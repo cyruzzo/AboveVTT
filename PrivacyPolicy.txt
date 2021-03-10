@@ -1,0 +1,5 @@
+AboveVTT does not collect,analyze or store any of your data in any way.
+
+AboveVTT works just by interacting with the DnDBeyond.com webiste.
+
+AboveVTT does not contain any tracker of any kind.
