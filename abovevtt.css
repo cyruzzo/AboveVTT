@@ -1,0 +1,193 @@
+button[id$='-button'],
+button[id$='_button'],
+button[id^=jitsi_],
+#combat_tracker > button,
+#scene_selector_toggle,
+body > button,
+#addscene,
+.scene button,
+#combat_tracker_inside button,
+#edit_dialog button,
+#mega_importer button,
+#prewiz td button,
+#wizard_popup button,
+.sidebar__controls button {
+    background: #3d3d3d;
+    color: #fff;
+    border: 0;
+    height: 22px;
+    margin: 0 2px;
+    border-radius: 7px;
+    box-shadow: 0px 8px 15px rgb(0 0 0 / 10%);
+    padding: 2px 8px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out;
+}   
+
+button[id$='-button']:hover,
+button[id$='_button']:hover,
+button[id^=jitsi_]:hover,
+#combat_tracker > button:hover,
+#scene_selector_toggle:hover,
+body > button:hover,
+#addscene:hover,
+.scene button:hover,
+#combat_tracker_inside button:hover,
+#edit_dialog button:hover,
+#mega_importer button:hover,
+#prewiz td button:hover,
+#wizard_popup button:hover,
+.sidebar__controls button:hover {
+    color: #E60207;
+    background: #2e2e2e;
+}
+
+.sidebar__controls > div button {
+    width: 30px;
+    font-size: 20px;
+    line-height: 19px;
+}
+
+button#scene_selector_toggle {
+    left: 972px !important;
+}
+
+button[id$='-button'].button-enabled:hover {
+    color: #000;
+}
+
+#addscene {
+    margin: 5px;
+}
+
+.scene {
+    border-radius: 5px;
+    border: 1px solid #3d3d3d !important;
+}
+
+.scene button,
+#combat_tracker_inside button {
+    margin: 0;
+    border-radius: 0;
+}
+
+div#scene_selector,
+#combat_tracker_inside,
+#edit_dialog,
+#mega_importer,
+#prewiz,
+#wizard_popup {
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+}
+
+#edit_dialog {
+    height: 375px !important;
+}
+
+div#combat_tracker_inside {
+    margin: 10px 0;
+    position: relative;
+}
+
+#combat_area button {
+    padding: 2px 5px;
+}
+
+#combat_tracker_inside button {
+    padding: 2px 9px;
+}
+
+#combat_tracker {
+    width: 185px !important;
+}
+
+#combat_area td:last-of-type {
+    text-align: right;
+}
+
+#combat_tracker_inside > div {
+    position: absolute;
+    bottom: 0;
+}
+
+input {
+    border: 1px solid #3d3d3d;
+}
+
+#scene_properties form > button {
+    float: right;
+    vertical-align: bottom;
+    margin-top: 20px;
+}
+
+#mega_importer {
+    left: 200px !important;
+    height: 590px !important;
+}
+
+#importer_area {
+    height: 520px !important;
+}
+
+#importer_area > div {
+    border: 1px solid #3d3d3d !important;
+    padding: 5px 0;
+    height: 220px !important;
+}
+
+#importer_footer > div {
+    right: 16px !important;
+}
+
+#importer_footer button:disabled:hover {
+    color: #fff;
+}
+
+/** it would be nice to have a class selector because of the red background, will use this as a temp fix **/
+.importer_toggle:hover {
+    color: gold !important;
+}
+
+div#template_section {
+    margin: 10px 5px;
+}
+
+div#scene_properties {
+    margin: 0 5px;
+}
+
+div#scene_properties form > div {
+    margin: 5px 0;
+}
+
+#importer_toggles {
+    height: 35px !important;
+    display: flex;
+    align-items: flex-end;
+    margin-left: 10px;
+}
+
+#prewiz td {
+    padding: 10px;
+    font-size: 16px;
+    vertical-align: inherit;
+}
+
+#prewiz td button {
+    width: 150px;
+    text-transform: uppercase;
+    height: 50px;
+}
+
+#wizard_popup {
+    font-size: 16px !important;
+    padding: 10px;
+}
+
+#wizard_popup button {
+    display: block;
+    margin: 10px auto;
+    height: 28px;
+    font-size: 16px;
+    text-transform: uppercase;
+    min-width: 45px;
+}

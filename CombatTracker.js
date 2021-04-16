@@ -1,0 +1,235 @@
+
+function init_combat_tracker(){
+	ct=$("<div id='combat_tracker'/>");
+	toggle=$("<button>COMBAT</button>");
+	toggle.css('width',"75px");
+	toggle.click(function(){
+		if($("#combat_tracker_inside").is(":visible")){
+			$("#combat_tracker_inside").hide();
+			$("#combat_tracker").css("height","20px");
+		}
+		else{
+			$("#combat_tracker_inside").show();
+			$("#combat_tracker").css("height","450px");
+		}
+	});
+	ct.append(toggle);
+	ct_inside=$("<div id='combat_tracker_inside'/>");
+	ct_inside.css('background',"url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+	ct_inside.css('height','100%');
+	ct_inside.css('overflow','auto');
+	ct_inside.hide();
+	ct.append(ct_inside);
+	
+	ct_area=$("<table id='combat_area'/>");
+	ct_inside.append(ct_area);
+	
+	buttons=$("<div/>");
+	reorder=$("<button>REORDER</button>");
+	reorder.click(
+		function(){
+				var items = $("#combat_area tbody").children().sort(
+					function(a,b){
+						var vA=parseInt($(".init",a).val());
+						var vB=parseInt($(".init",b).val());
+						return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+					});
+				
+				$("#combat_area tbody").append(items);		
+	});
+	
+	clear=$("<button>CLEAR</button>");
+	clear.click(function(){
+		$("#combat_area").empty();
+	});
+	
+	next=$("<button>NEXT</button>");
+	next.click(function(){
+		var nextid="";
+		if($("#combat_area tr").length==0)
+			return;
+		
+		current=$("#combat_area tr[data-current=1]");
+		if(current.length==0){
+			console.log('nessuno selezionato');
+			$("#combat_area tr").first().attr('data-current','1');
+			$("#combat_area tr").first().css('background','lightgreen');
+		}
+		else{
+			current.removeAttr('data-current');
+			current.css('background','');
+			next=current.next();
+			if(next.length==0){
+				next=$("#combat_area tr").first()
+			}
+			next.attr('data-current','1');
+			next.css('background','lightgreen');
+		}
+		var target=$("#combat_area tr[data-current=1]").attr('data-target');
+
+		
+	});
+	
+	roll=$("<button>ROLLINIT</button>");
+	roll.click(function(){
+		$("#combat_area tr[data-monster]").each(function(idx){
+			let element=$(this);
+			if(element.find(".init").val()!=0) // DON'T ROLL AGAIN'
+				return;
+					
+			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
+				element.find(".init").val(value);
+				ct_persist();
+			});
+			
+		});
+		
+	});
+	buttons.append(roll);
+	buttons.append(clear);
+	buttons.append(reorder);
+	buttons.append(next);
+	buttons.css('font-size','8px');
+	
+	ct_inside.append(buttons);
+	ct.css('position','fixed');
+	ct.css('width','180px');
+	ct.css('height','20px');
+	ct.css('left','5px');
+	ct.css('top','40px');
+	ct.css('z-index','99999999');
+	
+	$("#site").append(ct);
+}
+
+
+function ct_add_token(token,persist=true){
+	// TODO: check if the token is already in the tracker..
+	
+	selector="#combat_area tr[data-target='"+token.options.id+"']";
+	if($(selector).length>0)
+		return;
+	
+	entry=$("<tr/>");
+	entry.css("height","30px");
+	entry.attr("data-target",token.options.id);
+	
+	if(token.options.monster > 0)
+		entry.attr('data-monster',token.options.monster);
+	
+	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
+	img.attr('src',token.options.imgsrc);
+	img.css('border','3px solid '+token.options.color);
+	entry.append($("<td/>").append(img));
+	init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
+	init.css('width','20px');
+	init.css('-webkit-appearance','none');
+	init.val(0);
+	entry.append($("<td/>").append(init));
+	
+	
+	hp=$("<div class='hp'/>");
+	hp.text(token.options.hp);
+	
+	hp.css('font-size','10px');
+	//hp.css('width','20px');
+	entry.append($("<td/>").append(hp));
+	max_hp=$("<div/>");
+	max_hp.text("/"+token.options.max_hp);
+	max_hp.css('font-size','10px');
+	//max_hp.css('width','20px');
+	entry.append($("<td/>").append(max_hp));
+	
+	
+	var buttons=$("<td/>");
+	
+	
+	find=$("<button style='font-size:8px;'>FIND</button>");
+	find.click(function(){
+		var target=$(this).parent().parent().attr('data-target');
+		if(target in window.TOKEN_OBJECTS){
+			window.TOKEN_OBJECTS[target].highlight();
+		}
+	});
+	
+	buttons.append(find);
+	
+	del=$("<button style='font-size:8px;'>DEL</button>");
+	del.click(
+		function(){
+			$(this).parent().parent().remove();
+			ct_persist();
+		}
+	);
+	
+	buttons.append(del);
+	
+	if(token.options.monster > 0){
+		stat=$("<button style='font-size:8px;'>STAT</button>");
+		
+		stat.click(function(){
+			iframe_id="#iframe-monster-"+token.options.monster;
+			if($(iframe_id).is(":visible"))
+				$(iframe_id).hide();
+			else{
+				$(".monster_frame").hide();
+				load_monster_stat(token.options.monster);
+				}
+		});
+		
+		buttons.append(stat);
+		
+	}	
+	else{
+		stat=$("<button style='font-size:8px;'>STAT</button>");
+		stat.click(function(){
+			open_player_sheet(token.options.id);
+		});
+		buttons.append(stat);
+	}
+	
+		entry.append(buttons);
+	
+	
+	$("#combat_area").append(entry);
+	$("#combat_area td").css("vertical-align","middle");
+	
+	if(persist){
+		ct_persist();
+	}
+}
+
+function ct_persist(){
+	var data= [];
+	$('#combat_area tr').each( function () {
+	  data.push( {
+		'data-target': $(this).attr("data-target"),
+		'init': $(this).find(".init").val(),
+		'current': ($(this).attr("data-current")=="1"),
+	   });
+	});
+	
+	var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
+	
+	localStorage.setItem(itemkey,JSON.stringify(data));
+	console.log(itemkey);
+	console.log(data);
+}
+
+function ct_load(){
+	var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
+	var data=$.parseJSON(localStorage.getItem(itemkey));
+	
+	if(data){	
+		for(i=0;i<data.length;i++){
+			if(  (data[i]['data-target'] in window.TOKEN_OBJECTS)){
+				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false);
+				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
+				if(data[i]['current']){
+					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1").css('background','lightgreen');
+				}
+			}
+		}
+	}
+	ct_persist();
+}
