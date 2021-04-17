@@ -24,7 +24,7 @@ function init_combat_tracker(){
 	ct_area=$("<table id='combat_area'/>");
 	ct_inside.append(ct_area);
 	
-	buttons=$("<div/>");
+	buttons=$("<div id='combat_footer'/>");
 	reorder=$("<button>REORDER</button>");
 	reorder.click(
 		function(){
@@ -35,12 +35,14 @@ function init_combat_tracker(){
 						return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
 					});
 				
-				$("#combat_area tbody").append(items);		
+				$("#combat_area tbody").append(items);
+				ct_persist();		
 	});
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
 		$("#combat_area").empty();
+		ct_persist();
 	});
 	
 	next=$("<button>NEXT</button>");
@@ -65,7 +67,8 @@ function init_combat_tracker(){
 			next.attr('data-current','1');
 			next.css('background','lightgreen');
 		}
-		var target=$("#combat_area tr[data-current=1]").attr('data-target');
+		ct_persist();
+		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
 
 		
 	});
@@ -85,15 +88,17 @@ function init_combat_tracker(){
 		});
 		
 	});
-	buttons.append(roll);
-	buttons.append(clear);
-	buttons.append(reorder);
-	buttons.append(next);
-	buttons.css('font-size','8px');
-	
-	ct_inside.append(buttons);
+	if(window.DM){
+		buttons.append(roll);
+		buttons.append(clear);
+		buttons.append(reorder);
+		buttons.append(next);
+		buttons.css('font-size','8px');
+		
+		ct_inside.append(buttons);
+	}
 	ct.css('position','fixed');
-	ct.css('width','180px');
+	ct.css('width','200px');
 	ct.css('height','20px');
 	ct.css('left','5px');
 	ct.css('top','40px');
@@ -105,6 +110,15 @@ function init_combat_tracker(){
 
 function ct_add_token(token,persist=true){
 	// TODO: check if the token is already in the tracker..
+	
+	
+	// IF PLAYER. ADD THE TOKEN ONLY IF IT'S VISIBLE
+	if(!window.DM){
+		var selector = "div[data-id='" + token.options.id + "']";
+		if($(selector).length==0 || ! $(selector).is(":visible")){
+			return;
+		}
+	}
 	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
@@ -124,7 +138,13 @@ function ct_add_token(token,persist=true){
 	init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
 	init.css('width','20px');
 	init.css('-webkit-appearance','none');
-	init.val(0);
+	if(window.DM){
+		init.val(0);
+		init.change(ct_persist);
+	}
+	else{
+		init.attr("disabled","disabled");
+	}
 	entry.append($("<td/>").append(init));
 	
 	
@@ -133,12 +153,18 @@ function ct_add_token(token,persist=true){
 	
 	hp.css('font-size','10px');
 	//hp.css('width','20px');
-	entry.append($("<td/>").append(hp));
+	if(window.DM || !(token.options.monster > 0) )
+		entry.append($("<td/>").append(hp));
+	else
+		entry.append($("<td/>"))
 	max_hp=$("<div/>");
 	max_hp.text("/"+token.options.max_hp);
 	max_hp.css('font-size','10px');
 	//max_hp.css('width','20px');
-	entry.append($("<td/>").append(max_hp));
+	if(window.DM || !(token.options.monster > 0) )
+		entry.append($("<td/>").append(max_hp));
+	else
+		entry.append($("<td/>"));
 	
 	
 	var buttons=$("<td/>");
@@ -152,6 +178,7 @@ function ct_add_token(token,persist=true){
 		}
 	});
 	
+	
 	buttons.append(find);
 	
 	del=$("<button style='font-size:8px;'>DEL</button>");
@@ -161,8 +188,8 @@ function ct_add_token(token,persist=true){
 			ct_persist();
 		}
 	);
-	
-	buttons.append(del);
+	if(window.DM)
+		buttons.append(del);
 	
 	if(token.options.monster > 0){
 		stat=$("<button style='font-size:8px;'>STAT</button>");
@@ -176,8 +203,8 @@ function ct_add_token(token,persist=true){
 				load_monster_stat(token.options.monster);
 				}
 		});
-		
-		buttons.append(stat);
+		if(window.DM)
+			buttons.append(stat);
 		
 	}	
 	else{
@@ -185,7 +212,8 @@ function ct_add_token(token,persist=true){
 		stat.click(function(){
 			open_player_sheet(token.options.id);
 		});
-		buttons.append(stat);
+		if(window.DM)
+			buttons.append(stat);
 	}
 	
 		entry.append(buttons);
@@ -212,13 +240,15 @@ function ct_persist(){
 	var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
 	
 	localStorage.setItem(itemkey,JSON.stringify(data));
-	console.log(itemkey);
-	console.log(data);
+	window.MB.sendMessage("custom/myVTT/CT",data);
 }
 
-function ct_load(){
-	var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
-	var data=$.parseJSON(localStorage.getItem(itemkey));
+function ct_load(data=null){
+	
+	if(data==null){
+		var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
+		data=$.parseJSON(localStorage.getItem(itemkey));
+	}
 	
 	if(data){	
 		for(i=0;i<data.length;i++){

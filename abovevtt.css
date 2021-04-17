@@ -95,19 +95,19 @@ div#combat_tracker_inside {
     padding: 2px 5px;
 }
 
-#combat_tracker_inside button {
+/*#combat_tracker_inside button {
     padding: 2px 9px;
-}
+}*/
 
-#combat_tracker {
+/*#combat_tracker {
     width: 185px !important;
-}
+}*/
 
 #combat_area td:last-of-type {
     text-align: right;
 }
 
-#combat_tracker_inside > div {
+#combat_footer > div {
     position: absolute;
     bottom: 0;
 }

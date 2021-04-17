@@ -992,8 +992,8 @@ function init_ui() {
 	}
 	$(".sidebar__controls").append(zoom_section);
 
+	init_combat_tracker();
 	if (window.DM) {
-		init_combat_tracker();
 		token_menu();
 	}
 	

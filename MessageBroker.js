@@ -72,6 +72,9 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/chat") {
 				self.handleChat(msg.data);
 			}
+			if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
+				self.handleCT(msg.data);
+			}
 			if (msg.eventType == "custom/myVTT/highlight") {
 				if (msg.data.id in window.TOKEN_OBJECTS) {
 					window.TOKEN_OBJECTS[msg.data.id].highlight();
@@ -160,6 +163,11 @@ class MessageBroker {
 		setInterval(function() {
 			self.sendPing();
 		}, 30000);
+	}
+
+    handleCT(data){
+		$("#combat_area").empty();
+		ct_load(data);
 	}
 
 	handlePlayerData(data) {
