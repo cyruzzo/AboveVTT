@@ -921,7 +921,7 @@ function init_ui() {
 	}
 
 	// ZOOM BUTTON
-	zoom_section = $("<div/>");
+	zoom_section = $("<div id='zoom_buttons' />");
 
 	zoom_minus = $("<button id='zoom_minus'>-</button>");
 	zoom_minus.click(function() {
@@ -984,18 +984,21 @@ function init_ui() {
 
 	zoom_section.append(zoom_plus);
 
-	zoom_section.css("z-index", 999999);
-
-
-	zoom_section.css("position", "absolute");
-	zoom_section.css("left", "-140px");
-	zoom_section.css("top", "0px");
+	if(window.DM){
+		zoom_section.css("left","-100px");
+	}
+	else{
+		zoom_section.css("left","-180px");
+	}
 	$(".sidebar__controls").append(zoom_section);
 
 	if (window.DM) {
-		token_menu();
 		init_combat_tracker();
+		token_menu();
 	}
+	
+	
+	
 
 	init_spells();
 
@@ -1105,7 +1108,7 @@ function init_buttons() {
 	});
 
 
-	fog_menu = $("<div></div>");
+	fog_menu = $("<div class='top_menu'></div>");
 	fog_menu.append("<div style='font-weight: bold;'>Reveal</div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=0>Square</button></div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc'  data-type=0>Circle</button></div>");
@@ -1117,22 +1120,25 @@ function init_buttons() {
 	fog_menu.hide();
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
-	fog_menu.css("left", "155px");
 	fog_menu.css("width", "75px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
-
+	
 
 	buttons = $("<div/>")
+	$("body").append(buttons);
+	
 	if (window.DM)
 		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'>SELECT</button>"));
+		
 	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'>MEASURE</button>"));
 	fog_button = $("<button style='display:inline;width:75px;' id='fog_button'>FOG</button>");
+	
 	if (window.DM)
 		buttons.append(fog_button);
+	fog_menu.css("left",fog_button.position().left);
 
-
-	draw_menu = $("<div></div>");
+	draw_menu = $("<div class='top_menu'></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='draw'>Square</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type='draw'>Circle</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='cone' data-type='draw'>Cone</button></div>");
@@ -1184,7 +1190,6 @@ function init_buttons() {
 	draw_menu.hide();
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
-	draw_menu.css("left", "230px");
 	draw_menu.css("width", "75px");
 	draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 
@@ -1192,8 +1197,11 @@ function init_buttons() {
 
 	draw_button = $("<button style='display:inline;width:75px' id='draw_button'>DRAW</button>");
 
-	if (window.DM)
+	if (window.DM){
 		buttons.append(draw_button);
+		draw_menu.css("left",draw_button.position().left);
+		
+	}
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
@@ -1223,7 +1231,7 @@ function init_buttons() {
 		}
 	});
 
-	$("body").append(buttons);
+	
 
 	draw_menu.find(".drawType").first().click();
 	draw_menu.find(".coloroption").first().click();

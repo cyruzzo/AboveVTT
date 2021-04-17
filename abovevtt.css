@@ -11,7 +11,8 @@ body > button,
 #mega_importer button,
 #prewiz td button,
 #wizard_popup button,
-.sidebar__controls button {
+.sidebar__controls button
+{
     background: #3d3d3d;
     color: #fff;
     border: 0;
@@ -39,6 +40,11 @@ body > button:hover,
 .sidebar__controls button:hover {
     color: #E60207;
     background: #2e2e2e;
+}
+
+.top_menu {
+	margin: 0 8px;
+	/* padding: 2px 8px;*/	
 }
 
 .sidebar__controls > div button {
@@ -187,4 +193,14 @@ div#scene_properties form > div {
     font-size: 16px;
     text-transform: uppercase;
     min-width: 45px;
+}
+
+#zoom_buttons{
+	position: absolute;
+	top: 0px;
+	z-index: 60;
+}
+
+#scene_selector{
+	z-index:1000;
 }
