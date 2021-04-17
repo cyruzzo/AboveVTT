@@ -791,9 +791,6 @@ function init_ui() {
 	background = $("<img id='scene_map'></img>");
 	background.css("top", "0");
 	background.css("left", "0");
-	//background.css("padding-right","500px");
-	//background.css("padding-bottom","500px");
-
 	background.css("position", "absolute");
 	background.css("z-index", "10");
 
@@ -913,20 +910,7 @@ function init_ui() {
 
 
 	init_buttons();
-	/*
-	if(window.DM){
-		init_reveal_button();
-	}
-	else{
-		b=$("<button id='measure-button' class='drawbutton' data-shape='measure'>MEASURE</button>");
-		b.css("position","fixed");
-		b.css("top","20px");
-		b.css("left","20px");
-		$("body").append(b);
-		setup_draw_buttons();
-	}*/
-
-
+	
 
 	if (!window.DM) {
 
@@ -1002,11 +986,6 @@ function init_ui() {
 
 	zoom_section.css("z-index", 999999);
 
-	/*
-	zoom_section.css("position","fixed");
-	zoom_section.css("top",10);
-	zoom_section.css("right",400);
-	$(window.document.body).append(zoom_section);*/
 
 	zoom_section.css("position", "absolute");
 	zoom_section.css("left", "-140px");

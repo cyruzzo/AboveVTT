@@ -160,9 +160,6 @@ function edit_scene_dialog(scene_id) {
 
 
 
-
-
-
 	let grid_5 = function(enable_grid = false, enable_snap = true) {
 
 		console.log("enable_grid " + enable_grid + " enable_snap" + enable_snap);
@@ -696,7 +693,7 @@ function init_scene_selector() {
 	toggle.css('position', 'fixed');
 	toggle.css('width', '75px');
 	toggle.css('top', '5px');
-	toggle.css('left', '305px');
+	toggle.css('left', '325px');
 	toggle.css('z-index', '9999')
 
 	toggle.click(function() {

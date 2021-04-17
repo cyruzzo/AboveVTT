@@ -47,9 +47,6 @@ body > button:hover,
     line-height: 19px;
 }
 
-button#scene_selector_toggle {
-    left: 972px !important;
-}
 
 button[id$='-button'].button-enabled:hover {
     color: #000;
