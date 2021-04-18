@@ -1,5 +1,3 @@
-
-
 ["SceneData.js", "jquery.ui.touch-punch.js", "CombatTracker.js", "StatHandler.js", "rpg-dice-roller.bundle.min.js", "MonsterDice.js", "Fog.js", "jquery.contextMenu.js", "PlayerPanel.js", "Token.js", "Jitsi.js", "MessageBroker.js", "ScenesHandler.js", "MonsterPanel.js", "ScenesPanel.js", "Main.js"].forEach(function(value, index, array) {
 	var s = document.createElement('script');
 

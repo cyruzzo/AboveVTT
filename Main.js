@@ -9,7 +9,7 @@ function getRandomColorOLD() {
 
 function uuid() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+		var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	});
 }
@@ -24,7 +24,7 @@ function getRandomInt(min, max) {
 function youtube_parser(url) {
 	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
 	var match = url.match(regExp);
-	return (match && match[7].length == 11) ? match[7] : false;
+	return (match && match[7].length === 11) ? match[7] : false;
 }
 
 
@@ -34,7 +34,7 @@ window.YTTIMEOUT = null;
 function load_scenemap(url, width = null, height = null, callback = null) {
 	$("#scene_map").remove();
 
-	if (window.YTTIMEOUT != null) {
+	if (window.YTTIMEOUT !== null) {
 		clearTimeout(window.YTTIMEOUT);
 		window.YTTIMEOUT = null;
 	}
@@ -42,7 +42,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
 
-		if (width == null) {
+		if (width === null) {
 			width = 1920;
 			height = 1080;
 		}
@@ -56,13 +56,13 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 			videoId: videoid,
 			playerVars: { 'autoplay': 1, 'controls': 0 },
 			events: {
-				'onStateChange': function(event) { if (event.data == 0) player.seekTo(0); },
+				'onStateChange': function(event) { if (event.data === 0) player.seekTo(0); },
 				'onReady': function(e) { e.target.mute(); }
 			}
 		});
 
 		let smooth = function() {
-			if (player.playerInfo.playerState != 1) // something went wrong
+			if (player.playerInfo.playerState !== 1) // something went wrong
 				return;
 			remaining = player.playerInfo.duration - player.playerInfo.currentTime;
 			if (remaining < 1) { // we should be able to just skip on the last second
@@ -82,12 +82,12 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 	else {
 		newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
-		if (width != null) {
+		if (width !== null) {
 			newmap.width(width);
 			newmap.height(height);
 		}
 
-		if (callback != null)
+		if (callback !== null)
 			newmap.on("load", callback);
 		$("#VTT").append(newmap);
 	}
@@ -147,11 +147,11 @@ function switch_control(e) {
 	$($(e.target).attr("data-target")).show();
 
 
-	if ($(e.target).attr("data-target") == ".glc-game-log") {
+	if ($(e.target).attr("data-target") === ".glc-game-log") {
 		$("#switch_gamelog").css('background', '');
 	}
 
-	if ($(e.target).attr("data-target") == "#monster-panel" && !window.MONSTERPANEL_LOADED) {
+	if ($(e.target).attr("data-target") === "#monster-panel" && !window.MONSTERPANEL_LOADED) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 		window.MONSTERPANEL_LOADED = true;
@@ -170,7 +170,7 @@ function load_monster_stat(monsterid) {
 
 	iframe_id = "iframe-monster-" + monsterid;
 	if ($("#" + iframe_id).length > 0) {
-		// RENDI VISIBILE
+		// Make visible
 		oldframe = $("#" + iframe_id);
 		oldframe.show();
 		oldframe.animate({
@@ -223,7 +223,7 @@ function load_monster_stat(monsterid) {
 
 			let img = $(event.target).contents().find(".detail-content").find(".image");
 			let statblock = $(event.target).contents().find(".mon-stat-block");
-			if (img.length == 1) {
+			if (img.length === 1) {
 				img.insertAfter(statblock);
 				var cast = $("<button>Send IMG To Gamelog</button>");
 				img.css("text-align", "center");
@@ -269,7 +269,7 @@ function init_controls() {
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
 	hider = $("<button id='hide_rightpanel' data-visible=1></button>").click(function() {
-		if ($(this).attr('data-visible') == 1) {
+		if ($(this).attr('data-visible') === 1) {
 			$(this).attr('data-visible', 0);
 			$(".sidebar--right").animate({ "right": "-340px" }, 500);
 			$(this).text("<<");
@@ -405,13 +405,13 @@ function sortGameLog(e) {
 
 	// SHOW ELEMENT IF GAMELOG IS HIDDEN
 	cloned_entry = $($(e.target).clone(true));
-	if ($("#hide_rightpanel").attr('data-visible') === "0" && (cloned_entry.find(".DiceMessage_Pending__30N8v").length == 0) && !cloned_entry.is("svg")) {
+	if ($("#hide_rightpanel").attr('data-visible') === "0" && (cloned_entry.find(".DiceMessage_Pending__30N8v").length === 0) && !cloned_entry.is("svg")) {
 		cloned_entry.css("border-radius", "10px 10px 10px 10px");
 		cloned_entry.css("border", "2px solid black");
 		cloned_entry.css("background", "rgba(255,255,255,0.95)");
 		console.log(cloned_entry);
 
-		if ($("#temporary_gamelog").length == 0) {
+		if ($("#temporary_gamelog").length === 0) {
 			var t = $("<ul id='temporary_gamelog'/>");
 			t.css("position", "fixed");
 			t.css("bottom", "0px");
@@ -426,7 +426,7 @@ function sortGameLog(e) {
 
 		cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function() {
 			$(this).remove();
-			if ($("#temporary_gamelog").children().length == 0)
+			if ($("#temporary_gamelog").children().length === 0)
 				$("#temporary_gamelog").remove();
 		})
 	}
@@ -486,7 +486,7 @@ function init_spells() {
 		$(event.target).contents().find(".homebrew-comments").remove();
 		$(event.target).contents().find("#footer").hide();
 		$(event.target).contents().find("body").on("click", "a", function(e) {
-			if ($(this).attr('href') != "/spells")
+			if ($(this).attr('href') !== "/spells")
 				$(this).attr("target", "_blank");
 		});
 	});
@@ -627,7 +627,7 @@ function open_player_sheet(sheet_url) {
 			console.log('scattai');
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
 			if (sidebar.length > 0) {
-				if ($(event.target).contents().find("#castbutton").length == 0) {
+				if ($(event.target).contents().find("#castbutton").length === 0) {
 					console.log("creating button");
 					observer.disconnect();
 					var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
@@ -645,7 +645,7 @@ function open_player_sheet(sheet_url) {
 								'font-size': $(this).css('font-size'),
 								'background-image': $(this).css('background-image'),
 							};
-							if ($(this).css("background-image") != "none") {
+							if ($(this).css("background-image") !== "none") {
 								newcss.width = $(this).width();
 								newcss.height = $(this).height();
 								newcss.background = $(this).css("background");
@@ -758,7 +758,7 @@ function init_ui() {
 	// AGGIUNGI CHAT
 	$(".glc-game-log").append($("<div><input id='chat-text' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
 	$("#chat-text").on('keypress', function(e) {
-		if (e.keyCode == 13) {
+		if (e.keyCode === 13) {
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
@@ -839,12 +839,12 @@ function init_ui() {
 		//	deselect_all_tokens();
 	});*/
 	fog.on("mousedown", function(e) {
-		if (e.button == 0)
+		if (e.button === 0)
 			deselect_all_tokens();
 	});
 
 	window.ZOOM = 1.0;
-	VTT = $("<div id='VTT' style='position:absolute; top:0px;left:0px;transform: scale(1.0);'/>");
+	VTT = $("<div id='VTT' style='position:absolute; top:0pleft:0;transform: scale(1.0);'/>");
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
@@ -1026,7 +1026,7 @@ function init_ui() {
 		// CONTROLLA SE FA CASINIIIIIIIIIIIIIIII
 		curYPos = m.pageY;
 		curXPos = m.pageX;
-		if (m.button == 2) { // ONLY THE RIGHT CLICK
+		if (m.button === 2) { // ONLY THE RIGHT CLICK
 			//e.preventDefault();
 			curDown = true;
 			$("body").css("cursor", "grabbing");
@@ -1085,7 +1085,7 @@ function init_buttons() {
 	clear_button.click(function() {
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. Are you sure?");
-		if (r == true) {
+		if (r === true) {
 			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
 			redraw_canvas();
 			window.ScenesHandler.persist();
@@ -1096,7 +1096,7 @@ function init_buttons() {
 	var hide_all_button = $("<button style='width:75px;'>ALL</button>");
 	hide_all_button.click(function() {
 		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. Are you sure?");
-		if (r == true) {
+		if (r === true) {
 			window.REVEALED = [];
 			redraw_canvas();
 			window.ScenesHandler.persist();

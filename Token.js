@@ -44,13 +44,13 @@ class Token {
 		this.sync = null;
 		this.persist = null;
 		this.doing_highlight = false;
-		if (typeof this.options.size == "undefined") {
+		if (typeof this.options.size === "undefined") {
 			this.options.size = window.CURRENT_SCENE_DATA.hpps; // one grid square
 		}
-		if (typeof options.custom_conditions == "undefined") {
+		if (typeof options.custom_conditions === "undefined") {
 			this.options.custom_conditions = [];
 		}
-		if (typeof options.conditions == "undefined") {
+		if (typeof options.conditions === "undefined") {
 			this.options.conditions = [];
 		}
 	}
@@ -60,7 +60,7 @@ class Token {
 		this.options.size = newsize;
 		this.place();
 		this.sync();
-		if (this.persist != null)
+		if (this.persist !== null)
 			this.persist();
 	}
 
@@ -69,7 +69,7 @@ class Token {
 		this.options.hidden = true;
 		this.place();
 		this.sync();
-		if (this.persist != null)
+		if (this.persist !== null)
 			this.persist();
 	}
 	show() {
@@ -77,7 +77,7 @@ class Token {
 		delete this.options.hidden;
 		this.place();
 		this.sync();
-		if (this.persist != null)
+		if (this.persist !== null)
 			this.persist();
 	}
 
@@ -147,7 +147,7 @@ class Token {
 		this.options.top = old.css("top");
 		//this.options.hpstring=old.find(".hpbar").val();
 		//this.options.size=old.width();
-		if (old.css("opacity") == 0.5)
+		if (old.css("opacity") === 0.5)
 			this.options.hidden = true;
 		else
 			delete this.options.hidden;
@@ -179,9 +179,9 @@ class Token {
 	update_and_sync(e) {
 		self = this;
 		self.update_from_page();
-		if (self.sync != null)
+		if (self.sync !== null)
 			self.sync(e);
-		if (self.persist != null)
+		if (self.persist !== null)
 			self.persist(e);
 		check_token_visibility();
 
@@ -246,8 +246,8 @@ class Token {
 			});
 		}
 		else {
-			hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
+			hp_input.keydown(function(e) { if (e.keyCode === '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+			maxhp_input.keydown(function(e) { if (e.keyCode === '13') self.update_from_page(); e.preventDefault(); });
 		}
 
 		return (hpbar);
@@ -292,7 +292,7 @@ class Token {
 		if (bar_width > 25)
 			bar_width = 25;
 
-		if ((this.options.conditions.length + this.options.custom_conditions.length) == 0) {
+		if ((this.options.conditions.length + this.options.custom_conditions.length) === 0) {
 			cond.hide();
 			return cond;
 		}
@@ -352,7 +352,7 @@ class Token {
 		}
 
 
-		if (cond.children().length == 0) {
+		if (cond.children().length === 0) {
 			cond.hide();
 			return cond;
 		}
@@ -376,7 +376,7 @@ class Token {
 			console.log("trovato!!");
 
 
-			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
+			if (old.css("left") !== this.options.left || old.css("top") !== this.options.top)
 				old.animate(
 					{
 						left: this.options.left,
@@ -394,7 +394,7 @@ class Token {
 
 
 
-			if (old.attr('width') != this.options.size) {
+			if (old.attr('width') !== this.options.size) {
 				// NEED RESIZING
 				old.find("img").css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
 				old.find("img").animate({
@@ -503,7 +503,7 @@ class Token {
 					function(e) {
 
 						// CHECK IF SNAPPING IS ENABLED
-						if (window.CURRENT_SCENE_DATA.snap == "1") {
+						if (window.CURRENT_SCENE_DATA.snap === "1") {
 
 							// calculate offset in real coordinates
 							var startX = window.CURRENT_SCENE_DATA.offsetx;// * window.CURRENT_SCENE_DATA.scaleX;
@@ -530,7 +530,7 @@ class Token {
 						self.update_and_sync(e);
 						if (self.selected) {
 							for (id in window.TOKEN_OBJECTS) {
-								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+								if ((id !== self.options.id) && window.TOKEN_OBJECTS[id].selected) {
 									var curr = window.TOKEN_OBJECTS[id];
 									var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
 									curr.update_and_sync(ev);
@@ -555,7 +555,7 @@ class Token {
 					self.orig_left = self.options.left;
 					if (self.selected) {
 						for (id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+							if ((id !== self.options.id) && window.TOKEN_OBJECTS[id].selected) {
 								var curr = window.TOKEN_OBJECTS[id];
 								curr.orig_top = curr.options.top;
 								curr.orig_left = curr.options.left;
@@ -590,7 +590,7 @@ class Token {
 						//console.log("OFFSETLEFT "+offsetLeft+ " OFFSETTOP " + offsetTop);
 
 						for (id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+							if ((id !== self.options.id) && window.TOKEN_OBJECTS[id].selected) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
 								var tok = $("#tokens div[data-id='" + id + "']");
@@ -683,7 +683,7 @@ function token_button(e) {
 	if ($(e.target).attr('data-name') && (options.monster > 0)) { // ADD number to the end of named monsters
 		var count = 1;
 		for (var tokenid in window.TOKEN_OBJECTS) {
-			if (window.TOKEN_OBJECTS[tokenid].options.monster == options.monster)
+			if (window.TOKEN_OBJECTS[tokenid].options.monster === options.monster)
 				count++;
 		}
 		if (count > 1) {
@@ -719,7 +719,7 @@ function array_remove_index_by_value(arr, item) {
 
 function menu_callback(key, options, event) {
 
-	if (key == "view") {
+	if (key === "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
 			load_monster_stat($(this).attr('data-monster'));
 		}
@@ -728,7 +728,7 @@ function menu_callback(key, options, event) {
 			open_player_sheet($(this).attr('data-id'));
 		}
 	}
-	if (key == "delete") {
+	if (key === "delete") {
 		id = $(this).attr('data-id');
 		$(this).remove();
 		delete window.ScenesHandler.scene.tokens[id];
@@ -736,34 +736,34 @@ function menu_callback(key, options, event) {
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
 	}
-	if (key == "token_medium") {
+	if (key === "token_medium") {
 		id = $(this).attr('data-id'); window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps));
 	}
-	if (key == "token_large") {
+	if (key === "token_large") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 2);
 	}
-	if (key == "token_huge") {
+	if (key === "token_huge") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 3);
 	}
-	if (key == "token_gargantuan") {
+	if (key === "token_gargantuan") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 4);
 	}
-	if (key == "token_colossal") {
+	if (key === "token_colossal") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 5);
 	}
-	if (key == "hide") {
+	if (key === "hide") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].hide();
 	}
-	if (key == "show") {
+	if (key === "show") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].show();
 	}
-	if (key == "token_combat") {
+	if (key === "token_combat") {
 		id = $(this).attr('data-id');
 		ct_add_token(window.TOKEN_OBJECTS[id]);
 	}
@@ -831,26 +831,26 @@ function token_inputs(opt) {
 }
 
 function multiple_callback(key, options, event) {
-	if (key == "token_combat") {
+	if (key === "token_combat") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			ct_add_token(window.TOKEN_OBJECTS[id],false);
 			ct_persist();
 		});
 	}
-	if (key == "hide") {
+	if (key === "hide") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			window.TOKEN_OBJECTS[id].hide();
 		});
 	}
-	if (key == "show") {
+	if (key === "show") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			window.TOKEN_OBJECTS[id].show();
 		});
 	}
-	if (key == "delete") {
+	if (key === "delete") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			$(this).remove();

@@ -19,7 +19,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 
-		if (scene.grid_subdivided == "1")
+		if (scene.grid_subdivided === "1")
 			scene.grid = "1";
 
 
@@ -79,7 +79,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		  videoId: 'ny_XrjC3F9Q',
 		  playerVars: { 'autoplay': 1, 'controls': 0 },
 		  events: {
-			'onStateChange': function(event){if(event.data==0)player.playVideo();}
+			'onStateChange': function(event){if(event.data === 0)player.playVideo();}
 		  }
 		});*/
 
@@ -102,7 +102,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		$("#grid_overlay").show();
 
 
-		if (self.scene.fog_of_war == 1) {
+		if (self.scene.fog_of_war === 1) {
 			window.FOG_OF_WAR = true;
 			//$("#fog_overlay").show();
 			window.REVEALED = [].concat(self.scene.reveals);
@@ -121,7 +121,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 		var map_url = "";
-		if ((scene.dm_map != "") && (scene.dm_map_usable == "1") && (window.DM)) {
+		if ((scene.dm_map !== "") && (scene.dm_map_usable === "1") && (window.DM)) {
 			map_url = scene.dm_map;
 		}
 		else {
@@ -134,7 +134,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
 
-			if (scene.upscaled == "1") {
+			if (scene.upscaled === "1") {
 				$("#scene_map").width(owidth * 2);
 				$("#scene_map").height(oheight * 2);
 			}
@@ -159,7 +159,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}
 
 			self.sync();
-			if (callback != null)
+			if (callback !== null)
 				callback();
 		});
 
@@ -253,7 +253,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		var adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
 
 
-		if (self.sources[keyword].type != 'dnb') {
+		if (self.sources[keyword].type !== 'dnb') {
 			callback();
 			return;
 		}
@@ -273,7 +273,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			var iframe = $(event.target);
 			console.log('caricato ' + window.frames['scraper'].location.href);
 
-			if (window.frames['scraper'].location.href != adventure_url) {
+			if (window.frames['scraper'].location.href !== adventure_url) {
 				console.log('rilevato cambio url');
 				var title = "Single Chapter";
 				var url = window.frames['scraper'].location.href;
@@ -311,7 +311,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		var chapter_url = self.sources[source_keyword].chapters[chapter_keyword].url;
 		console.log("checking for scenes in " + chapter_url);
 
-		if (self.sources[source_keyword].chapters[chapter_keyword].type != 'dnb') {
+		if (self.sources[source_keyword].chapters[chapter_keyword].type !== 'dnb') {
 			callback();
 			return;
 		}
@@ -331,7 +331,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			var iframe = $(event.target);
 			iframe.contents().find("figure").each(function(idx) { // FIGURE + FIGCAPTION. 
 				var id = $(this).attr('id');
-				if (typeof id == typeof undefined)
+				if (typeof id === typeof undefined)
 					return;
 				var img1 = $(this).find(".compendium-image-center").attr("href");
 				var links = $(this).find("figcaption a");
@@ -371,7 +371,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			// COMPENDIUM IMAGE WITH SUBTITLE
 			iframe.contents().find(".compendium-image-with-subtitle-center,.compendium-image-with-subtitle-right,.compendium-image-with-subtitle-left").each(function(idx) {
 				var id = $(this).attr('id');
-				if (typeof id == typeof undefined) {
+				if (typeof id === typeof undefined) {
 					id = $(this).attr('data-content-chunk-id');
 				}
 				var thumb = $(this).find("img").attr('src');
@@ -494,7 +494,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.sources = {};
 
 
-		if (localStorage.getItem('ScenesHandler' + gameid) != null) {
+		if (localStorage.getItem('ScenesHandler' + gameid) !== null) {
 			this.scenes = $.parseJSON(localStorage.getItem('ScenesHandler' + gameid));
 			this.current_scene_id = localStorage.getItem("CurrentScene" + gameid);
 		}

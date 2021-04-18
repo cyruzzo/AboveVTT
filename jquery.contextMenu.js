@@ -49,7 +49,7 @@
      prop = (prefix ? ('-' + prefix.toLowerCase() + '-') : '') + 'user-select';
 
      e.style.cssText = prop + ': text;';
-     if (e.style[propCC] == 'text') {
+     if (e.style[propCC] === 'text') {
      t = true;
      return false;
      }
@@ -67,7 +67,7 @@
         $.cleanData = (function (orig) {
             return function (elems) {
                 var events, elem, i;
-                for (i = 0; elems[i] != null; i++) {
+                for (i = 0; elems[i] !== null; i++) {
                     elem = elems[i];
                     try {
                         // Only trigger remove when necessary to save time

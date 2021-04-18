@@ -38,11 +38,11 @@ function scan_monster(target, stats) {
 		dice = $(this).attr('data-exp');
 		mod = $(this).attr('data-mod');
 
-		if (mod && mod == "CRIT") {
+		if (mod && mod === "CRIT") {
 			mod = dice.replace(/^([0-9]+d[0-9]+).*$/, "$1");
 		}
 
-		if (mod && mod.charAt(0) != "+")
+		if (mod && mod.charAt(0) !== "+")
 			mod = "+" + mod;
 		else
 			mod = mod;

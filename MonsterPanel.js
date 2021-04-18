@@ -54,7 +54,7 @@ function init_monster_panel() {
 			button.attr('data-img', url);
 			button.attr('data-stat', monsterid);
 
-			if (e.button == 2) {
+			if (e.button === 2) {
 				button.attr('data-hidden', 1)
 			}
 			else
@@ -62,11 +62,11 @@ function init_monster_panel() {
 
 
 			window.StatHandler.getStat(monsterid, function(stat) {
-				if (stat.data.sizeId == 5)
+				if (stat.data.sizeId === 5)
 					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 2);
-				if (stat.data.sizeId == 6)
+				if (stat.data.sizeId === 6)
 					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 3);
-				if (stat.data.sizeId == 7)
+				if (stat.data.sizeId === 7)
 					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 4);
 				button.attr('data-hp', stat.data.averageHitPoints);
 				button.attr('data-maxhp', stat.data.averageHitPoints);

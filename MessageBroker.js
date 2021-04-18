@@ -1,7 +1,4 @@
 class MessageBroker {
-
-
-
 	loadWS(token, callback = null) {
 
 		if (callback)
@@ -47,47 +44,47 @@ class MessageBroker {
 		};
 
 		this.ws.onmessage = function(event) { // SCHIFO.. DOVREI FAR REGISTRARE GLI HANDLER ALLA CREAZIONE DELLA MB
-			if (event.data == "pong")
+			if (event.data === "pong")
 				return;
 
 			var msg = $.parseJSON(event.data);
-			if (msg.eventType == "custom/myVTT/token") {
+			if (msg.eventType === "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
-			if (msg.eventType == "custom/myVTT/scene") {
+			if (msg.eventType === "custom/myVTT/scene") {
 				self.handleScene(msg);
 			}
-			if (msg.eventType == "custom/myVTT/syncmeup") {
+			if (msg.eventType === "custom/myVTT/syncmeup") {
 				self.handleSyncMeUp(msg);
 			}
-			if (msg.eventType == "custom/myVTT/reveal") {
+			if (msg.eventType === "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
 				redraw_canvas();
 				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 			}
-			if (msg.eventType == "custom/myVTT/drawing") {
+			if (msg.eventType === "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
 				redraw_drawings();
 			}
-			if (msg.eventType == "custom/myVTT/chat") {
+			if (msg.eventType === "custom/myVTT/chat") {
 				self.handleChat(msg.data);
 			}
-			if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
+			if (msg.eventType === "custom/myVTT/CT" && (!window.DM)) {
 				self.handleCT(msg.data);
 			}
-			if (msg.eventType == "custom/myVTT/highlight") {
+			if (msg.eventType === "custom/myVTT/highlight") {
 				if (msg.data.id in window.TOKEN_OBJECTS) {
 					window.TOKEN_OBJECTS[msg.data.id].highlight();
 				}
 			}
-			if (msg.eventType == "custom/myVTT/pointer") {
+			if (msg.eventType === "custom/myVTT/pointer") {
 				set_pointer(msg.data);
 			}
 
-			if (msg.eventType == "custom/myVTT/lock") {
+			if (msg.eventType === "custom/myVTT/lock") {
 				if (window.DM)
 					return;
-				if (msg.data.player_sheet == window.PLAYER_SHEET) {
+				if (msg.data.player_sheet === window.PLAYER_SHEET) {
 					//alert('locked');
 					var lock_display = $("<div id='lock_display'><h1>LOCKED BY DM</h1><p>The DM is working on your character sheet</p></div>");
 					lock_display.css("font-size", "80px");
@@ -103,10 +100,10 @@ class MessageBroker {
 					$("#sheet iframe").attr('disabled', 'disabled');
 				}
 			}
-			if (msg.eventType == "custom/myVTT/unlock") {
+			if (msg.eventType === "custom/myVTT/unlock") {
 				if (window.DM)
 					return;
-				if (msg.data.player_sheet == window.PLAYER_SHEET) {
+				if (msg.data.player_sheet === window.PLAYER_SHEET) {
 					//alert('unlocked');
 					$("#lock_display").remove();
 					$("#sheet iframe").removeAttr('disabled');
@@ -117,15 +114,15 @@ class MessageBroker {
 
 
 
-			if (msg.eventType == "custom/myVTT/playerdata") {
+			if (msg.eventType === "custom/myVTT/playerdata") {
 				self.handlePlayerData(msg.data);
 			}
-			if (msg.eventType == "dice/roll/fulfilled") {
+			if (msg.eventType === "dice/roll/fulfilled") {
 				notify_gamelog();
 				if (!window.DM)
 					return;
 				// CHECK FOR INIT ROLLS
-				if (msg.data.action == "Initiative") {
+				if (msg.data.action === "Initiative") {
 					console.log(msg.data);
 					var total = msg.data.rolls[0].result.total;
 					let entityid = msg.data.context.entityId;
@@ -134,7 +131,7 @@ class MessageBroker {
 					$("#combat_area tr").each(function() {
 						var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 						console.log(converted);
-						if (converted == entityid) {
+						if (converted === entityid) {
 							console.log("trovatoooooooo");
 							$(this).find(".init").val(total);
 						}
@@ -181,7 +178,7 @@ class MessageBroker {
 
 			console.log("old " + cur.options.hp + " new " + data.hp);
 			console.log(data.conditions);
-			if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentrated")) {
+			if (typeof cur.options.hp !== "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentrated")) {
 				var msgdata = {
 					player: cur.options.name,
 					img: cur.options.imgsrc,
@@ -301,7 +298,7 @@ class MessageBroker {
 		});
 
 
-		if (data.fog_of_war == 1) {
+		if (data.fog_of_war === 1) {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
@@ -354,7 +351,7 @@ class MessageBroker {
 			// entityType:"character", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
 		};
 
-		if (this.ws.readyState == this.ws.OPEN) {
+		if (this.ws.readyState === this.ws.OPEN) {
 			this.ws.send(JSON.stringify(message));
 		}
 		else { // TRY TO RECOVER
@@ -370,7 +367,7 @@ class MessageBroker {
 
 	sendPing() {
 		self = this;
-		if (this.ws.readyState == this.ws.OPEN) {
+		if (this.ws.readyState === this.ws.OPEN) {
 			this.ws.send("{\"data\": \"ping\"}");
 		}
 		else {

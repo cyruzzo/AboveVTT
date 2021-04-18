@@ -70,7 +70,7 @@ function init_jitsi() {
 function jitsi_tile_listener(event) {
 	console.log("jitsi_tile_listener status" + event.enabled);
 	window.jitsiAPI.removeEventListener("tileViewChanged", jitsi_tile_listener);
-	if (event.enabled != window.tile_desired)
+	if (event.enabled !== window.tile_desired)
 		window.jitsiAPI.executeCommand(`toggleTileView`);
 	setTimeout(function() { window.jitsiAPI.addEventListener("tileViewChanged", jitsi_tile_listener); }, 1000); // BUGGY AND HACKY
 }
@@ -90,7 +90,7 @@ function jitsi_bottom() {
 }
 
 function jitsi_switch() {
-	if (window.tile_desired == 0)
+	if (window.tile_desired === 0)
 		jitsi_modal();
 	else
 		jitsi_bottom();

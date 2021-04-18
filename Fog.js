@@ -11,7 +11,7 @@ function check_token_visibility() {
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 		var selector = "div[data-id='" + id + "']";
-		if (pixeldata[3] == 255) {
+		if (pixeldata[3] === 255) {
 			console.log(selector);
 			$(selector).hide();
 			console.log('HIDE ' + id);
@@ -134,7 +134,7 @@ function reset_canvas() {
 
 	var canvas_grid = document.getElementById("grid_overlay");
 	var ctx_grid = canvas_grid.getContext("2d");
-	if (window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.grid == "1" || window.WIZARDING) && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
+	if (window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.grid === "1" || window.WIZARDING) && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
 		canvas_grid.width = $("#scene_map").width();
 		canvas_grid.height = $("#scene_map").height();
@@ -175,7 +175,7 @@ function reset_canvas() {
 			ctx_grid.stroke();
 
 			ctx_grid.strokeStyle = "rgba(255,0,0,1)";
-			if (window.ScenesHandler.scene.upscaled == "1")
+			if (window.ScenesHandler.scene.upscaled === "1")
 				ctx_grid.lineWidth = 2;
 			else
 				ctx_grid.lineWidth = 1;
@@ -189,12 +189,12 @@ function reset_canvas() {
 
 		//alert('inizio 1');
 
-		if (window.CURRENT_SCENE_DATA.grid == "1") {
+		if (window.CURRENT_SCENE_DATA.grid === "1") {
 			var increment = window.CURRENT_SCENE_DATA.hpps;
 			ctx_grid.lineWidth = 1;
 			var skip = true;
 			for (var i = startX; i < $("#scene_map").width(); i = i + increment) {
-				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
+				if (window.CURRENT_SCENE_DATA.grid_subdivided === "1" && skip) {
 					skip = false;
 					continue;
 				}
@@ -211,7 +211,7 @@ function reset_canvas() {
 			var increment = window.CURRENT_SCENE_DATA.vpps;
 			skip = true;
 			for (var i = startY; i < $("#scene_map").height(); i = i + increment) {
-				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
+				if (window.CURRENT_SCENE_DATA.grid_subdivided === "1" && skip) {
 					skip = false;
 					continue;
 				}
@@ -250,15 +250,15 @@ function redraw_canvas() {
 
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
-		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
+		if (d.length === 4) { // SIMPLE CASE OF RECT TO REVEAL
 			ctx.clearRect(d[0], d[1], d[2], d[3]);
 			continue;
 		}
-		if (d[5] == 0) { //REVEAL 
-			if (d[4] == 0) { // REVEAL SQUARE
+		if (d[5] === 0) { //REVEAL
+			if (d[4] === 0) { // REVEAL SQUARE
 				ctx.clearRect(d[0], d[1], d[2], d[3]);
 			}
-			if (d[4] == 1) { // REVEAL CIRCLE
+			if (d[4] === 1) { // REVEAL CIRCLE
 				ctx.save();
 				ctx.beginPath();
 				ctx.fillStyle = "rgba(0,0,0,0);"
@@ -267,18 +267,18 @@ function redraw_canvas() {
 				ctx.clearRect(d[0] - d[2], d[1] - d[2], d[2] * 2, d[2] * 2);
 				ctx.restore();
 			}
-			if (d[4] == 2) {
+			if (d[4] === 2) {
 				// reveal ALL!!!!!!!!!!
 				ctx.clearRect(0, 0, $("#scene_map").width(), $("#scene_map").height());
 			}
 		}
-		if (d[5] == 1) { // HIDE
-			if (d[4] == 0) { // HIDE SQUARE
+		if (d[5] === 1) { // HIDE
+			if (d[4] === 0) { // HIDE SQUARE
 				ctx.clearRect(d[0], d[1], d[2], d[3]);
 				ctx.fillStyle = fogStyle;
 				ctx.fillRect(d[0], d[1], d[2], d[3]);
 			}
-			if (d[4] == 1) { // HIDE CIRCLE
+			if (d[4] === 1) { // HIDE CIRCLE
 				ctx.save();
 				ctx.beginPath();
 				ctx.arc(d[0], d[1], d[2], 0, 2 * Math.PI, false);
@@ -306,25 +306,25 @@ function redraw_drawings() {
 		data = window.DRAWINGS[i];
 
 
-		if (data[0] == "eraser") {
+		if (data[0] === "eraser") {
 			ctx.clearRect(data[3], data[4], data[5], data[6]);
 		}
-		if (data[0] == "rect" && data[1] == "filled") {
+		if (data[0] === "rect" && data[1] === "filled") {
 			ctx.fillStyle = data[2];
 			ctx.fillRect(data[3], data[4], data[5], data[6]);
 		}
-		if (data[0] == "rect" && data[1] == "transparent") {
+		if (data[0] === "rect" && data[1] === "transparent") {
 			ctx.fillStyle = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
 			ctx.fillRect(data[3], data[4], data[5], data[6]);
 		}
-		if (data[0] == "rect" && data[1] == "border") {
+		if (data[0] === "rect" && data[1] === "border") {
 			ctx.strokeStyle = data[2];
 			ctx.lineWidth = "6";
 			ctx.beginPath();
 			ctx.rect(data[3], data[4], data[5], data[6]);
 			ctx.stroke();
 		}
-		if (data[0] == "arc" && data[1] == "filled") {
+		if (data[0] === "arc" && data[1] === "filled") {
 			ctx.fillStyle = data[2];
 			ctx.save();
 			ctx.beginPath();
@@ -335,7 +335,7 @@ function redraw_drawings() {
 			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
 			ctx.fill();
 		}
-		if (data[0] == "arc" && data[1] == "transparent") {
+		if (data[0] === "arc" && data[1] === "transparent") {
 			ctx.fillStyle = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
 			ctx.save();
 			ctx.beginPath();
@@ -346,14 +346,14 @@ function redraw_drawings() {
 			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
 			ctx.fill();
 		}
-		if (data[0] == "arc" && data[1] == "border") {
+		if (data[0] === "arc" && data[1] === "border") {
 			ctx.strokeStyle = data[2];
 			ctx.lineWidth = "6";
 			ctx.beginPath();
 			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
 			ctx.stroke();
 		}
-		if (data[0] == "cone" && data[1] == "transparent") {
+		if (data[0] === "cone" && data[1] === "transparent") {
 			ctx.fillStyle = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
 			var L = Math.sqrt(Math.pow(data[5] - data[3], 2) + Math.pow(data[6] - data[4], 2));
 			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
@@ -366,7 +366,7 @@ function redraw_drawings() {
 			ctx.closePath();
 			ctx.fill();
 		}
-		if (data[0] == "cone" && data[1] == "filled") {
+		if (data[0] === "cone" && data[1] === "filled") {
 			ctx.fillStyle = data[2];
 			var L = Math.sqrt(Math.pow(data[5] - data[3], 2) + Math.pow(data[6] - data[4], 2));
 			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
@@ -379,7 +379,7 @@ function redraw_drawings() {
 			ctx.closePath();
 			ctx.fill();
 		}
-		if (data[0] == "cone" && data[1] == "border") {
+		if (data[0] === "cone" && data[1] === "border") {
 			ctx.strokeStyle = data[2];
 			var L = Math.sqrt(Math.pow(data[5] - data[3], 2) + Math.pow(data[6] - data[4], 2));
 			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
@@ -392,7 +392,7 @@ function redraw_drawings() {
 			ctx.closePath();
 			ctx.stroke();
 		}
-		if (data[0] == "line") {
+		if (data[0] === "line") {
 			ctx.strokeStyle = data[2];
 			ctx.lineWidth = "6";
 			ctx.beginPath();
@@ -424,9 +424,9 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
-	if (window.DRAGGING && e.data.shap != 'align')
+	if (window.DRAGGING && e.data.shap !== 'align')
 		return;
-	if (e.button != 0)
+	if (e.button !== 0)
 		return;
 	deselect_all_tokens();
 
@@ -452,11 +452,11 @@ function drawing_mousemove(e) {
 		redraw_canvas();
 
 		ctx.fillStyle = "#FF0000";
-		if (e.data.shape == "rect") {
+		if (e.data.shape === "rect") {
 			ctx.fillStyle = "rgba(255,0,0,0.7)";
 			ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height);
 		}
-		else if (e.data.shape == "align") {
+		else if (e.data.shape === "align") {
 			for (i = 0; i < 4; i++) {
 				ctx.strokeStyle = "rgba(255,0,0,0.7)";
 				ctx.lineWidth = 1;
@@ -473,7 +473,7 @@ function drawing_mousemove(e) {
 
 			//ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height);
 		}
-		else if (e.data.shape == "arc") {
+		else if (e.data.shape === "arc") {
 			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 			centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 			radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
@@ -481,7 +481,7 @@ function drawing_mousemove(e) {
 			ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
 			ctx.fill();
 		}
-		else if (e.data.shape == "cone") {
+		else if (e.data.shape === "cone") {
 			var L = Math.sqrt(Math.pow(mousex - window.BEGIN_MOUSEX, 2) + Math.pow(mousey - window.BEGIN_MOUSEY, 2));
 			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
 			var res = circle_intersection(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, T, mousex, mousey, L / 2);
@@ -494,7 +494,7 @@ function drawing_mousemove(e) {
 			ctx.closePath();
 			ctx.fill();
 		}
-		else if (e.data.shape == "line") {
+		else if (e.data.shape === "line") {
 			ctx.beginPath();
 			ctx.strokeStyle = "rgba(255,0,0,0.7)";
 			ctx.lineWidth = 6;
@@ -502,7 +502,7 @@ function drawing_mousemove(e) {
 			ctx.lineTo(mousex, mousey);
 			ctx.stroke();
 		}
-		else if (e.data.shape == "select") {
+		else if (e.data.shape === "select") {
 			ctx.save();
 			ctx.beginPath();
 			ctx.strokeStyle = "white";
@@ -510,7 +510,7 @@ function drawing_mousemove(e) {
 			ctx.stroke();
 			ctx.restore();
 		}
-		else if (e.data.shape == "measure") {
+		else if (e.data.shape === "measure") {
 			ctx.save();
 			ctx.beginPath();
 			ctx.strokeStyle = "rgba(255,0,0,0.9)";
@@ -555,7 +555,7 @@ function drawing_mouseup(e) {
 
 	// [0-3] is always shape data [4] is shape and [5] is type
 
-	if (e.data.shape == "line" && e.data.type === "draw") {
+	if (e.data.shape === "line" && e.data.type === "draw") {
 		data = ['line', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
@@ -564,7 +564,7 @@ function drawing_mouseup(e) {
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 
-	if (e.data.shape == "rect" && e.data.type === "draw") {
+	if (e.data.shape === "rect" && e.data.type === "draw") {
 		console.log('disegno');
 		data = ['rect', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
 		window.DRAWINGS.push(data);
@@ -573,7 +573,7 @@ function drawing_mouseup(e) {
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "rect" && e.data.type === "eraser") {
+	if (e.data.shape === "rect" && e.data.type === "eraser") {
 		console.log('disegno');
 		data = ['eraser', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
 		window.DRAWINGS.push(data);
@@ -582,7 +582,7 @@ function drawing_mouseup(e) {
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "arc" && e.data.type === "draw") {
+	if (e.data.shape === "arc" && e.data.type === "draw") {
 		console.log('son qua');
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
@@ -594,7 +594,7 @@ function drawing_mouseup(e) {
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "cone" && e.data.type === "draw") {
+	if (e.data.shape === "cone" && e.data.type === "draw") {
 		data = ['cone', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
@@ -602,7 +602,7 @@ function drawing_mouseup(e) {
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "rect" && (e.data.type === "0" || e.data.type === "1")) {
+	if (e.data.shape === "rect" && (e.data.type === "0" || e.data.type === "1")) {
 		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0];
 		data[5] = parseInt(e.data.type);
 		window.REVEALED.push(data);
@@ -613,7 +613,7 @@ function drawing_mouseup(e) {
 
 
 
-	if (e.data.shape == "arc" && (e.data.type == 0 || e.data.type == 1)) {
+	if (e.data.shape === "arc" && (e.data.type === 0 || e.data.type === 1)) {
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
@@ -624,16 +624,16 @@ function drawing_mouseup(e) {
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	}
-	if (e.data.shape == "select") {
+	if (e.data.shape === "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 			var toktop = parseInt(curr.options.top);
-			if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
+			if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) === toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) === toktop))
 				continue;
 			var tokleft = parseInt(curr.options.left);
-			if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
+			if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) === tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) === tokleft))
 				continue;
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
@@ -647,10 +647,10 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		console.log("READY");
 	}
-	if (e.data.shape == "measure") {
+	if (e.data.shape === "measure") {
 		setTimeout(redraw_canvas, 3000); // hide the mea			
 	}
-	if (e.data.shape == "align") {
+	if (e.data.shape === "align") {
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		console.log("Horizontal Pixel Per Square: " + (width / 3.0) + " Vertical Pixel Per Square " + (height / 3.0));
 		//ppsX=Math.round((width/window.ScenesHandler.scene.scaleX)/3);
@@ -767,7 +767,7 @@ function setup_draw_buttons() {
 			stop_drawing();
 			$(".drawbutton").removeClass('button-enabled').css('background-color', '');
 
-			if (window.ALIGNING == true) {
+			if (window.ALIGNING === true) {
 				window.ALIGNING = false;
 				window.ScenesHandler.reload();
 			}
@@ -782,7 +782,7 @@ function setup_draw_buttons() {
 
 		var target = $("#fog_overlay");
 
-		if ($(e.target).attr('id') == "measure-button") {
+		if ($(e.target).attr('id') === "measure-button") {
 			target = $("#VTT");
 		}
 
@@ -797,7 +797,7 @@ function setup_draw_buttons() {
 			type: $(this).attr('data-type'),
 		}
 
-		if ($(this).attr('id') == "align-button") {
+		if ($(this).attr('id') === "align-button") {
 			window.ALIGNING = true;
 
 			// ALIGNING REQURES SPECIAL SETTINGS
@@ -809,7 +809,7 @@ function setup_draw_buttons() {
 			$("#grid_overlay").hide();
 
 		}
-		else if (window.ALIGNING == true) {
+		else if (window.ALIGNING === true) {
 			window.ALIGNING = false;
 			window.ScenesHandler.reload();
 		}

@@ -136,7 +136,7 @@ function edit_scene_dialog(scene_id) {
 
 
 
-	if (typeof scene.fog_of_war == "undefined")
+	if (typeof scene.fog_of_war === "undefined")
 		scene.fog_of_war = "1";
 
 
@@ -566,9 +566,9 @@ function edit_scene_dialog(scene_id) {
 	var hide_all_button = $("<button>COVER WITH FOG</button>");
 	hide_all_button.click(function() {
 		r = confirm("This will delete all current FOG zones on this scene and HIDE ALL THE MAP to the player. Are you sure?");
-		if (r == true) {
+		if (r === true) {
 			scene.reveals = [];
-			if (scene_id == window.ScenesHandler.current_scene_id) {
+			if (scene_id === window.ScenesHandler.current_scene_id) {
 				window.REVEALED = [];
 				redraw_canvas();
 			}
@@ -614,7 +614,7 @@ function refresh_scenes() {
 		title = $("<div style='text-align:center;'/>");
 		title.html(scene.title);
 
-		if (i == window.ScenesHandler.current_scene_id)
+		if (i === window.ScenesHandler.current_scene_id)
 			title.css('background', 'red');
 		newobj.append(title);
 		controls = $("<div/>");
@@ -697,7 +697,7 @@ function init_scene_selector() {
 	toggle.css('z-index', '9999')
 
 	toggle.click(function() {
-		if (toggle.css('top') == "5px") {
+		if (toggle.css('top') === "5px") {
 			toggle.animate({
 				top: '200px',
 			}, 500);
@@ -891,7 +891,7 @@ function fill_importer(scene_set, start) {
 			stats.append("<b style='background: lightblue; border 1px solid back; margin: 5px;' title='Has DM Map'>DM</b>");
 		}
 
-		if (scene_set[i].snap == "1") {
+		if (scene_set[i].snap === "1") {
 			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-ALIGNED!</b>");
 		}
 		entry.append(stats);
@@ -946,7 +946,7 @@ function fill_importer(scene_set, start) {
 	});
 
 	prev = $("<button>PREV</button>");
-	if (start == 0)
+	if (start === 0)
 		prev.attr("disabled", "disabled");
 
 	prev.click(function() {
@@ -954,7 +954,7 @@ function fill_importer(scene_set, start) {
 	})
 
 	next = $("<button>NEXT</button>");
-	if (i == scene_set.length)
+	if (i === scene_set.length)
 		next.attr("disabled", "disabled");
 	next.click(function() {
 		fill_importer(scene_set, start + 8);

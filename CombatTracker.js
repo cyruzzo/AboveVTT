@@ -48,11 +48,11 @@ function init_combat_tracker(){
 	next=$("<button>NEXT</button>");
 	next.click(function(){
 		var nextid="";
-		if($("#combat_area tr").length==0)
+		if($("#combat_area tr").length === 0)
 			return;
 		
 		current=$("#combat_area tr[data-current=1]");
-		if(current.length==0){
+		if(current.length === 0){
 			console.log('nessuno selezionato');
 			$("#combat_area tr").first().attr('data-current','1');
 			$("#combat_area tr").first().css('background','lightgreen');
@@ -61,7 +61,7 @@ function init_combat_tracker(){
 			current.removeAttr('data-current');
 			current.css('background','');
 			next=current.next();
-			if(next.length==0){
+			if(next.length === 0){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
@@ -77,7 +77,7 @@ function init_combat_tracker(){
 	roll.click(function(){
 		$("#combat_area tr[data-monster]").each(function(idx){
 			let element=$(this);
-			if(element.find(".init").val()!=0) // DON'T ROLL AGAIN'
+			if(element.find(".init").val() !== 0) // DON'T ROLL AGAIN'
 				return;
 					
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
@@ -118,7 +118,7 @@ function ct_add_token(token,persist=true){
 	// IF PLAYER. ADD THE TOKEN ONLY IF IT'S VISIBLE
 	if(!window.DM){
 		var selector = "div[data-id='" + token.options.id + "']";
-		if($(selector).length==0 || ! $(selector).is(":visible")){
+		if($(selector).length === 0 || ! $(selector).is(":visible")){
 			return;
 		}
 	}
@@ -236,7 +236,7 @@ function ct_persist(){
 	  data.push( {
 		'data-target': $(this).attr("data-target"),
 		'init': $(this).find(".init").val(),
-		'current': ($(this).attr("data-current")=="1"),
+		'current': ($(this).attr("data-current") === "1"),
 	   });
 	});
 	
@@ -248,7 +248,7 @@ function ct_persist(){
 
 function ct_load(data=null){
 	
-	if(data==null){
+	if(data === null){
 		var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
 		data=$.parseJSON(localStorage.getItem(itemkey));
 	}
