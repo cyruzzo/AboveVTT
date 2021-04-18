@@ -759,25 +759,35 @@ function init_ui() {
 
 
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div><input id='chat-text' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
+	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
+			var dmonly=false;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
 
-			if (text.startsWith("/roll")) {
+			if(text.startsWith("/roll")) {
 				expression = text.substring(6);
 				roll = new rpgDiceRoller.DiceRoll(expression);
 				text = roll.output;
 			}
+			
+			if(text.startsWith("/dmroll")) {
+				expression = text.substring(8);
+				roll = new rpgDiceRoller.DiceRoll(expression);
+				text = roll.output;
+				dmonly=true;
+			}
+			
 			data = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
-				text: text
+				text: text,
+				dmonly: dmonly,
 			};
 			window.MB.sendMessage('custom/myVTT/chat', data);
-			window.MB.handleChat(data);
+			window.MB.handleChat(data,true);
 		}
 
 	});
