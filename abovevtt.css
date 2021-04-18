@@ -11,18 +11,17 @@ body > button,
 #mega_importer button,
 #prewiz td button,
 #wizard_popup button,
-.sidebar__controls button
-{
+.sidebar__controls button {
     background: #3d3d3d;
     color: #fff;
     border: 0;
     height: 22px;
     margin: 0 2px;
     border-radius: 7px;
-    box-shadow: 0px 8px 15px rgb(0 0 0 / 10%);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     padding: 2px 8px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out;
-}   
+}
 
 button[id$='-button']:hover,
 button[id$='_button']:hover,
@@ -43,8 +42,8 @@ body > button:hover,
 }
 
 .top_menu {
-	margin: 0 8px;
-	/* padding: 2px 8px;*/	
+    margin: 0 8px;
+    /* padding: 2px 8px;*/
 }
 
 .sidebar__controls > div button {
@@ -195,12 +194,12 @@ div#scene_properties form > div {
     min-width: 45px;
 }
 
-#zoom_buttons{
-	position: absolute;
-	top: 0px;
-	z-index: 60;
+#zoom_buttons {
+    position: absolute;
+    top: 0;
+    z-index: 60;
 }
 
-#scene_selector{
-	z-index:1000;
+#scene_selector {
+    z-index: 1000;
 }
