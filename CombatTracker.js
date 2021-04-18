@@ -264,5 +264,6 @@ function ct_load(data=null){
 			}
 		}
 	}
-	ct_persist();
+	if(window.DM)
+		ct_persist();
 }
