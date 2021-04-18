@@ -98,7 +98,10 @@ function init_combat_tracker(){
 		ct_inside.append(buttons);
 	}
 	ct.css('position','fixed');
-	ct.css('width','200px');
+	if(window.DM)
+		ct.css('width','200px');
+	else
+		ct.css('width','150px');
 	ct.css('height','20px');
 	ct.css('left','5px');
 	ct.css('top','40px');
