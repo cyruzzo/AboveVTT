@@ -336,14 +336,14 @@ function init_splash() {
 	cont.append("<h4>Useful Links</h4>");
 	ul = $("<ul/>");
 
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>Youtube Channel (demo and in the near future, tutorials)</a></li>");
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></li>");
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></li>");
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>Youtube Channel (demo and in the near future, tutorials)</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);
 	cont.append("<br>Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
 	cont.append("<h3>Current Patreon Supporters</h3>");
-	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. There won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
+	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. There won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
 	patreons = $("<div style='margin-top:10px;'/>");
 
