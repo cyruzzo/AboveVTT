@@ -612,15 +612,12 @@ function open_player_sheet(sheet_url) {
 
 		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
 		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions", function() {
-			if (window.WAITING_FOR_SYNCHP)
-				return;
-			else {
+			if (!window.WAITING_FOR_SYNCHP)
 				window.WAITING_FOR_SYNCHP = true;
 				setTimeout(function() {
 					window.WAITING_FOR_SYNCHP = false;
 					synchp();
 				}, 1000);
-			}
 		});
 
 		var mutation_target = $(event.target).contents().get(0);
