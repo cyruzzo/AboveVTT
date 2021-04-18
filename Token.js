@@ -834,7 +834,8 @@ function multiple_callback(key, options, event) {
 	if (key == "token_combat") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
-			ct_add_token(window.TOKEN_OBJECTS[id]);
+			ct_add_token(window.TOKEN_OBJECTS[id],false);
+			ct_persist();
 		});
 	}
 	if (key == "hide") {
