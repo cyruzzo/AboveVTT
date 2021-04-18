@@ -439,7 +439,9 @@ class Token {
 			var hpbar = $("<input class='hpbar'>");
 			var tokimg = $("<img class='Avatar_AvatarPortrait__2dP8u'/>"); // class to make them round
 
-			tok.css("z-index", 30); // 
+
+			var zindexdiff=(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			tok.css("z-index", 30+zindexdiff);
 			tok.width(this.options.size);
 
 
