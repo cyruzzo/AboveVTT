@@ -25,18 +25,7 @@ function init_combat_tracker(){
 	
 	buttons=$("<div id='combat_footer'/>");
 	reorder=$("<button>REORDER</button>");
-	reorder.click(
-		function(){
-				var items = $("#combat_area tbody").children().sort(
-					function(a,b){
-						var vA=parseInt($(".init",a).val());
-						var vB=parseInt($(".init",b).val());
-						return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
-					});
-				
-				$("#combat_area tbody").append(items);
-				ct_persist();		
-	});
+	reorder.click(ct_reorder);
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
@@ -81,9 +70,9 @@ function init_combat_tracker(){
 					
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
 				element.find(".init").val(value);
-				ct_persist();
+				ct_reorder(false);
 			});
-			
+			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
 		
 	});
@@ -104,6 +93,19 @@ function init_combat_tracker(){
 	}
 
 	$("#site").append(ct);
+}
+
+function ct_reorder(persist=true) {
+	var items = $("#combat_area tbody").children().sort(
+		function(a, b) {
+			var vA = parseInt($(".init", a).val());
+			var vB = parseInt($(".init", b).val());
+			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+		});
+
+	$("#combat_area tbody").append(items);
+	if(persist)
+		ct_persist();
 }
 
 
