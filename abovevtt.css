@@ -240,3 +240,19 @@ div#scene_properties form > div {
     width: 100%;
     height: 34px;
 }
+
+#combat_tracker {
+    position: fixed;
+    height: 450px;
+    left: 5px;
+    top: 40px;
+    z-index: 99999000;
+}
+
+.tracker-dm {
+    width: 200px;
+}
+
+.tracker-player {
+    width: 150px;
+}
