@@ -105,7 +105,7 @@ function init_combat_tracker(){
 	ct.css('height','20px');
 	ct.css('left','5px');
 	ct.css('top','40px');
-	ct.css('z-index','99999999');
+	ct.css('z-index','99999000');
 	
 	$("#site").append(ct);
 }

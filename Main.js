@@ -1127,7 +1127,6 @@ function init_buttons() {
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=1>Square</button></div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type=1>Circle</button></div>");
 	fog_menu.append($("<div/>").append(hide_all_button));
-	fog_menu.hide();
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
 	fog_menu.css("width", "75px");
@@ -1154,7 +1153,7 @@ function init_buttons() {
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='cone' data-type='draw'>Cone</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='line' data-type='draw'>Line</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='eraser'>Erase</button></div>");
-	draw_menu.append("<div><button id='delete_drawing'style='width:75px'>ERASE ALL</button></div>");
+	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 
 	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS?");
@@ -1197,7 +1196,6 @@ function init_buttons() {
 	});
 
 
-	draw_menu.hide();
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
 	draw_menu.css("width", "75px");
@@ -1220,24 +1218,24 @@ function init_buttons() {
 	fog_button.click(function(e) {
 		$(this).toggleClass('button-selected');
 		if ($(this).hasClass('button-selected')) {
-			fog_menu.show();
-			draw_menu.hide();
+			fog_menu.addClass('visible');
+			draw_menu.removeClass('visible');
 			$("#draw_button").removeClass('button-selected');
 		}
 		else {
-			fog_menu.hide();
+			fog_menu.removeClass('visible');
 		}
 	});
 
 	draw_button.click(function(e) {
 		$(this).toggleClass('button-selected');
 		if ($(this).hasClass('button-selected')) {
-			fog_menu.hide();
+			fog_menu.removeClass('visible');
 			$("#fog_button").removeClass('button-selected');
-			draw_menu.show();
+			draw_menu.addClass('visible');
 		}
 		else {
-			draw_menu.hide();
+			draw_menu.removeClass('visible');
 		}
 	});
 
