@@ -1252,21 +1252,27 @@ function init_buttons() {
 
 
 $(function() {
+	var is_dm=false;
+	if($(".ddb-campaigns-detail-body-dm-notes-label").length>0){
+		is_dm=true;
+	}
+	
+	if(is_dm){
 	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<a style='color:white;background: #1b9af0;' class='btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='joindm'>AboveVTT JOIN AS DM</a>"));
-
-	$("#joindm").click(function(e) {
-		e.preventDefault();
-		window.DM = true;
-		window.PLAYER_SHEET = false;
-		window.PLAYER_NAME = "THE DM";
-		window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-		init_ui();
-	});
-
-	//$(".ddb-campaigns-detail-header-secondary-sharing").append($("<button onclick='DM=false;init_ui();return false;'>VTT AS PLAYER</button>"));
-
+		$("#joindm").click(function(e) {
+			e.preventDefault();
+			window.DM = true;
+			window.PLAYER_SHEET = false;
+			window.PLAYER_NAME = "THE DM";
+			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
+			init_ui();
+		});
+	}
 
 	$(".ddb-campaigns-character-card-footer-links").each(function() {
+		if($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length==0)
+			return;
+		
 		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
 		let img = $(this).parent().parent().find('.user-selected-avatar').css('background-image');
 		let name = $(this).parent().parent().find(".ddb-campaigns-character-card-header-upper-character-info-primary").html();
