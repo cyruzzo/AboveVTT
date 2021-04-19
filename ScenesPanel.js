@@ -975,7 +975,7 @@ function fill_importer(scene_set, start) {
 
 function mega_importer(DDB = false) {
 	container = $("<div id='mega_importer'/>");
-	toggles = $("<div id='importer_toggles'/>").css({ height: "30px", width: "100%" });
+	toggles = $("<div id='importer_toggles'/>");
 
 	if (!DDB) {
 		first = false;
