@@ -96,8 +96,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 
 
-function set_pointer(data) {
-
+function set_pointer(data,dontscroll=false) {
 
 	let marker = $("<div></div>");
 	marker.css({
@@ -126,12 +125,14 @@ function set_pointer(data) {
 
 	// calculate pageX and pageY and scroll there!
 
-	var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
-	var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
-	$("html,body").animate({
-		scrollTop: pageY + 200,
-		scrollLeft: pageX + 200,
-	}, 500);
+	if(!dontscroll){
+		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
+		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
+		$("html,body").animate({
+			scrollTop: pageY + 200,
+			scrollLeft: pageX + 200,
+		}, 500);
+	}
 }
 
 function notify_gamelog() {
@@ -837,6 +838,8 @@ function init_ui() {
 		data = {
 			x: mousex,
 			y: mousey,
+			from: window.PLAYER_NAME,
+			dm: window.DM
 		}
 
 		set_pointer(data);

@@ -81,7 +81,7 @@ class MessageBroker {
 				}
 			}
 			if (msg.eventType == "custom/myVTT/pointer") {
-				set_pointer(msg.data);
+				set_pointer(msg.data,!msg.data.DM);
 			}
 
 			if (msg.eventType == "custom/myVTT/lock") {
