@@ -634,9 +634,12 @@ function refresh_scenes() {
 		controls.append(edit_button);
 		delete_button = $("<button>DELETE</button>")
 		delete_button.click(function() {
-			window.ScenesHandler.scenes.splice(scene_id, 1);
-			window.ScenesHandler.persist();
-			refresh_scenes();
+			r = confirm("Are you sure that you want to delete this scene?");
+			if (r == true) {
+				window.ScenesHandler.scenes.splice(scene_id, 1);
+				window.ScenesHandler.persist();
+				refresh_scenes();
+			}
 		});
 		controls.append(delete_button);
 		newobj.append(controls);
