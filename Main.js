@@ -336,14 +336,14 @@ function init_splash() {
 	cont.append("<h4>Useful Links</h4>");
 	ul = $("<ul/>");
 
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>Youtube Channel (demo and in the near future, tutorials)</a></li>");
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></li>");
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></li>");
-	ul.append("<li><a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>Youtube Channel (demo and in the near future, tutorials)</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);
 	cont.append("<br>Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
 	cont.append("<h3>Current Patreon Supporters</h3>");
-	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. There won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-style:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
+	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. There won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
 	patreons = $("<div style='margin-top:10px;'/>");
 
@@ -759,25 +759,35 @@ function init_ui() {
 
 
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div><input id='chat-text' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
+	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
+			var dmonly=false;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
 
-			if (text.startsWith("/roll")) {
+			if(text.startsWith("/roll")) {
 				expression = text.substring(6);
 				roll = new rpgDiceRoller.DiceRoll(expression);
 				text = roll.output;
 			}
+			
+			if(text.startsWith("/dmroll")) {
+				expression = text.substring(8);
+				roll = new rpgDiceRoller.DiceRoll(expression);
+				text = roll.output;
+				dmonly=true;
+			}
+			
 			data = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
-				text: text
+				text: text,
+				dmonly: dmonly,
 			};
 			window.MB.sendMessage('custom/myVTT/chat', data);
-			window.MB.handleChat(data);
+			window.MB.handleChat(data,true);
 		}
 
 	});
@@ -788,7 +798,7 @@ function init_ui() {
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);
 
-	background = $("<img id='scene_map'></img>");
+	background = $("<img id='scene_map'>");
 	background.css("top", "0");
 	background.css("left", "0");
 	background.css("position", "absolute");
@@ -1117,7 +1127,6 @@ function init_buttons() {
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=1>Square</button></div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type=1>Circle</button></div>");
 	fog_menu.append($("<div/>").append(hide_all_button));
-	fog_menu.hide();
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
 	fog_menu.css("width", "75px");
@@ -1144,7 +1153,7 @@ function init_buttons() {
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='cone' data-type='draw'>Cone</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='line' data-type='draw'>Line</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='eraser'>Erase</button></div>");
-	draw_menu.append("<div><button id='delete_drawing'style='width:75px'>ERASE ALL</button></div>");
+	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 
 	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS?");
@@ -1187,7 +1196,6 @@ function init_buttons() {
 	});
 
 
-	draw_menu.hide();
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
 	draw_menu.css("width", "75px");
@@ -1210,24 +1218,24 @@ function init_buttons() {
 	fog_button.click(function(e) {
 		$(this).toggleClass('button-selected');
 		if ($(this).hasClass('button-selected')) {
-			fog_menu.show();
-			draw_menu.hide();
+			fog_menu.addClass('visible');
+			draw_menu.removeClass('visible');
 			$("#draw_button").removeClass('button-selected');
 		}
 		else {
-			fog_menu.hide();
+			fog_menu.removeClass('visible');
 		}
 	});
 
 	draw_button.click(function(e) {
 		$(this).toggleClass('button-selected');
 		if ($(this).hasClass('button-selected')) {
-			fog_menu.hide();
+			fog_menu.removeClass('visible');
 			$("#fog_button").removeClass('button-selected');
-			draw_menu.show();
+			draw_menu.addClass('visible');
 		}
 		else {
-			draw_menu.hide();
+			draw_menu.removeClass('visible');
 		}
 	});
 

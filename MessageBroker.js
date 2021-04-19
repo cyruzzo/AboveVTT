@@ -207,7 +207,9 @@ class MessageBroker {
 		update_pclist();
 	}
 
-	handleChat(data) {
+	handleChat(data,local=false) {
+		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
+			return;
 		notify_gamelog();
 		var newentry = $("<li></li>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__3EVrE GameLogEntry_Other__2PSbv Flex_Flex__3gB7U Flex_Flex__alignItems-flex-end__YiKos Flex_Flex__justifyContent-flex-start__1lEY5');

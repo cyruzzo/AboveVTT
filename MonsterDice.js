@@ -65,7 +65,7 @@ function scan_monster(target, stats) {
 
 		entry.append($("<div style='width:100%;' />").append(output_beauty));
 
-		var send_button = $("<div><button style='width:100%;'>SHOW TO PLAYERS</button></div>");
+		var send_button = $("<div><button class='stp-btn'>SHOW TO PLAYERS</button></div>");
 
 		entry.append(send_button);
 		send_button.click(function() {
