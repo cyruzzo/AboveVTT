@@ -5,9 +5,11 @@ function init_combat_tracker(){
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").hide();
+			$("#combat_tracker").css("height","20px");
 		}
 		else{
 			$("#combat_tracker_inside").show();
+			$("#combat_tracker").css("height","450px");
 		}
 	});
 	ct.append(toggle);
