@@ -331,7 +331,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.38</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.39</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<p><b>WARNING!</b>This is still a developement version, but some brave adventurers are starting to play on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a></p>");
 	cont.append("<h4>Useful Links</h4>");
@@ -346,10 +346,10 @@ function init_splash() {
 	cont.append("<h3>Current Patreon Supporters</h3>");
 	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. There won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
-	patreons = $("<div style='margin-top:10px;'/>");
+	patreons = $("<div id='patreons' style='margin-top:10px;'/>");
 
 	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman"];
-	l2 = ["Iain Russell<b>the Wizard of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams"];
+	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott"];
 	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel"];
 
 	l1div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;' >Masters of the Realms</div></div>");
@@ -1315,12 +1315,12 @@ $(function() {
 
 	var campaign_banner=$("<div id='campaign_banner'></div>")
 	campaign_banner.append("<h3>This campaign is SuperPowered by <img width='200px' src='"+window.EXTENSION_PATH + "assets/logo.png'></h3>");
-	campaign_banner.append("<p>If you're the DM, you can press <b>JOIN ABOVEVTT AS DM</b> over this page</p>");
-	campaign_banner.append("<p>If you're a Player, you can press <b>JOIN AboveVTT</b> next to your character below. You can only enter if your DM is connected too.</p>");
-	campaign_banner.append("<p>Quick tip: if you have the Beyond20 extension installed <b>please disable it</b> or you won't be able to roll dices.</p>");
-	campaign_banner.append("<p>If you're new a and want to see a quick tutorial take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel</a></p>");
-	campaign_banner.append("<p>Join the <b>Community</b> on <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Server</a>.</p>");
-	campaign_banner.append("<p>If you want to help this project grow, consider supporting the <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a></p>");
+	campaign_banner.append("<p>DM, press <b>JOIN ABOVEVTT AS DM</b> at the top</p>");
+	campaign_banner.append("<p>Players, press <b>JOIN AboveVTT</b> next to your character at the bottom (and wait for your DM to join)</p>");
+	campaign_banner.append("<p>Do you have the Beyond20 extension installed ? <b>Disable it</b> or you won't be able to roll dices.</p>");
+	campaign_banner.append("Wanna see a  tutorial? Look at the <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
+	campaign_banner.append("Want to chat about this project ? Join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
+	campaign_banner.append("Do you like what you see ? Support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a>");
 	
 
 	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);

@@ -272,3 +272,7 @@ div#scene_properties form > div {
 #campaign_banner a{
 	color: #1b9af0;
 }
+
+#patreons {
+	font-size:10px;
+}
