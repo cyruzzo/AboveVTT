@@ -798,7 +798,7 @@ function init_ui() {
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);
 
-	background = $("<img id='scene_map'></img>");
+	background = $("<img id='scene_map'>");
 	background.css("top", "0");
 	background.css("left", "0");
 	background.css("position", "absolute");
