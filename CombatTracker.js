@@ -2,15 +2,12 @@
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	toggle=$("<button>COMBAT</button>");
-	toggle.css('width',"75px");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").hide();
-			$("#combat_tracker").css("height","20px");
 		}
 		else{
 			$("#combat_tracker_inside").show();
-			$("#combat_tracker").css("height","450px");
 		}
 	});
 	ct.append(toggle);
@@ -97,16 +94,13 @@ function init_combat_tracker(){
 		
 		ct_inside.append(buttons);
 	}
-	ct.css('position','fixed');
-	if(window.DM)
-		ct.css('width','200px');
-	else
-		ct.css('width','150px');
-	ct.css('height','20px');
-	ct.css('left','5px');
-	ct.css('top','40px');
-	ct.css('z-index','99999000');
-	
+
+	if(window.DM) {
+		ct.addClass('tracker-dm');
+	} else {
+		ct.addClass('tracker-player');
+	}
+
 	$("#site").append(ct);
 }
 
