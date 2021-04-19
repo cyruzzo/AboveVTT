@@ -114,15 +114,6 @@ function init_combat_tracker(){
 function ct_add_token(token,persist=true){
 	// TODO: check if the token is already in the tracker..
 	
-	
-	// IF PLAYER. ADD THE TOKEN ONLY IF IT'S VISIBLE
-	if(!window.DM){
-		var selector = "div[data-id='" + token.options.id + "']";
-		if($(selector).length==0 || ! $(selector).is(":visible")){
-			return;
-		}
-	}
-	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
