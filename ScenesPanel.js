@@ -974,17 +974,7 @@ function fill_importer(scene_set, start) {
 }
 
 function mega_importer(DDB = false) {
-	container = $("<div id='mega_importer'/>").css({
-		background: "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')",
-		position: "fixed",
-		top: "40px",
-		left: "180px",
-		width: "850px",
-		height: "550px",
-		border: '3px solid black',
-		'border-radius': '5px 5px 5px 5px',
-		'z-index': "999999"
-	});
+	container = $("<div id='mega_importer'/>");
 	toggles = $("<div id='importer_toggles'/>");
 
 	if (!DDB) {
