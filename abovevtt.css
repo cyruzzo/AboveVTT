@@ -187,10 +187,10 @@ div#scene_properties form > div {
 }
 
 #importer_toggles {
-    height: 35px !important;
     display: flex;
     align-items: flex-end;
-    margin-left: 10px;
+    padding: .5rem .5rem 0;
+    width: 100%;
 }
 
 #prewiz td {

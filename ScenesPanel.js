@@ -985,7 +985,7 @@ function mega_importer(DDB = false) {
 		'border-radius': '5px 5px 5px 5px',
 		'z-index': "999999"
 	});
-	toggles = $("<div id='importer_toggles'/>").css({ height: "30px", width: "100%" });
+	toggles = $("<div id='importer_toggles'/>");
 
 	if (!DDB) {
 		first = false;
