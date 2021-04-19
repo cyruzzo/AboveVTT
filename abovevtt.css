@@ -24,7 +24,7 @@ body > button,
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     padding: 2px 8px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out;
-}   
+}
 
 button[id$='-button']:hover,
 button[id$='_button']:hover,
@@ -147,8 +147,15 @@ input {
 }
 
 #mega_importer {
-    left: 200px !important;
-    height: 590px !important;
+    left: 200px;
+    height: 590px;
+    background: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
+    position: fixed;
+    top: 40px;
+    width: 850px;
+    border: 3px solid black;
+    border-radius: 5px;
+    z-index: 999999;
 }
 
 #importer_area {
@@ -187,10 +194,10 @@ div#scene_properties form > div {
 }
 
 #importer_toggles {
-    height: 35px !important;
     display: flex;
     align-items: flex-end;
-    margin-left: 10px;
+    padding: .5rem .5rem 0;
+    width: 100%;
 }
 
 #prewiz td {
@@ -232,4 +239,40 @@ div#scene_properties form > div {
 .stp-btn {
     width: 100%;
     height: 34px;
+}
+
+#combat_tracker {
+    position: fixed;
+    height: 450px;
+    left: 5px;
+    top: 40px;
+    z-index: 99999000;
+}
+
+.tracker-dm {
+    width: 200px;
+}
+
+.tracker-player {
+    width: 150px;
+}
+
+#campaign_banner{
+	border:1px dashed #1b9af0;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	width: 100%;
+}
+
+#campaign_banner h3{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#campaign_banner a{
+	color: #1b9af0;
+}
+
+#patreons {
+	font-size:10px;
 }

@@ -2,7 +2,6 @@
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	toggle=$("<button>COMBAT</button>");
-	toggle.css('width',"75px");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").hide();
@@ -26,18 +25,7 @@ function init_combat_tracker(){
 	
 	buttons=$("<div id='combat_footer'/>");
 	reorder=$("<button>REORDER</button>");
-	reorder.click(
-		function(){
-				var items = $("#combat_area tbody").children().sort(
-					function(a,b){
-						var vA=parseInt($(".init",a).val());
-						var vB=parseInt($(".init",b).val());
-						return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
-					});
-				
-				$("#combat_area tbody").append(items);
-				ct_persist();		
-	});
+	reorder.click(ct_reorder);
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
@@ -82,9 +70,9 @@ function init_combat_tracker(){
 					
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
 				element.find(".init").val(value);
-				ct_persist();
+				ct_reorder(false);
 			});
-			
+			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
 		
 	});
@@ -97,31 +85,32 @@ function init_combat_tracker(){
 		
 		ct_inside.append(buttons);
 	}
-	ct.css('position','fixed');
-	if(window.DM)
-		ct.css('width','200px');
-	else
-		ct.css('width','150px');
-	ct.css('height','20px');
-	ct.css('left','5px');
-	ct.css('top','40px');
-	ct.css('z-index','99999000');
-	
+
+	if(window.DM) {
+		ct.addClass('tracker-dm');
+	} else {
+		ct.addClass('tracker-player');
+	}
+
 	$("#site").append(ct);
+}
+
+function ct_reorder(persist=true) {
+	var items = $("#combat_area tbody").children().sort(
+		function(a, b) {
+			var vA = parseInt($(".init", a).val());
+			var vB = parseInt($(".init", b).val());
+			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+		});
+
+	$("#combat_area tbody").append(items);
+	if(persist)
+		ct_persist();
 }
 
 
 function ct_add_token(token,persist=true){
 	// TODO: check if the token is already in the tracker..
-	
-	
-	// IF PLAYER. ADD THE TOKEN ONLY IF IT'S VISIBLE
-	if(!window.DM){
-		var selector = "div[data-id='" + token.options.id + "']";
-		if($(selector).length==0 || ! $(selector).is(":visible")){
-			return;
-		}
-	}
 	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)

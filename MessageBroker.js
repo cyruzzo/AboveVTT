@@ -81,7 +81,7 @@ class MessageBroker {
 				}
 			}
 			if (msg.eventType == "custom/myVTT/pointer") {
-				set_pointer(msg.data);
+				set_pointer(msg.data,!msg.data.dm);
 			}
 
 			if (msg.eventType == "custom/myVTT/lock") {
@@ -135,8 +135,8 @@ class MessageBroker {
 						var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 						console.log(converted);
 						if (converted == entityid) {
-							console.log("trovatoooooooo");
 							$(this).find(".init").val(total);
+							ct_reorder();
 						}
 					});
 					ct_persist();
