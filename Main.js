@@ -730,7 +730,6 @@ function open_player_sheet(sheet_url) {
 
 
 function init_ui() {
-	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
 	window.STARTING = true;
 	var gameid = $("#message-broker-lib").attr("data-gameId");
 	init_splash();
@@ -1252,6 +1251,7 @@ function init_buttons() {
 
 
 $(function() {
+	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
 	var is_dm=false;
 	if($(".ddb-campaigns-detail-body-dm-notes-label").length>0){
 		is_dm=true;
@@ -1312,6 +1312,18 @@ $(function() {
 			console.log('user canceled');
 		}
 	});
+
+	var campaign_banner=$("<div id='campaign_banner'></div>")
+	campaign_banner.append("<h3>This campaign is SuperPowered by <img width='200px' src='"+window.EXTENSION_PATH + "assets/logo.png'></h3>");
+	campaign_banner.append("<p>If you're the DM, you can press <b>JOIN ABOVEVTT AS DM</b> over this page</p>");
+	campaign_banner.append("<p>If you're a Player, you can press <b>JOIN AboveVTT</b> next to your character below. You can only enter if your DM is connected too.</p>");
+	campaign_banner.append("<p>Quick tip: if you have the Beyond20 extension installed <b>please disable it</b> or you won't be able to roll dices.</p>");
+	campaign_banner.append("<p>If you're new a and want to see a quick tutorial take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel</a></p>");
+	campaign_banner.append("<p>Join the <b>Community</b> on <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Server</a>.</p>");
+	campaign_banner.append("<p>If you want to help this project grow, consider supporting the <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a></p>");
+	
+
+	$(".ddb-campaigns-detail-header-secondary-description").before(campaign_banner);
 
 });
 

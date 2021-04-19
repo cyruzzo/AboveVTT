@@ -256,3 +256,12 @@ div#scene_properties form > div {
 .tracker-player {
     width: 150px;
 }
+
+#campaign_banner{
+	border:1px dashed #1b9af0;
+	margin: 20px;
+}
+
+#campaign_banner a{
+	color: #1b9af0;
+}
