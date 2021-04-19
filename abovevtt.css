@@ -154,7 +154,7 @@ input {
     top: 40px;
     width: 850px;
     border: 3px solid black;
-    border-radius: 5px 5px 5px 5px;
+    border-radius: 5px;
     z-index: 999999;
 }
 
