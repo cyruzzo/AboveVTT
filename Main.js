@@ -1323,7 +1323,7 @@ $(function() {
 	campaign_banner.append("<p>If you want to help this project grow, consider supporting the <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a></p>");
 	
 
-	$(".ddb-campaigns-detail-header-secondary-description").before(campaign_banner);
+	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);
 
 });
 

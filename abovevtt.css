@@ -259,7 +259,14 @@ div#scene_properties form > div {
 
 #campaign_banner{
 	border:1px dashed #1b9af0;
-	margin: 20px;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	width: 100%;
+}
+
+#campaign_banner h3{
+	margin-top: 25px;
+	margin-bottom: 25px;
 }
 
 #campaign_banner a{
