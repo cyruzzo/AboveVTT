@@ -14,9 +14,6 @@ function init_combat_tracker(){
 	});
 	ct.append(toggle);
 	ct_inside=$("<div id='combat_tracker_inside'/>");
-	ct_inside.css('background',"url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
-	ct_inside.css('height','100%');
-	ct_inside.css('overflow','auto');
 	ct_inside.hide();
 	ct.append(ct_inside);
 	

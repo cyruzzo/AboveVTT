@@ -52,7 +52,7 @@ body > button:hover,
     top: 28px !important;
     /* width: 150px !important; */
     border-radius: 5px;
-    max-height: 0px;
+    max-height: 0;
     overflow: hidden;
     transition: all 0.4s ease-in-out;
     text-align: center;
@@ -114,9 +114,12 @@ div#scene_selector,
     height: 375px !important;
 }
 
-div#combat_tracker_inside {
-    margin: 10px 0;
+#combat_tracker_inside {
     position: relative;
+    height: 100%;
+    margin: 10px 0;
+    background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
+    overflow: auto;
 }
 
 #combat_area button {
@@ -257,22 +260,22 @@ div#scene_properties form > div {
     width: 150px;
 }
 
-#campaign_banner{
-	border:1px dashed #1b9af0;
-	margin-top: 50px;
-	margin-bottom: 50px;
-	width: 100%;
+#campaign_banner {
+    border: 1px dashed #1b9af0;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
 }
 
-#campaign_banner h3{
-	margin-top: 5px;
-	margin-bottom: 5px;
+#campaign_banner h3 {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-#campaign_banner a{
-	color: #1b9af0;
+#campaign_banner a {
+    color: #1b9af0;
 }
 
 #patreons {
-	font-size:10px;
+    font-size: 10px;
 }
