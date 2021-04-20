@@ -15,15 +15,15 @@ body > button,
 .monster_frame > button,
 .stp-btn,
 .sidebar__controls button {
-    background: #3d3d3d;
-    color: #fff;
-    border: 0;
+    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    color: #3d3d3d;
     height: 22px;
     margin: 0 2px;
     border-radius: 7px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
     padding: 2px 8px;
-    transition: color 0.3s ease-in-out, background 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
 }
 
 button[id$='-button']:hover,
@@ -43,14 +43,19 @@ body > button:hover,
 .monster_frame > button:hover,
 .stp-btn:hover,
 .sidebar__controls button:hover {
-    color: #E60207;
-    background: #2e2e2e;
+    color: #333;
+    background-image: none;
+    background: #e6e6e6;
+}
+
+.drawbutton.button-enabled {
+    background-image: none !important;
+    background: red !important;
 }
 
 .top_menu {
     margin: 0 8px;
     top: 28px !important;
-    /* width: 150px !important; */
     border-radius: 5px;
     max-height: 0;
     overflow: hidden;
@@ -90,6 +95,7 @@ button[id$='-button'].button-enabled:hover {
 .top_menu button {
     margin: 0;
     border-radius: 0;
+    border: 0;
 }
 
 .scene > div:first-of-type {
