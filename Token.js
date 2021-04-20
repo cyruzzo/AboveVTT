@@ -166,6 +166,22 @@ class Token {
 
 			this.options.hp = old.find(".hp").val();
 			this.options.max_hp = old.find(".max_hp").val();
+
+			// HEALTH AURA
+			if (this.options.max_hp > 0) {
+
+				if (this.options.max_hp > 0 && parseInt(this.options.hp) === 0) {
+					old.prepend(`<div class="dead" style="--size: ${parseInt(this.options.size) / 10}px;"></div>`);
+				} else {
+					old.find('.dead').remove();
+				}
+
+				old.css('box-shadow',
+					`${this.token_health_aura(
+						Math.round((this.options.hp / this.options.max_hp) * 100)
+					)} 0px 0px 7px 7px`
+				);
+			}
 		}
 
 
@@ -274,6 +290,42 @@ class Token {
 		ac.css("font-size", fs);
 		ac.css("text-align", "center");
 		return ac;
+	}
+
+	token_health_aura(hpPercentage) {
+		//PERC TO RGB------------
+		const percentToHEX = function (percent) {
+			var HEX;
+			if (percent > 100) HEX = "#0000FF";
+			else {
+				if (percent === 100) percent = 99;
+				var r, g, b = 0;
+				if (percent < 50) {
+					g = Math.floor(255 * (percent / 50));
+					r = 255;
+				}
+				else {
+					g = 255;
+					r = Math.floor(255 * ((50 - percent % 50) / 50));
+				}
+				HEX = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+			}
+			return HEX;
+		}
+		//HEX TO RGB------------
+		const hexToRGB = function (hex) {
+			// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+			var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+			hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+				return r + r + g + g + b + b;
+			});
+
+			const pHex = (n) => parseInt(n, 16);
+
+			var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+			return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 80%)` : null;
+		}
+		return hexToRGB(percentToHEX(hpPercentage));
 	}
 
 
@@ -392,6 +444,24 @@ class Token {
 				old.find(".ac").replaceWith(this.build_ac());
 			}
 
+			// HEALTH AURA / DEAD CROSS
+			console.log("AURAO - ", window.PLAYER_STATS[this.options.id] || this.options);
+			if (this.options.max_hp > 0) {
+				const pData = window.PLAYER_STATS[this.options.id] || this.options;
+
+				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
+					old.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+				} else {
+					old.find('.dead').remove();
+				}
+
+				old.css('box-shadow',
+					`${this.token_health_aura(
+						Math.round((pData.hp / pData.max_hp) * 100)
+					)} 0px 0px 7px 7px`
+				);
+			}
+
 
 
 			if (old.attr('width') != this.options.size) {
@@ -443,7 +513,7 @@ class Token {
 			var zindexdiff=(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 			tok.css("z-index", 30+zindexdiff);
 			tok.width(this.options.size);
-
+			tok.addClass('token');
 
 			tok.append(tokimg);
 
@@ -451,6 +521,23 @@ class Token {
 
 				tok.append(this.build_hp());
 				tok.append(this.build_ac());
+			}
+
+			// HEALTH AURA / DEAD CROSS
+			console.log("AURAO - ", this.options);
+			if (this.options.max_hp > 0) {
+				const pData = window.PLAYER_STATS[this.options.id] || this.options;
+				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
+					tok.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+				} else {
+					tok.find('.dead').remove();
+				}
+
+				tok.css('box-shadow',
+					`${this.token_health_aura(
+						Math.round((pData.hp / pData.max_hp) * 100)
+					)} 0px 0px 7px 7px`
+				);
 			}
 
 			tok.attr("data-id", this.options.id);
