@@ -250,6 +250,43 @@ div#scene_properties form > div {
     height: 34px;
 }
 
+.token {
+    overflow: visible !important;
+    border-radius: 50%;
+    transition: box-shadow 0.5 ease-in-out;
+    z-index: 50;
+}
+
+.dead {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.dead:before, .dead:after {
+    position: absolute;
+    content: '';
+    background: red;
+    display: block;
+    width: 100%;
+    height: var(--size, 10px);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.dead:after {
+    -webkit-transform: rotate(45deg);    
+    transform: rotate(45deg);
+}
+
 #combat_tracker {
     position: fixed;
     height: 450px;
