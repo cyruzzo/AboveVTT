@@ -267,3 +267,7 @@ div#scene_properties form > div {
 #patreons {
     font-size: 10px;
 }
+
+#combat_area tr[data-current] {
+    background-color: lightgreen;
+}
