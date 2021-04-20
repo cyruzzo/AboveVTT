@@ -257,22 +257,13 @@ div#scene_properties form > div {
     width: 150px;
 }
 
-#campaign_banner{
-	border:1px dashed #1b9af0;
-	margin-top: 50px;
-	margin-bottom: 50px;
-	width: 100%;
-}
-
-#campaign_banner h3{
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-
-#campaign_banner a{
-	color: #1b9af0;
+#campaign_banner {
+    border: 1px dashed #1b9af0;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: .5rem;
 }
 
 #patreons {
-	font-size:10px;
+    font-size: 10px;
 }
