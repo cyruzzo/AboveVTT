@@ -489,16 +489,16 @@ var DDB_EXTRAS = {
 	"hotdq/dragon-hatchery/Map31DragonHatchery": {
 		dm_map_usable: "1",
 		snap: "1",
-		hpps: "65.66666666666667",
-		vpps: "66.33333333333333",
+		hpps: "66",
+		vpps: "66",
 		fpsq: "5",
-		offsetx: "63.99999999999987",
-		offsety: "3.3333333333334423",
+		offsetx: "54",
+		offsety: "12",
 		grid_subdivided: "0",
 	},
 	"hotdq/construction-ahead/Map51CarnathRoadhouse": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "93",
 		vpps: "92.33333333333333",
 		fpsq: "5",
@@ -509,31 +509,31 @@ var DDB_EXTRAS = {
 	"hotdq/castle-naerytar/Map64CastleNaerytarDungeon": {
 		dm_map_usable: "1",
 		snap: "1",
-		hpps: "47.833333333333336",
-		vpps: "47.666666666666664",
+		hpps: "47.666666666666664",
+		vpps: "47.833333333333336",
 		fpsq: "5",
-		offsetx: "9.333333333333258",
-		offsety: "15.333333333333385",
+		offsetx: "15.3333333333334",
+		offsety: "10.666666666666615",
 		grid_subdivided: "1",
 	},
 	"hotdq/hunting-lodge/Map71HuntingLodgeGroundFloor": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "77.66666666666667",
 		vpps: "77",
 		fpsq: "5",
-		offsetx: "55.99999999999996",
-		offsety: "72",
+		offsetx: "54.99999999999996",
+		offsety: "73",
 		grid_subdivided: "0",
 	},
 	"hotdq/hunting-lodge/Map72HuntingLodgeUpperFloor": {
 		dm_map_usable: "1",
-		snap: "1",
-		hpps: "90",
-		vpps: "90.66666666666667",
+		snap: "0",
+		hpps: "90.33333333333333",
+		vpps: "90.33333333333333",
 		fpsq: "5",
-		offsetx: "9",
-		offsety: "61.999999999999986",
+		offsetx: "63.3333333333334",
+		offsety: "43.66666666666674",
 		grid_subdivided: "0",
 	},
 	"hotdq/castle-in-the-clouds/Map81Parnast": {
@@ -543,17 +543,37 @@ var DDB_EXTRAS = {
 		vpps: "22.166666666666668",
 		fpsq: "5",
 		offsetx: "1.6666666666666288",
-		offsety: "33.66666666666663",
+		offsety: "33.999999999999964",
 		grid_subdivided: "1",
 	},
 	"hotdq/castle-in-the-clouds/Map82SkyreachCastle": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "29.333333333333332",
 		vpps: "29.666666666666668",
 		fpsq: "5",
-		offsetx: "12.666666666666707",
+		offsetx: "13.000000000000039",
 		offsety: "1.6666666666665577",
+		grid_subdivided: "0",
+	},
+	"rot/the-sea-of-moving-ice/Map101ArauthatorsIcebergandLair": {
+		dm_map_usable: "0",
+		snap: "0",
+		hpps: "21.5",
+		vpps: "21.5",
+		fpsq: "15",
+		offsetx: "18",
+		offsety: "3",
+		grid_subdivided: "0",
+	},
+	"rot/death-to-the-wyrmspeakers/Map121NeronvainsStronghold": {
+		dm_map_usable: "0",
+		snap: "0",
+		hpps: "47.166666666666664",
+		vpps: "44.333333333333336",
+		fpsq: "15",
+		offsetx: "20.000000000000114",
+		offsety: "78.99999999999989",
 		grid_subdivided: "0",
 	},
 	"rot/death-to-the-wyrmspeakers/Map31TombofDiderius": {
@@ -580,10 +600,10 @@ var DDB_EXTRAS = {
 		dm_map_usable: "1",
 		snap: "1",
 		hpps: "13.666666666666666",
-		vpps: "13.833333333333334",
+		vpps: "13.666666666666666",
 		fpsq: "5",
-		offsetx: "22.666666666666703",
-		offsety: "21.666666666666625",
+		offsetx: "23.333333333333364",
+		offsety: "6.666666666666718",
 		grid_subdivided: "1",
 	},
 	"slw/attack-on-the-wayside-inn/Map2WaysideInn": {
@@ -646,16 +666,6 @@ var DDB_EXTRAS = {
 		offsety: "26",
 		grid_subdivided: "0",
 	},
-	"pota//compendium/adventures/pota/secret-of-the-sumber-hills/Map31FeathergaleSpire": {
-		dm_map_usable: "1",
-		snap: "1",
-		hpps: "22.833333333333332",
-		vpps: "22.833333333333332",
-		fpsq: "5",
-		offsetx: "6.000000000000021",
-		offsety: "27.000000000000057",
-		grid_subdivided: "1",
-	},
 	"pota//compendium/adventures/pota/secret-of-the-sumber-hills/Map33RivergardKeep": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -696,6 +706,7 @@ var DDB_EXTRAS = {
 		offsety: "54",
 		grid_subdivided: "1",
 	},
+
 	"pota//compendium/adventures/pota/air-earth-fire-and-water/Map42TempleoftheCrushingWave": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -752,18 +763,18 @@ var DDB_EXTRAS = {
 		hpps: "16.333333333333332",
 		vpps: "16.333333333333332",
 		fpsq: "5",
-		offsetx: "11.3333333333334",
-		offsety: "22.000000000000036",
+		offsetx: "11.000000000000064",
+		offsety: "23.000000000000036",
 		grid_subdivided: "1",
 	},
 	"pota//compendium/adventures/pota/temple-of-the-elder-elemental-eye/Map53ThePlungingTorrents": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "23",
 		vpps: "23.166666666666668",
 		fpsq: "5",
 		offsetx: "30",
-		offsety: "30.999999999999915",
+		offsety: "32.99999999999994",
 		grid_subdivided: "1",
 	},
 	"pota//compendium/adventures/pota/temple-of-the-elder-elemental-eye/Map54TheBlackGeode": {
@@ -773,7 +784,7 @@ var DDB_EXTRAS = {
 		vpps: "23.5",
 		fpsq: "5",
 		offsetx: "9",
-		offsety: "22",
+		offsety: "19",
 		grid_subdivided: "1",
 	},
 	"pota//compendium/adventures/pota/alarums-and-excursions/Map62NecromancersCave": {
@@ -792,8 +803,8 @@ var DDB_EXTRAS = {
 		hpps: "16.5",
 		vpps: "16.5",
 		fpsq: "5",
-		offsetx: "32",
-		offsety: "11",
+		offsetx: "30",
+		offsety: "12",
 		grid_subdivided: "1",
 	},
 	"pota//compendium/adventures/pota/alarums-and-excursions/Map65DellmonRanch": {
@@ -1137,6 +1148,7 @@ var DDB_EXTRAS = {
 		offsety: "64.99999999999994",
 		grid_subdivided: "0",
 	},
+
 	"cos/the-town-of-vallaki/Map55CoffinMakersShopAreaN6": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -1149,7 +1161,7 @@ var DDB_EXTRAS = {
 	},
 	"cos/the-town-of-vallaki/Map56VistaniCampAreaN9": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "34.5",
 		vpps: "34.5",
 		fpsq: "5",
@@ -1169,7 +1181,7 @@ var DDB_EXTRAS = {
 	},
 	"cos/argynvostholt/Map71ArgynvostholtAreaQ": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "72",
 		vpps: "71.83333333333333",
 		fpsq: "5",
@@ -1200,11 +1212,11 @@ var DDB_EXTRAS = {
 	"cos/the-village-of-krezk/Map83AbbeyofSaintMarkoviaUpperFloorCellar": {
 		dm_map_usable: "1",
 		snap: "1",
-		hpps: "34.5",
+		hpps: "34.333333333333336",
 		vpps: "34.5",
 		fpsq: "5",
-		offsetx: "62",
-		offsety: "65",
+		offsetx: "64.99999999999994",
+		offsety: "64",
 		grid_subdivided: "1",
 	},
 	"cos/tsolenka-pass/Map91TsolenkaPassAreaT": {
@@ -1231,10 +1243,10 @@ var DDB_EXTRAS = {
 		dm_map_usable: "1",
 		snap: "1",
 		hpps: "71.66666666666667",
-		vpps: "71.33333333333333",
+		vpps: "71.66666666666667",
 		fpsq: "5",
-		offsetx: "58.66666666666664",
-		offsety: "2.000000000000057",
+		offsetx: "59.333333333333314",
+		offsety: "67.99999999999991",
 		grid_subdivided: "0",
 	},
 	"cos/the-wizard-of-wines/Map121WizardofWinesWineryAreaW": {
@@ -1250,11 +1262,11 @@ var DDB_EXTRAS = {
 	"cos/the-amber-temple/Map131AmberTempleAreaXUpperLevel": {
 		dm_map_usable: "1",
 		snap: "1",
-		hpps: "38.333333333333336",
-		vpps: "38.333333333333336",
+		hpps: "38.166666666666664",
+		vpps: "38.166666666666664",
 		fpsq: "5",
-		offsetx: "52.99999999999994",
-		offsety: "43.33333333333324",
+		offsetx: "57.00000000000006",
+		offsety: "49.66666666666676",
 		grid_subdivided: "1",
 	},
 	"cos/the-amber-temple/Map132AmberTempleAreaXLowerLevel": {
@@ -1710,7 +1722,6 @@ var DDB_EXTRAS = {
 		offsety: "20",
 		grid_subdivided: "1",
 	},
-
 	"oota//compendium/adventures/oota/into-darkness/Map22TheHookHorrorLair": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -1721,7 +1732,6 @@ var DDB_EXTRAS = {
 		offsety: "62.33333333333337",
 		grid_subdivided: "1",
 	},
-
 	"oota//compendium/adventures/oota/into-darkness/Map23TheOozingTemple": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -1732,7 +1742,6 @@ var DDB_EXTRAS = {
 		offsety: "60.33333333333343",
 		grid_subdivided: "0",
 	},
-
 	"oota//compendium/adventures/oota/into-darkness/Map24TheLostTomb": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -1743,7 +1752,6 @@ var DDB_EXTRAS = {
 		offsety: "141.6666666666667",
 		grid_subdivided: "1",
 	},
-
 	"oota//compendium/adventures/oota/the-darklake/Map31Sloobludop": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -1754,21 +1762,20 @@ var DDB_EXTRAS = {
 		offsety: "31.333333333333456",
 		grid_subdivided: "1",
 	},
-
 	"oota//compendium/adventures/oota/gracklstugh/Map43LairoftheSpiderKing": {
 		dm_map_usable: "1",
 		snap: "1",
 		hpps: "22.666666666666668",
 		vpps: "22.666666666666668",
 		fpsq: "5",
-		offsetx: "10.999999999999972",
-		offsety: "14.666666666666643",
+		offsetx: "10.999999999999975",
+		offsety: "14.66666666666665",
 		grid_subdivided: "0",
 	},
 
 	"oota//compendium/adventures/oota/gracklstugh/Map44GrayGhostGarden": {
 		dm_map_usable: "1",
-		snap: "1",
+		snap: "0",
 		hpps: "16.666666666666668",
 		vpps: "16.666666666666668",
 		fpsq: "5",
@@ -1776,7 +1783,6 @@ var DDB_EXTRAS = {
 		offsety: "5.999999999999982",
 		grid_subdivided: "0",
 	},
-
 	"oota//compendium/adventures/oota/gracklstugh/Map45CultistPens": {
 		dm_map_usable: "1",
 		snap: "1",
@@ -1797,7 +1803,6 @@ var DDB_EXTRAS = {
 		offsety: "7.333333333333307",
 		grid_subdivided: "0",
 	},
-
 	"oota//compendium/adventures/oota/neverlight-grove/Map51NeverlightGrove": {
 		dm_map_usable: "1",
 		snap: "1",
