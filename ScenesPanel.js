@@ -14,6 +14,9 @@ function consider_upscaling(target){
 			target.offsetx*=4;
 			target.offsety*=4;
 		}
+		else{
+			target.scale_factor=1;
+		}
 }
 	
 
@@ -134,7 +137,8 @@ function edit_scene_dialog(scene_id) {
 	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Show Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Foot per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a sudbdivion (1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10ft</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
 	manual.hide();
 
 	manual.find("input").each(function() {
@@ -577,8 +581,7 @@ function edit_scene_dialog(scene_id) {
 				scene[n] = $(this).val();
 			});
 
-
-			//scene.upscaled="1"; // UPSCALE THIS!!!
+			scene.scale_factor=1;
 
 			window.ScenesHandler.persist();
 			window.ScenesHandler.switch_scene(scene_id);
@@ -998,6 +1001,8 @@ function fill_importer(scene_set, start) {
 				$("#scene_properties input[name='offsety']").val(scene.offsety);
 			if (typeof scene.grid_subdivided !== "undefined")
 				$("#scene_properties input[name='grid_subdivided']").val(scene.grid_subdivided);
+			if (typeof scene.scale_factor !== "undefined")
+				$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
 
 			$("#mega_importer").remove();
 		});
