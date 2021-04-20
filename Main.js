@@ -1317,7 +1317,7 @@ $(function() {
 	campaign_banner.append("<h4>Do you want to play on this campaign with <img width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>?</h4>");
 	campaign_banner.append("DM, press <b>JOIN ABOVEVTT AS DM</b> at the top<br>");
 	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom (and wait for your DM to join)<br>");
-	campaign_banner.append("Do you have the Beyond20 extension installed ? <b>Disable it</b> or you won't be able to roll dices.<br>");
+	campaign_banner.append("Do you have the Beyond20 extension installed ? <b>Disable it</b> or you won't be able to roll dice.<br>");
 	//campaign_banner.append("Wanna see a  tutorial? Look at the <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	//campaign_banner.append("Want to chat about this project ? Join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	//campaign_banner.append("Do you like what you see ? Support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a>");
