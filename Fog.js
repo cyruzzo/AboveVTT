@@ -765,7 +765,7 @@ function setup_draw_buttons() {
 	$(".drawbutton").click(function(e) {
 		if ($(this).hasClass('button-enabled')) {
 			stop_drawing();
-			$(".drawbutton").removeClass('button-enabled').css('background-color', '');
+			$(".drawbutton").removeClass('button-enabled');
 
 			if (window.ALIGNING == true) {
 				window.ALIGNING = false;
@@ -775,9 +775,8 @@ function setup_draw_buttons() {
 			return;
 		}
 		stop_drawing();
-		$(".drawbutton").removeClass('button-enabled').css('background-color', '');
+		$(".drawbutton").removeClass('button-enabled');
 		$(this).addClass('button-enabled');
-		$(this).css("background-color", "red");
 
 
 		var target = $("#fog_overlay");
@@ -789,7 +788,6 @@ function setup_draw_buttons() {
 
 		target.css('cursor', 'crosshair');
 
-		$(this).css("background-color", "red");
 		$(this).addClass('button-enabled');
 
 		var data = {
