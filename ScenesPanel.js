@@ -200,6 +200,8 @@ function edit_scene_dialog(scene_id) {
 
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.grid_subdivided = "0";
+		consider_upscaling(window.ScenesHandler.scene);
+		
 		window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
@@ -223,7 +225,9 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.hpps /= 2;
 			window.ScenesHandler.scene.vpps /= 2;
-
+			
+			consider_upscaling(window.ScenesHandler.scene);
+			
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -239,6 +243,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.grid_subdivided = "0";
 			window.ScenesHandler.scene.grid = "0";
 			window.ScenesHandler.scene.fpsq = "10";
+			consider_upscaling(window.ScenesHandler.scene);
 			window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
@@ -248,6 +253,44 @@ function edit_scene_dialog(scene_id) {
 		});
 	}
 
+	let grid_15 = function() {
+		window.WIZARDING = false;
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		window.ScenesHandler.scene.grid_subdivided = "0";
+		window.ScenesHandler.scene.snap = "1";
+		window.ScenesHandler.scene.grid = "0";
+		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.hpps /= 3;
+		window.ScenesHandler.scene.vpps /= 3;
+		consider_upscaling(window.ScenesHandler.scene);
+		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+			$("#wizard_popup").remove();
+		});
+		window.ScenesHandler.persist();
+		window.ScenesHandler.reload();
+	}
+
+
+	let grid_20 = function() {
+		window.WIZARDING = false;
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		window.ScenesHandler.scene.grid_subdivided = "0";
+		window.ScenesHandler.scene.snap = "1";
+		window.ScenesHandler.scene.grid = "1";
+		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.hpps /= 4;
+		window.ScenesHandler.scene.vpps /= 4;
+		consider_upscaling(window.ScenesHandler.scene);
+		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+			$("#wizard_popup").remove();
+		});
+		window.ScenesHandler.persist();
+		window.ScenesHandler.reload();
+	}
 
 	let align_grid = function(square = false, just_rescaling = true) {
 
@@ -262,6 +305,7 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA.grid = "0";
 
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
+			window.CURRENT_SCENE_DATA.scale_factor=1;
 			var aligner1 = $("<canvas id='aligner1'/>");
 			aligner1.width(59);
 			aligner1.height(59);
@@ -508,11 +552,15 @@ function edit_scene_dialog(scene_id) {
 						grid_5(false, false);
 					}
 					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> or <button id='grid_10'>10</button>");
+						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button> <button id='grid_50'>50</button>");
 						$("#grid_5").click(function() { grid_5(); });
 						$("#grid_10").click(function() { grid_10(); });
+						$("#grid_15").click(function() { grid_15(); });
+						$("#grid_20").click(function() { grid_20(); });
+						$("#grid_50").click(function() { grid_50(); });
+						$("#grid_100").click(function() { grid_100(); });
 					}
-					else {
+					else { // just creating a 5 foot grid
 						grid_5(true);
 					}
 
@@ -540,8 +588,6 @@ function edit_scene_dialog(scene_id) {
 			$("#scene_selector").removeAttr("disabled");
 			$("#scene_selector_toggle").click();
 			$("#scene_selector_toggle").hide();
-
-
 
 
 			prewiz = $("<table id='prewiz'/>");
