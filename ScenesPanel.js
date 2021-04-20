@@ -1,3 +1,22 @@
+
+function consider_upscaling(target){
+		if(target.hpps < 60 && target.hpps > 25){
+			target.scale_factor=2;
+			target.hpps *= 2;
+			target.vpps *= 2;
+			target.offsetx*=2;
+			target.offsety*=2;
+		}
+		else if(target.hpps <=25){
+			target.scale_factor=4;
+			target.hpps *= 4;
+			target.vpps *= 4;
+			target.offsetx*=4;
+			target.offsety*=4;
+		}
+}
+	
+
 function preset_importer(target, key) {
 	target.empty();
 	let sel = $("<select/>");
@@ -158,6 +177,7 @@ function edit_scene_dialog(scene_id) {
 	});
 
 
+	
 
 
 	let grid_5 = function(enable_grid = false, enable_snap = true) {

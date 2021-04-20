@@ -134,9 +134,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
 
-			if (scene.upscaled == "1") {
-				$("#scene_map").width(owidth * 2);
-				$("#scene_map").height(oheight * 2);
+			if (scene.scale_factor) {
+				$("#scene_map").width(owidth * scene.scale_factor);
+				$("#scene_map").height(oheight * scene.scale_factor);
 			}
 
 			$("#scene_map").off("load");

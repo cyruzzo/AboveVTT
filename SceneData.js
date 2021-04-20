@@ -25,7 +25,9 @@ function export_ddb() {
 	data += "\t\tfpsq: \"" + window.CURRENT_SCENE_DATA.fpsq + "\",\n";
 	data += "\t\toffsetx: \"" + window.CURRENT_SCENE_DATA.offsetx + "\",\n";
 	data += "\t\toffsety: \"" + window.CURRENT_SCENE_DATA.offsety + "\",\n";
+	data += "\t\tgrid: \"" + window.CURRENT_SCENE_DATA.grid + "\",\n";
 	data += "\t\tgrid_subdivided: \"" + window.CURRENT_SCENE_DATA.grid_subdivided + "\",\n";
+	data += "\t\tscale_factor: \"" + window.CURRENT_SCENE_DATA.scale_factor + "\",\n";
 	data += "\t},";
 	console.log(data);
 }
