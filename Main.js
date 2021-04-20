@@ -1314,7 +1314,7 @@ $(function() {
 	});
 
 	var campaign_banner=$("<div id='campaign_banner'></div>")
-	campaign_banner.append("<h4>Do you want to play on this campaign with <img alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>?</h4>");
+	campaign_banner.append(`<h4>Do you want to play on this campaign with <img alt="AboveVTT's logo" width="100px" src="${window.EXTENSION_PATH}assets/logo.png">?</h4>`);
 	campaign_banner.append("DM, press <b>JOIN ABOVEVTT AS DM</b> at the top.<br>");
 	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom (and wait for your DM to join)<br>");
 	campaign_banner.append("Do you have the Beyond20 extension installed ? <b>Disable it</b> or you won't be able to roll dices.<br>");
