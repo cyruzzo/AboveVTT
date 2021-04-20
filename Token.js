@@ -510,7 +510,9 @@ class Token {
 			var tokimg = $("<img class='Avatar_AvatarPortrait__2dP8u'/>"); // class to make them round
 
 
-			var zindexdiff=(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			console.log("Diff: "+zindexdiff);
+			
 			tok.css("z-index", 30+zindexdiff);
 			tok.width(this.options.size);
 			tok.addClass('token');
