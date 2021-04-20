@@ -13,7 +13,6 @@ function export_free() {
 	data += "\t\tgrid: \"" + window.CURRENT_SCENE_DATA.grid + "\",\n";
 	data += "\t\tgrid_subdivided: \"" + window.CURRENT_SCENE_DATA.grid_subdivided + "\",\n";
 	console.log(data);
-
 }
 
 function export_ddb() {
@@ -556,7 +555,7 @@ var DDB_EXTRAS = {
 		offsety: "1.6666666666665577",
 		grid_subdivided: "0",
 	},
-	"rot/the-sea-of-moving-ice/Map101ArauthatorsIcebergandLair": {
+	/*"rot/the-sea-of-moving-ice/Map101ArauthatorsIcebergandLair": {
 		dm_map_usable: "0",
 		snap: "0",
 		hpps: "21.5",
@@ -575,7 +574,7 @@ var DDB_EXTRAS = {
 		offsetx: "20.000000000000114",
 		offsety: "78.99999999999989",
 		grid_subdivided: "0",
-	},
+	},*/
 	"rot/death-to-the-wyrmspeakers/Map31TombofDiderius": {
 		dm_map_usable: "1",
 		snap: "1",
