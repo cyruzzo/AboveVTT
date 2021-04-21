@@ -34,9 +34,15 @@ function update_pclist() {
 
 
 	});
-
-
-
+	const addPartyButtonContainer = $("<div class='add-party-container'></div>");
+	const addPartyButton = $("<button id='add-party'>ADD PARTY</button>");
+	addPartyButton.on('click', () => {
+		window.pcs.forEach(function (p, i) {
+			token_button({ target: $(`[data-name='${p.name}']`) }, i, window.pcs.length);
+		});
+	});
+	addPartyButtonContainer.append(addPartyButton);
+	pcs_list.append(addPartyButtonContainer);
 
 	var NEXT_COLOR = 0;
 	window.pcs.forEach(function(item, index) {
@@ -44,77 +50,90 @@ function update_pclist() {
 		color = "#" + TOKEN_COLORS[NEXT_COLOR++];
 
 		pc = item;
-		row = $("<div/>");
-		row.css("padding", "20px");
 
-		player_name = $("<div/>");
-		player_name.text(pc.name).css("background", color).css("font-weight", "bold");
-		player_name.attr('data-nextcolor', NEXT_COLOR);
-		row.append(player_name);
-
-		row_inside = $("<div/>");
-		row_inside.css('border', '1px solid black');
-		row_inside.css("width", "100%");
-		row_inside.css("float", "left");
-		row.append(row_inside);
-
-		row_inside.append($("<div style='float:left;'><img width=60 height=60 src='" + pc.image + "'></div>"));
-
-		stats = $("<div/>");
-		stats.css("float", "left");
-
-		stats.append("<div><div><b>HP:</b></div><div class='hp'>-</div></div>");
-		stats.append("<div><div><b>AC:</b></div><div class='ac'>-</div></div>");
-		stats.append("<div><div><b>Passive Perception:</b></div><div class='pp'>-</div></div>");
-
-		row_inside.append(stats);
-
-		conditions = $("<div style='float:left;'/>");
-		conditions.append("<div><b>Conditions</b></div>");
-		conditions.append("<div class='conditions'></div>");
-
-		row_inside.append(conditions);
-
+		let playerData;
 		if (pc.sheet in window.PLAYER_STATS) {
-			data = window.PLAYER_STATS[pc.sheet];
-
-			stats.find(".hp").text(data.hp + "/" + data.max_hp);
-			stats.find(".ac").text(data.ac);
-			stats.find(".pp").text(data.pp);
-
-			for (var i = 0; i < data.conditions.length; i++)
-				conditions.find(".conditions").append($("<div/>").text(data.conditions[i]));
+			playerData = window.PLAYER_STATS[pc.sheet];
 		}
 
+		newPlayerTemplate = `
+			<div class="player-card">
+				<div class="player-card-header">
+					<div class="player-name">${pc.name}</div>
+					<div class="player-actions">
+						<button 
+							data-set-token-id='${pc.sheet}' data-img='${pc.image}' data-name="${pc.name}"
+							data-hp="${playerData ? playerData.hp : ''}"
+							data-ac="${playerData ? playerData.ac : ''}"
+							data-maxhp="${playerData ? playerData.max_hp : ''}"
+							data-color="${color}" class="add-token-btn">
+							TOKEN
+						</button>
+						<button data-target='${pc.sheet}' class="open-sheet-btn">SHEET</button>
+					</div>
+				</div>
+				<div class="player-card-content">
+					<div class="player-token">
+						<img width="70" height="70" src="${pc.image}" style="border: 2px solid ${color}" />
+					</div>
+					${
+						playerData ? `
+							<div class="player-info">
+								<div class="player-attributes">
+									<div class="player-attribute">
+										<b>HP:</b> ${playerData.hp}
+									</div>
+									<div class="player-attribute">
+										<b>AC:</b> ${playerData.ac}
+									</div>
+									<div class="player-attribute">
+										<b>PP:</b> ${playerData.pp}
+									</div>
+								</div>
+								<div class="player-conditions">
+									<div class="player-card-title"><b>Conditions:</b></div>
+									<div>
+										${
+											playerData.conditions.map(c => c).join(', ')
+										}
+									</div>
+								</div>
+							</div>
+						` : `
+							<div class="player-no-attributes">
+								Please load the character sheet.
+							</div>
+						`
+					}
+				</div>
+				${
+					playerData ? `
+						<div class="player-card-footer">
+							${
+								playerData.abilities.map(a => {
+									return `
+										<div class="ability_value">
+											<div class="ability_name">${a.abilityAbbr.toUpperCase()}</div>
+											<div class="ability_modifier">${a.modifier}</div>
+											<div class="ability_score">${a.score}</div>
+										</div>
+									`;
+								}).join('')
+							}
+						</div>
+					` : ''
+				}
+			</div>
+		`;
+		pcs_list.append($(newPlayerTemplate));
+	});
 
+	$(".add-token-btn").on("click", function () {
+		token_button({target: this});
+	});
 
-		buttons = $("<div/>");
-
-		btn_token = $("<button data-set-token-id='" + pc.sheet + "' data-img='" + pc.image + "'>ADD TOKEN</button>");
-		btn_token.attr("data-name", pc.name);
-		btn_token.click(token_button);
-
-		if (pc.sheet in window.PLAYER_STATS) {
-			data = window.PLAYER_STATS[pc.sheet];
-			btn_token.attr('data-hp', data['hp']);
-			btn_token.attr('data-ac', data['ac']);
-			btn_token.attr('data-maxhp', data['max_hp']); // maxhp , max-hp, max_hp .. WHY AM I DOING THIS TO MYSELF?!?!?!?!?!
-
-		}
-		btn_token.attr('data-color', color);
-		buttons.append(btn_token);
-
-		view_button = $("<button data-target='" + pc.sheet + "'>VIEW SHEET</button>");
-
-		view_button.click(function(e) {
-			open_player_sheet($(e.target).attr('data-target'));
-		});
-
-		buttons.append(view_button);
-
-		row.append(buttons);
-
-		pcs_list.append(row);
+	$(".open-sheet-btn").on("click", function () {
+		open_player_sheet($(this).attr('data-target'));
 	});
 
 }

@@ -591,6 +591,16 @@ function open_player_sheet(sheet_url) {
 				conditions.push($(this).text());
 			});
 
+			abilities = [];
+			$(event.target).contents().find('.ct-quick-info__ability').each(function() {
+				abilities.push({
+					abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+					abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+					modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+					score: $(this).find('.ddbc-ability-summary__secondary').text()
+				});
+			});
+
 
 			var playerdata = {
 				id: sheet_url,
@@ -598,7 +608,8 @@ function open_player_sheet(sheet_url) {
 				max_hp: max_hp,
 				ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
 				pp: pp.html(),
-				conditions: conditions
+				conditions: conditions,
+				abilities
 			};
 
 			if (!window.DM) {

@@ -717,7 +717,7 @@ class Token {
 }
 
 
-function token_button(e) {
+function token_button(e, tokenIndex = null, tokenTotal = null) {
 	console.log($(e.target).outerHTML());
 	let imgsrc = $(e.target).attr("data-img");
 	let id;
@@ -789,6 +789,11 @@ function token_button(e) {
 
 	if (typeof $(e.target).attr('data-color') !== "undefined") {
 		options.color = $(e.target).attr('data-color');
+	}
+
+	if (tokenIndex && tokenTotal) {
+		options.left = (centerX + (((options.size || 68.33) * 5) / 2) * Math.cos(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
+		options.top = (centerY + (((options.size || 68.33) * 5) / 2) * Math.sin(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
 	}
 
 
