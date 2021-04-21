@@ -920,10 +920,12 @@ function fill_importer(scene_set, start) {
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
 
+	var ddb_extra_found=false;
 	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
 		let current_scene = scene_set[i];
 
 		if (current_scene.uuid in DDB_EXTRAS) {
+			ddb_extra_found=true;
 			for (prop in DDB_EXTRAS[current_scene.uuid]) {
 				current_scene[prop] = DDB_EXTRAS[current_scene.uuid][prop];
 			}
@@ -963,8 +965,8 @@ function fill_importer(scene_set, start) {
 			stats.append("<b style='background: lightblue; border 1px solid back; margin: 5px;' title='Has DM Map'>DM</b>");
 		}
 
-		if (scene_set[i].snap == "1") {
-			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-ALIGNED!</b>");
+		if ((scene_set[i].snap == "1") || ddb_extra_found) {
+			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-CONFIGURED!</b>");
 		}
 		entry.append(stats);
 
