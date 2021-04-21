@@ -1322,7 +1322,7 @@ $(function() {
 	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join<br><br>");
 	campaign_banner.append("Please check that you don't have other extensions for DndBeyond (ex. Beyond20) <b>Disable it</b> or you won't be able to roll dice.<br>");
 	campaign_banner.append("If you're looking for tutorials, take a look at: <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
-	campaign_banner.append("If you need help, or just want to send me your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
+	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see ? Support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
 	campaign_banner.append("(<b>advanced</b>) If you're not the DM on this DDB campaign and want to join as DM anyway <a class='joindm'> Click here</a>. Please note that <b>you won't be able to see any data of the other DM</b>. Don't press this if there's already another DM connected");
 	campaign_banner.hide();
