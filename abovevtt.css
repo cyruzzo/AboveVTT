@@ -14,6 +14,8 @@ body > button,
 .top_menu button,
 .monster_frame > button,
 .stp-btn,
+.player-actions button,
+#add-party,
 .sidebar__controls button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
@@ -42,7 +44,10 @@ body > button:hover,
 .top_menu button:hover,
 .monster_frame > button:hover,
 .stp-btn:hover,
-.sidebar__controls button:hover {
+.sidebar__controls button:hover,
+.player-actions button:hover,
+#add-party:hover,
+.importer_toggle:hover {
     color: #333;
     background-image: none;
     background: #e6e6e6;
@@ -185,11 +190,6 @@ input {
     color: #fff;
 }
 
-/** it would be nice to have a class selector because of the red background, will use this as a temp fix **/
-.importer_toggle:hover {
-    color: gold !important;
-}
-
 div#template_section {
     margin: 10px 5px;
 }
@@ -312,4 +312,110 @@ div#scene_properties form > div {
 
 #patreons {
     font-size: 10px;
+}
+
+.player-card {
+    box-shadow: 0 8px 16px -8px rgb(0 0 0 / 40%);
+    background: linear-gradient(#e6e6e6, #fff);
+    border-radius: 6px;
+    margin: 10px;
+    padding: 5px;
+}
+
+.player-card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.player-name {
+    font-variant: small-caps;
+    font-size: 17px;
+    width: 160px;
+}
+
+.player-actions {
+    display: flex;
+    align-items: center;
+}
+
+.player-card-content {
+    display: flex;
+    margin: 10px 5px;
+}
+
+.player-info {
+    display: flex;
+    width: 100%;
+    margin: 0 10px;
+}
+
+.player-attributes {
+    width: 60px;
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 70px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.player-no-attributes {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+}
+
+.player-conditions {
+    max-width: 155px;
+    padding-left: 15px;
+}
+
+.player-card-footer {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 10px 0;
+}
+
+.player-token img {
+    border-radius: 50%;
+}
+
+.ability_value {
+    display: inline-block;
+    width: 44px;
+    padding: 5px;
+    text-align: center;
+    border:solid 2px #AE0404;
+    position: relative;
+    border-radius: 15px 25px 125px 25px/15px 225px 15px 255px;
+    height: 60px;
+}
+  
+.ability_name {
+    color: darkgrey;
+    font-weight: bold;
+}
+  
+.ability_modifier {
+    font-size: 18px;
+    margin-top: -2px;
+}
+  
+.ability_score {
+    position: absolute;
+    bottom: -10px;
+    border-radius: 50%;
+    border: 1px solid #AE0404;
+    width: 25px;
+    background: #fff;
+    left: calc(20px / 2);
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-party-container {
+    padding: 10px;
+    text-align: right;
 }
