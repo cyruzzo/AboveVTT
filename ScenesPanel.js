@@ -556,12 +556,11 @@ function edit_scene_dialog(scene_id) {
 						grid_5(false, false);
 					}
 					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button> <button id='grid_50'>50</button>");
+						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
 						$("#grid_5").click(function() { grid_5(); });
 						$("#grid_10").click(function() { grid_10(); });
 						$("#grid_15").click(function() { grid_15(); });
 						$("#grid_20").click(function() { grid_20(); });
-						$("#grid_50").click(function() { grid_50(); });
 						$("#grid_100").click(function() { grid_100(); });
 					}
 					else { // just creating a 5 foot grid
