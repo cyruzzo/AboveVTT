@@ -31,31 +31,26 @@ function init_combat_tracker(){
 	});
 	
 	next=$("<button>NEXT</button>");
+
 	next.click(function(){
-		var nextid="";
 		if($("#combat_area tr").length==0)
 			return;
-		
+
 		current=$("#combat_area tr[data-current=1]");
 		if(current.length==0){
 			console.log('nessuno selezionato');
 			$("#combat_area tr").first().attr('data-current','1');
-			$("#combat_area tr").first().css('background','lightgreen');
 		}
 		else{
 			current.removeAttr('data-current');
-			current.css('background','');
 			next=current.next();
 			if(next.length==0){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			next.css('background','lightgreen');
 		}
 		ct_persist();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
-
-		
 	});
 	
 	roll=$("<button>ROLLINIT</button>");

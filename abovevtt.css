@@ -15,7 +15,7 @@ body > button,
 .monster_frame > button,
 .stp-btn,
 .sidebar__controls button {
-    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
     height: 22px;
     margin: 0 2px;
@@ -130,6 +130,10 @@ div#scene_selector,
 
 #combat_area button {
     padding: 2px 5px;
+}
+
+#combat_area tr[data-current] {
+    background-color: lightgreen;
 }
 
 #combat_area td:last-of-type {
@@ -283,7 +287,7 @@ div#scene_properties form > div {
 }
 
 .dead:after {
-    -webkit-transform: rotate(45deg);    
+    -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
 }
 
@@ -308,6 +312,7 @@ div#scene_properties form > div {
     margin-top: 50px;
     margin-bottom: 50px;
     width: 100%;
+    padding: .5rem;
 }
 
 #campaign_banner h3 {
