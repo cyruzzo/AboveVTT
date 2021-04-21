@@ -609,7 +609,9 @@ function open_player_sheet(sheet_url) {
 				ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
 				pp: pp.html(),
 				conditions: conditions,
-				abilities
+				abilities,
+				walking: `${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__number").text()}${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__label").text()}`,
+				inspiration: $(event.target).contents().find('.ct-inspiration__status--active').length
 			};
 
 			if (!window.DM) {
@@ -623,7 +625,7 @@ function open_player_sheet(sheet_url) {
 		};
 
 		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
-		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions", function() {
+		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,.ct-inspiration__status", function() {
 			if (window.WAITING_FOR_SYNCHP)
 				return;
 			else {

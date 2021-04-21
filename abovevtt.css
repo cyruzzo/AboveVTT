@@ -367,6 +367,16 @@ div#scene_properties form > div {
     justify-content: space-between;
 }
 
+.player-attribute {
+    display: flex;
+    align-items: center;
+}
+
+.player-attribute > img {
+    width: 16px;
+    margin-right: 10px;
+}
+
 .player-no-attributes {
     display: flex;
     justify-content: center;
@@ -384,9 +394,37 @@ div#scene_properties form > div {
     justify-content: space-evenly;
     margin: 10px 0;
 }
+.player-token {
+    position: relative;
+    border-radius: 50%;
+    height: 70px;
+}
 
 .player-token img {
     border-radius: 50%;
+}
+
+.player-token > div {
+    font-size: 10px;
+}
+
+.player-token-hp {
+    background: #FF7777;
+    position: absolute;
+    top: 56px;
+    left: 1px;
+    padding: 0 3px;
+}
+
+.player-token-ac {
+    position: absolute;
+    top: 54px;
+    border: 1px solid black;
+    background: white;
+    border-radius: 50%;
+    width: 16px;
+    text-align: center;
+    left: 51px;
 }
 
 .ability_value {

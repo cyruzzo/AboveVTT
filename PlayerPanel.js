@@ -55,7 +55,7 @@ function update_pclist() {
 		if (pc.sheet in window.PLAYER_STATS) {
 			playerData = window.PLAYER_STATS[pc.sheet];
 		}
-
+		
 		newPlayerTemplate = `
 			<div class="player-card">
 				<div class="player-card-header">
@@ -73,28 +73,43 @@ function update_pclist() {
 					</div>
 				</div>
 				<div class="player-card-content">
-					<div class="player-token">
+					<div class="player-token" style="box-shadow: ${
+						playerData ? `${token_health_aura(
+							Math.round((playerData.hp / playerData.max_hp) * 100)
+						)} 0px 0px 11px 3px` : 'none'
+					};">
 						<img width="70" height="70" src="${pc.image}" style="border: 2px solid ${color}" />
+						${
+							playerData ? `
+								<div class="player-token-hp">${playerData.hp} / ${playerData.max_hp}</div>
+								<div class="player-token-ac">${playerData.ac}</div>
+							` : ''
+						}
 					</div>
 					${
 						playerData ? `
 							<div class="player-info">
 								<div class="player-attributes">
 									<div class="player-attribute">
-										<b>HP:</b> ${playerData.hp}
+										<img src="${window.EXTENSION_PATH + "assets/eye.png"}" title="Passive Perception" />
+										<span>${playerData.pp}</span>
 									</div>
 									<div class="player-attribute">
-										<b>AC:</b> ${playerData.ac}
+									<img src="${window.EXTENSION_PATH + "assets/walking.png"}" title="Walking Speed" />
+									<span>${playerData.walking}</span>
 									</div>
 									<div class="player-attribute">
-										<b>PP:</b> ${playerData.pp}
+										<img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration" />
+										<span>${playerData.inspiration ? 'Yes' : 'No'}</span>
 									</div>
 								</div>
 								<div class="player-conditions">
 									<div class="player-card-title"><b>Conditions:</b></div>
 									<div>
 										${
-											playerData.conditions.map(c => c).join(', ')
+											playerData.conditions.map(c => `<span title="${
+												CONDITIONS[c] ? CONDITIONS[c].join(`\n`) : CONDITIONS.Exhaustion.join(`\n`)
+											}">${c}</span>`).join(', ')
 										}
 									</div>
 								</div>

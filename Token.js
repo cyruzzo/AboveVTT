@@ -177,7 +177,7 @@ class Token {
 				}
 
 				old.css('box-shadow',
-					`${this.token_health_aura(
+					`${token_health_aura(
 						Math.round((this.options.hp / this.options.max_hp) * 100)
 					)} 0px 0px 7px 7px`
 				);
@@ -290,42 +290,6 @@ class Token {
 		ac.css("font-size", fs);
 		ac.css("text-align", "center");
 		return ac;
-	}
-
-	token_health_aura(hpPercentage) {
-		//PERC TO RGB------------
-		const percentToHEX = function (percent) {
-			var HEX;
-			if (percent > 100) HEX = "#0000FF";
-			else {
-				if (percent === 100) percent = 99;
-				var r, g, b = 0;
-				if (percent < 50) {
-					g = Math.floor(255 * (percent / 50));
-					r = 255;
-				}
-				else {
-					g = 255;
-					r = Math.floor(255 * ((50 - percent % 50) / 50));
-				}
-				HEX = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-			}
-			return HEX;
-		}
-		//HEX TO RGB------------
-		const hexToRGB = function (hex) {
-			// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-			var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-			hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-				return r + r + g + g + b + b;
-			});
-
-			const pHex = (n) => parseInt(n, 16);
-
-			var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-			return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 80%)` : null;
-		}
-		return hexToRGB(percentToHEX(hpPercentage));
 	}
 
 
@@ -456,7 +420,7 @@ class Token {
 				}
 
 				old.css('box-shadow',
-					`${this.token_health_aura(
+					`${token_health_aura(
 						Math.round((pData.hp / pData.max_hp) * 100)
 					)} 0px 0px 7px 7px`
 				);
@@ -536,7 +500,7 @@ class Token {
 				}
 
 				tok.css('box-shadow',
-					`${this.token_health_aura(
+					`${token_health_aura(
 						Math.round((pData.hp / pData.max_hp) * 100)
 					)} 0px 0px 7px 7px`
 				);
@@ -1078,4 +1042,40 @@ function deselect_all_tokens() {
 			curr.place();
 		}
 	}
+}
+
+function token_health_aura(hpPercentage) {
+	//PERC TO RGB------------
+	const percentToHEX = function (percent) {
+		var HEX;
+		if (percent > 100) HEX = "#0000FF";
+		else {
+			if (percent === 100) percent = 99;
+			var r, g, b = 0;
+			if (percent < 50) {
+				g = Math.floor(255 * (percent / 50));
+				r = 255;
+			}
+			else {
+				g = 255;
+				r = Math.floor(255 * ((50 - percent % 50) / 50));
+			}
+			HEX = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+		}
+		return HEX;
+	}
+	//HEX TO RGB------------
+	const hexToRGB = function (hex) {
+		// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+		var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+		hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+			return r + r + g + g + b + b;
+		});
+
+		const pHex = (n) => parseInt(n, 16);
+
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 80%)` : null;
+	}
+	return hexToRGB(percentToHEX(hpPercentage));
 }
