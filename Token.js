@@ -791,7 +791,7 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.color = $(e.target).attr('data-color');
 	}
 
-	if (tokenIndex && tokenTotal) {
+	if (tokenIndex !== null && tokenTotal !== null) {
 		options.left = (centerX + (((options.size || 68.33) * 5) / 2) * Math.cos(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
 		options.top = (centerY + (((options.size || 68.33) * 5) / 2) * Math.sin(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
 	}
