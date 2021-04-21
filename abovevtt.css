@@ -389,11 +389,32 @@ div#scene_properties form > div {
     padding-left: 15px;
 }
 
+.player-see-more {
+    text-align: center;
+}
+
+.player-see-more img {
+    cursor: pointer;
+    width: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.player-see-more img.reverse {
+    transform: rotate(180deg);
+}
+
 .player-card-footer {
     display: flex;
     justify-content: space-evenly;
-    margin: 10px 0;
+    overflow: hidden;
+    max-height: 0px;
+    transition: all 0.5s ease-in-out;
 }
+
+.player-card-footer.show {
+    max-height: 80px;
+}
+
 .player-token {
     position: relative;
     border-radius: 50%;
@@ -436,6 +457,7 @@ div#scene_properties form > div {
     position: relative;
     border-radius: 15px 25px 125px 25px/15px 225px 15px 255px;
     height: 60px;
+    margin: 10px 0;
 }
   
 .ability_name {

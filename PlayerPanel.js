@@ -55,7 +55,7 @@ function update_pclist() {
 		if (pc.sheet in window.PLAYER_STATS) {
 			playerData = window.PLAYER_STATS[pc.sheet];
 		}
-		
+
 		newPlayerTemplate = `
 			<div class="player-card">
 				<div class="player-card-header">
@@ -108,7 +108,7 @@ function update_pclist() {
 									<div>
 										${
 											playerData.conditions.map(c => `<span title="${
-												CONDITIONS[c] ? CONDITIONS[c].join(`\n`) : CONDITIONS.Exhaustion.join(`\n`)
+												CONDITIONS[c] ? [c, ...CONDITIONS[c]].join(`\n`) : [c, ...CONDITIONS.Exhaustion].join(`\n`)
 											}">${c}</span>`).join(', ')
 										}
 									</div>
@@ -123,6 +123,9 @@ function update_pclist() {
 				</div>
 				${
 					playerData ? `
+						<div class="player-see-more">
+							<img src="${window.EXTENSION_PATH}assets/arrows_down.png" title="See More" />
+						</div>
 						<div class="player-card-footer">
 							${
 								playerData.abilities.map(a => {
@@ -149,6 +152,18 @@ function update_pclist() {
 
 	$(".open-sheet-btn").on("click", function () {
 		open_player_sheet($(this).attr('data-target'));
+	});
+
+	$(".player-see-more img").on("click", function(e) {
+		e.preventDefault();
+		const el = $(this).parent().next();
+		if (el.hasClass('show')) {
+			$(this).removeClass('reverse');
+			el.removeClass('show');
+		} else {
+			$(this).addClass('reverse');
+			el.addClass('show');
+		}
 	});
 
 }

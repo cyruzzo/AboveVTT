@@ -324,7 +324,7 @@ class Token {
 
 			if (name.startsWith("Exhaustion")) {
 				var newimg = $("<img style='padding:0;margin:0;' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/exhaustion.svg'/>");
-				newimg.attr('title', name);
+				newimg.attr('title', [name, ...CONDITIONS.Exhaustion].join(`\n`));
 				newimg.css('width', bar_width);
 				newimg.css('padding', '0px');
 				newimg.css('margin', '0px');
@@ -338,7 +338,7 @@ class Token {
 			else {
 				var fname = name.toLowerCase() + ".svg";
 				var newimg = $("<img style='padding:0;margin:0;' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/" + fname + "'/>");
-				newimg.attr('title', name);
+				newimg.attr('title', [name, ...CONDITIONS[name]].join('\n'));
 				newimg.css('width', bar_width);
 				newimg.css('padding', '0px');
 				newimg.css('margin', '0px');
