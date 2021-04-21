@@ -1312,7 +1312,7 @@ $(function() {
 			console.log('user canceled');
 		}
 	});
-
+	/* Will consider readding later
 	var campaign_banner=$("<div id='campaign_banner'></div>")
 	campaign_banner.append("<h4>Do you want to play on this campaign with <img width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>?</h4>");
 	campaign_banner.append("DM, press <b>JOIN ABOVEVTT AS DM</b> at the top<br>");
@@ -1324,6 +1324,6 @@ $(function() {
 	
 
 	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);
-
+	*/
 });
 
