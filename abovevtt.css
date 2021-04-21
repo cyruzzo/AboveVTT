@@ -310,6 +310,10 @@ div#scene_properties form > div {
     padding: .5rem;
 }
 
+#campaign_banner a{
+	color: #1b9af0;
+}
+
 #patreons {
     font-size: 10px;
 }
