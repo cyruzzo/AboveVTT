@@ -281,7 +281,7 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled.");
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		window.ScenesHandler.scene.snap = "1";
 		window.ScenesHandler.scene.grid = "1";
