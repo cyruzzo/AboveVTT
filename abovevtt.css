@@ -15,7 +15,7 @@ body > button,
 .monster_frame > button,
 .stp-btn,
 .sidebar__controls button {
-    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
     height: 22px;
     margin: 0 2px;
@@ -283,7 +283,7 @@ div#scene_properties form > div {
 }
 
 .dead:after {
-    -webkit-transform: rotate(45deg);    
+    -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
 }
 
@@ -307,16 +307,7 @@ div#scene_properties form > div {
     border: 1px dashed #1b9af0;
     margin-top: 50px;
     margin-bottom: 50px;
-    width: 100%;
-}
-
-#campaign_banner h3 {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-#campaign_banner a {
-    color: #1b9af0;
+    padding: .5rem;
 }
 
 #patreons {
