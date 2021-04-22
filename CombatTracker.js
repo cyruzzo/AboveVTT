@@ -1,15 +1,16 @@
 
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
+	ct.css("height","20px"); // IMPORTANT
 	toggle=$("<button>COMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").hide();
-			$("#combat_tracker").css("height","20px");
+			$("#combat_tracker").css("height","20px"); // IMPORTANT
 		}
 		else{
 			$("#combat_tracker_inside").show();
-			$("#combat_tracker").css("height","450px");
+			$("#combat_tracker").css("height","450px"); // IMPORTANT
 		}
 	});
 	ct.append(toggle);
