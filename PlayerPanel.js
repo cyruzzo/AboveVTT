@@ -37,8 +37,8 @@ function update_pclist() {
 	const addPartyButtonContainer = $("<div class='add-party-container'></div>");
 	const addPartyButton = $("<button id='add-party'>ADD PARTY</button>");
 	addPartyButton.on('click', () => {
-		window.pcs.forEach(function (p, i) {
-			token_button({ target: $(`[data-name='${p.name}']`) }, i, window.pcs.length);
+		window.pcs.forEach(function (player, i) {
+			token_button({ target: $(`[data-set-token-id='${player.sheet}']`) }, i, window.pcs.length);
 		});
 	});
 	addPartyButtonContainer.append(addPartyButton);
@@ -56,7 +56,7 @@ function update_pclist() {
 			playerData = window.PLAYER_STATS[pc.sheet];
 		}
 
-		newPlayerTemplate = `
+		const newPlayerTemplate = `
 			<div class="player-card">
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
