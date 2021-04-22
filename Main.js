@@ -698,8 +698,8 @@ function open_player_sheet(sheet_url) {
 
 		const waitToSync = (timeElapsed = 0) => {
 			setTimeout(() => {
-				var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number");
-				if (hp_element.length > 0) {
+				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box");
+				if (ac_element.length > 0) {
 					synchp();
 				} else {
 					if (timeElapsed < 10000) {
