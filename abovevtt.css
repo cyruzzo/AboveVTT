@@ -137,6 +137,10 @@ div#scene_selector,
     padding: 2px 5px;
 }
 
+#combat_area tr[data-current] {
+    background-color: lightgreen;
+}
+
 #combat_area td:last-of-type {
     text-align: right;
 }
