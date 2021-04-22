@@ -130,7 +130,6 @@ div#scene_selector,
     height: 100%;
     margin: 10px 0;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
-    overflow: auto;
 }
 
 #combat_area button {
@@ -141,9 +140,13 @@ div#scene_selector,
     text-align: right;
 }
 
-#combat_tracker_inside > div {
-    position: absolute;
-    bottom: 0;
+#combat_tracker_inside .tracker-list {
+    height: calc(100% - 22px);
+    overflow: auto;
+}
+
+#combat_footer {
+    text-align: center;
 }
 
 #combat_footer button {

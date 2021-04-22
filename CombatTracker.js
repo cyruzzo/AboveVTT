@@ -18,7 +18,9 @@ function init_combat_tracker(){
 	ct.append(ct_inside);
 	
 	ct_area=$("<table id='combat_area'/>");
-	ct_inside.append(ct_area);
+	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
+	ct_list_wrapper.append(ct_area);
+	ct_inside.append(ct_list_wrapper);
 	
 	buttons=$("<div id='combat_footer'/>");
 	reorder=$("<button>REORDER</button>");
