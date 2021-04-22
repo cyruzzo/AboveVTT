@@ -696,8 +696,19 @@ function open_player_sheet(sheet_url) {
 
 		observer.observe(mutation_target, mutation_config);
 
-
-		setTimeout(synchp, 10000); // <- HACK...
+		const waitToSync = (timeElapsed = 0) => {
+			setTimeout(() => {
+				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box");
+				if (ac_element.length > 0) {
+					synchp();
+				} else {
+					if (timeElapsed < 10000) {
+						waitToSync(timeElapsed + 500);
+					}
+				}
+			}, 500);
+		};
+		waitToSync();
 		//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
 	});
 	$("#site").append(container);
