@@ -107,7 +107,7 @@ function update_pclist() {
 					}
 				</div>
 				${
-					playerData ? `
+					playerData && playerData.abilities ? `
 						<div class="player-card-footer">
 							${
 								playerData.abilities.map(a => {
