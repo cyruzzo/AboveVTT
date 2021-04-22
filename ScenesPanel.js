@@ -281,7 +281,7 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled.");
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		window.ScenesHandler.scene.snap = "1";
 		window.ScenesHandler.scene.grid = "1";
@@ -556,12 +556,11 @@ function edit_scene_dialog(scene_id) {
 						grid_5(false, false);
 					}
 					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button> <button id='grid_50'>50</button>");
+						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
 						$("#grid_5").click(function() { grid_5(); });
 						$("#grid_10").click(function() { grid_10(); });
 						$("#grid_15").click(function() { grid_15(); });
 						$("#grid_20").click(function() { grid_20(); });
-						$("#grid_50").click(function() { grid_50(); });
 						$("#grid_100").click(function() { grid_100(); });
 					}
 					else { // just creating a 5 foot grid
@@ -920,10 +919,12 @@ function fill_importer(scene_set, start) {
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
 
+	var ddb_extra_found=false;
 	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
 		let current_scene = scene_set[i];
 
 		if (current_scene.uuid in DDB_EXTRAS) {
+			ddb_extra_found=true;
 			for (prop in DDB_EXTRAS[current_scene.uuid]) {
 				current_scene[prop] = DDB_EXTRAS[current_scene.uuid][prop];
 			}
@@ -963,8 +964,8 @@ function fill_importer(scene_set, start) {
 			stats.append("<b style='background: lightblue; border 1px solid back; margin: 5px;' title='Has DM Map'>DM</b>");
 		}
 
-		if (scene_set[i].snap == "1") {
-			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-ALIGNED!</b>");
+		if ((scene_set[i].snap == "1") || ddb_extra_found) {
+			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-CONFIGURED!</b>");
 		}
 		entry.append(stats);
 
