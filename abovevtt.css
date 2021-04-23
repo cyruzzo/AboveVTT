@@ -283,6 +283,7 @@ div#scene_properties form > div {
     top: 0;
     bottom: 0;
     margin: auto;
+    transition: all 0.5s ease-in-out;
 }
 
 .dead:after {
