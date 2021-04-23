@@ -169,9 +169,13 @@ class Token {
 
 			// HEALTH AURA
 			if (this.options.max_hp > 0) {
-
 				if (this.options.max_hp > 0 && parseInt(this.options.hp) === 0) {
-					old.prepend(`<div class="dead" style="--size: ${parseInt(this.options.size) / 10}px;"></div>`);
+					const deadCross = old.find('.dead');
+					if (deadCross.length > 0) {
+						deadCross.attr("style", `--size: ${parseInt(this.options.size) / 10}px;`)
+					} else {
+						old.prepend(`<div class="dead" style="--size: ${parseInt(this.options.size) / 10}px;"></div>`);
+					}
 				} else {
 					old.find('.dead').remove();
 				}
@@ -184,11 +188,6 @@ class Token {
 			}
 		}
 
-
-
-
-
-		console.log(this.options);
 	}
 
 
@@ -445,12 +444,15 @@ class Token {
 			}
 
 			// HEALTH AURA / DEAD CROSS
-			console.log("AURAO - ", window.PLAYER_STATS[this.options.id] || this.options);
 			if (this.options.max_hp > 0) {
 				const pData = window.PLAYER_STATS[this.options.id] || this.options;
-
 				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
-					old.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+					const deadCross = old.find('.dead');
+					if (deadCross.length > 0) {
+						deadCross.attr("style", `--size: ${parseInt(pData.size) / 10}px;`)
+					} else {
+						old.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+					}
 				} else {
 					old.find('.dead').remove();
 				}
@@ -530,7 +532,12 @@ class Token {
 			if (this.options.max_hp > 0) {
 				const pData = window.PLAYER_STATS[this.options.id] || this.options;
 				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
-					tok.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+					const deadCross = tok.find('.dead');
+					if (deadCross.length > 0) {
+						deadCross.attr("style", `--size: ${parseInt(pData.size) / 10}px;`)
+					} else {
+						tok.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+					}
 				} else {
 					tok.find('.dead').remove();
 				}
