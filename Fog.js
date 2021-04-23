@@ -766,6 +766,7 @@ function setup_draw_buttons() {
 		if ($(this).hasClass('button-enabled')) {
 			stop_drawing();
 			$(".drawbutton").removeClass('button-enabled');
+			$("#fog_overlay").css("z-index", "20");
 
 			if (window.ALIGNING == true) {
 				window.ALIGNING = false;
@@ -780,6 +781,7 @@ function setup_draw_buttons() {
 
 
 		var target = $("#fog_overlay");
+		target.css("z-index", "50");
 
 		if ($(e.target).attr('id') == "measure-button") {
 			target = $("#VTT");
