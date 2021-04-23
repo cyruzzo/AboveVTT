@@ -425,11 +425,13 @@ function stop_drawing() {
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
 	target.off('mousemove', drawing_mousemove);
+	target.off('contextmenu', drawing_contextmenu);
 	var target = $("#VTT");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
 	target.off('mousemove', drawing_mousemove);
+	target.off('contextmenu', drawing_contextmenu);
 }
 
 function drawing_mousedown(e) {
