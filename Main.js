@@ -575,7 +575,7 @@ function open_player_sheet(sheet_url) {
 			}
 			else {
 				var current_hp = 0;
-				if (!window.DM && window.PLAYERDATA.max_hp > 0)
+				if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
 					max_hp = window.PLAYERDATA.max_hp;
 				else
 					max_hp = 0;

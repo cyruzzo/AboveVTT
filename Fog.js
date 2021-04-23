@@ -13,9 +13,7 @@ function check_token_visibility() {
 
 		var selector = "div[data-id='" + id + "']";
 		if (pixeldata[3] == 255) {
-			console.log(selector);
 			$(selector).hide();
-			console.log('HIDE ' + id);
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).show();
@@ -411,9 +409,8 @@ function redraw_drawings() {
 			drawPolygon(data[3], data[2].replace(')', ', 0.5)').replace('rgb', 'rgba'), false);
 		}
 		if (data[0] == "polygon" && data[1] == "border") {
-			ctx.lineWidth = "6";
 			ctx.strokeStyle = data[2];
-			drawPolygon(data[3], "rgba(0, 0, 0, 0)", false);
+			drawPolygon(data[3], "rgba(0, 0, 0, 0)", false, 6);
 			ctx.stroke();
 		}
 
@@ -599,6 +596,7 @@ function drawing_mousemove(e) {
 				),
 				undefined,
 				!isNaN(e.data.type),
+				undefined,
 				mousex,
 				mousey
 			);
@@ -838,6 +836,7 @@ function drawing_contextmenu(e) {
 			),
 			undefined,
 			!isNaN(e.data.type),
+			undefined,
 			(e.pageX - 200) * (1.0 / window.ZOOM),
 			(e.pageY - 200) * (1.0 / window.ZOOM)
 		);
@@ -911,6 +910,7 @@ function drawPolygon (
 	points,
 	bgColor = 'rgba(255,0,0,0.6)',
 	fog = true,
+	lineWidth = 0,
 	mouseX = null,
 	mouseY = null
 ) {
@@ -920,12 +920,14 @@ function drawPolygon (
 	ctx.fillStyle = bgColor;
 	ctx.save();
 	ctx.beginPath();
-	ctx.moveTo(points[0].x, points[0].y);
+	ctx.lineWidth = lineWidth;
 
 	if (points.length < 2) {
 		ctx.strokeStyle = bgColor;
 		ctx.lineWidth = 1;
 	}
+
+	ctx.moveTo(points[0].x, points[0].y);
 
 	points.forEach((vertice) => {
 		ctx.lineTo(vertice.x, vertice.y);
@@ -970,7 +972,11 @@ function savePolygon(e) {
 	redraw_canvas();
 	redraw_drawings();
 	window.ScenesHandler.persist();
-	window.MB.sendMessage('custom/myVTT/drawing', data);
+	window.MB.sendMessage(
+		isNaN(e.data.type) ?
+			'custom/myVTT/drawing' : 'custom/myVTT/reveal',
+		data
+	);
 	window.BEGIN_MOUSEX = [];
 	window.BEGIN_MOUSEY = [];
 }
