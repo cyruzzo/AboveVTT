@@ -868,7 +868,11 @@ function setup_draw_buttons() {
 
 
 		var target = $("#fog_overlay");
-		target.css("z-index", "50");
+		if (!e.currentTarget.id || (e.currentTarget.id !== "measure-button" && e.currentTarget.id !== "select-button")) {
+			target.css("z-index", "50");
+		} else {
+			target.css("z-index", "20");
+		}
 
 		if ($(e.target).attr('id') == "measure-button") {
 			target = $("#VTT");
