@@ -249,7 +249,10 @@ div#scene_properties form > div {
 }
 
 #scene_selector {
-    z-index: 1000;
+    z-index: 9999;
+    width: 800px;
+    border: solid black 2px;
+    overflow: scroll;
 }
 
 .stp-btn {

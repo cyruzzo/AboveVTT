@@ -722,11 +722,6 @@ function init_scene_selector() {
 	ss.css('height', 0);
 	ss.css('top', '0px');
 	ss.css('left', '250px');
-	ss.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
-	ss.css('width', '800px');
-	ss.css('border', 'solid black 2px');
-	ss.css('z-index', '9999');
-	ss.css('overflow', 'hidden');
 
 
 	addblock = $("<div style='float:left;overflow: hidden;display:block;'/>");
@@ -763,7 +758,7 @@ function init_scene_selector() {
 	let toggle = $("<button id='scene_selector_toggle'>SCENES</button>");
 	toggle.css('position', 'fixed');
 	toggle.css('width', '75px');
-	toggle.css('top', '5px');
+	toggle.css('top', '5px'); // IMPORTANT
 	toggle.css('left', '325px');
 	toggle.css('z-index', '9999')
 
@@ -775,6 +770,7 @@ function init_scene_selector() {
 			ss.animate({
 				height: '200px'
 			}, 500);
+			ss.css("overflow","auto");
 			refresh_scenes();
 		}
 		else {
@@ -785,9 +781,6 @@ function init_scene_selector() {
 				height: '0px'
 			}, 500);
 		}
-
-
-
 	});
 	$(window.document.body).append(ss);
 	$(window.document.body).append(toggle);
