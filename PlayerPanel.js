@@ -122,7 +122,7 @@ function update_pclist() {
 					}
 				</div>
 				${
-					playerData ? `
+					playerData && playerData.abilities ? `
 						<div class="player-see-more">
 							<img src="${window.EXTENSION_PATH}assets/arrows_down.png" title="See More" />
 						</div>

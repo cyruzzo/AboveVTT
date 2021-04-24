@@ -1,3 +1,25 @@
+
+function consider_upscaling(target){
+		if(target.hpps < 60 && target.hpps > 25){
+			target.scale_factor=2;
+			target.hpps *= 2;
+			target.vpps *= 2;
+			target.offsetx*=2;
+			target.offsety*=2;
+		}
+		else if(target.hpps <=25){
+			target.scale_factor=4;
+			target.hpps *= 4;
+			target.vpps *= 4;
+			target.offsetx*=4;
+			target.offsety*=4;
+		}
+		else{
+			target.scale_factor=1;
+		}
+}
+	
+
 function preset_importer(target, key) {
 	target.empty();
 	let sel = $("<select/>");
@@ -115,7 +137,8 @@ function edit_scene_dialog(scene_id) {
 	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Show Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Foot per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a sudbdivion (1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10ft</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
 	manual.hide();
 
 	manual.find("input").each(function() {
@@ -158,6 +181,7 @@ function edit_scene_dialog(scene_id) {
 	});
 
 
+	
 
 
 	let grid_5 = function(enable_grid = false, enable_snap = true) {
@@ -180,6 +204,8 @@ function edit_scene_dialog(scene_id) {
 
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.grid_subdivided = "0";
+		consider_upscaling(window.ScenesHandler.scene);
+		
 		window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
@@ -203,7 +229,9 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.hpps /= 2;
 			window.ScenesHandler.scene.vpps /= 2;
-
+			
+			consider_upscaling(window.ScenesHandler.scene);
+			
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -219,6 +247,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.grid_subdivided = "0";
 			window.ScenesHandler.scene.grid = "0";
 			window.ScenesHandler.scene.fpsq = "10";
+			consider_upscaling(window.ScenesHandler.scene);
 			window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
@@ -228,6 +257,44 @@ function edit_scene_dialog(scene_id) {
 		});
 	}
 
+	let grid_15 = function() {
+		window.WIZARDING = false;
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		window.ScenesHandler.scene.grid_subdivided = "0";
+		window.ScenesHandler.scene.snap = "1";
+		window.ScenesHandler.scene.grid = "0";
+		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.hpps /= 3;
+		window.ScenesHandler.scene.vpps /= 3;
+		consider_upscaling(window.ScenesHandler.scene);
+		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+			$("#wizard_popup").remove();
+		});
+		window.ScenesHandler.persist();
+		window.ScenesHandler.reload();
+	}
+
+
+	let grid_20 = function() {
+		window.WIZARDING = false;
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled.");
+		window.ScenesHandler.scene.grid_subdivided = "0";
+		window.ScenesHandler.scene.snap = "1";
+		window.ScenesHandler.scene.grid = "1";
+		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.hpps /= 4;
+		window.ScenesHandler.scene.vpps /= 4;
+		consider_upscaling(window.ScenesHandler.scene);
+		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+			$("#wizard_popup").remove();
+		});
+		window.ScenesHandler.persist();
+		window.ScenesHandler.reload();
+	}
 
 	let align_grid = function(square = false, just_rescaling = true) {
 
@@ -242,6 +309,7 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA.grid = "0";
 
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
+			window.CURRENT_SCENE_DATA.scale_factor=1;
 			var aligner1 = $("<canvas id='aligner1'/>");
 			aligner1.width(59);
 			aligner1.height(59);
@@ -488,11 +556,14 @@ function edit_scene_dialog(scene_id) {
 						grid_5(false, false);
 					}
 					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> or <button id='grid_10'>10</button>");
+						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
 						$("#grid_5").click(function() { grid_5(); });
 						$("#grid_10").click(function() { grid_10(); });
+						$("#grid_15").click(function() { grid_15(); });
+						$("#grid_20").click(function() { grid_20(); });
+						$("#grid_100").click(function() { grid_100(); });
 					}
-					else {
+					else { // just creating a 5 foot grid
 						grid_5(true);
 					}
 
@@ -509,8 +580,7 @@ function edit_scene_dialog(scene_id) {
 				scene[n] = $(this).val();
 			});
 
-
-			//scene.upscaled="1"; // UPSCALE THIS!!!
+			scene.scale_factor=1;
 
 			window.ScenesHandler.persist();
 			window.ScenesHandler.switch_scene(scene_id);
@@ -520,8 +590,6 @@ function edit_scene_dialog(scene_id) {
 			$("#scene_selector").removeAttr("disabled");
 			$("#scene_selector_toggle").click();
 			$("#scene_selector_toggle").hide();
-
-
 
 
 			prewiz = $("<table id='prewiz'/>");
@@ -851,10 +919,12 @@ function fill_importer(scene_set, start) {
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
 
+	var ddb_extra_found=false;
 	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
 		let current_scene = scene_set[i];
 
 		if (current_scene.uuid in DDB_EXTRAS) {
+			ddb_extra_found=true;
 			for (prop in DDB_EXTRAS[current_scene.uuid]) {
 				current_scene[prop] = DDB_EXTRAS[current_scene.uuid][prop];
 			}
@@ -894,8 +964,8 @@ function fill_importer(scene_set, start) {
 			stats.append("<b style='background: lightblue; border 1px solid back; margin: 5px;' title='Has DM Map'>DM</b>");
 		}
 
-		if (scene_set[i].snap == "1") {
-			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-ALIGNED!</b>");
+		if ((scene_set[i].snap == "1") || ddb_extra_found) {
+			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-CONFIGURED!</b>");
 		}
 		entry.append(stats);
 
@@ -932,6 +1002,8 @@ function fill_importer(scene_set, start) {
 				$("#scene_properties input[name='offsety']").val(scene.offsety);
 			if (typeof scene.grid_subdivided !== "undefined")
 				$("#scene_properties input[name='grid_subdivided']").val(scene.grid_subdivided);
+			if (typeof scene.scale_factor !== "undefined")
+				$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
 
 			$("#mega_importer").remove();
 		});

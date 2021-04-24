@@ -1,15 +1,16 @@
 
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
+	ct.css("height","20px"); // IMPORTANT
 	toggle=$("<button>COMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").hide();
-			$("#combat_tracker").css("height","20px");
+			$("#combat_tracker").css("height","20px"); // IMPORTANT
 		}
 		else{
 			$("#combat_tracker_inside").show();
-			$("#combat_tracker").css("height","450px");
+			$("#combat_tracker").css("height","450px"); // IMPORTANT
 		}
 	});
 	ct.append(toggle);
@@ -18,7 +19,9 @@ function init_combat_tracker(){
 	ct.append(ct_inside);
 	
 	ct_area=$("<table id='combat_area'/>");
-	ct_inside.append(ct_area);
+	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
+	ct_list_wrapper.append(ct_area);
+	ct_inside.append(ct_list_wrapper);
 	
 	buttons=$("<div id='combat_footer'/>");
 	reorder=$("<button>REORDER</button>");
@@ -32,15 +35,13 @@ function init_combat_tracker(){
 	
 	next=$("<button>NEXT</button>");
 	next.click(function(){
-		var nextid="";
 		if($("#combat_area tr").length==0)
 			return;
-		
+
 		current=$("#combat_area tr[data-current=1]");
 		if(current.length==0){
 			console.log('nessuno selezionato');
 			$("#combat_area tr").first().attr('data-current','1');
-			$("#combat_area tr").first().css('background','lightgreen');
 		}
 		else{
 			current.removeAttr('data-current');
@@ -50,12 +51,9 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			next.css('background','lightgreen');
 		}
 		ct_persist();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
-
-		
 	});
 	
 	roll=$("<button>ROLLINIT</button>");

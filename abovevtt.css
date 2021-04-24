@@ -17,7 +17,7 @@ body > button,
 .player-actions button,
 #add-party,
 .sidebar__controls button {
-    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
     height: 22px;
     margin: 0 2px;
@@ -130,20 +130,27 @@ div#scene_selector,
     height: 100%;
     margin: 10px 0;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
-    overflow: auto;
 }
 
 #combat_area button {
     padding: 2px 5px;
 }
 
+#combat_area tr[data-current] {
+    background-color: lightgreen;
+}
+
 #combat_area td:last-of-type {
     text-align: right;
 }
 
-#combat_tracker_inside > div {
-    position: absolute;
-    bottom: 0;
+#combat_tracker_inside .tracker-list {
+    height: calc(100% - 22px);
+    overflow: auto;
+}
+
+#combat_footer {
+    text-align: center;
 }
 
 #combat_footer button {
@@ -280,10 +287,11 @@ div#scene_properties form > div {
     top: 0;
     bottom: 0;
     margin: auto;
+    transition: all 0.5s ease-in-out;
 }
 
 .dead:after {
-    -webkit-transform: rotate(45deg);    
+    -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
 }
 
@@ -307,16 +315,11 @@ div#scene_properties form > div {
     border: 1px dashed #1b9af0;
     margin-top: 50px;
     margin-bottom: 50px;
-    width: 100%;
+    padding: .5rem;
 }
 
-#campaign_banner h3 {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-#campaign_banner a {
-    color: #1b9af0;
+#campaign_banner a{
+	color: #1b9af0;
 }
 
 #patreons {
