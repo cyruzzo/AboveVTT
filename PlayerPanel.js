@@ -37,8 +37,8 @@ function update_pclist() {
 	const addPartyButtonContainer = $("<div class='add-party-container'></div>");
 	const addPartyButton = $("<button id='add-party'>ADD PARTY</button>");
 	addPartyButton.on('click', () => {
-		window.pcs.forEach(function (p, i) {
-			token_button({ target: $(`[data-name='${p.name}']`) }, i, window.pcs.length);
+		window.pcs.forEach(function (player, i) {
+			token_button({ target: $(`[data-set-token-id='${player.sheet}']`) }, i, window.pcs.length);
 		});
 	});
 	addPartyButtonContainer.append(addPartyButton);
@@ -56,7 +56,7 @@ function update_pclist() {
 			playerData = window.PLAYER_STATS[pc.sheet];
 		}
 
-		newPlayerTemplate = `
+		const newPlayerTemplate = `
 			<div class="player-card">
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
@@ -73,28 +73,43 @@ function update_pclist() {
 					</div>
 				</div>
 				<div class="player-card-content">
-					<div class="player-token">
+					<div class="player-token" style="box-shadow: ${
+						playerData ? `${token_health_aura(
+							Math.round((playerData.hp / playerData.max_hp) * 100)
+						)} 0px 0px 11px 3px` : 'none'
+					};">
 						<img width="70" height="70" src="${pc.image}" style="border: 2px solid ${color}" />
+						${
+							playerData ? `
+								<div class="player-token-hp">${playerData.hp} / ${playerData.max_hp}</div>
+								<div class="player-token-ac">${playerData.ac}</div>
+							` : ''
+						}
 					</div>
 					${
 						playerData ? `
 							<div class="player-info">
 								<div class="player-attributes">
 									<div class="player-attribute">
-										<b>HP:</b> ${playerData.hp}
+										<img src="${window.EXTENSION_PATH + "assets/eye.png"}" title="Passive Perception" />
+										<span>${playerData.pp}</span>
 									</div>
 									<div class="player-attribute">
-										<b>AC:</b> ${playerData.ac}
+									<img src="${window.EXTENSION_PATH + "assets/walking.png"}" title="Walking Speed" />
+									<span>${playerData.walking}</span>
 									</div>
 									<div class="player-attribute">
-										<b>PP:</b> ${playerData.pp}
+										<img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration" />
+										<span>${playerData.inspiration ? 'Yes' : 'No'}</span>
 									</div>
 								</div>
 								<div class="player-conditions">
 									<div class="player-card-title"><b>Conditions:</b></div>
 									<div>
 										${
-											playerData.conditions.map(c => c).join(', ')
+											playerData.conditions.map(c => `<span title="${
+												CONDITIONS[c] ? [c, ...CONDITIONS[c]].join(`\n`) : [c, ...CONDITIONS.Exhaustion].join(`\n`)
+											}">${c}</span>`).join(', ')
 										}
 									</div>
 								</div>
@@ -108,6 +123,9 @@ function update_pclist() {
 				</div>
 				${
 					playerData && playerData.abilities ? `
+						<div class="player-see-more">
+							<img src="${window.EXTENSION_PATH}assets/arrows_down.png" title="See More" />
+						</div>
 						<div class="player-card-footer">
 							${
 								playerData.abilities.map(a => {
@@ -134,6 +152,18 @@ function update_pclist() {
 
 	$(".open-sheet-btn").on("click", function () {
 		open_player_sheet($(this).attr('data-target'));
+	});
+
+	$(".player-see-more img").on("click", function(e) {
+		e.preventDefault();
+		const el = $(this).parent().next();
+		if (el.hasClass('show')) {
+			$(this).removeClass('reverse');
+			el.removeClass('show');
+		} else {
+			$(this).addClass('reverse');
+			el.addClass('show');
+		}
 	});
 
 }

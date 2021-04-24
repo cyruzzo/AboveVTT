@@ -370,6 +370,16 @@ div#scene_properties form > div {
     justify-content: space-between;
 }
 
+.player-attribute {
+    display: flex;
+    align-items: center;
+}
+
+.player-attribute > img {
+    width: 16px;
+    margin-right: 10px;
+}
+
 .player-no-attributes {
     display: flex;
     justify-content: center;
@@ -382,14 +392,63 @@ div#scene_properties form > div {
     padding-left: 15px;
 }
 
+.player-see-more {
+    text-align: center;
+}
+
+.player-see-more img {
+    cursor: pointer;
+    width: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.player-see-more img.reverse {
+    transform: rotate(180deg);
+}
+
 .player-card-footer {
     display: flex;
     justify-content: space-evenly;
-    margin: 10px 0;
+    overflow: hidden;
+    max-height: 0px;
+    transition: all 0.5s ease-in-out;
+}
+
+.player-card-footer.show {
+    max-height: 80px;
+}
+
+.player-token {
+    position: relative;
+    border-radius: 50%;
+    height: 70px;
 }
 
 .player-token img {
     border-radius: 50%;
+}
+
+.player-token > div {
+    font-size: 10px;
+}
+
+.player-token-hp {
+    background: #FF7777;
+    position: absolute;
+    top: 56px;
+    left: 1px;
+    padding: 0 3px;
+}
+
+.player-token-ac {
+    position: absolute;
+    top: 54px;
+    border: 1px solid black;
+    background: white;
+    border-radius: 50%;
+    width: 16px;
+    text-align: center;
+    left: 51px;
 }
 
 .ability_value {
@@ -401,6 +460,7 @@ div#scene_properties form > div {
     position: relative;
     border-radius: 15px 25px 125px 25px/15px 225px 15px 255px;
     height: 60px;
+    margin: 10px 0;
 }
   
 .ability_name {
