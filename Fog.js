@@ -290,7 +290,6 @@ function redraw_canvas() {
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				// clearPolygon(d[0]);
 				drawPolygon(d[0], fogStyle);
 			}
 		}
@@ -998,19 +997,22 @@ function clearPolygon (points) {
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
 	
+	/*
+	 * globalCompositeOperation does not accept alpha transparency,
+	 * need to set it to opaque color.
+	 */
+	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
 	ctx.moveTo(points[0].x, points[0].y);
-
 	points.forEach((vertice) => {
 		ctx.lineTo(vertice.x, vertice.y);
 	})
-
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
 	ctx.restore();
-	ctx.globalCompositeOperation = "source-over"
+	ctx.globalCompositeOperation = "source-over";
 }
 
 function drawClosingArea(pointX, pointY, fog = true) {
