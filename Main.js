@@ -575,7 +575,7 @@ function open_player_sheet(sheet_url) {
 			}
 			else {
 				var current_hp = 0;
-				if (!window.DM && window.PLAYERDATA.max_hp > 0)
+				if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
 					max_hp = window.PLAYERDATA.max_hp;
 				else
 					max_hp = 0;
@@ -1149,10 +1149,12 @@ function init_buttons() {
 	fog_menu.append("<div style='font-weight: bold;'>Reveal</div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=0>Square</button></div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc'  data-type=0>Circle</button></div>");
+	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type=0>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(clear_button));
 	fog_menu.append("<div style='font-weight: bold;'>Hide</div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=1>Square</button></div>");
 	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type=1>Circle</button></div>");
+	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type=1>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(hide_all_button));
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
@@ -1179,6 +1181,7 @@ function init_buttons() {
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type='draw'>Circle</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='cone' data-type='draw'>Cone</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='line' data-type='draw'>Line</button></div>");
+	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type='draw'>Polygon</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='eraser'>Erase</button></div>");
 	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 

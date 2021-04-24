@@ -1,3 +1,4 @@
+const POLYGON_CLOSE_DISTANCE = 15;
 
 function check_token_visibility() {
 	if (window.DM || $("#fog_overlay").is(":hidden"))
@@ -12,9 +13,7 @@ function check_token_visibility() {
 
 		var selector = "div[data-id='" + id + "']";
 		if (pixeldata[3] == 255) {
-			console.log(selector);
 			$(selector).hide();
-			console.log('HIDE ' + id);
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).show();
@@ -38,7 +37,6 @@ function circle2(a, b) {
 		[a.x + dx * x + dy * y, a.y + dy * x - dx * y]
 	];
 }
-
 
 function circle_intersection(x0, y0, r0, x1, y1, r1) {
 	var a, dx, dy, d, h, rx, ry;
@@ -94,10 +92,6 @@ function circle_intersection(x0, y0, r0, x1, y1, r1) {
 
 	return [xi, xi_prime, yi, yi_prime];
 }
-
-
-
-
 
 function reset_canvas() {
 	$('#fog_overlay').width($("#scene_map").width());
@@ -236,7 +230,6 @@ function redraw_canvas() {
 		return;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-	//ctx.globalCompositeOperation = 'destination-out';
 
 	if (window.DM)
 		fogStyle = "rgba(0, 0, 0, 0.5)";
@@ -271,6 +264,10 @@ function redraw_canvas() {
 				// reveal ALL!!!!!!!!!!
 				ctx.clearRect(0, 0, $("#scene_map").width(), $("#scene_map").height());
 			}
+			if (d[4] == 3) {
+				// REVEAL POLYGON
+				clearPolygon(d[0]);
+			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
@@ -291,10 +288,13 @@ function redraw_canvas() {
 
 
 			}
+			if (d[4] == 3) {
+				// HIDE POLYGON
+				drawPolygon(d[0], fogStyle);
+			}
 		}
 	}
 }
-
 
 function redraw_drawings() {
 	var canvas = document.getElementById("draw_overlay");
@@ -401,12 +401,20 @@ function redraw_drawings() {
 			ctx.stroke();
 		}
 
-
+		if (data[0] == "polygon" && data[1] == "filled") {
+			drawPolygon(data[3], data[2], false);
+		}
+		if (data[0] == "polygon" && data[1] == "transparent") {
+			drawPolygon(data[3], data[2].replace(')', ', 0.5)').replace('rgb', 'rgba'), false);
+		}
+		if (data[0] == "polygon" && data[1] == "border") {
+			ctx.strokeStyle = data[2];
+			drawPolygon(data[3], "rgba(0, 0, 0, 0)", false, 6);
+			ctx.stroke();
+		}
 
 	}
 }
-
-
 
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
@@ -416,11 +424,13 @@ function stop_drawing() {
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
 	target.off('mousemove', drawing_mousemove);
+	target.off('contextmenu', drawing_contextmenu);
 	var target = $("#VTT");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
 	target.off('mousemove', drawing_mousemove);
+	target.off('contextmenu', drawing_contextmenu);
 }
 
 function drawing_mousedown(e) {
@@ -430,23 +440,56 @@ function drawing_mousedown(e) {
 		return;
 	deselect_all_tokens();
 
-
-
-
-	window.BEGIN_MOUSEX = (e.pageX - 200) * (1.0 / window.ZOOM);
-	window.BEGIN_MOUSEY = (e.pageY - 200) * (1.0 / window.ZOOM);
-	window.MOUSEDOWN = true;
+	if (e.data.shape === "polygon") {
+		if (isNaN(e.data.type)) {
+			redraw_drawings();
+		} else {
+			redraw_canvas();
+		}
+		const pointX = (e.pageX - 200) * (1.0 / window.ZOOM);
+		const pointY = (e.pageY - 200) * (1.0 / window.ZOOM);
+		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
+			if (
+				isPointWithinDistance(
+					{ x: window.BEGIN_MOUSEX[0], y: window.BEGIN_MOUSEY[0] },
+					{ x: pointX , y: pointY}
+				)
+			) {
+				savePolygon(e);
+				return;
+			} else {
+				window.BEGIN_MOUSEX.push(pointX);
+				window.BEGIN_MOUSEY.push(pointY);
+			}
+		} else {
+			window.BEGIN_MOUSEX = [pointX];
+			window.BEGIN_MOUSEY = [pointY];
+		}
+		drawPolygon(
+			joinPointsArray(
+				window.BEGIN_MOUSEX,
+				window.BEGIN_MOUSEY
+			),
+			undefined,
+			!isNaN(e.data.type)
+		);
+		drawClosingArea(window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(e.data.type));
+	} else {
+		window.BEGIN_MOUSEX = (e.pageX - 200) * (1.0 / window.ZOOM);
+		window.BEGIN_MOUSEY = (e.pageY - 200) * (1.0 / window.ZOOM);
+		window.MOUSEDOWN = true;
+	}
 
 }
 
-
 function drawing_mousemove(e) {
 
+	var mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
+	var mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+	
 	if (window.MOUSEDOWN) {
 		var canvas = document.getElementById("fog_overlay");
 		var ctx = canvas.getContext("2d");
-		var mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
-		var mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
 		redraw_canvas();
@@ -537,8 +580,29 @@ function drawing_mousemove(e) {
 
 			ctx.restore();
 		}
+	} else {
+		if (e.data.shape === "polygon" &&
+			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
+			
+			if (isNaN(e.data.type)) {
+				redraw_drawings();
+			} else {
+				redraw_canvas();
+			}
 
-
+			drawPolygon(
+				joinPointsArray(
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY
+				),
+				undefined,
+				!isNaN(e.data.type),
+				undefined,
+				mousex,
+				mousey
+			);
+			drawClosingArea(window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(e.data.type));
+		}
 	}
 }
 
@@ -755,9 +819,32 @@ function drawing_mouseup(e) {
 	}
 }
 
+function drawing_contextmenu(e) {
+	if (e.data.shape === "polygon") {
+		window.BEGIN_MOUSEX.pop();
+		window.BEGIN_MOUSEY.pop();
+
+		if (isNaN(e.data.type)) {
+			redraw_drawings();
+		} else {
+			redraw_canvas();
+		}
+
+		drawPolygon(
+			joinPointsArray(
+				window.BEGIN_MOUSEX,
+				window.BEGIN_MOUSEY
+			),
+			undefined,
+			!isNaN(e.data.type),
+			undefined,
+			(e.pageX - 200) * (1.0 / window.ZOOM),
+			(e.pageY - 200) * (1.0 / window.ZOOM)
+		);
+	}
+}
 
 function setup_draw_buttons() {
-
 
 	var canvas = document.getElementById('fog_overlay');
 	var ctx = canvas.getContext('2d');
@@ -818,6 +905,128 @@ function setup_draw_buttons() {
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup', data, drawing_mouseup);
 		target.on('mousemove', data, drawing_mousemove);
+		target.on('contextmenu', data, drawing_contextmenu);
 	})
 }
 
+function drawPolygon (
+	points,
+	bgColor = 'rgba(255,0,0,0.6)',
+	fog = true,
+	lineWidth = 0,
+	mouseX = null,
+	mouseY = null
+) {
+	var canvas = document.getElementById(fog ? "fog_overlay" : "draw_overlay");
+	var ctx = canvas.getContext("2d");
+
+	ctx.fillStyle = bgColor;
+	ctx.save();
+	ctx.beginPath();
+	ctx.lineWidth = lineWidth;
+
+	if (points.length < 2) {
+		ctx.strokeStyle = bgColor;
+		ctx.lineWidth = 1;
+	}
+
+	ctx.moveTo(points[0].x, points[0].y);
+
+	points.forEach((vertice) => {
+		ctx.lineTo(vertice.x, vertice.y);
+	})
+
+	if (mouseX !== null && mouseY !== null) {
+		ctx.lineTo(mouseX, mouseY);
+	}
+
+	ctx.closePath();
+	ctx.fill();
+	if (points.length < 2) {
+		ctx.stroke();
+	}
+}
+
+function savePolygon(e) {
+	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
+	let data;
+	if (isNaN(e.data.type)) {
+		data = [
+			'polygon',
+			$(".drawTypeSelected ").attr('data-value'),
+			$(".colorselected").css('background-color'),
+			polygonPoints,
+			null,
+			null,
+			null
+		];
+		window.DRAWINGS.push(data);
+	} else {
+		data = [
+			polygonPoints,
+			null,
+			null,
+			null,
+			3,
+			e.data.type
+		];
+		window.REVEALED.push(data);
+	}
+	redraw_canvas();
+	redraw_drawings();
+	window.ScenesHandler.persist();
+	window.MB.sendMessage(
+		isNaN(e.data.type) ?
+			'custom/myVTT/drawing' : 'custom/myVTT/reveal',
+		data
+	);
+	window.BEGIN_MOUSEX = [];
+	window.BEGIN_MOUSEY = [];
+}
+
+function joinPointsArray(pointsX, pointsY) {
+	return pointsX.map((pointX, i) => {
+		return { x: pointX, y: pointsY[i] };
+	});
+}
+
+function isPointWithinDistance(points1, points2) {
+	return Math.abs(points1.x - points2.x) <= POLYGON_CLOSE_DISTANCE
+			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
+}
+
+function clearPolygon (points) {
+	var canvas = document.getElementById("fog_overlay");
+	var ctx = canvas.getContext("2d");
+	
+	/*
+	 * globalCompositeOperation does not accept alpha transparency,
+	 * need to set it to opaque color.
+	 */
+	ctx.fillStyle = "#000";
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.beginPath();
+	ctx.moveTo(points[0].x, points[0].y);
+	points.forEach((vertice) => {
+		ctx.lineTo(vertice.x, vertice.y);
+	})
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+	ctx.restore();
+	ctx.globalCompositeOperation = "source-over";
+}
+
+function drawClosingArea(pointX, pointY, fog = true) {
+	var canvas = document.getElementById(fog ? "fog_overlay" : "draw_overlay");
+	var ctx = canvas.getContext("2d");
+	ctx.strokeStyle = "#00FFFF";
+	ctx.lineWidth = "2";
+	ctx.beginPath();
+	ctx.rect(
+		pointX - POLYGON_CLOSE_DISTANCE,
+		pointY - POLYGON_CLOSE_DISTANCE,
+		POLYGON_CLOSE_DISTANCE * 2,
+		POLYGON_CLOSE_DISTANCE * 2);
+	ctx.stroke();
+}
