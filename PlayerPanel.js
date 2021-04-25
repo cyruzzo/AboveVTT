@@ -94,14 +94,18 @@ function update_pclist() {
 										<img src="${window.EXTENSION_PATH + "assets/eye.png"}" title="Passive Perception" />
 										<span>${playerData.pp}</span>
 									</div>
-									<div class="player-attribute">
-									<img src="${window.EXTENSION_PATH + "assets/walking.png"}" title="Walking Speed" />
-									<span>${playerData.walking}</span>
-									</div>
-									<div class="player-attribute">
-										<img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration" />
-										<span>${playerData.inspiration ? 'Yes' : 'No'}</span>
-									</div>
+									${
+										playerData.walking ? `
+											<div class="player-attribute">
+												<img src="${window.EXTENSION_PATH + "assets/walking.png"}" title="Walking Speed" />
+												<span>${playerData.walking}</span>
+											</div>
+											<div class="player-attribute">
+												<img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration" />
+												<span>${playerData.inspiration ? 'Yes' : 'No'}</span>
+											</div>
+										` : ""
+									}
 								</div>
 								<div class="player-conditions">
 									<div class="player-card-title"><b>Conditions:</b></div>
