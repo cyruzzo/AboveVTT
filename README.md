@@ -28,3 +28,13 @@ Other considerations:
 - When you send me a pull request from one of your branches, don't add more features to that until I merge it (only bugfixes) 
 - Try to keep different features in separate branches, so I can import them individually
 - Be nice to other devs 
+
+# License
+
+Copyright (c) 2021 Daniele Martini
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3 of the License.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <[https://www.gnu.org/licenses/](https://www.gnu.org/licenses/)>.
