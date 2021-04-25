@@ -331,26 +331,26 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.41RC2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.41</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<p><b>WARNING!</b>This is still a developement version, but some brave adventurers are starting to play on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a></p>");
 	cont.append("<h4>Useful Links</h4>");
 	ul = $("<ul/>");
-
-	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>Youtube Channel (demo and in the near future, tutorials)</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://youtu.be/2GZ8q-hB7pg'>Youtube Tutorial</a></li>");
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></li>");
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></li>");
+	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></li>");
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);
-	cont.append("<br>Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
+	cont.append("Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
 	cont.append("<br>Contributors: <b>Stumpy, Palad1n, KuzKuz</b>");
 	cont.append("<h3>Current Patreon Supporters</h3>");
-	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. There won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
+	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
-	patreons = $("<div id='patreons' style='margin-top:10px;'/>");
+	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
 	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman"];
-	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott"];
+	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane"];
 	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel"];
 
 	l1div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;' >Masters of the Realms</div></div>");
