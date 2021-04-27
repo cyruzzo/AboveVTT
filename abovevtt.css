@@ -494,3 +494,40 @@ div#scene_properties form > div {
     padding: 10px;
     text-align: right;
 }
+
+/* Classes for main buttons on campaign page */
+.above-vtt-content-div {
+    display: inline-block;
+    margin-top: 15px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #1b9af0
+}
+
+.above-vtt-right-margin-5px {
+    margin-right:5px;
+}
+
+.above-vtt-logo {
+
+    display: inline-block;
+    margin-left:5px;
+    padding-top:15px;
+    padding-bottom:15px;
+}
+
+.above-vtt-campaignscreen-blue-button {
+    color:white;
+    background:#1b9af0;
+}
+
+.above-vtt-campaignscreen-black-button {
+    color:white;
+    background:black;
+}
+
+.above-vtt-campaignscreen-white-button {
+    cursor: pointer;
+    color:#1b9af0;
+    background:white;
+}
