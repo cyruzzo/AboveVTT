@@ -569,12 +569,12 @@ function drawing_mousemove(e) {
 			var textwidth = ctx.measureText(foots).width;
 
 			ctx.fillStyle = "white";
-			ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, textwidth, 30);
+			ctx.fillRect(mousex, mousey, textwidth, 30);
 
 			ctx.fillStyle = "black";
 			ctx.textBaseline = 'top';
 			//ctx.fillText(foots,(window.BEGIN_MOUSEX+mousex)/2,(window.BEGIN_MOUSEY+mousey)/2);
-			ctx.fillText(foots, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
+			ctx.fillText(foots, mousex, mousey);
 
 			ctx.fillStyle = '#f50';
 
