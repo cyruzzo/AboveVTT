@@ -1285,7 +1285,7 @@ $(function() {
 		is_dm=true;
 	}
 	
-	// SCB: Add a dummy DIV to force he AboutVTT DIV below the standard DDB buttons
+	// SCB: Add a dummy DIV to force the AboutVTT DIV below the standard DDB buttons
 	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<div style='clear:both'>"))
 
 	// SCB:Create a 'content DIV' for AboveVTT to add our controls to, so we can control styling better
@@ -1327,7 +1327,6 @@ $(function() {
 	});
 
 	delete_button = $("<a style='color:white;background:black;margin-right:5px' class='button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
-	//contentDiv.append(delete_button);
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
 			gameid = $("#message-broker-lib").attr("data-gameId");
