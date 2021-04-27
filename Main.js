@@ -1285,9 +1285,14 @@ $(function() {
 		is_dm=true;
 	}
 	
-	//var contentDiv = $(".ddb-campaigns-detail-header-secondary-sharing").appendTo()
+	// SCB: Add a dummy DIV to force he AboutVTT DIV below the standard DDB buttons
+	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<div style='clear:both'>"))
+
+	// SCB:Create a 'content DIV' for AboveVTT to add our controls to, so we can control styling better
 	var contentDiv = $("<div style='display: inline-block;margin-top:15px;border-style:solid;border-width:1px;border-color:#1b9af0' class='aboveVTTContentDiv'>").appendTo($(".ddb-campaigns-detail-header-secondary-sharing"));
-	contentDiv.append($("<img style='margin-left:5px;padding-top:15px;padding-bottom:15px;margin-right:5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
+	
+	// SCB: Append our logo
+	contentDiv.append($("<img style='display: inline-block;margin-left:5px;padding-top:15px;padding-bottom:15px;margin-right:5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
 	if(is_dm){
 		contentDiv.append($("<a style='color:white;background:#1b9af0;margin-right:5px' class='button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
@@ -1322,7 +1327,7 @@ $(function() {
 	});
 
 	delete_button = $("<a style='color:white;background:black;margin-right:5px' class='button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
-	contentDiv.append(delete_button);
+	//contentDiv.append(delete_button);
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
 			gameid = $("#message-broker-lib").attr("data-gameId");
@@ -1346,10 +1351,12 @@ $(function() {
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
 	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
-	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected");
+	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected<br><br>");
+	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
+	campaign_banner.append(delete_button);
 	campaign_banner.hide();
 	
-	contentDiv.append($("<a style='color:white;background:#1b9af0;margin-right:5px;' class='button instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
+	contentDiv.append($("<a style='cursor: pointer;color:#1b9af0;background:white;margin-right:5px;' class=' instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
 	
 	$(".instructions").click(function(){
 		if(campaign_banner.is(":visible"))
