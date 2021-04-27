@@ -464,6 +464,10 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
+			
+			if(old.find("img").attr("src")!=this.options.imgsrc && !this.options.hidden){
+				old.find("img").attr("src",this.options.imgsrc);
+			}
 
 
 
@@ -891,6 +895,7 @@ function token_inputs(opt) {
 	}
 
 
+	tok.options.imgsrc=data.imgsrc;
 
 	tok.place();
 	tok.sync();
@@ -1026,6 +1031,17 @@ function token_menu() {
 								}
 							},
 							sep2: '---------',
+							imgsrc:{
+								type: 'text',
+								name: 'IMG Url',
+								value: window.TOKEN_OBJECTS[id].options.imgsrc,
+								events: {
+									click: function(e) {
+										$(e.target).select();
+									}
+								}
+							},
+							sep3: '----------',
 							hide: { name: 'Hide From Players' },
 							show: { name: 'Show To Players' },
 							delete: { name: 'Delete Token' }
