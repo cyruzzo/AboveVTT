@@ -1285,8 +1285,12 @@ $(function() {
 		is_dm=true;
 	}
 	
+	//var contentDiv = $(".ddb-campaigns-detail-header-secondary-sharing").appendTo()
+	var contentDiv = $("<div style='display: inline-block;margin-top:15px;border-style:solid;border-width:1px;border-color:#1b9af0' class='aboveVTTContentDiv'>").appendTo($(".ddb-campaigns-detail-header-secondary-sharing"));
+	contentDiv.append($("<img style='margin-left:5px;padding-top:15px;padding-bottom:15px;margin-right:5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
+
 	if(is_dm){
-		$(".ddb-campaigns-detail-header-secondary-sharing").append($("<a style='color:white;background: #1b9af0;' class='joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>AboveVTT JOIN AS DM</a>"));
+		contentDiv.append($("<a style='color:white;background:#1b9af0;margin-right:5px' class='button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
 	}
 
 	$(".ddb-campaigns-character-card-footer-links").each(function() {
@@ -1301,7 +1305,7 @@ $(function() {
 		else
 			img = "https://www.dndbeyond.com/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
 
-		newlink = $("<a style='color:white;background: #1b9af0;' href='#' class='ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>");
+		newlink = $("<a style='color:white;background: #1b9af0;' href='#' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>");
 
 		newlink.click(function(e) {
 			e.preventDefault();
@@ -1317,8 +1321,8 @@ $(function() {
 		console.log('Sheet: ' + sheet + "img " + img);
 	});
 
-	delete_button = $("<a class='btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL AboveVTT Data</a>");
-	$(".ddb-campaigns-detail-header-secondary-sharing").append(delete_button);
+	delete_button = $("<a style='color:white;background:black;margin-right:5px' class='button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
+	contentDiv.append(delete_button);
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
 			gameid = $("#message-broker-lib").attr("data-gameId");
@@ -1334,18 +1338,18 @@ $(function() {
 	});
 	
 	var campaign_banner=$("<div id='campaign_banner'></div>")
-	campaign_banner.append("<h4><img alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'> basic instructions!</h4>");
-	campaign_banner.append("If you're the DM, press <b>JOIN ABOVEVTT AS DM</b> at the top.<br>");
-	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join<br><br>");
-	campaign_banner.append("Please check that you don't have other extensions for DndBeyond (ex. Beyond20) <b>Disable it</b> or you won't be able to roll dice.<br>");
-	campaign_banner.append("If you're looking for tutorials, take a look at: <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
+	campaign_banner.append("<h4><img style='margin-right:5px;' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
+	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
+	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>");
+	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (excluding Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
+	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
-	campaign_banner.append("Do you like what you see ? Support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
-	campaign_banner.append("(<b>advanced</b>) If you're not the DM on this DDB campaign and want to join as DM anyway <a class='joindm'> Click here</a>. Please note that <b>you won't be able to see any data of the other DM</b>. Don't press this if there's already another DM connected");
+	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
+	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
+	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected");
 	campaign_banner.hide();
 	
-	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<a style='color:white;background: #1b9af0;' class='instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>ABOVEVTT Instructions</a>"));
-	
+	contentDiv.append($("<a style='color:white;background:#1b9af0;margin-right:5px;' class='button instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
 	
 	$(".instructions").click(function(){
 		if(campaign_banner.is(":visible"))
@@ -1364,8 +1368,5 @@ $(function() {
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 			init_ui();
 		});
-	
-	
-	
 });
 
