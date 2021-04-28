@@ -78,7 +78,7 @@ function update_pclist() {
 							Math.round((playerData.hp / playerData.max_hp) * 100)
 						)} 0px 0px 11px 3px` : 'none'
 					};">
-						<img width="70" height="70" src="${pc.image}" style="border: 2px solid ${color}" />
+						<img width="70" height="70" src="${pc.image}" style="border: 3px solid ${color}" />
 						${
 							playerData ? `
 								<div class="player-token-hp">${playerData.hp} / ${playerData.max_hp}</div>
