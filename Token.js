@@ -412,7 +412,7 @@ class Token {
 			}
 
 			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
-			old.find("img").css("transfrom", "scale(" + scale + ")");
+			old.find("img").css("transform", "scale(" + scale + ")");
 
 			// HEALTH AURA / DEAD CROSS
 			if (this.options.max_hp > 0) {
