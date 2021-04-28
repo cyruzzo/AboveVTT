@@ -1,14 +1,9 @@
 
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
 
-const CUSTOM_CONDITIONS = ["Concentrated", "Bloodied", "Custom1", "Custom2"]
-
-const CUSTOM_CONDITIONS_ICONS = {
-	'Concentrated': "<div style='display:inline' title='Concentrated'>C</div>",
-	'Bloodied': "<div style='display:inline' title='Bloodied'>B</div>",
-	'Custom1': "<div style='display:inline' title='Custom 1'>1</div>",
-	'Custom2': "<div style='display:inline' title='Custom 2'>2</div>",
-}
+const CUSTOM_CONDITIONS = ["Concentration", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
+							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
+							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
 /*const TOKEN_COLORS=  [
 	"D1BBD7","882E72","5289C7","4EB265","CAEOAB","F6C141","E8601C","777777","AE76A3","1965BO","7BAFDE","90C987","F7F056","F1932D","DC050C",
@@ -24,16 +19,15 @@ const CUSTOM_CONDITIONS_ICONS = {
 // const TOKEN_COLORS = ["8DB6C7","","D1C6BF","CA9F92","","E3D9BO","B1C27A","B2E289","51COBF","59ADDO","","9FA3E3","099304","DB8DB2","F1C3DO"];
 
 
-const TOKEN_COLORS = [
-	"FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF",
-	"800000", "008000", "000080", "808000", "800080", "008080", "808080",
-	"C00000", "00C000", "0000C0", "C0C000", "C000C0", "00C0C0", "C0C0C0",
-	"400000", "004000", "000040", "404000", "400040", "004040", "404040",
-	"200000", "002000", "000020", "202000", "200020", "002020", "202020",
-	"600000", "006000", "000060", "606000", "600060", "006060", "606060",
-	"A00000", "00A000", "0000A0", "A0A000", "A000A0", "00A0A0", "A0A0A0",
-	"E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
-];
+const TOKEN_COLORS = ["1A6AFF", "FF7433", "FF4D4D", "FFD433", "884DFF", "86FF66", "EC8AFF", "44E0F2",
+					"000000", "F032E6", "911EB4", //END OF NEW COLORS
+					"800000", "008000", "000080", "808000", "800080", "008080", "808080", "C00000", "00C000", "0000C0",
+					"C0C000", "C000C0", "00C0C0", "C0C0C0", "400000", "004000", "000040",
+					"404000", "400040", "004040", "404040", "200000", "002000", "000020",
+					"202000", "200020", "002020", "202020", "600000", "006000", "000060",
+					"606000", "600060", "006060", "606060", "A00000", "00A000", "0000A0",
+					"A0A000", "A000A0", "00A0A0", "A0A0A0", "E00000", "00E000", "0000E0",
+					"E0E000", "E000E0", "00E0E0", "E0E0E0"];
 
 
 class Token {
@@ -167,6 +161,8 @@ class Token {
 			this.options.hp = old.find(".hp").val();
 			this.options.max_hp = old.find(".max_hp").val();
 
+			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+
 			// HEALTH AURA
 			if (this.options.max_hp > 0) {
 				if (this.options.max_hp > 0 && parseInt(this.options.hp) === 0) {
@@ -174,13 +170,13 @@ class Token {
 					if (deadCross.length > 0) {
 						deadCross.attr("style", `--size: ${parseInt(this.options.size) / 10}px;`)
 					} else {
-						old.prepend(`<div class="dead" style="--size: ${parseInt(this.options.size) / 10}px;"></div>`);
+						old.prepend(`<div class="dead" style="transform:scale(${scale});--size: ${parseInt(this.options.size) / 10}px;"></div>`);
 					}
 				} else {
 					old.find('.dead').remove();
 				}
 
-				old.css('box-shadow',
+				old.find(".Avatar_AvatarPortrait__2dP8u").css('box-shadow',
 					`${token_health_aura(
 						Math.round((this.options.hp / this.options.max_hp) * 100)
 					)} 0px 0px 7px 7px`
@@ -217,9 +213,8 @@ class Token {
 		var hpbar = $("<div class='hpbar'/>");
 		hpbar.css("position", 'absolute');
 		hpbar.css('height', bar_height);
-		hpbar.css('left', '0px');
+		hpbar.css('left', (Math.floor(this.options.size * 0.35) / 2));
 		hpbar.css('top', this.options.size - bar_height);
-		//hpbar.css('background','red');
 		hpbar.css('background', '#ff7777');
 		hpbar.width("max-width: 100%");
 
@@ -269,109 +264,119 @@ class Token {
 	}
 
 	build_ac() {
-		var bar_height = Math.max(6, Math.floor(this.options.size * 0.2)); // no less than 8px
-		var fs = Math.floor(bar_height / 1.4) + "px";
+		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
 		var ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");
-		ac.css('left', this.options.size - Math.floor(this.options.size * 0.3));
-		ac.css('width', bar_height);
-		ac.css('height', bar_height);
-
-		if (bar_height > 10) {
-			ac.css('border-radius', '50%');
-			ac.css('border', '1px solid black');
-		}
-		ac.css('background', 'lightyellow');
+		ac.css('right', "-1px");
+		ac.css('width', bar_height + "px");
+		ac.css('height', bar_height + "px");
 		ac.css('bottom', '0px');
-		ac.text(this.options.ac);
-		ac.css("height", bar_height);
-		ac.css('font-weight', 'bold');
-		ac.css("font-size", fs);
-		ac.css("text-align", "center");
+		ac.append(
+			$(`
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="ac_shield" x="0px" y="0px" viewBox="6.991001129150391 0 45.999996185302734 59.981998443603516" xml:space="preserve" height="${bar_height}px" width="${bar_height}px">
+				<g xmlns="http://www.w3.org/2000/svg" transform="translate(6 0)">
+					<path d="M51.991,7.982c-14.628,0-21.169-7.566-21.232-7.64c-0.38-0.456-1.156-0.456-1.536,0c-0.064,0.076-6.537,7.64-21.232,7.64   c-0.552,0-1,0.448-1,1v19.085c0,10.433,4.69,20.348,12.546,26.521c3.167,2.489,6.588,4.29,10.169,5.352   c0.093,0.028,0.189,0.042,0.285,0.042s0.191-0.014,0.285-0.042c3.581-1.063,7.002-2.863,10.169-5.352   c7.856-6.174,12.546-16.088,12.546-26.521V8.982C52.991,8.43,52.544,7.982,51.991,7.982z "></path>
+					<path d="M50.991,28.067   c0,9.824-4.404,19.151-11.782,24.949c-2.883,2.266-5.983,3.92-9.218,4.921c-3.235-1-6.335-2.655-9.218-4.921   C13.395,47.219,8.991,37.891,8.991,28.067V9.971c12.242-0.272,18.865-5.497,21-7.545c2.135,2.049,8.758,7.273,21,7.545V28.067z" style="fill:white;"></path>
+					<text style="font-size:34px;color:#000;" transform="translate(${this.options.ac > 9 ? 9 : 20},40)">${this.options.ac}</text>
+				</g>
+			</svg>
+
+			`)
+		);
 		return ac;
 	}
 
+	build_conditions(parent) {
 
-	build_conditions() {
+		let bar_width = Math.floor(this.options.size * 0.2);
+		const cond = $("<div class='conditions' style='padding:0;margin:0'/>");
+		const moreCond = $(`<div class='conditions' style='left:${bar_width}px;'/>`);
+		cond.css('left', "0");
 
-		var bar_width = Math.floor(this.options.size * 0.2);
-		var cond = $("<div class='conditions' style='padding:0;margin:0'/>");
-		cond.css("position", "absolute");
-		cond.css("top", "0px");
-		cond.css('height', this.options.size * 0.8);
-		cond.css('left', this.options.size - bar_width)
+		const symbolSize = Math.min(bar_width >= 22 ? bar_width : (this.options.size / 4), 45);
 
+		moreCond.css('left', this.options.size - symbolSize);
+		[cond, moreCond].forEach(cond_bar => {
+			cond_bar.width(symbolSize);
+			cond_bar.height(this.options.size - bar_width);
+		})
 
-		cond.width(bar_width);
+		const conditionsTotal = this.options.conditions.length + this.options.custom_conditions.length;
 
-		if (bar_width > 25)
-			bar_width = 25;
-
-		if ((this.options.conditions.length + this.options.custom_conditions.length) == 0) {
-			cond.hide();
-			return cond;
-		}
-
-		var maxheight = Math.round((this.options.size * 0.8) / (this.options.conditions.length + this.options.custom_conditions.length));
-
-		for (var i = 0; i < this.options.conditions.length; i++) {
-			var name = this.options.conditions[i];
-
-			/*if(maxheight>13)
-				maxheight=13;*/
-
-
-			if (name.startsWith("Exhaustion")) {
-				var newimg = $("<img style='padding:0;margin:0;' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/exhaustion.svg'/>");
-				newimg.attr('title', [name, ...CONDITIONS.Exhaustion].join(`\n`));
-				newimg.css('width', bar_width);
-				newimg.css('padding', '0px');
-				newimg.css('margin', '0px');
-				newimg.css("max-height", maxheight + "px");
-				newimg.css('background', "#" + TOKEN_COLORS[STANDARD_CONDITIONS.indexOf('Exhaustion')]);
-				newimg.css('border-radius', '50%');
-				newimg.css('display', 'inline-block');
-				newimg.css('float', 'left');
-				cond.append(newimg);
+		if (conditionsTotal > 0) {
+			let conditionCount = 0;
+			
+			for (let i = 0; i < this.options.conditions.length; i++) {
+				const conditionName = this.options.conditions[i];
+				const isExhaustion = conditionName.startsWith("Exhaustion");
+				const conditionSymbolName = isExhaustion ? 'exhaustion' : conditionName.toLowerCase();
+				const conditionContainer = $("<div class='dnd-condition condition-container' />");
+				const symbolImage = $("<img class='condition-img' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/" + conditionSymbolName + ".svg'/>");
+				const conditionDescription = isExhaustion ? CONDITIONS.Exhaustion : CONDITIONS[conditionName];
+				symbolImage.attr('title', [conditionName, ...conditionDescription].join(`\n`));
+				conditionContainer.css('width', symbolSize + "px");
+				conditionContainer.css("height", symbolSize + "px");
+				symbolImage.height(symbolSize + "px");
+				symbolImage.width(symbolSize + "px");
+				conditionContainer.append(symbolImage);
+				conditionContainer.dblclick(() => {
+					const data = {
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: `<div>${[conditionName, ...conditionDescription].map(line => `<p>${line}</p>`).join(``)}</div>`
+					};
+					window.MB.sendMessage('custom/myVTT/chat', data);
+					window.MB.handleChat(data);
+				});
+				if (conditionCount >= 3) {
+					moreCond.append(conditionContainer);
+				} else {
+					cond.append(conditionContainer);
+				}
+				conditionCount++;
 			}
-			else {
-				var fname = name.toLowerCase() + ".svg";
-				var newimg = $("<img style='padding:0;margin:0;' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/" + fname + "'/>");
-				newimg.attr('title', [name, ...CONDITIONS[name]].join('\n'));
-				newimg.css('width', bar_width);
-				newimg.css('padding', '0px');
-				newimg.css('margin', '0px');
-				newimg.css("max-height", maxheight + "px");
-				newimg.css('background', "#" + TOKEN_COLORS[STANDARD_CONDITIONS.indexOf(name)]);
-				newimg.css('border-radius', '50%');
-				newimg.css('display', 'inline-block');
-				newimg.css('float', 'left');
-				cond.append(newimg);
+
+			for (let i = 0; i < this.options.custom_conditions.length; i++) {
+				const conditionName = this.options.custom_conditions[i];
+				const conditionSymbolName = conditionName.replaceAll(' ','_').toLowerCase();
+				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
+				let symbolImage;
+				if (conditionName.startsWith('#')) {
+					symbolImage = $(`<img class='condition-img custom-condition' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style='background: ${conditionName}' />`);
+				} else {
+					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
+				}
+				symbolImage.attr('title', conditionName);
+				conditionContainer.css('width', symbolSize + "px");
+				conditionContainer.css("height", symbolSize + "px");
+				symbolImage.height(symbolSize + "px");
+				symbolImage.width(symbolSize + "px");
+				conditionContainer.append(symbolImage);
+				if (conditionCount >= 3) {
+					if (conditionSymbolName === "concentration") {
+						moreCond.prepend(conditionContainer);
+					} else {
+						moreCond.append(conditionContainer);
+					}
+				} else {
+					if (conditionSymbolName === "concentration") {
+						cond.prepend(conditionContainer);
+					} else {
+						cond.append(conditionContainer);
+					}
+				}
+				
+				conditionCount++;
 			}
 		}
 
-		for (var i = 0; i < this.options.custom_conditions.length; i++) {
-			var name = this.options.custom_conditions[i];
-			var newimg = $(CUSTOM_CONDITIONS_ICONS[name]);
-			newimg.attr('title', name);
-			newimg.css('width', bar_width);
-			newimg.css('padding', '0px');
-			newimg.css('margin', '0px');
-			newimg.css("max-height", maxheight + "px");
-			newimg.css('background', "#" + TOKEN_COLORS[CUSTOM_CONDITIONS.indexOf(name) + STANDARD_CONDITIONS.length]);
-			newimg.css('border-radius', '50%');
-			newimg.css('display', 'inline-block');
-			newimg.css('float', 'left');
-
-			cond.append(newimg);
+		if (parent) {
+			parent.find(".conditions").remove();
+			parent.append(cond);
+			parent.append(moreCond);
+		} else {
+			return [cond, moreCond];
 		}
-
-
-		if (cond.children().length == 0) {
-			cond.hide();
-			return cond;
-		}
-		return cond;
 	}
 
 
@@ -390,7 +395,6 @@ class Token {
 		if (old.length > 0) {
 			console.log("trovato!!");
 
-
 			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
 				old.animate(
 					{
@@ -407,21 +411,24 @@ class Token {
 				old.find(".ac").replaceWith(this.build_ac());
 			}
 
+			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			old.find("img").css("transfrom", "scale(" + scale + ")");
+
 			// HEALTH AURA / DEAD CROSS
 			if (this.options.max_hp > 0) {
 				const pData = window.PLAYER_STATS[this.options.id] || this.options;
 				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
 					const deadCross = old.find('.dead');
 					if (deadCross.length > 0) {
-						deadCross.attr("style", `--size: ${parseInt(pData.size) / 10}px;`)
+						deadCross.attr("style", `transform:scale(${scale});--size: ${parseInt(pData.size) / 10}px;`)
 					} else {
-						old.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+						old.prepend(`<div class="dead" style="transform:scale(${scale});--size: ${parseInt(pData.size) / 10}px;"></div>`);
 					}
 				} else {
 					old.find('.dead').remove();
 				}
 
-				old.css('box-shadow',
+				old.find(".Avatar_AvatarPortrait__2dP8u").css('box-shadow',
 					`${token_health_aura(
 						Math.round((pData.hp / pData.max_hp) * 100)
 					)} 0px 0px 7px 7px`
@@ -454,7 +461,7 @@ class Token {
 				old.show();
 			}
 
-			old.find(".conditions").replaceWith(this.build_conditions());
+			this.build_conditions(old);
 
 			if (this.selected) {
 				old.css("border", "2px solid white");
@@ -465,15 +472,13 @@ class Token {
 				old.removeClass("tokenselected");
 			}
 
-
-
-
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
 		else {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
-			var tokimg = $("<img class='Avatar_AvatarPortrait__2dP8u'/>"); // class to make them round
+			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			var tokimg = $("<img style='transform:scale(" + scale + ")' class='Avatar_AvatarPortrait__2dP8u'/>"); // class to make them round
 
 
 			var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
@@ -500,13 +505,13 @@ class Token {
 					if (deadCross.length > 0) {
 						deadCross.attr("style", `--size: ${parseInt(pData.size) / 10}px;`)
 					} else {
-						tok.prepend(`<div class="dead" style="--size: ${parseInt(pData.size) / 10}px;"></div>`);
+						tok.prepend(`<div class="dead" style="transform:scale(${scale});--size: ${parseInt(pData.size) / 10}px;"></div>`);
 					}
 				} else {
 					tok.find('.dead').remove();
 				}
 
-				tok.css('box-shadow',
+				tok.find(".Avatar_AvatarPortrait__2dP8u").css('box-shadow',
 					`${token_health_aura(
 						Math.round((pData.hp / pData.max_hp) * 100)
 					)} 0px 0px 7px 7px`
@@ -544,10 +549,9 @@ class Token {
 			}
 
 			// CONDITIONS
-
-			tok.append(this.build_conditions());
-
-
+			this.build_conditions().forEach(cond_bar => {
+				tok.append(cond_bar);
+			});
 
 
 			$("#tokens").append(tok);
@@ -672,7 +676,7 @@ class Token {
 
 
 			// 
-			tok.dblclick(function(e) {
+			tok.find(".Avatar_AvatarPortrait__2dP8u").dblclick(function(e) {
 				self.highlight();
 				var data = {
 					id: self.options.id
@@ -709,7 +713,7 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		imgsrc: imgsrc,
 		left: centerX + "px",
 		top: centerY + "px",
-		color: '#ff0000',
+		color: '#000000',
 		conditions: [],
 		hp: "",
 		max_hp: "",
@@ -954,6 +958,8 @@ function token_menu() {
 				}
 				else { // STANDARD SINGLE TOKEN MENU
 					cond_items = {};
+					custom_cond_items = {};
+					custom_reminders = {}
 					id = $(element).attr('data-id');
 					is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
@@ -968,12 +974,20 @@ function token_menu() {
 							cond_items[command].selected = true;
 						}
 					}
-					cond_items.sep1 = "-----";
+					// cond_items.sep1 = "-----";
 					for (var i = 0; i < CUSTOM_CONDITIONS.length; i++) {
 						command = "custom_" + CUSTOM_CONDITIONS[i];
-						cond_items[command] = { name: CUSTOM_CONDITIONS[i], type: "checkbox" }
+						if (CUSTOM_CONDITIONS[i].startsWith("#")) {
+							custom_cond_items[command] = {
+								name: `<div class="color-reminder" style="background:${CUSTOM_CONDITIONS[i]}">&nbsp;</div>`,
+								isHtmlName: true,
+								type: "checkbox"
+							};
+						} else {
+							custom_cond_items[command] = { name: CUSTOM_CONDITIONS[i], type: "checkbox" };
+						}
 						if (window.TOKEN_OBJECTS[id].options.custom_conditions.includes(CUSTOM_CONDITIONS[i])) {
-							cond_items[command].selected = true;
+							custom_cond_items[command].selected = true;
 						}
 					}
 
@@ -988,7 +1002,7 @@ function token_menu() {
 							sep0: "--------",
 							token_combat: { name: 'Add to Combat Tracker' },
 							token_size: {
-								name: "Set Token Size",
+								name: "Token Size",
 								items: {
 									token_medium: { name: 'Small or Medium' },
 									token_large: { name: 'Large' },
@@ -1001,6 +1015,10 @@ function token_menu() {
 							token_cond: {
 								name: "Conditions",
 								items: cond_items,
+							},
+							token_custom_cond: {
+								name: "Reminders",
+								items: custom_cond_items,
 							},
 							sep1: "-------",
 							hp: {
