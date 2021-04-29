@@ -27,6 +27,41 @@ function youtube_parser(url) {
 	return (match && match[7].length == 11) ? match[7] : false;
 }
 
+const MAX_ZOOM = 5
+const MIN_ZOOM = 0.1
+function changeZoom(newZoom, x, y) {
+	var zoomCenterX = x || $(window).width() / 2
+	var zoomCenterY = y || $(window).height() / 2
+	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
+	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
+	window.ZOOM = newZoom;
+	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + 200;
+	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
+
+	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
+
+	$(window).scrollLeft(pageX);
+	$(window).scrollTop(pageY);
+}
+
+function decreaseZoom() {
+	if (window.ZOOM > MIN_ZOOM) {
+		changeZoom(window.ZOOM * 0.9)
+	}
+}
+
+function resetZoom () {
+	changeZoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
+}
+
+function increaseZoom() {
+	changeZoom(window.ZOOM * 1.10)
+}
+
 
 
 window.YTTIMEOUT = null;
@@ -306,6 +341,19 @@ function init_controls() {
 	$(".sidebar__controls").append(b4);
 
 }
+
+function init_mouse_zoom(){
+	window.addEventListener('wheel', function (e) {
+		if (e.ctrlKey) {
+			e.preventDefault();
+			var newScale = window.ZOOM -0.01 * e.deltaY
+			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+				changeZoom(newScale, e.clientX, e.clientY)
+			}
+		}
+	}, {passive: false} )
+}
+
 
 
 
@@ -961,64 +1009,15 @@ function init_ui() {
 	zoom_section = $("<div id='zoom_buttons' />");
 
 	zoom_minus = $("<button id='zoom_minus'>-</button>");
-	zoom_minus.click(function() {
-		if (window.ZOOM > 0.1) {
-
-			var centerX = Math.round((($(window).scrollLeft() + $(window).width() / 2) - 200) * (1.0 / window.ZOOM));
-			var centerY = Math.round((($(window).scrollTop() + $(window).height() / 2) - 200) * (1.0 / window.ZOOM));
-			window.ZOOM = window.ZOOM * 0.9;
-			var pageX = Math.round(centerX * window.ZOOM - ($(window).width() / 2)) + 200;
-			var pageY = Math.round(centerY * window.ZOOM - ($(window).height() / 2)) + 200;
-
-			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
-
-			$(window).scrollLeft(pageX);
-			$(window).scrollTop(pageY);
-
-		}
-	})
+	zoom_minus.click(decreaseZoom)
 	zoom_section.append(zoom_minus);
 
 	zoom_center = $("<button>=</button>");
-	zoom_center.click(function() {
-		var centerX = Math.round((($(window).scrollLeft() + $(window).width() / 2) - 200) * (1.0 / window.ZOOM));
-		var centerY = Math.round((($(window).scrollTop() + $(window).height() / 2) - 200) * (1.0 / window.ZOOM));
-		window.ZOOM = (60.0 / window.CURRENT_SCENE_DATA.hpps);
-		var pageX = Math.round(centerX * window.ZOOM - ($(window).width() / 2)) + 200;
-		var pageY = Math.round(centerY * window.ZOOM - ($(window).height() / 2)) + 200;
-		$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-		$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-		$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400);
-		$(window).scrollLeft(pageX);
-		$(window).scrollTop(pageY);
-	});
+	zoom_center.click(resetZoom);
 	zoom_section.append(zoom_center);
 
 	zoom_plus = $("<button id='zoom_plus'>+</button>");
-	zoom_plus.click(function() {
-
-		var centerX = Math.round((($(window).scrollLeft() + $(window).width() / 2) - 200) * (1.0 / window.ZOOM));
-		var centerY = Math.round((($(window).scrollTop() + $(window).height() / 2) - 200) * (1.0 / window.ZOOM));
-		window.ZOOM = window.ZOOM * 1.10;
-		var pageX = Math.round(centerX * window.ZOOM - ($(window).width() / 2)) + 200;
-		var pageY = Math.round(centerY * window.ZOOM - ($(window).height() / 2)) + 200;
-
-		$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-		$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-		$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
-		$(window).scrollLeft(pageX);
-		$(window).scrollTop(pageY);
-
-	});
-
+	zoom_plus.click(increaseZoom);
 	zoom_section.append(zoom_plus);
 
 	if(window.DM){
@@ -1088,34 +1087,7 @@ function init_ui() {
 		return false;
 	});
 
-	// EXPERIMENTAL MOUSEWHEEL TO ZOOM
-
-	/*$("#fog_overlay").on("mousewheel", function(event){
-	//	console.log("wheeeeeling");
-		event.preventDefault();
-    	const delta = Math.sign(event.originalEvent.deltaY);
-		oldzoom=parseFloat($("#VTT").css("zoom"));
-		//console.log(event);
-		if(delta<0){
-			
-			$("#zoom_plus").click();
-		}
-		else if(delta>0){
-			if(oldzoom > 0.1){
-				imagex = Math.round(event.pageX * (1.0/$("#VTT").css("zoom")));
-				imagey = Math.round(event.pageY * (1.0/$("#VTT").css("zoom")));
-				console.log("Before ex,ey"+event.pageX+" "+event.pageY +"->"+imagex+" "+imagey);
-				$("#VTT").css("zoom",oldzoom-0.02);
-				var pageX = Math.round(imagex * $("#VTT").css("zoom"));  
-				var pageY = Math.round(imagey * $("#VTT").css("zoom"));
-				console.log("After -> " +pageX+" "+pageY);
-				
-				window.scrollTo(pageX-event.mouseX,pageY-event.mouseY);
-			}
-		}
-		return false;
-	})*/;
-
+	init_mouse_zoom()
 }
 
 
