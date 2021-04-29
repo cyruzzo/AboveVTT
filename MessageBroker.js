@@ -150,9 +150,9 @@ class MessageBroker {
 
 		this.callbackQueue = [];
 
-		this.userid = $("#message-broker-lib").attr("data-userId");
-		this.gameid = $("#message-broker-lib").attr("data-gameId");
-		this.url = $("#message-broker-lib").attr("data-connectUrl");
+		this.userid = $("#message-broker-client").attr("data-userId");
+		this.gameid = $("#message-broker-client").attr("data-gameId");
+		this.url = $("#message-broker-client").attr("data-connectUrl");
 
 
 		get_cobalt_token(function(token) {

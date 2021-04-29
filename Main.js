@@ -331,7 +331,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.41</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.41 HF</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<p><b>WARNING!</b>This is still a developement version, but some brave adventurers are starting to play on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a></p>");
 	cont.append("<h4>Useful Links</h4>");
@@ -754,7 +754,7 @@ function open_player_sheet(sheet_url) {
 
 function init_ui() {
 	window.STARTING = true;
-	var gameid = $("#message-broker-lib").attr("data-gameId");
+	var gameid = $("#message-broker-client").attr("data-gameId");
 	init_splash();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
