@@ -260,12 +260,7 @@ function load_monster_stat(monsterid) {
 
 function init_controls() {
 	$(".sidebar").css("top", "10px");
-	$(".sidebar").css("height", "calc(100vh - 10px)");
-
-	$(".sidebar__controls").css("margin", "0px");
-
-	$(".sidebar__controls").css("position", "relative");
-	$(".sidebar__controls").css("left", "-30px");
+	$(".sidebar").css("height", "calc(100vh - 45px)");
 
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
@@ -292,17 +287,17 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' data-target='.glc-game-log'>GAMELOG</button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn' data-target='.glc-game-log'>GAMELOG</button>").click(switch_control);
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
-		b2 = $("<button id='switch_characters' data-target='#pcs_list'>PLAYERS</button>").click(switch_control);
+		b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'>PLAYERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b2);
-		b3 = $("<button id='switch_panel' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
+		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b3);
 	}
 
-	b4 = $("<button id='switch_spell' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
+	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
 	$(".sidebar__controls").append(b4);
 
 }

@@ -16,7 +16,8 @@ body > button,
 .stp-btn,
 .player-actions button,
 #add-party,
-.sidebar__controls button {
+#hide_rightpanel,
+#zoom_buttons button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
     height: 22px;
@@ -44,10 +45,11 @@ body > button:hover,
 .top_menu button:hover,
 .monster_frame > button:hover,
 .stp-btn:hover,
-.sidebar__controls button:hover,
+#hide_rightpanel:hover,
 .player-actions button:hover,
 #add-party:hover,
-.importer_toggle:hover {
+.importer_toggle:hover,
+#zoom_buttons button:hover {
     color: #333;
     background-image: none;
     background: #e6e6e6;
@@ -567,4 +569,28 @@ div#scene_properties form > div {
     cursor: pointer;
     color:#1b9af0;
     background:white;
+}
+
+.sidebar__inner {
+    position: relative;
+}
+
+.sidebar__controls {
+    position: relative;
+    margin: 0 !important;
+    left: -26px;
+}
+
+.sidebar__pane-content {
+    position: absolute;
+    right: 0;
+    top: 22px;
+}
+
+.sidebar__controls .tab-btn {
+    background-color: #fff;
+    margin: 0 2px;
+    border-radius: 7px 7px 0 0;
+    padding: 2px 8px;
+    border: 1px solid lightgray;
 }
