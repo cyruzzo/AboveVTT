@@ -29,7 +29,7 @@ function youtube_parser(url) {
 
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
-function changeZoom(newZoom, x, y) {
+function change_zoom(newZoom, x, y) {
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
 	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
@@ -48,18 +48,18 @@ function changeZoom(newZoom, x, y) {
 	$(window).scrollTop(pageY);
 }
 
-function decreaseZoom() {
+function decrease_zoom() {
 	if (window.ZOOM > MIN_ZOOM) {
-		changeZoom(window.ZOOM * 0.9)
+		change_zoom(window.ZOOM * 0.9)
 	}
 }
 
-function resetZoom () {
-	changeZoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
+function reset_zoom () {
+	change_zoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
 }
 
-function increaseZoom() {
-	changeZoom(window.ZOOM * 1.10)
+function increase_zoom() {
+	change_zoom(window.ZOOM * 1.10)
 }
 
 
@@ -348,7 +348,7 @@ function init_mouse_zoom(){
 			e.preventDefault();
 			var newScale = window.ZOOM -0.01 * e.deltaY
 			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
-				changeZoom(newScale, e.clientX, e.clientY)
+				change_zoom(newScale, e.clientX, e.clientY)
 			}
 		}
 	}, {passive: false} )
@@ -1009,15 +1009,15 @@ function init_ui() {
 	zoom_section = $("<div id='zoom_buttons' />");
 
 	zoom_minus = $("<button id='zoom_minus'>-</button>");
-	zoom_minus.click(decreaseZoom)
+	zoom_minus.click(decrease_zoom)
 	zoom_section.append(zoom_minus);
 
 	zoom_center = $("<button>=</button>");
-	zoom_center.click(resetZoom);
+	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
 	zoom_plus = $("<button id='zoom_plus'>+</button>");
-	zoom_plus.click(increaseZoom);
+	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
 	if(window.DM){
