@@ -593,13 +593,29 @@ function open_player_sheet(sheet_url) {
 			});
 
 			abilities = [];
+
+			const isScore = (val) => {
+				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
+			}
+
 			$(event.target).contents().find('.ct-quick-info__ability').each(function() {
-				abilities.push({
-					abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-					abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-					modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-					score: $(this).find('.ddbc-ability-summary__secondary').text()
-				});
+				let abilityScores;
+				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__primary button').text()
+					}
+				} else {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__secondary').text()
+					};
+				}
+				abilities.push(abilityScores);
 			});
 
 
