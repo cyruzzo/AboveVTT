@@ -568,3 +568,18 @@ div#scene_properties form > div {
     color:#1b9af0;
     background:white;
 }
+
+.tokenentryimg {
+	width:60px;
+	height:60px;
+}
+
+.tokenmenuitem {
+	float: left;
+	height:100px;
+	width: 100px;
+}
+
+#tokens-panel-warning {
+	background:red;
+}

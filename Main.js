@@ -292,7 +292,7 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' data-target='.glc-game-log'>GAMELOG</button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' data-target='.glc-game-log'>LOG</button>").click(switch_control);
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
@@ -300,6 +300,7 @@ function init_controls() {
 		$(".sidebar__controls").append(b2);
 		b3 = $("<button id='switch_panel' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b3);
+		init_tokenmenu();
 	}
 
 	b4 = $("<button id='switch_spell' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
