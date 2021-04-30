@@ -572,22 +572,32 @@ class Token {
 						if (window.CURRENT_SCENE_DATA.snap == "1") {
 
 							// calculate offset in real coordinates
-							var startX = window.CURRENT_SCENE_DATA.offsetx;// * window.CURRENT_SCENE_DATA.scaleX;
-							var startY = window.CURRENT_SCENE_DATA.offsety;// * window.CURRENT_SCENE_DATA.scaleY;
+							const startX = window.CURRENT_SCENE_DATA.offsetx;
+							const startY = window.CURRENT_SCENE_DATA.offsety;
 
+							const selectedOldTop = parseInt($(e.target).css("top"));
+							const selectedOldleft = parseInt($(e.target).css("left"));
 
-							var oldtop = parseInt($(e.target).css("top"));
-							var oldleft = parseInt($(e.target).css("left"));
+							const selectedNewtop = Math.round((selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+							const selectedNewleft = Math.round((selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
+							$(e.target).css("top", selectedNewtop + "px");
+							$(e.target).css("left", selectedNewleft + "px");
 
+							for (id in window.TOKEN_OBJECTS) {
+								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+									const tok = $("#tokens div[data-id='" + id + "']");
 
-							var newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-							var newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									const oldtop = parseInt(tok.css("top"));
+									const oldleft = parseInt(tok.css("left"));
 
-							console.log("oldtop " + oldtop + "newtop " + newtop);
-							console.log("oldleft " + oldleft + "newleft " + newleft);
-							$(e.target).css("top", newtop + "px");
-							$(e.target).css("left", newleft + "px");
+									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+									tok.css("top", newtop + "px");
+									tok.css("left", newleft + "px");
+								}
+							}
 
 						}
 
