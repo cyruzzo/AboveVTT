@@ -1017,7 +1017,7 @@ function token_menu() {
 								items: cond_items,
 							},
 							token_custom_cond: {
-								name: "Reminders",
+								name: "Markers",
 								items: custom_cond_items,
 							},
 							sep1: "-------",
