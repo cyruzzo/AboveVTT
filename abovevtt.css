@@ -274,6 +274,7 @@ div#scene_properties form > div {
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 2;
 }
 
 .dead:before, .dead:after {
@@ -495,6 +496,42 @@ div#scene_properties form > div {
     text-align: right;
 }
 
+.token .condition-img {
+    padding: 0;
+    margin: 0;
+    background: #01ffff;
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+.token .custom-condition.condition-img {
+    background: #F58231;
+}
+
+.ac {
+    position: absolute;
+}
+
+.color-reminder {
+    display: inline-block;
+    width:85%;
+}
+
+.conditions {
+    padding: 0;
+    margin: 0;
+    top: 0;
+    position: absolute;
+    z-index: 5;
+}
+
+.dnd-condition {
+    cursor: pointer;
+}
+
+.hpbar {
+    z-index: 3;
+}
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
     display: inline-block;
