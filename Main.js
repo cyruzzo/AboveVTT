@@ -331,7 +331,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.42RC1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.42RC2</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<b>WARNING!</b>This is still a developement version, but some brave adventurers are starting to play on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
 	cont.append("<h4>Useful Links</h4>");
@@ -593,13 +593,29 @@ function open_player_sheet(sheet_url) {
 			});
 
 			abilities = [];
+
+			const isScore = (val) => {
+				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
+			}
+
 			$(event.target).contents().find('.ct-quick-info__ability').each(function() {
-				abilities.push({
-					abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-					abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-					modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-					score: $(this).find('.ddbc-ability-summary__secondary').text()
-				});
+				let abilityScores;
+				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__primary button').text()
+					}
+				} else {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__secondary').text()
+					};
+				}
+				abilities.push(abilityScores);
 			});
 
 
@@ -756,7 +772,7 @@ function open_player_sheet(sheet_url) {
 
 function init_ui() {
 	window.STARTING = true;
-	var gameid = $("#message-broker-lib").attr("data-gameId");
+	var gameid = $("#message-broker-client").attr("data-gameId");
 	init_splash();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
@@ -1329,7 +1345,7 @@ $(function() {
 	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
-			gameid = $("#message-broker-lib").attr("data-gameId");
+			gameid = $("#message-broker-client").attr("data-gameId");
 			localStorage.removeItem("ScenesHandler" + gameid);
 			localStorage.removeItem("current_source" + gameid);
 			localStorage.removeItem("current_chapter" + gameid);
@@ -1345,7 +1361,7 @@ $(function() {
 	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
 	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
 	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>");
-	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (excluding Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
+	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
 	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
