@@ -448,6 +448,10 @@ class Token {
 				old.animate({
 					width: this.options.size
 				}, { duration: 1000, queue: false });
+				
+				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				old.css("z-index", 30+zindexdiff);
+				
 			}
 
 			if (this.options.hidden) {
