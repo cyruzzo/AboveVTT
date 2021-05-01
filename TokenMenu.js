@@ -39,7 +39,7 @@ function init_tokenmenu(){
 	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
 	tokens_panel=$("<div id='tokens-panel' class='sidepanel-content'/>");
 	tokens_panel.hide();
-	tokens_panel.append("<div id='tokens-panel-warning'>THIS IS STILL EXPERIMENTAL. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOOSE THEM</div>");
+	tokens_panel.append("<div id='tokens-panel-warning'>THIS IS AN EXPERIMENTAL FEATURE. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOOSE THEM</div>");
 	header=$("<div id='tokens-panel-header'/>");
 	tokens_panel.append(header);
 	addfolder=$("<button id='token-addfolder'>Add Folder</button>");
@@ -147,7 +147,7 @@ function fill_tokenmenu(path){
 		$("#token-addtoken").removeAttr("disabled");
 	}
 	
-	if(path!="/"){
+	if(path!=""){
 		var previous=path.substring(0,path.lastIndexOf("/"));
 		var newentry=$(`
 			<div data-path='${previous}' class='tokenfolder tokenmenuitem'>
@@ -165,6 +165,7 @@ function fill_tokenmenu(path){
 			<div data-path='${newpath}' class='tokenfolder tokenmenuitem'>
 				<img class='tokenentryimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div>${f}</div>
+				<button></button>
 			</div>
 		`);
 		$("#tokens-panel-data").append(newentry);
@@ -182,9 +183,21 @@ function fill_tokenmenu(path){
 			</div>
 		`);
 		
+		if(!path.startsWith("/AboveVTT BUILTIN")){
+			delbutton=$("<button class='tokendel'>DEL</button>");
+			delbutton.attr('data-target',t);
+			newentry.append(delbutton);
+		}
+		
 		for(prop in folder.tokens[t]){
 			newentry.find(".tokenadd").attr(prop,folder.tokens[t][prop]);
 		}
+		
+		newentry.find(".tokendel").click(function(){
+			delete window.CURRENT_TOKEN_FOLDER.tokens[$(this).attr('data-target')];
+			fill_tokenmenu(window.CURRENT_TOKEN_PATH);
+			persist_customtokens();
+		});
 		
 		$("#tokens-panel-data").append(newentry);
 	}
