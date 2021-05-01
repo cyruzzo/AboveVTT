@@ -3,19 +3,21 @@ tokenbuiltin={
 			folders:{
 				'Overlays':{
 					tokens:{
+						'Blood':{
+							'data-img': 'https://drive.google.com/file/d/1frTuvq-64DA23ayC6P0XGZyo0M6paEID/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
 						'Big Bang':{
-							'data-img':'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing'
+							'data-img':'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
 						}
 					}
 				},
-				'Traps':{
-					tokens:{
-						'Generic Test':{
-							'data-img':'https://www.enworld.org/attachments/female_human_wizard_t01-png.121370/',
-						}
-					}
-				},
-				'Letters':{},
+				'NPC':{
+					
+				}
 			}
 		};
 		
@@ -48,6 +50,7 @@ function init_tokenmenu(){
 			window.CURRENT_TOKEN_FOLDER.folders={};
 		window.CURRENT_TOKEN_FOLDER.folders[newfoldername]={};
 		fill_tokenmenu(window.CURRENT_TOKEN_PATH);
+		persist_customtokens();
 	});
 	
 	header.append(addfolder);
@@ -71,9 +74,13 @@ function init_tokenmenu(){
 				<div>Image URL:</div>
 				<div><input name='data-img'></div>
 			</div>
-			<div>
+			<!--<div>
 				<div>Image type</div>
 				<div><select name='data-square'><option value='0'>Round</option><option value='1'>Square</option></select></div>
+			</div>-->
+			<div>
+				<div>Hide Border</div>
+				<div><input type='checkbox' name='data-disableborder'></div>
 			</div>
 			<div>
 				<button id='tokenform-save'>Save</button>
@@ -87,14 +94,18 @@ function init_tokenmenu(){
 		var tokenname=tokenform.find("[name='data-name']").val();
 		var newtoken={};
 		newtoken['data-img']=tokenform.find("[name='data-img']").val();
-		newtoken['data-square']=tokenform.find("[name='data-square']").val();
+		//newtoken['data-square']=tokenform.find("[name='data-square']").val();
 		newtoken['data-name']=tokenform.find("[name='data-name']").val();
+		newtoken['data-disablestat']=true;
+		if(tokenform.find("[name='data-disableborder']").is(":checked"))
+			newtoken['data-disableborder']=true;
 		
 		if(!window.CURRENT_TOKEN_FOLDER.tokens)
 			window.CURRENT_TOKEN_FOLDER.tokens={};
 		window.CURRENT_TOKEN_FOLDER.tokens[tokenname]=newtoken;
 		fill_tokenmenu(window.CURRENT_TOKEN_PATH);
 		tokenform.hide();
+		persist_customtokens();
 	});
 	
 	tokenform.find("#tokenform-cancel").click(function(){
@@ -182,5 +193,7 @@ function fill_tokenmenu(path){
 }
 
 function persist_customtokens(){
-	
+	tokendata.folders["AboveVTT BUILTIN"]={};
+	localStorage.setItem("CustomTokens",JSON.stringify(tokendata));
+	tokendata.folders["AboveVTT BUILTIN"]=tokenbuiltin;
 }

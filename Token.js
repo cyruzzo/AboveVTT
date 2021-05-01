@@ -149,7 +149,7 @@ class Token {
 
 
 
-		if ((!(this.options.monster > 0)) || window.DM) {
+		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
 			}
@@ -479,6 +479,11 @@ class Token {
 			if(old.find("img").attr("src")!=this.options.imgsrc && !this.options.hidden){
 				old.find("img").attr("src",this.options.imgsrc);
 			}
+		
+			if(this.options.disableborder){
+				old.find("img").css("border-width","0");
+			}
+
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
@@ -499,9 +504,10 @@ class Token {
 			tok.append(tokimg);
 
 			if ((!(this.options.monster > 0)) || window.DM) {
-
-				tok.append(this.build_hp());
-				tok.append(this.build_ac());
+				if(!this.options.disablestat){
+					tok.append(this.build_hp());
+					tok.append(this.build_ac());
+				}
 			}
 
 			// HEALTH AURA / DEAD CROSS
@@ -536,6 +542,10 @@ class Token {
 			tokimg.css("border-style", "solid");
 			tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
 			tokimg.css("border-color", this.options.color);
+			
+			if(this.options.disableborder)
+				tokimg.css("border-width","0");
+				
 			tok.css("position", "absolute");
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
@@ -731,6 +741,14 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 
 	if ($(e.target).attr('data-size')) {
 		options.size = $(e.target).attr('data-size');
+	}
+
+	if ($(e.target).attr('data-disablestat')) {
+		options.disablestat = $(e.target).attr('data-disablestat');
+	}
+	
+	if ($(e.target).attr('data-disableborder')) {
+		options.disableborder = $(e.target).attr('data-disableborder');
 	}
 
 	if ($(e.target).attr('data-hp')) {
