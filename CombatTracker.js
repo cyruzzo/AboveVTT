@@ -224,7 +224,7 @@ function ct_persist(){
 	   });
 	});
 	
-	var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
+	var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
 	
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
@@ -233,7 +233,7 @@ function ct_persist(){
 function ct_load(data=null){
 	
 	if(data==null){
-		var itemkey="CombatTracker"+$("#message-broker-lib").attr("data-gameId");
+		var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
 		data=$.parseJSON(localStorage.getItem(itemkey));
 	}
 	
