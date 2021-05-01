@@ -1,8 +1,13 @@
 
-tokendata={
-	folders:{
-		'AboveVTT' : {
+tokenbuiltin={
 			folders:{
+				'Overlays':{
+					tokens:{
+						'Big Bang':{
+							'data-img':'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing'
+						}
+					}
+				},
 				'Traps':{
 					tokens:{
 						'Generic Test':{
@@ -12,10 +17,12 @@ tokendata={
 				},
 				'Letters':{},
 			}
-		},
-	},
-};
+		};
+		
 
+tokendata={
+	folders:{},
+};
 
 
 function init_tokenmenu(){
@@ -23,12 +30,17 @@ function init_tokenmenu(){
 	button.click(switch_control);
 	$(".sidebar__controls").append(button);
 	
+	
+	if(localStorage.getItem('CustomTokens') != null){
+		tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
+	}
+	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
 	tokens_panel=$("<div id='tokens-panel' class='sidepanel-content'/>");
 	tokens_panel.hide();
-	tokens_panel.append("<div id='tokens-panel-warning'>THIS IS STILL EXPERIMENTAL. DON'T START SPENDING HOURS ADDING TOKENS. YOU MAY LOOSE THEM</div>");
+	tokens_panel.append("<div id='tokens-panel-warning'>THIS IS STILL EXPERIMENTAL. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOOSE THEM</div>");
 	header=$("<div id='tokens-panel-header'/>");
 	tokens_panel.append(header);
-	addfolder=$("<button>Add Folder</button>");
+	addfolder=$("<button id='token-addfolder'>Add Folder</button>");
 	
 	addfolder.click(function(){
 		var newfoldername=prompt("Enter the name of the new folder");
@@ -39,7 +51,7 @@ function init_tokenmenu(){
 	});
 	
 	header.append(addfolder);
-	addtoken=$("<button>Add Token</button>");
+	addtoken=$("<button id='token-addtoken'>Add Token</button>");
 	addtoken.click(function(){
 		if($("#token-form").is(":hidden"))
 			$("#token-form").show();
@@ -93,7 +105,7 @@ function init_tokenmenu(){
 	tokens_panel.append(tokenform);
 	tokens_panel.append("<div id='tokens-panel-data' />");
 	$(".sidebar__pane-content").append(tokens_panel);
-	fill_tokenmenu("/");
+	fill_tokenmenu("");
 }
 
 function convert_path(path){
@@ -115,6 +127,15 @@ function fill_tokenmenu(path){
 	window.CURRENT_TOKEN_PATH=path;
 	$("#tokens-panel-data").empty();
 	
+	if (path.startsWith("/AboveVTT BUILTIN")){
+		$("#token-addfolder").attr("disabled","disabled");
+		$("#token-addtoken").attr("disabled","disabled");
+	}
+	else{
+		$("#token-addfolder").removeAttr("disabled");
+		$("#token-addtoken").removeAttr("disabled");
+	}
+	
 	if(path!="/"){
 		var previous=path.substring(0,path.lastIndexOf("/"));
 		var newentry=$(`
@@ -128,8 +149,9 @@ function fill_tokenmenu(path){
 	
 	
 	for(let f in folder.folders){
+		var newpath=path+"/"+f;
 		var newentry=$(`
-			<div data-path='${path+"/"+f}' class='tokenfolder tokenmenuitem'>
+			<div data-path='${newpath}' class='tokenfolder tokenmenuitem'>
 				<img class='tokenentryimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div>${f}</div>
 			</div>
@@ -159,3 +181,6 @@ function fill_tokenmenu(path){
 	$(".tokenadd").click(token_button);
 }
 
+function persist_customtokens(){
+	
+}
