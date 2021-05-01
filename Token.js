@@ -698,7 +698,7 @@ class Token {
 
 function token_button(e, tokenIndex = null, tokenTotal = null) {
 	console.log($(e.target).outerHTML());
-	let imgsrc = $(e.target).attr("data-img");
+	let imgsrc = parse_img($(e.target).attr("data-img"));
 	let id;
 	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
 	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
@@ -899,7 +899,7 @@ function token_inputs(opt) {
 	}
 
 
-	tok.options.imgsrc=data.imgsrc;
+	tok.options.imgsrc=parse_img(data.imgsrc);
 
 	tok.place();
 	tok.sync();

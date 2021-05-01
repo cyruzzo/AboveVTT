@@ -165,7 +165,7 @@ function fill_tokenmenu(path){
 	for(let t in folder.tokens){
 		var newentry=$(`
 			<div class='tokenentry tokenmenuitem'>
-				<img class='tokenentryimg' src='${folder.tokens[t]["data-img"]}'></img>
+				<img class='tokenentryimg' src='${parse_img(folder.tokens[t]["data-img"])}'></img>
 				<div>${t}</div>
 				<button class='tokenadd' >Token</button>
 			</div>

@@ -1,3 +1,11 @@
+function parse_img(url){
+	retval=url;
+	if(retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0)
+		retval='https://drive.google.com/uc?id=' + retval.split('/')[5];
+	return retval;
+}
+
+
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
 	var color = '#';
