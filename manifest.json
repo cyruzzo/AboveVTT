@@ -32,6 +32,7 @@
 	"CombatTracker.js",
 	"jquery.ui.touch-punch.js",
 	"SceneData.js",
+	"TokenMenu.js",
 	"abovevtt.css",
 	"assets/*"
 	]

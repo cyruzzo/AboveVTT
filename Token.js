@@ -149,7 +149,7 @@ class Token {
 
 
 
-		if ((!(this.options.monster > 0)) || window.DM) {
+		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
 			}
@@ -448,6 +448,10 @@ class Token {
 				old.animate({
 					width: this.options.size
 				}, { duration: 1000, queue: false });
+				
+				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				old.css("z-index", 30+zindexdiff);
+				
 			}
 
 			if (this.options.hidden) {
@@ -471,6 +475,15 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
+			
+			if(old.find("img").attr("src")!=this.options.imgsrc && !this.options.hidden){
+				old.find("img").attr("src",this.options.imgsrc);
+			}
+		
+			if(this.options.disableborder){
+				old.find("img").css("border-width","0");
+			}
+
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
@@ -491,9 +504,10 @@ class Token {
 			tok.append(tokimg);
 
 			if ((!(this.options.monster > 0)) || window.DM) {
-
-				tok.append(this.build_hp());
-				tok.append(this.build_ac());
+				if(!this.options.disablestat){
+					tok.append(this.build_hp());
+					tok.append(this.build_ac());
+				}
 			}
 
 			// HEALTH AURA / DEAD CROSS
@@ -528,6 +542,10 @@ class Token {
 			tokimg.css("border-style", "solid");
 			tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
 			tokimg.css("border-color", this.options.color);
+			
+			if(this.options.disableborder)
+				tokimg.css("border-width","0");
+				
 			tok.css("position", "absolute");
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
@@ -572,19 +590,33 @@ class Token {
 						if (window.CURRENT_SCENE_DATA.snap == "1") {
 
 							// calculate offset in real coordinates
-							var startX = window.CURRENT_SCENE_DATA.offsetx;// * window.CURRENT_SCENE_DATA.scaleX;
-							var startY = window.CURRENT_SCENE_DATA.offsety;// * window.CURRENT_SCENE_DATA.scaleY;
+							const startX = window.CURRENT_SCENE_DATA.offsetx;
+							const startY = window.CURRENT_SCENE_DATA.offsety;
 
-							var oldtop = parseInt($(event.target).css("top"));
-							var oldleft = parseInt($(event.target).css("left"));
+							const selectedOldTop = parseInt($(e.target).css("top"));
+							const selectedOldleft = parseInt($(e.target).css("left"));
 
-							var newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-							var newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+							const selectedNewtop = Math.round((selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+							const selectedNewleft = Math.round((selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-							// console.log("oldtop " + oldtop + "newtop " + newtop);
-							// console.log("oldleft " + oldleft + "newleft " + newleft);
-							$(event.target).css("top", newtop + "px");
-							$(event.target).css("left", newleft + "px");
+							$(e.target).css("top", selectedNewtop + "px");
+							$(e.target).css("left", selectedNewleft + "px");
+
+							for (id in window.TOKEN_OBJECTS) {
+								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+									const tok = $("#tokens div[data-id='" + id + "']");
+
+									const oldtop = parseInt(tok.css("top"));
+									const oldleft = parseInt(tok.css("left"));
+
+									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+									tok.css("top", newtop + "px");
+									tok.css("left", newleft + "px");
+								}
+							}
+
 						}
 
 						window.DRAGGING = false;
@@ -750,7 +782,7 @@ function return_false() {
 
 function token_button(e, tokenIndex = null, tokenTotal = null) {
 	console.log($(e.target).outerHTML());
-	let imgsrc = $(e.target).attr("data-img");
+	let imgsrc = parse_img($(e.target).attr("data-img"));
 	let id;
 	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
 	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
@@ -779,6 +811,14 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 
 	if ($(e.target).attr('data-size')) {
 		options.size = $(e.target).attr('data-size');
+	}
+
+	if ($(e.target).attr('data-disablestat')) {
+		options.disablestat = $(e.target).attr('data-disablestat');
+	}
+	
+	if ($(e.target).attr('data-disableborder')) {
+		options.disableborder = $(e.target).attr('data-disableborder');
 	}
 
 	if ($(e.target).attr('data-hp')) {
@@ -951,6 +991,7 @@ function token_inputs(opt) {
 	}
 
 
+	tok.options.imgsrc=parse_img(data.imgsrc);
 
 	tok.place();
 	tok.sync();
@@ -1101,6 +1142,17 @@ function token_menu() {
 								}
 							},
 							sep2: '---------',
+							imgsrc:{
+								type: 'text',
+								name: 'IMG Url',
+								value: window.TOKEN_OBJECTS[id].options.imgsrc,
+								events: {
+									click: function(e) {
+										$(e.target).select();
+									}
+								}
+							},
+							sep3: '----------',
 							hide: { name: 'Hide From Players' },
 							show: { name: 'Show To Players' },
 							delete: { name: 'Delete Token' }
