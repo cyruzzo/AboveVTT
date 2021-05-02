@@ -12,11 +12,55 @@ tokenbuiltin={
 							'data-img':'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing',
 							'data-disablestat':true,
 							'data-disableborder':true,
-						}
+						},
+						'Fire 1':{
+							'data-img':'https://drive.google.com/file/d/1_wE3B5rvr38cM9NMbCQ__WUf0RIXIuhQ/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
+						'Nebula':{
+							'data-img':'https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
+						'Web':{
+							'data-img':'https://drive.google.com/file/d/1rGuD7FMtzy6XR0qcsewndhS33wZL8vEM/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
 					}
 				},
 				'NPC':{
-					
+					tokens:{
+						'Maid':{
+							'data-img':'https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
+						'Male Commoner':{
+							'data-img':'https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
+						'Male Guard':{
+							'data-img':'https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
+						'Female Commoner':{
+							'data-img':'https://drive.google.com/file/d/14sNpLcJlzOfL4A5Qb_zdrYmOTZk51GTM/view?usp=sharing',
+							'data-disablestat':true,
+							'data-disableborder':true,
+						},
+					}
+				},
+				'Weapons':{
+					tokens:{
+						'Heartseeker Blade':{
+							'data-img':'https://drive.google.com/file/d/1Ft84c1VwnEhwKPew8Yyq8w8NFViC7Mr7/view?usp=sharing',
+							'data-disablestat':true,
+						},
+					}
 				}
 			}
 		};
@@ -28,9 +72,6 @@ tokendata={
 
 
 function init_tokenmenu(){
-	var button=$("<button id='switch_tokens' data-target='#tokens-panel'>T</button>");
-	button.click(switch_control);
-	$(".sidebar__controls").append(button);
 	
 	
 	if(localStorage.getItem('CustomTokens') != null){
@@ -151,7 +192,7 @@ function fill_tokenmenu(path){
 		var previous=path.substring(0,path.lastIndexOf("/"));
 		var newentry=$(`
 			<div data-path='${previous}' class='tokenfolder tokenmenuitem'>
-				<img class='tokenentryimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
+				<img data-path='${previous}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div>..</div>
 			</div>
 		`);
@@ -163,14 +204,23 @@ function fill_tokenmenu(path){
 		var newpath=path+"/"+f;
 		var newentry=$(`
 			<div data-path='${newpath}' class='tokenfolder tokenmenuitem'>
-				<img class='tokenentryimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
+				<img data-path='${newpath}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div>${f}</div>
-				<button></button>
 			</div>
 		`);
+		if(!path.startsWith("/AboveVTT BUILTIN") && !f.startsWith("AboveVTT BUILTIN")){
+			delbutton=$("<button class='delfolder'>DEL</button>");
+			delbutton.attr('data-target',f);
+			newentry.append(delbutton);
+			delbutton.click(function(e){
+				delete window.CURRENT_TOKEN_FOLDER.folders[$(this).attr('data-target')];
+				fill_tokenmenu(window.CURRENT_TOKEN_PATH);
+				persist_customtokens();
+			});
+		}
 		$("#tokens-panel-data").append(newentry);
 	}
-	$(".tokenfolder").click(function(e){
+	$(".tokenfolderimg").click(function(e){
 		fill_tokenmenu($(this).attr('data-path'));
 	});
 	

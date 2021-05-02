@@ -583,3 +583,7 @@ div#scene_properties form > div {
 #tokens-panel-warning {
 	background:red;
 }
+
+.sidebar__controls button{
+	font-size: 10px;
+}

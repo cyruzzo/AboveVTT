@@ -309,8 +309,10 @@ function init_controls() {
 		b3 = $("<button id='switch_panel' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b3);
 		init_tokenmenu();
+		b5=$("<button id='switch_tokens' data-target='#tokens-panel'>TOKENS</button>");
+		b5.click(switch_control);
+		$(".sidebar__controls").append(b5);
 	}
-
 	b4 = $("<button id='switch_spell' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
 	$(".sidebar__controls").append(b4);
 
