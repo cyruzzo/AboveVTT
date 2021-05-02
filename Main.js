@@ -1095,7 +1095,7 @@ function init_ui() {
 
 	// Function separated so it can be dis/enabled
 	function mouseup() {
-		console.log("Window mouseup fired")
+
 		curDown = false;
 		$("body").css("cursor", "");
 	}
@@ -1104,7 +1104,6 @@ function init_ui() {
 	// do token dragging operations with measure paths
 	window.disable_window_mouse_handlers = function () {
 
-		console.log("Disabling mouse handlers");
 		$(window).off("mousemove", mousemove);
 		$(window).off("mousedown", mousedown);
 		$(window).off("mouseup", mouseup);
@@ -1114,7 +1113,6 @@ function init_ui() {
 	// do token dragging operations with measure paths
 	window.enable_window_mouse_handlers = function () {
 
-		console.log("Enabling mouse handlers");
 		$(window).on("mousemove", mousemove);
 		$(window).on("mousedown", mousedown);
 		$(window).on("mouseup", mouseup);
