@@ -14,6 +14,13 @@ class WaypointManager {
 	static mouseDownCoords = { mousex: undefined, mousey: undefined };
 	static timeout = undefined;
 
+	// Set canvas and further set context
+	static setCanvas(canvas) {
+
+		this.canvas = canvas;
+		this.ctx = canvas.getContext("2d");
+	}
+
 	// Are we in the middle of measuring?
 	static isMeasuring() {
 
@@ -38,14 +45,15 @@ class WaypointManager {
 		}
 	}
 
-	// If the timer from registerMouseMove has expired but the user hasnt moved the mouse, or released
-	// the button then we increment the current index into the array of waypoints, and draw a small
-	// indicator
+	// Increment the current index into the array of waypoints, and draw a small indicator
 	static checkNewWaypoint(mousex, mousey) {
 
 		if (this.mouseDownCoords.mousex == mousex && this.mouseDownCoords.mousey == mousey) {
 
+			console.log("Incrementing waypoint");
 			this.currentWaypointIndex++;
+
+			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
 			this.ctx.beginPath();
 			this.ctx.arc(snapCoords.x, snapCoords.y, window.CURRENT_SCENE_DATA.hpps / 4, 0, 2 * Math.PI, false);
@@ -58,8 +66,7 @@ class WaypointManager {
 		}
 	}
 
-	// Track mouse moving, clearing and setting a timeout which, if fires, means the user has paused to
-	// create a waypoint, see: checkNewWaypoint
+	// Track mouse moving
 	static registerMouseMove(mousex, mousey) {
 
 		this.mouseDownCoords.mousex = mousex;
@@ -77,8 +84,7 @@ class WaypointManager {
 		this.timeout = undefined;
 	}
 
-	// Helper function to convert mouse cooridnates to 'snap' or 'centre of current grid cell' 
-	// coordinates
+	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
 	static getSnapPointCoords(x, y) {
 
 		var gridSize = window.CURRENT_SCENE_DATA.hpps;
@@ -90,18 +96,23 @@ class WaypointManager {
 		return { x: snapPointXStart, y: snapPointYStart }
 	}
 
-	// Draw the waypoints, note that we sum up the cumulative distance
-	static draw() {
+	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
+	// as otherwise the token sits on the measurement label
+	static draw(midlineLabels) {
 
+		
 		var cumulativeDistance = 0
 		for (var i = 0; i < this.coords.length; i++) {
-			this.drawWaypointSegment(this.coords[i], cumulativeDistance);
+			// We do the beginPath here because otherwise the lines on subsequent waypoints get
+			// drawn over the labels...
+			this.ctx.beginPath();
+			this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
 			cumulativeDistance += this.coords[i].distance;
 		}
 	}
 
 	// Draw a waypoint segment with all the lines and labels etc.
-	static drawWaypointSegment(coord, cumulativeDistance) {
+	static drawWaypointSegment(coord, cumulativeDistance, midlineLabels) {
 
 		// Snap to centre of current grid square
 		var gridSize = window.CURRENT_SCENE_DATA.hpps;
@@ -113,6 +124,78 @@ class WaypointManager {
 		snapCoords = this.getSnapPointCoords(coord.endX, coord.endY);
 		var snapPointXEnd = snapCoords.x;
 		var snapPointYEnd = snapCoords.y;
+
+		// In future we may support other units(?), defaulting to 'ft' for feet
+		var unitSymbol = "ft";
+
+		// Calculate the distance and set into the waypoint object
+		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
+		distance = Math.floor(distance / gridSize);
+		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
+		coord.distance = distance;
+
+		var textX = 0;
+		var textY = 0;
+		var margin = 2;
+		var heightOffset = 30;
+		var slopeModifier = 0;
+
+		// Setup text metrics
+		this.ctx.font = "30px Arial";
+		var text = "" + (distance + cumulativeDistance) + unitSymbol;
+		var textMetrics = this.ctx.measureText(text);
+
+		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or 
+		// token dragging (midlineLabels == true)
+		var contrastRect = { x: 0, y: 0, width: 0, height: 0 }
+		var textRect = { x: 0, y: 0, width: 0, height: 0 }
+
+		if (midlineLabels === true) {
+
+			// Calculate our coords and dimensions
+			textX = (snapPointXStart + snapPointXEnd) / 2;
+			textY = (snapPointYStart + snapPointYEnd) / 2;
+
+			contrastRect.x = textX - margin;
+			contrastRect.y = textY - margin;
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height = heightOffset + (margin * 3);
+
+			textRect.x = textX;
+			textRect.y = textY;
+			textRect.width = textMetrics.width + (margin * 2);
+			textRect.height = heightOffset + margin;
+		}
+		else {
+			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
+			if (snapPointYStart <= snapPointYEnd) {
+				// Push right and down
+				slopeModifier = margin * 4;
+			}
+			else {
+				// Push up and left, bigger number as whole rect height pushed
+				slopeModifier = -heightOffset - (margin * 4);
+			}
+
+			// Need to further tweak the modifier if we are on the right hand side of the map
+			if (snapPointXEnd + gridSize > this.canvas.width) {
+				slopeModifier = -(heightOffset * 1.5);
+			}
+
+			// Calculate our coords and dimensions
+			contrastRect.x = snapPointXEnd - margin + slopeModifier;
+			contrastRect.y = snapPointYEnd - margin + slopeModifier;
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height = 30 + (margin * 3);
+
+			textRect.x = snapPointXEnd + slopeModifier;
+			textRect.y = snapPointYEnd + slopeModifier;
+			textRect.width = textMetrics.width + (margin * 2);
+			textRect.height = 30 + margin;
+
+			textX = snapPointXEnd + margin + slopeModifier;
+			textY = snapPointYEnd + margin + slopeModifier;
+		}
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = "black";
@@ -126,49 +209,18 @@ class WaypointManager {
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
-		// In future we may support other units(?), defaulting to 'ft' for feet
-		var unitSymbol = "ft";
-
-		// Calculate the distance and set into the waypoint object
-		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
-		distance = Math.floor(distance / gridSize);
-		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
-		coord.distance = distance;
-
-		// Calculate slope modifier so we can float the rectangle away from the line end.
-		var slopeModifier = 0;
-		if (snapPointYStart <= snapPointYEnd) {
-			// Push right and down
-			slopeModifier = 7;
-		}
-		else {
-			// Push up and left, bigger number as whole rect height pushed
-			slopeModifier = -37
-		}
-
-		// Need to further tweak the modifier if we are on the right hand side of the map
-		if (snapPointXEnd + gridSize > this.canvas.width) {
-			slopeModifier = -45
-		}
-
-		// Create text metrics
-		this.ctx.font = "30px Arial";
-		var text = "" + (distance + cumulativeDistance) + unitSymbol;
-		var textMetrics = this.ctx.measureText(text);
-
 		// Draw a 'backing rectangle', slightly larger than our text rectangle
-		var margin = 2;
 		this.ctx.fillStyle = "black";
-		this.ctx.fillRect(snapPointXEnd - margin + slopeModifier, snapPointYEnd - margin + slopeModifier, textMetrics.width + (margin * 4), 30 + (margin * 3));
+		this.ctx.fillRect(contrastRect.x, contrastRect.y, contrastRect.width, contrastRect.height);
 
 		// Draw our text rectangle
 		this.ctx.fillStyle = "white";
-		this.ctx.fillRect(snapPointXEnd + slopeModifier, snapPointYEnd + slopeModifier, textMetrics.width + (margin * 2), 30 + margin);
+		this.ctx.fillRect(textRect.x, textRect.y, textRect.width, textRect.height);
 
 		// Finally draw our text
 		this.ctx.fillStyle = "black";
 		this.ctx.textBaseline = 'top';
-		this.ctx.fillText(text, snapPointXEnd + margin + slopeModifier, snapPointYEnd + margin + slopeModifier);
+		this.ctx.fillText(text, textX, textY);
 	}
 };
 
@@ -727,13 +779,12 @@ function drawing_mousemove(e) {
 		}
 		else if (e.data.shape == "measure") {
 			ctx.save();
-			ctx.beginPath();
+			// ctx.beginPath();
 
-			WaypointManager.canvas = canvas;
-			WaypointManager.ctx = ctx;
+			WaypointManager.setCanvas(canvas);
 			WaypointManager.registerMouseMove(mousex, mousey);
 			WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
-			WaypointManager.draw();
+			WaypointManager.draw(false);
 
 			ctx.fillStyle = '#f50';
 
@@ -770,10 +821,10 @@ function drawing_mouseup(e) {
 	mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
 	mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
 
-	// Do NOT execute this function if we are measuring and have hit the right mouse button
+	// Return early from this function if we are measuring and have hit the right mouse button
 	if (e.data.shape == "measure" && e.button == 2) {
 		WaypointManager.checkNewWaypoint(mousex, mousey);
-		console.log("Measure right click");
+		//console.log("Measure right click");
 		return;
 	}
 
@@ -882,13 +933,13 @@ function drawing_mouseup(e) {
 	}
 	if (e.data.shape == "measure") {
 
-		setTimeout(function() {
+		setTimeout(function () {
 			// We do not clear if we are still measuring, added this as it somehow appeared multiple
 			// timers could be set, may be a race condition or something still here...
-			if(!WaypointManager.isMeasuring()) {
+			if (!WaypointManager.isMeasuring()) {
 				redraw_canvas();
 			}
-		}, 3000);
+		}, 1500);
 		WaypointManager.clearWaypoints();
 	}
 	if (e.data.shape == "align") {
