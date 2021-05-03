@@ -1,5 +1,229 @@
 const POLYGON_CLOSE_DISTANCE = 15;
 
+/**
+ * Class to manage measure waypoints
+ */
+class WaypointManager {
+
+	// Members
+	static canvas;
+	static ctx;
+	static numWaypoints = 0;
+	static coords = [];
+	static currentWaypointIndex = 0;
+	static mouseDownCoords = { mousex: undefined, mousey: undefined };
+	static timeout = undefined;
+
+	// Set canvas and further set context
+	static setCanvas(canvas) {
+
+		this.canvas = canvas;
+		this.ctx = canvas.getContext("2d");
+	}
+
+	// Are we in the middle of measuring?
+	static isMeasuring() {
+
+		return this.numWaypoints != 0;
+	}
+
+	// Store a waypoint in the array
+	static storeWaypoint(index, startX, startY, endX, endY) {
+
+		// Check if we have this waypoint in our array, if not then increment how many waypoints we have
+		if (typeof this.coords[index] === 'undefined') {
+			this.numWaypoints++;
+		}
+
+		// If this is the first segment we store the values as passed in
+		if (this.numWaypoints == 1) {
+			this.coords[index] = { startX: startX, startY: startY, endX: endX, endY: endY, distance: 0 };
+		}
+		else {
+			// If this is NOT the first, then we stitch the segments together by setting the start of this one to the end of the previous one
+			this.coords[index] = { startX: this.coords[index - 1].endX, startY: this.coords[index - 1].endY, endX: endX, endY: endY, distance: 0 };
+		}
+	}
+
+	// Increment the current index into the array of waypoints, and draw a small indicator
+	static checkNewWaypoint(mousex, mousey) {
+
+		if (this.mouseDownCoords.mousex == mousex && this.mouseDownCoords.mousey == mousey) {
+
+			console.log("Incrementing waypoint");
+			this.currentWaypointIndex++;
+
+			// Draw an indicator for cosmetic niceness
+			var snapCoords = this.getSnapPointCoords(mousex, mousey);
+			this.ctx.beginPath();
+			this.ctx.arc(snapCoords.x, snapCoords.y, window.CURRENT_SCENE_DATA.hpps / 4, 0, 2 * Math.PI, false);
+			this.ctx.lineWidth = 5;
+			this.ctx.strokeStyle = "black";
+			this.ctx.stroke();
+			this.ctx.lineWidth = 3;
+			this.ctx.strokeStyle = "white";
+			this.ctx.stroke();
+		}
+	}
+
+	// Track mouse moving
+	static registerMouseMove(mousex, mousey) {
+
+		this.mouseDownCoords.mousex = mousex;
+		this.mouseDownCoords.mousey = mousey;
+	}
+
+	// On mouse up, clear out the waypoints
+	static clearWaypoints() {
+
+		this.numWaypoints = 0;
+		this.coords = [];
+		this.currentWaypointIndex = 0;
+		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
+		clearTimeout(this.timeout);
+		this.timeout = undefined;
+	}
+
+	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
+	static getSnapPointCoords(x, y) {
+
+		var gridSize = window.CURRENT_SCENE_DATA.hpps;
+		var currGridX = Math.floor(x / gridSize);
+		var currGridY = Math.floor(y / gridSize);
+		var snapPointXStart = (currGridX * gridSize) + (gridSize / 2);
+		var snapPointYStart = (currGridY * gridSize) + (gridSize / 2);
+
+		return { x: snapPointXStart, y: snapPointYStart }
+	}
+
+	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
+	// as otherwise the token sits on the measurement label
+	static draw(midlineLabels) {
+
+		
+		var cumulativeDistance = 0
+		for (var i = 0; i < this.coords.length; i++) {
+			// We do the beginPath here because otherwise the lines on subsequent waypoints get
+			// drawn over the labels...
+			this.ctx.beginPath();
+			this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
+			cumulativeDistance += this.coords[i].distance;
+		}
+	}
+
+	// Draw a waypoint segment with all the lines and labels etc.
+	static drawWaypointSegment(coord, cumulativeDistance, midlineLabels) {
+
+		// Snap to centre of current grid square
+		var gridSize = window.CURRENT_SCENE_DATA.hpps;
+		var snapCoords = this.getSnapPointCoords(coord.startX, coord.startY);
+		var snapPointXStart = snapCoords.x;
+		var snapPointYStart = snapCoords.y;
+		this.ctx.moveTo(snapPointXStart, snapPointYStart);
+
+		snapCoords = this.getSnapPointCoords(coord.endX, coord.endY);
+		var snapPointXEnd = snapCoords.x;
+		var snapPointYEnd = snapCoords.y;
+
+		// In future we may support other units(?), defaulting to 'ft' for feet
+		var unitSymbol = "ft";
+
+		// Calculate the distance and set into the waypoint object
+		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
+		distance = Math.round(distance / gridSize);
+		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
+		coord.distance = distance;
+
+		var textX = 0;
+		var textY = 0;
+		var margin = 2;
+		var heightOffset = 30;
+		var slopeModifier = 0;
+
+		// Setup text metrics
+		this.ctx.font = "30px Arial";
+		var text = "" + (distance + cumulativeDistance) + unitSymbol;
+		var textMetrics = this.ctx.measureText(text);
+
+		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or 
+		// token dragging (midlineLabels == true)
+		var contrastRect = { x: 0, y: 0, width: 0, height: 0 }
+		var textRect = { x: 0, y: 0, width: 0, height: 0 }
+
+		if (midlineLabels === true) {
+
+			// Calculate our coords and dimensions
+			textX = (snapPointXStart + snapPointXEnd) / 2;
+			textY = (snapPointYStart + snapPointYEnd) / 2;
+
+			contrastRect.x = textX - margin;
+			contrastRect.y = textY - margin;
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height = heightOffset + (margin * 3);
+
+			textRect.x = textX;
+			textRect.y = textY;
+			textRect.width = textMetrics.width + (margin * 2);
+			textRect.height = heightOffset + margin;
+		}
+		else {
+			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
+			if (snapPointYStart <= snapPointYEnd) {
+				// Push right and down
+				slopeModifier = margin * 4;
+			}
+			else {
+				// Push up and left, bigger number as whole rect height pushed
+				slopeModifier = -heightOffset - (margin * 4);
+			}
+
+			// Need to further tweak the modifier if we are on the right hand side of the map
+			if (snapPointXEnd + gridSize > this.canvas.width) {
+				slopeModifier = -(heightOffset * 1.5);
+			}
+
+			// Calculate our coords and dimensions
+			contrastRect.x = snapPointXEnd - margin + slopeModifier;
+			contrastRect.y = snapPointYEnd - margin + slopeModifier;
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height = 30 + (margin * 3);
+
+			textRect.x = snapPointXEnd + slopeModifier;
+			textRect.y = snapPointYEnd + slopeModifier;
+			textRect.width = textMetrics.width + (margin * 2);
+			textRect.height = 30 + margin;
+
+			textX = snapPointXEnd + margin + slopeModifier;
+			textY = snapPointYEnd + margin + slopeModifier;
+		}
+
+		// Draw our 'contrast line'
+		this.ctx.strokeStyle = "black";
+		this.ctx.lineWidth = 7;
+		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
+		this.ctx.stroke();
+
+		// Draw our centre line
+		this.ctx.strokeStyle = "white";
+		this.ctx.lineWidth = 5;
+		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
+		this.ctx.stroke();
+
+		// Draw a 'backing rectangle', slightly larger than our text rectangle
+		this.ctx.fillStyle = "black";
+		this.ctx.fillRect(contrastRect.x, contrastRect.y, contrastRect.width, contrastRect.height);
+
+		// Draw our text rectangle
+		this.ctx.fillStyle = "white";
+		this.ctx.fillRect(textRect.x, textRect.y, textRect.width, textRect.height);
+
+		// Finally draw our text
+		this.ctx.fillStyle = "black";
+		this.ctx.textBaseline = 'top';
+		this.ctx.fillText(text, textX, textY);
+	}
+};
+
 function check_token_visibility() {
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
@@ -452,7 +676,7 @@ function drawing_mousedown(e) {
 			if (
 				isPointWithinDistance(
 					{ x: window.BEGIN_MOUSEX[0], y: window.BEGIN_MOUSEY[0] },
-					{ x: pointX , y: pointY}
+					{ x: pointX, y: pointY }
 				)
 			) {
 				savePolygon(e);
@@ -486,7 +710,7 @@ function drawing_mousemove(e) {
 
 	var mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
 	var mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
-	
+
 	if (window.MOUSEDOWN) {
 		var canvas = document.getElementById("fog_overlay");
 		var ctx = canvas.getContext("2d");
@@ -555,26 +779,12 @@ function drawing_mousemove(e) {
 		}
 		else if (e.data.shape == "measure") {
 			ctx.save();
-			ctx.beginPath();
-			ctx.strokeStyle = "rgba(255,0,0,0.9)";
-			ctx.lineWidth = 10;
-			ctx.moveTo(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
-			ctx.lineTo(mousex, mousey);
-			ctx.stroke();
-			ctx.font = "30px Arial";
-			ctx.fillStyle = "black";
-			// distance in pixel / 60px * fpsq
-			//var foots=Math.round(Math.sqrt(Math.pow(mousex-window.BEGIN_MOUSEX,2)+Math.pow(mousey-window.BEGIN_MOUSEY,2))/60)*window.ScenesHandler.scene.fpsq;
-			var foots = Math.round(Math.max(Math.abs(mousex - window.BEGIN_MOUSEX), Math.abs(mousey - window.BEGIN_MOUSEY)) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.fpsq;
-			var textwidth = ctx.measureText(foots).width;
+			// ctx.beginPath();
 
-			ctx.fillStyle = "white";
-			ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, textwidth, 30);
-
-			ctx.fillStyle = "black";
-			ctx.textBaseline = 'top';
-			//ctx.fillText(foots,(window.BEGIN_MOUSEX+mousex)/2,(window.BEGIN_MOUSEY+mousey)/2);
-			ctx.fillText(foots, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
+			WaypointManager.setCanvas(canvas);
+			WaypointManager.registerMouseMove(mousex, mousey);
+			WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
+			WaypointManager.draw(false);
 
 			ctx.fillStyle = '#f50';
 
@@ -583,7 +793,7 @@ function drawing_mousemove(e) {
 	} else {
 		if (e.data.shape === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
-			
+
 			if (isNaN(e.data.type)) {
 				redraw_drawings();
 			} else {
@@ -607,12 +817,22 @@ function drawing_mousemove(e) {
 }
 
 function drawing_mouseup(e) {
-	if (!window.MOUSEDOWN)
-		return;
 
-	window.MOUSEDOWN = false;
 	mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
 	mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+
+	// Return early from this function if we are measuring and have hit the right mouse button
+	if (e.data.shape == "measure" && e.button == 2) {
+		WaypointManager.checkNewWaypoint(mousex, mousey);
+		//console.log("Measure right click");
+		return;
+	}
+
+	if (!window.MOUSEDOWN) {
+		return;
+	}
+
+	window.MOUSEDOWN = false;
 	var width = mousex - window.BEGIN_MOUSEX;
 	var height = mousey - window.BEGIN_MOUSEY;
 
@@ -712,7 +932,15 @@ function drawing_mouseup(e) {
 		console.log("READY");
 	}
 	if (e.data.shape == "measure") {
-		setTimeout(redraw_canvas, 3000); // hide the mea			
+
+		setTimeout(function () {
+			// We do not clear if we are still measuring, added this as it somehow appeared multiple
+			// timers could be set, may be a race condition or something still here...
+			if (!WaypointManager.isMeasuring()) {
+				redraw_canvas();
+			}
+		}, 1500);
+		WaypointManager.clearWaypoints();
 	}
 	if (e.data.shape == "align") {
 		window.ScenesHandler.scene.grid_subdivided = "0";
@@ -750,17 +978,17 @@ function drawing_mouseup(e) {
 		$("#wizard_popup").append("We are now super-imposing a grid on the image. Does the grid match ? (no need to be 100% accurate, but try to get close) <button id='grid_yes'>YES</button> <button id='grid_no'>NO</button>");
 
 		$("#wizard_popup").find("#grid_no").click(
-			function() {
+			function () {
 				$("#wizard_popup").empty().append("Try again. Remember to ZOOM IN so that you can be more accurate!!!");
 				$("#align-button").click();
 			}
 		);
 
 		$("#wizard_popup").find("#grid_yes").click(
-			function() {
+			function () {
 				$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> or <button id='grid_10'>10</button>");
 
-				$("#grid_5").click(function() {
+				$("#grid_5").click(function () {
 					window.WIZARDING = false;
 					window.ScenesHandler.scene.snap = "1";
 					window.ScenesHandler.scene.grid = "0";
@@ -770,16 +998,16 @@ function drawing_mouseup(e) {
 					window.ScenesHandler.reload();
 					$("#wizard_popup").empty().append("You're good to go!! Measurement tool calibrated. Token Snapping Enabled (you can remove it from manual grid data)");
 
-					$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
+					$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function () {
 
 						$("#wizard_popup").remove();
 					});
 				});
 
-				$("#grid_10").click(function() {
+				$("#grid_10").click(function () {
 					$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so that you can get in-scale token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
 
-					$("#grid_divide").click(function() {
+					$("#grid_divide").click(function () {
 						window.WIZARDING = false;
 						$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
 						window.ScenesHandler.scene.grid_subdivided = "1";
@@ -788,14 +1016,14 @@ function drawing_mouseup(e) {
 						window.ScenesHandler.scene.grid = "1";
 						window.ScenesHandler.scene.fpsq = "5";
 
-						$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+						$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function () {
 							$("#wizard_popup").remove();
 						});
 						window.ScenesHandler.persist();
 						window.ScenesHandler.reload();
 					});
 
-					$("#grid_nodivide").click(function() {
+					$("#grid_nodivide").click(function () {
 						window.WIZARDING = false;
 						window.ScenesHandler.scene.snap = "1";
 						window.ScenesHandler.scene.grid_subdivided = "0";
@@ -813,7 +1041,7 @@ function drawing_mouseup(e) {
 		);
 
 
-		setTimeout(function() {
+		setTimeout(function () {
 			window.ScenesHandler.reload();
 		}, 500);
 	}
@@ -849,7 +1077,7 @@ function setup_draw_buttons() {
 	var canvas = document.getElementById('fog_overlay');
 	var ctx = canvas.getContext('2d');
 
-	$(".drawbutton").click(function(e) {
+	$(".drawbutton").click(function (e) {
 		if ($(this).hasClass('button-enabled')) {
 			stop_drawing();
 			$(".drawbutton").removeClass('button-enabled');
@@ -913,7 +1141,7 @@ function setup_draw_buttons() {
 	})
 }
 
-function drawPolygon (
+function drawPolygon(
 	points,
 	bgColor = 'rgba(255,0,0,0.6)',
 	fog = true,
@@ -996,13 +1224,13 @@ function joinPointsArray(pointsX, pointsY) {
 
 function isPointWithinDistance(points1, points2) {
 	return Math.abs(points1.x - points2.x) <= POLYGON_CLOSE_DISTANCE
-			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
+		&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon (points) {
+function clearPolygon(points) {
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-	
+
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
 	 * need to set it to opaque color.
