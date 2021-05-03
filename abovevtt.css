@@ -17,7 +17,8 @@ body > button,
 .player-actions button,
 #add-party,
 #hide_rightpanel,
-#zoom_buttons button {
+#zoom_buttons button,
+.GameLogEntry_Message__1GoY3 button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
     height: 22px;
@@ -49,7 +50,8 @@ body > button:hover,
 .player-actions button:hover,
 #add-party:hover,
 .importer_toggle:hover,
-#zoom_buttons button:hover {
+#zoom_buttons button:hover,
+.GameLogEntry_Message__1GoY3 button:hover {
     color: #333;
     background-image: none;
     background: #e6e6e6;
@@ -579,6 +581,7 @@ div#scene_properties form > div {
     position: relative;
     margin: 0 !important;
     left: -26px;
+    z-index: 20;
 }
 
 .sidebar__pane-content {
@@ -588,9 +591,75 @@ div#scene_properties form > div {
 }
 
 .sidebar__controls .tab-btn {
-    background-color: #fff;
+    background-color: #e3e3e3;
     margin: 0 2px;
     border-radius: 7px 7px 0 0;
-    padding: 2px 8px;
-    border: 1px solid lightgray;
+    padding: 0;
+    border-style: solid;
+    border-width: 0;
+    border-color: lightgray;
+    transition: all 0.2s ease-in-out;
+    font-weight: 400;
+    max-width: 75px;
+    width: 75px;
+}
+
+.sidebar__controls .tab-btn.selected-tab {
+    background-color: #fff;
+}
+
+#chat-text {
+    width:260px;
+    height:30px;
+    margin-bottom:10px;
+}
+
+.dice-roller {
+    display: flex;
+    justify-content: space-around;
+    width: 320px;
+    margin: 10px 0 15px 0;
+}
+
+.dice-roller > div {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dice-roller > div:hover:not(.dice-number) {
+    transform: translateY(-2px);
+}
+
+.dice-roller > div img {
+    top: 0;
+    transition: all 0.5s ease-in-out;
+    position: absolute;
+    z-index: 11;
+}
+
+.dice-roller > div.dice-number img {
+    top: -50px;
+}
+
+.dice-roller > div input {
+    width: 40px;
+    opacity: 0;
+    z-index: 10;
+}
+
+.d-block {
+    display: block;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.hidden {
+    visibility: hidden;
 }

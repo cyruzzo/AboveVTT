@@ -287,7 +287,7 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' class='tab-btn' data-target='.glc-game-log'>GAMELOG</button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'>GAMELOG</button>").click(switch_control);
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
@@ -299,6 +299,11 @@ function init_controls() {
 
 	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
 	$(".sidebar__controls").append(b4);
+
+	$(".tab-btn").on("click", function(e) {
+		$(".tab-btn").removeClass('selected-tab');
+		$(e.target).toggleClass('selected-tab');
+	});
 
 }
 
@@ -779,7 +784,131 @@ function init_ui() {
 
 
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
+	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
+	$(".glc-game-log").append($(`
+		<div class="dice-roller">
+			<div>
+				<img title="d4" alt="d4" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d4.svg"}"/>
+			</div>
+			<div>
+				<img title="d6" alt="d6" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d6.png"}"/>
+			</div>
+			<div>
+				<img title="d8" alt="d8" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d8.svg"}"/>
+			</div>
+			<div>
+				<img title="d10" alt="d10" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d10.svg"}"/>
+			</div>
+			<div>
+				<img title="d100" alt="d100" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d100.png"}"/>
+			</div>
+			<div>
+				<img title="d12" alt="d12" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d12.svg"}"/>
+			</div>
+			<div>
+				<img title="d20" alt="d20" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d20.svg"}"/>
+			</div>
+		</div>
+	`));
+
+	$(".dice-roller > div img").on("click", function(e) {
+		const roll = new rpgDiceRoller.DiceRoll($(e.target).attr("alt"));
+		const text = roll.output;
+		const uuid = new Date().getTime();
+		const data = {
+			player: window.PLAYER_NAME,
+			img: window.PLAYER_IMG,
+			text: window.DM ? `<div class="d-block"><div>${text}</div><div class="text-center"><button ${window.DM ? `id="${uuid}"` : ""}>Send to Players</button></div></div>` : text,
+			dmonly: window.DM || false,
+			id: window.DM ? `li_${uuid}` : undefined
+		};
+		window.MB.sendMessage('custom/myVTT/chat', data);
+		window.MB.handleChat(data,true);
+		if (window.DM) {
+			$("#" + uuid).on("click", () => {
+				const newData = {...data, dmonly: false, id: undefined, text: text};
+				window.MB.sendMessage('custom/myVTT/chat', newData);
+				window.MB.handleChat(newData,true);
+				$("#li_" + uuid).remove()
+			});
+		}
+	});
+
+	$(".dice-roller > div img").on("contextmenu", function(e) {
+		e.preventDefault();
+
+		const containerDiv = $(e.target).parent();
+		if (containerDiv.hasClass("dice-number")) {
+			$(this).parent().find("input").each(function () {
+				if ($(this).val().length === 0 || $(this).val() === "0") {
+					$(this).animate({'opacity': "0"}, 500, function () {
+						$(this).remove();
+						$("#chat-text").animate({'opacity': "1"}, 500);
+					});
+					containerDiv.toggleClass("dice-number");
+					
+				}
+			})
+			return;
+		}
+		
+		$("#chat-text").animate({'opacity': "0"}, 500);
+		$(".dice-roller > div input").each(function () {
+			if ($(this).val().length === 0 || $(this).val() === "0") {
+				$(this).animate({'opacity': "0"}, 500, function () { $(this).remove(); });
+				$(this).parent().removeClass("dice-number");
+			}
+		});
+		
+		containerDiv.toggleClass("dice-number");
+		const numberInput = $("<input min='0' type='number' />");
+		containerDiv.append(numberInput);
+		numberInput.focus();
+		numberInput.animate({'opacity': "1"}, 500, () => numberInput.css("opacity", "1"));
+		numberInput.on("keypress", function(e) {
+			if (e.keyCode == 13) {
+				const rollExpression = [];
+				const errorFlag = false;
+				$(".dice-roller > div input").each(function() {
+					if ($(this).val() < 0) {
+						$(this).css("border", "1px solid red");
+						errorFlag = true;
+						return;
+					}
+					if ($(this).val().length === 0) {
+						return;
+					}
+					rollExpression.push($(this).val() + $(this).parent().find("img").attr("alt"));
+				});
+				if (!errorFlag) {
+					const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
+					const text = roll.output;
+					const uuid = new Date().getTime();
+					const data = {
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: window.DM ? `<div class="d-block"><div>${text}</div><div class="text-center"><button ${window.DM ? `id="${uuid}"` : ""}>Send to Players</button></div></div>` : text,
+						dmonly: window.DM || false,
+						id: window.DM ? `li_${uuid}` : undefined
+					};
+					window.MB.sendMessage('custom/myVTT/chat', data);
+					window.MB.handleChat(data,true);
+					if (window.DM) {
+						$("#" + uuid).on("click", () => {
+							const newData = {...data, dmonly: false, id: undefined, text: text};
+							window.MB.sendMessage('custom/myVTT/chat', newData);
+							window.MB.handleChat(newData,true);
+							$("#li_" + uuid).remove()
+						});
+					}
+					$("#chat-text").animate({'opacity': "1"}, 500);
+					$(".dice-roller > div input").animate({'opacity': "0"}, 500, function() { $(this).remove(); });
+					$(".dice-roller > div").removeClass("dice-number");
+				}
+			}
+		})
+	});
+	
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
 			var dmonly=false;
