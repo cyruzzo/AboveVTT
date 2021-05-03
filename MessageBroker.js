@@ -181,7 +181,7 @@ class MessageBroker {
 
 			console.log("old " + cur.options.hp + " new " + data.hp);
 			console.log(data.conditions);
-			if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration")) {
+			if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
 				var msgdata = {
 					player: cur.options.name,
 					img: cur.options.imgsrc,
