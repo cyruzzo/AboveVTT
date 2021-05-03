@@ -455,8 +455,9 @@ class Token {
 			}
 
 			if (this.options.hidden) {
-				if (window.DM)
+				if (window.DM) {
 					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
+				}
 				else
 					old.hide();
 			}
@@ -643,6 +644,11 @@ class Token {
 						if($(tok).css('opacity') == 0) {
 							doSomething();
 						}
+
+						// Bit hacky, set a custom opacity for dragging if the token had no previous opacity change, e.g. hidden
+						if (tok.css("opacity") == 0.51) {
+							$(tok).fadeTo(0, 1);
+						}
 						//$(tok).fadeTo(0, 1);
 					},
 				start: function (event) {
@@ -665,6 +671,11 @@ class Token {
 					}
 
 					// Setup waypoint manager
+
+					// If we are solid (not hidden), set opacity to custom number so we can see measure label
+					if (tok.css("opacity") == 1.0) {
+						$(tok).fadeTo(0, 0.51);
+					}
 					//$(tok).fadeTo(0, 0.5);
 					window.BEGIN_MOUSEX = (event.pageX - 200) * (1.0 / window.ZOOM);
 					window.BEGIN_MOUSEY = (event.pageY - 200) * (1.0 / window.ZOOM);
