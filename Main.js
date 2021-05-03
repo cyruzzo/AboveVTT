@@ -16,7 +16,7 @@ function getRandomColorOLD() {
 }
 
 function uuid() {
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	});
@@ -364,7 +364,6 @@ function init_mouse_zoom(){
 		}
 	}, {passive: false} )
 }
-
 
 
 
@@ -1047,11 +1046,11 @@ function init_ui() {
 	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
-	if (window.DM) {
-		zoom_section.css("left", "-100px");
+	if(window.DM) {
+		zoom_section.css("left","-100px");
 	}
-	else {
-		zoom_section.css("left", "-180px");
+	else{
+		zoom_section.css("left","-180px");
 	}
 	$(".sidebar__controls").append(zoom_section);
 
@@ -1182,7 +1181,6 @@ function init_buttons() {
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
 	
-
 
 	buttons = $("<div/>")
 	$("body").append(buttons);
