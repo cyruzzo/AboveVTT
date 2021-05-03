@@ -2,8 +2,8 @@
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
 
 const CUSTOM_CONDITIONS = ["Concentration", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
-	"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
-	"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
+							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
+							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
 /*const TOKEN_COLORS=  [
 	"D1BBD7","882E72","5289C7","4EB265","CAEOAB","F6C141","E8601C","777777","AE76A3","1965BO","7BAFDE","90C987","F7F056","F1932D","DC050C",
@@ -20,14 +20,14 @@ const CUSTOM_CONDITIONS = ["Concentration", "Inspiration", "Flying", "Flamed", "
 
 
 const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404", "EC8AFF", "00E5FF",
-	"000000", "F032E6", "911EB4", //END OF NEW COLORS
-	"800000", "008000", "000080", "808000", "800080", "008080", "808080", "C00000", "00C000", "0000C0",
-	"C0C000", "C000C0", "00C0C0", "C0C0C0", "400000", "004000", "000040",
-	"404000", "400040", "004040", "404040", "200000", "002000", "000020",
-	"202000", "200020", "002020", "202020", "600000", "006000", "000060",
-	"606000", "600060", "006060", "606060", "A00000", "00A000", "0000A0",
-	"A0A000", "A000A0", "00A0A0", "A0A0A0", "E00000", "00E000", "0000E0",
-	"E0E000", "E000E0", "00E0E0", "E0E0E0"];
+					"000000", "F032E6", "911EB4", //END OF NEW COLORS
+					"800000", "008000", "000080", "808000", "800080", "008080", "808080", "C00000", "00C000", "0000C0",
+					"C0C000", "C000C0", "00C0C0", "C0C0C0", "400000", "004000", "000040",
+					"404000", "400040", "004040", "404040", "200000", "002000", "000020",
+					"202000", "200020", "002020", "202020", "600000", "006000", "000060",
+					"606000", "600060", "006060", "606060", "A00000", "00A000", "0000A0",
+					"A0A000", "A000A0", "00A0A0", "A0A0A0", "E00000", "00E000", "0000E0",
+					"E0E000", "E000E0", "00E0E0", "E0E0E0"];
 
 
 class Token {
@@ -99,7 +99,7 @@ class Token {
 
 
 			// double blink
-			old.animate({ opacity: 0 }, 250).animate({ opacity: old_op }, 250).animate({ opacity: 0 }, 250).animate({ opacity: old_op }, 250, function () {
+			old.animate({ opacity: 0 }, 250).animate({ opacity: old_op }, 250).animate({ opacity: 0 }, 250).animate({ opacity: old_op }, 250, function() {
 				self.doing_highlight = false;
 			});
 		}
@@ -127,7 +127,7 @@ class Token {
 		n.animate({
 			opacity: 0.3,
 			top: parseInt(this.options.top) - 100,
-		}, 6000, function () {
+		}, 6000, function() {
 			n.remove();
 		})
 
@@ -242,22 +242,22 @@ class Token {
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
 		if (this.options.monster > 0) {
-			hp_input.change(function (e) {
+			hp_input.change(function(e) {
 				self.update_and_sync(e);
 			});
-			hp_input.click(function (e) {
+			hp_input.click(function(e) {
 				$(e.target).select();
 			});
-			maxhp_input.change(function (e) {
+			maxhp_input.change(function(e) {
 				self.update_and_sync(e);
 			});
-			maxhp_input.click(function (e) {
+			maxhp_input.click(function(e) {
 				$(e.target).select();
 			});
 		}
 		else {
-			hp_input.keydown(function (e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-			maxhp_input.keydown(function (e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
+			hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
 
 		return (hpbar);
@@ -305,7 +305,7 @@ class Token {
 
 		if (conditionsTotal > 0) {
 			let conditionCount = 0;
-
+			
 			for (let i = 0; i < this.options.conditions.length; i++) {
 				const conditionName = this.options.conditions[i];
 				const isExhaustion = conditionName.startsWith("Exhaustion");
@@ -338,7 +338,7 @@ class Token {
 
 			for (let i = 0; i < this.options.custom_conditions.length; i++) {
 				const conditionName = this.options.custom_conditions[i];
-				const conditionSymbolName = conditionName.replaceAll(' ', '_').toLowerCase();
+				const conditionSymbolName = conditionName.replaceAll(' ','_').toLowerCase();
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
@@ -365,7 +365,7 @@ class Token {
 						cond.append(conditionContainer);
 					}
 				}
-
+				
 				conditionCount++;
 			}
 		}
@@ -455,9 +455,8 @@ class Token {
 			}
 
 			if (this.options.hidden) {
-				if (window.DM) {
+				if (window.DM)
 					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
-				}
 				else
 					old.hide();
 			}
@@ -495,10 +494,10 @@ class Token {
 			var tokimg = $("<img style='transform:scale(" + scale + ")' class='Avatar_AvatarPortrait__2dP8u'/>"); // class to make them round
 
 
-			var zindexdiff = Math.round(20 / (this.options.size / window.CURRENT_SCENE_DATA.hpps));
-			console.log("Diff: " + zindexdiff);
-
-			tok.css("z-index", 30 + zindexdiff);
+			var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			console.log("Diff: "+zindexdiff);
+			
+			tok.css("z-index", 30+zindexdiff);
 			tok.width(this.options.size);
 			tok.addClass('token');
 
@@ -687,7 +686,7 @@ class Token {
 					console.log("started");
 				},
 
-				drag: function (event, ui) {
+				drag: function(event, ui) {
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
@@ -722,6 +721,7 @@ class Token {
 								//curr.place();
 							}
 						}
+
 					}
 
 					redraw_canvas();
@@ -745,7 +745,7 @@ class Token {
 
 
 			// 
-			tok.find(".Avatar_AvatarPortrait__2dP8u").dblclick(function (e) {
+			tok.find(".Avatar_AvatarPortrait__2dP8u").dblclick(function(e) {
 				self.highlight();
 				var data = {
 					id: self.options.id
@@ -1006,26 +1006,26 @@ function token_inputs(opt) {
 
 function multiple_callback(key, options, event) {
 	if (key == "token_combat") {
-		$("#tokens .tokenselected").each(function () {
+		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
-			ct_add_token(window.TOKEN_OBJECTS[id], false);
+			ct_add_token(window.TOKEN_OBJECTS[id],false);
 			ct_persist();
 		});
 	}
 	if (key == "hide") {
-		$("#tokens .tokenselected").each(function () {
+		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			window.TOKEN_OBJECTS[id].hide();
 		});
 	}
 	if (key == "show") {
-		$("#tokens .tokenselected").each(function () {
+		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			window.TOKEN_OBJECTS[id].show();
 		});
 	}
 	if (key == "delete") {
-		$("#tokens .tokenselected").each(function () {
+		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			$(this).remove();
 			delete window.ScenesHandler.scene.tokens[id];
@@ -1040,13 +1040,12 @@ function multiple_callback(key, options, event) {
 }
 
 function token_menu() {
-
 	if (window.DM) {
 
 		$.contextMenu({
 			selector: '.VTTToken',
 
-			build: function (element, e) {
+			build: function(element, e) {
 
 				if ($(element).hasClass("tokenselected") && window.MULTIPLE_TOKEN_SELECTED) {
 					ret = {
@@ -1142,7 +1141,7 @@ function token_menu() {
 								value: window.TOKEN_OBJECTS[id].options.max_hp,
 								disabled: !is_monster,
 								events: {
-									click: function (e) {
+									click: function(e) {
 										$(e.target).select();
 									}
 								}

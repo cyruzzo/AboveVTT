@@ -99,12 +99,12 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 			videoId: videoid,
 			playerVars: { 'autoplay': 1, 'controls': 0 },
 			events: {
-				'onStateChange': function (event) { if (event.data == 0) player.seekTo(0); },
-				'onReady': function (e) { e.target.mute(); }
+				'onStateChange': function(event) { if (event.data == 0) player.seekTo(0); },
+				'onReady': function(e) { e.target.mute(); }
 			}
 		});
 
-		let smooth = function () {
+		let smooth = function() {
 			if (player.playerInfo.playerState != 1) // something went wrong
 				return;
 			remaining = player.playerInfo.duration - player.playerInfo.currentTime;
@@ -139,7 +139,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 
 
-function set_pointer(data, dontscroll = false) {
+function set_pointer(data,dontscroll=false) {
 
 	let marker = $("<div></div>");
 	marker.css({
@@ -164,11 +164,11 @@ function set_pointer(data, dontscroll = false) {
 		top: data.y - 60,
 		left: data.x - 60,
 		"border-width": 0,
-	}, 5000, function () { marker.remove() });
+	}, 5000, function() { marker.remove() });
 
 	// calculate pageX and pageY and scroll there!
 
-	if (!dontscroll) {
+	if(!dontscroll){
 		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
 		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
 		$("html,body").animate({
@@ -200,7 +200,7 @@ function switch_control(e) {
 		init_monster_panel();
 		window.MONSTERPANEL_LOADED = true;
 		window.BLOCKCONTROLS = true;
-		setTimeout(function () {
+		setTimeout(function() {
 			window.BLOCKCONTROLS = false;
 
 		}, 2000);
@@ -237,7 +237,7 @@ function load_monster_stat(monsterid) {
 	close_button.css("right", "0");
 	close_button.css("top", "0");
 	close_button.css("z-index", "1001");
-	close_button.click(function () {
+	close_button.click(function() {
 		container.animate({
 			left: "-500px"
 		}, 500);
@@ -254,9 +254,9 @@ function load_monster_stat(monsterid) {
 	//iframe.css("transform","scale(0.75)");
 
 
-	window.StatHandler.getStat(monsterid, function (stats) {
+	window.StatHandler.getStat(monsterid, function(stats) {
 
-		iframe.on("load", function (event) {
+		iframe.on("load", function(event) {
 			console.log('carico mostro');
 			$(event.target).contents().find("#mega-menu-target").remove();
 			$(event.target).contents().find(".site-bar").remove();
@@ -274,7 +274,7 @@ function load_monster_stat(monsterid) {
 				img.append(cast);
 
 				let imgsrc = img.find("a").attr('href');
-				cast.click(function () {
+				cast.click(function() {
 					var msgdata = {
 						player: window.PLAYER_NAME,
 						img: window.PLAYER_IMG,
@@ -312,7 +312,7 @@ function init_controls() {
 
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
-	hider = $("<button id='hide_rightpanel' data-visible=1></button>").click(function () {
+	hider = $("<button id='hide_rightpanel' data-visible=1></button>").click(function() {
 		if ($(this).attr('data-visible') == 1) {
 			$(this).attr('data-visible', 0);
 			$(".sidebar--right").animate({ "right": "-340px" }, 500);
@@ -408,9 +408,9 @@ function init_splash() {
 
 	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
-	l1 = ["GodEater", "John Pilhoefer", "Max Puplett", "Kevin Morgan", "Jason Deman"];
-	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity", "adam williams", "Chance Russo", "Kris Scott", "Steve Carsella", "Brendan Shane", "Reginald Coupet"];
-	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela", "Martin Brandt", "Emmett Jayhart", "Julia Hoffmann", "Kristopher McGinnis", "Amata (she_her)", "Alexander Engel"];
+	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman"];
+	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane","Reginald Coupet"];
+	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel"];
 
 	l1div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;' >Masters of the Realms</div></div>");
 	l1ul = $("<ul/>");
@@ -433,7 +433,7 @@ function init_splash() {
 	patreons.append(l1div).append(l2div).append(l3div)
 
 	cont.append(patreons);
-	cont.click(function () {
+	cont.click(function() {
 		$("#splash").remove();
 
 	});
@@ -457,7 +457,7 @@ function sortGameLog(e) {
 	$(".GameLog_GameLogEntries__33O_1").off('DOMNodeInserted', sortGameLog);
 
 	var items = $(".GameLog_GameLogEntries__33O_1").children().sort(
-		function (a, b) {
+		function(a, b) {
 			var vA = Date.parse($("time", a).attr('datetime'));
 			var vB = Date.parse($("time", b).attr('datetime'));
 			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
@@ -485,7 +485,7 @@ function sortGameLog(e) {
 		$("#temporary_gamelog").append(cloned_entry);
 
 
-		cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function () {
+		cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function() {
 			$(this).remove();
 			if ($("#temporary_gamelog").children().length == 0)
 				$("#temporary_gamelog").remove();
@@ -517,7 +517,7 @@ function get_cobalt_token(callback) {
 			// To allow cross domain cookies
 			withCredentials: true
 		},
-		success: function (data) {
+		success: function(data) {
 			console.log("GOT NEW TOKEN");
 			MYCOBALT_TOKEN = data.token;
 			MYCOBALT_TOKEN_EXPIRATION = Date.now() + (data.ttl * 1000) - 10000;
@@ -537,7 +537,7 @@ function init_spells() {
 
 	iframe.height(window.innerHeight - 50);
 	iframe.css("width", "100%");
-	iframe.on('load', function (e) {
+	iframe.on('load', function(e) {
 		$(event.target).contents().find("#site-main").css("padding", "0");
 		$(event.target).contents().find("header").hide();
 		//$(event.target).contents().find(".main-filter-container").hide();
@@ -546,7 +546,7 @@ function init_spells() {
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
 		$(event.target).contents().find("#footer").hide();
-		$(event.target).contents().find("body").on("click", "a", function (e) {
+		$(event.target).contents().find("body").on("click", "a", function(e) {
 			if ($(this).attr('href') != "/spells")
 				$(this).attr("target", "_blank");
 		});
@@ -555,7 +555,7 @@ function init_spells() {
 
 	panel.append(iframe);
 	$(".sidebar__pane-content").append(panel);
-	$(window).resize(function () {
+	$(window).resize(function() {
 		$("#iframe-spells-panel").height(window.innerHeight - 50);
 	});
 
@@ -598,7 +598,7 @@ function open_player_sheet(sheet_url) {
 		close_button.css("position", "absolute");
 		close_button.css("top", "0px");
 		close_button.css("right", "0px");
-		close_button.click(function () {
+		close_button.click(function() {
 			data = {
 				player_sheet: $("#sheet iframe").attr('src')
 			};
@@ -616,7 +616,7 @@ function open_player_sheet(sheet_url) {
 	container.height($(".sidebar__inner").height() - 20);
 	iframe.height(container.height() - 20);
 
-	iframe.on("load", function (event) {
+	iframe.on("load", function(event) {
 		$(event.target).contents().find("#mega-menu-target").remove();
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
@@ -624,7 +624,7 @@ function open_player_sheet(sheet_url) {
 
 		// CHARACTER
 		let tokenid = sheet_url;
-		var synchp = function () {
+		var synchp = function() {
 			console.log('sinco HP');
 			var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number");
 
@@ -647,7 +647,7 @@ function open_player_sheet(sheet_url) {
 			let conditions = [];
 			var conds_tag = $(event.target).contents().find(".ct-conditions-summary .ddbc-condition__name");
 
-			conds_tag.each(function (el, idx) {
+			conds_tag.each(function(el, idx) {
 				conditions.push($(this).text());
 			});
 
@@ -657,7 +657,7 @@ function open_player_sheet(sheet_url) {
 				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
 			}
 
-			$(event.target).contents().find('.ct-quick-info__ability').each(function () {
+			$(event.target).contents().find('.ct-quick-info__ability').each(function() {
 				let abilityScores;
 				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
 					abilityScores = {
@@ -701,12 +701,12 @@ function open_player_sheet(sheet_url) {
 		};
 
 		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
-		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,.ct-inspiration__status", function () {
+		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,.ct-inspiration__status", function() {
 			if (window.WAITING_FOR_SYNCHP)
 				return;
 			else {
 				window.WAITING_FOR_SYNCHP = true;
-				setTimeout(function () {
+				setTimeout(function() {
 					window.WAITING_FOR_SYNCHP = false;
 					synchp();
 				}, 1000);
@@ -716,7 +716,7 @@ function open_player_sheet(sheet_url) {
 		var mutation_target = $(event.target).contents().get(0);
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
-		var observer = new MutationObserver(function (mutations) {
+		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
 			if (sidebar.length > 0) {
@@ -724,12 +724,12 @@ function open_player_sheet(sheet_url) {
 					console.log("creating button");
 					observer.disconnect();
 					var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
-					b.click(function () {
+					b.click(function() {
 						var newobj = $(event.target).contents().find(".ct-sidebar__pane-content").clone();
 						newobj.hide();
 						$(event.target).contents().find(".ct-sidebar__pane-content").parent().append(newobj);
-						newobj.find("button,select,input").each(function () { $(this).remove() });
-						newobj.find("div,span").each(function () {
+						newobj.find("button,select,input").each(function() { $(this).remove() });
+						newobj.find("div,span").each(function() {
 							var newcss = {
 								display: $(this).css('display'),
 								'font-style': $(this).css('font-style'),
@@ -800,7 +800,7 @@ function open_player_sheet(sheet_url) {
 		$(".sidebar__controls").append(sheet_button);
 		$(window.document.body).append(container);
 
-		sheet_button.click(function (e) {
+		sheet_button.click(function(e) {
 			if (container.css("z-index") > 0) {
 				container.animate({
 					right: $(".sidebar__inner").width() - 1530,
@@ -860,26 +860,26 @@ function init_ui() {
 
 	// AGGIUNGI CHAT
 	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
-	$("#chat-text").on('keypress', function (e) {
+	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
-			var dmonly = false;
+			var dmonly=false;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
 
-			if (text.startsWith("/roll")) {
+			if(text.startsWith("/roll")) {
 				expression = text.substring(6);
 				roll = new rpgDiceRoller.DiceRoll(expression);
 				text = roll.output;
 			}
-
-			if (text.startsWith("/dmroll")) {
+			
+			if(text.startsWith("/dmroll")) {
 				expression = text.substring(8);
 				roll = new rpgDiceRoller.DiceRoll(expression);
 				text = roll.output;
-				dmonly = true;
+				dmonly=true;
 			}
-
+			
 			data = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
@@ -887,7 +887,7 @@ function init_ui() {
 				dmonly: dmonly,
 			};
 			window.MB.sendMessage('custom/myVTT/chat', data);
-			window.MB.handleChat(data, true);
+			window.MB.handleChat(data,true);
 		}
 
 	});
@@ -926,7 +926,7 @@ function init_ui() {
 	fog.css("z-index", "20");
 
 
-	fog.dblclick(function (e) {
+	fog.dblclick(function(e) {
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
@@ -953,7 +953,7 @@ function init_ui() {
 	//	if(!$("#select-button").hasClass("button-enabled"))
 		//	deselect_all_tokens();
 	});*/
-	fog.on("mousedown", function (e) {
+	fog.on("mousedown", function(e) {
 		if (e.button == 0)
 			deselect_all_tokens();
 	});
@@ -1009,7 +1009,7 @@ function init_ui() {
 
 
 	if (!DM) {
-		setTimeout(function () {
+		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
 		}, 5000);
 	}
@@ -1022,7 +1022,7 @@ function init_ui() {
 
 
 	init_buttons();
-
+	
 
 	if (!window.DM) {
 
@@ -1065,18 +1065,17 @@ function init_ui() {
 
 	init_spells();
 
-	setTimeout(function () {
+	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 	}, 5000);
 
-	setTimeout(function () {
+	setTimeout(function() {
 		window.STARTING = false;
 	}, 6000);
 
 
 
 	create_jitsi_button();
-
 
 	// EXPERRIMENTAL DRAG TO MOVE
 	var curDown = false,
@@ -1143,7 +1142,7 @@ function init_ui() {
 function init_buttons() {
 
 	var clear_button = $("<button style='width:75px;'>ALL</button>");
-	clear_button.click(function () {
+	clear_button.click(function() {
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. Are you sure?");
 		if (r == true) {
@@ -1155,7 +1154,7 @@ function init_buttons() {
 	});
 
 	var hide_all_button = $("<button style='width:75px;'>ALL</button>");
-	hide_all_button.click(function () {
+	hide_all_button.click(function() {
 		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. Are you sure?");
 		if (r == true) {
 			window.REVEALED = [];
@@ -1182,20 +1181,21 @@ function init_buttons() {
 	fog_menu.css("width", "75px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
+	
 
 
 	buttons = $("<div/>")
 	$("body").append(buttons);
-
+	
 	if (window.DM)
 		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'>SELECT</button>"));
-
+		
 	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'>MEASURE</button>"));
 	fog_button = $("<button style='display:inline;width:75px;' id='fog_button'>FOG</button>");
-
+	
 	if (window.DM)
 		buttons.append(fog_button);
-	fog_menu.css("left", fog_button.position().left);
+	fog_menu.css("left",fog_button.position().left);
 
 	draw_menu = $("<div class='top_menu'></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='draw'>Square</button></div>");
@@ -1206,7 +1206,7 @@ function init_buttons() {
 	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='eraser'>Erase</button></div>");
 	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 
-	draw_menu.find("#delete_drawing").click(function () {
+	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS?");
 		if (r === true) {
 			window.DRAWINGS = [];
@@ -1226,7 +1226,7 @@ function init_buttons() {
 		c.css("float", "left");
 		colors.append(c);
 
-		c.click(function (e) {
+		c.click(function(e) {
 			$(".coloroption").css('border', '').removeClass('colorselected');
 			$(this).css('border', '2px solid black');
 			$(this).addClass('colorselected');
@@ -1239,7 +1239,7 @@ function init_buttons() {
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='border'>BORDER</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='filled'>FILLED</button></div>");
 
-	draw_menu.find(".drawType").click(function (e) {
+	draw_menu.find(".drawType").click(function(e) {
 		$(".drawType").removeClass('drawTypeSelected');
 		$(".drawType").css('background', '');
 		$(this).addClass('drawTypeSelected');
@@ -1256,17 +1256,17 @@ function init_buttons() {
 
 	draw_button = $("<button style='display:inline;width:75px' id='draw_button'>DRAW</button>");
 
-	if (window.DM) {
+	if (window.DM){
 		buttons.append(draw_button);
-		draw_menu.css("left", draw_button.position().left);
-
+		draw_menu.css("left",draw_button.position().left);
+		
 	}
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
 
-	fog_button.click(function (e) {
+	fog_button.click(function(e) {
 		$(this).toggleClass('button-selected');
 		if ($(this).hasClass('button-selected')) {
 			fog_menu.addClass('visible');
@@ -1278,7 +1278,7 @@ function init_buttons() {
 		}
 	});
 
-	draw_button.click(function (e) {
+	draw_button.click(function(e) {
 		$(this).toggleClass('button-selected');
 		if ($(this).hasClass('button-selected')) {
 			fog_menu.removeClass('visible');
@@ -1290,7 +1290,7 @@ function init_buttons() {
 		}
 	});
 
-
+	
 
 	draw_menu.find(".drawType").first().click();
 	draw_menu.find(".coloroption").first().click();
@@ -1299,30 +1299,30 @@ function init_buttons() {
 }
 
 
-$(function () {
+$(function() {
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
-	var is_dm = false;
-	if ($(".ddb-campaigns-detail-body-dm-notes-label").length > 0) {
-		is_dm = true;
+	var is_dm=false;
+	if($(".ddb-campaigns-detail-body-dm-notes-label").length>0){
+		is_dm=true;
 	}
-
+	
 	// SCB: Add a dummy DIV to force the AboutVTT DIV below the standard DDB buttons
 	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<div style='clear:both'>"))
 
 	// SCB:Create a 'content DIV' for AboveVTT to add our controls to, so we can control styling better
 	var contentDiv = $("<div class='above-vtt-content-div'>").appendTo($(".ddb-campaigns-detail-header-secondary-sharing"));
-
+	
 	// SCB: Append our logo
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
-	if (is_dm) {
+	if(is_dm){
 		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
 	}
 
-	$(".ddb-campaigns-character-card-footer-links").each(function () {
-		if ($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length == 0)
+	$(".ddb-campaigns-character-card-footer-links").each(function() {
+		if($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length==0)
 			return;
-
+		
 		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
 		let img = $(this).parent().parent().find('.user-selected-avatar').css('background-image');
 		let name = $(this).parent().parent().find(".ddb-campaigns-character-card-header-upper-character-info-primary").html();
@@ -1333,7 +1333,7 @@ $(function () {
 
 		newlink = $("<a style='color:white;background: #1b9af0;' href='#' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>");
 
-		newlink.click(function (e) {
+		newlink.click(function(e) {
 			e.preventDefault();
 			window.PLAYER_IMG = img;
 			window.PLAYER_SHEET = sheet;
@@ -1348,7 +1348,7 @@ $(function () {
 	});
 
 	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
-	delete_button.click(function () {
+	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
 			gameid = $("#message-broker-client").attr("data-gameId");
 			localStorage.removeItem("ScenesHandler" + gameid);
@@ -1361,9 +1361,9 @@ $(function () {
 			console.log('user canceled');
 		}
 	});
-
-	var campaign_banner = $("<div id='campaign_banner'></div>")
-	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='" + window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
+	
+	var campaign_banner=$("<div id='campaign_banner'></div>")
+	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
 	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
 	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>");
 	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
@@ -1375,25 +1375,25 @@ $(function () {
 	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
 	campaign_banner.hide();
-
+	
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
-
-	$(".instructions").click(function () {
-		if (campaign_banner.is(":visible"))
+	
+	$(".instructions").click(function(){
+		if(campaign_banner.is(":visible"))
 			campaign_banner.hide();
 		else
 			campaign_banner.show();
 	});
 
 	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);
-
-	$(".joindm").click(function (e) {
-		e.preventDefault();
-		window.DM = true;
-		window.PLAYER_SHEET = false;
-		window.PLAYER_NAME = "THE DM";
-		window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-		init_ui();
-	});
+	
+		$(".joindm").click(function(e) {
+			e.preventDefault();
+			window.DM = true;
+			window.PLAYER_SHEET = false;
+			window.PLAYER_NAME = "THE DM";
+			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
+			init_ui();
+		});
 });
 

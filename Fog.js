@@ -676,7 +676,7 @@ function drawing_mousedown(e) {
 			if (
 				isPointWithinDistance(
 					{ x: window.BEGIN_MOUSEX[0], y: window.BEGIN_MOUSEY[0] },
-					{ x: pointX, y: pointY }
+					{ x: pointX , y: pointY}
 				)
 			) {
 				savePolygon(e);
@@ -710,7 +710,7 @@ function drawing_mousemove(e) {
 
 	var mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
 	var mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
-
+	
 	if (window.MOUSEDOWN) {
 		var canvas = document.getElementById("fog_overlay");
 		var ctx = canvas.getContext("2d");
@@ -793,7 +793,7 @@ function drawing_mousemove(e) {
 	} else {
 		if (e.data.shape === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
-
+			
 			if (isNaN(e.data.type)) {
 				redraw_drawings();
 			} else {
@@ -978,17 +978,17 @@ function drawing_mouseup(e) {
 		$("#wizard_popup").append("We are now super-imposing a grid on the image. Does the grid match ? (no need to be 100% accurate, but try to get close) <button id='grid_yes'>YES</button> <button id='grid_no'>NO</button>");
 
 		$("#wizard_popup").find("#grid_no").click(
-			function () {
+			function() {
 				$("#wizard_popup").empty().append("Try again. Remember to ZOOM IN so that you can be more accurate!!!");
 				$("#align-button").click();
 			}
 		);
 
 		$("#wizard_popup").find("#grid_yes").click(
-			function () {
+			function() {
 				$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> or <button id='grid_10'>10</button>");
 
-				$("#grid_5").click(function () {
+				$("#grid_5").click(function() {
 					window.WIZARDING = false;
 					window.ScenesHandler.scene.snap = "1";
 					window.ScenesHandler.scene.grid = "0";
@@ -998,16 +998,16 @@ function drawing_mouseup(e) {
 					window.ScenesHandler.reload();
 					$("#wizard_popup").empty().append("You're good to go!! Measurement tool calibrated. Token Snapping Enabled (you can remove it from manual grid data)");
 
-					$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function () {
+					$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
 
 						$("#wizard_popup").remove();
 					});
 				});
 
-				$("#grid_10").click(function () {
+				$("#grid_10").click(function() {
 					$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so that you can get in-scale token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
 
-					$("#grid_divide").click(function () {
+					$("#grid_divide").click(function() {
 						window.WIZARDING = false;
 						$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
 						window.ScenesHandler.scene.grid_subdivided = "1";
@@ -1016,14 +1016,14 @@ function drawing_mouseup(e) {
 						window.ScenesHandler.scene.grid = "1";
 						window.ScenesHandler.scene.fpsq = "5";
 
-						$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function () {
+						$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 							$("#wizard_popup").remove();
 						});
 						window.ScenesHandler.persist();
 						window.ScenesHandler.reload();
 					});
 
-					$("#grid_nodivide").click(function () {
+					$("#grid_nodivide").click(function() {
 						window.WIZARDING = false;
 						window.ScenesHandler.scene.snap = "1";
 						window.ScenesHandler.scene.grid_subdivided = "0";
@@ -1041,7 +1041,7 @@ function drawing_mouseup(e) {
 		);
 
 
-		setTimeout(function () {
+		setTimeout(function() {
 			window.ScenesHandler.reload();
 		}, 500);
 	}
@@ -1077,7 +1077,7 @@ function setup_draw_buttons() {
 	var canvas = document.getElementById('fog_overlay');
 	var ctx = canvas.getContext('2d');
 
-	$(".drawbutton").click(function (e) {
+	$(".drawbutton").click(function(e) {
 		if ($(this).hasClass('button-enabled')) {
 			stop_drawing();
 			$(".drawbutton").removeClass('button-enabled');
@@ -1141,7 +1141,7 @@ function setup_draw_buttons() {
 	})
 }
 
-function drawPolygon(
+function drawPolygon (
 	points,
 	bgColor = 'rgba(255,0,0,0.6)',
 	fog = true,
@@ -1224,13 +1224,13 @@ function joinPointsArray(pointsX, pointsY) {
 
 function isPointWithinDistance(points1, points2) {
 	return Math.abs(points1.x - points2.x) <= POLYGON_CLOSE_DISTANCE
-		&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
+			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon(points) {
+function clearPolygon (points) {
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-
+	
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
 	 * need to set it to opaque color.
