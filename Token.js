@@ -641,10 +641,6 @@ class Token {
 
 						window.enable_window_mouse_handlers();
 
-						if($(tok).css('opacity') == 0) {
-							doSomething();
-						}
-
 						// Bit hacky, set a custom opacity for dragging if the token had no previous opacity change, e.g. hidden
 						if (tok.css("opacity") == 0.51) {
 							$(tok).fadeTo(0, 1);
