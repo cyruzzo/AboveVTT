@@ -1,3 +1,11 @@
+function parse_img(url){
+	retval=url;
+	if(retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0)
+		retval='https://drive.google.com/uc?id=' + retval.split('/')[5];
+	return retval;
+}
+
+
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
 	var color = '#';
@@ -25,6 +33,41 @@ function youtube_parser(url) {
 	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
 	var match = url.match(regExp);
 	return (match && match[7].length == 11) ? match[7] : false;
+}
+
+const MAX_ZOOM = 5
+const MIN_ZOOM = 0.1
+function change_zoom(newZoom, x, y) {
+	var zoomCenterX = x || $(window).width() / 2
+	var zoomCenterY = y || $(window).height() / 2
+	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
+	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
+	window.ZOOM = newZoom;
+	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + 200;
+	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
+
+	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
+
+	$(window).scrollLeft(pageX);
+	$(window).scrollTop(pageY);
+}
+
+function decrease_zoom() {
+	if (window.ZOOM > MIN_ZOOM) {
+		change_zoom(window.ZOOM * 0.9)
+	}
+}
+
+function reset_zoom () {
+	change_zoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
+}
+
+function increase_zoom() {
+	change_zoom(window.ZOOM * 1.10)
 }
 
 
@@ -287,7 +330,7 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'>GAMELOG</button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'>LOG</button>").click(switch_control);
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
@@ -295,8 +338,11 @@ function init_controls() {
 		$(".sidebar__controls").append(b2);
 		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b3);
+		init_tokenmenu();
+		b5=$("<button id='switch_tokens' class='tab-btn' data-target='#tokens-panel'>TOKENS</button>");
+		b5.click(switch_control);
+		$(".sidebar__controls").append(b5);
 	}
-
 	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
 	$(".sidebar__controls").append(b4);
 
@@ -305,6 +351,18 @@ function init_controls() {
 		$(e.target).toggleClass('selected-tab');
 	});
 
+}
+
+function init_mouse_zoom(){
+	window.addEventListener('wheel', function (e) {
+		if (e.ctrlKey) {
+			e.preventDefault();
+			var newScale = window.ZOOM -0.01 * e.deltaY
+			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+				change_zoom(newScale, e.clientX, e.clientY)
+			}
+		}
+	}, {passive: false} )
 }
 
 
@@ -331,7 +389,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.42RC1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.42RC2</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<b>WARNING!</b>This is still a developement version, but some brave adventurers are starting to play on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
 	cont.append("<h4>Useful Links</h4>");
@@ -593,13 +651,29 @@ function open_player_sheet(sheet_url) {
 			});
 
 			abilities = [];
+
+			const isScore = (val) => {
+				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
+			}
+
 			$(event.target).contents().find('.ct-quick-info__ability').each(function() {
-				abilities.push({
-					abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-					abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-					modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-					score: $(this).find('.ddbc-ability-summary__secondary').text()
-				});
+				let abilityScores;
+				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__primary button').text()
+					}
+				} else {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__secondary').text()
+					};
+				}
+				abilities.push(abilityScores);
 			});
 
 
@@ -756,7 +830,7 @@ function open_player_sheet(sheet_url) {
 
 function init_ui() {
 	window.STARTING = true;
-	var gameid = $("#message-broker-lib").attr("data-gameId");
+	var gameid = $("#message-broker-client").attr("data-gameId");
 	init_splash();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
@@ -1085,67 +1159,18 @@ function init_ui() {
 	zoom_section = $("<div id='zoom_buttons' />");
 
 	zoom_minus = $("<button id='zoom_minus'>-</button>");
-	zoom_minus.click(function() {
-		if (window.ZOOM > 0.1) {
-
-			var centerX = Math.round((($(window).scrollLeft() + $(window).width() / 2) - 200) * (1.0 / window.ZOOM));
-			var centerY = Math.round((($(window).scrollTop() + $(window).height() / 2) - 200) * (1.0 / window.ZOOM));
-			window.ZOOM = window.ZOOM * 0.9;
-			var pageX = Math.round(centerX * window.ZOOM - ($(window).width() / 2)) + 200;
-			var pageY = Math.round(centerY * window.ZOOM - ($(window).height() / 2)) + 200;
-
-			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
-
-			$(window).scrollLeft(pageX);
-			$(window).scrollTop(pageY);
-
-		}
-	})
+	zoom_minus.click(decrease_zoom)
 	zoom_section.append(zoom_minus);
 
 	zoom_center = $("<button>=</button>");
-	zoom_center.click(function() {
-		var centerX = Math.round((($(window).scrollLeft() + $(window).width() / 2) - 200) * (1.0 / window.ZOOM));
-		var centerY = Math.round((($(window).scrollTop() + $(window).height() / 2) - 200) * (1.0 / window.ZOOM));
-		window.ZOOM = (60.0 / window.CURRENT_SCENE_DATA.hpps);
-		var pageX = Math.round(centerX * window.ZOOM - ($(window).width() / 2)) + 200;
-		var pageY = Math.round(centerY * window.ZOOM - ($(window).height() / 2)) + 200;
-		$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-		$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-		$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400);
-		$(window).scrollLeft(pageX);
-		$(window).scrollTop(pageY);
-	});
+	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
 	zoom_plus = $("<button id='zoom_plus'>+</button>");
-	zoom_plus.click(function() {
-
-		var centerX = Math.round((($(window).scrollLeft() + $(window).width() / 2) - 200) * (1.0 / window.ZOOM));
-		var centerY = Math.round((($(window).scrollTop() + $(window).height() / 2) - 200) * (1.0 / window.ZOOM));
-		window.ZOOM = window.ZOOM * 1.10;
-		var pageX = Math.round(centerX * window.ZOOM - ($(window).width() / 2)) + 200;
-		var pageY = Math.round(centerY * window.ZOOM - ($(window).height() / 2)) + 200;
-
-		$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-		$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-		$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-		$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
-		$(window).scrollLeft(pageX);
-		$(window).scrollTop(pageY);
-
-	});
-
+	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
-	if(window.DM){
+	if(window.DM) {
 		zoom_section.css("left","-100px");
 	}
 	else{
@@ -1154,12 +1179,12 @@ function init_ui() {
 	$(".sidebar__controls").append(zoom_section);
 
 	init_combat_tracker();
-	if (window.DM) {
-		token_menu();
-	}
-	
-	
-	
+
+	token_menu();
+
+
+
+
 
 	init_spells();
 
@@ -1180,13 +1205,15 @@ function init_ui() {
 		curYPos = 0,
 		curXPos = 0;
 
-	$(window).mousemove(function(m) {
+	// Function separated so it can be dis/enabled
+	function mousemove(m) {
 		if (curDown) {
 			window.scrollBy(curXPos - m.pageX, curYPos - m.pageY)
 		}
-	});
+	}
 
-	$(window).mousedown(function(m) {
+	// Function separated so it can be dis/enabled
+	function mousedown(m) {
 		// CONTROLLA SE FA CASINIIIIIIIIIIIIIIII
 		curYPos = m.pageY;
 		curXPos = m.pageX;
@@ -1196,52 +1223,44 @@ function init_ui() {
 			$("body").css("cursor", "grabbing");
 			//return false;
 		}
+	}
 
+	// Function separated so it can be dis/enabled
+	function mouseup() {
 
-	});
-
-	$(window).mouseup(function() {
 		curDown = false;
 		$("body").css("cursor", "");
-	});
+	}
 
+	// Helper function to disable window mouse handlers, required when we
+	// do token dragging operations with measure paths
+	window.disable_window_mouse_handlers = function () {
 
+		$(window).off("mousemove", mousemove);
+		$(window).off("mousedown", mousedown);
+		$(window).off("mouseup", mouseup);
+	}
 
+	// Helper function to enable mouse handlers, required when we
+	// do token dragging operations with measure paths
+	window.enable_window_mouse_handlers = function () {
 
-	$("#fog_overlay").bind("contextmenu", function(e) {
+		$(window).on("mousemove", mousemove);
+		$(window).on("mousedown", mousedown);
+		$(window).on("mouseup", mouseup);
+	}
+
+	// Set basic mouse event handlers
+	$(window).mousemove(mousemove);
+	$(window).mousedown(mousedown);
+	$(window).mouseup(mouseup);
+
+	$("#fog_overlay").bind("contextmenu", function (e) {
 		return false;
 	});
 
-	// EXPERIMENTAL MOUSEWHEEL TO ZOOM
-
-	/*$("#fog_overlay").on("mousewheel", function(event){
-	//	console.log("wheeeeeling");
-		event.preventDefault();
-    	const delta = Math.sign(event.originalEvent.deltaY);
-		oldzoom=parseFloat($("#VTT").css("zoom"));
-		//console.log(event);
-		if(delta<0){
-			
-			$("#zoom_plus").click();
-		}
-		else if(delta>0){
-			if(oldzoom > 0.1){
-				imagex = Math.round(event.pageX * (1.0/$("#VTT").css("zoom")));
-				imagey = Math.round(event.pageY * (1.0/$("#VTT").css("zoom")));
-				console.log("Before ex,ey"+event.pageX+" "+event.pageY +"->"+imagex+" "+imagey);
-				$("#VTT").css("zoom",oldzoom-0.02);
-				var pageX = Math.round(imagex * $("#VTT").css("zoom"));  
-				var pageY = Math.round(imagey * $("#VTT").css("zoom"));
-				console.log("After -> " +pageX+" "+pageY);
-				
-				window.scrollTo(pageX-event.mouseX,pageY-event.mouseY);
-			}
-		}
-		return false;
-	})*/;
-
+	init_mouse_zoom()
 }
-
 
 function init_buttons() {
 
@@ -1453,7 +1472,7 @@ $(function() {
 	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
-			gameid = $("#message-broker-lib").attr("data-gameId");
+			gameid = $("#message-broker-client").attr("data-gameId");
 			localStorage.removeItem("ScenesHandler" + gameid);
 			localStorage.removeItem("current_source" + gameid);
 			localStorage.removeItem("current_chapter" + gameid);
@@ -1469,7 +1488,7 @@ $(function() {
 	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
 	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
 	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>");
-	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (excluding Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
+	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
 	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");

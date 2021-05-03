@@ -31,7 +31,7 @@ function init_jitsi() {
 	);
 
 
-	gameid = $("#message-broker-lib").attr("data-gameId");
+	gameid = $("#message-broker-client").attr("data-gameId");
 	const domain = 'meet.jit.si';
 	const options = {
 		roomName: 'aboveVTT-' + gameid,

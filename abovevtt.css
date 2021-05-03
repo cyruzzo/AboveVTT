@@ -580,7 +580,7 @@ div#scene_properties form > div {
 .sidebar__controls {
     position: relative;
     margin: 0 !important;
-    left: -26px;
+    left: -2px;
     z-index: 20;
 }
 
@@ -600,8 +600,8 @@ div#scene_properties form > div {
     border-color: lightgray;
     transition: all 0.2s ease-in-out;
     font-weight: 400;
-    max-width: 75px;
-    width: 75px;
+    max-width: 64px;
+    width: 64px;
 }
 
 .sidebar__controls .tab-btn.selected-tab {
@@ -662,4 +662,22 @@ div#scene_properties form > div {
 
 .hidden {
     visibility: hidden;
+}
+.tokenentryimg {
+	width:60px;
+	height:60px;
+}
+
+.tokenmenuitem {
+	float: left;
+	height:100px;
+	width: 100px;
+}
+
+#tokens-panel-warning {
+	background:red;
+}
+
+.sidebar__controls button{
+	font-size: 10px;
 }

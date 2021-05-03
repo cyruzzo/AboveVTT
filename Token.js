@@ -1,7 +1,7 @@
 
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
 
-const CUSTOM_CONDITIONS = ["Concentration", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
+const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
 							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
@@ -19,7 +19,7 @@ const CUSTOM_CONDITIONS = ["Concentration", "Inspiration", "Flying", "Flamed", "
 // const TOKEN_COLORS = ["8DB6C7","","D1C6BF","CA9F92","","E3D9BO","B1C27A","B2E289","51COBF","59ADDO","","9FA3E3","099304","DB8DB2","F1C3DO"];
 
 
-const TOKEN_COLORS = ["1A6AFF", "FF7433", "FF4D4D", "FFD433", "884DFF", "86FF66", "EC8AFF", "44E0F2",
+const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404", "EC8AFF", "00E5FF",
 					"000000", "F032E6", "911EB4", //END OF NEW COLORS
 					"800000", "008000", "000080", "808000", "800080", "008080", "808080", "C00000", "00C000", "0000C0",
 					"C0C000", "C000C0", "00C0C0", "C0C0C0", "400000", "004000", "000040",
@@ -149,7 +149,7 @@ class Token {
 
 
 
-		if ((!(this.options.monster > 0)) || window.DM) {
+		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
 			}
@@ -448,6 +448,10 @@ class Token {
 				old.animate({
 					width: this.options.size
 				}, { duration: 1000, queue: false });
+				
+				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				old.css("z-index", 30+zindexdiff);
+				
 			}
 
 			if (this.options.hidden) {
@@ -471,6 +475,15 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
+			
+			if(old.find("img").attr("src")!=this.options.imgsrc && !this.options.hidden){
+				old.find("img").attr("src",this.options.imgsrc);
+			}
+		
+			if(this.options.disableborder){
+				old.find("img").css("border-width","0");
+			}
+
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
@@ -491,9 +504,10 @@ class Token {
 			tok.append(tokimg);
 
 			if ((!(this.options.monster > 0)) || window.DM) {
-
-				tok.append(this.build_hp());
-				tok.append(this.build_ac());
+				if(!this.options.disablestat){
+					tok.append(this.build_hp());
+					tok.append(this.build_ac());
+				}
 			}
 
 			// HEALTH AURA / DEAD CROSS
@@ -528,6 +542,10 @@ class Token {
 			tokimg.css("border-style", "solid");
 			tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
 			tokimg.css("border-color", this.options.color);
+			
+			if(this.options.disableborder)
+				tokimg.css("border-width","0");
+				
 			tok.css("position", "absolute");
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
@@ -566,34 +584,43 @@ class Token {
 			};
 			tok.draggable({
 				stop:
-					function(e) {
+					function (event) {
 
 						// CHECK IF SNAPPING IS ENABLED
 						if (window.CURRENT_SCENE_DATA.snap == "1") {
 
 							// calculate offset in real coordinates
-							var startX = window.CURRENT_SCENE_DATA.offsetx;// * window.CURRENT_SCENE_DATA.scaleX;
-							var startY = window.CURRENT_SCENE_DATA.offsety;// * window.CURRENT_SCENE_DATA.scaleY;
+							const startX = window.CURRENT_SCENE_DATA.offsetx;
+							const startY = window.CURRENT_SCENE_DATA.offsety;
 
+							const selectedOldTop = parseInt($(event.target).css("top"));
+							const selectedOldleft = parseInt($(event.target).css("left"));
 
-							var oldtop = parseInt($(e.target).css("top"));
-							var oldleft = parseInt($(e.target).css("left"));
+							const selectedNewtop = Math.round((selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+							const selectedNewleft = Math.round((selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
+							$(event.target).css("top", selectedNewtop + "px");
+							$(event.target).css("left", selectedNewleft + "px");
 
+							for (var id in window.TOKEN_OBJECTS) {
+								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+									const tok = $("#tokens div[data-id='" + id + "']");
 
-							var newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-							var newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									const oldtop = parseInt(tok.css("top"));
+									const oldleft = parseInt(tok.css("left"));
 
-							console.log("oldtop " + oldtop + "newtop " + newtop);
-							console.log("oldleft " + oldleft + "newleft " + newleft);
-							$(e.target).css("top", newtop + "px");
-							$(e.target).css("left", newleft + "px");
+									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+									tok.css("top", newtop + "px");
+									tok.css("left", newleft + "px");
+								}
+							}
 
 						}
 
-
 						window.DRAGGING = false;
-						self.update_and_sync(e);
+						self.update_and_sync(event);
 						if (self.selected) {
 							for (id in window.TOKEN_OBJECTS) {
 								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
@@ -604,19 +631,27 @@ class Token {
 							}
 						}
 
+						// We may have reached here because the user has right-clicked, which stops the drag operation,
+						redraw_canvas();
+						WaypointManager.clearWaypoints();
+						$(event.target).off("mouseup", dragging_right_click_mouseup);
+						$(event.target).off("mousedown", dragging_right_click_mousedown);
+						$(event.target).off("contextmenu", return_false);
+
+						window.enable_window_mouse_handlers();
+
+						// Bit hacky, set a custom opacity for dragging if the token had no previous opacity change, e.g. hidden
+						if (tok.css("opacity") == 0.51) {
+							$(tok).fadeTo(0, 1);
+						}
 					},
-				/*drag: function(evt,ui)
-					{
-						 var factor = (1 / window.ZOOM -1);
-			
-						 ui.position.top += Math.round((ui.position.top - ui.originalPosition.top) * factor);
-						 ui.position.left += Math.round((ui.position.left- ui.originalPosition.left) * factor);    
-					}
-				*/
-				start: function(event) {
+				start: function (event) {
 					window.DRAGGING = true;
 					click.x = event.clientX;
 					click.y = event.clientY;
+
+					console.log("Click x: " + click.x + " y: " + click.y);
+
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 					if (self.selected) {
@@ -628,6 +663,26 @@ class Token {
 							}
 						}
 					}
+
+					// Setup waypoint manager
+
+					// If we are solid (not hidden), set opacity to custom number so we can see measure label
+					if (tok.css("opacity") == 1.0) {
+						$(tok).fadeTo(0, 0.51);
+					}
+
+					window.BEGIN_MOUSEX = (event.pageX - 200) * (1.0 / window.ZOOM);
+					window.BEGIN_MOUSEY = (event.pageY - 200) * (1.0 / window.ZOOM);
+					WaypointManager.setCanvas(document.getElementById("fog_overlay"));
+
+					// Detect the right-click mouseup/down in our own custom function
+					$(event.target).on("mouseup", dragging_right_click_mouseup);
+					$(event.target).on("mousedown", dragging_right_click_mousedown);
+					// Disable the context menu in the drag
+					$(event.target).on("contextmenu", return_false);
+					// Disable the 'master' mouse handlers so we don't default to right-click drag panning
+					window.disable_window_mouse_handlers();
+
 					console.log("started");
 				},
 
@@ -669,9 +724,23 @@ class Token {
 
 					}
 
+					redraw_canvas();
 
+					// Draw waypoints
+					var rect = WaypointManager.canvas.getBoundingClientRect();
+					var mousex = (event.pageX - 200) * (1.0 / window.ZOOM);
+					var mousey = (event.pageY - 200) * (1.0 / window.ZOOM);
+
+					WaypointManager.ctx.save();
+					WaypointManager.ctx.beginPath();
+
+					WaypointManager.registerMouseMove(mousex, mousey);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
+					WaypointManager.draw(true);
+
+					WaypointManager.ctx.fillStyle = '#f50';
+					WaypointManager.ctx.restore();
 				}
-
 			});
 
 
@@ -691,10 +760,35 @@ class Token {
 
 }
 
+// Stop the right click mouse down from cancelling our drag
+function dragging_right_click_mousedown(event) {
+
+	event.preventDefault();
+	event.stopPropagation();
+}
+
+// This is called when we right-click mouseup during a drag operation
+function dragging_right_click_mouseup(event) {
+
+	if (window.DRAGGING && event.button == 2) {
+		console.log("dragging_right_click yay")
+		event.preventDefault();
+		event.stopPropagation();
+		var mousex = (event.pageX - 200) * (1.0 / window.ZOOM);
+		var mousey = (event.pageY - 200) * (1.0 / window.ZOOM);
+		WaypointManager.checkNewWaypoint(mousex, mousey);
+	}
+}
+
+// Named function to bind/unbind contextmenu
+function return_false() {
+
+	return false;
+}
 
 function token_button(e, tokenIndex = null, tokenTotal = null) {
 	console.log($(e.target).outerHTML());
-	let imgsrc = $(e.target).attr("data-img");
+	let imgsrc = parse_img($(e.target).attr("data-img"));
 	let id;
 	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
 	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
@@ -723,6 +817,14 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 
 	if ($(e.target).attr('data-size')) {
 		options.size = $(e.target).attr('data-size');
+	}
+
+	if ($(e.target).attr('data-disablestat')) {
+		options.disablestat = $(e.target).attr('data-disablestat');
+	}
+	
+	if ($(e.target).attr('data-disableborder')) {
+		options.disableborder = $(e.target).attr('data-disableborder');
 	}
 
 	if ($(e.target).attr('data-hp')) {
@@ -895,6 +997,7 @@ function token_inputs(opt) {
 	}
 
 
+	tok.options.imgsrc=parse_img(data.imgsrc);
 
 	tok.place();
 	tok.sync();
@@ -1017,7 +1120,7 @@ function token_menu() {
 								items: cond_items,
 							},
 							token_custom_cond: {
-								name: "Reminders",
+								name: "Markers",
 								items: custom_cond_items,
 							},
 							sep1: "-------",
@@ -1027,7 +1130,7 @@ function token_menu() {
 								value: window.TOKEN_OBJECTS[id].options.hp,
 								disabled: !is_monster,
 								events: {
-									click: function(e) {
+									click: function (e) {
 										$(e.target).select();
 									}
 								}
@@ -1044,6 +1147,17 @@ function token_menu() {
 								}
 							},
 							sep2: '---------',
+							imgsrc:{
+								type: 'text',
+								name: 'IMG Url',
+								value: window.TOKEN_OBJECTS[id].options.imgsrc,
+								events: {
+									click: function(e) {
+										$(e.target).select();
+									}
+								}
+							},
+							sep3: '----------',
 							hide: { name: 'Hide From Players' },
 							show: { name: 'Show To Players' },
 							delete: { name: 'Delete Token' }
@@ -1051,6 +1165,22 @@ function token_menu() {
 					};
 					return ret;
 				}
+			}
+		});
+	}
+	else {
+		// Suppress menu for players
+		$.contextMenu({
+			selector: '.VTTToken',
+
+			build: function (element, e) {
+				ret = {
+					callback: multiple_callback,
+					items: {
+						//delete: { name: 'Delete Token' }
+					}
+				};
+				return ret;
 			}
 		});
 	}
