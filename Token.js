@@ -1,7 +1,7 @@
 
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
 
-const CUSTOM_CONDITIONS = ["Concentration", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
+const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
 							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
@@ -1120,7 +1120,7 @@ function token_menu() {
 								items: cond_items,
 							},
 							token_custom_cond: {
-								name: "Reminders",
+								name: "Markers",
 								items: custom_cond_items,
 							},
 							sep1: "-------",
