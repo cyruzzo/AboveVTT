@@ -757,15 +757,12 @@ class Token {
 // Stop the right click mouse down from cancelling our drag
 function dragging_right_click_mousedown(event) {
 
-	console.log("dragging_right_click_mousedown")
 	event.preventDefault();
 	event.stopPropagation();
 }
 
 // This is called when we right-click mouseup during a drag operation
 function dragging_right_click_mouseup(event) {
-
-	console.log("dragging_right_click_mouseup")
 
 	if (window.DRAGGING && event.button == 2) {
 		console.log("dragging_right_click yay")
