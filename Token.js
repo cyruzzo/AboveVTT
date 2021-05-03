@@ -593,16 +593,16 @@ class Token {
 							const startX = window.CURRENT_SCENE_DATA.offsetx;
 							const startY = window.CURRENT_SCENE_DATA.offsety;
 
-							const selectedOldTop = parseInt($(e.target).css("top"));
-							const selectedOldleft = parseInt($(e.target).css("left"));
+							const selectedOldTop = parseInt($(event.target).css("top"));
+							const selectedOldleft = parseInt($(event.target).css("left"));
 
 							const selectedNewtop = Math.round((selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
 							const selectedNewleft = Math.round((selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-							$(e.target).css("top", selectedNewtop + "px");
-							$(e.target).css("left", selectedNewleft + "px");
+							$(event.target).css("top", selectedNewtop + "px");
+							$(event.target).css("left", selectedNewleft + "px");
 
-							for (id in window.TOKEN_OBJECTS) {
+							for (var id in window.TOKEN_OBJECTS) {
 								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
 									const tok = $("#tokens div[data-id='" + id + "']");
 
