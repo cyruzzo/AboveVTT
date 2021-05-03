@@ -645,7 +645,6 @@ class Token {
 						if (tok.css("opacity") == 0.51) {
 							$(tok).fadeTo(0, 1);
 						}
-						//$(tok).fadeTo(0, 1);
 					},
 				start: function (event) {
 					window.DRAGGING = true;
@@ -672,7 +671,7 @@ class Token {
 					if (tok.css("opacity") == 1.0) {
 						$(tok).fadeTo(0, 0.51);
 					}
-					//$(tok).fadeTo(0, 0.5);
+
 					window.BEGIN_MOUSEX = (event.pageX - 200) * (1.0 / window.ZOOM);
 					window.BEGIN_MOUSEY = (event.pageY - 200) * (1.0 / window.ZOOM);
 					WaypointManager.setCanvas(document.getElementById("fog_overlay"));
