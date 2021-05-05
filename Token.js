@@ -683,8 +683,6 @@ class Token {
 					$(event.target).on("contextmenu", return_false);
 					// Disable the 'master' mouse handlers so we don't default to right-click drag panning
 					window.disable_window_mouse_handlers();
-
-					console.log("started");
 				},
 
 				drag: function (event, ui) {
