@@ -24,6 +24,7 @@ Of course, this is not a job, so the days may differ a bit.. anyway try to stick
 Other considerations:
 - Right now AboveVTT have people running games with it, so the most important rule for any PR is *we try our best to don't break things*
 - Every PR *MUST* support basic compatibility with the previous versions of AboveVTT.
+- Don't reformat the pieces you are not editing. It makes the PR hard to read, and you risk causing conflicts with other people work.
 - Join the discord server and *talk with me* about what you are working on
 - When you send me a pull request from one of your branches, don't add more features to that until I merge it (only bugfixes) 
 - Try to keep different features in separate branches, so I can import them individually
