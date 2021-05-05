@@ -35,6 +35,7 @@ body > button,
     right: 400px;
     background-color: #fff;
     color: #000;
+    z-index: 9999;
     border-radius: 50px;
     text-align: center;
     font-family:Verdana, Geneva, sans-serif;
