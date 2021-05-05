@@ -73,16 +73,15 @@ class WaypointManager {
 	}
 
 	// Draw a nice circle
-	static drawBobble(x, y, tiny) {
+	static drawBobble(x, y, radius) {
 
-		var radius = 5;
-		if(tiny) {
-			radius = 3;
+		if(radius == undefined) {
+			radius = 5;
 		}
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = radius;
+		this.ctx.lineWidth = 5;
 		this.ctx.strokeStyle = "black";
 		this.ctx.stroke();
 		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
@@ -99,7 +98,7 @@ class WaypointManager {
 
 			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
-			this.drawBobble(snapCoords.x, snapCoords.y);
+			this.drawBobble(snapCoords.x, snapCoords.y, 20);
 		}
 	}
 
@@ -267,7 +266,7 @@ class WaypointManager {
 		this.ctx.fillText(text, textX, textY);
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
-		this.drawBobble(snapPointXEnd, snapPointYEnd, true);
+		this.drawBobble(snapPointXEnd, snapPointYEnd, 3);
 	}
 };
 
