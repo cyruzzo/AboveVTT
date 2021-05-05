@@ -682,8 +682,6 @@ class Token {
 					$(event.target).on("contextmenu", return_false);
 					// Disable the 'master' mouse handlers so we don't default to right-click drag panning
 					window.disable_window_mouse_handlers();
-
-					console.log("started");
 				},
 
 				drag: function(event, ui) {
@@ -771,7 +769,6 @@ function dragging_right_click_mousedown(event) {
 function dragging_right_click_mouseup(event) {
 
 	if (window.DRAGGING && event.button == 2) {
-		console.log("dragging_right_click yay")
 		event.preventDefault();
 		event.stopPropagation();
 		var mousex = (event.pageX - 200) * (1.0 / window.ZOOM);

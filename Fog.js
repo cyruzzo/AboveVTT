@@ -1,5 +1,32 @@
 const POLYGON_CLOSE_DISTANCE = 15;
 
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+
+	if (typeof stroke == "undefined" ) {
+	  stroke = true;
+	}
+	if (typeof radius === "undefined") {
+	  radius = 5;
+	}
+	ctx.beginPath();
+	ctx.moveTo(x + radius, y);
+	ctx.lineTo(x + width - radius, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	ctx.lineTo(x + width, y + height - radius);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	ctx.lineTo(x + radius, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	ctx.lineTo(x, y + radius);
+	ctx.quadraticCurveTo(x, y, x + radius, y);
+	ctx.closePath();
+	if (stroke) {
+	  ctx.stroke();
+	}
+	if (fill) {
+	  ctx.fill();
+	}        
+}
+
 /**
  * Class to manage measure waypoints
  */
@@ -45,24 +72,33 @@ class WaypointManager {
 		}
 	}
 
+	// Draw a nice circle
+	static drawBobble(x, y, radius) {
+
+		if(radius == undefined) {
+			radius = 5;
+		}
+
+		this.ctx.beginPath();
+		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+		this.ctx.lineWidth = 5;
+		this.ctx.strokeStyle = "black";
+		this.ctx.stroke();
+		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+		this.ctx.fill();
+	}
+
 	// Increment the current index into the array of waypoints, and draw a small indicator
 	static checkNewWaypoint(mousex, mousey) {
 
 		if (this.mouseDownCoords.mousex == mousex && this.mouseDownCoords.mousey == mousey) {
 
-			console.log("Incrementing waypoint");
+			//console.log("Incrementing waypoint");
 			this.currentWaypointIndex++;
 
 			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
-			this.ctx.beginPath();
-			this.ctx.arc(snapCoords.x, snapCoords.y, window.CURRENT_SCENE_DATA.hpps / 4, 0, 2 * Math.PI, false);
-			this.ctx.lineWidth = 5;
-			this.ctx.strokeStyle = "black";
-			this.ctx.stroke();
-			this.ctx.lineWidth = 3;
-			this.ctx.strokeStyle = "white";
-			this.ctx.stroke();
+			this.drawBobble(snapCoords.x, snapCoords.y, 20);
 		}
 	}
 
@@ -87,11 +123,18 @@ class WaypointManager {
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
 	static getSnapPointCoords(x, y) {
 
+		x -= window.CURRENT_SCENE_DATA.offsetx;
+		y -= window.CURRENT_SCENE_DATA.offsety;
+
 		var gridSize = window.CURRENT_SCENE_DATA.hpps;
 		var currGridX = Math.floor(x / gridSize);
 		var currGridY = Math.floor(y / gridSize);
 		var snapPointXStart = (currGridX * gridSize) + (gridSize / 2);
 		var snapPointYStart = (currGridY * gridSize) + (gridSize / 2);
+
+		// Add in scene offset
+		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx;
+		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety;
 
 		return { x: snapPointXStart, y: snapPointYStart }
 	}
@@ -163,8 +206,11 @@ class WaypointManager {
 
 			textRect.x = textX;
 			textRect.y = textY;
-			textRect.width = textMetrics.width + (margin * 2);
+			textRect.width = textMetrics.width + (margin * 3);
 			textRect.height = heightOffset + margin;
+
+			// Knock the text down slightly
+			textY += (margin * 2);
 		}
 		else {
 			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
@@ -190,37 +236,37 @@ class WaypointManager {
 
 			textRect.x = snapPointXEnd + slopeModifier;
 			textRect.y = snapPointYEnd + slopeModifier;
-			textRect.width = textMetrics.width + (margin * 2);
+			textRect.width = textMetrics.width + (margin * 3);
 			textRect.height = 30 + margin;
 
 			textX = snapPointXEnd + margin + slopeModifier;
-			textY = snapPointYEnd + margin + slopeModifier;
+			textY = snapPointYEnd + (margin * 2) + slopeModifier;
 		}
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = "black";
-		this.ctx.lineWidth = 7;
-		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
-		this.ctx.stroke();
-
-		// Draw our centre line
-		this.ctx.strokeStyle = "white";
 		this.ctx.lineWidth = 5;
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
-		// Draw a 'backing rectangle', slightly larger than our text rectangle
-		this.ctx.fillStyle = "black";
-		this.ctx.fillRect(contrastRect.x, contrastRect.y, contrastRect.width, contrastRect.height);
+		// Draw our centre line
+		this.ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+		this.ctx.lineWidth = 3;
+		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
+		this.ctx.stroke();
 
-		// Draw our text rectangle
-		this.ctx.fillStyle = "white";
-		this.ctx.fillRect(textRect.x, textRect.y, textRect.width, textRect.height);
+		this.ctx.lineWidth = 3;
+		this.ctx.strokeStyle = "black";
+		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
 
 		// Finally draw our text
 		this.ctx.fillStyle = "black";
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);
+
+		this.drawBobble(snapPointXStart, snapPointYStart);
+		this.drawBobble(snapPointXEnd, snapPointYEnd, 3);
 	}
 };
 
@@ -939,7 +985,7 @@ function drawing_mouseup(e) {
 			if (!WaypointManager.isMeasuring()) {
 				redraw_canvas();
 			}
-		}, 1500);
+		}, 2000);
 		WaypointManager.clearWaypoints();
 	}
 	if (e.data.shape == "align") {
