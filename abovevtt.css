@@ -642,7 +642,7 @@ div#scene_properties form > div {
     z-index: 11;
 }
 
-.dice-roller > div.dice-number img {
+/* .dice-roller > div.dice-number img {
     top: -50px;
 }
 
@@ -650,6 +650,43 @@ div#scene_properties form > div {
     width: 40px;
     opacity: 0;
     z-index: 10;
+} */
+.dice-badge {
+    position: absolute;
+    text-align: center;
+    display: inline-block;
+    border-radius: 50%;
+    transition: transform .2s ease-in-out;
+    transform: scale(.6);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    right: -7px;
+    top: -10px;
+    color: #fff;
+    background: #f44336;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 16px;
+}
+
+.roll-button {
+    position: fixed;
+    right: 343px;
+    bottom: 13px;
+    z-index: 0;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.roll-button.show {
+    z-index: 900000;
+    opacity: 1;
 }
 
 .d-block {
