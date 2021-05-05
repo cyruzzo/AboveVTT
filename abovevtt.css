@@ -718,3 +718,9 @@ div#scene_properties form > div {
 .sidebar__controls button{
 	font-size: 10px;
 }
+
+
+.splashLinkRow div{
+	display:inline;
+	padding-left:20px;
+} 
