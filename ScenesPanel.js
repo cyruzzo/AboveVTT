@@ -18,7 +18,7 @@ function consider_upscaling(target){
 			target.scale_factor=1;
 		}
 }
-	
+
 
 function preset_importer(target, key) {
 	target.empty();
@@ -172,7 +172,7 @@ function edit_scene_dialog(scene_id) {
 			var n = $(this).attr('name');
 			let nValue = $(this).val();
 
-			if (n === 'player_map' 
+			if (n === 'player_map'
 					&& nValue.startsWith("https://drive.google.com")
 					&& nValue.indexOf("uc?id=") < 0
 			) {
@@ -190,7 +190,7 @@ function edit_scene_dialog(scene_id) {
 	});
 
 
-	
+
 
 
 	let grid_5 = function(enable_grid = false, enable_snap = true) {
@@ -214,7 +214,7 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
-		
+
 		window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
@@ -238,9 +238,9 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.hpps /= 2;
 			window.ScenesHandler.scene.vpps /= 2;
-			
+
 			consider_upscaling(window.ScenesHandler.scene);
-			
+
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -732,38 +732,6 @@ function init_scene_selector() {
 	ss.css('top', '0px');
 	ss.css('left', '250px');
 
-
-	addblock = $("<div style='float:left;overflow: hidden;display:block;'/>");
-	addbutton = $("<button id='addscene'>ADDSCENE</button>");
-
-	addbutton.click(function() {
-		window.ScenesHandler.scenes.push({
-			title: "New Scene",
-			dm_map: "",
-			player_map: "",
-			scale: "100",
-			dm_map_usable: "0",
-			fog_of_war: "1",
-			tokens: {},
-			fpsq: 5,
-			hpps: 60,
-			vpps: 60,
-			offsetx: 0,
-			offsety: 0,
-			grid: 0,
-			snap: 0,
-			reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
-		}
-		);
-		window.ScenesHandler.persist();
-		refresh_scenes();
-	});
-
-
-	addblock.append(addbutton);
-	ss.append(addblock);
-
-
 	let toggle = $("<button id='scene_selector_toggle'>SCENES</button>");
 	toggle.css('position', 'fixed');
 	toggle.css('width', '75px');
@@ -828,13 +796,13 @@ function display_scenes() {
 	console.log(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes);
 	console.log("mostrati...");
 	/*$("#scene_select").empty();
-	
+
 	var source_name=$("#source_select").val();
 	var chapter_name=$("#chapter_select").val();
 	for(property in window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes){
 				var scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[property];
 				$("#scene_select").append($("<option value='"+property+"'>"+scene.title+"</option>"));
-			}			
+			}
 			$("#scene_select").change();*/
 }
 
@@ -877,7 +845,7 @@ function init_ddb_importer(target) {
 	});
 
 	/*	var scene_select=$("<select id='scene_select'/>");
-	
+
 		scene_select.change(function(){
 			console.log('prepare scene properties');
 			var source_name=$("#source_select").val();
@@ -888,18 +856,18 @@ function init_ddb_importer(target) {
 			else
 				$("#import_button").attr('disabled','disabled');
 			//window.ScenesHandler.display_scene_properties(source_name,chapter_name,scene_name);
-			
+
 		});*/
 
 
 	/*import_button=$("<button id='import_button'>IMPORT</button>");
 	import_button.attr('disabled','disabled');
-	
+
 	import_button.click(function(){
 		var source_name=$("#source_select").val();
 		var chapter_name=$("#chapter_select").val();
 		var scene_name=$("#scene_select").val();
-		
+
 		scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[scene_name];
 		$("#scene_properties input[name='player_map']").val(scene.player_map);
 		$("#scene_properties input[name='dm_map']").val(scene.dm_map);

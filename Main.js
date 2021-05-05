@@ -847,6 +847,7 @@ function init_ui() {
 	if (DM) {
 		window.ScenesHandler = new ScenesHandler(gameid);
 		init_scene_selector();
+		create_add_scene_button();
 	}
 	// ATTIVA GAMELOG
 	$(".gamelog-button").click();
@@ -872,14 +873,14 @@ function init_ui() {
 				roll = new rpgDiceRoller.DiceRoll(expression);
 				text = roll.output;
 			}
-			
+
 			if(text.startsWith("/dmroll")) {
 				expression = text.substring(8);
 				roll = new rpgDiceRoller.DiceRoll(expression);
 				text = roll.output;
 				dmonly=true;
 			}
-			
+
 			data = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
@@ -1022,7 +1023,7 @@ function init_ui() {
 
 
 	init_buttons();
-	
+
 
 	if (!window.DM) {
 
@@ -1059,9 +1060,9 @@ function init_ui() {
 	if (window.DM) {
 		token_menu();
 	}
-	
-	
-	
+
+
+
 
 	init_spells();
 
@@ -1160,17 +1161,17 @@ function init_buttons() {
 	fog_menu.css("width", "75px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
-	
+
 
 	buttons = $("<div/>")
 	$("body").append(buttons);
-	
+
 	if (window.DM)
 		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'>SELECT</button>"));
-		
+
 	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'>MEASURE</button>"));
 	fog_button = $("<button style='display:inline;width:75px;' id='fog_button'>FOG</button>");
-	
+
 	if (window.DM)
 		buttons.append(fog_button);
 	fog_menu.css("left",fog_button.position().left);
@@ -1237,7 +1238,7 @@ function init_buttons() {
 	if (window.DM){
 		buttons.append(draw_button);
 		draw_menu.css("left",draw_button.position().left);
-		
+
 	}
 
 	buttons.css("position", "fixed");
@@ -1268,7 +1269,7 @@ function init_buttons() {
 		}
 	});
 
-	
+
 
 	draw_menu.find(".drawType").first().click();
 	draw_menu.find(".coloroption").first().click();
@@ -1276,6 +1277,42 @@ function init_buttons() {
 	setup_draw_buttons();
 }
 
+function create_add_scene_button() {
+	addbutton = $("<button id='addscene'>+</button>");
+	addbutton.click(function () {
+		$('#scene_selector_toggle').animate({
+			top: '200px',
+		}, 500);
+		ss.animate({
+			height: '200px'
+		}, 500);
+		ss.css("overflow", "auto");
+		refresh_scenes();
+
+
+		window.ScenesHandler.scenes.push({
+				title: "New Scene",
+				dm_map: "",
+				player_map: "",
+				scale: "100",
+				dm_map_usable: "0",
+				fog_of_war: "1",
+				tokens: {},
+				fpsq: 5,
+				hpps: 60,
+				vpps: 60,
+				offsetx: 0,
+				offsety: 0,
+				grid: 0,
+				snap: 0,
+				reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+			}
+		);
+		window.ScenesHandler.persist();
+		refresh_scenes();
+	});
+	$("body").append(addbutton);
+}
 
 $(function() {
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
@@ -1283,13 +1320,13 @@ $(function() {
 	if($(".ddb-campaigns-detail-body-dm-notes-label").length>0){
 		is_dm=true;
 	}
-	
+
 	// SCB: Add a dummy DIV to force the AboutVTT DIV below the standard DDB buttons
 	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<div style='clear:both'>"))
 
 	// SCB:Create a 'content DIV' for AboveVTT to add our controls to, so we can control styling better
 	var contentDiv = $("<div class='above-vtt-content-div'>").appendTo($(".ddb-campaigns-detail-header-secondary-sharing"));
-	
+
 	// SCB: Append our logo
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
@@ -1300,7 +1337,7 @@ $(function() {
 	$(".ddb-campaigns-character-card-footer-links").each(function() {
 		if($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length==0)
 			return;
-		
+
 		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
 		let img = $(this).parent().parent().find('.user-selected-avatar').css('background-image');
 		let name = $(this).parent().parent().find(".ddb-campaigns-character-card-header-upper-character-info-primary").html();
@@ -1339,7 +1376,7 @@ $(function() {
 			console.log('user canceled');
 		}
 	});
-	
+
 	var campaign_banner=$("<div id='campaign_banner'></div>")
 	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
 	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
@@ -1353,9 +1390,9 @@ $(function() {
 	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
 	campaign_banner.hide();
-	
+
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
-	
+
 	$(".instructions").click(function(){
 		if(campaign_banner.is(":visible"))
 			campaign_banner.hide();
@@ -1364,7 +1401,7 @@ $(function() {
 	});
 
 	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);
-	
+
 		$(".joindm").click(function(e) {
 			e.preventDefault();
 			window.DM = true;
