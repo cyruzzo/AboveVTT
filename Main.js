@@ -367,7 +367,6 @@ function init_mouse_zoom(){
 
 
 
-
 function ga_heartbeat() {
 	ga('AboveVTT.send', 'event', 'keepalive', 'keepalive');
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
@@ -1048,7 +1047,7 @@ function init_ui() {
 	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
-	if(window.DM){
+	if(window.DM) {
 		zoom_section.css("left","-100px");
 	}
 	else{
@@ -1057,9 +1056,9 @@ function init_ui() {
 	$(".sidebar__controls").append(zoom_section);
 
 	init_combat_tracker();
-	if (window.DM) {
-		token_menu();
-	}
+
+
+	token_menu();
 
 
 
@@ -1083,13 +1082,15 @@ function init_ui() {
 		curYPos = 0,
 		curXPos = 0;
 
-	$(window).mousemove(function(m) {
+	// Function separated so it can be dis/enabled
+	function mousemove(m) {
 		if (curDown) {
 			window.scrollBy(curXPos - m.pageX, curYPos - m.pageY)
 		}
-	});
+	}
 
-	$(window).mousedown(function(m) {
+	// Function separated so it can be dis/enabled
+	function mousedown(m) {
 		// CONTROLLA SE FA CASINIIIIIIIIIIIIIIII
 		curYPos = m.pageY;
 		curXPos = m.pageX;
@@ -1099,25 +1100,44 @@ function init_ui() {
 			$("body").css("cursor", "grabbing");
 			//return false;
 		}
+	}
 
+	// Function separated so it can be dis/enabled
+	function mouseup() {
 
-	});
-
-	$(window).mouseup(function() {
 		curDown = false;
 		$("body").css("cursor", "");
-	});
+	}
 
+	// Helper function to disable window mouse handlers, required when we
+	// do token dragging operations with measure paths
+	window.disable_window_mouse_handlers = function () {
 
+		$(window).off("mousemove", mousemove);
+		$(window).off("mousedown", mousedown);
+		$(window).off("mouseup", mouseup);
+	}
 
+	// Helper function to enable mouse handlers, required when we
+	// do token dragging operations with measure paths
+	window.enable_window_mouse_handlers = function () {
 
-	$("#fog_overlay").bind("contextmenu", function(e) {
+		$(window).on("mousemove", mousemove);
+		$(window).on("mousedown", mousedown);
+		$(window).on("mouseup", mouseup);
+	}
+
+	// Set basic mouse event handlers
+	$(window).mousemove(mousemove);
+	$(window).mousedown(mousedown);
+	$(window).mouseup(mouseup);
+
+	$("#fog_overlay").bind("contextmenu", function (e) {
 		return false;
 	});
 
 	init_mouse_zoom()
 }
-
 
 function init_buttons() {
 
