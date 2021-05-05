@@ -1,69 +1,144 @@
 
-tokenbuiltin={
-			folders:{
-				'Overlays':{
-					tokens:{
-						'Blood':{
-							'data-img': 'https://drive.google.com/file/d/1frTuvq-64DA23ayC6P0XGZyo0M6paEID/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Big Bang':{
-							'data-img':'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Fire 1':{
-							'data-img':'https://drive.google.com/file/d/1_wE3B5rvr38cM9NMbCQ__WUf0RIXIuhQ/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Nebula':{
-							'data-img':'https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Web':{
-							'data-img':'https://drive.google.com/file/d/1rGuD7FMtzy6XR0qcsewndhS33wZL8vEM/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-					}
+tokenbuiltin = {
+	folders: {
+		'Overlays': {
+			tokens: {
+				'Blood': {
+					'data-img': 'https://drive.google.com/file/d/1frTuvq-64DA23ayC6P0XGZyo0M6paEID/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
 				},
-				'NPC':{
-					tokens:{
-						'Maid':{
-							'data-img':'https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Male Commoner':{
-							'data-img':'https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Male Guard':{
-							'data-img':'https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-						'Female Commoner':{
-							'data-img':'https://drive.google.com/file/d/14sNpLcJlzOfL4A5Qb_zdrYmOTZk51GTM/view?usp=sharing',
-							'data-disablestat':true,
-							'data-disableborder':true,
-						},
-					}
+				'Big Bang': {
+					'data-img': 'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
 				},
-				'Weapons':{
-					tokens:{
-						'Heartseeker Blade':{
-							'data-img':'https://drive.google.com/file/d/1Ft84c1VwnEhwKPew8Yyq8w8NFViC7Mr7/view?usp=sharing',
-							'data-disablestat':true,
-						},
-					}
-				}
+				'Fire': {
+					'data-img': 'https://drive.google.com/file/d/1_wE3B5rvr38cM9NMbCQ__WUf0RIXIuhQ/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Flame 1': {
+					'data-img': 'https://thumbs.gfycat.com/GiddyMajorDingo-small.gif',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Flame 2': {
+					'data-img': 'https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Nebula': {
+					'data-img': 'https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Web': {
+					'data-img': 'https://drive.google.com/file/d/1rGuD7FMtzy6XR0qcsewndhS33wZL8vEM/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
 			}
-		};
+		},
+		'NPC': {
+			tokens: {
+				'Maid': {
+					'data-img': 'https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Male Comm.': {
+					'data-img': 'https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Male Guard': {
+					'data-img': 'https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Female Comm.': {
+					'data-img': 'https://drive.google.com/file/d/14sNpLcJlzOfL4A5Qb_zdrYmOTZk51GTM/view?usp=sharing',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 1': {
+					'data-img': 'https://i.pinimg.com/564x/fa/93/fb/fa93fbf94a90d2068af62b5a34b48d2d.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 2': {
+					'data-img': 'https://i.pinimg.com/564x/b1/88/10/b18810e3a419fe6c9666ec64c67fdb4f.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 3': {
+					'data-img': 'https://i.pinimg.com/564x/b1/61/18/b16118b557ed8cd55a72631ff763fa97.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 4': {
+					'data-img': 'https://i.pinimg.com/564x/f7/6c/e5/f76ce511507ceb4be5003507c4b3190e.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 5': {
+					'data-img': 'https://i.pinimg.com/564x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 6': {
+					'data-img': 'https://i.pinimg.com/564x/55/22/96/55229604ec385c8c1bf442a187a3aeeb.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 7': {
+					'data-img': 'https://i.pinimg.com/564x/da/56/f5/da56f50ba711df5b7c80e2fc240d9786.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 8': {
+					'data-img': 'https://i.pinimg.com/236x/62/45/8e/62458effd9b3901aa220954d50410988.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 9': {
+					'data-img': 'https://i.pinimg.com/236x/dc/39/e3/dc39e3e0edf1204d128565084146e221.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 10': {
+					'data-img': 'https://i.pinimg.com/236x/5a/13/5f/5a135f30617868eb35a78c0c268bd069.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 11': {
+					'data-img': 'https://i.pinimg.com/236x/6a/e2/51/6ae25147759cdf023dac43cdfeb68ef7.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 12': {
+					'data-img': 'https://i.pinimg.com/236x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'NPC 13': {
+					'data-img': 'https://i.pinimg.com/236x/ec/24/81/ec2481a73c161cbbb70622e485bba1ae.jpg',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+			}
+		},
+		'Weapons': {
+			tokens: {
+				'Heartseeker Blade': {
+					'data-img': 'https://drive.google.com/file/d/1Ft84c1VwnEhwKPew8Yyq8w8NFViC7Mr7/view?usp=sharing',
+					'data-disablestat': true,
+				},
+			}
+		}
+	}
+};
 		
 
 tokendata={
