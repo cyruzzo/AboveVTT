@@ -18,7 +18,7 @@ function consider_upscaling(target){
 			target.scale_factor=1;
 		}
 }
-	
+
 
 function preset_importer(target, key) {
 	target.empty();
@@ -168,29 +168,11 @@ function edit_scene_dialog(scene_id) {
 	var sub = $("<button>Save And Switch</button>");
 
 	sub.click(function() {
-		f.find("input").each(function() {
-			var n = $(this).attr('name');
-			let nValue = $(this).val();
-
-			if (n === 'player_map' 
-					&& nValue.startsWith("https://drive.google.com")
-					&& nValue.indexOf("uc?id=") < 0
-			) {
-				nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
-			}
-
-			scene[n] = nValue;
-			console.log('setto ' + n + ' a ' + $(this).val());
-		});
-		window.ScenesHandler.persist();
-		window.ScenesHandler.switch_scene(scene_id);
-		$("#edit_dialog").remove();
-		$("#scene_selector").removeAttr("disabled");
-		$("#scene_selector_toggle").click();
+		switch_scene_by_id(f, scene_id, scene)
 	});
 
 
-	
+
 
 
 	let grid_5 = function(enable_grid = false, enable_snap = true) {
@@ -214,7 +196,7 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
-		
+
 		window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
@@ -238,9 +220,9 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.hpps /= 2;
 			window.ScenesHandler.scene.vpps /= 2;
-			
+
 			consider_upscaling(window.ScenesHandler.scene);
-			
+
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -640,7 +622,7 @@ function edit_scene_dialog(scene_id) {
 	})
 
 
-	var hide_all_button = $("<button>COVER WITH FOG</button>");
+	var hide_all_button = $("<button>Fog And Switch</button>");
 	hide_all_button.click(function() {
 		r = confirm("This will delete all current FOG zones on this scene and HIDE ALL THE MAP to the player. Are you sure?");
 		if (r == true) {
@@ -649,8 +631,7 @@ function edit_scene_dialog(scene_id) {
 				window.REVEALED = [];
 				redraw_canvas();
 			}
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			switch_scene_by_id(f, scene_id, scene)
 		}
 	});
 
@@ -676,7 +657,27 @@ function edit_scene_dialog(scene_id) {
 
 }
 
+function switch_scene_by_id(f, scene_id, scene) {
+	f.find("input").each(function() {
+		var n = $(this).attr('name');
+		let nValue = $(this).val();
 
+		if (n === 'player_map'
+			&& nValue.startsWith("https://drive.google.com")
+			&& nValue.indexOf("uc?id=") < 0
+		) {
+			nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
+		}
+
+		scene[n] = nValue;
+		console.log('setto ' + n + ' a ' + $(this).val());
+	});
+	window.ScenesHandler.persist();
+	window.ScenesHandler.switch_scene(scene_id);
+	$("#edit_dialog").remove();
+	$("#scene_selector").removeAttr("disabled");
+	$("#scene_selector_toggle").click();
+}
 
 function refresh_scenes() {
 	target = $("#scene_selector");
@@ -828,13 +829,13 @@ function display_scenes() {
 	console.log(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes);
 	console.log("mostrati...");
 	/*$("#scene_select").empty();
-	
+
 	var source_name=$("#source_select").val();
 	var chapter_name=$("#chapter_select").val();
 	for(property in window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes){
 				var scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[property];
 				$("#scene_select").append($("<option value='"+property+"'>"+scene.title+"</option>"));
-			}			
+			}
 			$("#scene_select").change();*/
 }
 
@@ -877,7 +878,7 @@ function init_ddb_importer(target) {
 	});
 
 	/*	var scene_select=$("<select id='scene_select'/>");
-	
+
 		scene_select.change(function(){
 			console.log('prepare scene properties');
 			var source_name=$("#source_select").val();
@@ -888,18 +889,18 @@ function init_ddb_importer(target) {
 			else
 				$("#import_button").attr('disabled','disabled');
 			//window.ScenesHandler.display_scene_properties(source_name,chapter_name,scene_name);
-			
+
 		});*/
 
 
 	/*import_button=$("<button id='import_button'>IMPORT</button>");
 	import_button.attr('disabled','disabled');
-	
+
 	import_button.click(function(){
 		var source_name=$("#source_select").val();
 		var chapter_name=$("#chapter_select").val();
 		var scene_name=$("#scene_select").val();
-		
+
 		scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[scene_name];
 		$("#scene_properties input[name='player_map']").val(scene.player_map);
 		$("#scene_properties input[name='dm_map']").val(scene.dm_map);
