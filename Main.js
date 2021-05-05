@@ -303,12 +303,7 @@ function load_monster_stat(monsterid) {
 
 function init_controls() {
 	$(".sidebar").css("top", "10px");
-	$(".sidebar").css("height", "calc(100vh - 10px)");
-
-	$(".sidebar__controls").css("margin", "0px");
-
-	$(".sidebar__controls").css("position", "relative");
-	$(".sidebar__controls").css("left", "-30px");
+	$(".sidebar").css("height", "calc(100vh - 45px)");
 
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
@@ -335,21 +330,26 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' data-target='.glc-game-log'>LOG</button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'>LOG</button>").click(switch_control);
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
-		b2 = $("<button id='switch_characters' data-target='#pcs_list'>PLAYERS</button>").click(switch_control);
+		b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'>PLAYERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b2);
-		b3 = $("<button id='switch_panel' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
+		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
 		$(".sidebar__controls").append(b3);
 		init_tokenmenu();
-		b5=$("<button id='switch_tokens' data-target='#tokens-panel'>TOKENS</button>");
+		b5=$("<button id='switch_tokens' class='tab-btn' data-target='#tokens-panel'>TOKENS</button>");
 		b5.click(switch_control);
 		$(".sidebar__controls").append(b5);
 	}
-	b4 = $("<button id='switch_spell' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
+	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
 	$(".sidebar__controls").append(b4);
+
+	$(".tab-btn").on("click", function(e) {
+		$(".tab-btn").removeClass('selected-tab');
+		$(e.target).toggleClass('selected-tab');
+	});
 
 }
 
@@ -858,7 +858,102 @@ function init_ui() {
 
 
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..' style='width:260px; height:30px; margin-bottom:20px;'></div>"));
+	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
+	$(".glc-game-log").append($(`
+		<div class="dice-roller">
+			<div>
+				<img title="d4" alt="d4" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d4.svg"}"/>
+			</div>
+			<div>
+				<img title="d6" alt="d6" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d6.png"}"/>
+			</div>
+			<div>
+				<img title="d8" alt="d8" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d8.svg"}"/>
+			</div>
+			<div>
+				<img title="d10" alt="d10" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d10.svg"}"/>
+			</div>
+			<div>
+				<img title="d100" alt="d100" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d100.png"}"/>
+			</div>
+			<div>
+				<img title="d12" alt="d12" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d12.svg"}"/>
+			</div>
+			<div>
+				<img title="d20" alt="d20" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d20.svg"}"/>
+			</div>
+		</div>
+	`));
+
+	$(".dice-roller > div img").on("click", function(e) {
+		const dataCount = $(this).attr("data-count");
+		if (dataCount === undefined) {
+			$(this).attr("data-count", 1);
+			$(this).parent().append(`<span class="dice-badge">1</span>`);
+		} else {
+			$(this).attr("data-count", parseInt(dataCount) + 1);
+			$(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
+		}
+		if ($(".dice-roller > div img[data-count]").length > 0) {
+			$(".roll-button").addClass("show");
+		} else {
+			$(".roll-button").removeClass("show");
+		}
+	});
+
+	$(".dice-roller > div img").on("contextmenu", function(e) {
+		e.preventDefault();
+
+		let dataCount = $(this).attr("data-count");
+		if (dataCount !== undefined) {
+			dataCount = parseInt(dataCount) - 1;
+			if (dataCount === 0) {
+				$(this).removeAttr("data-count");
+				$(this).parent().find("span").remove();
+			} else {
+				$(this).attr("data-count", dataCount);
+				$(this).parent().append(`<span class="dice-badge">${dataCount}</span>`);
+			}
+		}
+		if ($(".dice-roller > div img[data-count]").length > 0) {
+			$(".roll-button").addClass("show");
+		} else {
+			$(".roll-button").removeClass("show");
+		}
+	});
+
+	const rollButton = $(`<button class="roll-button">Roll</button>`);
+	$("body").append(rollButton);
+	rollButton.on("click", function (e) {
+		const rollExpression = [];
+		$(".dice-roller > div img[data-count]").each(function() {
+			rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
+		});
+		const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
+		const text = roll.output;
+		const uuid = new Date().getTime();
+		const data = {
+			player: window.PLAYER_NAME,
+			img: window.PLAYER_IMG,
+			text: window.DM ? `<div class="d-block"><div>${text}</div><div class="text-center"><button ${window.DM ? `id="${uuid}"` : ""}>Send to Players</button></div></div>` : text,
+			dmonly: window.DM || false,
+			id: window.DM ? `li_${uuid}` : undefined
+		};
+		window.MB.sendMessage('custom/myVTT/chat', data);
+		window.MB.handleChat(data,true);
+		if (window.DM) {
+			$("#" + uuid).on("click", () => {
+				const newData = {...data, dmonly: false, id: undefined, text: text};
+				window.MB.sendMessage('custom/myVTT/chat', newData);
+				window.MB.handleChat(newData,true);
+				$("#li_" + uuid).remove()
+			});
+		}
+		$(".roll-button").removeClass("show");
+		$(".dice-roller > div img[data-count]").removeAttr("data-count");
+		$(".dice-roller > div span").remove();
+	});
+	
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
 			var dmonly=false;
