@@ -4,7 +4,6 @@ button[id^=jitsi_],
 #combat_tracker > button,
 #scene_selector_toggle,
 body > button,
-#addscene,
 .scene button,
 #combat_tracker_inside button,
 #edit_dialog button,
@@ -16,6 +15,7 @@ body > button,
 .stp-btn,
 .player-actions button,
 #add-party,
+#reset_round_number,
 .sidebar__controls button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;
@@ -26,6 +26,26 @@ body > button,
     padding: 2px 8px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
+}
+#round_number_label {
+    font-size:15px;
+    color:grey;
+    background-color: white
+}
+
+#addscene {
+    z-index:999;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    bottom: 0;
+    right: 0;
+    background-color: #fff;
+    color: #000;
+    border-radius: 50px;
+    text-align: center;
+    font-family:Verdana, Geneva, sans-serif;
+    font-size:15px;
 }
 
 button[id$='-button']:hover,
@@ -466,17 +486,17 @@ div#scene_properties form > div {
     height: 60px;
     margin: 10px 0;
 }
-  
+
 .ability_name {
     color: darkgrey;
     font-weight: bold;
 }
-  
+
 .ability_modifier {
     font-size: 18px;
     margin-top: -2px;
 }
-  
+
 .ability_score {
     position: absolute;
     bottom: -10px;
