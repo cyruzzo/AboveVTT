@@ -1,5 +1,9 @@
 
 function init_combat_tracker(){
+	let round_number = 1;
+	rn = $(`<div id='round_number_label'><label>Round Number</label><input style="font-size:15px; text-align:center" type='text' id='round_number' value=${round_number}><br></div>`)
+	reset_rounds=$("<button style='font-size:10px'><strong>RESET</strong></button>");
+	rn.append(reset_rounds)
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
 	toggle=$("<button>COMBAT</button>");
@@ -17,22 +21,22 @@ function init_combat_tracker(){
 	ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
 	ct.append(ct_inside);
-	
+
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_list_wrapper.append(ct_area);
 	ct_inside.append(ct_list_wrapper);
-	
+
 	buttons=$("<div id='combat_footer'/>");
 	reorder=$("<button>REORDER</button>");
 	reorder.click(ct_reorder);
-	
+
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
 		$("#combat_area").empty();
 		ct_persist();
 	});
-	
+
 	next=$("<button>NEXT</button>");
 	next.click(function(){
 		if($("#combat_area tr").length==0)
@@ -48,6 +52,9 @@ function init_combat_tracker(){
 			current.css('background','');
 			next=current.next();
 			if(next.length==0){
+				round_number++;
+				const round_counter = document.getElementById('round_number')
+				round_counter.value = round_number;
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
@@ -55,29 +62,47 @@ function init_combat_tracker(){
 		ct_persist();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
 	});
-	
+
+	reset_rounds.click(function (){
+		round_number = 1;
+		const round_counter = document.getElementById('round_number')
+		round_counter.value = round_number;
+		$("#combat_area tr").first().attr('data-current','1');
+		next.removeAttr('data-current');
+		next.css('background','');
+	});
+
+	rn.change(function (data) {
+		if(typeof data.currentTarget.value === 'number'){
+			round_number = data.currentTarget.value.toString()
+			const round_counter = document.getElementById('round_number')
+			round_counter.value = round_number;
+		}
+	});
+
 	roll=$("<button>ROLLINIT</button>");
 	roll.click(function(){
 		$("#combat_area tr[data-monster]").each(function(idx){
 			let element=$(this);
 			if(element.find(".init").val()!=0) // DON'T ROLL AGAIN'
 				return;
-					
+
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
 				element.find(".init").val(value);
 				ct_reorder(false);
 			});
 			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
-		
+
 	});
 	if(window.DM){
 		buttons.append(roll);
 		buttons.append(clear);
 		buttons.append(reorder);
 		buttons.append(next);
+		buttons.append(rn)
 		buttons.css('font-size','8px');
-		
+
 		ct_inside.append(buttons);
 	}
 
@@ -106,18 +131,18 @@ function ct_reorder(persist=true) {
 
 function ct_add_token(token,persist=true){
 	// TODO: check if the token is already in the tracker..
-	
+
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
-	
+
 	entry=$("<tr/>");
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);
-	
+
 	if(token.options.monster > 0)
 		entry.attr('data-monster',token.options.monster);
-	
+
 	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
@@ -133,11 +158,11 @@ function ct_add_token(token,persist=true){
 		init.attr("disabled","disabled");
 	}
 	entry.append($("<td/>").append(init));
-	
-	
+
+
 	hp=$("<div class='hp'/>");
 	hp.text(token.options.hp);
-	
+
 	hp.css('font-size','10px');
 	//hp.css('width','20px');
 	if(window.DM || !(token.options.monster > 0) )
@@ -152,11 +177,11 @@ function ct_add_token(token,persist=true){
 		entry.append($("<td/>").append(max_hp));
 	else
 		entry.append($("<td/>"));
-	
-	
+
+
 	var buttons=$("<td/>");
-	
-	
+
+
 	find=$("<button style='font-size:8px;'>FIND</button>");
 	find.click(function(){
 		var target=$(this).parent().parent().attr('data-target');
@@ -164,10 +189,10 @@ function ct_add_token(token,persist=true){
 			window.TOKEN_OBJECTS[target].highlight();
 		}
 	});
-	
-	
+
+
 	buttons.append(find);
-	
+
 	del=$("<button style='font-size:8px;'>DEL</button>");
 	del.click(
 		function(){
@@ -177,10 +202,10 @@ function ct_add_token(token,persist=true){
 	);
 	if(window.DM)
 		buttons.append(del);
-	
+
 	if(token.options.monster > 0){
 		stat=$("<button style='font-size:8px;'>STAT</button>");
-		
+
 		stat.click(function(){
 			iframe_id="#iframe-monster-"+token.options.monster;
 			if($(iframe_id).is(":visible"))
@@ -192,8 +217,8 @@ function ct_add_token(token,persist=true){
 		});
 		if(window.DM)
 			buttons.append(stat);
-		
-	}	
+
+	}
 	else{
 		stat=$("<button style='font-size:8px;'>STAT</button>");
 		stat.click(function(){
@@ -202,13 +227,13 @@ function ct_add_token(token,persist=true){
 		if(window.DM)
 			buttons.append(stat);
 	}
-	
+
 		entry.append(buttons);
-	
-	
+
+
 	$("#combat_area").append(entry);
 	$("#combat_area td").css("vertical-align","middle");
-	
+
 	if(persist){
 		ct_persist();
 	}
@@ -223,21 +248,21 @@ function ct_persist(){
 		'current': ($(this).attr("data-current")=="1"),
 	   });
 	});
-	
+
 	var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
-	
+
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
 }
 
 function ct_load(data=null){
-	
+
 	if(data==null){
 		var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
 		data=$.parseJSON(localStorage.getItem(itemkey));
 	}
-	
-	if(data){	
+
+	if(data){
 		for(i=0;i<data.length;i++){
 			if(  (data[i]['data-target'] in window.TOKEN_OBJECTS)){
 				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false);
