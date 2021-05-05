@@ -769,7 +769,6 @@ function dragging_right_click_mousedown(event) {
 function dragging_right_click_mouseup(event) {
 
 	if (window.DRAGGING && event.button == 2) {
-		console.log("dragging_right_click yay")
 		event.preventDefault();
 		event.stopPropagation();
 		var mousex = (event.pageX - 200) * (1.0 / window.ZOOM);
