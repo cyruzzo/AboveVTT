@@ -1,7 +1,7 @@
 
 function init_combat_tracker(){
 	let round_number = 1;
-	rn = $(`<div id='round_number_label'><label>Round Number</label><input style="font-size:15px; text-align:center" type='text' id='round_number' value=${round_number}><br></div>`)
+	rn = $(`<div id='round_number_label'><label>Round Number</label><input readonly style="font-size:15px; text-align:center" type='text' id='round_number' value=${round_number}><br></div>`)
 	reset_rounds=$("<button style='font-size:10px'><strong>RESET</strong></button>");
 	rn.append(reset_rounds)
 	ct=$("<div id='combat_tracker'/>");
