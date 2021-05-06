@@ -584,6 +584,10 @@ div#scene_properties form > div {
     z-index: 20;
 }
 
+.sidebar__controls.player {
+    left: -206px;
+}
+
 .sidebar__pane-content {
     position: absolute;
     right: 0;
