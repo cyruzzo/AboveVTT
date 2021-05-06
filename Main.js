@@ -313,7 +313,7 @@ function init_controls() {
 			$(".sidebar--right").animate({ "right": "-340px" }, 500);
 			$(this).text("<<");
 			if (parseInt($("#sheet").css("right")) >= 0) {
-				$("#sheet").animate({ right: $(".sidebar__inner").width() - 340 }, 500);
+				$("#sheet").animate({ right: 343 - 340 }, 500);
 			}
 
 		}
@@ -322,7 +322,7 @@ function init_controls() {
 			$(".sidebar--right").animate({ "right": "0px" }, 500);
 			$(this).text(">>");
 			if (parseInt($("#sheet").css("right")) >= 0) {
-				$("#sheet").animate({ right: $(".sidebar__inner").width() }, 500);
+				$("#sheet").animate({ right: 343 }, 500);
 			}
 		}
 
@@ -589,11 +589,11 @@ function open_player_sheet(sheet_url) {
 
 
 	if (!window.DM) {
-		container.css('right', $(".sidebar__inner").width() - 1530);
+		container.css('right', 343 - 1530);
 		container.css('z-index', 0);
 	}
 	else {
-		container.css("right", $(".sidebar__inner").width() + parseInt($(".sidebar").css("right")));
+		container.css("right", 343 + parseInt($(".sidebar").css("right")));
 		container.css("z-index", 99999999);
 		if ($("#sheet").length > 0) { // DESTROY ANY PREVIOUS SHEET AND ULOCKIT
 			data = {
@@ -809,7 +809,7 @@ function open_player_sheet(sheet_url) {
 		sheet_button = $("<button id='sheet_button'>SHEET</button>");
 		sheet_button.css("position", "absolute");
 		sheet_button.css("top", 0);
-		sheet_button.css("right", 343);
+		sheet_button.css("right", 170);
 		sheet_button.css("z-index", 999999);
 
 		$(".sidebar__controls").append(sheet_button);
@@ -818,7 +818,7 @@ function open_player_sheet(sheet_url) {
 		sheet_button.click(function(e) {
 			if (container.css("z-index") > 0) {
 				container.animate({
-					right: $(".sidebar__inner").width() - 1530,
+					right: 343 - 1530,
 					'z-index': 0
 				}, 500);
 
@@ -833,7 +833,7 @@ function open_player_sheet(sheet_url) {
 			container.css("z-index", 99999999);
 			container.animate({
 				//right: $(".sidebar__inner").width()
-				right: $(".sidebar__inner").width() + parseInt($(".sidebar").css("right"))
+				right: 343 + parseInt($(".sidebar").css("right"))
 			}, 500);
 
 		});

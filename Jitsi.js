@@ -76,7 +76,7 @@ function jitsi_tile_listener(event) {
 }
 
 function jitsi_modal() {
-	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "250px").css("width", "900px");
+	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", (window.width-400)+"px");
 	window.tile_desired = true;
 	window.jitsiAPI.executeCommand(`toggleTileView`);
 }
