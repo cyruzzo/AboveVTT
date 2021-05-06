@@ -351,6 +351,10 @@ function init_controls() {
 		$(e.target).toggleClass('selected-tab');
 	});
 
+	if (!DM) {
+		$(".sidebar__controls").addClass("player");
+	}
+
 }
 
 function init_mouse_zoom(){
