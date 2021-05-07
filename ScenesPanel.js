@@ -586,7 +586,15 @@ function edit_scene_dialog(scene_id) {
 
 			f.find("input").each(function() {
 				var n = $(this).attr('name');
-				scene[n] = $(this).val();
+				let nValue = $(this).val();
+
+				if (n === 'player_map'
+					&& nValue.startsWith("https://drive.google.com")
+					&& nValue.indexOf("uc?id=") < 0
+				) {
+					nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
+				}
+				scene[n] = nValue;
 			});
 
 			scene.scale_factor=1;
