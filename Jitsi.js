@@ -40,7 +40,7 @@ function init_jitsi() {
 		parentNode: document.querySelector('#jitsi_container'),
 
 		userInfo: {
-			displayName: "user" + getRandomInt(1000, 1999),
+			displayName: window.PLAYER_NAME,
 		},
 		configOverwrite: {
 			prejoinPageEnabled: false,
