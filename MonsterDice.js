@@ -62,12 +62,11 @@ function scan_monster(target, stats) {
 		container.append($("<div class='GameLogEntry_Line__1JeGA GameLogEntry_Sender__2LjcO'><span>" + stats.data.name + "</span></div>"));
 
 		var entry = $("<div class='GameLogEntry_Message__1GoY3 GameLogEntry_Collapsed__1fgGY GameLogEntry_Other__2PSbv Flex_Flex__3gB7U'/>");
+		var dblock=$("<div class='d-block' />").append($("<div/>").append(output_beauty))
+		entry.append(dblock);
+		var send_button = $("<div class='text-center'><button>Send to Players</button></div>");
 
-		entry.append($("<div style='width:100%;' />").append(output_beauty));
-
-		var send_button = $("<div><button class='stp-btn'>SHOW TO PLAYERS</button></div>");
-
-		entry.append(send_button);
+		dblock.append(send_button);
 		send_button.click(function() {
 			data = {
 				player: stats.data.name,
