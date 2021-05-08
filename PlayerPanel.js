@@ -13,7 +13,7 @@ function update_pclist() {
 	pcs_list.empty();
 
 	window.pcs = [];
-	$(".ddb-campaigns-character-card").each(function(idx) {
+	$(".ddb-campaigns-detail-body-listing-active").find(".ddb-campaigns-character-card").each(function(idx) {
 		tmp = $(this).find(".ddb-campaigns-character-card-header-upper-character-info-primary");
 		name = tmp.html();
 		tmp = $(this).find(".user-selected-avatar");
