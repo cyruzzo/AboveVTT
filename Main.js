@@ -366,8 +366,11 @@ function init_mouse_zoom(){
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
-			var deltaY = clamp(e.deltaY, -MAX_ZOOM_STEP, MAX_ZOOM_STEP)
-			var newScale = window.ZOOM - 0.01 * deltaY
+			var newScale
+			if (e.deltaY > MAX_ZOOM_STEP) newScale = window.ZOOM * 1.10
+			else if (e.deltaY < -MAX_ZOOM_STEP) newScale = window.ZOOM * 0.9
+			else newScale = window.ZOOM - 0.01 * e.deltaY
+
 			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
 				change_zoom(newScale, e.clientX, e.clientY)
 			}
