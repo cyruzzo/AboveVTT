@@ -361,10 +361,10 @@ function init_mouse_zoom(){
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
-			var newScale = window.ZOOM -0.01 * e.deltaY
-			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
-				change_zoom(newScale, e.clientX, e.clientY)
-			}
+			if(e.deltaY > 0)
+				decrease_zoom();
+			else
+				increase_zoom();
 		}
 	}, {passive: false} )
 }
