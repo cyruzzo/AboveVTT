@@ -366,10 +366,17 @@ function init_mouse_zoom(){
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
+
 			var newScale
-			if (e.deltaY > MAX_ZOOM_STEP) newScale = window.ZOOM * 1.10
-			else if (e.deltaY < -MAX_ZOOM_STEP) newScale = window.ZOOM * 0.9
-			else newScale = window.ZOOM - 0.01 * e.deltaY
+			if (e.deltaY > MAX_ZOOM_STEP) {
+				newScale = window.ZOOM * 0.9
+			}
+			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
+				newScale = window.ZOOM * 1.10
+			}
+			else {
+				newScale = window.ZOOM - 0.01 * e.deltaY
+			}
 
 			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
 				change_zoom(newScale, e.clientX, e.clientY)
@@ -387,7 +394,7 @@ function ga_heartbeat() {
 
 
 function init_splash() {
-	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT');
+	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT'); 
 	ga('AboveVTT.send', 'pageview');
 
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
