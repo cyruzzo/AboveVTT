@@ -147,8 +147,6 @@ class Token {
 			delete this.options.hidden;
 
 
-
-
 		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
@@ -170,6 +168,7 @@ class Token {
 					if (deadCross.length > 0) {
 						deadCross.attr("style", `--size: ${parseInt(this.options.size) / 10}px;`)
 					} else {
+						console.log(this.options);
 						old.prepend(`<div class="dead" style="transform:scale(${scale});--size: ${parseInt(this.options.size) / 10}px;"></div>`);
 					}
 				} else {
@@ -416,7 +415,7 @@ class Token {
 
 			// HEALTH AURA / DEAD CROSS
 			if (this.options.max_hp > 0) {
-				const pData = window.PLAYER_STATS[this.options.id] || this.options;
+				const pData=this.options;
 				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
 					const deadCross = old.find('.dead');
 					if (deadCross.length > 0) {
