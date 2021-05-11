@@ -270,11 +270,16 @@ class WaypointManager {
 	}
 };
 
-function check_token_visibility() {
+function check_token_visibility() {	
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
-	var canvas = document.getElementById("fog_overlay");
+	var FogCanvas = document.getElementById("fog_overlay");
+	var canvas = document.createElement('canvas');
+	canvas.width=FogCanvas.width;
+	canvas.height=FogCanvas.height;
 	var ctx = canvas.getContext("2d");
+
+	ctx.drawImage(FogCanvas,0,0);
 
 	for (var id in window.TOKEN_OBJECTS) {
 		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
@@ -290,6 +295,7 @@ function check_token_visibility() {
 			//console.log('SHOW '+id);
 		}
 	}
+	canvas.remove();	
 }
 
 function circle2(a, b) {
