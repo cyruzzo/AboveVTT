@@ -28,6 +28,10 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min; //Il max � escluso e il min � incluso
 }
 
+// Constrains a number between a minimum and maximum value
+function clamp (number, min, max) {
+	return Math.min(Math.max(number, min), max)
+}
 
 function youtube_parser(url) {
 	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -357,16 +361,28 @@ function init_controls() {
 
 }
 
+const MAX_ZOOM_STEP = 20
 function init_mouse_zoom(){
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
-			if(e.deltaY > 0)
-				decrease_zoom();
-			else
-				increase_zoom();
+
+			var newScale
+			if (e.deltaY > MAX_ZOOM_STEP) {
+				newScale = window.ZOOM * 0.9
+			}
+			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
+				newScale = window.ZOOM * 1.10
+			}
+			else {
+				newScale = window.ZOOM - 0.01 * e.deltaY
+			}
+
+			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+				change_zoom(newScale, e.clientX, e.clientY)
+			}
 		}
-	}, {passive: false} )
+	}, { passive: false } )
 }
 
 
@@ -378,7 +394,7 @@ function ga_heartbeat() {
 
 
 function init_splash() {
-	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT');
+	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT'); 
 	ga('AboveVTT.send', 'pageview');
 
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
