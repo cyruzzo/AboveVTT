@@ -28,6 +28,10 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min; //Il max � escluso e il min � incluso
 }
 
+// Constrains a number between a minimum and maximum value
+function clamp (number, min, max) {
+	return Math.min(Math.max(number, min), max)
+}
 
 function youtube_parser(url) {
 	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -357,16 +361,28 @@ function init_controls() {
 
 }
 
+const MAX_ZOOM_STEP = 20
 function init_mouse_zoom(){
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
-			if(e.deltaY > 0)
-				decrease_zoom();
-			else
-				increase_zoom();
+
+			var newScale
+			if (e.deltaY > MAX_ZOOM_STEP) {
+				newScale = window.ZOOM * 0.9
+			}
+			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
+				newScale = window.ZOOM * 1.10
+			}
+			else {
+				newScale = window.ZOOM - 0.01 * e.deltaY
+			}
+
+			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+				change_zoom(newScale, e.clientX, e.clientY)
+			}
 		}
-	}, {passive: false} )
+	}, { passive: false } )
 }
 
 
@@ -378,7 +394,7 @@ function ga_heartbeat() {
 
 
 function init_splash() {
-	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT');
+	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT'); 
 	ga('AboveVTT.send', 'pageview');
 
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
@@ -393,7 +409,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.45RC2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.45RC3</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
 	cont.append("<h4>Useful Links</h4>");
@@ -424,8 +440,8 @@ function init_splash() {
 	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
 	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman"];
-	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane","Reginald Coupet","Pucas McDookie","Clint Blough","Jordan Cohen"];
-	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nate gonzalez"];
+	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane","Reginald Coupet","Pucas McDookie","Clint Blough","Jordan Cohen","Chris Johnson"];
+	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nate gonzalez","Andrew Depledge"];
 
 	l1div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;' >Masters of the Realms</div></div>");
 	l1ul = $("<ul/>");
