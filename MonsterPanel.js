@@ -18,9 +18,9 @@ function init_monster_panel() {
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
-		$(event.target).contents().find("#footer").hide();
+		$(event.target).contents().find("footer").remove();
 		$(event.target).contents().find(".encounter-builder__sidebar").remove();
-
+		$(event.target).contents().find(".dice-rolling-panel").remove();
 
 		var list = $(event.target).contents().find(".monster-listing__body");
 
