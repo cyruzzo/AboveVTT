@@ -757,6 +757,9 @@ function open_player_sheet(sheet_url) {
 					var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
 					b.click(function() {
 						var newobj = $(event.target).contents().find(".ct-sidebar__pane-content").clone();
+						newobj.find("img.ct-item-detail__full-image-img").css("max-width", "270px");
+						newobj.find(".stat-block-finder").css("display", "flex !important");
+						newobj.find(".stat-block-finder").css("flex-wrap", "wrap");
 						newobj.hide();
 						$(event.target).contents().find(".ct-sidebar__pane-content").parent().append(newobj);
 						newobj.find("button,select,input").each(function() { $(this).remove() });
@@ -775,8 +778,6 @@ function open_player_sheet(sheet_url) {
 								newcss.background = $(this).css("background");
 								newcss['background-size'] = $(this).css("background-size");
 							}
-
-							console.log(newcss);
 							$(this).css(newcss);
 						});
 
