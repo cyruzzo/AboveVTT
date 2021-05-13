@@ -727,4 +727,10 @@ div#scene_properties form > div {
 .splashLinkRow div{
 	display:inline;
 	padding-left:20px;
-} 
+}
+
+.aura-element {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 0, 0.2);
+}

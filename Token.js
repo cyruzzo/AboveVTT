@@ -390,6 +390,26 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
 		}
 
+		const setTokenAuras = (token, options) => {
+			const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
+			const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
+			if (innerAuraSize > 0 || outerAuraSize > 0) {
+				token.css("z-index", 49);
+				const totalAura = innerAuraSize + outerAuraSize;
+				const auraRadius = innerAuraSize + (window.CURRENT_SCENE_DATA.hpps / 2);
+				const auraBg = `radial-gradient(rgba(255, 129, 0, 0.3) ${auraRadius}px, rgba(255, 255, 0, 0.1) ${auraRadius}px);`;
+				const totalSize = window.CURRENT_SCENE_DATA.hpps + (2 * totalAura);
+				const absPosOffset = (window.CURRENT_SCENE_DATA.hpps - totalSize) / 2;
+				const auraStyles = `width:${totalSize}px;height:${totalSize}px;left:${absPosOffset}px;top:${absPosOffset}px;background-image:${auraBg};`;
+				if (token.find(".aura-element").length > 0) {
+					token.find(".aura-element").attr("style", auraStyles);	
+				} else {
+					const auraElement = $(`<div class='aura-element' style='${auraStyles}' />`);
+					token.prepend(auraElement);
+				}
+			}
+		}
+
 
 		if (old.length > 0) {
 			console.log("trovato!!");
@@ -482,6 +502,8 @@ class Token {
 			if(this.options.disableborder){
 				old.find("img").css("border-width","0");
 			}
+			
+			setTokenAuras(old, this.options);
 
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
@@ -569,6 +591,8 @@ class Token {
 			this.build_conditions().forEach(cond_bar => {
 				tok.append(cond_bar);
 			});
+
+			setTokenAuras(tok, this.options);
 
 
 			$("#tokens").append(tok);
@@ -808,7 +832,13 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		hp: "",
 		max_hp: "",
 		ac: "",
-		name: ""
+		name: "",
+		aura1: {
+			feet: ""
+		},
+		aura2: {
+			feet: ""
+		}
 	};
 
 	if ($(e.target).attr('data-size')) {
@@ -991,7 +1021,13 @@ function token_inputs(opt) {
 
 		tok.options.max_hp = data.max_hp;
 	}
-
+	console.log("MYFUCKINGDATA", data);
+	if (data.aura1 && data.aura1.length > 0) {
+		tok.options.aura1.feet = data.aura1;
+	}
+	if (data.aura2 && data.aura2.length > 0) {
+		tok.options.aura2.feet = data.aura2;
+	}
 
 	tok.options.imgsrc=parse_img(data.imgsrc);
 
@@ -1143,6 +1179,32 @@ function token_menu() {
 								}
 							},
 							sep2: '---------',
+							tokenAuras: {
+								name: "Token Auras",
+								items: {
+									aura1: {
+										type: 'text',
+										name: 'Token Aura 1 Ft.',
+										value: window.TOKEN_OBJECTS[id].options.aura1.feet,
+										events: {
+											click: function (e) {
+												$(e.target).select();
+											}
+										}
+									},
+									sepAuras: '---------',
+									aura2: {
+										type: 'text',
+										name: 'Token Aura 2 Ft.',
+										value: window.TOKEN_OBJECTS[id].options.aura2.feet,
+										events: {
+											click: function (e) {
+												$(e.target).select();
+											}
+										}
+									}
+								}
+							},
 							imgsrc:{
 								type: 'text',
 								name: 'IMG Url',
