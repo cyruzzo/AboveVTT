@@ -2222,7 +2222,7 @@
     };
 
     $.contextMenu.types.title = function(item, opt, root) {
-        const input = $('<label>' + item.name + '</label>');
+        const input = $('<label><b>' + item.name + '</b></label>');
         input.appendTo(this);
         this.addClass("context-menu-not-selectable");
     };

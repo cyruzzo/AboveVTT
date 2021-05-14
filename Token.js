@@ -609,14 +609,10 @@ class Token {
 							const token = $(event.target);
 							const el = token.parent().find("#aura_" + token.attr("data-id").replaceAll("/", ""));
 							if (el.length > 0) {
-								const auraTop = parseInt(el.css("top"));
-								const auraLeft = parseInt(el.css("left"));
+								const auraSize = parseInt(el.css("width"));
 
-								const auraNewtop = Math.round((auraTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-								const auraNewleft = Math.round((auraLeft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
-
-								el.css("top", auraNewtop + "px");
-								el.css("left", auraNewleft + "px");
+								el.css("top", `${selectedNewtop - ((auraSize - self.options.size) / 2)}px`);
+								el.css("left", `${selectedNewleft - ((auraSize - self.options.size) / 2)}px`);
 							}
 
 							for (var id in window.TOKEN_OBJECTS) {
@@ -631,6 +627,14 @@ class Token {
 
 									tok.css("top", newtop + "px");
 									tok.css("left", newleft + "px");
+
+									const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
+									if (selEl.length > 0) {
+										const auraSize = parseInt(selEl.css("width"));
+
+										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+									}
 								}
 							}
 
@@ -677,6 +681,12 @@ class Token {
 								var curr = window.TOKEN_OBJECTS[id];
 								curr.orig_top = curr.options.top;
 								curr.orig_left = curr.options.left;
+
+								const el = $("#aura_" + id.replaceAll("/", ""));
+								if (el.length > 0) {
+									el.attr("data-left", el.css("left").replace("px", ""));
+									el.attr("data-top", el.css("top").replace("px", ""));
+								}
 							}
 						}
 					}
@@ -750,6 +760,16 @@ class Token {
 								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
+
+								const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
+								if (selEl.length > 0) {
+									let currLeft = parseFloat(selEl.attr("data-left"));
+									let currTop = parseFloat(selEl.attr("data-top"));
+									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+									selEl.css('left', (currLeft + offsetLeft) + "px");
+									selEl.css('top', (currTop + offsetTop) + "px");
+								}
 							}
 						}
 
@@ -850,7 +870,8 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		aura2: {
 			feet: "0",
 			color: "rgba(255, 255, 0, 0.1)"
-		}
+		},
+		auraVisible: true
 	};
 
 	if ($(e.target).attr('data-size')) {
@@ -929,7 +950,6 @@ function array_remove_index_by_value(arr, item) {
 }
 
 function menu_callback(key, options, event) {
-
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
 			load_monster_stat($(this).attr('data-monster'));
@@ -992,12 +1012,50 @@ function menu_callback(key, options, event) {
 		window.ScenesHandler.persist();
 		// should persist ?	
 	}
+	if (['candle', 'torch', 'lamp', 'lantern', 'paladinAura'].indexOf(key) >= 0) {
+	
+		id = $(this).attr('data-id');
+
+		if (key === "candle") {
+			window.TOKEN_OBJECTS[id].options.aura1.feet = "5";
+			window.TOKEN_OBJECTS[id].options.aura2.feet = "5";
+			
+		}
+		if (key === "torch") {
+			window.TOKEN_OBJECTS[id].options.aura1.feet = "20";
+			window.TOKEN_OBJECTS[id].options.aura2.feet = "20";
+			
+		}
+		if (key === "lamp") {
+			window.TOKEN_OBJECTS[id].options.aura1.feet = "15";
+			window.TOKEN_OBJECTS[id].options.aura2.feet = "30";
+			
+		}
+		if (key === "lantern") {
+			window.TOKEN_OBJECTS[id].options.aura1.feet = "30";
+			window.TOKEN_OBJECTS[id].options.aura2.feet = "30";
+			
+		}
+		if (key === "paladinAura") {
+			window.TOKEN_OBJECTS[id].options.aura1.feet = "10";
+			window.TOKEN_OBJECTS[id].options.aura2.feet = "0";
+		}
+	
+		window.TOKEN_OBJECTS[id].place();
+		window.TOKEN_OBJECTS[id].sync();
+		window.TOKEN_OBJECTS[id].persist();
+	}
+	
 }
 
 function token_inputs(opt) {
 	// this is the trigger element
 	//alert('chiamato');
 	// export states to data store
+
+	if (opt.$selected.hasClass("aura-preset")) {
+		return;
+	}
 
 
 	id = $(this).attr("data-id");
@@ -1008,11 +1066,10 @@ function token_inputs(opt) {
 
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
-
-
 	tok = window.TOKEN_OBJECTS[id];
 	tok.options.conditions = [];
 	tok.options.custom_conditions = [];
+
 	for (k in data) {
 		if (k.startsWith("cond_") && data[k]) { // if checkbox is true...
 			tok.options.conditions.push(k.substr(5));
@@ -1046,6 +1103,7 @@ function token_inputs(opt) {
 	if (data.aura2Color && data.aura2Color.length > 0) {
 		tok.options.aura2.color = data.aura2Color;
 	}
+	tok.options.auraVisible = data.auraVisible;
 
 	tok.options.imgsrc=parse_img(data.imgsrc);
 
@@ -1085,8 +1143,6 @@ function multiple_callback(key, options, event) {
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
 	}
-
-
 }
 
 function token_menu() {
@@ -1173,33 +1229,16 @@ function token_menu() {
 								name: "Markers",
 								items: custom_cond_items,
 							},
-							sep1: "-------",
-							hp: {
-								type: 'text',
-								name: 'Current HP',
-								value: window.TOKEN_OBJECTS[id].options.hp,
-								disabled: !is_monster,
-								events: {
-									click: function (e) {
-										$(e.target).select();
-									}
-								}
-							},
-							max_hp: {
-								type: 'text',
-								name: 'Max Hp',
-								value: window.TOKEN_OBJECTS[id].options.max_hp,
-								disabled: !is_monster,
-								events: {
-									click: function(e) {
-										$(e.target).select();
-									}
-								}
-							},
-							sep2: '---------',
 							tokenAuras: {
 								name: "Token Auras",
 								items: {
+									auraVisible: {
+										type: 'checkbox',
+										name: 'Token Auras',
+										className: 'on-off-title',
+										selected: window.TOKEN_OBJECTS[id].options.auraVisible
+									},
+									sep2Auras: '---------',
 									aura1Label: {
 										type: "title",
 										name: "Inner Aura"
@@ -1252,9 +1291,58 @@ function token_menu() {
 												$(e.target).select();
 											}
 										}
+									},
+									sep3Auras: '---------',
+									presets: {
+										type: "title",
+										name: "Presets"
+									},
+									candle: {
+										name: "Candle",
+										className: "aura-preset"
+									},
+									torch: {
+										name: "Torch / Light",
+										className: "aura-preset"
+									},
+									lamp: {
+										name: "Lamp",
+										className: "aura-preset"
+									},
+									lantern: {
+										name: "Lantern",
+										className: "aura-preset"
+									},
+									paladinAura: {
+										name: "Paladin Aura",
+										className: "aura-preset"
+									},
+								}
+							},
+							sep1: "-------",
+							hp: {
+								type: 'text',
+								name: 'Current HP',
+								value: window.TOKEN_OBJECTS[id].options.hp,
+								disabled: !is_monster,
+								events: {
+									click: function (e) {
+										$(e.target).select();
 									}
 								}
 							},
+							max_hp: {
+								type: 'text',
+								name: 'Max Hp',
+								value: window.TOKEN_OBJECTS[id].options.max_hp,
+								disabled: !is_monster,
+								events: {
+									click: function(e) {
+										$(e.target).select();
+									}
+								}
+							},
+							sep2: '---------',
 							imgsrc:{
 								type: 'text',
 								name: 'IMG Url',
@@ -1346,7 +1434,7 @@ function token_health_aura(hpPercentage) {
 function setTokenAuras (token, options) {
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
-	if (innerAuraSize > 0 || outerAuraSize > 0) {
+	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
 		const totalAura = innerAuraSize + outerAuraSize;
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;

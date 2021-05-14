@@ -732,7 +732,6 @@ div#scene_properties form > div {
 .aura-element {
     position: absolute;
     border-radius: 50%;
-    background-color: rgba(255, 255, 0, 0.2);
     z-index: 29;
 }
 
@@ -755,9 +754,9 @@ div#scene_properties form > div {
 }
 
 .context-menu-input.aura-color > label > input[type="text"] {
-    /* width: 0px;
-    padding: 0;
-    border: 0;
-    visibility: hidden; */
     display: none;
+}
+
+.context-menu-input.on-off-title > label > input[type="checkbox"] {
+    float: right;
 }
