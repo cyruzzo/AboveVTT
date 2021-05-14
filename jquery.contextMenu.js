@@ -1220,16 +1220,29 @@
 
                     if (item.type && types[item.type]) {
                         // run custom type handler
-                        types[item.type].call($t, item, opt, root);
-                        // register commands
-                        $.each([opt, root], function (i, k) {
-                            k.commands[key] = item;
-                            // Overwrite only if undefined or the item is appended to the root. This so it
-                            // doesn't overwrite callbacks of root elements if the name is the same.
-                            if ($.isFunction(item.callback) && (typeof k.callbacks[key] === 'undefined' || typeof opt.type === 'undefined')) {
-                                k.callbacks[key] = item.callback;
-                            }
-                        });
+                        
+                        if (item.type && item.type === 'colorPicker') {
+                            $input = types[item.type].call($t, item, opt, root);
+                            $.each([opt, root], function (i, k) {
+                                k.commands[key] = item;
+                                k.inputs[key] = item;
+                                if ($.isFunction(item.callback) && (typeof k.callbacks[key] === 'undefined' || typeof opt.type === 'undefined')) {
+                                    k.callbacks[key] = item.callback;
+                                }
+                            });
+                            item.$input = $input;
+                        } else {
+                            types[item.type].call($t, item, opt, root);
+                            // register commands
+                            $.each([opt, root], function (i, k) {
+                                k.commands[key] = item;
+                                // Overwrite only if undefined or the item is appended to the root. This so it
+                                // doesn't overwrite callbacks of root elements if the name is the same.
+                                if ($.isFunction(item.callback) && (typeof k.callbacks[key] === 'undefined' || typeof opt.type === 'undefined')) {
+                                    k.callbacks[key] = item.callback;
+                                }
+                            });
+                        }
                     } else {
                         // add label for input
                         if (item.type === 'cm_seperator') {
@@ -1942,6 +1955,8 @@
                         data[item.radio] = item.value;
                     }
                     break;
+                case 'colorPicker':
+                    data[key] = item.$input.val();
             }
         });
 
@@ -2144,4 +2159,71 @@
     $.contextMenu.handle = handle;
     $.contextMenu.op = op;
     $.contextMenu.menus = menus;
+
+    $.contextMenu.types.colorPicker = function(item, opt, root) {
+        const input = $('<input type="text" name="context-menu-input-' + item.prop + '" value="' + item.value + '" id="' + item.prop + '">');
+        const button = $('<button></button>');
+        button.css("background-color", item.value);
+        const menuItemTemplate = $(`<label><span>${item.name}</span></label>`);
+        menuItemTemplate.append(button);
+        menuItemTemplate.append(input);
+        menuItemTemplate.appendTo(this);
+        this.addClass("context-menu-input aura-color");
+        CP.RGBA = x => {
+            let r, g, b, a, rgba;
+            // Convert color string to color data
+            if ('string' === typeof x) {
+                x = x.trim();
+                if (rgba = x.match(/^rgba\s*\(\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]|0?\.\d+)\s*\)$/i)) {
+                    return [+rgba[1], +rgba[2], +rgba[3], +rgba[4]];
+                }
+                if (rgba = x.match(/^rgb\s*\(\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*\)$/i)) {
+                    return [+rgba[1], +rgba[2], +rgba[3], 1];
+                }
+                return [0, 0, 0, 1]; // Default to black
+            }
+            // Convert color data to color string
+            r = +x[0];
+            g = +x[1];
+            b = +x[2];
+            a = +('undefined' === typeof x[3] ? 1 : x[3]);
+            // Rounding the decimal point of opacity
+            a = +a.toFixed(3);
+            // Transparent, return as RGBA color string
+            return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+        };
+        this.on('keydown', function(e) {
+            if(e.which == 13) {
+                picker.exit();
+            }
+        });
+        this.on('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        })
+        const inputSource = input.get()[0];
+        const picker = new CP(inputSource,{
+            color: 'RGBA'
+        });
+        button.on("mousedown", function (e) {
+            inputSource.getBoundingClientRect = () => { return button.get()[0].getBoundingClientRect(); };
+            picker[picker.visible ? "exit" : "enter"]();
+        });
+        button.on("mouseup", function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        picker.on('change', function(r, g, b, a) {
+            const newColor = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+            this.source.value = newColor;
+            button.css("background-color", newColor);
+        });
+        return input;
+    };
+
+    $.contextMenu.types.title = function(item, opt, root) {
+        const input = $('<label>' + item.name + '</label>');
+        input.appendTo(this);
+        this.addClass("context-menu-not-selectable");
+    };
 });

@@ -390,26 +390,6 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
 		}
 
-		const setTokenAuras = (token, options) => {
-			const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
-			const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
-			if (innerAuraSize > 0 || outerAuraSize > 0) {
-				token.css("z-index", 49);
-				const totalAura = innerAuraSize + outerAuraSize;
-				const auraRadius = innerAuraSize + (window.CURRENT_SCENE_DATA.hpps / 2);
-				const auraBg = `radial-gradient(rgba(255, 129, 0, 0.3) ${auraRadius}px, rgba(255, 255, 0, 0.1) ${auraRadius}px);`;
-				const totalSize = window.CURRENT_SCENE_DATA.hpps + (2 * totalAura);
-				const absPosOffset = (window.CURRENT_SCENE_DATA.hpps - totalSize) / 2;
-				const auraStyles = `width:${totalSize}px;height:${totalSize}px;left:${absPosOffset}px;top:${absPosOffset}px;background-image:${auraBg};`;
-				if (token.find(".aura-element").length > 0) {
-					token.find(".aura-element").attr("style", auraStyles);	
-				} else {
-					const auraElement = $(`<div class='aura-element' style='${auraStyles}' />`);
-					token.prepend(auraElement);
-				}
-			}
-		}
-
 
 		if (old.length > 0) {
 			console.log("trovato!!");
@@ -625,6 +605,20 @@ class Token {
 							$(event.target).css("top", selectedNewtop + "px");
 							$(event.target).css("left", selectedNewleft + "px");
 
+							///GET
+							const token = $(event.target);
+							const el = token.parent().find("#aura_" + token.attr("data-id").replaceAll("/", ""));
+							if (el.length > 0) {
+								const auraTop = parseInt(el.css("top"));
+								const auraLeft = parseInt(el.css("left"));
+
+								const auraNewtop = Math.round((auraTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+								const auraNewleft = Math.round((auraLeft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+								el.css("top", auraNewtop + "px");
+								el.css("left", auraNewleft + "px");
+							}
+
 							for (var id in window.TOKEN_OBJECTS) {
 								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
 									const tok = $("#tokens div[data-id='" + id + "']");
@@ -687,6 +681,12 @@ class Token {
 						}
 					}
 
+					const el = $("#aura_" + self.options.id.replaceAll("/", ""));
+					if (el.length > 0) {
+						el.attr("data-left", el.css("left").replace("px", ""));
+						el.attr("data-top", el.css("top").replace("px", ""));
+					}
+
 					// Setup waypoint manager
 
 					// If we are solid (not hidden), set opacity to custom number so we can see measure label
@@ -720,6 +720,16 @@ class Token {
 					/*$(event.target).css("left",ui.position.left);
 					$(event.target).css("top",ui.position.top);*/
 					// END OF HACK TEST
+
+					const el = ui.helper.parent().find("#aura_" + ui.helper.attr("data-id").replaceAll("/", ""));
+					if (el.length > 0) {
+						let currLeft = parseFloat(el.attr("data-left"));
+						let currTop = parseFloat(el.attr("data-top"));
+						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						el.css('left', (currLeft + offsetLeft) + "px");
+						el.css('top', (currTop + offsetTop) + "px");
+					}
 
 
 					if (self.selected) { // if dragging on a selected token, we should move also the other selected tokens
@@ -834,10 +844,12 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		ac: "",
 		name: "",
 		aura1: {
-			feet: ""
+			feet: "0",
+			color: "rgba(255, 129, 0, 0.3)"
 		},
 		aura2: {
-			feet: ""
+			feet: "0",
+			color: "rgba(255, 255, 0, 0.1)"
 		}
 	};
 
@@ -932,6 +944,7 @@ function menu_callback(key, options, event) {
 		$(this).remove();
 		delete window.ScenesHandler.scene.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
+		$("#aura_" + id.replaceAll("/", "")).remove();
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
 	}
@@ -993,7 +1006,6 @@ function token_inputs(opt) {
 
 	data = $.contextMenu.getInputValues(opt, $(this).data());
 
-
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
 
@@ -1021,12 +1033,18 @@ function token_inputs(opt) {
 
 		tok.options.max_hp = data.max_hp;
 	}
-	console.log("MYFUCKINGDATA", data);
+
 	if (data.aura1 && data.aura1.length > 0) {
 		tok.options.aura1.feet = data.aura1;
-	}
+	} else { tok.options.aura1.feet = 0 }
 	if (data.aura2 && data.aura2.length > 0) {
 		tok.options.aura2.feet = data.aura2;
+	} else { tok.options.aura2.feet = 0 }
+	if (data.aura1Color && data.aura1Color.length > 0) {
+		tok.options.aura1.color = data.aura1Color;
+	}
+	if (data.aura2Color && data.aura2Color.length > 0) {
+		tok.options.aura2.color = data.aura2Color;
 	}
 
 	tok.options.imgsrc=parse_img(data.imgsrc);
@@ -1182,10 +1200,26 @@ function token_menu() {
 							tokenAuras: {
 								name: "Token Auras",
 								items: {
+									aura1Label: {
+										type: "title",
+										name: "Inner Aura"
+									},
 									aura1: {
 										type: 'text',
-										name: 'Token Aura 1 Ft.',
+										name: 'Ft.',
 										value: window.TOKEN_OBJECTS[id].options.aura1.feet,
+										className: "aura-feet",
+										events: {
+											click: function (e) {
+												$(e.target).select();
+											}
+										}
+									},
+									aura1Color: {
+										type: 'colorPicker',
+										name: 'Color',
+										prop: 'aura1Color',
+										value: window.TOKEN_OBJECTS[id].options.aura1.color,
 										events: {
 											click: function (e) {
 												$(e.target).select();
@@ -1193,10 +1227,26 @@ function token_menu() {
 										}
 									},
 									sepAuras: '---------',
+									aura21Label: {
+										type: "title",
+										name: "Outer Aura"
+									},
 									aura2: {
 										type: 'text',
-										name: 'Token Aura 2 Ft.',
+										name: 'Ft.',
 										value: window.TOKEN_OBJECTS[id].options.aura2.feet,
+										className: "aura-feet",
+										events: {
+											click: function (e) {
+												$(e.target).select();
+											}
+										}
+									},
+									aura2Color: {
+										type: 'colorPicker',
+										name: 'Color',
+										value: window.TOKEN_OBJECTS[id].options.aura2.color,
+										prop: 'aura2Color',
 										events: {
 											click: function (e) {
 												$(e.target).select();
@@ -1291,4 +1341,34 @@ function token_health_aura(hpPercentage) {
 		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 80%)` : null;
 	}
 	return hexToRGB(percentToHEX(hpPercentage));
+}
+
+function setTokenAuras (token, options) {
+	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
+	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
+	if (innerAuraSize > 0 || outerAuraSize > 0) {
+		const totalAura = innerAuraSize + outerAuraSize;
+		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
+		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
+		const totalSize = parseInt(options.size) + (2 * totalAura);
+		const absPosOffset = (options.size - totalSize) / 2;
+		const auraStyles = `width:${totalSize}px;
+							height:${totalSize}px;
+							left:${absPosOffset}px;
+							top:${absPosOffset}px;
+							background-image:${auraBg};
+							left:${parseFloat(options.left.replace('px', '')) - ((totalSize - options.size) / 2)}px;
+							top:${parseFloat(options.top.replace('px', '')) - ((totalSize - options.size) / 2)}px;
+							`;
+		const tokenId = token.attr("data-id").replaceAll("/", "");
+		if (token.parent().find("#aura_" + tokenId).length > 0) {
+			token.parent().find("#aura_" + tokenId).attr("style", auraStyles);	
+		} else {
+			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" style='${auraStyles}' />`);
+			$("#tokens").prepend(auraElement);
+		}
+	} else {
+		const tokenId = token.attr("data-id").replaceAll("/", "");
+		token.parent().find("#aura_" + tokenId).remove();
+	}
 }

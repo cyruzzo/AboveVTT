@@ -733,4 +733,31 @@ div#scene_properties form > div {
     position: absolute;
     border-radius: 50%;
     background-color: rgba(255, 255, 0, 0.2);
+    z-index: 29;
+}
+
+.aura-feet label, .aura-color label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.context-menu-input.aura-feet > label > input[type="text"] {
+    display: inline-block;
+    width: 70%;
+}
+
+.aura-color button {
+    width: 70%;
+    height: 23px;
+    border: 1px solid #3e3e3e;
+    border-radius: 5px;
+}
+
+.context-menu-input.aura-color > label > input[type="text"] {
+    /* width: 0px;
+    padding: 0;
+    border: 0;
+    visibility: hidden; */
+    display: none;
 }
