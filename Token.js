@@ -1298,23 +1298,23 @@ function token_menu() {
 										name: "Presets"
 									},
 									candle: {
-										name: "Candle",
+										name: "Candle (5/5)",
 										className: "aura-preset"
 									},
 									torch: {
-										name: "Torch / Light",
+										name: "Torch / Light (20/20)",
 										className: "aura-preset"
 									},
 									lamp: {
-										name: "Lamp",
+										name: "Lamp (15/30)",
 										className: "aura-preset"
 									},
 									lantern: {
-										name: "Lantern",
+										name: "Lantern (30/30)",
 										className: "aura-preset"
 									},
 									paladinAura: {
-										name: "Paladin Aura",
+										name: "Paladin Aura (10)",
 										className: "aura-preset"
 									},
 								}
