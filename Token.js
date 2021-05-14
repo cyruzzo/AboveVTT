@@ -1053,7 +1053,7 @@ function token_inputs(opt) {
 	//alert('chiamato');
 	// export states to data store
 
-	if (opt.$selected.hasClass("aura-preset")) {
+	if (opt.$selected && opt.$selected.hasClass("aura-preset")) {
 		return;
 	}
 
