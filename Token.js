@@ -1012,7 +1012,7 @@ function menu_callback(key, options, event) {
 		window.ScenesHandler.persist();
 		// should persist ?	
 	}
-	if (['candle', 'torch', 'lamp', 'lantern', 'paladinAura'].indexOf(key) >= 0) {
+	if (['candle', 'torch', 'lamp', 'lantern'].indexOf(key) >= 0) {
 	
 		id = $(this).attr('data-id');
 
@@ -1035,10 +1035,6 @@ function menu_callback(key, options, event) {
 			window.TOKEN_OBJECTS[id].options.aura1.feet = "30";
 			window.TOKEN_OBJECTS[id].options.aura2.feet = "30";
 			
-		}
-		if (key === "paladinAura") {
-			window.TOKEN_OBJECTS[id].options.aura1.feet = "10";
-			window.TOKEN_OBJECTS[id].options.aura2.feet = "0";
 		}
 	
 		window.TOKEN_OBJECTS[id].place();
@@ -1312,11 +1308,7 @@ function token_menu() {
 									lantern: {
 										name: "Lantern (30/30)",
 										className: "aura-preset"
-									},
-									paladinAura: {
-										name: "Paladin Aura (10)",
-										className: "aura-preset"
-									},
+									}
 								}
 							},
 							sep1: "-------",
