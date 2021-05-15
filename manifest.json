@@ -33,7 +33,9 @@
 	"jquery.ui.touch-punch.js",
 	"SceneData.js",
 	"TokenMenu.js",
+	"color-picker.js",
 	"abovevtt.css",
+	"color-picker.min.css",
 	"assets/*"
 	]
 }

@@ -727,4 +727,36 @@ div#scene_properties form > div {
 .splashLinkRow div{
 	display:inline;
 	padding-left:20px;
-} 
+}
+
+.aura-element {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 29;
+}
+
+.aura-feet label, .aura-color label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.context-menu-input.aura-feet > label > input[type="text"] {
+    display: inline-block;
+    width: 70%;
+}
+
+.aura-color button {
+    width: 70%;
+    height: 23px;
+    border: 1px solid #3e3e3e;
+    border-radius: 5px;
+}
+
+.context-menu-input.aura-color > label > input[type="text"] {
+    display: none;
+}
+
+.context-menu-input.on-off-title > label > input[type="checkbox"] {
+    float: right;
+}

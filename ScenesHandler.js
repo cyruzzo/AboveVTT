@@ -11,6 +11,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.scene = scene;
 		window.CURRENT_SCENE_DATA = scene;
 
+		$(".VTTToken").each(function() {
+			$("#aura_" + $(this).attr("data-id").replaceAll("/", "")).remove();
+		});
 		$(".VTTToken").remove();
 
 		for (var i in window.TOKEN_OBJECTS) {
