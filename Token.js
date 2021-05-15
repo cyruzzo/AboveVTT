@@ -630,20 +630,7 @@ class Token {
 							}
 						}
 
-						// We may have reached here because the user has right-clicked, which stops the drag operation,
-						redraw_canvas();
-						WaypointManager.clearWaypoints();
-						$(event.target).off("mouseup", dragging_right_click_mouseup);
-						$(event.target).off("mousedown", dragging_right_click_mousedown);
-						$(event.target).off("contextmenu", return_false);
-
-						window.enable_window_mouse_handlers();
-
-						// Bit hacky, set a custom opacity for dragging if the token had no previous opacity change, e.g. hidden
-						if (tok.css("opacity") == 0.51) {
-							$(tok).fadeTo(0, 1);
-						}
-					},
+											},
 				start: function (event) {
 					window.DRAGGING = true;
 					click.x = event.clientX;
@@ -665,22 +652,9 @@ class Token {
 
 					// Setup waypoint manager
 
-					// If we are solid (not hidden), set opacity to custom number so we can see measure label
-					if (tok.css("opacity") == 1.0) {
-						$(tok).fadeTo(0, 0.51);
-					}
 
 					window.BEGIN_MOUSEX = (event.pageX - 200) * (1.0 / window.ZOOM);
 					window.BEGIN_MOUSEY = (event.pageY - 200) * (1.0 / window.ZOOM);
-					WaypointManager.setCanvas(document.getElementById("fog_overlay"));
-
-					// Detect the right-click mouseup/down in our own custom function
-					$(event.target).on("mouseup", dragging_right_click_mouseup);
-					$(event.target).on("mousedown", dragging_right_click_mousedown);
-					// Disable the context menu in the drag
-					$(event.target).on("contextmenu", return_false);
-					// Disable the 'master' mouse handlers so we don't default to right-click drag panning
-					window.disable_window_mouse_handlers();
 				},
 
 				drag: function(event, ui) {
@@ -721,22 +695,6 @@ class Token {
 
 					}
 
-					redraw_canvas();
-
-					// Draw waypoints
-					var rect = WaypointManager.canvas.getBoundingClientRect();
-					var mousex = (event.pageX - 200) * (1.0 / window.ZOOM);
-					var mousey = (event.pageY - 200) * (1.0 / window.ZOOM);
-
-					WaypointManager.ctx.save();
-					WaypointManager.ctx.beginPath();
-
-					WaypointManager.registerMouseMove(mousex, mousey);
-					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
-					WaypointManager.draw(true);
-
-					WaypointManager.ctx.fillStyle = '#f50';
-					WaypointManager.ctx.restore();
 				}
 			});
 
