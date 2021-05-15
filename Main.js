@@ -55,10 +55,10 @@ function change_zoom(newZoom, x, y) {
 	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
 
 	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
 
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);

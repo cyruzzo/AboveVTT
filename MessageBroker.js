@@ -292,6 +292,10 @@ class MessageBroker {
 		$("#scene_map").height(data.height);
 
 		load_scenemap(data.map, data.width, data.height, function() {
+			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
+			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
 			/*if(old_src!=$("#scene_map").attr('src')){
 			window.ZOOM=(60.0/window.CURRENT_SCENE_DATA.hpps);		
 			$("#VTT").css("transform", "scale("+window.ZOOM+")");
