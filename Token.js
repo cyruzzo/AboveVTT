@@ -147,7 +147,7 @@ class Token {
 			delete this.options.hidden;
 
 
-		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat) {
+		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat && old.find(".hp").length > 0) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
 			}
@@ -162,7 +162,7 @@ class Token {
 			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
 
 			// HEALTH AURA
-			if (this.options.max_hp > 0) {
+			if (this.options.max_hp > 0 && !this.options.disableaura) {
 				if (this.options.max_hp > 0 && parseInt(this.options.hp) === 0) {
 					const deadCross = old.find('.dead');
 					if (deadCross.length > 0) {
@@ -175,7 +175,7 @@ class Token {
 					old.find('.dead').remove();
 				}
 
-				old.find(".Avatar_AvatarPortrait__2dP8u").css('box-shadow',
+				old.find(".token-image").css('box-shadow',
 					`${token_health_aura(
 						Math.round((this.options.hp / this.options.max_hp) * 100)
 					)} 0px 0px 7px 7px`
@@ -409,6 +409,14 @@ class Token {
 				old.find(".hpbar").replaceWith(this.build_hp());
 				old.find(".ac").replaceWith(this.build_ac());
 			}
+			if(this.options.disablestat){
+				old.find(".hpbar").hide();
+				old.find(".ac").hide();
+			}
+			else{
+				old.find(".hpbar").show();
+				old.find(".ac").show();
+			}
 
 			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
 			old.find("img").css("transform", "scale(" + scale + ")");
@@ -427,7 +435,7 @@ class Token {
 					old.find('.dead').remove();
 				}
 
-				old.find(".Avatar_AvatarPortrait__2dP8u").css('box-shadow',
+				old.find(".token-image").css('box-shadow',
 					`${token_health_aura(
 						Math.round((pData.hp / pData.max_hp) * 100)
 					)} 0px 0px 7px 7px`
@@ -485,6 +493,25 @@ class Token {
 			
 			setTokenAuras(old, this.options);
 
+			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
+				old.find("img").addClass("token-round");
+			}
+			
+			if(old.find("img").hasClass('token-round') && (this.options.square) ){
+				old.find("img").removeClass("token-round");
+			}
+			
+			if(this.options.locked){
+				old.draggable("disable");
+				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+			}
+			else if(!this.options.locked){
+				old.draggable("enable");
+			}
+
+			if(this.options.disableaura){
+				old.find("img").css("box-shadow","");
+			}
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
@@ -492,7 +519,10 @@ class Token {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
 			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
-			var tokimg = $("<img style='transform:scale(" + scale + ")' class='Avatar_AvatarPortrait__2dP8u'/>"); // class to make them round
+			var tokimg = $("<img style='transform:scale(" + scale + ")' class='token-image'/>");
+			if(!(this.options.square)){
+				tokimg.addClass("token-round");
+			}
 
 
 			var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
@@ -510,10 +540,19 @@ class Token {
 					tok.append(this.build_ac());
 				}
 			}
+			
+			if(this.options.disablestat){
+				tok.find(".hpbar").hide();
+				tok.find(".ac").hide();
+			}
+			else{
+				tok.find(".hpbar").show();
+				tok.find(".ac").show();
+			}
 
 			// HEALTH AURA / DEAD CROSS
 			console.log("AURAO - ", this.options);
-			if (this.options.max_hp > 0) {
+			if (this.options.max_hp > 0 && !(this.options.disableaura)) {
 				const pData = window.PLAYER_STATS[this.options.id] || this.options;
 				if (pData.max_hp > 0 && parseInt(pData.hp) === 0) {
 					const deadCross = tok.find('.dead');
@@ -526,7 +565,7 @@ class Token {
 					tok.find('.dead').remove();
 				}
 
-				tok.find(".Avatar_AvatarPortrait__2dP8u").css('box-shadow',
+				tok.find(".token-image").css('box-shadow',
 					`${token_health_aura(
 						Math.round((pData.hp / pData.max_hp) * 100)
 					)} 0px 0px 7px 7px`
@@ -752,9 +791,12 @@ class Token {
 				}
 			});
 
-
+			if(this.options.locked){
+				tok.draggable("disable");
+				tok.removeClass("ui-state-disabled");
+			}
 			// 
-			tok.find(".Avatar_AvatarPortrait__2dP8u").dblclick(function(e) {
+			tok.find(".token-image").dblclick(function(e) {
 				self.highlight();
 				var data = {
 					id: self.options.id
@@ -842,6 +884,10 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 	
 	if ($(e.target).attr('data-disableborder')) {
 		options.disableborder = $(e.target).attr('data-disableborder');
+	}
+	
+	if ($(e.target).attr('data-square')) {
+		options.square = true;
 	}
 
 	if ($(e.target).attr('data-hp')) {
@@ -1061,6 +1107,41 @@ function token_inputs(opt) {
 
 	tok.options.imgsrc=parse_img(data.imgsrc);
 
+	if(data.token_square){
+		tok.options.square=true;
+	}
+	else{
+		tok.options.square=false;
+	}
+	
+	if(data.token_disablestat){
+		tok.options.disablestat=1;
+	}
+	else{
+		tok.options.disablestat=false;
+	}
+	
+	if(data.token_locked){
+		tok.options.locked=1;
+	}
+	else{
+		tok.options.locked=false;
+	}
+	
+	if(data.token_disableborder){
+		tok.options.disableborder=true;
+	}
+	else{
+		tok.options.disableborder=false;
+	}
+	
+	if(data.token_disableaura){
+		tok.options.disableaura=true;
+	}
+	else{
+		tok.options.disableaura=false;
+	}
+
 	tok.place();
 	tok.sync();
 	tok.persist();
@@ -1266,6 +1347,36 @@ function token_menu() {
 									lantern: {
 										name: "Lantern (30/30)",
 										className: "aura-preset"
+									}
+								}
+							},
+							options:{
+								name: "Options",
+								items: {
+									token_square:{
+										type: 'checkbox',
+										name: 'Square Token',
+										selected: window.TOKEN_OBJECTS[id].options.square
+									},
+									token_locked:{
+										type: 'checkbox',
+										name: 'Lock Token in Position',
+										selected: window.TOKEN_OBJECTS[id].options.locked
+									},
+									token_disablestat:{
+										type:'checkbox',
+										name: 'Disable HP/AC',
+										selected: window.TOKEN_OBJECTS[id].options.disablestat
+									},
+									token_disableborder:{
+										type:'checkbox',
+										name: 'Disable Border',
+										selected: window.TOKEN_OBJECTS[id].options.disableborder
+									},
+									token_disableaura:{
+										type:'checkbox',
+										name: 'Disable Aura',
+										selected: window.TOKEN_OBJECTS[id].options.disableaura
 									}
 								}
 							},

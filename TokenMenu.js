@@ -7,36 +7,43 @@ tokenbuiltin = {
 					'data-img': 'https://drive.google.com/file/d/1frTuvq-64DA23ayC6P0XGZyo0M6paEID/view?usp=sharing',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 				'Big Bang': {
 					'data-img': 'https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 				'Fire': {
 					'data-img': 'https://drive.google.com/file/d/1_wE3B5rvr38cM9NMbCQ__WUf0RIXIuhQ/view?usp=sharing',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 				'Flame 1': {
 					'data-img': 'https://thumbs.gfycat.com/GiddyMajorDingo-small.gif',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 				'Flame 2': {
 					'data-img': 'https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 				'Nebula': {
 					'data-img': 'https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 				'Web': {
 					'data-img': 'https://drive.google.com/file/d/1rGuD7FMtzy6XR0qcsewndhS33wZL8vEM/view?usp=sharing',
 					'data-disablestat': true,
 					'data-disableborder': true,
+					'data-square': true,
 				},
 			}
 		},
@@ -190,10 +197,10 @@ function init_tokenmenu(){
 				<div>Image URL:</div>
 				<div><input name='data-img'></div>
 			</div>
-			<!--<div>
+			<div>
 				<div>Image type</div>
 				<div><select name='data-square'><option value='0'>Round</option><option value='1'>Square</option></select></div>
-			</div>-->
+			</div>
 			<div>
 				<div>Hide Border</div>
 				<div><input type='checkbox' name='data-disableborder'></div>
@@ -210,7 +217,7 @@ function init_tokenmenu(){
 		var tokenname=tokenform.find("[name='data-name']").val();
 		var newtoken={};
 		newtoken['data-img']=tokenform.find("[name='data-img']").val();
-		//newtoken['data-square']=tokenform.find("[name='data-square']").val();
+		newtoken['data-square']=tokenform.find("[name='data-square']").val();
 		newtoken['data-name']=tokenform.find("[name='data-name']").val();
 		newtoken['data-disablestat']=true;
 		if(tokenform.find("[name='data-disableborder']").is(":checked"))

@@ -760,3 +760,7 @@ div#scene_properties form > div {
 .context-menu-input.on-off-title > label > input[type="checkbox"] {
     float: right;
 }
+
+.token-round{
+	border-radius: 50%;
+}
