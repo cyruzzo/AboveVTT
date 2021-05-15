@@ -30,32 +30,34 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 /**
  * Class to manage measure waypoints
  */
-class WaypointManager {
+class WaypointManagerClass {
 
-	// Members
-	static canvas;
-	static ctx;
-	static numWaypoints = 0;
-	static coords = [];
-	static currentWaypointIndex = 0;
-	static mouseDownCoords = { mousex: undefined, mousey: undefined };
-	static timeout = undefined;
-
+	constructor(){
+		this.canvas=undefined;
+		this.ctx=undefined;
+		this.numWaypoints = 0;
+		this.coords = [];
+		this.currentWaypointIndex = 0;
+		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
+		this.timeout = undefined;
+	}
+	
 	// Set canvas and further set context
-	static setCanvas(canvas) {
+	
+	setCanvas(canvas) {
 
 		this.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
 	}
 
 	// Are we in the middle of measuring?
-	static isMeasuring() {
+	isMeasuring() {
 
 		return this.numWaypoints != 0;
 	}
 
 	// Store a waypoint in the array
-	static storeWaypoint(index, startX, startY, endX, endY) {
+	storeWaypoint(index, startX, startY, endX, endY) {
 
 		// Check if we have this waypoint in our array, if not then increment how many waypoints we have
 		if (typeof this.coords[index] === 'undefined') {
@@ -73,7 +75,7 @@ class WaypointManager {
 	}
 
 	// Draw a nice circle
-	static drawBobble(x, y, radius) {
+	drawBobble(x, y, radius) {
 
 		if(radius == undefined) {
 			radius = 5;
@@ -89,7 +91,7 @@ class WaypointManager {
 	}
 
 	// Increment the current index into the array of waypoints, and draw a small indicator
-	static checkNewWaypoint(mousex, mousey) {
+	checkNewWaypoint(mousex, mousey) {
 
 		if (this.mouseDownCoords.mousex == mousex && this.mouseDownCoords.mousey == mousey) {
 
@@ -103,14 +105,14 @@ class WaypointManager {
 	}
 
 	// Track mouse moving
-	static registerMouseMove(mousex, mousey) {
+	registerMouseMove(mousex, mousey) {
 
 		this.mouseDownCoords.mousex = mousex;
 		this.mouseDownCoords.mousey = mousey;
 	}
 
 	// On mouse up, clear out the waypoints
-	static clearWaypoints() {
+	clearWaypoints() {
 
 		this.numWaypoints = 0;
 		this.coords = [];
@@ -121,7 +123,7 @@ class WaypointManager {
 	}
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
-	static getSnapPointCoords(x, y) {
+	getSnapPointCoords(x, y) {
 
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;
@@ -141,9 +143,8 @@ class WaypointManager {
 
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
-	static draw(midlineLabels) {
-
-		
+	draw(midlineLabels) {
+	
 		var cumulativeDistance = 0
 		for (var i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
@@ -155,7 +156,7 @@ class WaypointManager {
 	}
 
 	// Draw a waypoint segment with all the lines and labels etc.
-	static drawWaypointSegment(coord, cumulativeDistance, midlineLabels) {
+	drawWaypointSegment(coord, cumulativeDistance, midlineLabels) {
 
 		// Snap to centre of current grid square
 		var gridSize = window.CURRENT_SCENE_DATA.hpps;
@@ -269,6 +270,7 @@ class WaypointManager {
 		this.drawBobble(snapPointXEnd, snapPointYEnd, 3);
 	}
 };
+
 
 function check_token_visibility() {	
 	if (window.DM || $("#fog_overlay").is(":hidden"))

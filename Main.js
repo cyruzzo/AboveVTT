@@ -1197,7 +1197,7 @@ function init_ui() {
 
 
 
-
+	window.WaypointManager=new WaypointManagerClass();
 
 	init_spells();
 
