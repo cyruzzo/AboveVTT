@@ -1012,7 +1012,8 @@ function init_ui() {
 			}
 			
 			if(validateUrl(text)){
-				text="<img width=200 src='"+text+"'>";
+				
+				text="<img width=200 src='"+parse_img(text)+"'>";
 			}
 			
 			data = {
