@@ -1531,6 +1531,7 @@ function setTokenAuras (token, options) {
 			token.parent().find("#aura_" + tokenId).attr("style", auraStyles);	
 		} else {
 			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" style='${auraStyles}' />`);
+			auraElement.contextmenu(function(){return false;});
 			$("#tokens").prepend(auraElement);
 		}
 	} else {

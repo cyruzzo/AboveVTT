@@ -732,7 +732,7 @@ div#scene_properties form > div {
 .aura-element {
     position: absolute;
     border-radius: 50%;
-    z-index: 29;
+    z-index: 19;
 }
 
 .aura-feet label, .aura-color label {
