@@ -710,6 +710,11 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
+
+	if (e.data.shape === 'select') {
+		$("#fog_overlay").css("z-index", "50");
+	}
+
 	if (window.DRAGGING && e.data.shap != 'align')
 		return;
 	if (e.button != 0)
@@ -872,6 +877,10 @@ function drawing_mouseup(e) {
 
 	mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
 	mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+
+	if (e.data.shape === 'select') {
+		$("#fog_overlay").css("z-index", "31");
+	}
 
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (e.data.shape == "measure" && e.button == 2) {
@@ -1151,7 +1160,7 @@ function setup_draw_buttons() {
 		if (!e.currentTarget.id || e.currentTarget.id !== "select-button") {
 			target.css("z-index", "50");
 		} else {
-			target.css("z-index", "20");
+			target.css("z-index", "31");
 		}
 
 		if ($(e.target).attr('id') == "measure-button") {
