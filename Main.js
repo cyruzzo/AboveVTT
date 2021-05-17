@@ -443,7 +443,7 @@ function init_splash() {
 
 	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
-	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman"];
+	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman","Miguel Garcia Jr."];
 	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane","Reginald Coupet","Pucas McDookie","Clint Blough","Jordan Cohen","Chris Johnson"];
 	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nate gonzalez","Andrew Depledge","Jason Osterbind","Daniel Villablanca","William Geisbert","Adam Nothnagel"];
 
