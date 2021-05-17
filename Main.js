@@ -413,7 +413,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.46</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.47RC1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
 	cont.append("<h4>Useful Links</h4>");
@@ -437,7 +437,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
-	cont.append("<br>Contributors: <b>Stumpy, Palad1N, KuzKuz, Coryphon, Johnno</b>");
+	cont.append("<br>Contributors: <b>Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig</b>");
 	cont.append("<h3>Current Patreon Supporters</h3>");
 	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
@@ -445,7 +445,7 @@ function init_splash() {
 
 	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman"];
 	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane","Reginald Coupet","Pucas McDookie","Clint Blough","Jordan Cohen","Chris Johnson"];
-	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nate gonzalez","Andrew Depledge"];
+	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nate gonzalez","Andrew Depledge","Jason Osterbind","Daniel Villablanca","William Geisbert","Adam Nothnagel"];
 
 	l1div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;' >Masters of the Realms</div></div>");
 	l1ul = $("<ul/>");
