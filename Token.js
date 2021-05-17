@@ -1173,7 +1173,7 @@ function multiple_callback(key, options, event) {
 			$(this).remove();
 			delete window.ScenesHandler.scene.tokens[id];
 			delete window.TOKEN_OBJECTS[id];
-
+			$("#aura_" + id.replaceAll("/", "")).remove();
 		});
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
@@ -1206,6 +1206,21 @@ function token_menu() {
 					custom_reminders = {}
 					id = $(element).attr('data-id');
 					is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
+
+					if (!window.TOKEN_OBJECTS[id].options.aura1) {
+						window.TOKEN_OBJECTS[id].options = {
+							...window.TOKEN_OBJECTS[id].options,
+							aura1: {
+								feet: "0",
+								color: "rgba(255, 129, 0, 0.3)"
+							},
+							aura2: {
+								feet: "0",
+								color: "rgba(255, 255, 0, 0.1)"
+							},
+							auraVisible: true
+						}
+					}
 
 					for (var i = 0; i < STANDARD_CONDITIONS.length; i++) {
 						command = "cond_" + STANDARD_CONDITIONS[i];
@@ -1493,6 +1508,8 @@ function token_health_aura(hpPercentage) {
 }
 
 function setTokenAuras (token, options) {
+	if (!options.aura1) return;
+
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
