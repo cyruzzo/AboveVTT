@@ -115,7 +115,15 @@ class MessageBroker {
 				}
 			}
 
-
+			if(msg.eventType=="custom/myVTT/playchannel"){
+				audio_playchannel(msg.data.channel,msg.data.time,msg.data.volume);
+			}
+			if(msg.eventType=="custom/myVTT/pausechannel"){
+				audio_pausechannel(msg.data.channel);
+			}
+			if(msg.eventType=="custom/myVTT/changechannel"){
+				audio_changevolume(msg.data.channel,msg.data.volume);
+			}
 
 			if (msg.eventType == "custom/myVTT/playerdata") {
 				self.handlePlayerData(msg.data);

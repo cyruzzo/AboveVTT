@@ -764,3 +764,12 @@ div#scene_properties form > div {
 .token-round{
 	border-radius: 50%;
 }
+
+#soundpad-section audio{
+	height:20px;
+	width: 300px;
+}
+
+.soundpad-line-title{
+	display: inline-block;
+}

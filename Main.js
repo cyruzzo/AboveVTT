@@ -1200,6 +1200,7 @@ function init_ui() {
 	window.WaypointManager=new WaypointManagerClass();
 
 	init_spells();
+	test_audio(); // TEMPORARY AUDIO TEST
 
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK

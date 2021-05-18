@@ -26,10 +26,54 @@ var soundpad = {
 };
 
 function audio_onplay(e){
-	channel($(e.target).attr('data-channel'));
+	var channel=($(e.target).attr('data-channel'));
+	var audio_object=e.target;
 	
+	var data={
+		channel: channel,
+		time: e.target.currentTime,
+		volume: e.target.volume,
+	}
+	window.MB.sendMessage("custom/myVTT/playchannel",data);
 }
 
+function audio_onpause(e){
+	var channel=($(e.target).attr('data-channel'));
+	var data={
+		channel: channel,
+	}
+	window.MB.sendMessage("custom/myVTT/pausechannel",data);
+}
+
+function audio_onvolumechange(e){
+	var channel=($(e.target).attr('data-channel'));
+	var data={
+		channel: channel,
+		volume: e.target.volume,
+	}
+	window.MB.sendMessage("custom/myVTT/changechannel",data);
+}
+
+function audio_playchannel(channel,time,volume){
+	element=$("audio[data-channel="+channel+"]").get(0);
+	element.currentTime=time;
+	element.volume=volume;
+	if(element){
+		element.play();
+	}
+}
+
+function audio_pausechannel(channel){
+	element=$("audio[data-channel="+channel+"]").get(0);
+	if(element){
+		element.pause();
+	}
+}
+
+function audio_changevolume(channel,volume){
+	element=$("audio[data-channel="+channel+"]").get(0);
+	element.volume=volume;
+}
 
 function create_soundpad(target,soundpad) {
 	target.empty();
@@ -39,25 +83,39 @@ function create_soundpad(target,soundpad) {
 		s=$("<div class='soundpad-section'/>");
 		s.append("<div ='soundpad-section-title'>"+section+"</div>");
 		for (var i = 0; i < soundpad[section].length; i++) {
-			id_count++;
+			line=$("<div/>")
+			line.append("<div class='soundpad-line-title'>"+soundpad[section][i].name+"</div>");
 			audio = $("<audio/>");
 			audio.attr('data-channel',id_count);
 			audio.attr("controls","");
 			audio.attr("controlsList","nodownload");
+			audio.attr("preload","true");
 			source = $("<source/>");
 			source.attr("src", soundpad[section][i].src);
 			audio.append(source);
-			s.append(audio);
+			line.append(audio);
+			s.append(line);
+			id_count++;
 		}
 		target.append(s);
 	}
-	if(window.DM)
+	if(window.DM){
 		$("audio").on('play',audio_onplay);
+		$("audio").on('seeked',audio_onplay);
+		$("audio").on('pause',audio_onpause);
+		$("audio").on('volumechange',audio_onvolumechange);
+	 }
 }
 
 
 
 function test_audio(){
-	create_soundpad($("#spells-panel"),soundpad);
+	if(window.DM)
+		create_soundpad($("#spells-panel"),soundpad);
+	else{
+		/*cont=$("<div/>").hide();
+		$("#site").append(cont);
+		create_soundpad(cont,soundpad);*/ create_soundpad($("#spells-panel"),soundpad);
+	}
 }
 
