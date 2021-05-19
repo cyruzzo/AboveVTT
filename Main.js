@@ -113,20 +113,23 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		});
 
 		let smooth = function() {
-			if (player.playerInfo.playerState != 1) // something went wrong
-				return;
-			remaining = player.playerInfo.duration - player.playerInfo.currentTime;
-			if (remaining < 1) { // we should be able to just skip on the last second
+			if (player.playerInfo.playerState != 1){ // something went wrong. tries to reset
 				player.seekTo(0);
-				window.YTTIMEOUT = setTimeout(smooth, (player.playerInfo.duration - 0.9) * 1000);
+				player.playVideo();
+				window.YTTIMEOUT = setTimeout(smooth, (player.playerInfo.duration - 1.6) * 1000);
+				return;
+			}
+			remaining = player.playerInfo.duration - player.playerInfo.currentTime;
+			if (remaining < 2) { // we should be able to just skip on the last second
+				player.seekTo(0);
+				window.YTTIMEOUT = setTimeout(smooth, (player.playerInfo.duration - 1.6) * 1000);
 			}
 			else {
-				window.YTTIMEOUT = setTimeout(smooth, (remaining - 0.9) * 1000);
+				window.YTTIMEOUT = setTimeout(smooth, (remaining - 1.6) * 1000);
 			}
-
 		};
 
-		window.YTTIMEOUT = setTimeout(smooth, 10000);
+		window.YTTIMEOUT = setTimeout(smooth, 5000);
 
 		callback();
 	}
