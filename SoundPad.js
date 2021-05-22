@@ -81,7 +81,7 @@ function create_soundpad(target,soundpad) {
 	$("#soundpad").remove();
 	for (section in soundpad) {
 		s=$("<div class='soundpad-section'/>");
-		s.append("<div ='soundpad-section-title'>"+section+"</div>");
+		s.append("<div class='soundpad-section-title'>"+section+"</div>");
 		for (var i = 0; i < soundpad[section].length; i++) {
 			line=$("<div/>")
 			line.append("<div class='soundpad-line-title'>"+soundpad[section][i].name+"</div>");
@@ -110,12 +110,13 @@ function create_soundpad(target,soundpad) {
 
 
 function test_audio(){
-	if(window.DM)
-		create_soundpad($("#spells-panel"),soundpad);
-	else{
-		/*cont=$("<div/>").hide();
-		$("#site").append(cont);
-		create_soundpad(cont,soundpad);*/ create_soundpad($("#spells-panel"),soundpad);
-	}
+	
+	$("#spells-panel").empty();
+	
+	soundpad_element=$("<div id=soundpad'>");
+	$("#spells-panel").append(soundpad_element);
+	
+	create_soundpad($("#spells-panel"),soundpad);
+	
 }
 
