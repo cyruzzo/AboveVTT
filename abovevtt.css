@@ -717,7 +717,7 @@ div#scene_properties form > div {
 	width: 100px;
 }
 
-#tokens-panel-warning {
+.panel-warning {
 	background:red;
 }
 

@@ -359,7 +359,14 @@ function init_controls() {
 		b5.append("<img src='"+window.EXTENSION_PATH + "assets/icons/photo.svg' height='100%;'>");
 		b5.click(switch_control);
 		$(".sidebar__controls").append(b5);
+		
 	}
+	
+	b6 = $("<button id='switch_tokens' class='tab-btn' data-target='#sounds-panel'></button>");
+	b6.append("<img src='" + window.EXTENSION_PATH + "assets/icons/speaker.svg' height='100%;'>");
+	b6.click(switch_control);
+	$(".sidebar__controls").append(b6);
+	
 	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'></button>").click(switch_control);
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
@@ -1210,8 +1217,8 @@ function init_ui() {
 	window.WaypointManager=new WaypointManagerClass();
 
 	init_spells();
-	test_audio(); // TEMPORARY AUDIO TEST
-
+	init_audio();
+	
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 	}, 5000);

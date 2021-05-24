@@ -109,14 +109,16 @@ function create_soundpad(target,soundpad) {
 
 
 
-function test_audio(){
+function init_audio(){
 	
-	$("#spells-panel").empty();
+	sounds_panel = $("<div id='sounds-panel' class='sidepanel-content'/>");
+	$(".sidebar__pane-content").append(sounds_panel);
 	
-	soundpad_element=$("<div id=soundpad'>");
+	sounds_panel.append("<div class='panel-warning'>THIS IS AN EXPERIMENTAL FEATURE</div>");
+	/*soundpad_element=$("<div id=soundpad'>");
 	$("#spells-panel").append(soundpad_element);
 	
-	create_soundpad($("#spells-panel"),soundpad);
+	create_soundpad($("#spells-panel"),soundpad);*/
 	
 }
 

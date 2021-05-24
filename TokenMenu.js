@@ -162,7 +162,7 @@ function init_tokenmenu(){
 	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
 	tokens_panel=$("<div id='tokens-panel' class='sidepanel-content'/>");
 	tokens_panel.hide();
-	tokens_panel.append("<div id='tokens-panel-warning'>THIS IS AN EXPERIMENTAL FEATURE. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOOSE THEM</div>");
+	tokens_panel.append("<div class='panel-warning'>THIS IS AN EXPERIMENTAL FEATURE. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOOSE THEM</div>");
 	header=$("<div id='tokens-panel-header'/>");
 	tokens_panel.append(header);
 	addfolder=$("<button id='token-addfolder'>Add Folder</button>");
