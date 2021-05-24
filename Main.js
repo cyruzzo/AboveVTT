@@ -113,7 +113,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		});
 
 		let smooth = function() {
-			if (player.playerInfo.playerState != 1){ // something went wrong. tries to reset
+			if (window.YTPLAYER.playerInfo.playerState != 1){ // something went wrong. tries to reset
 				window.YTPLAYER.seekTo(0);
 				window.YTPLAYER.playVideo();
 				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
