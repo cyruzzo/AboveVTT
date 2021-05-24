@@ -1019,6 +1019,8 @@ function menu_callback(key, options, event) {
 	if (['candle', 'torch', 'lamp', 'lantern'].indexOf(key) >= 0) {
 	
 		id = $(this).attr('data-id');
+		window.TOKEN_OBJECTS[id].options.aura1.color = "rgba(255, 129, 0, 0.3)";
+		window.TOKEN_OBJECTS[id].options.aura2.color = "rgba(255, 255, 0, 0.1)";
 
 		if (key === "candle") {
 			window.TOKEN_OBJECTS[id].options.aura1.feet = "5";
