@@ -767,13 +767,14 @@ div#scene_properties form > div {
 	border-radius: 50%;
 }
 
-#soundpad-section audio{
+.soundpad-section audio{
 	height:20px;
-	width: 300px;
+	width: 200px;
 }
 
 .soundpad-line-title{
 	display: inline-block;
+	width: 70px;
 }
 
 #hide_rightpanel{
@@ -781,3 +782,12 @@ div#scene_properties form > div {
 	left: -30px;
 }
 
+
+.soundpad-section-title{
+	font-weight: bold;
+}
+
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display{
+	display:none;
+}

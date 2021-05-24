@@ -107,10 +107,11 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 			videoId: videoid,
 			playerVars: { 'autoplay': 1, 'controls': 0 },
 			events: {
-				'onStateChange': function(event) { if (event.data == 0) window.YTPLAYER.seekTo(0); },
-				//'onReady': function(e) { e.target.mute(); }
+				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
+				'onReady': function(e) { window.YTPLAYER.setVolume($("#youtube_volume").val()); }
 			}
 		});
+		
 
 		let smooth = function() {
 			if (window.YTPLAYER.playerInfo.playerState != 1){ // something went wrong. tries to reset

@@ -115,6 +115,10 @@ class MessageBroker {
 				}
 			}
 
+			if(msg.eventType=="custom/myVTT/soundpad"){
+				build_soundpad(msg.data.soundpad);
+			}
+
 			if(msg.eventType=="custom/myVTT/playchannel"){
 				audio_playchannel(msg.data.channel,msg.data.time,msg.data.volume);
 			}
@@ -123,6 +127,13 @@ class MessageBroker {
 			}
 			if(msg.eventType=="custom/myVTT/changechannel"){
 				audio_changevolume(msg.data.channel,msg.data.volume);
+			}
+			if(msg.eventType=="custom/myVTT/changeyoutube"){
+				if(window.YTPLAYER){
+					$("#youtube_volume").val(msg.data.volume);
+					if(window.YTPLAYER)
+						window.YTPLAYER.setVolume(msg.data.volume);
+				}
 			}
 
 			if (msg.eventType == "custom/myVTT/playerdata") {
