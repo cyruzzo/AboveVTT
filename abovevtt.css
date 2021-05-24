@@ -582,11 +582,12 @@ div#scene_properties form > div {
     margin: 0 !important;
     left: -2px;
     z-index: 20;
+    width: 340px;
 }
 
-.sidebar__controls.player {
+/*.sidebar__controls.player {
     left: -206px;
-}
+}*/
 
 .sidebar__pane-content {
     position: absolute;
@@ -604,8 +605,9 @@ div#scene_properties form > div {
     border-color: lightgray;
     transition: all 0.2s ease-in-out;
     font-weight: 400;
-    max-width: 64px;
-    width: 64px;
+    max-width: 40px;
+    width: 40px;
+    height: 22px;
 }
 
 .sidebar__controls .tab-btn.selected-tab {
@@ -763,4 +765,9 @@ div#scene_properties form > div {
 
 .token-round{
 	border-radius: 50%;
+}
+
+#hide_rightpanel{
+	position: absolute;
+	left: -30px;
 }

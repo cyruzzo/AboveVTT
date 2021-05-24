@@ -199,14 +199,14 @@ function switch_control(e) {
 	if (window.BLOCKCONTROLS)
 		return;
 	$(".sidepanel-content").hide();
-	$($(e.target).attr("data-target")).show();
+	$($(e.currentTarget).attr("data-target")).show();
 
 
-	if ($(e.target).attr("data-target") == ".glc-game-log") {
+	if ($(e.currentTarget).attr("data-target") == ".glc-game-log") {
 		$("#switch_gamelog").css('background', '');
 	}
 
-	if ($(e.target).attr("data-target") == "#monster-panel" && !window.MONSTERPANEL_LOADED) {
+	if ($(e.currentTarget).attr("data-target") == "#monster-panel" && !window.MONSTERPANEL_LOADED) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 		window.MONSTERPANEL_LOADED = true;
@@ -341,25 +341,32 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'>LOG</button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'></button>").click(switch_control);
+	b1.append('<svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg>');
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
-		b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'>PLAYERS</button>").click(switch_control);
+		b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'></button>").click(switch_control);
+		b2.append("<img src='"+window.EXTENSION_PATH + "assets/icons/character.svg' height='100%;'>");
+		
+		
 		$(".sidebar__controls").append(b2);
-		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'>MONSTERS</button>").click(switch_control);
+		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'></button>").click(switch_control);
+		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
 		init_tokenmenu();
-		b5=$("<button id='switch_tokens' class='tab-btn' data-target='#tokens-panel'>TOKENS</button>");
+		b5=$("<button id='switch_tokens' class='tab-btn' data-target='#tokens-panel'></button>");
+		b5.append("<img src='"+window.EXTENSION_PATH + "assets/icons/photo.svg' height='100%;'>");
 		b5.click(switch_control);
 		$(".sidebar__controls").append(b5);
 	}
-	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'>SPELLS</button>").click(switch_control);
+	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'></button>").click(switch_control);
+	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
 
 	$(".tab-btn").on("click", function(e) {
 		$(".tab-btn").removeClass('selected-tab');
-		$(e.target).toggleClass('selected-tab');
+		$(e.currentTarget).toggleClass('selected-tab');
 	});
 
 	if (!DM) {
@@ -833,7 +840,7 @@ function open_player_sheet(sheet_url) {
 		sheet_button = $("<button id='sheet_button'>SHEET</button>");
 		sheet_button.css("position", "absolute");
 		sheet_button.css("top", 0);
-		sheet_button.css("right", 170);
+		sheet_button.css("left", -80);
 		sheet_button.css("z-index", 999999);
 
 		$(".sidebar__controls").append(sheet_button);
@@ -1187,7 +1194,7 @@ function init_ui() {
 	zoom_section.append(zoom_plus);
 
 	if(window.DM) {
-		zoom_section.css("left","-100px");
+		zoom_section.css("left","-130px");
 	}
 	else{
 		zoom_section.css("left","-180px");
