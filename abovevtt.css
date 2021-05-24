@@ -767,7 +767,6 @@ div#scene_properties form > div {
 	border-radius: 50%;
 }
 
-<<<<<<< HEAD
 #soundpad-section audio{
 	height:20px;
 	width: 300px;
@@ -776,9 +775,9 @@ div#scene_properties form > div {
 .soundpad-line-title{
 	display: inline-block;
 }
-=======
+
 #hide_rightpanel{
 	position: absolute;
 	left: -30px;
 }
->>>>>>> refs/remotes/origin/main
+
