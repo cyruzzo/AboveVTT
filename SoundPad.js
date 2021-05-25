@@ -187,7 +187,11 @@ function build_soundpad(soundpad) {
 			
 			btn_save.click(function(){
 				soundpad[section][i].name=edit_title.val();
-				soundpad[section][i].src=url.val();
+				var newurl=url.val();
+				if(newurl.startsWith("https://drive.google.com") && newurl.indexOf("uc?id=") < 0)
+					newurl='https://drive.google.com/uc?id=' + newurl.split('/')[5];
+				url.val(newurl);
+				soundpad[section][i].src=newurl;
 				build_soundpad(soundpad);
 								
 				data={
@@ -251,7 +255,7 @@ function init_audio(){
 		window.SOUNDPADS = {};
 	}
 	
-	if(!"DEMO" in window.SOUNDPADS){
+	if(!("DEMO" in window.SOUNDPADS)){
 		 window.SOUNDPADS['DEMO']=demo_soundpad;
 	}
 	
@@ -313,7 +317,21 @@ function init_audio(){
 		});
 		
 		
-		
+		btn_delsoundpad=$("<button class='soundpad_del'>DEL</button>");
+		btn_delsoundpad.click(function(){
+			c=confirm("Are you sure that you want to delete the current soundpad?");
+			if(c){
+				delete window.SOUNDPADS[soundpad_selector.val()];
+				$("#soundpad").empty();
+				soundpad_selector.empty();
+				soundpad_selector.append("<option value=''>-</option>");
+				for (k in window.SOUNDPADS) {
+					soundpad_selector.append($("<option/>").attr('value', k).html(k));
+				}
+				persist_soundpad();
+			}
+		});
+		selector_section.append(btn_delsoundpad);
 		
 		soundpad_selector.on("change",function(){
 			$("#soundpad").empty();
@@ -331,5 +349,11 @@ function init_audio(){
 	
 	soundpad_element=$("<div id='soundpad'>");
 	sounds_panel.append(soundpad_element);
+	if(!window.DM){
+		soundpad_element.hide();
+		sounds_panel.append("Music is entirely controlled by the DM. As a player you'll find a master volume control here... but sorry.. it's not ready :('");
+		
+	}
+	
 }
 
