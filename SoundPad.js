@@ -92,16 +92,47 @@ function build_soundpad(soundpad) {
 	
 	target.append(btn_addsection);
 	
-	for (section in soundpad) {
+	btn_addsection.click(function(){
+		newname=prompt("Add a name for the new Soundpad Section");
+		if(newname){
+			soundpad[newname]=[];
+			build_soundpad(soundpad);
+		}
+	});
+	
+	for (let section in soundpad) {
 		s=$("<div class='soundpad-section'/>");
-		s.append("<div class='soundpad-section-title'>"+section+"</div>");
+		section_title=$("<div class='soundpad-section-title'>"+section+"</div>");
+		s.append(section_title);
 		btn_addsound=$("<button class='soundpad_addsound'>Add Sound</button>");
-		s.append(btn_addsound);
 		
-		for (var i = 0; i < soundpad[section].length; i++) {
+		btn_addsound.click(function(){
+			soundpad[section].push({
+				name:'new',
+				url:'',
+			});
+			build_soundpad(soundpad);
+		});
+		
+		section_title.append(btn_addsound);
+		
+		for (let i = 0; i < soundpad[section].length; i++) {
 			line=$("<div class='soundpad-line'/>")
-			line.append("<div class='soundpad-line-title'>"+soundpad[section][i].name+"</div>");
-			audio = $("<audio/>");
+			line.attr("data-section",section);
+			line.attr("data-position",i);
+			
+			
+			let title=$("<div class='soundpad-line-title'/>");
+			title.html(soundpad[section][i].name);
+			
+			line.append(title);
+			let edit_title=$("<input>");
+			edit_title.val(soundpad[section][i].name);
+			edit_title.hide();		
+			line.append(edit_title);
+			//line.append("<input class='soundpad-line-title'>"++"</div>");
+			
+			let audio = $("<audio/>");
 			audio.attr('data-channel',id_count);
 			audio.attr("controls","");
 			audio.attr("controlsList","nodownload");
@@ -111,10 +142,70 @@ function build_soundpad(soundpad) {
 			audio.append(source);
 			line.append(audio);
 			
-			btn_edit=$("<button class='soundpad_editsound'>E</button>");
+			let url=$("<input type='text'>");
+			url.val(soundpad[section][i].src);
+			url.attr("placeholder","http://www.audio.com/mp3");
+			url.hide();
+			line.append(url);
+			
+			let btn_save=$("<button class='soundpad_save'>OK</button>");
+			btn_save.hide();
+			line.append(btn_save);
+			
+			let btn_cancel=$("<button class='soundpad_cancel'>CANCEL</button>");
+			btn_cancel.hide();
+			line.append(btn_cancel);
+			
+			let btn_edit=$("<button class='soundpad_editsound'>E</button>");
+			
+			
 			line.append(btn_edit);
-			btn_del=$("<button class='soundpad_editsound'>X</button>");
+			let btn_del=$("<button class='soundpad_delsound'>X</button>");
 			line.append(btn_del);
+						
+			btn_edit.click(function(){
+				audio.hide();
+				title.hide();
+				edit_title.show();
+				btn_edit.hide();
+				btn_del.hide();
+				btn_save.show();
+				btn_cancel.show();
+				url.show();
+			});
+			
+			btn_cancel.click(function(){
+				audio.show();
+				title.show();
+				edit_title.hide();
+				btn_edit.show();
+				btn_del.show();
+				btn_save.hide();
+				btn_cancel.hide();
+				url.hide();
+			});
+			
+			btn_save.click(function(){
+				soundpad[section][i].name=edit_title.val();
+				soundpad[section][i].src=url.val();
+				build_soundpad(soundpad);
+								
+				data={
+					soundpad: soundpad
+				}
+				window.MB.sendMessage("custom/myVTT/soundpad",data);
+			});
+			
+			btn_del.click(function(){
+				soundpad[section].splice(i,1);
+				build_soundpad(soundpad);
+				data={
+					soundpad: soundpad
+				}
+				window.MB.sendMessage("custom/myVTT/soundpad",data);
+			});
+			
+			
 			s.append(line);
 			id_count++;
 		}
@@ -126,15 +217,47 @@ function build_soundpad(soundpad) {
 		$("audio").on('pause',audio_onpause);
 		$("audio").on('volumechange',audio_onvolumechange);
 	 }
+	soundpad_check_editable(); // hide / show buttons
+	if(window.DM)
+		persist_soundpad();
 }
 
 
-function init_audio(){	
-	window.SOUNDPADS={DEMO:demo_soundpad};
+function soundpad_check_editable(){
+	if($("#soundpad_enable_edit").is(":checked")){
+		$(".soundpad_editsound").show();
+		$(".soundpad_delsound").show();
+		$(".soundpad_addsound").show();
+		$(".soundpad_addsection").show();
+	}
+	else{
+		$(".soundpad_editsound").hide();
+		$(".soundpad_delsound").hide();
+		$(".soundpad_addsound").hide();
+		$(".soundpad_addsection").hide();
+	}
+}
+
+
+function persist_soundpad(){
+	localStorage.setItem("Soundpads",JSON.stringify(window.SOUNDPADS));
+}
+
+function init_audio(){
+	if (localStorage.getItem("Soundpads") != null) {
+		window.SOUNDPADS = $.parseJSON(localStorage.getItem("Soundpads"));
+	}
+	else {
+		window.SOUNDPADS = {};
+	}
+	
+	if(!"DEMO" in window.SOUNDPADS){
+		 window.SOUNDPADS['DEMO']=demo_soundpad;
+	}
 	
 	sounds_panel = $("<div id='sounds-panel' class='sidepanel-content'/>");
 	$(".sidebar__pane-content").append(sounds_panel);
-	sounds_panel.append("<div class='panel-warning'>THIS IS AN EXPERIMENTAL FEATURE</div>");
+	sounds_panel.append("<div class='panel-warning'>EXPERIMENTAL FEATURE (still ugly but should work)</div>");
 	
 	
 	youtube_section=$("<div class='youtube_section'/>");;
@@ -163,15 +286,36 @@ function init_audio(){
 		selector_section=$("<div/>");
 		soundpad_selector=$("<select id='soundpad_selector'/>");
 		soundpad_selector.append("<option value=''>-</option>");
-		//soundpad_selector.append("<option value='DEMO'>DEMO</option>");
 		for(k in window.SOUNDPADS){
 			soundpad_selector.append($("<option/>").attr('value',k).html(k));
 		}
 		selector_section.append("Load Soundpad:");
 		selector_section.append(soundpad_selector);
+		selector_section.append("Enable Edit:");
+		soundpad_enable_edit=$("<input type='checkbox' id='soundpad_enable_edit'>");
+		
+		soundpad_enable_edit.change(soundpad_check_editable);
+		selector_section.append(soundpad_enable_edit);
+		
+		btn_addsoundpad=$("<button class='soundpad_add'>NEW</button>");
+		selector_section.append(btn_addsoundpad);
 		sounds_panel.append(selector_section);
 		
-		selector_section.on("change",function(){
+		btn_addsoundpad.click(function(){
+			var newname=prompt("New Soundpad Name");
+			if(newname){
+				window.SOUNDPADS[newname]={};
+				soundpad_selector.append($("<option/>").attr('value',newname).html(newname));
+				soundpad_selector.val(newname);
+				$("#soundpad_enable_edit").prop('checked', true);
+				build_soundpad(window.SOUNDPADS[newname]);
+			}
+		});
+		
+		
+		
+		
+		soundpad_selector.on("change",function(){
 			$("#soundpad").empty();
 			soundpad_id=$("#soundpad_selector").val();
 			if(soundpad_id!=""){
@@ -182,9 +326,6 @@ function init_audio(){
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad",data);
 			}
-			
-			
-			
 		});
 	}
 	

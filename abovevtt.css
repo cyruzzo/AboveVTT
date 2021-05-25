@@ -785,6 +785,7 @@ div#scene_properties form > div {
 
 .soundpad-section-title{
 	font-weight: bold;
+	background: #dddddd;
 }
 
 audio::-webkit-media-controls-current-time-display,
