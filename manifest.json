@@ -14,6 +14,7 @@
 "permissions": [],
 "icons":{"128":"icon.png"},
 "web_accessible_resources": [
+	"SoundPad.js",
 	"MonsterDice.js",
 	"Fog.js",
 	"Main.js",

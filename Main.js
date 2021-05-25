@@ -101,28 +101,29 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		var newmap = $('<div style="width:' + width + 'px;height:' + height + 'px;position:absolute;top:0;left:0;z-index:10" id="scene_map" />');
 		$("#VTT").append(newmap);
 		videoid = youtube_parser(url);
-		var player = new YT.Player('scene_map', {
+		window.YTPLAYER = new YT.Player('scene_map', {
 			width: width,
 			height: height,
 			videoId: videoid,
 			playerVars: { 'autoplay': 1, 'controls': 0 },
 			events: {
-				'onStateChange': function(event) { if (event.data == 0) player.seekTo(0); },
-				'onReady': function(e) { e.target.mute(); }
+				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
+				'onReady': function(e) { window.YTPLAYER.setVolume($("#youtube_volume").val()); }
 			}
 		});
+		
 
 		let smooth = function() {
-			if (player.playerInfo.playerState != 1){ // something went wrong. tries to reset
-				player.seekTo(0);
-				player.playVideo();
-				window.YTTIMEOUT = setTimeout(smooth, (player.playerInfo.duration - 1.6) * 1000);
+			if (window.YTPLAYER.playerInfo.playerState != 1){ // something went wrong. tries to reset
+				window.YTPLAYER.seekTo(0);
+				window.YTPLAYER.playVideo();
+				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
 				return;
 			}
-			remaining = player.playerInfo.duration - player.playerInfo.currentTime;
+			remaining = window.YTPLAYER.playerInfo.duration - window.YTPLAYER.playerInfo.currentTime;
 			if (remaining < 2) { // we should be able to just skip on the last second
-				player.seekTo(0);
-				window.YTTIMEOUT = setTimeout(smooth, (player.playerInfo.duration - 1.6) * 1000);
+				window.YTPLAYER.seekTo(0);
+				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
 			}
 			else {
 				window.YTTIMEOUT = setTimeout(smooth, (remaining - 1.6) * 1000);
@@ -359,7 +360,14 @@ function init_controls() {
 		b5.append("<img src='"+window.EXTENSION_PATH + "assets/icons/photo.svg' height='100%;'>");
 		b5.click(switch_control);
 		$(".sidebar__controls").append(b5);
+		
 	}
+	
+	b6 = $("<button id='switch_tokens' class='tab-btn' data-target='#sounds-panel'></button>");
+	b6.append("<img src='" + window.EXTENSION_PATH + "assets/icons/speaker.svg' height='100%;'>");
+	b6.click(switch_control);
+	$(".sidebar__controls").append(b6);
+	
 	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'></button>").click(switch_control);
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
@@ -1210,7 +1218,8 @@ function init_ui() {
 	window.WaypointManager=new WaypointManagerClass();
 
 	init_spells();
-
+	init_audio();
+	
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 	}, 5000);
