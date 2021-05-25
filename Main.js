@@ -650,7 +650,7 @@ function open_player_sheet(sheet_url) {
 
 		close_button.css("position", "absolute");
 		close_button.css("top", "0px");
-		close_button.css("right", "0px");
+		close_button.css("left", "0px");
 		close_button.click(function() {
 			data = {
 				player_sheet: $("#sheet iframe").attr('src')
