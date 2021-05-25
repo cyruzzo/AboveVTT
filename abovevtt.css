@@ -691,7 +691,7 @@ div#scene_properties form > div {
 }
 
 .roll-button.show {
-    z-index: 900000;
+    z-index: 999999999;
     opacity: 1;
 }
 
