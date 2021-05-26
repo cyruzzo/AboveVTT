@@ -230,7 +230,7 @@ function load_monster_stat(monsterid) {
 		oldframe = $("#" + iframe_id);
 		oldframe.show();
 		oldframe.animate({
-			left: '177px'
+			left: '220px'
 		}, 500);
 		return;
 	}
@@ -242,11 +242,11 @@ function load_monster_stat(monsterid) {
 	container.css("top", "80px");
 	container.css("z-index", "1000");
 	container.css("background", "white");
-	container.css("width", "900px");
+	container.css("width", "850px");
 	container.css("height", "450px");
 	close_button = $("<button>X</button>");
 	close_button.css("position", "absolute");
-	close_button.css("right", "0");
+	close_button.css("left", "0");
 	close_button.css("top", "0");
 	close_button.css("z-index", "1001");
 	close_button.click(function() {
@@ -308,7 +308,7 @@ function load_monster_stat(monsterid) {
 	container.append(iframe);
 	$("#site").append(container);
 	container.animate({
-		left: '177px'
+		left: '220px'
 	}, 500);
 }
 
