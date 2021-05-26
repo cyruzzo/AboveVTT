@@ -76,7 +76,7 @@ class Token {
 	}
 
 
-	highlight() {
+	highlight(dontscroll=false) {
 		let self = this;
 		if (self.doing_highlight)
 			return;
@@ -91,11 +91,13 @@ class Token {
 			var pageX = Math.round(parseInt(this.options.left) * window.ZOOM - ($(window).width() / 2));
 			var pageY = Math.round(parseInt(this.options.top) * window.ZOOM - ($(window).height() / 2));
 			console.log(this.options.left + " " + this.options.top + "->" + pageX + " " + pageY);
+			
+			if(!dontscroll){
 			$("html,body").animate({
 				scrollTop: pageY + 200,
 				scrollLeft: pageX + 200
 			}, 500);
-
+			}
 
 
 			// double blink
@@ -797,7 +799,7 @@ class Token {
 			}
 			// 
 			tok.find(".token-image").dblclick(function(e) {
-				self.highlight();
+				self.highlight(true); // dont scroll
 				var data = {
 					id: self.options.id
 				};

@@ -1095,7 +1095,7 @@ function init_ui() {
 			dm: window.DM
 		}
 
-		set_pointer(data);
+		set_pointer(data,true);
 
 		window.MB.sendMessage("custom/myVTT/pointer", data)
 	});

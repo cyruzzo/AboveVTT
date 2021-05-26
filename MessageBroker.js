@@ -77,7 +77,7 @@ class MessageBroker {
 			}
 			if (msg.eventType == "custom/myVTT/highlight") {
 				if (msg.data.id in window.TOKEN_OBJECTS) {
-					window.TOKEN_OBJECTS[msg.data.id].highlight();
+					window.TOKEN_OBJECTS[msg.data.id].highlight(true);
 				}
 			}
 			if (msg.eventType == "custom/myVTT/pointer") {
