@@ -370,6 +370,10 @@ class MessageBroker {
 		if (DM) {
 			window.ScenesHandler.sync();
 			ct_persist(); // force refresh of combat tracker for late users
+			data={
+					soundpad: window.SOUNDPADS[soundpad_id]
+			}
+			window.MB.sendMessage("custom/myVTT/soundpad",data); // refresh soundpad
 		}
 	}
 
