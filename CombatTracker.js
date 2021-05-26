@@ -122,17 +122,27 @@ function ct_add_token(token,persist=true){
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
 	entry.append($("<td/>").append(img));
-	init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
+	let init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
 	init.css('width','20px');
 	init.css('-webkit-appearance','none');
 	if(window.DM){
 		init.val(0);
-		init.change(ct_persist);
+		init.change(ct_reorder);
 	}
 	else{
 		init.attr("disabled","disabled");
 	}
 	entry.append($("<td/>").append(init));
+	
+	// auto roll initiative for monsters
+	
+	if(window.DM && (token.options.monster > 0)){
+		window.StatHandler.rollInit(token.options.monster,function(value){
+				init.val(value);
+				setTimeout(ct_reorder,1000);
+			});
+	}
+	
 	
 	
 	hp=$("<div class='hp'/>");

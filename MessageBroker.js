@@ -149,6 +149,16 @@ class MessageBroker {
 					var total = msg.data.rolls[0].result.total;
 					let entityid = msg.data.context.entityId;
 					console.log("cerco " + entityid);
+					
+					$("#tokens .VTTToken").each(
+						function(){
+							var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+							if(converted==entityid){
+								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+							}
+						}
+					);
+					
 
 					$("#combat_area tr").each(function() {
 						var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
@@ -359,6 +369,7 @@ class MessageBroker {
 	handleSyncMeUp(msg) {
 		if (DM) {
 			window.ScenesHandler.sync();
+			ct_persist(); // force refresh of combat tracker for late users
 		}
 	}
 
