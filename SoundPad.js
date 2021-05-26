@@ -4,29 +4,82 @@
 
 
 var demo_soundpad = {
-	'Music': [
+	"Music": [
 		{
-			name: 'Heroic Demise',
-			src: 'https://opengameart.org/sites/default/files/Heroic%20Demise%20%28New%29_0.mp3',
-			loop: true,
-		}],
-	'Backgrounds': [
-		{
-			name: 'Rain',
-			src: 'https://opengameart.org/sites/default/files/audio_preview/1_7.mp3.ogg',
-			loop: true,
-		}
-	],
-	'Fx': [
-		{
-			name: 'Knife Slice',
-			src: 'https://opengameart.org/sites/default/files/knifesharpener1.flac',
-			pulse: true,
+			"name": "Heroic Demise",
+			"src": "https://opengameart.org/sites/default/files/Heroic%20Demise%20%28New%29_0.mp3",
+			"loop": true
 		},
 		{
-			name: 'Projectile',
-			src: 'https://opengameart.org/sites/default/files/audio_preview/la.mp3.ogg',
-			pulse: true,
+			"name": "Its our Battle",
+			"url": "",
+			"src": "https://opengameart.org/sites/default/files/It%27s%20our%20battle.ogg"
+		},
+		{
+			"name": "Lost in the meadows",
+			"url": "",
+			"src": "https://opengameart.org/sites/default/files/lost%20in%20the%20meadows_0.flac"
+		},
+		{
+			"name": "Mystical Town",
+			"url": "",
+			"src": "https://opengameart.org/sites/default/files/symphony%20-%20mystical%20town%2001_1.ogg"
+		}
+	],
+	"Backgrounds": [
+		{
+			"name": "Rain",
+			"src": "https://opengameart.org/sites/default/files/audio_preview/1_7.mp3.ogg",
+			"loop": true
+		}
+	],
+	"Fx": [
+		{
+			"name": "Knife Slice",
+			"src": "https://opengameart.org/sites/default/files/knifesharpener1.flac",
+			"pulse": true
+		},
+		{
+			"name": "Projectile",
+			"src": "https://opengameart.org/sites/default/files/audio_preview/la.mp3.ogg",
+			"pulse": true
+		},
+		{
+			"name": "Swing",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=19wYW7PGs4B383D2E-zPmR2zoQYjC74LL"
+		},
+		{
+			"name": "Sword",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=175IZxBm2hsZMA9tobphEYO7Id2mLZzzl"
+		},
+		{
+			"name": "Slime",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=1opi5czN0Jh8NN2jZejygIx_dPdxBdFYa"
+		},
+		{
+			"name": "Door",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=1tbWhDFU-Nn0zdPkJZu66dCOF2u9I5PGU"
+		},
+		{
+			"name": "Creak",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=1htEzWVBlpinRvRvba7zMqpUdoLsJ2a3Y"
+		}
+	],
+	"Monsters": [
+		{
+			"name": "Gutteral Beast",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=1CLW4mr3REB6EV-RTy58_64i6Z43Sa8Ef"
+		},
+		{
+			"name": "Ogre",
+			"url": "",
+			"src": "https://drive.google.com/uc?id=1VwbLG6IvilU6D4bPRdAnQZXfxWiWAq84"
 		}
 	]
 };
