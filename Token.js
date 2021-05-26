@@ -969,6 +969,8 @@ function menu_callback(key, options, event) {
 		delete window.ScenesHandler.scene.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
+		$("#combat_area tr[data-target='"+id+"']").remove(); // delete token from the combat tracker if it's there
+		ct_persist();
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
 	}
@@ -1176,7 +1178,11 @@ function multiple_callback(key, options, event) {
 			delete window.ScenesHandler.scene.tokens[id];
 			delete window.TOKEN_OBJECTS[id];
 			$("#aura_" + id.replaceAll("/", "")).remove();
+			
+			$("#combat_area tr[data-target='"+id+"']").remove(); // delete token from the combat tracker if it's there
 		});
+		ct_persist();
+		
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
 	}
