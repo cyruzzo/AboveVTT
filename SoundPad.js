@@ -137,6 +137,7 @@ function audio_changevolume(channel,volume){
 
 
 function build_soundpad(soundpad) {
+	window.CURRENT_SOUNDPAD=soundpad;
 	target=$("#soundpad");
 	console.log("loading soundpad");
 	target.empty();
@@ -301,6 +302,8 @@ function persist_soundpad(){
 }
 
 function init_audio(){
+	window.CURRENT_SOUNDPAD={};
+	
 	if (localStorage.getItem("Soundpads") != null) {
 		window.SOUNDPADS = $.parseJSON(localStorage.getItem("Soundpads"));
 	}
