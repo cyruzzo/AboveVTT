@@ -231,7 +231,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			iframe.contents().find("#Adventures .sources-listing--item--title").each(function(idx) {
 				var title = $(this).html();
 				var url = $(this).parent().attr("href");
-				var keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/', '');
+				var keyword = url.replace('https://www.dndbeyond.com', '').replace('sources/', '');
 
 				if (keyword in self.sources) // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
 					return;
@@ -253,8 +253,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		var self = this;
 		console.log('scansiono ' + keyword);
 		var target_list = $("#" + $(event.target).attr('data-target'));
-		var adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
-
+		//var adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
+		var adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url;
 
 		if (self.sources[keyword].type != 'dnb') {
 			callback();
