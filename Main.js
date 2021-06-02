@@ -431,7 +431,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.48RC1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.48</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
 	cont.append("<h4>Useful Links</h4>");
@@ -508,45 +508,49 @@ function sortGameLog(e) {
 	$(".GameLog_GameLog__3XDNT").scrollTop(0);
 	console.log($(".GameLog_GameLog__3XDNT").prop("scrollHeight") + "--- " + Math.abs($(".GameLog_GameLog__3XDNT").scrollTop()));
 	$(".GameLog_GameLogEntries__33O_1").off('DOMNodeInserted', sortGameLog);
+	try {		
+		
+		var items = $(".GameLog_GameLogEntries__33O_1").children().sort(
+			function(a, b) {
+				var vA = Date.parse($("time", a).attr('datetime'));
+				var vB = Date.parse($("time", b).attr('datetime'));
+				return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+			});
+		$(".GameLog_GameLogEntries__33O_1").append(items);
 
-	var items = $(".GameLog_GameLogEntries__33O_1").children().sort(
-		function(a, b) {
-			var vA = Date.parse($("time", a).attr('datetime'));
-			var vB = Date.parse($("time", b).attr('datetime'));
-			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
-		});
-	$(".GameLog_GameLogEntries__33O_1").append(items);
+		// SHOW ELEMENT IF GAMELOG IS HIDDEN
+		cloned_entry = $($(e.target).clone(true));
+		if ($("#hide_rightpanel").attr('data-visible') === "0" && (cloned_entry.find(".DiceMessage_Pending__30N8v").length == 0) && !cloned_entry.is("svg")) {
+			cloned_entry.css("border-radius", "10px 10px 10px 10px");
+			cloned_entry.css("border", "2px solid black");
+			cloned_entry.css("background", "rgba(255,255,255,0.95)");
+			console.log(cloned_entry);
 
-	// SHOW ELEMENT IF GAMELOG IS HIDDEN
-	cloned_entry = $($(e.target).clone(true));
-	if ($("#hide_rightpanel").attr('data-visible') === "0" && (cloned_entry.find(".DiceMessage_Pending__30N8v").length == 0) && !cloned_entry.is("svg")) {
-		cloned_entry.css("border-radius", "10px 10px 10px 10px");
-		cloned_entry.css("border", "2px solid black");
-		cloned_entry.css("background", "rgba(255,255,255,0.95)");
-		console.log(cloned_entry);
+			if ($("#temporary_gamelog").length == 0) {
+				var t = $("<ul id='temporary_gamelog'/>");
+				t.css("position", "fixed");
+				t.css("bottom", "0px");
+				t.css("right", "0px");
+				t.css("width", "340px");
+				//t.css("background","rgba(255,255,255,0.95)");
+				$("body").append(t);
+			}
 
-		if ($("#temporary_gamelog").length == 0) {
-			var t = $("<ul id='temporary_gamelog'/>");
-			t.css("position", "fixed");
-			t.css("bottom", "0px");
-			t.css("right", "0px");
-			t.css("width", "340px");
-			//t.css("background","rgba(255,255,255,0.95)");
-			$("body").append(t);
+			$("#temporary_gamelog").append(cloned_entry);
+
+
+			cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function() {
+				$(this).remove();
+				if ($("#temporary_gamelog").children().length == 0)
+					$("#temporary_gamelog").remove();
+			})
 		}
 
-		$("#temporary_gamelog").append(cloned_entry);
-
-
-		cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function() {
-			$(this).remove();
-			if ($("#temporary_gamelog").children().length == 0)
-				$("#temporary_gamelog").remove();
-		})
+		$(".GameLog_GameLog__3XDNT").scrollTop(prescroll);
 	}
-
-	$(".GameLog_GameLog__3XDNT").scrollTop(prescroll);
-
+	catch (error) {
+		console.log(error);
+	}
 	$(".GameLog_GameLogEntries__33O_1").on('DOMNodeInserted', sortGameLog);
 }
 
