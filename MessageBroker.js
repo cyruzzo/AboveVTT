@@ -241,21 +241,21 @@ class MessageBroker {
 			return;
 		notify_gamelog();
 		var newentry = $(`<li ${data.id ? `id="${data.id}"` : ""}></li>`);
-		newentry.attr('class', 'GameLogEntry_GameLogEntry__3EVrE GameLogEntry_Other__2PSbv Flex_Flex__3gB7U Flex_Flex__alignItems-flex-end__YiKos Flex_Flex__justifyContent-flex-start__1lEY5');
-		newentry.append($("<p role='img class='Avatar_Avatar__2KZS- Flex_Flex__3gB7U'><img class='Avatar_AvatarPortrait__2dP8u' src='" + data.img + "'></p>"));
-		var container = $("<div class='GameLogEntry_MessageContainer__UYzc0 Flex_Flex__3gB7U Flex_Flex__alignItems-flex-start__3ZqUk Flex_Flex__flexDirection-column__1v3au'></div>");
-		container.append($("<div class='GameLogEntry_Line__1JeGA GameLogEntry_Sender__2LjcO'><span>" + data.player + "</span></div>"));
-		var entry = $("<div class='GameLogEntry_Message__1GoY3 GameLogEntry_Collapsed__1fgGY GameLogEntry_Other__2PSbv Flex_Flex__3gB7U'>" + data.text + "</div>");
+		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
+		newentry.append($("<p role='img class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_Avatar__131Mw Flex_Flex__3cwBI' src='" + data.img + "'></p>"));
+		var container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
+		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
+		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
 		container.append(entry);
 
 
 		var d = new Date();
 		var datetime = d.toISOString();
-		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__1T3dC TimeAgo_TimeAgo__XzWqO'></time"));
+		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
 
-		$(".GameLog_GameLogEntries__33O_1").prepend(newentry);
+		$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
 	}
 
 	handleToken(msg) {

@@ -507,16 +507,16 @@ function sortGameLog(e) {
 	var prescroll = $(".GameLog_GameLog__3XDNT").scrollTop();
 	$(".GameLog_GameLog__3XDNT").scrollTop(0);
 	console.log($(".GameLog_GameLog__3XDNT").prop("scrollHeight") + "--- " + Math.abs($(".GameLog_GameLog__3XDNT").scrollTop()));
-	$(".GameLog_GameLogEntries__33O_1").off('DOMNodeInserted', sortGameLog);
+	$(".GameLog_GameLogEntries__3oNPD").off('DOMNodeInserted', sortGameLog);
 	try {		
 		
-		var items = $(".GameLog_GameLogEntries__33O_1").children().sort(
+		var items = $(".GameLog_GameLogEntries__3oNPD").children().sort(
 			function(a, b) {
 				var vA = Date.parse($("time", a).attr('datetime'));
 				var vB = Date.parse($("time", b).attr('datetime'));
 				return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
 			});
-		$(".GameLog_GameLogEntries__33O_1").append(items);
+		$(".GameLog_GameLogEntries__3oNPD").append(items);
 
 		// SHOW ELEMENT IF GAMELOG IS HIDDEN
 		cloned_entry = $($(e.target).clone(true));
@@ -551,7 +551,7 @@ function sortGameLog(e) {
 	catch (error) {
 		console.log(error);
 	}
-	$(".GameLog_GameLogEntries__33O_1").on('DOMNodeInserted', sortGameLog);
+	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
 }
 
 
@@ -913,7 +913,7 @@ function init_ui() {
 	$("#site").children().hide();
 
 
-	$(".GameLog_GameLogEntries__33O_1").on('DOMNodeInserted', sortGameLog);
+	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
 
 
 	// AGGIUNGI CHAT

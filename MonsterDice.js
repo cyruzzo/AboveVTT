@@ -76,12 +76,12 @@ function scan_monster(target, stats) {
 		// KIND OF UGLY COPY PASTE FROM MB handleChat... BUT STILL IT WORKS...
 
 		var newentry = $("<li></li>");
-		newentry.attr('class', 'GameLogEntry_GameLogEntry__3EVrE GameLogEntry_Other__2PSbv Flex_Flex__3gB7U Flex_Flex__alignItems-flex-end__YiKos Flex_Flex__justifyContent-flex-start__1lEY5');
-		newentry.append($("<p role='img class='Avatar_Avatar__2KZS- Flex_Flex__3gB7U'><img class='Avatar_AvatarPortrait__2dP8u' src='" + stats.data.avatarUrl + "'></p>"));
-		var container = $("<div class='GameLogEntry_MessageContainer__UYzc0 Flex_Flex__3gB7U Flex_Flex__alignItems-flex-start__3ZqUk Flex_Flex__flexDirection-column__1v3au'></div>");
-		container.append($("<div class='GameLogEntry_Line__1JeGA GameLogEntry_Sender__2LjcO'><span>" + stats.data.name + "</span></div>"));
+		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
+		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + stats.data.avatarUrl + "'></p>"));
+		var container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
+		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + stats.data.name + "</span></div>"));
 
-		var entry = $("<div class='GameLogEntry_Message__1GoY3 GameLogEntry_Collapsed__1fgGY GameLogEntry_Other__2PSbv Flex_Flex__3gB7U'/>");
+		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'/>");
 		var dblock=$("<div class='d-block' />").append($("<div/>").append(output_beauty))
 		entry.append(dblock);
 		var send_button = $("<div class='text-center'><button>Send to Players</button></div>");
@@ -103,10 +103,10 @@ function scan_monster(target, stats) {
 
 		var d = new Date();
 		var datetime = d.toISOString();
-		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__1T3dC TimeAgo_TimeAgo__XzWqO'></time"));
+		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
-		$(".GameLog_GameLogEntries__33O_1").prepend(newentry);
+		$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
 		notify_gamelog();
 
 
