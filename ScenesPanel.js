@@ -172,7 +172,7 @@ function edit_scene_dialog(scene_id) {
 			var n = $(this).attr('name');
 			let nValue = $(this).val();
 
-			if (n === 'player_map' 
+			if ( ((n === 'player_map') || (n==='dm_map'))   
 					&& nValue.startsWith("https://drive.google.com")
 					&& nValue.indexOf("uc?id=") < 0
 			) {
@@ -588,7 +588,7 @@ function edit_scene_dialog(scene_id) {
 				var n = $(this).attr('name');
 				let nValue = $(this).val();
 
-				if (n === 'player_map'
+				if (((n === 'player_map') || (n==='dm_map'))
 					&& nValue.startsWith("https://drive.google.com")
 					&& nValue.indexOf("uc?id=") < 0
 				) {
