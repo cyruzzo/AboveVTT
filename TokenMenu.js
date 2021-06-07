@@ -87,7 +87,7 @@ tokenbuiltin = {
 				'Elf 8': {
 					'data-img': 'https://i.imgur.com/JC0VwYz.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 9': {
 					'data-img': 'https://i.imgur.com/iNaGb82.png',
@@ -97,12 +97,12 @@ tokenbuiltin = {
 				'Elf 10': {
 					'data-img': 'https://i.imgur.com/w4rZdMx.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 11': {
 					'data-img': 'https://i.imgur.com/Eagxsqn.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 12': {
 					'data-img': 'https://i.imgur.com/PN7rm5K.png',
@@ -117,7 +117,7 @@ tokenbuiltin = {
 				'Elf 14': {
 					'data-img': 'https://i.imgur.com/5cUJo1X.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 15': {
 					'data-img': 'https://i.imgur.com/36nKnjL.png',
@@ -132,7 +132,7 @@ tokenbuiltin = {
 				'Elf 17': {
 					'data-img': 'https://i.imgur.com/f24uQF7.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 18': {
 					'data-img': 'https://i.imgur.com/2d2apvN.png',
@@ -147,7 +147,7 @@ tokenbuiltin = {
 				'Elf 20': {
 					'data-img': 'https://i.imgur.com/F9r9k3P.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 21': {
 					'data-img': 'https://i.imgur.com/dH30PNn.png',
@@ -167,7 +167,7 @@ tokenbuiltin = {
 				'Elf 24': {
 					'data-img': 'https://i.imgur.com/Yt6osn6.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 25': {
 					'data-img': 'https://i.imgur.com/bNdE7DR.png',
@@ -192,7 +192,7 @@ tokenbuiltin = {
 				'Elf 29': {
 					'data-img': 'https://i.imgur.com/v5FHlGi.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 30': {
 					'data-img': 'https://i.imgur.com/LfbJzvb.png',
@@ -207,7 +207,7 @@ tokenbuiltin = {
 				'Elf 32': {
 					'data-img': 'https://i.imgur.com/hqSP2Rs.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 33': {
 					'data-img': 'https://i.imgur.com/MNUuxZj.png',
@@ -217,7 +217,7 @@ tokenbuiltin = {
 				'Elf 34': {
 					'data-img': 'https://i.imgur.com/dl8Vf71.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 35': {
 					'data-img': 'https://i.imgur.com/wSofg8Z.png',
@@ -232,7 +232,7 @@ tokenbuiltin = {
 				'Elf 37': {
 					'data-img': 'https://i.imgur.com/uwQOjqz.png',
 					'data-disablestat': true,
-					'data-disableborder':  true,
+					'data-disableborder': true,
 				},
 				'Elf 38': {
 					'data-img': 'https://i.imgur.com/d8FvdaA.png',
@@ -870,135 +870,137 @@ tokenbuiltin = {
 			}
 		},
 		'Humans [F]': {
-			'Human 101': {
-				'data-img': 'https://i.imgur.com/NjP2sGL.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 102': {
-				'data-img': 'https://i.imgur.com/H8Q36Zh.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 103': {
-				'data-img': 'https://i.imgur.com/RZq8SBK.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 104': {
-				'data-img': 'https://i.imgur.com/HHwopfD.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 105': {
-				'data-img': 'https://i.imgur.com/XqxVZmK.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 106': {
-				'data-img': 'https://i.imgur.com/CPAfuWB.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 107': {
-				'data-img': 'https://i.imgur.com/74bpcvT.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 108': {
-				'data-img': 'https://i.imgur.com/urg9Qhh.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 109': {
-				'data-img': 'https://i.imgur.com/t4yQcY9.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 110': {
-				'data-img': 'https://i.imgur.com/eymbYs8.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 111': {
-				'data-img': 'https://i.imgur.com/HOgBuYA.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 112': {
-				'data-img': 'https://i.imgur.com/FofhAaY.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 113': {
-				'data-img': 'https://i.imgur.com/ftlyRz6.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 114': {
-				'data-img': 'https://i.imgur.com/ufdYpaw.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 115': {
-				'data-img': 'https://i.imgur.com/PZ0UHJV.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 116': {
-				'data-img': 'https://i.imgur.com/6Ha5aDY.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 117': {
-				'data-img': 'https://i.imgur.com/DOnKbPL.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 118': {
-				'data-img': 'https://i.imgur.com/lbxFV6I.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 119': {
-				'data-img': 'https://i.imgur.com/2U9nwqu.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 120': {
-				'data-img': 'https://i.imgur.com/KcIaDqG.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 121': {
-				'data-img': 'https://i.imgur.com/NDNovgG.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 122': {
-				'data-img': 'https://i.imgur.com/RZkpx3l.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 123': {
-				'data-img': 'https://i.imgur.com/fZKrYaJ.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 124': {
-				'data-img': 'https://i.imgur.com/AuXrxtN.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 125': {
-				'data-img': 'https://i.imgur.com/tG53u3r.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
-			},
-			'Human 126': {
-				'data-img': 'https://i.imgur.com/9emKSJI.png',
-				'data-disablestat': true,
-				'data-disableborder': true,
+			tokens: {
+				'Human 101': {
+					'data-img': 'https://i.imgur.com/NjP2sGL.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 102': {
+					'data-img': 'https://i.imgur.com/H8Q36Zh.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 103': {
+					'data-img': 'https://i.imgur.com/RZq8SBK.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 104': {
+					'data-img': 'https://i.imgur.com/HHwopfD.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 105': {
+					'data-img': 'https://i.imgur.com/XqxVZmK.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 106': {
+					'data-img': 'https://i.imgur.com/CPAfuWB.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 107': {
+					'data-img': 'https://i.imgur.com/74bpcvT.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 108': {
+					'data-img': 'https://i.imgur.com/urg9Qhh.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 109': {
+					'data-img': 'https://i.imgur.com/t4yQcY9.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 110': {
+					'data-img': 'https://i.imgur.com/eymbYs8.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 111': {
+					'data-img': 'https://i.imgur.com/HOgBuYA.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 112': {
+					'data-img': 'https://i.imgur.com/FofhAaY.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 113': {
+					'data-img': 'https://i.imgur.com/ftlyRz6.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 114': {
+					'data-img': 'https://i.imgur.com/ufdYpaw.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 115': {
+					'data-img': 'https://i.imgur.com/PZ0UHJV.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 116': {
+					'data-img': 'https://i.imgur.com/6Ha5aDY.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 117': {
+					'data-img': 'https://i.imgur.com/DOnKbPL.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 118': {
+					'data-img': 'https://i.imgur.com/lbxFV6I.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 119': {
+					'data-img': 'https://i.imgur.com/2U9nwqu.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 120': {
+					'data-img': 'https://i.imgur.com/KcIaDqG.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 121': {
+					'data-img': 'https://i.imgur.com/NDNovgG.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 122': {
+					'data-img': 'https://i.imgur.com/RZkpx3l.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 123': {
+					'data-img': 'https://i.imgur.com/fZKrYaJ.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 124': {
+					'data-img': 'https://i.imgur.com/AuXrxtN.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 125': {
+					'data-img': 'https://i.imgur.com/tG53u3r.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				},
+				'Human 126': {
+					'data-img': 'https://i.imgur.com/9emKSJI.png',
+					'data-disablestat': true,
+					'data-disableborder': true,
+				}
 			},
 		},
 		'Dwarf [M]': {
