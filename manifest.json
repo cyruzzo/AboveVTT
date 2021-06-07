@@ -35,6 +35,7 @@
 	"SceneData.js",
 	"TokenMenu.js",
 	"color-picker.js",
+	"purify.min.js",
 	"abovevtt.css",
 	"color-picker.min.css",
 	"assets/*"
