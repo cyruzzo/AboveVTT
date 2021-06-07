@@ -1454,6 +1454,11 @@ function init_buttons() {
 	draw_menu.find(".coloroption").first().click();
 
 	setup_draw_buttons();
+	
+	// HIDE default SEND TO functiontality in the campaign page:
+	
+	$(".GameLogHeader_Container__36cXS").hide();
+	
 }
 
 
