@@ -89,18 +89,21 @@ class MessageBroker {
 					return;
 				if (msg.data.player_sheet == window.PLAYER_SHEET) {
 					//alert('locked');
-					var lock_display = $("<div id='lock_display'><h1>LOCKED BY DM</h1><p>The DM is working on your character sheet</p></div>");
-					lock_display.css("font-size", "80px");
-					lock_display.css('color', "red");
+					var lock_display = $("<div id='lock_display'>The DM is looking at your character sheet</p></div>");
+					lock_display.css("font-size", "18px");
+					lock_display.css("text-align","center");
+					lock_display.css('font-weight', "bold");
+					lock_display.css('background', "rgba(255,255,0,0.7)");
 					lock_display.css('position', 'absolute');
 					lock_display.css('top', '0px');
 					lock_display.css('left', '0px');
 					lock_display.width($("#sheet").width());
-					lock_display.height($("#sheet").height());
-					lock_display.css('padding-top', '50px');
-					$("#sheet iframe").css('opacity', '0.8');
+					//lock_display.height($("#sheet").height());
+					lock_display.height(25);
+					//lock_display.css('padding-top', '50px');
+					//$("#sheet iframe").css('opacity', '0.8');
 					$("#sheet").append(lock_display);
-					$("#sheet iframe").attr('disabled', 'disabled');
+					//$("#sheet iframe").attr('disabled', 'disabled');
 				}
 			}
 			if (msg.eventType == "custom/myVTT/unlock") {
