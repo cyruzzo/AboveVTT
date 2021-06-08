@@ -426,26 +426,45 @@ function init_splash() {
 	cont.css('position', 'fixed');
 	cont.css('width', 600);
 	cont.css('height', '670px');
-	cont.css('top', "10px");
+	cont.css('top', "15px");
 	cont.css('left', ($(window).width() - 640) / 2 + "px");
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='350px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.49</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.49</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
-	cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
-	cont.append("<h4>Useful Links</h4>");
-	cont.append(`
+	
+	s=$("<div/>");
+	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
+	s.append(
+		"");
+	s.append(`
+	<div style='display:inline-block; vertical-align:top;width:300px;'>
+	<div style='padding-top:10px;padding-bottom:10px;'>
+		This is a <b>FREE</b> passion project <b>still in developement. Some bugs are to be expected</b>If you need help or want to report a bug <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>
+	</div>
 	<div class='splashLinks'>
-		<div class='splashLinkRow'>
+		<div class="splashLinkRow">
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://youtu.be/2GZ8q-hB7pg'>Youtube Tutorial</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></div>
+		</div>
+		<div class="splashLinkRow">
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></div>
 		</div>
+		
 	</div>
-	`);
+	
+	</div>
+	`
+	);
+	
+	s.append('<iframe width="280" height="157" src="https://www.youtube.com/embed/2GZ8q-hB7pg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+	cont.append(s);
+	
+	//cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
+	
 	
 	/*ul = $("<ul/>");
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://youtu.be/2GZ8q-hB7pg'>Youtube Tutorial</a></li>");
@@ -455,35 +474,39 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
-	cont.append("<br>Contributors: <b>Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig</b>");
-	cont.append("<h3>Current Patreon Supporters</h3>");
+	cont.append("<br>Contributors: <b>Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ</b>");
+	cont.append("<h3>Patreon Supporters</h3>");
 	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
 	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
-	l1 = ["GodEater", "John Pilhoefer", "Max Puplett","Kevin Morgan","Jason Deman","Miguel Garcia Jr."];
-	l2 = ["Iain Russell <b>Aligner of Grids</b>", "Lukas Edelmann", "Oliver", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "Jordan Innerarity","adam williams","Chance Russo","Kris Scott","Steve Carsella","Brendan Shane","Reginald Coupet","Pucas McDookie","Clint Blough","Jordan Cohen","Chris Johnson","Michael Saint Gregory","Elmer Senson"];
-	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela","Martin Brandt","Emmett Jayhart","Julia Hoffmann","Kristopher McGinnis","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nate gonzalez","Andrew Depledge","Jason Osterbind","Daniel Villablanca","William Geisbert","Adam Nothnagel","Thorsten Schlich","Kathryn"];
+	l1 = ["Max Puplett", "Kevin Morgan", "Clipped Dragon", "Miguel  Garcia Jr.", "Jeff Antis"];
+	
+	l2 = ["Iain Russell", "Lukas Edelmann", "Oliver", "Jordan Innerarity", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "adam williams", "Chance Russo", "Kris Scott", "Steve Carsella", "Brendan Shane", "Reginald Coupet", "Pucas McDookie", "Jordan Cohen", "Chris Johnson", "Michael Saint Gregory", "Elmer Senson", "Chris Cannon","_"];
+	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela", "Martin Brandt", "Emmett Jayhart", "Julia Hoffmann", "Kristopher McGinnis", "Amata (she_her)", "Alexander Engel", "Fini Plays", "Tommy Girouard-Belhumeur", "nate gonzalez", "Andrew Depledge", "Jason Osterbind", "Daniel Villablanca", "William Geisbert", "Adam Nothnagel", "Kat", "Cobalt Blue", "Danny Pellerin", "Cody Vegas Rothwell", "damian tier", "CraftyHobo", "CrazyPitesh", "Milkmann", "aaron hamilton", "Eduardo Villela", "Paul Maloney", "David Meese"];
 
-	l1div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;' >Masters of the Realms</div></div>");
+	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
-	l1div.append(l1ul);
+	patreons.append(l1div);
+	patreons.append(l1ul);
 	for (i = 0; i < l1.length; i++)
 		l1ul.append($("<li/>").text(l1[i]));
 
-	l2div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;'>Heroes of the Realms</div></div>");
+	l2div = $("<div class='patreons-title'>Heroes of the Realms</div>");
 	l2ul = $("<ul/>");
-	l2div.append(l2ul);
+	patreons.append(l2div);
+	patreons.append(l2ul);
 	for (i = 0; i < l2.length; i++)
 		l2ul.append($("<li/>").html(l2[i]));
 
-	l3div = $("<div style='width:33%;float:left;'><div style='font-weight:bold;'>Local Heroes</div></div>");
+	l3div = $("<div class='patreons-title'>Local Heroes</div>");
 	l3ul = $("<ul/>");
-	l3div.append(l3ul);
+	patreons.append(l3div);
+	patreons.append(l3ul);
 	for (i = 0; i < l3.length; i++)
 		l3ul.append($("<li/>").text(l3[i]));
 
-	patreons.append(l1div).append(l2div).append(l3div)
+	//patreons.append(l1div).append(l2div).append(l3div)
 
 	cont.append(patreons);
 	cont.click(function() {
