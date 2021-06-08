@@ -104,7 +104,7 @@ function ct_reorder(persist=true) {
 }
 
 
-function ct_add_token(token,persist=true){
+function ct_add_token(token,persist=true,disablerolling=false){
 	// TODO: check if the token is already in the tracker..
 	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
@@ -136,7 +136,7 @@ function ct_add_token(token,persist=true){
 	
 	// auto roll initiative for monsters
 	
-	if(window.DM && (token.options.monster > 0)){
+	if(window.DM && (token.options.monster > 0) && (!disablerolling)){
 		window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				setTimeout(ct_reorder,1000);
@@ -250,7 +250,7 @@ function ct_load(data=null){
 	if(data){	
 		for(i=0;i<data.length;i++){
 			if(  (data[i]['data-target'] in window.TOKEN_OBJECTS)){
-				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false);
+				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false,true);
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1").css('background','lightgreen');
