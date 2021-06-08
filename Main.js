@@ -426,13 +426,13 @@ function init_splash() {
 	cont.css('position', 'fixed');
 	cont.css('width', 600);
 	cont.css('height', '670px');
-	cont.css('top', "15px");
+	cont.css('top', "27px");
 	cont.css('left', ($(window).width() - 640) / 2 + "px");
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px;'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.49</div></h1>");
-	cont.append("<div style='font-style: italic;padding-left:50px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.49</div></h1>");
+	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
 	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
