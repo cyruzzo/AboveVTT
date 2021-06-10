@@ -378,10 +378,12 @@ class MessageBroker {
 		if (DM) {
 			window.ScenesHandler.sync();
 			ct_persist(); // force refresh of combat tracker for late users
-			data={
-					soundpad: window.SOUNDPADS[soundpad_id]
+			if (window.CURRENT_SOUNDPAD) {
+				var data = {
+					soundpad: window.CURRENT_SOUNDPAD
+				}
+				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
-			window.MB.sendMessage("custom/myVTT/soundpad",data); // refresh soundpad
 		}
 	}
 
