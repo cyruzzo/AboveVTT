@@ -522,13 +522,13 @@ function init_splash() {
 
 
 function sortGameLog(e) {
-	/*if(Math.abs(Math.abs($(".GameLog_GameLog__3XDNT").scrollTop()) -  $(".GameLog_GameLog__3XDNT").prop("scrollHeight")) < 500 ){
+	/*if(Math.abs(Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()) -  $(".GameLog_GameLog__2z_HZ").prop("scrollHeight")) < 500 ){
 		return;	 // DO NOT SORT WHEN AT THE TOP
 	} */
 
-	var prescroll = $(".GameLog_GameLog__3XDNT").scrollTop();
-	$(".GameLog_GameLog__3XDNT").scrollTop(0);
-	console.log($(".GameLog_GameLog__3XDNT").prop("scrollHeight") + "--- " + Math.abs($(".GameLog_GameLog__3XDNT").scrollTop()));
+	var prescroll = $(".GameLog_GameLog__2z_HZ").scrollTop();
+	$(".GameLog_GameLog__2z_HZ").scrollTop(0);
+	console.log($(".GameLog_GameLog__2z_HZ").prop("scrollHeight") + "--- " + Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()));
 	$(".GameLog_GameLogEntries__3oNPD").off('DOMNodeInserted', sortGameLog);
 	try {		
 		
@@ -568,7 +568,7 @@ function sortGameLog(e) {
 			})
 		}
 
-		$(".GameLog_GameLog__3XDNT").scrollTop(prescroll);
+		$(".GameLog_GameLog__2z_HZ").scrollTop(prescroll);
 	}
 	catch (error) {
 		console.log(error);
