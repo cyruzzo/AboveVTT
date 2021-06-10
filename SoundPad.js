@@ -8,7 +8,6 @@ var demo_soundpad = {
 		{
 			"name": "Heroic Demise",
 			"src": "https://opengameart.org/sites/default/files/Heroic%20Demise%20%28New%29_0.mp3",
-			"loop": true
 		},
 		{
 			"name": "Its our Battle",
@@ -336,7 +335,7 @@ function init_audio(){
 	
 	youtube_section=$("<div class='youtube_section'/>");;
 	
-	youtube_section.append("Youtube: ");
+	youtube_section.append("Animated Map Volume): ");
 	youtube_volume = $('<input type="range" min="0." max="100" value="50" step="1" class="slider" id="youtube_volume">');
 	youtube_section.append(youtube_volume);
 	
