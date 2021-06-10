@@ -36,12 +36,10 @@ var demo_soundpad = {
 		{
 			"name": "Knife Slice",
 			"src": "https://opengameart.org/sites/default/files/knifesharpener1.flac",
-			"pulse": true
 		},
 		{
 			"name": "Projectile",
 			"src": "https://opengameart.org/sites/default/files/audio_preview/la.mp3.ogg",
-			"pulse": true
 		},
 		{
 			"name": "Swing",
@@ -123,9 +121,10 @@ function audio_pausechannel(channel){
 	}
 }
 
-function audio_changevolume(channel,volume){
+function audio_changesettings(channel,volume,loop){
 	element=$("audio[data-channel="+channel+"]").get(0);
 	element.volume=volume;
+	element.loop=loop;
 }
 
 
@@ -205,6 +204,7 @@ function build_soundpad(soundpad) {
 					var data = {
 						channel: channel,
 						volume: e.target.volume,
+						loop: e.target.loop,
 					}
 					window.MB.sendMessage("custom/myVTT/changechannel", data);
 					// persist volume
@@ -212,6 +212,39 @@ function build_soundpad(soundpad) {
 					persist_soundpad();
 				});
 			}
+			
+			
+			let loop_btn=$("<button class='loop-button'/>");
+			let loop_img=$("<img class='loop-img'>");
+			loop_img.attr("src",window.EXTENSION_PATH+"assets/loop.png");
+			loop_btn.append(loop_img);
+			if(soundpad[section][i].loop){
+				audio.get(0).loop=true;
+				loop_btn.addClass('loop-pressed');				
+			}
+			
+			loop_btn.click(function() {
+				var looping = !soundpad[section][i].loop;
+				audio.get(0).loop = looping;
+				soundpad[section][i].loop = looping;
+				if (looping)
+					$(this).addClass('loop-pressed');
+				else
+					$(this).removeClass('loop-pressed');
+				persist_soundpad();
+
+				var data = {
+					channel: audio.attr('data-channel'),
+					volume: audio.get(0).volume,
+					loop: audio.get(0).loop,
+				}
+				window.MB.sendMessage("custom/myVTT/changechannel", data);
+
+
+			}
+			);
+			line.append(loop_btn);
+			
 			
 			
 			let url=$("<input type='text'>");

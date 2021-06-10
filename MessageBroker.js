@@ -129,7 +129,7 @@ class MessageBroker {
 				audio_pausechannel(msg.data.channel);
 			}
 			if(msg.eventType=="custom/myVTT/changechannel"){
-				audio_changevolume(msg.data.channel,msg.data.volume);
+				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
 				if(window.YTPLAYER){
