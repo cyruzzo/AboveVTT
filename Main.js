@@ -934,7 +934,7 @@ function init_ui() {
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").zIndex(99999);
 	$("#site").children().hide();
-
+	$(".sidebar__controls").width(340);
 
 	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
 
