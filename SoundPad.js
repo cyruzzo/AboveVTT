@@ -362,6 +362,7 @@ function init_audio(){
 	}
 	
 	sounds_panel = $("<div id='sounds-panel' class='sidepanel-content'/>");
+	sounds_panel.hide();
 	$(".sidebar__pane-content").append(sounds_panel);
 	sounds_panel.append("<div class='panel-warning'>EXPERIMENTAL FEATURE (still ugly but should work)</div>");
 	
