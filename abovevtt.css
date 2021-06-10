@@ -265,6 +265,7 @@ div#scene_properties form > div {
 }
 
 .token {
+    cursor: move;
     overflow: visible !important;
     border-radius: 50%;
     transition: box-shadow 0.5 ease-in-out;
@@ -512,6 +513,10 @@ div#scene_properties form > div {
 .add-party-container {
     padding: 10px;
     text-align: right;
+}
+
+.token.ui-draggable-disabled {
+    cursor: default;
 }
 
 .token .condition-img {
