@@ -8,7 +8,6 @@ var demo_soundpad = {
 		{
 			"name": "Heroic Demise",
 			"src": "https://opengameart.org/sites/default/files/Heroic%20Demise%20%28New%29_0.mp3",
-			"loop": true
 		},
 		{
 			"name": "Its our Battle",
