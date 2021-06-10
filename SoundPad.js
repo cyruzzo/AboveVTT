@@ -105,12 +105,7 @@ function audio_onpause(e){
 }
 
 function audio_onvolumechange(e){
-	var channel=($(e.target).attr('data-channel'));
-	var data={
-		channel: channel,
-		volume: e.target.volume,
-	}
-	window.MB.sendMessage("custom/myVTT/changechannel",data);
+	
 }
 
 function audio_playchannel(channel,time,volume){
@@ -141,7 +136,7 @@ function build_soundpad(soundpad) {
 	target=$("#soundpad");
 	console.log("loading soundpad");
 	target.empty();
-	id_count = 0;
+	var id_count = 0;
 	btn_addsection=$("<button class='soundpad_addsection'>Add Section</button>");
 	
 	target.append(btn_addsection);
@@ -195,6 +190,30 @@ function build_soundpad(soundpad) {
 			source.attr("src", soundpad[section][i].src);
 			audio.append(source);
 			line.append(audio);
+			if(soundpad[section][i].volume){
+				audio.get(0).volume=soundpad[section][i].volume;
+			}
+			else{
+				audio.get(0).volume=0.5;
+			}
+			
+			if (window.DM) {
+				audio.on('play', audio_onplay);
+				audio.on('seeked', audio_onplay);
+				audio.on('pause', audio_onpause);
+				audio.on('volumechange', function(e) {
+					var channel = ($(e.target).attr('data-channel'));
+					var data = {
+						channel: channel,
+						volume: e.target.volume,
+					}
+					window.MB.sendMessage("custom/myVTT/changechannel", data);
+					// persist volume
+					soundpad[section][i].volume=e.target.volume;
+					persist_soundpad();
+				});
+			}
+			
 			
 			let url=$("<input type='text'>");
 			url.val(soundpad[section][i].src);
@@ -269,12 +288,7 @@ function build_soundpad(soundpad) {
 		}
 		target.append(s);
 	}
-	if(window.DM){
-		$("audio").on('play',audio_onplay);
-		$("audio").on('seeked',audio_onplay);
-		$("audio").on('pause',audio_onpause);
-		$("audio").on('volumechange',audio_onvolumechange);
-	 }
+	
 	soundpad_check_editable(); // hide / show buttons
 	if(window.DM)
 		persist_soundpad();
