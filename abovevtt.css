@@ -812,3 +812,16 @@ audio::-webkit-media-controls-current-time-display,
 audio::-webkit-media-controls-time-remaining-display{
 	display:none;
 }
+
+.loop-pressed{
+	background:green;
+}
+
+.loop-img{
+	height:20px;
+}
+
+.loop-button{
+	position:relative;
+	top: -2px;
+}

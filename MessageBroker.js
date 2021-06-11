@@ -129,7 +129,7 @@ class MessageBroker {
 				audio_pausechannel(msg.data.channel);
 			}
 			if(msg.eventType=="custom/myVTT/changechannel"){
-				audio_changevolume(msg.data.channel,msg.data.volume);
+				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
 				if(window.YTPLAYER){
@@ -378,10 +378,12 @@ class MessageBroker {
 		if (DM) {
 			window.ScenesHandler.sync();
 			ct_persist(); // force refresh of combat tracker for late users
-			data={
-					soundpad: window.SOUNDPADS[soundpad_id]
+			if (window.CURRENT_SOUNDPAD) {
+				var data = {
+					soundpad: window.CURRENT_SOUNDPAD
+				}
+				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
-			window.MB.sendMessage("custom/myVTT/soundpad",data); // refresh soundpad
 		}
 	}
 
