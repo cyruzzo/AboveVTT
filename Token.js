@@ -506,6 +506,8 @@ class Token {
 			if(this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+				old.css("z-index", old.css("z-index")-2);
+				console.log(old.css("z-index"));
 			}
 			else if(!this.options.locked){
 				old.draggable("enable");
