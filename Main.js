@@ -701,6 +701,8 @@ function open_player_sheet(sheet_url) {
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
 
+		
+
 		// CHARACTER
 		let tokenid = sheet_url;
 		var synchp = function() {
@@ -777,6 +779,9 @@ function open_player_sheet(sheet_url) {
 				window.MB.handlePlayerData(playerdata);
 			}
 
+			// FIX DDB BUG ON Z-INDEX FOR RIGHT CLICK CONTEXT MENU FOR ROLLING (piggybacking on synchp)
+			if($(event.target).contents().find(".ct-sidebar").length > 0)
+				$(event.target).contents().find(".ct-sidebar").zIndex(11);
 		};
 
 		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
