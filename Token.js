@@ -597,8 +597,10 @@ class Token {
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
 
-			if ((typeof this.options.name !== "undefined") && window.DM)
-				tokimg.attr("title", this.options.name);
+			if ((this.options.name) && (window.DM || !this.options.monster)) {
+				tok.attr("data-name", this.options.name);
+				tok.addClass("token-tooltip");
+			}
 
 
 			var newopacity = 1.0;
@@ -914,19 +916,19 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.monster = $(e.target).attr('data-stat');
 	}
 
-	if ($(e.target).attr('data-name') && (options.monster > 0)) { // ADD number to the end of named monsters
-		var count = 1;
-		for (var tokenid in window.TOKEN_OBJECTS) {
-			if (window.TOKEN_OBJECTS[tokenid].options.monster == options.monster)
-				count++;
-		}
-		if (count > 1) {
-			console.log("Count " + count);
-			options.name = $(e.target).attr('data-name') + " " + count;
-			options.color = "#" + TOKEN_COLORS[(count - 1) % 54];
-		}
-		else {
-			options.name = $(e.target).attr('data-name');
+	if ($(e.target).attr('data-name')) {
+		options.name = $(e.target).attr('data-name');
+		if (options.monster > 0) { // ADD number to the end of named monsters
+			var count = 1;
+			for (var tokenid in window.TOKEN_OBJECTS) {
+				if (window.TOKEN_OBJECTS[tokenid].options.monster == options.monster)
+					count++;
+			}
+			if (count > 1) {
+				console.log("Count " + count);
+				options.name = $(e.target).attr('data-name') + " " + count;
+				options.color = "#" + TOKEN_COLORS[(count - 1) % 54];
+			}
 		}
 	}
 
