@@ -113,7 +113,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	entry=$("<tr/>");
 	entry.css("height","30px");
-	entry.attr("data-target",token.options.id);
+	entry.attr("data-target",token.options.id);	
 	
 	if(token.options.monster > 0)
 		entry.attr('data-monster',token.options.monster);
@@ -121,6 +121,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
+	if (window.DM || !token.options.monster) {
+		img.attr("data-name", token.options.name);
+		img.attr("data-token-tooltip", "true");
+	}
 	entry.append($("<td/>").append(img));
 	let init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
 	init.css('width','20px');
