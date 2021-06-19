@@ -445,15 +445,15 @@ class Token {
 			}
 
 			if (old.attr('name') != this.options.name) {
+				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
+					old.removeClass('hasTooltip');
+				}	
 				if (this.options.name) {
 					if ((window.DM || !this.options.monster || this.options.revealname)) {
 						old.attr("data-name", this.options.name);
 						old.addClass("hasTooltip");
 					}
 				}
-				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
-					old.removeClass('hasTooltip');
-				}	
 			}
 
 
