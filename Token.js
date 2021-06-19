@@ -599,7 +599,7 @@ class Token {
 
 			if ((this.options.name) && (window.DM || !this.options.monster)) {
 				tok.attr("data-name", this.options.name);
-				tok.addClass("token-tooltip");
+				tok.addClass("hasTooltip");
 			}
 
 

@@ -272,7 +272,7 @@ div#scene_properties form > div {
     z-index: 50;
 }
 
-[data-name]::after {
+.hasTooltip::after {
     content: attr(data-name);
     -webkit-font-smoothing: antialiased;
     margin: 0 auto;
@@ -286,16 +286,11 @@ div#scene_properties form > div {
     text-shadow: 0px 1px 1px #000;
     z-index: 51;
     visibility: hidden;
+    overflow: visible !important;
     transition: 0s ease-in-out 0.5s;
 }
 
-[data-name]:hover:after {
-    opacity: 1;
-    visibility: visible;
-    transition: 0.05s ease-in-out 0.3s;
-}
-
-.token-tooltip::after {
+.hasTooltip.VTTToken::after {
     position: absolute;
     left: 50%;
     font-size: 24px;
@@ -303,12 +298,16 @@ div#scene_properties form > div {
     transform: translate(-50%);
 }
 
-[data-token-tooltip]::after {
+.hasTooltip.CTToken::after {
     position: absolute;
-    content: "asdfasdfasdfasdfasdf";
-    left: -200px;
-    z-index: 99999900;
+    left: 100%;
     font-size: 24px;
+}
+
+.hasTooltip:hover:after {
+    opacity: 1;
+    visibility: visible;
+    transition: 0.05s ease-in-out 0.3s;
 }
 
 .dead {

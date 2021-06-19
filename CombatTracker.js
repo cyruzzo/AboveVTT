@@ -110,10 +110,15 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
-	
+
+
 	entry=$("<tr/>");
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);	
+	if (window.DM || !token.options.monster) {
+		entry.attr("data-name", token.options.name);
+		entry.addClass("hasTooltip CTToken");
+	}
 	
 	if(token.options.monster > 0)
 		entry.attr('data-monster',token.options.monster);
@@ -121,10 +126,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
-	if (window.DM || !token.options.monster) {
-		img.attr("data-name", token.options.name);
-		img.attr("data-token-tooltip", "true");
-	}
+	
 	entry.append($("<td/>").append(img));
 	let init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
 	init.css('width','20px');
