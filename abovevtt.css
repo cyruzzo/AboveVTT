@@ -294,14 +294,8 @@ div#scene_properties form > div {
     position: absolute;
     left: 50%;
     font-size: 24px;
-    bottom: 32px;
+    bottom: -32px;
     transform: translate(-50%);
-}
-
-.hasTooltip.CTToken::after {
-    position: absolute;
-    left: 100%;
-    font-size: 24px;
 }
 
 .hasTooltip:hover:after {
