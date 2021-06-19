@@ -446,14 +446,12 @@ class Token {
 
 			if (old.attr('name') != this.options.name) {
 				if (this.options.name) {
-					console.log(this.options.name);
-					if ((window.DM || !this.options.monster)) {
+					if ((window.DM || !this.options.monster || this.options.revealname)) {
 						old.attr("data-name", this.options.name);
 						old.addClass("hasTooltip");
 					}
 				}
-				else if (old.addClass('hasTooltip')) {
-					console.log('removing');
+				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
 					old.removeClass('hasTooltip');
 				}	
 			}
@@ -610,7 +608,7 @@ class Token {
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
 
-			if ((this.options.name) && (window.DM || !this.options.monster)) {
+			if ((this.options.name) && (window.DM || !this.options.monster || this.options.revealname)) {
 				tok.attr("data-name", this.options.name);
 				tok.addClass("hasTooltip");
 			}
@@ -925,6 +923,10 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.hidden = true;
 	}
 
+	if ($(e.target).attr('data-revealname')) {
+		options.revealname = true;
+	}
+
 	if (typeof $(e.target).attr('data-stat') !== "undefined") {
 		options.monster = $(e.target).attr('data-stat');
 	}
@@ -1164,6 +1166,12 @@ function token_inputs(opt) {
 	}
 	else{
 		tok.options.disableaura=false;
+	}
+	if(data.token_revealname){
+		tok.options.revealname=true;
+	}
+	else{
+		tok.options.revealname=false;
 	}
 
 	tok.place();
@@ -1420,6 +1428,11 @@ function token_menu() {
 										type:'checkbox',
 										name: 'Disable Aura',
 										selected: window.TOKEN_OBJECTS[id].options.disableaura
+									},
+									token_revealname:{
+										type:'checkbox',
+										name:'Show name to players',
+										selected: window.TOKEN_OBJECTS[id].options.revealname
 									}
 								}
 							},

@@ -286,7 +286,6 @@ div#scene_properties form > div {
     text-shadow: 0px 1px 1px #000;
     z-index: 51;
     visibility: hidden;
-    overflow: visible !important;
     transition: 0s ease-in-out 0.5s;
 }
 
