@@ -444,6 +444,19 @@ class Token {
 				);
 			}
 
+			if (old.attr('name') != this.options.name) {
+				if (this.options.name) {
+					console.log(this.options.name);
+					if ((window.DM || !this.options.monster)) {
+						old.attr("data-name", this.options.name);
+						old.addClass("hasTooltip");
+					}
+				}
+				else if (old.addClass('hasTooltip')) {
+					console.log('removing');
+					old.removeClass('hasTooltip');
+				}	
+			}
 
 
 			if (old.attr('width') != this.options.size) {
@@ -1114,6 +1127,8 @@ function token_inputs(opt) {
 	}
 	tok.options.auraVisible = data.auraVisible;
 
+	tok.options.name = data.name;
+
 	tok.options.imgsrc=parse_img(data.imgsrc);
 
 	if(data.token_square){
@@ -1432,6 +1447,16 @@ function token_menu() {
 								}
 							},
 							sep2: '---------',
+							name:{
+								type: 'text',
+								name: 'Name',
+								value: window.TOKEN_OBJECTS[id].options.name,
+								events: {
+									click: function(e) {
+										$(e.target).select();
+									}
+								}							
+							},
 							imgsrc:{
 								type: 'text',
 								name: 'IMG Url',
