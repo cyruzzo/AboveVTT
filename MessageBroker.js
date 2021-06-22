@@ -51,6 +51,17 @@ class MessageBroker {
 				return;
 
 			var msg = $.parseJSON(event.data);
+			
+			if(msg.eventType == "custom/beyond20/request"){
+				
+				var data={
+					player:"Beyond20 POC",
+					img:"https://storage.ko-fi.com/cdn/useruploads/display/png_kofi_63f1b9e9-eed1-424a-80de-2c0ef9ba61dd256.png",
+					text:msg.data.render,			
+				};
+				
+				self.handleChat(data);
+			}
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
