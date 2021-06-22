@@ -303,12 +303,17 @@ div#scene_properties form > div {
     left: 100%;
     transform: translate(0, 25%);
     font-size: 16px;
+    transition: 0.1s ease-in-out 0.2s;
 }
 
 .hasTooltip:hover:after {
     opacity: 1;
     visibility: visible;
     transition: 0.05s ease-in-out 0.3s;
+}
+
+.hasTooltip.CTToken:hover:after {
+    transition: 0s ease-in-out 0s;
 }
 
 .dead {
