@@ -116,6 +116,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);	
 	
+	if (window.DM || !token.options.monster) {
+		entry.attr("data-name", token.options.name);
+		entry.addClass("hasTooltip CTToken");
+	}
+
 	if(token.options.monster > 0)
 		entry.attr('data-monster',token.options.monster);
 	
