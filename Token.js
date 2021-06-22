@@ -451,19 +451,14 @@ class Token {
 				var entry = $("#combat_area").find(selector);
 				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
 					old.removeClass('hasTooltip');
-					console.log($(entry).length);
-					//if($(entry).length>0) {
 						entry.removeClass("hasTooltip");
-					//}
 				}	
 				if (this.options.name) {
 					if ((window.DM || !this.options.monster || this.options.revealname)) {
 						old.attr("data-name", this.options.name);
 						old.addClass("hasTooltip");
-						//if($(entry).length>0) {
 							entry.attr("data-name", this.options.name);
 							entry.addClass("hasTooltip");
-						//}
 					}
 				}
 			}
