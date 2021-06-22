@@ -284,20 +284,26 @@ div#scene_properties form > div {
     color: #fff;
     border-radius: 2px;
     text-shadow: 0px 1px 1px #000;
-    z-index: 51;
     visibility: hidden;
-    transition: 0s ease-in-out 0.5s;
+    transition: 0.2s ease-in-out 0.5s;
 }
 
 .hasTooltip.VTTToken::after {
     position: absolute;
+    z-index: 4;
     left: 50%;
-    font-size: 24px;
-    bottom: -32px;
+    font-size: 0.85em;
+    bottom: -1.2em;
     transform: translate(-50%);
 }
 
 .hasTooltip:hover:after {
+    opacity: 1;
+    visibility: visible;
+    transition: 0.05s ease-in-out 0.3s;
+}
+
+.hasTooltip:not(after):hover:after {
     opacity: 1;
     visibility: visible;
     transition: 0.05s ease-in-out 0.3s;

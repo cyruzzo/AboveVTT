@@ -221,6 +221,8 @@ class Token {
 
 		var fs = Math.floor(bar_height / 1.3) + "px";
 
+		$("<div class='token'/>").css("font-size",50);
+
 		var input_width = Math.floor(this.options.size * 0.3);
 		if (input_width > 90)
 			input_width = 90;
@@ -471,7 +473,14 @@ class Token {
 				
 				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 				old.css("z-index", 30+zindexdiff);
-				
+
+				var bar_height = Math.floor(this.options.size * 0.2);
+
+				if (bar_height > 60)
+					bar_height = 60;
+
+				var fs = Math.floor(bar_height / 1.3) + "px";
+				old.css("font-size",fs);
 			}
 
 			if (this.options.hidden) {
@@ -533,6 +542,14 @@ class Token {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
 			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			var bar_height = Math.floor(this.options.size * 0.2);
+
+			if (bar_height > 60)
+				bar_height = 60;
+
+			var fs = Math.floor(bar_height / 1.3) + "px";
+			tok.css("font-size",fs);
+
 			var tokimg = $("<img style='transform:scale(" + scale + ")' class='token-image'/>");
 			if(!(this.options.square)){
 				tokimg.addClass("token-round");
