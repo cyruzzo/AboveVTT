@@ -24,8 +24,25 @@ function init_combat_tracker(){
 	ct_inside.append(ct_list_wrapper);
 	
 	buttons=$("<div id='combat_footer'/>");
-	reorder=$("<button>REORDER</button>");
-	reorder.click(ct_reorder);
+	
+	reroll=$("<button>REROLL</button>");
+	reroll.click(function(){
+		$("#combat_area tr[data-target]").each(function(){
+			$(this).removeAttr('data-current');
+		});
+
+		$("#combat_area tr[data-monster]").each(function(idx){
+			let element=$(this);
+
+			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
+				element.find(".init").val(value);
+				ct_reorder(false);
+			});
+			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
+		});
+
+		$("#combat_area tr").first().attr('data-current','1');
+	});
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
@@ -74,7 +91,7 @@ function init_combat_tracker(){
 	if(window.DM){
 		buttons.append(roll);
 		buttons.append(clear);
-		buttons.append(reorder);
+		buttons.append(reroll);
 		buttons.append(next);
 		buttons.css('font-size','8px');
 		
@@ -110,17 +127,25 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
-	
+
+
 	entry=$("<tr/>");
 	entry.css("height","30px");
-	entry.attr("data-target",token.options.id);
+	entry.attr("data-target",token.options.id);	
+	entry.addClass("CTToken");
 	
+	if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
+		entry.attr("data-name", token.options.name);
+		entry.addClass("hasTooltip");
+	}
+
 	if(token.options.monster > 0)
 		entry.attr('data-monster',token.options.monster);
 	
 	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
+	
 	entry.append($("<td/>").append(img));
 	let init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
 	init.css('width','20px');
@@ -253,7 +278,7 @@ function ct_load(data=null){
 				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false,true);
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
-					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1").css('background','lightgreen');
+					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 				}
 			}
 		}
