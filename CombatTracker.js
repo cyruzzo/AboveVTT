@@ -24,8 +24,19 @@ function init_combat_tracker(){
 	ct_inside.append(ct_list_wrapper);
 	
 	buttons=$("<div id='combat_footer'/>");
-	reorder=$("<button>REORDER</button>");
-	reorder.click(ct_reorder);
+	
+	reroll=$("<button>REROLL</button>");
+	reroll.click(function(){
+		$("#combat_area tr[data-monster]").each(function(idx){
+			let element=$(this);
+
+			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
+				element.find(".init").val(value);
+				ct_reorder(false);
+			});
+			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
+		});
+	});
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
@@ -74,7 +85,7 @@ function init_combat_tracker(){
 	if(window.DM){
 		buttons.append(roll);
 		buttons.append(clear);
-		buttons.append(reorder);
+		buttons.append(reroll);
 		buttons.append(next);
 		buttons.css('font-size','8px');
 		
