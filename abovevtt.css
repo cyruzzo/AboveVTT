@@ -303,12 +303,6 @@ div#scene_properties form > div {
     transition: 0.05s ease-in-out 0.3s;
 }
 
-.hasTooltip:not(after):hover:after {
-    opacity: 1;
-    visibility: visible;
-    transition: 0.05s ease-in-out 0.3s;
-}
-
 .dead {
     position: absolute;
     overflow: hidden;
