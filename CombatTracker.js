@@ -24,8 +24,19 @@ function init_combat_tracker(){
 	ct_inside.append(ct_list_wrapper);
 	
 	buttons=$("<div id='combat_footer'/>");
-	reorder=$("<button>REORDER</button>");
-	reorder.click(ct_reorder);
+	
+	reroll=$("<button>REROLL</button>");
+	reroll.click(function(){
+		$("#combat_area tr[data-monster]").each(function(idx){
+			let element=$(this);
+
+			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
+				element.find(".init").val(value);
+				ct_reorder(false);
+			});
+			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
+		});
+	});
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
@@ -74,7 +85,7 @@ function init_combat_tracker(){
 	if(window.DM){
 		buttons.append(roll);
 		buttons.append(clear);
-		buttons.append(reorder);
+		buttons.append(reroll);
 		buttons.append(next);
 		buttons.css('font-size','8px');
 		
@@ -116,6 +127,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);	
 	
+	if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
+		entry.attr("data-name", token.options.name);
+		entry.addClass("hasTooltip CTToken");
+	}
+
 	if(token.options.monster > 0)
 		entry.attr('data-monster',token.options.monster);
 	
