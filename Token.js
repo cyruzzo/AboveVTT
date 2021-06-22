@@ -1455,7 +1455,7 @@ function token_menu() {
 									token_hidestat:{
 										type:'checkbox',
 										name: 'Hide HP/AC from players',
-										selected: window.TOKEN_OBJECTS[id].options.hidestat
+										selected: window.TOKEN_OBJECTS[id].options.hidestat,
 									},
 									token_disableborder:{
 										type:'checkbox',
@@ -1470,7 +1470,7 @@ function token_menu() {
 									token_revealname:{
 										type:'checkbox',
 										name:'Show name to players',
-										selected: window.TOKEN_OBJECTS[id].options.revealname
+										selected: window.TOKEN_OBJECTS[id].options.revealname,
 									}
 								}
 							},
@@ -1524,6 +1524,9 @@ function token_menu() {
 							delete: { name: 'Delete Token' }
 						}
 					};
+					if(is_monster)
+						delete ret.items.options.items.token_hidestat;
+					
 					return ret;
 				}
 			}
