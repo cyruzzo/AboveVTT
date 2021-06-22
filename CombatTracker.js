@@ -27,6 +27,10 @@ function init_combat_tracker(){
 	
 	reroll=$("<button>REROLL</button>");
 	reroll.click(function(){
+		$("#combat_area tr[data-target]").each(function(){
+			$(this).removeAttr('data-current');
+		});
+
 		$("#combat_area tr[data-monster]").each(function(idx){
 			let element=$(this);
 
@@ -36,7 +40,7 @@ function init_combat_tracker(){
 			});
 			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
-		$("#combat_area tr[data-current=1]").removeAttr('data-current');
+
 		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
@@ -274,7 +278,7 @@ function ct_load(data=null){
 				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false,true);
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
-					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1").css('background','lightgreen');
+					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 				}
 			}
 		}
