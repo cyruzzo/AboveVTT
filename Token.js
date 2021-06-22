@@ -149,7 +149,7 @@ class Token {
 			delete this.options.hidden;
 
 
-		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat && old.find(".hp").length > 0) {
+		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.hidestat)) && !this.options.disablestat && old.find(".hp").length > 0) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
 			}
@@ -220,6 +220,8 @@ class Token {
 		hpbar.width("max-width: 100%");
 
 		var fs = Math.floor(bar_height / 1.3) + "px";
+
+		$("<div class='token'/>").css("font-size",50);
 
 		var input_width = Math.floor(this.options.size * 0.3);
 		if (input_width > 90)
@@ -411,7 +413,7 @@ class Token {
 				old.find(".hpbar").replaceWith(this.build_hp());
 				old.find(".ac").replaceWith(this.build_ac());
 			}
-			if(this.options.disablestat){
+			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
 				old.find(".hpbar").hide();
 				old.find(".ac").hide();
 			}
@@ -444,6 +446,17 @@ class Token {
 				);
 			}
 
+			if (old.attr('name') != this.options.name) {
+				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
+					old.removeClass('hasTooltip');
+				}	
+				if (this.options.name) {
+					if ((window.DM || !this.options.monster || this.options.revealname)) {
+						old.attr("data-name", this.options.name);
+						old.addClass("hasTooltip");
+					}
+				}
+			}
 
 
 			if (old.attr('width') != this.options.size) {
@@ -460,7 +473,14 @@ class Token {
 				
 				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 				old.css("z-index", 30+zindexdiff);
-				
+
+				var bar_height = Math.floor(this.options.size * 0.2);
+
+				if (bar_height > 60)
+					bar_height = 60;
+
+				var fs = Math.floor(bar_height / 1.3) + "px";
+				old.css("font-size",fs);
 			}
 
 			if (this.options.hidden) {
@@ -522,6 +542,14 @@ class Token {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
 			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			var bar_height = Math.floor(this.options.size * 0.2);
+
+			if (bar_height > 60)
+				bar_height = 60;
+
+			var fs = Math.floor(bar_height / 1.3) + "px";
+			tok.css("font-size",fs);
+
 			var tokimg = $("<img style='transform:scale(" + scale + ")' class='token-image'/>");
 			if(!(this.options.square)){
 				tokimg.addClass("token-round");
@@ -538,13 +566,13 @@ class Token {
 			tok.append(tokimg);
 
 			if ((!(this.options.monster > 0)) || window.DM) {
-				if(!this.options.disablestat){
+				if(!this.options.disablestat || (!window.DM && this.options.hidestat)){
 					tok.append(this.build_hp());
 					tok.append(this.build_ac());
 				}
 			}
 			
-			if(this.options.disablestat){
+			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
 				tok.find(".hpbar").hide();
 				tok.find(".ac").hide();
 			}
@@ -597,8 +625,10 @@ class Token {
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
 
-			if ((typeof this.options.name !== "undefined") && window.DM)
-				tokimg.attr("title", this.options.name);
+			if ((this.options.name) && (window.DM || !this.options.monster || this.options.revealname)) {
+				tok.attr("data-name", this.options.name);
+				tok.addClass("hasTooltip");
+			}
 
 
 			var newopacity = 1.0;
@@ -884,6 +914,10 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 	if ($(e.target).attr('data-disablestat')) {
 		options.disablestat = $(e.target).attr('data-disablestat');
 	}
+
+	if ($(e.target).attr('data-hidestat')) {
+		options.hidestat = $(e.target).attr('data-hidestat');
+	}
 	
 	if ($(e.target).attr('data-disableborder')) {
 		options.disableborder = $(e.target).attr('data-disableborder');
@@ -910,23 +944,27 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.hidden = true;
 	}
 
+	if ($(e.target).attr('data-revealname')) {
+		options.revealname = true;
+	}
+
 	if (typeof $(e.target).attr('data-stat') !== "undefined") {
 		options.monster = $(e.target).attr('data-stat');
 	}
 
-	if ($(e.target).attr('data-name') && (options.monster > 0)) { // ADD number to the end of named monsters
-		var count = 1;
-		for (var tokenid in window.TOKEN_OBJECTS) {
-			if (window.TOKEN_OBJECTS[tokenid].options.monster == options.monster)
-				count++;
-		}
-		if (count > 1) {
-			console.log("Count " + count);
-			options.name = $(e.target).attr('data-name') + " " + count;
-			options.color = "#" + TOKEN_COLORS[(count - 1) % 54];
-		}
-		else {
-			options.name = $(e.target).attr('data-name');
+	if ($(e.target).attr('data-name')) {
+		options.name = $(e.target).attr('data-name');
+		if (options.monster > 0) { // ADD number to the end of named monsters
+			var count = 1;
+			for (var tokenid in window.TOKEN_OBJECTS) {
+				if (window.TOKEN_OBJECTS[tokenid].options.monster == options.monster)
+					count++;
+			}
+			if (count > 1) {
+				console.log("Count " + count);
+				options.name = $(e.target).attr('data-name') + " " + count;
+				options.color = "#" + TOKEN_COLORS[(count - 1) % 54];
+			}
 		}
 	}
 
@@ -1112,6 +1150,8 @@ function token_inputs(opt) {
 	}
 	tok.options.auraVisible = data.auraVisible;
 
+	tok.options.name = data.name;
+
 	tok.options.imgsrc=parse_img(data.imgsrc);
 
 	if(data.token_square){
@@ -1126,6 +1166,13 @@ function token_inputs(opt) {
 	}
 	else{
 		tok.options.disablestat=false;
+	}
+
+	if(data.token_hidestat){
+		tok.options.hidestat=1;
+	}
+	else{
+		tok.options.hidestat=false;
 	}
 	
 	if(data.token_locked){
@@ -1147,6 +1194,12 @@ function token_inputs(opt) {
 	}
 	else{
 		tok.options.disableaura=false;
+	}
+	if(data.token_revealname){
+		tok.options.revealname=true;
+	}
+	else{
+		tok.options.revealname=false;
 	}
 
 	tok.place();
@@ -1394,6 +1447,11 @@ function token_menu() {
 										name: 'Disable HP/AC',
 										selected: window.TOKEN_OBJECTS[id].options.disablestat
 									},
+									token_hidestat:{
+										type:'checkbox',
+										name: 'Hide HP/AC from players',
+										selected: window.TOKEN_OBJECTS[id].options.hidestat
+									},
 									token_disableborder:{
 										type:'checkbox',
 										name: 'Disable Border',
@@ -1403,6 +1461,11 @@ function token_menu() {
 										type:'checkbox',
 										name: 'Disable Aura',
 										selected: window.TOKEN_OBJECTS[id].options.disableaura
+									},
+									token_revealname:{
+										type:'checkbox',
+										name:'Show name to players',
+										selected: window.TOKEN_OBJECTS[id].options.revealname
 									}
 								}
 							},
@@ -1430,6 +1493,16 @@ function token_menu() {
 								}
 							},
 							sep2: '---------',
+							name:{
+								type: 'text',
+								name: 'Name',
+								value: window.TOKEN_OBJECTS[id].options.name,
+								events: {
+									click: function(e) {
+										$(e.target).select();
+									}
+								}							
+							},
 							imgsrc:{
 								type: 'text',
 								name: 'IMG Url',
