@@ -1330,7 +1330,7 @@ function token_menu() {
 							sep0: "--------",
 							token_combat: { name: 'Add to Combat Tracker' },
 							token_size: {
-								name: "Token Size",
+								name: "Size",
 								items: {
 									token_medium: { name: 'Small or Medium' },
 									token_large: { name: 'Large' },
@@ -1349,7 +1349,7 @@ function token_menu() {
 								items: custom_cond_items,
 							},
 							tokenAuras: {
-								name: "Token Auras",
+								name: "Auras",
 								items: {
 									auraVisible: {
 										type: 'checkbox',

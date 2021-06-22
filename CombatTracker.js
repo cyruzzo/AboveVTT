@@ -36,6 +36,8 @@ function init_combat_tracker(){
 			});
 			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
+		$("#combat_area tr[data-current=1]").removeAttr('data-current');
+		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
 	clear=$("<button>CLEAR</button>");
