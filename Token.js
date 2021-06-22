@@ -149,7 +149,7 @@ class Token {
 			delete this.options.hidden;
 
 
-		if ( ( (!(this.options.monster > 0)) || window.DM) && !this.options.disablestat && old.find(".hp").length > 0) {
+		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.hidestat)) && !this.options.disablestat && old.find(".hp").length > 0) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
 				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
 			}
@@ -413,7 +413,7 @@ class Token {
 				old.find(".hpbar").replaceWith(this.build_hp());
 				old.find(".ac").replaceWith(this.build_ac());
 			}
-			if(this.options.disablestat){
+			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
 				old.find(".hpbar").hide();
 				old.find(".ac").hide();
 			}
@@ -566,13 +566,13 @@ class Token {
 			tok.append(tokimg);
 
 			if ((!(this.options.monster > 0)) || window.DM) {
-				if(!this.options.disablestat){
+				if(!this.options.disablestat || (!window.DM && this.options.hidestat)){
 					tok.append(this.build_hp());
 					tok.append(this.build_ac());
 				}
 			}
 			
-			if(this.options.disablestat){
+			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
 				tok.find(".hpbar").hide();
 				tok.find(".ac").hide();
 			}
@@ -914,6 +914,10 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 	if ($(e.target).attr('data-disablestat')) {
 		options.disablestat = $(e.target).attr('data-disablestat');
 	}
+
+	if ($(e.target).attr('data-hidestat')) {
+		options.hidestat = $(e.target).attr('data-hidestat');
+	}
 	
 	if ($(e.target).attr('data-disableborder')) {
 		options.disableborder = $(e.target).attr('data-disableborder');
@@ -1162,6 +1166,13 @@ function token_inputs(opt) {
 	}
 	else{
 		tok.options.disablestat=false;
+	}
+
+	if(data.token_hidestat){
+		tok.options.hidestat=1;
+	}
+	else{
+		tok.options.hidestat=false;
 	}
 	
 	if(data.token_locked){
@@ -1435,6 +1446,11 @@ function token_menu() {
 										type:'checkbox',
 										name: 'Disable HP/AC',
 										selected: window.TOKEN_OBJECTS[id].options.disablestat
+									},
+									token_hidestat:{
+										type:'checkbox',
+										name: 'Hide HP/AC from players',
+										selected: window.TOKEN_OBJECTS[id].options.hidestat
 									},
 									token_disableborder:{
 										type:'checkbox',
