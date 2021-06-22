@@ -221,7 +221,7 @@ class Token {
 
 		var fs = Math.floor(bar_height / 1.3) + "px";
 
-		$("<div class='token'/>").css("font-size",50);
+		$("<div class='token'/>").css("font-size",fs);
 
 		var input_width = Math.floor(this.options.size * 0.3);
 		if (input_width > 90)
