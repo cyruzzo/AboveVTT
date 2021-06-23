@@ -225,18 +225,22 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		f.hide();
 		$("#site").append(f);
 
+		var scraped_sources={};
+
 		f.on("load", function(event) {
 			console.log('iframe pronto..');
 			var iframe = $(event.target);
-			iframe.contents().find("#Adventures .sources-listing--item--title").each(function(idx) {
+			iframe.contents().find(".sources-listing--item--title").each(function(idx) {
+				var ddbtype=$(this).closest(".sources-listing").attr('id'); // get Sourcebooks of Adventures
 				var title = $(this).html();
 				var url = $(this).parent().attr("href");
 				var keyword = url.replace('https://www.dndbeyond.com', '').replace('sources/', '');
 
 				if (keyword in self.sources) // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
 					return;
-				self.sources[keyword] = {
+				scraped_sources[keyword] = {
 					type: 'dnb',
+					ddbtype:ddbtype,
 					title: title,
 					url: url,
 					chapters: {},
@@ -244,6 +248,24 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			});
 			iframe.remove();
 			//self.persist();
+			
+			// SORT
+			self.sources = Object.keys(scraped_sources)
+				.sort(
+					function(a, b) {
+						if (scraped_sources[a].ddbtype == scraped_sources[b].ddbtype) {
+							return ((scraped_sources[a].title == scraped_sources[b].title) ? 0 : ((scraped_sources[a].title > scraped_sources[b].title) ? 1 : -1));
+						}
+						else {
+							return (a.ddbtype == "Adventures") ? 1 : -1;
+						}
+					}
+				)
+				.reduce((acc, key) => ({
+					...acc, [key]: scraped_sources[key]
+				}), {})
+			
+			
 			callback();
 		});
 	}
