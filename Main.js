@@ -372,6 +372,13 @@ function init_controls() {
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
 
+	if (DM) {
+		b7 = $("<button id='switch_tokens' class='tab-btn' data-target='#settings-panel'></button>");
+		b7.append("<img src='" + window.EXTENSION_PATH + "assets/icons/cog.svg' height='100%;'>");
+		b7.click(switch_control);
+		$(".sidebar__controls").append(b7);
+	}
+
 	$(".tab-btn").on("click", function(e) {
 		$(".tab-btn").removeClass('selected-tab');
 		$(e.currentTarget).toggleClass('selected-tab');
@@ -1250,6 +1257,7 @@ function init_ui() {
 
 	init_spells();
 	init_audio();
+	init_settings();
 	
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
