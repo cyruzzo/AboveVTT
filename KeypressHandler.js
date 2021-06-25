@@ -124,19 +124,21 @@ Mousetrap.bind('6', function () {
 Mousetrap.bind('up', function () {
     if ($("#fog_menu").hasClass('visible')) {
         $("#fog_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
+        return false;
     }
     if ($("#draw_menu").hasClass('visible')) {
         $("#draw_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
+        return false;
     }
-    return false;
 });
 
 Mousetrap.bind('down', function () {
     if ($("#fog_menu").hasClass('visible')) {
         $("#fog_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
+        return false;
     }
     if ($("#draw_menu").hasClass('visible')) {
         $("#draw_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
+        return false;
     }
-    return false;
 });
