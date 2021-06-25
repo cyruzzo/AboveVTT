@@ -1136,66 +1136,104 @@ function setup_draw_buttons() {
 	var ctx = canvas.getContext('2d');
 
 	$(".drawbutton").click(function(e) {
-		if ($(this).hasClass('button-enabled')) {
+		var clicked = this;
+		if (!($(clicked).hasClass('menu-option'))) {						//handle menu open/close toggling
+			$(".menu-button").not(clicked).removeClass('button-selected');
+		}
+
+		if ($(clicked).hasClass('menu-button')) {
+			$(clicked).toggleClass('button-selected');
+		}
+
+		$(".top_menu").removeClass('visible');
+		if ($("#fog_button").hasClass('button-selected')) {
+			$("#fog_menu").addClass('visible');
+			if ($(clicked).is("#fog_button") && !($(clicked).hasClass('button-enabled'))) {
+				clicked = $(".fog-option.remembered-selection");
+			}
+		}
+
+		if ($("#draw_button").hasClass('button-selected')) {
+			$("#draw_menu").addClass('visible');
+			if ($(clicked).is("#draw_button") && !($(clicked).hasClass('button-enabled'))) {
+				clicked = $(".draw-option.remembered-selection");
+			}
+		}
+
+
+
+		if (!($(clicked).hasClass('menu-button'))) {
+			if ($(clicked).hasClass('button-enabled')) {
+				stop_drawing();
+				$(".drawbutton").removeClass('button-enabled');
+				$("#fog_overlay").css("z-index", "20");
+
+				if (window.ALIGNING == true) {
+					window.ALIGNING = false;
+					window.ScenesHandler.reload();
+				}
+
+				return;
+			}
+
 			stop_drawing();
 			$(".drawbutton").removeClass('button-enabled');
-			$("#fog_overlay").css("z-index", "20");
+			$(clicked).addClass('button-enabled');
+			if ($(clicked).hasClass('fog-option')) {
+				$(".fog-option").removeClass('remembered-selection');
+				$(clicked).addClass('remembered-selection');
+				$("#fog_button").addClass('button-enabled');
+			}
+			if ($(clicked).hasClass('draw-option')) {
+				$(".draw-option").removeClass('remembered-selection');
+				$(clicked).addClass('remembered-selection');
+				$("#draw_button").addClass('button-enabled');
+			}
 
-			if (window.ALIGNING == true) {
+			var target = $("#fog_overlay");
+			if (!e.currentTarget.id || e.currentTarget.id !== "select_button") {
+				target.css("z-index", "50");
+			} else {
+				target.css("z-index", "31");
+			}
+
+			if ($(e.target).attr('id') == "measure-button") {
+				target = $("#VTT");
+			}
+
+
+			target.css('cursor', 'crosshair');
+
+			$(clicked).addClass('button-enabled');
+
+			var data = {
+				shape: $(clicked).attr('data-shape'),
+				type: $(clicked).attr('data-type'),
+			}
+
+			if ($(clicked).attr('id') == "align-button") {
+				window.ALIGNING = true;
+
+				// ALIGNING REQURES SPECIAL SETTINGS
+				$("#scene_map").css("width", "auto");
+				$("#scene_map").css("height", "auto");
+				reset_canvas();
+				redraw_canvas();
+				$("#tokens").hide();
+				$("#grid_overlay").hide();
+
+			}
+			else if (window.ALIGNING == true) {
 				window.ALIGNING = false;
 				window.ScenesHandler.reload();
 			}
 
-			return;
+
+			target.on('mousedown', data, drawing_mousedown);
+			target.on('mouseup', data, drawing_mouseup);
+			target.on('mousemove', data, drawing_mousemove);
+			target.on('contextmenu', data, drawing_contextmenu);
 		}
-		stop_drawing();
-		$(".drawbutton").removeClass('button-enabled');
-		$(this).addClass('button-enabled');
-
-
-		var target = $("#fog_overlay");
-		if (!e.currentTarget.id || e.currentTarget.id !== "select-button") {
-			target.css("z-index", "50");
-		} else {
-			target.css("z-index", "31");
-		}
-
-		if ($(e.target).attr('id') == "measure-button") {
-			target = $("#VTT");
-		}
-
-
-		target.css('cursor', 'crosshair');
-
-		$(this).addClass('button-enabled');
-
-		var data = {
-			shape: $(this).attr('data-shape'),
-			type: $(this).attr('data-type'),
-		}
-
-		if ($(this).attr('id') == "align-button") {
-			window.ALIGNING = true;
-
-			// ALIGNING REQURES SPECIAL SETTINGS
-			$("#scene_map").css("width", "auto");
-			$("#scene_map").css("height", "auto");
-			reset_canvas();
-			redraw_canvas();
-			$("#tokens").hide();
-			$("#grid_overlay").hide();
-
-		}
-		else if (window.ALIGNING == true) {
-			window.ALIGNING = false;
-			window.ScenesHandler.reload();
-		}
-
-
-		target.on('mousedown', data, drawing_mousedown);
-		target.on('mouseup', data, drawing_mouseup);
-		target.on('mousemove', data, drawing_mousemove);
-		target.on('contextmenu', data, drawing_contextmenu);
 	})
 }
 
