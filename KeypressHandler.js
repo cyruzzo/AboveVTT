@@ -1,3 +1,5 @@
+var altHeld, ctrlHeld, savedSnapState;
+
 Mousetrap.bind('c', function () {       //combat tracker
         $('#combat_button').click()
 });
@@ -142,3 +144,37 @@ Mousetrap.bind('down', function () {
         return false;
     }
 });
+
+Mousetrap.bind('alt', function () {
+    if (altHeld) {
+        return;
+    } else {
+        altHeld = true;
+    }
+    if (!($('#measure-button').hasClass('button-enabled'))) {
+        $('#measure-button').click()
+    }
+}, 'keydown');
+
+Mousetrap.bind('alt', function () {
+    if ($('#measure-button').hasClass('button-enabled')) {
+        $('#measure-button').click()
+    }
+    altHeld = false;
+}, 'keyup');
+
+
+Mousetrap.bind('ctrl', function () {
+    if (ctrlHeld) {
+        return;
+    } else {
+        ctrlHeld = true;
+    }
+    savedSnapState = window.CURRENT_SCENE_DATA.snap; 
+    window.CURRENT_SCENE_DATA.snap = (savedSnapState == 0 ? 1 : 0);
+}, 'keydown');
+
+Mousetrap.bind('ctrl', function () {
+    window.CURRENT_SCENE_DATA.snap = (window.CURRENT_SCENE_DATA.snap == 0 ? 1 : 0);
+    ctrlHeld = false;
+}, 'keyup');
