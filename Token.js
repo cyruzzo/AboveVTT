@@ -1544,6 +1544,8 @@ function token_menu() {
 						delete ret.items.sep1;
 						delete ret.items.hp;
 						delete ret.items.max_hp;
+						delete ret.items.token_cond;
+						delete ret.items.options.items.token_revealname;
 					}
 					
 					return ret;
