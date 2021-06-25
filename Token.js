@@ -1334,9 +1334,9 @@ function token_menu() {
 							hide: token_inputs
 						},
 						items: {
-							view: { name: 'Open Character Sheet' },
-							sep0: "--------",
+							view: { name: 'Open Sheet' },
 							token_combat: { name: 'Add to Combat Tracker' },
+							sep0: "--------",
 							token_size: {
 								name: "Size",
 								items: {
@@ -1520,7 +1520,7 @@ function token_menu() {
 							},
 							imgsrc:{
 								type: 'text',
-								name: 'IMG Url',
+								name: 'Custom Image',
 								value: window.TOKEN_OBJECTS[id].options.imgsrc,
 								events: {
 									click: function(e) {
@@ -1531,10 +1531,10 @@ function token_menu() {
 							sep3: '----------',
 							token_hidden:{
 								type: 'checkbox',
-								name: 'Hidden from players',
+								name: 'Hide',
 								selected: window.TOKEN_OBJECTS[id].options.hidden,
 							},
-							delete: { name: 'Delete Token' }
+							delete: { name: 'Delete' }
 						}
 					};
 					if(is_monster) {
