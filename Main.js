@@ -1351,16 +1351,16 @@ function init_buttons() {
 	});
 
 
-	fog_menu = $("<div class='top_menu'></div>");
+	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
 	fog_menu.append("<div style='font-weight: bold;'>Reveal</div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=0>Square</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc'  data-type=0>Circle</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type=0>Polygon</button></div>");
+	fog_menu.append("<div><button id='fog_square-r' style='width:75px' class='drawbutton menu-option fog-option remembered-selection' data-shape='rect' data-type=0>Square</button></div>");
+	fog_menu.append("<div><button id='fog_circle_r' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc'  data-type=0>Circle</button></div>");
+	fog_menu.append("<div><button id='fog_polygon_r' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=0>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(clear_button));
 	fog_menu.append("<div style='font-weight: bold;'>Hide</div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=1>Square</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type=1>Circle</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type=1>Polygon</button></div>");
+	fog_menu.append("<div><button id='fog_square_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='rect' data-type=1>Square</button></div>");
+	fog_menu.append("<div><button id='fog_circle_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</button></div>");
+	fog_menu.append("<div><button id='fog_polygon_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(hide_all_button));
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
@@ -1375,20 +1375,20 @@ function init_buttons() {
 	if (window.DM)
 		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'>SELECT</button>"));
 		
-	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'>MEASURE</button>"));
-	fog_button = $("<button style='display:inline;width:75px;' id='fog_button'>FOG</button>");
+	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'>RULER</button>"));
+	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button'>FOG</button>");
 	
 	if (window.DM)
 		buttons.append(fog_button);
 	fog_menu.css("left",fog_button.position().left);
 
-	draw_menu = $("<div class='top_menu'></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='draw'>Square</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type='draw'>Circle</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='cone' data-type='draw'>Cone</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='line' data-type='draw'>Line</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type='draw'>Polygon</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='eraser'>Erase</button></div>");
+	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
+	draw_menu.append("<div><button id='draw_square' style='width:75px' class='drawbutton menu-option draw-option remembered-selection' data-shape='rect' data-type='draw'>Square</button></div>");
+	draw_menu.append("<div><button id='draw_circle' style='width:75px' class='drawbutton menu-option draw-option' data-shape='arc' data-type='draw'>Circle</button></div>");
+	draw_menu.append("<div><button id='draw_cone' style='width:75px' class='drawbutton menu-option draw-option' data-shape='cone' data-type='draw'>Cone</button></div>");
+	draw_menu.append("<div><button id='draw_line' style='width:75px' class='drawbutton menu-option draw-option' data-shape='line' data-type='draw'>Line</button></div>");
+	draw_menu.append("<div><button id='draw_polygon' style='width:75px' class='drawbutton menu-option draw-option' data-shape='polygon' data-type='draw'>Polygon</button></div>");
+	draw_menu.append("<div><button id='draw_erase' style='width:75px' class='drawbutton menu-option draw-option' data-shape='rect' data-type='eraser'>Erase</button></div>");
 	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 
 	draw_menu.find("#delete_drawing").click(function() {
@@ -1439,7 +1439,7 @@ function init_buttons() {
 
 	$("body").append(draw_menu);
 
-	draw_button = $("<button style='display:inline;width:75px' id='draw_button'>DRAW</button>");
+	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button'>DRAW</button>");
 
 	if (window.DM){
 		buttons.append(draw_button);
