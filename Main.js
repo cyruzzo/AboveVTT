@@ -372,6 +372,13 @@ function init_controls() {
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
 
+	if (DM) {
+		b7 = $("<button id='switch_tokens' class='tab-btn' data-target='#settings-panel'></button>");
+		b7.append("<img src='" + window.EXTENSION_PATH + "assets/icons/cog.svg' height='100%;'>");
+		b7.click(switch_control);
+		$(".sidebar__controls").append(b7);
+	}
+
 	$(".tab-btn").on("click", function(e) {
 		$(".tab-btn").removeClass('selected-tab');
 		$(e.currentTarget).toggleClass('selected-tab');
@@ -1250,6 +1257,7 @@ function init_ui() {
 
 	init_spells();
 	init_audio();
+	init_settings();
 	
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
@@ -1537,7 +1545,7 @@ $(function() {
 		console.log('Sheet: ' + sheet + "img " + img);
 	});
 
-	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
+	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete AboveVTT Data for this campaign</a>");
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
 			gameid = $("#message-broker-client").attr("data-gameId");
@@ -1545,12 +1553,26 @@ $(function() {
 			localStorage.removeItem("current_source" + gameid);
 			localStorage.removeItem("current_chapter" + gameid);
 			localStorage.removeItem("current_scene" + gameid);
-
+			localStorage.removeItem("CombatTracker"+gameid);
 		}
 		else {
 			console.log('user canceled');
 		}
 	});
+	
+	delete_button2 = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete2'>Delete Global AboveVTT Data (soundpads, tokens..)</a>");
+	delete_button2.click(function() {
+		if (confirm("Are you sure?")) {
+			localStorage.removeItem("Soundpads");
+			localStorage.removeItem("CustomTokens");
+		}
+		else {
+			console.log('user canceled');
+		}
+	});
+
+
+	
 	
 	var campaign_banner=$("<div id='campaign_banner'></div>")
 	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
@@ -1564,6 +1586,7 @@ $(function() {
 	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected<br><br>");
 	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
+	campaign_banner.append(delete_button2);
 	campaign_banner.hide();
 	
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
