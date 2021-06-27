@@ -39,6 +39,8 @@
 	"abovevtt.css",
 	"color-picker.min.css",
 	"Settings.js",
+	"mousetrap.1.6.5.min.js",
+	"KeypressHandler.js",
 	"assets/*"
 	]
 }
