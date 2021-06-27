@@ -1451,31 +1451,6 @@ function init_buttons() {
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
 
-	fog_button.click(function(e) {
-		$(this).toggleClass('button-selected');
-		if ($(this).hasClass('button-selected')) {
-			fog_menu.addClass('visible');
-			draw_menu.removeClass('visible');
-			$("#draw_button").removeClass('button-selected');
-		}
-		else {
-			fog_menu.removeClass('visible');
-		}
-	});
-
-	draw_button.click(function(e) {
-		$(this).toggleClass('button-selected');
-		if ($(this).hasClass('button-selected')) {
-			fog_menu.removeClass('visible');
-			$("#fog_button").removeClass('button-selected');
-			draw_menu.addClass('visible');
-		}
-		else {
-			draw_menu.removeClass('visible');
-		}
-	});
-
-	
 
 	draw_menu.find(".drawType").first().click();
 	draw_menu.find(".coloroption").first().click();
