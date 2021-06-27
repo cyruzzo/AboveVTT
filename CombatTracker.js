@@ -2,7 +2,7 @@
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
-	toggle=$("<button id='combat_button'>COMBAT</button>");
+	toggle=$("<button id='combat_button'><u>C</u>OMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").attr('style', 'display: none;');
@@ -50,7 +50,7 @@ function init_combat_tracker(){
 		ct_persist();
 	});
 	
-	next=$("<button id='combat_next_button'>NEXT</button>");
+	next=$("<button id='combat_next_button'><u>N</u>EXT</button>");
 	next.click(function(){
 		if($("#combat_area tr").length==0)
 			return;
