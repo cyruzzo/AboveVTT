@@ -62,8 +62,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
     $(".drawbutton").removeClass('button-enabled button-selected');
     $(".top_menu").removeClass('visible');
-    $("#select_button").addClass('button-enabled');
-    $("#select_button").click();
+    $("#fog_overlay").css("z-index", "20");
 });
 
 
