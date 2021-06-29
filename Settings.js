@@ -1,4 +1,23 @@
 
+function b64EncodeUnicode(str) {
+        // first we use encodeURIComponent to get percent-encoded UTF-8,
+        // then we convert the percent encodings into raw bytes which
+        // can be fed into btoa.
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+            function toSolidBytes(match, p1) {
+                return String.fromCharCode('0x' + p1);
+        }));
+    }
+
+function b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        return decodeURIComponent(atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
+    
+
+
 function download(data, filename, type) {
     var file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
@@ -64,7 +83,7 @@ function export_file(){
 	DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
 	
 	DataFile.soundpads=window.SOUNDPADS;
-	download(btoa(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 };
 
 function import_openfile(){
@@ -75,7 +94,17 @@ function import_readfile() {
 	var reader = new FileReader();
 	reader.onload = function() {
 		// DECODE
-		var DataFile=$.parseJSON(atob(reader.result));
+		var DataFile=null;
+		try{
+			var DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
+		}
+		catch{
+			
+		}
+		if(!DataFile){ // pre version 2
+			var DataFile=$.parseJSON(atob(reader.result));
+		}
+		
 		console.log(DataFile);
 		for(i=0;i<DataFile.scenes.length;i++){
 			window.ScenesHandler.scenes.push(DataFile.scenes[i]);
