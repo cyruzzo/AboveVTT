@@ -16,7 +16,7 @@ function create_jitsi_button() {
 
 function init_jitsi() {
 
-	jitsi_box = $("<div id='meet'><button id='jitsi_switch'>SW</button><button id='jitsi_close'>X</button><div id='jitsi_container' style='width:100%;height:100%;'></div></div>");
+	jitsi_box = $("<div id='meet'><button id='jitsi_switch'><img src='"+window.EXTENSION_PATH + "assets/icons/fullscreen.svg'></button><button id='jitsi_close'>X</button><div id='jitsi_container' style='width:100%;height:100%;'></div></div>");
 	jitsi_box.css("z-index", "100");
 	$("#site").append(jitsi_box);
 	$("#jitsi_switch").css("position", "absolute").css("top", 0).css("left", 0);
@@ -79,6 +79,7 @@ function jitsi_modal() {
 	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", (window.width-400)+"px");
 	window.tile_desired = true;
 	window.jitsiAPI.executeCommand(`toggleTileView`);
+	$("#jitsi_switch > img").attr("src", window.EXTENSION_PATH + 'assets/icons/fullscreen-exit.svg');
 }
 
 function jitsi_bottom() {
@@ -87,6 +88,7 @@ function jitsi_bottom() {
 	window.tile_desired = false;
 	//window.jitsiAPI.setLargeVideoParticipant(0);
 	window.jitsiAPI.executeCommand(`toggleTileView`);
+	$("#jitsi_switch > img").attr("src", window.EXTENSION_PATH + 'assets/icons/fullscreen.svg');
 }
 
 function jitsi_switch() {

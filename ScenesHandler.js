@@ -216,15 +216,17 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	build_adventures(callback) {
-		/*if('cos' in this.sources){
-			callback();
-			return;
-		}*/
 		var self = this;
+		if(Object.keys(self.sources).length!=0){
+			setTimeout(callback,1000);
+			return;
+		}
+		
 		var f = $("<iframe src='/sources'></iframe");
 		f.hide();
 		$("#site").append(f);
-
+		
+		
 		var scraped_sources={};
 
 		f.on("load", function(event) {
@@ -236,8 +238,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				var url = $(this).parent().attr("href");
 				var keyword = url.replace('https://www.dndbeyond.com', '').replace('sources/', '');
 
-				if (keyword in self.sources) // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
+				if (keyword in self.sources){ // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
+					scraped_sources[keyword]=self.sources.keyword;
 					return;
+				}
 				scraped_sources[keyword] = {
 					type: 'dnb',
 					ddbtype:ddbtype,
@@ -274,7 +278,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	build_chapters(keyword, callback) {
 		var self = this;
 		console.log('scansiono ' + keyword);
-		var target_list = $("#" + $(event.target).attr('data-target'));
+		//var target_list = $("#" + $(event.target).attr('data-target'));
 		//var adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
 		var adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url;
 

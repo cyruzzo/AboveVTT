@@ -928,7 +928,7 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.disableborder = $(e.target).attr('data-disableborder');
 	}
 	
-	if ($(e.target).attr('data-square')) {
+	if ($(e.target).attr('data-square')=="1") {
 		options.square = true;
 	}
 

@@ -2,14 +2,14 @@
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
-	toggle=$("<button>COMBAT</button>");
+	toggle=$("<button id='combat_button'><u>C</u>OMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
-			$("#combat_tracker_inside").hide();
+			$("#combat_tracker_inside").attr('style', 'display: none;');
 			$("#combat_tracker").css("height","20px"); // IMPORTANT
 		}
 		else{
-			$("#combat_tracker_inside").show();
+			$("#combat_tracker_inside").attr('style', 'display: block;');
 			$("#combat_tracker").css("height","450px"); // IMPORTANT
 		}
 	});
@@ -50,7 +50,7 @@ function init_combat_tracker(){
 		ct_persist();
 	});
 	
-	next=$("<button>NEXT</button>");
+	next=$("<button id='combat_next_button'><u>N</u>EXT</button>");
 	next.click(function(){
 		if($("#combat_area tr").length==0)
 			return;

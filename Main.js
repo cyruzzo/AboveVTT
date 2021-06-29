@@ -372,6 +372,13 @@ function init_controls() {
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
 
+	if (DM) {
+		b7 = $("<button id='switch_tokens' class='tab-btn' data-target='#settings-panel'></button>");
+		b7.append("<img src='" + window.EXTENSION_PATH + "assets/icons/cog.svg' height='100%;'>");
+		b7.click(switch_control);
+		$(".sidebar__controls").append(b7);
+	}
+
 	$(".tab-btn").on("click", function(e) {
 		$(".tab-btn").removeClass('selected-tab');
 		$(e.currentTarget).toggleClass('selected-tab');
@@ -431,7 +438,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.51 RC0</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.51 RC1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
@@ -480,9 +487,9 @@ function init_splash() {
 
 	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
-	l1 = ["Max Puplett", "Kevin Morgan", "Clipped Dragon", "Miguel  Garcia Jr.", "Jeff Antis"];
-	l2 = ["Iain Russell", "Lukas Edelmann", "Oliver", "Jordan Innerarity", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "adam williams", "Chance Russo", "Kris Scott", "Steve Carsella", "Brendan Shane", "Reginald Coupet", "Pucas McDookie", "Jordan Cohen", "Chris Johnson", "Michael Saint Gregory", "Elmer Senson", "Chris Cannon","David William Daniel Thomas","Tom"];
-	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela", "Martin Brandt", "Julia Hoffmann", "Kristopher McGinnis", "Amata (she_her)", "Alexander Engel", "Fini Plays", "Tommy Girouard-Belhumeur", "nate gonzalez", "Andrew Depledge", "Jason Osterbind", "Daniel Villablanca", "William Geisbert", "Adam Nothnagel", "Kat", "Cobalt Blue", "Danny Pellerin", "Cody Vegas Rothwell", "damian tier", "CraftyHobo", "CrazyPitesh", "Milkmann", "aaron hamilton", "Eduardo Villela", "Paul Maloney", "David Meese","Adam Connor","mad4ever","Brad Stack","Liu XxX","Johan Surac","Chris Sells"];
+	l1 = ["Max Puplett", "Kevin Morgan", "Clipped Dragon", "Miguel  Garcia Jr.", "Jeff Antis","ZorkFox"];
+	l2 = ["Iain Russell", "Lukas Edelmann", "Oliver", "Jordan Innerarity", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "adam williams", "Chance Russo", "Kris Scott", "Steve Carsella", "Brendan Shane", "Reginald Coupet", "Pucas McDookie", "Jordan Cohen", "Chris Johnson", "Michael Saint Gregory", "Elmer Senson", "Chris Cannon","David William Daniel Thomas","Tom","CritCat (ExpQuest)","Carl Cedarstaff II"];
+	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela", "Martin Brandt", "Julia Hoffmann", "Kristopher McGinnis", "Amata (she_her)", "Alexander Engel", "Fini Plays", "Tommy Girouard-Belhumeur", "nate gonzalez", "Jason Osterbind", "Daniel Villablanca", "William Geisbert", "Adam Nothnagel", "Kat", "Cobalt Blue", "Danny Pellerin", "Cody Vegas Rothwell", "damian tier", "CraftyHobo", "CrazyPitesh", "Milkmann", "aaron hamilton", "Eduardo Villela", "Paul Maloney", "David Meese","Adam Connor","mad4ever","Brad Stack","Liu XxX","Johan Surac","Chris Sells","Tim Newton","Nick champion","Aviad Tal"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -1250,6 +1257,7 @@ function init_ui() {
 
 	init_spells();
 	init_audio();
+	init_settings();
 	
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
@@ -1351,16 +1359,16 @@ function init_buttons() {
 	});
 
 
-	fog_menu = $("<div class='top_menu'></div>");
+	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
 	fog_menu.append("<div style='font-weight: bold;'>Reveal</div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=0>Square</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc'  data-type=0>Circle</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type=0>Polygon</button></div>");
+	fog_menu.append("<div><button id='fog_square-r' style='width:75px' class='drawbutton menu-option fog-option remembered-selection' data-shape='rect' data-type=0>Square</button></div>");
+	fog_menu.append("<div><button id='fog_circle_r' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc'  data-type=0>Circle</button></div>");
+	fog_menu.append("<div><button id='fog_polygon_r' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=0>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(clear_button));
 	fog_menu.append("<div style='font-weight: bold;'>Hide</div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type=1>Square</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type=1>Circle</button></div>");
-	fog_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type=1>Polygon</button></div>");
+	fog_menu.append("<div><button id='fog_square_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='rect' data-type=1>Square</button></div>");
+	fog_menu.append("<div><button id='fog_circle_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</button></div>");
+	fog_menu.append("<div><button id='fog_polygon_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(hide_all_button));
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
@@ -1373,22 +1381,22 @@ function init_buttons() {
 	$("body").append(buttons);
 	
 	if (window.DM)
-		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'>SELECT</button>"));
+		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'><u>S</u>ELECT</button>"));
 		
-	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'>MEASURE</button>"));
-	fog_button = $("<button style='display:inline;width:75px;' id='fog_button'>FOG</button>");
+	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'><u>R</u>ULER</button>"));
+	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button'><u>F</u>OG</button>");
 	
 	if (window.DM)
 		buttons.append(fog_button);
 	fog_menu.css("left",fog_button.position().left);
 
-	draw_menu = $("<div class='top_menu'></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='draw'>Square</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='arc' data-type='draw'>Circle</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='cone' data-type='draw'>Cone</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='line' data-type='draw'>Line</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='polygon' data-type='draw'>Polygon</button></div>");
-	draw_menu.append("<div><button style='width:75px' class='drawbutton' data-shape='rect' data-type='eraser'>Erase</button></div>");
+	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
+	draw_menu.append("<div><button id='draw_square' style='width:75px' class='drawbutton menu-option draw-option remembered-selection' data-shape='rect' data-type='draw'>Square</button></div>");
+	draw_menu.append("<div><button id='draw_circle' style='width:75px' class='drawbutton menu-option draw-option' data-shape='arc' data-type='draw'>Circle</button></div>");
+	draw_menu.append("<div><button id='draw_cone' style='width:75px' class='drawbutton menu-option draw-option' data-shape='cone' data-type='draw'>Cone</button></div>");
+	draw_menu.append("<div><button id='draw_line' style='width:75px' class='drawbutton menu-option draw-option' data-shape='line' data-type='draw'>Line</button></div>");
+	draw_menu.append("<div><button id='draw_polygon' style='width:75px' class='drawbutton menu-option draw-option' data-shape='polygon' data-type='draw'>Polygon</button></div>");
+	draw_menu.append("<div><button id='draw_erase' style='width:75px' class='drawbutton menu-option draw-option' data-shape='rect' data-type='eraser'>Erase</button></div>");
 	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 
 	draw_menu.find("#delete_drawing").click(function() {
@@ -1439,7 +1447,7 @@ function init_buttons() {
 
 	$("body").append(draw_menu);
 
-	draw_button = $("<button style='display:inline;width:75px' id='draw_button'>DRAW</button>");
+	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button'><u>D</u>RAW</button>");
 
 	if (window.DM){
 		buttons.append(draw_button);
@@ -1451,31 +1459,6 @@ function init_buttons() {
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
 
-	fog_button.click(function(e) {
-		$(this).toggleClass('button-selected');
-		if ($(this).hasClass('button-selected')) {
-			fog_menu.addClass('visible');
-			draw_menu.removeClass('visible');
-			$("#draw_button").removeClass('button-selected');
-		}
-		else {
-			fog_menu.removeClass('visible');
-		}
-	});
-
-	draw_button.click(function(e) {
-		$(this).toggleClass('button-selected');
-		if ($(this).hasClass('button-selected')) {
-			fog_menu.removeClass('visible');
-			$("#fog_button").removeClass('button-selected');
-			draw_menu.addClass('visible');
-		}
-		else {
-			draw_menu.removeClass('visible');
-		}
-	});
-
-	
 
 	draw_menu.find(".drawType").first().click();
 	draw_menu.find(".coloroption").first().click();
@@ -1537,7 +1520,7 @@ $(function() {
 		console.log('Sheet: ' + sheet + "img " + img);
 	});
 
-	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete ALL Data</a>");
+	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete AboveVTT Data for this campaign</a>");
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
 			gameid = $("#message-broker-client").attr("data-gameId");
@@ -1545,12 +1528,26 @@ $(function() {
 			localStorage.removeItem("current_source" + gameid);
 			localStorage.removeItem("current_chapter" + gameid);
 			localStorage.removeItem("current_scene" + gameid);
-
+			localStorage.removeItem("CombatTracker"+gameid);
 		}
 		else {
 			console.log('user canceled');
 		}
 	});
+	
+	delete_button2 = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete2'>Delete Global AboveVTT Data (soundpads, tokens..)</a>");
+	delete_button2.click(function() {
+		if (confirm("Are you sure?")) {
+			localStorage.removeItem("Soundpads");
+			localStorage.removeItem("CustomTokens");
+		}
+		else {
+			console.log('user canceled');
+		}
+	});
+
+
+	
 	
 	var campaign_banner=$("<div id='campaign_banner'></div>")
 	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
@@ -1564,6 +1561,7 @@ $(function() {
 	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected<br><br>");
 	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
+	campaign_banner.append(delete_button2);
 	campaign_banner.hide();
 	
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
