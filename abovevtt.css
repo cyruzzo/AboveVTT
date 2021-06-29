@@ -846,6 +846,12 @@ div#scene_properties form > div {
     width: 100%;
 }
 
+.context-menu-helptext {
+    max-width: 150px;
+    color: grey;
+    font-size: 0.9em;
+}
+
 .token-round{
 	border-radius: 50%;
 }

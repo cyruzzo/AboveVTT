@@ -1334,8 +1334,13 @@ function token_menu() {
 							hide: token_inputs
 						},
 						items: {
-							view: { name: 'Open Sheet' },
+							view: { name: 'Character Sheet' },
 							token_combat: { name: 'Add to Combat Tracker' },
+							token_hidden:{
+								type: 'checkbox',
+								name: 'Hide',
+								selected: window.TOKEN_OBJECTS[id].options.hidden,
+							},
 							sep0: "--------",
 							token_size: {
 								name: "Size",
@@ -1529,16 +1534,17 @@ function token_menu() {
 								}
 							},
 							sep3: '----------',
-							token_hidden:{
-								type: 'checkbox',
-								name: 'Hide',
-								selected: window.TOKEN_OBJECTS[id].options.hidden,
+							helptext:{
+								name: 'Player HP/conditions must be set in character sheet',
+								className: 'context-menu-helptext',
+								disabled: true
 							},
 							delete: { name: 'Delete' }
 						}
 					};
 					if(is_monster) {
 						delete ret.items.options.items.token_hidestat;
+						delete ret.items.helptext;
 					}
 					else {
 						delete ret.items.sep1;
