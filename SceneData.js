@@ -512,7 +512,7 @@ var DDB_EXTRAS =
 		"scale_factor": "4"
 	},
 	"wdh//compendium/adventures/wdh/fireball/GralhundVilla": {
-		"dm_map_usable": "1",
+		"dm_map_usable": "0",
 		"snap": "1",
 		"hpps": "108.66666666666667",
 		"vpps": "108.66666666666667",
