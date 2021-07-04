@@ -1831,7 +1831,7 @@ var DDB_EXTRAS =
 		"scale_factor": 2
 	},
 	"bgdia/a-tale-of-two-cities/Map12ElfsongTavern": {
-		"dm_map_usable": "1",
+		"dm_map_usable": "0",
 		"snap": "1",
 		"hpps": "216.66666666666666",
 		"vpps": "216.66666666666666",
