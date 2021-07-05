@@ -1039,14 +1039,16 @@ function menu_callback(key, options, event) {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 5);
 	}
-	if (key == "hide") {
+	if (key == "token_hidden") {
 		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].hide();
+		if (window.TOKEN_OBJECTS[id].hidden) {
+			window.TOKEN_OBJECTS[id].hide();
+		}
+		else {
+			window.TOKEN_OBJECTS[id].show();
+		}	
 	}
-	if (key == "show") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].show();
-	}
+
 	if (key == "token_combat") {
 		id = $(this).attr('data-id');
 		ct_add_token(window.TOKEN_OBJECTS[id]);
@@ -1200,6 +1202,12 @@ function token_inputs(opt) {
 	else{
 		tok.options.disableaura=false;
 	}
+	if(data.token_hidden){
+		tok.options.hidden=true;
+	}
+	else{
+		tok.options.hidden=false;
+	}
 	if(data.token_revealname){
 		tok.options.revealname=true;
 	}
@@ -1326,9 +1334,14 @@ function token_menu() {
 							hide: token_inputs
 						},
 						items: {
-							view: { name: 'Open Character Sheet' },
-							sep0: "--------",
+							view: { name: 'Character Sheet' },
 							token_combat: { name: 'Add to Combat Tracker' },
+							token_hidden:{
+								type: 'checkbox',
+								name: 'Hide',
+								selected: window.TOKEN_OBJECTS[id].options.hidden,
+							},
+							sep0: "--------",
 							token_size: {
 								name: "Size",
 								items: {
@@ -1478,17 +1491,19 @@ function token_menu() {
 							hp: {
 								type: 'text',
 								name: 'Current HP',
+								className: 'hp-context-input',
 								value: window.TOKEN_OBJECTS[id].options.hp,
 								disabled: !is_monster,
 								events: {
 									click: function (e) {
 										$(e.target).select();
 									}
-								}
+								},
 							},
 							max_hp: {
 								type: 'text',
 								name: 'Max Hp',
+								className: 'hp-context-input',
 								value: window.TOKEN_OBJECTS[id].options.max_hp,
 								disabled: !is_monster,
 								events: {
@@ -1510,7 +1525,7 @@ function token_menu() {
 							},
 							imgsrc:{
 								type: 'text',
-								name: 'IMG Url',
+								name: 'Custom Image',
 								value: window.TOKEN_OBJECTS[id].options.imgsrc,
 								events: {
 									click: function(e) {
@@ -1519,13 +1534,25 @@ function token_menu() {
 								}
 							},
 							sep3: '----------',
-							hide: { name: 'Hide From Players' },
-							show: { name: 'Show To Players' },
-							delete: { name: 'Delete Token' }
+							helptext:{
+								name: 'Player HP/conditions must be set in character sheet',
+								className: 'context-menu-helptext',
+								disabled: true
+							},
+							delete: { name: 'Delete' }
 						}
 					};
-					if(is_monster)
+					if(is_monster) {
 						delete ret.items.options.items.token_hidestat;
+						delete ret.items.helptext;
+					}
+					else {
+						delete ret.items.sep1;
+						delete ret.items.hp;
+						delete ret.items.max_hp;
+						delete ret.items.token_cond;
+						delete ret.items.options.items.token_revealname;
+					}
 					
 					return ret;
 				}

@@ -836,6 +836,22 @@ div#scene_properties form > div {
     float: right;
 }
 
+.context-menu-input.hp-context-input{
+    display: inline-block;
+    zoom: 1;
+    max-width: 75px;
+}
+
+.context-menu-input.hp-context-input > label > input{
+    width: 100%;
+}
+
+.context-menu-helptext {
+    max-width: 150px;
+    color: grey;
+    font-size: 0.9em;
+}
+
 .token-round{
 	border-radius: 50%;
 }
