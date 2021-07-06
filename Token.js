@@ -982,7 +982,7 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.top = (centerY + (((options.size || 68.33) * 5) / 2) * Math.sin(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
 	}
 
-
+	options = Object.assign({}, options, window.TOKEN_SETTINGS);
 	window.ScenesHandler.create_update_token(options);
 
 	if (id in window.PLAYER_STATS) {

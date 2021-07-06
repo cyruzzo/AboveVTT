@@ -56,6 +56,70 @@ function init_settings(){
 	<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
 	`);
 	$("#input_file").change(import_readfile);
+	const token_settings = [
+		{
+			name: 'hidden',
+			label: 'Hide'
+		},
+		{
+			name: 'square',
+			label: 'Square Token'
+		},
+		{
+			name: 'locked',
+			label: 'Lock Token in Position'
+		},
+		{
+			name: 'disablestat',
+			label: 'Disable HP/AC'
+		},
+		{
+			name: 'hidestat',
+			label: 'Hide HP/AC from players'
+		},
+		{
+			name: 'disableborder',
+			label: 'Disable Border'
+		},
+		{
+			name: 'disableaura',
+			label: 'Disable Aura'
+		},
+		{
+			name: 'revealname',
+			label: 'Show name to players'
+		},
+	];
+
+	settings_panel.append(`
+		<div>
+			<h6>Default Token Options</h6>
+			<div>
+				${token_settings.map(setting => (
+					`
+						<div>
+							<input type='checkbox' name='${setting.name}' ${window.TOKEN_SETTINGS[setting.name] && 'checked'}>
+							<label for='${setting.name}' style='display: inline-block;'>${setting.label}<label/>
+						</div>
+					`
+				)).join('')}
+			</div>
+		</div>
+	`);
+
+	const tokenSettingsHandler = (e) => {
+		const $el = $(e.target);
+		window.TOKEN_SETTINGS[$el.attr('name')] = $el.is(":checked");
+		persist_token_settings(window.TOKEN_SETTINGS);
+	}
+	token_settings.forEach(setting => {
+		$(`#settings-panel input[name='${setting.name}']`).change(tokenSettingsHandler);
+	});	
+}
+
+function persist_token_settings(settings){
+	const gameid = $("#message-broker-client").attr("data-gameId");
+	localStorage.setItem("TokenSettings" + gameid, JSON.stringify(settings));
 }
 
 function export_file(){
