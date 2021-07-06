@@ -931,7 +931,7 @@ function init_ui() {
 	window.MONSTERPANEL_LOADED = false;
 	window.BLOCKCONTROLS = false;
 	window.PLAYER_STATS = {};
-
+	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameid)) || {};
 
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
