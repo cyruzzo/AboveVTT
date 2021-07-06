@@ -502,7 +502,11 @@ class Token {
 			this.build_conditions(old);
 
 			if (this.selected) {
-				old.css("border", "2px solid white");
+				if (this.options.locked)
+					old.css("border", "3px solid red");
+				else
+					old.css("border", "3px solid white");
+
 				old.addClass("tokenselected");
 			}
 			else {
@@ -728,8 +732,8 @@ class Token {
 								}
 							}
 						}
+					},
 
-											},
 				start: function (event) {
 					window.DRAGGING = true;
 					click.x = event.clientX;
@@ -803,7 +807,7 @@ class Token {
 						//console.log("OFFSETLEFT "+offsetLeft+ " OFFSETTOP " + offsetTop);
 
 						for (id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.locked) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
 								var tok = $("#tokens div[data-id='" + id + "']");
