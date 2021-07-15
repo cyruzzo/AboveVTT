@@ -72,6 +72,16 @@ function scan_monster(target, stats) {
 		if($(this).attr('data-rolldamagetype')){
 			output_beauty+= " <b>"+$(this).attr('data-rolldamagetype')+"</b>";
 		}
+		
+		data = {
+				player: stats.data.name,
+				img: stats.data.avatarUrl,
+				text: output_beauty,
+				dmonly:true,
+			};
+		window.MB.inject_chat(data);
+		/*
+		
 
 		// KIND OF UGLY COPY PASTE FROM MB handleChat... BUT STILL IT WORKS...
 
@@ -84,7 +94,7 @@ function scan_monster(target, stats) {
 		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'/>");
 		var dblock=$("<div class='d-block' />").append($("<div/>").append(output_beauty))
 		entry.append(dblock);
-		var send_button = $("<div class='text-center'><button>Send to Players</button></div>");
+		 var send_button = $("<div class='text-center'><button>Send to Players</button></div>");
 
 		dblock.append(send_button);
 		send_button.click(function() {
@@ -97,7 +107,8 @@ function scan_monster(target, stats) {
 			window.MB.sendMessage('custom/myVTT/chat', data);
 		});
 
-
+		
+		
 		container.append(entry);
 
 
@@ -108,7 +119,7 @@ function scan_monster(target, stats) {
 		newentry.append(container);
 		$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
 		notify_gamelog();
-
+		*/
 
 
 

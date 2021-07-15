@@ -293,8 +293,9 @@ function load_monster_stat(monsterid) {
 						text: "<img width='100%' src='" + imgsrc + "'>",
 					};
 
-					window.MB.sendMessage('custom/myVTT/chat', msgdata);
-					window.MB.handleChat(msgdata);
+					window.MB.inject_chat(msgdata);
+					//window.MB.sendMessage('custom/myVTT/chat', msgdata);
+					//window.MB.handleChat(msgdata);
 				});
 			}
 
@@ -529,6 +530,7 @@ function init_splash() {
 
 
 function sortGameLog(e) {
+	console.log("DEPRECATED");
 	/*if(Math.abs(Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()) -  $(".GameLog_GameLog__2z_HZ").prop("scrollHeight")) < 500 ){
 		return;	 // DO NOT SORT WHEN AT THE TOP
 	} */
@@ -849,8 +851,9 @@ function open_player_sheet(sheet_url) {
 							img: window.PLAYER_IMG,
 							text: html
 						};
-						window.MB.sendMessage('custom/myVTT/chat', data);
-						window.MB.handleChat(data);
+						// DEPRECATED window.MB.sendMessage('custom/myVTT/chat', data);
+						// DEPRECATED window.MB.handleChat(data);
+						window.MB.inject_chat(data);
 
 
 					});
@@ -947,7 +950,7 @@ function init_ui() {
 	$("#site").children().hide();
 	$(".sidebar__controls").width(340);
 
-	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
+	//$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog); // DEPRECATED
 
 
 	// AGGIUNGI CHAT
@@ -1032,14 +1035,15 @@ function init_ui() {
 			dmonly: window.DM || false,
 			id: window.DM ? `li_${uuid}` : undefined
 		};
-		window.MB.sendMessage('custom/myVTT/chat', data);
-		window.MB.handleChat(data,true);
-		if (window.DM) {
+		//DEPREACTED window.MB.sendMessage('custom/myVTT/chat', data);
+		//DEPRECATED window.MB.handleChat(data,true);
+		window.MB.inject_chat(data);
+		
+		if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
 			$("#" + uuid).on("click", () => {
 				const newData = {...data, dmonly: false, id: undefined, text: text};
-				window.MB.sendMessage('custom/myVTT/chat', newData);
-				window.MB.handleChat(newData,true);
-				$("#li_" + uuid).remove()
+				window.MB.inject_chat(newData);
+				$(this).remove();
 			});
 		}
 		$(".roll-button").removeClass("show");
@@ -1078,8 +1082,10 @@ function init_ui() {
 				text: text,
 				dmonly: dmonly,
 			};
-			window.MB.sendMessage('custom/myVTT/chat', data);
-			window.MB.handleChat(data,true);
+			//DEPRECATED window.MB.sendMessage('custom/myVTT/chat', data);
+			//DEPRECATED window.MB.handleChat(data,true);
+			window.MB.inject_chat(data);
+			
 		}
 
 	});

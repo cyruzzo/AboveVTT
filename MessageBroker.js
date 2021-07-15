@@ -1,5 +1,6 @@
-class MessageBroker {
+// THIS CLASS IMPLEMENTS A VERY HACKY TRICK TO INJECT MESSAGES INTO THE GAMELOG AND DECIPERHING THEM
 
+class MessageBroker {
 
 
 	loadWS(token, callback = null) {
@@ -69,7 +70,8 @@ class MessageBroker {
 				window.DRAWINGS.push(msg.data);
 				redraw_drawings();
 			}
-			if (msg.eventType == "custom/myVTT/chat") {
+			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
+				console.log("VERSION MISMATCH");
 				self.handleChat(msg.data);
 			}
 			if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
@@ -142,11 +144,23 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/playerdata") {
 				self.handlePlayerData(msg.data);
 			}
+			if (msg.eventType == "dice/roll/pending"){
+				// check for injected_data!
+				if(msg.data.injected_data){
+					self.handle_injected_data(msg);
+				}
+			}
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
+				
+
+				
+				
 				if (!window.DM)
 					return;
-				// CHECK FOR INIT ROLLS
+				
+					
+				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action == "Initiative") {
 					console.log(msg.data);
 					var total = msg.data.rolls[0].result.total;
@@ -177,8 +191,65 @@ class MessageBroker {
 		};
 	}
 
+	handle_injected_data(data){
+		let self=this;
+		self.chat_pending_messages.push(data);
+		// start the task
+		
+		if(self.chat_decipher_task==null){
+			self.chat_decipher_task=setInterval(function(){
+				console.log("deciphering");
+				for(var i=0;i<self.chat_pending_messages.length;i++){
+					var current=self.chat_pending_messages.shift();
+					
+					var injection_id=current.data.rolls[0].rollType;
+					var injection_data=current.data.injected_data;
+					console.log(injection_id);
+					console.log(injection_data);
+					
+					var found=false;
+					$(".DiceMessage_RollType__wlBsW").each(function(){
+						if($(this).text()==injection_id){
+							console.log("TROVATOOOOOOOOOOOOOOOOO");
+							found=true;
+							let li =$(this).closest("li");
+							var newlihtml=self.convertChat(injection_data).html();
+							
+							li.html(newlihtml);
+							if(newlihtml=="")
+								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
+							
+							if(injection_data.dmonly && window.DM){ // ADD THE "Send To Player Buttons"
+								let btn=$("<button>Show to Players</button>")
+								li.append(btn);
+								btn.click( ()=>{
+									li.css("display","none");
+									delete injection_data.dmonly;
+									self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
+								});
+							}
+						}
+					});
+					if(!found){
+						self.chat_pending_messages.push(current);
+					}
+				}
+				if(self.chat_pending_messages.length==0){
+					console.log("stop deciphering");
+					clearInterval(self.chat_decipher_task);
+					self.chat_decipher_task=null;
+				}
+			},500);
+		}
+	}
+
 	constructor() {
 		var self = this;
+		
+		this.chat_id=uuid();
+		this.chat_counter=0;
+		this.chat_pending_messages=[];
+		this.chat_decipher_task=null;
 
 		this.callbackQueue = [];
 
@@ -220,8 +291,7 @@ class MessageBroker {
 					text: "<b>Check for concentration!!</b>",
 				};
 
-				window.MB.sendMessage('custom/myVTT/chat', msgdata);
-				window.MB.handleChat(msgdata);
+				window.MB.inject_chat(msgdata);
 			}
 			cur.options.hp = data.hp;
 
@@ -240,6 +310,7 @@ class MessageBroker {
 	}
 
 	handleChat(data,local=false) {
+		console.log("VERSION MISMATCH! DEPRECATED");
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
@@ -262,9 +333,39 @@ class MessageBroker {
 		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
-
+		
 		$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
 	}
+	
+	convertChat(data,local=false) {
+		//Security logic to prevent content being sent which can execute JavaScript.
+		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
+		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
+		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg']}); //This array needs to include all HTML elements the extension sends via chat.
+
+		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
+			return $("<div/>");
+		//notify_gamelog();
+		
+		var newentry = $("<div/>");
+		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
+		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + data.img + "'></p>"));
+		var container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
+		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
+		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
+		container.append(entry);
+
+
+		var d = new Date();
+		var datetime = d.toISOString();
+		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
+
+		newentry.append(container);
+
+		return newentry;
+		//$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
+	}
+
 
 	handleToken(msg) {
 		var data = msg.data;
@@ -386,6 +487,58 @@ class MessageBroker {
 			}
 		}
 	}
+	
+	inject_chat(injected_data) {
+		var msgid = this.chat_id + this.chat_counter++;
+
+		var data = {
+			injected_data: injected_data,
+			"action": "ABOVETT",
+			"rolls": [
+				{
+					"diceNotation": {
+						"set": [
+						],
+						"constant": 0
+					},
+					"diceNotationStr": "1d4",
+					"rollType": msgid,
+					"rollKind": "",
+				}
+			],
+			"context": {
+				"entityId": this.userid,
+				"entityType": "user",
+				"messageScope": "gameId",
+				"messageTarget": this.gameid
+			},
+			"setId": "01201",
+			"rollId": uuid(),
+		};
+		var eventType = "dice/roll/pending";
+		var message = {
+			id: uuid(),
+			source: "web",
+			gameId: this.gameid,
+			userId: this.userid,
+			persist: false, // INTERESSANTE PER RILEGGERLI, per ora non facciamogli casini
+			messageScope: "gameId",
+			messageTarget: this.gameid,
+			eventType: eventType,
+			data: data,
+			entityId: this.userid, //proviamo a non metterla
+			entityType: "user", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
+		};
+
+		if (this.ws.readyState == this.ws.OPEN) {
+			this.ws.send(JSON.stringify(message));
+		}
+		
+		this.handle_injected_data(message);
+
+
+	}
+
 
 	sendMessage(eventType, data) {
 		var self = this;

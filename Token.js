@@ -328,8 +328,7 @@ class Token {
 						img: window.PLAYER_IMG,
 						text: `<div>${[conditionName, ...conditionDescription].map(line => `<p>${line}</p>`).join(``)}</div>`
 					};
-					window.MB.sendMessage('custom/myVTT/chat', data);
-					window.MB.handleChat(data);
+					window.MB.inject_chat(data);
 				});
 				if (conditionCount >= 3) {
 					moreCond.append(conditionContainer);
