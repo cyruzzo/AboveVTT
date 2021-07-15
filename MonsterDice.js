@@ -72,46 +72,14 @@ function scan_monster(target, stats) {
 		if($(this).attr('data-rolldamagetype')){
 			output_beauty+= " <b>"+$(this).attr('data-rolldamagetype')+"</b>";
 		}
-
-		// KIND OF UGLY COPY PASTE FROM MB handleChat... BUT STILL IT WORKS...
-
-		var newentry = $("<li></li>");
-		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
-		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + stats.data.avatarUrl + "'></p>"));
-		var container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
-		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + stats.data.name + "</span></div>"));
-
-		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'/>");
-		var dblock=$("<div class='d-block' />").append($("<div/>").append(output_beauty))
-		entry.append(dblock);
-		var send_button = $("<div class='text-center'><button>Send to Players</button></div>");
-
-		dblock.append(send_button);
-		send_button.click(function() {
-			data = {
+		
+		data = {
 				player: stats.data.name,
 				img: stats.data.avatarUrl,
-				text: output_beauty
+				text: output_beauty,
+				dmonly:true,
 			};
-			$(this).remove();
-			window.MB.sendMessage('custom/myVTT/chat', data);
-		});
-
-
-		container.append(entry);
-
-
-		var d = new Date();
-		var datetime = d.toISOString();
-		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
-
-		newentry.append(container);
-		$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
-		notify_gamelog();
-
-
-
-
+		window.MB.inject_chat(data);
 	});
 }
 

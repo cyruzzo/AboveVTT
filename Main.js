@@ -293,8 +293,7 @@ function load_monster_stat(monsterid) {
 						text: "<img width='100%' src='" + imgsrc + "'>",
 					};
 
-					window.MB.sendMessage('custom/myVTT/chat', msgdata);
-					window.MB.handleChat(msgdata);
+					window.MB.inject_chat(msgdata);
 				});
 			}
 
@@ -526,64 +525,6 @@ function init_splash() {
 
 
 }
-
-
-function sortGameLog(e) {
-	/*if(Math.abs(Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()) -  $(".GameLog_GameLog__2z_HZ").prop("scrollHeight")) < 500 ){
-		return;	 // DO NOT SORT WHEN AT THE TOP
-	} */
-
-	var prescroll = $(".GameLog_GameLog__2z_HZ").scrollTop();
-	$(".GameLog_GameLog__2z_HZ").scrollTop(0);
-	console.log($(".GameLog_GameLog__2z_HZ").prop("scrollHeight") + "--- " + Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()));
-	$(".GameLog_GameLogEntries__3oNPD").off('DOMNodeInserted', sortGameLog);
-	try {		
-		
-		var items = $(".GameLog_GameLogEntries__3oNPD").children().sort(
-			function(a, b) {
-				var vA = Date.parse($("time", a).attr('datetime'));
-				var vB = Date.parse($("time", b).attr('datetime'));
-				return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
-			});
-		$(".GameLog_GameLogEntries__3oNPD").append(items);
-
-		// SHOW ELEMENT IF GAMELOG IS HIDDEN
-		cloned_entry = $($(e.target).clone(true));
-		if ($("#hide_rightpanel").attr('data-visible') === "0" && (cloned_entry.find(".DiceMessage_Pending__30N8v").length == 0) && !cloned_entry.is("svg")) {
-			cloned_entry.css("border-radius", "10px 10px 10px 10px");
-			cloned_entry.css("border", "2px solid black");
-			cloned_entry.css("background", "rgba(255,255,255,0.95)");
-			console.log(cloned_entry);
-
-			if ($("#temporary_gamelog").length == 0) {
-				var t = $("<ul id='temporary_gamelog'/>");
-				t.css("position", "fixed");
-				t.css("bottom", "0px");
-				t.css("right", "0px");
-				t.css("width", "340px");
-				//t.css("background","rgba(255,255,255,0.95)");
-				$("body").append(t);
-			}
-
-			$("#temporary_gamelog").append(cloned_entry);
-
-
-			cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function() {
-				$(this).remove();
-				if ($("#temporary_gamelog").children().length == 0)
-					$("#temporary_gamelog").remove();
-			})
-		}
-
-		$(".GameLog_GameLog__2z_HZ").scrollTop(prescroll);
-	}
-	catch (error) {
-		console.log(error);
-	}
-	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
-}
-
-
 
 // UNIFIED TOKEN HANDLING
 var MYCOBALT_TOKEN = false;
@@ -849,8 +790,7 @@ function open_player_sheet(sheet_url) {
 							img: window.PLAYER_IMG,
 							text: html
 						};
-						window.MB.sendMessage('custom/myVTT/chat', data);
-						window.MB.handleChat(data);
+						window.MB.inject_chat(data);
 
 
 					});
@@ -947,8 +887,6 @@ function init_ui() {
 	$("#site").children().hide();
 	$(".sidebar__controls").width(340);
 
-	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
-
 
 	// AGGIUNGI CHAT
 	$(".glc-game-log").append($("<div><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
@@ -1032,14 +970,13 @@ function init_ui() {
 			dmonly: window.DM || false,
 			id: window.DM ? `li_${uuid}` : undefined
 		};
-		window.MB.sendMessage('custom/myVTT/chat', data);
-		window.MB.handleChat(data,true);
-		if (window.DM) {
+		window.MB.inject_chat(data);
+		
+		if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
 			$("#" + uuid).on("click", () => {
 				const newData = {...data, dmonly: false, id: undefined, text: text};
-				window.MB.sendMessage('custom/myVTT/chat', newData);
-				window.MB.handleChat(newData,true);
-				$("#li_" + uuid).remove()
+				window.MB.inject_chat(newData);
+				$(this).remove();
 			});
 		}
 		$(".roll-button").removeClass("show");
@@ -1078,8 +1015,8 @@ function init_ui() {
 				text: text,
 				dmonly: dmonly,
 			};
-			window.MB.sendMessage('custom/myVTT/chat', data);
-			window.MB.handleChat(data,true);
+			window.MB.inject_chat(data);
+			
 		}
 
 	});
