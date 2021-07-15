@@ -1,5 +1,3 @@
-// THIS CLASS IMPLEMENTS A VERY HACKY TRICK TO INJECT MESSAGES INTO THE GAMELOG AND DECIPERHING THEM
-
 class MessageBroker {
 
 
@@ -71,8 +69,10 @@ class MessageBroker {
 				redraw_drawings();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
-				console.log("VERSION MISMATCH");
-				self.handleChat(msg.data);
+				if(!window.NOTIFIEDOLDVERSION){
+					alert('One of the player is using AboveTT 0.0.51 or less. Please update everyone to 0.0.52 or higher');
+					window.NOTIFIEDOLDVERSION=true;
+				}
 			}
 			if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
 				self.handleCT(msg.data);
@@ -147,16 +147,13 @@ class MessageBroker {
 			if (msg.eventType == "dice/roll/pending"){
 				// check for injected_data!
 				if(msg.data.injected_data){
+					notify_gamelog();
 					self.handle_injected_data(msg);
 				}
 			}
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
-				
-
-				
-				
-				if (!window.DM)
+								if (!window.DM)
 					return;
 				
 					
@@ -307,34 +304,6 @@ class MessageBroker {
 		// update combat tracker:
 
 		update_pclist();
-	}
-
-	handleChat(data,local=false) {
-		console.log("VERSION MISMATCH! DEPRECATED");
-		//Security logic to prevent content being sent which can execute JavaScript.
-		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
-		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg']}); //This array needs to include all HTML elements the extension sends via chat.
-
-		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
-			return;
-		notify_gamelog();
-		var newentry = $(`<li ${data.id ? `id="${data.id}"` : ""}></li>`);
-		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
-		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + data.img + "'></p>"));
-		var container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
-		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
-		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
-		container.append(entry);
-
-
-		var d = new Date();
-		var datetime = d.toISOString();
-		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
-
-		newentry.append(container);
-		
-		$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
 	}
 	
 	convertChat(data,local=false) {

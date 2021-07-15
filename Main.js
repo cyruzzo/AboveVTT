@@ -294,8 +294,6 @@ function load_monster_stat(monsterid) {
 					};
 
 					window.MB.inject_chat(msgdata);
-					//window.MB.sendMessage('custom/myVTT/chat', msgdata);
-					//window.MB.handleChat(msgdata);
 				});
 			}
 
@@ -851,8 +849,6 @@ function open_player_sheet(sheet_url) {
 							img: window.PLAYER_IMG,
 							text: html
 						};
-						// DEPRECATED window.MB.sendMessage('custom/myVTT/chat', data);
-						// DEPRECATED window.MB.handleChat(data);
 						window.MB.inject_chat(data);
 
 
@@ -1035,8 +1031,6 @@ function init_ui() {
 			dmonly: window.DM || false,
 			id: window.DM ? `li_${uuid}` : undefined
 		};
-		//DEPREACTED window.MB.sendMessage('custom/myVTT/chat', data);
-		//DEPRECATED window.MB.handleChat(data,true);
 		window.MB.inject_chat(data);
 		
 		if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
@@ -1082,8 +1076,6 @@ function init_ui() {
 				text: text,
 				dmonly: dmonly,
 			};
-			//DEPRECATED window.MB.sendMessage('custom/myVTT/chat', data);
-			//DEPRECATED window.MB.handleChat(data,true);
 			window.MB.inject_chat(data);
 			
 		}
