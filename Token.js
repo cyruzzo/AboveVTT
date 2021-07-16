@@ -1098,7 +1098,8 @@ function menu_callback(key, options, event) {
 	
 		window.TOKEN_OBJECTS[id].place();
 		window.TOKEN_OBJECTS[id].sync();
-		window.TOKEN_OBJECTS[id].persist();
+		if(window.DM)
+			window.TOKEN_OBJECTS[id].persist();
 	}
 	
 }
@@ -1122,7 +1123,8 @@ function token_inputs(opt) {
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
 	tok = window.TOKEN_OBJECTS[id];
-	tok.options.conditions = [];
+	if(is_monster)
+		tok.options.conditions = [];
 	tok.options.custom_conditions = [];
 
 	for (k in data) {
@@ -1134,17 +1136,6 @@ function token_inputs(opt) {
 		}
 	}
 
-	if (is_monster) {
-		if (data.hp.startsWith("+") || data.hp.startsWith("-"))
-			data.hp = parseInt(tok.options.hp) + parseInt(data.hp);
-
-		tok.options.hp = data.hp;
-
-		if (data.max_hp.startsWith("+") || data.max_hp.startsWith("-"))
-			data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
-
-		tok.options.max_hp = data.max_hp;
-	}
 
 	if (data.aura1 && data.aura1.length > 0) {
 		tok.options.aura1.feet = data.aura1;
@@ -1160,67 +1151,85 @@ function token_inputs(opt) {
 	}
 	tok.options.auraVisible = data.auraVisible;
 
-	tok.options.name = data.name;
 
-	tok.options.imgsrc=parse_img(data.imgsrc);
 
-	if(data.token_square){
-		tok.options.square=true;
-	}
-	else{
-		tok.options.square=false;
+	if (window.DM) {
+		if (is_monster) {
+			if (data.hp.startsWith("+") || data.hp.startsWith("-"))
+				data.hp = parseInt(tok.options.hp) + parseInt(data.hp);
+
+			tok.options.hp = data.hp;
+
+			if (data.max_hp.startsWith("+") || data.max_hp.startsWith("-"))
+				data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
+
+			tok.options.max_hp = data.max_hp;
+		}
+
+		
+		tok.options.name = data.name;
+		
+		tok.options.imgsrc = parse_img(data.imgsrc);
+
+		if (data.token_square) {
+			tok.options.square = true;
+		}
+		else {
+			tok.options.square = false;
+		}
+
+		if (data.token_disablestat) {
+			tok.options.disablestat = 1;
+		}
+		else {
+			tok.options.disablestat = false;
+		}
+
+		if (data.token_hidestat) {
+			tok.options.hidestat = 1;
+		}
+		else {
+			tok.options.hidestat = false;
+		}
+
+		if (data.token_locked) {
+			tok.options.locked = 1;
+		}
+		else {
+			tok.options.locked = false;
+		}
+
+		if (data.token_disableborder) {
+			tok.options.disableborder = true;
+		}
+		else {
+			tok.options.disableborder = false;
+		}
+
+		if (data.token_disableaura) {
+			tok.options.disableaura = true;
+		}
+		else {
+			tok.options.disableaura = false;
+		}
+		if (data.token_hidden) {
+			tok.options.hidden = true;
+		}
+		else {
+			tok.options.hidden = false;
+		}
+		if (data.token_revealname) {
+			tok.options.revealname = true;
+		}
+		else {
+			tok.options.revealname = false;
+		}
 	}
 	
-	if(data.token_disablestat){
-		tok.options.disablestat=1;
-	}
-	else{
-		tok.options.disablestat=false;
-	}
-
-	if(data.token_hidestat){
-		tok.options.hidestat=1;
-	}
-	else{
-		tok.options.hidestat=false;
-	}
-	
-	if(data.token_locked){
-		tok.options.locked=1;
-	}
-	else{
-		tok.options.locked=false;
-	}
-	
-	if(data.token_disableborder){
-		tok.options.disableborder=true;
-	}
-	else{
-		tok.options.disableborder=false;
-	}
-	
-	if(data.token_disableaura){
-		tok.options.disableaura=true;
-	}
-	else{
-		tok.options.disableaura=false;
-	}
-	if(data.token_hidden){
-		tok.options.hidden=true;
-	}
-	else{
-		tok.options.hidden=false;
-	}
-	if(data.token_revealname){
-		tok.options.revealname=true;
-	}
-	else{
-		tok.options.revealname=false;
-	}
-
 	tok.place();
 	tok.sync();
-	tok.persist();
+	if(window.DM)
+		tok.persist();
 }
 
 function multiple_callback(key, options, event) {
@@ -1261,323 +1270,318 @@ function multiple_callback(key, options, event) {
 }
 
 function token_menu() {
-	if (window.DM) {
+	$.contextMenu({
+		selector: '.VTTToken',
 
-		$.contextMenu({
-			selector: '.VTTToken',
+		build: function(element, e) {
 
-			build: function(element, e) {
-
-				if ($(element).hasClass("tokenselected") && window.MULTIPLE_TOKEN_SELECTED) {
-					ret = {
-						callback: multiple_callback,
-						items: {
-							token_combat: { name: 'Add to Combat Tracker' },
-							hide: { name: 'Hide From Players' },
-							show: { name: 'Show To Players' },
-							delete: { name: 'Delete Token' }
-						}
-					};
-					return ret;
-				}
-				else { // STANDARD SINGLE TOKEN MENU
-					cond_items = {};
-					custom_cond_items = {};
-					custom_reminders = {}
-					id = $(element).attr('data-id');
-					is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
-
-					if (!window.TOKEN_OBJECTS[id].options.aura1) {
-						window.TOKEN_OBJECTS[id].options = {
-							...window.TOKEN_OBJECTS[id].options,
-							aura1: {
-								feet: "0",
-								color: "rgba(255, 129, 0, 0.3)"
-							},
-							aura2: {
-								feet: "0",
-								color: "rgba(255, 255, 0, 0.1)"
-							},
-							auraVisible: true
-						}
-					}
-
-					for (var i = 0; i < STANDARD_CONDITIONS.length; i++) {
-						command = "cond_" + STANDARD_CONDITIONS[i];
-						cond_items[command] = { name: STANDARD_CONDITIONS[i], type: "checkbox" }
-						//cond_items[command].events={change:condition_change};
-						if (!is_monster) {
-							cond_items[command].disabled = true;
-						}
-						if (window.TOKEN_OBJECTS[id].options.conditions.includes(STANDARD_CONDITIONS[i])) {
-							cond_items[command].selected = true;
-						}
-					}
-					// cond_items.sep1 = "-----";
-					for (var i = 0; i < CUSTOM_CONDITIONS.length; i++) {
-						command = "custom_" + CUSTOM_CONDITIONS[i];
-						if (CUSTOM_CONDITIONS[i].startsWith("#")) {
-							custom_cond_items[command] = {
-								name: `<div class="color-reminder" style="background:${CUSTOM_CONDITIONS[i]}">&nbsp;</div>`,
-								isHtmlName: true,
-								type: "checkbox"
-							};
-						} else {
-							custom_cond_items[command] = { name: CUSTOM_CONDITIONS[i], type: "checkbox" };
-						}
-						if (window.TOKEN_OBJECTS[id].options.custom_conditions.includes(CUSTOM_CONDITIONS[i])) {
-							custom_cond_items[command].selected = true;
-						}
-					}
-
-
-					ret = {
-						callback: menu_callback,
-						events: {
-							hide: token_inputs
-						},
-						items: {
-							view: { name: 'Character Sheet' },
-							token_combat: { name: 'Add to Combat Tracker' },
-							token_hidden:{
-								type: 'checkbox',
-								name: 'Hide',
-								selected: window.TOKEN_OBJECTS[id].options.hidden,
-							},
-							sep0: "--------",
-							token_size: {
-								name: "Size",
-								items: {
-									token_medium: { name: 'Small or Medium' },
-									token_large: { name: 'Large' },
-									token_huge: { name: 'Huge' },
-									token_gargantuan: { name: 'Gargantuan' },
-									token_colossal: { name: 'Colossal' }
-								}
-							},
-
-							token_cond: {
-								name: "Conditions",
-								items: cond_items,
-							},
-							token_custom_cond: {
-								name: "Markers",
-								items: custom_cond_items,
-							},
-							tokenAuras: {
-								name: "Auras",
-								items: {
-									auraVisible: {
-										type: 'checkbox',
-										name: 'Token Auras',
-										className: 'on-off-title',
-										selected: window.TOKEN_OBJECTS[id].options.auraVisible
-									},
-									sep2Auras: '---------',
-									aura1Label: {
-										type: "title",
-										name: "Inner Aura"
-									},
-									aura1: {
-										type: 'text',
-										name: 'Ft.',
-										value: window.TOKEN_OBJECTS[id].options.aura1.feet,
-										className: "aura-feet",
-										events: {
-											click: function (e) {
-												$(e.target).select();
-											}
-										}
-									},
-									aura1Color: {
-										type: 'colorPicker',
-										name: 'Color',
-										prop: 'aura1Color',
-										value: window.TOKEN_OBJECTS[id].options.aura1.color,
-										events: {
-											click: function (e) {
-												$(e.target).select();
-											}
-										}
-									},
-									sepAuras: '---------',
-									aura21Label: {
-										type: "title",
-										name: "Outer Aura"
-									},
-									aura2: {
-										type: 'text',
-										name: 'Ft.',
-										value: window.TOKEN_OBJECTS[id].options.aura2.feet,
-										className: "aura-feet",
-										events: {
-											click: function (e) {
-												$(e.target).select();
-											}
-										}
-									},
-									aura2Color: {
-										type: 'colorPicker',
-										name: 'Color',
-										value: window.TOKEN_OBJECTS[id].options.aura2.color,
-										prop: 'aura2Color',
-										events: {
-											click: function (e) {
-												$(e.target).select();
-											}
-										}
-									},
-									sep3Auras: '---------',
-									presets: {
-										type: "title",
-										name: "Presets"
-									},
-									candle: {
-										name: "Candle (5/5)",
-										className: "aura-preset"
-									},
-									torch: {
-										name: "Torch / Light (20/20)",
-										className: "aura-preset"
-									},
-									lamp: {
-										name: "Lamp (15/30)",
-										className: "aura-preset"
-									},
-									lantern: {
-										name: "Lantern (30/30)",
-										className: "aura-preset"
-									}
-								}
-							},
-							options:{
-								name: "Options",
-								items: {
-									token_square:{
-										type: 'checkbox',
-										name: 'Square Token',
-										selected: window.TOKEN_OBJECTS[id].options.square
-									},
-									token_locked:{
-										type: 'checkbox',
-										name: 'Lock Token in Position',
-										selected: window.TOKEN_OBJECTS[id].options.locked
-									},
-									token_disablestat:{
-										type:'checkbox',
-										name: 'Disable HP/AC',
-										selected: window.TOKEN_OBJECTS[id].options.disablestat
-									},
-									token_hidestat:{
-										type:'checkbox',
-										name: 'Hide HP/AC from players',
-										selected: window.TOKEN_OBJECTS[id].options.hidestat,
-									},
-									token_disableborder:{
-										type:'checkbox',
-										name: 'Disable Border',
-										selected: window.TOKEN_OBJECTS[id].options.disableborder
-									},
-									token_disableaura:{
-										type:'checkbox',
-										name: 'Disable Aura',
-										selected: window.TOKEN_OBJECTS[id].options.disableaura
-									},
-									token_revealname:{
-										type:'checkbox',
-										name:'Show name to players',
-										selected: window.TOKEN_OBJECTS[id].options.revealname,
-									}
-								}
-							},
-							sep1: "-------",
-							hp: {
-								type: 'text',
-								name: 'Current HP',
-								className: 'hp-context-input',
-								value: window.TOKEN_OBJECTS[id].options.hp,
-								disabled: !is_monster,
-								events: {
-									click: function (e) {
-										$(e.target).select();
-									}
-								},
-							},
-							max_hp: {
-								type: 'text',
-								name: 'Max Hp',
-								className: 'hp-context-input',
-								value: window.TOKEN_OBJECTS[id].options.max_hp,
-								disabled: !is_monster,
-								events: {
-									click: function(e) {
-										$(e.target).select();
-									}
-								}
-							},
-							sep2: '---------',
-							name:{
-								type: 'text',
-								name: 'Name',
-								value: window.TOKEN_OBJECTS[id].options.name,
-								events: {
-									click: function(e) {
-										$(e.target).select();
-									}
-								}							
-							},
-							imgsrc:{
-								type: 'text',
-								name: 'Custom Image',
-								value: window.TOKEN_OBJECTS[id].options.imgsrc,
-								events: {
-									click: function(e) {
-										$(e.target).select();
-									}
-								}
-							},
-							sep3: '----------',
-							helptext:{
-								name: 'Player HP/conditions must be set in character sheet',
-								className: 'context-menu-helptext',
-								disabled: true
-							},
-							delete: { name: 'Delete' }
-						}
-					};
-					if(is_monster) {
-						delete ret.items.options.items.token_hidestat;
-						delete ret.items.helptext;
-					}
-					else {
-						delete ret.items.sep1;
-						delete ret.items.hp;
-						delete ret.items.max_hp;
-						delete ret.items.token_cond;
-						delete ret.items.options.items.token_revealname;
-					}
-					
-					return ret;
-				}
-			}
-		});
-	}
-	else {
-		// Suppress menu for players
-		$.contextMenu({
-			selector: '.VTTToken',
-
-			build: function (element, e) {
+			if ($(element).hasClass("tokenselected") && window.MULTIPLE_TOKEN_SELECTED) {
 				ret = {
 					callback: multiple_callback,
 					items: {
-						//delete: { name: 'Delete Token' }
+						token_combat: { name: 'Add to Combat Tracker' },
+						hide: { name: 'Hide From Players' },
+						show: { name: 'Show To Players' },
+						delete: { name: 'Delete Token' }
 					}
 				};
 				return ret;
 			}
-		});
-	}
+			else { // STANDARD SINGLE TOKEN MENU
+				cond_items = {};
+				custom_cond_items = {};
+				custom_reminders = {}
+				id = $(element).attr('data-id');
+				is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
+
+				if (!window.TOKEN_OBJECTS[id].options.aura1) {
+					window.TOKEN_OBJECTS[id].options = {
+						...window.TOKEN_OBJECTS[id].options,
+						aura1: {
+							feet: "0",
+							color: "rgba(255, 129, 0, 0.3)"
+						},
+						aura2: {
+							feet: "0",
+							color: "rgba(255, 255, 0, 0.1)"
+						},
+						auraVisible: true
+					}
+				}
+
+				for (var i = 0; i < STANDARD_CONDITIONS.length; i++) {
+					command = "cond_" + STANDARD_CONDITIONS[i];
+					cond_items[command] = { name: STANDARD_CONDITIONS[i], type: "checkbox" }
+					//cond_items[command].events={change:condition_change};
+					if (!is_monster) {
+						cond_items[command].disabled = true;
+					}
+					if (window.TOKEN_OBJECTS[id].options.conditions.includes(STANDARD_CONDITIONS[i])) {
+						cond_items[command].selected = true;
+					}
+				}
+				// cond_items.sep1 = "-----";
+				for (var i = 0; i < CUSTOM_CONDITIONS.length; i++) {
+					command = "custom_" + CUSTOM_CONDITIONS[i];
+					if (CUSTOM_CONDITIONS[i].startsWith("#")) {
+						custom_cond_items[command] = {
+							name: `<div class="color-reminder" style="background:${CUSTOM_CONDITIONS[i]}">&nbsp;</div>`,
+							isHtmlName: true,
+							type: "checkbox"
+						};
+					} else {
+						custom_cond_items[command] = { name: CUSTOM_CONDITIONS[i], type: "checkbox" };
+					}
+					if (window.TOKEN_OBJECTS[id].options.custom_conditions.includes(CUSTOM_CONDITIONS[i])) {
+						custom_cond_items[command].selected = true;
+					}
+				}
+
+
+				ret = {
+					callback: menu_callback,
+					events: {
+						hide: token_inputs
+					},
+					items: {
+						view: { name: 'Character Sheet' },
+						token_combat: { name: 'Add to Combat Tracker' },
+						token_hidden: {
+							type: 'checkbox',
+							name: 'Hide',
+							selected: window.TOKEN_OBJECTS[id].options.hidden,
+						},
+						sep0: "--------",
+						token_size: {
+							name: "Size",
+							items: {
+								token_medium: { name: 'Small or Medium' },
+								token_large: { name: 'Large' },
+								token_huge: { name: 'Huge' },
+								token_gargantuan: { name: 'Gargantuan' },
+								token_colossal: { name: 'Colossal' }
+							}
+						},
+
+						token_cond: {
+							name: "Conditions",
+							items: cond_items,
+						},
+						token_custom_cond: {
+							name: "Markers",
+							items: custom_cond_items,
+						},
+						tokenAuras: {
+							name: "Auras",
+							items: {
+								auraVisible: {
+									type: 'checkbox',
+									name: 'Token Auras',
+									className: 'on-off-title',
+									selected: window.TOKEN_OBJECTS[id].options.auraVisible
+								},
+								sep2Auras: '---------',
+								aura1Label: {
+									type: "title",
+									name: "Inner Aura"
+								},
+								aura1: {
+									type: 'text',
+									name: 'Ft.',
+									value: window.TOKEN_OBJECTS[id].options.aura1.feet,
+									className: "aura-feet",
+									events: {
+										click: function(e) {
+											$(e.target).select();
+										}
+									}
+								},
+								aura1Color: {
+									type: 'colorPicker',
+									name: 'Color',
+									prop: 'aura1Color',
+									value: window.TOKEN_OBJECTS[id].options.aura1.color,
+									events: {
+										click: function(e) {
+											$(e.target).select();
+										}
+									}
+								},
+								sepAuras: '---------',
+								aura21Label: {
+									type: "title",
+									name: "Outer Aura"
+								},
+								aura2: {
+									type: 'text',
+									name: 'Ft.',
+									value: window.TOKEN_OBJECTS[id].options.aura2.feet,
+									className: "aura-feet",
+									events: {
+										click: function(e) {
+											$(e.target).select();
+										}
+									}
+								},
+								aura2Color: {
+									type: 'colorPicker',
+									name: 'Color',
+									value: window.TOKEN_OBJECTS[id].options.aura2.color,
+									prop: 'aura2Color',
+									events: {
+										click: function(e) {
+											$(e.target).select();
+										}
+									}
+								},
+								sep3Auras: '---------',
+								presets: {
+									type: "title",
+									name: "Presets"
+								},
+								candle: {
+									name: "Candle (5/5)",
+									className: "aura-preset"
+								},
+								torch: {
+									name: "Torch / Light (20/20)",
+									className: "aura-preset"
+								},
+								lamp: {
+									name: "Lamp (15/30)",
+									className: "aura-preset"
+								},
+								lantern: {
+									name: "Lantern (30/30)",
+									className: "aura-preset"
+								}
+							}
+						},
+						options: {
+							name: "Options",
+							items: {
+								token_square: {
+									type: 'checkbox',
+									name: 'Square Token',
+									selected: window.TOKEN_OBJECTS[id].options.square
+								},
+								token_locked: {
+									type: 'checkbox',
+									name: 'Lock Token in Position',
+									selected: window.TOKEN_OBJECTS[id].options.locked
+								},
+								token_disablestat: {
+									type: 'checkbox',
+									name: 'Disable HP/AC',
+									selected: window.TOKEN_OBJECTS[id].options.disablestat
+								},
+								token_hidestat: {
+									type: 'checkbox',
+									name: 'Hide HP/AC from players',
+									selected: window.TOKEN_OBJECTS[id].options.hidestat,
+								},
+								token_disableborder: {
+									type: 'checkbox',
+									name: 'Disable Border',
+									selected: window.TOKEN_OBJECTS[id].options.disableborder
+								},
+								token_disableaura: {
+									type: 'checkbox',
+									name: 'Disable Aura',
+									selected: window.TOKEN_OBJECTS[id].options.disableaura
+								},
+								token_revealname: {
+									type: 'checkbox',
+									name: 'Show name to players',
+									selected: window.TOKEN_OBJECTS[id].options.revealname,
+								}
+							}
+						},
+						sep1: "-------",
+						hp: {
+							type: 'text',
+							name: 'Current HP',
+							className: 'hp-context-input',
+							value: window.TOKEN_OBJECTS[id].options.hp,
+							disabled: !is_monster,
+							events: {
+								click: function(e) {
+									$(e.target).select();
+								}
+							},
+						},
+						max_hp: {
+							type: 'text',
+							name: 'Max Hp',
+							className: 'hp-context-input',
+							value: window.TOKEN_OBJECTS[id].options.max_hp,
+							disabled: !is_monster,
+							events: {
+								click: function(e) {
+									$(e.target).select();
+								}
+							}
+						},
+						sep2: '---------',
+						name: {
+							type: 'text',
+							name: 'Name',
+							value: window.TOKEN_OBJECTS[id].options.name,
+							events: {
+								click: function(e) {
+									$(e.target).select();
+								}
+							}
+						},
+						imgsrc: {
+							type: 'text',
+							name: 'Custom Image',
+							value: window.TOKEN_OBJECTS[id].options.imgsrc,
+							events: {
+								click: function(e) {
+									$(e.target).select();
+								}
+							}
+						},
+						sep3: '----------',
+						helptext: {
+							name: 'Player HP/conditions must be set in character sheet',
+							className: 'context-menu-helptext',
+							disabled: true
+						},
+						delete: { name: 'Delete' }
+					}
+				};
+				if (is_monster) {
+					delete ret.items.options.items.token_hidestat;
+					delete ret.items.helptext;
+				}
+				else {
+					delete ret.items.sep1;
+					delete ret.items.hp;
+					delete ret.items.max_hp;
+					delete ret.items.token_cond;
+					delete ret.items.options.items.token_revealname;
+				}
+				
+				if(!window.DM){
+					delete ret.items.view;
+					delete ret.items.token_combat;
+					delete ret.items.token_hidden;
+					delete ret.items.token_size;
+					delete ret.items.options;
+					delete ret.items.sep1;
+					delete ret.items.hp;
+					delete ret.items.max_hp;
+					delete ret.items.delete;
+					delete ret.items.name;
+					delete ret.items.imgsrc;
+				}
+
+				return ret;
+			}
+		}
+	});
 }
 
 function deselect_all_tokens() {
