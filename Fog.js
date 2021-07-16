@@ -902,7 +902,7 @@ function drawing_mouseup(e) {
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 
@@ -912,7 +912,7 @@ function drawing_mouseup(e) {
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (e.data.shape == "rect" && e.data.type === "eraser") {
@@ -921,7 +921,7 @@ function drawing_mouseup(e) {
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (e.data.shape == "arc" && e.data.type === "draw") {
@@ -933,7 +933,7 @@ function drawing_mouseup(e) {
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (e.data.shape == "cone" && e.data.type === "draw") {
@@ -941,7 +941,7 @@ function drawing_mouseup(e) {
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (e.data.shape == "rect" && (e.data.type === "0" || e.data.type === "1")) {
@@ -949,7 +949,7 @@ function drawing_mouseup(e) {
 		data[5] = parseInt(e.data.type);
 		window.REVEALED.push(data);
 		window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		redraw_canvas();
 	}
 
@@ -963,7 +963,7 @@ function drawing_mouseup(e) {
 		data[5] = parseInt(e.data.type);
 		window.REVEALED.push(data);
 		window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		redraw_canvas();
 	}
 	if (e.data.shape == "select") {
@@ -1029,7 +1029,7 @@ function drawing_mouseup(e) {
 		window.ScenesHandler.scene.offsety = offsetY;
 		window.ScenesHandler.scene.snap = "1";
 		window.ScenesHandler.scene.grid = "1";
-		window.ScenesHandler.persist();
+		if(window.DM)window.ScenesHandler.persist();
 		stop_drawing();
 		$("#wizard_popup").empty();
 
@@ -1052,7 +1052,7 @@ function drawing_mouseup(e) {
 					window.ScenesHandler.scene.grid = "0";
 					window.ScenesHandler.scene.fpsq = "5";
 					window.ScenesHandler.scene.grid_subdivided = "0";
-					window.ScenesHandler.persist();
+					if(window.DM)window.ScenesHandler.persist();
 					window.ScenesHandler.reload();
 					$("#wizard_popup").empty().append("You're good to go!! Measurement tool calibrated. Token Snapping Enabled (you can remove it from manual grid data)");
 
@@ -1077,7 +1077,7 @@ function drawing_mouseup(e) {
 						$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 							$("#wizard_popup").remove();
 						});
-						window.ScenesHandler.persist();
+						if(window.DM)window.ScenesHandler.persist();
 						window.ScenesHandler.reload();
 					});
 
@@ -1087,7 +1087,7 @@ function drawing_mouseup(e) {
 						window.ScenesHandler.scene.grid_subdivided = "0";
 						window.ScenesHandler.scene.grid = "0";
 						window.ScenesHandler.scene.fpsq = "10";
-						window.ScenesHandler.persist();
+						if(window.DM)window.ScenesHandler.persist();
 						$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 					});
 
@@ -1302,7 +1302,7 @@ function savePolygon(e) {
 	}
 	redraw_canvas();
 	redraw_drawings();
-	window.ScenesHandler.persist();
+	if(window.DM)window.ScenesHandler.persist();
 	window.MB.sendMessage(
 		isNaN(e.data.type) ?
 			'custom/myVTT/drawing' : 'custom/myVTT/reveal',

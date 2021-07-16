@@ -66,6 +66,8 @@ class MessageBroker {
 			}
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
+				if(window.DM)
+					window.ScenesHandler.persist();
 				redraw_drawings();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
