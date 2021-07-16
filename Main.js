@@ -966,7 +966,7 @@ function init_ui() {
 		const data = {
 			player: window.PLAYER_NAME,
 			img: window.PLAYER_IMG,
-			text: window.DM ? `<div class="d-block"><div>${text}</div><div class="text-center"><button ${window.DM ? `id="${uuid}"` : ""}>Send to Players</button></div></div>` : text,
+			text: text,
 			dmonly: window.DM || false,
 			id: window.DM ? `li_${uuid}` : undefined
 		};

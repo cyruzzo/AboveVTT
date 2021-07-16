@@ -210,21 +210,29 @@ class MessageBroker {
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							found=true;
 							let li =$(this).closest("li");
+							let oldheight=li.height();
 							var newlihtml=self.convertChat(injection_data).html();
-							
-							li.html(newlihtml);
 							if(newlihtml=="")
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
+								
+							li.animate({ opacity: 0 }, 250, function() {
+								li.html(newlihtml);
+								let neweight = li.height();
+								li.height(oldheight);
+								li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
+
+								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
+									let btn = $("<button>Show to Players</button>")
+									li.append(btn);
+									btn.click(() => {
+										li.css("display", "none");
+										delete injection_data.dmonly;
+										self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
+									});
+								}
+							});
 							
-							if(injection_data.dmonly && window.DM){ // ADD THE "Send To Player Buttons"
-								let btn=$("<button>Show to Players</button>")
-								li.append(btn);
-								btn.click( ()=>{
-									li.css("display","none");
-									delete injection_data.dmonly;
-									self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
-								});
-							}
+							
 						}
 					});
 					if(!found){
