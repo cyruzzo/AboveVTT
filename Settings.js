@@ -1,4 +1,23 @@
 
+function b64EncodeUnicode(str) {
+        // first we use encodeURIComponent to get percent-encoded UTF-8,
+        // then we convert the percent encodings into raw bytes which
+        // can be fed into btoa.
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+            function toSolidBytes(match, p1) {
+                return String.fromCharCode('0x' + p1);
+        }));
+    }
+
+function b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        return decodeURIComponent(atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
+    
+
+
 function download(data, filename, type) {
     var file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
@@ -37,6 +56,70 @@ function init_settings(){
 	<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
 	`);
 	$("#input_file").change(import_readfile);
+	const token_settings = [
+		{
+			name: 'hidden',
+			label: 'Hide'
+		},
+		{
+			name: 'square',
+			label: 'Square Token'
+		},
+		{
+			name: 'locked',
+			label: 'Lock Token in Position'
+		},
+		{
+			name: 'disablestat',
+			label: 'Disable HP/AC'
+		},
+		{
+			name: 'hidestat',
+			label: 'Hide HP/AC from players'
+		},
+		{
+			name: 'disableborder',
+			label: 'Disable Border'
+		},
+		{
+			name: 'disableaura',
+			label: 'Disable Aura'
+		},
+		{
+			name: 'revealname',
+			label: 'Show name to players'
+		},
+	];
+
+	settings_panel.append(`
+		<div>
+			<h6>Default Token Options</h6>
+			<div>
+				${token_settings.map(setting => (
+					`
+						<div>
+							<input type='checkbox' name='${setting.name}' ${window.TOKEN_SETTINGS[setting.name] && 'checked'}>
+							<label for='${setting.name}' style='display: inline-block;'>${setting.label}<label/>
+						</div>
+					`
+				)).join('')}
+			</div>
+		</div>
+	`);
+
+	const tokenSettingsHandler = (e) => {
+		const $el = $(e.target);
+		window.TOKEN_SETTINGS[$el.attr('name')] = $el.is(":checked");
+		persist_token_settings(window.TOKEN_SETTINGS);
+	}
+	token_settings.forEach(setting => {
+		$(`#settings-panel input[name='${setting.name}']`).change(tokenSettingsHandler);
+	});	
+}
+
+function persist_token_settings(settings){
+	const gameid = $("#message-broker-client").attr("data-gameId");
+	localStorage.setItem("TokenSettings" + gameid, JSON.stringify(settings));
 }
 
 function export_file(){
@@ -64,7 +147,7 @@ function export_file(){
 	DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
 	
 	DataFile.soundpads=window.SOUNDPADS;
-	download(btoa(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 };
 
 function import_openfile(){
@@ -75,7 +158,17 @@ function import_readfile() {
 	var reader = new FileReader();
 	reader.onload = function() {
 		// DECODE
-		var DataFile=$.parseJSON(atob(reader.result));
+		var DataFile=null;
+		try{
+			var DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
+		}
+		catch{
+			
+		}
+		if(!DataFile){ // pre version 2
+			var DataFile=$.parseJSON(atob(reader.result));
+		}
+		
 		console.log(DataFile);
 		for(i=0;i<DataFile.scenes.length;i++){
 			window.ScenesHandler.scenes.push(DataFile.scenes[i]);

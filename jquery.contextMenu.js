@@ -669,7 +669,10 @@
                         handle.keyStop(e, opt);
                         if (opt.isInput) {
                             if (opt.$selected && !opt.$selected.is('textarea, select')) {
-                                e.preventDefault();
+                                //e.preventDefault();
+                                if (opt.$menu !== null && typeof opt.$menu !== 'undefined') {
+                                    opt.$menu.trigger('contextmenu:hide');
+                                }
                                 return;
                             }
                             break;
@@ -677,6 +680,7 @@
                         if (typeof opt.$selected !== 'undefined' && opt.$selected !== null) {
                             opt.$selected.trigger('mouseup');
                         }
+
                         return;
 
                     case 32: // space

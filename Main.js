@@ -293,8 +293,7 @@ function load_monster_stat(monsterid) {
 						text: "<img width='100%' src='" + imgsrc + "'>",
 					};
 
-					window.MB.sendMessage('custom/myVTT/chat', msgdata);
-					window.MB.handleChat(msgdata);
+					window.MB.inject_chat(msgdata);
 				});
 			}
 
@@ -438,7 +437,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.51 RC1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.0.51</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
@@ -488,8 +487,8 @@ function init_splash() {
 	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
 
 	l1 = ["Max Puplett", "Kevin Morgan", "Clipped Dragon", "Miguel  Garcia Jr.", "Jeff Antis","ZorkFox"];
-	l2 = ["Iain Russell", "Lukas Edelmann", "Oliver", "Jordan Innerarity", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "adam williams", "Chance Russo", "Kris Scott", "Steve Carsella", "Brendan Shane", "Reginald Coupet", "Pucas McDookie", "Jordan Cohen", "Chris Johnson", "Michael Saint Gregory", "Elmer Senson", "Chris Cannon","David William Daniel Thomas","Tom","CritCat (ExpQuest)","Carl Cedarstaff II"];
-	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela", "Martin Brandt", "Julia Hoffmann", "Kristopher McGinnis", "Amata (she_her)", "Alexander Engel", "Fini Plays", "Tommy Girouard-Belhumeur", "nate gonzalez", "Jason Osterbind", "Daniel Villablanca", "William Geisbert", "Adam Nothnagel", "Kat", "Cobalt Blue", "Danny Pellerin", "Cody Vegas Rothwell", "damian tier", "CraftyHobo", "CrazyPitesh", "Milkmann", "aaron hamilton", "Eduardo Villela", "Paul Maloney", "David Meese","Adam Connor","mad4ever","Brad Stack","Liu XxX","Johan Surac","Chris Sells","Tim Newton","Nick champion","Aviad Tal"];
+	l2 = ["Iain Russell", "Lukas Edelmann", "Oliver", "Jordan Innerarity", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "adam williams", "Chance Russo", "Kris Scott", "Steve Carsella", "Brendan Shane", "Reginald Coupet", "Pucas McDookie", "Jordan Cohen", "Chris Johnson", "Michael Saint Gregory", "Elmer Senson", "Chris Cannon","David William Daniel Thomas","Tom","CritCat (ExpQuest)","Carl Cedarstaff II","Renato Villas Boas Medeiros"];
+	l3 = ["Daniel Wall", "Jerome Van Vynckt", "Cameron Warner", "Luis Mirandela", "Martin Brandt", "Julia Hoffmann", "Amata (she_her)", "Alexander Engel", "Fini Plays", "Tommy Girouard-Belhumeur", "nate gonzalez", "Jason Osterbind", "Daniel Villablanca", "William Geisbert", "Adam Nothnagel", "Kat", "Cobalt Blue", "Danny Pellerin", "Cody Vegas Rothwell", "damian tier", "CraftyHobo", "CrazyPitesh", "Milkmann", "aaron hamilton", "Eduardo Villela", "Paul Maloney", "David Meese","Adam Connor","mad4ever","Brad Stack","Johan Surac","Chris Sells","Tim Newton","Nick champion","Aviad Tal","Brahm","Randy Zuendel","M Mustaqim Mustafa","Robert J Correa","Jon Bond","Philip Wert"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -526,64 +525,6 @@ function init_splash() {
 
 
 }
-
-
-function sortGameLog(e) {
-	/*if(Math.abs(Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()) -  $(".GameLog_GameLog__2z_HZ").prop("scrollHeight")) < 500 ){
-		return;	 // DO NOT SORT WHEN AT THE TOP
-	} */
-
-	var prescroll = $(".GameLog_GameLog__2z_HZ").scrollTop();
-	$(".GameLog_GameLog__2z_HZ").scrollTop(0);
-	console.log($(".GameLog_GameLog__2z_HZ").prop("scrollHeight") + "--- " + Math.abs($(".GameLog_GameLog__2z_HZ").scrollTop()));
-	$(".GameLog_GameLogEntries__3oNPD").off('DOMNodeInserted', sortGameLog);
-	try {		
-		
-		var items = $(".GameLog_GameLogEntries__3oNPD").children().sort(
-			function(a, b) {
-				var vA = Date.parse($("time", a).attr('datetime'));
-				var vB = Date.parse($("time", b).attr('datetime'));
-				return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
-			});
-		$(".GameLog_GameLogEntries__3oNPD").append(items);
-
-		// SHOW ELEMENT IF GAMELOG IS HIDDEN
-		cloned_entry = $($(e.target).clone(true));
-		if ($("#hide_rightpanel").attr('data-visible') === "0" && (cloned_entry.find(".DiceMessage_Pending__30N8v").length == 0) && !cloned_entry.is("svg")) {
-			cloned_entry.css("border-radius", "10px 10px 10px 10px");
-			cloned_entry.css("border", "2px solid black");
-			cloned_entry.css("background", "rgba(255,255,255,0.95)");
-			console.log(cloned_entry);
-
-			if ($("#temporary_gamelog").length == 0) {
-				var t = $("<ul id='temporary_gamelog'/>");
-				t.css("position", "fixed");
-				t.css("bottom", "0px");
-				t.css("right", "0px");
-				t.css("width", "340px");
-				//t.css("background","rgba(255,255,255,0.95)");
-				$("body").append(t);
-			}
-
-			$("#temporary_gamelog").append(cloned_entry);
-
-
-			cloned_entry.delay(10000).animate({ opacity: 0 }, 4000, function() {
-				$(this).remove();
-				if ($("#temporary_gamelog").children().length == 0)
-					$("#temporary_gamelog").remove();
-			})
-		}
-
-		$(".GameLog_GameLog__2z_HZ").scrollTop(prescroll);
-	}
-	catch (error) {
-		console.log(error);
-	}
-	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
-}
-
-
 
 // UNIFIED TOKEN HANDLING
 var MYCOBALT_TOKEN = false;
@@ -849,8 +790,7 @@ function open_player_sheet(sheet_url) {
 							img: window.PLAYER_IMG,
 							text: html
 						};
-						window.MB.sendMessage('custom/myVTT/chat', data);
-						window.MB.handleChat(data);
+						window.MB.inject_chat(data);
 
 
 					});
@@ -931,7 +871,7 @@ function init_ui() {
 	window.MONSTERPANEL_LOADED = false;
 	window.BLOCKCONTROLS = false;
 	window.PLAYER_STATS = {};
-
+	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameid)) || {};
 
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
@@ -946,8 +886,6 @@ function init_ui() {
 	$(".sidebar").zIndex(99999);
 	$("#site").children().hide();
 	$(".sidebar__controls").width(340);
-
-	$(".GameLog_GameLogEntries__3oNPD").on('DOMNodeInserted', sortGameLog);
 
 
 	// AGGIUNGI CHAT
@@ -1028,18 +966,17 @@ function init_ui() {
 		const data = {
 			player: window.PLAYER_NAME,
 			img: window.PLAYER_IMG,
-			text: window.DM ? `<div class="d-block"><div>${text}</div><div class="text-center"><button ${window.DM ? `id="${uuid}"` : ""}>Send to Players</button></div></div>` : text,
+			text: text,
 			dmonly: window.DM || false,
 			id: window.DM ? `li_${uuid}` : undefined
 		};
-		window.MB.sendMessage('custom/myVTT/chat', data);
-		window.MB.handleChat(data,true);
-		if (window.DM) {
+		window.MB.inject_chat(data);
+		
+		if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
 			$("#" + uuid).on("click", () => {
 				const newData = {...data, dmonly: false, id: undefined, text: text};
-				window.MB.sendMessage('custom/myVTT/chat', newData);
-				window.MB.handleChat(newData,true);
-				$("#li_" + uuid).remove()
+				window.MB.inject_chat(newData);
+				$(this).remove();
 			});
 		}
 		$(".roll-button").removeClass("show");
@@ -1078,8 +1015,8 @@ function init_ui() {
 				text: text,
 				dmonly: dmonly,
 			};
-			window.MB.sendMessage('custom/myVTT/chat', data);
-			window.MB.handleChat(data,true);
+			window.MB.inject_chat(data);
+			
 		}
 
 	});
