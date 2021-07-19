@@ -707,7 +707,6 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
-	console.log("artcross", e);
 	if (e.data.shape === 'select') {
 		$("#fog_overlay").css("z-index", "50");
 		if (e.which == 1) {

@@ -845,7 +845,6 @@ class Token {
 				let tokID = $(this).attr('data-id');
 				let thisSelected = !($(this).hasClass('tokenselected'));
 				let count = 0;
-				console.log("artqwer", thisSelected, shiftHeld, window.TOKEN_OBJECTS[tokID]);
 				if (shiftHeld == false) {
 					deselect_all_tokens();
 				}
@@ -856,7 +855,6 @@ class Token {
 				}				
 			
 				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
-				console.log("artasdf", thisSelected, shiftHeld, window.TOKEN_OBJECTS[tokID]);
 			
 				for (var id in window.TOKEN_OBJECTS) {
 					var curr = window.TOKEN_OBJECTS[id];
@@ -866,7 +864,6 @@ class Token {
 				}
 			
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
-				console.log("artnumtokens", window.MULTIPLE_TOKEN_SELECTED, count);
 			});
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
