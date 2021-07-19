@@ -318,11 +318,11 @@ function init_controls() {
 
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
-	hider = $("<button id='hide_rightpanel' data-visible=1></button>").click(function() {
+	hider = $("<button id='hide_rightpanel' class='hasTooltip button-icon' data-name='Show/hide sidebar (q)' data-visible=1></button>").click(function() {
 		if ($(this).attr('data-visible') == 1) {
 			$(this).attr('data-visible', 0);
 			$(".sidebar--right").animate({ "right": "-340px" }, 500);
-			$(this).text("<<");
+			$(this).addClass("point-left").removeClass("point-right");
 			if (parseInt($("#sheet").css("right")) >= 0) {
 				$("#sheet").animate({ right: 343 - 340 }, 500);
 			}
@@ -331,48 +331,48 @@ function init_controls() {
 		else {
 			$(this).attr('data-visible', 1);
 			$(".sidebar--right").animate({ "right": "0px" }, 500);
-			$(this).text(">>");
+			$(this).addClass("point-right").removeClass("point-left");
 			if (parseInt($("#sheet").css("right")) >= 0) {
 				$("#sheet").animate({ right: 343 }, 500);
 			}
 		}
 
-	}).text(">>");
+	}).html("<span class='material-icons button-icon'>chevron_right</span>").addClass("point-right");
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'></button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab hasTooltip button-icon' data-name='Gamelog' target='.glc-game-log'></button>").click(switch_control);
 	b1.append('<svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg>');
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
-		b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'></button>").click(switch_control);
+		b2 = $("<button id='switch_characters' class='tab-btn hasTooltip button-icon' data-name='Party' data-target='#pcs_list'></button>").click(switch_control);
 		b2.append("<img src='"+window.EXTENSION_PATH + "assets/icons/character.svg' height='100%;'>");
 		
 		
 		$(".sidebar__controls").append(b2);
-		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'></button>").click(switch_control);
+		b3 = $("<button id='switch_panel' class='tab-btn hasTooltip button-icon' data-name='Monsters' data-target='#monster-panel'></button>").click(switch_control);
 		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
 		init_tokenmenu();
-		b5=$("<button id='switch_tokens' class='tab-btn' data-target='#tokens-panel'></button>");
+		b5=$("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Tokens' data-target='#tokens-panel'></button>");
 		b5.append("<img src='"+window.EXTENSION_PATH + "assets/icons/photo.svg' height='100%;'>");
 		b5.click(switch_control);
 		$(".sidebar__controls").append(b5);
 		
 	}
 	
-	b6 = $("<button id='switch_tokens' class='tab-btn' data-target='#sounds-panel'></button>");
+	b6 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Soundboard' data-target='#sounds-panel'></button>");
 	b6.append("<img src='" + window.EXTENSION_PATH + "assets/icons/speaker.svg' height='100%;'>");
 	b6.click(switch_control);
 	$(".sidebar__controls").append(b6);
 	
-	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'></button>").click(switch_control);
+	b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
 
 	if (DM) {
-		b7 = $("<button id='switch_tokens' class='tab-btn' data-target='#settings-panel'></button>");
+		b7 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Settings' data-target='#settings-panel'></button>");
 		b7.append("<img src='" + window.EXTENSION_PATH + "assets/icons/cog.svg' height='100%;'>");
 		b7.click(switch_control);
 		$(".sidebar__controls").append(b7);
@@ -1164,23 +1164,23 @@ function init_ui() {
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
 
-	zoom_minus = $("<button id='zoom_minus'>-</button>");
-	zoom_minus.click(decrease_zoom)
-	zoom_section.append(zoom_minus);
-
-	zoom_center = $("<button>=</button>");
+	zoom_center = $("<button id='zoom_fit' class='hasTooltip button-icon' data-name='fit screen (0)'><span class='material-icons button-icon'>fit_screen</span></button>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
-	zoom_plus = $("<button id='zoom_plus'>+</button>");
+	zoom_minus = $("<button id='zoom_minus' class='hasTooltip button-icon' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></button>");
+	zoom_minus.click(decrease_zoom)
+	zoom_section.append(zoom_minus);
+
+	zoom_plus = $("<button id='zoom_plus' class='hasTooltip button-icon' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></button>");
 	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
 	if(window.DM) {
-		zoom_section.css("left","-130px");
+		zoom_section.css("left","-136px");
 	}
 	else{
-		zoom_section.css("left","-180px");
+		zoom_section.css("left","-186px");
 	}
 	$(".sidebar__controls").append(zoom_section);
 
@@ -1503,6 +1503,8 @@ $(function() {
 	
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
 	
+	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
+
 	$(".instructions").click(function(){
 		if(campaign_banner.is(":visible"))
 			campaign_banner.hide();

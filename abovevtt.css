@@ -57,6 +57,25 @@ body > button:hover,
     background: #e6e6e6;
 }
 
+.material-icons.md-10 { font-size: 10px; }
+.material-icons.md-12 { font-size: 12px; }
+.material-icons.md-16 { font-size: 16px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-32 { font-size: 32px; }
+.material-icons.md-small{font-size: 100%;}
+
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+.material-icons.button-icon {
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 22px;
+    margin: -3px -5px;
+}
+
 .drawbutton.button-enabled {
     background-image: -webkit-linear-gradient(270deg, #f7a6a6, #ff7777);
     box-shadow: 0 0 12px 0px #f10000;
@@ -295,6 +314,30 @@ div#scene_properties form > div {
     text-shadow: 0px 1px 1px #000;
     visibility: hidden;
     transition: 0.2s ease-in-out 0.5s;
+}
+
+.hasTooltip.button-icon{
+    position: relative;
+}
+
+.hasTooltip.button-icon.point-right span{
+    transform: rotate(0turn);
+    transition: transform 0.3s ease-in-out;
+}
+
+.hasTooltip.button-icon.point-left span{
+    transform: rotate(0.5turn);
+    transition: transform 0.3s ease-in-out;
+}
+
+.hasTooltip.button-icon::after {
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    font-size: 11px;
+    bottom: -24px;
+    transform: translate(-50%);
+    transition: 0.1s ease-in-out 0.2s;
 }
 
 .hasTooltip.VTTToken::after {
@@ -868,7 +911,8 @@ div#scene_properties form > div {
 
 #hide_rightpanel{
 	position: absolute;
-	left: -30px;
+	left: -34px;
+
 }
 
 
