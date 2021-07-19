@@ -584,6 +584,14 @@ div#scene_properties form > div {
     background: #F58231;
 }
 
+.tokenselected {
+    box-shadow: rgb(255 255 255) 0px 0px 16px 12px;
+}
+
+.tokenselected.ui-draggable-disabled {
+    box-shadow: rgb(255 170 170) 0px 0px 13px 11px;
+}
+
 .ac {
     position: absolute;
 }

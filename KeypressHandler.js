@@ -1,4 +1,5 @@
-var altHeld, ctrlHeld, savedSnapState;
+var altHeld, ctrlHeld, shiftHeld = false;
+var savedSnapState;
 
 Mousetrap.bind('c', function () {       //combat tracker
         $('#combat_button').click()
@@ -59,10 +60,7 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 });
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
-    stop_drawing();
-    $(".drawbutton").removeClass('button-enabled button-selected');
-    $(".top_menu").removeClass('visible');
-    $("#fog_overlay").css("z-index", "20");
+    $('#select-button').click();
 });
 
 
@@ -176,6 +174,18 @@ Mousetrap.bind('ctrl', function () {
 Mousetrap.bind('ctrl', function () {
     window.CURRENT_SCENE_DATA.snap = (window.CURRENT_SCENE_DATA.snap == 0 ? 1 : 0);
     ctrlHeld = false;
+}, 'keyup');
+
+Mousetrap.bind('shift', function () {
+    if (shiftHeld) {
+        return;
+    } else {
+        shiftHeld = true;
+    }
+}, 'keydown');
+
+Mousetrap.bind('shift', function () {
+    shiftHeld = false;
 }, 'keyup');
 
 Mousetrap.bind('shift+h', function () {
