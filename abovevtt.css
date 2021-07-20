@@ -594,7 +594,7 @@ div#scene_properties form > div {
     border-radius: 0px;
     padding: 5px;
     border: 5px #c0f3fff5 solid;
-    z-index: 2;
+    z-index: 30;
 }
 
 .tokenselected.ui-draggable-disabled::before{
