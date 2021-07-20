@@ -1,9 +1,11 @@
 
 function create_jitsi_button() {
-	b = $("<button id='jitsi_switch' class='hasTooltip button-icon' data-name='Connect video call'><span class='material-icons button-icon'>video_call</span></button>");
+	b = $("<button id='jitsi_switch' class='hasTooltip button-icon' data-name='Connect video call'><span>VIDEO</span><span class='material-icons button-icon'>video_call</span></button>");
 	b.css("position", "fixed");
-	b.css("bottom", 0);
-	b.css("left", 0);
+	b.css("bottom", "3px");
+	b.css("left", "3px");
+	b.css("gap", "6px");
+	b.css("display", "inline-flex");
 	b.css("z-index", 9999);
 	$("body").append(b);
 
