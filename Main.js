@@ -1393,7 +1393,7 @@ function init_buttons() {
 		
 	}
 
-	buttons.append("<button style='display:inline;' id='help_button'><u>H</u>ELP</button>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
@@ -1533,9 +1533,7 @@ function init_help_menu() {
 				<div class="help-tabs">
 					<ul>
 						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
-						<li><a href="#tab2">Scenes/Maps</a></li>
-						<li><a href="#tab3">Tips & Tricks</a></li>
-						<li><a href="#tab4">FAQ</a></li>
+						<li><a href="#tab2">FAQ</a></li>
 					</ul>
 				</div>
 
@@ -1601,17 +1599,7 @@ function init_help_menu() {
 					</div>
 
 					<div id="tab2">
-					<h3>Second Tab</h3>
-					<p>Content</p>
-					</div>
-				
-					<div id="tab3">
-					<h3>Third Tab</h3>
-					<p>Content</p>
-					</div>
-
-					<div id="tab4">
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true" marginwidth="0" marginheight="0" hspace="0" vspace="0" frameborder="0"></iframe>
+						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true"></iframe>
 					</div>
 					
 				</section>

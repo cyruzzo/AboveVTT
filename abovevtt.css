@@ -974,7 +974,6 @@ body {
     padding: 10px 15px;
     color: rgb(0, 0, 0);
   }
-  /* Active tab */
   
   .help-tabs li:hover {
     background-color: #DDD;
@@ -988,7 +987,6 @@ body {
   .help-tabs li.active a {
     color: inherit;
   }
-  /* Tab content */
   
   .tabs-content {
     display: block;
@@ -1000,18 +998,16 @@ body {
   }
 
   .tabs-content iframe{
-    width: 90vw;
+    width: 830px;
     height: 90vh;
-  }
-
-  iframe body {
-      padding: 0;
+    max-width: 90vw;
+    margin-left: -85px;
+    margin-top: -85px;
   }
   
   .tabs-content IMG {
     margin-right: 10px;
   }
-  /* Hide all but first content div */
   
   .tabs-content div:not(:first-child) {
     display: none;
@@ -1027,6 +1023,7 @@ body {
     color: rgb(0, 0, 0);
     min-width: 8px;
     font-weight: bold;
+    box-shadow: 1px 1px 3px 0px black;
 }
 
 .tabs-content dd {
