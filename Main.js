@@ -346,7 +346,7 @@ function init_controls() {
 	$(".sidebar__controls").append(b1);
 
 	if (DM) {
-		b2 = $("<button id='switch_characters' class='tab-btn hasTooltip button-icon' data-name='Party' data-target='#pcs_list'></button>").click(switch_control);
+		b2 = $("<button id='switch_characters' class='tab-btn hasTooltip button-icon' data-name='Players' data-target='#pcs_list'></button>").click(switch_control);
 		b2.append("<img src='"+window.EXTENSION_PATH + "assets/icons/character.svg' height='100%;'>");
 		
 		
@@ -362,7 +362,7 @@ function init_controls() {
 		
 	}
 	
-	b6 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Soundboard' data-target='#sounds-panel'></button>");
+	b6 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Sounds' data-target='#sounds-panel'></button>");
 	b6.append("<img src='" + window.EXTENSION_PATH + "assets/icons/speaker.svg' height='100%;'>");
 	b6.click(switch_control);
 	$(".sidebar__controls").append(b6);
