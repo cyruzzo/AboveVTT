@@ -501,11 +501,6 @@ class Token {
 			this.build_conditions(old);
 
 			if (this.selected) {
-				if (this.options.locked)
-					old.css("border", "3px solid red");
-				else
-					old.css("border", "3px solid white");
-
 				old.addClass("tokenselected");
 			}
 			else {
@@ -845,6 +840,31 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
+			tok.click(function() {
+				console.log(this);
+				let tokID = $(this).attr('data-id');
+				let thisSelected = !($(this).hasClass('tokenselected'));
+				let count = 0;
+				if (shiftHeld == false) {
+					deselect_all_tokens();
+				}
+				if (thisSelected == true) {
+					$(this).addClass('tokenselected');
+				} else {
+					$(this).removeClass('tokenselected');
+				}				
+			
+				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
+			
+				for (var id in window.TOKEN_OBJECTS) {
+					var curr = window.TOKEN_OBJECTS[id];
+					if (curr.selected == true) {
+						count++;
+					}			
+				}
+			
+				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
+			});
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
@@ -1584,7 +1604,7 @@ function token_menu() {
 	});
 }
 
-function deselect_all_tokens() {
+function deselect_all_tokens(skip_place = false) {
 	if (!window.DM)
 		return;
 	window.MULTIPLE_TOKEN_SELECTED = false;
