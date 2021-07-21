@@ -1464,7 +1464,9 @@ function init_buttons() {
 		stream_button.css("left","-190px");
 	else
 		stream_button.css("left","-240px");
-	$(".sidebar__controls").append(stream_button);
+		
+	if(!$.browser.mozilla) // DISABLE FOR FIREFOX
+		$(".sidebar__controls").append(stream_button);
 	
 }
 
