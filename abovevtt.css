@@ -18,6 +18,7 @@ body > button,
 #add-party,
 #hide_rightpanel,
 #zoom_buttons button,
+.stream_button,
 .GameLogEntry_Message__1GoY3 button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     color: #3d3d3d;

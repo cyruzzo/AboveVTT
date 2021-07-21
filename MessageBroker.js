@@ -1,3 +1,62 @@
+// this shouln't be here...
+
+function mydebounce(func, timeout = 800){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+
+function clearFrame(){
+	let canvas=$("#dicecanvas").get(0);
+	let ctx=canvas.getContext('2d');
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+const delayedClear = mydebounce(() => clearFrame());
+
+function addVideo(stream) {
+	let video = document.createElement("video");
+	video.setAttribute("class", "dicestream");
+	video.width = 1024;
+	video.height = 600;
+	video.autoplay = true;
+	$(video).hide();
+	video.srcObject = stream;
+	document.body.appendChild(video);
+	video.play();
+	
+	let canvas=$("#dicecanvas").get(0);
+	let ctx=canvas.getContext('2d');
+	let updateCanvas=function(){
+		delayedClear();
+		
+		
+		let tmpcanvas = document.createElement("canvas");
+		tmpcanvas.width = 1024;
+		tmpcanvas.height = 600;
+		let tmpctx = tmpcanvas.getContext("2d");
+		tmpctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, 1024, 600);
+		const frame = tmpctx.getImageData(0, 0, 1024, 600);
+
+		for (let i = 0; i < frame.data.length; i += 4) {
+			const red = frame.data[i + 0];
+			const green = frame.data[i + 1];
+			const blue = frame.data[i + 2];
+			if ((red < 24) && (green < 24) && (blue < 24))
+				frame.data[i + 3] = 128;
+			if ((red < 8) && (green < 8) && (blue < 8))
+				frame.data[i + 3] = 0;
+			
+		}
+		ctx.putImageData(frame,0,0);
+		video.requestVideoFrameCallback(updateCanvas);
+	};
+	
+	video.requestVideoFrameCallback(updateCanvas);
+}
+
 class MessageBroker {
 
 
@@ -50,6 +109,8 @@ class MessageBroker {
 				return;
 
 			var msg = $.parseJSON(event.data);
+			console.log(msg.eventType);
+			
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
@@ -151,6 +212,115 @@ class MessageBroker {
 					self.handle_injected_data(msg);
 				}
 			}
+			
+			if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+					return;
+					
+				setTimeout( () => {
+				var peer=window.STREAMPEERS[msg.data.from];
+				peer.addIceCandidate(msg.data.ice);
+				 },500); // ritardalo un po'
+			}
+			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID))
+					return;
+				const configuration = {
+    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+  				};
+				var peer=new RTCPeerConnection(configuration);
+				peer.addEventListener('track', async (event) => {
+					console.log("aggiungo video!!!!");
+				     addVideo(event.streams[0]);
+				});
+				peer.onicecandidate = e => {
+					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
+						to: msg.data.from,
+						from: window.MYSTREAMID,
+						ice: e.candidate
+					})
+				};
+
+				
+				window.STREAMPEERS[msg.data.from]=peer;
+				peer.onconnectionstatechange=() => {
+					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
+						console.log("DELETING PEER "+msg.data.from);
+						delete window.STREAMPEERS[msg.data.from];
+					}
+				};
+				if(window.MYMEDIASTREAM){
+					var stream=window.MYMEDIASTREAM;
+					stream.getTracks().forEach(track => peer.addTrack(track, stream));
+				}
+				peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
+					console.log("fatto setLocalDescription");
+					peer.setLocalDescription(desc);
+					self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+						to: msg.data.from,
+						from: window.MYSTREAMID,
+						offer: desc
+					})
+				});
+			}
+			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+					return;
+				const configuration = {
+    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+  				};
+				var peer=new RTCPeerConnection(configuration);
+				peer.addEventListener('track', async (event) => {
+					addVideo(event.streams[0]);
+				});
+				peer.onicecandidate = e => {
+					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
+						to: msg.data.from,
+						from: window.MYSTREAMID,
+						ice: e.candidate
+					})
+				};
+				
+				window.STREAMPEERS[msg.data.from]=peer;
+				peer.onconnectionstatechange=() => {
+					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
+						console.log("DELETING PEER "+msg.data.from);
+						delete window.STREAMPEERS[msg.data.from];
+					}
+				};
+				if(window.MYMEDIASTREAM){
+					var stream=window.MYMEDIASTREAM;
+					stream.getTracks().forEach(track => peer.addTrack(track, stream));
+				}
+				peer.setRemoteDescription(msg.data.offer);
+				console.log("fatto setRemoteDescription");
+				peer.createAnswer().then( (desc) => {
+					peer.setLocalDescription(desc);
+					console.log("fatto setLocalDescription");
+					
+					window.MB.sendMessage("custom/myVTT/okseethem",{
+						from: window.MYSTREAMID,
+						to: msg.data.from,
+						answer: desc
+					});
+				})
+			}
+			if(msg.eventType == "custom/myVTT/okseethem"){
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+					return;
+				var peer=window.STREAMPEERS[msg.data.from];
+				peer.setRemoteDescription(msg.data.answer);
+				console.log("fatto setRemoteDescription");
+			}
+			
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
 								if (!window.DM)
