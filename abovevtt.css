@@ -895,3 +895,139 @@ audio::-webkit-media-controls-time-remaining-display{
 	position:relative;
 	top: -2px;
 }
+
+#help-overlay{
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999999; /*this seems super over the top but that's what's needed to appear over the combat button. I didn't want to change the z-index for that without checking first*/
+}
+
+#help-container{
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999999; /*this seems super over the top but that's what's needed to appear over the combat button. I didn't want to change the z-index for that without checking first*/
+}
+
+#help-menu-outside{
+    backdrop-filter: saturate(50%) blur(20px);
+    backdrop-filter: hue-rotate(90deg) saturate(30%);
+    backdrop-filter: saturate(30%);
+    backdrop-filter: brightness(30%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#help-menu {
+    max-width: 90vw;
+    max-height: 90vh;
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    /*transform: translate(-50%, -50%);*/
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 3;
+    display: flex;
+    overflow-y: auto;
+}
+
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+  }
+  
+
+  
+  a {
+    text-decoration: none;
+  }
+  
+  .help-tabs {
+      background-color: #f1f1f1;
+      flex: 0 0 auto;
+  }
+
+  .help-tabs ul {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .help-tabs li {
+    display: block;
+    border-width: 1px 0px 1px 1px;
+    margin: -1px;
+    margin-bottom: 0px;
+  }
+  
+  .help-tabs a {
+    display: block;
+    padding: 10px 15px;
+    color: rgb(0, 0, 0);
+  }
+  
+  .help-tabs li:hover {
+    background-color: #DDD;
+  }
+
+  .help-tabs li.active {
+    background-color: #CCC;
+    color: rgb(0, 0, 0);
+  }
+  
+  .help-tabs li.active a {
+    color: inherit;
+  }
+  
+  .tabs-content {
+    display: block;
+    top: 0;
+    border: 1px solid #34495E;
+    padding: 10px;
+    margin-top: -1px;
+    overflow: auto;
+  }
+
+  .tabs-content iframe{
+    width: 830px;
+    height: 90vh;
+    max-width: 90vw;
+    margin-left: -85px;
+    margin-top: -85px;
+  }
+  
+  .tabs-content IMG {
+    margin-right: 10px;
+  }
+  
+  .tabs-content div:not(:first-child) {
+    display: none;
+  }
+
+.tabs-content dt {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    padding: 1px 3px;
+    border-radius: 2px;
+    background-color: rgb(180, 173, 209);
+    color: rgb(0, 0, 0);
+    min-width: 8px;
+    font-weight: bold;
+    box-shadow: 1px 1px 3px 0px black;
+}
+
+.tabs-content dd {
+    display: inline-block;
+    margin: 0 0 0 5px;
+}

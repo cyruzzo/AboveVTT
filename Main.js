@@ -1206,7 +1206,6 @@ function init_ui() {
 	token_menu();
 
 
-
 	window.WaypointManager=new WaypointManagerClass();
 
 	init_spells();
@@ -1285,6 +1284,8 @@ function init_ui() {
 	});
 
 	init_mouse_zoom()
+
+	init_help_menu();
 }
 
 function init_buttons() {
@@ -1409,6 +1410,8 @@ function init_buttons() {
 		
 	}
 
+	buttons.append("<button style='display:inline;width:75px' id='help_button'>HELP</button>");
+
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
@@ -1418,7 +1421,6 @@ function init_buttons() {
 	draw_menu.find(".coloroption").first().click();
 
 	setup_draw_buttons();
-	
 	// HIDE default SEND TO functiontality in the campaign page:
 	
 	$(".GameLogHeader_Container__36cXS").hide();
@@ -1584,3 +1586,107 @@ $(function() {
 		});
 });
 
+
+function init_help_menu() {
+	$('body').append(`
+		<div id="help-container">
+			<div id="help-menu-outside"></div>
+			<div id="help-menu">
+				<div class="help-tabs">
+					<ul>
+						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
+						<li><a href="#tab2">FAQ</a></li>
+					</ul>
+				</div>
+
+				<section class="tabs-content">
+					<div id="tab1">
+						<h3>Keyboard Shortcuts</h3>
+						<dl>
+							<dt>SPACE</dt>
+							<dd>Show/hide character sheet (players only)</dd>
+						<dl>
+						<dl>
+							<dt>Q</dt>
+							<dd>Show/hide sidebar</dd>
+						<dl>
+						<dl>
+							<dt>ESC</dt>
+							<dd>Cancel button selections</dd>
+						<dl>
+						<dl>
+							<dt>S</dt>
+							<dd>Select tool</dd>
+						<dl>
+						<dl>
+							<dt>R</dt>
+							<dd>Ruler</dd>
+						<dl>
+						<dl>
+							<dt>F</dt>
+							<dd>Fog menu</dd>
+						<dl>
+						<dl>
+							<dt>D</dt>
+							<dd>Draw tool</dd>
+						<dl>
+						<dl>
+							<dt>C</dt>
+							<dd>Combat tracker</dd>
+						<dl>
+						<dl>
+							<dt>N</dt>
+							<dd>Next creature (if combat tracker is open)</dd>
+						<dl>
+						<dl>
+							<dt>-</dt>
+							<dd>Zoom out</dd>
+						<dl>
+						<dl>
+							<dt>=</dt>
+							<dd>Zoom in</dd>
+						<dl>
+						<dl>
+							<dt>CTRL (held)</dt>
+							<dd>Temporarily toggle grid snapping</dd>
+						<dl>
+						<dl>
+							<dt>ALT (held)</dt>
+							<dd>Temporarily activate ruler</dd>
+						<dl>
+						<dl>
+							<dt>UP/DOWN arrows</dt>
+							<dd>Will cycle through fog & draw options if menu open</dd>
+						<dl>
+					</div>
+
+					<div id="tab2">
+						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true"></iframe>
+					</div>
+					
+				</section>
+			</div>
+		</div>
+	`);
+
+	$('#help-container').fadeOut(0);
+
+	$(function() {
+        $('.help-tabs a').on('click', function() {
+        $('.help-tabs li').removeClass('active');
+        $(this).parent().addClass('active');
+        let currentTab = $(this).attr('href');
+        $('.tabs-content div').hide();
+        $(currentTab).show();
+        return false;
+        });
+    });
+
+	$('#help-menu-outside').on('click', function() {
+		$('#help-container').fadeOut(200);
+	});
+
+	$("#help_button").click(function(e) {
+		$('#help-container').fadeIn(200);
+	});
+}
