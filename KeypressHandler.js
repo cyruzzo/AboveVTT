@@ -47,7 +47,8 @@ Mousetrap.bind('-', function () {       //zoom minus
     $('#zoom_minus').click()
 });
 
-Mousetrap.bind('space', function () {     //collapse/show character sheet
+Mousetrap.bind('space', function (e) {     //collapse/show character sheet
+	e.preventDefault();
     if(!window.DM) {    
         $('#sheet_button').click()
     }
