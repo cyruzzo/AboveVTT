@@ -1100,9 +1100,8 @@ function init_ui() {
 		//	deselect_all_tokens();
 	});*/
 	fog.on("mousedown", function(e) {
-		if (e.button == 0 && shiftHeld == false) {
+		if (e.button == 0)
 			deselect_all_tokens();
-		}
 	});
 
 	window.ZOOM = 1.0;
