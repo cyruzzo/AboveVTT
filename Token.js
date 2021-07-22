@@ -974,6 +974,13 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 				options.color = "#" + TOKEN_COLORS[(count - 1) % 54];
 			}
 		}
+
+		// if there are custom images defined, use those instead of the default DDB image
+		let customImgs = get_custom_monster_images($(e.target).attr('data-stat'));
+		if (customImgs != undefined && customImgs.length > 0) {
+			let randomIndex = getRandomInt(0, customImgs.length);
+			options.imgsrc = customImgs[randomIndex];
+		}
 	}
 
 	if (typeof $(e.target).attr('data-color') !== "undefined") {
@@ -1168,8 +1175,12 @@ function token_inputs(opt) {
 
 		
 		tok.options.name = data.name;
-		
-		
+
+		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
+			tok.options.imgsrc = parse_img(opt.imgsrcSelection);
+		} else {
+			tok.options.imgsrc = parse_img(data.imgsrc);
+		}
 
 		if (data.token_square) {
 			tok.options.square = true;
@@ -1336,7 +1347,31 @@ function token_menu() {
 						custom_cond_items[command].selected = true;
 					}
 				}
-
+				
+				// build a submenu in case there are multiple custom images defined
+				let customImages = get_custom_monster_images(window.TOKEN_OBJECTS[id].options.monster);
+				var customImageSelectorOptions = {
+					imgsrc: {
+						type: 'text',
+						name: 'Custom Image',
+						value: window.TOKEN_OBJECTS[id].options.imgsrc,
+						events: {
+							click: function(e) {
+								$(e.target).select();
+							}
+						}
+					}
+				};
+				for (let i = 0; i < customImages.length; i++) { 
+					let iconUrl = customImages[i];
+					customImageSelectorOptions['imgsrcSelect'+i] = { 
+						name: '<img class="custom-token-image-menu-item-img" src="' + iconUrl + '" />', 
+						isHtmlName: true,
+						callback: function(key, opt){
+							opt.imgsrcSelection = iconUrl;
+						}
+					}
+				}
 
 				ret = {
 					callback: menu_callback,
@@ -1533,6 +1568,7 @@ function token_menu() {
 								}
 							}
 						},
+						sep3: '----------',
 						imgsrc: {
 							type: 'text',
 							name: 'Custom Image',
@@ -1543,7 +1579,11 @@ function token_menu() {
 								}
 							}
 						},
-						sep3: '----------',
+						imgsrcSelect: {
+							name: "Change Image",
+							items: customImageSelectorOptions
+						},
+						sep4: '----------',
 						helptext: {
 							name: 'Player HP/conditions must be set in character sheet',
 							className: 'context-menu-helptext',
@@ -1564,6 +1604,14 @@ function token_menu() {
 					delete ret.items.options.items.token_revealname;
 				}
 				
+				if (customImages.length <= 1) {
+					// only show the image select if there are multiple images to choose from
+					delete ret.items.imgsrcSelect;
+				} else {
+					// remove imgsrc from the main menu. It is now in the imgsrcSelect submenu
+					delete ret.items.imgsrc;
+				}
+				
 				if(!window.DM){
 					delete ret.items.view;
 					delete ret.items.token_combat;
@@ -1576,6 +1624,7 @@ function token_menu() {
 					delete ret.items.delete;
 					delete ret.items.name;
 					//delete ret.items.imgsrc;
+					delete ret.items.imgsrcSelect;
 				}
 
 				return ret;
@@ -1665,3 +1714,159 @@ function setTokenAuras (token, options) {
 		token.parent().find("#aura_" + tokenId).remove();
 	}
 }
+
+
+function build_token_image_map_menu() {
+	// setup context menu for custom token image mapping
+	$.contextMenu({
+		selector: '#custom-img-src-anchor',
+		events: {
+			hide: custom_image_menu_callback
+		},
+		build: function($trigger, e) {
+			// $trigger is the "#custom-img-src-anchor" element that we injected in MonsterPanel.js
+			// grab the monsterId from that element, and any custom images that may have already been defined
+			let monsterId = $trigger.data('monster-id');
+			let customImages = get_custom_monster_images(monsterId);
+			var imageItems = { };
+			if (customImages != undefined && customImages.length > 0) {
+				// the user has custom token images defined. Add them all as separate menu items each with their own "Remove" and "Copy Url" subitems
+				for (let i = 0; i < customImages.length; i++) { 
+					let iconUrl = customImages[i];
+					imageItems['imgsrc'+i] = { 
+						name: '<img class="custom-token-image-menu-item-img" src="' + iconUrl + '" />', 
+						isHtmlName: true,
+						value: iconUrl, 
+						items: {
+							remove: {
+								name: "Remove",
+								callback: function(key, opt){
+									remove_custom_token_image(monsterId, i);
+									opt.didRemove = true;
+								}
+							},
+							copy: {
+								name: "Copy Url",
+								callback: function(key, opt){
+									copy_to_clipboard(iconUrl);
+								}
+							}
+						}
+					};
+				}
+
+				// add a way to add more images. If there are more than 1 image defined, they will be chosen at random when placing them on the scene
+				imageItems["addNew"] = {
+					name: "Add Another Default Image",
+					type: "text"
+				};
+
+				// also add an easy way to reset to the default DDB image
+				imageItems["reset"] = { 
+					name: "Reset to Default",
+					callback: function(key, opt){
+						opt.didReset = true;
+						// clear all custom images from the mapping for this monster
+						remove_all_custom_token_images(monsterId);
+					}
+				};
+
+			} else {
+
+				// There are no custom images defined. Add a way to replace the default DDB image
+				imageItems["addNew"] = {
+					name: "Replace The Default Image",
+					type: "text"
+				};
+
+			}
+
+			return {
+				className: 'custom-token-image-menu',
+				items: imageItems
+			};
+		}
+	});
+}
+
+function get_custom_monster_images(monsterId) {
+	if (monsterId == undefined) {
+		return [];
+	}
+	if (window.CUSTOM_TOKEN_IMAGE_MAP == undefined) {
+		load_custom_image_mapping();
+	}
+	var customImages = window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
+	if (customImages == undefined) {
+		customImages = [];
+	}
+	return customImages;
+}
+
+function add_custom_image_mapping(monsterId, imgsrc) {
+	if (monsterId == undefined) {
+		return;
+	}
+	var customImages = get_custom_monster_images(monsterId);
+	customImages.push(imgsrc);
+	window.CUSTOM_TOKEN_IMAGE_MAP[monsterId] = customImages;
+	save_custom_image_mapping();
+}
+
+function remove_custom_token_image(monsterId, index) {
+	var customImages = get_custom_monster_images(monsterId);;
+	if (customImages.length > index) {
+		window.CUSTOM_TOKEN_IMAGE_MAP[monsterId].splice(index, 1);
+	}
+	save_custom_image_mapping();
+}
+
+function remove_all_custom_token_images(monsterId) {
+	delete window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
+	save_custom_image_mapping();
+}
+
+function load_custom_image_mapping() {
+	window.CUSTOM_TOKEN_IMAGE_MAP = {};
+	let customMappingData = localStorage.getItem('CustomDefaultTokenMapping');
+	if(customMappingData != null){
+		window.CUSTOM_TOKEN_IMAGE_MAP = $.parseJSON(customMappingData);
+	}
+}
+
+function save_custom_image_mapping() {
+	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
+	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
+	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { "17100": [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
+}
+
+function custom_image_menu_callback(opt) {
+	if (opt.didReset) {
+		// all custom images hav been removed. Nothing else to do.
+		return;
+	}
+	if (opt.didRemove) {
+		// a single image was removed. reopen the menu after it has had time to fully close
+		setTimeout(function(){ 
+			$('#custom-img-src-anchor').contextMenu();
+		}, 200);	
+		return;
+	}
+	
+	var data = $.contextMenu.getInputValues(opt, $(this).data());
+	if (data.addNew != undefined && data.addNew.length > 0) {
+		// a new image was added. save it
+		add_custom_image_mapping(data.monsterId, data.addNew);
+		setTimeout(function(){ 
+			$('#custom-img-src-anchor').contextMenu();
+		 }, 200);
+	}
+}
+
+function copy_to_clipboard(text) {
+	var $temp = $("<input>");
+	$("body").append($temp);
+	$temp.val(text).select();
+	document.execCommand("copy");
+	$temp.remove();
+};

@@ -1204,6 +1204,8 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
+	build_token_image_map_menu();
+	load_custom_image_mapping();
 
 
 	window.WaypointManager=new WaypointManagerClass();
