@@ -93,7 +93,7 @@ function init_settings(){
 
 	settings_panel.append(`
 		<div>
-			<h6>Default Token Options</h6>
+			<h6>Default Options for newly created Tokens</h6>
 			<div>
 				${token_settings.map(setting => (
 					`
