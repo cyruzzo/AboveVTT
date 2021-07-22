@@ -1150,8 +1150,8 @@ function token_inputs(opt) {
 		tok.options.aura2.color = data.aura2Color;
 	}
 	tok.options.auraVisible = data.auraVisible;
-
-
+	
+	tok.options.imgsrc = parse_img(data.imgsrc);
 
 	if (window.DM) {
 		if (is_monster) {
@@ -1169,7 +1169,7 @@ function token_inputs(opt) {
 		
 		tok.options.name = data.name;
 		
-		tok.options.imgsrc = parse_img(data.imgsrc);
+		
 
 		if (data.token_square) {
 			tok.options.square = true;
@@ -1568,14 +1568,14 @@ function token_menu() {
 					delete ret.items.view;
 					delete ret.items.token_combat;
 					delete ret.items.token_hidden;
-					delete ret.items.token_size;
+					//delete ret.items.token_size;
 					delete ret.items.options;
 					delete ret.items.sep1;
 					delete ret.items.hp;
 					delete ret.items.max_hp;
 					delete ret.items.delete;
 					delete ret.items.name;
-					delete ret.items.imgsrc;
+					//delete ret.items.imgsrc;
 				}
 
 				return ret;
