@@ -1,3 +1,7 @@
+
+function init_keypress_handler(){
+	
+	
 var altHeld, ctrlHeld, savedSnapState;
 
 Mousetrap.bind('c', function () {       //combat tracker
@@ -183,3 +187,5 @@ Mousetrap.bind('shift+h', function () {
     $('#scene_selector_toggle, #combat_button, #measure-button, #fog_button, #draw_button, #select-button, #zoom_buttons, #hide_rightpanel').toggle();
     $("button:contains('CONNECT VIDEO')").toggle();
 });
+
+}

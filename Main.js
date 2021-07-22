@@ -1468,10 +1468,15 @@ function init_buttons() {
 		stream_button.css("left","-240px");
 	
 	stream_button.css("background","yellow");
-	setTimeout(() => stream_button.click(), 5000 );
 	
-	if(!$.browser.mozilla) // DISABLE FOR FIREFOX
+	
+	if(!$.browser.mozilla){ // DISABLE FOR FIREFOX
 		$(".sidebar__controls").append(stream_button);
+		setTimeout(() => stream_button.click(), 5000 );
+	}
+		
+		
+	init_keypress_handler();
 	
 }
 
