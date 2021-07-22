@@ -389,9 +389,9 @@ div#scene_properties form > div {
 	padding-top:20px;
     font-size: 9px;
  
-   -webkit-column-count: 4;
-      -moz-column-count: 4;
-           column-count: 4;
+   -webkit-column-count: 5;
+      -moz-column-count: 5;
+           column-count: 5;
 
    -webkit-column-gap: 20px;
       -moz-column-gap: 20px;
