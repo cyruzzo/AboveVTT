@@ -32,7 +32,7 @@ function init_jitsi() {
 
 
 	gameid = $("#message-broker-client").attr("data-gameId");
-	const domain = 'meet.jit.si';
+	const domain = 'https://voice.kimchicat.se/qf9uqxtgd7beuuexhz4s5f1lfp4iobng';
 	const options = {
 		roomName: 'aboveVTT-' + gameid,
 		width: '100%',
