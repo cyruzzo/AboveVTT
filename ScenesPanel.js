@@ -139,6 +139,8 @@ function edit_scene_dialog(scene_id) {
 	manual.append($("<div><div style='display:inline-block; width:30%'>Foot per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10ft</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Player Map Offset X</div><div style='display:inline-block;width:70%;'><input name='player_map_offset_x'> px</div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Player Map Offset Y</div><div style='display:inline-block;width:70%;'><input name='player_map_offset_y'> px</div></div>"));
 	manual.hide();
 
 	manual.find("input").each(function() {
@@ -1014,6 +1016,17 @@ function fill_importer(scene_set, start) {
 				$("#scene_properties input[name='grid_subdivided']").val(scene.grid_subdivided);
 			if (typeof scene.scale_factor !== "undefined")
 				$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
+			if (typeof scene.player_map_offset_x !== "undefined") {
+				$("#scene_properties input[name='player_map_offset_x']").val(scene.player_map_offset_x);
+			} else {
+				$("#scene_properties input[name='player_map_offset_x']").val(0);
+			}
+			if (typeof scene.player_map_offset_y !== "undefined") {
+				$("#scene_properties input[name='player_map_offset_y']").val(scene.player_map_offset_y);
+			} else {
+				$("#scene_properties input[name='player_map_offset_y']").val(0);
+			}
+				
 
 			$("#mega_importer").remove();
 		});

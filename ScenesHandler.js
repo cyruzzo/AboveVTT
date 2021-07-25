@@ -58,6 +58,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		scene.hpps = parseFloat(scene.hpps);
 		scene.offsetx = parseFloat(scene.offsetx);
 		scene.offsety = parseFloat(scene.offsety);
+		scene.player_map_offset_x = parseFloat(scene.player_map_offset_x);
+		scene.player_map_offset_y = parseFloat(scene.player_map_offset_y);
 
 		// CALCOLI DI SCALA non dovrebbero servire piu''
 		scene['scale'] = (60.0 / parseInt(scene['hpps'])) * 100; // for backward compatibility, this will be horizonat scale
@@ -192,6 +194,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		data.grid_subdivded = window.CURRENT_SCENE_DATA.grid_subdivided;
 		data.offsetx = window.CURRENT_SCENE_DATA.offsetx;
 		data.offsety = window.CURRENT_SCENE_DATA.offsety;
+		data.player_map_offset_x = window.CURRENT_SCENE_DATA.player_map_offset_x;
+		data.player_map_offset_y = window.CURRENT_SCENE_DATA.player_map_offset_y;
 
 		data.map = this.scene.player_map;
 		data.width = $("#scene_map").width();
@@ -460,7 +464,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						fog_of_war: "0",
 						thumb: thumb,
 						tokens: {},
-						reveals: [],
+						reveals: []
 					});
 
 				});
@@ -544,6 +548,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				offsetx: 0,
 				offsety: 0,
 				reveals: [[0, 0, 0, 0, 2, 0]],
+				player_map_offset_x: 0,
+				player_map_offset_y: 0
 			});
 			this.current_scene_id = 0;
 		}

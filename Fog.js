@@ -367,6 +367,27 @@ function circle_intersection(x0, y0, r0, x1, y1, r1) {
 }
 
 function reset_canvas() {
+
+	if (!window.DM) {
+		 // only offset the player map
+		let offsetX = "0px";
+		if (CURRENT_SCENE_DATA.player_map_offset_x != undefined) {
+			offsetX = CURRENT_SCENE_DATA.player_map_offset_x + "px";
+		}
+		let offsetY = "0px";
+		if (CURRENT_SCENE_DATA.player_map_offset_y != undefined) {
+			offsetY = CURRENT_SCENE_DATA.player_map_offset_y + "px";
+		}
+		$('#fog_overlay').css("top", offsetY);
+		$('#fog_overlay').css("left", offsetX);
+		$('#grid_overlay').css("top", offsetY);
+		$('#grid_overlay').css("left", offsetX);
+		$('#draw_overlay').css("top", offsetY);
+		$('#draw_overlay').css("left", offsetX);
+		$('#draw_overlay').css("top", offsetY);
+		$('#draw_overlay').css("left", offsetX);
+	}
+
 	$('#fog_overlay').width($("#scene_map").width());
 	$('#fog_overlay').height($("#scene_map").height());
 
