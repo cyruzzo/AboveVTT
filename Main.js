@@ -1470,7 +1470,9 @@ function init_buttons() {
 }
 
 function init_stream_button() {
-	var stream_button = $("<button id='stream_button'>STREAM</button>");
+	var stream_button = $("<button id='stream_button'></button>");
+	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
+	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
 
 	stream_button.click(() => {
 		if (!window.JOINTHEDICESTREAM) {
