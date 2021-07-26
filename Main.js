@@ -437,7 +437,7 @@ function init_splash() {
 	cont.css('z-index', 999);
 	cont.css('border', '3px solid black');
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.52RC1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.52RC2</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
@@ -652,7 +652,12 @@ function open_player_sheet(sheet_url) {
 		
 		// DICE STREAMING ?!?!
 		if(!window.DM){
-			window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream();
+			let firstTime=false;
+			if(!window.MYMEDIASTREAM)
+				firstTime=true;
+			window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream(0);
+			
+			
 			if(window.JOINTHEDICESTREAM){
 				// we should tear down and reconnect
 				for(let i in window.STREAMPEERS){
@@ -660,6 +665,10 @@ function open_player_sheet(sheet_url) {
 					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
 				}
 			}
+			
+			if(firstTime)
+				$("#stream_button").click();
+				
 		}
 
 		// CHARACTER
@@ -851,6 +860,11 @@ function open_player_sheet(sheet_url) {
 				}, 500);
 
 				container.css('width', '1030');
+				
+				if(window.STREAMTASK){
+					clearInterval(window.STREAMTASK);
+					window.STREAMTASK=false;
+				}
 
 				return;
 			}
@@ -860,6 +874,15 @@ function open_player_sheet(sheet_url) {
 			if(window.JOINTHEDICESTREAM){
 				iframe.contents().find(".dice-rolling-panel__container").get(0).height=600;
 				iframe.contents().find(".dice-rolling-panel__container").height(600);
+				
+				if(!window.STREAMTASK){
+						window.STREAMTASK=setInterval(() => {
+							if(window.MYMEDIASTREAM.requestFrame)
+								window.MYMEDIASTREAM.requestFrame(); // Firefox :( 
+							else
+							window.MYMEDIASTREAM.getVideoTracks()[0].requestFrame(); // Chrome :|
+						} ,1000 / 30)
+				}
 			}
 			
 			iframe.height(container.height() - 20);
@@ -892,6 +915,15 @@ function init_ui() {
 
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
+	
+	
+	
+	
+
+
+
+	
+	
 
 	if (DM) {
 		window.ScenesHandler = new ScenesHandler(gameid);
@@ -1168,7 +1200,7 @@ function init_ui() {
 
 
 	init_buttons();
-	
+	init_stream_button();
 
 	if (!window.DM) {
 
@@ -1431,53 +1463,51 @@ function init_buttons() {
 	window.MYSTREAMID=uuid();
 	window.JOINTHEDICESTREAM=false;
 	
-	var dicecanvas=$("<canvas id='dicecanvas' width=1024 height=600 />");
-	dicecanvas.css("width","1024");
-	dicecanvas.css("height","600");
-	//dicecanvas.css("opacity",0.5);
-	dicecanvas.css("position","fixed");
-	dicecanvas.css("top","100px");
-	dicecanvas.css("right","340px");
-	dicecanvas.css("z-index",9000);
-	dicecanvas.css("touch-action","none");
-	dicecanvas.css("pointer-events","none");
-	$("#site").append(dicecanvas);
-	
-	var stream_button=$("<button>STREAM</button>");
-	
-	stream_button.click(() => {
-		if(!window.JOINTHEDICESTREAM){
-			window.JOINTHEDICESTREAM=true;
-			window.MB.sendMessage("custom/myVTT/wannaseemydicecollection",{from:window.MYSTREAMID});
-			stream_button.css("background","red");
-		}
-		else{
-			window.JOINTHEDICESTREAM=false;
-			for(let i in window.STREAMPEERS){
-				window.STREAMPEERS[i].close();
-				delete window.STREAMPEERS[i];
-				stream_button.css("background","");
-			}
-		}
-	});
-	stream_button.addClass("stream_button");
-	stream_button.css("position","absolute");
-	if(window.DM)
-		stream_button.css("left","-190px");
-	else
-		stream_button.css("left","-240px");
-	
-	stream_button.css("background","yellow");
-	
-	
-	if(!$.browser.mozilla){ // DISABLE FOR FIREFOX
-		$(".sidebar__controls").append(stream_button);
-		setTimeout(() => stream_button.click(), 5000 );
-	}
-		
+			
 		
 	init_keypress_handler();
 	
+}
+
+function init_stream_button() {
+	var stream_button = $("<button id='stream_button'></button>");
+	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
+	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
+
+	stream_button.click(() => {
+		if (!window.JOINTHEDICESTREAM) {
+			window.JOINTHEDICESTREAM = true;
+			window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
+			stream_button.css("background", "red");
+		}
+		else {
+			window.JOINTHEDICESTREAM = false;
+			stream_button.css("background", "");
+			for (let i in window.STREAMPEERS) {
+				window.STREAMPEERS[i].close();
+				delete window.STREAMPEERS[i];
+			}
+			$(".streamer-canvas").remove();
+		}
+	});
+	stream_button.addClass("stream_button");
+	stream_button.css("position", "absolute");
+	if (window.DM)
+		stream_button.css("left", "-190px");
+	else
+		stream_button.css("left", "-240px");
+
+	stream_button.css("background", "yellow");
+
+	if (!$.browser.mozilla) { // DISABLE FOR FIREFOX
+		$(".sidebar__controls").append(stream_button);
+		if(window.DM){
+			setTimeout( () => {stream_button.click()} , 5000); 
+		}
+	}
+	
+	
+
 }
 
 
