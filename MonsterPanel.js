@@ -24,7 +24,34 @@ function init_monster_panel() {
 
 		var list = $(event.target).contents().find(".monster-listing__body");
 
+		// prevent right click menu on the monster image so we can use our own custom menu
+		list.on("contextmenu", ".monster-row__cell--avatar", function(e) {
+			e.preventDefault();
+		});
 
+		// present our own custom monster image menu
+		list.on("mousedown", ".monster-row__cell--avatar", function(e) {
+
+			e.stopPropagation();
+			e.target = this; // hack per passarlo a token_button
+
+			let monsterImage = $(this);
+			let monsterid = monsterImage.parent().parent().attr('id').replace("monster-row-", "");
+			let ogImgSrc = monsterImage.find('img').attr('src');
+
+			if ($.find("#custom-img-src-anchor").length == 0) {
+				// contextMenu doesn't seem to be able to use elements inside the monster panel iframe so
+				// inject an element outside of the monster panel iframe
+				// then display a contextMenu from that point.
+				$('<span id="custom-img-src-anchor" style="position:absolute;" />').insertBefore(panel);
+			}
+			$("#custom-img-src-anchor").css("top", e.pageY + "px");
+			$("#custom-img-src-anchor").data("monster-id", monsterid);
+			$("#custom-img-src-anchor").data("monster-og-img-src", ogImgSrc);
+
+			// open our context menu
+			$("#custom-img-src-anchor").contextMenu();
+		});
 
 		list.on("contextmenu", "button.monster-row__add-button", function(e) {
 			e.preventDefault();
