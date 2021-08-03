@@ -339,8 +339,9 @@ class Token {
 			}
 
 			for (let i = 0; i < this.options.custom_conditions.length; i++) {
-				const conditionName = this.options.custom_conditions[i];
-				const conditionSymbolName = conditionName.replaceAll(' ','_').toLowerCase();
+				//Security logic to prevent HTML/JS from being injected into condition names.
+				const conditionName = DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []});
+				const conditionSymbolName = DOMPurify.sanitize( conditionName.replaceAll(' ','_').toLowerCase(),{ALLOWED_TAGS: []});
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
