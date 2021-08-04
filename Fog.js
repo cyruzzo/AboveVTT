@@ -995,6 +995,7 @@ function drawing_mouseup(e) {
 
 		redraw_canvas();
 		console.log("READY");
+		draw_selected_token_bounding_box();
 	}
 	if (e.data.shape == "measure") {
 
