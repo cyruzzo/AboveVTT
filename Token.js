@@ -501,11 +501,6 @@ class Token {
 			this.build_conditions(old);
 
 			if (this.selected) {
-				if (this.options.locked)
-					old.css("border", "3px solid red");
-				else
-					old.css("border", "3px solid white");
-
 				old.addClass("tokenselected");
 			}
 			else {
@@ -845,6 +840,32 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
+			tok.find(".token-image").click(function() {
+				//console.log(this);
+				let parentToken = $(this).parent(".VTTToken");
+				let tokID = parentToken.attr('data-id');
+				let thisSelected = !(parentToken.hasClass('tokenselected'));
+				let count = 0;
+				if (shiftHeld == false) {
+					deselect_all_tokens();
+				}
+				if (thisSelected == true) {
+					parentToken.addClass('tokenselected');
+				} else {
+					parentToken.removeClass('tokenselected');
+				}				
+
+				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
+
+				for (var id in window.TOKEN_OBJECTS) {
+					var curr = window.TOKEN_OBJECTS[id];
+					if (curr.selected == true) {
+						count++;
+					}			
+				}
+
+				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
+			});
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}

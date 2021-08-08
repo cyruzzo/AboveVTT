@@ -1,8 +1,11 @@
+var altHeld = false;
+var ctrlHeld = false;
+var shiftHeld = false;
+var savedSnapState;
+
 
 function init_keypress_handler(){
-	
-	
-var altHeld, ctrlHeld, savedSnapState;
+
 
 Mousetrap.bind('c', function () {       //combat tracker
         $('#combat_button').click()
@@ -68,6 +71,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     $(".drawbutton").removeClass('button-enabled button-selected');
     $(".top_menu").removeClass('visible');
     $("#fog_overlay").css("z-index", "20");
+    $('#select-button').click();
 });
 
 
@@ -165,6 +169,20 @@ Mousetrap.bind('alt', function () {
         $('#measure-button').click()
     }
     altHeld = false;
+}, 'keyup');
+
+
+
+Mousetrap.bind('shift', function () {
+    if (shiftHeld == true) {
+        return;
+    } else {
+        shiftHeld = true;
+    }
+}, 'keydown');
+
+Mousetrap.bind('shift', function () {
+    shiftHeld = false;
 }, 'keyup');
 
 
