@@ -206,6 +206,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	del=$("<button style='font-size:8px;'>DEL</button>");
 	del.click(
 		function(){
+			if($(this).parent().parent().attr("data-current")=="1"){
+				$("#combat_next_button").click();
+			}
 			$(this).parent().parent().remove();
 			ct_persist();
 		}
