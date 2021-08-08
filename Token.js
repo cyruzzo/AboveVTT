@@ -1087,7 +1087,12 @@ function menu_callback(key, options, event) {
 		delete window.ScenesHandler.scene.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
-		$("#combat_area tr[data-target='"+id+"']").remove(); // delete token from the combat tracker if it's there
+		if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
+			if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
+				$("#combat_next_button").click();
+			}
+			$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
+		}
 		ct_persist();
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
@@ -1334,8 +1339,13 @@ function multiple_callback(key, options, event) {
 			delete window.TOKEN_OBJECTS[id];
 			$("#aura_" + id.replaceAll("/", "")).remove();
 			
-			$("#combat_area tr[data-target='"+id+"']").remove(); // delete token from the combat tracker if it's there
-			draw_selected_token_bounding_box(); // clean up the rotation if needed
+			if($("#combat_area tr[data-target='"+id+"']").length>0){
+				if( $("#combat_area tr[data-target='"+id+"']").attr('data-current')=="1"){
+					$("#combat_next_button").click();
+				}
+				$("#combat_area tr[data-target='"+id+"']").remove(); // delete token from the combat tracker if it's there
+			}
+      draw_selected_token_bounding_box(); // clean up the rotation if needed
 		});
 		ct_persist();
 		
