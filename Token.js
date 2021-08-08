@@ -501,11 +501,6 @@ class Token {
 			this.build_conditions(old);
 
 			if (this.selected) {
-				if (this.options.locked)
-					old.css("border", "3px solid red");
-				else
-					old.css("border", "3px solid white");
-
 				old.addClass("tokenselected");
 			}
 			else {
@@ -696,24 +691,30 @@ class Token {
 							}
 
 							for (var id in window.TOKEN_OBJECTS) {
-								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
-									const tok = $("#tokens div[data-id='" + id + "']");
+								if (window.TOKEN_OBJECTS[id].selected) {
+									setTimeout(function(tempID) {
+										$("[data-id='"+tempID+"']").removeClass("pause_click");
+										console.log($("[data-id='"+id+"']"));
+									}, 200, id);
+									if (id != self.options.id) {
+										const tok = $("#tokens div[data-id='" + id + "']");
 
-									const oldtop = parseInt(tok.css("top"));
-									const oldleft = parseInt(tok.css("left"));
+										const oldtop = parseInt(tok.css("top"));
+										const oldleft = parseInt(tok.css("left"));
 
-									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+										const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+										const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-									tok.css("top", newtop + "px");
-									tok.css("left", newleft + "px");
+										tok.css("top", newtop + "px");
+										tok.css("left", newleft + "px");
 
-									const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const auraSize = parseInt(selEl.css("width"));
+										const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
+										if (selEl.length > 0) {
+											const auraSize = parseInt(selEl.css("width"));
 
-										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
-										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+										}
 									}
 								}
 							}
@@ -744,15 +745,18 @@ class Token {
 					self.orig_left = self.options.left;
 					if (self.selected) {
 						for (id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
-								var curr = window.TOKEN_OBJECTS[id];
-								curr.orig_top = curr.options.top;
-								curr.orig_left = curr.options.left;
+							if (window.TOKEN_OBJECTS[id].selected) {
+								$("[data-id='"+id+"']").addClass("pause_click");
+								if (id != self.options.id) {
+									var curr = window.TOKEN_OBJECTS[id];
+									curr.orig_top = curr.options.top;
+									curr.orig_left = curr.options.left;
 
-								const el = $("#aura_" + id.replaceAll("/", ""));
-								if (el.length > 0) {
-									el.attr("data-left", el.css("left").replace("px", ""));
-									el.attr("data-top", el.css("top").replace("px", ""));
+									const el = $("#aura_" + id.replaceAll("/", ""));
+									if (el.length > 0) {
+										el.attr("data-left", el.css("left").replace("px", ""));
+										el.attr("data-top", el.css("top").replace("px", ""));
+									}
 								}
 							}
 						}
@@ -845,6 +849,34 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
+			tok.find(".token-image").click(function() {
+				let parentToken = $(this).parent(".VTTToken");
+				if (parentToken.hasClass("pause_click")) {
+					return;
+				}
+				let tokID = parentToken.attr('data-id');
+				let thisSelected = !(parentToken.hasClass('tokenselected'));
+				let count = 0;
+				if (shiftHeld == false) {
+					deselect_all_tokens();
+				}
+				if (thisSelected == true) {
+					parentToken.addClass('tokenselected');
+				} else {
+					parentToken.removeClass('tokenselected');
+				}				
+
+				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
+
+				for (var id in window.TOKEN_OBJECTS) {
+					var curr = window.TOKEN_OBJECTS[id];
+					if (curr.selected == true) {
+						count++;
+					}			
+				}
+
+				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
+			});
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}

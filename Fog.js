@@ -710,13 +710,19 @@ function drawing_mousedown(e) {
 
 	if (e.data.shape === 'select') {
 		$("#fog_overlay").css("z-index", "50");
+		if (e.which == 1) {
+			$("#fog_overlay").css('cursor', 'crosshair');
+		}
 	}
 
-	if (window.DRAGGING && e.data.shap != 'align')
+	if (window.DRAGGING && e.data.shape != 'align')
 		return;
 	if (e.button != 0)
 		return;
 	deselect_all_tokens();
+	if (shiftHeld == false || e.data.shape != 'select') {
+		deselect_all_tokens();
+	}
 
 	if (e.data.shape === "polygon") {
 		if (isNaN(e.data.type)) {
@@ -877,6 +883,7 @@ function drawing_mouseup(e) {
 
 	if (e.data.shape === 'select') {
 		$("#fog_overlay").css("z-index", "31");
+		$("#fog_overlay").css('cursor', '');
 	}
 
 	// Return early from this function if we are measuring and have hit the right mouse button
@@ -1163,7 +1170,7 @@ function setup_draw_buttons() {
 
 
 		if (!($(clicked).hasClass('menu-button'))) {
-			if ($(clicked).hasClass('button-enabled')) {
+			if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
 				stop_drawing();
 				$(".drawbutton").removeClass('button-enabled');
 				$("#fog_overlay").css("z-index", "20");
@@ -1173,6 +1180,7 @@ function setup_draw_buttons() {
 					window.ScenesHandler.reload();
 				}
 
+				$('#select-button').click();
 				return;
 			}
 
@@ -1191,7 +1199,7 @@ function setup_draw_buttons() {
 			}
 
 			var target = $("#fog_overlay");
-			if (!e.currentTarget.id || e.currentTarget.id !== "select_button") {
+			if (!e.currentTarget.id || e.currentTarget.id !== "select-button") {
 				target.css("z-index", "50");
 			} else {
 				target.css("z-index", "31");
@@ -1203,6 +1211,9 @@ function setup_draw_buttons() {
 
 
 			target.css('cursor', 'crosshair');
+			if (e.currentTarget.id != "select-button") {
+				target.css('cursor', 'crosshair');
+			}
 
 			$(clicked).addClass('button-enabled');
 
@@ -1235,6 +1246,7 @@ function setup_draw_buttons() {
 			target.on('contextmenu', data, drawing_contextmenu);
 		}
 	})
+	$('#select-button').click();
 }
 
 function drawPolygon (

@@ -275,11 +275,14 @@ div#scene_properties form > div {
 }
 
 .token {
-    cursor: move;
     overflow: visible !important;
     border-radius: 50%;
     transition: box-shadow 0.5 ease-in-out;
     z-index: 50;
+}
+
+.token-image {
+    cursor: move;
 }
 
 .hasTooltip::after {
@@ -584,6 +587,24 @@ div#scene_properties form > div {
 .token .custom-condition.condition-img {
     background: #F58231;
 }
+
+.tokenselected::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0px;
+    padding: 5px;
+    border: 5px #c0f3fff5 solid;
+    z-index: 0;
+}
+
+.tokenselected.ui-draggable-disabled::before{
+    border: 5px #f7bfbfd5 solid
+}
+
 
 .ac {
     position: absolute;
