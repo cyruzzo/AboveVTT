@@ -519,6 +519,8 @@ function init_splash() {
 
 	});
 
+	let closeButton = $(`<button class="ddbeb-modal__close-button qa-modal_close" title="Close Modal" ><svg class="" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g><g transform="rotate(45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g></svg></button>`);
+	cont.append(closeButton);
 
 	$(window.document.body).append(cont);
 
@@ -1286,10 +1288,12 @@ function init_ui() {
 	}
 
 	// Function separated so it can be dis/enabled
-	function mouseup() {
-
+	function mouseup(event) {
 		curDown = false;
 		$("body").css("cursor", "");
+		if (event.target.tagName.toLowerCase() !== 'a') {
+			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
+		}
 	}
 
 	// Helper function to disable window mouse handlers, required when we
