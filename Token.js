@@ -744,7 +744,7 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 					if (self.selected) {
-						for (id in window.TOKEN_OBJECTS) {
+						for (let id in window.TOKEN_OBJECTS) {
 							if (window.TOKEN_OBJECTS[id].selected) {
 								$("[data-id='"+id+"']").addClass("pause_click");
 								if (id != self.options.id) {
@@ -809,7 +809,7 @@ class Token {
 
 						//console.log("OFFSETLEFT "+offsetLeft+ " OFFSETTOP " + offsetTop);
 
-						for (id in window.TOKEN_OBJECTS) {
+						for (let id in window.TOKEN_OBJECTS) {
 							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.locked) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
@@ -1666,8 +1666,6 @@ function token_menu() {
 }
 
 function deselect_all_tokens() {
-	if (!window.DM)
-		return;
 	window.MULTIPLE_TOKEN_SELECTED = false;
 	for (id in window.TOKEN_OBJECTS) {
 		var curr = window.TOKEN_OBJECTS[id];
