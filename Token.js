@@ -745,6 +745,16 @@ class Token {
 								}
 							}
 
+						} else {
+							// we want to remove the pause_click even when grid snapping is turned off
+							for (var id in window.TOKEN_OBJECTS) {
+								if (window.TOKEN_OBJECTS[id].selected) {
+									setTimeout(function(tempID) {
+										$("[data-id='"+tempID+"']").removeClass("pause_click");
+										console.log($("[data-id='"+id+"']"));
+									}, 200, id);
+								}
+							}
 						}
 
 						window.DRAGGING = false;
