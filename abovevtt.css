@@ -111,7 +111,25 @@ body > button:hover,
 }
 
 button#scene_selector_toggle {
-    left: 612px !important;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    top: 5px;
+    z-index: 9999;
+}
+
+#scene_selector_toggle > span {
+    transform: rotate(0deg);
+    transition: 0.5s ease-in-out;
+}
+
+#scene_selector_toggle.menu_opened > span {
+    transform: rotate(180deg);
+    transition: 0.5s ease-in-out;
 }
 
 button[id$='-button'].button-enabled:hover {
@@ -281,10 +299,17 @@ div#scene_properties form > div {
 }
 
 #scene_selector {
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    top: 27px;
+    height: 60vh;
+    min-width: 200px;
+    width: calc(100vw - 720px);
+    max-width: 800px;
     z-index: 9999;
-    width: 800px;
     border: solid black 2px;
-    overflow: scroll;
+    overflow: scroll;   
 }
 
 .stp-btn {
@@ -840,6 +865,16 @@ div#scene_properties form > div {
 	font-size: 10px;
 }
 
+#splash {
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    top: 27px;
+    height: 670px;
+    width: 600px;
+    z-index: 999;
+    border: 3px solid black;
+}
 
 .splashLinkRow div{
 	display:inline;
