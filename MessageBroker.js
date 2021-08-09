@@ -400,7 +400,7 @@ class MessageBroker {
 							found=true;
 							let li =$(this).closest("li");
 							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data).html();
+							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 							if(newlihtml=="")
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 								
@@ -510,6 +510,9 @@ class MessageBroker {
 		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
+			return $("<div/>");
+				
+		if(data.whisper && (data.whisper!=window.PLAYER_NAME) && (!local))
 			return $("<div/>");
 		//notify_gamelog();
 		
@@ -658,6 +661,7 @@ class MessageBroker {
 		var msgid = this.chat_id + this.chat_counter++;
 
 		var data = {
+			player_name: window.PLAYER_NAME,
 			injected_data: injected_data,
 			"action": "ABOVETT",
 			"rolls": [

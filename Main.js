@@ -345,12 +345,12 @@ function init_controls() {
 	b1.append('<svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg>');
 	$(".sidebar__controls").append(b1);
 
+	b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'></button>").click(switch_control);
+	b2.append("<img src='"+window.EXTENSION_PATH + "assets/icons/character.svg' height='100%;'>");
+	$(".sidebar__controls").append(b2);
 	if (DM) {
-		b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'></button>").click(switch_control);
-		b2.append("<img src='"+window.EXTENSION_PATH + "assets/icons/character.svg' height='100%;'>");
 		
 		
-		$(".sidebar__controls").append(b2);
 		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'></button>").click(switch_control);
 		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
@@ -1039,6 +1039,7 @@ function init_ui() {
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
 			var dmonly=false;
+			var whisper=null;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
@@ -1056,6 +1057,14 @@ function init_ui() {
 				dmonly=true;
 			}
 			
+			if(text.startsWith("/whisper")) {
+				let matches = text.match(/\[(.*?)\] (.*)/);
+				console.log(matches);
+				whisper=matches[1]
+				text="[Whispered to: "+whisper+"]" +matches[2];
+			}
+			
+			
 			if(validateUrl(text)){
 				
 				text="<img width=200 src='"+parse_img(text)+"'>";
@@ -1067,6 +1076,10 @@ function init_ui() {
 				text: text,
 				dmonly: dmonly,
 			};
+			
+			if(whisper)
+				data.whisper=whisper;
+				
 			window.MB.inject_chat(data);
 			
 		}
@@ -1197,7 +1210,7 @@ function init_ui() {
 	}
 
 	init_controls();
-	if (window.DM)
+	//if (window.DM)
 		init_pclist();
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");

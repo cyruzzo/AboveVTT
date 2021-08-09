@@ -41,8 +41,11 @@ function update_pclist() {
 			token_button({ target: $(`[data-set-token-id='${player.sheet}']`) }, i, window.pcs.length);
 		});
 	});
+	
 	addPartyButtonContainer.append(addPartyButton);
-	pcs_list.append(addPartyButtonContainer);
+	
+	if(window.DM)
+		pcs_list.append(addPartyButtonContainer);
 
 	var NEXT_COLOR = 0;
 	window.pcs.forEach(function(item, index) {
@@ -70,6 +73,7 @@ function update_pclist() {
 							TOKEN
 						</button>
 						<button data-target='${pc.sheet}' class="open-sheet-btn">SHEET</button>
+						<button class="whisper-btn" data-to="${pc.name}">WHISPER</button>
 					</div>
 				</div>
 				<div class="player-card-content">
@@ -147,7 +151,12 @@ function update_pclist() {
 				}
 			</div>
 		`;
-		pcs_list.append($(newPlayerTemplate));
+		let newplayer=$(newPlayerTemplate);
+		if(!window.DM){
+			newplayer.find(".add-token-btn,.open-sheet-btn").remove();
+			newplayer.find(".player-no-attributes").html("");
+		}
+		pcs_list.append(newplayer);
 	});
 
 	$(".add-token-btn").on("click", function () {
@@ -157,6 +166,12 @@ function update_pclist() {
 	$(".open-sheet-btn").on("click", function () {
 		open_player_sheet($(this).attr('data-target'));
 	});
+	
+	$(".whisper-btn").on("click",function(){
+		$("#switch_gamelog").click();
+		$("#chat-text").val("/whisper ["+$(this).attr('data-to')+ "] ");
+		$("#chat-text").focus();
+	})
 
 	$(".player-see-more img").on("click", function(e) {
 		e.preventDefault();
