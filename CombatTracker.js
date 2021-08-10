@@ -2,7 +2,7 @@
 function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
-	toggle=$("<button id='combat_button'><u>C</u>OMBAT</button>");
+	toggle=$("<button id='combat_button' class='hideable'><u>C</u>OMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").attr('style', 'display: none;');
