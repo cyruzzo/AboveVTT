@@ -1346,7 +1346,7 @@ function init_buttons() {
 	var clear_button = $("<button style='width:75px;'>ALL</button>");
 	clear_button.click(function() {
 
-		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. Are you sure?");
+		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
 			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
 			redraw_canvas();
@@ -1357,7 +1357,7 @@ function init_buttons() {
 
 	var hide_all_button = $("<button style='width:75px;'>ALL</button>");
 	hide_all_button.click(function() {
-		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. Are you sure?");
+		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
 			window.REVEALED = [];
 			redraw_canvas();
@@ -1378,11 +1378,18 @@ function init_buttons() {
 	fog_menu.append("<div><button id='fog_circle_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</button></div>");
 	fog_menu.append("<div><button id='fog_polygon_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(hide_all_button));
+	fog_menu.append("<div><button id='fog_undo' style='width:75px'>UNDO</button></div>")
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
 	fog_menu.css("width", "75px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
+	fog_menu.find("#fog_undo").click(function(){
+		window.REVEALED.pop();
+		redraw_canvas();
+		window.ScenesHandler.persist();
+		window.ScenesHandler.sync();
+	});
 	
 
 	buttons = $("<div/>")
@@ -1405,16 +1412,26 @@ function init_buttons() {
 	draw_menu.append("<div><button id='draw_line' style='width:75px' class='drawbutton menu-option draw-option' data-shape='line' data-type='draw'>Line</button></div>");
 	draw_menu.append("<div><button id='draw_polygon' style='width:75px' class='drawbutton menu-option draw-option' data-shape='polygon' data-type='draw'>Polygon</button></div>");
 	draw_menu.append("<div><button id='draw_erase' style='width:75px' class='drawbutton menu-option draw-option' data-shape='rect' data-type='eraser'>Erase</button></div>");
-	draw_menu.append("<div><button id='delete_drawing'style='width:75px;height: 38px;'>ERASE ALL</button></div>");
+	
+	draw_menu.append("<div><button id='draw_undo' style='width:75px'>UNDO</button></div>");
+	
+	draw_menu.append("<div><button id='delete_drawing' style='width:75px;height: 38px;'>ERASE ALL</button></div>");
 
 	draw_menu.find("#delete_drawing").click(function() {
-		r = confirm("DELETE ALL DRAWINGS?");
+		r = confirm("DELETE ALL DRAWINGS? (cannot be undone!)");
 		if (r === true) {
 			window.DRAWINGS = [];
 			redraw_drawings();
 			window.ScenesHandler.persist();
 			window.ScenesHandler.sync();
 		}
+	});
+	
+	draw_menu.find("#draw_undo").click(function() {
+		window.DRAWINGS.pop();
+		redraw_drawings();
+		window.ScenesHandler.persist();
+		window.ScenesHandler.sync();
 	});
 
 	colors = $("<div/>");
