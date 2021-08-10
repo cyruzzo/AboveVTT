@@ -81,6 +81,7 @@ class Token {
 			this.persist();
 	}
 	rotate(newRotation) {
+		if (this.options.locked) return; // don't allow rotation if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
