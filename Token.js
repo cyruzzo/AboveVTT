@@ -49,6 +49,12 @@ class Token {
 		}
 	}
 
+	isPlayer() {
+		// player tokens have ids with a structure like "/profile/username/characters/someId"
+		// monster tokens have a uuid for their id
+		return this.options.id.includes("/")
+	}
+
 	size(newsize) {
 		this.update_from_page();
 		this.options.size = newsize;
@@ -2137,15 +2143,30 @@ function remove_selected_token_bounding_box() {
 }
 
 function copy_selected_tokens() {
+	if (!window.DM) return;
 	window.TOKEN_PASTE_BUFFER = [];
+	let redrawBoundingBox = false;
 	for (id in window.TOKEN_OBJECTS) {
-		if (window.TOKEN_OBJECTS[id].selected) {
-			window.TOKEN_PASTE_BUFFER.push(id);
+		let token = window.TOKEN_OBJECTS[id];
+		if (token.selected) { 
+			if (token.isPlayer()) {
+				// deselect player tokens to avoid confusion about them being selected but not copy/pasted
+				window.TOKEN_OBJECTS[id].selected = false;
+				window.TOKEN_OBJECTS[id].place_sync_persist();
+				redrawBoundingBox = true;
+			} else {
+				// only allow copy/paste for selected monster tokens
+				window.TOKEN_PASTE_BUFFER.push(id);
+			}
 		}
+	}
+	if (redrawBoundingBox) {
+		draw_selected_token_bounding_box();
 	}
 }
 
 function paste_selected_tokens() {
+	if (!window.DM) return;
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
 	}
@@ -2153,6 +2174,7 @@ function paste_selected_tokens() {
 	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
 		let id = window.TOKEN_PASTE_BUFFER[i];
 		let token = window.TOKEN_OBJECTS[id];
+		if (token == undefined || token.isPlayer()) continue; // only allow copy/paste for monster tokens, and protect against pasting deleted tokens
 		let options = Object.assign({}, token.options);
 		let newId = uuid();
 		options.id = newId;
