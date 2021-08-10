@@ -1415,7 +1415,7 @@ function init_buttons() {
 	
 	draw_menu.append("<div><button id='draw_undo' style='width:75px'>UNDO</button></div>");
 	
-	draw_menu.append("<div><button id='delete_drawing' style='width:75px;height: 38px;'>ERASE ALL</button></div>");
+	draw_menu.append("<div><button id='delete_drawing' style='width:75px'>CLEAR</button></div>");
 
 	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS? (cannot be undone!)");
