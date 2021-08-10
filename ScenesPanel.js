@@ -736,6 +736,7 @@ function refresh_scenes() {
 			forcePlaceholderSize: true,
 			placeholder: "sortable_placeholder"
 		});
+		$("#scene_selector").css("overflow","auto");
 	}
 }
 
