@@ -1410,7 +1410,21 @@ function token_menu() {
 						token_combat: { name: 'Add to Combat Tracker' },
 						hide: { name: 'Hide From Players' },
 						show: { name: 'Show To Players' },
-						delete: { name: 'Delete Token' }
+						delete: { name: 'Delete Token' },
+						token_locked: {
+							type: 'checkbox',
+							name: 'Lock Tokens in Position',
+							events: {
+								click: function(e) {
+									if (e.target == undefined || e.target.checked == undefined) return;
+									$("#tokens .tokenselected").each(function() {
+										id = $(this).attr('data-id');
+										window.TOKEN_OBJECTS[id].options.locked = e.target.checked;
+										window.TOKEN_OBJECTS[id].place_sync_persist();
+									});							
+								}
+							}
+						}
 					}
 				};
 				return ret;
