@@ -696,7 +696,9 @@ class Token {
 				stop:
 					function (event) {
 						// this should be a XOR... (A AND !B) OR (!A AND B)
-						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);					
+						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
+						console.log("shallwesnap",shallwesnap);
+						console.log("toggleSnap",window.toggleSnap);					
 						if (shallwesnap) {
 
 							// calculate offset in real coordinates

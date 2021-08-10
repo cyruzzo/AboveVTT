@@ -187,17 +187,13 @@ Mousetrap.bind('shift', function () {
 
 
 Mousetrap.bind('ctrl', function () {
-    if (ctrlHeld) {
-        return;
-    } else {
-        ctrlHeld = true;
-    }
-	toggleSnap=true;
-
+	ctrlHeld=true;
+	window.toggleSnap=true;
 }, 'keydown');
 
 Mousetrap.bind('ctrl', function () {
-	toggleSnap=false;
+	ctrlHeld=false;
+	window.toggleSnap=false;
 }, 'keyup');
 
 Mousetrap.bind('shift+h', function () {
