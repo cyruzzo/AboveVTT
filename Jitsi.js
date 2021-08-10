@@ -1,9 +1,11 @@
 
 function create_jitsi_button() {
-	b = $("<button>CONNECT VIDEO</button>");
+	b = $("<button id='jitsi_switch' class='hasTooltip button-icon hideable' data-name='Connect video call'><span>VIDEO</span><span class='material-icons button-icon'>video_call</span></button>");
 	b.css("position", "fixed");
-	b.css("bottom", 0);
-	b.css("left", 0);
+	b.css("bottom", "3px");
+	b.css("left", "3px");
+	b.css("gap", "6px");
+	b.css("display", "inline-flex");
 	b.css("z-index", 9999);
 	$("body").append(b);
 
@@ -16,12 +18,12 @@ function create_jitsi_button() {
 
 function init_jitsi() {
 
-	jitsi_box = $("<div id='meet'><button id='jitsi_switch'><img src='"+window.EXTENSION_PATH + "assets/icons/fullscreen.svg'></button><button id='jitsi_close'>X</button><div id='jitsi_container' style='width:100%;height:100%;'></div></div>");
+	jitsi_box = $("<div id='meet'><button id='jitsi_switch' class='hasTooltip button-icon' data-name='Fullscreen (v)'><span class='material-icons button-icon'>fullscreen</span></button><button id='jitsi_close' class='hasTooltip button-icon' data-name='Disconnect'><span class='material-icons button-icon'>cancel</span></button><div id='jitsi_container' style='width:100%;height:100%;'></div></div>");
 	jitsi_box.css("z-index", "100");
 	$("#site").append(jitsi_box);
 	$("#jitsi_switch").css("position", "absolute").css("top", 0).css("left", 0);
 	$("#jitsi_switch").click(jitsi_switch);
-	$("#jitsi_close").css("position", "absolute").css("top", 0).css("left", ($("#jitsi_switch").width() + 50) + "px");
+	$("#jitsi_close").css("position", "absolute").css("top", 0).css("left", "32px");
 
 	$("#jitsi_close").click(
 		function() {
@@ -79,7 +81,7 @@ function jitsi_modal() {
 	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", (window.width-400)+"px");
 	window.tile_desired = true;
 	window.jitsiAPI.executeCommand(`toggleTileView`);
-	$("#jitsi_switch > img").attr("src", window.EXTENSION_PATH + 'assets/icons/fullscreen-exit.svg');
+	$("#jitsi_switch").html("<span class='material-icons button-icon' data-name='Exit fullscreen (v)>fullscreen_exit</span>");
 }
 
 function jitsi_bottom() {

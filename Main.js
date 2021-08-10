@@ -318,11 +318,11 @@ function init_controls() {
 
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
-	hider = $("<button id='hide_rightpanel' data-visible=1></button>").click(function() {
+	hider = $("<button id='hide_rightpanel' class='hasTooltip button-icon hideable' data-name='Show/hide sidebar (q)' data-visible=1></button>").click(function() {
 		if ($(this).attr('data-visible') == 1) {
 			$(this).attr('data-visible', 0);
 			$(".sidebar--right").animate({ "right": "-340px" }, 500);
-			$(this).text("<<");
+			$(this).addClass("point-left").removeClass("point-right");
 			if (parseInt($("#sheet").css("right")) >= 0) {
 				$("#sheet").animate({ right: 343 - 340 }, 500);
 			}
@@ -331,48 +331,48 @@ function init_controls() {
 		else {
 			$(this).attr('data-visible', 1);
 			$(".sidebar--right").animate({ "right": "0px" }, 500);
-			$(this).text(">>");
+			$(this).addClass("point-right").removeClass("point-left");
 			if (parseInt($("#sheet").css("right")) >= 0) {
 				$("#sheet").animate({ right: 343 }, 500);
 			}
 		}
 
-	}).text(">>");
+	}).html("<span class='material-icons button-icon'>chevron_right</span>").addClass("point-right");
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab' data-target='.glc-game-log'></button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab hasTooltip button-icon' data-name='Gamelog' data-target='.glc-game-log'></button>").click(switch_control);
 	b1.append('<svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg>');
 	$(".sidebar__controls").append(b1);
 
-	b2 = $("<button id='switch_characters' class='tab-btn' data-target='#pcs_list'></button>").click(switch_control);
+	b2 = $("<button id='switch_characters' class='tab-btn hasTooltip button-icon' data-name='Players' data-target='#pcs_list'></button>").click(switch_control);
 	b2.append("<img src='"+window.EXTENSION_PATH + "assets/icons/character.svg' height='100%;'>");
 	$(".sidebar__controls").append(b2);
-	if (DM) {
+	if (DM) {		
 		
-		
-		b3 = $("<button id='switch_panel' class='tab-btn' data-target='#monster-panel'></button>").click(switch_control);
+		b3 = $("<button id='switch_panel' class='tab-btn hasTooltip button-icon' data-name='Monsters' data-target='#monster-panel'></button>").click(switch_control);
+
 		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
 		init_tokenmenu();
-		b5=$("<button id='switch_tokens' class='tab-btn' data-target='#tokens-panel'></button>");
+		b5=$("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Tokens' data-target='#tokens-panel'></button>");
 		b5.append("<img src='"+window.EXTENSION_PATH + "assets/icons/photo.svg' height='100%;'>");
 		b5.click(switch_control);
 		$(".sidebar__controls").append(b5);
 		
 	}
 	
-	b6 = $("<button id='switch_tokens' class='tab-btn' data-target='#sounds-panel'></button>");
+	b6 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Sounds' data-target='#sounds-panel'></button>");
 	b6.append("<img src='" + window.EXTENSION_PATH + "assets/icons/speaker.svg' height='100%;'>");
 	b6.click(switch_control);
 	$(".sidebar__controls").append(b6);
 	
-	b4 = $("<button id='switch_spell' class='tab-btn' data-target='#spells-panel'></button>").click(switch_control);
+	b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	$(".sidebar__controls").append(b4);
 
 	if (DM) {
-		b7 = $("<button id='switch_tokens' class='tab-btn' data-target='#settings-panel'></button>");
+		b7 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Settings' data-target='#settings-panel'></button>");
 		b7.append("<img src='" + window.EXTENSION_PATH + "assets/icons/cog.svg' height='100%;'>");
 		b7.click(switch_control);
 		$(".sidebar__controls").append(b7);
@@ -429,13 +429,6 @@ function init_splash() {
 
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
-	cont.css('position', 'fixed');
-	cont.css('width', 600);
-	cont.css('height', '670px');
-	cont.css('top', "27px");
-	cont.css('left', ($(window).width() - 640) / 2 + "px");
-	cont.css('z-index', 999);
-	cont.css('border', '3px solid black');
 
 	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.52</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
@@ -845,10 +838,10 @@ function open_player_sheet(sheet_url) {
 	$("#site").append(container);
 
 	if (!window.DM) {
-		sheet_button = $("<button id='sheet_button'>SHEET</button>");
+		sheet_button = $("<button id='sheet_button' class='hasTooltip button-icon hideable' data-name='Show/hide character sheet (SPACE)'>SHEET</button>");
 		sheet_button.css("position", "absolute");
 		sheet_button.css("top", 0);
-		sheet_button.css("left", -80);
+		sheet_button.css("left", -86);
 		sheet_button.css("z-index", 999999);
 
 		$(".sidebar__controls").append(sheet_button);
@@ -1231,23 +1224,33 @@ function init_ui() {
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
 
-	zoom_minus = $("<button id='zoom_minus'>-</button>");
-	zoom_minus.click(decrease_zoom)
-	zoom_section.append(zoom_minus);
-
-	zoom_center = $("<button>=</button>");
+	zoom_center = $("<button id='zoom_fit' class='hasTooltip button-icon hideable' data-name='fit screen (0)'><span class='material-icons button-icon'>fit_screen</span></button>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
-	zoom_plus = $("<button id='zoom_plus'>+</button>");
+	zoom_minus = $("<button id='zoom_minus' class='hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></button>");
+	zoom_minus.click(decrease_zoom)
+	zoom_section.append(zoom_minus);
+
+	zoom_plus = $("<button id='zoom_plus' class='hasTooltip button-icon hideable' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></button>");
 	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
+	hide_interface = $(`<button id='hide_interface_button' class='hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></button>`);
+	hide_interface.click(unhide_interface);
+	hide_interface.css("display", "none");
+	hide_interface.css("position", "absolute");
+	hide_interface.css("opacity", "50%");
+	hide_interface.css("right", "-136px");
+	zoom_section.append(hide_interface);
+
+
+
 	if(window.DM) {
-		zoom_section.css("left","-130px");
+		zoom_section.css("left","-136px");
 	}
 	else{
-		zoom_section.css("left","-180px");
+		zoom_section.css("left","-186px");
 	}
 	$(".sidebar__controls").append(zoom_section);
 
@@ -1397,10 +1400,10 @@ function init_buttons() {
 	$("body").append(buttons);
 	
 	if (window.DM)
-		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton' data-shape='select'><u>S</u>ELECT</button>"));
+		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable' data-shape='select'><u>S</u>ELECT</button>"));
 		
-	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton' data-shape='measure'><u>R</u>ULER</button>"));
-	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button'><u>F</u>OG</button>");
+	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton hideable' data-shape='measure'><u>R</u>ULER</button>"));
+	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable'><u>F</u>OG</button>");
 	
 	if (window.DM)
 		buttons.append(fog_button);
@@ -1473,7 +1476,7 @@ function init_buttons() {
 
 	$("body").append(draw_menu);
 
-	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button'><u>D</u>RAW</button>");
+	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable'><u>D</u>RAW</button>");
 
 	if (window.DM){
 		buttons.append(draw_button);
@@ -1481,7 +1484,7 @@ function init_buttons() {
 		
 	}
 
-	buttons.append("<button style='display:inline;width:75px' id='help_button'>HELP</button>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
@@ -1509,7 +1512,8 @@ function init_buttons() {
 }
 
 function init_stream_button() {
-	var stream_button = $("<button id='stream_button'></button>");
+	var stream_button = $("<button id='stream_button' class='hasTooltip button-icon hideable' data-name='Stream dice rolls'></button>");
+	stream_button.attr("data-name", "SHARE/SEE player's DDB dice rolling visuals (Experimental/stable).\nDisclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.\nOn by default = RED.");
 	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
 	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
 
@@ -1532,9 +1536,9 @@ function init_stream_button() {
 	stream_button.addClass("stream_button");
 	stream_button.css("position", "absolute");
 	if (window.DM)
-		stream_button.css("left", "-190px");
+		stream_button.css("left", "-197px");
 	else
-		stream_button.css("left", "-240px");
+		stream_button.css("left", "-247px");
 
 	stream_button.css("background", "yellow");
 
@@ -1643,6 +1647,8 @@ $(function() {
 	campaign_banner.hide();
 	
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
+
+	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
 	
 	$(".instructions").click(function(){
 		if(campaign_banner.is(":visible"))
@@ -1730,6 +1736,14 @@ function init_help_menu() {
 						<dl>
 							<dt>ALT (held)</dt>
 							<dd>Temporarily activate ruler</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+H</dt>
+							<dd>Hide buttons from screen (spectator mode)</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+Click</dt>
+							<dd>Select multiple tokens</dd>
 						<dl>
 						<dl>
 							<dt>UP/DOWN arrows</dt>
