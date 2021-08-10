@@ -1392,6 +1392,18 @@ function token_menu() {
 		build: function(element, e) {
 
 			if ($(element).hasClass("tokenselected") && window.MULTIPLE_TOKEN_SELECTED) {
+				if (!window.DM) {
+					// players can't do anything to multiple tokens, currently
+					return {
+						items: { 
+							helptext: {
+								name: 'You cannot apply changes to multiple tokens',
+								className: 'context-menu-helptext',
+								disabled: true
+							}
+						}
+					}
+				}
 				ret = {
 					callback: multiple_callback,
 					items: {
@@ -1699,6 +1711,7 @@ function token_menu() {
 				};
 				if (is_monster) {
 					delete ret.items.options.items.token_hidestat;
+					delete ret.items.sep4;
 					delete ret.items.helptext;
 				}
 				else {
@@ -1718,6 +1731,7 @@ function token_menu() {
 				}
 				
 				if(!window.DM){
+					delete ret.items.sep0;
 					delete ret.items.view;
 					delete ret.items.token_combat;
 					delete ret.items.token_hidden;
@@ -1728,6 +1742,7 @@ function token_menu() {
 					delete ret.items.max_hp;
 					delete ret.items.delete;
 					delete ret.items.name;
+					delete ret.items.sep2;
 					//delete ret.items.imgsrc;
 					delete ret.items.imgsrcSelect;
 				}
