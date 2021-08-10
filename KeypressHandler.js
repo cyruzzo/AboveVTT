@@ -1,7 +1,7 @@
 var altHeld = false;
 var ctrlHeld = false;
 var shiftHeld = false;
-var savedSnapState;
+var toggleSnap=false;
 
 
 function init_keypress_handler(){
@@ -192,13 +192,12 @@ Mousetrap.bind('ctrl', function () {
     } else {
         ctrlHeld = true;
     }
-    savedSnapState = window.CURRENT_SCENE_DATA.snap; 
-    window.CURRENT_SCENE_DATA.snap = (savedSnapState == 0 ? 1 : 0);
+	toggleSnap=true;
+
 }, 'keydown');
 
 Mousetrap.bind('ctrl', function () {
-    window.CURRENT_SCENE_DATA.snap = (window.CURRENT_SCENE_DATA.snap == 0 ? 1 : 0);
-    ctrlHeld = false;
+	toggleSnap=false;
 }, 'keyup');
 
 Mousetrap.bind('shift+h', function () {

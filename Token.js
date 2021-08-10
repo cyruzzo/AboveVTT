@@ -689,9 +689,9 @@ class Token {
 			tok.draggable({
 				stop:
 					function (event) {
-
-						// CHECK IF SNAPPING IS ENABLED
-						if (window.CURRENT_SCENE_DATA.snap == "1") {
+						// this should be a XOR... (A AND !B) OR (!A AND B)
+						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);					
+						if (shallwesnap) {
 
 							// calculate offset in real coordinates
 							const startX = window.CURRENT_SCENE_DATA.offsetx;
@@ -758,6 +758,7 @@ class Token {
 						}
 
 						window.DRAGGING = false;
+						
 						self.update_and_sync(event);
 						if (self.selected) {
 							for (id in window.TOKEN_OBJECTS) {
@@ -770,6 +771,7 @@ class Token {
 						}
 
 						draw_selected_token_bounding_box();
+						window.toggleSnap=false;
 					},
 
 				start: function (event) {
