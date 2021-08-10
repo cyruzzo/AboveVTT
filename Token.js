@@ -997,7 +997,17 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		},
 		auraVisible: true
 	};
-
+	
+	
+	if(typeof $(e.target).attr('data-stat') !== "undefined"){ // APPLY SAVED TOKEN SETTINGS ONLY FOR MONSTERS
+		for(let o in window.TOKEN_SETTINGS){
+				if(window.TOKEN_SETTINGS[o]){
+					options[o]="1";
+				}
+		}
+	}
+	
+	
 	if ($(e.target).attr('data-size')) {
 		options.size = $(e.target).attr('data-size');
 	}
@@ -1075,7 +1085,7 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.top = (centerY + (((options.size || 68.33) * 5) / 2) * Math.sin(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
 	}
 
-	options = Object.assign({}, options, window.TOKEN_SETTINGS);
+	//options = Object.assign({}, options, window.TOKEN_SETTINGS);
 	window.ScenesHandler.create_update_token(options);
 
 	if (id in window.PLAYER_STATS) {
