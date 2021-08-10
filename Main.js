@@ -915,6 +915,7 @@ function init_ui() {
 	window.PLAYER_STATS = {};
 	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameid)) || {};
 	window.CURRENTLY_SELECTED_TOKENS = [];
+	window.TOKEN_PASTE_BUFFER = [];
 
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();

@@ -205,4 +205,20 @@ Mousetrap.bind('shift+h', function () {
     $("button:contains('CONNECT VIDEO')").toggle();
 });
 
+Mousetrap.bind('ctrl+c', function(e) {
+    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
+    copy_selected_tokens();
+});
+Mousetrap.bind('command+c', function(e) {
+    copy_selected_tokens();
+});
+
+Mousetrap.bind('ctrl+v', function(e) {
+    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
+    paste_selected_tokens();
+});
+Mousetrap.bind('command+v', function(e) {
+    paste_selected_tokens();
+});
+
 }
