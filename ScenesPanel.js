@@ -693,7 +693,7 @@ function refresh_scenes() {
 	for (var i = 0; i < window.ScenesHandler.scenes.length; i++) {
 		let scene_id = i;
 		var scene = window.ScenesHandler.scenes[i];
-		var newobj = $("<div class='scene'/>");
+		var newobj = $("<div class='scene' data-scene-index='"+i+"'/>");
 
 
 		title = $("<div class='scene_title' style='text-align:center;'/>");
@@ -734,7 +734,29 @@ function refresh_scenes() {
 		$("#scene_selector").sortable({
 			handle: ".scene_title",
 			forcePlaceholderSize: true,
-			placeholder: "sortable_placeholder"
+			placeholder: "sortable_placeholder", 
+			update: function(event, ui) {
+				let fromSceneIndex = ui.item.attr("data-scene-index");
+				let toSceneIndex;
+				let j = 0;
+				let tempScenes = [];
+				$("#scene_selector").children('.scene').each(function(j) {
+					let oldSceneID = $(this).attr("data-scene-index");
+					if (fromSceneIndex == oldSceneID) {
+						toSceneIndex = j;
+					}
+					tempScenes.push(window.ScenesHandler.scenes[oldSceneID]);
+					$(this).attr("data-scene-index", j);
+					if ($(this).hasClass('active_scene')) {
+						window.ScenesHandler.current_scene_id = j;
+					}
+					j++;
+				});
+				console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
+				window.ScenesHandler.scenes = tempScenes;
+				window.ScenesHandler.persist();
+				refresh_scenes();
+			}
 		});
 		$("#scene_selector").css("overflow","auto");
 	}
