@@ -1055,12 +1055,12 @@ function init_ui() {
 				let matches = text.match(/\[(.*?)\] (.*)/);
 				console.log(matches);
 				whisper=matches[1]
-				text="[Whispered to: "+whisper+"]" +matches[2];
+				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
 			
 			
 			if(validateUrl(text)){
-				
+
 				text="<img width=200 src='"+parse_img(text)+"'>";
 			}
 			

@@ -32,8 +32,17 @@ function update_pclist() {
 		console.log("trovato sheet " + sheet);
 		window.pcs.push(pc);
 
-
 	});
+	
+	if(!window.DM){
+		window.pcs.push({
+			name: 'THE DM',
+			image: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
+			sheet: false,
+			data: {}
+		});
+	}
+	
 	const addPartyButtonContainer = $("<div class='add-party-container'></div>");
 	const addPartyButton = $("<button id='add-party'>ADD PARTY</button>");
 	addPartyButton.on('click', () => {
