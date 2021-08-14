@@ -430,7 +430,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.52</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.53RC1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
@@ -477,11 +477,11 @@ function init_splash() {
 	cont.append("<h3>Patreon Supporters</h3>");
 	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
 
-	patreons = $("<div id='patreons' style='margin-top:9x;'/>");
+	patreons = $("<div id='patreons' style='margin-top:9px;'/>");
 
-	l1 = ["Max Puplett", "Miguel  Garcia Jr.","Epyk","ZorkFox","Imaginary Voices","John NG","Mike Miller"];
-	l2 = ["Iain Russell", "Lukas Edelmann", "Oliver", "Jordan Innerarity", "Chad Lenny", "Phillip Geurtz", "Virginia Lancianese", "Daniel Levitus", "RenoGeek", "TheDigifire", "Ryan Purcell", "adam williams", "Chance Russo", "Kris Scott", "Brendan Shane", "Reginald Coupet", "Pucas McDookie", "Jordan Cohen", "Chris Johnson", "Elmer Senson", "Chris Cannon","David William Daniel Thomas","Tom","CritCat (ExpQuest)","Carl Cedarstaff II","Renato Villas Boas Medeiros","Kim Dargeou","Scott Moore"];
-	l3 = ["Daniel Wall", "Cameron Warner", "Martin Brandt", "Julia Hoffmann", "Amata (she_her)", "Alexander Engel", "Fini Plays", "Tommy Girouard-Belhumeur", "nate gonzalez", "Jason Osterbind", "Daniel Villablanca", "William Geisbert", "Adam Nothnagel", "Kat", "Cobalt Blue", "Danny Pellerin", "Cody Vegas Rothwell", "damian tier", "CraftyHobo", "CrazyPitesh", "Milkmann", "aaron hamilton", "Eduardo Villela", "Paul Maloney", "David Meese","Adam Connor","mad4ever","Brad Stack","Johan Surac","Chris Sells","Tim Newton","Nick champion","Aviad Tal","Brahm","Randy Zuendel","M Mustaqim Mustafa","Robert J Correa","Jon Bond","Cistern","James Cohen","Deku Baba","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Han Dandler","Matt Scullion","Trevor A","Dan Bosscher"];
+	l1 = ["Michael Sangregorio","Max Puplett","Miguel  Garcia Jr.","ZorkFox","Epyk","John Ng","Josh Downing","Zytiga Gaming"];
+	l2 = ["Oliver","Iain Russell","RenoGeek","Daniel Levitus","Virginia Lancianese","Phillip Geurtz","Jordan Innerarity","TheDigifire","adam williams","Reginald Coupet","Brendan Shane","Kris Scott","Drago Russo","Ryan Purcell","Lukas Edelmann","Elmer Senson","Chris Johnson","Jordan Cohen","Pucas McDookie","Carl Cedarstaff II","Sarah (ExpQuest)","Tom","Chris Cannon","Renato Villas Boas Medeiros","Scott Moore","Kim Dargeou","Mike Miller"];
+	l3 = ["Daniel Wall","Cameron Warner","Amata (she_her)","Julia Hoffmann","Martin Brandt","Alexander Engel","Tommy Girouard-Belhumeur","Cobalt Blue","Kat","Adam Nothnagel","William Geisbert","Daniel Villablanca","Jason Osterbind","nate gonzalez","Fini Plays","Liu XxX","Paul Maloney","damian tier","Danny Pellerin","Randy Zuendel","Brahm","Tim Newton","Chris Sells","Brad Stack","Adam Connor","David Meese","Eduardo Villela","aaron hamilton","Milkmann","CraftyHobo","Cody Vegas Rothwell","Johan Surac","M Mustaqim Mustafa","Aviad Tal","mad4ever","CrazyPitesh","Matt Scullion","Unlucky Archer","Trevor A","Han Dandler","Michael Crane","BelowtheDM","its Bonez","Deku Baba","James Cohen","Cistern","Jon Bond","Robert J Correa","Dan Bosscher","Ofek Shoham","Cheeky Sausage Games","Joseph Bendickson","Blake Thomas","Steve Vlaminck","Victor Waters","Alexander Glass"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
