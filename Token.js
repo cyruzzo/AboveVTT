@@ -1942,7 +1942,7 @@ function add_custom_image_mapping(monsterId, imgsrc) {
 		return;
 	}
 	var customImages = get_custom_monster_images(monsterId);
-	customImages.push(imgsrc);
+	customImages.push(parse_img(imgsrc));
 	window.CUSTOM_TOKEN_IMAGE_MAP[monsterId] = customImages;
 	save_custom_image_mapping();
 }
