@@ -156,6 +156,14 @@ Mousetrap.bind('up', function () {
         $("#draw_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
         return false;
     }
+    if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+            let id = window.CURRENTLY_SELECTED_TOKENS[i];
+            let token = window.TOKEN_OBJECTS[id];
+            token.moveUp();
+        }
+        return false;
+    }
 });
 
 Mousetrap.bind('down', function () {
@@ -165,6 +173,36 @@ Mousetrap.bind('down', function () {
     }
     if ($("#draw_menu").hasClass('visible')) {
         $("#draw_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
+        return false;
+    }
+    if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+            let id = window.CURRENTLY_SELECTED_TOKENS[i];
+            let token = window.TOKEN_OBJECTS[id];
+            token.moveDown();
+        }
+        return false;
+    }
+});
+
+Mousetrap.bind('left', function () {
+    if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+            let id = window.CURRENTLY_SELECTED_TOKENS[i];
+            let token = window.TOKEN_OBJECTS[id];
+            token.moveLeft();
+        }
+        return false;
+    }
+});
+
+Mousetrap.bind('right', function () {
+    if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+            let id = window.CURRENTLY_SELECTED_TOKENS[i];
+            let token = window.TOKEN_OBJECTS[id];
+            token.moveRight();
+        }
         return false;
     }
 });
