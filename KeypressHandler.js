@@ -232,4 +232,19 @@ Mousetrap.bind('command+v', function(e) {
     paste_selected_tokens();
 });
 
+Mousetrap.bind('backspace', function(e) {
+    delete_selected_tokens();
+});
+Mousetrap.bind('ctrl+z', function(e) {
+    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
+    if (Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0) {
+        undo_delete_tokens();
+    }
+});
+Mousetrap.bind('command+z', function(e) {
+    if (Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0) {
+        undo_delete_tokens();
+    }
+});
+
 }
