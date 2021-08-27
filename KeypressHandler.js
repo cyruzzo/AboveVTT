@@ -232,7 +232,7 @@ Mousetrap.bind('command+v', function(e) {
     paste_selected_tokens();
 });
 
-Mousetrap.bind('backspace', function(e) {
+Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
