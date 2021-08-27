@@ -9,14 +9,16 @@ function mydebounce(func, timeout = 800){
 }
 
 function clearFrame(){
-	let canvas=$("#dicecanvas").get(0);
-	let ctx=canvas.getContext('2d');
-	ctx.clearRect(0,0,canvas.width,canvas.height);
+	$(".streamer-canvas").each(function() {
+		let canvas=$(this).get(0);
+		let ctx=canvas.getContext('2d');
+		ctx.clearRect(0,0,canvas.width,canvas.height);	
+	});
 }
 
 const delayedClear = mydebounce(() => clearFrame());
 
-function addVideo(stream) {
+function addVideo(stream,streamerid) {
 	let video = document.createElement("video");
 	video.setAttribute("class", "dicestream");
 	video.width = 1024;
@@ -27,11 +29,26 @@ function addVideo(stream) {
 	document.body.appendChild(video);
 	video.play();
 	
-	let canvas=$("#dicecanvas").get(0);
+	
+	var dicecanvas=$("<canvas width=1024 height=600 class='streamer-canvas' />");
+	dicecanvas.attr("id","streamer-canvas-"+streamerid);
+	dicecanvas.css("width","1024");
+	dicecanvas.css("height","600");
+	//dicecanvas.css("opacity",0.5);
+	dicecanvas.css("position","fixed");
+	dicecanvas.css("bottom","5px");
+	dicecanvas.css("right","340px");
+	dicecanvas.css("z-index",9000);
+	dicecanvas.css("touch-action","none");
+	dicecanvas.css("pointer-events","none");
+	$("#site").append(dicecanvas);
+	
+	
+	
+	let canvas=dicecanvas.get(0);
 	let ctx=canvas.getContext('2d');
 	let updateCanvas=function(){
 		delayedClear();
-		
 		
 		let tmpcanvas = document.createElement("canvas");
 		tmpcanvas.width = 1024;
@@ -44,9 +61,9 @@ function addVideo(stream) {
 			const red = frame.data[i + 0];
 			const green = frame.data[i + 1];
 			const blue = frame.data[i + 2];
-			if ((red < 24) && (green < 24) && (blue < 24))
-				frame.data[i + 3] = 128;
-			if ((red < 8) && (green < 8) && (blue < 8))
+			/*if ((red < 24) && (green < 24) && (blue < 24))
+				frame.data[i + 3] = 128;*/
+			if ((red < 14) && (green < 14) && (blue < 14))
 				frame.data[i + 3] = 0;
 			
 		}
@@ -235,7 +252,7 @@ class MessageBroker {
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
 					console.log("aggiungo video!!!!");
-				     addVideo(event.streams[0]);
+				     addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
 					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
@@ -251,6 +268,7 @@ class MessageBroker {
 					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
 						console.log("DELETING PEER "+msg.data.from);
 						delete window.STREAMPEERS[msg.data.from];
+						$("#streamer-canvas-"+msg.data.from).remove();
 					}
 				};
 				if(window.MYMEDIASTREAM){
@@ -277,7 +295,7 @@ class MessageBroker {
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
-					addVideo(event.streams[0]);
+					addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
 					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
@@ -292,6 +310,7 @@ class MessageBroker {
 					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
 						console.log("DELETING PEER "+msg.data.from);
 						delete window.STREAMPEERS[msg.data.from];
+						$("#streamer-canvas-"+msg.data.from).remove();
 					}
 				};
 				if(window.MYMEDIASTREAM){
@@ -381,7 +400,7 @@ class MessageBroker {
 							found=true;
 							let li =$(this).closest("li");
 							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data).html();
+							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 							if(newlihtml=="")
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 								
@@ -491,6 +510,9 @@ class MessageBroker {
 		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
+			return $("<div/>");
+				
+		if(data.whisper && (data.whisper!=window.PLAYER_NAME) && (!local))
 			return $("<div/>");
 		//notify_gamelog();
 		
@@ -639,6 +661,7 @@ class MessageBroker {
 		var msgid = this.chat_id + this.chat_counter++;
 
 		var data = {
+			player_name: window.PLAYER_NAME,
 			injected_data: injected_data,
 			"action": "ABOVETT",
 			"rolls": [

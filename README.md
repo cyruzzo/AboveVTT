@@ -9,19 +9,7 @@ but then things got out of hand. As this was just a way to "hack" inside DnDBeyo
 The goal was (and still is) to reach features quickly.
 
 # Contributing
-
-In this phase, we want to push out an offical release about every week. This will eventually slow down when we have enough features.
-
-The process will go around two main days.
-
-- *Wednesday*: Feature Freeze. What's in is in.. what's not will move to the next release. I'll branch main into a "version branch" (ex 0.0.41)
-pack it as beta and send it on discord for beta testers. In the next days, if you want to provide a bugfix for this "prerelease", do it
-without adding other features in the same branch.
-- *Monday*: Push current "prerelease" (with any bugfixes) to the Chrome and Firefox stores
-
-Of course, this is not a job, so the days may differ a bit.. anyway try to stick with those dealines.
-
-Other considerations:
+Cnsiderations:
 - Right now AboveVTT have people running games with it, so the most important rule for any PR is *we try our best to don't break things*
 - Every PR *MUST* support basic compatibility with the previous versions of AboveVTT.
 - Don't reformat the pieces you are not editing. It makes the PR hard to read, and you risk causing conflicts with other people work.

@@ -693,14 +693,14 @@ function refresh_scenes() {
 	for (var i = 0; i < window.ScenesHandler.scenes.length; i++) {
 		let scene_id = i;
 		var scene = window.ScenesHandler.scenes[i];
-		var newobj = $("<div class='scene' style='float:left;overflow: hidden;display:block;border: 1px solid black;margin: 5px;'/>");
+		var newobj = $("<div class='scene' data-scene-index='"+i+"'/>");
 
 
-		title = $("<div style='text-align:center;'/>");
+		title = $("<div class='scene_title' style='text-align:center;'/>");
 		title.html(scene.title);
 
 		if (i == window.ScenesHandler.current_scene_id)
-			title.css('background', 'red');
+			newobj.addClass('active_scene');
 		newobj.append(title);
 		controls = $("<div/>");
 		switch_button = $("<button>SWITCH</button>");
@@ -729,20 +729,46 @@ function refresh_scenes() {
 		controls.append(delete_button);
 		newobj.append(controls);
 
-		target.append(newobj);
+		$("#addscene").parent().before(newobj);
+
+		$("#scene_selector").sortable({
+			handle: ".scene_title",
+			forcePlaceholderSize: true,
+			placeholder: "sortable_placeholder", 
+			update: function(event, ui) {
+				let fromSceneIndex = ui.item.attr("data-scene-index");
+				let toSceneIndex;
+				let j = 0;
+				let tempScenes = [];
+				$("#scene_selector").children('.scene').each(function(j) {
+					let oldSceneID = $(this).attr("data-scene-index");
+					if (fromSceneIndex == oldSceneID) {
+						toSceneIndex = j;
+					}
+					tempScenes.push(window.ScenesHandler.scenes[oldSceneID]);
+					$(this).attr("data-scene-index", j);
+					if ($(this).hasClass('active_scene')) {
+						window.ScenesHandler.current_scene_id = j;
+					}
+					j++;
+				});
+				console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
+				window.ScenesHandler.scenes = tempScenes;
+				window.ScenesHandler.persist();
+				refresh_scenes();
+			}
+		});
+		$("#scene_selector").css("overflow","auto");
 	}
 }
 
 function init_scene_selector() {
 	ss = $("<div  id='scene_selector' />");
-	ss.css('position', 'fixed');
-	ss.css('height', 0);
-	ss.css('top', '0px');
-	ss.css('left', '250px');
+	ss.hide();
 
 
 	addblock = $("<div style='float:left;overflow: hidden;display:block;'/>");
-	addbutton = $("<button id='addscene'>ADDSCENE</button>");
+	addbutton = $("<button id='addscene'><span class='material-icons button-icon md-dark md-32'>add</span></button></button>");
 
 	addbutton.click(function() {
 		window.ScenesHandler.scenes.push({
@@ -772,31 +798,16 @@ function init_scene_selector() {
 	ss.append(addblock);
 
 
-	let toggle = $("<button id='scene_selector_toggle'>SCENES</button>");
-	toggle.css('position', 'fixed');
-	toggle.css('width', '75px');
-	toggle.css('top', '5px'); // IMPORTANT
-	toggle.css('left', '325px');
-	toggle.css('z-index', '9999')
+	let toggle = $("<button id='scene_selector_toggle' class='hideable'>SCENES<span class='material-icons md-dark md-16'>expand_more</span></button>");
 
 	toggle.click(function() {
-		if (toggle.css('top') == "5px") {
-			toggle.animate({
-				top: '200px',
-			}, 500);
-			ss.animate({
-				height: '200px'
-			}, 500);
-			ss.css("overflow","auto");
+		if (ss.hasClass("menu_opened")) {
+			ss.slideUp().removeClass("menu_opened");
+			toggle.removeClass("menu_opened");
+		} else {
+			ss.slideDown().addClass("menu_opened");
+			toggle.addClass("menu_opened");
 			refresh_scenes();
-		}
-		else {
-			toggle.animate({
-				top: '5px',
-			}, 500);
-			ss.animate({
-				height: '0px'
-			}, 500);
 		}
 	});
 	$(window.document.body).append(ss);

@@ -1,8 +1,23 @@
+var altHeld = false;
+var ctrlHeld = false;
+var shiftHeld = false;
+var toggleSnap=false;
+
+function unhide_interface() {
+    if ($('#hide_interface_button').hasClass('unhidden')) {
+        $('#hide_interface_button').hide().removeClass('unhidden');
+        $('.hideable').show();
+    } else {
+        if ($('#hide_rightpanel').hasClass('point-right')) {
+            $('#hide_rightpanel').click();
+        }
+        $('#hide_interface_button').show().addClass('unhidden');
+        $('.hideable').hide();
+    }
+}
 
 function init_keypress_handler(){
-	
-	
-var altHeld, ctrlHeld, savedSnapState;
+
 
 Mousetrap.bind('c', function () {       //combat tracker
         $('#combat_button').click()
@@ -51,6 +66,10 @@ Mousetrap.bind('-', function () {       //zoom minus
     $('#zoom_minus').click()
 });
 
+Mousetrap.bind('0', function () {
+    $('#zoom_fit').click()
+});
+
 Mousetrap.bind('space', function (e) {     //collapse/show character sheet
 	e.preventDefault();
     if(!window.DM) {    
@@ -68,6 +87,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     $(".drawbutton").removeClass('button-enabled button-selected');
     $(".top_menu").removeClass('visible');
     $("#fog_overlay").css("z-index", "20");
+    $('#select-button').click();
 });
 
 
@@ -168,24 +188,48 @@ Mousetrap.bind('alt', function () {
 }, 'keyup');
 
 
-Mousetrap.bind('ctrl', function () {
-    if (ctrlHeld) {
+
+Mousetrap.bind('shift', function () {
+    if (shiftHeld == true) {
         return;
     } else {
-        ctrlHeld = true;
+        shiftHeld = true;
     }
-    savedSnapState = window.CURRENT_SCENE_DATA.snap; 
-    window.CURRENT_SCENE_DATA.snap = (savedSnapState == 0 ? 1 : 0);
+}, 'keydown');
+
+Mousetrap.bind('shift', function () {
+    shiftHeld = false;
+}, 'keyup');
+
+
+Mousetrap.bind('ctrl', function () {
+	ctrlHeld=true;
+	window.toggleSnap=true;
 }, 'keydown');
 
 Mousetrap.bind('ctrl', function () {
-    window.CURRENT_SCENE_DATA.snap = (window.CURRENT_SCENE_DATA.snap == 0 ? 1 : 0);
-    ctrlHeld = false;
+	ctrlHeld=false;
+	window.toggleSnap=false;
 }, 'keyup');
 
 Mousetrap.bind('shift+h', function () {
-    $('#scene_selector_toggle, #combat_button, #measure-button, #fog_button, #draw_button, #select-button, #zoom_buttons, #hide_rightpanel').toggle();
-    $("button:contains('CONNECT VIDEO')").toggle();
+    unhide_interface();
+});
+
+Mousetrap.bind('ctrl+c', function(e) {
+    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
+    copy_selected_tokens();
+});
+Mousetrap.bind('command+c', function(e) {
+    copy_selected_tokens();
+});
+
+Mousetrap.bind('ctrl+v', function(e) {
+    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
+    paste_selected_tokens();
+});
+Mousetrap.bind('command+v', function(e) {
+    paste_selected_tokens();
 });
 
 }
