@@ -93,6 +93,33 @@ class Token {
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");		
 	}
+	moveUp() {
+		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
+		this.move(newTop, this.options.left)
+	}
+	moveDown() {
+		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
+		this.move(newTop, this.options.left)
+	}
+	moveLeft() {
+		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
+		this.move(this.options.top, newLeft)
+	}
+	moveRight() {
+		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
+		this.move(this.options.top, newLeft)
+	}
+	move(top, left) {
+		if (this.options.locked) return; // don't allow moving if the token is locked
+		this.update_from_page();
+		this.options.top = top;
+		this.options.left = left;
+		this.place(100);
+		this.sync();
+		if (this.persist != null) {
+			this.persist();
+		}
+	}
 	place_sync_persist() {
 		this.place();
 		this.sync();
@@ -407,7 +434,10 @@ class Token {
 	}
 
 
-	place() {
+	place(animationDuration) {
+		if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
+			animationDuration = 1000;
+		}
 		console.log("cerco id" + this.options.id);
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
@@ -423,11 +453,14 @@ class Token {
 			console.log("trovato!!");
 
 			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
+				remove_selected_token_bounding_box();
 				old.animate(
 					{
 						left: this.options.left,
 						top: this.options.top,
-					}, { duration: 1500, queue: false });
+					}, { duration: animationDuration, queue: false, complete: function() {
+						draw_selected_token_bounding_box();
+					} });
 
 
 			// CONCENTRATION REMINDER
