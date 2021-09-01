@@ -24,7 +24,7 @@ function init_monster_panel() {
 
 		var list = $(event.target).contents().find(".monster-listing__body");
 		
-		// limit the width of monster name entries
+		// limit the width of monster entries
 		list.css("max-width", "400px");
 	
 		// prevent right click menu on the monster image so we can use our own custom menu
