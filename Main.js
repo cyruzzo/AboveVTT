@@ -748,7 +748,8 @@ function open_player_sheet(sheet_url) {
 		};
 
 		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
-		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,.ct-inspiration__status", function() {
+		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
+			".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
 			if (window.WAITING_FOR_SYNCHP)
 				return;
 			else {
