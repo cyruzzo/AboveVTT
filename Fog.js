@@ -871,7 +871,7 @@ function drawing_mouseup(e) {
 	}
 	
 	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
-	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.button == 2)
+	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.which !== 1)
 	{
 		return;
 	}
