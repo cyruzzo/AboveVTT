@@ -720,7 +720,7 @@ function drawing_mousedown(e) {
 			drawStroke,
 			lineWidth
 		);
-		drawClosingArea(window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
+		drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 	} else {
 		window.BEGIN_MOUSEX = (e.pageX - 200) * (1.0 / window.ZOOM);
 		window.BEGIN_MOUSEY = (e.pageY - 200) * (1.0 / window.ZOOM);
@@ -848,7 +848,7 @@ function drawing_mousemove(e) {
 				mousex,
 				mousey
 			);
-			drawClosingArea(window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
+			drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 		}
 	}
 }
@@ -867,6 +867,12 @@ function drawing_mouseup(e) {
 	if (window.DRAWSHAPE == "measure" && e.button == 2) {
 		WaypointManager.checkNewWaypoint(mousex, mousey);
 		//console.log("Measure right click");
+		return;
+	}
+	
+	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
+	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.button == 2)
+	{
 		return;
 	}
 
@@ -942,8 +948,8 @@ function drawing_mouseup(e) {
 		window.BRUSHPOINTS.push({x:window.mousex+1, y:window.mousey+1});
 		window.BRUSHPOINTS.push({x:window.mousex-1, y:window.mousey-1});
 		data = ['brush', window.DRAWTYPE,window.DRAWCOLOR, window.BRUSHPOINTS,null,null,null,window.LINEWIDTH];
-		console.log("save brush");
-		console.log(data);
+		//console.log("save brush");
+		//console.log(data);
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
@@ -1112,64 +1118,46 @@ function drawing_contextmenu(e) {
 	if (window.DRAWSHAPE === "polygon") {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
-		
-		var canvas = document.getElementById("fog_overlay");
-		var ctx = canvas.getContext("2d");
-		
-		var drawStroke = false;
-		var fill = true;
-		var style = "#FF0000";
-		var lineWidth = window.LINEWIDTH;
-		// set style
-		if(window.DRAWFUNCTION === "draw")
+		if(window.BEGIN_MOUSEX.length > 0)
 		{
+			var canvas = document.getElementById("fog_overlay");
+			var ctx = canvas.getContext("2d");
 			
-			style = window.DRAWCOLOR;
-			if(window.DRAWTYPE == "transparent")
-			{
-				drawStroke = false;
-				fill = true;
-				style = style.replace(')', ', 0.5)').replace('rgb', 'rgba');
+			var drawStroke = getDrawingStroke();
+			var fill = getDrawingFill();
+			var style = getDrawingStyle();
+			var lineWidth = getDrawingLineWidth();
+
+			if (isNaN(window.DRAWFUNCTION)) {
+				redraw_drawings();
+			} else {
+				redraw_canvas();
 			}
-			else if (window.DRAWTYPE == "border")
-			{
-				drawStroke = true;
-				fill = false;
-				style = style.replace(')', ', 0.9)').replace('rgb', 'rgba');
-			}
-			else if (window.DRAWTYPE == "filled")
-			{
-				drawStroke = false;
-				fill = true;
-				style = style.replace(')', ', 0.9)').replace('rgb', 'rgba');
-			}
+			drawPolygon(
+				ctx,
+				joinPointsArray(
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY
+				),
+				style,
+				fill,
+				drawStroke,
+				lineWidth,
+				(e.pageX - 200) * (1.0 / window.ZOOM),
+				(e.pageY - 200) * (1.0 / window.ZOOM)
+			);
 		}
 		else
 		{
-			drawStroke = false;
-			fill = true;
-			lineWidth = 0;
-			style = "rgba(255,0,0,0.7)";
-		}
-
-		if (isNaN(window.DRAWFUNCTION)) {
-			redraw_drawings();
-		} else {
+			// cancel polygon if on last point
 			redraw_canvas();
 		}
-		drawPolygon(
-			ctx,
-			joinPointsArray(
-				window.BEGIN_MOUSEX,
-				window.BEGIN_MOUSEY
-			),
-			style,
-			fill,
-			drawStroke,
-			lineWidth,
-			(e.pageX - 200) * (1.0 / window.ZOOM),
-			(e.pageY - 200) * (1.0 / window.ZOOM)
-		);
+	}
+	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "1") || (window.DRAWFUNCTION == "0"))
+	{
+		// cancel shape
+		window.MOUSEDOWN = false;
+		redraw_canvas();
 	}
 }
 
@@ -1299,13 +1287,13 @@ function getDrawingStyle()
 			style =style.replace(')', ', 0.9)').replace('rgb', 'rgba');
 		}
 	}
-	else if (window.DRAWFUNCTION === "0")
-	{
-		style = "rgba(255,0,0,0.5)";
-	}
 	else if (window.DRAWFUNCTION === "1")
 	{
 		style = "rgba(0,0,0,0.5)";
+	}
+	else
+	{
+		style = "rgba(255,0,0,0.5)";
 	}
 	return style;
 }
@@ -1560,9 +1548,7 @@ function clearCircle(ctx, centerX, centerY, radius)
 	ctx.restore();
 }
 
-function drawClosingArea(pointX, pointY, fog = true) {
-	var canvas = document.getElementById(fog ? "fog_overlay" : "draw_overlay");
-	var ctx = canvas.getContext("2d");
+function drawClosingArea(ctx, pointX, pointY, fog = true) {
 	ctx.strokeStyle = "#00FFFF";
 	ctx.lineWidth = "2";
 	ctx.beginPath();
