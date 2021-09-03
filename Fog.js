@@ -875,6 +875,12 @@ function drawing_mouseup(e) {
 	{
 		return;
 	}
+	
+	// ignore middle-mouse clicks
+	if(e.which == 2)
+	{
+		return;
+	}
 
 	if (!window.MOUSEDOWN) {
 		return;
