@@ -1415,6 +1415,7 @@ function init_buttons() {
 	draw_menu.append("<div><button id='draw_circle' style='width:75px' class='drawbutton menu-option draw-option' data-shape='arc' data-type='draw'>Circle</button></div>");
 	draw_menu.append("<div><button id='draw_cone' style='width:75px' class='drawbutton menu-option draw-option' data-shape='cone' data-type='draw'>Cone</button></div>");
 	draw_menu.append("<div><button id='draw_line' style='width:75px' class='drawbutton menu-option draw-option' data-shape='line' data-type='draw'>Line</button></div>");
+	draw_menu.append("<div><button id='draw_brush' style='width:75px' class='drawbutton menu-option draw-option' data-shape='brush' data-type='draw'>Brush</button></div>");
 	draw_menu.append("<div><button id='draw_polygon' style='width:75px' class='drawbutton menu-option draw-option' data-shape='polygon' data-type='draw'>Polygon</button></div>");
 	draw_menu.append("<div><button id='draw_erase' style='width:75px' class='drawbutton menu-option draw-option' data-shape='rect' data-type='eraser'>Erase</button></div>");
 	
@@ -1469,6 +1470,8 @@ function init_buttons() {
 		$(this).css('background', 'green');
 	});
 
+	draw_menu.append("<div style='font-weight:bold'>Line Width</div>");
+	draw_menu.append("<div><input id='draw_line_width' type='range' style='width:75px' min='1' max='60' value='6' class='drawWidthSlider'></div>");
 
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
