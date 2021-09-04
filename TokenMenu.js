@@ -1981,7 +1981,7 @@ function fill_tokenmenu(path){
 		var newentry=$(`
 			<div data-path='${newpath}' class='tokenfolder tokenmenuitem'>
 				<img data-path='${newpath}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
-				<div>${f}</div>
+				<div class="label-one-line">${f}</div>
 			</div>
 		`);
 		if(!path.startsWith("/AboveVTT BUILTIN") && !f.startsWith("AboveVTT BUILTIN")){
@@ -2004,7 +2004,7 @@ function fill_tokenmenu(path){
 		var newentry=$(`
 			<div class='tokenentry tokenmenuitem'>
 				<img class='tokenentryimg' src='${parse_img(folder.tokens[t]["data-img"])}'></img>
-				<div>${t}</div>
+				<div class="label-one-line">${t}</div>
 				<button class='tokenadd' >Token</button>
 			</div>
 		`);
