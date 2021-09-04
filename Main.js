@@ -1062,8 +1062,7 @@ function init_ui() {
 			
 			
 			if(validateUrl(text)){
-
-				text="<img width=200 src='"+parse_img(text)+"'>";
+				text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
 			}
 			
 			data = {
