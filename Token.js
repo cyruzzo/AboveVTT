@@ -80,6 +80,21 @@ class Token {
 		if (this.persist != null)
 			this.persist();
 	}
+	delete(persist=true) {
+		if (!window.DM) return; // only allow DMs to delete tokens
+		ct_remove_token(this, false);
+		let id = this.options.id;
+		let selector = "div[data-id='" + id + "']";
+		$(selector).remove();
+		delete window.ScenesHandler.scene.tokens[id];
+		delete window.TOKEN_OBJECTS[id];
+		$("#aura_" + id.replaceAll("/", "")).remove();
+		if (persist == true) {
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+			draw_selected_token_bounding_box(); // redraw the selection box
+		}
+	}
 	rotate(newRotation) {
 		if (this.options.locked) return; // don't allow rotation if the token is locked
 		this.update_from_page();
@@ -92,6 +107,33 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");		
+	}
+	moveUp() {
+		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
+		this.move(newTop, this.options.left)
+	}
+	moveDown() {
+		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
+		this.move(newTop, this.options.left)
+	}
+	moveLeft() {
+		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
+		this.move(this.options.top, newLeft)
+	}
+	moveRight() {
+		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
+		this.move(this.options.top, newLeft)
+	}
+	move(top, left) {
+		if (this.options.locked) return; // don't allow moving if the token is locked
+		this.update_from_page();
+		this.options.top = top;
+		this.options.left = left;
+		this.place(100);
+		this.sync();
+		if (this.persist != null) {
+			this.persist();
+		}
 	}
 	place_sync_persist() {
 		this.place();
@@ -407,7 +449,10 @@ class Token {
 	}
 
 
-	place() {
+	place(animationDuration) {
+		if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
+			animationDuration = 1000;
+		}
 		console.log("cerco id" + this.options.id);
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
@@ -423,11 +468,14 @@ class Token {
 			console.log("trovato!!");
 
 			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
+				remove_selected_token_bounding_box();
 				old.animate(
 					{
 						left: this.options.left,
 						top: this.options.top,
-					}, { duration: 1500, queue: false });
+					}, { duration: animationDuration, queue: false, complete: function() {
+						draw_selected_token_bounding_box();
+					} });
 
 
 			// CONCENTRATION REMINDER
@@ -1115,20 +1163,7 @@ function menu_callback(key, options, event) {
 	}
 	if (key == "delete") {
 		id = $(this).attr('data-id');
-		$(this).remove();
-		delete window.ScenesHandler.scene.tokens[id];
-		delete window.TOKEN_OBJECTS[id];
-		$("#aura_" + id.replaceAll("/", "")).remove();
-		if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
-			if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
-				$("#combat_next_button").click();
-			}
-			$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
-		}
-		ct_persist();
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
-		draw_selected_token_bounding_box(); // clean up the rotation if needed
+		window.TOKEN_OBJECTS[id].delete();
 	}
 	if (key == "token_medium") {
 		id = $(this).attr('data-id'); window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps));
@@ -2237,4 +2272,39 @@ function paste_selected_tokens() {
 	// copy the newly selected tokens in case they paste again, we want them pasted in reference to the newly created tokens
 	copy_selected_tokens();
 	draw_selected_token_bounding_box();
+}
+
+function delete_selected_tokens() {
+	if (!window.DM) return;
+	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+	// move all the tokens into a separate list so the DM can "undo" the deletion
+	let tokensToDelete = [];
+	for (id in window.TOKEN_OBJECTS) {
+		let token = window.TOKEN_OBJECTS[id];
+		if (token.selected) {
+			window.TOKEN_OBJECTS_RECENTLY_DELETED[id] = Object.assign({}, token.options);
+			tokensToDelete.push(token);
+		}
+	}
+	// delete these in a separate loop to prevent altering the array while iterating over it
+	for (let i = 0; i < tokensToDelete.length; i++) {
+		tokensToDelete[i].delete(false); // don't persist on each token delete, we'll do that next
+	}
+	window.ScenesHandler.persist();
+	window.ScenesHandler.sync();
+	draw_selected_token_bounding_box(); // redraw the selection box
+	ct_persist();
+}
+
+function undo_delete_tokens() {
+	if (!window.DM) return;
+	for (id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
+		let options = window.TOKEN_OBJECTS_RECENTLY_DELETED[id];
+		window.ScenesHandler.create_update_token(options);
+		if (options.combat) {
+			// the deleted token was removed from the combat tracker so add it back in
+			ct_add_token(window.TOKEN_OBJECTS[id]);
+		}
+	}
+	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 }

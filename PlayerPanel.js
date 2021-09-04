@@ -9,6 +9,9 @@ function init_pclist() {
 
 function update_pclist() {
 
+	// get scroll position
+	var scroll_y = $(".sidebar__pane-content").scrollTop();
+	
 	pcs_list = $("#pcs_list");
 	pcs_list.empty();
 
@@ -194,4 +197,6 @@ function update_pclist() {
 		}
 	});
 
+	// reset scroll position
+	$(".sidebar__pane-content").scrollTop(scroll_y);
 }

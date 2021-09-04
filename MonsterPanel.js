@@ -23,7 +23,10 @@ function init_monster_panel() {
 		$(event.target).contents().find(".dice-rolling-panel").remove();
 
 		var list = $(event.target).contents().find(".monster-listing__body");
-
+		
+		// limit the width of monster entries
+		list.css("max-width", "400px");
+	
 		// prevent right click menu on the monster image so we can use our own custom menu
 		list.on("contextmenu", ".monster-row__cell--avatar", function(e) {
 			e.preventDefault();
