@@ -49,7 +49,7 @@ function init_jitsi() {
 			startWithAudioMuted: true,
 		},
 		interfaceConfigOverwrite: {
-			TOOLBAR_BUTTONS: ["microphone", "camera", "settings"],
+			TOOLBAR_BUTTONS: ["microphone", "camera", "settings", "tileview"],
 			VERTICAL_FILMSTRIP: false,
 			filmStripOnly: true,
 			DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
