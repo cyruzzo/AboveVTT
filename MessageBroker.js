@@ -385,7 +385,8 @@ class MessageBroker {
 		if(self.chat_decipher_task==null){
 			self.chat_decipher_task=setInterval(function(){
 				console.log("deciphering");
-				for(var i=0;i<self.chat_pending_messages.length;i++){
+				let pend_length = self.chat_pending_messages.length;
+				for(var i=0;i<pend_length;i++){
 					var current=self.chat_pending_messages.shift();
 					
 					var injection_id=current.data.rolls[0].rollType;
