@@ -41,6 +41,8 @@
 	"Settings.js",
 	"mousetrap.1.6.5.min.js",
 	"KeypressHandler.js",
+	"jquery.magnific-popup.min.js",
+	"magnific-popup.css",
 	"assets/*"
 	]
 }
