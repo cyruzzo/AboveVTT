@@ -910,6 +910,7 @@ div#scene_properties form > div {
 	float: left;
 	height:100px;
 	width: 100px;
+    margin-bottom: 20px;
 }
 
 .panel-warning {
@@ -1176,4 +1177,16 @@ body {
 .custom-token-image-menu-item-remove-button{
     margin-left: 8px;
     vertical-align: baseline;
+}
+
+.label-one-line {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.label-one-line:hover {
+    overflow: visible;
+    white-space: normal;
+    width: auto;
 }
