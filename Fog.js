@@ -685,8 +685,8 @@ function drawing_mousedown(e) {
 	if (window.DRAWSHAPE === "polygon") {
 		
 		redraw_canvas();
-		const pointX = (e.pageX - 200) * (1.0 / window.ZOOM);
-		const pointY = (e.pageY - 200) * (1.0 / window.ZOOM);
+		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
 				isPointWithinDistance(
@@ -722,8 +722,8 @@ function drawing_mousedown(e) {
 		);
 		drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 	} else {
-		window.BEGIN_MOUSEX = (e.pageX - 200) * (1.0 / window.ZOOM);
-		window.BEGIN_MOUSEY = (e.pageY - 200) * (1.0 / window.ZOOM);
+		window.BEGIN_MOUSEX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+		window.BEGIN_MOUSEY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		window.MOUSEDOWN = true;
 		if(window.DRAWSHAPE === "brush")
 		{
@@ -744,8 +744,8 @@ function drawing_mousedown(e) {
 
 function drawing_mousemove(e) {
 
-	var mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
-	var mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 	
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
@@ -855,8 +855,8 @@ function drawing_mousemove(e) {
 
 function drawing_mouseup(e) {
 
-	mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
-	mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
 	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "31");
@@ -1149,8 +1149,8 @@ function drawing_contextmenu(e) {
 				fill,
 				drawStroke,
 				lineWidth,
-				(e.pageX - 200) * (1.0 / window.ZOOM),
-				(e.pageY - 200) * (1.0 / window.ZOOM)
+				Math.round(((e.pageX - 200) * (1.0 / window.ZOOM))),
+				Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)))
 			);
 		}
 		else
