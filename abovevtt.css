@@ -198,6 +198,7 @@ div#scene_selector,
     position: relative;
     height: 100%;
     margin: 10px 0;
+    padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
 
@@ -227,10 +228,9 @@ div#scene_selector,
 }
 
 #round_number_label {
-	font-size: 10px;
-    background-color: white;
-	vertical-align: middle;
-	padding-left: 8px;
+    font-size: 10px;
+    vertical-align: middle;
+    padding-left: 8px;
     text-align: left;
 }
 
