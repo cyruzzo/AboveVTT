@@ -162,6 +162,10 @@ function ct_reorder(persist=true) {
 function ct_add_token(token,persist=true,disablerolling=false){
 	// TODO: check if the token is already in the tracker..
 	
+	token.options.combat = true;
+	token.sync();
+	if (token.persist != null) token.persist();
+	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
@@ -333,4 +337,24 @@ function ct_load(data=null){
 	}
 	if(window.DM)
 		ct_persist();
+}
+
+function ct_remove_token(token,persist=true) {
+
+	if (persist == true) {
+		token.options.combat = false;
+		token.sync();
+		if (token.persist != null) token.persist();
+	}
+
+	let id = token.options.id;
+	if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
+		if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
+			$("#combat_next_button").click();
+		}
+		$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
+	}
+	if (persist) {
+		ct_persist();
+	}
 }
