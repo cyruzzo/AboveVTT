@@ -20,6 +20,11 @@ function init_combat_tracker(){
 	ct_inside.hide();
 	ct.append(ct_inside);
 	
+	ct_area=$("<table id='combat_area'/>");
+	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
+	ct_list_wrapper.append(ct_area);
+	ct_inside.append(ct_list_wrapper);
+	
 	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 10px; width: 20px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
 	reset_rounds=$("<button style='font-size: 8px;'>RESET</button>");
 	
@@ -49,11 +54,6 @@ function init_combat_tracker(){
 	{
 		rn.find("#round_number").prop("readonly", true);
 	}
-	
-	ct_area=$("<table id='combat_area'/>");
-	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
-	ct_list_wrapper.append(ct_area);
-	ct_inside.append(ct_list_wrapper);
 	
 	buttons=$("<div id='combat_footer'/>");
 	
