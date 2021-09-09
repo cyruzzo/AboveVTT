@@ -16,6 +16,7 @@ body > button,
 .stp-btn,
 .player-actions button,
 #add-party,
+#reset_round_number,
 #hide_rightpanel,
 #zoom_buttons button,
 .stream_button,
@@ -102,7 +103,7 @@ body > button:hover,
 }
 
 .top_menu.visible {
-    max-height: 325px;
+    max-height: 400px;
 }
 
 .sidebar__controls > div button {
@@ -223,6 +224,27 @@ div#scene_selector,
 
 #combat_footer button {
     width: 50px;
+}
+
+#round_number_label {
+    /*font-size:15px;
+    color:grey;*/
+	font-size: 10px;
+    background-color: white;
+	vertical-align: middle;
+	padding-left: 8px;
+    text-align: left;
+}
+
+input.roundNum::-webkit-outer-spin-button,
+input.roundNum::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number].roundNum {
+  -moz-appearance: textfield;
 }
 
 input {
@@ -910,7 +932,6 @@ div#scene_properties form > div {
 	float: left;
 	height:100px;
 	width: 100px;
-    margin-bottom: 20px;
 }
 
 .panel-warning {
@@ -1177,16 +1198,4 @@ body {
 .custom-token-image-menu-item-remove-button{
     margin-left: 8px;
     vertical-align: baseline;
-}
-
-.label-one-line {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-.label-one-line:hover {
-    overflow: visible;
-    white-space: normal;
-    width: auto;
 }
