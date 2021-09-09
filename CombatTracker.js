@@ -134,15 +134,7 @@ function init_combat_tracker(){
 		buttons.css('font-size','8px');
 		
 		ct_inside.append(buttons);
-		
-		// rn.append(reset_rounds);
-		// ct_inside.append(rn);
 	}
-	// else
-	// {
-		// rn.find("#round_number").prop("readonly", true);
-		// ct_inside.append(rn);
-	// }
 	
 	if(window.DM) {
 		ct.addClass('tracker-dm');
