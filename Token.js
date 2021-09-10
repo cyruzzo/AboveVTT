@@ -1025,6 +1025,15 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		id = uuid();
 	}
 
+	// if this is a player token, check if the token is already on the map
+	if(id in window.TOKEN_OBJECTS){
+		if(window.TOKEN_OBJECTS[id].isPlayer())
+		{
+			window.TOKEN_OBJECTS[id].highlight();
+			return;
+		}
+	}
+	
 	options = {
 		id: id,
 		imgsrc: imgsrc,
