@@ -1558,7 +1558,7 @@ function init_stream_button() {
 $(function() {
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
 	var is_dm=false;
-	if($(".ddb-campaigns-detail-body-dm-notes-label").length>0){
+	if($(".ddb-campaigns-detail-body-dm-notes-private").length>0){
 		is_dm=true;
 	}
 	
