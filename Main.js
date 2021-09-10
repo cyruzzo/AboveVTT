@@ -1329,14 +1329,6 @@ function init_ui() {
 	init_buttons();
 	init_stream_button();
 
-	if (!window.DM) {
-
-		open_player_sheet(window.PLAYER_SHEET, true);
-
-		iframe = $("#sheet");
-
-	}
-
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
 
