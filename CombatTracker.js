@@ -25,8 +25,8 @@ function init_combat_tracker(){
 	ct_list_wrapper.append(ct_area);
 	ct_inside.append(ct_list_wrapper);
 	
-	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 10px; width: 20px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
-	reset_rounds=$("<button style='font-size: 8px;'>RESET</button>");
+	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 24px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
+	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
 	
 	reset_rounds.click(function (){
 		window.ROUND_NUMBER = 1;
