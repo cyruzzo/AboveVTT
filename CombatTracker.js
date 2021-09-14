@@ -93,7 +93,7 @@ function init_combat_tracker(){
 		buttons.append(clear);
 		buttons.append(reroll);
 		buttons.append(next);
-		buttons.css('font-size','8px');
+		buttons.css('font-size','10px');
 		
 		ct_inside.append(buttons);
 	}
@@ -151,7 +151,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	img.css('border','3px solid '+token.options.color);
 	
 	entry.append($("<td/>").append(img));
-	let init=$("<input class='init' maxlength=2 style='font-size:10px;'>");
+	let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
 	init.css('width','20px');
 	init.css('-webkit-appearance','none');
 	if(window.DM){
@@ -196,7 +196,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	var buttons=$("<td/>");
 	
 	
-	find=$("<button style='font-size:8px;'>FIND</button>");
+	find=$("<button style='font-size:10px;'>FIND</button>");
 	find.click(function(){
 		var target=$(this).parent().parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
@@ -207,7 +207,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	buttons.append(find);
 	
-	del=$("<button style='font-size:8px;'>DEL</button>");
+	del=$("<button style='font-size:10px;'>DEL</button>");
 	del.click(
 		function(){
 			if($(this).parent().parent().attr("data-current")=="1"){
@@ -221,7 +221,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		buttons.append(del);
 	
 	if(token.options.monster > 0){
-		stat=$("<button style='font-size:8px;'>STAT</button>");
+		stat=$("<button style='font-size:10px;'>STAT</button>");
 		
 		stat.click(function(){
 			iframe_id="#iframe-monster-"+token.options.monster;
@@ -237,7 +237,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 	}	
 	else{
-		stat=$("<button style='font-size:8px;'>STAT</button>");
+		stat=$("<button style='font-size:10px;'>STAT</button>");
 		stat.click(function(){
 			open_player_sheet(token.options.id);
 		});
