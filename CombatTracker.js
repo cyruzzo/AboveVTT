@@ -1,5 +1,7 @@
 
 function init_combat_tracker(){
+	window.ROUND_NUMBER =1;
+	
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
 	toggle=$("<button id='combat_button' class='hideable'><u>C</u>OMBAT</button>");
@@ -22,6 +24,36 @@ function init_combat_tracker(){
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_list_wrapper.append(ct_area);
 	ct_inside.append(ct_list_wrapper);
+	
+	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 24px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
+	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
+	
+	reset_rounds.click(function (){
+		window.ROUND_NUMBER = 1;
+		document.getElementById('round_number').value = window.ROUND_NUMBER;
+		$("#combat_area tr").first().attr('data-current','1');
+		next.removeAttr('data-current');
+		next.css('background','');
+		ct_persist();
+	});
+
+	rn.find("#round_number").change(function (data) {
+		if( !isNaN(data.currentTarget.value)){
+			window.ROUND_NUMBER = Math.round(data.currentTarget.value);
+			ct_persist();
+		}
+		document.getElementById('round_number').value = window.ROUND_NUMBER;
+	});
+	
+	ct_inside.append(rn);
+	if(window.DM)
+	{
+		rn.append(reset_rounds);
+	}
+	else
+	{
+		rn.find("#round_number").prop("readonly", true);
+	}
 	
 	buttons=$("<div id='combat_footer'/>");
 	
@@ -47,6 +79,8 @@ function init_combat_tracker(){
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
 		$("#combat_area").empty();
+		window.ROUND_NUMBER = 1;
+		document.getElementById('round_number').value = window.ROUND_NUMBER;
 		ct_persist();
 	});
 	
@@ -65,6 +99,8 @@ function init_combat_tracker(){
 			current.css('background','');
 			next=current.next();
 			if(next.length==0){
+				window.ROUND_NUMBER++;
+				document.getElementById('round_number').value = window.ROUND_NUMBER;
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
@@ -88,6 +124,8 @@ function init_combat_tracker(){
 		});
 		
 	});
+	
+	
 	if(window.DM){
 		buttons.append(roll);
 		buttons.append(clear);
@@ -97,7 +135,7 @@ function init_combat_tracker(){
 		
 		ct_inside.append(buttons);
 	}
-
+	
 	if(window.DM) {
 		ct.addClass('tracker-dm');
 	} else {
@@ -123,11 +161,11 @@ function ct_reorder(persist=true) {
 
 function ct_add_token(token,persist=true,disablerolling=false){
 	// TODO: check if the token is already in the tracker..
-
+	
 	token.options.combat = true;
 	token.sync();
 	if (token.persist != null) token.persist();
-
+	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
@@ -262,9 +300,11 @@ function ct_persist(){
 	  data.push( {
 		'data-target': $(this).attr("data-target"),
 		'init': $(this).find(".init").val(),
-		'current': ($(this).attr("data-current")=="1"),
+		'current': ($(this).attr("data-current")=="1")
 	   });
 	});
+	data.push({'data-target': 'round',
+				'round_number':window.ROUND_NUMBER});
 	
 	var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
 	
@@ -287,6 +327,11 @@ function ct_load(data=null){
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 				}
+			}
+			else if (data[i]['data-target'] === 'round')
+			{
+				window.ROUND_NUMBER = data[i]['round_number'];
+				document.getElementById('round_number').value = window.ROUND_NUMBER;
 			}
 		}
 	}

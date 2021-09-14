@@ -366,6 +366,13 @@ function circle_intersection(x0, y0, r0, x1, y1, r1) {
 	return [xi, xi_prime, yi, yi_prime];
 }
 
+function midPointBtw(p1, p2) {
+  return {
+    x: p1.x + (p2.x - p1.x) / 2,
+    y: p1.y + (p2.y - p1.y) / 2
+  };
+}
+
 function reset_canvas() {
 	$('#fog_overlay').width($("#scene_map").width());
 	$('#fog_overlay').height($("#scene_map").height());
@@ -525,13 +532,7 @@ function redraw_canvas() {
 				ctx.clearRect(d[0], d[1], d[2], d[3]);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
-				ctx.save();
-				ctx.beginPath();
-				ctx.fillStyle = "rgba(0,0,0,0);"
-				ctx.arc(d[0], d[1], d[2], 0, 2 * Math.PI, false);
-				ctx.clip();
-				ctx.clearRect(d[0] - d[2], d[1] - d[2], d[2] * 2, d[2] * 2);
-				ctx.restore();
+				clearCircle(ctx, d[0], d[1], d[2]);
 			}
 			if (d[4] == 2) {
 				// reveal ALL!!!!!!!!!!
@@ -539,7 +540,7 @@ function redraw_canvas() {
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
-				clearPolygon(d[0]);
+				clearPolygon(ctx, d[0]);
 			}
 		}
 		if (d[5] == 1) { // HIDE
@@ -549,21 +550,12 @@ function redraw_canvas() {
 				ctx.fillRect(d[0], d[1], d[2], d[3]);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
-				ctx.save();
-				ctx.beginPath();
-				ctx.arc(d[0], d[1], d[2], 0, 2 * Math.PI, false);
-				ctx.clip();
-				ctx.clearRect(d[0] - d[2], d[1] - d[2], d[2] * 2, d[2] * 2);
-				ctx.restore();
-				ctx.fillStyle = fogStyle;
-				ctx.arc(d[0], d[1], d[2], 0, 2 * Math.PI, false);
-				ctx.fill();
-
-
+				clearCircle(ctx, d[0], d[1], d[2]);
+				drawCircle(ctx, d[0], d[1], d[2], fogStyle);
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				drawPolygon(d[0], fogStyle);
+				drawPolygon(ctx, d[0], fogStyle);
 			}
 		}
 	}
@@ -572,120 +564,79 @@ function redraw_canvas() {
 function redraw_drawings() {
 	var canvas = document.getElementById("draw_overlay");
 	var ctx = canvas.getContext("2d");
+	var lineWidth = 6;
+	var style = "#FF0000";
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	for (var i = 0; i < window.DRAWINGS.length; i++) {
 		data = window.DRAWINGS[i];
-
-
+		
 		if (data[0] == "eraser") {
 			ctx.clearRect(data[3], data[4], data[5], data[6]);
 		}
 		if (data[0] == "rect" && data[1] == "filled") {
-			ctx.fillStyle = data[2];
-			ctx.fillRect(data[3], data[4], data[5], data[6]);
+			style = data[2];
+			drawRect(ctx,data[3], data[4], data[5], data[6], style, true);
 		}
 		if (data[0] == "rect" && data[1] == "transparent") {
-			ctx.fillStyle = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			ctx.fillRect(data[3], data[4], data[5], data[6]);
+			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
+			drawRect(ctx,data[3], data[4], data[5], data[6], style, true);
 		}
 		if (data[0] == "rect" && data[1] == "border") {
-			ctx.strokeStyle = data[2];
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.rect(data[3], data[4], data[5], data[6]);
-			ctx.stroke();
+			lineWidth = data.length > 7 ? data[7] : "6";
+			style = data[2];
+			drawRect(ctx,data[3], data[4], data[5], data[6], style, false, true,lineWidth );
 		}
 		if (data[0] == "arc" && data[1] == "filled") {
-			ctx.fillStyle = data[2];
-			ctx.save();
-			ctx.beginPath();
-			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
-			ctx.clip();
-			ctx.clearRect(data[3] - data[5], data[4] - data[5], data[5] * 2, data[5] * 2);
-			ctx.restore();
-			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
-			ctx.fill();
+			style = data[2];
+			drawCircle(ctx,data[3], data[4], data[5], style);
 		}
 		if (data[0] == "arc" && data[1] == "transparent") {
-			ctx.fillStyle = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			ctx.save();
-			ctx.beginPath();
-			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
-			ctx.clip();
-			ctx.clearRect(data[3] - data[5], data[4] - data[5], data[5] * 2, data[5] * 2);
-			ctx.restore();
-			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
-			ctx.fill();
+			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
+			drawCircle(ctx,data[3], data[4], data[5], style);
 		}
 		if (data[0] == "arc" && data[1] == "border") {
-			ctx.strokeStyle = data[2];
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.arc(data[3], data[4], data[5], 0, 2 * Math.PI, false);
-			ctx.stroke();
+			style = data[2];
+			lineWidth = data.length > 7 ? data[7] : "6";
+			drawCircle(ctx,data[3], data[4], data[5], style, false, true, lineWidth);
 		}
 		if (data[0] == "cone" && data[1] == "transparent") {
-			ctx.fillStyle = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			var L = Math.sqrt(Math.pow(data[5] - data[3], 2) + Math.pow(data[6] - data[4], 2));
-			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
-			var res = circle_intersection(data[3], data[4], T, data[5], data[6], L / 2);
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.moveTo(data[3], data[4]);
-			ctx.lineTo(res[0], res[2]);
-			ctx.lineTo(res[1], res[3]);
-			ctx.closePath();
-			ctx.fill();
+			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
+			drawCone(ctx,data[3], data[4], data[5],data[6], style);
 		}
 		if (data[0] == "cone" && data[1] == "filled") {
-			ctx.fillStyle = data[2];
-			var L = Math.sqrt(Math.pow(data[5] - data[3], 2) + Math.pow(data[6] - data[4], 2));
-			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
-			var res = circle_intersection(data[3], data[4], T, data[5], data[6], L / 2);
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.moveTo(data[3], data[4]);
-			ctx.lineTo(res[0], res[2]);
-			ctx.lineTo(res[1], res[3]);
-			ctx.closePath();
-			ctx.fill();
+			style = data[2];
+			drawCone(ctx,data[3], data[4], data[5],data[6], style);
 		}
 		if (data[0] == "cone" && data[1] == "border") {
-			ctx.strokeStyle = data[2];
-			var L = Math.sqrt(Math.pow(data[5] - data[3], 2) + Math.pow(data[6] - data[4], 2));
-			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
-			var res = circle_intersection(data[3], data[4], T, data[5], data[6], L / 2);
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.moveTo(data[3], data[4]);
-			ctx.lineTo(res[0], res[2]);
-			ctx.lineTo(res[1], res[3]);
-			ctx.closePath();
-			ctx.stroke();
+			style = data[2];
+			lineWidth = data.length > 7 ? data[7] : "6";
+			drawCone(ctx,data[3], data[4], data[5],data[6], style, false, true, lineWidth);
 		}
 		if (data[0] == "line") {
-			ctx.strokeStyle = data[2];
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.moveTo(data[3], data[4]);
-			ctx.lineTo(data[5], data[6]);
-			ctx.stroke();
+			style = data[2];
+			lineWidth = data.length > 7 ? data[7] : "6";
+			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
 		}
 
 		if (data[0] == "polygon" && data[1] == "filled") {
-			drawPolygon(data[3], data[2], false);
+			style = data[2];
+			drawPolygon(ctx,data[3], style, true);
 		}
 		if (data[0] == "polygon" && data[1] == "transparent") {
-			drawPolygon(data[3], data[2].replace(')', ', 0.5)').replace('rgb', 'rgba'), false);
+			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
+			drawPolygon(ctx,data[3], style, true);
 		}
 		if (data[0] == "polygon" && data[1] == "border") {
-			ctx.strokeStyle = data[2];
-			drawPolygon(data[3], "rgba(0, 0, 0, 0)", false, 6);
+			style = data[2];
+			lineWidth = data.length > 7 ? data[7] : "6";
+			drawPolygon(ctx,data[3], style, false, true, lineWidth);
 			ctx.stroke();
 		}
-
+		if (data[0] == "brush") {
+			drawBrushstroke(ctx, data[3],data[2], (data.length > 7 ? data[7] : "6"), false);
+		}
 	}
 }
 
@@ -708,30 +659,34 @@ function stop_drawing() {
 
 function drawing_mousedown(e) {
 
-	if (e.data.shape === 'select') {
+	window.LINEWIDTH = $("#draw_line_width").val();
+	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
+	window.DRAWCOLOR = $(".colorselected").css('background-color');
+	window.DRAWSHAPE = e.data.shape;
+	window.DRAWFUNCTION = e.data.type;
+	
+	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "50");
 		if (e.which == 1) {
 			$("#fog_overlay").css('cursor', 'crosshair');
 		}
 	}
 
-	if (window.DRAGGING && e.data.shape != 'align')
+	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
 	if (e.button != 0)
 		return;
 	deselect_all_tokens();
-	if (shiftHeld == false || e.data.shape != 'select') {
+	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
 		deselect_all_tokens();
 	}
+	
 
-	if (e.data.shape === "polygon") {
-		if (isNaN(e.data.type)) {
-			redraw_drawings();
-		} else {
-			redraw_canvas();
-		}
-		const pointX = (e.pageX - 200) * (1.0 / window.ZOOM);
-		const pointY = (e.pageY - 200) * (1.0 / window.ZOOM);
+	if (window.DRAWSHAPE === "polygon") {
+		
+		redraw_canvas();
+		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
 				isPointWithinDistance(
@@ -749,41 +704,69 @@ function drawing_mousedown(e) {
 			window.BEGIN_MOUSEX = [pointX];
 			window.BEGIN_MOUSEY = [pointY];
 		}
-		drawPolygon(
+		var canvas = document.getElementById("fog_overlay");
+		var ctx = canvas.getContext("2d");
+		var drawStroke = getDrawingStroke();
+		var fill = getDrawingFill();
+		var style = getDrawingStyle();
+		var lineWidth = getDrawingLineWidth();
+		drawPolygon(ctx,
 			joinPointsArray(
 				window.BEGIN_MOUSEX,
 				window.BEGIN_MOUSEY
 			),
-			undefined,
-			!isNaN(e.data.type)
+			style,
+			fill,
+			drawStroke,
+			lineWidth
 		);
-		drawClosingArea(window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(e.data.type));
+		drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 	} else {
-		window.BEGIN_MOUSEX = (e.pageX - 200) * (1.0 / window.ZOOM);
-		window.BEGIN_MOUSEY = (e.pageY - 200) * (1.0 / window.ZOOM);
+		window.BEGIN_MOUSEX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+		window.BEGIN_MOUSEY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		window.MOUSEDOWN = true;
+		if(window.DRAWSHAPE === "brush")
+		{
+			window.BRUSHWAIT = false;
+			window.BRUSHPOINTS = [];
+			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+			// draw a dot
+			var canvas = document.getElementById("fog_overlay");
+			var ctx = canvas.getContext("2d");
+			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
+			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
+			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+			drawBrushstroke(ctx, window.BRUSHPOINTS,getDrawingStyle(),getDrawingLineWidth());
+		}
 	}
 
 }
 
 function drawing_mousemove(e) {
 
-	var mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
-	var mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+	
+	var canvas = document.getElementById("fog_overlay");
+	var ctx = canvas.getContext("2d");
+	var drawStroke = getDrawingStroke();
+	var fill = getDrawingFill();
+	var style = getDrawingStyle();
+	var lineWidth = getDrawingLineWidth();
 	
 	if (window.MOUSEDOWN) {
-		var canvas = document.getElementById("fog_overlay");
-		var ctx = canvas.getContext("2d");
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
-		redraw_canvas();
-
-		ctx.fillStyle = "#FF0000";
-		if (e.data.shape == "rect") {
-			ctx.fillStyle = "rgba(255,0,0,0.7)";
-			ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height);
+		
+		if(window.DRAWSHAPE !== "brush")
+		{
+			redraw_canvas();
 		}
-		else if (e.data.shape == "align") {
+		
+		if (window.DRAWSHAPE == "rect") {
+			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
+		}
+		else if (window.DRAWSHAPE == "align") {
 			for (i = 0; i < 4; i++) {
 				ctx.strokeStyle = "rgba(255,0,0,0.7)";
 				ctx.lineWidth = 1;
@@ -800,44 +783,26 @@ function drawing_mousemove(e) {
 
 			//ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height);
 		}
-		else if (e.data.shape == "arc") {
+		else if (window.DRAWSHAPE == "arc") {
 			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 			centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 			radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-			ctx.beginPath();
-			ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-			ctx.fill();
+			drawCircle(ctx,centerX, centerY, radius, style, fill, drawStroke, lineWidth);
 		}
-		else if (e.data.shape == "cone") {
-			var L = Math.sqrt(Math.pow(mousex - window.BEGIN_MOUSEX, 2) + Math.pow(mousey - window.BEGIN_MOUSEY, 2));
-			var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
-			var res = circle_intersection(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, T, mousex, mousey, L / 2);
-			ctx.fillStyle = "rgba(255,0,0,0.7)";
-			ctx.lineWidth = "6";
-			ctx.beginPath();
-			ctx.moveTo(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
-			ctx.lineTo(res[0], res[2]);
-			ctx.lineTo(res[1], res[3]);
-			ctx.closePath();
-			ctx.fill();
+		else if (window.DRAWSHAPE == "cone") {
+			drawCone(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, style, fill, drawStroke, lineWidth);
 		}
-		else if (e.data.shape == "line") {
-			ctx.beginPath();
-			ctx.strokeStyle = "rgba(255,0,0,0.7)";
-			ctx.lineWidth = 6;
-			ctx.moveTo(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
-			ctx.lineTo(mousex, mousey);
-			ctx.stroke();
+		else if (window.DRAWSHAPE == "line") {
+			drawLine(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, style, lineWidth);
 		}
-		else if (e.data.shape == "select") {
+		else if (window.DRAWSHAPE == "select") {
 			ctx.save();
-			ctx.beginPath();
 			ctx.strokeStyle = "white";
-			ctx.rect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height);
-			ctx.stroke();
+			ctx.setLineDash([10,5]);
+			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,"white",false,true);
 			ctx.restore();
 		}
-		else if (e.data.shape == "measure") {
+		else if (window.DRAWSHAPE == "measure") {
 			ctx.save();
 			// ctx.beginPath();
 
@@ -850,46 +815,70 @@ function drawing_mousemove(e) {
 
 			ctx.restore();
 		}
-	} else {
-		if (e.data.shape === "polygon" &&
+		else if (window.DRAWSHAPE == "brush"){
+			// Only add a new point every 75ms to keep the drawing size low
+			if(!window.BRUSHWAIT)
+			{
+				window.BRUSHPOINTS.push({x:mousex, y:mousey});
+				
+				drawBrushstroke(ctx, window.BRUSHPOINTS,style,lineWidth);
+				
+				window.BRUSHWAIT = true;
+				setTimeout(function() {
+					window.BRUSHWAIT = false;
+				}, 75);
+			}
+		}
+	} 
+	else {
+		if (window.DRAWSHAPE === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			
-			if (isNaN(e.data.type)) {
-				redraw_drawings();
-			} else {
-				redraw_canvas();
-			}
+			redraw_canvas();
 
-			drawPolygon(
+			drawPolygon( ctx,
 				joinPointsArray(
 					window.BEGIN_MOUSEX,
 					window.BEGIN_MOUSEY
 				),
-				undefined,
-				!isNaN(e.data.type),
-				undefined,
+				style,
+				fill,
+				drawStroke,
+				lineWidth,
 				mousex,
 				mousey
 			);
-			drawClosingArea(window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(e.data.type));
+			drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 		}
 	}
 }
 
 function drawing_mouseup(e) {
 
-	mousex = (e.pageX - 200) * (1.0 / window.ZOOM);
-	mousey = (e.pageY - 200) * (1.0 / window.ZOOM);
+	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
-	if (e.data.shape === 'select') {
+	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "31");
 		$("#fog_overlay").css('cursor', '');
 	}
 
 	// Return early from this function if we are measuring and have hit the right mouse button
-	if (e.data.shape == "measure" && e.button == 2) {
+	if (window.DRAWSHAPE == "measure" && e.button == 2) {
 		WaypointManager.checkNewWaypoint(mousex, mousey);
 		//console.log("Measure right click");
+		return;
+	}
+	
+	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
+	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.which !== 1)
+	{
+		return;
+	}
+	
+	// ignore middle-mouse clicks
+	if(e.which == 2)
+	{
 		return;
 	}
 
@@ -904,8 +893,8 @@ function drawing_mouseup(e) {
 
 	// [0-3] is always shape data [4] is shape and [5] is type
 
-	if (e.data.shape == "line" && e.data.type === "draw") {
-		data = ['line', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey];
+	if (window.DRAWSHAPE == "line" && window.DRAWFUNCTION === "draw") {
+		data = ['line', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, window.LINEWIDTH];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
@@ -913,67 +902,79 @@ function drawing_mouseup(e) {
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 
-	if (e.data.shape == "rect" && e.data.type === "draw") {
+	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw") {
 		console.log('disegno');
-		data = ['rect', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
+		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "rect" && e.data.type === "eraser") {
+	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
 		console.log('disegno');
-		data = ['eraser', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
+		data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "arc" && e.data.type === "draw") {
+	if (window.DRAWSHAPE == "arc" && window.DRAWFUNCTION === "draw") {
 		console.log('son qua');
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = ['arc', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), centerX, centerY, radius];
+		data = ['arc', window.DRAWTYPE, window.DRAWCOLOR, centerX, centerY, radius,null,window.LINEWIDTH];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "cone" && e.data.type === "draw") {
-		data = ['cone', $(".drawTypeSelected ").attr('data-value'), $(".colorselected").css('background-color'), window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey];
+	if (window.DRAWSHAPE == "cone" && window.DRAWFUNCTION === "draw") {
+		data = ['cone', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey,window.LINEWIDTH];
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
 		window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (e.data.shape == "rect" && (e.data.type === "0" || e.data.type === "1")) {
+	if (window.DRAWSHAPE == "rect" && (window.DRAWFUNCTION === "0" || window.DRAWFUNCTION === "1")) {
 		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0];
-		data[5] = parseInt(e.data.type);
+		data[5] = parseInt(window.DRAWFUNCTION);
 		window.REVEALED.push(data);
 		window.MB.sendMessage('custom/myVTT/reveal', data);
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	}
+	if(window.DRAWSHAPE == "brush" && window.DRAWFUNCTION === "draw") {
+		window.BRUSHPOINTS.push({x:mousex, y:mousey});
+		// cap with a dot
+		window.BRUSHPOINTS.push({x:window.mousex+1, y:window.mousey+1});
+		window.BRUSHPOINTS.push({x:window.mousex-1, y:window.mousey-1});
+		data = ['brush', window.DRAWTYPE,window.DRAWCOLOR, window.BRUSHPOINTS,null,null,null,window.LINEWIDTH];
+		//console.log("save brush");
+		//console.log(data);
+		window.DRAWINGS.push(data);
+		redraw_canvas();
+		redraw_drawings();
+		window.ScenesHandler.persist();
+		window.MB.sendMessage('custom/myVTT/drawing', data);
+	}
 
-
-
-	if (e.data.shape == "arc" && (e.data.type == 0 || e.data.type == 1)) {
+	if (window.DRAWSHAPE == "arc" && (window.DRAWFUNCTION == 0 || window.DRAWFUNCTION == 1)) {
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
 		data = [centerX, centerY, radius, 0, 1];
-		data[5] = parseInt(e.data.type);
+		data[5] = parseInt(window.DRAWFUNCTION);
 		window.REVEALED.push(data);
 		window.MB.sendMessage('custom/myVTT/reveal', data);
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	}
-	if (e.data.shape == "select") {
+	if (window.DRAWSHAPE == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
@@ -997,7 +998,7 @@ function drawing_mouseup(e) {
 		console.log("READY");
 		draw_selected_token_bounding_box();
 	}
-	if (e.data.shape == "measure") {
+	if (window.DRAWSHAPE == "measure") {
 
 		setTimeout(function () {
 			// We do not clear if we are still measuring, added this as it somehow appeared multiple
@@ -1008,7 +1009,7 @@ function drawing_mouseup(e) {
 		}, 2000);
 		WaypointManager.clearWaypoints();
 	}
-	if (e.data.shape == "align") {
+	if (window.DRAWSHAPE == "align") {
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		console.log("Horizontal Pixel Per Square: " + (width / 3.0) + " Vertical Pixel Per Square " + (height / 3.0));
 		//ppsX=Math.round((width/window.ScenesHandler.scene.scaleX)/3);
@@ -1114,27 +1115,55 @@ function drawing_mouseup(e) {
 }
 
 function drawing_contextmenu(e) {
-	if (e.data.shape === "polygon") {
+	window.LINEWIDTH = $("#draw_line_width").val();
+	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
+	window.DRAWCOLOR = $(".colorselected").css('background-color');
+	window.DRAWSHAPE = e.data.shape;
+	window.DRAWFUNCTION = e.data.type;
+	
+	if (window.DRAWSHAPE === "polygon") {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
+		if(window.BEGIN_MOUSEX.length > 0)
+		{
+			var canvas = document.getElementById("fog_overlay");
+			var ctx = canvas.getContext("2d");
+			
+			var drawStroke = getDrawingStroke();
+			var fill = getDrawingFill();
+			var style = getDrawingStyle();
+			var lineWidth = getDrawingLineWidth();
 
-		if (isNaN(e.data.type)) {
-			redraw_drawings();
-		} else {
+			if (isNaN(window.DRAWFUNCTION)) {
+				redraw_drawings();
+			} else {
+				redraw_canvas();
+			}
+			drawPolygon(
+				ctx,
+				joinPointsArray(
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY
+				),
+				style,
+				fill,
+				drawStroke,
+				lineWidth,
+				Math.round(((e.pageX - 200) * (1.0 / window.ZOOM))),
+				Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)))
+			);
+		}
+		else
+		{
+			// cancel polygon if on last point
 			redraw_canvas();
 		}
-
-		drawPolygon(
-			joinPointsArray(
-				window.BEGIN_MOUSEX,
-				window.BEGIN_MOUSEY
-			),
-			undefined,
-			!isNaN(e.data.type),
-			undefined,
-			(e.pageX - 200) * (1.0 / window.ZOOM),
-			(e.pageY - 200) * (1.0 / window.ZOOM)
-		);
+	}
+	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "1") || (window.DRAWFUNCTION == "0"))
+	{
+		// cancel shape
+		window.MOUSEDOWN = false;
+		redraw_canvas();
 	}
 }
 
@@ -1250,26 +1279,170 @@ function setup_draw_buttons() {
 	$('#select-button').click();
 }
 
+function getDrawingStyle()
+{
+	var style = window.DRAWCOLOR;
+	if(window.DRAWFUNCTION === "draw")
+	{
+		if(window.DRAWTYPE == "transparent")
+		{
+			style = style.replace(')', ', 0.5)').replace('rgb', 'rgba');
+		}
+		else
+		{
+			style =style.replace(')', ', 0.9)').replace('rgb', 'rgba');
+		}
+	}
+	else if (window.DRAWFUNCTION === "1")
+	{
+		style = "rgba(0,0,0,0.5)";
+	}
+	else
+	{
+		style = "rgba(255,0,0,0.5)";
+	}
+	return style;
+}
+
+function getDrawingLineWidth()
+{
+	var lineWidth = window.LINEWIDTH;
+	if(window.DRAWFUNCTION !== "draw")
+	{
+		lineWidth = 0;
+	}
+	return lineWidth;
+}
+
+function getDrawingFill()
+{
+	var fill = true;
+	if((window.DRAWFUNCTION === "draw") && (window.DRAWTYPE == "border"))
+	{
+		fill = false;
+	}
+	return fill;
+}
+
+function getDrawingStroke()
+{
+	var drawStroke = false;
+	if((window.DRAWFUNCTION === "draw") && (window.DRAWTYPE == "border"))
+	{
+		drawStroke = true;
+	}
+	return drawStroke;
+}
+
+function drawCircle(ctx, centerX, centerY, radius, style, fill=true, drawStroke = false, lineWidth = 6)
+{
+	ctx.beginPath();
+	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	if(drawStroke)
+	{
+		ctx.strokeStyle = style;
+		ctx.lineWidth = lineWidth;
+		ctx.stroke();
+	}
+	if(fill)
+	{
+		ctx.fillStyle = style;
+		ctx.fill();
+	}
+}
+
+function drawRect(ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
+{
+	ctx.beginPath();
+	if(drawStroke)
+	{
+		ctx.lineWidth = lineWidth;
+		ctx.strokeStyle = style;
+		ctx.beginPath();
+		ctx.rect(startx, starty, width, height);
+		ctx.stroke();
+	}
+	if(fill)
+	{
+		ctx.fillStyle = style;
+		ctx.fillRect(startx, starty, width, height);
+	}
+}
+
+function drawCone(ctx, startx, starty, endx, endy, style, fill=true, drawStroke = false, lineWidth = 6)
+{
+	var L = Math.sqrt(Math.pow(endx - startx, 2) + Math.pow(endy - starty, 2));
+	var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
+	var res = circle_intersection(startx, starty, T, endx, endy, L / 2);
+	ctx.beginPath();
+	ctx.moveTo(startx, starty);
+	ctx.lineTo(res[0], res[2]);
+	ctx.lineTo(res[1], res[3]);
+	ctx.closePath();
+	if(drawStroke)
+	{
+		ctx.lineWidth = lineWidth;
+		ctx.strokeStyle = style;
+		ctx.stroke();
+	}
+	if(fill)
+	{
+		ctx.fillStyle = style;
+		ctx.fill();
+	}
+}
+
+function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
+{
+	ctx.beginPath();
+	ctx.strokeStyle = style;
+	ctx.lineWidth = lineWidth;
+	ctx.moveTo(startx, starty);
+	ctx.lineTo(endx, endy);
+	ctx.stroke();
+}
+
+function drawBrushstroke(ctx, points, style, lineWidth=6)
+{
+	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
+    // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
+	
+	var p1 = points[0];
+	var p2 = points[1];
+
+	ctx.strokeStyle = style;
+	ctx.lineWidth = lineWidth;
+	ctx.beginPath();
+	ctx.moveTo(p1.x, p1.y);
+
+	for (var i = 1, len = points.length; i < len; i++) {
+	// we pick the point between pi+1 & pi+2 as the
+	// end point and p1 as our control point
+	var midPoint = midPointBtw(p1, p2);
+	ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+	p1 = points[i];
+	p2 = points[i+1];
+	}
+	// Draw last line as a straight line
+	ctx.lineTo(p1.x, p1.y);
+	ctx.stroke();
+}
+
 function drawPolygon (
+	ctx,
 	points,
-	bgColor = 'rgba(255,0,0,0.6)',
-	fog = true,
-	lineWidth = 0,
+	style = 'rgba(255,0,0,0.6)',
+	fill = true,
+	drawStroke = false,
+	lineWidth = 1,
 	mouseX = null,
 	mouseY = null
 ) {
-	var canvas = document.getElementById(fog ? "fog_overlay" : "draw_overlay");
-	var ctx = canvas.getContext("2d");
 
-	ctx.fillStyle = bgColor;
+	ctx.fillStyle = style;
 	ctx.save();
 	ctx.beginPath();
-	ctx.lineWidth = lineWidth;
 
-	if (points.length < 2) {
-		ctx.strokeStyle = bgColor;
-		ctx.lineWidth = 1;
-	}
 
 	ctx.moveTo(points[0].x, points[0].y);
 
@@ -1280,26 +1453,40 @@ function drawPolygon (
 	if (mouseX !== null && mouseY !== null) {
 		ctx.lineTo(mouseX, mouseY);
 	}
-
+	
 	ctx.closePath();
-	ctx.fill();
-	if (points.length < 2) {
+	if(drawStroke)
+	{
+		ctx.lineWidth = lineWidth;
+	}
+	else
+	{
+		ctx.lineWidth = 1;
+	}
+	
+	if ((drawStroke) || (points.length < 2)) {
+		ctx.strokeStyle = style;
 		ctx.stroke();
+	}
+	if(fill)
+	{
+		ctx.fill();
 	}
 }
 
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
 	let data;
-	if (isNaN(e.data.type)) {
+	if (isNaN(window.DRAWFUNCTION)) {
 		data = [
 			'polygon',
-			$(".drawTypeSelected ").attr('data-value'),
-			$(".colorselected").css('background-color'),
+			window.DRAWTYPE,
+			window.DRAWCOLOR,
 			polygonPoints,
 			null,
 			null,
-			null
+			null,
+			window.LINEWIDTH
 		];
 		window.DRAWINGS.push(data);
 	} else {
@@ -1309,7 +1496,7 @@ function savePolygon(e) {
 			null,
 			null,
 			3,
-			e.data.type
+			window.DRAWFUNCTION
 		];
 		window.REVEALED.push(data);
 	}
@@ -1317,7 +1504,7 @@ function savePolygon(e) {
 	redraw_drawings();
 	window.ScenesHandler.persist();
 	window.MB.sendMessage(
-		isNaN(e.data.type) ?
+		isNaN(window.DRAWFUNCTION) ?
 			'custom/myVTT/drawing' : 'custom/myVTT/reveal',
 		data
 	);
@@ -1336,9 +1523,7 @@ function isPointWithinDistance(points1, points2) {
 			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon (points) {
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
+function clearPolygon (ctx, points) {
 	
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
@@ -1358,9 +1543,18 @@ function clearPolygon (points) {
 	ctx.globalCompositeOperation = "source-over";
 }
 
-function drawClosingArea(pointX, pointY, fog = true) {
-	var canvas = document.getElementById(fog ? "fog_overlay" : "draw_overlay");
-	var ctx = canvas.getContext("2d");
+function clearCircle(ctx, centerX, centerY, radius)
+{
+	ctx.save();
+	ctx.beginPath();
+	ctx.fillStyle = "rgba(0,0,0,0);"
+	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	ctx.clip();
+	ctx.clearRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+	ctx.restore();
+}
+
+function drawClosingArea(ctx, pointX, pointY, fog = true) {
 	ctx.strokeStyle = "#00FFFF";
 	ctx.lineWidth = "2";
 	ctx.beginPath();
