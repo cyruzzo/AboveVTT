@@ -124,10 +124,12 @@ function persist_token_settings(settings){
 
 function export_file(){
 	var DataFile={
-		version: 1,
+		version: 2,
 		scenes:[],
 		soundpads:{},
 		tokendata:{},
+		notes:{},
+		journalchapters:[],
 		};
 	for(i=0;i<window.ScenesHandler.scenes.length;i++){
 		// CHECK IF THE MAP IS FROM DNDBEYOND
@@ -145,6 +147,9 @@ function export_file(){
 	var tmp=DataFile.tokendata.folders['AboveVTT BUILTIN'];
 	delete DataFile.tokendata.folders['AboveVTT BUILTIN'];
 	DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
+	
+	DataFile.notes=window.JOURNAL.notes;
+	DataFile.journalchapters=window.JOURNAL.chapters;
 	
 	DataFile.soundpads=window.SOUNDPADS;
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
@@ -191,6 +196,15 @@ function import_readfile() {
 		$("#token-panel").remove(); init_tokenmenu();
 		
 		alert('Loading completed. Data merged');
+		
+		if(DataFile.notes){
+			window.JOURNAL.notes=DataFile.notes;
+			window.JOURNAL.chapters=DataFile.journalchapters;
+			window.JOURNAL.persist();
+			window.JOURNAL.build_journal();
+		}
+		
+		
 	};
 	reader.readAsText($("#input_file").get(0).files[0]);
 }

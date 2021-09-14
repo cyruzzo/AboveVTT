@@ -43,6 +43,7 @@
 	"KeypressHandler.js",
 	"jquery.magnific-popup.min.js",
 	"magnific-popup.css",
+	"Journal.js",
 	"assets/*"
 	]
 }
