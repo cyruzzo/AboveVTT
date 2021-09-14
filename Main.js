@@ -660,7 +660,7 @@ function init_sheet(){
 	}
 }
 
-function preload_player_sheet(pc_sheet)
+function preload_player_sheet(pc_sheet, loadWait = 0)
 {
 	let container = $("#sheet");
 	iframe = $("<iframe id='PlayerSheet"+getPlayerIDFromSheet(pc_sheet)+"' src=''></iframe>")
@@ -868,20 +868,26 @@ function preload_player_sheet(pc_sheet)
 			waitToSync();
 			//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
 		});
-		iframe.attr('src', pc_sheet);
 		container.append(iframe);
+		var loadSheet = function (sheetFrame, sheet_url) {
+			sheetFrame.attr('src', sheet_url);
+		};
+		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
 }
 
 function preload_player_sheets()
 {
 	// preload character sheets
-	for (var i = window.pcs.length - 1; i >= 0; i--) {
-		preload_player_sheet(window.pcs[i].sheet);
-	}
-	// window.pcs.forEach(function(pc, index) {
-		// preload_player_sheet(pc.sheet);
-	// });
-	
+	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
+	var sheetLoadWait = 4000;
+	// for (var i = window.pcs.length - 1; i >= 0; i--) {
+		// preload_player_sheet(window.pcs[i].sheet, sheetLoadWait);
+		// sheetLoadWait += 1000;
+	// }
+	window.pcs.forEach(function(pc, index) {
+		preload_player_sheet(pc.sheet, sheetLoadWait);
+		sheetLoadWait += 1500;
+	});
 }
 
 
