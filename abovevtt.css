@@ -102,7 +102,7 @@ body > button:hover,
 }
 
 .top_menu.visible {
-    max-height: 325px;
+    max-height: 400px;
 }
 
 .sidebar__controls > div button {
