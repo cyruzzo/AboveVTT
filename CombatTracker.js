@@ -177,7 +177,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	hp=$("<div class='hp'/>");
 	hp.text(token.options.hp);
 	
-	hp.css('font-size','10px');
+	hp.css('font-size','11px');
 	//hp.css('width','20px');
 	if(window.DM || !(token.options.monster > 0) )
 		entry.append($("<td/>").append(hp));
@@ -185,7 +185,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		entry.append($("<td/>"))
 	max_hp=$("<div/>");
 	max_hp.text("/"+token.options.max_hp);
-	max_hp.css('font-size','10px');
+	max_hp.css('font-size','11px');
 	//max_hp.css('width','20px');
 	if(window.DM || !(token.options.monster > 0) )
 		entry.append($("<td/>").append(max_hp));
