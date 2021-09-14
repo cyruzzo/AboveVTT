@@ -136,7 +136,7 @@ function update_pclist() {
 							</div>
 						` : `
 							<div class="player-no-attributes">
-								Please load the character sheet.
+								Character sheet loading, please wait.
 							</div>
 						`
 					}

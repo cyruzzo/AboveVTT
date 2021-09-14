@@ -89,7 +89,12 @@ function increase_zoom() {
 	change_zoom(window.ZOOM * 1.10)
 }
 
-
+function getPlayerIDFromSheet(sheet_url)
+{
+	var urlSplit = sheet_url.split("/");
+	var playerID = urlSplit[urlSplit.length - 1];
+	return playerID;
+}
 
 window.YTTIMEOUT = null;
 
@@ -599,290 +604,346 @@ function init_spells() {
 
 }
 
-
-function open_player_sheet(sheet_url) {
-
+function init_sheet(){
 	let container = $("<div id='sheet'></div>");
-	let iframe = $("<iframe src='" + sheet_url + "'></iframe>");
-	iframe.css("width", "100%");
-
-	container.append(iframe);
-	container.css('position', 'fixed');
-
-
-
-	if (!window.DM) {
-		container.css('right', 343 - 1530);
-		container.css('z-index', 0);
-	}
-	else {
-		container.css("right", 343 + parseInt($(".sidebar").css("right")));
-		container.css("z-index", 99999999);
-		if ($("#sheet").length > 0) { // DESTROY ANY PREVIOUS SHEET AND ULOCKIT
-			data = {
-				player_sheet: $("#sheet iframe").attr('src')
-			};
-			window.MB.sendMessage("custom/myVTT/unlock", data);
-			$("#sheet").remove();
-		}
-		// LOCK!
-		data = {
-			player_sheet: sheet_url
-		};
-		window.MB.sendMessage("custom/myVTT/lock", data);
-
-		var close_button = $("<button>X</button>");
-
-		close_button.css("position", "absolute");
-		close_button.css("top", "0px");
-		close_button.css("left", "0px");
-		close_button.click(function() {
-			data = {
-				player_sheet: $("#sheet iframe").attr('src')
-			};
-			window.MB.sendMessage("custom/myVTT/unlock", data);
-			$("#sheet").remove();
-		});
-		container.append(close_button);
-
-
-	}
-
-
-	container.css('width', 1030);
-	container.css('top', 40);
-	container.height($(".sidebar__inner").height() - 20);
-	iframe.height(container.height() - 20);
-
-	iframe.on("load", function(event) {
-		$(event.target).contents().find("#mega-menu-target").remove();
-		$(event.target).contents().find(".site-bar").remove();
-		$(event.target).contents().find(".page-header").remove();
-		$(event.target).contents().find(".homebrew-comments").remove();
-
+	
+	//container.css('display', 'none');
+	container.css('height', '0px');
+	container.css('width', 1025);
+	container.css('background', '#242527');
+	container.css('z-index', 0);
+	var buttonleft = 0;
 		
-		// DICE STREAMING ?!?!
-		if(!window.DM){
-			let firstTime=false;
-			if(!window.MYMEDIASTREAM)
-				firstTime=true;
-			window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream(0);
-			
-			
-			if(window.JOINTHEDICESTREAM){
-				// we should tear down and reconnect
-				for(let i in window.STREAMPEERS){
-					console.log("replacing the track")
-					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-				}
-			}
-			
-			if(firstTime)
-				$("#stream_button").click();
-				
-		}
+	var close_button = $("<button>X</button>");
 
-		// CHARACTER
-		let tokenid = sheet_url;
-		var synchp = function() {
-			console.log('sinco HP');
-			var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number");
-
-			if (hp_element.length > 0) {
-				var current_hp = hp_element.html();
-				var max_hp = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(3) .ct-health-summary__hp-number").html();
-			}
-			else {
-				var current_hp = 0;
-				if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
-					max_hp = window.PLAYERDATA.max_hp;
-				else
-					max_hp = 0;
-
-			}
-
-
-			var pp = $(event.target).contents().find(".ct-senses > .ct-senses__callouts:first-child .ct-senses__callout-value");
-
-			let conditions = [];
-			var conds_tag = $(event.target).contents().find(".ct-conditions-summary .ddbc-condition__name");
-
-			conds_tag.each(function(el, idx) {
-				conditions.push($(this).text());
-			});
-
-			abilities = [];
-
-			const isScore = (val) => {
-				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
-			}
-
-			$(event.target).contents().find('.ct-quick-info__ability').each(function() {
-				let abilityScores;
-				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
-					abilityScores = {
-						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-						score: $(this).find('.ddbc-ability-summary__primary button').text()
-					}
-				} else {
-					abilityScores = {
-						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-						score: $(this).find('.ddbc-ability-summary__secondary').text()
-					};
-				}
-				abilities.push(abilityScores);
-			});
-
-
-			var playerdata = {
-				id: sheet_url,
-				hp: current_hp,
-				max_hp: max_hp,
-				ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
-				pp: pp.html(),
-				conditions: conditions,
-				abilities,
-				walking: `${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__number").text()}${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__label").text()}`,
-				inspiration: $(event.target).contents().find('.ct-inspiration__status--active').length
-			};
-
-			if (!window.DM) {
-				window.PLAYERDATA = playerdata;
-				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-			}
-			else {
-				window.MB.handlePlayerData(playerdata);
-			}
-
-			// FIX DDB BUG ON Z-INDEX FOR RIGHT CLICK CONTEXT MENU FOR ROLLING (piggybacking on synchp)
-			if($(event.target).contents().find(".ct-sidebar").length > 0)
-				$(event.target).contents().find(".ct-sidebar").zIndex(11);
-		};
-
-		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
-		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
-			".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
-			if (window.WAITING_FOR_SYNCHP)
-				return;
-			else {
-				window.WAITING_FOR_SYNCHP = true;
-				setTimeout(function() {
-					window.WAITING_FOR_SYNCHP = false;
-					synchp();
-				}, 1000);
+	close_button.css("position", "absolute");
+	close_button.css('display', 'none');
+	close_button.css("top", "0px");
+	close_button.css("left", buttonleft);
+	buttonleft+=27;
+	close_button.css("height", "23px");
+	close_button.css("width", "25px");
+	close_button.click(function() {
+		$("#sheet").find("iframe").each(function(){
+			if($(this).css('height') !== '0px')
+			{
+				close_player_sheet($(this).attr('src'));
 			}
 		});
-
-		var mutation_target = $(event.target).contents().get(0);
-		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-
-		var observer = new MutationObserver(function(mutations) {
-			console.log('scattai');
-			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
-			if (sidebar.length > 0) {
-				if ($(event.target).contents().find("#castbutton").length == 0) {
-					console.log("creating button");
-					observer.disconnect();
-					var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
-					b.click(function() {
-						var newobj = $(event.target).contents().find(".ct-sidebar__pane-content").clone();
-						newobj.find("img.ct-item-detail__full-image-img").css("max-width", "270px");
-						newobj.find(".stat-block-finder").css("display", "flex !important");
-						newobj.find(".stat-block-finder").css("flex-wrap", "wrap");
-						newobj.hide();
-						$(event.target).contents().find(".ct-sidebar__pane-content").parent().append(newobj);
-						newobj.find("button,select,input").each(function() { $(this).remove() });
-						newobj.find("div,span").each(function() {
-							var newcss = {
-								display: $(this).css('display'),
-								'font-style': $(this).css('font-style'),
-								'font-weight': $(this).css('font-weight'),
-								'margin': $(this).css('margin'),
-								'font-size': $(this).css('font-size'),
-								'background-image': $(this).css('background-image'),
-							};
-							if ($(this).css("background-image") != "none") {
-								newcss.width = $(this).width();
-								newcss.height = $(this).height();
-								newcss.background = $(this).css("background");
-								newcss['background-size'] = $(this).css("background-size");
-							}
-							$(this).css(newcss);
-						});
-
-						html = newobj.html();
-						newobj.remove();
-						console.log(html);
-						data = {
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: html
-						};
-						window.MB.inject_chat(data);
-
-
-					});
-
-
-					$(event.target).contents().find(".ct-sidebar__pane-content").prepend(b);
-
-					observer.observe(mutation_target, mutation_config);
-				}
-			}
-		});
-
-		observer.observe(mutation_target, mutation_config);
-
-		const waitToSync = (timeElapsed = 0) => {
-			setTimeout(() => {
-				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box");
-				if (ac_element.length > 0) {
-					synchp();
-				} else {
-					if (timeElapsed < 15000) {
-						waitToSync(timeElapsed + 500);
-					}
-				}
-			}, 500);
-		};
-		waitToSync();
-		//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
 	});
+	container.append(close_button);
+	
+	var reload_button = $("<button>🗘</button>");
+
+	reload_button.css("position", "absolute");
+	reload_button.css('display', 'none');
+	reload_button.css("top", "0px");
+	reload_button.css("left", buttonleft);
+	reload_button.css("height", "23px");
+	reload_button.css("width", "25px");
+	reload_button.click(function() {
+		$("#sheet").find("iframe").each(function(){
+			if($(this).css('height') !== '0px')
+			{
+				$(this).attr('src', $(this).attr('src'));
+			}
+		});
+	});
+	container.append(reload_button);
+	
+	//container.height($(".sidebar__inner").height() - 20);
+	
 	$("#site").append(container);
+	container.css('position', 'fixed');
+	container.css('right', 343 - 1530);
+	container.css('top', 40);
 
 	if (!window.DM) {
+		
+		let iframe =  $("[id='PlayerSheet"+window.PLAYER_ID+"']");
 		sheet_button = $("<button id='sheet_button' class='hasTooltip button-icon hideable' data-name='Show/hide character sheet (SPACE)'>SHEET</button>");
 		sheet_button.css("position", "absolute");
 		sheet_button.css("top", 0);
 		sheet_button.css("left", -86);
-		sheet_button.css("z-index", 999999);
+		sheet_button.css("z-index", 999);
 
 		$(".sidebar__controls").append(sheet_button);
-		$(window.document.body).append(container);
 
 		sheet_button.click(function(e) {
-			if (container.css("z-index") > 0) {
-				container.animate({
-					right: 343 - 1530,
-					'z-index': 0
-				}, 500);
+			open_player_sheet(window.PLAYER_SHEET);
 
-				container.css('width', '1030');
+		});
+	}
+}
+
+function preload_player_sheet(pc_sheet, loadWait = 0)
+{
+	let container = $("#sheet");
+	iframe = $("<iframe id='PlayerSheet"+getPlayerIDFromSheet(pc_sheet)+"' src=''></iframe>")
+		//iframe.css('display', 'none');
+		iframe.css("width", "100%");
+		iframe.css("position", "absolute");
+		iframe.css("top", "24px");
+		iframe.css("left", "0px");
+		iframe.css("height", "0px");
+		iframe.on("load", function(event) {
+			$(event.target).contents().find("#mega-menu-target").remove();
+			$(event.target).contents().find(".site-bar").remove();
+			$(event.target).contents().find(".page-header").remove();
+			$(event.target).contents().find(".homebrew-comments").remove();
+
+			
+			// DICE STREAMING ?!?!
+			if(!window.DM){
+				let firstTime=false;
+				if(!window.MYMEDIASTREAM)
+					firstTime=true;
+				window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream(0);
 				
-				if(window.STREAMTASK){
-					clearInterval(window.STREAMTASK);
-					window.STREAMTASK=false;
+				
+				if(window.JOINTHEDICESTREAM){
+					// we should tear down and reconnect
+					for(let i in window.STREAMPEERS){
+						console.log("replacing the track")
+						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+					}
+				}
+				
+				if(firstTime)
+					$("#stream_button").click();
+					
+			}
+
+			// CHARACTER
+			let tokenid = $(event.target).attr('src');
+			var synchp = function() {
+				console.log('sinco HP');
+				var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-current");
+
+				if (hp_element.length > 0) {
+					var current_hp = hp_element.html();
+					var max_hp = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(3) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-max").html();
+				}
+				else {
+					var current_hp = 0;
+					if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
+						max_hp = window.PLAYERDATA.max_hp;
+					else
+						max_hp = 0;
+
 				}
 
-				return;
-			}
-			//container.height($(".sidebar__inner").height());
-			container.height($(".sidebar__inner").height() - 20);
+
+				var pp = $(event.target).contents().find(".ct-senses > .ct-senses__callouts:first-child .ct-senses__callout-value");
+
+				let conditions = [];
+				var conds_tag = $(event.target).contents().find(".ct-conditions-summary .ddbc-condition__name");
+
+				conds_tag.each(function(el, idx) {
+					conditions.push($(this).text());
+				});
+
+				abilities = [];
+
+				const isScore = (val) => {
+					return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
+				}
+
+				$(event.target).contents().find('.ct-quick-info__ability,.ct-main-mobile__ability').each(function() {
+					let abilityScores;
+					if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
+						abilityScores = {
+							abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+							abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+							modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+							score: $(this).find('.ddbc-ability-summary__primary button').text()
+						}
+					} else {
+						abilityScores = {
+							abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+							abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+							modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+							score: $(this).find('.ddbc-ability-summary__secondary').text()
+						};
+					}
+					abilities.push(abilityScores);
+				});
+
+
+				var playerdata = {
+					id: tokenid,
+					hp: current_hp,
+					max_hp: max_hp,
+					ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
+					pp: pp.html(),
+					conditions: conditions,
+					abilities,
+					walking: `${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__number").text()}${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__label").text()}`,
+					inspiration: $(event.target).contents().find('.ct-inspiration__status--active').length
+				};
+
+				if (!window.DM) {
+					window.PLAYERDATA = playerdata;
+					window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
+				}
+				else {
+					window.MB.handlePlayerData(playerdata);
+				}
+
+				// FIX DDB BUG ON Z-INDEX FOR RIGHT CLICK CONTEXT MENU FOR ROLLING (piggybacking on synchp)
+				if($(event.target).contents().find(".ct-sidebar").length > 0)
+					$(event.target).contents().find(".ct-sidebar").zIndex(11);
+			};
+
+			// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
+			$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
+				".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
+				if (window.WAITING_FOR_SYNCHP)
+					return;
+				else {
+					window.WAITING_FOR_SYNCHP = true;
+					setTimeout(function() {
+						window.WAITING_FOR_SYNCHP = false;
+						synchp();
+					}, 1000);
+				}
+			});
+
+			var mutation_target = $(event.target).contents().get(0);
+			var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+
+			var observer = new MutationObserver(function(mutations) {
+				console.log('scattai');
+				var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
+				if (sidebar.length > 0) {
+					if ($(event.target).contents().find("#castbutton").length == 0) {
+						console.log("creating button");
+						observer.disconnect();
+						var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
+						b.click(function() {
+							var newobj = $(event.target).contents().find(".ct-sidebar__pane-content").clone();
+							newobj.find("img.ct-item-detail__full-image-img").css("max-width", "270px");
+							newobj.find(".stat-block-finder").css("display", "flex !important");
+							newobj.find(".stat-block-finder").css("flex-wrap", "wrap");
+							newobj.hide();
+							$(event.target).contents().find(".ct-sidebar__pane-content").parent().append(newobj);
+							newobj.find("button,select,input").each(function() { $(this).remove() });
+							newobj.find("div,span").each(function() {
+								var newcss = {
+									display: $(this).css('display'),
+									'font-style': $(this).css('font-style'),
+									'font-weight': $(this).css('font-weight'),
+									'margin': $(this).css('margin'),
+									'font-size': $(this).css('font-size'),
+									'background-image': $(this).css('background-image'),
+								};
+								if ($(this).css("background-image") != "none") {
+									newcss.width = $(this).width();
+									newcss.height = $(this).height();
+									newcss.background = $(this).css("background");
+									newcss['background-size'] = $(this).css("background-size");
+								}
+								$(this).css(newcss);
+							});
+
+							html = newobj.html();
+							newobj.remove();
+							console.log(html);
+							data = {
+								player: window.PLAYER_NAME,
+								img: window.PLAYER_IMG,
+								text: html
+							};
+							window.MB.inject_chat(data);
+
+
+						});
+
+
+						$(event.target).contents().find(".ct-sidebar__pane-content").prepend(b);
+
+						observer.observe(mutation_target, mutation_config);
+					}
+				}
+			});
+
+			observer.observe(mutation_target, mutation_config);
+
+			const waitToSync = (timeElapsed = 0) => {
+				setTimeout(() => {
+					var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
+					if (ac_element.length > 0) {
+						synchp();
+					} else {
+						if (timeElapsed < 15000) {
+							waitToSync(timeElapsed + 500);
+						}
+					}
+				}, 500);
+			};
+			waitToSync();
+			//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
+		});
+		container.append(iframe);
+		var loadSheet = function (sheetFrame, sheet_url) {
+			sheetFrame.attr('src', sheet_url);
+		};
+		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+}
+
+function preload_player_sheets()
+{
+	// preload character sheets
+	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
+	var sheetLoadWait = 4000;
+	// for (var i = window.pcs.length - 1; i >= 0; i--) {
+		// preload_player_sheet(window.pcs[i].sheet, sheetLoadWait);
+		// sheetLoadWait += 1000;
+	// }
+	window.pcs.forEach(function(pc, index) {
+		preload_player_sheet(pc.sheet, sheetLoadWait);
+		sheetLoadWait += 1500;
+	});
+}
+
+
+function open_player_sheet(sheet_url, closeIfOpen = true) {
+
+	let container = $("#sheet");
+	let iframe = $("[id='PlayerSheet"+getPlayerIDFromSheet(sheet_url)+"']");
+	if(iframe.height() == 0)
+	{
+		// Open the sheet
+		if(window.DM)
+		{
+			//unlock and hide any other open sheets
+			$("#sheet").find("iframe").each(function(){
+				if($(this).attr('src') !== sheet_url)
+				{
+					if($(this).css('height') !== '0px')
+					{
+						if (window.DM) {
+							data = {
+								player_sheet: $(this).attr('src')
+							};
+							window.MB.sendMessage("custom/myVTT/unlock", data);
+						}
+						$(this).animate({
+							height:0
+						},500);
+						// $(this).css("height", "0px");
+					}
+				}
+			});
 			
+			// lock this sheet
+			data = {
+				player_sheet: sheet_url
+			};
+			window.MB.sendMessage("custom/myVTT/lock", data);
+		}
+		else
+		{
 			if(window.JOINTHEDICESTREAM){
 				iframe.contents().find(".dice-rolling-panel__container").get(0).height=600;
 				iframe.contents().find(".dice-rolling-panel__container").height(600);
@@ -896,22 +957,74 @@ function open_player_sheet(sheet_url) {
 						} ,1000 / 30)
 				}
 			}
-			
-			iframe.height(container.height() - 20);
-
-			container.css("z-index", 99999999);
-			container.animate({
-				//right: $(".sidebar__inner").width()
-				right: 343 + parseInt($(".sidebar").css("right"))
-			}, 500);
-
-		});
+		}
+		
+		// show sheet container and sheet iframe
+		$("#sheet").find("button").css('display', 'inherit');
+		container.css("z-index", 99999999);
+		var containerHeight = $(".sidebar__inner").height() - 20;
+		var iframeHeight = containerHeight -20;
+		container.animate({
+			//right: $(".sidebar__inner").width()
+			right: 343 + parseInt($(".sidebar").css("right")),
+			height: containerHeight
+		}, 500);
+		iframe.animate({
+			height: iframeHeight
+		}, 500);
+		
+		// reload if there have been changes
+		if(iframe.attr('data-changed') == 'true')
+		{
+			iframe.attr('data-changed','false');
+			iframe.attr('src', function(i, val) { return val; });
+		}
 	}
-
-
+	else if (closeIfOpen)
+	{
+		//sheet is already open, close the sheet
+		close_player_sheet(sheet_url);
+	}
+	
 }
 
-
+function close_player_sheet(sheet_url)
+{
+	let container = $("#sheet");
+	let iframe = $("[id='PlayerSheet"+getPlayerIDFromSheet(sheet_url)+"']");
+	// hide the buttons first, they tend to float over everything
+	container.find("button").css('display', 'none');
+	if (container.css("z-index") > 0) {
+		container.animate({
+						right: 343 - 1530,
+						'z-index': 0,
+						height: 0
+					}, 500);
+	}
+	iframe.animate({
+		height:0
+	},500);
+	
+	if(window.DM)
+	{
+		data = {
+			player_sheet: sheet_url
+		};
+		window.MB.sendMessage("custom/myVTT/unlock", data);
+	}
+	else
+	{
+		if(window.STREAMTASK){
+				clearInterval(window.STREAMTASK);
+				window.STREAMTASK=false;
+			}
+			
+			data = {
+				player_sheet: window.PLAYER_SHEET
+			};
+			window.MB.sendMessage("custom/myVTT/player_sheet_closed", data);
+	}
+}
 
 function init_ui() {
 	window.STARTING = true;
@@ -1222,22 +1335,22 @@ function init_ui() {
 	}
 
 	init_controls();
-	//if (window.DM)
-		init_pclist();
+	init_sheet();
+	init_pclist();
+	if(window.DM)
+	{
+		preload_player_sheets();
+	}
+	else
+	{
+		preload_player_sheet(window.PLAYER_SHEET);
+	}
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
 
 
 	init_buttons();
 	init_stream_button();
-
-	if (!window.DM) {
-
-		open_player_sheet(window.PLAYER_SHEET, true);
-
-		iframe = $("#sheet");
-
-	}
 
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
@@ -1621,6 +1734,7 @@ $(function() {
 			window.PLAYER_IMG = img;
 			window.PLAYER_SHEET = sheet;
 			window.PLAYER_NAME = name;
+			window.PLAYER_ID = getPlayerIDFromSheet(sheet);
 			window.DM = false;
 			init_ui();
 		});
@@ -1694,6 +1808,7 @@ $(function() {
 			window.DM = true;
 			window.PLAYER_SHEET = false;
 			window.PLAYER_NAME = "THE DM";
+			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 			init_ui();
 		});

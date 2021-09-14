@@ -167,7 +167,7 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/lock") {
 				if (window.DM)
 					return;
-				if (msg.data.player_sheet == window.PLAYER_SHEET) {
+				if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
 					//alert('locked');
 					var lock_display = $("<div id='lock_display'>The DM is looking at your character sheet</p></div>");
 					lock_display.css("font-size", "18px");
@@ -175,7 +175,7 @@ class MessageBroker {
 					lock_display.css('font-weight', "bold");
 					lock_display.css('background', "rgba(255,255,0,0.7)");
 					lock_display.css('position', 'absolute');
-					lock_display.css('top', '0px');
+					lock_display.css('top', '27px');
 					lock_display.css('left', '0px');
 					lock_display.width($("#sheet").width());
 					//lock_display.height($("#sheet").height());
@@ -188,13 +188,24 @@ class MessageBroker {
 			}
 			if (msg.eventType == "custom/myVTT/unlock") {
 				if (window.DM)
+				{
 					return;
-				if (msg.data.player_sheet == window.PLAYER_SHEET) {
+				}
+				else if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
 					//alert('unlocked');
 					$("#lock_display").remove();
 					$("#sheet iframe").removeAttr('disabled');
 					$("#sheet iframe").css('opacity', '1');
 					$("#sheet iframe").attr('src', function(i, val) { return val; }); // RELOAD IFRAME
+				}
+			}
+
+			if (msg.eventType == "custom/myVTT/player_sheet_closed") {
+				if (window.DM)
+				{
+					//$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('src', function(i, val) { return val; });
+					$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('data-changed', 'true');
+					return;
 				}
 			}
 			
