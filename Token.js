@@ -356,7 +356,7 @@ class Token {
 	}
 
 	build_conditions(parent) {
-
+		let self=this;
 		let bar_width = Math.floor(this.options.size * 0.2);
 		const cond = $("<div class='conditions' style='padding:0;margin:0'/>");
 		const moreCond = $(`<div class='conditions' style='left:${bar_width}px;'/>`);
@@ -370,7 +370,7 @@ class Token {
 			cond_bar.height(this.options.size - bar_width);
 		})
 
-		const conditionsTotal = this.options.conditions.length + this.options.custom_conditions.length;
+		const conditionsTotal = this.options.conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player));
 
 		if (conditionsTotal > 0) {
 			let conditionCount = 0;
@@ -437,8 +437,34 @@ class Token {
 				
 				conditionCount++;
 			}
-		}
+			// CHECK IF ADDING NOTE CONDITION
+			if (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player)) {
+				console.log("aggiungerei nota");
+				const conditionName = "note"
+				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
+				const symbolImage = $("<img class='condition-img note-condition' src='" + window.EXTENSION_PATH + "assets/conditons/note.svg'/>");
 
+
+				conditionContainer.dblclick(function(){
+					window.JOURNAL.display_note(self.options.id);
+				})
+				symbolImage.attr('title', window.JOURNAL.notes[this.options.id].plain);
+				conditionContainer.css('width', symbolSize + "px");
+				conditionContainer.css("height", symbolSize + "px");
+				symbolImage.height(symbolSize + "px");
+				symbolImage.width(symbolSize + "px");
+				conditionContainer.append(symbolImage);
+				if (conditionCount >= 3) {
+					moreCond.append(conditionContainer);
+				} else {
+					cond.append(conditionContainer);
+				}
+				conditionCount++;
+			}
+
+		}
+				
+		
 		if (parent) {
 			parent.find(".conditions").remove();
 			parent.append(cond);
@@ -1194,6 +1220,30 @@ function menu_callback(key, options, event) {
 		}	
 	}
 
+	if ( key =="note_edit") {
+		if (!(id in window.JOURNAL.notes)) {
+			window.JOURNAL.notes[id] = {
+				title: window.TOKEN_OBJECTS[id].options.name,
+				text: '',
+				plain: '',
+				player: false
+			}
+		}
+		window.JOURNAL.edit_note(id);
+	}
+	if( key =="note_view"){
+		window.JOURNAL.display_note(id);
+	}
+	if ( key =="note_delete") {
+		if(id in window.JOURNAL.notes){
+			delete window.JOURNAL.notes[id];
+			window.JOURNAL.persist();
+			window.TOKEN_OBJECTS[id].place();
+		}
+		
+	}
+	
+
 	if (key == "token_combat") {
 		id = $(this).attr('data-id');
 		ct_add_token(window.TOKEN_OBJECTS[id]);
@@ -1471,6 +1521,8 @@ function token_menu() {
 				custom_reminders = {}
 				id = $(element).attr('data-id');
 				is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
+				
+				has_note=id in window.JOURNAL.notes;
 
 				if (!window.TOKEN_OBJECTS[id].options.aura1) {
 					window.TOKEN_OBJECTS[id].options = {
@@ -1699,6 +1751,14 @@ function token_menu() {
 								}
 							}
 						},
+						note_menu:{
+							name: "Notes",
+							items:{
+								note_view: {name: 'View Note', disable: !has_note},
+								note_edit: {name: 'Create/Edit Note'},
+								note_delete: {name: 'Delete Note'},
+							}
+						},
 						sep1: "-------",
 						hp: {
 							type: 'text',
@@ -1724,7 +1784,6 @@ function token_menu() {
 								}
 							}
 						},
-						sep2: '---------',
 						name: {
 							type: 'text',
 							name: 'Name',
@@ -1735,7 +1794,6 @@ function token_menu() {
 								}
 							}
 						},
-						sep3: '----------',
 						imgsrc: {
 							type: 'text',
 							name: 'Custom Image',
@@ -1780,6 +1838,11 @@ function token_menu() {
 					delete ret.items.imgsrc;
 				}
 				
+				if(!has_note){
+					delete ret.items.note_menu.items.note_view;
+					delete ret.items.note_menu.items.note_delete;
+				}
+				
 				if(!window.DM){
 					delete ret.items.sep0;
 					delete ret.items.view;
@@ -1791,6 +1854,7 @@ function token_menu() {
 					delete ret.items.hp;
 					delete ret.items.max_hp;
 					delete ret.items.delete;
+					delete ret.items.note_menu;
 					delete ret.items.name;
 					delete ret.items.sep2;
 					//delete ret.items.imgsrc;

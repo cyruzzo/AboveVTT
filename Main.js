@@ -6,6 +6,17 @@ function parse_img(url){
 	return retval;
 }
 
+function whenAvailable(name, callback) {
+    var interval = 10; // ms
+    window.setTimeout(function() {
+        if (window[name]) {
+            callback(window[name]);
+        } else {
+            whenAvailable(name, callback);
+        }
+    }, interval);
+}
+
 
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
@@ -367,9 +378,14 @@ function init_controls() {
 	b6.click(switch_control);
 	$(".sidebar__controls").append(b6);
 	
-	b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
-	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
+	b4 = $("<button id='switch_journal' class='tab-btn hasTooltip button-icon' data-name='Journal' data-target='#journal-panel'></button>");
+	b4.append("<img src='" + window.EXTENSION_PATH + "assets/conditons/note.svg' height='100%;'>");
+	b4.click(switch_control);
 	$(".sidebar__controls").append(b4);
+	
+	/*b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
+	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
+	$(".sidebar__controls").append(b4);*/
 
 	if (DM) {
 		b7 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Settings' data-target='#settings-panel'></button>");
@@ -1201,6 +1217,7 @@ function init_ui() {
 	if (!DM) {
 		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
+			window.MB.sendMessage("custom/myVTT/playerjoin");
 		}, 5000);
 	}
 
@@ -1270,6 +1287,11 @@ function init_ui() {
 	
 	setTimeout(function() {
 		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
+
+		// also sync the journal
+		window.JOURNAL.sync();		
+		
+		
 	}, 5000);
 
 	setTimeout(function() {
@@ -1344,6 +1366,9 @@ function init_ui() {
 	init_mouse_zoom()
 
 	init_help_menu();
+
+
+	init_journal($("#message-broker-client").attr("data-gameId"));
 }
 
 function init_buttons() {
@@ -1612,6 +1637,8 @@ $(function() {
 			localStorage.removeItem("current_chapter" + gameid);
 			localStorage.removeItem("current_scene" + gameid);
 			localStorage.removeItem("CombatTracker"+gameid);
+			localStorage.removeItem("Journal"+gameid);
+			localStorage.removeItem("JournalChapters"+gameid);
 		}
 		else {
 			console.log('user canceled');

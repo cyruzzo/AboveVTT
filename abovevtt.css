@@ -689,6 +689,11 @@ div#scene_properties form > div {
     background: #F58231;
 }
 
+.token .note-condition.condition-img {
+    background: #e4c700;
+}
+
+
 .tokenselected::before{
     content: "";
     position: absolute;
@@ -1027,6 +1032,32 @@ audio::-webkit-media-controls-time-remaining-display{
 .loop-button{
 	position:relative;
 	top: -2px;
+}
+
+.journal-chapter-title{
+    font-weight: bold;
+    background: #dddddd;
+}
+
+.journal-note-entry{
+	width:100%;
+	height: 20px;
+	margin-top:3px;
+	margin-bottom:3px;
+}
+
+.journal-entry-buttons{
+	float:right;
+	height: 20px;
+}
+.journal-note-entry-title{
+	float:left;
+	height: 20px;
+}
+
+.visibility-container{
+	border: 1px solid black;
+	width: auto;
 }
 
 #help-overlay{
