@@ -1285,15 +1285,14 @@ function init_ui() {
 	init_audio();
 	init_settings();
 	
-	setTimeout(function() {
-		window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
+	if (window.DM) {
+		setTimeout(function() {
+			window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 
-		// also sync the journal
-		window.JOURNAL.sync();		
-		
-		
-	}, 5000);
-
+			// also sync the journal
+			window.JOURNAL.sync();
+		}, 5000);
+	}
 	setTimeout(function() {
 		window.STARTING = false;
 	}, 6000);
