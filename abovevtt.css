@@ -16,6 +16,7 @@ body > button,
 .stp-btn,
 .player-actions button,
 #add-party,
+#reset_round_number,
 #hide_rightpanel,
 #zoom_buttons button,
 .stream_button,
@@ -197,6 +198,7 @@ div#scene_selector,
     position: relative;
     height: 100%;
     margin: 10px 0;
+    padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
 
@@ -223,6 +225,24 @@ div#scene_selector,
 
 #combat_footer button {
     width: 50px;
+}
+
+#round_number_label {
+    font-size: 11px;
+    vertical-align: middle;
+    padding-left: 8px;
+    text-align: left;
+}
+
+input.roundNum::-webkit-outer-spin-button,
+input.roundNum::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number].roundNum {
+  -moz-appearance: textfield;
 }
 
 input {
