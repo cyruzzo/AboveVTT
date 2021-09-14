@@ -6,6 +6,17 @@ function parse_img(url){
 	return retval;
 }
 
+function whenAvailable(name, callback) {
+    var interval = 10; // ms
+    window.setTimeout(function() {
+        if (window[name]) {
+            callback(window[name]);
+        } else {
+            whenAvailable(name, callback);
+        }
+    }, interval);
+}
+
 
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
@@ -367,9 +378,14 @@ function init_controls() {
 	b6.click(switch_control);
 	$(".sidebar__controls").append(b6);
 	
-	b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
-	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
+	b4 = $("<button id='switch_journal' class='tab-btn hasTooltip button-icon' data-name='Journal' data-target='#journal-panel'></button>");
+	b4.append("<img src='" + window.EXTENSION_PATH + "assets/conditons/note.svg' height='100%;'>");
+	b4.click(switch_control);
 	$(".sidebar__controls").append(b4);
+	
+	/*b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
+	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
+	$(".sidebar__controls").append(b4);*/
 
 	if (DM) {
 		b7 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Settings' data-target='#settings-panel'></button>");
@@ -1201,6 +1217,7 @@ function init_ui() {
 	if (!DM) {
 		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
+			window.MB.sendMessage("custom/myVTT/playerjoin");
 		}, 5000);
 	}
 
@@ -1268,9 +1285,12 @@ function init_ui() {
 	init_audio();
 	init_settings();
 	
+
 	if(window.DM) {
 		setTimeout(function() {
 			window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
+      // also sync the journal
+		  window.JOURNAL.sync();		
 		}, 5000);
 	}
 
@@ -1346,6 +1366,9 @@ function init_ui() {
 	init_mouse_zoom()
 
 	init_help_menu();
+
+
+	init_journal($("#message-broker-client").attr("data-gameId"));
 }
 
 function init_buttons() {
@@ -1417,6 +1440,7 @@ function init_buttons() {
 	draw_menu.append("<div><button id='draw_circle' style='width:75px' class='drawbutton menu-option draw-option' data-shape='arc' data-type='draw'>Circle</button></div>");
 	draw_menu.append("<div><button id='draw_cone' style='width:75px' class='drawbutton menu-option draw-option' data-shape='cone' data-type='draw'>Cone</button></div>");
 	draw_menu.append("<div><button id='draw_line' style='width:75px' class='drawbutton menu-option draw-option' data-shape='line' data-type='draw'>Line</button></div>");
+	draw_menu.append("<div><button id='draw_brush' style='width:75px' class='drawbutton menu-option draw-option' data-shape='brush' data-type='draw'>Brush</button></div>");
 	draw_menu.append("<div><button id='draw_polygon' style='width:75px' class='drawbutton menu-option draw-option' data-shape='polygon' data-type='draw'>Polygon</button></div>");
 	draw_menu.append("<div><button id='draw_erase' style='width:75px' class='drawbutton menu-option draw-option' data-shape='rect' data-type='eraser'>Erase</button></div>");
 	
@@ -1471,6 +1495,8 @@ function init_buttons() {
 		$(this).css('background', 'green');
 	});
 
+	draw_menu.append("<div style='font-weight:bold'>Line Width</div>");
+	draw_menu.append("<div><input id='draw_line_width' type='range' style='width:75px' min='1' max='60' value='6' class='drawWidthSlider'></div>");
 
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
@@ -1614,6 +1640,8 @@ $(function() {
 			localStorage.removeItem("current_chapter" + gameid);
 			localStorage.removeItem("current_scene" + gameid);
 			localStorage.removeItem("CombatTracker"+gameid);
+			localStorage.removeItem("Journal"+gameid);
+			localStorage.removeItem("JournalChapters"+gameid);
 		}
 		else {
 			console.log('user canceled');

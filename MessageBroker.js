@@ -197,7 +197,36 @@ class MessageBroker {
 					$("#sheet iframe").attr('src', function(i, val) { return val; }); // RELOAD IFRAME
 				}
 			}
-
+			
+			
+			if(msg.eventType=="custom/myVTT/JournalChapters"){
+				if(!window.DM){
+					window.JOURNAL.chapters=msg.data.chapters;
+					window.JOURNAL.build_journal();
+				}
+			}
+			
+			if(msg.eventType=="custom/myVTT/note"){
+				if(!window.DM){
+					window.JOURNAL.notes[msg.data.id]=msg.data.note;
+					
+					window.JOURNAL.build_journal();
+					
+					if(msg.data.id in window.TOKEN_OBJECTS){
+						window.TOKEN_OBJECTS[msg.data.id].place();
+					}
+					
+					if(msg.data.popup)
+						window.JOURNAL.display_note(msg.data.id);
+					
+				}
+			}
+			
+			if(msg.eventType=="custom/myVTT/playerjoin"){
+				if(window.DM){
+					window.JOURNAL.sync();
+				}	
+			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad);
 			}
