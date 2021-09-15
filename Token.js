@@ -103,10 +103,15 @@ class Token {
 		// this just rotates locally to help with performance.
 		// draggable.stop will call place_sync_persist to finalize the rotation. 
 		// If we ever want this to send to all players in real time, simply comment out the rest of this function and call place_sync_persist() instead.
-		const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+		let scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+		if ( !(this.options.max_hp) > 0 || (this.options.disableaura))
+			scale=1;
+		
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
-		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");		
+		
+		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");
+		
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -227,8 +232,11 @@ class Token {
 			this.options.hp = old.find(".hp").val();
 			this.options.max_hp = old.find(".max_hp").val();
 
-			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
-
+			let scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			
+			if (!(this.options.max_hp) > 0 || (this.options.disableaura))
+				scale = 1;
+			
 			// HEALTH AURA
 			if (this.options.max_hp > 0 && !this.options.disableaura) {
 				if (this.options.max_hp > 0 && parseInt(this.options.hp) === 0) {
@@ -520,7 +528,9 @@ class Token {
 				old.find(".ac").show();
 			}
 
-			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			let scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			if (!(this.options.max_hp) > 0 || (this.options.disableaura))
+				scale = 1;
 			var rotation = 0;
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
@@ -647,7 +657,9 @@ class Token {
 		else {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
-			const scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			let scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
+			if (!(this.options.max_hp) > 0 || (this.options.disableaura))
+				scale = 1;
 			var bar_height = Math.floor(this.options.size * 0.2);
 
 			if (bar_height > 60)
