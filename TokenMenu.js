@@ -1989,9 +1989,12 @@ function fill_tokenmenu(path){
 			delbutton.attr('data-target',f);
 			newentry.append(delbutton);
 			delbutton.click(function(e){
-				delete window.CURRENT_TOKEN_FOLDER.folders[$(this).attr('data-target')];
-				fill_tokenmenu(window.CURRENT_TOKEN_PATH);
-				persist_customtokens();
+				r = confirm("This will delete this token folder. Are you sure?");
+				if (r == true) {
+					delete window.CURRENT_TOKEN_FOLDER.folders[$(this).attr('data-target')];
+					fill_tokenmenu(window.CURRENT_TOKEN_PATH);
+					persist_customtokens();
+				}
 			});
 		}
 		$("#tokens-panel-data").append(newentry);
@@ -2020,9 +2023,12 @@ function fill_tokenmenu(path){
 		}
 		
 		newentry.find(".tokendel").click(function(){
-			delete window.CURRENT_TOKEN_FOLDER.tokens[$(this).attr('data-target')];
-			fill_tokenmenu(window.CURRENT_TOKEN_PATH);
-			persist_customtokens();
+			r = confirm("This will delete this token. Are you sure?");
+			if (r == true) {
+				delete window.CURRENT_TOKEN_FOLDER.tokens[$(this).attr('data-target')];
+				fill_tokenmenu(window.CURRENT_TOKEN_PATH);
+				persist_customtokens();
+			}
 		});
 		
 		$("#tokens-panel-data").append(newentry);
