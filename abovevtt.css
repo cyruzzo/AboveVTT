@@ -1061,6 +1061,7 @@ audio::-webkit-media-controls-time-remaining-display{
 .journal-chapter-title{
     font-weight: bold;
     background: #dddddd;
+    min-height: 30px;
 }
 
 .journal-note-entry{
@@ -1082,6 +1083,12 @@ audio::-webkit-media-controls-time-remaining-display{
 .visibility-container{
 	border: 1px solid black;
 	width: auto;
+}
+
+.btn-del-chapter{
+    right: 0;
+    position: absolute;
+    margin-top: 4px;
 }
 
 #help-overlay{
