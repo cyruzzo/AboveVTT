@@ -199,6 +199,7 @@ class JournalManager{
 		let note_text=$("<div/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
 		note.append(note_text);
+		note.find("a").attr("target","_blank");
 		note.dialog({
 			draggable: true,
 			width: 800,
