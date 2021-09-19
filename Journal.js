@@ -292,6 +292,10 @@ class JournalManager{
 			menu: {},
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,videoembed',
 			toolbar: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,code,|,formatselect,|,alignleft,|,aligncenter,|,alignright,|,fontselect,|,fontsizeselect,|,forecolor,|,bullist,|,numlist,|,hr,|,removeformat,|,outdent,|,indent,|,spoiler,|,link,|,unlink,|,image,|,videoembed,|,|,codeBlock,|,dieroller',
+			image_class_list: [
+				{title: 'None', value: ''},
+				{title: 'Magnify', value: 'magnify'},
+			],
 			external_plugins: {
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
 				'videoembed': "/content/1-0-1688-0/js/tinymce/custom_plugins/videoembed/plugin.js",

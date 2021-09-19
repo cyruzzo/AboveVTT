@@ -306,7 +306,7 @@ function load_monster_stat(monsterid) {
 					var msgdata = {
 						player: window.PLAYER_NAME,
 						img: window.PLAYER_IMG,
-						text: "<img width='100%' src='" + imgsrc + "'>",
+						text: "<img width='100%' class='magnify' href='" + imgsrc + "' src='" + imgsrc + "'>",
 					};
 
 					window.MB.inject_chat(msgdata);
