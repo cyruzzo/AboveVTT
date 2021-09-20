@@ -378,6 +378,7 @@ div#scene_properties form > div {
 
 .token-image {
     cursor: move;
+    object-fit: cover;
 }
 
 .hasTooltip::after {
