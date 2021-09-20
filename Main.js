@@ -91,8 +91,15 @@ function increase_zoom() {
 
 function getPlayerIDFromSheet(sheet_url)
 {
-	var urlSplit = sheet_url.split("/");
-	var playerID = urlSplit[urlSplit.length - 1];
+	let playerid = -1;
+	if(sheet_url)
+	{
+		let urlSplit = sheet_url.split("/");
+		if(urlSplit.length > 0)
+		{
+			playerID = urlSplit[urlSplit.length - 1];
+		}
+	}
 	return playerID;
 }
 
