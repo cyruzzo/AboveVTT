@@ -69,6 +69,18 @@ function init_jitsi() {
 	};
 	api = new JitsiMeetExternalAPI(domain, options);
 	window.jitsiAPI = api;
+
+	/* You can not execute any commands right after you instantiate the jitsi client
+	and there is really no way to wait for the client to be ready. A workaround is to
+	create a one time use handler just for startup, to render the pane and set the tile
+	layout, attached to the subjectChange event, which by chance is almost the last thing
+	the client does before being considered ready. After which, commands can be executed.
+	*/
+	api.addEventListener('subjectChange', jitsi_startup)
+}
+
+function jitsi_startup() {
+	window.jitsiAPI.removeListener('subjectChange', jitsi_startup);
 	jitsi_bottom()
 }
 
@@ -81,7 +93,6 @@ function jitsi_modal() {
 }
 
 function jitsi_bottom() {
-	console.log("jitsi to bottom");
 	$("#meet").css("position", "fixed").css("top", "").css("height", "120px").css("left", "50px").css("width", "75%").css("bottom", "10px");
 	window.tile_desired = false;
 	window.jitsiAPI.executeCommand(`setTileView`, true);
