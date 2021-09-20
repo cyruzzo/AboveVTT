@@ -222,10 +222,10 @@ class Token {
 
 		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.hidestat)) && !this.options.disablestat && old.find(".hp").length > 0) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
-				old.find(".hp").val(parseInt(this.options.hp) + parseInt(old.find(".hp").val()));
+				old.find(".hp").val(Math.max(0, parseInt(this.options.hp) + parseInt(old.find(".hp").val())));
 			}
 			if (old.find(".max_hp").val().startsWith("+") || old.find(".max_hp").val().startsWith("-")) {
-				old.find(".max_hp").val(parseInt(this.options.max_hp) + parseInt(old.find(".max_hp").val()));
+				old.find(".max_hp").val(Math.max(0, parseInt(this.options.max_hp) + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
 
