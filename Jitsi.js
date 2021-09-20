@@ -47,7 +47,6 @@ function init_jitsi() {
 		configOverwrite: {
 			prejoinPageEnabled: false,
 			startWithAudioMuted: true,
-			// disableResponsiveTiles: true,
 			toolbarButtons: [
 				"camera",
 				"desktop",
