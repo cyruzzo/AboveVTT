@@ -6,9 +6,11 @@
 "content_scripts":[
     {
       "matches":[
-        "https://www.dndbeyond.com/campaigns/*"
+        "https://www.dndbeyond.com/campaigns/*",
+        "https://meet.jit.si/aboveVTT*"
       ],
-      "js": ["Load.js"]
+      "js": ["Load.js"],
+	  "all_frames": true
     }
   ],
 "permissions": [],
