@@ -102,7 +102,8 @@ function jitsi_switch() {
 
 function add_hide_self_button()
 {
-	let hideSelfButton = $("<div id='vtt_jitsi_buttons'><button id='hide_self_view' class='hasTooltip button-icon' data-name='Hide Self View'>Hide Me</button></div>");
+	
+	let hideSelfButton = $("<div id='vtt_jitsi_buttons'><button id='hide_self_view' class='hasTooltip button-icon' data-name='Hide Self View'><span class='hide_self_view_text'>Hide Me</span></button></div>");
 	$("#layout_wrapper").append(hideSelfButton);
 	$("#vtt_jitsi_buttons").css("position", "absolute").css("top", "0px").css("left", "64px")
 	$("#hide_self_view").css("background-color","white").css("font-size","10px").css("height","22px").css("color","black");
