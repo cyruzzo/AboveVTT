@@ -100,3 +100,27 @@ function jitsi_switch() {
 		jitsi_bottom();
 }
 
+function add_hide_self_button()
+{
+	let hideSelfButton = $("<div id='vtt_jitsi_buttons'><button id='hide_self_view' class='hasTooltip button-icon' data-name='Hide Self View'>Hide Me</button></div>");
+	$("#layout_wrapper").append(hideSelfButton);
+	$("#vtt_jitsi_buttons").css("position", "absolute").css("top", "0px").css("left", "64px")
+	$("#hide_self_view").css("background-color","white").css("font-size","10px").css("height","22px").css("color","black");
+	$("#hide_self_view").click(
+	function() {
+		let selfView = $("#localVideo_container");
+		let selfViewWrapper = $("#localVideoWrapper");
+		if(selfView.is(":visible"))
+		{
+			selfView.hide();
+			let hiddenPanel = $("<div id='hide_self_view_panel'>Self View Hidden</div>");
+			selfViewWrapper.append(hiddenPanel);
+			hiddenPanel.css("background-color","grey").css("text-align","center").css("height","100%").css("width","100%").css("padding-top","20px");
+		}
+		else
+		{
+			selfView.show();
+			$("#hide_self_view_panel").remove();
+		}
+	});	
+}
