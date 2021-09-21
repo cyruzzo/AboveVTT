@@ -81,29 +81,31 @@ class JournalManager{
 			t.text(self.chapters[i].title);
 			journal_panel.append(c);
 			
-			let add_note_btn=$("<button class='material-icons md-8'>add</button>");
+			let del_chapter_btn=$("<button class='btn-del-chapter'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 			
-			add_note_btn.click(function(){
-				let new_noteid=uuid();
-				let note_title=prompt("Insert the note title");
-				self.notes[new_noteid]={
-					text: "",
-					plain: "",
-					title: note_title,
-					player: false,
-				};
-				
-				self.chapters[i].notes.push(new_noteid);
-				window.MB.sendMessage('custom/myVTT/JournalChapters',{
-					chapters: self.chapters
-				});
-				self.edit_note(new_noteid);
-				self.persist();
-				self.build_journal();
+			del_chapter_btn.click(function(){
+				if(confirm("Delete this chapter and all the contained notes?")){
+
+					for(let k=0;k<self.chapters[i].notes.length;k++){
+						let nid=self.chapters[i].notes[k];
+						delete self.notes[nid];
+					}
+
+					self.chapters.splice(i,1);
+					window.MB.sendMessage('custom/myVTT/JournalChapters',{
+						chapters: self.chapters
+					});
+					self.persist();
+					self.build_journal();
+				}
 			});
+
 			if(window.DM)
-				t.append(add_note_btn);
+				t.append(del_chapter_btn);
 			
+
+
+
 			for(let n=0; n<self.chapters[i].notes.length;n++){
 				
 				let note_id=self.chapters[i].notes[n];
@@ -150,6 +152,37 @@ class JournalManager{
 				
 				c.append(entry);
 			}
+
+			// 
+
+			let add_note_btn=$("<button class='journal-add-note'><img height=10 src='"+window.EXTENSION_PATH+"assets/conditons/note.svg'></button>");
+
+			add_note_btn.click(function(){
+				let new_noteid=uuid();
+				let note_title=prompt("Insert the note title");
+				self.notes[new_noteid]={
+					text: "",
+					plain: "",
+					title: note_title,
+					player: false,
+				};
+				
+				self.chapters[i].notes.push(new_noteid);
+				window.MB.sendMessage('custom/myVTT/JournalChapters',{
+					chapters: self.chapters
+				});
+				self.edit_note(new_noteid);
+				self.persist();
+				self.build_journal();
+			});
+
+			if(window.DM){
+				let entry=$("<div class='journal-note-entry'></div>");
+				entry.append(add_note_btn);
+				entry.append("<b>Add New Note</b>");
+				c.append(entry);
+			}
+
 		}
 		
 	}
@@ -259,6 +292,10 @@ class JournalManager{
 			menu: {},
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,videoembed',
 			toolbar: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,code,|,formatselect,|,alignleft,|,aligncenter,|,alignright,|,fontselect,|,fontsizeselect,|,forecolor,|,bullist,|,numlist,|,hr,|,removeformat,|,outdent,|,indent,|,spoiler,|,link,|,unlink,|,image,|,videoembed,|,|,codeBlock,|,dieroller',
+			image_class_list: [
+				{title: 'None', value: ''},
+				{title: 'Magnify', value: 'magnify'},
+			],
 			external_plugins: {
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
 				'videoembed': "/content/1-0-1688-0/js/tinymce/custom_plugins/videoembed/plugin.js",

@@ -517,9 +517,9 @@ div#scene_properties form > div {
 	padding-top:20px;
     font-size: 9px;
  
-   -webkit-column-count: 6;
-      -moz-column-count: 6;
-           column-count: 6;
+   -webkit-column-count: 7;
+      -moz-column-count: 7;
+           column-count: 7;
 
    -webkit-column-gap: 20px;
       -moz-column-gap: 20px;
@@ -1061,6 +1061,7 @@ audio::-webkit-media-controls-time-remaining-display{
 .journal-chapter-title{
     font-weight: bold;
     background: #dddddd;
+    min-height: 30px;
 }
 
 .journal-note-entry{
@@ -1082,6 +1083,12 @@ audio::-webkit-media-controls-time-remaining-display{
 .visibility-container{
 	border: 1px solid black;
 	width: auto;
+}
+
+.btn-del-chapter{
+    right: 0;
+    position: absolute;
+    margin-top: 4px;
 }
 
 #help-overlay{

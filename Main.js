@@ -91,8 +91,15 @@ function increase_zoom() {
 
 function getPlayerIDFromSheet(sheet_url)
 {
-	var urlSplit = sheet_url.split("/");
-	var playerID = urlSplit[urlSplit.length - 1];
+	let playerid = -1;
+	if(sheet_url)
+	{
+		let urlSplit = sheet_url.split("/");
+		if(urlSplit.length > 0)
+		{
+			playerID = urlSplit[urlSplit.length - 1];
+		}
+	}
 	return playerID;
 }
 
@@ -306,7 +313,7 @@ function load_monster_stat(monsterid) {
 					var msgdata = {
 						player: window.PLAYER_NAME,
 						img: window.PLAYER_IMG,
-						text: "<img width='100%' src='" + imgsrc + "'>",
+						text: "<img width='100%' class='magnify' href='" + imgsrc + "' src='" + imgsrc + "'>",
 					};
 
 					window.MB.inject_chat(msgdata);
@@ -451,7 +458,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.55RC1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.55</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
@@ -501,8 +508,8 @@ function init_splash() {
 	patreons = $("<div id='patreons' style='margin-top:9px;'/>");
 
 	l1 = ["Max Puplett","ZorkFox","Epyk","John Ng","Josh Downing","Zytiga Gaming","Jordan Cohen","Flek","Nathan Wilhelm"];
-	l2 = ["Oliver","Iain Russell","RenoGeek","Daniel Levitus","Virginia Lancianese","Phillip Geurtz","Jordan Innerarity","TheDigifire","adam williams","Brendan Shane","Kris Scott","Drago Russo","Ryan Purcell","Lukas Edelmann","Elmer Senson","Chris Johnson","Pucas McDookie","Carl Cedarstaff II","Tom","Chris Cannon","Scott Moore","Kim Dargeou","Mike Miller","John Curran","Starving Actor"];
-	l3 = ["Daniel Wall","Cameron Warner","Amata (she_her)","Julia Hoffmann","Martin Brandt","Alexander Engel","Tommy Girouard-Belhumeur","Cobalt Blue","Kat","Adam Nothnagel","William Geisbert","Daniel Villablanca","Jason Osterbind","nate gonzalez","Fini Plays","Liu XxX","Paul Maloney","damian tier","Randy Zuendel","Brahm","Tim Newton","Chris Sells","Adam Connor","David Meese","Eduardo Villela","aaron hamilton","Milkmann","CraftyHobo","Cody Vegas Rothwell","Johan Surac","M Mustaqim Mustafa","Aviad Tal","mad4ever","CrazyPitesh","Unlucky Archer","Trevor A","Han Dandler","Michael Crane","BelowtheDM","its Bonez","Deku Baba","James Cohen","Cistern","Jon Bond","Robert J Correa","Dan Bosscher","Ofek Shoham","Cheeky Sausage Games","Joseph Bendickson","Blake Thomas","Steve Vlaminck","Alexander Glass","Jerry Jones","Kevin Young","David Hollenbeck","aDingoAteMyBaby","Miguel  Garcia Jr.","Rennie","Victor Waters","Sarah (ExpQuest)","William Clem","Chris Meece","Victor Martinez","Ian Leyco"];
+	l2 = ["Oliver","Iain Russell","RenoGeek","Daniel Levitus","Virginia Lancianese","Phillip Geurtz","Jordan Innerarity","TheDigifire","adam williams","Brendan Shane","Kris Scott","Drago Russo","Ryan Purcell","Lukas Edelmann","Elmer Senson","Chris Johnson","Pucas McDookie","Carl Cedarstaff II","Tom","Chris Cannon","Scott Moore","Kim Dargeou","Mike Miller","John Curran","Starving Actor","Kurt Piersol"];
+	l3 = ["Daniel Wall","Cameron Warner","Amata (she_her)","Julia Hoffmann","Martin Brandt","Alexander Engel","Tommy Girouard-Belhumeur","Cobalt Blue","Kat","Adam Nothnagel","William Geisbert","Daniel Villablanca","Jason Osterbind","nate gonzalez","Fini Plays","Liu XxX","Paul Maloney","damian tier","Randy Zuendel","Brahm","Tim Newton","Chris Sells","Adam Connor","David Meese","Eduardo Villela","aaron hamilton","Milkmann","CraftyHobo","Cody Vegas Rothwell","Johan Surac","M Mustaqim Mustafa","Aviad Tal","mad4ever","CrazyPitesh","Unlucky Archer","Trevor A","Han Dandler","Michael Crane","BelowtheDM","its Bonez","Deku Baba","James Cohen","Cistern","Jon Bond","Robert J Correa","Dan Bosscher","Ofek Shoham","Cheeky Sausage Games","Joseph Bendickson","Blake Thomas","Steve Vlaminck","Alexander Glass","Jerry Jones","Kevin Young","David Hollenbeck","aDingoAteMyBaby","Miguel  Garcia Jr.","Rennie","Victor Waters","Sarah (ExpQuest)","William Clem","Chris Meece","Victor Martinez","Ian Leyco","Michel Gisby","Dorian Arcos","Stephanie Bowen","Arish Rustomji","Christian Johansson","Gregory Willis"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -680,215 +687,215 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 {
 	let container = $("#sheet");
 	iframe = $("<iframe id='PlayerSheet"+getPlayerIDFromSheet(pc_sheet)+"' src=''></iframe>")
-		//iframe.css('display', 'none');
-		iframe.css("width", "100%");
-		iframe.css("position", "absolute");
-		iframe.css("top", "24px");
-		iframe.css("left", "0px");
-		iframe.css("height", "0px");
-		iframe.on("load", function(event) {
-			$(event.target).contents().find("#mega-menu-target").remove();
-			$(event.target).contents().find(".site-bar").remove();
-			$(event.target).contents().find(".page-header").remove();
-			$(event.target).contents().find(".homebrew-comments").remove();
+	//iframe.css('display', 'none');
+	iframe.css("width", "100%");
+	iframe.css("position", "absolute");
+	iframe.css("top", "24px");
+	iframe.css("left", "0px");
+	iframe.css("height", "0px");
+	container.append(iframe);
+	iframe.on("load", function(event) {
+		$(event.target).contents().find("#mega-menu-target").remove();
+		$(event.target).contents().find(".site-bar").remove();
+		$(event.target).contents().find(".page-header").remove();
+		$(event.target).contents().find(".homebrew-comments").remove();
 
-			
-			// DICE STREAMING ?!?!
-			if(!window.DM){
-				let firstTime=false;
-				if(!window.MYMEDIASTREAM)
-					firstTime=true;
-				window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream(0);
-				
-				
-				if(window.JOINTHEDICESTREAM){
-					// we should tear down and reconnect
-					for(let i in window.STREAMPEERS){
-						console.log("replacing the track")
-						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-					}
+
+		// DICE STREAMING ?!?!
+		if(!window.DM){
+			let firstTime=false;
+			if(!window.MYMEDIASTREAM)
+				firstTime=true;
+			window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream(0);
+
+
+			if(window.JOINTHEDICESTREAM){
+				// we should tear down and reconnect
+				for(let i in window.STREAMPEERS){
+					console.log("replacing the track")
+					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
 				}
-				
-				if(firstTime)
-					$("#stream_button").click();
-					
 			}
 
-			// CHARACTER
-			let tokenid = $(event.target).attr('src');
-			var synchp = function() {
-				console.log('sinco HP');
-				var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-current");
+			if(firstTime)
+				$("#stream_button").click();
 
-				if (hp_element.length > 0) {
-					var current_hp = hp_element.html();
-					var max_hp = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(3) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-max").html();
-				}
-				else {
-					var current_hp = 0;
-					if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
-						max_hp = window.PLAYERDATA.max_hp;
-					else
-						max_hp = 0;
+		}
 
-				}
+		// CHARACTER
+		let tokenid = $(event.target).attr('src');
+		var synchp = function() {
+			console.log('sinco HP');
+			var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-current");
 
+			if (hp_element.length > 0) {
+				var current_hp = hp_element.html();
+				var max_hp = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(3) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-max").html();
+			}
+			else {
+				var current_hp = 0;
+				if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
+					max_hp = window.PLAYERDATA.max_hp;
+				else
+					max_hp = 0;
 
-				var pp = $(event.target).contents().find(".ct-senses > .ct-senses__callouts:first-child .ct-senses__callout-value");
-
-				let conditions = [];
-				var conds_tag = $(event.target).contents().find(".ct-conditions-summary .ddbc-condition__name");
-
-				conds_tag.each(function(el, idx) {
-					conditions.push($(this).text());
-				});
-
-				abilities = [];
-
-				const isScore = (val) => {
-					return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
-				}
-
-				$(event.target).contents().find('.ct-quick-info__ability,.ct-main-mobile__ability').each(function() {
-					let abilityScores;
-					if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
-						abilityScores = {
-							abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-							abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-							modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-							score: $(this).find('.ddbc-ability-summary__primary button').text()
-						}
-					} else {
-						abilityScores = {
-							abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-							abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-							modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-							score: $(this).find('.ddbc-ability-summary__secondary').text()
-						};
-					}
-					abilities.push(abilityScores);
-				});
+			}
 
 
-				var playerdata = {
-					id: tokenid,
-					hp: current_hp,
-					max_hp: max_hp,
-					ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
-					pp: pp.html(),
-					conditions: conditions,
-					abilities,
-					walking: `${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__number").text()}${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__label").text()}`,
-					inspiration: $(event.target).contents().find('.ct-inspiration__status--active').length
-				};
+			var pp = $(event.target).contents().find(".ct-senses > .ct-senses__callouts:first-child .ct-senses__callout-value");
 
-				if (!window.DM) {
-					window.PLAYERDATA = playerdata;
-					window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-				}
-				else {
-					window.MB.handlePlayerData(playerdata);
-				}
+			let conditions = [];
+			var conds_tag = $(event.target).contents().find(".ct-conditions-summary .ddbc-condition__name");
 
-				// FIX DDB BUG ON Z-INDEX FOR RIGHT CLICK CONTEXT MENU FOR ROLLING (piggybacking on synchp)
-				if($(event.target).contents().find(".ct-sidebar").length > 0)
-					$(event.target).contents().find(".ct-sidebar").zIndex(11);
-			};
-
-			// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
-			$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
-				".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
-				if (window.WAITING_FOR_SYNCHP)
-					return;
-				else {
-					window.WAITING_FOR_SYNCHP = true;
-					setTimeout(function() {
-						window.WAITING_FOR_SYNCHP = false;
-						synchp();
-					}, 1000);
-				}
+			conds_tag.each(function(el, idx) {
+				conditions.push($(this).text());
 			});
 
-			var mutation_target = $(event.target).contents().get(0);
-			var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+			abilities = [];
 
-			var observer = new MutationObserver(function(mutations) {
-				console.log('scattai');
-				var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
-				if (sidebar.length > 0) {
-					if ($(event.target).contents().find("#castbutton").length == 0) {
-						console.log("creating button");
-						observer.disconnect();
-						var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
-						b.click(function() {
-							var newobj = $(event.target).contents().find(".ct-sidebar__pane-content").clone();
-							newobj.find("img.ct-item-detail__full-image-img").css("max-width", "270px");
-							newobj.find(".stat-block-finder").css("display", "flex !important");
-							newobj.find(".stat-block-finder").css("flex-wrap", "wrap");
-							newobj.hide();
-							$(event.target).contents().find(".ct-sidebar__pane-content").parent().append(newobj);
-							newobj.find("button,select,input").each(function() { $(this).remove() });
-							newobj.find("div,span").each(function() {
-								var newcss = {
-									display: $(this).css('display'),
-									'font-style': $(this).css('font-style'),
-									'font-weight': $(this).css('font-weight'),
-									'margin': $(this).css('margin'),
-									'font-size': $(this).css('font-size'),
-									'background-image': $(this).css('background-image'),
-								};
-								if ($(this).css("background-image") != "none") {
-									newcss.width = $(this).width();
-									newcss.height = $(this).height();
-									newcss.background = $(this).css("background");
-									newcss['background-size'] = $(this).css("background-size");
-								}
-								$(this).css(newcss);
-							});
+			const isScore = (val) => {
+				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
+			}
 
-							html = newobj.html();
-							newobj.remove();
-							console.log(html);
-							data = {
-								player: window.PLAYER_NAME,
-								img: window.PLAYER_IMG,
-								text: html
+			$(event.target).contents().find('.ct-quick-info__ability,.ct-main-mobile__ability').each(function() {
+				let abilityScores;
+				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__primary button').text()
+					}
+				} else {
+					abilityScores = {
+						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
+						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
+						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
+						score: $(this).find('.ddbc-ability-summary__secondary').text()
+					};
+				}
+				abilities.push(abilityScores);
+			});
+
+
+			var playerdata = {
+				id: tokenid,
+				hp: current_hp,
+				max_hp: max_hp,
+				ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
+				pp: pp.html(),
+				conditions: conditions,
+				abilities,
+				walking: `${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__number").text()}${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__label").text()}`,
+				inspiration: $(event.target).contents().find('.ct-inspiration__status--active').length
+			};
+
+			if (!window.DM) {
+				window.PLAYERDATA = playerdata;
+				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
+			}
+			else {
+				window.MB.handlePlayerData(playerdata);
+			}
+
+			// FIX DDB BUG ON Z-INDEX FOR RIGHT CLICK CONTEXT MENU FOR ROLLING (piggybacking on synchp)
+			if($(event.target).contents().find(".ct-sidebar").length > 0)
+				$(event.target).contents().find(".ct-sidebar").zIndex(11);
+		};
+
+		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
+		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
+			".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
+			if (window.WAITING_FOR_SYNCHP)
+				return;
+			else {
+				window.WAITING_FOR_SYNCHP = true;
+				setTimeout(function() {
+					window.WAITING_FOR_SYNCHP = false;
+					synchp();
+				}, 1000);
+			}
+		});
+
+		var mutation_target = $(event.target).contents().get(0);
+		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+
+		var observer = new MutationObserver(function(mutations) {
+			console.log('scattai');
+			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
+			if (sidebar.length > 0) {
+				if ($(event.target).contents().find("#castbutton").length == 0) {
+					console.log("creating button");
+					observer.disconnect();
+					var b = $("<button id='castbutton'>SEND TO GAMELOG</button>");
+					b.click(function() {
+						var newobj = $(event.target).contents().find(".ct-sidebar__pane-content").clone();
+						newobj.find("img.ct-item-detail__full-image-img").css("max-width", "270px");
+						newobj.find(".stat-block-finder").css("display", "flex !important");
+						newobj.find(".stat-block-finder").css("flex-wrap", "wrap");
+						newobj.hide();
+						$(event.target).contents().find(".ct-sidebar__pane-content").parent().append(newobj);
+						newobj.find("button,select,input").each(function() { $(this).remove() });
+						newobj.find("div,span").each(function() {
+							var newcss = {
+								display: $(this).css('display'),
+								'font-style': $(this).css('font-style'),
+								'font-weight': $(this).css('font-weight'),
+								'margin': $(this).css('margin'),
+								'font-size': $(this).css('font-size'),
+								'background-image': $(this).css('background-image'),
 							};
-							window.MB.inject_chat(data);
-
-
+							if ($(this).css("background-image") != "none") {
+								newcss.width = $(this).width();
+								newcss.height = $(this).height();
+								newcss.background = $(this).css("background");
+								newcss['background-size'] = $(this).css("background-size");
+							}
+							$(this).css(newcss);
 						});
 
+						html = newobj.html();
+						newobj.remove();
+						console.log(html);
+						data = {
+							player: window.PLAYER_NAME,
+							img: window.PLAYER_IMG,
+							text: html
+						};
+						window.MB.inject_chat(data);
 
-						$(event.target).contents().find(".ct-sidebar__pane-content").prepend(b);
 
-						observer.observe(mutation_target, mutation_config);
+					});
+
+
+					$(event.target).contents().find(".ct-sidebar__pane-content").prepend(b);
+
+					observer.observe(mutation_target, mutation_config);
+				}
+			}
+		});
+
+		observer.observe(mutation_target, mutation_config);
+
+		const waitToSync = (timeElapsed = 0) => {
+			setTimeout(() => {
+				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
+				if (ac_element.length > 0) {
+					synchp();
+				} else {
+					if (timeElapsed < 15000) {
+						waitToSync(timeElapsed + 500);
 					}
 				}
-			});
-
-			observer.observe(mutation_target, mutation_config);
-
-			const waitToSync = (timeElapsed = 0) => {
-				setTimeout(() => {
-					var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
-					if (ac_element.length > 0) {
-						synchp();
-					} else {
-						if (timeElapsed < 15000) {
-							waitToSync(timeElapsed + 500);
-						}
-					}
-				}, 500);
-			};
-			waitToSync();
-			//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
-		});
-		container.append(iframe);
-		var loadSheet = function (sheetFrame, sheet_url) {
-			sheetFrame.attr('src', sheet_url);
+			}, 500);
 		};
-		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+		waitToSync();
+		//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
+	});
+	var loadSheet = function (sheetFrame, sheet_url) {
+		sheetFrame.attr('src', sheet_url);
+	};
+	setTimeout(loadSheet, loadWait,iframe,pc_sheet);
 }
 
 function preload_player_sheets()
