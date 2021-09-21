@@ -116,11 +116,16 @@ function add_hide_self_button()
 			let hiddenPanel = $("<div id='hide_self_view_panel'>Self View Hidden</div>");
 			selfViewWrapper.append(hiddenPanel);
 			hiddenPanel.css("background-color","grey").css("text-align","center").css("height","100%").css("width","100%").css("padding-top","20px");
+			$("span", this).text("Show Me");
+			$("#hide_self_view").attr("data-name","Show Self View");
+			
 		}
 		else
 		{
 			selfView.show();
 			$("#hide_self_view_panel").remove();
+			$("span", this).text("Hide Me");
+			$("#hide_self_view").attr("data-name","Hide Self View");
 		}
 	});	
 }
