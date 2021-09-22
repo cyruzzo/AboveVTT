@@ -1265,10 +1265,8 @@ body {
 	width:100%;
 	padding-top:20px;
 }
+
 .jitsi-internal-button {
-	background-color:white;
-	font-size:10px;
-	height:24px;
-	color:black;
-	padding:0px 6px;
+	padding:0px 6px!important;
+	background-color: white;
 }
