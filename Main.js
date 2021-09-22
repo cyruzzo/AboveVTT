@@ -1703,14 +1703,13 @@ function init_stream_button() {
 
 
 $(function() {
-	
+	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
 	if(location.hostname == "meet.jit.si")
 	{
 		add_hide_self_button();
 		return;
 	}
 	
-	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
 	var is_dm=false;
 	if($(".ddb-campaigns-detail-body-dm-notes-private").length>0){
 		is_dm=true;
