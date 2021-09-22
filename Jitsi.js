@@ -100,12 +100,12 @@ function jitsi_switch() {
 		jitsi_bottom();
 }
 
-function jitsi_add_hide_self_button()
+function add_hide_self_button()
 {
-	let hideSelfButton = $(`<div id='vtt_jitsi_buttons'><button id='hide_self_view' class='jitsi-internal-button' data-name='Hide Self View'><img id='hide_self_view_img' src="${window.EXTENSION_PATH + "assets/hide_self_view.png"}" class='jitsi-internal-image ' /></button></div>`);
+	let hideSelfButton = $(`<div id='vtt_jitsi_buttons'><button id='jitsi_hide_self_view' class='hasTooltip button-icon jitsi-internal-button' data-name='Hide Self View'><img id='hide_self_view_img' src="${window.EXTENSION_PATH + "assets/hide_self_view.png"}" class='jitsi-internal-image ' /></button></div>`);
 	$("#layout_wrapper").append(hideSelfButton);
 	$("#vtt_jitsi_buttons").css("position", "absolute").css("top", "0px").css("left", "64px")
-	$("#hide_self_view").click(
+	$("#jitsi_hide_self_view").click(
 	function() {
 		let selfView = $("#localVideo_container");
 		let selfViewWrapper = $("#localVideoWrapper");
@@ -115,7 +115,7 @@ function jitsi_add_hide_self_button()
 			let hiddenPanel = $("<div id='hide_self_view_panel' class='jitsi-self-view-panel'>Self View Hidden</div>");
 			selfViewWrapper.append(hiddenPanel);
 			$("img", this).attr("src", window.EXTENSION_PATH + "assets/show_self_view.png");
-			$("#hide_self_view").attr("data-name","Show Self View");
+			$("#jitsi_hide_self_view").attr("data-name","Show Self View");
 			
 		}
 		else
@@ -123,7 +123,7 @@ function jitsi_add_hide_self_button()
 			selfView.show();
 			$("#hide_self_view_panel").remove();
 			$("img", this).attr("src", window.EXTENSION_PATH + "assets/hide_self_view.png");
-			$("#hide_self_view").attr("data-name","Hide Self View");
+			$("#jitsi_hide_self_view").attr("data-name","Hide Self View");
 		}
 	});	
 }
