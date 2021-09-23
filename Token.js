@@ -484,6 +484,10 @@ class Token {
 
 
 	place(animationDuration) {
+		if(!window.CURRENT_SCENE_DATA){
+			// No scene loaded!
+			return;
+		}
 		if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 			animationDuration = 1000;
 		}
