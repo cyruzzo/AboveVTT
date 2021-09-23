@@ -81,7 +81,8 @@ function jitsi_modal() {
 	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", (window.width-400)+"px");
 	window.tile_desired = true;
 	window.jitsiAPI.executeCommand(`toggleTileView`);
-	$("#jitsi_switch").html("<span class='material-icons button-icon' data-name='Exit fullscreen (v)>fullscreen_exit</span>");
+	$("span", $("#jitsi_switch")).text("fullscreen_exit");
+	$("#jitsi_switch").attr("data-name","Exit fullscreen (v)");
 }
 
 function jitsi_bottom() {
@@ -90,7 +91,8 @@ function jitsi_bottom() {
 	window.tile_desired = false;
 	//window.jitsiAPI.setLargeVideoParticipant(0);
 	window.jitsiAPI.executeCommand(`toggleTileView`);
-	$("#jitsi_switch > img").attr("src", window.EXTENSION_PATH + 'assets/icons/fullscreen.svg');
+	$("span", $("#jitsi_switch")).text("fullscreen");
+	$("#jitsi_switch").attr("data-name","Fullscreen (v)");
 }
 
 function jitsi_switch() {
