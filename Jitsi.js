@@ -87,7 +87,7 @@ function jitsi_startup() {
 function jitsi_modal() {
 	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", "75%");
 	window.tile_desired = true;
-	window.jitsiAPI.executeCommand(`setTileView`, false);
+	window.jitsiAPI.executeCommand(`setTileView`, true);
 	$("span", $("#jitsi_switch")).text("fullscreen_exit");
 	$("#jitsi_switch").attr("data-name","Exit fullscreen (v)");
 }
@@ -95,7 +95,7 @@ function jitsi_modal() {
 function jitsi_bottom() {
 	$("#meet").css("position", "fixed").css("top", "").css("height", "120px").css("left", "50px").css("width", "75%").css("bottom", "10px");
 	window.tile_desired = false;
-	window.jitsiAPI.executeCommand(`setTileView`, true);
+	window.jitsiAPI.executeCommand(`setTileView`, false);
 	$("span", $("#jitsi_switch")).text("fullscreen");
 	$("#jitsi_switch").attr("data-name","Fullscreen (v)");
 }
