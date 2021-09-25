@@ -50,7 +50,6 @@ function JitsiOncompleteListener(details)
 		{
 			let injectCSSDetails =
 			{
-				allFrames: (details.frameId > 0),
 				file: "abovevtt_jitsi.css",
 				// code: add_hide_self_button_code,
 				frameId: details.frameId				
@@ -60,7 +59,6 @@ function JitsiOncompleteListener(details)
 			//start with jquery
 			let injectJQueryDetails =
 			{
-				allFrames: (details.frameId > 0),
 				file: "jquery.min.js",
 				// code: add_hide_self_button_code,
 				frameId: details.frameId				
@@ -68,7 +66,6 @@ function JitsiOncompleteListener(details)
 			chrome.tabs.executeScript(details.tabId, injectJQueryDetails, function() {
 				let injectCodeDetails =
 				{
-					allFrames: (details.frameId > 0),
 					file: "JitsiInternal.js",
 					// code: add_hide_self_button_code,
 					frameId: details.frameId				
