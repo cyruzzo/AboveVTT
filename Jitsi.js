@@ -65,7 +65,6 @@ function init_jitsi() {
 	$("#meet").css("position", "fixed").css("top", "").css("height", "120px").css("left", "50px").css("width", "75%").css("bottom", "10px");
 	window.tile_desired = false;
 	api.addEventListener("tileViewChanged", jitsi_tile_listener);
-	setTimeout(jitsi_bottom, 10000)
 }
 
 
