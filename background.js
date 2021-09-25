@@ -46,7 +46,7 @@ function JitsiOncompleteListener(details)
 	if(details.url)
 	{
 		const { hostname } = new URL(details.url);
-		if(hostname == "meet.jit.si")
+		if(details.url.search(aboveVTT_jitsi_url) > -1)
 		{
 			let injectCSSDetails =
 			{
