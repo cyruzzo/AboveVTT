@@ -47,50 +47,58 @@ function init_jitsi() {
 		configOverwrite: {
 			prejoinPageEnabled: false,
 			startWithAudioMuted: true,
+			toolbarButtons: [
+				"camera",
+				"desktop",
+				"microphone",
+				"select-background",
+				"settings",
+				"shareaudio",
+				"tileview",
+				"videoquality"
+			],
 		},
 		interfaceConfigOverwrite: {
-			TOOLBAR_BUTTONS: ["microphone", "camera", "settings", "tileview"],
-			VERTICAL_FILMSTRIP: false,
-			filmStripOnly: true,
 			DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
 			DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-			TOOLBAR_TIMEOUT: 500,
 			INITIAL_TOOLBAR_TIMEOUT: 500,
-			SHOW_CHROME_EXTENSION_BANNER: false
-
+			SHOW_CHROME_EXTENSION_BANNER: false,
+			TOOLBAR_TIMEOUT: 500,
+			VERTICAL_FILMSTRIP: false
 		},
 	};
 	api = new JitsiMeetExternalAPI(domain, options);
 	window.jitsiAPI = api;
 	$("#meet").css("position", "fixed").css("top", "").css("height", "120px").css("left", "50px").css("width", "75%").css("bottom", "10px");
-	window.tile_desired = false;
-	api.addEventListener("tileViewChanged", jitsi_tile_listener);
-	setTimeout(jitsi_bottom, 10000)
+
+	/* You can not execute any commands right after you instantiate the jitsi client
+	and there is really no way to wait for the client to be ready. A workaround is to
+	create a one time use handler just for startup, to render the pane and set the tile
+	layout, attached to the subjectChange event, which by chance is almost the last thing
+	the client does before being considered ready. After which, commands can be executed.
+	*/
+	api.addEventListener('subjectChange', jitsi_startup)
 }
 
-
-function jitsi_tile_listener(event) {
-	console.log("jitsi_tile_listener status" + event.enabled);
-	window.jitsiAPI.removeEventListener("tileViewChanged", jitsi_tile_listener);
-	if (event.enabled != window.tile_desired)
-		window.jitsiAPI.executeCommand(`toggleTileView`);
-	setTimeout(function() { window.jitsiAPI.addEventListener("tileViewChanged", jitsi_tile_listener); }, 1000); // BUGGY AND HACKY
+function jitsi_startup() {
+	window.jitsiAPI.removeListener('subjectChange', jitsi_startup);
+	jitsi_bottom()
 }
 
 function jitsi_modal() {
-	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", (window.width-400)+"px");
+	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", "75%");
 	window.tile_desired = true;
-	window.jitsiAPI.executeCommand(`toggleTileView`);
-	$("#jitsi_switch").html("<span class='material-icons button-icon' data-name='Exit fullscreen (v)>fullscreen_exit</span>");
+	window.jitsiAPI.executeCommand(`setTileView`, true);
+	$("span", $("#jitsi_switch")).text("fullscreen_exit");
+	$("#jitsi_switch").attr("data-name","Exit fullscreen (v)");
 }
 
 function jitsi_bottom() {
-	console.log("jitsi to bottom");
 	$("#meet").css("position", "fixed").css("top", "").css("height", "120px").css("left", "50px").css("width", "75%").css("bottom", "10px");
 	window.tile_desired = false;
-	//window.jitsiAPI.setLargeVideoParticipant(0);
-	window.jitsiAPI.executeCommand(`toggleTileView`);
-	$("#jitsi_switch > img").attr("src", window.EXTENSION_PATH + 'assets/icons/fullscreen.svg');
+	window.jitsiAPI.executeCommand(`setTileView`, false);
+	$("span", $("#jitsi_switch")).text("fullscreen");
+	$("#jitsi_switch").attr("data-name","Fullscreen (v)");
 }
 
 function jitsi_switch() {
@@ -127,3 +135,5 @@ function add_hide_self_button()
 		}
 	});	
 }
+
+

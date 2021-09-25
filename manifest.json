@@ -6,14 +6,21 @@
 "content_scripts":[
     {
       "matches":[
-        "https://www.dndbeyond.com/campaigns/*",
-        "https://meet.jit.si/aboveVTT*"
+        "https://www.dndbeyond.com/campaigns/*"
       ],
-      "js": ["Load.js"],
-	  "all_frames": true
+      "js": ["Load.js"]
     }
   ],
+"background":{
+	"persistent": false,
+	"page":"background.html"
+},
+"options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
 "permissions": [],
+"optional_permissions": ["https://meet.jit.si/aboveVTT*", "webNavigation"],
 "icons":{"128":"icon.png"},
 "web_accessible_resources": [
 	"SoundPad.js",
@@ -46,6 +53,8 @@
 	"jquery.magnific-popup.min.js",
 	"magnific-popup.css",
 	"Journal.js",
+	"JitsiInternal.js",
+	"abovevtt_jitsi.css",
 	"assets/*"
 	]
 }
