@@ -1252,21 +1252,3 @@ body {
     white-space: normal;
     width: auto;
 }
-
-.jitsi-internal-image {
-	height: 22px;
-	width: 22px;
-}
-
-.jitsi-self-view-panel {
-	background-color:grey;
-	text-align:center;
-	height:30%;
-	width:100%;
-	padding-top:10px;
-}
-
-.jitsi-internal-button {
-	padding:0px 6px!important;
-	background-color: white;
-}
