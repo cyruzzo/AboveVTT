@@ -76,7 +76,6 @@ function addVideo(stream,streamerid) {
 
 class MessageBroker {
 
-
 	loadWS(token, callback = null) {
 
 		if (callback)
@@ -93,6 +92,7 @@ class MessageBroker {
 		var url = this.url;
 		var userid = this.userid;
 		var gameid = this.gameid;
+		var connection_id = this.connection_id;
 
 		console.log("STARTING MB WITH TOKEN=" + token);
 
@@ -128,293 +128,25 @@ class MessageBroker {
 			var msg = $.parseJSON(event.data);
 			console.log(msg.eventType);
 			
-			if (msg.eventType == "custom/myVTT/token") {
-				self.handleToken(msg);
+			// AmOnline, confirm and MsgBundle messages 
+			// don't require confirmation, so are handled separately
+			if (msg.eventType == "custom/myVTT/AmOnline") {
+				self.handleAmOnline(msg);
+			} 
+			else if(msg.eventType == "custom/myVTT/confirm")
+			{
+				self.handleConfirmation(msg);
+			} 
+			else if(msg.eventType == "custom/myVTT/MsgBundle")
+			{
+				self.handleMessageBundle(msg);
 			}
-			if (msg.eventType == "custom/myVTT/scene") {
-				self.handleScene(msg);
-			}
-			if (msg.eventType == "custom/myVTT/syncmeup") {
-				self.handleSyncMeUp(msg);
-			}
-			if (msg.eventType == "custom/myVTT/reveal") {
-				window.REVEALED.push(msg.data);
-				redraw_canvas();
-				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-			}
-			if (msg.eventType == "custom/myVTT/drawing") {
-				window.DRAWINGS.push(msg.data);
-				redraw_drawings();
-			}
-			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
-				if(!window.NOTIFIEDOLDVERSION){
-					alert('One of the player is using AboveTT 0.0.51 or less. Please update everyone to 0.0.52 or higher');
-					window.NOTIFIEDOLDVERSION=true;
-				}
-			}
-			if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
-				self.handleCT(msg.data);
-			}
-			if (msg.eventType == "custom/myVTT/highlight") {
-				if (msg.data.id in window.TOKEN_OBJECTS) {
-					window.TOKEN_OBJECTS[msg.data.id].highlight(true);
-				}
-			}
-			if (msg.eventType == "custom/myVTT/pointer") {
-				set_pointer(msg.data,!msg.data.dm);
-			}
-
-			if (msg.eventType == "custom/myVTT/lock") {
-				if (window.DM)
-					return;
-				if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
-					//alert('locked');
-					var lock_display = $("<div id='lock_display'>The DM is looking at your character sheet</p></div>");
-					lock_display.css("font-size", "18px");
-					lock_display.css("text-align","center");
-					lock_display.css('font-weight', "bold");
-					lock_display.css('background', "rgba(255,255,0,0.7)");
-					lock_display.css('position', 'absolute');
-					lock_display.css('top', '27px');
-					lock_display.css('left', '0px');
-					lock_display.width($("#sheet").width());
-					//lock_display.height($("#sheet").height());
-					lock_display.height(25);
-					//lock_display.css('padding-top', '50px');
-					//$("#sheet iframe").css('opacity', '0.8');
-					$("#sheet").append(lock_display);
-					//$("#sheet iframe").attr('disabled', 'disabled');
-				}
-			}
-			if (msg.eventType == "custom/myVTT/unlock") {
-				if (window.DM)
-				{
-					return;
-				}
-				else if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
-					//alert('unlocked');
-					$("#lock_display").remove();
-					$("#sheet iframe").removeAttr('disabled');
-					$("#sheet iframe").css('opacity', '1');
-					$("#sheet iframe").attr('src', function(i, val) { return val; }); // RELOAD IFRAME
-				}
-			}
-
-			if (msg.eventType == "custom/myVTT/player_sheet_closed") {
-				if (window.DM)
-				{
-					//$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('src', function(i, val) { return val; });
-					$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('data-changed', 'true');
-					return;
-				}
+			else if(msg.hasOwnProperty("id"))
+			{
+				self.handleMessage(msg);
 			}
 			
-			
-			if(msg.eventType=="custom/myVTT/JournalChapters"){
-				if(!window.DM){
-					window.JOURNAL.chapters=msg.data.chapters;
-					window.JOURNAL.build_journal();
-				}
-			}
-			
-			if(msg.eventType=="custom/myVTT/note"){
-				if(!window.DM){
-					window.JOURNAL.notes[msg.data.id]=msg.data.note;
-					
-					window.JOURNAL.build_journal();
-					
-					if(msg.data.id in window.TOKEN_OBJECTS){
-						window.TOKEN_OBJECTS[msg.data.id].place();
-					}
-					
-					if(msg.data.popup)
-						window.JOURNAL.display_note(msg.data.id);
-					
-				}
-			}
-			
-			if(msg.eventType=="custom/myVTT/playerjoin"){
-				if(window.DM){
-					window.JOURNAL.sync();
-				}	
-			}
-			if(msg.eventType=="custom/myVTT/soundpad"){
-				build_soundpad(msg.data.soundpad);
-			}
-
-			if(msg.eventType=="custom/myVTT/playchannel"){
-				audio_playchannel(msg.data.channel,msg.data.time,msg.data.volume);
-			}
-			if(msg.eventType=="custom/myVTT/pausechannel"){
-				audio_pausechannel(msg.data.channel);
-			}
-			if(msg.eventType=="custom/myVTT/changechannel"){
-				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
-			}
-			if(msg.eventType=="custom/myVTT/changeyoutube"){
-				if(window.YTPLAYER){
-					$("#youtube_volume").val(msg.data.volume);
-					if(window.YTPLAYER)
-						window.YTPLAYER.setVolume(msg.data.volume);
-				}
-			}
-
-			if (msg.eventType == "custom/myVTT/playerdata") {
-				self.handlePlayerData(msg.data);
-			}
-			if (msg.eventType == "dice/roll/pending"){
-				// check for injected_data!
-				if(msg.data.injected_data){
-					notify_gamelog();
-					self.handle_injected_data(msg);
-				}
-			}
-			
-			if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-					
-				setTimeout( () => {
-				var peer=window.STREAMPEERS[msg.data.from];
-				peer.addIceCandidate(msg.data.ice);
-				 },500); // ritardalo un po'
-			}
-			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID))
-					return;
-				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
-  				};
-				var peer=new RTCPeerConnection(configuration);
-				peer.addEventListener('track', async (event) => {
-					console.log("aggiungo video!!!!");
-				     addVideo(event.streams[0],msg.data.from);
-				});
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};
-
-				
-				window.STREAMPEERS[msg.data.from]=peer;
-				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-					}
-				};
-				if(window.MYMEDIASTREAM){
-					var stream=window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
-				peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-					console.log("fatto setLocalDescription");
-					peer.setLocalDescription(desc);
-					self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						offer: desc
-					})
-				});
-			}
-			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
-  				};
-				var peer=new RTCPeerConnection(configuration);
-				peer.addEventListener('track', async (event) => {
-					addVideo(event.streams[0],msg.data.from);
-				});
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};
-				
-				window.STREAMPEERS[msg.data.from]=peer;
-				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-					}
-				};
-				if(window.MYMEDIASTREAM){
-					var stream=window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
-				peer.setRemoteDescription(msg.data.offer);
-				console.log("fatto setRemoteDescription");
-				peer.createAnswer().then( (desc) => {
-					peer.setLocalDescription(desc);
-					console.log("fatto setLocalDescription");
-					
-					window.MB.sendMessage("custom/myVTT/okseethem",{
-						from: window.MYSTREAMID,
-						to: msg.data.from,
-						answer: desc
-					});
-				})
-			}
-			if(msg.eventType == "custom/myVTT/okseethem"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-				var peer=window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(msg.data.answer);
-				console.log("fatto setRemoteDescription");
-			}
-			
-			if (msg.eventType == "dice/roll/fulfilled") {
-				notify_gamelog();
-								if (!window.DM)
-					return;
-				
-					
-				// CHECK FOR INIT ROLLS (auto add to combat tracker)
-				if (msg.data.action == "Initiative") {
-					console.log(msg.data);
-					var total = msg.data.rolls[0].result.total;
-					let entityid = msg.data.context.entityId;
-					console.log("cerco " + entityid);
-					
-					$("#tokens .VTTToken").each(
-						function(){
-							var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-							if(converted==entityid){
-								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
-							}
-						}
-					);
-					
-
-					$("#combat_area tr").each(function() {
-						var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-						console.log(converted);
-						if (converted == entityid) {
-							$(this).find(".init").val(total);
-							ct_reorder();
-						}
-					});
-					ct_persist();
-				}
-			}
-		};
+		}
 	}
 
 	handle_injected_data(data){
@@ -479,20 +211,346 @@ class MessageBroker {
 		}
 	}
 
+	handleMessage(msg){
+		let self=this
+		
+		// send confirmation
+		let confirmation = {
+			messageID : msg.id,
+			playerID : window.PLAYER_ID,
+			connectionId: self.connection_id,
+			timestamp: Date.now(),
+		}
+		self.sendMessage("custom/myVTT/confirm", confirmation, false);
+		
+		if(jQuery.inArray(msg.id, self.received_messages) == -1)
+		{
+			self.received_messages.push(msg.id);
+		}
+		else
+		{
+			// already received this message, don't process it again
+			return;					
+		}
+		if (msg.eventType == "custom/myVTT/token") {
+			self.handleToken(msg);
+		}
+		if (msg.eventType == "custom/myVTT/scene") {
+			self.handleScene(msg);
+		}
+		if (msg.eventType == "custom/myVTT/syncmeup") {
+			self.handleSyncMeUp(msg);
+		}
+		if (msg.eventType == "custom/myVTT/reveal") {
+			window.REVEALED.push(msg.data);
+			redraw_canvas();
+			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+		}
+		if (msg.eventType == "custom/myVTT/drawing") {
+			window.DRAWINGS.push(msg.data);
+			redraw_drawings();
+		}
+		if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
+			if(!window.NOTIFIEDOLDVERSION){
+				alert('One of the player is using AboveTT 0.0.51 or less. Please update everyone to 0.0.52 or higher');
+				window.NOTIFIEDOLDVERSION=true;
+			}
+		}
+		if (msg.eventType == "custom/myVTT/CT" && (!window.DM)) {
+			self.handleCT(msg.data);
+		}
+		if (msg.eventType == "custom/myVTT/highlight") {
+			if (msg.data.id in window.TOKEN_OBJECTS) {
+				window.TOKEN_OBJECTS[msg.data.id].highlight(true);
+			}
+		}
+		if (msg.eventType == "custom/myVTT/pointer") {
+			set_pointer(msg.data,!msg.data.dm);
+		}
+
+		if (msg.eventType == "custom/myVTT/lock") {
+			if (window.DM)
+				return;
+			if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
+				//alert('locked');
+				var lock_display = $("<div id='lock_display'>The DM is looking at your character sheet</p></div>");
+				lock_display.css("font-size", "18px");
+				lock_display.css("text-align","center");
+				lock_display.css('font-weight', "bold");
+				lock_display.css('background', "rgba(255,255,0,0.7)");
+				lock_display.css('position', 'absolute');
+				lock_display.css('top', '27px');
+				lock_display.css('left', '0px');
+				lock_display.width($("#sheet").width());
+				//lock_display.height($("#sheet").height());
+				lock_display.height(25);
+				//lock_display.css('padding-top', '50px');
+				//$("#sheet iframe").css('opacity', '0.8');
+				$("#sheet").append(lock_display);
+				//$("#sheet iframe").attr('disabled', 'disabled');
+			}
+		}
+		if (msg.eventType == "custom/myVTT/unlock") {
+			if (window.DM)
+			{
+				return;
+			}
+			else if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
+				//alert('unlocked');
+				$("#lock_display").remove();
+				$("#sheet iframe").removeAttr('disabled');
+				$("#sheet iframe").css('opacity', '1');
+				$("#sheet iframe").attr('src', function(i, val) { return val; }); // RELOAD IFRAME
+			}
+		}
+
+		if (msg.eventType == "custom/myVTT/player_sheet_closed") {
+			if (window.DM)
+			{
+				//$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('src', function(i, val) { return val; });
+				$("[id='PlayerSheet"+getPlayerIDFromSheet(msg.data.player_sheet)+"']").attr('data-changed', 'true');
+				return;
+			}
+		}
+		
+		
+		if(msg.eventType=="custom/myVTT/JournalChapters"){
+			if(!window.DM){
+				window.JOURNAL.chapters=msg.data.chapters;
+				window.JOURNAL.build_journal();
+			}
+		}
+		
+		if(msg.eventType=="custom/myVTT/note"){
+			if(!window.DM){
+				window.JOURNAL.notes[msg.data.id]=msg.data.note;
+				
+				window.JOURNAL.build_journal();
+				
+				if(msg.data.id in window.TOKEN_OBJECTS){
+					window.TOKEN_OBJECTS[msg.data.id].place();
+				}
+				
+				if(msg.data.popup)
+					window.JOURNAL.display_note(msg.data.id);
+				
+			}
+		}
+		
+		if(msg.eventType=="custom/myVTT/playerjoin"){
+			if(window.DM){
+				window.JOURNAL.sync();
+			}	
+		}
+		if(msg.eventType=="custom/myVTT/soundpad"){
+			build_soundpad(msg.data.soundpad);
+		}
+
+		if(msg.eventType=="custom/myVTT/playchannel"){
+			audio_playchannel(msg.data.channel,msg.data.time,msg.data.volume);
+		}
+		if(msg.eventType=="custom/myVTT/pausechannel"){
+			audio_pausechannel(msg.data.channel);
+		}
+		if(msg.eventType=="custom/myVTT/changechannel"){
+			audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
+		}
+		if(msg.eventType=="custom/myVTT/changeyoutube"){
+			if(window.YTPLAYER){
+				$("#youtube_volume").val(msg.data.volume);
+				if(window.YTPLAYER)
+					window.YTPLAYER.setVolume(msg.data.volume);
+			}
+		}
+
+		if (msg.eventType == "custom/myVTT/playerdata") {
+			self.handlePlayerData(msg.data);
+		}
+		if (msg.eventType == "dice/roll/pending"){
+			// check for injected_data!
+			if(msg.data.injected_data){
+				notify_gamelog();
+				self.handle_injected_data(msg);
+			}
+		}
+		
+		if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
+			if( !window.JOINTHEDICESTREAM)
+				return;
+			if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				return;
+				
+			setTimeout( () => {
+			var peer=window.STREAMPEERS[msg.data.from];
+			peer.addIceCandidate(msg.data.ice);
+			 },500); // ritardalo un po'
+		}
+		if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
+			if( !window.JOINTHEDICESTREAM)
+				return;
+			if( (!window.MYSTREAMID))
+				return;
+			const configuration = {
+				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+			};
+			var peer=new RTCPeerConnection(configuration);
+			peer.addEventListener('track', async (event) => {
+				console.log("aggiungo video!!!!");
+				 addVideo(event.streams[0],msg.data.from);
+			});
+			peer.onicecandidate = e => {
+				window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
+					to: msg.data.from,
+					from: window.MYSTREAMID,
+					ice: e.candidate
+				})
+			};
+
+			
+			window.STREAMPEERS[msg.data.from]=peer;
+			peer.onconnectionstatechange=() => {
+				if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
+					console.log("DELETING PEER "+msg.data.from);
+					delete window.STREAMPEERS[msg.data.from];
+					$("#streamer-canvas-"+msg.data.from).remove();
+				}
+			};
+			if(window.MYMEDIASTREAM){
+				var stream=window.MYMEDIASTREAM;
+				stream.getTracks().forEach(track => peer.addTrack(track, stream));
+			}
+			peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
+				console.log("fatto setLocalDescription");
+				peer.setLocalDescription(desc);
+				self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+					to: msg.data.from,
+					from: window.MYSTREAMID,
+					offer: desc
+				})
+			});
+		}
+		if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
+			if( !window.JOINTHEDICESTREAM)
+				return;
+			if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				return;
+			const configuration = {
+				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+			};
+			var peer=new RTCPeerConnection(configuration);
+			peer.addEventListener('track', async (event) => {
+				addVideo(event.streams[0],msg.data.from);
+			});
+			peer.onicecandidate = e => {
+				window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
+					to: msg.data.from,
+					from: window.MYSTREAMID,
+					ice: e.candidate
+				})
+			};
+			
+			window.STREAMPEERS[msg.data.from]=peer;
+			peer.onconnectionstatechange=() => {
+				if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
+					console.log("DELETING PEER "+msg.data.from);
+					delete window.STREAMPEERS[msg.data.from];
+					$("#streamer-canvas-"+msg.data.from).remove();
+				}
+			};
+			if(window.MYMEDIASTREAM){
+				var stream=window.MYMEDIASTREAM;
+				stream.getTracks().forEach(track => peer.addTrack(track, stream));
+			}
+			peer.setRemoteDescription(msg.data.offer);
+			console.log("fatto setRemoteDescription");
+			peer.createAnswer().then( (desc) => {
+				peer.setLocalDescription(desc);
+				console.log("fatto setLocalDescription");
+				
+				window.MB.sendMessage("custom/myVTT/okseethem",{
+					from: window.MYSTREAMID,
+					to: msg.data.from,
+					answer: desc
+				});
+			})
+		}
+		if(msg.eventType == "custom/myVTT/okseethem"){
+			if( !window.JOINTHEDICESTREAM)
+				return;
+			if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				return;
+			var peer=window.STREAMPEERS[msg.data.from];
+			peer.setRemoteDescription(msg.data.answer);
+			console.log("fatto setRemoteDescription");
+		}
+		
+		if (msg.eventType == "dice/roll/fulfilled") {
+			notify_gamelog();
+							if (!window.DM)
+				return;
+			
+				
+			// CHECK FOR INIT ROLLS (auto add to combat tracker)
+			if (msg.data.action == "Initiative") {
+				console.log(msg.data);
+				var total = msg.data.rolls[0].result.total;
+				let entityid = msg.data.context.entityId;
+				console.log("cerco " + entityid);
+				
+				$("#tokens .VTTToken").each(
+					function(){
+						var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+						if(converted==entityid){
+							ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+						}
+					}
+				);
+				
+
+				$("#combat_area tr").each(function() {
+					var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+					console.log(converted);
+					if (converted == entityid) {
+						$(this).find(".init").val(total);
+						ct_reorder();
+					}
+				});
+				ct_persist();
+			}
+		}
+		
+		if(msg.eventType == "custom/myVTT/message_confirm"){
+			if( !window.JOINTHEDICESTREAM)
+				return;
+			if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				return;
+			var peer=window.STREAMPEERS[msg.data.from];
+			peer.setRemoteDescription(msg.data.answer);
+			console.log("fatto setRemoteDescription");
+		}
+	}
+	
 	constructor() {
 		var self = this;
 		
 		this.chat_id=uuid();
+		this.connection_id=uuid();
 		this.chat_counter=0;
 		this.chat_pending_messages=[];
 		this.chat_decipher_task=null;
-
+		
 		this.callbackQueue = [];
 
 		this.userid = $("#message-broker-client").attr("data-userId");
 		this.gameid = $("#message-broker-client").attr("data-gameId");
 		this.url = $("#message-broker-client").attr("data-connectUrl");
-
+		
+		this.onlineUserList = []; //an array of connection IDs of each other online user.
+		
+		this.sent_messages = []; //the IDs of all sent messages
+		this.received_messages = []; //the IDs of all received messages
+		this.message_confirmations = {}; //a dictionary where each key is the ID of a messages sent and each value is and arrays of the connection ids of all users who have send confirmations to that message.
+		this.unconfirmed_messages = {};
 
 		get_cobalt_token(function(token) {
 			self.loadWS(token);
@@ -503,7 +561,7 @@ class MessageBroker {
 			self.sendPing();
 		}, 30000);
 	}
-
+	
     handleCT(data){
 		$("#combat_area").empty();
 		ct_load(data);
@@ -699,6 +757,39 @@ class MessageBroker {
 		}
 	}
 	
+	handleConfirmation(msg){
+		let confirmation = msg.data;
+		if(!window.MB.message_confirmations[confirmation.messageID])
+		{
+			window.MB.message_confirmations[confirmation.messageID] = [msg.data.connectionId];
+		}
+		else if (jQuery.inArray(msg.data.connectionId, window.MB.message_confirmations[confirmation.messageID]) == -1)
+		{
+			window.MB.message_confirmations[confirmation.messageID].push(msg.data.connectionId);
+		}
+	}
+	
+	handleAmOnline(msg){
+		if(jQuery.inArray(msg.data.connectionId, window.MB.onlineUserList) == -1)
+		{
+			window.MB.onlineUserList.push(msg.data.connectionId);
+		}
+	}
+	
+	handleMessageBundle(msg){
+		// go through array of messages in bundle and handle any new messages in order
+		// add a slight delay between message handling to more closely resemble asynchronous message receipt, in case that is expected
+		let handleDelay = 10;
+		let messageBundle = msg.data;
+		for(var i=0; i < messageBundle.length; i++)
+		{
+			setTimeout(function(_self, _msg){
+					_self.handleMessage(_msg)
+				},handleDelay,self, messageBundle[i]);
+			handleDelay += 50;
+		}
+	}
+	
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
 
@@ -730,6 +821,7 @@ class MessageBroker {
 		var eventType = "dice/roll/pending";
 		var message = {
 			id: uuid(),
+			datetime: Date.now(),
 			source: "web",
 			gameId: this.gameid,
 			userId: this.userid,
@@ -740,6 +832,7 @@ class MessageBroker {
 			data: data,
 			entityId: this.userid, //proviamo a non metterla
 			entityType: "user", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
+			connectionId: this.connection_id,
 		};
 
 		if (this.ws.readyState == this.ws.OPEN) {
@@ -752,11 +845,11 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data) {
+	sendMessage(eventType, data, getConfirmation = true) {
 		var self = this;
 		var message = {
 			id: uuid(),
-			//datetime: Date.now(),
+			datetime: Date.now(),
 			source: "web",
 			gameId: this.gameid,
 			userId: this.userid,
@@ -767,19 +860,164 @@ class MessageBroker {
 			data: data,
 			// entityId :"43263440", proviamo a non metterla
 			// entityType:"character", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
+			connectionId: this.connection_id,
 		};
 
 		if (this.ws.readyState == this.ws.OPEN) {
 			this.ws.send(JSON.stringify(message));
+			self.sent_messages.push(message.id);
+			self.message_confirmations[message.id] = [];
+			if(getConfirmation)
+			{
+				self.unconfirmed_messages[message.id] = message;
+			}
 		}
 		else { // TRY TO RECOVER
 			get_cobalt_token(function(token) {
 				self.loadWS(token, function() {
 					// TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
 					self.ws.send(JSON.stringify(message));
+					self.sent_messages.push(message.id);
+					self.message_confirmations[message.id] = [];
+					if(getConfirmation)
+					{
+						self.unconfirmed_messages[message.id] = message;
+					}
 				});
 			});
 
+		}
+	}
+	
+	resendUntilConfirmed(msg, delay, timeout, ticks = 0){
+		if(msg.eventType == "custom/myVTT/confirm")
+		{
+			// don't confirm confirmations
+			return;
+		}
+		if( ticks < timeout)
+		{
+			ticks += delay
+			setTimeout(function(){
+				let confirmed = true;
+				for(i =0; i < window.MB.onlineUserList.length; i++)
+				{
+					let onlineUserId = window.MB.onlineUserList[i];
+					if(onlineUserId != window.MB.connection_id)
+					{
+						if(jQuery.inArray(onlineUserId, window.MB.message_confirmations[msg.id]) == -1)
+						{
+							confirmed = false;
+						}
+					}
+				}
+				if(!confirmed)
+				{
+					if (window.MB.ws.readyState == window.MB.ws.OPEN) {
+						window.MB.ws.send(JSON.stringify(msg));
+						window.MB.resendUntilConfirmed(msg, delay, timeout, ticks);
+					}
+					else { // TRY TO RECOVER
+						get_cobalt_token(function(token) {
+							window.MB.loadWS(token, function() {
+								window.MB.ws.send(JSON.stringify(msg));
+								window.MB.resendUntilConfirmed(msg, delay, timeout, ticks);
+							});
+						});
+					}
+				}
+			}, delay);
+		}
+		else
+		{
+			// no reply, remove user from online list
+			let onlineUserIndex = jQuery.inArray(msg.connectionId, window.MB.onlineUserList);
+			if(onlineUserIndex > -1)
+			{
+				window.MB.onlineUserId.splice(onlineUserIndex, 1);
+			}
+		}
+	}
+	
+	resendUnconfirmedMessages(repeat_delay_ms, timeout_ms, minwait_ms=1000){
+		// loop through the messages in unconfirmed messages.
+		// If messages have received confirmations, remove them from the unconfirmed messages list.
+		// If any unconfirmed messages are older than minwait_ms and younger than timeout_ms
+		// 		and have not been confirmed by all online users, resend them in a message bundle.
+		// if the message has been confirmed by everyone on the online user list, remove them from the unconfirmed messages list.
+		// if the message age is older than timout_ms, remove the message from the unconfirmed messages list 
+		// 		and remove any unconfirming users from the online user list.
+		let messagesToRemove = [];
+		let messagesToSend = [];
+		let usersToRemove = [];
+		for(var msgID in window.MB.unconfirmed_messages)
+		{
+			let msg = window.MB.unconfirmed_messages[msgID];
+			
+			if(msg.eventType == "custom/myVTT/confirm")
+			{
+				messagesToRemove.push(msgID);
+				continue;
+			}
+			let msgAge_ms = Date.now() - msg.datetime;
+			if(msgAge_ms > minwait_ms)
+			{
+				let confirmed = true;
+				for(i =0; i < window.MB.onlineUserList.length; i++)
+				{
+					let onlineUserId = window.MB.onlineUserList[i];
+					if(onlineUserId != window.MB.connection_id)
+					{
+						if(jQuery.inArray(onlineUserId, window.MB.message_confirmations[msg.id]) == -1)
+						{
+							confirmed = false;
+							if(msgAge_ms >= timeout_ms)
+							{
+								usersToRemove.push(onlineUserId);
+							}
+						}
+					}
+				}
+				if(confirmed) // if confirmed by everyone, remove from unconfirmed messages list
+				{
+					messagesToRemove.push(msgID);
+				}
+				else
+				{
+					if( msgAge_ms < timeout_ms)
+					{
+						messagesToSend.push(msg);
+					} //end if( msgAge_ms < timeout_ms)
+					else
+					{	// if the message age is older than timout_ms, remove the message from the unconfirmed messages list
+						messagesToRemove.push(msgID);
+						
+						// remove users who have not confirmed the message before the timeout from the online user list
+						for(var i; i< usersToRemove.length; i++)
+						{
+							let onlineUserIndex = jQuery.inArray(usersToRemove[i], window.MB.onlineUserList);
+							if(onlineUserIndex > -1)
+							{
+								window.MB.onlineUserId.splice(onlineUserIndex, 1);
+							}
+						}
+					}
+				} // end else if(!confirmed)
+			} //end if(msgAge_ms > minwait_ms)
+		}// end for(var msgID in window.MB.unconfirmed_messages)
+		
+		for(i =0; i < messagesToRemove.length; i++)
+		{
+			delete window.MB.unconfirmed_messages[messagesToRemove[i]];
+		}
+		
+		if(messagesToSend.length > 0)
+		{
+			window.MB.sendMessage("custom/myVTT/MsgBundle",messagesToSend, false);
+		}
+		if(repeat_delay_ms > 0)
+		{
+			setTimeout(window.MB.resendUnconfirmedMessages,repeat_delay_ms, repeat_delay_ms, timeout_ms, minwait_ms);
 		}
 	}
 
@@ -795,6 +1033,19 @@ class MessageBroker {
 			});
 		}
 	}
+	
+
+	sendAmOnline(repeatDelay) {
+		let data = {
+			connectionId : window.MB.connection_id,
+			playerID : window.PLAYER_ID,
+			timestamp: (new Date()).valueOf()
+		}
+		window.MB.sendMessage("custom/myVTT/AmOnline", data, false);
+		if(repeatDelay)
+		{
+			setTimeout(window.MB.sendAmOnline, repeatDelay, repeatDelay);
+		}
+	}
 
 }
-
