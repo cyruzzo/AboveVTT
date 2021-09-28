@@ -1488,6 +1488,13 @@ function init_ui() {
 
 
 	init_journal($("#message-broker-client").attr("data-gameId"));
+	setTimeout(function() {
+		window.MB.sendAmOnline(10000);
+	}, 1000);
+	
+	setTimeout(function() {
+		window.MB.resendUnconfirmedMessages(1000,10000);
+	}, 1000);
 }
 
 function init_buttons() {
