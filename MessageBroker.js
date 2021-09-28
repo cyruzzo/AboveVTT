@@ -550,7 +550,7 @@ class MessageBroker {
 		this.sent_messages = []; //the IDs of all sent messages
 		this.received_messages = []; //the IDs of all received messages
 		this.message_confirmations = {}; //a dictionary where each key is the ID of a messages sent and each value is and arrays of the connection ids of all users who have send confirmations to that message.
-		this.unconfirmed_messages = {};
+		this.unconfirmed_messages = {}; //a dictionary where each key is the ID of a message sent but not yet confirmed by everyone in the online user list
 
 		get_cobalt_token(function(token) {
 			self.loadWS(token);
@@ -886,56 +886,6 @@ class MessageBroker {
 				});
 			});
 
-		}
-	}
-	
-	resendUntilConfirmed(msg, delay, timeout, ticks = 0){
-		if(msg.eventType == "custom/myVTT/confirm")
-		{
-			// don't confirm confirmations
-			return;
-		}
-		if( ticks < timeout)
-		{
-			ticks += delay
-			setTimeout(function(){
-				let confirmed = true;
-				for(i =0; i < window.MB.onlineUserList.length; i++)
-				{
-					let onlineUserId = window.MB.onlineUserList[i];
-					if(onlineUserId != window.MB.connection_id)
-					{
-						if(jQuery.inArray(onlineUserId, window.MB.message_confirmations[msg.id]) == -1)
-						{
-							confirmed = false;
-						}
-					}
-				}
-				if(!confirmed)
-				{
-					if (window.MB.ws.readyState == window.MB.ws.OPEN) {
-						window.MB.ws.send(JSON.stringify(msg));
-						window.MB.resendUntilConfirmed(msg, delay, timeout, ticks);
-					}
-					else { // TRY TO RECOVER
-						get_cobalt_token(function(token) {
-							window.MB.loadWS(token, function() {
-								window.MB.ws.send(JSON.stringify(msg));
-								window.MB.resendUntilConfirmed(msg, delay, timeout, ticks);
-							});
-						});
-					}
-				}
-			}, delay);
-		}
-		else
-		{
-			// no reply, remove user from online list
-			let onlineUserIndex = jQuery.inArray(msg.connectionId, window.MB.onlineUserList);
-			if(onlineUserIndex > -1)
-			{
-				window.MB.onlineUserId.splice(onlineUserIndex, 1);
-			}
 		}
 	}
 	
