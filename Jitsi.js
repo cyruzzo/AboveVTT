@@ -67,21 +67,17 @@ function init_jitsi() {
 			VERTICAL_FILMSTRIP: false
 		},
 	};
-	api = new JitsiMeetExternalAPI(domain, options);
-	window.jitsiAPI = api;
+	window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
+	jitsi_bottom()
 
-	/* You can not execute any commands right after you instantiate the jitsi client
-	and there is really no way to wait for the client to be ready. A workaround is to
-	create a one time use handler just for startup, to render the pane and set the tile
-	layout, attached to the subjectChange event, which by chance is almost the last thing
-	the client does before being considered ready. After which, commands can be executed.
-	*/
-	api.addEventListener('subjectChange', jitsi_startup)
+	//You must wait for the local participant to join the conference before attempting to execute any commands against the api 
+	window.jitsiAPI.addEventListener('videoConferenceJoined', jitsi_startup)
 }
 
+// This only gets used once, the very first time after you start video
 function jitsi_startup() {
-	window.jitsiAPI.removeListener('subjectChange', jitsi_startup);
-	jitsi_bottom()
+	window.jitsiAPI.removeListener('videoConferenceJoined', jitsi_startup);
+	jitsi_bottom();
 }
 
 function jitsi_modal() {
