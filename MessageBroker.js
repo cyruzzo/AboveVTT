@@ -222,10 +222,18 @@ class MessageBroker {
 			timestamp: Date.now(),
 		}
 		self.sendMessage("custom/myVTT/confirm", confirmation, false);
-		
-		if(jQuery.inArray(msg.id, self.received_messages) == -1)
+		if (!self.received_messages.has(msg.id))
 		{
-			self.received_messages.push(msg.id);
+			const maxReceivedMessageSize = 1000;
+			self.received_messages.set(msg.id, true);
+			// pare down received messages if it's too long
+			if (self.received_messages.size > maxReceivedMessageSize) {
+				let receivedKeys = self.received_messages.keys();
+				let numToDelete = this.received_messages.size - maxReceivedMessageSize;
+				for (var i = 0; i < numToDelete; i++) {
+					self.received_messages.delete(receivedKeys.next().value);
+                }
+            }
 		}
 		else
 		{
@@ -528,6 +536,10 @@ class MessageBroker {
 			peer.setRemoteDescription(msg.data.answer);
 			console.log("fatto setRemoteDescription");
 		}
+
+		if (msg.eventType == 'custom/myVTT/msgChunk') {
+			self.handleMessageChunk(msg);
+        }
 	}
 	
 	constructor() {
@@ -547,10 +559,13 @@ class MessageBroker {
 		
 		this.onlineUserList = []; //an array of connection IDs of each other online user.
 		
-		this.sent_messages = []; //the IDs of all sent messages
-		this.received_messages = []; //the IDs of all received messages
+		//this.sent_messages = []; //the IDs of all sent messages
+		this.received_messages = new Map(); //a map where each key is the ID of a received message. The value is always true
 		this.message_confirmations = {}; //a dictionary where each key is the ID of a messages sent and each value is and arrays of the connection ids of all users who have send confirmations to that message.
 		this.unconfirmed_messages = {}; //a dictionary where each key is the ID of a message sent but not yet confirmed by everyone in the online user list
+
+		this.message_chunks = {}; // a dictionary where each key is the ID of the message that's been broken into chunks, and the value is a 
+								//		dictionary where the key is the chunk number and the value is the message JSON string chunk
 
 		get_cobalt_token(function(token) {
 			self.loadWS(token);
@@ -789,6 +804,31 @@ class MessageBroker {
 			handleDelay += 50;
 		}
 	}
+
+	handleMessageChunk(msg) {
+		let chunkInfo = msg.data;
+		if (!this.message_chunks.hasOwnProperty(chunkInfo.msgId)) {
+			this.message_chunks[chunkInfo.msgId] = {};
+		}
+		let messageChunks = this.message_chunks[chunkInfo.msgId];
+		messageChunks[chunkInfo.chunkNum] = chunkInfo.chunk;
+		let chunkNums = Object.keys(messageChunks);
+		if (chunkNums.length == chunkInfo.chunks){
+			// build the message JSON and handle the message
+			let msgJSON = '';
+			for (var i = 0; i < chunkInfo.chunks; i++)
+			{
+				if (!messageChunks.hasOwnProperty(i)) {
+					// missing a chunk?
+					return;
+				}
+				msgJSON += messageChunks[i];
+			}
+			let msg = $.parseJSON(msgJSON);
+			this.handleMessage(msg);
+			delete this.message_chunks[chunkInfo.msgId];
+        }
+    }
 	
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
@@ -847,6 +887,7 @@ class MessageBroker {
 
 	sendMessage(eventType, data, getConfirmation = true) {
 		var self = this;
+		const messageMaxSize = 30000;
 		var message = {
 			id: uuid(),
 			datetime: Date.now(),
@@ -863,31 +904,60 @@ class MessageBroker {
 			connectionId: this.connection_id,
 		};
 
-		if (this.ws.readyState == this.ws.OPEN) {
-			this.ws.send(JSON.stringify(message));
-			self.sent_messages.push(message.id);
-			self.message_confirmations[message.id] = [];
-			if(getConfirmation)
-			{
-				self.unconfirmed_messages[message.id] = message;
+		var messageJSON = JSON.stringify(message);
+		if (messageJSON.length > messageMaxSize) {
+			self.sendMessageChunks(messageJSON, message.id, 20000);
+		}
+		else {
+			if (this.ws.readyState == this.ws.OPEN) {
+				this.ws.send(messageJSON);
+				//self.sent_messages.push(message.id);
+				self.message_confirmations[message.id] = [];
+				if (getConfirmation) {
+					self.unconfirmed_messages[message.id] = message;
+				}
 			}
-		}
-		else { // TRY TO RECOVER
-			get_cobalt_token(function(token) {
-				self.loadWS(token, function() {
-					// TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
-					self.ws.send(JSON.stringify(message));
-					self.sent_messages.push(message.id);
-					self.message_confirmations[message.id] = [];
-					if(getConfirmation)
-					{
-						self.unconfirmed_messages[message.id] = message;
-					}
+			else { // TRY TO RECOVER
+				get_cobalt_token(function (token) {
+					self.loadWS(token, function () {
+						// TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
+						self.ws.send(messageJSON);
+						//self.sent_messages.push(message.id);
+						self.message_confirmations[message.id] = [];
+						if (getConfirmation) {
+							self.unconfirmed_messages[message.id] = message;
+						}
+					});
 				});
-			});
 
-		}
+			}
+        }
+
 	}
+
+	sendMessageChunks(msgJSON, msgId, chunkSize = 20000, sendDelay = 250) {
+		var self = this;
+		let chunks = Math.ceil(msgJSON.length / chunkSize);
+		self.sendMessageChunk(msgJSON, msgId, 0, chunks, chunkSize, sendDelay);
+	}
+
+	sendMessageChunk(msgJSON, msgId, chunkNum, chunks, chunkSize = 20000, sendDelay = 250) {
+		var self = this;
+		let chunk = msgJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
+		var data = {
+			msgId: msgId,
+			chunkNum: chunkNum,
+			chunks: chunks,
+			chunk: chunk,
+		}
+		self.sendMessage('custom/myVTT/msgChunk', data);
+		chunkNum = chunkNum + 1;
+		if (chunkNum < chunks) {
+			setTimeout(function (_self, msgId, chunkNum, chunks, chunkSize, sendDelay) {
+				_self.sendMessageChunk(msgJSON, msgId, chunkNum, chunks, chunkSize, sendDelay);
+			}, sendDelay, self, msgId, chunkNum, chunks, chunkSize, sendDelay);
+        }
+    }
 	
 	resendUnconfirmedMessages(repeat_delay_ms, timeout_ms, minwait_ms=1000){
 		// loop through the messages in unconfirmed messages.
@@ -948,7 +1018,7 @@ class MessageBroker {
 							let onlineUserIndex = jQuery.inArray(usersToRemove[i], window.MB.onlineUserList);
 							if(onlineUserIndex > -1)
 							{
-								window.MB.onlineUserId.splice(onlineUserIndex, 1);
+								window.MB.onlineUserList.splice(onlineUserIndex, 1);
 							}
 						}
 					}
