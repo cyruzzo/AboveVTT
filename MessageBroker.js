@@ -800,7 +800,7 @@ class MessageBroker {
 		{
 			setTimeout(function(_self, _msg){
 					_self.handleMessage(_msg)
-				},handleDelay,self, messageBundle[i]);
+				},handleDelay,this, messageBundle[i]);
 			handleDelay += 50;
 		}
 	}
