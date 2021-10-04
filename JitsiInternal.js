@@ -21,33 +21,45 @@ function add_hide_self_button()
 		document.getElementById("vtt_jitsi_buttons").style.position = "absolute";
 		document.getElementById("vtt_jitsi_buttons").style.top = "0px";
 		document.getElementById("vtt_jitsi_buttons").style.left = "64px";
-		document.getElementById("vtt_jitsi_buttons").addEventListener("click", function() {
+		document.getElementById("vtt_jitsi_buttons").addEventListener("click", function () {
 			let selfView = document.getElementById("localVideo_container");
 			let selfViewWrapper = document.getElementById("localVideoWrapper");
 			if(!isHidden(selfView))
 			{
-				selfView.style.display = "none";
-				let hiddenPanel = createElementFromHTML("<div id='hide_self_view_panel' class='jitsi-self-view-panel'>Self View Hidden</div>");
-				selfViewWrapper.append(hiddenPanel);
-				document.querySelector('#hide_self_view_img').setAttribute('src', extensionPath + "assets/show_self_view.png");
-				document.getElementById("vtt_jitsi_buttons").dataset.name = "Show Self View";
-				
+				hideSelfView();
 			}
 			else
 			{
-				selfView.style.display = "initial";
-				document.getElementById("hide_self_view_panel").remove();
-				document.getElementById("hide_self_view_img").setAttribute('src', extensionPath + "assets/hide_self_view.png");
-				document.getElementById("vtt_jitsi_buttons").dataset.name = "Hide Self View";
-				
-				// selfView.show();
-				// $("#hide_self_view_panel").remove();
-				// $("img", this).attr("src", extensionPath + "assets/hide_self_view.png");
-				// $("#jitsi_hide_self_view").attr("data-name","Hide Self View");
+				showSelfView();
 			}
 		});	
 		
 	});
+}
+
+function hideSelfView()
+{
+	let selfView = document.getElementById("localVideo_container");
+	let selfViewWrapper = document.getElementById("localVideoWrapper");
+	selfView.style.display = "none";
+	let hiddenPanel = createElementFromHTML("<div id='hide_self_view_panel' class='jitsi-self-view-panel'>Self View Hidden</div>");
+	selfViewWrapper.append(hiddenPanel);
+	document.querySelector('#hide_self_view_img').setAttribute('src', extensionPath + "assets/show_self_view.png");
+	document.getElementById("vtt_jitsi_buttons").dataset.name = "Show Self View";
+	window.SELF_VIEW_HIDDEN = true;
+}
+
+
+
+function showSelfView()
+{
+	let selfView = document.getElementById("localVideo_container");
+	let selfViewWrapper = document.getElementById("localVideoWrapper");
+	selfView.style.display = "initial";
+	document.getElementById("hide_self_view_panel").remove();
+	document.getElementById("hide_self_view_img").setAttribute('src', extensionPath + "assets/hide_self_view.png");
+	document.getElementById("vtt_jitsi_buttons").dataset.name = "Hide Self View";
+	window.SELF_VIEW_HIDDEN = false;
 }
 
 add_hide_self_button();
