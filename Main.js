@@ -1493,7 +1493,7 @@ function init_ui() {
 	}, 1000);
 	
 	setTimeout(function() {
-		window.MB.resendUnconfirmedMessages(1000,10000);
+		window.MB.resendUnconfirmedMessages(2000,20000);
 	}, 1000);
 }
 
