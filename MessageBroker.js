@@ -887,7 +887,7 @@ class MessageBroker {
 
 	sendMessage(eventType, data, getConfirmation = true) {
 		var self = this;
-		const messageMaxSize = 30000;
+		const messageMaxSize = 42000;
 		var message = {
 			id: uuid(),
 			datetime: Date.now(),
@@ -906,7 +906,7 @@ class MessageBroker {
 
 		var messageJSON = JSON.stringify(message);
 		if (messageJSON.length > messageMaxSize) {
-			self.sendMessageChunks(messageJSON, message.id, 20000);
+			self.sendMessageChunks(messageJSON, message.id, 40000);
 		}
 		else {
 			if (this.ws.readyState == this.ws.OPEN) {
@@ -931,19 +931,24 @@ class MessageBroker {
 				});
 
 			}
-        }
+        	}
 
 	}
 
 	sendMessageChunks(msgJSON, msgId, chunkSize = 20000, sendDelay = 250) {
 		var self = this;
 		let chunks = Math.ceil(msgJSON.length / chunkSize);
-		self.sendMessageChunk(msgJSON, msgId, 0, chunks, chunkSize, sendDelay);
+
+		for (var chunkNum = 0; chunkNum < chunks; chunkNum++) {
+			let chunk = msgJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
+			setTimeout(function (_chunk, _msgId, _chunkNum, _chunks) {
+				window.MB.sendMessageChunk(_chunk, _msgId, _chunkNum, _chunks);
+			}, chunkNum * 250, chunk, msgId, chunkNum, chunks);
+        	}
 	}
 
-	sendMessageChunk(msgJSON, msgId, chunkNum, chunks, chunkSize = 20000, sendDelay = 250) {
+	sendMessageChunk(chunk, msgId, chunkNum, chunks) {
 		var self = this;
-		let chunk = msgJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
 		var data = {
 			msgId: msgId,
 			chunkNum: chunkNum,
@@ -951,13 +956,7 @@ class MessageBroker {
 			chunk: chunk,
 		}
 		self.sendMessage('custom/myVTT/msgChunk', data);
-		chunkNum = chunkNum + 1;
-		if (chunkNum < chunks) {
-			setTimeout(function (_self, msgId, chunkNum, chunks, chunkSize, sendDelay) {
-				_self.sendMessageChunk(msgJSON, msgId, chunkNum, chunks, chunkSize, sendDelay);
-			}, sendDelay, self, msgId, chunkNum, chunks, chunkSize, sendDelay);
-        }
-    }
+	}
 	
 	resendUnconfirmedMessages(repeat_delay_ms, timeout_ms, minwait_ms=1000){
 		// loop through the messages in unconfirmed messages.
