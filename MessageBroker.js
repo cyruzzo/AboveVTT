@@ -539,7 +539,11 @@ class MessageBroker {
 
 		if (msg.eventType == 'custom/myVTT/msgChunk') {
 			self.handleMessageChunk(msg);
-        }
+        	}
+		
+		if (msg.eventType == 'custom/myVTT/goodbye') {
+			self.handleGoodbye(msg);
+		}
 	}
 	
 	constructor() {
@@ -829,6 +833,21 @@ class MessageBroker {
 			delete this.message_chunks[chunkInfo.msgId];
         }
     }
+	
+	handleGoodbye(msg) {
+		let goodbye = msg.data;
+
+		let onlineUserIndex = jQuery.inArray(goodbye.connectionId, window.MB.onlineUserList);
+		if (onlineUserIndex > -1) {
+			window.MB.onlineUserList.splice(onlineUserIndex, 1);
+		}
+		if (goodbye.mediaStreamId && window.STREAMPEERS[goodbye.mediaStreamId]) {
+			console.log("DELETING PEER " + goodbye.mediaStreamId);
+			delete window.STREAMPEERS[goodbye.mediaStreamId];
+			$("#streamer-canvas-" + goodbye.mediaStreamId).remove();
+		}
+
+    	}
 	
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
