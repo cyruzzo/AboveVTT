@@ -1551,8 +1551,9 @@ function init_ui() {
 				retriveRules();
 				loadModules(initalModules);
 				window.character_update_task = setInterval(get_pclist_player_data, 10000);
-            }
-		},100);
+			}
+		}, 100);
+	}
 }
 
 function init_buttons() {
