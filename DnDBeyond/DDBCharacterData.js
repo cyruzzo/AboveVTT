@@ -1,15 +1,3 @@
-// ==UserScript==
-// @name         Test Direct Data
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
-// @author       You
-// @match        https://www.dndbeyond.com/campaigns/*
-// @require      http://code.jquery.com/jquery-3.4.1.min.js
-// @require      https://media.dndbeyond.com/character-tools/vendors~characterTools.bundle.f8b53c07d1796f1d29cb.min.js
-// @grant        none
-// ==/UserScript==
-
 var rulesUrls = ["https://character-service.dndbeyond.com/character/v4/rule-data?v=3.11.3", "https://gamedata-service.dndbeyond.com/vehicles/v3/rule-data?v=3.11.3"];
 var charJSONurlBase = "https://character-service.dndbeyond.com/character/v4/character/";
 
@@ -19,9 +7,16 @@ var rulesData = {};
 
 
 function get_pclist_player_data() {
+    var processedPlayers = [];
     window.pcs.forEach(function (pc) {
         getPlayerData(pc.sheet, function (playerData) {
-            window.MB.handlePlayerData(playerData);
+            window.PLAYER_STATS[playerData.id] = playerData;
+            window.MB.sendTokenUpdateFromPlayerData(playerData);
+            processedPlayers.push(playerData.id);
+            let players = Object.keys(window.PLAYER_STATS);
+            if (areArraysEqualSets(processedPlayers, players)) {
+                update_pclist();
+            }
         })
     });
 }
@@ -624,4 +619,28 @@ function distanceUnit(input){
         unit = 'mile' + (Math.abs(number) === 1 ? '' : 's');
     }
     return unit;
+}
+
+function areArraysEqualSets(a1, a2) {
+    const superSet = {};
+    for (const i of a1) {
+        const e = i + typeof i;
+        superSet[e] = 1;
+    }
+
+    for (const i of a2) {
+        const e = i + typeof i;
+        if (!superSet[e]) {
+            return false;
+        }
+        superSet[e] = 2;
+    }
+
+    for (let e in superSet) {
+        if (superSet[e] === 1) {
+            return false;
+        }
+    }
+
+    return true;
 }
