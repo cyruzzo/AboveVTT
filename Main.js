@@ -1490,6 +1490,15 @@ function init_ui() {
 	init_journal($("#message-broker-client").attr("data-gameId"));
 	setTimeout(function() {
 		window.MB.sendAmOnline(10000);
+		$(window).unload(function () {
+			let data = {
+				connectionId: window.MB.connection_id,
+				mediaStreamId: this.MYSTREAMID,
+				playerID: window.PLAYER_ID,
+				timestamp: (new Date()).valueOf()
+			}
+			window.MB.sendMessage('custom/myVTT/goodbye', data, false);
+		});
 	}, 1000);
 	
 	setTimeout(function() {
