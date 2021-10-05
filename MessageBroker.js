@@ -504,7 +504,7 @@ class MessageBroker {
 		}, 30000);
 	}
 
-    handleCT(data){
+    	handleCT(data){
 		$("#combat_area").empty();
 		ct_load(data);
 	}
@@ -514,7 +514,14 @@ class MessageBroker {
 			return;
 
 		window.PLAYER_STATS[data.id] = data;
+		this.sendTokenUpdateFromPlayerData(data);
 
+		// update combat tracker:
+
+		update_pclist();
+	}
+
+	sendTokenUpdateFromPlayerData(data) {
 		if (data.id in window.TOKEN_OBJECTS) {
 			var cur = window.TOKEN_OBJECTS[data.id];
 
@@ -529,7 +536,7 @@ class MessageBroker {
 
 				window.MB.inject_chat(msgdata);
 			}
-			cur.options.hp = data.hp;
+			cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
 
 
 			cur.options.max_hp = data.max_hp;
@@ -539,11 +546,7 @@ class MessageBroker {
 			cur.place();
 			window.MB.sendMessage('custom/myVTT/token', cur.options);
 		}
-
-		// update combat tracker:
-
-		update_pclist();
-	}
+    	}
 	
 	convertChat(data,local=false) {
 		//Security logic to prevent content being sent which can execute JavaScript.
