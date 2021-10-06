@@ -591,36 +591,46 @@ class MessageBroker {
 			return;
 
 		window.PLAYER_STATS[data.id] = data;
-
-		if (data.id in window.TOKEN_OBJECTS) {
-			var cur = window.TOKEN_OBJECTS[data.id];
-
-			console.log("old " + cur.options.hp + " new " + data.hp);
-			console.log(data.conditions);
-			if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
-				var msgdata = {
-					player: cur.options.name,
-					img: cur.options.imgsrc,
-					text: "<b>Check for concentration!!</b>",
-				};
-
-				window.MB.inject_chat(msgdata);
-			}
-			cur.options.hp = data.hp;
-
-
-			cur.options.max_hp = data.max_hp;
-			cur.options.ac = data.ac;
-			cur.options.conditions = data.conditions;
-
-			cur.place();
-			window.MB.sendMessage('custom/myVTT/token', cur.options);
-		}
+		this.sendTokenUpdateFromPlayerData(data);
 
 		// update combat tracker:
 
 		update_pclist();
 	}
+
+	sendTokenUpdateFromPlayerData(data) {
+		if (data.id in window.TOKEN_OBJECTS) {
+			var cur = window.TOKEN_OBJECTS[data.id];
+
+			// test for any change
+			if ((cur.options.hp !== +data.hp + (data.temp_hp ? +data.temp_hp : 0)) ||
+				(cur.options.max_hp !== data.max_hp) ||
+				(cur.options.ac !== data.ac) ||
+				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
+			{
+				console.log("old " + cur.options.hp + " new " + data.hp);
+				console.log(data.conditions);
+				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
+					var msgdata = {
+						player: cur.options.name,
+						img: cur.options.imgsrc,
+						text: "<b>Check for concentration!!</b>",
+					};
+
+					window.MB.inject_chat(msgdata);
+				}
+				cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
+
+
+				cur.options.max_hp = data.max_hp;
+				cur.options.ac = data.ac;
+				cur.options.conditions = data.conditions;
+
+				cur.place();
+				window.MB.sendMessage('custom/myVTT/token', cur.options);
+			}
+		}
+    	}
 	
 	convertChat(data,local=false) {
 		//Security logic to prevent content being sent which can execute JavaScript.

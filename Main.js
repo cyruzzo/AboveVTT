@@ -55,6 +55,22 @@ function validateUrl(value) {
   return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
 }
 
+function loadScript(url, callback) {
+	// Adding the script tag to the head as suggested before
+	var head = document.head;
+	var script = document.createElement('script');
+	script.type = 'text/javascript';
+	script.src = url;
+
+	// Then bind the event to the callback function.
+	// There are several events for cross browser compatibility.
+	script.onreadystatechange = callback;
+	script.onload = callback;
+
+	// Fire the loading
+	head.appendChild(script);
+}
+
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
 function change_zoom(newZoom, x, y) {
@@ -683,8 +699,9 @@ function init_sheet(){
 	}
 }
 
-function preload_player_sheet(pc_sheet, loadWait = 0)
+function init_player_sheet(pc_sheet, loadWait = 0)
 {
+	
 	let container = $("#sheet");
 	iframe = $("<iframe id='PlayerSheet"+getPlayerIDFromSheet(pc_sheet)+"' src=''></iframe>")
 	//iframe.css('display', 'none');
@@ -693,6 +710,8 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 	iframe.css("top", "24px");
 	iframe.css("left", "0px");
 	iframe.css("height", "0px");
+	iframe.attr('data-sheet_url', pc_sheet);
+	iframe.attr('data-init_load', 0);
 	container.append(iframe);
 	iframe.on("load", function(event) {
 		$(event.target).contents().find("#mega-menu-target").remove();
@@ -700,26 +719,29 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
 
-
+		
 		// DICE STREAMING ?!?!
 		if(!window.DM){
 			let firstTime=false;
 			if(!window.MYMEDIASTREAM)
-				firstTime=true;
-			window.MYMEDIASTREAM=$(event.target).contents().find(".dice-rolling-panel__container").get(0).captureStream(0);
+				firstTime = true;
+			let diceRollPanel = $(event.target).contents().find(".dice-rolling-panel__container");
+			if (diceRollPanel.length > 0) {
+				window.MYMEDIASTREAM = diceRollPanel.get(0).captureStream(0);
 
 
-			if(window.JOINTHEDICESTREAM){
-				// we should tear down and reconnect
-				for(let i in window.STREAMPEERS){
-					console.log("replacing the track")
-					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+				if (window.JOINTHEDICESTREAM) {
+					// we should tear down and reconnect
+					for (let i in window.STREAMPEERS) {
+						console.log("replacing the track")
+						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+					}
 				}
-			}
 
-			if(firstTime)
-				$("#stream_button").click();
-
+				if (firstTime)
+					$("#stream_button").click();
+            }
+				
 		}
 
 		// CHARACTER
@@ -738,7 +760,12 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 					max_hp = window.PLAYERDATA.max_hp;
 				else
 					max_hp = 0;
+			}
 
+			var temp_hp = 0;
+			var temp_hp_element = $(event.target).contents().find(".ct-health-summary__hp-item--temp > .ct-health-summary__hp-item-content > .ct-health-summary__hp-number ");
+			if (temp_hp_element.length > 0) {
+				temp_hp = temp_hp_element.html();
 			}
 
 
@@ -782,6 +809,7 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 				id: tokenid,
 				hp: current_hp,
 				max_hp: max_hp,
+				temp_hp: temp_hp,
 				ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
 				pp: pp.html(),
 				conditions: conditions,
@@ -882,6 +910,7 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
 				if (ac_element.length > 0) {
 					synchp();
+					$(event.target).attr('data-init_load', 1);
 				} else {
 					if (timeElapsed < 15000) {
 						waitToSync(timeElapsed + 500);
@@ -892,23 +921,23 @@ function preload_player_sheet(pc_sheet, loadWait = 0)
 		waitToSync();
 		//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
 	});
-	var loadSheet = function (sheetFrame, sheet_url) {
-		sheetFrame.attr('src', sheet_url);
-	};
-	setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+	
+	if((!window.DM) ||(window.KEEP_PLAYER_SHEET_LOADED))
+	{
+		var loadSheet = function (sheetFrame, sheet_url) {
+			sheetFrame.attr('src', sheet_url);
+		};
+		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+	}
 }
 
-function preload_player_sheets()
+function init_player_sheets()
 {
 	// preload character sheets
 	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
 	var sheetLoadWait = 4000;
-	// for (var i = window.pcs.length - 1; i >= 0; i--) {
-		// preload_player_sheet(window.pcs[i].sheet, sheetLoadWait);
-		// sheetLoadWait += 1000;
-	// }
 	window.pcs.forEach(function(pc, index) {
-		preload_player_sheet(pc.sheet, sheetLoadWait);
+		init_player_sheet(pc.sheet, sheetLoadWait);
 		sheetLoadWait += 1500;
 	});
 }
@@ -923,22 +952,22 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		// Open the sheet
 		if(window.DM)
 		{
-			//unlock and hide any other open sheets
 			$("#sheet").find("iframe").each(function(){
-				if($(this).attr('src') !== sheet_url)
+				
+				if($(this).attr('data-sheet_url') == sheet_url)
 				{
+					if($(this).attr('src') !== sheet_url)
+					{
+						console.log("loading player sheet" + sheet_url);
+						$(this).attr('src', sheet_url);
+					}
+				}
+				else
+				{
+					//unlock and hide any other open sheets
 					if($(this).css('height') !== '0px')
 					{
-						if (window.DM) {
-							data = {
-								player_sheet: $(this).attr('src')
-							};
-							window.MB.sendMessage("custom/myVTT/unlock", data);
-						}
-						$(this).animate({
-							height:0
-						},500);
-						// $(this).css("height", "0px");
+						close_player_sheet($(this).attr('data-sheet_url'), false);
 					}
 				}
 			});
@@ -951,17 +980,20 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		}
 		else
 		{
-			if(window.JOINTHEDICESTREAM){
-				iframe.contents().find(".dice-rolling-panel__container").get(0).height=600;
-				iframe.contents().find(".dice-rolling-panel__container").height(600);
-				
-				if(!window.STREAMTASK){
-						window.STREAMTASK=setInterval(() => {
-							if(window.MYMEDIASTREAM.requestFrame)
+			if (window.JOINTHEDICESTREAM) {
+				let diceRollPanel = iframe.contents().find(".dice-rolling-panel__container");
+				if (diceRollPanel.length > 0) {
+					diceRollPanel.get(0).height = 600;
+					diceRollPanel.height(600);
+
+					if (!window.STREAMTASK) {
+						window.STREAMTASK = setInterval(() => {
+							if (window.MYMEDIASTREAM.requestFrame)
 								window.MYMEDIASTREAM.requestFrame(); // Firefox :( 
 							else
-							window.MYMEDIASTREAM.getVideoTracks()[0].requestFrame(); // Chrome :|
-						} ,1000 / 30)
+								window.MYMEDIASTREAM.getVideoTracks()[0].requestFrame(); // Chrome :|
+						}, 1000 / 30)
+					}
 				}
 			}
 		}
@@ -992,25 +1024,30 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		//sheet is already open, close the sheet
 		close_player_sheet(sheet_url);
 	}
-	
 }
 
-function close_player_sheet(sheet_url)
+function close_player_sheet(sheet_url, hide_container = true)
 {
 	let container = $("#sheet");
 	let iframe = $("[id='PlayerSheet"+getPlayerIDFromSheet(sheet_url)+"']");
 	// hide the buttons first, they tend to float over everything
-	container.find("button").css('display', 'none');
-	if (container.css("z-index") > 0) {
-		container.animate({
-						right: 343 - 1530,
-						'z-index': 0,
-						height: 0
-					}, 500);
+	if(hide_container)
+	{
+		container.find("button").css('display', 'none');
+		if (container.css("z-index") > 0) {
+			container.animate({
+							right: 343 - 1530,
+							'z-index': 0,
+							height: 0
+						}, 500);
+		}
 	}
-	iframe.animate({
-		height:0
-	},500);
+	setTimeout(function(_iframe){
+		console.log("animating close sheet" + _iframe.attr('data-sheet_url'));
+		_iframe.animate({
+			height:0
+		},500);
+	},50, iframe)
 	
 	if(window.DM)
 	{
@@ -1018,6 +1055,13 @@ function close_player_sheet(sheet_url)
 			player_sheet: sheet_url
 		};
 		window.MB.sendMessage("custom/myVTT/unlock", data);
+		if(!window.KEEP_PLAYER_SHEET_LOADED)
+		{
+			setTimeout(function(_iframe){
+				console.log("closing sheet" + _iframe.attr('data-sheet_url'));
+				_iframe.attr('src','');
+			},500, iframe)
+		}
 	}
 	else
 	{
@@ -1346,11 +1390,16 @@ function init_ui() {
 	init_pclist();
 	if(window.DM)
 	{
-		preload_player_sheets();
+		init_player_sheets();
 	}
 	else
 	{
-		preload_player_sheet(window.PLAYER_SHEET);
+		setTimeout(function() {
+			window.MB.sendMessage("custom/myVTT/syncmeup");
+			window.MB.sendMessage("custom/myVTT/playerjoin");
+			init_player_sheet(window.PLAYER_SHEET);
+			//open_player_sheet(window.PLAYER_SHEET, false);
+		}, 5000);
 	}
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
@@ -1488,6 +1537,8 @@ function init_ui() {
 
 
 	init_journal($("#message-broker-client").attr("data-gameId"));
+  
+  // Send AmOnline messages every 10 seconds, and send a Goodbye message when closing/refreshing
 	setTimeout(function() {
 		window.MB.sendAmOnline(10000);
 		$(window).unload(function () {
@@ -1501,9 +1552,28 @@ function init_ui() {
 		});
 	}, 1000);
 	
+  // resend any unconfirmed messages every 2 seconds, timout a message after 20 seconds
 	setTimeout(function() {
 		window.MB.resendUnconfirmedMessages(2000,20000);
 	}, 1000);
+	
+	if (window.DM) {
+		// use DDB character tools to update character info every 10 seconds
+		loadScript("https://media.dndbeyond.com/character-tools/vendors~characterTools.bundle.f8b53c07d1796f1d29cb.min.js",
+			function () {
+				window.character_tools_loaded = true;
+			});
+		window.load_rules_task = setInterval(function () {
+			if (window.character_tools_loaded) {
+				clearInterval(window.load_rules_task);
+				// Load DDB character modules and rules
+				retriveRules();
+				loadModules(initalModules);
+				window.character_update_task = setInterval(get_pclist_player_data, 10000);
+			}
+		}, 100);
+	}
+
 }
 
 function init_buttons() {

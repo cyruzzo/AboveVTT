@@ -4,7 +4,7 @@ l.setAttribute("id", "extensionpath");
 l.setAttribute("data-path", chrome.runtime.getURL("/"));
 (document.body || document.documentElement).appendChild(l);
 
-["jquery.magnific-popup.min.js","purify.min.js","Journal.js","Settings.js","SoundPad.js","color-picker.js", "TokenMenu.js","SceneData.js", "jquery.ui.touch-punch.js", "CombatTracker.js", "StatHandler.js", "rpg-dice-roller.bundle.min.js", "MonsterDice.js", "Fog.js", "jquery.contextMenu.js", "PlayerPanel.js", "Token.js", "Jitsi.js", "MessageBroker.js", "ScenesHandler.js", "MonsterPanel.js", "ScenesPanel.js", "Main.js", "mousetrap.1.6.5.min.js", "KeypressHandler.js"].forEach(function(value, index, array) {
+["DnDBeyond/DDBCharacterData.js","jquery.magnific-popup.min.js","purify.min.js","Journal.js","Settings.js","SoundPad.js","color-picker.js", "TokenMenu.js","SceneData.js", "jquery.ui.touch-punch.js", "CombatTracker.js", "StatHandler.js", "rpg-dice-roller.bundle.min.js", "MonsterDice.js", "Fog.js", "jquery.contextMenu.js", "PlayerPanel.js", "Token.js", "Jitsi.js", "MessageBroker.js", "ScenesHandler.js", "MonsterPanel.js", "ScenesPanel.js", "Main.js", "mousetrap.1.6.5.min.js", "KeypressHandler.js"].forEach(function(value, index, array) {
 	var s = document.createElement('script');
 
 	s.src = chrome.runtime.getURL(value);
