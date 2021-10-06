@@ -55,6 +55,7 @@
 	"Journal.js",
 	"JitsiInternal.js",
 	"abovevtt_jitsi.css",
+	"DnDBeyond/DDBCharacterData.js",
 	"assets/*"
 	]
 }

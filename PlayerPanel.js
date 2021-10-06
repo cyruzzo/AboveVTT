@@ -207,9 +207,7 @@ function update_pclist() {
 // Higher res of the same character can be found at  https://www.dndbeyond.com/avatars/17/212/636377840850178381.jpeg
 // This is a slightly hacky method of getting the higher resolution image from the url of the thumbnail.
 function get_higher_res_url(thumbnailUrl) {
-	const thumbnailUrlMatcher = /avatars\/thumbnails\/\d+\/\d+\/\d\d\/\d\d\//
-	if (!thumbnailUrl.match(thumbnailUrlMatcher)) return thumbnailUrl
-	return thumbnailUrl
-		.replace('/thumbnails', '')
-		.replace(/\/\d\d\/\d\d\//, '/') // Remove the part of the url in the form /60/62
+	const thumbnailUrlMatcher = /avatars\/thumbnails\/\d+\/\d+\/\d\d\/\d\d\//;
+	if (!thumbnailUrl.match(thumbnailUrlMatcher)) return thumbnailUrl;
+	return thumbnailUrl.replace(/\/thumbnails(\/\d+\/\d+\/)\d+\/\d+\//, '$1');
 }
