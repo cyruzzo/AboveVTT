@@ -221,7 +221,8 @@ class MessageBroker {
 			connectionId: self.connection_id,
 			timestamp: Date.now(),
 		}
-		self.sendMessage("custom/myVTT/confirm", confirmation, false);
+		if(!(msg.eventType=="custom/myVTT/msgChunk"))
+			self.sendMessage("custom/myVTT/confirm", confirmation, false);
 		if (!self.received_messages.has(msg.id))
 		{
 			const maxReceivedMessageSize = 1000;
@@ -914,11 +915,11 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data, getConfirmation = true) {
+	sendMessage(eventType, data, getConfirmation = true,msgid = null) {
 		var self = this;
 		const messageMaxSize = 42000;
 		var message = {
-			id: uuid(),
+			id: msgid?msgid:uuid(),
 			datetime: Date.now(),
 			source: "web",
 			gameId: this.gameid,
@@ -936,6 +937,9 @@ class MessageBroker {
 		var messageJSON = JSON.stringify(message);
 		if (messageJSON.length > messageMaxSize) {
 			self.sendMessageChunks(messageJSON, message.id, 40000);
+			if (getConfirmation) {
+				self.unconfirmed_messages[message.id] = message;
+			}
 		}
 		else {
 			if (this.ws.readyState == this.ws.OPEN) {
@@ -984,7 +988,7 @@ class MessageBroker {
 			chunks: chunks,
 			chunk: chunk,
 		}
-		self.sendMessage('custom/myVTT/msgChunk', data);
+		self.sendMessage('custom/myVTT/msgChunk', data,false);
 	}
 	
 	resendUnconfirmedMessages(repeat_delay_ms, timeout_ms, minwait_ms=1000){
@@ -1022,6 +1026,7 @@ class MessageBroker {
 							if(msgAge_ms >= timeout_ms)
 							{
 								usersToRemove.push(onlineUserId);
+								console.warn("MESSAGE LOST. USER TIMED OUT");
 							}
 						}
 					}
