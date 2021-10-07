@@ -1538,24 +1538,22 @@ function init_ui() {
 
 	init_journal($("#message-broker-client").attr("data-gameId"));
   
-  // Send AmOnline messages every 10 seconds, and send a Goodbye message when closing/refreshing
-	setTimeout(function() {
-		window.MB.sendAmOnline(10000);
-		$(window).unload(function () {
-			let data = {
-				connectionId: window.MB.connection_id,
-				mediaStreamId: this.MYSTREAMID,
-				playerID: window.PLAYER_ID,
-				timestamp: (new Date()).valueOf()
-			}
-			window.MB.sendMessage('custom/myVTT/goodbye', data, false);
-		});
-	}, 1000);
-	
-  // resend any unconfirmed messages every 2 seconds, timout a message after 20 seconds
-	setTimeout(function() {
-		window.MB.resendUnconfirmedMessages(2000,20000);
-	}, 1000);
+	window.sendAmOnlineTask = setInterval(function () {
+		window.MB.sendAmOnline();
+	}, 10000);
+	$(window).unload(function () {
+		let data = {
+			connectionId: window.MB.connection_id,
+			mediaStreamId: this.MYSTREAMID,
+			playerID: window.PLAYER_ID,
+			timestamp: (new Date()).valueOf()
+		}
+		window.MB.sendMessage('custom/myVTT/goodbye', data, false);
+	});
+
+	window.resendUnconfirmedMessagesTask = setInterval(function () {
+		window.MB.resendUnconfirmedMessages(20000, 2000);
+	}, 2000);
 	
 	if (window.DM) {
 		// use DDB character tools to update character info every 10 seconds
