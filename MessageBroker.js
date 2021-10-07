@@ -855,6 +855,7 @@ class MessageBroker {
 				}
 				msgJSON += messageChunks[i];
 			}
+			msgJSON = msgJSON.replace(/´´/g, "\"");
 			let msg = $.parseJSON(msgJSON);
 			delete this.message_chunks[chunkInfo.msgId];
 			if (msg.eventType == 'custom/myVTT/MsgBundle') {
@@ -996,6 +997,7 @@ class MessageBroker {
 	sendMessageChunks(message, messageJSON, msgId, getConfirmation = true, chunkSize = 20000, sendDelay = 250) {
 		var self = this;
 		let chunks = Math.ceil(messageJSON.length / chunkSize);
+		messageJSON = messageJSON.replace(/"/g, "´´");
 
 		for (var chunkNum = 0; chunkNum < chunks; chunkNum++) {
 			let chunk = messageJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
