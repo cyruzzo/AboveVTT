@@ -1069,7 +1069,7 @@ class MessageBroker {
 						messagesToRemove.push(msgID);
 						
 						// remove users who have not confirmed the message before the timeout from the online user list
-						for(var i; i< usersToRemove.length; i++)
+						for(var i=0; i< usersToRemove.length; i++)
 						{
 							let onlineUserIndex = jQuery.inArray(usersToRemove[i], window.MB.onlineUserList);
 							if(onlineUserIndex > -1)
