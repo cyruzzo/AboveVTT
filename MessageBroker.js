@@ -99,7 +99,8 @@ class MessageBroker {
 		this.ws = new WebSocket(url + "?gameId=" + gameid + "&userId=" + userid + "&stt=" + token);
 
 
-		this.ws.onerror = function() {
+		this.ws.onerror = function (event) {
+			console.warn("WebSocket error observed:", event);
 			self.loadingWS = false;
 		};
 
@@ -141,9 +142,9 @@ class MessageBroker {
 			{
 				self.handleMessageBundle(msg);
 			}
-			else if (msg.eventType == "custom/myVTT/msgChunk") {
-				self.handleMessageChunk(msg);
-			}
+			//else if (msg.eventType == "custom/myVTT/msgChunk") {
+			//	self.handleMessageChunk(msg);
+			//}
 			else if(msg.hasOwnProperty("id"))
 			{
 				self.handleMessage(msg);
@@ -224,26 +225,25 @@ class MessageBroker {
 			connectionId: self.connection_id,
 			timestamp: Date.now(),
 		}
-		if(!(msg.eventType=="custom/myVTT/msgChunk"))
-			self.sendMessage("custom/myVTT/confirm", confirmation, false);
-		
+		self.sendMessage("custom/myVTT/confirm", confirmation, false);
+
 		// clear out any leftover message chunks
 		if (this.message_chunks.hasOwnProperty(msg.id)) {
 			delete this.message_chunks[msg.id];
 		}
-		
+
+
 		if (!self.received_messages.has(msg.id))
 		{
-			const maxReceivedMessageSize = 1000;
 			self.received_messages.set(msg.id, true);
 			// pare down received messages if it's too long
-			if (self.received_messages.size > maxReceivedMessageSize) {
+			if (self.received_messages.size > this.maxReceivedMessages) {
 				let receivedKeys = self.received_messages.keys();
-				let numToDelete = this.received_messages.size - maxReceivedMessageSize;
+				let numToDelete = this.received_messages.size - this.maxReceivedMessages;
 				for (var i = 0; i < numToDelete; i++) {
 					self.received_messages.delete(receivedKeys.next().value);
-                		}
-			}
+                }
+            }
 		}
 		else
 		{
@@ -547,15 +547,10 @@ class MessageBroker {
 			console.log("fatto setRemoteDescription");
 		}
 
-		if (msg.eventType == 'custom/myVTT/msgChunk') {
-			self.handleMessageChunk(msg);
-        	}
-		
 		if (msg.eventType == 'custom/myVTT/goodbye') {
 			self.handleGoodbye(msg);
 		}
-		
-		// just in case
+
 		if (msg.eventType == "custom/myVTT/MsgBundle") {
 			self.handleMessageBundle(msg);
 		}
@@ -588,6 +583,10 @@ class MessageBroker {
 
 		this.message_chunks = {}; // a dictionary where each key is the ID of the message that's been broken into chunks, and the value is a 
 								//		dictionary where the key is the chunk number and the value is the message JSON string chunk
+
+		this.messageMaxSize = 41000;
+		this.chunkSendDelay = 200;
+		this.maxReceivedMessages = 1000;
 
 		get_cobalt_token(function(token) {
 			self.loadWS(token);
@@ -648,7 +647,7 @@ class MessageBroker {
 				window.MB.sendMessage('custom/myVTT/token', cur.options);
 			}
 		}
-    	}
+    }
 	
 	convertChat(data,local=false) {
 		//Security logic to prevent content being sent which can execute JavaScript.
@@ -863,10 +862,10 @@ class MessageBroker {
 			}
 			else {
 				this.handleMessage(msg);
-            		}
-        	}
-    	}
-	
+            }
+        }
+    }
+
 	handleGoodbye(msg) {
 		let goodbye = msg.data;
 
@@ -880,8 +879,9 @@ class MessageBroker {
 			$("#streamer-canvas-" + goodbye.mediaStreamId).remove();
 		}
 
-    	}
-	
+    }
+
+
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
 
@@ -937,11 +937,10 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data, getConfirmation = true,msgid = null) {
+	sendMessage(eventType, data, getConfirmation = true) {
 		var self = this;
-		const messageMaxSize = 42000;
 		var message = {
-			id: msgid?msgid:uuid(),
+			id: uuid(),
 			datetime: Date.now(),
 			source: "web",
 			gameId: this.gameid,
@@ -956,54 +955,63 @@ class MessageBroker {
 		};
 
 		var messageJSON = JSON.stringify(message);
-		if (messageJSON.length > messageMaxSize) {
-			self.sendMessageChunks(messageJSON, message.id, 40000);
+		if (messageJSON.length > this.messageMaxSize) {
+			self.sendMessageChunks(message, messageJSON, message.id, getConfirmation, (this.messageMaxSize-1000), this.chunkSendDelay);
 		}
 		else {
 			if (this.ws.readyState == this.ws.OPEN) {
 				this.ws.send(messageJSON);
+				//self.sent_messages.push(message.id);
 			}
 			else { // TRY TO RECOVER
+				console.log("ws state " + this.ws.readyState);
 				get_cobalt_token(function (token) {
 					self.loadWS(token, function () {
 						// TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
 						self.ws.send(messageJSON);
+						//self.sent_messages.push(message.id);
 					});
 				});
 
 			}
-        	}
-		
-		if (getConfirmation) {
-			self.message_confirmations.set(message.id, []);
-			self.unconfirmed_messages[message.id] = message;
 
-			// pare down message_confirmations if it's too long
-			const maxReceivedMessageSize = 1000;
-			// pare down received messages if it's too long
-			if (self.message_confirmations.size > maxReceivedMessageSize) {
-				let msgIDKeys = self.message_confirmations.keys();
-				let numToDelete = this.message_confirmations.size - maxReceivedMessageSize;
-				for (var i = 0; i < numToDelete; i++) {
-					self.message_confirmations.delete(msgIDKeys.next().value);
+			if (getConfirmation) {
+				self.message_confirmations.set(message.id, []);
+				self.unconfirmed_messages[message.id] = message;
+
+				// pare down message_confirmations if it's too long
+				// pare down received messages if it's too long
+				if (self.message_confirmations.size > this.maxReceivedMessages) {
+					let msgIDKeys = self.message_confirmations.keys();
+					let numToDelete = this.message_confirmations.size - this.maxReceivedMessages;
+					for (var i = 0; i < numToDelete; i++) {
+						self.message_confirmations.delete(msgIDKeys.next().value);
+					}
 				}
 			}
 		}
+
 	}
 
-	sendMessageChunks(msgJSON, msgId, chunkSize = 20000, sendDelay = 250) {
+	sendMessageChunks(message, messageJSON, msgId, getConfirmation = true, chunkSize = 20000, sendDelay = 250) {
 		var self = this;
-		let chunks = Math.ceil(msgJSON.length / chunkSize);
+		let chunks = Math.ceil(messageJSON.length / chunkSize);
 
 		for (var chunkNum = 0; chunkNum < chunks; chunkNum++) {
-			let chunk = msgJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
-			setTimeout(function (_chunk, _msgId, _chunkNum, _chunks) {
-				window.MB.sendMessageChunk(_chunk, _msgId, _chunkNum, _chunks);
-			}, chunkNum * 250, chunk, msgId, chunkNum, chunks);
-        	}
+			let chunk = messageJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
+			setTimeout(function (_chunk, _msgId, _chunkNum, _chunks, _getConfirmation) {
+				window.MB.sendMessageChunk(_chunk, _msgId, _chunkNum, _chunks, _getConfirmation);
+			}, chunkNum * 250, chunk, msgId, chunkNum, chunks, getConfirmation);
+		}
+
+		//if (getConfirmation) {
+		//	message.datetime = Date.now() + 10*(chunks * sendDelay); //Delay checking for confirmation
+		//	self.message_confirmations.set(message.id, []);
+		//	self.unconfirmed_messages[message.id] = message;
+		//}
 	}
 
-	sendMessageChunk(chunk, msgId, chunkNum, chunks) {
+	sendMessageChunk(chunk, msgId, chunkNum, chunks, getConfirmation) {
 		var self = this;
 		var data = {
 			msgId: msgId,
@@ -1011,10 +1019,11 @@ class MessageBroker {
 			chunks: chunks,
 			chunk: chunk,
 		}
-		self.sendMessage('custom/myVTT/msgChunk', data,false);
+		self.sendMessage('custom/myVTT/msgChunk', data, getConfirmation);
 	}
+
 	
-	resendUnconfirmedMessages(repeat_delay_ms, timeout_ms, minwait_ms=1000){
+	resendUnconfirmedMessages(timeout_ms, minwait_ms=1000){
 		// loop through the messages in unconfirmed messages.
 		// If messages have received confirmations, remove them from the unconfirmed messages list.
 		// If any unconfirmed messages are older than minwait_ms and younger than timeout_ms
@@ -1089,11 +1098,11 @@ class MessageBroker {
 		
 		if(messagesToSend.length > 0)
 		{
-			window.MB.sendMessage("custom/myVTT/MsgBundle",messagesToSend, false);
-		}
-		if(repeat_delay_ms > 0)
-		{
-			setTimeout(window.MB.resendUnconfirmedMessages,repeat_delay_ms, repeat_delay_ms, timeout_ms, minwait_ms);
+			//window.MB.sendMessage("custom/myVTT/MsgBundle", messagesToSend, false);
+			for (i = i; i < messagesToSend.length; i++) {
+				console.log("resending message " + messagesToSend[i].id + " " + messagesToSend[i].eventType);
+				window.MB.sendMessage(messagesToSend[i].eventType, messagesToSend[i].data, false, messagesToSend[i].id);
+			}
 		}
 	}
 
