@@ -953,7 +953,6 @@ class MessageBroker {
 			data: data,
 			// entityId :"43263440", proviamo a non metterla
 			// entityType:"character", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
-			connectionId: this.connection_id,
 		};
 
 		var messageJSON = JSON.stringify(message);
