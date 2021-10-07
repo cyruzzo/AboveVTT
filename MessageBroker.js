@@ -128,7 +128,7 @@ class MessageBroker {
 			var msg = $.parseJSON(event.data);
 			console.log(msg.eventType);
 			
-			// AmOnline, confirm and MsgBundle messages 
+			// AmOnline, confirm, MsgBundle, and msgChunk messages 
 			// don't require confirmation, so are handled separately
 			if (msg.eventType == "custom/myVTT/AmOnline") {
 				self.handleAmOnline(msg);
@@ -140,6 +140,9 @@ class MessageBroker {
 			else if(msg.eventType == "custom/myVTT/MsgBundle")
 			{
 				self.handleMessageBundle(msg);
+			}
+			else if (msg.eventType == "custom/myVTT/msgChunk") {
+				self.handleMessageChunk(msg);
 			}
 			else if(msg.hasOwnProperty("id"))
 			{
@@ -223,6 +226,12 @@ class MessageBroker {
 		}
 		if(!(msg.eventType=="custom/myVTT/msgChunk"))
 			self.sendMessage("custom/myVTT/confirm", confirmation, false);
+		
+		// clear out any leftover message chunks
+		if (this.message_chunks.hasOwnProperty(msg.id)) {
+			delete this.message_chunks[msg.id];
+		}
+		
 		if (!self.received_messages.has(msg.id))
 		{
 			const maxReceivedMessageSize = 1000;
@@ -233,8 +242,8 @@ class MessageBroker {
 				let numToDelete = this.received_messages.size - maxReceivedMessageSize;
 				for (var i = 0; i < numToDelete; i++) {
 					self.received_messages.delete(receivedKeys.next().value);
-                }
-            }
+                		}
+			}
 		}
 		else
 		{
@@ -545,6 +554,14 @@ class MessageBroker {
 		if (msg.eventType == 'custom/myVTT/goodbye') {
 			self.handleGoodbye(msg);
 		}
+		
+		// just in case
+		if (msg.eventType == "custom/myVTT/MsgBundle") {
+			self.handleMessageBundle(msg);
+		}
+		if (msg.eventType == "custom/myVTT/msgChunk") {
+			self.handleMessageChunk(msg);
+		}
 	}
 	
 	constructor() {
@@ -566,7 +583,7 @@ class MessageBroker {
 		
 		//this.sent_messages = []; //the IDs of all sent messages
 		this.received_messages = new Map(); //a map where each key is the ID of a received message. The value is always true
-		this.message_confirmations = {}; //a dictionary where each key is the ID of a messages sent and each value is and arrays of the connection ids of all users who have send confirmations to that message.
+		this.message_confirmations = new Map(); //a dictionary where each key is the ID of a messages sent and each value is and arrays of the connection ids of all users who have send confirmations to that message.
 		this.unconfirmed_messages = {}; //a dictionary where each key is the ID of a message sent but not yet confirmed by everyone in the online user list
 
 		this.message_chunks = {}; // a dictionary where each key is the ID of the message that's been broken into chunks, and the value is a 
@@ -789,13 +806,13 @@ class MessageBroker {
 	
 	handleConfirmation(msg){
 		let confirmation = msg.data;
-		if(!window.MB.message_confirmations[confirmation.messageID])
+		if(!window.MB.message_confirmations.has(confirmation.messageID))
 		{
-			window.MB.message_confirmations[confirmation.messageID] = [msg.data.connectionId];
+			window.MB.message_confirmations.set(confirmation.messageID,[msg.data.connectionId]);
 		}
-		else if (jQuery.inArray(msg.data.connectionId, window.MB.message_confirmations[confirmation.messageID]) == -1)
+		else if (jQuery.inArray(msg.data.connectionId, window.MB.message_confirmations.get(confirmation.messageID)) == -1)
 		{
-			window.MB.message_confirmations[confirmation.messageID].push(msg.data.connectionId);
+			window.MB.message_confirmations.get(confirmation.messageID).push(msg.data.connectionId);
 		}
 	}
 	
@@ -840,10 +857,15 @@ class MessageBroker {
 				msgJSON += messageChunks[i];
 			}
 			let msg = $.parseJSON(msgJSON);
-			this.handleMessage(msg);
 			delete this.message_chunks[chunkInfo.msgId];
-        }
-    }
+			if (msg.eventType == 'custom/myVTT/MsgBundle') {
+				this.handleMessageBundle(msg);
+			}
+			else {
+				this.handleMessage(msg);
+            		}
+        	}
+    	}
 	
 	handleGoodbye(msg) {
 		let goodbye = msg.data;
@@ -937,35 +959,37 @@ class MessageBroker {
 		var messageJSON = JSON.stringify(message);
 		if (messageJSON.length > messageMaxSize) {
 			self.sendMessageChunks(messageJSON, message.id, 40000);
-			if (getConfirmation) {
-				self.unconfirmed_messages[message.id] = message;
-			}
 		}
 		else {
 			if (this.ws.readyState == this.ws.OPEN) {
 				this.ws.send(messageJSON);
-				//self.sent_messages.push(message.id);
-				self.message_confirmations[message.id] = [];
-				if (getConfirmation) {
-					self.unconfirmed_messages[message.id] = message;
-				}
 			}
 			else { // TRY TO RECOVER
 				get_cobalt_token(function (token) {
 					self.loadWS(token, function () {
 						// TODO, CONSIDER ADDING A SYNCMEUP / SCENE PAIR HERE
 						self.ws.send(messageJSON);
-						//self.sent_messages.push(message.id);
-						self.message_confirmations[message.id] = [];
-						if (getConfirmation) {
-							self.unconfirmed_messages[message.id] = message;
-						}
 					});
 				});
 
 			}
         	}
+		
+		if (getConfirmation) {
+			self.message_confirmations.set(message.id, []);
+			self.unconfirmed_messages[message.id] = message;
 
+			// pare down message_confirmations if it's too long
+			const maxReceivedMessageSize = 1000;
+			// pare down received messages if it's too long
+			if (self.message_confirmations.size > maxReceivedMessageSize) {
+				let msgIDKeys = self.message_confirmations.keys();
+				let numToDelete = this.message_confirmations.size - maxReceivedMessageSize;
+				for (var i = 0; i < numToDelete; i++) {
+					self.message_confirmations.delete(msgIDKeys.next().value);
+				}
+			}
+		}
 	}
 
 	sendMessageChunks(msgJSON, msgId, chunkSize = 20000, sendDelay = 250) {
@@ -1020,7 +1044,7 @@ class MessageBroker {
 					let onlineUserId = window.MB.onlineUserList[i];
 					if(onlineUserId != window.MB.connection_id)
 					{
-						if(jQuery.inArray(onlineUserId, window.MB.message_confirmations[msg.id]) == -1)
+						if(jQuery.inArray(onlineUserId, window.MB.message_confirmations.get(msg.id)) == -1)
 						{
 							confirmed = false;
 							if(msgAge_ms >= timeout_ms)
