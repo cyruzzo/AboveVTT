@@ -585,7 +585,7 @@ class MessageBroker {
 								//		dictionary where the key is the chunk number and the value is the message JSON string chunk
 
 		this.messageMaxSize = 41000;
-		this.chunkSendDelay = 200;
+		this.chunkSendDelay = 100;
 		this.maxReceivedMessages = 1000;
 
 		get_cobalt_token(function(token) {
@@ -855,7 +855,7 @@ class MessageBroker {
 				}
 				msgJSON += messageChunks[i];
 			}
-			msgJSON = msgJSON.replace(/´´/g, "\"");
+			//msgJSON = msgJSON.replace(/´´/g, "\"");
 			let msg = $.parseJSON(msgJSON);
 			delete this.message_chunks[chunkInfo.msgId];
 			if (msg.eventType == 'custom/myVTT/MsgBundle') {
@@ -938,10 +938,10 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data, getConfirmation = true) {
+	sendMessage(eventType, data, getConfirmation = true,msgid=null) {
 		var self = this;
 		var message = {
-			id: uuid(),
+			id: msgid?msgid:uuid(),
 			datetime: Date.now(),
 			source: "web",
 			gameId: this.gameid,
@@ -957,9 +957,10 @@ class MessageBroker {
 
 		var messageJSON = JSON.stringify(message);
 		if (messageJSON.length > this.messageMaxSize) {
-			self.sendMessageChunks(message, messageJSON, message.id, getConfirmation, (this.messageMaxSize-1000), this.chunkSendDelay);
+			self.sendMessageChunks(message, messageJSON, message.id, getConfirmation, Math.round(this.messageMaxSize/2)-1000, this.chunkSendDelay);
 		}
-		else {
+		else
+		{
 			if (this.ws.readyState == this.ws.OPEN) {
 				this.ws.send(messageJSON);
 				//self.sent_messages.push(message.id);
@@ -997,13 +998,13 @@ class MessageBroker {
 	sendMessageChunks(message, messageJSON, msgId, getConfirmation = true, chunkSize = 20000, sendDelay = 250) {
 		var self = this;
 		let chunks = Math.ceil(messageJSON.length / chunkSize);
-		messageJSON = messageJSON.replace(/"/g, "´´");
+		//messageJSON = messageJSON.replace(/"/g, "´´");
 
 		for (var chunkNum = 0; chunkNum < chunks; chunkNum++) {
 			let chunk = messageJSON.substring(chunkSize * chunkNum, chunkSize * (chunkNum + 1));
 			setTimeout(function (_chunk, _msgId, _chunkNum, _chunks, _getConfirmation) {
 				window.MB.sendMessageChunk(_chunk, _msgId, _chunkNum, _chunks, _getConfirmation);
-			}, chunkNum * 250, chunk, msgId, chunkNum, chunks, getConfirmation);
+			}, chunkNum * sendDelay, chunk, msgId, chunkNum, chunks, getConfirmation);
 		}
 
 		//if (getConfirmation) {
@@ -1101,7 +1102,7 @@ class MessageBroker {
 		if(messagesToSend.length > 0)
 		{
 			//window.MB.sendMessage("custom/myVTT/MsgBundle", messagesToSend, false);
-			for (i = i; i < messagesToSend.length; i++) {
+			for (i = 0; i < messagesToSend.length; i++) {
 				console.log("resending message " + messagesToSend[i].id + " " + messagesToSend[i].eventType);
 				window.MB.sendMessage(messagesToSend[i].eventType, messagesToSend[i].data, false, messagesToSend[i].id);
 			}

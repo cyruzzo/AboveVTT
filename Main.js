@@ -1464,6 +1464,11 @@ function init_ui() {
 	}
 	setTimeout(function() {
 		window.STARTING = false;
+		
+		window.resendUnconfirmedMessagesTask = setInterval(function () {
+			window.MB.resendUnconfirmedMessages(20000, 2000);
+		}, 2000);
+
 	}, 6000);
 
 
@@ -1551,9 +1556,6 @@ function init_ui() {
 		window.MB.sendMessage('custom/myVTT/goodbye', data, false);
 	});
 
-	window.resendUnconfirmedMessagesTask = setInterval(function () {
-		window.MB.resendUnconfirmedMessages(20000, 2000);
-	}, 2000);
 	
 	if (window.DM) {
 		// use DDB character tools to update character info every 10 seconds
