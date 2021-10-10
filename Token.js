@@ -506,7 +506,17 @@ class Token {
 			console.log("trovato!!");
 
 			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
+				
 				remove_selected_token_bounding_box();
+				if(old.is(':animated')){
+					old.stop();
+					old.css({
+						left: this.options.left,
+						top: this.options.top,
+					});
+					draw_selected_token_bounding_box();
+				}
+				else{
 				old.animate(
 					{
 						left: this.options.left,
@@ -514,6 +524,7 @@ class Token {
 					}, { duration: animationDuration, queue: false, complete: function() {
 						draw_selected_token_bounding_box();
 					} });
+				}
 
 
 			// CONCENTRATION REMINDER
