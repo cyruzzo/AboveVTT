@@ -514,6 +514,7 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					});
+					draw_selected_token_bounding_box();
 				}
 				else{
 				old.animate(
