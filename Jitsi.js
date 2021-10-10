@@ -68,6 +68,8 @@ function init_jitsi_popout() {
 	$("#meet").remove();
 	pop = window.open("", "", "height=1000,width=1000,menubar=no,status=no,toolbar=no");
 	pop.onbeforeunload = init_jitsi_box;
+	pop.document.body.style.margin = '0px';
+	pop.document.body.style.padding = '0px';
 	pop.document.body.id = 'jitsi_container';
 	pop.document.title = 'Above VTT';
 	pop.window.gameId = window.gameId;
