@@ -129,10 +129,11 @@ class JournalManager{
 				edit_btn.click(function(){
 					self.edit_note(note_id);
 				});
-				
+				let note_index=n;
 				let delete_btn=$("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 				delete_btn.click(function(){
-					self.chapters[i].notes.splice(n);
+					console.log("deleting note_index"+note_index);
+					self.chapters[i].notes.splice(note_index,1);
 					delete self.notes[note_id];
 					self.build_journal();
 					self.persist();
