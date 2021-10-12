@@ -309,6 +309,12 @@ class JournalManager{
 				if(note_id in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[note_id].place(); // trigger display of the "note" condition
 				}
+				if(self.notes[note_id].player){
+					window.MB.sendMessage('custom/myVTT/note',{
+						id: note_id,
+						note:self.notes[note_id]
+					});
+				}
 				
 			}
 		});
