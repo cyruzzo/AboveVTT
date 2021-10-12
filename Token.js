@@ -210,6 +210,11 @@ class Token {
 		console.log("update from page di " + this.options.id);
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
+
+		if(old.is(':animated')){
+			old.stop(true,true); // stop the animation and jump to the end.
+		}
+
 		this.options.left = old.css("left");
 		this.options.top = old.css("top");
 		//this.options.hpstring=old.find(".hpbar").val();
@@ -218,7 +223,6 @@ class Token {
 			this.options.hidden = true;
 		else
 			delete this.options.hidden;
-
 
 		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.hidestat)) && !this.options.disablestat && old.find(".hp").length > 0) {
 			if (old.find(".hp").val().startsWith("+") || old.find(".hp").val().startsWith("-")) {
@@ -509,14 +513,9 @@ class Token {
 				
 				remove_selected_token_bounding_box();
 				if(old.is(':animated')){
-					old.stop();
-					old.css({
-						left: this.options.left,
-						top: this.options.top,
-					});
-					draw_selected_token_bounding_box();
+					old.stop(true,true);
 				}
-				else{
+				
 				old.animate(
 					{
 						left: this.options.left,
@@ -524,7 +523,7 @@ class Token {
 					}, { duration: animationDuration, queue: false, complete: function() {
 						draw_selected_token_bounding_box();
 					} });
-				}
+				
 
 
 			// CONCENTRATION REMINDER
