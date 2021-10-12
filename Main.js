@@ -738,8 +738,8 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 					}
 				}
 
-				if (firstTime)
-					$("#stream_button").click();
+				/*if (firstTime)
+					$("#stream_button").click();*/
             }
 				
 		}
@@ -1754,13 +1754,13 @@ function init_stream_button() {
 	else
 		stream_button.css("left", "-247px");
 
-	stream_button.css("background", "yellow");
+	//stream_button.css("background", "yellow");
 
 	if (!$.browser.mozilla) { // DISABLE FOR FIREFOX
 		$(".sidebar__controls").append(stream_button);
-		if(window.DM){
+		/*if(window.DM){
 			setTimeout( () => {stream_button.click()} , 5000); 
-		}
+		}*/
 	}
 	
 	
