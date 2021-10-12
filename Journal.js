@@ -254,7 +254,16 @@ class JournalManager{
 		this.persist();
 	}
 	
+	close_all_notes(){
+		$("textarea[data-note-id]").each(function(){
+			let taid=$(this).attr('id')
+			tinyMCE.get(taid).execCommand('mceSave');
+			$(this).closest(".note").dialog("close");
+		});
+	}
+
 	edit_note(id){
+		this.close_all_notes();
 		let self=this;
 		
 		let note=$("<div class='note'></div>");
