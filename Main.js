@@ -1550,7 +1550,7 @@ function init_ui() {
 				// Load DDB character modules and rules
 				retriveRules();
 				loadModules(initalModules);
-				window.character_update_task = setInterval(get_pclist_player_data, 15000);
+				window.character_update_task = setInterval(get_pclist_player_data, 10000);
 			}
 		}, 100);
 	}

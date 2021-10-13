@@ -510,6 +510,7 @@ class MessageBroker {
 	}
 
 	handlePlayerData(data) {
+		return; // DISABLED
 		if (!window.DM)
 			return;
 
