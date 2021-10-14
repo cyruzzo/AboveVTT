@@ -905,7 +905,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 
 		observer.observe(mutation_target, mutation_config);
 
-		const waitToSync = (timeElapsed = 0) => {
+		/*const waitToSync = (timeElapsed = 0) => {
 			setTimeout(() => {
 				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
 				if (ac_element.length > 0) {
@@ -918,8 +918,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 				}
 			}, 500);
 		};
-		waitToSync();
-		//setTimeout(function(){$(event.target).contents().find(".ct-character-header__group--game-log").remove();},10000); // AND OTHER HACK!
+		waitToSync();*/
 	});
 	
 	if((!window.DM) ||(window.KEEP_PLAYER_SHEET_LOADED))

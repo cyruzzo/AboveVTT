@@ -510,7 +510,6 @@ class MessageBroker {
 	}
 
 	handlePlayerData(data) {
-		return; // DISABLED
 		if (!window.DM)
 			return;
 
@@ -633,9 +632,10 @@ class MessageBroker {
 			location.reload();
 		}
 
-		if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) { // PLAYERS RESEND STATS AFTER SCENE CHANGE.. JUST TO BE SURE
+		// DISABLED THANKS TO POLLING
+		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
 			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-		}
+		}*/
 
 
 		window.TOKEN_OBJECTS = {};
