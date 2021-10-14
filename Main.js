@@ -107,7 +107,7 @@ function increase_zoom() {
 
 function getPlayerIDFromSheet(sheet_url)
 {
-	let playerid = -1;
+	let playerID = -1;
 	if(sheet_url)
 	{
 		let urlSplit = sheet_url.split("/");
