@@ -1856,7 +1856,7 @@ $(function() {
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
 	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
-	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected<br><br>");
+	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data, and all active player sheets must be public</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected, or if you cannot view all active player sheets<br><br>");
 	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
 	campaign_banner.append(delete_button2);
