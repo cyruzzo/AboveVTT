@@ -1796,7 +1796,7 @@ function token_menu() {
 						},
 						sep1: "-------",
 						hp: {
-							type: 'text',
+							type: 'number',
 							name: 'Current HP',
 							className: 'hp-context-input',
 							value: window.TOKEN_OBJECTS[id].options.hp,
@@ -1808,8 +1808,8 @@ function token_menu() {
 							},
 						},
 						max_hp: {
-							type: 'text',
-							name: 'Max Hp',
+							type: 'number',
+							name: 'Max HP',
 							className: 'hp-context-input',
 							value: window.TOKEN_OBJECTS[id].options.max_hp,
 							disabled: !is_monster,
