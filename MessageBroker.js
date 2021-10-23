@@ -76,6 +76,46 @@ function addVideo(stream,streamerid) {
 
 class MessageBroker {
 
+	loadAboveWS(callback=null){
+		var self=this;
+		if (callback)
+			this.callbackAboveQueue.push(callback);
+		
+		
+		this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/dev?campaign="+window.CAMPAIGN_SECRET);
+		this.abovews.onopen=function(){
+
+		}
+		
+		if (this.loadingAboveWS) {
+			return;
+		}
+
+		this.loadingAboveWS=true;
+		
+		this.abovews.onerror = function() {
+			self.loadingAboveWS = false;
+		};
+
+		this.abovews.onmessage=this.onmessage;
+
+		this.abovews.onopen = function() {
+			self.loadingAboveWS = false;
+			var recovered = false;
+			if (self.callbackAboveQueue.length > 1) {
+				recovered = true;
+			}
+			var cb;
+			console.log('Empting callback queue list');
+			while (cb = self.callbackAboveQueue.shift()) {
+				cb();
+			};
+			if (recovered && (!window.DM)) {
+				console.log('asking the DM for recovery!');
+				self.sendMessage("custom/myVTT/syncmeup");
+			}
+		};
+	}
 
 	loadWS(token, callback = null) {
 
@@ -98,6 +138,8 @@ class MessageBroker {
 
 		this.ws = new WebSocket(url + "?gameId=" + gameid + "&userId=" + userid + "&stt=" + token);
 
+		this.ws.onmessage=this.onmessage;
+
 
 		this.ws.onerror = function() {
 			self.loadingWS = false;
@@ -105,23 +147,94 @@ class MessageBroker {
 
 		this.ws.onopen = function() {
 			self.loadingWS = false;
-			var recovered = false;
-			if (self.callbackQueue.length > 1) {
-				recovered = true;
-			}
 			var cb;
 			console.log('Empting callback queue list');
 			while (cb = self.callbackQueue.shift()) {
 				cb();
 			};
-			if (recovered && (!window.DM)) {
-				console.log('asking the DM for recovery!');
-				self.sendMessage("custom/myVTT/syncmeup");
-			}
-
 		};
 
-		this.ws.onmessage = function(event) { // SCHIFO.. DOVREI FAR REGISTRARE GLI HANDLER ALLA CREAZIONE DELLA MB
+		
+	}
+
+	handle_injected_data(data){
+		let self=this;
+		self.chat_pending_messages.push(data);
+		// start the task
+		
+		if(self.chat_decipher_task==null){
+			self.chat_decipher_task=setInterval(function(){
+				console.log("deciphering");
+				let pend_length = self.chat_pending_messages.length;
+				for(var i=0;i<pend_length;i++){
+					var current=self.chat_pending_messages.shift();
+					
+					var injection_id=current.data.rolls[0].rollType;
+					var injection_data=current.data.injected_data;
+					console.log(injection_id);
+					console.log(injection_data);
+					
+					var found=false;
+					$(".DiceMessage_RollType__wlBsW").each(function(){
+						if($(this).text()==injection_id){
+							console.log("TROVATOOOOOOOOOOOOOOOOO");
+							found=true;
+							let li =$(this).closest("li");
+							let oldheight=li.height();
+							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+							if(newlihtml=="")
+								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
+								
+							li.animate({ opacity: 0 }, 250, function() {
+								li.html(newlihtml);
+								let neweight = li.height();
+								li.height(oldheight);
+								li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
+								li.find(".magnify").magnificPopup({type: 'image', closeOnContentClick: true });
+
+								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
+									let btn = $("<button>Show to Players</button>")
+									li.append(btn);
+									btn.click(() => {
+										li.css("display", "none");
+										delete injection_data.dmonly;
+										self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
+									});
+								}
+							});
+							
+							
+						}
+					});
+					if(!found){
+						self.chat_pending_messages.push(current);
+					}
+				}
+				if(self.chat_pending_messages.length==0){
+					console.log("stop deciphering");
+					clearInterval(self.chat_decipher_task);
+					self.chat_decipher_task=null;
+				}
+			},500);
+		}
+	}
+
+	constructor() {
+		var self = this;
+		
+		this.chat_id=uuid();
+		this.chat_counter=0;
+		this.chat_pending_messages=[];
+		this.chat_decipher_task=null;
+
+		this.callbackQueue = [];
+		this.callbackAboveQueue = [];
+
+		this.userid = $("#message-broker-client").attr("data-userId");
+		this.gameid = $("#message-broker-client").attr("data-gameId");
+		this.url = $("#message-broker-client").attr("data-connectUrl");
+
+		this.onmessage = function(event) {
 			if (event.data == "pong")
 				return;
 
@@ -415,92 +528,23 @@ class MessageBroker {
 				}
 			}
 		};
-	}
 
-	handle_injected_data(data){
-		let self=this;
-		self.chat_pending_messages.push(data);
-		// start the task
-		
-		if(self.chat_decipher_task==null){
-			self.chat_decipher_task=setInterval(function(){
-				console.log("deciphering");
-				let pend_length = self.chat_pending_messages.length;
-				for(var i=0;i<pend_length;i++){
-					var current=self.chat_pending_messages.shift();
-					
-					var injection_id=current.data.rolls[0].rollType;
-					var injection_data=current.data.injected_data;
-					console.log(injection_id);
-					console.log(injection_data);
-					
-					var found=false;
-					$(".DiceMessage_RollType__wlBsW").each(function(){
-						if($(this).text()==injection_id){
-							console.log("TROVATOOOOOOOOOOOOOOOOO");
-							found=true;
-							let li =$(this).closest("li");
-							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
-							if(newlihtml=="")
-								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
-								
-							li.animate({ opacity: 0 }, 250, function() {
-								li.html(newlihtml);
-								let neweight = li.height();
-								li.height(oldheight);
-								li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
-								li.find(".magnify").magnificPopup({type: 'image', closeOnContentClick: true });
 
-								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
-									let btn = $("<button>Show to Players</button>")
-									li.append(btn);
-									btn.click(() => {
-										li.css("display", "none");
-										delete injection_data.dmonly;
-										self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
-									});
-								}
-							});
-							
-							
-						}
-					});
-					if(!found){
-						self.chat_pending_messages.push(current);
-					}
-				}
-				if(self.chat_pending_messages.length==0){
-					console.log("stop deciphering");
-					clearInterval(self.chat_decipher_task);
-					self.chat_decipher_task=null;
-				}
-			},500);
-		}
-	}
 
-	constructor() {
-		var self = this;
-		
-		this.chat_id=uuid();
-		this.chat_counter=0;
-		this.chat_pending_messages=[];
-		this.chat_decipher_task=null;
 
-		this.callbackQueue = [];
 
-		this.userid = $("#message-broker-client").attr("data-userId");
-		this.gameid = $("#message-broker-client").attr("data-gameId");
-		this.url = $("#message-broker-client").attr("data-connectUrl");
 
 
 		get_cobalt_token(function(token) {
 			self.loadWS(token);
 		});
 
+		self.loadAboveWS();
+
 
 		setInterval(function() {
 			self.sendPing();
+			self.sendAbovePing();
 		}, 30000);
 	}
 
@@ -765,6 +809,35 @@ class MessageBroker {
 
 	sendMessage(eventType, data) {
 		var self = this;
+
+		if(eventType.startsWith("custom")){
+			this.sendAboveMB(eventType,data);
+		}
+		else{
+			this.sendDDBMB(eventType,data);
+		}
+	}
+
+	sendAboveMB(eventType,data){
+		var self=this;
+		var message = {
+			action: "sendmessage",
+			campaignId:window.CAMPAIGN_SECRET,
+			eventType: eventType,
+			data: data,
+		}
+		if (this.abovews.readyState == this.ws.OPEN) {
+			this.abovews.send(JSON.stringify(message));
+		}
+		else {
+			self.loadAboveWS(function() {
+				self.abovews.send(JSON.stringify(message));
+			});
+		}
+	}
+
+	sendDDBMB(eventType,data){
+		var self=this;
 		var message = {
 			id: uuid(),
 			//datetime: Date.now(),
@@ -790,7 +863,6 @@ class MessageBroker {
 					self.ws.send(JSON.stringify(message));
 				});
 			});
-
 		}
 	}
 
@@ -802,8 +874,17 @@ class MessageBroker {
 		else {
 			get_cobalt_token(function(token) {
 				self.loadWS(token, null);
-
 			});
+		}
+	}
+
+	sendAbovePing(){
+		self = this;
+		if(this.abovews.readyState == this.abovews.OPEN){
+			this.abovews.send(JSON.stringify({action:"sendmessage",eventType:"custom/myVTT/keepalive"}));
+		}
+		else{
+			self.loadAboveWS(null);
 		}
 	}
 
