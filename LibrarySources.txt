@@ -1,0 +1,29 @@
+# purify.min.js (DOMPURIFY)
+
+wget https://github.com/cure53/DOMPurify/archive/refs/tags/2.3.3.tar.gz
+
+tar zxf 2.3.3.tar.gz
+
+sha1sum DOMPurify-2.3.3/dist/purify.min.js
+7445f68a73c8a71c2927ceaeb3a632fc0325cb1b  DOMPurify-2.3.3/dist/purify.min.js
+
+# color-picker.js 
+
+wget https://github.com/taufik-nurrohman/color-picker/archive/refs/tags/v2.2.4.tar.gz
+tar zxvf v2.2.4.tar.gz
+
+./color-picker-2.2.4/index.min.js  (gets renamed to color-picker.js)
+sha1sum color-picker-2.2.4/index.min.js
+3f14019544c2460be94aec14902b3e3d93aff08d  color-picker-2.2.4/index.min.js
+
+# rpg-dice-roller.bundle.min.js (https://greenimp.github.io/rpg-dice-roller/guide/getting-started.html)
+
+npm -i rpg-dice-roller@4.5.2
+sha1sum node_modules/rpg-dice-roller/lib/umd/bundle.min.js
+02e40d6c4cfd99f8ff4df06cc96778dc46968c07  node_modules/rpg-dice-roller/lib/umd/bundle.min.js
+
+# mousetrap.1.6.5.min.js (https://github.com/ccampbell/mousetrap/archive/refs/tags/1.6.5.tar.gz)
+tar zxvf 1.6.5.tar.gz
+sha1sum mousetrap-1.6.5/mousetrap.min.js
+ca18da6cb4e82fcb57e846928ef97b48ae4ccc39  mousetrap-1.6.5/mousetrap.min.js
+
