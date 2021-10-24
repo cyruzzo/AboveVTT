@@ -82,7 +82,7 @@ class MessageBroker {
 			this.callbackAboveQueue.push(callback);
 		
 		
-		this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/dev?campaign="+window.CAMPAIGN_SECRET);
+		this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET);
 		this.abovews.onopen=function(){
 
 		}
@@ -826,6 +826,9 @@ class MessageBroker {
 			eventType: eventType,
 			data: data,
 		}
+		if(window.CURRENT_SCENE_DATA)
+			message.sceneId=window.CURRENT_SCENE_DATA.id;
+		
 		if (this.abovews.readyState == this.ws.OPEN) {
 			this.abovews.send(JSON.stringify(message));
 		}
