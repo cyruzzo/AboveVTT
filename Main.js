@@ -1488,6 +1488,8 @@ function init_ui() {
 		curYPos = m.pageY;
 		curXPos = m.pageX;
 		if (m.button == 2) { // ONLY THE RIGHT CLICK
+			if($(m.target).closest($(".context-menu-root")).length>0 ) // AVOID RIGHT CLICK TRAP
+				return;
 			//e.preventDefault();
 			curDown = true;
 			$("body").css("cursor", "grabbing");
