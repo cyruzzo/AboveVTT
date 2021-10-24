@@ -772,6 +772,7 @@ function init_scene_selector() {
 
 	addbutton.click(function() {
 		window.ScenesHandler.scenes.push({
+			id: uuid(),
 			title: "New Scene",
 			dm_map: "",
 			player_map: "",

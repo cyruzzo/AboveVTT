@@ -1091,6 +1091,7 @@ function init_ui() {
 	window.TOKEN_PASTE_BUFFER = [];
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 
+	window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 	
