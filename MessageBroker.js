@@ -570,13 +570,18 @@ class MessageBroker {
 			var cur = window.TOKEN_OBJECTS[data.id];
 
 			// test for any change
-			if ((cur.options.hp !== +data.hp + (data.temp_hp ? +data.temp_hp : 0)) ||
-				(cur.options.max_hp !== data.max_hp) ||
-				(cur.options.ac !== data.ac) ||
+			if ((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
+				(cur.options.max_hp != data.max_hp) ||
+				(cur.options.ac != data.ac) ||
 				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
 			{
-				console.log("old " + cur.options.hp + " new " + data.hp);
-				console.log(data.conditions);
+				console.log(cur.options);
+				console.log(data);
+				console.log("4 expresision list following");
+				console.log((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))));
+				console.log((cur.options.max_hp != data.max_hp));
+				console.log((cur.options.ac != data.ac));
+				console.log((!areArraysEqualSets(cur.options.conditions, data.conditions)));
 				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
 					var msgdata = {
 						player: cur.options.name,
