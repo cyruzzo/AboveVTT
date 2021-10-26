@@ -952,11 +952,11 @@ div#scene_properties form > div {
 
 #splash {
     position: fixed;
-    left: 50%;
+    left: 45%;
     transform: translate(-50%, 0);
     top: 27px;
     height: 670px;
-    width: 600px;
+    width: 700px;
     z-index: 999;
     border: 3px solid black;
 }

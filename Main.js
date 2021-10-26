@@ -474,7 +474,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.57</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.58</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. I'll do it myself..</div>");
 	
 	s=$("<div/>");
@@ -518,14 +518,17 @@ function init_splash() {
 	cont.append(ul);*/
 	cont.append("Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b><br>Community & Collaborations Manager: <b>SnailDice (Nadav)</b>");
 	cont.append("<br>Contributors: <b>Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja</b>");
-	cont.append("<h3>Patreon Supporters</h3>");
-	cont.append("AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>");
+	//cont.append("<h3>Patreon Supporters</h3>");
+	if(Date.now() < 1635530400000)
+		cont.append("<br><br><b>Make sure that all your players are running AboveVTT 0.0.58</b>");
+	
+	cont.append("<br>AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>. Here's a list of the current supporters");
 
 	patreons = $("<div id='patreons' style='margin-top:9px;'/>");
 
-	l1 = ["Max Puplett","ZorkFox","Epyk","John Ng","Josh Downing","Zytiga Gaming","Jordan Cohen","Flek","Nathan Wilhelm","Mike Miller"];
-	l2 = ["Oliver","Iain Russell","RenoGeek","Daniel Levitus","Virginia Lancianese","Phillip Geurtz","Jordan Innerarity","TheDigifire","adam williams","Brendan Shane","Kris Scott","Drago Russo","Ryan Purcell","Lukas Edelmann","Elmer Senson","Chris Johnson","Pucas McDookie","Carl Cedarstaff II","Tom","Chris Cannon","Scott Moore","Kim Dargeou","John Curran","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry"];
-	l3 = ["Daniel Wall","Cameron Warner","Amata (she_her)","Julia Hoffmann","Martin Brandt","Alexander Engel","Tommy Girouard-Belhumeur","Cobalt Blue","Kat","Adam Nothnagel","William Geisbert","Daniel Villablanca","Jason Osterbind","nate gonzalez","Fini Plays","Paul Maloney","damian tier","Randy Zuendel","Brahm","Chris Sells","Adam Connor","David Meese","Eduardo Villela","aaron hamilton","Milkmann","CraftyHobo","Cody Vegas Rothwell","Johan Surac","M Mustaqim Mustafa","Aviad Tal","mad4ever","CrazyPitesh","Unlucky Archer","Trevor A","Han Dandler","Michael Crane","BelowtheDM","its Bonez","Deku Baba","James Cohen","Cistern","Jon Bond","Robert J Correa","Ofek Shoham","Cheeky Sausage Games","Joseph Bendickson","Blake Thomas","Steve Vlaminck","Alexander Glass","Jerry Jones","Kevin Young","David Hollenbeck","aDingoAteMyBaby","Miguel  Garcia Jr.","Rennie","Victor Waters","Sarah (ExpQuest)","William Clem","Chris Meece","Victor Martinez","Ian Leyco","Michel Gisby","Dorian Arcos","Stephanie Bowen","Arish Rustomji","Christian Johansson","Gregory Willis","Kat Wells","DH Ford","Dirk Wyncoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Substrate","Nicola Phillips","Don Walton","Squirrel666Zmbi","Patrick Wolfer"];
+	l1 = ["Max Puplett","Jordan Cohen","Epyk","ZorkFox","John Ng","Zytiga Gaming","Josh Downing","John Curran","Flek","Nathan Wilhelm","The Dread Pirate Mittens","Mike Miller"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","RenoGeek","TheDigifire","Ryan Purcell","adam williams","Drago Russo","Kris Scott","Brendan Shane","Pucas McDookie","Chris Johnson","Elmer Senson","Chris Cannon","Tom","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","Tommy Girouard-Belhumeur","nategonz","Jason Osterbind","Daniel Villablanca","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","Milkmann","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Adam Connor","mad4ever","Johan Surac","Chris Sells","Sarah (ExpQuest)","Aviad Tal","Randy Zuendel","M Mustaqim Mustafa","Robert J Correa","Jon Bond","Cistern","James Cohen","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Han Dandler","Alexander Glass","Steve Vlaminck","Blake Thomas","Joseph Bendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","William Clem","Chris Meece","Victor Martinez","Ian Leyco","Michael Gisby","Dorian Arcos","Arish Rustomji","Christian Johansson","Gregory Willis","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Substrate","Nicholas Phillips","Don Walton","Squirrel666Zmbi","Patrick Wolfer","Garry Rose","Wilko Rauert","Alexander Klein","Mage","Dee Rivers","Robert Sanderson","Michael Huffman"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
