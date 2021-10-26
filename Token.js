@@ -887,6 +887,9 @@ class Token {
 					window.DRAGGING = true;
 					click.x = event.clientX;
 					click.y = event.clientY;
+					if(tok.is(":animated")){
+						tok.stop(true,true);	
+					}
 
 					console.log("Click x: " + click.x + " y: " + click.y);
 
@@ -896,6 +899,9 @@ class Token {
 						for (let id in window.TOKEN_OBJECTS) {
 							if (window.TOKEN_OBJECTS[id].selected) {
 								$("[data-id='"+id+"']").addClass("pause_click");
+								if($("[data-id='"+id+"']").is(":animated")){
+									$("[data-id='"+id+"']").stop(true,true);
+								}
 								if (id != self.options.id) {
 									var curr = window.TOKEN_OBJECTS[id];
 									curr.orig_top = curr.options.top;

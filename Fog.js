@@ -995,8 +995,8 @@ function drawing_mouseup(e) {
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 
 		redraw_canvas();
-		console.log("READY");
 		draw_selected_token_bounding_box();
+		console.log("READY");
 	}
 	if (window.DRAWSHAPE == "measure") {
 
