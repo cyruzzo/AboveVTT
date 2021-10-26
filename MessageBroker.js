@@ -81,7 +81,8 @@ class MessageBroker {
 		if (callback)
 			this.callbackAboveQueue.push(callback);
 		
-		
+		// current dev wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1
+		// current prod wss://blackjackandhookers.abovevtt.net/v1
 		this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET);
 		this.abovews.onopen=function(){
 
