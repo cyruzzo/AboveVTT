@@ -816,12 +816,18 @@ class MessageBroker {
 	sendMessage(eventType, data) {
 		var self = this;
 
-		if(eventType.startsWith("custom")){
+		// HAD TO REVERT THIS SINCE MOZILLA FIREFOX ADDON REVIEW IS TAKING A LONG TIME.
+		// NOW CHROME WILL SEND THROUGH THE DDB GAMELOG WHILE ACCEPTING MESSAGES FROM BOTH MESSAGE BROKERS
+		
+		this.sendDDBMB(eventType,data); 
+		// ONCE FIREFOX ACCEPT A > 0.0.58 VERSION COMMENT THE PRECEDING LINE AND UNCOMMENT THE NEXT BLOCK
+		
+		/*if(eventType.startsWith("custom")){
 			this.sendAboveMB(eventType,data);
 		}
 		else{
 			this.sendDDBMB(eventType,data);
-		}
+		}*/
 	}
 
 	sendAboveMB(eventType,data){
