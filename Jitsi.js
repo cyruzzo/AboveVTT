@@ -1,5 +1,7 @@
 
 function create_jitsi_button() {
+	window.gameId = $("#message-broker-client").attr("data-gameId");
+
 	b = $("<button id='jitsi_switch' class='hasTooltip button-icon hideable' data-name='Connect video call'><span>VIDEO</span><span class='material-icons button-icon'>video_call</span></button>");
 	b.css("position", "fixed");
 	b.css("bottom", "3px");
@@ -9,34 +11,16 @@ function create_jitsi_button() {
 	b.css("z-index", 9999);
 	$("body").append(b);
 
-	b.click(function() {
+	b.click(function () {
 		$(this).remove();
-		init_jitsi();
+		init_jitsi_box();
 	});
 }
 
-
-function init_jitsi() {
-
-	jitsi_box = $("<div id='meet'><button id='jitsi_switch' class='hasTooltip button-icon' data-name='Fullscreen (v)'><span class='material-icons button-icon'>fullscreen</span></button><button id='jitsi_close' class='hasTooltip button-icon' data-name='Disconnect'><span class='material-icons button-icon'>cancel</span></button><div id='jitsi_container' style='width:100%;height:100%;'></div></div>");
-	jitsi_box.css("z-index", "100");
-	$("#site").append(jitsi_box);
-	$("#jitsi_switch").css("position", "absolute").css("top", 0).css("left", 0);
-	$("#jitsi_switch").click(jitsi_switch);
-	$("#jitsi_close").css("position", "absolute").css("top", 0).css("left", "32px");
-
-	$("#jitsi_close").click(
-		function() {
-			$("#meet").remove();
-			create_jitsi_button();
-		}
-	);
-
-
-	gameid = $("#message-broker-client").attr("data-gameId");
+function init_jitsi(tileLayout) {
 	const domain = 'meet.jit.si';
 	const options = {
-		roomName: 'aboveVTT-' + gameid,
+		roomName: 'aboveVTT-' + window.gameId,
 		width: '100%',
 		height: '100%',
 		parentNode: document.querySelector('#jitsi_container'),
@@ -68,15 +52,82 @@ function init_jitsi() {
 		},
 	};
 	window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
-	jitsi_bottom()
-
-	//You must wait for the local participant to join the conference before attempting to execute any commands against the api 
-	window.jitsiAPI.addEventListener('videoConferenceJoined', jitsi_startup)
+	init_layout(tileLayout);
 }
 
-// This only gets used once, the very first time after you start video
-function jitsi_startup() {
-	window.jitsiAPI.removeListener('videoConferenceJoined', jitsi_startup);
+function init_layout(tileLayout) {
+	function once() {
+		window.jitsiAPI.removeListener('videoConferenceJoined', once);
+		window.jitsiAPI.executeCommand(`setTileView`, tileLayout);
+	}
+	window.jitsiAPI.addEventListener('videoConferenceJoined', once);
+}
+
+function init_jitsi_popout() {
+	window.jitsiAPI.dispose()
+	$("#meet").remove();
+	pop = window.open("", "", "height=1000,width=1000,menubar=no,status=no,toolbar=no");
+	pop.onbeforeunload = init_jitsi_box;
+	pop.document.body.style.margin = '0px';
+	pop.document.body.style.padding = '0px';
+	pop.document.body.id = 'jitsi_container';
+	pop.document.title = 'Above VTT';
+	pop.window.gameId = window.gameId;
+
+	load = document.createElement('script');
+	load.src = 'https://meet.jit.si/external_api.js';
+
+	load.onload = function () {
+		script = document.createElement('script');
+		script.innerHTML = [
+			init_jitsi.toString(),
+			init_layout.toString(),
+			"init_jitsi(true)",
+		].join(';\n');
+		pop.document.head.appendChild(script);
+	};
+	pop.document.head.appendChild(load);
+}
+
+function init_jitsi_box() {
+	jitsi_box = $(`
+		<div id="meet">
+		<button id="jitsi_switch" class="hasTooltip button-icon" data-name="Fullscreen (v)">
+			<span class="material-icons button-icon">
+				fullscreen
+			</span>
+		</button>
+		<button id="jitsi_close" class="hasTooltip button-icon" data-name="Disconnect">
+			<span class="material-icons button-icon">
+				cancel
+			</span>
+		</button>
+		<button id="jitsi_pop" class="hasTooltip button-icon" data-name="Pop out">
+			<span class="material-icons button-icon">
+				north_east
+			</span>
+		</button>
+		<div id="jitsi_container" style="width: 100%; height: 100%;"></div>
+		</div>`
+	);
+
+	jitsi_box.css("z-index", "100");
+	$("#site").append(jitsi_box);
+	$("#jitsi_switch").css("position", "absolute").css("top", 0).css("left", 0);
+	$("#jitsi_switch").click(jitsi_switch);
+	$("#jitsi_close").css("position", "absolute").css("top", 0).css("left", "64px");
+
+	$("#jitsi_close").click(
+		function () {
+			$("#meet").remove();
+			create_jitsi_button();
+		}
+	);
+
+	$("#jitsi_pop").css("position", "absolute").css("top", 0).css("left", "32px");
+	$("#jitsi_pop").click(init_jitsi_popout);
+
+	init_jitsi(false);
 	jitsi_bottom();
 }
 
@@ -85,7 +136,7 @@ function jitsi_modal() {
 	window.tile_desired = true;
 	window.jitsiAPI.executeCommand(`setTileView`, true);
 	$("span", $("#jitsi_switch")).text("fullscreen_exit");
-	$("#jitsi_switch").attr("data-name","Exit fullscreen (v)");
+	$("#jitsi_switch").attr("data-name", "Exit fullscreen (v)");
 }
 
 function jitsi_bottom() {
@@ -93,7 +144,7 @@ function jitsi_bottom() {
 	window.tile_desired = false;
 	window.jitsiAPI.executeCommand(`setTileView`, false);
 	$("span", $("#jitsi_switch")).text("fullscreen");
-	$("#jitsi_switch").attr("data-name","Fullscreen (v)");
+	$("#jitsi_switch").attr("data-name", "Fullscreen (v)");
 }
 
 function jitsi_switch() {
