@@ -251,6 +251,12 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/syncmeup") {
 				self.handleSyncMeUp(msg);
 			}
+			if(msg.eventType == "character-sheet/character-update/fulfilled"){
+				if(window.DM)
+					self.handleCharacterUpdate(msg);
+			}
+
+
 			if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
 				redraw_canvas();
@@ -759,6 +765,23 @@ class MessageBroker {
 			}
 		}
 	}
+
+	handleCharacterUpdate(msg){
+		let characterId=msg.data.characterId;
+
+		window.pcs.forEach(function(pc){
+			
+			if(!pc.sheet.endsWith(characterId)) // we only poll for the characterId that sent this message
+				return;
+
+			getPlayerData(pc.sheet, function (playerData) {
+				window.PLAYER_STATS[playerData.id] = playerData;
+				window.MB.sendTokenUpdateFromPlayerData(playerData);
+				update_pclist();
+        	});
+		});
+		
+	}
 	
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
@@ -821,7 +844,7 @@ class MessageBroker {
 		
 		this.sendDDBMB(eventType,data); 
 		// ONCE FIREFOX ACCEPT A > 0.0.58 VERSION COMMENT THE PRECEDING LINE AND UNCOMMENT THE NEXT BLOCK
-		
+
 		/*if(eventType.startsWith("custom")){
 			this.sendAboveMB(eventType,data);
 		}

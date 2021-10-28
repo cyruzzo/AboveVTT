@@ -750,7 +750,6 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 		// CHARACTER
 		let tokenid = $(event.target).attr('src');
 		var synchp = function() {
-			console.log('sinco HP');
 			var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-current");
 
 			if (hp_element.length > 0) {
@@ -835,6 +834,10 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 		};
 
 		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
+		
+		
+		// DISABLED SINCE WE NOW READ JSON DATA FOR THE CHARACTER. 
+		/* 
 		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
 			".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
 			if (window.WAITING_FOR_SYNCHP)
@@ -847,7 +850,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 				}, 1000);
 			}
 		});
-
+		*/ 
 		var mutation_target = $(event.target).contents().get(0);
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
@@ -1544,7 +1547,7 @@ function init_ui() {
 	init_journal($("#message-broker-client").attr("data-gameId"));
 	
 	if (window.DM) {
-		// use DDB character tools to update character info every 10 seconds
+		// use DDB character tools to update character info
 		loadScript("https://media.dndbeyond.com/character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min.js",
 			function () {
 				window.character_tools_loaded = true;
@@ -1555,9 +1558,11 @@ function init_ui() {
 				// Load DDB character modules and rules
 				retriveRules();
 				loadModules(initalModules);
-				window.character_update_task = setInterval(get_pclist_player_data, 10000);
+				//window.character_update_task = setInterval(get_pclist_player_data, 10000);
+				// we now just reads all the character sheet once at load time after a while
+				setTimeout(get_pclist_player_data,15000);
 			}
-		}, 100);
+		}, 1000);
 	}
 }
 
