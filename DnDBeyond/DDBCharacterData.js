@@ -1,5 +1,11 @@
-var rulesUrls = ["https://character-service.dndbeyond.com/character/v4/rule-data?v=3.11.3", "https://gamedata-service.dndbeyond.com/vehicles/v3/rule-data?v=3.11.3"];
-var charJSONurlBase = "https://character-service.dndbeyond.com/character/v4/character/";
+const rulesUrls = ["https://character-service.dndbeyond.com/character/v4/rule-data", "https://gamedata-service.dndbeyond.com/vehicles/v3/rule-data"];
+const charJSONurlBase = "https://character-service.dndbeyond.com/character/v4/character/";
+
+const gameCollectionUrl = { prefix: "https://character-service.dndbeyond.com/character/v4/game-data/", postfix: "/collection" }
+const optionalRules = {
+    "optionalOrigins": { category: "racial-trait", id: "racialTraitId" },
+    "optionalClassFeatures": { category: "class-feature", id: "classFeatureId" },
+};
 
 var rulesData = {};
 
@@ -116,6 +122,14 @@ function generateSingleCharState(charID) {
         data: {}
     }
     charState.state.appEnv.characterId = charID;
+
+    for (let ruleID in optionalRules) {
+        charState.state.serviceData.definitionPool[optionalRules[ruleID].category] = {
+            accessTypeLookup: {},
+            definitionLookup: {},
+        };
+    }
+
     return charState
 }
 
@@ -149,51 +163,80 @@ function updateSingleCharData(charState, callback) {
         var charId = charJSON.data.id;
         //console.debug("Processing Char: " + charId);
         charState.state.character = charJSON.data;
-        var charData = window.moduleExport.getCharData(charState.state);
-        charState.data = charData;
-        if (callback) {
-            callback(charState);
-        }
+        let promises = retriveCharacterRules(charState)
+        Promise.all(promises).then(() => {
+            var charData = window.moduleExport.getCharData(charState.state);
+            charState.data = charData;
+            if (callback) {
+                callback(charState);
+            }
+        });
     });
-    //getJSONfromURLs(charURLs).then((js) => {
-    //    window.jstest = js;
-    //    js.forEach(function (charJSON, index) {
-    //        if (charJSON.success == null || charJSON.lenth < 1 || charJSON.success != true) {
-    //            console.warn("charJSON " + index + " is null, empty or fail");
-    //        }
-    //        var charId = charJSON.data.id;
-    //        console.debug("Processing Char: " + charId);
-    //        charactersData[charId].state.character = charJSON.data;
-    //        var charData = window.getCharData(charactersData[charId].state);
-    //        charactersData[charId].data = charData;
-    //    });
-    //    console.log("Updated Char Data");
-    //    console.debug(charactersData);
-    //    updateCharInfo();
-    //}).catch((error) => {
-    //    console.log(error);
-    //});
 }
+
 
 function retriveRules() {
     return new Promise(function (resolve, reject) {
         console.log("Retriving Rules Data");
         getJSONfromURLs(rulesUrls).then((js) => {
-           //console.log("Rules Data Processing Start");
-            js.forEach(function(rule, index){
-                if (rule.success == null || rule.lenth < 1 || rule.success != true){
+            //console.log("Rules Data Processing Start");
+            js.forEach(function (rule, index) {
+                if (rule.success == null || rule.lenth < 1 || rule.success != true) {
                     console.warn("ruleset " + index + " is null, empty or fail");
                 }
             });
             rulesData = {
-                ruleset : js[0].data,
-                vehiclesRuleset : js[1].data
+                ruleset: js[0].data,
+                vehiclesRuleset: js[1].data
             }
             //console.debug("Rules Data:");
             //console.debug(rulesData);
             resolve();
         }).catch((error) => {
             reject(error);
+        });
+    });
+}
+
+function retriveCharacterRules(charState) {
+    let promises = [];
+    //console.log("Looking for optional rules for " + charactersData[charId].data.name);
+    for (let ruleID in optionalRules) {
+        if (ruleID in charState.state.character && charState.state.character[ruleID].length > 0) {
+            console.log("Optional ruleset for " + ruleID + " found.");
+            promises.push(retriveCharacterRule(charState, ruleID));
+        }
+    }
+    return promises;
+}
+
+function retriveCharacterRule(charState, ruleID) {
+    let url = gameCollectionUrl.prefix + optionalRules[ruleID].category + gameCollectionUrl.postfix;
+
+    let ruleIds = []
+    for (let item of charState.state.character[ruleID]) {
+        ruleIds.push(item[optionalRules[ruleID].id]);
+    }
+
+    let body = { "campaignId": null, "sharingSetting": 2, "ids": ruleIds };
+    return new Promise(function (resolve, reject) {
+        getJSONfromURLs([url], body).then((js) => {
+            js.forEach(function (charJSON, index) {
+                console.log("Retrived " + ruleID + " data, processing.");
+                console.log(charJSON);
+                if (charJSON.success && charJSON.data.definitionData != undefined) {
+                    for (let data of charJSON.data.definitionData) {
+                        charState.state.serviceData.definitionPool[optionalRules[ruleID].category].definitionLookup[data.id] = data;
+                        charState.state.serviceData.definitionPool[optionalRules[ruleID].category].accessTypeLookup[data.id] = 1;
+                    }
+                }
+                console.log(ruleID + " finished processing.");
+            });
+            resolve();
+
+        }).catch((error) => {
+            console.log(error);
+            reject();
         });
     });
 }
@@ -213,14 +256,14 @@ var initalModules = {
         // var react_dom = __webpack_require__(84);
         // var react_dom_default = __webpack_require__.n(react_dom);
         // var es = __webpack_require__(10);
-        //var character_rules_engine_web_adapter_es = __webpack_require__(136);
         //var dist = __webpack_require__(710);
         //var dist_default = __webpack_require__.n(dist);
         var Core = __webpack_require__(5);
         var character_rules_engine_lib_es = __webpack_require__(1);
+        var character_rules_engine_web_adapter_es = __webpack_require__(136);
 
-        var crk = "rb";
-        var ktl = "d";
+        var crk = "js";
+        var ktl = "U";
         var cmov = "ab";
 
         var key = "";
@@ -228,18 +271,18 @@ var initalModules = {
         for (key in character_rules_engine_lib_es) {
             if (typeof character_rules_engine_lib_es[key].getAbilities === 'function') {
                 crk = key;
-                //console.log("crk found: " + key);
+                console.log("crk found: " + key);
             }
             if (typeof character_rules_engine_lib_es[key].getSenseTypeModifierKey === 'function') {
                 ktl = key;
-                //console.log("ktl found: " + key);
+                console.log("ktl found: " + key);
             }
         }
 
         for (key in Core) {
             if (typeof Core[key].WALK !== 'undefined' && typeof Core[key].SWIM !== 'undefined' && typeof Core[key].CLIMB !== 'undefined' && typeof Core[key].FLY !== 'undefined' && typeof Core[key].BURROW !== 'undefined') {
                 cmov = key;
-                //console.log("cmov found: " + key);
+                console.log("cmov found: " + key);
             }
         }
 
@@ -258,7 +301,7 @@ var initalModules = {
                 Any return that uses the function character_rules_engine_lib_es or character_rules_engine_web_adapter_es can be added to this for more return values as this list is not comprehensive.
                 Anything with selectors_appEnv is unnessisary,as it just returns values in state.appEnv.
             */
-            //console.log("Module 2080: Processing State Info Into Data");
+            console.log("Module 2080: Processing State Info Into Data");
 
             var ruleData = charf1.getRuleData(state);
 
@@ -291,21 +334,12 @@ var initalModules = {
                     }
                 });
             }
-            //let baseHp= charf1.getBaseHp(state);
-            //let overrideHp= charf1.getOverrideHp(state);
-            //let bonusHp= charf1.getBonusHp(state);
-            //let tempHp= charf1.getTempHp(state);
-            //let removedHp= charf1.getRemovedHp(state);
 
             return {
                 name: charf1.getName(state),
                 avatarUrl: charf1.getAvatarUrl(state),
-                //baseHp: getBaseHp(state),
-                //overrideHp: getOverrideHp(state),
-                //bonusHp: getBonusHp(state),
-                //tempHp: getTempHp(state),
-                //removedHp: getRemovedHp(state),
-                hitPointInfo: charf1.getHitPointInfo(state), // unbelievably bloated
+                //spellCasterInfo: charf1.getSpellCasterInfo(state),
+                hitPointInfo: charf1.getHitPointInfo(state),
                 armorClass: charf1.getAcTotal(state),
                 conditions: charf1.getActiveConditions(state),
                 initiative: charf1.getProcessedInitiative(state),
@@ -315,8 +349,7 @@ var initalModules = {
                 vulnerabilities: charf1.getActiveGroupedVulnerabilities(state),
                 fails: charf1.getDeathSavesFailCount(state),
                 successes: charf1.getDeathSavesSuccessCount(state),
-                abilities: charf1.getAbilities(state), // not sure what the difference is between this and abilityLookup, seems to be one is a object, the other an array...
-                //abilityLookup: charf1.getAbilityLookup(state),
+                abilities: charf1.getAbilities(state),
                 passivePerception: charf1.getPassivePerception(state),
                 passiveInvestigation: charf1.getPassiveInvestigation(state),
                 passiveInsight: charf1.getPassiveInsight(state),
@@ -328,7 +361,10 @@ var initalModules = {
                     weaponItems: charf1.getEquippedWeaponItems(state),
                     gearItems: charf1.getEquippedGearItems(state)
                 },
-                //spellCasterInfo: charf1.getSpellCasterInfo(state),
+
+                //originRefRaceData: charf1.getDataOriginRefRaceData(state),
+                //optionalOrigins: charf1.getOptionalOrigins(state),
+
                 //choiceInfo: charf1.getChoiceInfo(state),
                 //classes: charf1.getClasses(state),
                 //feats: charf1.getBaseFeats(state),
@@ -336,6 +372,7 @@ var initalModules = {
                 //currentXp: charf1.getCurrentXp(state),
                 //preferences: charf1.getCharacterPreferences(state),
                 //totalClassLevel: charf1.getTotalClassLevel(state),
+                //spellCasterInfo: charf1.getSpellCasterInfo(state),
                 //startingClass: charf1.getStartingClass(state),
                 //background: charf1.getBackgroundInfo(state),
                 //notes: charf1.getCharacterNotes(state),
@@ -350,12 +387,14 @@ var initalModules = {
                 //attunableArmor: charf1.getAttunableArmor(state),
                 //attunableGear: charf1.getAttunableGear(state),
                 //attunableWeapons: charf1.getAttunableWeapons(state),
-               /* background: charf1.getBackgroundInfo(state),*/
+                //startingClass: charf1.getStartingClass(state),
+                //background: charf1.getBackgroundInfo(state),
                 //unequipped: {
                 //    armorItems: charf1.getUnequippedArmorItems(state),
                 //    weaponItems: charf1.getUnequippedWeaponItems(state),
                 //    gearItems: charf1.getUnequippedGearItems(state)
-                //},
+                //},// not sure what the difference is between this and abilityLookup, seems to be one is a object, the other an array...
+                //abilityLookup: charf1.getAbilityLookup(state),
                 //proficiencyBonus: charf1.getProficiencyBonus(state),
                 //preferences: charf1.getCharacterPreferences(state),
                 //senses: getSenseData(charf1.getSenseInfo(state)), //has to be further processed
@@ -399,9 +438,7 @@ var initalModules = {
                 //attacksPerActionInfo: charf1.getAttacksPerActionInfo(state),
                 //ritualSpells: charf1.getRitualSpells(state),
                 //spellCasterInfo: charf1.getSpellCasterInfo(state),
-                //originRefRaceData: charf1.getDataOriginRefRaceData(state),
                 //hasSpells: charf1.hasSpells(state),
-               // optionalOrigins: charf1.getOptionalOrigins(state),
             }
         }
         window.moduleExport = {
@@ -544,7 +581,6 @@ function loadModules(modules) {
         return Object.prototype.hasOwnProperty.call(object, property)
     };
     __webpack_require__.p = "";
-    //window.jsonpDDBCT.push(modules);
     var jsonpArray = window.jsonpDDBCT = window.jsonpDDBCT || [];
     var oldJsonpFunction = jsonpArray.push.bind(jsonpArray); //This allows additonal modules to be added and run by using window.jsonpDDBCT.push(modules) which calls webpackJsonpCallback(modules) above
     jsonpArray.push2 = webpackJsonpCallback;
@@ -560,20 +596,60 @@ function loadModules(modules) {
 //        Generic Functions
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-function getJSONfromURLs(urls) {
+function isSuccessfulJSON(js, name) {
+    let success = true;
+    if (js.length < 1 || js.success == undefined) {
+        console.warn("JSON " + name + " is malformed");
+        return false;
+    } else if (js.success == false) {
+        console.warn("JSON " + name + "'s retrieval was unsuccessful");
+        return false;
+    } else if (js.success != true) {
+        console.warn("JSON " + name + "'s retrieval was unsuccessful and is malformed");
+        return false;
+    } else if (js.data == undefined || js.data.length < 1) {
+        console.warn("JSON " + name + "'s data is malformed");
+        return false;
+    }
+    return true;
+}
+
+function getJSONfromURLs(urls, body, headers, cookies) {
     return new Promise(function (resolve, reject) {
-        //console.log("Fetching: ", urls);
-        var proms = urls.map(d => fetch(d));
+        console.log("Fetching: ", urls);
+        var proms = urls.map(d => fetchRequest(d, body, cookies));
         Promise.all(proms)
-        .then(ps => Promise.all(ps.map(p => p.json()))) // p.json() also returns a promise
-        .then(jsons => {
-            //console.log("JSON Data Retrived");
-            resolve(jsons);
-        })
-        .catch((error) => {
-            reject(error);
-        });
+            .then(ps => Promise.all(ps.map(p => p.json()))) // p.json() also returns a promise
+            .then(jsons => {
+                console.log("JSON Data Retrived");
+                resolve(jsons);
+            })
+            .catch((error) => {
+                reject(error);
+            });
     });
+}
+function fetchRequest(url, body, headers, cookies) {
+    let options = {};
+    let myHeaders = new Headers({
+        'X-Custom-Header': 'hello world',
+    });
+    //for (let id in authHeaders) {
+    //    myHeaders.append(id, authHeaders[id]);
+    //}
+    if (body != undefined && body != '') {
+        options.method = 'POST'
+        myHeaders.append('Accept', 'application/json');
+        myHeaders.append('Content-Type', 'application/json');
+        options.body = JSON.stringify(body);
+    }
+    if (cookies != undefined && cookies != '') {
+        options.cookies = cookies;
+    }
+    options.credentials = 'include';
+    options.headers = myHeaders;
+    console.log(options);
+    return fetch(url, options);
 }
 
 function getSign(input){
@@ -621,7 +697,20 @@ function distanceUnit(input){
     return unit;
 }
 
+function parseIntSafe(input) {
+    let number = parseInt(input);
+    if (isNaN(number)) {
+        number = 0;
+    }
+    return number;
+}
+
+function parseBool(x) {
+    return x ? true : false;
+}
+
 function areArraysEqualSets(a1, a2) {
+    // canbax, https://stackoverflow.com/a/55614659
     const superSet = {};
     for (const i of a1) {
         const e = i + typeof i;
