@@ -1545,7 +1545,7 @@ function init_ui() {
 	
 	if (window.DM) {
 		// use DDB character tools to update character info every 10 seconds
-		loadScript("https://media.dndbeyond.com/character-tools/vendors~characterTools.bundle.f8b53c07d1796f1d29cb.min.js",
+		loadScript("https://media.dndbeyond.com/character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min.js",
 			function () {
 				window.character_tools_loaded = true;
 			});
