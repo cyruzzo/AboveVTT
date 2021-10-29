@@ -1,4 +1,3 @@
-
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
 
 const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
@@ -46,6 +45,18 @@ class Token {
 		}
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
+		}
+	}
+
+
+	stopAnimation(){
+		var selector = "div[data-id='" + this.options.id + "']";
+		var tok = $("#tokens").find(selector);
+
+		if(tok.is(":visible")){
+			tok.stop(true,true);
+			this.doing_highlight=false;
+
 		}
 	}
 
@@ -212,7 +223,7 @@ class Token {
 		var old = $("#tokens").find(selector);
 
 		if(old.is(':animated')){
-			old.stop(true,true); // stop the animation and jump to the end.
+			this.stopAnimation(); // stop the animation and jump to the end.
 		}
 
 		this.options.left = old.css("left");
@@ -513,7 +524,7 @@ class Token {
 				
 				remove_selected_token_bounding_box();
 				if(old.is(':animated')){
-					old.stop(true,true);
+					this.stopAnimation();
 				}
 				
 				old.animate(
@@ -888,7 +899,7 @@ class Token {
 					click.x = event.clientX;
 					click.y = event.clientY;
 					if(tok.is(":animated")){
-						tok.stop(true,true);	
+						self.stopAnimation();
 					}
 
 					console.log("Click x: " + click.x + " y: " + click.y);
@@ -900,7 +911,7 @@ class Token {
 							if (window.TOKEN_OBJECTS[id].selected) {
 								$("[data-id='"+id+"']").addClass("pause_click");
 								if($("[data-id='"+id+"']").is(":animated")){
-									$("[data-id='"+id+"']").stop(true,true);
+									window.TOKEN_OBJECTS[id].stopAnimation();
 								}
 								if (id != self.options.id) {
 									var curr = window.TOKEN_OBJECTS[id];
