@@ -166,6 +166,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}
 
 			self.sync();
+
+			get_pclist_player_data(); // UPDATE PLAYER TOKENS DATA
+
 			if (callback != null)
 				callback();
 		});
