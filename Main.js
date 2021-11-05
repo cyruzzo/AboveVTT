@@ -1941,6 +1941,10 @@ function init_help_menu() {
 							<dd>Draw tool</dd>
 						<dl>
 						<dl>
+							<dt>A</dt>
+							<dd>Area of effect menu</dd>
+						<dl>
+						<dl>
 							<dt>C</dt>
 							<dd>Combat tracker</dd>
 						<dl>
