@@ -245,6 +245,14 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
+			if(msg.eventType == "custom/myVTT/createtoken"){
+				if(window.DM){
+					let fake=$("<div/>");
+					fake.attr(msg.data);
+					token_button({target:fake.get(0)});
+					fake.remove();
+				}
+			}
 			if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
 			}

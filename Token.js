@@ -614,7 +614,7 @@ class Token {
 				}, { duration: 1000, queue: false });
 				
 				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
-				old.css("z-index", 30+zindexdiff);
+				old.css("z-index", 32+zindexdiff);
 
 				var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -706,7 +706,7 @@ class Token {
 			var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 			console.log("Diff: "+zindexdiff);
 			
-			tok.css("z-index", 30+zindexdiff);
+			tok.css("z-index", 32+zindexdiff);
 			tok.width(this.options.size);
 			tok.addClass('token');
 
@@ -1088,7 +1088,10 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 	centerX = Math.round(centerX * (1.0 / window.ZOOM));
 	centerY = Math.round(centerY * (1.0 / window.ZOOM));
 
-
+	if( $(e.target).attr("data-top"))
+		centerY=$(e.target).attr("data-top");
+	if( $(e.target).attr("data-left"))
+		centerX=$(e.target).attr("data-left");
 	id = $(e.target).attr('data-set-token-id');
 	if (typeof (id) === "undefined") {
 		id = uuid();

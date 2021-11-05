@@ -24,7 +24,7 @@ function setup_aoe_button() {
     aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
 
     aoe_menu.append("<div style='font-weight:bold'>Feet</div>");
-    aoe_menu.append("<div><input tabindex='2' id='aoe_size' style='width:75px;margin:0px;text-align:center' maxlength='10'></div>");
+    aoe_menu.append("<div><input tabindex='2' id='aoe_size' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10'></div>");
 
     aoe_menu.append("<div style='font-weight:bold'>Color</div>");
     aoe_menu.append("<div><button tabindex='3' id='aoe_default' class='drawbutton menu-option aoe-option aoecolor remembered-selection' style='width:75px'>Default</button></div>");
@@ -44,10 +44,10 @@ function setup_aoe_button() {
 
     $("body").append(aoe_menu);
 
-    if (window.DM) {
-        buttons.append(aoe_button);
-        aoe_menu.css("left", aoe_button.position().left);
-    }
+    
+    buttons.append(aoe_button);
+    aoe_menu.css("left", aoe_button.position().left);
+    
 
     $("#aoe_size").keydown(function(e) {
         if (e.key === "Escape") {
@@ -71,7 +71,7 @@ function setup_aoe_button() {
             size = size * 2;
         }
 
-        const atts = {
+        let atts = {
             'data-disablestat': true,
             'data-hidestat': true,
             'data-disableborder': true,
@@ -79,9 +79,24 @@ function setup_aoe_button() {
             'data-img': AOE_TEMPLATES[`${color}-${shape}`],
             'data-size': size,
         };
-        $(this).attr(atts);
-        token_button(e);
-        $(this).removeAttr(Object.keys(atts).join(' '));
-        $('#select-button').click();
+        
+        if(window.DM){
+            $(this).attr(atts);
+            token_button(e);
+            $(this).removeAttr(Object.keys(atts).join(' '));
+            $('#select-button').click();
+        }
+        else{
+            let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
+	        let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
+	        centerX = Math.round(centerX * (1.0 / window.ZOOM));
+	        centerY = Math.round(centerY * (1.0 / window.ZOOM));
+            atts['data-left']=centerX;
+            atts['data-top']=centerY;
+            window.MB.sendMessage("custom/myVTT/createtoken",atts);
+            $('#aoe_button').click();
+        }
+
+        
     });
 }

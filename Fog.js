@@ -1180,8 +1180,10 @@ function setup_draw_buttons() {
 
 		if ($(clicked).hasClass('menu-button')) {
 			if($(clicked).is("#aoe_button") && $(clicked).hasClass('button-selected')) {
-				$('#select-button').click();
-				return
+				if(window.DM){
+					$('#select-button').click();
+					return;
+				}
 			}
 			$(clicked).toggleClass('button-selected');
 		}
@@ -1207,6 +1209,7 @@ function setup_draw_buttons() {
 			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
 				clicked = $(".aoe-option.remembered-selection");
 				$("#aoe_size").focus();
+				$("#fog_overlay").css("z-index", "20");
 			}
 		}
 
@@ -1245,11 +1248,14 @@ function setup_draw_buttons() {
 			}
 
 			var target = $("#fog_overlay");
-			if (!e.currentTarget.id || e.currentTarget.id !== "select-button") {
+			
+			if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
+				console.log("setto a 50 per via di " + e.currentTarget.id);
 				target.css("z-index", "50");
 			} else {
 				target.css("z-index", "31");
 			}
+			
 
 			if ($(e.target).attr('id') == "measure-button") {
 				target = $("#VTT");
