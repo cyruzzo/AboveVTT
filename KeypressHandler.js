@@ -163,7 +163,11 @@ Mousetrap.bind('up', function () {
         return false;
     }
     if ($("#aoe_menu").hasClass('visible')) {
-        $("#aoe_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
+        if ($(".aoeshape").is(":focus")) {
+            $("#aoe_menu .aoeshape:focus").parent().prevAll('div').children('.aoeshape:first').focus();
+        } else {
+            $("#aoe_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click();
+        }
         return false;
     }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
@@ -186,7 +190,11 @@ Mousetrap.bind('down', function () {
         return false;
     }
     if ($("#aoe_menu").hasClass('visible')) {
-        $("#aoe_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
+        if ($(".aoeshape").is(":focus")) {
+            $("#aoe_menu .aoeshape:focus").parent().nextAll('div').children('.aoeshape:first').focus();
+        } else {
+            $("#aoe_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click();
+        }
         return false;
     }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
@@ -194,6 +202,28 @@ Mousetrap.bind('down', function () {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
             token.moveDown();
+        }
+        return false;
+    }
+});
+
+Mousetrap.bind('tab', function () {
+    if ($("#aoe_menu").hasClass('visible')) {
+        if ($(".aoeshape").is(":focus")) {
+            $("#aoe_size").focus();
+        } else {
+            $(".aoeshape").first().focus();
+        }
+        return false;
+    }
+});
+
+Mousetrap.bind('shift+tab', function () {
+    if ($("#aoe_menu").hasClass('visible')) {
+        if ($(".aoeshape").is(":focus")) {
+            $(".aoeshape").blur();
+        } else {
+            $("#aoe_size").focus();
         }
         return false;
     }

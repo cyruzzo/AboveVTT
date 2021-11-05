@@ -83,16 +83,19 @@ body > button:hover,
     margin: -3px -5px;
 }
 
+.aoeshape:focus,
 .drawbutton.button-enabled {
     background-image: -webkit-linear-gradient(270deg, #f7a6a6, #ff7777);
     box-shadow: 0 0 12px 0px #f10000;
     border: #ff7777;
 }
 
+.aoeshape:focus:hover,
 .drawbutton.button-enabled:hover {
     background-image: -webkit-linear-gradient(270deg, #e29393, #f37a7a);
 }
 
+.top_menu .aoeshape:focus,
 .top_menu .drawbutton.button-enabled {
     box-shadow: none;
 }
