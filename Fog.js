@@ -24,7 +24,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 	}
 	if (fill) {
 	  ctx.fill();
-	}        
+	}
 }
 
 /**
@@ -41,9 +41,9 @@ class WaypointManagerClass {
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		this.timeout = undefined;
 	}
-	
+
 	// Set canvas and further set context
-	
+
 	setCanvas(canvas) {
 
 		this.canvas = canvas;
@@ -144,7 +144,7 @@ class WaypointManagerClass {
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
 	draw(midlineLabels) {
-	
+
 		var cumulativeDistance = 0
 		for (var i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
@@ -189,7 +189,7 @@ class WaypointManagerClass {
 		var text = "" + (distance + cumulativeDistance) + unitSymbol;
 		var textMetrics = this.ctx.measureText(text);
 
-		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or 
+		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or
 		// token dragging (midlineLabels == true)
 		var contrastRect = { x: 0, y: 0, width: 0, height: 0 }
 		var textRect = { x: 0, y: 0, width: 0, height: 0 }
@@ -272,7 +272,7 @@ class WaypointManagerClass {
 };
 
 
-function check_token_visibility() {	
+function check_token_visibility() {
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
 	var canvas = document.getElementById("fog_overlay");
@@ -292,7 +292,7 @@ function check_token_visibility() {
 			$(selector).show();
 			//console.log('SHOW '+id);
 		}
-	}	
+	}
 }
 
 function circle2(a, b) {
@@ -336,7 +336,7 @@ function circle_intersection(x0, y0, r0, x1, y1, r1) {
 
 	/* 'point 2' is the point where the line through the circle
 	 * intersection points crosses the line between the circle
-	 * centers.  
+	 * centers.
 	 */
 
 	/* Determine the distance from point 0 to point 2. */
@@ -527,7 +527,7 @@ function redraw_canvas() {
 			ctx.clearRect(d[0], d[1], d[2], d[3]);
 			continue;
 		}
-		if (d[5] == 0) { //REVEAL 
+		if (d[5] == 0) { //REVEAL
 			if (d[4] == 0) { // REVEAL SQUARE
 				ctx.clearRect(d[0], d[1], d[2], d[3]);
 			}
@@ -571,7 +571,7 @@ function redraw_drawings() {
 
 	for (var i = 0; i < window.DRAWINGS.length; i++) {
 		data = window.DRAWINGS[i];
-		
+
 		if (data[0] == "eraser") {
 			ctx.clearRect(data[3], data[4], data[5], data[6]);
 		}
@@ -664,7 +664,7 @@ function drawing_mousedown(e) {
 	window.DRAWCOLOR = $(".colorselected").css('background-color');
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
-	
+
 	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "50");
 		if (e.which == 1) {
@@ -680,10 +680,10 @@ function drawing_mousedown(e) {
 	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
 		deselect_all_tokens();
 	}
-	
+
 
 	if (window.DRAWSHAPE === "polygon") {
-		
+
 		redraw_canvas();
 		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
@@ -746,23 +746,23 @@ function drawing_mousemove(e) {
 
 	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
-	
+
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
 	var drawStroke = getDrawingStroke();
 	var fill = getDrawingFill();
 	var style = getDrawingStyle();
 	var lineWidth = getDrawingLineWidth();
-	
+
 	if (window.MOUSEDOWN) {
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
-		
+
 		if(window.DRAWSHAPE !== "brush")
 		{
 			redraw_canvas();
 		}
-		
+
 		if (window.DRAWSHAPE == "rect") {
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
 		}
@@ -820,20 +820,20 @@ function drawing_mousemove(e) {
 			if(!window.BRUSHWAIT)
 			{
 				window.BRUSHPOINTS.push({x:mousex, y:mousey});
-				
+
 				drawBrushstroke(ctx, window.BRUSHPOINTS,style,lineWidth);
-				
+
 				window.BRUSHWAIT = true;
 				setTimeout(function() {
 					window.BRUSHWAIT = false;
 				}, 75);
 			}
 		}
-	} 
+	}
 	else {
 		if (window.DRAWSHAPE === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
-			
+
 			redraw_canvas();
 
 			drawPolygon( ctx,
@@ -869,13 +869,13 @@ function drawing_mouseup(e) {
 		//console.log("Measure right click");
 		return;
 	}
-	
+
 	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
 	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.which !== 1)
 	{
 		return;
 	}
-	
+
 	// ignore middle-mouse clicks
 	if(e.which == 2)
 	{
@@ -1120,7 +1120,7 @@ function drawing_contextmenu(e) {
 	window.DRAWCOLOR = $(".colorselected").css('background-color');
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
-	
+
 	if (window.DRAWSHAPE === "polygon") {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
@@ -1128,7 +1128,7 @@ function drawing_contextmenu(e) {
 		{
 			var canvas = document.getElementById("fog_overlay");
 			var ctx = canvas.getContext("2d");
-			
+
 			var drawStroke = getDrawingStroke();
 			var fill = getDrawingFill();
 			var style = getDrawingStyle();
@@ -1179,6 +1179,10 @@ function setup_draw_buttons() {
 		}
 
 		if ($(clicked).hasClass('menu-button')) {
+			if($(clicked).is("#template_button") && $(clicked).hasClass('button-selected')) {
+				$('#select-button').click();
+				return
+			}
 			$(clicked).toggleClass('button-selected');
 		}
 
@@ -1197,7 +1201,12 @@ function setup_draw_buttons() {
 			}
 		}
 
-
+		if ($("#template_button").hasClass('button-selected')) {
+			$("#template_menu").addClass('visible');
+			if ($(clicked).is("#template_button") && !($(clicked).hasClass('button-enabled'))) {
+				clicked = $(".template-option.remembered-selection");
+			}
+		}
 
 		if (!($(clicked).hasClass('menu-button'))) {
 			if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
@@ -1226,6 +1235,11 @@ function setup_draw_buttons() {
 				$(".draw-option").removeClass('remembered-selection');
 				$(clicked).addClass('remembered-selection');
 				$("#draw_button").addClass('button-enabled');
+			}
+			if ($(clicked).hasClass('template-option')) {
+				$(".template-option").removeClass('remembered-selection');
+				$(clicked).addClass('remembered-selection');
+				$("#template_button").addClass('button-enabled');
 			}
 
 			var target = $("#fog_overlay");
@@ -1406,7 +1420,7 @@ function drawBrushstroke(ctx, points, style, lineWidth=6)
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
-	
+
 	var p1 = points[0];
 	var p2 = points[1];
 
@@ -1453,7 +1467,7 @@ function drawPolygon (
 	if (mouseX !== null && mouseY !== null) {
 		ctx.lineTo(mouseX, mouseY);
 	}
-	
+
 	ctx.closePath();
 	if(drawStroke)
 	{
@@ -1463,7 +1477,7 @@ function drawPolygon (
 	{
 		ctx.lineWidth = 1;
 	}
-	
+
 	if ((drawStroke) || (points.length < 2)) {
 		ctx.strokeStyle = style;
 		ctx.stroke();
@@ -1524,7 +1538,7 @@ function isPointWithinDistance(points1, points2) {
 }
 
 function clearPolygon (ctx, points) {
-	
+
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
 	 * need to set it to opaque color.

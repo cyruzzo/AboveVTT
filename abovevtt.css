@@ -11,6 +11,7 @@ body > button,
 #mega_importer button,
 #prewiz td button,
 #wizard_popup button,
+#template_size,
 .top_menu button,
 .monster_frame > button,
 .stp-btn,
@@ -516,7 +517,7 @@ div#scene_properties form > div {
 #patreons {
 	padding-top:20px;
     font-size: 8px;
- 
+
    -webkit-column-count: 8;
       -moz-column-count: 8;
            column-count: 8;
@@ -667,17 +668,17 @@ div#scene_properties form > div {
     height: 60px;
     margin: 10px 0;
 }
-  
+
 .ability_name {
     color: darkgrey;
     font-weight: bold;
 }
-  
+
 .ability_modifier {
     font-size: 18px;
     margin-top: -2px;
 }
-  
+
 .ability_score {
     position: absolute;
     bottom: -10px;
@@ -806,7 +807,7 @@ div#scene_properties form > div {
     margin: 0 !important;
     left: -2px;
     z-index: 20;
-    /* width: 340px; moved to init_ui */ 
+    /* width: 340px; moved to init_ui */
 }
 
 /*.sidebar__controls.player {
@@ -1141,13 +1142,13 @@ body {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
   }
-  
 
-  
+
+
   a {
     text-decoration: none;
   }
-  
+
   .help-tabs {
       background-color: #f1f1f1;
       flex: 0 0 auto;
@@ -1157,20 +1158,20 @@ body {
     margin: 0;
     padding: 0;
   }
-  
+
   .help-tabs li {
     display: block;
     border-width: 1px 0px 1px 1px;
     margin: -1px;
     margin-bottom: 0px;
   }
-  
+
   .help-tabs a {
     display: block;
     padding: 10px 15px;
     color: rgb(0, 0, 0);
   }
-  
+
   .help-tabs li:hover {
     background-color: #DDD;
   }
@@ -1179,11 +1180,11 @@ body {
     background-color: #CCC;
     color: rgb(0, 0, 0);
   }
-  
+
   .help-tabs li.active a {
     color: inherit;
   }
-  
+
   .tabs-content {
     display: block;
     top: 0;
@@ -1200,11 +1201,11 @@ body {
     margin-left: -85px;
     margin-top: -85px;
   }
-  
+
   .tabs-content IMG {
     margin-right: 10px;
   }
-  
+
   .tabs-content div:not(:first-child) {
     display: none;
   }
