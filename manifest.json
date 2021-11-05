@@ -17,7 +17,7 @@
 	"SoundPad.js",
 	"MonsterDice.js",
 	"Fog.js",
-	"SpellTemplates.js",
+	"AOETemplates.js",
 	"Main.js",
 	"Jitsi.js",
 	"MessageBroker.js",

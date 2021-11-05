@@ -1706,7 +1706,7 @@ function init_buttons() {
 
 	}
 
-	setup_template_button();
+	setup_aoe_button();
 	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable'>HELP</button>");
 
 	buttons.css("position", "fixed");

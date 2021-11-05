@@ -1179,7 +1179,7 @@ function setup_draw_buttons() {
 		}
 
 		if ($(clicked).hasClass('menu-button')) {
-			if($(clicked).is("#template_button") && $(clicked).hasClass('button-selected')) {
+			if($(clicked).is("#aoe_button") && $(clicked).hasClass('button-selected')) {
 				$('#select-button').click();
 				return
 			}
@@ -1201,10 +1201,10 @@ function setup_draw_buttons() {
 			}
 		}
 
-		if ($("#template_button").hasClass('button-selected')) {
-			$("#template_menu").addClass('visible');
-			if ($(clicked).is("#template_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".template-option.remembered-selection");
+		if ($("#aoe_button").hasClass('button-selected')) {
+			$("#aoe_menu").addClass('visible');
+			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
+				clicked = $(".aoe-option.remembered-selection");
 			}
 		}
 
@@ -1236,10 +1236,10 @@ function setup_draw_buttons() {
 				$(clicked).addClass('remembered-selection');
 				$("#draw_button").addClass('button-enabled');
 			}
-			if ($(clicked).hasClass('template-option')) {
-				$(".template-option").removeClass('remembered-selection');
+			if ($(clicked).hasClass('aoe-option')) {
+				$(".aoe-option").removeClass('remembered-selection');
 				$(clicked).addClass('remembered-selection');
-				$("#template_button").addClass('button-enabled');
+				$("#aoe_button").addClass('button-enabled');
 			}
 
 			var target = $("#fog_overlay");
