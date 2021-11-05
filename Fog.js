@@ -1187,6 +1187,7 @@ function setup_draw_buttons() {
 		}
 
 		$(".top_menu").removeClass('visible');
+		$("#aoe_size").blur();
 		if ($("#fog_button").hasClass('button-selected')) {
 			$("#fog_menu").addClass('visible');
 			if ($(clicked).is("#fog_button") && !($(clicked).hasClass('button-enabled'))) {
@@ -1205,6 +1206,7 @@ function setup_draw_buttons() {
 			$("#aoe_menu").addClass('visible');
 			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
 				clicked = $(".aoe-option.remembered-selection");
+				$("#aoe_size").focus();
 			}
 		}
 

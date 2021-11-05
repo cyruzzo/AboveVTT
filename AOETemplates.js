@@ -49,19 +49,25 @@ function setup_aoe_button() {
         aoe_menu.css("left", aoe_button.position().left);
     }
 
+    $("#aoe_size").keydown(function(e) {
+        if (e.key === "Escape") {
+            $('#select-button').click();
+        }
+    });
+
     $(".aoeshape").click(function (e) {
         const color = $(".aoe-option.remembered-selection").attr('id').split('_')[1];
         const shape = this.id.split("_")[1];
-        let size = Math.round(window.CURRENT_SCENE_DATA.hpps * (document.getElementById("aoe_size").value / window.CURRENT_SCENE_DATA.fpsq))
+        let size = Math.round(window.CURRENT_SCENE_DATA.hpps * (document.getElementById("aoe_size").value / window.CURRENT_SCENE_DATA.fpsq));
 
         // don't create a token if the size is 0
         if (size == 0) {
-            return
+            return;
         }
 
         // circles are always by radius
         if (shape == 'circle') {
-            size = size * 2
+            size = size * 2;
         }
 
         const atts = {

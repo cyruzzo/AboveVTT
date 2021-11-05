@@ -30,6 +30,12 @@ Mousetrap.bind('d', function () {       //draw menu
     }
 });
 
+Mousetrap.bind('a', function () {       //aoe menu
+    if (window.DM){
+        $('#aoe_button').click()
+        return false;
+    }
+});
 
 Mousetrap.bind('f', function () {       //fog menu
     if (window.DM){
@@ -72,7 +78,7 @@ Mousetrap.bind('0', function () {
 
 Mousetrap.bind('space', function (e) {     //collapse/show character sheet
 	e.preventDefault();
-    if(!window.DM) {    
+    if(!window.DM) {
         $('#sheet_button').click()
     }
 });
@@ -156,6 +162,10 @@ Mousetrap.bind('up', function () {
         $("#draw_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
         return false;
     }
+    if ($("#aoe_menu").hasClass('visible')) {
+        $("#aoe_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
+        return false;
+    }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -173,6 +183,10 @@ Mousetrap.bind('down', function () {
     }
     if ($("#draw_menu").hasClass('visible')) {
         $("#draw_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
+        return false;
+    }
+    if ($("#aoe_menu").hasClass('visible')) {
+        $("#aoe_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
         return false;
     }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
