@@ -54,6 +54,11 @@ function setup_template_button() {
         const type = this.id.split("_")[1];
         let size = Math.round(window.CURRENT_SCENE_DATA.hpps * (document.getElementById("template_size").value / window.CURRENT_SCENE_DATA.fpsq))
 
+        // don't create a token if the size is 0
+        if (size == 0) {
+            return
+        }
+
         // circles are always by radius
         if (type == 'circle'){
             size = size*2
