@@ -50,9 +50,14 @@ function setup_template_button() {
 	}
 
     $(".templatetype").click(function(e){
-        let color = $(".template-option.remembered-selection").attr('id').split('_')[1];
-        let type = this.id.split("_")[1];
+        const color = $(".template-option.remembered-selection").attr('id').split('_')[1];
+        const type = this.id.split("_")[1];
         let size = Math.round(window.CURRENT_SCENE_DATA.hpps * (document.getElementById("template_size").value / window.CURRENT_SCENE_DATA.fpsq))
+
+        // circles are always by radius
+        if (type == 'circle'){
+            size = size*2
+        }
 
         const atts = {
             'data-disablestat': true,
