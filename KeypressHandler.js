@@ -30,6 +30,12 @@ Mousetrap.bind('d', function () {       //draw menu
     }
 });
 
+Mousetrap.bind('a', function () {       //aoe menu
+    if (window.DM){
+        $('#aoe_button').click()
+        return false;
+    }
+});
 
 Mousetrap.bind('f', function () {       //fog menu
     if (window.DM){
@@ -72,7 +78,7 @@ Mousetrap.bind('0', function () {
 
 Mousetrap.bind('space', function (e) {     //collapse/show character sheet
 	e.preventDefault();
-    if(!window.DM) {    
+    if(!window.DM) {
         $('#sheet_button').click()
     }
 });
@@ -156,6 +162,14 @@ Mousetrap.bind('up', function () {
         $("#draw_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
         return false;
     }
+    if ($("#aoe_menu").hasClass('visible')) {
+        if ($(".aoeshape").is(":focus")) {
+            $("#aoe_menu .aoeshape:focus").parent().prevAll('div').children('.aoeshape:first').focus();
+        } else {
+            $("#aoe_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click();
+        }
+        return false;
+    }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -175,11 +189,41 @@ Mousetrap.bind('down', function () {
         $("#draw_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
         return false;
     }
+    if ($("#aoe_menu").hasClass('visible')) {
+        if ($(".aoeshape").is(":focus")) {
+            $("#aoe_menu .aoeshape:focus").parent().nextAll('div').children('.aoeshape:first').focus();
+        } else {
+            $("#aoe_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click();
+        }
+        return false;
+    }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
             token.moveDown();
+        }
+        return false;
+    }
+});
+
+Mousetrap.bind('tab', function () {
+    if ($("#aoe_menu").hasClass('visible')) {
+        if ($(".aoeshape").is(":focus")) {
+            $("#aoe_size").focus();
+        } else {
+            $(".aoeshape").first().focus();
+        }
+        return false;
+    }
+});
+
+Mousetrap.bind('shift+tab', function () {
+    if ($("#aoe_menu").hasClass('visible')) {
+        if ($(".aoeshape").is(":focus")) {
+            $(".aoeshape").blur();
+        } else {
+            $("#aoe_size").focus();
         }
         return false;
     }
