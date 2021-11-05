@@ -32,7 +32,7 @@ class StatHandler {
 
 	rollInit(monsterid, callback) {
 		this.getStat(monsterid, function(stat) {
-			var modifier = Math.round((stat.data.stats[1].value - 10) / 2.0);
+			var modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
 			var expression = "1d20+" + modifier;
 			var roll = new rpgDiceRoller.DiceRoll(expression);
 			console.log(expression + "->" + roll.total);
