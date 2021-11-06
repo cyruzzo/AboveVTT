@@ -868,6 +868,13 @@ class MessageBroker {
 		if(window.CURRENT_SCENE_DATA)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
 		
+		const jsmessage=JSON.stringify(message);
+		if(jsmessage.length > (128000)){
+			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
+			return;
+		}
+
+
 		if (this.abovews.readyState == this.ws.OPEN) {
 			this.abovews.send(JSON.stringify(message));
 		}
