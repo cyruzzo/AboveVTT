@@ -160,14 +160,20 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
 			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
 
+			let found_data_tokens=false;
 			for (const property in scene.tokens) {
-				console.log("Carico TOKEN " + $(scene.tokens[property]));
 				self.create_update_token(scene.tokens[property]);
+				if(scene.tokens[property].imgsrc.startsWith("data:"))
+					found_data_tokens=true;
 			}
 
 			self.sync();
 
 			get_pclist_player_data(); // UPDATE PLAYER TOKENS DATA
+
+			if(found_data_tokens){
+				alert('WARNING. This scene contains token with data: urls as images. Please only use http:// or https:// urls for images');
+			}
 
 			if (callback != null)
 				callback();

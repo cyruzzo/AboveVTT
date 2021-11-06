@@ -1081,6 +1081,9 @@ function return_false() {
 function token_button(e, tokenIndex = null, tokenTotal = null) {
 	console.log($(e.target).outerHTML());
 	let imgsrc = parse_img($(e.target).attr("data-img"));
+	if (imgsrc.startsWith("data:")){
+		alert("WARNING! Support for token urls that starts with data: will be removed soon (as they can cause problems). Please find an image with url that begins with http:// or https://");
+	}
 	let id;
 	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
 	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;

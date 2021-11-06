@@ -1911,6 +1911,11 @@ function init_tokenmenu(){
 		var tokenname=tokenform.find("[name='data-name']").val();
 		var newtoken={};
 		newtoken['data-img']=tokenform.find("[name='data-img']").val();
+		if(newtoken['data-img'].startsWith("data:")){
+			alert("WARNING. You're tring to add an url that begins with data: . Please only add urls that starts with http: or https");
+			return;
+		}
+
 		newtoken['data-square']=tokenform.find("[name='data-square']").val();
 		newtoken['data-name']=tokenform.find("[name='data-name']").val();
 		newtoken['data-disablestat']=true;
