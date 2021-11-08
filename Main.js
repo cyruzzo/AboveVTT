@@ -1265,8 +1265,8 @@ function init_ui() {
 
 	});
 
-	s = $("<script src='https://meet.jit.si/external_api.js'></script>");
-	$("#site").append(s);
+	//s = $("<script src='https://meet.jit.si/external_api.js'></script>");
+	//$("#site").append(s);
 
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);

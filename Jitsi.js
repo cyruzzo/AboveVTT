@@ -75,7 +75,7 @@ function init_jitsi_popout() {
 	pop.window.gameId = window.gameId;
 
 	load = document.createElement('script');
-	load.src = 'https://meet.jit.si/external_api.js';
+	load.src = window.EXTENSION_PATH+ 'jitsi_external_api.js'; // NOW WE LOAD ID FROM THE EXTENSION, NOT FROM http://
 
 	load.onload = function () {
 		script = document.createElement('script');

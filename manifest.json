@@ -20,6 +20,7 @@
 	"AOETemplates.js",
 	"Main.js",
 	"Jitsi.js",
+	"jitsi_external_api.js",
 	"MessageBroker.js",
 	"ScenesHandler.js",
 	"MonsterPanel.js",

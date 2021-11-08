@@ -27,3 +27,7 @@ tar zxvf 1.6.5.tar.gz
 sha1sum mousetrap-1.6.5/mousetrap.min.js
 ca18da6cb4e82fcb57e846928ef97b48ae4ccc39  mousetrap-1.6.5/mousetrap.min.js
 
+# jitsi_external_api.js (https://meet.jit.si/external_api.js)
+wget https://meet.jit.si/external_api.js
+sha1sum external_api.js
+
