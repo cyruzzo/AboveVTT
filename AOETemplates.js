@@ -1,22 +1,22 @@
 
 // Lines are not supported yet
 const AOE_TEMPLATES = {
-    'dark-circle': 'https://drive.google.com/file/d/1XmBXPCjN-FIqujF_1S9kBSbtNAL3Rpap/view?usp=sharing',
-    'dark-cone': 'https://drive.google.com/file/d/164YeP9QAXkjc6IdAAviBYCu_n2mOPu4k/view?usp=sharing',
+    'dark-circle': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/SpellToken_DarkCircle.png',
+    'dark-cone': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_DarkCone.png',
     //'dark-line': 'https://drive.google.com/file/d/16G3T1cdyrOkn3TYrol855yXtR122VkTe/view?usp=sharing',
-    'dark-square': 'https://drive.google.com/file/d/1vYvUx6Lp6IkYLirYK2Z3TeGQRG-T8oAF/view?usp=sharing',
-    'default-circle': 'https://drive.google.com/file/d/1x9WpNCQO95mJSHFGXC8K29B4x_qFmdbn/view?usp=sharing',
-    'default-cone': 'https://drive.google.com/file/d/1kp9rS0QNwX9KE8PxuunwjV_rKwfcYmhN/view?usp=sharing',
+    'dark-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_DarkSquare.png',
+    'default-circle': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_DefaultCircle.png',
+    'default-cone': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/SpellToken_DefaultCone.png',
     //'default-line': 'https://drive.google.com/file/d/1GfstCLPWsIpZ8wz8O1MVv0658XlM0i2p/view?usp=sharing',
-    'default-square': 'https://drive.google.com/file/d/1Mn1HWAn6ZekqBmaio1IN5UkzX6zv1Vm8/view?usp=sharing',
-    'fire-circle': 'https://drive.google.com/file/d/18OaIupHGba1j9GwpNL2b9om9iZUga-Ld/view?usp=sharing',
-    'fire-cone': 'https://drive.google.com/file/d/1ApVI2b3L8K_nGe8Qvc_KN9sHwTBJQmRo/view?usp=sharing',
+    'default-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/SpellToken_DefaultSquare.png',
+    'fire-circle': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/SpellToken_FireCircle.png',
+    'fire-cone': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_FireCone.png',
     //'fire-line': 'https://drive.google.com/file/d/1TEyhC5c_syyY_gnfB2fIFZK6djdWw9qg/view?usp=sharing',
-    'fire-square': 'https://drive.google.com/file/d/1kpOykZzXzWGCM00_qlqgCu5Q-5bvGcLi/view?usp=sharing',
-    'green-circle': 'https://drive.google.com/file/d/14TIQ9qJ2El9M_k8D2basime7xKrog3dk/view?usp=sharing',
-    'green-cone': 'https://drive.google.com/file/d/1si0aJ66D7zFnYx_-UPN2hva_xSGtbUt4/view?usp=sharing',
+    'fire-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/SpellToken_FireSquare.png',
+    'green-circle': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenCircle.png',
+    'green-cone': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenCone.png',
     //'green-line': 'https://drive.google.com/file/d/1LNIBQAMJhrjFaOJk-iPioaUaFFvX3EUP/view?usp=sharing',
-    'green-square': 'https://drive.google.com/file/d/1vv_sDY7-bahgVbu-bDGrHCZnnJFA7aPD/view?usp=sharing',
+    'green-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenSquare.png',
 }
 
 function setup_aoe_button() {
