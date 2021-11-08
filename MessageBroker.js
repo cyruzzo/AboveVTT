@@ -930,7 +930,7 @@ class MessageBroker {
 	sendAbovePing(){
 		self = this;
 		if(this.abovews.readyState == this.abovews.OPEN){
-			this.abovews.send(JSON.stringify({action:"sendmessage",eventType:"custom/myVTT/keepalive"}));
+			this.abovews.send(JSON.stringify({action:"keepalive",eventType:"custom/myVTT/keepalive"}));
 		}
 		else{
 			self.loadAboveWS(null);
