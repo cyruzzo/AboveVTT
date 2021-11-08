@@ -1386,6 +1386,10 @@ function token_inputs(opt) {
 		}
 	}
 
+	if(data.token_custom_size && (!isNaN(data.token_custom_size))){
+		tok.options.size=Math.round(window.CURRENT_SCENE_DATA.hpps * (data.token_custom_size/5));
+	}
+
 
 	if (data.aura1 && data.aura1.length > 0) {
 		tok.options.aura1.feet = data.aura1;
@@ -1671,7 +1675,8 @@ function token_menu() {
 								token_large: { name: 'Large' },
 								token_huge: { name: 'Huge' },
 								token_gargantuan: { name: 'Gargantuan' },
-								token_colossal: { name: 'Colossal' }
+								token_colossal: { name: 'Colossal' },
+								token_custom_size: {name: 'Custom Size (enter edge feet)', type:'text'}
 							}
 						},
 
