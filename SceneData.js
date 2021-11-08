@@ -476,7 +476,7 @@ var DDB_EXTRAS =
 		"scale_factor": "1"
 	},
 	"wdh//compendium/adventures/wdh/a-friend-in-need/ZhentarimHideout": {
-		"dm_map_usable": "1",
+		"dm_map_usable": "0",
 		"snap": "0",
 		"hpps": "113.33333333333333",
 		"vpps": "114",
