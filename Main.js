@@ -55,22 +55,6 @@ function validateUrl(value) {
   return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
 }
 
-function loadScript(url, callback) {
-	// Adding the script tag to the head as suggested before
-	var head = document.head;
-	var script = document.createElement('script');
-	script.type = 'text/javascript';
-	script.src = url;
-
-	// Then bind the event to the callback function.
-	// There are several events for cross browser compatibility.
-	script.onreadystatechange = callback;
-	script.onload = callback;
-
-	// Fire the loading
-	head.appendChild(script);
-}
-
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
 function change_zoom(newZoom, x, y) {
@@ -1545,22 +1529,18 @@ function init_ui() {
 	init_journal($("#message-broker-client").attr("data-gameId"));
 
 	if (window.DM) {
-		// use DDB character tools to update character info
-		loadScript("https://media.dndbeyond.com/character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min.js",
-			function () {
-				window.character_tools_loaded = true;
-			});
-		window.load_rules_task = setInterval(function () {
-			if (window.character_tools_loaded) {
-				clearInterval(window.load_rules_task);
-				// Load DDB character modules and rules
-				retriveRules();
-				loadModules(initalModules);
-				//window.character_update_task = setInterval(get_pclist_player_data, 10000);
-				// we now just reads all the character sheet once at load time after a while
-				setTimeout(get_pclist_player_data,15000);
-			}
-		}, 1000);
+		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
+		let el=$("[src*=mega-menu]:nth-of-type(2)");
+		let s=el.attr("src");
+		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
+		el.detach();
+		$("#site").append(el);
+		setTimeout(function(){
+			console.log(2);
+			retriveRules();
+			loadModules(initalModules);
+		},10000);
+		setTimeout(get_pclist_player_data,25000);
 	}
 }
 
