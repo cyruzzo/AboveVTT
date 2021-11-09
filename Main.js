@@ -841,7 +841,8 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 			if (icons.length > 0){
 				icons.wrap(function(){
 					$(this).addClass("above-vtt-touched");
-					let button = $("<button class='above-aoe'></button>");
+					let button = $("<button class='above-aoe integrated-dice__container'></button>");
+					button.css("border-width","1px");
 					button.click(function(e){
 						e.stopPropagation();
 
