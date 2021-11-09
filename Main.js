@@ -836,11 +836,11 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 		var mutation_target = $(event.target).contents().get(0);
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
-		var o2 = new MutationObserver(function() {
-			let icons = $(event.target).contents().find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-touched')");
+		var aoe_observer = new MutationObserver(function() {
+			let icons = $(event.target).contents().find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
 			if (icons.length > 0){
 				icons.wrap(function(){
-					$(this).addClass("above-vtt-touched");
+					$(this).addClass("above-vtt-visited");
 					let button = $("<button class='above-aoe integrated-dice__container'></button>");
 					button.css("border-width","1px");
 					button.click(function(e){
@@ -868,7 +868,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 			}
 		});
 
-		o2.observe(mutation_target,mutation_config);
+		aoe_observer.observe(mutation_target,mutation_config);
 
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');

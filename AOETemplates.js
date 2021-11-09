@@ -142,7 +142,7 @@ function drop_aoe_token(color, shape, feet) {
 
     // don't create a token if the size isn't valid
     if (!is_feet_valid(feet)) {
-        throw "failed to create aoe token, size is invalid: " + size;
+        throw "failed to create aoe token, feet is invalid: " + feet;
     }
 
     // convert feet into pixels
