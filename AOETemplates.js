@@ -19,12 +19,13 @@ const AOE_TEMPLATES = {
     'green-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenSquare.png',
 }
 
+
 function setup_aoe_button() {
     aoe_button = $("<button style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable'><u>A</u>OE</button>");
     aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
 
     aoe_menu.append("<div style='font-weight:bold'>Feet</div>");
-    aoe_menu.append("<div><input tabindex='2' id='aoe_size' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10'></div>");
+    aoe_menu.append("<div><input tabindex='2' id='aoe_feet' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10'></div>");
 
     aoe_menu.append("<div style='font-weight:bold'>Color</div>");
     aoe_menu.append("<div><button tabindex='3' id='aoe_default' class='drawbutton menu-option aoe-option aoecolor remembered-selection' style='width:75px'>Default</button></div>");
@@ -44,12 +45,12 @@ function setup_aoe_button() {
 
     $("body").append(aoe_menu);
 
-    
+
     buttons.append(aoe_button);
     aoe_menu.css("left", aoe_button.position().left);
-    
 
-    $("#aoe_size").keydown(function(e) {
+
+    $("#aoe_feet").keydown(function(e) {
         if (e.key === "Escape") {
             $('#select-button').click();
         }
@@ -58,45 +59,77 @@ function setup_aoe_button() {
     $(".aoeshape").click(function (e) {
         const color = $(".aoe-option.remembered-selection").attr('id').split('_')[1];
         const shape = this.id.split("_")[1];
-        let size = Math.round(window.CURRENT_SCENE_DATA.hpps * (document.getElementById("aoe_size").value / window.CURRENT_SCENE_DATA.fpsq));
+        let feet = document.getElementById("aoe_feet").value
 
-        // don't create a token if the size is 0
-        if (size == 0) {
-            $("#aoe_size").focus();
+        // refocus size box if size is 0
+        if (!is_feet_valid(feet)) {
+            $("#aoe_feet").focus();
             return;
         }
 
-        // circles are always by radius
-        if (shape == 'circle') {
-            size = size * 2;
-        }
+        drop_aoe_token(color, shape, feet);
 
-        let atts = {
-            'data-disablestat': true,
-            'data-hidestat': true,
-            'data-disableborder': true,
-            'data-square': 1,
-            'data-img': AOE_TEMPLATES[`${color}-${shape}`],
-            'data-size': size,
-        };
-        
         if(window.DM){
-            $(this).attr(atts);
-            token_button(e);
-            $(this).removeAttr(Object.keys(atts).join(' '));
             $('#select-button').click();
         }
         else{
-            let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
-	        let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
-	        centerX = Math.round(centerX * (1.0 / window.ZOOM));
-	        centerY = Math.round(centerY * (1.0 / window.ZOOM));
-            atts['data-left']=centerX;
-            atts['data-top']=centerY;
-            window.MB.sendMessage("custom/myVTT/createtoken",atts);
             $('#aoe_button').click();
         }
-
-        
     });
+}
+
+function is_feet_valid(feet) {
+    return parseInt(feet) > 0;
+}
+
+function drop_aoe_token(color, shape, feet) {
+    // don't create a token if the size isn't valid
+    if (!is_feet_valid(feet)) {
+        throw "failed to create aoe token, size is invalid: " + size;
+    }
+
+    // convert feet into pixels
+    let size = window.CURRENT_SCENE_DATA.hpps * (feet / window.CURRENT_SCENE_DATA.fpsq);
+
+    // circles are always by radius
+    if (shape == 'circle') {
+        size = size * 2;
+    }
+
+    // normalize shape
+    switch(shape) {
+        case "cube":
+            shape = "square";
+            break;
+        case "sphere":
+            shape = "circle";
+            break;
+        case "cylinder":
+            shape = "circle";
+    }
+
+    let atts = {
+        'data-disablestat': true,
+        'data-hidestat': true,
+        'data-disableborder': true,
+        'data-square': 1,
+        'data-img': AOE_TEMPLATES[`${color}-${shape}`],
+        'data-size': Math.round(size),
+    };
+
+    if(window.DM){
+        let fake=$("<div/>");
+        fake.attr(atts);
+        token_button({target:fake.get(0)});
+        fake.remove();
+    }
+    else{
+        let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
+        let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
+        centerX = Math.round(centerX * (1.0 / window.ZOOM));
+        centerY = Math.round(centerY * (1.0 / window.ZOOM));
+        atts['data-left']=centerX;
+        atts['data-top']=centerY;
+        window.MB.sendMessage("custom/myVTT/createtoken",atts);
+    }
 }

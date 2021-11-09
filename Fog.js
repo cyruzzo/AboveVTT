@@ -1189,7 +1189,7 @@ function setup_draw_buttons() {
 		}
 
 		$(".top_menu").removeClass('visible');
-		$("#aoe_size").blur();
+		$("#aoe_feet").blur();
 		if ($("#fog_button").hasClass('button-selected')) {
 			$("#fog_menu").addClass('visible');
 			if ($(clicked).is("#fog_button") && !($(clicked).hasClass('button-enabled'))) {
@@ -1208,7 +1208,7 @@ function setup_draw_buttons() {
 			$("#aoe_menu").addClass('visible');
 			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
 				clicked = $(".aoe-option.remembered-selection");
-				$("#aoe_size").focus();
+				$("#aoe_feet").focus();
 				$("#fog_overlay").css("z-index", "20");
 			}
 		}
@@ -1248,14 +1248,14 @@ function setup_draw_buttons() {
 			}
 
 			var target = $("#fog_overlay");
-			
+
 			if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
 				console.log("setto a 50 per via di " + e.currentTarget.id);
 				target.css("z-index", "50");
 			} else {
 				target.css("z-index", "31");
 			}
-			
+
 
 			if ($(e.target).attr('id') == "measure-button") {
 				target = $("#VTT");

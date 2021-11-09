@@ -836,6 +836,26 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 		var mutation_target = $(event.target).contents().get(0);
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
+		var o2 = new MutationObserver(function() {
+			let icons = $(event.target).contents().find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-touched')");
+			if (icons.length > 0){
+				icons.wrap(function(){
+					$(this).addClass("above-vtt-touched");
+					let button = $("<button class='above-aoe'></button>");
+					button.click(function(e){
+						e.stopPropagation();
+						feet = $(this).prev().children().first().children().first().text();
+						shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1]
+						drop_aoe_token("default", shape, feet);
+					});
+					return button;
+				});
+				console.log(`${icons.length} aoe spells discovered`);
+			}
+		});
+
+		o2.observe(mutation_target,mutation_config);
+
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
