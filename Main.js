@@ -844,9 +844,22 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 					let button = $("<button class='above-aoe'></button>");
 					button.click(function(e){
 						e.stopPropagation();
+
+						// figure out color
+						color = 'default';
+						dmg_icon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
+						if (dmg_icon.length == 1){
+							color = dmg_icon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
+						}
+
+						// grab shape (this should always exist)
+						shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
+
+						// grab feet (this should always exist)
 						feet = $(this).prev().children().first().children().first().text();
-						shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1]
-						drop_aoe_token("default", shape, feet);
+
+						// drop the token
+						drop_aoe_token(color, shape, feet);
 					});
 					return button;
 				});

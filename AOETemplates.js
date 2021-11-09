@@ -83,17 +83,49 @@ function is_feet_valid(feet) {
 }
 
 function drop_aoe_token(color, shape, feet) {
-    // don't create a token if the size isn't valid
-    if (!is_feet_valid(feet)) {
-        throw "failed to create aoe token, size is invalid: " + size;
-    }
 
-    // convert feet into pixels
-    let size = window.CURRENT_SCENE_DATA.hpps * (feet / window.CURRENT_SCENE_DATA.fpsq);
-
-    // circles are always by radius
-    if (shape == 'circle') {
-        size = size * 2;
+    // support 13 damage types, for now most things will be default,
+    // but this should make it easier to add more template colors as they come in
+    switch(color) {
+        case "slashing":
+            color = "default";
+            break;
+        case "piercing":
+            color = "default";
+            break;
+        case "bludgeoning":
+            color = "default";
+            break;
+        case "poison":
+            color = "green";
+            break;
+        case "acid":
+            color = "green";
+            break;
+        case "fire":
+            color = "fire";
+            break;
+        case "cold":
+            color = "default";
+            break;
+        case "radiant":
+            color = "fire";
+            break;
+        case "necrotic":
+            color = "dark";
+            break;
+        case "lightning":
+            color = "default";
+            break;
+        case "thunder":
+            color = "default";
+            break;
+        case "force":
+            color = "default";
+            break;
+        case "psychic":
+            color = "default";
+            break;
     }
 
     // normalize shape
@@ -107,6 +139,21 @@ function drop_aoe_token(color, shape, feet) {
         case "cylinder":
             shape = "circle";
     }
+
+    // don't create a token if the size isn't valid
+    if (!is_feet_valid(feet)) {
+        throw "failed to create aoe token, size is invalid: " + size;
+    }
+
+    // convert feet into pixels
+    let size = window.CURRENT_SCENE_DATA.hpps * (feet / window.CURRENT_SCENE_DATA.fpsq);
+
+    // circles are always by radius
+    if (shape == 'circle') {
+        size = size * 2;
+    }
+
+    console.log(`dropping aoe token: color ${color}, shape ${shape}, feet ${feet}`);
 
     let atts = {
         'data-disablestat': true,
