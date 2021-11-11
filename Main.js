@@ -836,6 +836,40 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 		var mutation_target = $(event.target).contents().get(0);
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
+		var aoe_observer = new MutationObserver(function() {
+			let icons = $(event.target).contents().find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
+			if (icons.length > 0){
+				icons.wrap(function(){
+					$(this).addClass("above-vtt-visited");
+					let button = $("<button class='above-aoe integrated-dice__container'></button>");
+					button.css("border-width","1px");
+					button.click(function(e){
+						e.stopPropagation();
+
+						// figure out color
+						color = 'default';
+						dmg_icon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
+						if (dmg_icon.length == 1){
+							color = dmg_icon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
+						}
+
+						// grab shape (this should always exist)
+						shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
+
+						// grab feet (this should always exist)
+						feet = $(this).prev().children().first().children().first().text();
+
+						// drop the token
+						drop_aoe_token(color, shape, feet);
+					});
+					return button;
+				});
+				console.log(`${icons.length} aoe spells discovered`);
+			}
+		});
+
+		aoe_observer.observe(mutation_target,mutation_config);
+
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");

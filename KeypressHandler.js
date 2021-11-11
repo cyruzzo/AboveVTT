@@ -210,7 +210,7 @@ Mousetrap.bind('down', function () {
 Mousetrap.bind('tab', function () {
     if ($("#aoe_menu").hasClass('visible')) {
         if ($(".aoeshape").is(":focus")) {
-            $("#aoe_size").focus();
+            $("#aoe_feet").focus();
         } else {
             $(".aoeshape").first().focus();
         }
@@ -223,7 +223,7 @@ Mousetrap.bind('shift+tab', function () {
         if ($(".aoeshape").is(":focus")) {
             $(".aoeshape").blur();
         } else {
-            $("#aoe_size").focus();
+            $("#aoe_feet").focus();
         }
         return false;
     }
