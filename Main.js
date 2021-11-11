@@ -860,7 +860,9 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 						feet = $(this).prev().children().first().children().first().text();
 
 						// drop the token
-						drop_aoe_token(color, shape, feet);
+						container.animate({opacity:"0.1"},1000);
+						setTimeout( ()=>drop_aoe_token(color, shape, feet),1000);
+						setTimeout( ()=>container.animate({opacity:"1.0"},2000),3000);
 					});
 					return button;
 				});
