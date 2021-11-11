@@ -552,11 +552,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				fog_of_war: "1",
 				tokens: {},
 				grid: "0",
-				hpps: "60",
-				vpps: "60",
-				snap: "0",
-				offsetx: 0,
-				offsety: 0,
+				hpps: "72",
+				vpps: "72",
+				snap: "1",
+				fpsq: "5",
+				offsetx: 29,
+				offsety: 54,
 				reveals: [[0, 0, 0, 0, 2, 0]],
 			});
 			this.current_scene_id = 0;
