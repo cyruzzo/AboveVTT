@@ -1900,6 +1900,10 @@ function init_tokenmenu(){
 				<div><input type='checkbox' name='data-disableborder'></div>
 			</div>
 			<div>
+				<div>Stretch non-square token images by default</div>
+				<div><input type='checkbox' name='data-legacyaspectratio'></div>
+			</div>
+			<div>
 				<button id='tokenform-save'>Save</button>
 				<button id='tokenform-cancel'>Cancel</button>
 			</div>
@@ -1921,6 +1925,8 @@ function init_tokenmenu(){
 		newtoken['data-disablestat']=true;
 		if(tokenform.find("[name='data-disableborder']").is(":checked"))
 			newtoken['data-disableborder']=true;
+		newtoken['data-legacyaspectratio']=tokenform.find("[name='data-legacyaspectratio']").is(":checked");
+			
 		
 		if(!window.CURRENT_TOKEN_FOLDER.tokens)
 			window.CURRENT_TOKEN_FOLDER.tokens={};
@@ -1969,16 +1975,11 @@ function fill_tokenmenu(path){
 		$("#token-addtoken").removeAttr("disabled");
 	}
 	
-	var tokenImgClass = 'tokenentryimg';
-	if (window.TOKEN_SETTINGS['legacyaspectratio'] == true) {
-		tokenImgClass = 'tokenentryimg legacy-aspect-ratio';
-	}
-
 	if(path!=""){
 		var previous=path.substring(0,path.lastIndexOf("/"));
 		var newentry=$(`
 			<div data-path='${previous}' class='tokenfolder tokenmenuitem'>
-				<img data-path='${previous}' class='${tokenImgClass} tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
+				<img data-path='${previous}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div>..</div>
 			</div>
 		`);
@@ -1990,7 +1991,7 @@ function fill_tokenmenu(path){
 		var newpath=path+"/"+f;
 		var newentry=$(`
 			<div data-path='${newpath}' class='tokenfolder tokenmenuitem'>
-				<img data-path='${newpath}' class='${tokenImgClass} tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
+				<img data-path='${newpath}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div class="label-one-line">${f}</div>
 			</div>
 		`);
@@ -2014,6 +2015,15 @@ function fill_tokenmenu(path){
 	});
 	
 	for(let t in folder.tokens){
+
+		var tokenImgClass = 'tokenentryimg';
+		if (folder.tokens[t]["data-legacyaspectratio"] == false) {
+				// if the option is undefined, this token was created before the option existed and should therefore use the legacy behavior
+				// if the option is true, the user actively enabled the option.
+				// if the option is false, then we want to preserve aspect ratio
+			tokenImgClass = 'tokenentryimg preserve-aspect-ratio';
+		}
+
 		var newentry=$(`
 			<div class='tokenentry tokenmenuitem'>
 				<img class='${tokenImgClass}' src='${parse_img(folder.tokens[t]["data-img"])}'></img>

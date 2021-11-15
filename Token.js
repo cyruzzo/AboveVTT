@@ -676,6 +676,15 @@ class Token {
 			if(this.options.disableaura){
 				old.find("img").css("box-shadow","");
 			}
+			
+			if(this.options.legacyaspectratio == false) {
+				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
+				old.find("img").addClass("preserve-aspect-ratio");
+			} else {
+				// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
+				// if the option is true, the user actively enabled the option
+				old.find("img").removeClass("preserve-aspect-ratio");
+			}
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
@@ -698,8 +707,8 @@ class Token {
 				rotation = this.options.rotation;
 			}
 			let imgClass = 'token-image';
-			if (window.TOKEN_SETTINGS['legacyaspectratio'] == true) {
-				imgClass = 'token-image legacy-aspect-ratio';
+			if(this.options.legacyaspectratio == false) {
+				imgClass = 'token-image preserve-aspect-ratio';
 			}
 			var tokimg = $("<img style='transform:scale(" + scale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
 			if(!(this.options.square)){
@@ -1132,7 +1141,8 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 			feet: "0",
 			color: "rgba(255, 255, 0, 0.1)"
 		},
-		auraVisible: true
+		auraVisible: true,
+		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio']
 	};
 	
 	
@@ -1189,6 +1199,18 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 	if (typeof $(e.target).attr('data-stat') !== "undefined") {
 		options.monster = $(e.target).attr('data-stat');
 	}
+
+	if (options.monster || options.id.includes("/")) {
+		// monsters and players should use the global setting as the default
+		options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
+	} else if ($(e.target).attr('data-legacyaspectratio') == true || $(e.target).attr('data-legacyaspectratio') == 'true' || $(e.target).attr('data-legacyaspectratio') == undefined) {
+		// this is a custom token. It should use the setting that was defined when it was created
+		// if the option is undefined, this token was created before the option existed and should therefore use the legacy behavior
+		// if the option is true, the user actively enabled the option.
+		// if the option is false, then we want to preserve aspect ratio
+		options.legacyaspectratio = true;
+	}
+
 
 	if ($(e.target).attr('data-name')) {
 		options.name = $(e.target).attr('data-name');
@@ -1485,6 +1507,12 @@ function token_inputs(opt) {
 		}
 		else {
 			tok.options.revealname = false;
+		}
+		if (data.token_legacyaspectratio) {
+			tok.options.legacyaspectratio = true;
+		}
+		else {
+			tok.options.legacyaspectratio = false;
 		}
 	}
 	
@@ -1815,6 +1843,11 @@ function token_menu() {
 									type: 'checkbox',
 									name: 'Show name to players',
 									selected: window.TOKEN_OBJECTS[id].options.revealname,
+								},
+								token_legacyaspectratio: {
+									type: 'checkbox',
+									name: 'Stretch non-square token images',
+									selected: window.TOKEN_OBJECTS[id].options.legacyaspectratio == true || window.TOKEN_OBJECTS[id].options.legacyaspectratio == undefined
 								}
 							}
 						},

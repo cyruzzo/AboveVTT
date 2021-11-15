@@ -91,7 +91,7 @@ function init_settings(){
 		},
 		{
 			name: 'legacyaspectratio',
-			label: 'Stretch non-square images (requires page refresh)'
+			label: 'Stretch non-square token images by default'
 		}
 	];
 
