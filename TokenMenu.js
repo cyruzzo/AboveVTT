@@ -1969,11 +1969,16 @@ function fill_tokenmenu(path){
 		$("#token-addtoken").removeAttr("disabled");
 	}
 	
+	var tokenImgClass = 'tokenentryimg';
+	if (window.TOKEN_SETTINGS['legacyaspectratio'] == true) {
+		tokenImgClass = 'tokenentryimg legacy-aspect-ratio';
+	}
+
 	if(path!=""){
 		var previous=path.substring(0,path.lastIndexOf("/"));
 		var newentry=$(`
 			<div data-path='${previous}' class='tokenfolder tokenmenuitem'>
-				<img data-path='${previous}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
+				<img data-path='${previous}' class='${tokenImgClass} tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div>..</div>
 			</div>
 		`);
@@ -1985,7 +1990,7 @@ function fill_tokenmenu(path){
 		var newpath=path+"/"+f;
 		var newentry=$(`
 			<div data-path='${newpath}' class='tokenfolder tokenmenuitem'>
-				<img data-path='${newpath}' class='tokenentryimg tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
+				<img data-path='${newpath}' class='${tokenImgClass} tokenfolderimg' src='${window.EXTENSION_PATH+"assets/folder.svg"}'>
 				<div class="label-one-line">${f}</div>
 			</div>
 		`);
@@ -2011,7 +2016,7 @@ function fill_tokenmenu(path){
 	for(let t in folder.tokens){
 		var newentry=$(`
 			<div class='tokenentry tokenmenuitem'>
-				<img class='tokenentryimg' src='${parse_img(folder.tokens[t]["data-img"])}'></img>
+				<img class='${tokenImgClass}' src='${parse_img(folder.tokens[t]["data-img"])}'></img>
 				<div class="label-one-line">${t}</div>
 				<button class='tokenadd' >Token</button>
 			</div>

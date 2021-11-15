@@ -697,7 +697,11 @@ class Token {
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
 			}
-			var tokimg = $("<img style='transform:scale(" + scale + ") rotate(" + rotation + "deg)' class='token-image'/>");
+			let imgClass = 'token-image';
+			if (window.TOKEN_SETTINGS['legacyaspectratio'] == true) {
+				imgClass = 'token-image legacy-aspect-ratio';
+			}
+			var tokimg = $("<img style='transform:scale(" + scale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
 			if(!(this.options.square)){
 				tokimg.addClass("token-round");
 			}

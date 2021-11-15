@@ -89,6 +89,10 @@ function init_settings(){
 			name: 'revealname',
 			label: 'Show name to players'
 		},
+		{
+			name: 'legacyaspectratio',
+			label: 'Stretch non-square images (requires page refresh)'
+		}
 	];
 
 	settings_panel.append(`
