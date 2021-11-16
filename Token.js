@@ -2180,6 +2180,18 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 	return Math.round(degrees / snap) * snap
 }
 
+/// rotates all selected tokens to the specified newRotation
+function rotate_selected_tokens(newRotation) {
+	if ($("#select-button").hasClass("button-enabled") || !window.DM) { // players don't have a select tool
+		for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+			let id = window.CURRENTLY_SELECTED_TOKENS[i];
+			let token = window.TOKEN_OBJECTS[id];
+			token.rotate(newRotation);
+		}
+		return false;
+	}
+}
+
 /// draws a rectangle around every selected token, and adds a rotation grabber
 function draw_selected_token_bounding_box() {
 	remove_selected_token_bounding_box()
