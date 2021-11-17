@@ -329,4 +329,37 @@ Mousetrap.bind('command+z', function(e) {
     }
 });
 
+var rotationKeyPresses = [];
+window.addEventListener("keydown", async (event) => {
+    const arrowKeys = [ 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown' ];
+    if (event.shiftKey && arrowKeys.includes(event.key) ) {
+        rotationKeyPresses.push(event.key)
+    }
+});
+window.addEventListener("keyup", async (event) => {
+    if (!event.shiftKey) {
+        rotationKeyPresses = [];
+        return;
+    }
+    if (rotationKeyPresses.includes('ArrowDown') && rotationKeyPresses.includes('ArrowLeft')) {
+        rotate_selected_tokens(45);
+    } else if (rotationKeyPresses.includes('ArrowLeft') && rotationKeyPresses.includes('ArrowUp')) {
+        rotate_selected_tokens(135);
+    } else if (rotationKeyPresses.includes('ArrowUp') && rotationKeyPresses.includes('ArrowRight')) {
+        rotate_selected_tokens(225);
+    } else if (rotationKeyPresses.includes('ArrowRight') && rotationKeyPresses.includes('ArrowDown')) {
+        rotate_selected_tokens(315);
+    } else if (rotationKeyPresses.includes('ArrowDown')) {
+        rotate_selected_tokens(0);
+    } else if (rotationKeyPresses.includes('ArrowLeft')) {
+        rotate_selected_tokens(90);
+    } else if (rotationKeyPresses.includes('ArrowUp')) {
+        rotate_selected_tokens(180);
+    } else if (rotationKeyPresses.includes('ArrowRight')) {
+        rotate_selected_tokens(270);
+    }
+
+    rotationKeyPresses = [];
+});
+
 }
