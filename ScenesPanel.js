@@ -704,6 +704,11 @@ function refresh_scenes() {
 		newobj.append(title);
 		controls = $("<div/>");
 		switch_button = $("<button>SWITCH</button>");
+		if(scene.player_map)
+			switch_button.removeAttr("disabled");
+		else
+			switch_button.attr("disabled","true");
+			
 		switch_button.click(function() {
 			window.ScenesHandler.switch_scene(scene_id);
 			$("#scene_selector_toggle").click();
