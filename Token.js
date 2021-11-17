@@ -1227,11 +1227,17 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 			}
 		}
 
-		// if there are custom images defined, use those instead of the default DDB image
-		let customImgs = get_custom_monster_images($(e.target).attr('data-stat'));
-		if (customImgs != undefined && customImgs.length > 0) {
-			let randomIndex = getRandomInt(0, customImgs.length);
-			options.imgsrc = customImgs[randomIndex];
+		let specifiedCustomImg = $(e.target).data('custom-img');
+		if (specifiedCustomImg != undefined && specifiedCustomImg.length > 0) {
+			// the user has specifically chosen a custom image so use it
+			options.imgsrc = specifiedCustomImg;
+		} else {
+			// if there are custom images defined, use those instead of the default DDB image
+			let customImgs = get_custom_monster_images($(e.target).attr('data-stat'));
+			if (customImgs != undefined && customImgs.length > 0) {
+				let randomIndex = getRandomInt(0, customImgs.length);
+				options.imgsrc = customImgs[randomIndex];
+			}
 		}
 	}
 
@@ -1377,6 +1383,23 @@ function menu_callback(key, options, event) {
 		if(window.DM)
 			window.TOKEN_OBJECTS[id].persist();
 	}
+
+	if (key === "imgsrcSelect") {
+		id = $(this).attr("data-id");
+		if (!(id in window.TOKEN_OBJECTS)) 
+			return;
+		let tok = window.TOKEN_OBJECTS[id];
+		let monsterId = $(options.$trigger).data("monster");
+		let monsterName = $(options.$trigger).data("name");
+		window.StatHandler.getStat(monsterId, function(stat) {
+			currentlyCustomizingMonster = {
+				monsterId: monsterId,
+				monsterName: monsterName,
+				defaultImg: stat.data.avatarUrl
+			};					
+			display_token_customization_modal(tok);
+		});
+	}
 	
 }
 
@@ -1386,6 +1409,10 @@ function token_inputs(opt) {
 	// export states to data store
 
 	if (opt.$selected && opt.$selected.hasClass("aura-preset")) {
+		return;
+	}
+	if (opt.$selected && opt.$selected.hasClass("imgsrcSelect")) {
+		// this is handled in menu_callback
 		return;
 	}
 
@@ -1431,7 +1458,9 @@ function token_inputs(opt) {
 	}
 	tok.options.auraVisible = data.auraVisible;
 	
-	tok.options.imgsrc = parse_img(data.imgsrc);
+	if (data.imgsrc != undefined) {
+		tok.options.imgsrc = parse_img(data.imgsrc);
+	}
 
 	if (window.DM) {
 		if (is_monster) {
@@ -1451,7 +1480,7 @@ function token_inputs(opt) {
 
 		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
 			tok.options.imgsrc = parse_img(opt.imgsrcSelection);
-		} else {
+		} else if (data.imgsrc != undefined) {
 			tok.options.imgsrc = parse_img(data.imgsrc);
 		}
 
@@ -1661,31 +1690,6 @@ function token_menu() {
 					}
 				}
 				
-				// build a submenu in case there are multiple custom images defined
-				let customImages = get_custom_monster_images(window.TOKEN_OBJECTS[id].options.monster);
-				var customImageSelectorOptions = {
-					imgsrc: {
-						type: 'text',
-						name: 'Custom Image',
-						value: window.TOKEN_OBJECTS[id].options.imgsrc,
-						events: {
-							click: function(e) {
-								$(e.target).select();
-							}
-						}
-					}
-				};
-				for (let i = 0; i < customImages.length; i++) { 
-					let iconUrl = customImages[i];
-					customImageSelectorOptions['imgsrcSelect'+i] = { 
-						name: '<img class="custom-token-image-menu-item-img" src="' + iconUrl + '" />', 
-						isHtmlName: true,
-						callback: function(key, opt){
-							opt.imgsrcSelection = iconUrl;
-						}
-					}
-				}
-
 				ret = {
 					callback: menu_callback,
 					events: {
@@ -1904,9 +1908,10 @@ function token_menu() {
 								}
 							}
 						},
+						sep3: '----------',
 						imgsrcSelect: {
 							name: "Change Image",
-							items: customImageSelectorOptions
+							className: "imgsrcSelect"
 						},
 						sep4: '----------',
 						helptext: {
@@ -1919,8 +1924,8 @@ function token_menu() {
 				};
 				if (is_monster) {
 					delete ret.items.options.items.token_hidestat;
-					delete ret.items.sep4;
 					delete ret.items.helptext;
+					delete ret.items.imgsrc;
 				}
 				else {
 					delete ret.items.sep1;
@@ -1928,14 +1933,8 @@ function token_menu() {
 					delete ret.items.max_hp;
 					delete ret.items.token_cond;
 					delete ret.items.options.items.token_revealname;
-				}
-				
-				if (customImages.length <= 1) {
-					// only show the image select if there are multiple images to choose from
+					delete ret.items.sep3;
 					delete ret.items.imgsrcSelect;
-				} else {
-					// remove imgsrc from the main menu. It is now in the imgsrcSelect submenu
-					delete ret.items.imgsrc;
 				}
 				
 				if(!has_note){
@@ -1957,7 +1956,6 @@ function token_menu() {
 					delete ret.items.note_menu;
 					delete ret.items.name;
 					delete ret.items.sep2;
-					//delete ret.items.imgsrc;
 					delete ret.items.imgsrcSelect;
 				}
 
@@ -2048,80 +2046,6 @@ function setTokenAuras (token, options) {
 	}
 }
 
-
-function build_token_image_map_menu() {
-	// setup context menu for custom token image mapping
-	$.contextMenu({
-		selector: '#custom-img-src-anchor',
-		events: {
-			hide: custom_image_menu_callback
-		},
-		build: function($trigger, e) {
-			// $trigger is the "#custom-img-src-anchor" element that we injected in MonsterPanel.js
-			// grab the monsterId from that element, and any custom images that may have already been defined
-			let monsterId = $trigger.data('monster-id');
-			let customImages = get_custom_monster_images(monsterId);
-			var imageItems = { };
-			if (customImages != undefined && customImages.length > 0) {
-				// the user has custom token images defined. Add them all as separate menu items each with their own "Remove" and "Copy Url" subitems
-				for (let i = 0; i < customImages.length; i++) { 
-					let iconUrl = customImages[i];
-					imageItems['imgsrc'+i] = { 
-						name: '<img class="custom-token-image-menu-item-img" src="' + iconUrl + '" />', 
-						isHtmlName: true,
-						value: iconUrl, 
-						items: {
-							remove: {
-								name: "Remove",
-								callback: function(key, opt){
-									remove_custom_token_image(monsterId, i);
-									opt.didRemove = true;
-								}
-							},
-							copy: {
-								name: "Copy Url",
-								callback: function(key, opt){
-									copy_to_clipboard(iconUrl);
-								}
-							}
-						}
-					};
-				}
-
-				// add a way to add more images. If there are more than 1 image defined, they will be chosen at random when placing them on the scene
-				imageItems["addNew"] = {
-					name: "Add Another Default Image",
-					type: "text"
-				};
-
-				// also add an easy way to reset to the default DDB image
-				imageItems["reset"] = { 
-					name: "Reset to Default",
-					callback: function(key, opt){
-						opt.didReset = true;
-						// clear all custom images from the mapping for this monster
-						remove_all_custom_token_images(monsterId);
-					}
-				};
-
-			} else {
-
-				// There are no custom images defined. Add a way to replace the default DDB image
-				imageItems["addNew"] = {
-					name: "Replace The Default Image",
-					type: "text"
-				};
-
-			}
-
-			return {
-				className: 'custom-token-image-menu',
-				items: imageItems
-			};
-		}
-	});
-}
-
 function get_custom_monster_images(monsterId) {
 	if (monsterId == undefined) {
 		return [];
@@ -2171,29 +2095,6 @@ function save_custom_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
 	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { "17100": [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
-}
-
-function custom_image_menu_callback(opt) {
-	if (opt.didReset) {
-		// all custom images hav been removed. Nothing else to do.
-		return;
-	}
-	if (opt.didRemove) {
-		// a single image was removed. reopen the menu after it has had time to fully close
-		setTimeout(function(){ 
-			$('#custom-img-src-anchor').contextMenu();
-		}, 200);	
-		return;
-	}
-	
-	var data = $.contextMenu.getInputValues(opt, $(this).data());
-	if (data.addNew != undefined && data.addNew.length > 0) {
-		// a new image was added. save it
-		add_custom_image_mapping(data.monsterId, data.addNew);
-		setTimeout(function(){ 
-			$('#custom-img-src-anchor').contextMenu();
-		 }, 200);
-	}
 }
 
 function copy_to_clipboard(text) {
