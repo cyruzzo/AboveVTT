@@ -1256,3 +1256,7 @@ body {
     white-space: normal;
     width: auto;
 }
+
+.preserve-aspect-ratio {
+    object-fit: contain;
+}

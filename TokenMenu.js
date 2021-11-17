@@ -1900,6 +1900,10 @@ function init_tokenmenu(){
 				<div><input type='checkbox' name='data-disableborder'></div>
 			</div>
 			<div>
+				<div>Stretch non-square token images by default</div>
+				<div><input type='checkbox' name='data-legacyaspectratio'></div>
+			</div>
+			<div>
 				<button id='tokenform-save'>Save</button>
 				<button id='tokenform-cancel'>Cancel</button>
 			</div>
@@ -1921,6 +1925,8 @@ function init_tokenmenu(){
 		newtoken['data-disablestat']=true;
 		if(tokenform.find("[name='data-disableborder']").is(":checked"))
 			newtoken['data-disableborder']=true;
+		newtoken['data-legacyaspectratio']=tokenform.find("[name='data-legacyaspectratio']").is(":checked");
+			
 		
 		if(!window.CURRENT_TOKEN_FOLDER.tokens)
 			window.CURRENT_TOKEN_FOLDER.tokens={};
@@ -2009,9 +2015,18 @@ function fill_tokenmenu(path){
 	});
 	
 	for(let t in folder.tokens){
+
+		var tokenImgClass = 'tokenentryimg';
+		if (folder.tokens[t]["data-legacyaspectratio"] == false) {
+				// if the option is undefined, this token was created before the option existed and should therefore use the legacy behavior
+				// if the option is true, the user actively enabled the option.
+				// if the option is false, then we want to preserve aspect ratio
+			tokenImgClass = 'tokenentryimg preserve-aspect-ratio';
+		}
+
 		var newentry=$(`
 			<div class='tokenentry tokenmenuitem'>
-				<img class='tokenentryimg' src='${parse_img(folder.tokens[t]["data-img"])}'></img>
+				<img class='${tokenImgClass}' src='${parse_img(folder.tokens[t]["data-img"])}'></img>
 				<div class="label-one-line">${t}</div>
 				<button class='tokenadd' >Token</button>
 			</div>
