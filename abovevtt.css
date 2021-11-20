@@ -1361,3 +1361,10 @@ body {
     color: #979AA4;
     font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
 }
+.custom-token-image-item {
+    float: left; 
+    width:30%;
+}
+.custom-token-image-item.ui-draggable-dragging {
+    width: auto;
+}

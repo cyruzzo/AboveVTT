@@ -346,7 +346,7 @@ function display_token_customization_modal(placedToken) {
 }
 
 function build_token_customization_item(monsterId, monsterName, imageUrl, customImgIndex, placedToken) {
-	let tokenDiv = $(`<div class="custom-token-image-item" data-monster="${monsterId}" data-name="${monsterName}" data-custom-img-index="${customImgIndex}" style="float: left; width:30%"><img alt="token-img" style="transform: scale(0.75); display: inline-block; overflow: hidden; width:100%; height:100%" class="token-image token-round" src="${imageUrl}" /></div>`);
+	let tokenDiv = $(`<div class="custom-token-image-item" data-monster="${monsterId}" data-name="${monsterName}" data-custom-img-index="${customImgIndex}"><img alt="token-img" style="transform: scale(0.75); display: inline-block; overflow: hidden; width:100%; height:100%" class="token-image token-round" src="${imageUrl}" /></div>`);
 	if (placedToken != undefined) {
 		// the user is changing their token image, allow them to simply click an image
 		// we don't want to allow drag and drop from this modal
@@ -355,30 +355,82 @@ function build_token_customization_item(monsterId, monsterName, imageUrl, custom
 			close_token_customization_modal();
 			placedToken.place_sync_persist();
 		});
-	} else {
-		// the user is managing the image for a token, allow them to drag any image onto the scene to place it
-		// TODO: build this 
-		// tokenDiv.draggable({
-		// 	start: function (event) { 
-		// 		console.log("custom-token-image-item drag start");
-		// 	},
-		// 	drag: function(event, ui) {
-		// 		console.log("custom-token-image-item drag drag");
-		// 	},
-		// 	stop: function (event) { 
-		// 		console.log("custom-token-image-item drag stop");
-		// 	}
-		// });	
 	}
+
+	tokenDiv.draggable({
+		helper: "clone",
+		appendTo: "#VTTWRAPPER",
+		zIndex: 100000,
+		start: function (event, ui) { 
+			console.log("custom-token-image-item drag start");
+			// center under the cursor
+
+			window.StatHandler.getStat(monsterId, function(stat) {
+				let tokenSize = 1.0
+				if (stat.data.sizeId == 5) {
+					tokenSize = 2.0;
+				} else if (stat.data.sizeId == 6) {
+					tokenSize = 3.0;
+				} else if (stat.data.sizeId == 7) {
+					tokenSize = 4.0;
+				}
+					
+				let helperWidth = $(event.target).width() / (1.0 / window.ZOOM);
+				$(ui.helper).css('width', `${helperWidth * tokenSize}px`);
+			});
+		},
+		drag: function(event, ui) {
+			$(event).draggable("option", "cursorAt", {
+				left: Math.floor(ui.helper.width() / 2),
+				top: Math.floor(ui.helper.height() / 2)
+			}); 
+		},
+		stop: function (event) { 
+			// place a token where this was dropped
+			let token = $(event.target).clone();
+			let monsterId = token.data("monster");
+			let monsterName = token.data("name");
+			let imgSrc = token.find("img").attr("src");
+			let hidden = event.shiftKey;
+			event.target = token;
+
+			let mouseX = (event.pageX - 200) * (1.0 / window.ZOOM);
+			let mouseY = (event.pageY - 200) * (1.0 / window.ZOOM);
+
+			let fogOverlay = $("#fog_overlay"); // not sure if there's a better way to find this...
+			if (mouseX <= 0 || mouseY <= 0 || mouseX >= fogOverlay.width() || mouseY >= fogOverlay.height()) {
+				console.log("not dropping token outside of the scene");
+				return;
+			}
+
+			let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
+			if (shallwesnap) {
+				// calculate offset in real coordinates
+				const startX = window.CURRENT_SCENE_DATA.offsetx;
+				const startY = window.CURRENT_SCENE_DATA.offsety;
+
+				const selectedNewtop = Math.round((mouseY - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+				const selectedNewleft = Math.round((mouseX - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+				place_custom_monster_img(event, monsterId, monsterName, imgSrc, hidden, selectedNewleft, selectedNewtop);
+
+			} else {
+				place_custom_monster_img(event, monsterId, monsterName, imgSrc, hidden, mouseX, mouseY);
+			}
+
+		}
+	});
+
 	return tokenDiv;
 }
 
-function place_custom_monster_img(e, monsterId, monsterName, imgSrc, hidden) {
+function place_custom_monster_img(e, monsterId, monsterName, imgSrc, hidden, x, y) {
 	let button = e.target;
 	button.attr('data-stat', monsterId);
 	button.attr("data-name", monsterName);
 	button.attr('data-img', imgSrc);
 	button.attr('data-custom-img', imgSrc);
+	button.attr('data-left', x);
+	button.attr('data-top', y);
 
 	if (hidden) {
 		button.attr('data-hidden', 1)
@@ -397,6 +449,6 @@ function place_custom_monster_img(e, monsterId, monsterName, imgSrc, hidden) {
 		button.attr('data-maxhp', stat.data.averageHitPoints);
 		button.attr('data-ac', stat.data.armorClass);
 		token_button(e);
-	})
+	});
 
 }
