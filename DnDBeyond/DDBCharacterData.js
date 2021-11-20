@@ -86,7 +86,7 @@ function getPlayerData(sheet_url, callback) {
             conditions: conditions,
             abilities: abilities,
             walking: walkspeed+ "ft.",
-            inspiration: charData.hitPointInfo.inspiration,
+            inspiration: charData.inspiration,
         };
         if (callback) {
             callback(playerdata);
