@@ -270,6 +270,10 @@ function display_token_customization_modal(placedToken) {
 	inputWrapper.append(footerLabel);
 	let urlInput = $(`<input title="${footerLabelText}" placeholder="https://..." name="addCustomImage" type="text" style="width:100%" data-monster-id="${monsterId}" />`);
 	const add_token_customization_image = function(imageUrl) {
+		if(imageUrl.startsWith("data:")){
+			alert("You cannot use urls starting with data:");
+			return;
+		}
 		if (get_custom_monster_images(monsterId).length == 0) {
 			// this is the first custom image so remove the default image before appending the new one, and show the remove all button
 			modalBody.empty();
