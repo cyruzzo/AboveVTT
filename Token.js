@@ -613,7 +613,7 @@ class Token {
 					width: this.options.size
 				}, { duration: 1000, queue: false });
 				
-				var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 				old.css("z-index", 32+zindexdiff);
 
 				var bar_height = Math.floor(this.options.size * 0.2);
@@ -716,7 +716,7 @@ class Token {
 			}
 
 
-			var zindexdiff=Math.round(20/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 			console.log("Diff: "+zindexdiff);
 			
 			tok.css("z-index", 32+zindexdiff);
