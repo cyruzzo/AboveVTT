@@ -120,43 +120,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		scene['scaleX'] = (60.0 / parseInt(scene['hpps'])); // for backward compatibility, this will be horizonat scale
 		scene['scaleY'] = (60.0 / parseInt(scene['vpps'])); // for backward compatibility, this will be horizonat sca
 
-		// SET AND RESCALE
-
-
-
-		// YOUTUBE TEST HACK!
-		/*$("#scene_map").attr('id','tobedeleted');
-		//var newimage=$('<iframe style="position:absolute,top:0,left:0,z-index:10" id="scene_map" width="1920" height="1080" src="https://www.youtube.com/embed/ny_XrjC3F9Q?controls=0&autoplay=1&loop=1&playlist=ny_XrjC3F9Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
-		var newimage=$('<div style="position:absolute,top:0,left:0,z-index:10" id="scene_map" />');
-		$("#tobedeleted").replaceWith(
-				newimage
-			);
-			
-		 var player = new YT.Player('scene_map', {
-		  height: '1080',
-		  width: '1920',
-		  videoId: 'ny_XrjC3F9Q',
-		  playerVars: { 'autoplay': 1, 'controls': 0 },
-		  events: {
-			'onStateChange': function(event){if(event.data==0)player.playVideo();}
-		  }
-		});*/
-
-		// END
-
-
-		/*if(scene.width && scene.width!="0"){
-				$("#scene_map").width(scene.width);
-				$("#scene_map").height(scene.height);
-			}
-			else{
-				scene.width="0";
-				scene.height="0";
-				scene.upscaled="0";
-				
-				this.persist();	
-			}*/
-
 		$("#tokens").show();
 		$("#grid_overlay").show();
 
@@ -186,8 +149,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		else {
 			map_url = scene.player_map;
 		}
-
-
 
 		load_scenemap(map_url, null, null, function() {
 			var owidth = $("#scene_map").width();
@@ -257,6 +218,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	sync() {
+		if(window.CLOUD)
+			return;
 		console.log('inviooooooooooooooooooooooooooooooooooooooooooo');
 
 		$("#scene_map").width();
@@ -582,6 +545,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	persist() {
+		if(window.CLOUD)
+			return;
 		console.log("persisting");
 		if (window.STARTING)
 			return;
@@ -604,31 +569,36 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		this.sources = {};
 
-
-		if (localStorage.getItem('ScenesHandler' + gameid) != null) {
-			this.scenes = $.parseJSON(localStorage.getItem('ScenesHandler' + gameid));
-			this.current_scene_id = localStorage.getItem("CurrentScene" + gameid);
+		if(window.CLOUD){
+			this.scenes=null;
+			this.current_scene_id=null;
 		}
-		else {
-			this.scenes = [];
-			this.scenes.push({
-				title: "The Tavern",
-				dm_map: "",
-				player_map: "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
-				scale: "100",
-				dm_map_usable: "0",
-				fog_of_war: "1",
-				tokens: {},
-				grid: "0",
-				hpps: "72",
-				vpps: "72",
-				snap: "1",
-				fpsq: "5",
-				offsetx: 29,
-				offsety: 54,
-				reveals: [[0, 0, 0, 0, 2, 0]],
-			});
-			this.current_scene_id = 0;
-		}
+		else{ // LEGACY
+			if (localStorage.getItem('ScenesHandler' + gameid) != null) {
+				this.scenes = $.parseJSON(localStorage.getItem('ScenesHandler' + gameid));
+				this.current_scene_id = localStorage.getItem("CurrentScene" + gameid);
+			}
+			else {
+				this.scenes = [];
+				this.scenes.push({
+					title: "The Tavern",
+					dm_map: "",
+					player_map: "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
+					scale: "100",
+					dm_map_usable: "0",
+					fog_of_war: "1",
+					tokens: {},
+					grid: "0",
+					hpps: "72",
+					vpps: "72",
+					snap: "1",
+					fpsq: "5",
+					offsetx: 29,
+					offsety: 54,
+					reveals: [[0, 0, 0, 0, 2, 0]],
+				});
+				this.current_scene_id = 0;
+			}
+		} // END OF LEGACY
 	}
 }

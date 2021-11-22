@@ -323,6 +323,13 @@ class MessageBroker {
 					fake.remove();
 				}
 			}
+
+			if(msg.eventType == "custom/myVTT/scenelist"){
+				if(window.DM){
+					window.ScenesHandler.scenes=msg.data;
+				}
+			}
+
 			if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
 			}
@@ -782,7 +789,7 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
-		if (window.DM) {
+		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
 		}
@@ -791,7 +798,6 @@ class MessageBroker {
 		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
 			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
 		}*/
-
 
 		window.TOKEN_OBJECTS = {};
 		var data = msg.data;
