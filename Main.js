@@ -1639,8 +1639,8 @@ function init_buttons() {
 	buttons = $("<div/>")
 	$("body").append(buttons);
 
-	if (window.DM)
-		buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable' data-shape='select'><u>S</u>ELECT</button>"));
+	
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable' data-shape='select'><u>S</u>ELECT</button>"));
 
 	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton hideable' data-shape='measure'><u>R</u>ULER</button>"));
 	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable'><u>F</u>OG</button>");

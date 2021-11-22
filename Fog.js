@@ -1180,10 +1180,8 @@ function setup_draw_buttons() {
 
 		if ($(clicked).hasClass('menu-button')) {
 			if($(clicked).is("#aoe_button") && $(clicked).hasClass('button-selected')) {
-				if(window.DM){
-					$('#select-button').click();
-					return;
-				}
+				$('#select-button').click();
+				return;
 			}
 			$(clicked).toggleClass('button-selected');
 		}
