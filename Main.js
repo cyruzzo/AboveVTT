@@ -1468,7 +1468,6 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
-	build_token_image_map_menu();
 	load_custom_image_mapping();
 
 
@@ -1527,6 +1526,12 @@ function init_ui() {
 		$("body").css("cursor", "");
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
+		}
+		if (token_customization_modal_is_open() && event.which == 1) {
+			// if the click was outside the customization modal, close the modal, but allow right clicking because contextMenu events are outside the modal
+			if (event.target.closest(".token-image-modal") == undefined) {
+				close_token_customization_modal();
+			}
 		}
 	}
 
