@@ -1184,6 +1184,10 @@ function check_versions_match() {
 
 function init_ui() {
 	window.STARTING = true;
+	let searchParams = new URLSearchParams(window.location.search)
+		if(searchParams.has("dev"))
+			window.CLOUD=true;
+	
 	var gameid = $("#message-broker-client").attr("data-gameId");
 	init_splash();
 	window.TOKEN_OBJECTS = {};
@@ -1571,8 +1575,9 @@ function init_ui() {
 
 	if (window.DM) {
 		setTimeout(function() {
-			window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
-
+			if(!window.CLOUD){
+				window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
+			}
 			// also sync the journal
 			window.JOURNAL.sync();
 		}, 5000);
