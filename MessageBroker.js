@@ -227,6 +227,13 @@ class MessageBroker {
 	constructor() {
 		var self = this;
 		
+		this.mysenderid=uuid();
+		this.stats={
+			reflected:0,
+			peers : {}
+		};
+		this.above_sequence=0;
+
 		this.chat_id=uuid();
 		this.chat_counter=0;
 		this.chat_pending_messages=[];
@@ -239,13 +246,67 @@ class MessageBroker {
 		this.gameid = $("#message-broker-client").attr("data-gameId");
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 
-		this.onmessage = function(event) {
+		this.onmessage = function(event,tries=0) {
 			if (event.data == "pong")
 				return;
 
 			var msg = $.parseJSON(event.data);
 			console.log(msg.eventType);
 			
+			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
+
+				if(msg.sender==self.mysenderid){
+					self.stats.reflected++;
+					console.error("WARNING. WE RECEIVED BACK OUR OWN MESSAGE");
+					return;
+				}
+
+				if(self.stats.peers[msg.sender]){
+					let shouldbethis=self.stats.peers[msg.sender].sequence+1;
+					if(msg.sequence==shouldbethis){
+						self.stats.peers[msg.sender].sequence=msg.sequence;
+						if(tries>0){
+							console.log("FIXED");
+							self.stats.peers[msg.sender].future_fixed++;
+						}
+					}
+					if(msg.sequence > shouldbethis){
+						if(tries==0)
+							self.stats.peers[msg.sender].future++;
+						
+						console.log("MSG in the future. (was expecting "+shouldbethis+" but we got "+msg.sequence+ " retries :" + tries);
+						if(tries<20){
+							setTimeout(self.onmessage,300,event,tries+1);
+							console.log("trying to fix");
+							return;
+						}
+						else{
+							console.error("lost a message");
+							self.stats.peers[msg.sender].sequence=msg.sequence;
+						}
+					}
+					if(msg.sequence < shouldbethis){
+							if((msg.sequence - self.stats.peers[msg.sender].first_sequence) > 10){
+								self.stats.peers[msg.sender].past++;
+								console.error("Sequence message is in the past. We should try to recover");
+							}
+							else{
+								console.log("message in the past, but the che connection is new.. so.. I guess it's ok");
+							}
+							
+					}
+				}
+				else{
+					self.stats.peers[msg.sender]={
+							future:0,
+							future_fixed:0,
+							past:0,
+							sequence: msg.sequence,
+							first_sequence: msg.sequence,
+					}
+				}
+			}
+
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
@@ -267,7 +328,6 @@ class MessageBroker {
 				if(window.DM)
 					self.handleCharacterUpdate(msg);
 			}
-
 
 			if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
@@ -867,6 +927,8 @@ class MessageBroker {
 			action: "sendmessage",
 			campaignId:window.CAMPAIGN_SECRET,
 			eventType: eventType,
+			sender: this.mysenderid,
+			sequence: this.above_sequence++,
 			data: data,
 		}
 		if(window.CURRENT_SCENE_DATA)
