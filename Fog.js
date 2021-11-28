@@ -725,6 +725,7 @@ function drawing_mousedown(e) {
 		window.BEGIN_MOUSEX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 		window.BEGIN_MOUSEY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		window.MOUSEDOWN = true;
+		window.MOUSEMOVEWAIT = false;
 		if(window.DRAWSHAPE === "brush")
 		{
 			window.BRUSHWAIT = false;
@@ -744,6 +745,10 @@ function drawing_mousedown(e) {
 
 function drawing_mousemove(e) {
 
+	if (window.MOUSEMOVEWAIT) {
+		return;
+	}
+
 	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
@@ -753,6 +758,12 @@ function drawing_mousemove(e) {
 	var fill = getDrawingFill();
 	var style = getDrawingStyle();
 	var lineWidth = getDrawingLineWidth();
+	const mouseMoveFps = (1000 / 16);
+
+	window.MOUSEMOVEWAIT = true;
+	setTimeout(function() {
+		window.MOUSEMOVEWAIT = false;
+	}, mouseMoveFps);
 
 	if (window.MOUSEDOWN) {
 		var width = mousex - window.BEGIN_MOUSEX;
@@ -817,6 +828,7 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "brush"){
 			// Only add a new point every 75ms to keep the drawing size low
+			// Subtract mouseMoveFps from 75ms to avoid waiting too much
 			if(!window.BRUSHWAIT)
 			{
 				window.BRUSHPOINTS.push({x:mousex, y:mousey});
@@ -824,9 +836,11 @@ function drawing_mousemove(e) {
 				drawBrushstroke(ctx, window.BRUSHPOINTS,style,lineWidth);
 
 				window.BRUSHWAIT = true;
-				setTimeout(function() {
-					window.BRUSHWAIT = false;
-				}, 75);
+				if (mouseMoveFps < 75) {
+					setTimeout(function() {
+						window.BRUSHWAIT = false;
+					}, (75 - mouseMoveFps));
+				}
 			}
 		}
 	}
