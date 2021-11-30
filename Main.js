@@ -243,6 +243,14 @@ function switch_control(e) {
 
 }
 
+function report_connection(){
+	var msgdata = {
+			player: window.PLAYER_NAME,
+			img: window.PLAYER_IMG,
+			text: PLAYER_NAME + " has connected to the server!",	
+	};
+	window.MB.inject_chat(msgdata);
+}
 
 function load_monster_stat(monsterid) {
 	$(".monster_frame").hide();
@@ -1422,6 +1430,7 @@ function init_ui() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
 			window.MB.sendMessage("custom/myVTT/playerjoin");
 			init_player_sheet(window.PLAYER_SHEET);
+			report_connection();
 			//open_player_sheet(window.PLAYER_SHEET, false);
 		}, 5000);
 	}
