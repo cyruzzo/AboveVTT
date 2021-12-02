@@ -105,6 +105,10 @@ function getPlayerIDFromSheet(sheet_url)
 
 window.YTTIMEOUT = null;
 
+function image_load_cb() {
+	alert("Map could not be loaded");
+}
+
 function load_scenemap(url, width = null, height = null, callback = null) {
 	$("#scene_map").remove();
 
@@ -165,8 +169,11 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 			newmap.height(height);
 		}
 
-		if (callback != null)
+		if (callback != null) {
 			newmap.on("load", callback);
+			newmap.on("error", image_load_cb);
+		}
+
 		$("#VTT").append(newmap);
 	}
 
