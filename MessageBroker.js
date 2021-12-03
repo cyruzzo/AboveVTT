@@ -910,8 +910,6 @@ class MessageBroker {
 		
 		this.handle_injected_data(message);
 
-		console.log('got here');
-
 	}
 
 
