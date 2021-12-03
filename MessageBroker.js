@@ -712,9 +712,13 @@ class MessageBroker {
 		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
+		
+		if ($(".GameLog_GameLog__2z_HZ").scrollTop() < 0) {
+			$(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
+		}
 
 		return newentry;
-		//$(".GameLog_GameLogEntries__3oNPD").prepend(newentry);
+		
 	}
 
 
@@ -906,6 +910,7 @@ class MessageBroker {
 		
 		this.handle_injected_data(message);
 
+		console.log('got here');
 
 	}
 

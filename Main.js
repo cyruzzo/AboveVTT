@@ -1327,6 +1327,12 @@ function init_ui() {
 
 	});
 
+	$(".GameLog_GameLog__2z_HZ").scroll(function() {
+		if ($(this).scrollTop() >= 0) {
+			$(this).removeClass("highlight-gamelog");
+		}
+	});
+
 	//s = $("<script src='https://meet.jit.si/external_api.js'></script>");
 	//$("#site").append(s);
 
