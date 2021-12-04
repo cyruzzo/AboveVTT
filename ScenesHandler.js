@@ -1,3 +1,55 @@
+// Helper functions to check max map size - data from https://github.com/jhildenbiddle/canvas-size
+function get_canvas_max_length() {
+	var version_split = $.browser.version.split(".");
+
+	if ($.browser.mozilla) {
+		// Firefox
+		return 32767;		
+	} else if ($.browser.msie) {
+		// IE
+		if (version_split[0] >= 11.0) {
+			return 16384;
+		} else {
+			return 8192;
+		}
+	} else if (!$.browser.opera) {
+		// Chrome
+		if (version_split[0] >= 73.0) {
+			return 65535;
+		} else {
+			return 32767;
+		}
+	} else {
+		// Unsupported
+		return 32767;
+	}
+}
+
+function get_canvas_max_area() {
+	var browser_str = "Unknown";	
+	var max_area = 0;
+
+	if ($.browser.mozilla) {
+		// Firefox
+		browser_str = "Mozilla Firefox"
+		max_area = (11180 * 11180);
+	} else if ($.browser.msie) {
+		// IE
+		browser_str = "Internet Explorer"
+		max_area = (8192 * 8192);		
+	} else if (!$.browser.opera) {
+		// Chrome
+		browser_str = "Chrome"
+		max_area = (16384 * 16384);
+	} else {
+		// Unsupported
+		max_area = (16384 * 16384);
+	}
+
+	console.log("Browser detected as " + browser_str + " with version " + $.browser.version);
+	return max_area;
+}
+
 class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	reload(callback = null) {
@@ -140,6 +192,21 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		load_scenemap(map_url, null, null, function() {
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
+			var max_length = get_canvas_max_length();
+			var max_area = get_canvas_max_area();
+
+			console.log("Map size is " + owidth + "x" + oheight + " (with scale factor of " + scene.scale_factor + ") and browser supports max length of " + max_length + "px and max area of " + max_area + "px");
+
+			// Check if the map size is too large
+			if (owidth > max_length || oheight > max_length || (owidth * oheight) > max_area) {
+				alert("Your map is too large! Your browser supports max width and height of " + max_length + " and a max area (width*height) of " + max_area);
+			} else if (scene.scale_factor > 1) {
+				var scaled_owidth = (owidth * scene.scale_factor);
+				var scaled_oheight = (oheight * scene.scale_factor);
+				if (scaled_owidth > max_length || scaled_oheight > max_length || (scaled_owidth * scaled_oheight) > max_area) {
+					alert("Your grid size is too large! We try to keep grid squares at least 50px for nice looking token.\nWe had to scale the map size, making it unsupported on your browser.\nTry to re-grid your map and reduce the number of grid squares.");
+				}
+			}
 
 			if (scene.scale_factor) {
 				$("#scene_map").width(owidth * scene.scale_factor);
