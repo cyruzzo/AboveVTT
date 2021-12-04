@@ -1,5 +1,9 @@
 
 function parse_img(url){
+	if (url === undefined) {
+		console.warn("parse_img was called without a url");
+		return "";
+	}
 	retval=url;
 	if(retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0)
 		retval='https://drive.google.com/uc?id=' + retval.split('/')[5];
@@ -1500,7 +1504,7 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
-	load_custom_image_mapping();
+	load_custom_monster_image_mapping();
 
 
 	window.WaypointManager=new WaypointManagerClass();

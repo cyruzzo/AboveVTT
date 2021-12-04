@@ -36,12 +36,10 @@ function init_monster_panel() {
 			event.preventDefault();
 			event.stopPropagation();
 			let monsterRow = event.target.closest(".monster-row");
-			currentlyCustomizingMonster = {
-				monsterId: monsterRow.id.replace("monster-row-", ""),
-				monsterName: $(monsterRow).find(".monster-row__name").text(),
-				defaultImg: parse_img($(monsterRow).find(".monster-row__cell--avatar img").attr("src"))
-			};
-			display_token_customization_modal();
+			let monsterId = monsterRow.id.replace("monster-row-", "");
+			let monsterName = $(monsterRow).find(".monster-row__name").text();
+			let defaultImg = parse_img($(monsterRow).find(".monster-row__cell--avatar img").attr("src"));
+			display_monster_customization_modal(undefined, monsterId, monsterName, defaultImg);
 		};
 		// clicking the menu looking button opens our token customization modal
 		list.on("click", ".monster-row__cell--drag-handle", function(event) {
@@ -51,7 +49,7 @@ function init_monster_panel() {
 		list.on("mouseup", ".monster-row__cell--avatar", function(event) {
 			open_token_customization_modal_from_monster_row(event);
 		});
-		register_token_image_context_menu();
+		register_custom_monster_image_context_menu();
 
 		list.on("contextmenu", "button.monster-row__add-button", function(e) {
 			e.preventDefault();
@@ -132,8 +130,7 @@ function init_monster_panel() {
 	iframe.attr("src", "/encounter-builder");
 }
 
-var currentlyCustomizingMonster = {};
-function register_token_image_context_menu() {
+function register_custom_monster_image_context_menu() {
 	$.contextMenu({
 		selector: ".custom-token-image-item",
 		items: {
@@ -141,22 +138,14 @@ function register_token_image_context_menu() {
 				name: "Place Token",
 				callback: function(itemKey, opt, originalEvent) {
 					let selectedItem = $(opt.$trigger[0]);
-					let monsterId = selectedItem.data("monster");
-					let monsterName = selectedItem.data("name");
-					let imgSrc = selectedItem.find("img").attr("src");
-					originalEvent.target = selectedItem;
-					place_custom_monster_img(originalEvent, monsterId, monsterName, imgSrc, false)
+					place_custom_token_at_point(selectedItem, false);
 				}
 			},
 			placeHidden: {
 				name: "Place Hidden Token",
 				callback: function(itemKey, opt, originalEvent) {
 					let selectedItem = $(opt.$trigger[0]);
-					let monsterId = selectedItem.data("monster");
-					let monsterName = selectedItem.data("name");
-					let imgSrc = selectedItem.find("img").attr("src");
-					originalEvent.target = selectedItem;
-					place_custom_monster_img(originalEvent, monsterId, monsterName, imgSrc, true)
+					place_custom_token_at_point(selectedItem, true);
 				}
 			},
 			copy: {
@@ -171,15 +160,35 @@ function register_token_image_context_menu() {
 			remove: { 
 				name: "Remove",
 				callback: function(itemKey, opt, originalEvent) {
-					let selectedItem = $(opt.$trigger[0]);
-					let monsterId = selectedItem.data("monster");
-					let imgIndex = parseInt(selectedItem.data("custom-img-index"));
 					if (window.confirm("Are you sure you want to remove this custom image?")) {
-						remove_custom_token_image(monsterId, imgIndex);
-						selectedItem.remove();
-						if (get_custom_monster_images(monsterId).length == 0) {
-							// the user removed the last custom image. redraw the modal so the default image shows up
-							display_token_customization_modal();
+						let selectedItem = $(opt.$trigger[0]);
+						let imgIndex = parseInt(selectedItem.attr("data-custom-img-index"));
+						let monsterId = selectedItem.attr("data-monster");
+						let name = selectedItem.attr("data-name");
+						if (monsterId != undefined) {
+							// removing from the monsters pane
+							remove_custom_monster_image(monsterId, imgIndex);
+							selectedItem.remove();
+							if (get_custom_monster_images(monsterId).length == 0) {
+								// the user removed the last custom image. redraw the modal so the default image shows up
+								display_monster_customization_modal();
+							}
+						} else if (name != undefined) {
+							// removing from the tokens pane
+							let tokenDataPath = selectedItem.attr("data-tokendatapath");
+							let tokenDataName = selectedItem.attr("data-tokendataname"); // name can be changed. tokendataname is the key used to store the token data
+							if (tokenDataName == undefined) {
+								tokenDataName = name; // tokens placed before this feature went live won't have this data so try to find it using the name. Hopefully the user didn't rename the token.
+							}
+							remove_image_from_token_data(tokenDataPath, tokenDataName, imgIndex);
+							selectedItem.remove();
+							display_custom_token_form(tokenDataPath, tokenDataName);
+							if (imgIndex == 0) {
+								// the user removed the first image. redraw the underlying menu so that the row has the most recent image drawn
+								fill_tokenmenu(window.CURRENT_TOKEN_PATH);
+							}
+						} else {
+							console.warn("Failed to remove token. couldn't find a data-monster or data-name on the element");
 						}
 					}
 				}
@@ -189,21 +198,19 @@ function register_token_image_context_menu() {
 }
 
 function token_customization_modal_is_open() {
-	return $(".token-image-modal").length > 0;
+	return $("#VTTWRAPPER .token-image-modal").length > 0;
 }
 
 function close_token_customization_modal() {
-	$(".token-image-modal").remove();
+	$("#VTTWRAPPER .token-image-modal").remove();
 }
 
-function display_token_customization_modal(placedToken) {
+
+function display_monster_customization_modal(placedToken, monsterId, monsterName, defaultImg) {
 
 	// close any that are already open. This shouldn't be necessary, but it doesn't hurt just in case
 	close_token_customization_modal();
 	
-	let monsterId = currentlyCustomizingMonster.monsterId;
-	let monsterName = currentlyCustomizingMonster.monsterName;
-	let defaultImg = currentlyCustomizingMonster.defaultImg;
 	if (monsterId == undefined || monsterName == undefined || defaultImg == undefined) {
 		console.warn(`Failed to display monster customization modal; monsterId = ${monsterId}, monsterName = ${monsterName}, defaultImg = ${defaultImg}`)
 		return
@@ -212,21 +219,12 @@ function display_token_customization_modal(placedToken) {
 	let customImages = get_custom_monster_images(monsterId);
 
 	// build the modal header
-	let closeButton = $(`<button class="ddbeb-modal__close-button qa-modal_close" title="Close Modal"><svg class="" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g><g transform="rotate(45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g></svg></button>`); 
-	closeButton.click(close_token_customization_modal);
-	let modalHeader = $(`
-		<div class="token-image-modal-header">
-			<div class="token-image-modal-header-title">${monsterName}</div>
-			<div class="token-image-modal-header-subtitle">Token Images</div>
-		</div>
-	`);
-
+	let explanationText = "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.";
 	if (placedToken != undefined) {
 		// the user is updating a token that has already been placed. Add some explanation text to help them figure out how to use this in case it's their first time here.
-		modalHeader.append($(`<div class="token-image-modal-explanation">Click an image below to update your token or enter a new image URL at the bottom.</div>`))
-	} else {
-		modalHeader.append($(`<div class="token-image-modal-explanation">When placing tokens, one of these images will be chosen at random. Right-click an image for more options.</div>`))
+		explanationText = "Click an image below to update your token or enter a new image URL at the bottom.";
 	}
+	let modalHeader = build_token_modal_header(monsterName, explanationText);
 
 	const determineLabelText = function() {
 		if (placedToken != undefined) {
@@ -242,10 +240,10 @@ function display_token_customization_modal(placedToken) {
 	let modalBody = $(`<div class="token-image-modal-body"></div>`);
 	let removeAllButton = $(`<button class="token-image-modal-remove-all-button" data-monster-id="${monsterId}" title="Reset this monster back to the default image.">Remove All Custom Images</button><`);
 	removeAllButton.click(function(event) {
-		let monsterId = $(event.target).data("monster-id");
+		let monsterId = $(event.target).attr("data-monster-id");
 		if (window.confirm(`Are you sure you want to remove all custom images for ${monsterName}?\nThis will reset the monster images back to the default`)) {
-			remove_all_custom_token_images(monsterId);
-			display_token_customization_modal(placedToken);
+			remove_all_custom_monster_images(monsterId);
+			display_monster_customization_modal(placedToken);
 			footerLabel.text(determineLabelText());
 		}
 	})
@@ -253,22 +251,17 @@ function display_token_customization_modal(placedToken) {
 	if (customImages != undefined && customImages.length > 0) {
 		for (let i = 0; i < customImages.length; i++) { 
 			let imageUrl = parse_img(customImages[i]);
-			let tokenDiv = build_token_customization_item(monsterId, monsterName, imageUrl, i, placedToken);
+			let tokenDiv = build_monster_customization_item(monsterId, monsterName, imageUrl, i, placedToken);
 			modalBody.append(tokenDiv);
 		}
 		removeAllButton.show();
 	} else {
-		let tokenDiv = build_token_customization_item(monsterId, monsterName, defaultImg, -1, placedToken);
+		let tokenDiv = build_monster_customization_item(monsterId, monsterName, defaultImg, -1, placedToken);
 		modalBody.append(tokenDiv);
 		removeAllButton.hide();
 	}
 
 	// build the modal footer
-	let inputWrapper = $(`<div style="width:90%;"></div>`);
-	let footerLabelText = determineLabelText();
-	let footerLabel = $(`<div class="token-image-modal-footer-title" style="width:100%; padding-left:0px">${footerLabelText}</div>`)
-	inputWrapper.append(footerLabel);
-	let urlInput = $(`<input title="${footerLabelText}" placeholder="https://..." name="addCustomImage" type="text" style="width:100%" data-monster-id="${monsterId}" />`);
 	const add_token_customization_image = function(imageUrl) {
 		if(imageUrl.startsWith("data:")){
 			alert("You cannot use urls starting with data:");
@@ -279,37 +272,30 @@ function display_token_customization_modal(placedToken) {
 			modalBody.empty();
 			removeAllButton.show();
 		}
-		add_custom_image_mapping(monsterId, imageUrl);
+		add_custom_monster_image_mapping(monsterId, imageUrl);
 		let updatedImages = get_custom_monster_images(monsterId);
 		let imgIndex = updatedImages.indexOf(imageUrl);
-		let tokenDiv = build_token_customization_item(monsterId, monsterName, imageUrl, imgIndex, placedToken);
+		let tokenDiv = build_monster_customization_item(monsterId, monsterName, imageUrl, imgIndex, placedToken);
 		modalBody.append(tokenDiv);	
 		footerLabel.text(determineLabelText())
-	}
-	urlInput.on('keyup', function(event) {
-		let imageUrl = event.target.value;
-		if (event.key == "Enter" && imageUrl != undefined && imageUrl.length > 0) {
-			add_token_customization_image(imageUrl);
-		}
-	});
-	inputWrapper.append(urlInput);
-	let modalFooter = $(`<div class="token-image-modal-footer"></div>`);
-	modalFooter.append(inputWrapper);
+	};
+	let modalFooter = build_token_modal_footer(determineLabelText(), add_token_customization_image);
+	modalFooter.find(`input[name='addCustomImage']`).attr("data-monster-id", monsterId);
+	modalFooter.find(`.token-image-modal-add-button`).attr("data-monster-id", monsterId);
+
+
 
 	// put it all together
-	let sidebarContent = $(".sidebar__pane-content");
-	let width = parseInt(sidebarContent.width());
-	let top = parseInt(sidebarContent.position().top) + 10;
-	let height = parseInt(sidebarContent.height());
-	let modalContent = $(`<div class="token-image-modal-content" style="height:${height-20}px;"></div>`); // remove 20px to account for the padding on .token-image-modal
-	modalContent.append(closeButton);
+	let modal = build_modal_container();
+	let modalContent = modal.find(".token-image-modal-content");
 	modalContent.append(modalHeader);
 	modalContent.append(modalBody);
 	modalContent.append(removeAllButton);
 	modalContent.append(modalFooter);
 
 	if (placedToken) {
-		// allow them to only use the new url for 
+		modalFooter.find(`.token-image-modal-add-button`).remove();
+		// allow them to use the new url for the placed token without saving the url for all future monsters
 		let onlyForThisTokenButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" data-monster-id="${monsterId}" title="This url will be used for this token only. New tokens will continue to use the images shown above.">Set for this token only</button>`);
 		onlyForThisTokenButton.click(function(event) {
 			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
@@ -329,29 +315,110 @@ function display_token_customization_modal(placedToken) {
 		});
 		modalContent.append(addForAllButton);
 		modalContent.append($(`<div class="token-image-modal-explanation" style="padding:4px;">You can access this modal from the Monsters tab by clicking the button on the right side of the monster row.</div>`));
-	} else {
-		let addButton = $(`<button class="token-image-modal-add-button" data-monster-id="${monsterId}">Add</button>`);
-		addButton.click(function(event) {
-			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
-			if (imageUrl != undefined && imageUrl.length > 0) {
-				add_token_customization_image(imageUrl);
-			}
-		});
-		modalFooter.append(addButton);	
 	}
-
-	let modal = $(`<div class="token-image-modal" style="width:${width}px;top:${top}px;right:0px;left:auto;height:${height}px;position:fixed;"></div>`);
-	let overlay = $(`<div class="token-image-modal-overlay"></div>`)
-	modal.append(overlay);
-	modal.append(modalContent);
 
 	// display it
 	$("#VTTWRAPPER").append(modal);
 }
 
-function build_token_customization_item(monsterId, monsterName, imageUrl, customImgIndex, placedToken) {
-	let tokenDiv = $(`<div class="custom-token-image-item" data-monster="${monsterId}" data-name="${monsterName}" data-custom-img-index="${customImgIndex}"><img alt="token-img" style="transform: scale(0.75); display: inline-block; overflow: hidden; width:100%; height:100%" class="token-image token-round" src="${imageUrl}" /></div>`);
-	if (placedToken != undefined) {
+function build_modal_container() {
+	let sidebarContent = $(".sidebar__pane-content");
+	let width = parseInt(sidebarContent.width());
+	let top = parseInt(sidebarContent.position().top) + 10;
+	let height = parseInt(sidebarContent.height());
+	let modalContent = $(`<div class="token-image-modal-content" style="height:${height-20}px;"></div>`); // remove 20px to account for the padding on .token-image-modal
+	let modal = $(`<div class="token-image-modal" style="width:${width}px;top:${top}px;right:0px;left:auto;height:${height}px;position:fixed;"></div>`);
+	let overlay = $(`<div class="token-image-modal-overlay"></div>`)
+	modal.append(overlay);
+	modal.append(modalContent);
+	return modal;
+}
+
+function build_token_modal_header(headerTitle, explanationText) {
+	let closeButton = $(`<button class="ddbeb-modal__close-button qa-modal_close" title="Close Modal"><svg class="" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g><g transform="rotate(45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g></svg></button>`); 
+	closeButton.click(close_token_customization_modal);
+	let modalHeader = $(`
+		<div class="token-image-modal-header">
+			<div class="token-image-modal-header-title">${headerTitle}</div>
+			<div class="token-image-modal-header-subtitle">Token Images</div>
+			<div class="token-image-modal-explanation">${explanationText}</div>
+		</div>
+	`);
+	modalHeader.prepend(closeButton);
+	return modalHeader;
+}
+
+// imageUrlEntered is a function that takes a string in the form of a url
+function build_token_modal_footer(footerLabelText, imageUrlEntered) {
+	if (typeof imageUrlEntered !== 'function') {
+		imageUrlEntered = function(newImageUrl) {
+			console.warn(`Failed to provide a valid function to handle ${newImageUrl}`);
+		};
+	}
+	
+	let footerLabel = $(`<div class="token-image-modal-footer-title">${footerLabelText}</div>`)
+	// inputWrapper.append(footerLabel);
+	let urlInput = $(`<input title="${footerLabelText}" placeholder="https://..." name="addCustomImage" type="text" />`);
+	urlInput.on('keyup', function(event) {
+		let imageUrl = event.target.value;
+		if (event.key == "Enter" && imageUrl != undefined && imageUrl.length > 0) {
+			if(imageUrl.startsWith("data:")){
+				alert("You cannot use urls starting with data:");
+				return;
+			}	
+			imageUrlEntered(imageUrl);
+		}
+	});
+
+	let addButton = $(`<button class="token-image-modal-add-button">Add</button>`);
+	addButton.click(function(event) {
+		let imageUrl = $(`.token-image-modal-footer-input-wrapper input[name="addCustomImage"]`)[0].value;
+		if (imageUrl != undefined && imageUrl.length > 0) {
+			if(imageUrl.startsWith("data:")){
+				alert("You cannot use urls starting with data:");
+				return;
+			}	
+			imageUrlEntered(imageUrl);
+		}
+	});
+
+	// input wrapper is where all inputs should go. token menus add more inputs for example
+	let inputWrapper = $(`<div class="token-image-modal-footer-input-wrapper"></div>`);
+	
+
+	let labelAndUrlWrapper = $(`<div class="token-image-modal-url-label-wrapper"></div>`); // this is to keep the label and input stacked vertically
+	let addButtonAndLabelUrlWrapper = $(`<div class="token-image-modal-url-label-add-wrapper"></div>`); // this is to keep the add button on the right side of the label and input
+		
+	inputWrapper.append(addButtonAndLabelUrlWrapper);       // outer most wrapper
+	addButtonAndLabelUrlWrapper.append(labelAndUrlWrapper); // label/input on the left
+	addButtonAndLabelUrlWrapper.append(addButton);          // add button on the right
+	labelAndUrlWrapper.append(footerLabel);                 // label above input
+	labelAndUrlWrapper.append(urlInput);                    // input below label
+
+	let modalFooter = $(`<div class="token-image-modal-footer"></div>`);
+	modalFooter.append(inputWrapper);
+	return modalFooter;
+}
+
+function build_monster_customization_item(monsterId, monsterName, imageUrl, customImgIndex, placedToken) {
+	let tokenDiv = build_custom_token_item(monsterName, imageUrl, undefined, customImgIndex, placedToken);
+	tokenDiv.attr("data-monster", monsterId);
+	tokenDiv.addClass("monster-image-item");
+	return tokenDiv;
+}
+
+function build_custom_token_item(name, imageUrl, tokenSize, customImgIndex, placedToken) {
+	if (tokenSize === undefined) {
+		tokenSize = 1;
+	}	
+
+	let tokenDiv = $(`
+		<div class="custom-token-image-item" data-name="${name}" data-custom-img-index="${customImgIndex}" data-token-size="${tokenSize}">
+			<div class="token-image-sizing-dummy"></div>
+			<img alt="token-img" class="token-image token-round" src="${imageUrl}" />
+		</div>
+	`);
+	if (placedToken !== undefined) {
 		// the user is changing their token image, allow them to simply click an image
 		// we don't want to allow drag and drop from this modal
 		tokenDiv.click(function() {
@@ -361,98 +428,115 @@ function build_token_customization_item(monsterId, monsterName, imageUrl, custom
 		});
 	}
 
+
 	tokenDiv.draggable({
 		helper: "clone",
 		appendTo: "#VTTWRAPPER",
 		zIndex: 100000,
-		start: function (event, ui) { 
-			console.log("custom-token-image-item drag start");
-			// center under the cursor
-
-			window.StatHandler.getStat(monsterId, function(stat) {
-				let tokenSize = 1.0
-				if (stat.data.sizeId == 5) {
-					tokenSize = 2.0;
-				} else if (stat.data.sizeId == 6) {
-					tokenSize = 3.0;
-				} else if (stat.data.sizeId == 7) {
-					tokenSize = 4.0;
-				}
-					
-				let helperWidth = $(event.target).width() / (1.0 / window.ZOOM);
-				$(ui.helper).css('width', `${helperWidth * tokenSize}px`);
-			});
+		helper: function(event) {
+			return $(event.currentTarget).find("img").clone();
 		},
-		drag: function(event, ui) {
-			$(event).draggable("option", "cursorAt", {
-				left: Math.floor(ui.helper.width() / 2),
-				top: Math.floor(ui.helper.height() / 2)
-			}); 
+		start: function (event, ui) {
+
+			let tokenSize = $(event.currentTarget).attr("data-token-size");
+			let monsterId = $(event.target).attr("data-monster");
+
+			const updateHelperSize = function() {
+				if (tokenSize == undefined) {
+					tokenSize = 1;
+				}
+				let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
+				let helperWidth = width / (1.0 / window.ZOOM);
+				$(ui.helper).css('width', `${helperWidth}px`);
+				$(this).draggable('instance').offset.click = {
+					left: Math.floor(ui.helper.width() / 2),
+					top: Math.floor(ui.helper.height() / 2)
+				};	
+			};
+
+			if (monsterId != undefined) {
+				// we have a monster, fetch the tokenSize from DDB, and then update the element that is being dragged around
+				// this can't be done ahead of time because the rows are built synchronously, and this call is asynchronous
+				window.StatHandler.getStat(monsterId, function(stat) {
+					if (stat.data.sizeId == 5) {
+						tokenSize = 2;
+					} else if (stat.data.sizeId == 6) {
+						tokenSize = 3;
+					} else if (stat.data.sizeId == 7) {
+						tokenSize = 4;
+					}
+					updateHelperSize();
+				});
+			} else {
+				updateHelperSize();
+			}
 		},
 		stop: function (event) { 
 			// place a token where this was dropped
 			let token = $(event.target).clone();
-			let monsterId = token.data("monster");
-			let monsterName = token.data("name");
-			let imgSrc = token.find("img").attr("src");
 			let hidden = event.shiftKey;
-			event.target = token;
-
-			let mouseX = (event.pageX - 200) * (1.0 / window.ZOOM);
-			let mouseY = (event.pageY - 200) * (1.0 / window.ZOOM);
-
-			let fogOverlay = $("#fog_overlay"); // not sure if there's a better way to find this...
-			if (mouseX <= 0 || mouseY <= 0 || mouseX >= fogOverlay.width() || mouseY >= fogOverlay.height()) {
-				console.log("not dropping token outside of the scene");
-				return;
-			}
-
-			let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
-			if (shallwesnap) {
-				// calculate offset in real coordinates
-				const startX = window.CURRENT_SCENE_DATA.offsetx;
-				const startY = window.CURRENT_SCENE_DATA.offsety;
-
-				const selectedNewtop = Math.round((mouseY - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-				const selectedNewleft = Math.round((mouseX - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
-				place_custom_monster_img(event, monsterId, monsterName, imgSrc, hidden, selectedNewleft, selectedNewtop);
-
-			} else {
-				place_custom_monster_img(event, monsterId, monsterName, imgSrc, hidden, mouseX, mouseY);
-			}
-
+			place_custom_token_at_point(token, hidden, event.pageX, event.pageY);
 		}
 	});
 
 	return tokenDiv;
 }
 
-function place_custom_monster_img(e, monsterId, monsterName, imgSrc, hidden, x, y) {
-	let button = e.target;
-	button.attr('data-stat', monsterId);
-	button.attr("data-name", monsterName);
-	button.attr('data-img', imgSrc);
-	button.attr('data-custom-img', imgSrc);
-	button.attr('data-left', x);
-	button.attr('data-top', y);
 
-	if (hidden) {
-		button.attr('data-hidden', 1)
+
+function place_custom_token_at_point(htmlElement, hidden, eventPageX, eventPageY) {
+
+	let monsterId = htmlElement.attr("data-monster");
+	let name = htmlElement.attr("data-name");
+	let tokenSize = htmlElement.attr("data-token-size");
+	let imgSrc = htmlElement.find("img").attr("src");
+	if (monsterId !== undefined) {
+		// placing from the monster pane
+		place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize, hidden, eventPageX, eventPageY);
+	} else if (name !== undefined) {
+		// placing from the tokens pane
+		let tokenDataPath = htmlElement.attr("data-tokendatapath");
+		let tokenDataName = htmlElement.attr("data-tokendataname"); // name can be changed. tokendataname is the key used to store the token data
+		if (tokenDataName === undefined) {
+			tokenDataName = name; // tokens placed before this feature went live won't have this data so try to find it using the name. Hopefully the user didn't rename the token.
+		}
+		place_token_from_modal(tokenDataPath, tokenDataName, hidden, imgSrc, eventPageX, eventPageY);
 	} else {
-		button.removeAttr('data-hidden');
+		console.warn("Failed to place token. couldn't find a data-monster or data-name on the element");
 	}
+}
 
-	window.StatHandler.getStat(monsterId, function(stat) {
-		if (stat.data.sizeId == 5)
-			button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 2);
-		if (stat.data.sizeId == 6)
-			button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 3);
-		if (stat.data.sizeId == 7)
-			button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 4);
-		button.attr('data-hp', stat.data.averageHitPoints);
-		button.attr('data-maxhp', stat.data.averageHitPoints);
-		button.attr('data-ac', stat.data.armorClass);
-		token_button(e);
+function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize, hidden, eventPageX, eventPageY) {
+	let options = Object.assign({}, $(htmlElement).data());
+	delete options.size; // we're going to replace whatever might be there with tokenSize
+	// remove other html garbage
+ 	delete options.draggable;
+	delete options.contextMenu;
+	options = Object.assign(options, {
+		name: name,
+		imgsrc: imgSrc,
+		tokenSize: tokenSize,
+		hidden: hidden
 	});
 
+	if (monsterId != undefined) {
+		options.stat = monsterId
+		window.StatHandler.getStat(monsterId, function(stat) {
+			options.sizeId = stat.data.sizeId;
+			options.hp = stat.data.averageHitPoints;
+			options.max_hp = stat.data.averageHitPoints;
+			options.ac = stat.data.armorClass;
+			if (eventPageX == undefined || eventPageY == undefined) {
+				place_token_in_center_of_map(options);
+			} else {
+				place_token_under_cursor(options, eventPageX, eventPageY);
+			}
+		});
+	} else {
+		if (eventPageX == undefined || eventPageY == undefined) {
+			place_token_in_center_of_map(options);
+		} else {
+			place_token_under_cursor(options, eventPageX, eventPageY);
+		}
+	}
 }

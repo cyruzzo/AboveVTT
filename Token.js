@@ -63,7 +63,7 @@ class Token {
 	isPlayer() {
 		// player tokens have ids with a structure like "/profile/username/characters/someId"
 		// monster tokens have a uuid for their id
-		return this.options.id.includes("/")
+		return this.options.id.includes("/");
 	}
 
 	size(newsize) {
@@ -686,6 +686,14 @@ class Token {
 				old.find("img").removeClass("preserve-aspect-ratio");
 			}
 
+			// store custom token info if available
+			if (typeof this.options.tokendatapath !== "undefined" && this.options.tokendatapath != "") {
+				old.attr("data-tokendatapath", this.options.tokendatapath);
+			}
+			if (typeof this.options.tokendataname !== "undefined") {
+				old.attr("data-tokendataname", this.options.tokendataname);
+			}
+
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
 		else {
@@ -790,6 +798,13 @@ class Token {
 				tok.addClass("hasTooltip");
 			}
 
+			// store custom token info
+			if (typeof this.options.tokendatapath !== "undefined" && this.options.tokendatapath != "") {
+				tok.attr("data-tokendatapath", this.options.tokendatapath);
+			}
+			if (typeof this.options.tokendataname !== "undefined") {
+				tok.attr("data-tokendataname", this.options.tokendataname);
+			}
 
 			var newopacity = 1.0;
 			if (this.options.hidden) {
@@ -1091,6 +1106,27 @@ function return_false() {
 	return false;
 }
 
+function default_options() {
+	return {
+		color: '#000000',
+		conditions: [],
+		hp: "",
+		max_hp: "",
+		ac: "",
+		name: "",
+		aura1: {
+			feet: "0",
+			color: "rgba(255, 129, 0, 0.3)"
+		},
+		aura2: {
+			feet: "0",
+			color: "rgba(255, 255, 0, 0.1)"
+		},
+		auraVisible: true,
+		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio']
+	};
+}
+
 function token_button(e, tokenIndex = null, tokenTotal = null) {
 	console.log($(e.target).outerHTML());
 	let imgsrc = parse_img($(e.target).attr("data-img"));
@@ -1122,29 +1158,11 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		}
 	}
 	
-	options = {
-		id: id,
-		imgsrc: imgsrc,
-		left: centerX + "px",
-		top: centerY + "px",
-		color: '#000000',
-		conditions: [],
-		hp: "",
-		max_hp: "",
-		ac: "",
-		name: "",
-		aura1: {
-			feet: "0",
-			color: "rgba(255, 129, 0, 0.3)"
-		},
-		aura2: {
-			feet: "0",
-			color: "rgba(255, 255, 0, 0.1)"
-		},
-		auraVisible: true,
-		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio']
-	};
-	
+	let options = default_options();
+	options.id = id;
+	options.imgsrc = imgsrc;
+	options.left = `${centerX}px`;
+	options.top = `${centerY}px`;
 	
 	if(typeof $(e.target).attr('data-stat') !== "undefined"){ // APPLY SAVED TOKEN SETTINGS ONLY FOR MONSTERS
 		for(let o in window.TOKEN_SETTINGS){
@@ -1259,6 +1277,89 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 
 	window.MB.sendMessage('custom/myVTT/token', options);
 
+}
+
+function place_token_in_center_of_map(tokenObject) {
+	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
+	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
+	centerX = Math.round(centerX * (1.0 / window.ZOOM));
+	centerY = Math.round(centerY * (1.0 / window.ZOOM));
+	place_token_at_point(tokenObject, centerX, centerY);
+}
+
+function place_token_under_cursor(tokenObject, eventPageX, eventPageY) {
+	// adjust for map offset and zoom
+	let mouseX = (eventPageX - 200) * (1.0 / window.ZOOM);
+	let mouseY = (eventPageY - 200) * (1.0 / window.ZOOM);
+	let fogOverlay = $("#fog_overlay"); // not sure if there's a better way to find this...
+	if (mouseX <= 0 || mouseY <= 0 || mouseX >= fogOverlay.width() || mouseY >= fogOverlay.height()) {
+		console.log("not dropping token outside of the scene");
+		return;
+	}
+	// this was copied the place function in this file. We should make this a single function to be used in other places
+	let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
+	if (shallwesnap) {
+		// adjust to the nearest square coordinate
+		const startX = window.CURRENT_SCENE_DATA.offsetx;
+		const startY = window.CURRENT_SCENE_DATA.offsety;
+		const selectedNewtop = Math.round((mouseY - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+		const selectedNewleft = Math.round((mouseX - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+		place_token_at_point(tokenObject, selectedNewleft, selectedNewtop);
+	} else {
+		// drop it exactly where it is
+		place_token_at_point(tokenObject, mouseX, mouseY);
+	}
+}
+
+function place_token_at_point(tokenObject, x, y) {
+
+	console.log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
+
+	if (tokenObject.id == undefined) {
+		tokenObject.id = uuid();
+	}
+	// if this is a player token, check if the token is already on the map
+	if(tokenObject.id in window.TOKEN_OBJECTS && window.TOKEN_OBJECTS[tokenObject.id].isPlayer()){
+		window.TOKEN_OBJECTS[tokenObject.id].highlight();
+		return;
+	}
+
+	// overwrite the defaults with global settings
+	let options = Object.assign(default_options(), window.TOKEN_SETTINGS);
+	// now overwrite with anything that we were given
+	options = Object.assign(options, tokenObject);
+	options.imgsrc = parse_img(options.imgsrc);
+
+	options.left = `${x}px`;
+	options.top = `${y}px`;
+	if (options.size == undefined) {
+		if (options.sizeId != undefined) {
+			// sizeId was specified, convert it to size. This is used when adding from the monster pane
+			if (options.sizeId == 5) {
+				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 2;
+			} else if (options.sizeId == 6) {
+				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 3;
+			} else if (options.sizeId == 7) {
+				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 4;
+			} else {
+				// default to small/medium size
+				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
+			}
+		} else if (options.tokenSize != undefined && parseInt(options.tokenSize) != NaN) {
+			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
+			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseInt(options.tokenSize);
+		} else {
+			// default to small/medium size
+			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
+		}
+	}
+
+	// place the token
+	window.ScenesHandler.create_update_token(options);
+	if (options.id in window.PLAYER_STATS) {
+		window.MB.handlePlayerData(window.PLAYER_STATS[options.id]);
+	}
+	window.MB.sendMessage('custom/myVTT/token', options);
 }
 
 function array_remove_index_by_value(arr, item) {
@@ -1386,19 +1487,19 @@ function menu_callback(key, options, event) {
 
 	if (key === "imgsrcSelect") {
 		id = $(this).attr("data-id");
-		if (!(id in window.TOKEN_OBJECTS)) 
+		if (!(id in window.TOKEN_OBJECTS)) {
 			return;
+		}
 		let tok = window.TOKEN_OBJECTS[id];
 		let monsterId = $(options.$trigger).data("monster");
-		let monsterName = $(options.$trigger).data("name");
-		window.StatHandler.getStat(monsterId, function(stat) {
-			currentlyCustomizingMonster = {
-				monsterId: monsterId,
-				monsterName: monsterName,
-				defaultImg: stat.data.avatarUrl
-			};					
-			display_token_customization_modal(tok);
-		});
+		let name = $(options.$trigger).data("name");
+		if (monsterId != undefined) {
+			window.StatHandler.getStat(monsterId, function(stat) {
+				display_monster_customization_modal(tok, monsterId, name, stat.data.avatarUrl);
+			});
+		} else {
+			display_placed_token_customization_modal(tok);
+		}
 	}
 	
 }
@@ -1933,8 +2034,14 @@ function token_menu() {
 					delete ret.items.max_hp;
 					delete ret.items.token_cond;
 					delete ret.items.options.items.token_revealname;
-					delete ret.items.sep3;
-					delete ret.items.imgsrcSelect;
+					if (window.TOKEN_OBJECTS[id].isPlayer()) {
+						// players don't use the new modal yet
+						delete ret.items.sep3;
+						delete ret.items.imgsrcSelect;
+					} else {
+						// custom tokens use the new modal now
+						delete ret.items.imgsrc;
+					}
 				}
 				
 				if(!has_note){
@@ -2051,7 +2158,7 @@ function get_custom_monster_images(monsterId) {
 		return [];
 	}
 	if (window.CUSTOM_TOKEN_IMAGE_MAP == undefined) {
-		load_custom_image_mapping();
+		load_custom_monster_image_mapping();
 	}
 	var customImages = window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
 	if (customImages == undefined) {
@@ -2060,30 +2167,30 @@ function get_custom_monster_images(monsterId) {
 	return customImages;
 }
 
-function add_custom_image_mapping(monsterId, imgsrc) {
+function add_custom_monster_image_mapping(monsterId, imgsrc) {
 	if (monsterId == undefined) {
 		return;
 	}
 	var customImages = get_custom_monster_images(monsterId);
 	customImages.push(parse_img(imgsrc));
 	window.CUSTOM_TOKEN_IMAGE_MAP[monsterId] = customImages;
-	save_custom_image_mapping();
+	save_custom_monster_image_mapping();
 }
 
-function remove_custom_token_image(monsterId, index) {
+function remove_custom_monster_image(monsterId, index) {
 	var customImages = get_custom_monster_images(monsterId);;
 	if (customImages.length > index) {
 		window.CUSTOM_TOKEN_IMAGE_MAP[monsterId].splice(index, 1);
 	}
-	save_custom_image_mapping();
+	save_custom_monster_image_mapping();
 }
 
-function remove_all_custom_token_images(monsterId) {
+function remove_all_custom_monster_images(monsterId) {
 	delete window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
-	save_custom_image_mapping();
+	save_custom_monster_image_mapping();
 }
 
-function load_custom_image_mapping() {
+function load_custom_monster_image_mapping() {
 	window.CUSTOM_TOKEN_IMAGE_MAP = {};
 	let customMappingData = localStorage.getItem('CustomDefaultTokenMapping');
 	if(customMappingData != null){
@@ -2091,7 +2198,7 @@ function load_custom_image_mapping() {
 	}
 }
 
-function save_custom_image_mapping() {
+function save_custom_monster_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
 	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { "17100": [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
@@ -2119,12 +2226,15 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 }
 
 /// rotates all selected tokens to the specified newRotation
-function rotate_selected_tokens(newRotation) {
+function rotate_selected_tokens(newRotation, persist = false) {
 	if ($("#select-button").hasClass("button-enabled") || !window.DM) { // players don't have a select tool
 		for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 			let id = window.CURRENTLY_SELECTED_TOKENS[i];
 			let token = window.TOKEN_OBJECTS[id];
 			token.rotate(newRotation);
+			if (persist) {
+				token.place_sync_persist();
+			}
 		}
 		return false;
 	}

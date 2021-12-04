@@ -342,21 +342,21 @@ window.addEventListener("keyup", async (event) => {
         return;
     }
     if (rotationKeyPresses.includes('ArrowDown') && rotationKeyPresses.includes('ArrowLeft')) {
-        rotate_selected_tokens(45);
+        rotate_selected_tokens(45, true);
     } else if (rotationKeyPresses.includes('ArrowLeft') && rotationKeyPresses.includes('ArrowUp')) {
-        rotate_selected_tokens(135);
+        rotate_selected_tokens(135, true);
     } else if (rotationKeyPresses.includes('ArrowUp') && rotationKeyPresses.includes('ArrowRight')) {
-        rotate_selected_tokens(225);
+        rotate_selected_tokens(225, true);
     } else if (rotationKeyPresses.includes('ArrowRight') && rotationKeyPresses.includes('ArrowDown')) {
-        rotate_selected_tokens(315);
+        rotate_selected_tokens(315, true);
     } else if (rotationKeyPresses.includes('ArrowDown')) {
-        rotate_selected_tokens(0);
+        rotate_selected_tokens(0, true);
     } else if (rotationKeyPresses.includes('ArrowLeft')) {
-        rotate_selected_tokens(90);
+        rotate_selected_tokens(90, true);
     } else if (rotationKeyPresses.includes('ArrowUp')) {
-        rotate_selected_tokens(180);
+        rotate_selected_tokens(180, true);
     } else if (rotationKeyPresses.includes('ArrowRight')) {
-        rotate_selected_tokens(270);
+        rotate_selected_tokens(270, true);
     }
 
     rotationKeyPresses = [];

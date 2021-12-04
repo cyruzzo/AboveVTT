@@ -941,9 +941,16 @@ div#scene_properties form > div {
 
 .tokenmenuitem {
 	float: left;
-	height:100px;
-	width: 100px;
+	width: 33%;
     margin-bottom: 20px;
+    position: relative;
+}
+.tokenmenuitem img {
+    position: absolute;
+    top:      0;
+    left:     0;
+    bottom:   0;
+    right:    0;
 }
 
 .panel-warning {
@@ -1264,13 +1271,11 @@ body {
 .token-image-modal {
     position: fixed;
     z-index: 99999;
-    /* display: flex; */
     align-items: center;
     justify-content: center;
     padding: 10px;
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
-    /* background-color: rgba(0,0,0,.5); */
 }
 .token-image-modal-overlay {
     position: absolute;
@@ -1310,12 +1315,10 @@ body {
 .token-image-modal-body {
     position: relative; 
     width:100%; 
-    /* max-height: 90%; */
     overflow-y: auto;
     flex: auto;
 }
 .token-image-modal-footer {
-    height: 52px;
     border-top: 1px solid #d8e1e8;
     display: flex;
     align-items: center;
@@ -1330,6 +1333,31 @@ body {
     color: #738694;
     font-size: 13px;
     line-height: 1.4;
+    margin-top: 6px;
+}
+.token-image-modal-footer input {
+    margin-bottom: 6px;
+    width: auto;
+}
+.token-image-modal-footer-select-wrapper {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 6px;
+}
+.token-image-modal-footer-select-wrapper select {
+    min-width: 30%;
+}
+.token-image-modal-footer-input-wrapper {
+    width: 100%;
+}
+.token-image-modal-url-label-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.token-image-modal-url-label-add-wrapper {
+    display: flex;
+    flex-direction: row;
 }
 .token-image-modal-remove-all-button {
     appearance: none;
@@ -1363,8 +1391,187 @@ body {
 }
 .custom-token-image-item {
     float: left; 
-    width:30%;
+    width: 33%;
+    position: relative;
 }
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
+}
+.custom-token-image-item img {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: inline-block;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+.token-image-sizing-dummy {
+    /* this allows us to size the img using a 1:1 aspect ratio without having to use js to calculate the height after the felx width has been determined */
+    margin-top: 100%;
+}
+
+.custom-token-list {
+    display: flex;
+    align-items: center;
+    padding: 0px 6px 0px 6px;
+    flex-direction: column;
+    background: rgb(235, 241, 245);
+    height: 100%;
+}
+.custom-token-image-row {
+    padding: 4px;
+    width: 100%;
+    margin: 2px 0px 2px 0px;
+    border: 1px solid #d8e1e8;
+    border-radius: 3px;
+    background-color: #fff;
+}
+.custom-token-image-row-item {
+    display: flex;
+    width: 100%;
+}
+.custom-token-image-row-img {
+    display: flex;
+    flex-basis: 38px;
+    width: 38px;
+    max-width: 38px;
+    height: 38px;
+    max-height: 38px;
+    border-radius: 3px;
+    object-fit: cover;
+    margin-left: 4px;
+}
+.custom-token-image-row-img img {
+    object-fit: contain;
+    width: 38px;
+    max-width: 38px;
+    height: 38px;
+    max-height: 38px;
+}
+.custom-token-image-row-details {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: #10161a;
+    flex-grow: 1;
+    margin-left: 4px;
+    margin-right: 4px;
+    line-height: 1.4;
+    font-family: Roboto, "Open Sans", Helvetica, sans-serif;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.custom-token-image-row-details div {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+}
+.custom-token-image-row-details-title {
+    font-size: 13px;
+    font-weight: 700;
+}
+.custom-token-image-row-details-subtitle {
+    color: #738694;
+    font-size: 10px;
+}
+.custom-token-image-row-add {
+    margin-left: auto;
+    display: flex;
+    flex-basis: 38px;
+    width: 38px;
+    max-width: 38px;
+    height: 38px;
+    max-height: 38px;
+    border-radius: 3px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #d8e1e8;
+    cursor: pointer;
+}
+.custom-token-image-row-add svg {
+    width: 100%;
+    height: 100%;
+    fill: #1b9af0;
+}
+.custom-token-image-row-handle {
+    background-color: #d8e1e8;
+    display: flex;
+    width: 38px;
+    max-width: 38px;
+    object-fit: cover;
+    padding: 13px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #f2f6f8;
+    align-self: stretch;
+    border-left: 1px solid #d8e1e8;
+    margin: -4px -4px -4px 8px;
+    cursor: pointer;
+}
+.custom-token-image-row-handle svg {
+    width: 100%;
+    height: 100%;
+    fill: #738694;
+}
+
+#tokens-panel {
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    background-color: rgb(235, 241, 245);
+    height: 100%;
+}
+#tokens-panel .token-image-modal-content {
+    height: 100%;
+}
+#tokens-panel-data {
+    background-color: rgb(235, 241, 245);
+    position: relative; 
+    width:100%; 
+    overflow-y: auto;
+    flex: auto;
+}
+.tokens-panel-back-button {
+    background-image: url(https://media-waterdeep.cursecdn.com/file-attachments/0/737/chevron-left-green.svg);
+    background-repeat: no-repeat;
+    background-position: left;
+    padding: 4px;
+    cursor: pointer;
+}
+.tokens-panel-back-button div {
+    padding-left: 20px;
+    color: #878787;
+    text-transform: uppercase;
+    font-family: "Roboto Condensed", Roboto, Helvetica, sans-serif;
+    font-weight: bold;
+}
+#tokens-panel-header {
+    background-color: rgb(235, 241, 245);
+    padding: 8px;
+}
+#tokens-panel-footer {
+    display: flex;
+    padding: 8px;
+    background-color: rgb(235, 241, 245);
+}
+#tokens-panel-footer button {
+    appearance: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: #1b9af0;
+    border: none;
+    color: #fff;
+    align-self: stretch;
+    margin: 0px 4px 0px 4px;
+    padding: 10px;
+    flex-grow: 1;
+    text-align: center;
 }
