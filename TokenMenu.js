@@ -1233,12 +1233,12 @@ function update_modal_images(token) {
 
 function random_image_for_token(path, name) {
 	let token = find_token_at_path(path, name);
-	if (token == undefined) {
+	if (token === undefined) {
 		console.warn(`failed to find a token with name ${name}, and path ${path}`);
 		return "";
 	}
 	let images = token['data-alternative-images'];
-	if (images == undefined || images.length == 0) {
+	if (images === undefined || images.length == 0) {
 		images = [ token['data-img'] ];
 	}
 	let randomIndex = getRandomInt(0, images.length);
@@ -1251,7 +1251,7 @@ function place_token_from_modal(path, name, hidden, specificImage, eventPageX, e
 		path = find_best_path(name);
 	}
 	let token = find_token_at_path(path, name);
-	if (token == undefined) {
+	if (token === undefined) {
 		console.warn(`failed to place a token with name ${name}, and path ${path}`);
 		return;
 	}
@@ -1267,26 +1267,26 @@ function place_token_from_modal(path, name, hidden, specificImage, eventPageX, e
 		disablestat: true
 	};
 
-	if (specificImage == undefined) {
+	if (specificImage === undefined) {
 		options.imgsrc = random_image_for_token(path, name);
 	} else {
 		options.imgsrc = specificImage;
 	}
 
 	// set reasonable defaults
-	if (options.square == undefined) {
+	if (options.square === undefined) {
 		options.square = window.TOKEN_SETTINGS["square"];
 		if (options.square == undefined) {
 			options.square = false;
 		}
 	}
-	if (options.disableborder == undefined) {
+	if (options.disableborder === undefined) {
 		options.disableborder = window.TOKEN_SETTINGS["disableborder"];
 		if (options.disableborder == undefined) {
 			options.disableborder = false;
 		}
 	}
-	if (options.legacyaspectratio == undefined) {
+	if (options.legacyaspectratio === undefined) {
 		options.legacyaspectratio = window.TOKEN_SETTINGS["legacyaspectratio"];
 		if (options.legacyaspectratio == undefined) {
 			options.legacyaspectratio = false;
@@ -1301,7 +1301,7 @@ function place_token_from_modal(path, name, hidden, specificImage, eventPageX, e
 	}
 	options.tokenSize = tokenSize;
 
-	if (eventPageX == undefined || eventPageY == undefined) {
+	if (eventPageX === undefined || eventPageY === undefined) {
 		place_token_in_center_of_map(options);
 	} else {
 		place_token_under_cursor(options, eventPageX, eventPageY);
@@ -1446,9 +1446,11 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 		images.push(parsedImage);
 	}
 	
+	let indexOffset = 0;
 	if (dataImg !== undefined && !images.includes(dataImg)) {
 		// the main image somehow isn't in the list so put it at the front
 		images.unshift(dataImg);
+		indexOffset++;
 	}
 
 	if (placedToken !== undefined) {
@@ -1462,6 +1464,7 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 		if (placedImg !== undefined && !images.includes(placedImg)) {
 			// the placedToken image has been changed by the user so put it at the front
 			images.unshift(placedImg);
+			indexOffset++;
 		}
 	}
 	if (tokenSize === undefined) {
@@ -1471,7 +1474,7 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 	
 	for (let i = 0; i < images.length; i++) { 
 		let imageUrl = parse_img(images[i]);
-		let tokenDiv = build_custom_token_item(name, imageUrl, tokenSize, i);
+		let tokenDiv = build_custom_token_item(name, imageUrl, tokenSize, i - indexOffset);
 		if (placedToken !== undefined) {
 			// if they click this image, update the placedToken and close the modal
 			tokenDiv.click(function() {

@@ -6,8 +6,17 @@ function init_pclist() {
 
 }
 
+// this is not ideal, but if update_pclist is called while the user is dragging a player token, then draggable breaks and leaves the ui.helper on the screen forever
+// to prevent draggable from breaking, we prevent update_pclist from executing while the user is dragging a player token
+// once the user stops dragging the player token, we call update_pclist if it was called during the drag
+let isDraggingPlayerToken = false;
+let pclistUpdateRequired = false;
 
 function update_pclist() {
+	if (isDraggingPlayerToken) {
+		pclistUpdateRequired = true;
+		return;
+	}
 
 	// get scroll position
 	var scroll_y = $(".sidebar__pane-content").scrollTop();
@@ -61,12 +70,10 @@ function update_pclist() {
 	if(window.DM)
 		pcs_list.append(addPartyButtonContainer);
 
-	var NEXT_COLOR = 0;
 	window.pcs.forEach(function(item, index) {
 
-		color = "#" + TOKEN_COLORS[NEXT_COLOR++];
-
 		pc = item;
+		color = "#" + get_player_token_border_color(pc.sheet);
 
 		let playerData;
 		if (pc.sheet in window.PLAYER_STATS) {
@@ -74,7 +81,7 @@ function update_pclist() {
 		}
 
 		const newPlayerTemplate = `
-			<div class="player-card">
+			<div class="player-card" data-player-id="${pc.sheet}">
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
 					<div class="player-actions">
@@ -170,11 +177,53 @@ function update_pclist() {
 			newplayer.find(".add-token-btn,.open-sheet-btn").remove();
 			newplayer.find(".player-no-attributes").html("");
 		}
+		let token = newplayer.find(".player-token");
+		token.draggable({
+			appendTo: "#VTTWRAPPER",
+			zIndex: 100000,
+			helper: function(event) {
+				let helper = $(event.currentTarget).find("img").clone();
+				let playerId = $(event.currentTarget).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
+				let image = random_image_for_player_token(playerId);
+				if (image !== undefined) {
+					helper.attr("src", parse_img(image));
+				}
+				return helper;
+			},
+			start: function (event, ui) {
+				isDraggingPlayerToken = true;
+				console.log("row-item drag start");
+				let width = window.CURRENT_SCENE_DATA !== undefined ? Math.round(window.CURRENT_SCENE_DATA.hpps) : 100; // the scene hasn't fully loaded, 100 seems like an ok default
+				let helperWidth = width / (1.0 / window.ZOOM);
+				$(ui.helper).css('width', `${helperWidth}px`);
+				$(ui.helper).css('height', `${helperWidth}px`);
+				$(this).draggable('instance').offset.click = {
+					left: Math.floor(ui.helper.width() / 2),
+					top: Math.floor(ui.helper.height() / 2)
+				};
+			},
+			stop: function (event, ui) { 
+				// place a token where this was dropped
+				console.log("row-item drag stop");
+				let src = $(ui.helper).attr("src");
+				let playerId = $(event.target).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
+				place_player_token(playerId, event.shiftKey, src, event.pageX, event.pageY);
+				isDraggingPlayerToken = false;
+				if (pclistUpdateRequired) {
+					// update_pclist was called while the user was dragging a player token. 
+					// we prevented that call, because jquery draggable breaks if the target is removed while dragging
+					// so call it now
+					pclistUpdateRequired = false;
+					update_pclist();
+				}
+			}
+		});
 		pcs_list.append(newplayer);
 	});
 
-	$(".add-token-btn").on("click", function () {
-		token_button({target: this});
+	$(".add-token-btn").on("click", function (event) {
+		let playerId = $(event.currentTarget).attr('data-set-token-id');
+		place_player_token(playerId, event.button == 2);
 	});
 
 	$(".open-sheet-btn").on("click", function () {
@@ -210,4 +259,332 @@ function get_higher_res_url(thumbnailUrl) {
 	const thumbnailUrlMatcher = /avatars\/thumbnails\/\d+\/\d+\/\d\d\/\d\d\//;
 	if (!thumbnailUrl.match(thumbnailUrlMatcher)) return thumbnailUrl;
 	return thumbnailUrl.replace(/\/thumbnails(\/\d+\/\d+\/)\d+\/\d+\//, '$1');
+}
+
+
+
+
+function read_player_token_customizations() {
+	let customMappingData = localStorage.getItem('PlayerTokenCustomization');
+	if (customMappingData !== undefined && customMappingData != null) {
+		return $.parseJSON(customMappingData);
+	} else {
+		return {};
+	}
+}
+
+function write_player_token_customizations(customMappingData) {
+	if (customMappingData !== undefined && customMappingData != null) {
+		localStorage.setItem("PlayerTokenCustomization", JSON.stringify(customMappingData));
+	}
+}
+
+function add_player_image_mapping(playerId, imageUrl) {
+	if (playerId === undefined || imageUrl === undefined) {
+		return;
+	}
+	let customMappingData = read_player_token_customizations();
+	if (customMappingData[playerId] === undefined) {
+		customMappingData[playerId] = { images: [] };
+	}
+	customMappingData[playerId].images.push(imageUrl);
+	write_player_token_customizations(customMappingData);
+}
+
+function remove_player_image_mapping(playerId, index) {
+	if (playerId === undefined || index === undefined) {
+		return;
+	}
+	let customMappingData = read_player_token_customizations();
+	if (customMappingData[playerId] === undefined || customMappingData[playerId].images === undefined) {
+		return;
+	}
+
+	if (customMappingData[playerId].images.length > index) {
+		customMappingData[playerId].images.splice(index, 1);
+	}
+
+	write_player_token_customizations(customMappingData);
+}
+
+function remove_all_player_image_mappings(playerId) {
+	if (playerId === undefined) {
+		return;
+	}
+	let customMappingData = read_player_token_customizations();
+	customMappingData[playerId].images = [];
+	write_player_token_customizations(customMappingData);
+}
+
+function get_player_token_customizations(playerId) {
+	read_player_token_customizations();
+	let customMappingData = read_player_token_customizations();
+	if (customMappingData[playerId] === undefined) {
+		return { images: [] };
+	}
+	return customMappingData[playerId];
+}
+
+function get_player_image_mappings(playerId) {
+	let customizations = get_player_token_customizations(playerId);
+	if (customizations.images !== undefined) {
+		return customizations.images;
+	}
+	return [];
+}
+
+function random_image_for_player_token(playerId) {
+	let images = get_player_image_mappings(playerId);
+	let randomIndex = getRandomInt(0, images.length);
+	return images[randomIndex];
+}
+
+function get_player_token_border_color(playerId) {
+	let index = window.pcs.findIndex(pc => pc.sheet == playerId);
+	if (index >= 0 && index < TOKEN_COLORS.length) {
+		return TOKEN_COLORS[index];
+	}
+	return TOKEN_COLORS[0];
+}
+
+function register_player_token_customization_context_menu() {
+	$.contextMenu({
+		selector: '.player-card',
+		build: function(element, e) {
+			
+			let items = {};
+			let playerId = element.attr("data-player-id");
+			let isTokenOnMap = window.TOKEN_OBJECTS[playerId] !== undefined;
+			let pc = window.pcs.find(pc => pc.sheet == playerId);
+			let isOwner = pc.sheet.endsWith(window.PLAYER_ID);
+
+			if (isTokenOnMap) {
+				items.locate = {
+					name: "Locate Placed Token",
+					callback: function(itemKey, opt, originalEvent) {
+						let playerId = opt.$trigger.attr("data-player-id");
+						window.TOKEN_OBJECTS[playerId].highlight();
+					}
+				};
+			} else {
+
+				if (window.DM) {
+					items.place = {
+						name: "Place Token",
+						callback: function(itemKey, opt, originalEvent) {
+							let playerId = opt.$trigger.attr("data-player-id");
+							place_player_token(playerId, false);
+						}
+					};
+					items.placeHidden = {
+						name: "Place Hidden Token",
+						callback: function(itemKey, opt, originalEvent) {
+							let playerId = opt.$trigger.attr("data-player-id");
+							place_player_token(playerId, true);
+						}
+					};
+				}
+			}
+
+			items.copy = {
+				name: "Copy Url",
+				callback: function(itemKey, opt, e) {
+					let selectedItem = $(opt.$trigger[0]);
+					let imgSrc = selectedItem.find("img").attr("src");
+					copy_to_clipboard(imgSrc);
+				}
+			}
+			
+			items.border = "---";
+
+			if (window.DM || isOwner) {
+				items.customize = {
+					name: "Customize",
+					callback: function(itemKey, opt, originalEvent) {
+						let playerId = opt.$trigger.attr("data-player-id");
+						display_player_token_customization_modal(playerId);
+					}
+				};
+			}
+
+			return { items: items };
+		}
+	});
+}
+
+function place_player_token(playerId, hidden, specificImage, eventPageX, eventPageY) {
+
+	if (window.TOKEN_OBJECTS[playerId] !== undefined) {
+		window.TOKEN_OBJECTS[playerId].highlight();
+		return;
+	}
+
+	let pc = window.pcs.find(pc => pc.sheet == playerId);
+	let playerData = window.PLAYER_STATS[playerId];
+	if (pc === undefined) {
+		console.warn(`failed to find pc for id ${playerId}`);
+		return;
+	}
+
+	let options = {
+		id: playerId,
+		name: pc.name,
+		hidden: hidden,
+		tokenSize: 1,
+		hp: playerData ? playerData.hp : '',
+		ac: playerData ? playerData.ac : '',
+		max_hp: playerData ? playerData.max_hp : '',
+		square: window.TOKEN_SETTINGS["square"],
+		disableborder: window.TOKEN_SETTINGS['disableborder'],
+		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio'],
+		disablestat: window.TOKEN_SETTINGS['disablestat'],
+		color: "#" + get_player_token_border_color(pc.sheet)
+	};
+
+	if (specificImage !== undefined) {
+		options.imgsrc = parse_img(specificImage);
+	} else {
+		let image = random_image_for_player_token(playerId);
+		if (image === undefined) {
+			image = pc.image;
+		}
+		options.imgsrc = parse_img(image);
+	}
+
+
+	if (eventPageX == undefined || eventPageY == undefined) {
+		place_token_in_center_of_map(options);
+	} else {
+		place_token_under_cursor(options, eventPageX, eventPageY);
+	}
+
+}
+
+function display_player_token_customization_modal(playerId, placedToken) {
+	
+	// close any that are already open. This shouldn't be necessary, but it doesn't hurt just in case
+	close_token_customization_modal();
+
+	if (playerId === undefined) {
+		console.warn("display_player_token_customization_modal was called without a playerId");
+		return;
+	}
+
+	let pc = window.pcs.find(pc => pc.sheet == playerId);
+	if (pc === undefined) {
+		console.warn(`failed to find pc for id ${playerId}`);
+		return;
+	}
+
+	let customizations = get_player_token_customizations(playerId);
+
+
+	// build the modal header
+	let explanationText = "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.";
+	if (placedToken !== undefined) {
+		// the user is updating a token that has already been placed. Add some explanation text to help them figure out how to use this in case it's their first time here.
+		explanationText = "Click an image below to update your token or enter a new image URL at the bottom.";
+	}
+	let modalHeader = build_token_modal_header(pc.name, explanationText);
+	
+	const determineLabelText = function() {
+		if (placedToken != undefined) {
+			return "Enter a new image URL";	
+		} else if (get_player_image_mappings(playerId).length == 0) {
+			return "Replace The Default Image";
+		} else {
+			return "Add More Custom Images";
+		}
+	}
+
+	// build the modal body
+	let modalBody = $(`<div class="token-image-modal-body"></div>`);
+	let removeAllButton = $(`<button class="token-image-modal-remove-all-button" data-player-id="${playerId}" title="Reset this player back to the default image.">Remove All Custom Images</button><`);
+	removeAllButton.click(function(event) {
+		// let playerId = $(event.target).attr("data-player-id");
+		if (window.confirm(`Are you sure you want to remove all custom images for ${pc.name}?\nThis will reset the player images back to the default`)) {
+			remove_all_player_image_mappings(playerId);
+			display_player_token_customization_modal(playerId, placedToken);
+			$(".token-image-modal-footer-title").text(determineLabelText());
+		}
+	})
+	
+	if (customizations.images.length > 0) {
+		for (let i = 0; i < customizations.images.length; i++) { 
+			let imageUrl = parse_img(customizations.images[i]);
+			let tokenDiv = build_player_customization_item(playerId, pc.name, imageUrl, i, placedToken);
+			modalBody.append(tokenDiv);
+		}
+		removeAllButton.show();
+	} else {
+		let tokenDiv = build_player_customization_item(playerId, pc.name, pc.image, -1, placedToken);
+		modalBody.append(tokenDiv);
+		removeAllButton.hide();
+	}
+
+	// build the modal footer
+	const add_token_customization_image = function(imageUrl) {
+		if(imageUrl.startsWith("data:")){
+			alert("You cannot use urls starting with data:");
+			return;
+		}
+		if (get_player_image_mappings(playerId).length == 0) {
+			// this is the first custom image so remove the default image before appending the new one, and show the remove all button
+			modalBody.empty();
+			removeAllButton.show();
+		}
+		add_player_image_mapping(playerId, imageUrl);
+		let updatedImages = get_player_image_mappings(playerId);
+		let imgIndex = updatedImages.indexOf(imageUrl);
+		let tokenDiv = build_player_customization_item(playerId, pc.name, imageUrl, imgIndex, placedToken);
+		modalBody.append(tokenDiv);	
+		$(".token-image-modal-footer-title").text(determineLabelText())
+	};
+	let modalFooter = build_token_modal_footer(determineLabelText(), add_token_customization_image);
+	modalFooter.find(`input[name='addCustomImage']`).attr("data-player-id", playerId);
+	modalFooter.find(`.token-image-modal-add-button`).attr("data-player-id", playerId);
+	
+	
+	// put it all together
+	let modal = build_modal_container();
+	let modalContent = modal.find(".token-image-modal-content");
+	modalContent.append(modalHeader);
+	modalContent.append(modalBody);
+	modalContent.append(removeAllButton);
+	modalContent.append(modalFooter);
+
+
+	if (placedToken) {
+		modalFooter.find(`.token-image-modal-add-button`).remove();
+		// allow them to use the new url for the placed token without saving the url for all future player tokens
+		let onlyForThisTokenButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" data-player-id="${playerId}" title="This url will be used for this token only, it will not be saved for future use.">Set for this token only</button>`);
+		onlyForThisTokenButton.click(function(event) {
+			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
+			if (imageUrl != undefined && imageUrl.length > 0) {
+				placedToken.options.imgsrc = parse_img(imageUrl);
+				close_token_customization_modal();
+				placedToken.place_sync_persist();
+			}
+		});
+		modalContent.append(onlyForThisTokenButton);	
+		let addForAllButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" data-player-id="${playerId}" title="New tokens will use this new image instead of the default image. If you have more than one custom image, one will be chosen at random when you place this player token.">Add for all future tokens</button>`);
+		addForAllButton.click(function(event) {
+			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
+			if (imageUrl != undefined && imageUrl.length > 0) {
+				add_token_customization_image(imageUrl);
+			}
+		});
+		modalContent.append(addForAllButton);
+		modalContent.append($(`<div class="token-image-modal-explanation" style="padding:4px;">You can access this modal from the Player tab by right-clicking the player image and selecting "Customize".</div>`));
+	}
+
+	// display it
+	$("#VTTWRAPPER").append(modal);
+}
+
+function build_player_customization_item(playerId, playerName, imageUrl, customImgIndex, placedToken) {
+	let tokenDiv = build_custom_token_item(playerName, imageUrl, undefined, customImgIndex, placedToken);
+	tokenDiv.attr("data-player-id", playerId);
+	tokenDiv.addClass("player-image-item");
+	return tokenDiv;
 }

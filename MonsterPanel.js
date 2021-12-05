@@ -160,10 +160,15 @@ function register_custom_monster_image_context_menu() {
 			remove: { 
 				name: "Remove",
 				callback: function(itemKey, opt, originalEvent) {
+					let selectedItem = $(opt.$trigger[0]);
+					let imgIndex = parseInt(selectedItem.attr("data-custom-img-index"));
+					if (imgIndex < 0) {
+						alert("This token is only set on the current token. Click a different image to change the token image.");
+						return;
+					}
 					if (window.confirm("Are you sure you want to remove this custom image?")) {
-						let selectedItem = $(opt.$trigger[0]);
-						let imgIndex = parseInt(selectedItem.attr("data-custom-img-index"));
 						let monsterId = selectedItem.attr("data-monster");
+						let playerId = selectedItem.attr("data-player-id");
 						let name = selectedItem.attr("data-name");
 						if (monsterId != undefined) {
 							// removing from the monsters pane
@@ -173,6 +178,11 @@ function register_custom_monster_image_context_menu() {
 								// the user removed the last custom image. redraw the modal so the default image shows up
 								display_monster_customization_modal();
 							}
+						} else if (playerId !== undefined) {
+							// removing from the players pane
+							remove_player_image_mapping(playerId, imgIndex);
+							selectedItem.remove();
+							display_player_token_customization_modal(playerId);
 						} else if (name != undefined) {
 							// removing from the tokens pane
 							let tokenDataPath = selectedItem.attr("data-tokendatapath");
@@ -220,7 +230,7 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 
 	// build the modal header
 	let explanationText = "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.";
-	if (placedToken != undefined) {
+	if (placedToken !== undefined) {
 		// the user is updating a token that has already been placed. Add some explanation text to help them figure out how to use this in case it's their first time here.
 		explanationText = "Click an image below to update your token or enter a new image URL at the bottom.";
 	}
@@ -487,12 +497,16 @@ function build_custom_token_item(name, imageUrl, tokenSize, customImgIndex, plac
 function place_custom_token_at_point(htmlElement, hidden, eventPageX, eventPageY) {
 
 	let monsterId = htmlElement.attr("data-monster");
+	let playerId = htmlElement.attr("data-player-id");
 	let name = htmlElement.attr("data-name");
 	let tokenSize = htmlElement.attr("data-token-size");
 	let imgSrc = htmlElement.find("img").attr("src");
 	if (monsterId !== undefined) {
 		// placing from the monster pane
 		place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize, hidden, eventPageX, eventPageY);
+	} else if (playerId !== undefined) {
+		// placing from the players pane
+		place_player_token(playerId, hidden, imgSrc, eventPageX, eventPageY);
 	} else if (name !== undefined) {
 		// placing from the tokens pane
 		let tokenDataPath = htmlElement.attr("data-tokendatapath");
