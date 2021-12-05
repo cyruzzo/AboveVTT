@@ -163,7 +163,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	// TODO: check if the token is already in the tracker..
 	
 	token.options.combat = true;
-	token.sync();
+	//token.sync();
 	if (token.persist != null) token.persist();
 	
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
