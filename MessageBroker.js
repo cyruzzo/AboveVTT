@@ -249,6 +249,8 @@ class MessageBroker {
 		this.onmessage = function(event,tries=0) {
 			if (event.data == "pong")
 				return;
+			if (event.data == "ping")
+				return;
 
 			var msg = $.parseJSON(event.data);
 			console.log(msg.eventType);
