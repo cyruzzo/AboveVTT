@@ -1,4 +1,3 @@
-
 // Lines are not supported yet
 const AOE_TEMPLATES = {
     'dark-circle': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/SpellToken_DarkCircle.png',
@@ -41,7 +40,7 @@ function setup_aoe_button() {
     aoe_menu.css("position", "fixed");
     aoe_menu.css("top", "25px");
     aoe_menu.css("width", "75px");
-    aoe_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+    aoe_menu.css('background', "deepskyblue");
 
     $("body").append(aoe_menu);
 

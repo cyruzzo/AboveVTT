@@ -22,7 +22,7 @@ body > button,
 #zoom_buttons button,
 .stream_button,
 .GameLogEntry_Message__1GoY3 button {
-    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    background-image: -webkit-linear-gradient(top, #ffffff, #bbbbbb);
     color: #3d3d3d;
     height: 22px;
     margin: 0 2px;
@@ -31,6 +31,59 @@ body > button,
     padding: 2px 8px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
+}
+
+.GameLog_GameLogEntries__3oNPD {
+    overflow: auto;
+    margin-top: 10px;
+    background-color: #00000000;
+}
+
+.GameLogEntry_TimeAgo__zZTLH{
+    color: #555 !important;
+}
+
+.Avatar_Avatar__131Mw{
+    width: 48px;
+    height: 48px;
+}
+
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+    background-image: linear-gradient(180deg, #424242 0%, #000000 99%);
+    border-radius: 100px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-image: linear-gradient(180deg, #424242 0%, #000000 99%);
+    border-radius: 100px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    background-image: linear-gradient(180deg, #fff 0%, #bbb 99%);
+    box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+    padding: 2px;
+  }
+
+.ddb-campaigns-detail-header-secondary-sharing {
+    margin: 0 10px 15px 0;
+    display: flex;
+    flex-direction: column;
+    width: 460px;
+	align-self: center;
+}
+
+.gamelog-button {
+	width: 460px;
+	
+}
+	
+.ddb-campaigns-character-card-footer-links{
+	display: flex;
+	flex-wrap: wrap;
+	height: 76px;
 }
 
 #combat_tracker_inside button {
@@ -85,14 +138,14 @@ body > button:hover,
 
 .aoeshape:focus,
 .drawbutton.button-enabled {
-    background-image: -webkit-linear-gradient(270deg, #f7a6a6, #ff7777);
-    box-shadow: 0 0 12px 0px #f10000;
-    border: #ff7777;
+    background-image: -webkit-linear-gradient(270deg, #93c5e2, #7ac6f3);
+    box-shadow: 0 0 12px 0px #0098f1;
+    border: #ffffff;
 }
 
 .aoeshape:focus:hover,
 .drawbutton.button-enabled:hover {
-    background-image: -webkit-linear-gradient(270deg, #e29393, #f37a7a);
+    background-image: -webkit-linear-gradient(270deg, #93c5e2, #7ac6f3);
 }
 
 .top_menu .aoeshape:focus,
@@ -111,7 +164,8 @@ body > button:hover,
 }
 
 .top_menu.visible {
-    max-height: 400px;
+	z-index: 99999999;
+    max-height: 410px;
 }
 
 .sidebar__controls > div button {
@@ -158,7 +212,7 @@ button[id$='-button'].button-enabled:hover {
     float: left;
     overflow: hidden;
     margin: 5px;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background-image: linear-gradient(180deg, #ffffff, #bbbbbb);
 }
 
 .sortable_placeholder {
@@ -195,7 +249,7 @@ div#scene_selector,
 #prewiz,
 #wizard_popup,
 .top_menu {
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background-image: linear-gradient(180deg, #ffffff, #bbbbbb);
 }
 
 #edit_dialog {
@@ -225,6 +279,11 @@ div#scene_selector,
 #combat_tracker_inside .tracker-list {
     height: calc(100% - 22px);
     overflow: auto;
+	background-image: linear-gradient(180deg, #fff, #bbb)
+}
+
+#round_number_label {
+	background: gray;
 }
 
 #combat_footer {
@@ -364,8 +423,8 @@ div#scene_properties form > div {
 }
 
 .active_scene {
-    box-shadow: 0px 0px 15px -4px #ff7777;
-    border: 1px solid #ff7777;
+    box-shadow: 0px 0px 15px -4px #93c5e2;
+    border: 1px solid #7ac6f3;
 }
 
 .stp-btn {
@@ -818,6 +877,7 @@ div#scene_properties form > div {
 }*/
 
 .sidebar__pane-content {
+	background-image: linear-gradient(#ffffff 1%, #bbbbbb 99%) !important;
     position: absolute;
     right: 0;
     top: 22px;
@@ -845,6 +905,7 @@ div#scene_properties form > div {
 #chat-text {
     width:260px;
     height:30px;
+	margin-top: 10px;
     margin-bottom:10px;
 }
 

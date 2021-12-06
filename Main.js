@@ -356,7 +356,7 @@ function load_monster_stat(monsterid) {
 
 function init_controls() {
 	$(".sidebar").css("top", "10px");
-	$(".sidebar").css("height", "calc(100vh - 45px)");
+	$(".sidebar").css("height", "calc(100vh - 32px)");
 
 	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
 	$(".sidebar__controls").empty();
@@ -1277,7 +1277,7 @@ function init_ui() {
 		$(".dice-roller > div img[data-count]").removeAttr("data-count");
 		$(".dice-roller > div span").remove();
 	});
-
+	
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
 			var dmonly=false;
@@ -1637,7 +1637,7 @@ function init_ui() {
 		}
 	};
 }
-
+	
 function init_buttons() {
 
 	var clear_button = $("<button style='width:75px;'>ALL</button>");
@@ -1663,6 +1663,9 @@ function init_buttons() {
 		}
 	});
 
+const DRAW_COLORS = ["#FFFFFF", "#FF7433", "#1E50DC", "#FFD433", "#884DFF", "#5F0404", "#EC8AFF", "#00E5FF",
+					"#000000", "#F032E6", "#911EB4", "#800000", "#008000", "#000080", "#808000", "#800080", 
+					"#008080", "#808080", "#C00000", "#00C000"];
 
 	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
 	fog_menu.append("<div style='font-weight: bold;'>Reveal</div>");
@@ -1679,7 +1682,7 @@ function init_buttons() {
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
 	fog_menu.css("width", "75px");
-	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+	fog_menu.css('background', "deepskyblue")
 	$("body").append(fog_menu);
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
@@ -1732,23 +1735,54 @@ function init_buttons() {
 		window.ScenesHandler.sync();
 	});
 
+					
 	colors = $("<div/>");
+		
+	colors.prepend("<div><input type='color' id='cpick' name='cpick'value='#00C000'></div>");
+	
+	
+  
+	colors.find("#cpick").click(function(e)	{
 
+		$("#cpick").change(function () { console.log("closed");
+		cPick = $("#cpick").val();
+		console.log(cPick);
+		DRAW_COLORS[0] = cPick;
+		for (i = 0; i < 1; i++) {
+			c.remove();
+			c = $("<div class='coloroption'/>");
+			c.width(15);
+			c.height(15);
+			c.css("background", cPick);
+			c.css("float", "left");
+			colors.append(c);
+			c.click(function(e) {
+				$(".coloroption").css('border', '').removeClass('colorselected');
+				$(this).css('border', '2px solid black');
+				$(this).addClass('colorselected');
+		}
+		);
+	}
+		});
+
+	});
+	
 	for (i = 0; i < 20; i++) {
 		c = $("<div class='coloroption'/>");
 		c.width(15);
 		c.height(15);
-		c.css("background", "#" + TOKEN_COLORS[i]);
+		c.css("background", DRAW_COLORS[i]);
 		c.css("float", "left");
 		colors.append(c);
-
 		c.click(function(e) {
 			$(".coloroption").css('border', '').removeClass('colorselected');
 			$(this).css('border', '2px solid black');
 			$(this).addClass('colorselected');
-		});
+		}
+		);
 	}
 
+	
 	draw_menu.append(colors);
 	draw_menu.append("<div style='font-weight:bold'>Type</div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='transparent'>TRANSP</button></div>");
@@ -1759,7 +1793,7 @@ function init_buttons() {
 		$(".drawType").removeClass('drawTypeSelected');
 		$(".drawType").css('background', '');
 		$(this).addClass('drawTypeSelected');
-		$(this).css('background', 'green');
+		$(this).css('background-image', '-webkit-linear-gradient(270deg, #93c5e2, #7ac6f3)');
 	});
 
 	draw_menu.append("<div style='font-weight:bold'>Line Width</div>");
@@ -1768,7 +1802,7 @@ function init_buttons() {
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
 	draw_menu.css("width", "75px");
-	draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+	draw_menu.css('background', "deepskyblue")
 
 	$("body").append(draw_menu);
 
@@ -1807,12 +1841,12 @@ function init_buttons() {
 	init_keypress_handler();
 
 }
-
+	
 function init_stream_button() {
 	var stream_button = $("<button id='stream_button' class='hasTooltip button-icon hideable' data-name='Stream dice rolls'></button>");
 	stream_button.attr("data-name", "SHARE/SEE player's DDB dice rolling visuals (Experimental/stable).\nDisclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.\nOn by default = RED.");
-	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
-	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
+	stream_button.append("<img height='20px' style='padding-bottom: 4px;' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
+	stream_button.append("<img height='20px' style='padding-bottom: 4px;' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
 
 	stream_button.click(() => {
 		if (!window.JOINTHEDICESTREAM) {
@@ -1833,7 +1867,7 @@ function init_stream_button() {
 	stream_button.addClass("stream_button");
 	stream_button.css("position", "absolute");
 	if (window.DM)
-		stream_button.css("left", "-197px");
+		stream_button.css("left", "-190px");
 	else
 		stream_button.css("left", "-247px");
 
@@ -1868,7 +1902,13 @@ $(function() {
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
 	if(is_dm){
-		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
+		newlink_dm = $("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>")
+		contentDiv.append(newlink_dm);
+		newlink_dm.click(function(e){
+			$("body").each(function(){
+				$(this).css('overflow', 'hidden')
+			})
+		});
 	}
 
 	$(".ddb-campaigns-character-card-footer-links").each(function() {
@@ -1892,6 +1932,9 @@ $(function() {
 			window.PLAYER_NAME = name;
 			window.PLAYER_ID = getPlayerIDFromSheet(sheet);
 			window.DM = false;
+			$("body").each(function(){
+				$(this).css('overflow', 'hidden')
+			})
 			init_ui();
 		});
 
