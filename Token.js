@@ -107,7 +107,7 @@ class Token {
 		}
 	}
 	rotate(newRotation) {
-		if (this.options.locked) return; // don't allow rotation if the token is locked
+		if (this.options.locked && !window.DM) return; // don't allow rotation if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -141,7 +141,7 @@ class Token {
 		this.move(this.options.top, newLeft)
 	}
 	move(top, left) {
-		if (this.options.locked) return; // don't allow moving if the token is locked
+		if (this.options.locked && !window.DM) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -664,14 +664,33 @@ class Token {
 				old.find("img").removeClass("token-round");
 			}
 			
+
+
+
+
+
 			if(this.options.locked){
-				old.draggable("disable");
-				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
-				old.css("z-index", old.css("z-index")-2);
+				if(!window.DM){
+					old.draggable("disable");
+					old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+					old.css("z-index", old.css("z-index")-2);
+					console.log('woohoo');
+				}
+				else if (window.DM){
+					old.draggable("enable");
+				}
 			}
 			else if(!this.options.locked){
 				old.draggable("enable");
 			}
+
+
+
+
+
+
+
+
 
 			if(this.options.disableaura){
 				old.find("img").css("box-shadow","");
@@ -1032,11 +1051,22 @@ class Token {
 				}
 			});
 
-			if(this.options.locked){
-				tok.draggable("disable");
-				tok.removeClass("ui-state-disabled");
-			}
+			//if(this.options.locked){
+			//	tok.draggable("disable");
+			//	tok.removeClass("ui-state-disabled");
+			//}
 			// 
+
+
+
+
+
+
+
+
+
+
+
 			tok.find(".token-image").dblclick(function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
