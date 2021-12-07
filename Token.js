@@ -1574,6 +1574,10 @@ function token_inputs(opt) {
 				data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
 
 			tok.options.max_hp = data.max_hp;
+
+			if (!isNaN(data.ac)) {
+				tok.options.ac = data.ac;
+			}
 		}
 
 		
@@ -1989,6 +1993,17 @@ function token_menu() {
 								}
 							}
 						},
+						ac: {
+							type: 'text',
+							name: 'AC',
+							className: 'ac-context-input',
+							value: window.TOKEN_OBJECTS[id].options.ac,
+							events: {
+								click: function(e) {
+									$(e.target).select();
+								}
+							}
+						},
 						name: {
 							type: 'text',
 							name: 'Name',
@@ -2042,6 +2057,7 @@ function token_menu() {
 						// custom tokens use the new modal now
 						delete ret.items.imgsrc;
 					}
+					delete ret.items.ac;
 				}
 				
 				if(!has_note){
@@ -2063,7 +2079,9 @@ function token_menu() {
 					delete ret.items.note_menu;
 					delete ret.items.name;
 					delete ret.items.sep2;
+					delete ret.items.sep3;
 					delete ret.items.imgsrcSelect;
+					delete ret.items.ac;
 				}
 
 				return ret;
