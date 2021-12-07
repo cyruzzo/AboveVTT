@@ -1512,6 +1512,7 @@ function init_ui() {
 
 	token_menu();
 	load_custom_monster_image_mapping();
+	register_player_token_customization_context_menu();
 
 
 	window.WaypointManager=new WaypointManagerClass();

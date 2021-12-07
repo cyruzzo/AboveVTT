@@ -1491,9 +1491,11 @@ function menu_callback(key, options, event) {
 			return;
 		}
 		let tok = window.TOKEN_OBJECTS[id];
-		let monsterId = $(options.$trigger).data("monster");
+		let monsterId = $(options.$trigger).attr("data-monster");
 		let name = $(options.$trigger).data("name");
-		if (monsterId != undefined) {
+		if (tok.isPlayer()) {
+			display_player_token_customization_modal(id, tok);
+		} else if (monsterId !== undefined) {
 			window.StatHandler.getStat(monsterId, function(stat) {
 				display_monster_customization_modal(tok, monsterId, name, stat.data.avatarUrl);
 			});
@@ -2014,16 +2016,6 @@ function token_menu() {
 								}
 							}
 						},
-						imgsrc: {
-							type: 'text',
-							name: 'Custom Image',
-							value: window.TOKEN_OBJECTS[id].options.imgsrc,
-							events: {
-								click: function(e) {
-									$(e.target).select();
-								}
-							}
-						},
 						sep3: '----------',
 						imgsrcSelect: {
 							name: "Change Image",
@@ -2041,7 +2033,6 @@ function token_menu() {
 				if (is_monster) {
 					delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
-					delete ret.items.imgsrc;
 				}
 				else {
 					delete ret.items.sep1;
@@ -2049,14 +2040,6 @@ function token_menu() {
 					delete ret.items.max_hp;
 					delete ret.items.token_cond;
 					delete ret.items.options.items.token_revealname;
-					if (window.TOKEN_OBJECTS[id].isPlayer()) {
-						// players don't use the new modal yet
-						delete ret.items.sep3;
-						delete ret.items.imgsrcSelect;
-					} else {
-						// custom tokens use the new modal now
-						delete ret.items.imgsrc;
-					}
 					delete ret.items.ac;
 				}
 				
@@ -2079,9 +2062,11 @@ function token_menu() {
 					delete ret.items.note_menu;
 					delete ret.items.name;
 					delete ret.items.sep2;
-					delete ret.items.sep3;
-					delete ret.items.imgsrcSelect;
 					delete ret.items.ac;
+					if (!id.endsWith(window.PLAYER_ID)) {
+						delete ret.items.sep3;
+						delete ret.items.imgsrcSelect;
+					}
 				}
 
 				return ret;
@@ -2219,7 +2204,7 @@ function load_custom_monster_image_mapping() {
 function save_custom_monster_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
-	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { "17100": [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
+	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { 17100: [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
 }
 
 function copy_to_clipboard(text) {
