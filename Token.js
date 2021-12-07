@@ -107,8 +107,8 @@ class Token {
 		}
 	}
 	rotate(newRotation) {
-		if (this.options.locked) return; // don't allow rotation if the token is locked
-		if (this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
+		if (this.options.locked || !window.DM && this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
+		if (!window.DM && this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -142,8 +142,8 @@ class Token {
 		this.move(this.options.top, newLeft)
 	}
 	move(top, left) {
-		if (this.options.locked) return; // don't allow moving if the token is locked
-		if (this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
+		if (this.options.locked || !window.DM && this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
+		if (!window.DM && this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -666,21 +666,21 @@ class Token {
 				old.find("img").removeClass("token-round");
 			}
 			
-			if(this.options.locked && !this.options.restrictPlayerMove){
+			if(this.options.locked || !window.DM && this.options.restrictPlayerMove){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(!this.options.locked){
+			else if(!this.options.locked || !window.DM && this.options.restrictPlayerMove){
 				old.draggable("enable");
 			}	
 
-			if(this.options.restrictPlayerMove && !window.DM){
+			if(!window.DM && this.options.restrictPlayerMove){ //restrict player movement
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(!this.options.restrictPlayerMove && !window.DM){
+			else if(!window.DM && !this.options.restrictPlayerMove){
 				old.draggable("enable");
 			}
 
@@ -1068,7 +1068,7 @@ class Token {
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
-			if(this.options.restrictPlayerMove){
+			if(!window.DM && this.options.restrictPlayerMove){
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
