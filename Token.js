@@ -108,7 +108,7 @@ class Token {
 	}
 	rotate(newRotation) {
 		if (this.options.locked) return; // don't allow rotation if the token is locked
-		if (this.options.dmLocked) return; // don't allow rotation if the token is locked
+		if (this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -143,7 +143,7 @@ class Token {
 	}
 	move(top, left) {
 		if (this.options.locked) return; // don't allow moving if the token is locked
-		if (this.options.dmLocked) return; // don't allow moving if the token is locked
+		if (this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -666,21 +666,21 @@ class Token {
 				old.find("img").removeClass("token-round");
 			}
 			
-			if(this.options.locked && !window.DM){
+			if(this.options.locked && !this.options.restrictPlayerMove){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(!this.options.locked && !window.DM){
+			else if(!this.options.locked){
 				old.draggable("enable");
 			}	
 
-			if(this.options.dmLocked){
+			if(this.options.restrictPlayerMove && !window.DM){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(!this.options.dmLocked){
+			else if(!this.options.restrictPlayerMove && !window.DM){
 				old.draggable("enable");
 			}
 
@@ -1038,7 +1038,7 @@ class Token {
 							}
 						}
 						for (let id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.dmLocked) {
+							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.restrictPlayerMove) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
 								var tok = $("#tokens div[data-id='" + id + "']");
@@ -1068,7 +1068,7 @@ class Token {
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
-			if(this.options.dmLocked){
+			if(this.options.restrictPlayerMove){
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
@@ -1649,11 +1649,11 @@ function token_inputs(opt) {
 			tok.options.locked = false;
 		}
 
-		if (data.token_dmLocked) {
-			tok.options.dmLocked = 1;
+		if (data.token_restrictPlayerMove) {
+			tok.options.restrictPlayerMove = 1;
 		}
 		else {
-			tok.options.dmLocked = false;
+			tok.options.restrictPlayerMove = false;
 		}
 
 		if (data.token_disableborder) {
@@ -1766,7 +1766,7 @@ function token_menu() {
 						delete: { name: 'Delete Token' },
 						token_locked: {
 							type: 'checkbox',
-							name: 'Player Token Lock',
+							name: 'Lock Tokens in Position',
 							events: {
 								click: function(e) {
 									if (e.target == undefined || e.target.checked == undefined) return;
@@ -1778,15 +1778,15 @@ function token_menu() {
 								}
 							}
 						},
-						token_dmLocked: {
+						token_restrictPlayerMove: {
 							type: 'checkbox',
-							name: 'DM Token Lock',
+							name: 'Restrict Player Movement',
 							events: {
 								click: function(e) {
 									if (e.target == undefined || e.target.checked == undefined) return;
 									$("#tokens .tokenselected").each(function() {
 										id = $(this).attr('data-id');
-										window.TOKEN_OBJECTS[id].options.dmLocked = e.target.checked;
+										window.TOKEN_OBJECTS[id].options.restrictPlayerMove = e.target.checked;
 										window.TOKEN_OBJECTS[id].place_sync_persist();
 									});							
 								}
@@ -1978,13 +1978,13 @@ function token_menu() {
 								},
 								token_locked: {
 									type: 'checkbox',
-									name: 'Player Token Lock',
+									name: 'Lock Tokens in Position',
 									selected: window.TOKEN_OBJECTS[id].options.locked
 								},
-								token_dmLocked: {
+								token_restrictPlayerMove: {
 									type: 'checkbox',
-									name: 'DM Token Lock',
-									selected: window.TOKEN_OBJECTS[id].options.dmLocked
+									name: 'Restrict Player Movement',
+									selected: window.TOKEN_OBJECTS[id].options.restrictPlayerMove
 								},
 								token_disablestat: {
 									type: 'checkbox',
