@@ -1001,7 +1001,12 @@ function drawing_mouseup(e) {
 				continue;
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
-			curr.selected = true;
+			if(!curr.options.isTile){
+				curr.selected = true;
+			}
+			else{
+			curr.selected = false;
+			}
 			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
 			curr.place();
 		}

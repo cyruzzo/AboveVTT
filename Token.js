@@ -108,6 +108,7 @@ class Token {
 	}
 	rotate(newRotation) {
 		if (this.options.locked && !window.DM) return; // don't allow rotation if the token is locked
+		if (this.options.isTile) return; // don't allow rotation if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -142,6 +143,7 @@ class Token {
 	}
 	move(top, left) {
 		if (this.options.locked && !window.DM) return; // don't allow moving if the token is locked
+		if (this.options.isTile) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -674,7 +676,6 @@ class Token {
 					old.draggable("disable");
 					old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 					old.css("z-index", old.css("z-index")-2);
-					console.log('woohoo');
 				}
 				else if (window.DM){
 					old.draggable("enable");
@@ -684,7 +685,15 @@ class Token {
 				old.draggable("enable");
 			}
 
-
+			if(this.options.isTile){
+				old.draggable("disable");
+				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+				old.css("z-index", old.css("z-index")-2);
+				console.log('woohoo');
+			}
+			else if(!this.options.isTile){
+				old.draggable("enable");
+			}
 
 
 
@@ -1044,6 +1053,25 @@ class Token {
 									selEl.css('top', (currTop + offsetTop) + "px");
 								}
 							}
+							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.isTile) {
+								//console.log("sposto!");
+								var curr = window.TOKEN_OBJECTS[id];
+								var tok = $("#tokens div[data-id='" + id + "']");
+								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
+								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
+								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
+								//curr.place();
+
+								const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
+								if (selEl.length > 0) {
+									let currLeft = parseFloat(selEl.attr("data-left"));
+									let currTop = parseFloat(selEl.attr("data-top"));
+									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+									selEl.css('left', (currLeft + offsetLeft) + "px");
+									selEl.css('top', (currTop + offsetTop) + "px");
+								}
+							}
 						}
 
 					}
@@ -1058,7 +1086,11 @@ class Token {
 			// 
 
 
-
+			if(this.options.isTile){
+				old.draggable("disable");
+				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+				console.log('woohoo');
+			}
 
 
 
@@ -1643,6 +1675,13 @@ function token_inputs(opt) {
 			tok.options.locked = false;
 		}
 
+		if (data.token_isTile) {
+			tok.options.isTile = 1;
+		}
+		else {
+			tok.options.isTile = false;
+		}
+
 		if (data.token_disableborder) {
 			tok.options.disableborder = true;
 		}
@@ -1760,6 +1799,20 @@ function token_menu() {
 									$("#tokens .tokenselected").each(function() {
 										id = $(this).attr('data-id');
 										window.TOKEN_OBJECTS[id].options.locked = e.target.checked;
+										window.TOKEN_OBJECTS[id].place_sync_persist();
+									});							
+								}
+							}
+						},
+						token_isTile: {
+							type: 'checkbox',
+							name: 'Convert Token/Tile',
+							events: {
+								click: function(e) {
+									if (e.target == undefined || e.target.checked == undefined) return;
+									$("#tokens .tokenselected").each(function() {
+										id = $(this).attr('data-id');
+										window.TOKEN_OBJECTS[id].options.isTile = e.target.checked;
 										window.TOKEN_OBJECTS[id].place_sync_persist();
 									});							
 								}
@@ -1953,6 +2006,11 @@ function token_menu() {
 									type: 'checkbox',
 									name: 'Lock Token in Position',
 									selected: window.TOKEN_OBJECTS[id].options.locked
+								},
+								token_isTile: {
+									type: 'checkbox',
+									name: 'Convert Token/Tile',
+									selected: window.TOKEN_OBJECTS[id].options.isTile
 								},
 								token_disablestat: {
 									type: 'checkbox',
