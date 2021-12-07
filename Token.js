@@ -142,8 +142,8 @@ class Token {
 		this.move(this.options.top, newLeft)
 	}
 	move(top, left) {
-		if (this.options.locked || !window.DM && this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
-		if (!window.DM && this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
+		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
+		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked)) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -666,23 +666,29 @@ class Token {
 				old.find("img").removeClass("token-round");
 			}
 			
-			if(this.options.locked || !window.DM && this.options.restrictPlayerMove){
-				old.draggable("disable");
-				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
-				old.css("z-index", old.css("z-index")-2);
-			}
-			else if(!this.options.locked || !window.DM && this.options.restrictPlayerMove){
-				old.draggable("enable");
-			}	
 
-			if(!window.DM && this.options.restrictPlayerMove){ //restrict player movement
+
+
+			if(!window.DM && (this.options.restrictPlayerMove || this.options.locked)){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(!window.DM && !this.options.restrictPlayerMove){
+			else if(window.DM && (this.options.restrictPlayerMove && !this.options.locked)){
 				old.draggable("enable");
 			}
+			else if(window.DM && this.options.locked){
+				old.draggable("disable");
+				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+				old.css("z-index", old.css("z-index")-2);
+			}
+			else if(!this.options.locked){
+				old.draggable("enable");
+			}
+
+
+
+
 
 			if(this.options.disableaura){
 				old.find("img").css("box-shadow","");
