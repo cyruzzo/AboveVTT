@@ -169,8 +169,11 @@ class WaypointManagerClass {
 		var snapPointXEnd = snapCoords.x;
 		var snapPointYEnd = snapCoords.y;
 
-		// In future we may support other units(?), defaulting to 'ft' for feet
-		var unitSymbol = window.ScenesHandler.scene.upsq;
+		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
+		if (typeof window.ScenesHandler.scene.upsq !== "undefined")
+			var unitSymbol = window.ScenesHandler.scene.upsq;
+		else
+			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
 		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
