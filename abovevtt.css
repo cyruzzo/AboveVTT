@@ -33,6 +33,15 @@ body > button,
     border: 1px solid lightgray;
 }
 
+#cpick{
+    display: block;
+    margin-left: 27px;
+}
+
+#ccpicker{
+    background: #D32F2F;
+}
+
 #combat_tracker_inside button {
     padding: 2px 4px;
 }

@@ -1737,27 +1737,26 @@ function init_buttons() {
 		window.ScenesHandler.sync();
 	});
 
-	colors = $("<div/>");
+	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
 		
-	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#333333' style='width: 58px'></div>");
+	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#D32F2F' style='width: 48px'></div>");
 
-	colors.find("#cpick").click(function(e)	{
-		$("#cpick").change(function () {
-			console.log("closed");
+
+
+	colors.find("#cpick").click(function(e)	{ //open the color picker
+		$("#cpick").change(function () { // run when color changed
 			cPick = $("#cpick").val();
-			console.log(cPick);
-			c.remove();
-			c = $("<div class='coloroption'/>");
-			c.width(15);
-			c.height(15);
-			c.css("background", cPick);
+			console.log("cPicked! " + cPick);
+			c.remove(); //remove previous picked color
+			c = $("<div class='coloroption'/>"); //create Class for coloroption
+			c.width(27);
+			c.height(27);
+			c.css("background", cPick); //set color from cPick
 			c.css("float", "left");
-			c.css("margin-top", "6px");
-			c.css("margin-left", "1px");
-			colors.prepend(c);
-			$(".coloroption").css('border', '').removeClass('colorselected');
-			c.css('border', '2px solid black');
-			c.addClass('colorselected');
+			colors.prepend(c); //Place new color selector
+			$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
+			c.css('border', '2px solid black'); //highlight new color
+			c.addClass('colorselected'); //select new color
 			c.click(function(e) {
 				$(".coloroption").css('border', '').removeClass('colorselected');
 				$(this).css('border', '2px solid black');
@@ -1766,7 +1765,7 @@ function init_buttons() {
 		});
 	});
 
-	for (i = 0; i < 20; i++) {
+	for (i = 0; i < 21; i++) {
 		c = $("<div class='coloroption'/>");
 		c.width(15);
 		c.height(15);
