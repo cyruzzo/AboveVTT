@@ -170,7 +170,7 @@ class WaypointManagerClass {
 		var snapPointYEnd = snapCoords.y;
 
 		// In future we may support other units(?), defaulting to 'ft' for feet
-		var unitSymbol = "ft";
+		var unitSymbol = window.ScenesHandler.scene.upsq;
 
 		// Calculate the distance and set into the waypoint object
 		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
