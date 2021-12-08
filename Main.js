@@ -1638,6 +1638,11 @@ function init_ui() {
 	};
 }
 
+const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
+					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA", 
+					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0", 
+					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF"];
+
 function init_buttons() {
 
 	var clear_button = $("<button style='width:75px;'>ALL</button>");
@@ -1733,12 +1738,39 @@ function init_buttons() {
 	});
 
 	colors = $("<div/>");
+		
+	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#333333' style='width: 58px'></div>");
+
+	colors.find("#cpick").click(function(e)	{
+		$("#cpick").change(function () {
+			console.log("closed");
+			cPick = $("#cpick").val();
+			console.log(cPick);
+			c.remove();
+			c = $("<div class='coloroption'/>");
+			c.width(15);
+			c.height(15);
+			c.css("background", cPick);
+			c.css("float", "left");
+			c.css("margin-top", "6px");
+			c.css("margin-left", "1px");
+			colors.prepend(c);
+			$(".coloroption").css('border', '').removeClass('colorselected');
+			c.css('border', '2px solid black');
+			c.addClass('colorselected');
+			c.click(function(e) {
+				$(".coloroption").css('border', '').removeClass('colorselected');
+				$(this).css('border', '2px solid black');
+				$(this).addClass('colorselected');
+			});
+		});
+	});
 
 	for (i = 0; i < 20; i++) {
 		c = $("<div class='coloroption'/>");
 		c.width(15);
 		c.height(15);
-		c.css("background", "#" + TOKEN_COLORS[i]);
+		c.css("background", DRAW_COLORS[i]);
 		c.css("float", "left");
 		colors.append(c);
 
