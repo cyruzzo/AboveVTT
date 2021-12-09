@@ -1641,7 +1641,7 @@ function init_ui() {
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
 					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA", 
 					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0", 
-					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF"];
+					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF", "cPick"];
 
 function init_buttons() {
 
@@ -1739,49 +1739,69 @@ function init_buttons() {
 
 	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
 		
-	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#D32F2F' style='width: 48px'></div>");
-
-
-
+	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
 	colors.find("#cpick").click(function(e)	{ //open the color picker
+		$('body').append("<div id='cpicker_overlay'></div>");
+		$('#cpicker_overlay').click(function(e){
+			$('#cpicker_overlay').remove();
+		});
 		$("#cpick").change(function () { // run when color changed
-			cPick = $("#cpick").val();
-			console.log("cPicked! " + cPick);
-			c.remove(); //remove previous picked color
-			c = $("<div class='coloroption'/>"); //create Class for coloroption
-			c.width(27);
-			c.height(27);
-			c.css("background", cPick); //set color from cPick
+				cPick = $("#cpick").val();
+				console.log("cPicked! " + cPick);
+				cc.remove(); //remove previous picked color
+				cc = $("<div class='coloroption'/>");
+				cc.width(27);
+				cc.height(27);
+				cc.css("background", cPick); //set color from cPick
+				cc.css("float", "left");
+				colors.prepend(cc); //Place new color selector
+				$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
+				cc.css('border', '2px solid black'); //highlight new color
+				cc.addClass('colorselected'); //select new color
+				$('#cpicker_overlay').remove();
+
+				cc.click(function(e) {
+					$(".coloroption").css('border', '').removeClass('colorselected');
+					$(this).css('border', '2px solid black');
+					$(this).addClass('colorselected');
+				});
+			});
+		});
+
+	for (i = 0; i < 20; i++){
+		var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
+			c = colorOp;
+			c.width(15);
+			c.height(15);
+			c.css("background", DRAW_COLORS[i]);
 			c.css("float", "left");
-			colors.prepend(c); //Place new color selector
-			$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
-			c.css('border', '2px solid black'); //highlight new color
-			c.addClass('colorselected'); //select new color
+			colors.append(c);
+
 			c.click(function(e) {
 				$(".coloroption").css('border', '').removeClass('colorselected');
 				$(this).css('border', '2px solid black');
 				$(this).addClass('colorselected');
 			});
-		});
-	});
-
-	for (i = 0; i < 21; i++) {
-		c = $("<div class='coloroption'/>");
-		c.width(15);
-		c.height(15);
-		c.css("background", DRAW_COLORS[i]);
-		c.css("float", "left");
-		colors.append(c);
-
-		c.click(function(e) {
-			$(".coloroption").css('border', '').removeClass('colorselected');
-			$(this).css('border', '2px solid black');
-			$(this).addClass('colorselected');
-		});
 	}
 
+	//create default cPick coloroption
+	cPick = "#E29393";
+	cc = $("<div class='coloroption'/>");
+	cc.width(27);
+	cc.height(27);
+	cc.css("background", cPick); //set color from cPick
+	cc.css("float", "left");
+	colors.prepend(cc); //Place new color selector in front of colorpicker
+	cc.css('border', '2px solid black'); //highlight new color
+	cc.addClass('colorselected'); //select new color
+	cc.click(function(e) {
+		$(".coloroption").css('border', '').removeClass('colorselected');
+		$(this).css('border', '2px solid black');
+		$(this).addClass('colorselected');
+	});
+
 	draw_menu.append(colors);
-	draw_menu.append("<div style='font-weight:bold'>Type</div>");
+	draw_menu.append("<div style='font-weight:bold;'>Type</div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='transparent'>TRANSP</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='border'>BORDER</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='filled'>FILLED</button></div>");
@@ -1790,7 +1810,7 @@ function init_buttons() {
 		$(".drawType").removeClass('drawTypeSelected');
 		$(".drawType").css('background', '');
 		$(this).addClass('drawTypeSelected');
-		$(this).css('background', 'green');
+		$(this).css('background', '-webkit-linear-gradient(270deg, #e29393, #f37a7a)');
 	});
 
 	draw_menu.append("<div style='font-weight:bold'>Line Width</div>");
