@@ -524,14 +524,15 @@ class Token {
 				
 				remove_selected_token_bounding_box();
 				if(old.is(':animated')){
-					this.stopAnimation();
+					// this token is being moved quickly, speed up the animation
+					animationDuration = 100;
 				}
 				
 				old.animate(
 					{
 						left: this.options.left,
 						top: this.options.top,
-					}, { duration: animationDuration, queue: false, complete: function() {
+					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
 					} });
 				
