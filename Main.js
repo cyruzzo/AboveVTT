@@ -1740,48 +1740,49 @@ function init_buttons() {
 	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
 		
 	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
+
 	colors.find("#cpick").click(function(e)	{ //open the color picker
 		$('body').append("<div id='cpicker_overlay'></div>");
 		$('#cpicker_overlay').click(function(e){
 			$('#cpicker_overlay').remove();
 		});
 		$("#cpick").change(function () { // run when color changed
-				cPick = $("#cpick").val();
-				console.log("cPicked! " + cPick);
-				cc.remove(); //remove previous picked color
-				cc = $("<div class='coloroption'/>");
-				cc.width(27);
-				cc.height(27);
-				cc.css("background", cPick); //set color from cPick
-				cc.css("float", "left");
-				colors.prepend(cc); //Place new color selector
-				$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
-				cc.css('border', '2px solid black'); //highlight new color
-				cc.addClass('colorselected'); //select new color
-				$('#cpicker_overlay').remove();
+			cPick = $("#cpick").val();
+			console.log("cPicked! " + cPick);
+			cc.remove(); //remove previous picked color
+			cc = $("<div class='coloroption'/>");
+			cc.width(27);
+			cc.height(27);
+			cc.css("background", cPick); //set color from cPick
+			cc.css("float", "left");
+			colors.prepend(cc); //Place new color selector
+			$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
+			cc.css('border', '2px solid black'); //highlight new color
+			cc.addClass('colorselected'); //select new color
+			$('#cpicker_overlay').remove();
 
-				cc.click(function(e) {
-					$(".coloroption").css('border', '').removeClass('colorselected');
-					$(this).css('border', '2px solid black');
-					$(this).addClass('colorselected');
-				});
-			});
-		});
-
-	for (i = 0; i < 20; i++){
-		var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
-			c = colorOp;
-			c.width(15);
-			c.height(15);
-			c.css("background", DRAW_COLORS[i]);
-			c.css("float", "left");
-			colors.append(c);
-
-			c.click(function(e) {
+			cc.click(function(e) {
 				$(".coloroption").css('border', '').removeClass('colorselected');
 				$(this).css('border', '2px solid black');
 				$(this).addClass('colorselected');
 			});
+		});
+	});
+
+	for (i = 0; i < 20; i++){
+		var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
+		c = colorOp;
+		c.width(15);
+		c.height(15);
+		c.css("background", DRAW_COLORS[i]);
+		c.css("float", "left");
+		colors.append(c);
+
+		c.click(function(e) {
+			$(".coloroption").css('border', '').removeClass('colorselected');
+			$(this).css('border', '2px solid black');
+			$(this).addClass('colorselected');
+		});
 	}
 
 	//create default cPick coloroption

@@ -107,8 +107,7 @@ class Token {
 		}
 	}
 	rotate(newRotation) {
-		if (this.options.locked || !window.DM && this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
-		if (!window.DM && this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
+		if (this.options.locked) return; // don't allow rotation if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -142,8 +141,7 @@ class Token {
 		this.move(this.options.top, newLeft)
 	}
 	move(top, left) {
-		if (this.options.locked || !window.DM && this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
-		if (!window.DM && this.options.restrictPlayerMove) return; // don't allow moving if the token is locked
+		if (this.options.locked) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -666,21 +664,12 @@ class Token {
 				old.find("img").removeClass("token-round");
 			}
 			
-			if(this.options.locked || !window.DM && this.options.restrictPlayerMove){
+			if(this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(!this.options.locked || !window.DM && this.options.restrictPlayerMove){
-				old.draggable("enable");
-			}	
-
-			if(!window.DM && this.options.restrictPlayerMove){ //restrict player movement
-				old.draggable("disable");
-				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
-				old.css("z-index", old.css("z-index")-2);
-			}
-			else if(!window.DM && !this.options.restrictPlayerMove){
+			else if(!this.options.locked){
 				old.draggable("enable");
 			}
 
@@ -1037,27 +1026,6 @@ class Token {
 								}
 							}
 						}
-						for (let id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.restrictPlayerMove) {
-								//console.log("sposto!");
-								var curr = window.TOKEN_OBJECTS[id];
-								var tok = $("#tokens div[data-id='" + id + "']");
-								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
-								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
-								//curr.place();
-
-								const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
-								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + offsetLeft) + "px");
-									selEl.css('top', (currTop + offsetTop) + "px");
-								}
-							}
-						}
 
 					}
 
@@ -1065,10 +1033,6 @@ class Token {
 			});
 
 			if(this.options.locked){
-				tok.draggable("disable");
-				tok.removeClass("ui-state-disabled");
-			}
-			if(!window.DM && this.options.restrictPlayerMove){
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
@@ -1527,9 +1491,11 @@ function menu_callback(key, options, event) {
 			return;
 		}
 		let tok = window.TOKEN_OBJECTS[id];
-		let monsterId = $(options.$trigger).data("monster");
+		let monsterId = $(options.$trigger).attr("data-monster");
 		let name = $(options.$trigger).data("name");
-		if (monsterId != undefined) {
+		if (tok.isPlayer()) {
+			display_player_token_customization_modal(id, tok);
+		} else if (monsterId !== undefined) {
 			window.StatHandler.getStat(monsterId, function(stat) {
 				display_monster_customization_modal(tok, monsterId, name, stat.data.avatarUrl);
 			});
@@ -1610,6 +1576,10 @@ function token_inputs(opt) {
 				data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
 
 			tok.options.max_hp = data.max_hp;
+
+			if (!isNaN(data.ac)) {
+				tok.options.ac = data.ac;
+			}
 		}
 
 		
@@ -1647,13 +1617,6 @@ function token_inputs(opt) {
 		}
 		else {
 			tok.options.locked = false;
-		}
-
-		if (data.token_restrictPlayerMove) {
-			tok.options.restrictPlayerMove = 1;
-		}
-		else {
-			tok.options.restrictPlayerMove = false;
 		}
 
 		if (data.token_disableborder) {
@@ -1773,20 +1736,6 @@ function token_menu() {
 									$("#tokens .tokenselected").each(function() {
 										id = $(this).attr('data-id');
 										window.TOKEN_OBJECTS[id].options.locked = e.target.checked;
-										window.TOKEN_OBJECTS[id].place_sync_persist();
-									});							
-								}
-							}
-						},
-						token_restrictPlayerMove: {
-							type: 'checkbox',
-							name: 'Restrict Player Movement',
-							events: {
-								click: function(e) {
-									if (e.target == undefined || e.target.checked == undefined) return;
-									$("#tokens .tokenselected").each(function() {
-										id = $(this).attr('data-id');
-										window.TOKEN_OBJECTS[id].options.restrictPlayerMove = e.target.checked;
 										window.TOKEN_OBJECTS[id].place_sync_persist();
 									});							
 								}
@@ -1978,13 +1927,8 @@ function token_menu() {
 								},
 								token_locked: {
 									type: 'checkbox',
-									name: 'Lock Tokens in Position',
+									name: 'Lock Token in Position',
 									selected: window.TOKEN_OBJECTS[id].options.locked
-								},
-								token_restrictPlayerMove: {
-									type: 'checkbox',
-									name: 'Restrict Player Movement',
-									selected: window.TOKEN_OBJECTS[id].options.restrictPlayerMove
 								},
 								token_disablestat: {
 									type: 'checkbox',
@@ -2051,20 +1995,21 @@ function token_menu() {
 								}
 							}
 						},
-						name: {
+						ac: {
 							type: 'text',
-							name: 'Name',
-							value: window.TOKEN_OBJECTS[id].options.name,
+							name: 'AC',
+							className: 'ac-context-input',
+							value: window.TOKEN_OBJECTS[id].options.ac,
 							events: {
 								click: function(e) {
 									$(e.target).select();
 								}
 							}
 						},
-						imgsrc: {
+						name: {
 							type: 'text',
-							name: 'Custom Image',
-							value: window.TOKEN_OBJECTS[id].options.imgsrc,
+							name: 'Name',
+							value: window.TOKEN_OBJECTS[id].options.name,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2088,7 +2033,6 @@ function token_menu() {
 				if (is_monster) {
 					delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
-					delete ret.items.imgsrc;
 				}
 				else {
 					delete ret.items.sep1;
@@ -2096,14 +2040,7 @@ function token_menu() {
 					delete ret.items.max_hp;
 					delete ret.items.token_cond;
 					delete ret.items.options.items.token_revealname;
-					if (window.TOKEN_OBJECTS[id].isPlayer()) {
-						// players don't use the new modal yet
-						delete ret.items.sep3;
-						delete ret.items.imgsrcSelect;
-					} else {
-						// custom tokens use the new modal now
-						delete ret.items.imgsrc;
-					}
+					delete ret.items.ac;
 				}
 				
 				if(!has_note){
@@ -2125,7 +2062,11 @@ function token_menu() {
 					delete ret.items.note_menu;
 					delete ret.items.name;
 					delete ret.items.sep2;
-					delete ret.items.imgsrcSelect;
+					delete ret.items.ac;
+					if (!id.endsWith(window.PLAYER_ID)) {
+						delete ret.items.sep3;
+						delete ret.items.imgsrcSelect;
+					}
 				}
 
 				return ret;
@@ -2263,7 +2204,7 @@ function load_custom_monster_image_mapping() {
 function save_custom_monster_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
-	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { "17100": [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
+	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { 17100: [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
 }
 
 function copy_to_clipboard(text) {
