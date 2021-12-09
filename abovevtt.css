@@ -955,6 +955,7 @@ div#scene_properties form > div {
 
 .panel-warning {
 	background:red;
+    margin-bottom: 10px;
 }
 
 .sidebar__controls button{
@@ -1237,20 +1238,6 @@ body {
     display: inline-block;
     margin: 0 0 0 5px;
 }
-.custom-token-image-menu-item-img{
-    width: 38px;
-    max-width: 38px;
-    height: 38px;
-    max-height: 38px;
-    border-radius: 3px;
-    object-fit: cover;
-    margin-bottom: 4px;
-}
-
-.custom-token-image-menu-item-remove-button{
-    margin-left: 8px;
-    vertical-align: baseline;
-}
 
 .label-one-line {
     white-space: nowrap;
@@ -1268,7 +1255,7 @@ body {
     object-fit: contain;
 }
 
-.token-image-modal {
+.sidebar-modal {
     position: fixed;
     z-index: 99999;
     align-items: center;
@@ -1277,14 +1264,27 @@ body {
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
 }
-.token-image-modal-overlay {
+.sidebar-modal-background {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 }
-.token-image-modal-content {
+
+/* Make a few adjustments for when it's a modal because we nest it inside or .sidebar-modal and change the UI slightly  */
+.sidebar-modal .sidebar-panel-content,
+.sidebar-modal .sidebar-panel-content .sidebar-panel-header,
+.sidebar-modal .sidebar-panel-content .sidebar-panel-body,
+.sidebar-modal .sidebar-panel-content .sidebar-panel-footer {
+    background-color: #fff;
+}
+.sidebar-modal .sidebar-panel-content .sidebar-panel-header,
+.sidebar-modal .sidebar-panel-content .sidebar-panel-footer {
+    padding: 4px;
+}
+
+.sidebar-panel-content {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -1295,10 +1295,11 @@ body {
     border: 1px solid #d8e1e8;
     background-color: #fff;
 }
-.token-image-modal-header {
+.sidebar-panel-header {
     padding: 4px;
+    width: 100%;
 }
-.token-image-modal-header-title {
+.sidebar-panel-header-title {
     text-transform: uppercase;
     font-size: 16px;
     font-weight: 700;
@@ -1306,19 +1307,19 @@ body {
     display: flex;
     align-items: center;
 }
-.token-image-modal-header-subtitle {
+.sidebar-panel-header-subtitle {
     font-size: 12px;
     font-weight: 700;
     color: #738694;
     line-height: 1.4;
 }
-.token-image-modal-body {
+.sidebar-panel-body {
     position: relative; 
     width:100%; 
     overflow-y: auto;
     flex: auto;
 }
-.token-image-modal-footer {
+.sidebar-panel-footer {
     border-top: 1px solid #d8e1e8;
     display: flex;
     align-items: center;
@@ -1335,19 +1336,25 @@ body {
     line-height: 1.4;
     margin-top: 6px;
 }
+.sidebar-panel-footer input,
 .token-image-modal-footer input {
     margin-bottom: 6px;
     width: auto;
 }
+.sidebar-panel-footer-horizontal-wrapper,
 .token-image-modal-footer-select-wrapper {
     display: flex;
     flex-direction: row;
     margin-bottom: 6px;
+    width: 100%;
+}
+.sidebar-panel-footer-horizontal-wrapper .sidebar-panel-footer-button {
+    margin: 0px 4px 0px 4px;
 }
 .token-image-modal-footer-select-wrapper select {
     min-width: 30%;
 }
-.token-image-modal-footer-input-wrapper {
+.footer-input-wrapper {
     width: 100%;
 }
 .token-image-modal-url-label-wrapper {
@@ -1372,7 +1379,7 @@ body {
     padding: 4px;
     margin: 10px;
 }
-.token-image-modal-add-button {
+.sidebar-panel-footer-button {
     appearance: none;
     font-weight: 700;
     text-transform: uppercase;
@@ -1381,10 +1388,16 @@ body {
     border: none;
     color: #fff;
     align-self: stretch;
-    margin: 0px 4px 0px 4px;
+    margin: 4px 0px 4px 0px;
     padding: 10px;
+    width: 100%;
+    flex-grow: 0;
 }
-.token-image-modal-explanation {
+.token-image-modal-add-button {
+    margin: 0px 4px 0px 4px;
+    width: auto;
+}
+.sidebar-panel-header-explanation {
     font-size: 14px;
     color: #979AA4;
     font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
@@ -1521,17 +1534,17 @@ body {
     fill: #738694;
 }
 
-#tokens-panel {
+.sidebar-panel-content {
     align-items: center;
     justify-content: center;
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
     height: 100%;
 }
-#tokens-panel .token-image-modal-content {
+.sidebar-panel-content .sidebar-panel-body {
     height: 100%;
 }
-#tokens-panel-data {
+.sidebar-panel-content .sidebar-panel-body {
     background-color: rgb(235, 241, 245);
     position: relative; 
     width:100%; 
@@ -1552,26 +1565,16 @@ body {
     font-family: "Roboto Condensed", Roboto, Helvetica, sans-serif;
     font-weight: bold;
 }
-#tokens-panel-header {
+.sidebar-panel-content .sidebar-panel-header {
     background-color: rgb(235, 241, 245);
     padding: 8px;
 }
-#tokens-panel-footer {
+.sidebar-panel-content .sidebar-panel-footer {
     display: flex;
+    flex-direction: column;
     padding: 8px;
     background-color: rgb(235, 241, 245);
+    width: 100%;
+    align-items: center;
 }
-#tokens-panel-footer button {
-    appearance: none;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: #1b9af0;
-    border: none;
-    color: #fff;
-    align-self: stretch;
-    margin: 0px 4px 0px 4px;
-    padding: 10px;
-    flex-grow: 1;
-    text-align: center;
-}
+
