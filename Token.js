@@ -107,8 +107,8 @@ class Token {
 		}
 	}
 	rotate(newRotation) {
-		if (this.options.locked || !window.DM && this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
-		if (!window.DM && this.options.restrictPlayerMove) return; // don't allow rotation if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow rotating if the token is locked
+		if (window.DM && this.options.locked) return; // don't allow rotating if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -142,8 +142,8 @@ class Token {
 		this.move(this.options.top, newLeft)
 	}
 	move(top, left) {
+		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked)) return; // don't allow moving if the token is locked
 		this.update_from_page();
 		this.options.top = top;
 		this.options.left = left;
@@ -665,30 +665,18 @@ class Token {
 			if(old.find("img").hasClass('token-round') && (this.options.square) ){
 				old.find("img").removeClass("token-round");
 			}
-			
 
-
-
-			if(!window.DM && (this.options.restrictPlayerMove || this.options.locked)){
+			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 				old.css("z-index", old.css("z-index")-2);
 			}
-			else if(window.DM && (this.options.restrictPlayerMove && !this.options.locked)){
+			else if((window.DM && this.options.restrictPlayerMove) || !this.options.locked){
+				old.draggable("enable");
+			}	
+			else if(!window.DM && (!this.options.restrictPlayerMove || !this.options.locked)){
 				old.draggable("enable");
 			}
-			else if(window.DM && this.options.locked){
-				old.draggable("disable");
-				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
-				old.css("z-index", old.css("z-index")-2);
-			}
-			else if(!this.options.locked){
-				old.draggable("enable");
-			}
-
-
-
-
 
 			if(this.options.disableaura){
 				old.find("img").css("box-shadow","");
@@ -1023,28 +1011,7 @@ class Token {
 						//console.log("OFFSETLEFT "+offsetLeft+ " OFFSETTOP " + offsetTop);
 
 						for (let id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.locked) {
-								//console.log("sposto!");
-								var curr = window.TOKEN_OBJECTS[id];
-								var tok = $("#tokens div[data-id='" + id + "']");
-								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
-								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
-								//curr.place();
-
-								const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
-								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + offsetLeft) + "px");
-									selEl.css('top', (currTop + offsetTop) + "px");
-								}
-							}
-						}
-						for (let id in window.TOKEN_OBJECTS) {
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && !window.TOKEN_OBJECTS[id].options.restrictPlayerMove) {
+							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
 								var tok = $("#tokens div[data-id='" + id + "']");
