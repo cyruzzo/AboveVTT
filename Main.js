@@ -228,6 +228,10 @@ function notify_gamelog() {
 	if ($(".glc-game-log").is(":hidden")) {
 		$("#switch_gamelog").css("background", "red");
 	}
+
+	if ($(".GameLog_GameLog__2z_HZ").scrollTop() < 0) {
+		$(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
+	}
 }
 
 function switch_control(e) {
