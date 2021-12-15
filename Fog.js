@@ -174,7 +174,6 @@ class WaypointManagerClass {
 			var unitSymbol = window.CURRENT_SCENE_DATA.upsq;
 		else
 			var unitSymbol = 'ft'
-			console.log(window.CURRENT_SCENE_DATA)
 
 		// Calculate the distance and set into the waypoint object
 		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
