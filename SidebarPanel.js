@@ -20,6 +20,10 @@ function init_sidebar_tabs() {
   journalPanel.hide();  
 
   // settings doesn't use it yet
+  settingsPanel = new SidebarPanel("settings-panel", false);
+  $(".sidebar__pane-content").append(settingsPanel.build());
+  settingsPanel.hide();
+
 
 }
 
