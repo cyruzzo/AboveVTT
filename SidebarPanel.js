@@ -14,7 +14,11 @@ function init_sidebar_tabs() {
   soundsPanel.hide();
 
   // sounds doesn't use it yet
-  // journal doesn't use it yet
+  
+  journalPanel = new SidebarPanel("journal-panel", false);
+  $(".sidebar__pane-content").append(journalPanel.build());
+  journalPanel.hide();  
+
   // settings doesn't use it yet
 
 }
