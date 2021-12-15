@@ -1,3 +1,4 @@
+var abovevtt_version = '0.64';
 
 function parse_img(url){
 	if (url === undefined) {
@@ -228,12 +229,18 @@ function notify_gamelog() {
 	if ($(".glc-game-log").is(":hidden")) {
 		$("#switch_gamelog").css("background", "red");
 	}
+
+	if ($(".GameLog_GameLog__2z_HZ").scrollTop() < 0) {
+		$(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
+	}
 }
 
 function switch_control(e) {
 	if (window.BLOCKCONTROLS)
 		return;
 	$(".sidepanel-content").hide();
+	$(".sidebar-panel-content").hide();
+	close_sidebar_modal();
 	$($(e.currentTarget).attr("data-target")).show();
 
 
@@ -355,6 +362,8 @@ function load_monster_stat(monsterid) {
 
 
 function init_controls() {
+	init_sidebar_tabs();
+
 	$(".sidebar").css("top", "10px");
 	$(".sidebar").css("height", "calc(100vh - 45px)");
 
@@ -477,7 +486,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.64</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+"</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -1142,6 +1151,37 @@ function close_player_sheet(sheet_url, hide_container = true)
 	}
 }
 
+function notify_player_join() {
+	var playerdata = {
+		abovevtt_version: abovevtt_version,
+		player_id: window.PLAYER_ID
+	};
+
+	console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
+	window.MB.sendMessage("custom/myVTT/playerjoin", playerdata);
+}
+
+function check_versions_match() {
+	var latestVersionSeen = 0.0;
+	var oldestVersionSeen = 1000.0;
+	
+	$.each(window.CONNECTED_PLAYERS, function(key, value) {
+		latestVersionSeen = Math.max(latestVersionSeen, value);
+		oldestVersionSeen = Math.min(oldestVersionSeen, value);
+	});
+
+	if (latestVersionSeen != oldestVersionSeen) {
+		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';		
+		for (const [key, value] of Object.entries(window.CONNECTED_PLAYERS)) {
+			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
+		}
+
+		alert(alertMsg);
+	}
+
+	return latestVersionSeen;
+}
+
 function init_ui() {
 	window.STARTING = true;
 	var gameid = $("#message-broker-client").attr("data-gameId");
@@ -1152,6 +1192,7 @@ function init_ui() {
 	window.MONSTERPANEL_LOADED = false;
 	window.BLOCKCONTROLS = false;
 	window.PLAYER_STATS = {};
+	window.CONNECTED_PLAYERS = {};
 	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameid)) || {};
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	window.TOKEN_PASTE_BUFFER = [];
@@ -1171,6 +1212,7 @@ function init_ui() {
 
 
 	if (DM) {
+		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameid);
 		init_scene_selector();
 	}
@@ -1327,6 +1369,12 @@ function init_ui() {
 
 	});
 
+	$(".GameLog_GameLog__2z_HZ").scroll(function() {
+		if ($(this).scrollTop() >= 0) {
+			$(this).removeClass("highlight-gamelog");
+		}
+	});
+
 	//s = $("<script src='https://meet.jit.si/external_api.js'></script>");
 	//$("#site").append(s);
 
@@ -1447,7 +1495,7 @@ function init_ui() {
 	if (!DM) {
 		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
-			window.MB.sendMessage("custom/myVTT/playerjoin");
+			notify_player_join();
 		}, 5000);
 	}
 
@@ -1462,7 +1510,7 @@ function init_ui() {
 	{
 		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
-			window.MB.sendMessage("custom/myVTT/playerjoin");
+			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
 			//open_player_sheet(window.PLAYER_SHEET, false);
@@ -1512,6 +1560,7 @@ function init_ui() {
 
 	token_menu();
 	load_custom_monster_image_mapping();
+	register_player_token_customization_context_menu();
 
 
 	window.WaypointManager=new WaypointManagerClass();
@@ -1570,10 +1619,10 @@ function init_ui() {
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
-		if (token_customization_modal_is_open() && event.which == 1) {
-			// if the click was outside the customization modal, close the modal, but allow right clicking because contextMenu events are outside the modal
-			if (event.target.closest(".token-image-modal") == undefined) {
-				close_token_customization_modal();
+		if (sidebar_modal_is_open() && event.which == 1) {
+			let modal = event.target.closest(".sidebar-modal");
+			if (modal === undefined || modal == null) {
+				close_sidebar_modal();
 			}
 		}
 	}
