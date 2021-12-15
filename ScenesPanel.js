@@ -18,7 +18,6 @@ function consider_upscaling(target){
 			target.scale_factor=1;
 		}
 }
-	
 
 function preset_importer(target, key) {
 	target.empty();
@@ -47,8 +46,6 @@ function preset_importer(target, key) {
 	target.append(sel);
 	target.append(import_button);
 }
-
-
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
@@ -683,8 +680,6 @@ function edit_scene_dialog(scene_id) {
 
 }
 
-
-
 function refresh_scenes() {
 	target = $("#scene_selector");
 	target.find(".scene").remove();
@@ -822,7 +817,6 @@ function init_scene_selector() {
 
 }
 
-
 function display_sources() {
 	$("#source_select").empty();
 	$("#chapter_select").empty();
@@ -938,7 +932,6 @@ function init_ddb_importer(target) {
 
 
 }
-
 
 function fill_importer(scene_set, start) {
 	area = $("#importer_area");
