@@ -9,6 +9,10 @@ function init_sidebar_tabs() {
   $(".sidebar__pane-content").append(tokensPanel.build());
   tokensPanel.hide();
   
+  soundsPanel = new SidebarPanel("sounds-panel", false);
+  $(".sidebar__pane-content").append(soundsPanel.build());
+  soundsPanel.hide();
+
   // sounds doesn't use it yet
   // journal doesn't use it yet
   // settings doesn't use it yet

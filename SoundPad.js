@@ -360,11 +360,8 @@ function init_audio(){
 	if(!("DEMO" in window.SOUNDPADS)){
 		 window.SOUNDPADS['DEMO']=demo_soundpad;
 	}
-	
-	sounds_panel = $("<div id='sounds-panel' class='sidepanel-content'/>");
-	sounds_panel.hide();
-	$(".sidebar__pane-content").append(sounds_panel);
-	sounds_panel.append("<div class='panel-warning'>EXPERIMENTAL FEATURE (still ugly but should work)</div>");
+
+	soundsPanel.header.append("<div class='panel-warning'>EXPERIMENTAL FEATURE (still ugly but should work)</div>");
 	
 	
 	youtube_section=$("<div class='youtube_section'/>");;
@@ -374,7 +371,7 @@ function init_audio(){
 	youtube_section.append(youtube_volume);
 	
 	
-	sounds_panel.append(youtube_section);
+	soundsPanel.body.append(youtube_section);
 
 	youtube_volume.on("change", function() {
 		if (window.YTPLAYER) {
@@ -406,7 +403,7 @@ function init_audio(){
 		
 		btn_addsoundpad=$("<button class='soundpad_add'>NEW</button>");
 		selector_section.append(btn_addsoundpad);
-		sounds_panel.append(selector_section);
+		soundsPanel.body.append(selector_section);
 		
 		btn_addsoundpad.click(function(){
 			var newname=prompt("New Soundpad Name");
@@ -451,10 +448,10 @@ function init_audio(){
 	}
 	
 	soundpad_element=$("<div id='soundpad'>");
-	sounds_panel.append(soundpad_element);
+	soundsPanel.body.append(soundpad_element);
 	if(!window.DM){
 		soundpad_element.hide();
-		sounds_panel.append("Music is entirely controlled by the DM. As a player you'll find a master volume control here... but sorry.. it's not ready :('");
+		soundsPanel.body.append("Music is entirely controlled by the DM. As a player you'll find a master volume control here... but sorry.. it's not ready :('");
 		
 	}
 	
