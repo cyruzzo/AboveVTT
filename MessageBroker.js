@@ -246,6 +246,9 @@ class MessageBroker {
 		this.gameid = $("#message-broker-client").attr("data-gameId");
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 
+		this.lastAlertTS = 0;
+		this.latestVersionSeen = abovevtt_version;
+
 		this.onmessage = function(event,tries=0) {
 			if (event.data == "pong")
 				return;
@@ -428,7 +431,25 @@ class MessageBroker {
 			}
 			
 			if(msg.eventType=="custom/myVTT/playerjoin"){
-				if(window.DM){
+				if (window.DM) {										
+					if (msg.data == null || typeof msg.data.abovevtt_version === "undefined") {
+						// Player with version <= 0.64 - avoiding popping too many alert messages
+						if (self.lastAlertTS == 0 || (Date.now() - self.lastAlertTS) >= 4 * 1000) {
+							console.log("A player just joined with an old version <= 0.64");
+							alert("Please note, a player just joined with an old version <= 0.64.\nFor best experience and compatibility, we recommend all players and DM to run the latest AboveVTT version.");
+							self.lastAlertTS = Date.now();
+						}
+					} else {
+						if (window.CONNECTED_PLAYERS[msg.data.player_id] === "undefined" ||
+						window.CONNECTED_PLAYERS[msg.data.player_id] != msg.data.abovevtt_version) {
+							window.CONNECTED_PLAYERS[msg.data.player_id] = msg.data.abovevtt_version;
+							
+							if (msg.data.abovevtt_version != self.latestVersionSeen) {
+								self.latestVersionSeen = check_versions_match();
+							}
+						}
+					}
+
 					window.JOURNAL.sync();
 				}	
 			}
