@@ -996,17 +996,19 @@ function drawing_mouseup(e) {
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
-			var toktop = parseInt(curr.options.top);
-			if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
-				continue;
-			var tokleft = parseInt(curr.options.left);
-			if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
-				continue;
-			c++;
-			// TOKEN IS INSIDE THE SELECTION
-			curr.selected = true;
-			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
-			curr.place();
+			if (window.DM || !curr.options.hidden) {
+				var toktop = parseInt(curr.options.top);
+				if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
+					continue;
+				var tokleft = parseInt(curr.options.left);
+				if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
+					continue;
+				c++;
+				// TOKEN IS INSIDE THE SELECTION
+				curr.selected = true;
+				//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
+				curr.place();
+			}
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);

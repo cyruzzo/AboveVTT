@@ -1,3 +1,4 @@
+var abovevtt_version = '0.64';
 
 function parse_img(url){
 	if (url === undefined) {
@@ -228,12 +229,18 @@ function notify_gamelog() {
 	if ($(".glc-game-log").is(":hidden")) {
 		$("#switch_gamelog").css("background", "red");
 	}
+
+	if ($(".GameLog_GameLog__2z_HZ").scrollTop() < 0) {
+		$(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
+	}
 }
 
 function switch_control(e) {
 	if (window.BLOCKCONTROLS)
 		return;
 	$(".sidepanel-content").hide();
+	$(".sidebar-panel-content").hide();
+	close_sidebar_modal();
 	$($(e.currentTarget).attr("data-target")).show();
 
 
@@ -355,6 +362,8 @@ function load_monster_stat(monsterid) {
 
 
 function init_controls() {
+	init_sidebar_tabs();
+
 	$(".sidebar").css("top", "10px");
 	$(".sidebar").css("height", "calc(100vh - 45px)");
 
@@ -383,7 +392,7 @@ function init_controls() {
 	$(".sidebar__controls").append(hider);
 
 
-	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab hasTooltip button-icon' data-name='Gamelog' data-target='.glc-game-log'></button>").click(switch_control);
+	b1 = $("<button id='switch_gamelog' class='tab-btn selected-tab hasTooltip button-icon leading-edge' data-name='Gamelog' data-target='.glc-game-log'></button>").click(switch_control);
 	b1.append('<svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg>');
 	$(".sidebar__controls").append(b1);
 
@@ -392,7 +401,7 @@ function init_controls() {
 	$(".sidebar__controls").append(b2);
 	if (DM) {
 
-		b3 = $("<button id='switch_panel' class='tab-btn hasTooltip button-icon' data-name='Monsters' data-target='#monster-panel'></button>").click(switch_control);
+		b3 = $("<button id='switch_monsters' class='tab-btn hasTooltip button-icon' data-name='Monsters' data-target='#monster-panel'></button>").click(switch_control);
 
 		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
@@ -404,7 +413,7 @@ function init_controls() {
 
 	}
 
-	b6 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Sounds' data-target='#sounds-panel'></button>");
+	b6 = $("<button id='switch_sounds' class='tab-btn hasTooltip button-icon' data-name='Sounds' data-target='#sounds-panel'></button>");
 	b6.append("<img src='" + window.EXTENSION_PATH + "assets/icons/speaker.svg' height='100%;'>");
 	b6.click(switch_control);
 	$(".sidebar__controls").append(b6);
@@ -419,7 +428,7 @@ function init_controls() {
 	$(".sidebar__controls").append(b4);*/
 
 	if (DM) {
-		b7 = $("<button id='switch_tokens' class='tab-btn hasTooltip button-icon' data-name='Settings' data-target='#settings-panel'></button>");
+		b7 = $("<button id='switch_settings' class='tab-btn hasTooltip button-icon trailing-edge' data-name='Settings' data-target='#settings-panel'></button>");
 		b7.append("<img src='" + window.EXTENSION_PATH + "assets/icons/cog.svg' height='100%;'>");
 		b7.click(switch_control);
 		$(".sidebar__controls").append(b7);
@@ -477,7 +486,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.64</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+"</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -1142,6 +1151,37 @@ function close_player_sheet(sheet_url, hide_container = true)
 	}
 }
 
+function notify_player_join() {
+	var playerdata = {
+		abovevtt_version: abovevtt_version,
+		player_id: window.PLAYER_ID
+	};
+
+	console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
+	window.MB.sendMessage("custom/myVTT/playerjoin", playerdata);
+}
+
+function check_versions_match() {
+	var latestVersionSeen = 0.0;
+	var oldestVersionSeen = 1000.0;
+	
+	$.each(window.CONNECTED_PLAYERS, function(key, value) {
+		latestVersionSeen = Math.max(latestVersionSeen, value);
+		oldestVersionSeen = Math.min(oldestVersionSeen, value);
+	});
+
+	if (latestVersionSeen != oldestVersionSeen) {
+		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';		
+		for (const [key, value] of Object.entries(window.CONNECTED_PLAYERS)) {
+			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
+		}
+
+		alert(alertMsg);
+	}
+
+	return latestVersionSeen;
+}
+
 function init_ui() {
 	window.STARTING = true;
 	var gameid = $("#message-broker-client").attr("data-gameId");
@@ -1152,6 +1192,7 @@ function init_ui() {
 	window.MONSTERPANEL_LOADED = false;
 	window.BLOCKCONTROLS = false;
 	window.PLAYER_STATS = {};
+	window.CONNECTED_PLAYERS = {};
 	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameid)) || {};
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	window.TOKEN_PASTE_BUFFER = [];
@@ -1171,6 +1212,7 @@ function init_ui() {
 
 
 	if (DM) {
+		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameid);
 		init_scene_selector();
 	}
@@ -1327,6 +1369,12 @@ function init_ui() {
 
 	});
 
+	$(".GameLog_GameLog__2z_HZ").scroll(function() {
+		if ($(this).scrollTop() >= 0) {
+			$(this).removeClass("highlight-gamelog");
+		}
+	});
+
 	//s = $("<script src='https://meet.jit.si/external_api.js'></script>");
 	//$("#site").append(s);
 
@@ -1447,7 +1495,7 @@ function init_ui() {
 	if (!DM) {
 		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
-			window.MB.sendMessage("custom/myVTT/playerjoin");
+			notify_player_join();
 		}, 5000);
 	}
 
@@ -1462,7 +1510,7 @@ function init_ui() {
 	{
 		setTimeout(function() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
-			window.MB.sendMessage("custom/myVTT/playerjoin");
+			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
 			//open_player_sheet(window.PLAYER_SHEET, false);
@@ -1571,10 +1619,10 @@ function init_ui() {
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
-		if (token_customization_modal_is_open() && event.which == 1) {
-			// if the click was outside the customization modal, close the modal, but allow right clicking because contextMenu events are outside the modal
-			if (event.target.closest(".token-image-modal") == undefined) {
-				close_token_customization_modal();
+		if (sidebar_modal_is_open() && event.which == 1) {
+			let modal = event.target.closest(".sidebar-modal");
+			if (modal === undefined || modal == null) {
+				close_sidebar_modal();
 			}
 		}
 	}
@@ -1638,6 +1686,11 @@ function init_ui() {
 		}
 	};
 }
+
+const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
+					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA", 
+					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0", 
+					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF", "cPick"];
 
 function init_buttons() {
 
@@ -1733,13 +1786,44 @@ function init_buttons() {
 		window.ScenesHandler.sync();
 	});
 
-	colors = $("<div/>");
+	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
+		
+	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
 
-	for (i = 0; i < 20; i++) {
-		c = $("<div class='coloroption'/>");
+	colors.find("#cpick").click(function(e)	{ //open the color picker
+		$('body').append("<div id='cpicker_overlay'></div>");
+		$('#cpicker_overlay').click(function(e){
+			$('#cpicker_overlay').remove();
+		});
+		$("#cpick").change(function () { // run when color changed
+			cPick = $("#cpick").val();
+			console.log("cPicked! " + cPick);
+			cc.remove(); //remove previous picked color
+			cc = $("<div class='coloroption'/>");
+			cc.width(27);
+			cc.height(27);
+			cc.css("background", cPick); //set color from cPick
+			cc.css("float", "left");
+			colors.prepend(cc); //Place new color selector
+			$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
+			cc.css('border', '2px solid black'); //highlight new color
+			cc.addClass('colorselected'); //select new color
+			$('#cpicker_overlay').remove();
+
+			cc.click(function(e) {
+				$(".coloroption").css('border', '').removeClass('colorselected');
+				$(this).css('border', '2px solid black');
+				$(this).addClass('colorselected');
+			});
+		});
+	});
+
+	for (i = 0; i < 20; i++){
+		var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
+		c = colorOp;
 		c.width(15);
 		c.height(15);
-		c.css("background", "#" + TOKEN_COLORS[i]);
+		c.css("background", DRAW_COLORS[i]);
 		c.css("float", "left");
 		colors.append(c);
 
@@ -1750,8 +1834,24 @@ function init_buttons() {
 		});
 	}
 
+	//create default cPick coloroption
+	cPick = "#E29393";
+	cc = $("<div class='coloroption'/>");
+	cc.width(27);
+	cc.height(27);
+	cc.css("background", cPick); //set color from cPick
+	cc.css("float", "left");
+	colors.prepend(cc); //Place new color selector in front of colorpicker
+	cc.css('border', '2px solid black'); //highlight new color
+	cc.addClass('colorselected'); //select new color
+	cc.click(function(e) {
+		$(".coloroption").css('border', '').removeClass('colorselected');
+		$(this).css('border', '2px solid black');
+		$(this).addClass('colorselected');
+	});
+
 	draw_menu.append(colors);
-	draw_menu.append("<div style='font-weight:bold'>Type</div>");
+	draw_menu.append("<div style='font-weight:bold;'>Type</div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='transparent'>TRANSP</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='border'>BORDER</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='filled'>FILLED</button></div>");
@@ -1760,7 +1860,7 @@ function init_buttons() {
 		$(".drawType").removeClass('drawTypeSelected');
 		$(".drawType").css('background', '');
 		$(this).addClass('drawTypeSelected');
-		$(this).css('background', 'green');
+		$(this).css('background', '-webkit-linear-gradient(270deg, #e29393, #f37a7a)');
 	});
 
 	draw_menu.append("<div style='font-weight:bold'>Line Width</div>");

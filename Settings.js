@@ -38,11 +38,9 @@ function download(data, filename, type) {
 
 
 function init_settings(){
-	settings_panel = $("<div id='settings-panel' class='sidepanel-content'/>");
-	settings_panel.hide();
-	$(".sidebar__pane-content").append(settings_panel);
-	settings_panel.append(`
-		<div class='panel-warning'>EXPERIMENTAL FEATURE ( again?!?!) )</div>
+	
+	settingsPanel.header.append(`<div class='panel-warning'>EXPERIMENTAL FEATURE ( again?!?!) )</div>`);
+	settingsPanel.body.append(`
 		<p>
 		This is still alpha. Use at your risk. The next version will include an import/export wizard.
 		</p>
@@ -95,7 +93,7 @@ function init_settings(){
 		}
 	];
 
-	settings_panel.append(`
+	settingsPanel.body.append(`
 		<div>
 			<h6>Default Options for newly created Monsters</h6>
 			<div>

@@ -504,14 +504,10 @@ function init_tokenmenu(){
 		tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
 	}
 	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
+
+	let header = tokensPanel.header;
+	header.append("<div class='panel-warning'>THIS IS AN EXPERIMENTAL FEATURE. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOSE THEM</div>");
 	
-	let tokens_panel = $("<div id='tokens-panel' class='sidepanel-content'/>");
-	tokens_panel.hide();
-	let tokens_panel_content = $(`<div class="token-image-modal-content"></div>`);
-	tokens_panel.append(tokens_panel_content);
-	tokens_panel_content.append("<div class='panel-warning'>THIS IS AN EXPERIMENTAL FEATURE. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOSE THEM</div>");
-	
-	let header = $("<div id='tokens-panel-header'></div>");
 	let backButton = $(`<div class="tokens-panel-back-button"><div>Back</div></div>`);
 	header.append(backButton);
 	backButton.click(function(event) {
@@ -519,13 +515,9 @@ function init_tokenmenu(){
 		fill_tokenmenu(previous);
 	});
 	
-	tokens_panel_content.append(header);
-	tokens_panel_content.append("<div id='tokens-panel-data' />");
-	$(".sidebar__pane-content").append(tokens_panel);
 	fill_tokenmenu("");
 
-	let footer = $("<div id='tokens-panel-footer'></div>");
-	let addTokenButton = $(`<button id='add-token-btn'>Add Token</button>`);
+	let addTokenButton = $(`<button id="add-token-btn" class="sidebar-panel-footer-button">Add Token</button>`);
 	addTokenButton.click(function(event) {
 		let path = $(event.target).attr("data-folder-path");
 		if (path === undefined) {
@@ -533,7 +525,7 @@ function init_tokenmenu(){
 		}
 		display_custom_token_form(path);
 	});
-	let addFolderButton = $(`<button id='add-folder-btn'>Add Folder</button>`);
+	let addFolderButton = $(`<button id="add-folder-btn" class="sidebar-panel-footer-button">Add Folder</button>`);
 	addFolderButton.click(function(event) {
 		var newfoldername = prompt("Enter the name of the new folder");
 		if (newfoldername == undefined || newfoldername == "") {
@@ -553,10 +545,10 @@ function init_tokenmenu(){
 		fill_tokenmenu(`${path}/${newfoldername}`);
 	});
 
-	footer.append(addTokenButton);
-	footer.append(addFolderButton);
-	tokens_panel_content.append(footer);
-
+	let buttonWrapper = $(`<div class="sidebar-panel-footer-horizontal-wrapper"></div>`)
+	buttonWrapper.append(addTokenButton);
+	buttonWrapper.append(addFolderButton);
+	tokensPanel.footer.append(buttonWrapper);
 
 	register_token_row_context_menu();             // context menu for each row
 	register_custom_monster_image_context_menu();  // context menu for images within the customization modal
@@ -581,22 +573,25 @@ function fill_tokenmenu(path){
 	}
 	window.CURRENT_TOKEN_PATH = path; // be careful using this. It should only be used for folder navigation
 	let folder = convert_path(path);
-	$("#tokens-panel-data").empty();
-	$("#add-token-btn").attr("data-folder-path", path);
-	$("#add-folder-btn").attr("data-folder-path", path);
+	// $("#tokens-panel-data").empty();
+	tokensPanel.body.empty();
+	let footer = tokensPanel.footer;
+	// TODO: consider storing current path on the tokensPanel object
+	footer.find("#add-token-btn").attr("data-folder-path", path);
+	footer.find("#add-token-btn").attr("data-folder-path", path);
 	if (path == "") {
-		$("#tokens-panel-header .tokens-panel-back-button").hide();
+		tokensPanel.header.find(".tokens-panel-back-button").hide();
 	} else {
-		$("#tokens-panel-header .tokens-panel-back-button").show();
+		tokensPanel.header.find(".tokens-panel-back-button").show();
 	}
 
 	draw_custom_token_list(folder, path);
 	
-	// don't allow users to add tokens or folders inside the builtin folder
 	if (is_builtin(path)) {
-		$("#tokens-panel-footer").hide();
+		// don't allow users to add tokens or folders inside the builtin folder
+		tokensPanel.footer.hide();
 	} else {
-		$("#tokens-panel-footer").show();
+		tokensPanel.footer.show();
 	}
 }
 
@@ -607,8 +602,6 @@ function persist_customtokens(){
 }
 
 function draw_custom_token_list(folder, path) {
-
-	$("#tokens-panel-data").empty();
 
 	let list = $(`<div class="custom-token-list"></div>`);
 	if (folder.folders) {
@@ -657,10 +650,7 @@ function draw_custom_token_list(folder, path) {
 			row.find(".custom-token-image-row-add").attr('data-tokendatapath', path);
 			row.find(".custom-token-image-row-add").attr('data-tokendataname', t);
 			row.find(".custom-token-image-row-add").click(function(event) {
-				// token_button uses target which will often be the svg inside of the button, but we want to use the button which will always be currentTarget
 				place_token_from_modal(path, t, false);
-				// event.target = $(event.currentTarget).clone(true);
-				// token_button(event);
 			});
 	
 			row.attr('data-tokendatapath', path);
@@ -673,7 +663,9 @@ function draw_custom_token_list(folder, path) {
 		}
 	}
 
-	$("#tokens-panel-data").append(list);
+	let body = tokensPanel.body;
+	body.empty();
+	body.append(list);
 }
 
 function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
@@ -886,7 +878,7 @@ function is_builtin(path) {
 function display_custom_token_form(path, name, token) {
 
 	// close any that are already open. This shouldn't be necessary, but it doesn't hurt just in case
-	close_token_customization_modal();
+	close_sidebar_modal();
 
 	if (path === undefined) {
 		console.warn("display_custom_token_form was called without a path");
@@ -899,49 +891,44 @@ function display_custom_token_form(path, name, token) {
 		token = folder.tokens[name];
 	}
 
+	let sidebarPanel = new SidebarPanel("custom-token-customization-modal");
+	display_sidebar_modal(sidebarPanel);
+
 	let explanationText = "Enter a url at the bottom to create a new token.";
 	let headerTitle = name === undefined ? "New Token" : name
-	let modalHeader = build_token_modal_header(headerTitle, explanationText);
+	sidebarPanel.updateHeader(headerTitle, "", explanationText);
 
 	if (token !== undefined) {
 		explanationText = "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.";
-		modalHeader.find(".token-image-modal-header-subtitle").hide();
 		migrate_token_image_data(token);
 	}
 
-	// build the modal body
-	let modalBody = $(`<div class="token-image-modal-body"></div>`);
 	// add all of the tokens images to the body
-	redraw_images_in_modal_body(modalBody, path, name, token);
+	redraw_images_in_modal_body(sidebarPanel.body, path, name, token);
 
-	// put it all together
-	let modal = build_modal_container();
-	let modalContent = modal.find(".token-image-modal-content");
-	modalContent.append(modalHeader);
-	modalContent.append(modalBody);
 	if (!is_builtin(path)) {
-		// only allow editing of non-builtin tokens
-		let modalFooter = build_custom_token_form_footer(path, name, token);
-		modalContent.append(modalFooter);
+		// only build the footer for custom tokens. Don't allow builtin tokens to be edited
+		build_custom_token_form_footer(sidebarPanel, path, name, token)
 	}
 
-	// display it
-	$("#VTTWRAPPER").append(modal);
-	update_modal_images(populate_token_from_form(token));
+	update_modal_images(sidebarPanel, populate_token_from_form(sidebarPanel, token));
 }
 
-function build_custom_token_form_footer(path, name, token) {
+function build_custom_token_form_footer(sidebarPanel, path, name, token) {
 	let footerText = token == undefined ? "Enter an Image Url" : "Add More Custom Images";
 	const footerSubmit = function(imgUrl) {
-		submit_custom_token_form(path);
+		submit_custom_token_form(sidebarPanel, path);
 	}
-	let modalFooter = build_token_modal_footer(footerText, footerSubmit);
-	let inputWrapper = modalFooter.find(".token-image-modal-footer-input-wrapper");
-	inputWrapper.css("width", "100%");
+
+	let imageUrlInput = sidebarPanel.build_image_url_input(footerText, footerSubmit);
+
+	let inputWrapper = sidebarPanel.inputWrapper;
+	inputWrapper.append(imageUrlInput);
+
 	let nameInput = $(`<input data-previous-name="${name}" title="token name" placeholder="my token name" name="addCustomName" type="text" style="width:100%" value="${name == undefined ? '' : name}" />`);
 	nameInput.on('keyup', function(event) {
 		if (event.key == "Enter") {
-			submit_custom_token_form(path);
+			submit_custom_token_form(sidebarPanel, path);
 		}
 	});
 
@@ -1017,17 +1004,17 @@ function build_custom_token_form_footer(path, name, token) {
 		aspectRatioInput.val("default");
 	}
 
-	let saveButton = $(`<button class="token-image-modal-add-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Token</button>`);
+	let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Token</button>`);
 	saveButton.click(function(event) {
-		submit_custom_token_form(path);
-		close_token_customization_modal();
+		submit_custom_token_form(sidebarPanel, path);
+		close_sidebar_modal();
 	});
 
 	const selectWrapper = function(labelText, input) {
 		let wrapper = $(`<div class="token-image-modal-footer-select-wrapper"><div class="token-image-modal-footer-title">${labelText}</div></div>`);
 		wrapper.append(input);
 		input.change(function(event) {
-			submit_custom_token_form(path);
+			submit_custom_token_form(sidebarPanel, path);
 		});
 		return wrapper;
 	};
@@ -1035,21 +1022,24 @@ function build_custom_token_form_footer(path, name, token) {
 	inputWrapper.append($(`<div class="token-image-modal-footer-title" style="width:100%;padding-left:0px">Token Name</div>`));
 	inputWrapper.append(nameInput);
 	inputWrapper.append(selectWrapper("Token Size", tokenSizeInput));
-	inputWrapper.append(`<div class="token-image-modal-explanation" style="padding-bottom:6px;">The following will override global settings for this token. Global settings can be changed in the settings tab.</div>`)
+	inputWrapper.append(`<div class="sidebar-panel-header-explanation" style="padding-bottom:6px;">The following will override global settings for this token. Global settings can be changed in the settings tab.</div>`)
 	inputWrapper.append(selectWrapper("Token Shape", tokenTypeInput)); // class token-round
 	inputWrapper.append(selectWrapper("Border Visibility", hideBorderInput)); // border-width: 4
 	inputWrapper.append(selectWrapper("Aspect Ratio", aspectRatioInput)); // class preserve-aspect-ratio
 	inputWrapper.append(saveButton);
 
-	return modalFooter;
 }
 
-function populate_token_from_form(token) {
+function populate_token_from_form(sidebarPanel, token) {
 	if (token == undefined) {
 		token = {};
 	}
+	if (sidebarPanel === undefined) {
+		console.warn("populate_token_from_form was called without a sidebarPanel");
+		return token;
+	}
 
-	let inputWrapper = $(".token-image-modal-footer-input-wrapper");
+	let inputWrapper = sidebarPanel.inputWrapper;
 	if (inputWrapper.length == 0) {
 		// we're probably inside a builtin directory. We remove the footer to avoid users mucking with builtin data, and therefore don't have a form to populate from
 		return token;
@@ -1106,21 +1096,25 @@ function populate_token_from_form(token) {
 	return token;
 }
 
-function submit_custom_token_form(path) {
+function submit_custom_token_form(sidebarPanel, path) {
+	if (sidebarPanel === undefined) {
+		console.warn("submit_custom_token_form was called without a sidebarPanel");
+		return;
+	}	
 	if (path === undefined) {
 		console.warn("submit_custom_token_form was called without a path");
 		path = "";
 	}
 	let folder = convert_path(path);
 	if(!folder.tokens) {
-		folder.tokens={};
+		folder.tokens = {};
 	}
 
-	let inputWrapper = $(".token-image-modal-footer-input-wrapper");
+	let inputWrapper = sidebarPanel.inputWrapper;
 	
 	let nameInput = inputWrapper.find(`input[name='addCustomName']`)[0];
 	let name = nameInput.value;
-	if (name == undefined || name.length == 0) {
+	if (name === undefined || name.length == 0) {
 		console.warn("not saving a token with no name");
 		return;
 	}
@@ -1139,7 +1133,7 @@ function submit_custom_token_form(path) {
 		token = folder.tokens[previousName];
 	}
 
-	let isNewToken = token == undefined;
+	let isNewToken = token === undefined;
 	let didRename = previousName != name;
 
 	if (didRename) {
@@ -1164,7 +1158,7 @@ function submit_custom_token_form(path) {
 		token['data-alternative-images'].push(imageUrl);
 	}
 
-	folder.tokens[name] = populate_token_from_form(token);
+	folder.tokens[name] = populate_token_from_form(sidebarPanel, token);
 	persist_customtokens();
 	
 	if (isNewToken || didRename) {
@@ -1173,23 +1167,22 @@ function submit_custom_token_form(path) {
 		// TODO: figure out everything that needs to be updated, and do that instead of redrawing the entire thing
 		display_custom_token_form(path, name, token);
 	} else {
-		redraw_images_in_modal_body($(".token-image-modal-body"), path, name, token);
+		redraw_images_in_modal_body(sidebarPanel.body, path, name, token);
 	}
 	// just reload the body instead of the entire modal
 	
 	fill_tokenmenu(path);
-	update_modal_images(folder.tokens[name]);
+	update_modal_images(sidebarPanel, folder.tokens[name]);
 }
 
-function update_modal_images(token) {
+function update_modal_images(sidebarPanel, token) {
 
 	if (token === undefined) {
 		console.warn("update_modal_images was called without a token");
 		return;
 	}
 
-	let items = $(".token-image-modal-body .custom-token-image-item");
-	console.log(items);
+	let items = sidebarPanel.body.find(".custom-token-image-item");
 
 	// use token override if it exists, else fall back to global setting
 	let tokenSquareSetting = token["data-square"];
@@ -1309,16 +1302,16 @@ function place_token_from_modal(path, name, hidden, specificImage, eventPageX, e
 }
 
 function display_placed_token_customization_modal(placedToken) {
-	if (placedToken == undefined) {
+	if (placedToken === undefined) {
 		console.warn("Attempted to call display_placed_token_customization_modal without a token");
 		return;
 	}
 
 	// close any that are already open. This shouldn't be necessary, but it doesn't hurt just in case
-	close_token_customization_modal();
+	close_sidebar_modal();
 
 	let monsterId = placedToken.options.monster;
-	if (monsterId != undefined) {
+	if (monsterId !== undefined) {
 		window.StatHandler.getStat(monsterId, function(stat) {
 			display_monster_customization_modal(placedToken, monsterId, placedToken.options.name, stat.data.avatarUrl);
 		});
@@ -1356,10 +1349,13 @@ function display_placed_token_customization_modal(placedToken) {
 	if (savedTokenData === undefined) {
 		explanationText = "Enter a new image URL at the bottom.";
 	}
-	let modalHeader = build_token_modal_header(placedToken.options.name, explanationText);
 
-	// build the modal body
-	let modalBody = $(`<div class="token-image-modal-body"></div>`);
+	let sidebarPanel = new SidebarPanel("custom-token-customization-modal");
+	display_sidebar_modal(sidebarPanel);
+	sidebarPanel.updateHeader(placedToken.options.name, "", explanationText);
+
+	// configure the modal body
+	let modalBody = sidebarPanel.body;
 	// add all of the tokens images to the body
 	redraw_images_in_modal_body(modalBody, tokenDataPath, tokenDataName, savedTokenData, placedToken);
 
@@ -1373,7 +1369,7 @@ function display_placed_token_customization_modal(placedToken) {
 		if (savedTokenData === undefined) {
 			// this is an unassociated token. Blindly swap the url and close the modal
 			placedToken.options.imgsrc = parse_img(imageUrl);
-			close_token_customization_modal();
+			close_sidebar_modal();
 			placedToken.place_sync_persist();
 		} else {
 			let tokenDataName = placedToken.options.tokendataname !== undefined ? placedToken.options.tokendataname : placedToken.options.name;
@@ -1382,32 +1378,25 @@ function display_placed_token_customization_modal(placedToken) {
 		}
 	};
 	
-	let modalFooter = build_token_modal_footer("Enter a new image URL", add_token_customization_image);
+	let imageInput = sidebarPanel.build_image_url_input("Enter a new image URL", add_token_customization_image);
+	imageInput.find(`.token-image-modal-add-button`).remove();
+	sidebarPanel.inputWrapper.append(imageInput);
 
-	// put it all together
-	let modal = build_modal_container();
-	let modalContent = modal.find(".token-image-modal-content");
-	modalContent.append(modalHeader);
-	modalContent.append(modalBody);
-	modalContent.append(modalFooter);
-
-
-	modalFooter.find(`.token-image-modal-add-button`).remove();
 	// allow them to use the new url for the placed token without saving the url for all future monsters
-	let onlyForThisTokenButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" title="This url will be used for this token only. New tokens will continue to use the images shown above.">Set for this token only</button>`);
+	let onlyForThisTokenButton = $(`<button class="sidebar-panel-footer-button" title="This url will be used for this token only. New tokens will continue to use the images shown above.">Set for this token only</button>`);
 	onlyForThisTokenButton.click(function(event) {
 		let imageUrl = $(`input[name='addCustomImage']`)[0].value;
 		if (imageUrl != undefined && imageUrl.length > 0) {
 			placedToken.options.imgsrc = parse_img(imageUrl);
-			close_token_customization_modal();
+			close_sidebar_modal();
 			placedToken.place_sync_persist();
 		}
 	});
-	modalContent.append(onlyForThisTokenButton);	
+	sidebarPanel.inputWrapper.append(onlyForThisTokenButton);
 
 	if (savedTokenData !== undefined && !is_builtin(tokenDataPath)) {
 		// Only show the add for all button if the placed token has been associated with a saved token object. We can't save what we don't know about
-		let addForAllButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" title="New tokens will use this new image. If you have more than one image, one will be chosen at random when you place a new token.">Add for all future tokens</button>`);
+		let addForAllButton = $(`<button class="sidebar-panel-footer-button" title="New tokens will use this new image. If you have more than one image, one will be chosen at random when you place a new token.">Add for all future tokens</button>`);
 		addForAllButton.click(function(event) {
 			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
@@ -1415,13 +1404,11 @@ function display_placed_token_customization_modal(placedToken) {
 				display_placed_token_customization_modal(placedToken);	
 			}
 		});
-		modalContent.append(addForAllButton);
+		sidebarPanel.inputWrapper.append(addForAllButton);
 	}
-	modalContent.append($(`<div class="token-image-modal-explanation" style="padding:4px;">You can access this modal from the Tokens tab by clicking the button on the right side of the token row.</div>`));
 
-	// display it
-	$("#VTTWRAPPER").append(modal);
-	update_modal_images(savedTokenData);
+	sidebarPanel.inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can access this modal from the Tokens tab by clicking the button on the right side of the token row.</div>`));
+	update_modal_images(sidebarPanel, savedTokenData);
 }
 
 function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedToken) {
@@ -1479,7 +1466,7 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 			// if they click this image, update the placedToken and close the modal
 			tokenDiv.click(function() {
 				placedToken.options.imgsrc = imageUrl;
-				close_token_customization_modal();
+				close_sidebar_modal();
 				placedToken.place_sync_persist();
 			});
 			if (placedToken.options.tokendatapath !== undefined) {

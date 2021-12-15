@@ -48,9 +48,11 @@ class JournalManager{
 	
 	build_journal(){
 		let self=this;
-		let journal_panel=$("#journal-panel");
-		journal_panel.empty();
-		journal_panel.append("<div class='panel-warning'>Experimental</div>");
+
+		journalPanel.body.empty();
+		if (journalPanel.header.find(".panel-warning").length == 0) {
+			journalPanel.header.append("<div class='panel-warning'>Experimental</div>");
+		}
 		
 		let btn_add_chapter=$("<button id='btn_add_chapter'>Add Chapter</button>");
 		
@@ -70,7 +72,7 @@ class JournalManager{
 		);
 		
 		if(window.DM)
-			journal_panel.append(btn_add_chapter);
+			journalPanel.body.append(btn_add_chapter);
 		
 		for(let i=0; i<self.chapters.length;i++){
 			console.log('xxx');
@@ -79,7 +81,7 @@ class JournalManager{
 			c.append(t);
 			
 			t.text(self.chapters[i].title);
-			journal_panel.append(c);
+			journalPanel.body.append(c);
 			
 			let del_chapter_btn=$("<button class='btn-del-chapter'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 			
@@ -353,10 +355,7 @@ function init_journal(gameid){
 	
 	
 	window.JOURNAL=new JournalManager(gameid);
-	
-	journal_panel = $("<div id='journal-panel' class='sidepanel-content'/>");
-	journal_panel.hide();
-	$(".sidebar__pane-content").append(journal_panel);
+
 	window.JOURNAL.build_journal();
 	
 	
