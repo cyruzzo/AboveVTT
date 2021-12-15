@@ -461,9 +461,9 @@ function place_player_token(playerId, hidden, specificImage, eventPageX, eventPa
 }
 
 function display_player_token_customization_modal(playerId, placedToken) {
-	
+
 	// close any that are already open. This shouldn't be necessary, but it doesn't hurt just in case
-	close_token_customization_modal();
+	close_sidebar_modal();
 
 	if (playerId === undefined) {
 		console.warn("display_player_token_customization_modal was called without a playerId");
@@ -476,17 +476,19 @@ function display_player_token_customization_modal(playerId, placedToken) {
 		return;
 	}
 
-	let customizations = get_player_token_customizations(playerId);
+	// build and display the modal
+	let sidebarPanel = new SidebarPanel("player-token-customization-modal");
+	display_sidebar_modal(sidebarPanel);
 
-
-	// build the modal header
+	// configure the header
 	let explanationText = "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.";
 	if (placedToken !== undefined) {
 		// the user is updating a token that has already been placed. Add some explanation text to help them figure out how to use this in case it's their first time here.
 		explanationText = "Click an image below to update your token or enter a new image URL at the bottom.";
 	}
-	let modalHeader = build_token_modal_header(pc.name, explanationText);
-	
+	sidebarPanel.updateHeader(pc.name, "Token Images", explanationText);
+
+	// configure the body
 	const determineLabelText = function() {
 		if (placedToken != undefined) {
 			return "Enter a new image URL";	
@@ -496,12 +498,8 @@ function display_player_token_customization_modal(playerId, placedToken) {
 			return "Add More Custom Images";
 		}
 	}
-
-	// build the modal body
-	let modalBody = $(`<div class="token-image-modal-body"></div>`);
 	let removeAllButton = $(`<button class="token-image-modal-remove-all-button" data-player-id="${playerId}" title="Reset this player back to the default image.">Remove All Custom Images</button><`);
 	removeAllButton.click(function(event) {
-		// let playerId = $(event.target).attr("data-player-id");
 		if (window.confirm(`Are you sure you want to remove all custom images for ${pc.name}?\nThis will reset the player images back to the default`)) {
 			remove_all_player_image_mappings(playerId);
 			display_player_token_customization_modal(playerId, placedToken);
@@ -509,20 +507,23 @@ function display_player_token_customization_modal(playerId, placedToken) {
 		}
 	})
 	
+	let customizations = get_player_token_customizations(playerId);
 	if (customizations.images.length > 0) {
 		for (let i = 0; i < customizations.images.length; i++) { 
 			let imageUrl = parse_img(customizations.images[i]);
 			let tokenDiv = build_player_customization_item(playerId, pc.name, imageUrl, i, placedToken);
-			modalBody.append(tokenDiv);
+			sidebarPanel.body.append(tokenDiv);
 		}
 		removeAllButton.show();
 	} else {
 		let tokenDiv = build_player_customization_item(playerId, pc.name, pc.image, -1, placedToken);
-		modalBody.append(tokenDiv);
+		sidebarPanel.body.append(tokenDiv);
 		removeAllButton.hide();
 	}
+	// shove the remove all button between the body and the footer
+	sidebarPanel.body.after(removeAllButton);
 
-	// build the modal footer
+	// configure the footer
 	const add_token_customization_image = function(imageUrl) {
 		if(imageUrl.startsWith("data:")){
 			alert("You cannot use urls starting with data:");
@@ -530,56 +531,48 @@ function display_player_token_customization_modal(playerId, placedToken) {
 		}
 		if (get_player_image_mappings(playerId).length == 0) {
 			// this is the first custom image so remove the default image before appending the new one, and show the remove all button
-			modalBody.empty();
+			sidebarPanel.body.empty();
 			removeAllButton.show();
 		}
 		add_player_image_mapping(playerId, imageUrl);
 		let updatedImages = get_player_image_mappings(playerId);
 		let imgIndex = updatedImages.indexOf(imageUrl);
 		let tokenDiv = build_player_customization_item(playerId, pc.name, imageUrl, imgIndex, placedToken);
-		modalBody.append(tokenDiv);	
+		sidebarPanel.body.append(tokenDiv);	
 		$(".token-image-modal-footer-title").text(determineLabelText())
 	};
-	let modalFooter = build_token_modal_footer(determineLabelText(), add_token_customization_image);
-	modalFooter.find(`input[name='addCustomImage']`).attr("data-player-id", playerId);
-	modalFooter.find(`.token-image-modal-add-button`).attr("data-player-id", playerId);
-	
-	
-	// put it all together
-	let modal = build_modal_container();
-	let modalContent = modal.find(".token-image-modal-content");
-	modalContent.append(modalHeader);
-	modalContent.append(modalBody);
-	modalContent.append(removeAllButton);
-	modalContent.append(modalFooter);
+	let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), add_token_customization_image);
+	imageUrlInput.find(`input[name='addCustomImage']`).attr("data-player-id", playerId);
+	imageUrlInput.find(`.token-image-modal-add-button`).attr("data-player-id", playerId);
+	sidebarPanel.inputWrapper.append(imageUrlInput);
 
-
+	// handle placedToken modal
 	if (placedToken) {
-		modalFooter.find(`.token-image-modal-add-button`).remove();
+		sidebarPanel.footer.find(`.token-image-modal-add-button`).remove();
 		// allow them to use the new url for the placed token without saving the url for all future player tokens
-		let onlyForThisTokenButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" data-player-id="${playerId}" title="This url will be used for this token only, it will not be saved for future use.">Set for this token only</button>`);
+		let onlyForThisTokenButton = $(`<button class="sidebar-panel-footer-button" data-player-id="${playerId}" title="This url will be used for this token only, it will not be saved for future use.">Set for this token only</button>`);
 		onlyForThisTokenButton.click(function(event) {
-			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
+			let imageUrl = sidebarPanel.inputWrapper.find(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
 				placedToken.options.imgsrc = parse_img(imageUrl);
-				close_token_customization_modal();
+				close_sidebar_modal();
 				placedToken.place_sync_persist();
 			}
 		});
-		modalContent.append(onlyForThisTokenButton);	
-		let addForAllButton = $(`<button class="token-image-modal-add-button" style="margin:4px;" data-player-id="${playerId}" title="New tokens will use this new image instead of the default image. If you have more than one custom image, one will be chosen at random when you place this player token.">Add for all future tokens</button>`);
+		let addForAllButton = $(`<button class="sidebar-panel-footer-button" data-player-id="${playerId}" title="New tokens will use this new image instead of the default image. If you have more than one custom image, one will be chosen at random when you place this player token.">Add for all future tokens</button>`);
 		addForAllButton.click(function(event) {
-			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
+			let imageUrl = sidebarPanel.inputWrapper.find(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
 				add_token_customization_image(imageUrl);
 			}
 		});
-		modalContent.append(addForAllButton);
-		modalContent.append($(`<div class="token-image-modal-explanation" style="padding:4px;">You can access this modal from the Player tab by right-clicking the player image and selecting "Customize".</div>`));
+
+		// add these after the footer after the inputWrapper
+		sidebarPanel.inputWrapper.append(onlyForThisTokenButton);
+		sidebarPanel.inputWrapper.append(addForAllButton);
+		sidebarPanel.inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can access this modal from the Player tab by right-clicking the player image and selecting "Customize".</div>`));		
 	}
 
-	// display it
-	$("#VTTWRAPPER").append(modal);
 }
 
 function build_player_customization_item(playerId, playerName, imageUrl, customImgIndex, placedToken) {

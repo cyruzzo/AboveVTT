@@ -47,6 +47,7 @@
 	"magnific-popup.css",
 	"Journal.js",
 	"DnDBeyond/DDBCharacterData.js",
+	"SidebarPanel.js",
 	"assets/*"
 	]
 }

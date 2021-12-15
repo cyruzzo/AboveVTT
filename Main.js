@@ -239,6 +239,8 @@ function switch_control(e) {
 	if (window.BLOCKCONTROLS)
 		return;
 	$(".sidepanel-content").hide();
+	$(".sidebar-panel-content").hide();
+	close_sidebar_modal();
 	$($(e.currentTarget).attr("data-target")).show();
 
 
@@ -360,6 +362,8 @@ function load_monster_stat(monsterid) {
 
 
 function init_controls() {
+	init_sidebar_tabs();
+
 	$(".sidebar").css("top", "10px");
 	$(".sidebar").css("height", "calc(100vh - 45px)");
 
@@ -1615,10 +1619,10 @@ function init_ui() {
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
-		if (token_customization_modal_is_open() && event.which == 1) {
-			// if the click was outside the customization modal, close the modal, but allow right clicking because contextMenu events are outside the modal
-			if (event.target.closest(".token-image-modal") == undefined) {
-				close_token_customization_modal();
+		if (sidebar_modal_is_open() && event.which == 1) {
+			let modal = event.target.closest(".sidebar-modal");
+			if (modal === undefined || modal == null) {
+				close_sidebar_modal();
 			}
 		}
 	}
