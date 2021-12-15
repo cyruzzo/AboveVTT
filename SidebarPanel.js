@@ -1,30 +1,29 @@
 
 function init_sidebar_tabs() {
-  // gamelog doesn't use it yet, maybe never
-  // players doesn't use it yet
-  // monsters doesn't use it yet, maybe never
-  // scenesPanel = SidebarPanel("#scenes-panel", false);
   
+  // gamelog doesn't use it yet, maybe never
+
+  playersPanel = new SidebarPanel("players-panel", false);
+  $(".sidebar__pane-content").append(playersPanel.build());
+  playersPanel.hide();
+
+  // monsters doesn't use it yet, maybe never
+
   tokensPanel = new SidebarPanel("tokens-panel", false);
   $(".sidebar__pane-content").append(tokensPanel.build());
   tokensPanel.hide();
-  
+
   soundsPanel = new SidebarPanel("sounds-panel", false);
   $(".sidebar__pane-content").append(soundsPanel.build());
   soundsPanel.hide();
 
-  // sounds doesn't use it yet
-  
   journalPanel = new SidebarPanel("journal-panel", false);
   $(".sidebar__pane-content").append(journalPanel.build());
   journalPanel.hide();  
 
-  // settings doesn't use it yet
   settingsPanel = new SidebarPanel("settings-panel", false);
   $(".sidebar__pane-content").append(settingsPanel.build());
   settingsPanel.hide();
-
-
 }
 
 function sidebar_modal_is_open() {
