@@ -85,9 +85,10 @@ class MessageBroker {
 		// current prod wss://blackjackandhookers.abovevtt.net/v1
 		let searchParams = new URLSearchParams(window.location.search)
 		if(searchParams.has("dev"))
-			this.abovews = new WebSocket("wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1?campaign="+window.CAMPAIGN_SECRET);	
-		else
-			this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET);
+			this.abovews = new WebSocket("wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1?campaign="+window.CAMPAIGN_SECRET+"&DM="+window.DM);	
+		else{
+			this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET+"&DM="+window.DM);
+		}
 		this.abovews.onopen=function(){
 
 		}
@@ -326,7 +327,9 @@ class MessageBroker {
 
 			if(msg.eventType == "custom/myVTT/scenelist"){
 				if(window.DM){
+					console.log("got scene list");
 					window.ScenesHandler.scenes=msg.data;
+					refresh_scenes();
 				}
 			}
 
@@ -802,6 +805,13 @@ class MessageBroker {
 		window.TOKEN_OBJECTS = {};
 		var data = msg.data;
 
+		if(window.CLOUD){
+			if(window.DM && data.dm_map_usable=="1")
+				data.map=data.dm_map;
+			else
+				data.map=data.player_map;
+		}
+
 		window.CURRENT_SCENE_DATA = msg.data;
 
 		console.log("SETTO BACKGROUND A " + msg.data);
@@ -809,22 +819,23 @@ class MessageBroker {
 
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
-		$("#scene_map").width(data.width);
-		$("#scene_map").height(data.height);
 
 		load_scenemap(data.map, data.width, data.height, function() {
+			var owidth = $("#scene_map").width();
+			var oheight = $("#scene_map").height();
+
+			if (window.CURRENT_SCENE_DATA.scale_factor) {
+				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
+				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
+			}
+			reset_canvas();
+			redraw_canvas();
+			redraw_drawings();
+
 			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
 			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
 			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
-			/*if(old_src!=$("#scene_map").attr('src')){
-			window.ZOOM=(60.0/window.CURRENT_SCENE_DATA.hpps);		
-			$("#VTT").css("transform", "scale("+window.ZOOM+")");
-			$("#VTTWRAPPER").width($("#scene_map").width()*window.ZOOM+400);
-			$("#VTTWRAPPER").height($("#scene_map").height()*window.ZOOM+400);
-			$("#black_layer").width($("#scene_map").width()*window.ZOOM+400);
-			$("#black_layer").height($("#scene_map").height()*window.ZOOM+400)
-		}*/
+			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
 		});
 
 
@@ -960,9 +971,12 @@ class MessageBroker {
 			campaignId:window.CAMPAIGN_SECRET,
 			eventType: eventType,
 			sender: this.mysenderid,
-			sequence: this.above_sequence++,
 			data: data,
 		}
+
+		if(!["custom/myVTT/switch_scene"].includes(eventType))
+			message.sequence=this.above_sequence++;
+
 		if(window.CURRENT_SCENE_DATA)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
 		

@@ -36,6 +36,9 @@ class Token {
 		this.options = options;
 		this.sync = null;
 		this.persist = null;
+		if(window.CLOUD)
+			this.persist= ()=>{};
+		
 		this.doing_highlight = false;
 		if (typeof this.options.size == "undefined") {
 			this.options.size = window.CURRENT_SCENE_DATA.hpps; // one grid square
