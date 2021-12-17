@@ -20,39 +20,8 @@ function update_pclist() {
 	
 	playersPanel.body.empty();
 
-	window.pcs = [];
-	$(".ddb-campaigns-detail-body-listing-active").find(".ddb-campaigns-character-card").each(function(idx) {
-		tmp = $(this).find(".ddb-campaigns-character-card-header-upper-character-info-primary");
-		name = tmp.html();
-		tmp = $(this).find(".user-selected-avatar");
-		if (tmp.length > 0) {
-			const lowResUrl = tmp.css("background-image").slice(5, -2); // url("x") TO -> x
-			image = get_higher_res_url(lowResUrl)
-		} else {
-			image = "/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-		}
-		sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr("href");
+	gather_pcs();
 
-		pc = {
-			name: name,
-			image: image,
-			sheet: sheet,
-			data: {}
-		};
-		console.log("trovato sheet " + sheet);
-		window.pcs.push(pc);
-
-	});
-	
-	if(!window.DM){
-		window.pcs.push({
-			name: 'THE DM',
-			image: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
-			sheet: false,
-			data: {}
-		});
-	}
-	
 	const addPartyButtonContainer = $("<div class='add-party-container'></div>");
 	const addPartyButton = $("<button id='add-party'>ADD PARTY</button>");
 	addPartyButton.on('click', () => {
@@ -177,6 +146,7 @@ function update_pclist() {
 		token.draggable({
 			appendTo: "#VTTWRAPPER",
 			zIndex: 100000,
+			cursorAt: {top: 0, left: 0},
 			helper: function(event) {
 				let helper = $(event.currentTarget).find("img").clone();
 				let playerId = $(event.currentTarget).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
@@ -257,8 +227,47 @@ function get_higher_res_url(thumbnailUrl) {
 	return thumbnailUrl.replace(/\/thumbnails(\/\d+\/\d+\/)\d+\/\d+\//, '$1');
 }
 
+function gather_pcs() {
+	let campaignId = get_campaign_id();
+	if (is_encounters_page() || is_characters_page()) {
+		// they aren't on this page, but we've added them to localStorage to handle this scenario
+		window.pcs = $.parseJSON(localStorage.getItem(`CampaignCharacters${campaignId}`));
+		console.log(`reading "CampaignCharacters-${campaignId}", ${JSON.stringify(window.pcs)}`);
+		return;
+	}
 
-
+	window.pcs = [];
+	$(".ddb-campaigns-detail-body-listing-active").find(".ddb-campaigns-character-card").each(function(idx) {
+		let tmp = $(this).find(".ddb-campaigns-character-card-header-upper-character-info-primary");
+		let name = tmp.html();
+		tmp = $(this).find(".user-selected-avatar");
+		if (tmp.length > 0) {
+			const lowResUrl = tmp.css("background-image").slice(5, -2); // url("x") TO -> x
+			image = get_higher_res_url(lowResUrl)
+		} else {
+			image = "/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
+		}
+		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr("href");
+		let pc = {
+			name: name,
+			image: image,
+			sheet: sheet,
+			data: {}
+		};
+		console.log("trovato sheet " + sheet);
+		window.pcs.push(pc);
+	});
+	
+	if(!window.DM){
+		window.pcs.push({
+			name: 'THE DM',
+			image: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
+			sheet: "", // MessageBroker calls `endsWith` on this so make sure it has something to read
+			data: {}
+		});
+	}
+	localStorage.setItem(`CampaignCharacters${campaignId}`, JSON.stringify(window.pcs));
+}
 
 function read_player_token_customizations() {
 	let customMappingData = localStorage.getItem('PlayerTokenCustomization');

@@ -134,6 +134,9 @@ function generateSingleCharState(charID) {
 }
 
 function getCharacterJSON(charID, callback) {
+    if (charID < 0) {
+        return;
+    }
     get_cobalt_token(function (token) {
         $.ajax({
             url: charJSONurlBase + charID,
@@ -153,6 +156,9 @@ function getCharacterJSON(charID, callback) {
 
 
 function updateSingleCharData(charState, callback) {
+    if (charState === undefined || window.moduleExport === undefined) {
+        return;
+    }
     //console.log("Retriving Char Data");
     var charURLs = [];
     charURLs.push(charState.url);

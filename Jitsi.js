@@ -1,8 +1,7 @@
 
 function create_jitsi_button() {
-	window.gameId = $("#message-broker-client").attr("data-gameId");
 
-	b = $("<button id='jitsi_switch' class='hasTooltip button-icon hideable' data-name='Connect video call'><span>VIDEO</span><span class='material-icons button-icon'>video_call</span></button>");
+	b = $("<div id='jitsi_switch' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Connect video call'><div class='ddbc-tab-options__header-heading'><span>VIDEO</span><span class='material-icons button-icon' style='margin: -3px 0px -3px 3px'>video_call</span></div></div>");
 	b.css("position", "fixed");
 	b.css("bottom", "3px");
 	b.css("left", "3px");
@@ -14,13 +13,15 @@ function create_jitsi_button() {
 	b.click(function () {
 		$(this).remove();
 		init_jitsi_box();
+		reposition_enounter_combat_tracker_iframe();
+		reposition_player_sheet();
 	});
 }
 
 function init_jitsi(tileLayout) {
 	const domain = 'meet.jit.si';
 	const options = {
-		roomName: 'aboveVTT-' + window.gameId,
+		roomName: 'aboveVTT-' + find_game_id(),
 		width: '100%',
 		height: '100%',
 		parentNode: document.querySelector('#jitsi_container'),
@@ -72,7 +73,7 @@ function init_jitsi_popout() {
 	pop.document.body.style.padding = '0px';
 	pop.document.body.id = 'jitsi_container';
 	pop.document.title = 'Above VTT';
-	pop.window.gameId = window.gameId;
+	pop.window.gameId = find_game_id();
 
 	load = document.createElement('script');
 	load.src = window.EXTENSION_PATH+ 'jitsi_external_api.js'; // NOW WE LOAD ID FROM THE EXTENSION, NOT FROM http://
@@ -121,6 +122,8 @@ function init_jitsi_box() {
 		function () {
 			$("#meet").remove();
 			create_jitsi_button();
+			reposition_enounter_combat_tracker_iframe();
+			reposition_player_sheet();
 		}
 	);
 

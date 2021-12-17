@@ -7,10 +7,15 @@ function unhide_interface() {
     if ($('#hide_interface_button').hasClass('unhidden')) {
         $('#hide_interface_button').hide().removeClass('unhidden');
         $('.hideable').show();
+        $(".dice-toolbar").show();
     } else {
         if ($('#hide_rightpanel').hasClass('point-right')) {
             $('#hide_rightpanel').click();
         }
+        if (is_characters_page()) {
+            hide_player_sheet();
+        }
+        $(".dice-toolbar").hide();
         $('#hide_interface_button').show().addClass('unhidden');
         $('.hideable').hide();
     }
@@ -31,10 +36,8 @@ Mousetrap.bind('d', function () {       //draw menu
 });
 
 Mousetrap.bind('a', function () {       //aoe menu
-    if (window.DM){
-        $('#aoe_button').click()
-        return false;
-    }
+    $('#aoe_button').click()
+    return false;
 });
 
 Mousetrap.bind('f', function () {       //fog menu
@@ -91,6 +94,7 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
     $(".drawbutton").removeClass('button-enabled button-selected');
+    $(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
     $(".top_menu").removeClass('visible');
     $("#fog_overlay").css("z-index", "20");
     $('#select-button').click();

@@ -849,22 +849,27 @@ function init_scene_selector() {
 	ss.append(addblock);
 
 
-	let toggle = $("<button id='scene_selector_toggle' class='hideable'>SCENES<span class='material-icons md-dark md-16'>expand_more</span></button>");
+	let toggle = $("<div id='scene_selector_toggle' class='hideable ddbc-tab-options__header-heading'>SCENES<span class='material-icons md-dark md-14 md-weight-700'>expand_more</span></div>");
 
 	toggle.click(function() {
 		if (ss.hasClass("menu_opened")) {
 			ss.slideUp().removeClass("menu_opened");
 			toggle.removeClass("menu_opened");
+			toggle.removeClass("ddbc-tab-options__header-heading--is-active");
 		} else {
 			ss.slideDown().addClass("menu_opened");
 			toggle.addClass("menu_opened");
+			toggle.addClass("ddbc-tab-options__header-heading--is-active");
 			refresh_scenes();
 		}
+
+		close_monster_stat_block();
+
 	});
 	$(window.document.body).append(ss);
-	$(window.document.body).append(toggle);
-
-
+	let pill = $(`<div id="scene_selector_toggle_pill" class="ddbc-tab-options--layout-pill" />`);
+	pill.append(toggle);
+	$(window.document.body).append(pill);
 }
 
 function display_sources() {

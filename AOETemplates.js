@@ -21,22 +21,22 @@ const AOE_TEMPLATES = {
 
 
 function setup_aoe_button() {
-    aoe_button = $("<button style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable'><u>A</u>OE</button>");
+    aoe_button = $("<div style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
     aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
 
-    aoe_menu.append("<div style='font-weight:bold'>Size</div>");
-    aoe_menu.append("<div><input tabindex='2' id='aoe_feet' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10'></div>");
+    aoe_menu.append("<div class='menu-subtitle'>Size</div>");
+    aoe_menu.append("<div><input tabindex='2' id='aoe_feet' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>");
 
-    aoe_menu.append("<div style='font-weight:bold'>Color</div>");
-    aoe_menu.append("<div><button tabindex='3' id='aoe_default' class='drawbutton menu-option aoe-option aoecolor remembered-selection' style='width:75px'>Default</button></div>");
-    aoe_menu.append("<div><button tabindex='3' id='aoe_fire' class='drawbutton menu-option aoe-option aoecolor' style='width:75px'>Fire</button></div>");
-    aoe_menu.append("<div><button tabindex='3' id='aoe_dark' class='drawbutton menu-option aoe-option aoecolor' style='width:75px'>Dark</button></div>");
-    aoe_menu.append("<div><button tabindex='3' id='aoe_green' class='drawbutton menu-option aoe-option aoecolor' style='width:75px'>Green</button></div>");
+    aoe_menu.append("<div class='menu-subtitle'>Color</div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_default' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor remembered-selection ddbc-tab-options__header-heading--is-active'>Default</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_fire' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Fire</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_dark' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Dark</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_green' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Green</div></div>");
 
-    aoe_menu.append("<div style='font-weight:bold'>Shape</div>");
-    aoe_menu.append("<div><button tabindex='1' id='aoe_cone' class='aoeshape' style='width:75px'>Cone</button></div>");
-    aoe_menu.append("<div><button tabindex='1' id='aoe_square' class='aoeshape' style='width:75px'>Square</button></div>");
-    aoe_menu.append("<div><button tabindex='1' id='aoe_circle'class='aoeshape' style='width:75px'>Circle</button></div>");
+    aoe_menu.append("<div class='menu-subtitle'>Shape</div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_cone' class='aoeshape ddbc-tab-options__header-heading'>Cone</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_square' class='aoeshape ddbc-tab-options__header-heading'>Square</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_circle'class='aoeshape ddbc-tab-options__header-heading'>Circle</div></div>");
 
     aoe_menu.css("position", "fixed");
     aoe_menu.css("top", "25px");

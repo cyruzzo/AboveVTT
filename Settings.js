@@ -41,6 +41,8 @@ function init_settings(){
 	
 	let body = settingsPanel.body;
 
+	if (window.DM) {
+
 	body.append(`
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
@@ -128,7 +130,7 @@ function init_settings(){
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
 		let currentValue = window.TOKEN_SETTINGS[setting.name];
-		let inputWrapper = settingsPanel.build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
+		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`${name} setting is now ${newValue}`);
 			window.TOKEN_SETTINGS[name] = newValue;
 			persist_token_settings(window.TOKEN_SETTINGS);
@@ -168,34 +170,57 @@ function init_settings(){
 	});
 	body.append(resetToDefaults);
 
+	}
+
 	const experimental_features = [
-		// {
-		// 	name: 'test',
-		// 	label: 'Test One',
-		// 	enabledDescription: 'You are testing this feature',
-		// 	disabledDescription: 'Testing this feature means, you will see x, y, and z instead of a, b, and c.'
-		// }
-	];
+	]
+	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] == true) {
+		experimental_features.push({
+			name: 'disableDdbDiceMonsterPanel',
+			label: 'Disable DDB Dice in Monsters Tab',
+			enabledDescription: "Stat blocks loaded in the monsters tab will use the AboveVTT rolling mechanism. (Changing this requires a page reload)",
+			disabledDescription: "Stat blocks opened in the monsters tab will use DDB Dice. If the tab doesn't load properly, please inform the devs in Discord thank you. (Changing this requires a page reload)",
+			dmOnly: true
+		});
+		experimental_features.push({
+			name: 'DEBUGddbDiceMonsterPanel',
+			label: 'Debug Monsters Tab Loading',
+			enabledDescription: "All of the loading indicators will be transparent, and the monsters tab will be selected by default. This is to allow developers to visually see what is happening while debugging. (Changing this requires a page reload)",
+			disabledDescription: "If you are not a developer, please ignore this feature. It is to allow developers to visually see what is happening in the monsters panel while debugging. (Changing this requires a page reload)",
+			dmOnly: true
+		});
+	}
+	if (get_browser().chrome) {
+		experimental_features.push({
+			name: 'streamDiceRolls',
+			label: 'Stream Dice Rolls',
+			enabledDescription: `You can currently see player's DDB dice rolling visuals. Disclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.`,
+			disabledDescription: `SHARE/SEE player's DDB dice rolling visuals. Disclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.`
+		});
+	}
 	if (experimental_features.length > 0) {
 		body.append(`
 			<br />
 			<h5 class="token-image-modal-footer-title">Experimental Features</h5>
 			<div class="sidebar-panel-header-explanation">These are experimental features. You must explicitly opt-in to them. Use at your own risk.</div>
 		`);
-		const experimental_features = [
-			// {
-			// 	name: 'test',
-			// 	label: 'Test One',
-			// 	enabledDescription: 'You are testing this feature',
-			// 	disabledDescription: 'Testing this feature means, you will see x, y, and z instead of a, b, and c.'
-			// }
-		];
 		for(let i = 0; i < experimental_features.length; i++) {
 			let setting = experimental_features[i];
-			let currentValue = window.TOKEN_SETTINGS[setting.name];
-			let inputWrapper = settingsPanel.build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-				console.log(`${name} setting is now ${newValue}`);
-				// TODO: store this setting somewhere?
+			if (setting.dmOnly == true && !window.DM) {
+				continue;
+			}
+			let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name];
+			if (currentValue === undefined && setting.defaultValue !== undefined) {
+				currentValue = setting.defaultValue;
+			}
+			let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
+				console.log(`experimental setting ${name} is now ${newValue}`);
+				if (name == "streamDiceRolls") {
+					update_dice_streaming_feature(newValue)
+				} else {
+					window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
+					persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+				}
 			});
 			body.append(inputWrapper);
 		}
@@ -299,9 +324,35 @@ function redraw_settings_panel_token_examples() {
 	}
 }
 
+function update_dice_streaming_feature(enabled) {
+	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
+	if (enabled == true) {
+		window.JOINTHEDICESTREAM = true;
+	} else {
+		window.JOINTHEDICESTREAM = false;
+	}
+
+	if (window.JOINTHEDICESTREAM) {
+		window.JOINTHEDICESTREAM = false;
+		for (let i in window.STREAMPEERS) {
+			window.STREAMPEERS[i].close();
+			delete window.STREAMPEERS[i];
+		}
+		$(".streamer-canvas").remove();
+	} else {
+		window.JOINTHEDICESTREAM = true;
+		window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
+	}
+}
+
 function persist_token_settings(settings){
-	const gameid = $("#message-broker-client").attr("data-gameId");
+	const gameid = find_game_id();
 	localStorage.setItem("TokenSettings" + gameid, JSON.stringify(settings));
+}
+
+function persist_experimental_settings(settings) {
+	const gameid = find_game_id();
+	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
 function export_file(){
