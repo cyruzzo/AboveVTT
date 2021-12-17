@@ -2205,6 +2205,12 @@ function get_custom_monster_images(monsterId) {
 	return customImages;
 }
 
+function get_random_custom_monster_image(monsterId) {
+	let customImgs = get_custom_monster_images(monsterId);
+	let randomIndex = getRandomInt(0, customImgs.length);
+	return customImgs[randomIndex];
+}
+
 function add_custom_monster_image_mapping(monsterId, imgsrc) {
 	if (monsterId == undefined) {
 		return;

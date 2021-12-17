@@ -248,7 +248,7 @@ function switch_control(e) {
 		$("#switch_gamelog").css('background', '');
 	}
 
-	if ($(e.currentTarget).attr("data-target") == "#monster-panel" && !window.MONSTERPANEL_LOADED) {
+	if ($(e.currentTarget).attr("data-target") == "#monsters-panel" && !window.MONSTERPANEL_LOADED) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 		window.MONSTERPANEL_LOADED = true;
@@ -401,7 +401,7 @@ function init_controls() {
 	$(".sidebar__controls").append(b2);
 	if (DM) {
 
-		b3 = $("<button id='switch_monsters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Monsters' data-target='#monster-panel'></button>").click(switch_control);
+		b3 = $("<button id='switch_monsters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Monsters' data-target='#monsters-panel'></button>").click(switch_control);
 
 		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
@@ -1215,6 +1215,7 @@ function init_ui() {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameid);
 		init_scene_selector();
+		window.EncounterHandler = new EncounterHandler();
 	}
 	// ATTIVA GAMELOG
 	$(".gamelog-button").click();

@@ -702,6 +702,7 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 		rowItem.draggable({
 			appendTo: "#VTTWRAPPER",
 			zIndex: 100000,
+			cursorAt: {top: 0, left: 0},
 			cancel: '.custom-token-image-row-handle',
 			helper: function(event) {
 				let helper = $(event.currentTarget).find(".custom-token-image-row-img img").clone();

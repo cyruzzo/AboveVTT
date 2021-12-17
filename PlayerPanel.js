@@ -177,6 +177,7 @@ function update_pclist() {
 		token.draggable({
 			appendTo: "#VTTWRAPPER",
 			zIndex: 100000,
+			cursorAt: {top: 0, left: 0},
 			helper: function(event) {
 				let helper = $(event.currentTarget).find("img").clone();
 				let playerId = $(event.currentTarget).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
