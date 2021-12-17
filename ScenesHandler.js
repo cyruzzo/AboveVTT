@@ -65,6 +65,11 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			scene.id=uuid();
 		}
 
+		if(window.CLOUD){
+			window.MB.sendMessage("custom/myVTT/switch_scene",{sceneId:scene.id}); // this should send the tokens and reveals to everyone (including ourselves)
+			return; // we just ask the MB to switch us.. this stuff all die
+		}
+
 		window.CURRENT_SCENE_DATA = scene;
 
 		$(".VTTToken").each(function() {
@@ -150,7 +155,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			map_url = scene.player_map;
 		}
 
-		load_scenemap(map_url, null, null, function() {
+		load_scenemap(map_url, null, null, function() { // THIS WILL ALL BECOME USELESS WITH THE NEW CLOUD STUFF
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
 			var max_length = get_canvas_max_length();
@@ -569,7 +574,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.sources = {};
 
 		if(window.CLOUD){
-			this.scenes=null;
+			this.scenes=[];
 			this.current_scene_id=null;
 		}
 		else{ // LEGACY

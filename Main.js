@@ -1185,7 +1185,7 @@ function check_versions_match() {
 function init_ui() {
 	window.STARTING = true;
 	let searchParams = new URLSearchParams(window.location.search)
-		if(searchParams.has("dev"))
+		if(searchParams.has("cloud"))
 			window.CLOUD=true;
 	
 	var gameid = $("#message-broker-client").attr("data-gameId");
@@ -1501,6 +1501,11 @@ function init_ui() {
 			window.MB.sendMessage("custom/myVTT/syncmeup");
 			notify_player_join();
 		}, 5000);
+	}
+	if(DM && window.CLOUD){
+		setTimeout(function(){
+			window.MB.sendMessage("custom/myVTT/dmjoin"); // join and ask for the scene list
+		},4000);
 	}
 
 	init_controls();
