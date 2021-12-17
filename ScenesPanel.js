@@ -819,7 +819,6 @@ function init_scene_selector() {
 	$(window.document.body).append(ss);
 	$(window.document.body).append(toggle);
 
-
 }
 
 

@@ -248,7 +248,7 @@ function switch_control(e) {
 		$("#switch_gamelog").css('background', '');
 	}
 
-	if ($(e.currentTarget).attr("data-target") == "#monster-panel" && !window.MONSTERPANEL_LOADED) {
+	if ($(e.currentTarget).attr("data-target") == "#monsters-panel" && !window.MONSTERPANEL_LOADED) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 		window.MONSTERPANEL_LOADED = true;
@@ -401,7 +401,7 @@ function init_controls() {
 	$(".sidebar__controls").append(b2);
 	if (DM) {
 
-		b3 = $("<button id='switch_monsters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Monsters' data-target='#monster-panel'></button>").click(switch_control);
+		b3 = $("<button id='switch_monsters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Monsters' data-target='#monsters-panel'></button>").click(switch_control);
 
 		b3.append("<img src='"+window.EXTENSION_PATH + "assets/icons/mimic-chest.svg' height='100%;'>");
 		$(".sidebar__controls").append(b3);
@@ -645,7 +645,7 @@ function init_sheet(){
 
 	//container.css('display', 'none');
 	container.css('height', '0px');
-	container.css('width', 1025);
+	container.css('width', 1030);
 	container.css('background', '#242527');
 	container.css('z-index', 0);
 	var buttonleft = 0;
@@ -699,12 +699,12 @@ function init_sheet(){
 	resize_button.css("width", "25px");
 	resize_button.click(function() {
 		$("#sheet").each(function(){
-			if($(this).css('width') == '1025px')
+			if($(this).css('width') == '1030px')
 			{
 				$(this).css('width', '420px');
 			}
 			else{
-				$(this).css('width', '1025px');
+				$(this).css('width', '1030px');
 				};
 		});
 	});
@@ -994,6 +994,12 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 			}, 500);
 		};
 		waitToSync();*/
+
+		setTimeout(function() {
+			$("#sheet").find("iframe").each(function() { 
+				$(this.contentDocument.body).css("background-position-y", "90px");
+			})
+		}, 1000);
 	});
 
 	if((!window.DM) ||(window.KEEP_PLAYER_SHEET_LOADED))
@@ -1182,10 +1188,22 @@ function check_versions_match() {
 	return latestVersionSeen;
 }
 
-function init_ui() {
+function find_game_id() {
+	if (window.gameId === undefined) {
+		if (is_encounters_page()) {
+			const urlParams = new URLSearchParams(window.location.search);
+			window.gameId = urlParams.get('cid');
+		} else {
+			window.gameId = $("#message-broker-client").attr("data-gameId");
+		}
+	}
+	return window.gameId;
+};
+
+function init_things() {
 	window.STARTING = true;
-	var gameid = $("#message-broker-client").attr("data-gameId");
-	init_splash();
+	gather_pcs();
+	let gameId = find_game_id();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
 	window.DRAWINGS = [];
@@ -1193,35 +1211,63 @@ function init_ui() {
 	window.BLOCKCONTROLS = false;
 	window.PLAYER_STATS = {};
 	window.CONNECTED_PLAYERS = {};
-	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameid)) || {};
+	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameId)) || {};
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	window.TOKEN_PASTE_BUFFER = [];
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 
-	window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+	if (window.CAMPAIGN_SECRET === undefined) {
+		window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+	}
+
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
-
-
-
-
-
-
-
-
-
-	if (DM) {
+	if (window.DM) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
-		window.ScenesHandler = new ScenesHandler(gameid);
-		init_scene_selector();
+		window.ScenesHandler = new ScenesHandler(gameId);
+		window.EncounterHandler = new EncounterHandler(function() {
+			init_ui();
+			if (is_encounters_page()) {
+				$("#site-main").css({"display": "block", "visibility": "hidden"});
+				$(".dice-rolling-panel").css({"visibility": "visible"});
+				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
+				$("div.dice-toolbar").css({"bottom": "35px"});
+				// for some reason the gamelog "send to (default)" breaks. The following sequence fixes it
+				$(".sidebar button.MuiButtonBase-root").click();
+				$(".MuiPopover-root").css({"display": "block", "visibility": "visible"});
+				$(".MuiPopover-root .MuiPaper-root").css({"display": "block", "visibility": "visible"});
+				let list = $(".MuiPopover-root .MuiPaper-root .MuiMenu-list");
+				let selected = list.attr("tabindex");
+				list.find(`li[tabindex=${selected}]`).click();
+				list.find(`li`).click(function (clickEvent) {
+					let selectedOption = $(clickEvent.currentTarget).attr("tabindex");
+					let optionList = window.EncounterHandler.combat_body.find(`.MuiPopover-root .MuiPaper-root .MuiMenu-list`);
+					let optionToSelect = optionList.find(`li[tabindex=${selectedOption}]`);
+					optionToSelect.click();
+				});
+
+				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
+				init_enounter_combat_tracker_iframe();
+
+			}
+			init_scene_selector();
+			init_splash();
+		});
+	} else {
+		init_ui();
+		init_splash();
 	}
+}
+
+function init_ui() {
 	// ATTIVA GAMELOG
 	$(".gamelog-button").click();
 	$(".glc-game-log").addClass("sidepanel-content");
-	$(".sidebar").zIndex(9999);
+	$(".sidebar").css("z-index", 9999);
 	$("#site").children().hide();
 	$(".sidebar__controls").width(340);
+	$("body").css("overflow", "scroll");
 
 
 	// AGGIUNGI CHAT
@@ -1253,45 +1299,105 @@ function init_ui() {
 	`));
 
 	$(".dice-roller > div img").on("click", function(e) {
-		const dataCount = $(this).attr("data-count");
-		if (dataCount === undefined) {
-			$(this).attr("data-count", 1);
-			$(this).parent().append(`<span class="dice-badge">1</span>`);
+		if ($(".dice-toolbar__dropdown").length > 0) {
+			// DDB dice are on the screen so let's use those. Ours will synchronize when these change.
+			if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
+				// make sure it's open
+				$(".dice-toolbar__dropdown-die").click();
+			}
+			// select the DDB dice matching the one that the user just clicked
+			let dieSize = $(this).attr("alt");
+			$(`.dice-die-button[data-dice='${dieSize}']`).click();
 		} else {
-			$(this).attr("data-count", parseInt(dataCount) + 1);
-			$(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
+			// there aren't any DDB dice on the screen so use our own 
+			const dataCount = $(this).attr("data-count");
+			if (dataCount === undefined) {
+				$(this).attr("data-count", 1);
+				$(this).parent().append(`<span class="dice-badge">1</span>`);
+			} else {
+				$(this).attr("data-count", parseInt(dataCount) + 1);
+				$(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
+			}
+			if ($(".dice-roller > div img[data-count]").length > 0) {
+				$(".roll-button").addClass("show");
+			} else {
+				$(".roll-button").removeClass("show");
+			}
 		}
-		if ($(".dice-roller > div img[data-count]").length > 0) {
-			$(".roll-button").addClass("show");
-		} else {
-			$(".roll-button").removeClass("show");
-		}
+	});
+
+	$(".dice-toolbar__dropdown").on("DOMSubtreeModified", function() {
+		// Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+		$(".dice-die-button").each(function() {
+			let dieSize = $(this).attr("data-dice");
+			let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
+			let diceCountElement = $(this).find(".dice-die-button__count");
+			ourDiceElement.parent().find("span").remove();
+			if (diceCountElement.length == 0) {
+				ourDiceElement.removeAttr("data-count");
+			} else {
+				let diceCount = parseInt(diceCountElement.text());
+				ourDiceElement.attr("data-count", diceCount);
+				ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
+			}
+		})
+
+		// make sure our roll button is shown/hidden after all animations have completed
+		setTimeout(function() {
+			if ($(".dice-toolbar").hasClass("rollable")) {
+				$(".roll-button").addClass("show");
+			} else {
+				$(".roll-button").removeClass("show");
+			}
+		}, 500);
 	});
 
 	$(".dice-roller > div img").on("contextmenu", function(e) {
 		e.preventDefault();
 
-		let dataCount = $(this).attr("data-count");
-		if (dataCount !== undefined) {
-			dataCount = parseInt(dataCount) - 1;
-			if (dataCount === 0) {
-				$(this).removeAttr("data-count");
-				$(this).parent().find("span").remove();
-			} else {
-				$(this).attr("data-count", dataCount);
-				$(this).parent().append(`<span class="dice-badge">${dataCount}</span>`);
-			}
-		}
-		if ($(".dice-roller > div img[data-count]").length > 0) {
-			$(".roll-button").addClass("show");
+		if ($(".dice-toolbar__dropdown").length > 0) {
+			// There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
+			// the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
+			let dieSize = $(this).attr("alt");
+			var element = $(`.dice-die-button[data-dice='${dieSize}']`)[0];
+			var e = element.ownerDocument.createEvent('MouseEvents');
+			e.initMouseEvent('contextmenu', true, true,
+					element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+					false, false, false, 2, null);
+			element.dispatchEvent(e);
 		} else {
-			$(".roll-button").removeClass("show");
+			let dataCount = $(this).attr("data-count");
+			if (dataCount !== undefined) {
+				dataCount = parseInt(dataCount) - 1;
+				if (dataCount === 0) {
+					$(this).removeAttr("data-count");
+					$(this).parent().find("span").remove();
+				} else {
+					$(this).attr("data-count", dataCount);
+					$(this).parent().append(`<span class="dice-badge">${dataCount}</span>`);
+				}
+			}
+			if ($(".dice-roller > div img[data-count]").length > 0) {
+				$(".roll-button").addClass("show");
+			} else {
+				$(".roll-button").removeClass("show");
+			}
 		}
 	});
 
 	const rollButton = $(`<button class="roll-button">Roll</button>`);
 	$("body").append(rollButton);
 	rollButton.on("click", function (e) {
+
+		if ($(".dice-toolbar").hasClass("rollable")) {
+			let theirRollButton = $(".dice-toolbar__target").children().first();
+			if (theirRollButton.length > 0) {
+				// we found a DDB dice roll button. Click it and move on
+				theirRollButton.click();
+				return;
+			}
+		}
+
 		const rollExpression = [];
 		$(".dice-roller > div img[data-count]").each(function() {
 			rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
@@ -1658,8 +1764,7 @@ function init_ui() {
 
 	init_help_menu();
 
-
-	init_journal($("#message-broker-client").attr("data-gameId"));
+	init_journal(find_game_id());
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
@@ -1676,15 +1781,17 @@ function init_ui() {
 		setTimeout(get_pclist_player_data,25000);
 	}
 
-	// Hook DDB's processFlashMessages function to avoid calling it during animations
-	// It gets called every 2.5 seconds and runs for approx. 200ms, depending on cookie size
-	var origProcessFlashMessages = Cobalt.Core.processFlashMessages;
-	Cobalt.Core.processFlashMessages = function(i, r) {
-		// Allow DDB to process only while we're not during animation to avoid stutters
-		if (!window.MOUSEDOWN || i != "FlashMessageAjax") {
-			return origProcessFlashMessages(i, r);
-		}
-	};
+	if (!is_encounters_page()) {
+		// Hook DDB's processFlashMessages function to avoid calling it during animations
+		// It gets called every 2.5 seconds and runs for approx. 200ms, depending on cookie size
+		var origProcessFlashMessages = Cobalt.Core.processFlashMessages;
+		Cobalt.Core.processFlashMessages = function(i, r) {
+			// Allow DDB to process only while we're not during animation to avoid stutters
+			if (!window.MOUSEDOWN || i != "FlashMessageAjax") {
+				return origProcessFlashMessages(i, r);
+			}
+		};
+	}
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
@@ -1940,7 +2047,7 @@ function init_stream_button() {
 
 	//stream_button.css("background", "yellow");
 
-	if (!$.browser.mozilla) { // DISABLE FOR FIREFOX
+	if (!get_browser().mozilla) { // DISABLE FOR FIREFOX
 		$(".sidebar__controls").append(stream_button);
 		/*if(window.DM){
 			setTimeout( () => {stream_button.click()} , 5000);
@@ -1956,6 +2063,8 @@ $(function() {
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
 	var is_dm=false;
 	if($(".ddb-campaigns-detail-body-dm-notes-private").length>0){
+		is_dm=true;
+	} else if (is_encounters_page()) {
 		is_dm=true;
 	}
 
@@ -1993,7 +2102,7 @@ $(function() {
 			window.PLAYER_NAME = name;
 			window.PLAYER_ID = getPlayerIDFromSheet(sheet);
 			window.DM = false;
-			init_ui();
+			init_things();
 		});
 
 		$(this).prepend(newlink);
@@ -2004,14 +2113,14 @@ $(function() {
 	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete AboveVTT Data for this campaign</a>");
 	delete_button.click(function() {
 		if (confirm("Are you sure?")) {
-			gameid = $("#message-broker-client").attr("data-gameId");
-			localStorage.removeItem("ScenesHandler" + gameid);
-			localStorage.removeItem("current_source" + gameid);
-			localStorage.removeItem("current_chapter" + gameid);
-			localStorage.removeItem("current_scene" + gameid);
-			localStorage.removeItem("CombatTracker"+gameid);
-			localStorage.removeItem("Journal"+gameid);
-			localStorage.removeItem("JournalChapters"+gameid);
+			let gameId = find_game_id();
+			localStorage.removeItem("ScenesHandler" + gameId);
+			localStorage.removeItem("current_source" + gameId);
+			localStorage.removeItem("current_chapter" + gameId);
+			localStorage.removeItem("current_scene" + gameId);
+			localStorage.removeItem("CombatTracker"+gameId);
+			localStorage.removeItem("Journal"+gameId);
+			localStorage.removeItem("JournalChapters"+gameId);
 		}
 		else {
 			console.log('user canceled');
@@ -2060,15 +2169,40 @@ $(function() {
 
 	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);
 
-		$(".joindm").click(function(e) {
-			e.preventDefault();
-			window.DM = true;
-			window.PLAYER_SHEET = false;
-			window.PLAYER_NAME = "THE DM";
-			window.PLAYER_ID = false;
-			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_ui();
+	$(".joindm").click(function(e) {
+		e.preventDefault();
+		gather_pcs();
+		window.EncounterHandler = new EncounterHandler(function() {
+			if (window.EncounterHandler.encounterBuilderDiceSupported == true) {
+				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?abovevtt=true&cs=${cs}&cid=${window.EncounterHandler.campaignId}`, '_blank');
+			} else {
+				// DDB doesn't support dice on their encounters page for non-subscribers so load the non-DDB dice version
+				window.DM = true;
+				window.PLAYER_SHEET = false;
+				window.PLAYER_NAME = "THE DM";
+				window.PLAYER_ID = false;
+				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
+				init_things();				
+			}
 		});
+	});
+	
+	
+	if (window.location.search.includes("abovevtt=true")) {
+		if (is_encounters_page()) {
+			const urlParams = new URLSearchParams(window.location.search);
+			window.gameId = urlParams.get('cid');
+			window.CAMPAIGN_SECRET = urlParams.get('cs');
+		}
+		window.DM = true;
+		window.PLAYER_SHEET = false;
+		window.PLAYER_NAME = "THE DM";
+		window.PLAYER_ID = false;
+		window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
+		init_things();
+	}
+
 });
 
 
@@ -2186,4 +2320,27 @@ function init_help_menu() {
 	$("#help_button").click(function(e) {
 		$('#help-container').fadeIn(200);
 	});
+}
+
+// returns { name: 'Chrome', version: '96' }
+function get_browser() {
+	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
+	if(/trident/i.test(M[1])){
+			tem=/\brv[ :]+(\d+)/g.exec(ua) || []; 
+			return {name:'IE',version:(tem[1]||'')};
+			}   
+	if(M[1]==='Chrome'){
+			tem=ua.match(/\bOPR|Edge\/(\d+)/)
+			if(tem!=null)   {return {name:'Opera', version:tem[1]};}
+			}   
+	M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+	if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+	return {
+		name: M[0],
+		version: M[1],
+		mozilla: M[0] == "Firefox",
+		chrome: M[0] == "Chrome",
+		msie: M[0] == "Internet Explorer",
+		opera: M[0] == "Opera",
+	};
 }

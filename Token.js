@@ -66,6 +66,10 @@ class Token {
 		return this.options.id.includes("/");
 	}
 
+	isMonster() {
+		return (typeof this.options.monster == "string") && this.options.monster.length > 0
+	}
+
 	size(newsize) {
 		this.update_from_page();
 		this.options.size = newsize;
@@ -1369,6 +1373,9 @@ function place_token_at_point(tokenObject, x, y) {
 		window.MB.handlePlayerData(window.PLAYER_STATS[options.id]);
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
+
+	
+	window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 }
 
 function array_remove_index_by_value(arr, item) {
@@ -1380,7 +1387,11 @@ function array_remove_index_by_value(arr, item) {
 function menu_callback(key, options, event) {
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
-			load_monster_stat($(this).attr('data-monster'));
+			if (is_encounters_page()) {
+				open_monster_stat_block($(this).attr('data-monster'));
+			} else {
+				load_monster_stat($(this).attr('data-monster'));	
+			}
 		}
 		else {
 			//load_frame($(this).attr('data-id'));
@@ -2203,6 +2214,12 @@ function get_custom_monster_images(monsterId) {
 		customImages = [];
 	}
 	return customImages;
+}
+
+function get_random_custom_monster_image(monsterId) {
+	let customImgs = get_custom_monster_images(monsterId);
+	let randomIndex = getRandomInt(0, customImgs.length);
+	return customImgs[randomIndex];
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {

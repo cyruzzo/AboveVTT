@@ -501,7 +501,7 @@ div#scene_properties form > div {
     height: 450px;
     left: 5px;
     top: 40px;
-    z-index: 99999000;
+    z-index: 56000;
 }
 
 .tracker-dm {
@@ -1330,7 +1330,7 @@ body {
 }
 .sidebar-modal .sidebar-panel-content .sidebar-panel-header,
 .sidebar-modal .sidebar-panel-content .sidebar-panel-footer {
-    padding: 4px;
+    padding: 0px;
 }
 
 .sidebar-panel-content {
@@ -1343,7 +1343,6 @@ body {
     background-color: #fff;
 }
 .sidebar-panel-header {
-    padding: 4px;
     width: 100%;
 }
 .sidebar-panel-header-title {
@@ -1353,26 +1352,30 @@ body {
     letter-spacing: .5px;
     display: flex;
     align-items: center;
+    margin: 8px 0px 8px 8px;
+}
+.sidebar-panel-header-title:empty{
+    margin: 0px;
 }
 .sidebar-panel-header-subtitle {
     font-size: 12px;
     font-weight: 700;
     color: #738694;
     line-height: 1.4;
+    margin: 8px 0px 8px 8px;
 }
-.sidebar-panel-body {
-    position: relative; 
-    width:100%; 
-    overflow-y: auto;
-    flex: auto;
-    padding: 8px;
+.sidebar-panel-header-subtitle:empty{
+    margin: 0px;
 }
-.sidebar-panel-footer {
-    border-top: 1px solid #d8e1e8;
-    display: flex;
-    align-items: center;
-    padding: 4px;
-    width: 100%;
+.sidebar-panel-header-explanation {
+    font-size: 14px;
+    color: #979AA4;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    margin: 8px 0px 8px 8px;
+    padding: 0px;
+}
+.sidebar-panel-header-explanation:empty{
+    margin: 0px;
 }
 .token-image-modal-footer-title {
     font-weight: 700;
@@ -1382,7 +1385,7 @@ body {
     color: #738694;
     font-size: 13px;
     line-height: 1.4;
-    margin-top: 6px;
+    margin: 8px 6px 2px 2px;
 }
 .sidebar-panel-footer input,
 .token-image-modal-footer input {
@@ -1404,6 +1407,8 @@ body {
 }
 .footer-input-wrapper {
     width: 100%;
+    padding: 4px;
+    border-top: 1px solid #d8e1e8;
 }
 .token-image-modal-url-label-wrapper {
     display: flex;
@@ -1444,11 +1449,6 @@ body {
 .token-image-modal-add-button {
     margin: 0px 4px 0px 4px;
     width: auto;
-}
-.sidebar-panel-header-explanation {
-    font-size: 14px;
-    color: #979AA4;
-    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
 }
 .custom-token-image-item {
     float: left; 
@@ -1591,6 +1591,13 @@ body {
 }
 .sidebar-panel-content .sidebar-panel-body {
     height: 100%;
+    padding: 8px;
+}
+#monsters-panel .sidebar-panel-body {
+    padding: 0px;
+}
+#players-panel .sidebar-panel-body {
+    padding: 0px;
 }
 .sidebar-panel-content .sidebar-panel-body {
     background-color: rgb(235, 241, 245);
@@ -1605,6 +1612,7 @@ body {
     background-position: left;
     padding: 4px;
     cursor: pointer;
+    margin: 0px 12px;
 }
 .tokens-panel-back-button div {
     padding-left: 20px;
@@ -1615,14 +1623,55 @@ body {
 }
 .sidebar-panel-content .sidebar-panel-header {
     background-color: rgb(235, 241, 245);
-    padding: 8px;
+    padding: 0px;
 }
 .sidebar-panel-content .sidebar-panel-footer {
     display: flex;
     flex-direction: column;
-    padding: 8px;
+    padding: 0px;
     background-color: rgb(235, 241, 245);
     width: 100%;
     align-items: center;
 }
+.sidebar-panel-content .sidebar-panel-footer .footer-input-wrapper:empty {
+    padding: 0px;
+    border-top: 0px solid #d8e1e8;
+}
+.sidebar-panel-loading-indicator {
+    padding: 40px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: rgb(235, 241, 245);
+    /* easy debugging */
+    /* opacity: 0.5; */
+}
+.loading-status-indicator__subtext {
+    font-size: 14px;
+    color: #738694;
+    margin-bottom: 8px;
+    text-align: center;
+}
+.beholder-dm-screen__beholder {
+    animation-duration: 6s;
+    animation-timing-function: ease-in-out;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-fill-mode: none;
+    animation-play-state: running;
+    animation-name: beholder-float;
+}
+@keyframes beholder-float {
+    0% { transform: translate(0,  0px); }
+    50%  { transform: translate(0, -20px); }
+    100%   { transform: translate(0, -0px); }   
+}
 
+div.sidebar__pane-content div.tooltip::after {
+    background: none !important;
+}

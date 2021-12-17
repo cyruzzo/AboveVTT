@@ -180,7 +180,7 @@ class MessageBroker {
 					console.log(injection_data);
 					
 					var found=false;
-					$(".DiceMessage_RollType__wlBsW").each(function(){
+					$(self.diceMessageSelector).each(function(){
 						if($(this).text()==injection_id){
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							found=true;
@@ -212,7 +212,7 @@ class MessageBroker {
 						}
 					});
 					if(!found){
-						self.chat_pending_messages.push(current);
+						// self.chat_pending_messages.push(current);
 					}
 				}
 				if(self.chat_pending_messages.length==0){
@@ -243,8 +243,12 @@ class MessageBroker {
 		this.callbackAboveQueue = [];
 
 		this.userid = $("#message-broker-client").attr("data-userId");
-		this.gameid = $("#message-broker-client").attr("data-gameId");
+		this.gameid = find_game_id();
 		this.url = $("#message-broker-client").attr("data-connectUrl");
+		this.diceMessageSelector = ".DiceMessage_RollType__wlBsW";
+		if (is_encounters_page()) {
+			this.diceMessageSelector = ".DiceMessage_RollType__3a3Yo";
+		}
 
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
@@ -719,6 +723,22 @@ class MessageBroker {
 			return $("<div/>");
 		//notify_gamelog();
 		
+		if (is_encounters_page()) {
+			return $(`
+				<li class="GameLogEntry_GameLogEntry__1vYGY GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-end__2tv2W Flex_Flex__justifyContent-flex-start__3bvHH">
+					<p role="img" class="Avatar_Avatar__3dpoQ Flex_Flex__3K1Dd">
+						<img class="Avatar_AvatarPortrait__1B7vl" src="${data.img}" alt="">
+					</p>
+					<div class="GameLogEntry_MessageContainer__19nlL Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-start__JUhHW Flex_Flex__flexDirection-column__2o9lU">
+						<div class="GameLogEntry_Line__2g9hr Flex_Flex__3K1Dd Flex_Flex__justifyContent-space-between__E7BLY">
+						<span class="GameLogEntry_Sender__275Cs">${data.player}</span>
+					</div>
+					<div class="GameLogEntry_Message___nA2h GameLogEntry_Collapsed__1D6Vi GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd">${data.text}</div>
+					<time datetime="2021-12-21T13:11:06-06:00" title="12/21/2021 1:11 PM" class="GameLogEntry_TimeAgo__NX7ml TimeAgo_TimeAgo__2bZoF">27 mins ago</time></div>
+				</li>
+			`);
+		}
+
 		var newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
 		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + data.img + "'></p>"));
@@ -869,7 +889,6 @@ class MessageBroker {
 		let characterId=msg.data.characterId;
 
 		window.pcs.forEach(function(pc){
-			
 			if(!pc.sheet.endsWith(characterId)) // we only poll for the characterId that sent this message
 				return;
 

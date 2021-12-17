@@ -14,6 +14,7 @@ function init_combat_tracker(){
 			$("#combat_tracker_inside").attr('style', 'display: block;');
 			$("#combat_tracker").css("height","450px"); // IMPORTANT
 		}
+		reposition_enounter_combat_tracker_iframe();
 	});
 	ct.append(toggle);
 	ct_inside=$("<div id='combat_tracker_inside'/>");
@@ -262,13 +263,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		stat=$("<button style='font-size:10px;'>STAT</button>");
 		
 		stat.click(function(){
-			iframe_id="#iframe-monster-"+token.options.monster;
-			if($(iframe_id).is(":visible"))
-				$(iframe_id).hide();
-			else{
-				$(".monster_frame").hide();
-				load_monster_stat(token.options.monster);
+			if (is_encounters_page()) {
+				open_monster_stat_block(token.options.monster);
+			} else {
+				iframe_id="#iframe-monster-"+token.options.monster;
+				if($(iframe_id).is(":visible")) {
+					$(iframe_id).hide();
+				} else {
+					$(".monster_frame").hide();
+					load_monster_stat(token.options.monster);
 				}
+			}
 		});
 		if(window.DM)
 			buttons.append(stat);
@@ -306,7 +311,7 @@ function ct_persist(){
 	data.push({'data-target': 'round',
 				'round_number':window.ROUND_NUMBER});
 	
-	var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
+	var itemkey="CombatTracker"+find_game_id();
 	
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
@@ -315,7 +320,7 @@ function ct_persist(){
 function ct_load(data=null){
 	
 	if(data==null){
-		var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
+		var itemkey="CombatTracker"+find_game_id();
 		data=$.parseJSON(localStorage.getItem(itemkey));
 	}
 	

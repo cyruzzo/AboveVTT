@@ -120,7 +120,7 @@ function init_settings(){
 }
 
 function persist_token_settings(settings){
-	const gameid = $("#message-broker-client").attr("data-gameId");
+	const gameid = find_game_id();
 	localStorage.setItem("TokenSettings" + gameid, JSON.stringify(settings));
 }
 
