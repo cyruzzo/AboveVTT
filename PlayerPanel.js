@@ -1,7 +1,4 @@
 function init_pclist() {
-	pcs_list = $("<div id='pcs_list' class='sidepanel-content'/>");
-	$(".sidebar__pane-content").append(pcs_list);
-	pcs_list.hide();
 	update_pclist();
 
 }
@@ -21,8 +18,7 @@ function update_pclist() {
 	// get scroll position
 	var scroll_y = $(".sidebar__pane-content").scrollTop();
 	
-	pcs_list = $("#pcs_list");
-	pcs_list.empty();
+	playersPanel.body.empty();
 
 	window.pcs = [];
 	$(".ddb-campaigns-detail-body-listing-active").find(".ddb-campaigns-character-card").each(function(idx) {
@@ -68,7 +64,7 @@ function update_pclist() {
 	addPartyButtonContainer.append(addPartyButton);
 	
 	if(window.DM)
-		pcs_list.append(addPartyButtonContainer);
+		playersPanel.body.append(addPartyButtonContainer);
 
 	window.pcs.forEach(function(item, index) {
 
@@ -218,7 +214,7 @@ function update_pclist() {
 				}
 			}
 		});
-		pcs_list.append(newplayer);
+		playersPanel.body.append(newplayer);
 	});
 
 	$(".add-token-btn").on("click", function (event) {

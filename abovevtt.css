@@ -846,6 +846,10 @@ div#scene_properties form > div {
     background-color: #fff;
 }
 
+.sidebar__controls .tab-btn.selected-tab.blue-tab {
+    background-color: rgb(235, 241, 245);
+}
+
 .sidebar__controls .tab-btn.leading-edge {
     margin-left: 0px;
 }
@@ -1336,8 +1340,6 @@ body {
     justify-content: stretch;
     position: relative;
     overflow-y: auto;
-    border-radius: 3px;
-    border: 1px solid #d8e1e8;
     background-color: #fff;
 }
 .sidebar-panel-header {
@@ -1363,6 +1365,7 @@ body {
     width:100%; 
     overflow-y: auto;
     flex: auto;
+    padding: 8px;
 }
 .sidebar-panel-footer {
     border-top: 1px solid #d8e1e8;
@@ -1474,7 +1477,7 @@ body {
 .custom-token-list {
     display: flex;
     align-items: center;
-    padding: 0px 6px 0px 6px;
+    padding: 0px;
     flex-direction: column;
     background: rgb(235, 241, 245);
     height: 100%;
