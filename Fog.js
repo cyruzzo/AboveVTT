@@ -1,5 +1,15 @@
 const POLYGON_CLOSE_DISTANCE = 15;
 
+
+function sync_fog(){
+	window.MB.sendMessage("custom/myVTT/fogdata",window.REVEALED);
+}
+
+function sync_drawings(){
+	window.MB.sendMessage("custom/myVTT/drawdata",window.DRAWINGS);
+}
+
+
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 
 	if (typeof stroke == "undefined" ) {
@@ -913,7 +923,10 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw") {
@@ -923,7 +936,10 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
 		console.log('disegno');
@@ -932,7 +948,10 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (window.DRAWSHAPE == "arc" && window.DRAWFUNCTION === "draw") {
 		console.log('son qua');
@@ -944,7 +963,10 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (window.DRAWSHAPE == "cone" && window.DRAWFUNCTION === "draw") {
 		data = ['cone', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey,window.LINEWIDTH];
@@ -952,13 +974,19 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	if (window.DRAWSHAPE == "rect" && (window.DRAWFUNCTION === "0" || window.DRAWFUNCTION === "1")) {
 		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0];
 		data[5] = parseInt(window.DRAWFUNCTION);
 		window.REVEALED.push(data);
-		window.MB.sendMessage('custom/myVTT/reveal', data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	}
@@ -974,7 +1002,10 @@ function drawing_mouseup(e) {
 		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 
 	if (window.DRAWSHAPE == "arc" && (window.DRAWFUNCTION == 0 || window.DRAWFUNCTION == 1)) {
@@ -984,7 +1015,10 @@ function drawing_mouseup(e) {
 		data = [centerX, centerY, radius, 0, 1];
 		data[5] = parseInt(window.DRAWFUNCTION);
 		window.REVEALED.push(data);
-		window.MB.sendMessage('custom/myVTT/reveal', data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	}
@@ -1539,11 +1573,20 @@ function savePolygon(e) {
 	redraw_canvas();
 	redraw_drawings();
 	window.ScenesHandler.persist();
-	window.MB.sendMessage(
-		isNaN(window.DRAWFUNCTION) ?
-			'custom/myVTT/drawing' : 'custom/myVTT/reveal',
-		data
-	);
+
+	if(window.CLOUD){
+		if(isNaN(window.DRAWFUNCTION))
+			sync_drawings();
+		else
+			sync_fog();
+	}
+	else{
+		window.MB.sendMessage(
+			isNaN(window.DRAWFUNCTION) ?
+				'custom/myVTT/drawing' : 'custom/myVTT/reveal',
+			data
+		);
+	}
 	window.BEGIN_MOUSEX = [];
 	window.BEGIN_MOUSEY = [];
 }

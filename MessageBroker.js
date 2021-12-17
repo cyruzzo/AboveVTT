@@ -349,8 +349,20 @@ class MessageBroker {
 				redraw_canvas();
 				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 			}
+
+			if(msg.eventType== "custom/myVTT/fogdata"){ // WE RESEND ALL THE FOG EVERYTIME NOW
+				window.REVEALED=msg.data;
+				redraw_canvas();
+				check_token_visibility();
+			}
+
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
+				redraw_drawings();
+			}
+
+			if(msg.eventType=="custom/myVTT/drawdata"){
+				window.DRAWINGS=msg.data;
 				redraw_drawings();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
