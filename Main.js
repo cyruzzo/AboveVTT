@@ -1711,8 +1711,13 @@ function init_buttons() {
 		if (r == true) {
 			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
 			redraw_canvas();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
@@ -1722,8 +1727,13 @@ function init_buttons() {
 		if (r == true) {
 			window.REVEALED = [];
 			redraw_canvas();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
@@ -1748,8 +1758,13 @@ function init_buttons() {
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_canvas();
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
+		if(window.CLOUD){
+			sync_fog();
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
 	});
 
 
@@ -1784,16 +1799,26 @@ function init_buttons() {
 		if (r === true) {
 			window.DRAWINGS = [];
 			redraw_drawings();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_drawings();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
 	draw_menu.find("#draw_undo").click(function() {
 		window.DRAWINGS.pop();
 		redraw_drawings();
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
+		if(window.CLOUD){
+			sync_drawings();
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
 	});
 
 	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");

@@ -182,8 +182,13 @@ function edit_scene_dialog(scene_id) {
 			scene[n] = nValue;
 			console.log('setto ' + n + ' a ' + $(this).val());
 		});
-		window.ScenesHandler.persist();
-		window.ScenesHandler.switch_scene(scene_id);
+		if(window.CLOUD){
+			window.ScenesHandler.persist_scene(scene_id,true,true);
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.switch_scene(scene_id);
+		}
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
@@ -726,9 +731,15 @@ function refresh_scenes() {
 		delete_button.click(function() {
 			r = confirm("Are you sure that you want to delete this scene?");
 			if (r == true) {
+				if(window.CLOUD){
+					window.MB.sendMessage("custom/myVTT/delete_scene",{id:window.ScenesHandler.scenes[scene_id].id})
+				}
 				window.ScenesHandler.scenes.splice(scene_id, 1);
-				window.ScenesHandler.persist();
+				if(!window.CLOUD){
+					window.ScenesHandler.persist();
+				}
 				refresh_scenes();
+				
 			}
 		});
 		controls.append(delete_button);
@@ -795,7 +806,12 @@ function init_scene_selector() {
 			reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
 		}
 		);
-		window.ScenesHandler.persist();
+		if(window.CLOUD){
+			window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length -1);
+		}
+		else{
+			window.ScenesHandler.persist();
+		}
 		refresh_scenes();
 	});
 

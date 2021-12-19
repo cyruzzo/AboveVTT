@@ -316,6 +316,11 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
+			if(msg.eventType=="custom/myVTT/delete_token"){
+				let tokenid=msg.data.id;
+				if(tokenid in window.TOKEN_OBJECTS)
+					window.TOKEN_OBJECTS[tokenid].delete(false,false);
+			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
 					let fake=$("<div/>");
@@ -825,7 +830,14 @@ class MessageBroker {
 		}
 
 		window.CURRENT_SCENE_DATA = msg.data;
-
+		if(window.CLOUD && window.DM){
+			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
+		}
+		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
+		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
+		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
+		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
+		
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 
@@ -985,6 +997,9 @@ class MessageBroker {
 			sender: this.mysenderid,
 			data: data,
 		}
+
+		if(window.CLOUD)
+			message.cloud=1;
 
 		if(!["custom/myVTT/switch_scene"].includes(eventType))
 			message.sequence=this.above_sequence++;
