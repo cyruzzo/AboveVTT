@@ -94,18 +94,22 @@ class Token {
 		if (this.persist != null)
 			this.persist();
 	}
-	delete(persist=true) {
-		if (!window.DM) return; // only allow DMs to delete tokens
+	delete(persist=true,sync=true) {
 		ct_remove_token(this, false);
 		let id = this.options.id;
 		let selector = "div[data-id='" + id + "']";
 		$(selector).remove();
-		delete window.ScenesHandler.scene.tokens[id];
+		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		if (persist == true) {
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD && sync){
+				window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
+			}
+			else if(!window.CLOUD && window.DM){
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 			draw_selected_token_bounding_box(); // redraw the selection box
 		}
 	}
@@ -855,9 +859,13 @@ class Token {
 
 							const selectedOldTop = parseInt($(event.target).css("top"));
 							const selectedOldleft = parseInt($(event.target).css("left"));
+							
 
-							const selectedNewtop = Math.round((selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-							const selectedNewleft = Math.round((selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+							const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
+							const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+							console.log("Snapping from "+selectedOldleft+ " "+selectedOldTop + " -> "+selectedNewleft + " "+selectedNewtop);
+							console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
 
 							$(event.target).css("top", selectedNewtop + "px");
 							$(event.target).css("left", selectedNewleft + "px");
@@ -2514,12 +2522,20 @@ function delete_selected_tokens() {
 			tokensToDelete.push(token);
 		}
 	}
-	// delete these in a separate loop to prevent altering the array while iterating over it
-	for (let i = 0; i < tokensToDelete.length; i++) {
-		tokensToDelete[i].delete(false); // don't persist on each token delete, we'll do that next
+
+	if(window.CLOUD){
+		for (let i = 0; i < tokensToDelete.length; i++) {
+			tokensToDelete[i].delete(); // don't persist on each token delete, we'll do that next
+		}
 	}
-	window.ScenesHandler.persist();
-	window.ScenesHandler.sync();
+	else{
+		// delete these in a separate loop to prevent altering the array while iterating over it
+		for (let i = 0; i < tokensToDelete.length; i++) {
+			tokensToDelete[i].delete(false); // don't persist on each token delete, we'll do that next
+		}
+		window.ScenesHandler.persist();
+		window.ScenesHandler.sync();
+	}
 	draw_selected_token_bounding_box(); // redraw the selection box
 	ct_persist();
 }

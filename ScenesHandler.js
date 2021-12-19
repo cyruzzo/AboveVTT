@@ -549,6 +549,16 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			this.persist();
 	}
 
+
+	persist_scene(scene_index,switch_dm= false, switch_players=false){ // CLOUD ONLY FUNCTION
+		let sceneData=Object.assign({},this.scenes[scene_index]);
+		sceneData.reveals=[];
+		sceneData.drawings=[];
+
+		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
+
+	}
+
 	persist() {
 		if(window.CLOUD)
 			return;
