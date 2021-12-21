@@ -27,5 +27,5 @@ sha1sum mousetrap-1.6.5/mousetrap.min.js
 wget https://meet.jit.si/external_api.js
 sha1sum external_api.js
 
-# update lock file
-node lock.js
+# move files to correct locations
+# update lock file by running `node lock.js`

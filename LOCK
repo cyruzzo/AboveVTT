@@ -1,6 +1,6 @@
 # This file was generated, to update it run `node lock.js`
 3f14019544c2460be94aec14902b3e3d93aff08d	color-picker.js
-2066b147d3a53df78d1bd5e8a4f3ca9cc8a9668c	external_api.js
+2066b147d3a53df78d1bd5e8a4f3ca9cc8a9668c	jitsi_external_api.js
 ca18da6cb4e82fcb57e846928ef97b48ae4ccc39	mousetrap.1.6.5.min.js
 7445f68a73c8a71c2927ceaeb3a632fc0325cb1b	purify.min.js
 02e40d6c4cfd99f8ff4df06cc96778dc46968c07	rpg-dice-roller.bundle.min.js

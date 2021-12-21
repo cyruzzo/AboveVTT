@@ -6,7 +6,7 @@ const lockFile = 'LOCK';
 
 const externalDependencies = [
     "color-picker.js",
-    "external_api.js",
+    "jitsi_external_api.js",
     "mousetrap.1.6.5.min.js",
     "purify.min.js",
     "rpg-dice-roller.bundle.min.js",
