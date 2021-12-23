@@ -167,7 +167,8 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		callback();
 	}
 	else {
-		newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
+		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
+		newmap.css("opacity","0");
 		newmap.attr("src", url);
 		if (width != null) {
 			newmap.width(width);
@@ -175,6 +176,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		}
 
 		if (callback != null) {
+			newmap.on("load", () => newmap.animate({opacity:1},2000));
 			newmap.on("load", callback);
 			newmap.on("error", image_load_cb);
 		}

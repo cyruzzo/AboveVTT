@@ -56,7 +56,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.switch_scene(this.current_scene_id, null);
 	}
 
-	switch_scene(sceneid, callback = null) {
+	switch_scene(sceneid, callback = null) { // THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
 		this.current_scene_id = sceneid;
 		var self = this;
 		var scene = this.scenes[sceneid];
@@ -65,10 +65,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			scene.id=uuid();
 		}
 
-		if(window.CLOUD){
-			window.MB.sendMessage("custom/myVTT/switch_scene",{sceneId:scene.id}); // this should send the tokens and reveals to everyone (including ourselves)
-			return; // we just ask the MB to switch us.. this stuff all die
-		}
 
 		window.CURRENT_SCENE_DATA = scene;
 
@@ -550,10 +546,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 
-	persist_scene(scene_index,switch_dm= false, switch_players=false){ // CLOUD ONLY FUNCTION
+	persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
 		let sceneData=Object.assign({},this.scenes[scene_index]);
 		sceneData.reveals=[];
 		sceneData.drawings=[];
+		sceneData.tokens={};
+		if(isnew)
+			sceneData.isnewscene=true;
 
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 
