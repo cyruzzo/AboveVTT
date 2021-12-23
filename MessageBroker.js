@@ -84,10 +84,18 @@ class MessageBroker {
 		// current dev wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1
 		// current prod wss://blackjackandhookers.abovevtt.net/v1
 		let searchParams = new URLSearchParams(window.location.search)
-		if(searchParams.has("dev"))
-			this.abovews = new WebSocket("wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1?campaign="+window.CAMPAIGN_SECRET+"&DM="+window.DM);	
+		if(searchParams.has("dev")){
+			let url="wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1?campaign="+window.CAMPAIGN_SECRET;
+			if(window.DM)
+				url=url+="&DM=1";
+			this.abovews = new WebSocket(url);	
+		}
 		else{
-			this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET+"&DM="+window.DM);
+			let url="wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET;
+			if(window.DM)
+				url=url+="&DM=1";
+			this.abovews = new WebSocket(url);
+			
 		}
 		this.abovews.onopen=function(){
 

@@ -167,6 +167,9 @@ function edit_scene_dialog(scene_id) {
 
 	var sub = $("<button>Save And Switch</button>");
 
+	if(window.CLOUD)
+		sub.html("Save");
+
 	sub.click(function() {
 		f.find("input").each(function() {
 			var n = $(this).attr('name');
@@ -654,6 +657,9 @@ function edit_scene_dialog(scene_id) {
 
 
 	var hide_all_button = $("<button>COVER WITH FOG</button>");
+	if(window.CLOUD){
+		hide_all_button.hide();
+	}
 	hide_all_button.click(function() {
 		r = confirm("This will delete all current FOG zones on this scene and HIDE ALL THE MAP to the player. Are you sure?");
 		if (r == true) {
@@ -708,26 +714,47 @@ function refresh_scenes() {
 			newobj.addClass('active_scene');
 		newobj.append(title);
 		controls = $("<div/>");
-		switch_button = $("<button>SWITCH</button>");
-		if(scene.player_map)
-			switch_button.removeAttr("disabled");
-		else
-			switch_button.attr("disabled","true");
+		if(window.CLOUD){
+			let switch_players=$("<button>PLAYERS</button>");
+			switch_players.click(function(){
+				let msg={
+					sceneId:window.ScenesHandler.scenes[scene_id].id,
+				};
+				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
+			});
 			
-		switch_button.click(function() {
-			window.ScenesHandler.switch_scene(scene_id);
-			$("#scene_selector_toggle").click();
-			refresh_scenes();
-		});
+			let switch_dm=$("<button>DM</button>");
+			switch_dm.click(function(){
+				let msg={
+					sceneId:window.ScenesHandler.scenes[scene_id].id,
+					switch_dm: true
+				};
+				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
+			});
 
-
-		controls.append(switch_button);
-		edit_button = $("<button>EDIT</button>");
+			controls.append(switch_players);
+			controls.append(switch_dm);
+		}
+		else{
+			switch_button = $("<button>SWITCH</button>");
+			if(scene.player_map)
+				switch_button.removeAttr("disabled");
+			else
+				switch_button.attr("disabled","true");
+				
+			switch_button.click(function() {
+				window.ScenesHandler.switch_scene(scene_id);
+				$("#scene_selector_toggle").click();
+				refresh_scenes();
+			});
+			controls.append(switch_button);
+		}
+		edit_button = $("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/edit.svg'></button>");
 		edit_button.click(function() {
 			edit_scene_dialog(scene_id);
 		});
 		controls.append(edit_button);
-		delete_button = $("<button>DELETE</button>")
+		delete_button=$("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 		delete_button.click(function() {
 			r = confirm("Are you sure that you want to delete this scene?");
 			if (r == true) {
