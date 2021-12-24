@@ -708,7 +708,7 @@ class Token {
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
-		else {
+		else { // adding a new token
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
 			let scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
@@ -837,7 +837,7 @@ class Token {
 			$("#tokens").append(tok);
 			tok.animate({
 				opacity: newopacity
-			}, { duration: 1000, queue: false });
+			}, { duration: 3000, queue: false });
 
 
 			let click = {

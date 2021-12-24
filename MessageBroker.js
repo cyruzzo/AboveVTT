@@ -268,7 +268,6 @@ class MessageBroker {
 			console.log(msg.eventType);
 			
 			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
-
 				if(msg.sender==self.mysenderid){
 					self.stats.reflected++;
 					console.error("WARNING. WE RECEIVED BACK OUR OWN MESSAGE");
@@ -321,6 +320,24 @@ class MessageBroker {
 				}
 			}
 
+			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
+				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
+					if(["custom/myVTT/token",
+					    "custom/myVTT/delete_token",
+						"custom/myVTT/createtoken",
+						"custom/myVTT/reveal",
+						"custom/myVTT/fogdata",
+						"custom/myVTT/drawing",
+						"custom/myVTT/drawdata",
+						"custom/myVTT/highlight",
+						"custom/myVTT/pointer",
+					   ].includes(msg.eventType)){
+						   console.log("skipping msg from a different scene");
+					   	return;
+					   }
+				}
+			}
+
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
 			}
@@ -341,7 +358,16 @@ class MessageBroker {
 			if(msg.eventType == "custom/myVTT/scenelist"){
 				if(window.DM){
 					console.log("got scene list");
+
+					msg.data.sort((a,b) => {
+						if(a.order < b.order)
+							return -1;
+						if(a.order > b.order)
+							return 1;
+						return 0
+					});
 					window.ScenesHandler.scenes=msg.data;
+					window.PLAYER_SCENE_ID=msg.playersSceneId;
 					refresh_scenes();
 				}
 			}
@@ -893,11 +919,17 @@ class MessageBroker {
 		redraw_drawings();
 
 
-
+		
 		for (var i = 0; i < data.tokens.length; i++) { // QUICK HACK
 			this.handleToken({
 				data: data.tokens[i]
 			});
+			if(!window.DM)
+				check_token_visibility();
+		}
+
+		if(window.CLOUD && window.DM){
+			refresh_scenes();
 		}
 	}
 

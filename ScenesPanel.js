@@ -222,8 +222,10 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
-		
-		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			window.ScenesHandler.persist_current_scene();
+		else
+			window.ScenesHandler.persist();	
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
 
@@ -252,7 +254,10 @@ function edit_scene_dialog(scene_id) {
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
-			window.ScenesHandler.persist();
+			if(window.CLOUD)
+				window.ScenesHandler.persist_current_scene();
+			else
+				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
 		});
 
@@ -265,7 +270,10 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.grid = "0";
 			window.ScenesHandler.scene.fpsq = "10";
 			consider_upscaling(window.ScenesHandler.scene);
-			window.ScenesHandler.persist();
+			if(window.CLOUD)
+				window.ScenesHandler.persist_current_scene();
+			else
+				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
@@ -289,7 +297,10 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			window.ScenesHandler.persist_current_scene();
+		else
+			window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 	}
 
@@ -309,7 +320,10 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			window.ScenesHandler.persist_current_scene();
+		else
+			window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 	}
 
@@ -607,7 +621,10 @@ function edit_scene_dialog(scene_id) {
 
 			scene.scale_factor=1;
 
-			window.ScenesHandler.persist();
+			if(window.CLOUD)
+				window.ScenesHandler.persist_current_scene();
+			else
+				window.ScenesHandler.persist();
 			window.ScenesHandler.switch_scene(scene_id);
 
 
@@ -710,20 +727,31 @@ function refresh_scenes() {
 		title = $("<div class='scene_title' style='text-align:center;'/>");
 		title.html(scene.title);
 
-		if (i == window.ScenesHandler.current_scene_id)
+		if ( (i == window.ScenesHandler.current_scene_id)   && (!window.CLOUD))
 			newobj.addClass('active_scene');
 		newobj.append(title);
 		controls = $("<div/>");
 		if(window.CLOUD){
 			let switch_players=$("<button>PLAYERS</button>");
+
+			if(window.PLAYER_SCENE_ID==window.ScenesHandler.scenes[scene_id].id){
+				console.log("players are here!");
+				switch_players.css("background","#FF7F7F");
+			}
+
 			switch_players.click(function(){
 				let msg={
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 				};
+				window.PLAYER_SCENE_ID=window.ScenesHandler.scenes[scene_id].id;
+				refresh_scenes();
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 			});
 			
 			let switch_dm=$("<button>DM</button>");
+			if(window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.id==window.ScenesHandler.scenes[scene_id].id)){
+				switch_dm.css("background","#FF7F7F");
+			}
 			switch_dm.click(function(){
 				let msg={
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
@@ -731,6 +759,14 @@ function refresh_scenes() {
 				};
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 			});
+			if(scene.player_map){
+				switch_players.removeAttr("disabled");
+				switch_dm.removeAttr("disabled");
+			}
+			else{
+				switch_players.attr("disabled","true");
+				switch_dm.attr("disabled","true");
+			}
 
 			controls.append(switch_players);
 			controls.append(switch_dm);
@@ -796,6 +832,25 @@ function refresh_scenes() {
 					j++;
 				});
 				console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
+				if(window.CLOUD){
+					let neworder;
+					console.log(window.ScenesHandler.scenes);
+					if(toSceneIndex < fromSceneIndex){ // moving back
+						if(toSceneIndex==0)
+							neworder=window.ScenesHandler.scenes[0].order-100;
+						else
+							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex-1].order)/2);
+					}
+					else{
+						if(toSceneIndex==(window.ScenesHandler.scenes.length-1)){
+							neworder=window.ScenesHandler.scenes[toSceneIndex].order+100;
+						}
+						else
+							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex+1].order)/2);
+					}
+					window.ScenesHandler.scenes[fromSceneIndex].order=neworder;
+					window.ScenesHandler.persist_scene(fromSceneIndex);
+				}
 				window.ScenesHandler.scenes = tempScenes;
 				window.ScenesHandler.persist();
 				refresh_scenes();
@@ -831,10 +886,11 @@ function init_scene_selector() {
 			grid: 0,
 			snap: 0,
 			reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+			order: Date.now()
 		}
 		);
 		if(window.CLOUD){
-			window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length -1);
+			window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length -1,true);
 		}
 		else{
 			window.ScenesHandler.persist();
