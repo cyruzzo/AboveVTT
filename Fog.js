@@ -787,23 +787,6 @@ function drawing_mousemove(e) {
 		if (window.DRAWSHAPE == "rect") {
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
 		}
-		else if (window.DRAWSHAPE == "align") {
-			for (i = 0; i < 4; i++) {
-				ctx.strokeStyle = "rgba(255,0,0,0.7)";
-				ctx.lineWidth = 1;
-				ctx.beginPath();
-				ctx.moveTo(window.BEGIN_MOUSEX + i * (width / 3.0), window.BEGIN_MOUSEY);
-				ctx.lineTo(window.BEGIN_MOUSEX + i * (width / 3.0), window.BEGIN_MOUSEY + height);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY + i * (height / 3.0));
-				ctx.lineTo(window.BEGIN_MOUSEX + width, window.BEGIN_MOUSEY + i * (height / 3.0));
-				ctx.stroke();
-
-			}
-
-			//ctx.fillRect(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height);
-		}
 		else if (window.DRAWSHAPE == "arc") {
 			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 			centerY = (window.BEGIN_MOUSEY + mousey) / 2;
@@ -1058,109 +1041,6 @@ function drawing_mouseup(e) {
 			}
 		}, 2000);
 		WaypointManager.clearWaypoints();
-	}
-	if (window.DRAWSHAPE == "align") {
-		window.ScenesHandler.scene.grid_subdivided = "0";
-		console.log("Horizontal Pixel Per Square: " + (width / 3.0) + " Vertical Pixel Per Square " + (height / 3.0));
-		//ppsX=Math.round((width/window.ScenesHandler.scene.scaleX)/3);
-		//ppsY=Math.round((height/window.ScenesHandler.scene.scaleY)/3);
-		ppsX = Math.abs(width / 3.0); // let's try with subpixel precision
-		ppsY = Math.abs(height / 3.0);
-		offsetX = (window.BEGIN_MOUSEX) % ppsX;
-		offsetY = (window.BEGIN_MOUSEY) % ppsY;
-
-		let gotWidth = width;
-		let gotHeight = height;
-		let gotBeginX = window.BEGIN_MOUSEX;
-		let gotBeginY = window.BEGIN_MOUSEY;
-
-		// ASK FOR CONFIRMATION
-
-		$("#grid_overlay").show();
-		$("#tokens").show();
-		window.ALIGNING = false;
-		window.WIZARDING = true;
-		$("#align-button").removeClass("button-enabled").css('background-color', '');
-		stop_drawing();
-		window.ScenesHandler.scene.hpps = ppsX;
-		window.ScenesHandler.scene.vpps = ppsY;
-		window.ScenesHandler.scene.offsetx = offsetX;
-		window.ScenesHandler.scene.offsety = offsetY;
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "1";
-		window.ScenesHandler.persist();
-		stop_drawing();
-		$("#wizard_popup").empty();
-
-		$("#wizard_popup").append("We are now super-imposing a grid on the image. Does the grid match ? (no need to be 100% accurate, but try to get close) <button id='grid_yes'>YES</button> <button id='grid_no'>NO</button>");
-
-		$("#wizard_popup").find("#grid_no").click(
-			function() {
-				$("#wizard_popup").empty().append("Try again. Remember to ZOOM IN so that you can be more accurate!!!");
-				$("#align-button").click();
-			}
-		);
-
-		$("#wizard_popup").find("#grid_yes").click(
-			function() {
-				$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> or <button id='grid_10'>10</button>");
-
-				$("#grid_5").click(function() {
-					window.WIZARDING = false;
-					window.ScenesHandler.scene.snap = "1";
-					window.ScenesHandler.scene.grid = "0";
-					window.ScenesHandler.scene.fpsq = "5";
-					window.ScenesHandler.scene.grid_subdivided = "0";
-					window.ScenesHandler.persist();
-					window.ScenesHandler.reload();
-					$("#wizard_popup").empty().append("You're good to go!! Measurement tool calibrated. Token Snapping Enabled (you can remove it from manual grid data)");
-
-					$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
-
-						$("#wizard_popup").remove();
-					});
-				});
-
-				$("#grid_10").click(function() {
-					$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so that you can get in-scale token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
-
-					$("#grid_divide").click(function() {
-						window.WIZARDING = false;
-						$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
-						window.ScenesHandler.scene.grid_subdivided = "1";
-						window.ScenesHandler.scene.snap = "1";
-
-						window.ScenesHandler.scene.grid = "1";
-						window.ScenesHandler.scene.fpsq = "5";
-
-						$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-							$("#wizard_popup").remove();
-						});
-						window.ScenesHandler.persist();
-						window.ScenesHandler.reload();
-					});
-
-					$("#grid_nodivide").click(function() {
-						window.WIZARDING = false;
-						window.ScenesHandler.scene.snap = "1";
-						window.ScenesHandler.scene.grid_subdivided = "0";
-						window.ScenesHandler.scene.grid = "0";
-						window.ScenesHandler.scene.fpsq = "10";
-						window.ScenesHandler.persist();
-						$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
-					});
-
-
-				});
-
-
-			}
-		);
-
-
-		setTimeout(function() {
-			window.ScenesHandler.reload();
-		}, 500);
 	}
 }
 

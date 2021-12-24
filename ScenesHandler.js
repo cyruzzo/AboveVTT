@@ -554,7 +554,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			sceneData.isnewscene=true;
 
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
+	}
 
+	persist_current_scene(){
+		let sceneData=Object.assign({},this.scene);
+		sceneData.reveals=[];
+		sceneData.drawings=[];
+		sceneData.tokens={};
+		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
 
 	persist() {
