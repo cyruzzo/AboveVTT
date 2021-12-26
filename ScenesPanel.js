@@ -338,8 +338,6 @@ function edit_scene_dialog(scene_id) {
 				ctx.beginPath();
 				ctx.moveTo(29, 0);
 				ctx.lineTo(29, 58);
-				ctx.stroke();
-				ctx.beginPath();
 				ctx.moveTo(0, 29);
 				ctx.lineTo(58, 29);
 				ctx.stroke();
