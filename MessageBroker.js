@@ -928,6 +928,7 @@ class MessageBroker {
 		if (this.ws.readyState == this.ws.OPEN) {
 			this.ws.send(JSON.stringify(message));
 		}
+
 		this.handle_injected_data(message);
 
 	}
