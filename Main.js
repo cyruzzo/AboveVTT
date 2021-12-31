@@ -15,18 +15,15 @@ async function checkImage(url, callback){
 	var image = new Image();
   image.onload = function() {
     if (this.width > 0) {
-			console.log("Image!")
       callback(true);
     } else {
-			console.log("Width 0 not image!")
 			callback(false)
 		}
   }
   image.onerror = function() {
-		console.log("error not image!")
     callback(false);
   }
-  image.src = url;
+  image.src = parse_img(url);
 }
 
 function whenAvailable(name, callback) {
