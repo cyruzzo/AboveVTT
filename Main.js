@@ -11,7 +11,7 @@ function parse_img(url){
 	return retval;
 }
 
-async function checkImage(url, callback){
+function checkImage(url, callback){
 	var image = new Image();
 	image.onload = function() {
 		if (this.width > 0) {
