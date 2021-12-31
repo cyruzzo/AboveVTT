@@ -1625,4 +1625,9 @@ body {
     width: 100%;
     align-items: center;
 }
+.chat-link {
+  word-wrap: break-word;
+  width: 100%;
+  text-decoration: underline;
+}
 
