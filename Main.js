@@ -1350,7 +1350,7 @@ function init_ui() {
 
 
 			if(validateUrl(text)){
-				if (text.match(/\.(jpeg|jpg|gif|png)$/)) {
+				if (text.match(/\.(jpeg|jpg|gif|png|webp|webm)$/)) {
 					text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
 				} else {
 					text=`<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`;
