@@ -13,17 +13,17 @@ function parse_img(url){
 
 async function checkImage(url, callback){
 	var image = new Image();
-  image.onload = function() {
-    if (this.width > 0) {
-      callback(true);
-    } else {
+	image.onload = function() {
+		if (this.width > 0) {
+			callback(true);
+		} else {
 			callback(false)
 		}
-  }
-  image.onerror = function() {
-    callback(false);
-  }
-  image.src = parse_img(url);
+	}
+	image.onerror = function() {
+		callback(false);
+	}
+	image.src = parse_img(url);
 }
 
 function whenAvailable(name, callback) {
