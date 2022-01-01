@@ -750,11 +750,57 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	iframe.attr('data-init_load', 0);
 	container.append(iframe);
 	iframe.on("load", function(event) {
+		$(event.target).contents().find("head").append(`
+			<style>
+			button.avtt-roll-button {
+				/* lifted from DDB encounter stat blocks  */
+				color: #b43c35;
+				border: 1px solid #b43c35;
+				border-radius: 4px;
+				background-color: #fff;
+				white-space: nowrap;
+				font-size: 14px;
+				font-weight: 600;
+				font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+				line-height: 18px;
+				letter-spacing: 1px;
+				padding: 1px 4px 0;
+			}			
+			.MuiPaper-root {
+				padding: 0px 16px;
+				width: 100px;
+			}
+			.MuiListItemText-root {
+				flex: 1 1 auto;
+				min-width: 0;
+				margin-top: 4px;
+				margin-bottom: 4px;
+			}
+			.MuiButtonBase-root {
+				width: 100%;
+			}
+			</style>
+		`);
 		$(event.target).contents().find("#mega-menu-target").remove();
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
 
+		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
+			let addedElement = $(addedEvent.target);
+			if (addedElement.hasClass("ct-sidebar__pane")) {
+				let statBlock = addedElement.find(".ct-creature-pane");
+				if (statBlock.length > 0) {
+					scan_player_creature_pane(statBlock);
+				}
+			}
+		});
+		$(event.target).contents().on("DOMSubtreeModified", ".ct-sidebar__pane", function(modifiedEvent) {
+			let statBlock = $(modifiedEvent.target).find(".ct-creature-pane");
+			if (statBlock.length > 0) {
+				scan_player_creature_pane(statBlock);
+			}
+		});
 
 		// DICE STREAMING ?!?!
 		if(!window.DM){
