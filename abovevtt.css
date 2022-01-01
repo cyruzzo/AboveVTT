@@ -1640,6 +1640,11 @@ h5.token-image-modal-footer-title:after {
     width: 100%;
     align-items: center;
 }
+.chat-link {
+  word-wrap: break-word;
+  width: 100%;
+  text-decoration: underline;
+}
 
 .example-tokens-wrapper {
     width: 100%;

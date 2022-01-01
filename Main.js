@@ -11,6 +11,21 @@ function parse_img(url){
 	return retval;
 }
 
+function checkImage(url, callback){
+	var image = new Image();
+	image.onload = function() {
+		if (this.width > 0) {
+			callback(true);
+		} else {
+			callback(false)
+		}
+	}
+	image.onerror = function() {
+		callback(false);
+	}
+	image.src = parse_img(url);
+}
+
 function whenAvailable(name, callback) {
     var interval = 10; // ms
     window.setTimeout(function() {
@@ -1399,23 +1414,40 @@ function init_ui() {
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
 
-
-			if(validateUrl(text)){
-				text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+			sendLinkOrImage = (text, dmonly, whisper, isImg) => {
+				if (isImg) {
+					text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+				} else {
+					text=`<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`;
+				}
+				data = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: text,
+					dmonly: dmonly,
+				};
+	
+				if(whisper)
+					data.whisper=whisper;
+	
+				window.MB.inject_chat(data);
 			}
 
-			data = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: text,
-				dmonly: dmonly,
-			};
-
-			if(whisper)
-				data.whisper=whisper;
-
-			window.MB.inject_chat(data);
-
+			if(validateUrl(text)){
+				checkImage(text, (isImg) => sendLinkOrImage(text, dmonly, whisper, isImg));
+			} else {
+				data = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: text,
+					dmonly: dmonly,
+				};
+	
+				if(whisper)
+					data.whisper=whisper;
+	
+				window.MB.inject_chat(data);
+			}
 		}
 
 	});
