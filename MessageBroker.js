@@ -212,6 +212,10 @@ class MessageBroker {
 						}
 					});
 					if(!found){
+						console.warn(`couldn't find a message matching ${JSON.stringify(current)}`);
+						// It's possible that we could lose messages due to this not being here, but
+						// if we push the message here, we can end up in an infinite loop.
+						// We may need to revisit this and do better with error handling if we end up missing too many messages.
 						// self.chat_pending_messages.push(current);
 					}
 				}
@@ -708,9 +712,35 @@ class MessageBroker {
 				window.MB.sendMessage('custom/myVTT/token', cur.options);
 			}
 		}
-    	}
+	}
+
+	encode_message_text(text) {
+		if (is_supported_version('0.66')) {
+			// This is used when the "Send to Gamelog" button sends HTML over the websocket.
+			// If there are special characters, then the _dndbeyond_message_broker_client fails to parse the JSON
+			// To work around this, we base64 encode the html here, and then decode it in MessageBroker.convertChat
+			return "base64" + window.btoa(unescape(encodeURIComponent(text)));
+		} else {
+			console.warn("There's at least one connection below version 0.66; not encoding message text to prevent that user from seeing base64 encoded text in the gamelog");
+			return text;
+		}
+	}
+	
+	decode_message_text(text) {
+		// no need to check version because the `startsWith("base64")` will return `false` if there are any connections below 0.65. See `encode_message_text` for more details.
+		if (text !== undefined && text.startsWith("base64")) {
+			// This is used when the "Send to Gamelog" button sends HTML over the websocket.
+			// If there are special characters, then the _dndbeyond_message_broker_client fails to parse the JSON
+			// To work around this, we base64 encode the html in encode_message_text, and then decode it here after the message has been received
+			text = decodeURIComponent(escape(window.atob(text.replace("base64", ""))));
+		}
+		return text;
+	}
 	
 	convertChat(data,local=false) {
+
+		data.text = this.decode_message_text(data.text);
+
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});

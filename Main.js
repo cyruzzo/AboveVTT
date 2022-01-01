@@ -957,7 +957,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 							$(this).css(newcss);
 						});
 
-						html = newobj.html();
+						html = window.MB.encode_message_text(newobj.html());
 						newobj.remove();
 						console.log(html);
 						data = {
@@ -1199,6 +1199,11 @@ function find_game_id() {
 	}
 	return window.gameId;
 };
+
+/** returns true if all connected users are on a version that is greater than or equal to `versionString` */
+function is_supported_version(versionString) {
+	return abovevtt_version >= versionString;
+}
 
 function init_things() {
 	window.STARTING = true;
