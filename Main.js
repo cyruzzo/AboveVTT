@@ -125,11 +125,12 @@ function getPlayerIDFromSheet(sheet_url)
 
 window.YTTIMEOUT = null;
 
-function image_load_cb() {
-	alert("Map could not be loaded");
+function map_load_error_cb() {
+	alert("Map could not be loaded - if you're using Drive or similar, ensure sharing is enabled");
 }
 
-function load_scenemap(url, width = null, height = null, callback = null) {
+function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
+
 	$("#scene_map").remove();
 
 	if (window.YTTIMEOUT != null) {
@@ -137,7 +138,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		window.YTTIMEOUT = null;
 	}
 
-
+	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
 
 		if (width == null) {
@@ -181,9 +182,10 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 		callback();
 	}
-	else {
+	else if (is_video === "0" || !is_video) {
 		newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
+		newmap.on("error", map_load_error_cb);
 		if (width != null) {
 			newmap.width(width);
 			newmap.height(height);
@@ -191,12 +193,32 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 		if (callback != null) {
 			newmap.on("load", callback);
-			newmap.on("error", image_load_cb);
 		}
 
 		$("#VTT").append(newmap);
 	}
+	else {
+		console.log("LOAD MAP " + width + " " + height);
+		let newmapSize = 'width: 100vw; height: 100vh;';
+		if (width != null) {
+			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
+		}
 
+		var newmap = $('<video style="' + newmapSize + ' position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay muted loop id="scene_map" src="' + url + '" />');
+		newmap.on("loadeddata", callback);
+		newmap.on("error", map_load_error_cb);
+
+		if (width == null) {
+			newmap.on("loadedmetadata", function (e) {
+				console.log("video width:", this.videoWidth);
+				console.log("video height:", this.videoHeight);
+				$('#scene_map').width(this.videoWidth);
+				$('#scene_map').height(this.videoHeight);
+			});
+		}
+
+		$("#VTT").append(newmap);
+	}
 }
 
 

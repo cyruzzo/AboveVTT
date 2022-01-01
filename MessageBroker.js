@@ -836,7 +836,7 @@ class MessageBroker {
 		$("#scene_map").width(data.width);
 		$("#scene_map").height(data.height);
 
-		load_scenemap(data.map, data.width, data.height, function() {
+		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
 			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
 			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
