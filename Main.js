@@ -2173,7 +2173,7 @@ $(function() {
 		e.preventDefault();
 		gather_pcs();
 		window.EncounterHandler = new EncounterHandler(function() {
-			if (window.EncounterHandler.encounterBuilderDiceSupported == true) {
+			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
 				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?abovevtt=true&cs=${cs}&cid=${window.EncounterHandler.campaignId}`, '_blank');
 			} else {

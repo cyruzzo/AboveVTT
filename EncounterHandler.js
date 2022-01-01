@@ -476,6 +476,12 @@ function open_monster_stat_block(monsterId) {
 	} else {
 		// we just opened the stat block. Hold the monsterId locally so we know which one is currently open.
 		window.EncounterHandler.combat_stat_block_monster = monsterId;
+		if (window.EncounterHandler.encounterBuilderDiceSupported != true) {
+			// this user is not a subscriber, so let's parse the monster sheet and add buttons for rolling from the stat block
+			window.StatHandler.getStat(monsterId, function(stats) {
+				scan_monster(window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block .mon-stat-block"), stats);
+			});
+		}
 	}
 	window.EncounterHandler.combat_body.find(".sidebar-panel-loading-indicator").remove(); // just in case there was already one shown we don't want to add a second one
 	reposition_enounter_combat_tracker_iframe();
