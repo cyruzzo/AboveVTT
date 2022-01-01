@@ -251,7 +251,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		this.persist();
 
-
+		// some things can't be done correctly until after the scene finishes loading
+		redraw_settings_panel_token_examples();
 
 	}
 

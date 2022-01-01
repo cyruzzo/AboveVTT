@@ -1380,9 +1380,24 @@ body {
     letter-spacing: 1px;
     flex-grow: 1;
     color: #738694;
-    font-size: 13px;
     line-height: 1.4;
     margin-top: 6px;
+}
+div.token-image-modal-footer-title {
+    font-size: 13px;
+}
+h1.token-image-modal-footer-title:after,
+h2.token-image-modal-footer-title:after,
+h3.token-image-modal-footer-title:after,
+h4.token-image-modal-footer-title:after,
+h5.token-image-modal-footer-title:after {
+    /* This was lifted from source book titles, and tweaked slightly */
+    content: '';
+    width: 100%;
+    margin: 5px auto 20px;
+    height: 1px;
+    background-color: #979AA4;
+    display: block;
 }
 .sidebar-panel-footer input,
 .token-image-modal-footer input {
@@ -1626,3 +1641,98 @@ body {
     align-items: center;
 }
 
+.example-tokens-wrapper {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    margin: 10px 0px;
+}
+
+/* all the rc-switch styles were lifted from the content sharing screen /campaigns/<campaign_id>/content-management and then tweaked slightly */
+.rc-switch {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    width: 44px;
+    height: 22px;
+    line-height: 20px;
+    padding: 0;
+    vertical-align: middle;
+    border-radius: 20px 20px;
+    border: 1px solid #ccc;
+    background-color: #ccc;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+.rc-switch-checked {
+    border: 1px solid #1b9af0;
+    background-color: #1b9af0;
+}
+.rc-switch-checked:after {
+    left: 22px;
+}
+.rc-switch:after {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 2px;
+    top: 1px;
+    border-radius: 50% 50%;
+    background-color: #fff;
+    content: " ";
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+    transform: scale(1);
+    transition: left 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+    -webkit-animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+    animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+    -webkit-animation-duration: 0.3s;
+    animation-duration: 0.3s;
+    -webkit-animation-name: rcSwitchOff;
+    animation-name: rcSwitchOff;
+}
+.rc-switch-inner {
+    color: #fff;
+    font-size: 12px;
+    position: absolute;
+    left: 24px;
+    top: 0;
+}
+.rc-switch-checked .rc-switch-inner {
+    left: 6px;
+}
+.rc-switch-checked:after {
+    left: 22px;
+}
+.rc-switch:hover:after {
+    transform: scale(1.1);
+    -webkit-animation-name: rcSwitchOn;
+    animation-name: rcSwitchOn;
+}
+
+.sidebar-hovertext:before {
+    content: attr(data-hover);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    text-transform: none;
+    visibility: hidden;
+    opacity: 0;
+    width: max-content;
+    background-color: rgba(28,29,30,0.8);
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 5px;
+    transition: opacity 1s ease-in-out;
+    position: absolute;
+    z-index: 1;
+    left: 5%;
+    margin-top: 30px;
+    width: 90%;
+}
+
+.sidebar-hovertext:hover:before {
+    opacity: 1;
+    visibility: visible;
+}
