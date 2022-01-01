@@ -18,7 +18,6 @@ function consider_upscaling(target){
 			target.scale_factor=1;
 		}
 }
-	
 
 function preset_importer(target, key) {
 	target.empty();
@@ -56,8 +55,6 @@ function preset_importer(target, key) {
 	target.append(sel);
 	target.append(import_button);
 }
-
-
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
@@ -172,8 +169,9 @@ function edit_scene_dialog(scene_id) {
 	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Show Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Foot per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10ft</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
 	manual.hide();
 
@@ -190,15 +188,8 @@ function edit_scene_dialog(scene_id) {
 	});
 
 
-
-
-
-
-
 	if (typeof scene.fog_of_war == "undefined")
 		scene.fog_of_war = "1";
-
-
 
 
 	var sub = $("<button>Save And Switch</button>");
@@ -239,7 +230,7 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 	});
-
+	
 
 	
 
@@ -263,6 +254,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.grid = "0";
 
 		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
 		if(window.CLOUD)
@@ -289,6 +281,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.snap = "1";
 			window.ScenesHandler.scene.grid = "1";
 			window.ScenesHandler.scene.fpsq = "5";
+			window.ScenesHandler.scene.upsq = "ft";
 			window.ScenesHandler.scene.hpps /= 2;
 			window.ScenesHandler.scene.vpps /= 2;
 			
@@ -312,6 +305,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.grid_subdivided = "0";
 			window.ScenesHandler.scene.grid = "0";
 			window.ScenesHandler.scene.fpsq = "10";
+			window.ScenesHandler.scene.upsq = "ft";
 			consider_upscaling(window.ScenesHandler.scene);
 			if(window.CLOUD)
 				window.ScenesHandler.persist_current_scene();
@@ -334,6 +328,7 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.snap = "1";
 		window.ScenesHandler.scene.grid = "0";
 		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 3;
 		window.ScenesHandler.scene.vpps /= 3;
 		consider_upscaling(window.ScenesHandler.scene);
@@ -357,6 +352,7 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.snap = "1";
 		window.ScenesHandler.scene.grid = "1";
 		window.ScenesHandler.scene.fpsq = "5";
+		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 4;
 		window.ScenesHandler.scene.vpps /= 4;
 		consider_upscaling(window.ScenesHandler.scene);
@@ -628,7 +624,7 @@ function edit_scene_dialog(scene_id) {
 						grid_5(false, false);
 					}
 					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many feet per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
+						$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
 						$("#grid_5").click(function() { grid_5(); });
 						$("#grid_10").click(function() { grid_10(); });
 						$("#grid_15").click(function() { grid_15(); });
@@ -759,8 +755,6 @@ function edit_scene_dialog(scene_id) {
 
 
 }
-
-
 
 function refresh_scenes() {
 	target = $("#scene_selector");
@@ -929,6 +923,7 @@ function init_scene_selector() {
 			fog_of_war: "1",
 			tokens: {},
 			fpsq: 5,
+			upsq: 'ft',
 			hpps: 60,
 			vpps: 60,
 			offsetx: 0,
@@ -970,7 +965,6 @@ function init_scene_selector() {
 
 
 }
-
 
 function display_sources() {
 	$("#source_select").empty();
@@ -1088,7 +1082,6 @@ function init_ddb_importer(target) {
 
 }
 
-
 function fill_importer(scene_set, start) {
 	area = $("#importer_area");
 	area.empty();
@@ -1149,7 +1142,7 @@ function fill_importer(scene_set, start) {
 
 		b.click(function() {
 			var scene = current_scene;
-
+		
 			$("#scene_properties input[name='player_map']").val(scene.player_map);
 			$("#scene_properties input[name='dm_map']").val(scene.dm_map);
 			$("#scene_properties input[name='title']").val(scene.title);
@@ -1177,6 +1170,8 @@ function fill_importer(scene_set, start) {
 				$("#scene_properties input[name='snap']").val(scene.snap);
 			if (typeof scene.fpsq !== "undefined")
 				$("#scene_properties input[name='fpsq']").val(scene.fpsq);
+			if (typeof scene.upsq !== "undefined")
+				$("#scene_properties input[name='upsq']").val(scene.upsq);
 			if (typeof scene.offsetx !== "undefined")
 				$("#scene_properties input[name='offsetx']").val(scene.offsetx);
 			if (typeof scene.offsety !== "undefined")
