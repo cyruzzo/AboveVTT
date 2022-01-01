@@ -11,6 +11,21 @@ function parse_img(url){
 	return retval;
 }
 
+function checkImage(url, callback){
+	var image = new Image();
+	image.onload = function() {
+		if (this.width > 0) {
+			callback(true);
+		} else {
+			callback(false)
+		}
+	}
+	image.onerror = function() {
+		callback(false);
+	}
+	image.src = parse_img(url);
+}
+
 function whenAvailable(name, callback) {
     var interval = 10; // ms
     window.setTimeout(function() {
@@ -750,11 +765,57 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	iframe.attr('data-init_load', 0);
 	container.append(iframe);
 	iframe.on("load", function(event) {
+		$(event.target).contents().find("head").append(`
+			<style>
+			button.avtt-roll-button {
+				/* lifted from DDB encounter stat blocks  */
+				color: #b43c35;
+				border: 1px solid #b43c35;
+				border-radius: 4px;
+				background-color: #fff;
+				white-space: nowrap;
+				font-size: 14px;
+				font-weight: 600;
+				font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+				line-height: 18px;
+				letter-spacing: 1px;
+				padding: 1px 4px 0;
+			}			
+			.MuiPaper-root {
+				padding: 0px 16px;
+				width: 100px;
+			}
+			.MuiListItemText-root {
+				flex: 1 1 auto;
+				min-width: 0;
+				margin-top: 4px;
+				margin-bottom: 4px;
+			}
+			.MuiButtonBase-root {
+				width: 100%;
+			}
+			</style>
+		`);
 		$(event.target).contents().find("#mega-menu-target").remove();
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
 
+		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
+			let addedElement = $(addedEvent.target);
+			if (addedElement.hasClass("ct-sidebar__pane")) {
+				let statBlock = addedElement.find(".ct-creature-pane");
+				if (statBlock.length > 0) {
+					scan_player_creature_pane(statBlock);
+				}
+			}
+		});
+		$(event.target).contents().on("DOMSubtreeModified", ".ct-sidebar__pane", function(modifiedEvent) {
+			let statBlock = $(modifiedEvent.target).find(".ct-creature-pane");
+			if (statBlock.length > 0) {
+				scan_player_creature_pane(statBlock);
+			}
+		});
 
 		// DICE STREAMING ?!?!
 		if(!window.DM){
@@ -1459,23 +1520,40 @@ function init_ui() {
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
 
-
-			if(validateUrl(text)){
-				text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+			sendLinkOrImage = (text, dmonly, whisper, isImg) => {
+				if (isImg) {
+					text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+				} else {
+					text=`<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`;
+				}
+				data = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: text,
+					dmonly: dmonly,
+				};
+	
+				if(whisper)
+					data.whisper=whisper;
+	
+				window.MB.inject_chat(data);
 			}
 
-			data = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: text,
-				dmonly: dmonly,
-			};
-
-			if(whisper)
-				data.whisper=whisper;
-
-			window.MB.inject_chat(data);
-
+			if(validateUrl(text)){
+				checkImage(text, (isImg) => sendLinkOrImage(text, dmonly, whisper, isImg));
+			} else {
+				data = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: text,
+					dmonly: dmonly,
+				};
+	
+				if(whisper)
+					data.whisper=whisper;
+	
+				window.MB.inject_chat(data);
+			}
 		}
 
 	});

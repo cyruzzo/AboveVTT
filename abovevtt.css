@@ -1691,6 +1691,12 @@ div.sidebar__pane-content div.tooltip::after {
     background: none !important;
 }
 
+.chat-link {
+  word-wrap: break-word;
+  width: 100%;
+  text-decoration: underline;
+}
+
 .example-tokens-wrapper {
     width: 100%;
     height: 100px;
