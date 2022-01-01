@@ -96,6 +96,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			scene.grid = 0;
 			scene.snap = 0;
 			scene.fpsq = 5;
+			scene.upsq = 'ft'
 
 			for (var id in scene.tokens) { // RESCALE ALL THE TOKENS
 				var tok_options = scene.tokens[id];
@@ -183,7 +184,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		else {
 			window.DRAWINGS = [];
 		}
-
+		
 		var map_url = "";
 		var map_is_video = false;
 		if ((scene.dm_map != "") && (scene.dm_map_usable == "1") && (window.DM)) {
@@ -279,6 +280,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		data.hpps = window.CURRENT_SCENE_DATA.hpps;
 		data.vpps = window.CURRENT_SCENE_DATA.vpps;
 		data.fpsq = window.CURRENT_SCENE_DATA.fpsq;
+		data.upsq = window.CURRENT_SCENE_DATA.upsq;
+		
 		data.grid_subdivded = window.CURRENT_SCENE_DATA.grid_subdivided;
 		data.offsetx = window.CURRENT_SCENE_DATA.offsetx;
 		data.offsety = window.CURRENT_SCENE_DATA.offsety;
@@ -364,7 +367,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			callback();
 		});
 	}
-
 
 	build_chapters(keyword, callback) {
 		var self = this;
@@ -570,7 +572,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		});
 	}
 
-
 	create_update_token(options, save = true) {
 		console.log("create_update_token");
 		let self = this;
@@ -648,6 +649,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				vpps: "72",
 				snap: "1",
 				fpsq: "5",
+				upsq: "ft",
 				offsetx: 29,
 				offsety: 54,
 				reveals: [[0, 0, 0, 0, 2, 0]],

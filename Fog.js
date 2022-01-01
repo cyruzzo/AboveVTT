@@ -169,8 +169,11 @@ class WaypointManagerClass {
 		var snapPointXEnd = snapCoords.x;
 		var snapPointYEnd = snapCoords.y;
 
-		// In future we may support other units(?), defaulting to 'ft' for feet
-		var unitSymbol = "ft";
+		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
+		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
+			var unitSymbol = window.CURRENT_SCENE_DATA.upsq;
+		else
+			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
 		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
@@ -986,19 +989,17 @@ function drawing_mouseup(e) {
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
-			if (window.DM || !curr.options.hidden) {
-				var toktop = parseInt(curr.options.top);
-				if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
-					continue;
-				var tokleft = parseInt(curr.options.left);
-				if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
-					continue;
-				c++;
-				// TOKEN IS INSIDE THE SELECTION
-				curr.selected = true;
-				//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
-				curr.place();
-			}
+			var toktop = parseInt(curr.options.top);
+			if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
+				continue;
+			var tokleft = parseInt(curr.options.left);
+			if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
+				continue;
+			c++;
+			// TOKEN IS INSIDE THE SELECTION
+			curr.selected = true;
+			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
+			curr.place();
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
