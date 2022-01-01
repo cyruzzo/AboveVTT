@@ -37,8 +37,17 @@ function preset_importer(target, key) {
 		i = sel.val();
 		scene = PRESET[key][i];
 
+		if (typeof scene.player_map_is_video === 'undefined') {
+			scene.player_map_is_video = "0";
+		}
+		if (typeof scene.dm_map_is_video === 'undefined') {
+			scene.dm_map_is_video = "0";
+		}
+
 		$("#scene_properties input[name='player_map']").val(scene.player_map);
 		$("#scene_properties input[name='dm_map']").val(scene.dm_map);
+		$("#scene_properties input[name='player_map_is_video']").prop('checked', scene.player_map_is_video === "1");
+		$("#scene_properties input[name='dm_map_is_video']").prop('checked', scene.dm_map_is_video === "1");
 		$("#scene_properties input[name='title']").val(scene.title);
 		$("#scene_properties input[name='scale']").val(scene.scale);
 	});
@@ -111,13 +120,40 @@ function edit_scene_dialog(scene_id) {
 		f.append(row);
 	};
 
+	let addrow_with_checkbox = function(name, title, checkbox_name, checkbox_title, type = 'text') {
+		var row = $("<div style='width:100%;'/>");
+		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		c1.css("font-weight", "bold");
+		var c2 = $("<div style='display:inline-block; width:50%'/>");
+		var i = $("<input />");
+		i.attr('type', type);
+		i.attr('name', name);
+		i.val(scene[name]);
+		i.css("width", "100%");
+
+		var c3 = $("<div style='display: inline-block;'>&nbsp;&nbsp;" + checkbox_title + "&nbsp;&nbsp;</div>");
+		c3.css("font-weight", "bold");
+		var c4 = $("<div style='display:inline-block;'/>");
+		var t = $("<input />");
+		t.attr('type', "checkbox");
+		t.attr('name', checkbox_name);
+		t.prop('checked', scene[checkbox_name] === "1");
+		c2.append(i);
+		c4.append(t);
+		row.append(c1);
+		row.append(c2);
+		row.append(c3);
+		row.append(c4);
+		f.append(row);
+	};
+
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
 	f.append(uuid_hidden);
 
 	addrow('title', 'Scene Title');
-	addrow('player_map', 'Player Map');
-	addrow('dm_map', 'Dm Map');
+	addrow_with_checkbox('player_map', 'Player Map', 'player_map_is_video', "Is Video?");
+	addrow_with_checkbox('dm_map', 'Dm Map', 'dm_map_is_video', "Is Video?");
 	addrow('dm_map_usable', 'Use DM Map (1 to enable)');
 	wizard = $("<button><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button>Manual Grid Data</button>");
@@ -161,7 +197,14 @@ function edit_scene_dialog(scene_id) {
 	sub.click(function() {
 		f.find("input").each(function() {
 			var n = $(this).attr('name');
-			let nValue = $(this).val();
+			var t = $(this).attr('type');
+			let nValue = null;
+			if (t == "checkbox") {
+				nValue = $(this).prop("checked") ? "1" : "0";
+			}
+			else {
+				nValue = $(this).val();
+			}
 
 			if ( ((n === 'player_map') || (n==='dm_map'))   
 					&& nValue.startsWith("https://drive.google.com")
@@ -334,8 +377,6 @@ function edit_scene_dialog(scene_id) {
 				ctx.beginPath();
 				ctx.moveTo(29, 0);
 				ctx.lineTo(29, 58);
-				ctx.stroke();
-				ctx.beginPath();
 				ctx.moveTo(0, 29);
 				ctx.lineTo(58, 29);
 				ctx.stroke();
@@ -582,7 +623,14 @@ function edit_scene_dialog(scene_id) {
 
 			f.find("input").each(function() {
 				var n = $(this).attr('name');
-				let nValue = $(this).val();
+				var t = $(this).attr('type');
+				let nValue = null;
+				if (t == "checkbox") {
+					nValue = $(this).prop("checked") ? "1" : "0";
+				}
+				else {
+					nValue = $(this).val();
+				}
 
 				if (((n === 'player_map') || (n==='dm_map'))
 					&& nValue.startsWith("https://drive.google.com")
@@ -777,6 +825,8 @@ function init_scene_selector() {
 			player_map: "",
 			scale: "100",
 			dm_map_usable: "0",
+			player_map_is_video: "0",
+			dm_map_is_video: "0",
 			fog_of_war: "1",
 			tokens: {},
 			fpsq: 5,
@@ -998,6 +1048,11 @@ function fill_importer(scene_set, start) {
 			$("#scene_properties input[name='dm_map']").val(scene.dm_map);
 			$("#scene_properties input[name='title']").val(scene.title);
 			$("#scene_properties input[name='scale']").val(scene.scale);
+
+			if (typeof scene.player_map_is_video !== "undefined")
+				$("#scene_properties input[name='player_map_is_video']").prop('checked', scene.player_map_is_video === "1");
+			if (typeof scene.dm_map_is_video !== "undefined")
+				$("#scene_properties input[name='dm_map_is_video']").prop('checked', scene.dm_map_is_video === "1");
 
 
 			if (typeof scene.uuid !== "undefined")

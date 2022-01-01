@@ -11,6 +11,21 @@ function parse_img(url){
 	return retval;
 }
 
+function checkImage(url, callback){
+	var image = new Image();
+	image.onload = function() {
+		if (this.width > 0) {
+			callback(true);
+		} else {
+			callback(false)
+		}
+	}
+	image.onerror = function() {
+		callback(false);
+	}
+	image.src = parse_img(url);
+}
+
 function whenAvailable(name, callback) {
     var interval = 10; // ms
     window.setTimeout(function() {
@@ -110,11 +125,12 @@ function getPlayerIDFromSheet(sheet_url)
 
 window.YTTIMEOUT = null;
 
-function image_load_cb() {
-	alert("Map could not be loaded");
+function map_load_error_cb() {
+	alert("Map could not be loaded - if you're using Drive or similar, ensure sharing is enabled");
 }
 
-function load_scenemap(url, width = null, height = null, callback = null) {
+function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
+
 	$("#scene_map").remove();
 
 	if (window.YTTIMEOUT != null) {
@@ -122,7 +138,7 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 		window.YTTIMEOUT = null;
 	}
 
-
+	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
 
 		if (width == null) {
@@ -166,9 +182,10 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 		callback();
 	}
-	else {
+	else if (is_video === "0" || !is_video) {
 		newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
+		newmap.on("error", map_load_error_cb);
 		if (width != null) {
 			newmap.width(width);
 			newmap.height(height);
@@ -176,12 +193,32 @@ function load_scenemap(url, width = null, height = null, callback = null) {
 
 		if (callback != null) {
 			newmap.on("load", callback);
-			newmap.on("error", image_load_cb);
 		}
 
 		$("#VTT").append(newmap);
 	}
+	else {
+		console.log("LOAD MAP " + width + " " + height);
+		let newmapSize = 'width: 100vw; height: 100vh;';
+		if (width != null) {
+			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
+		}
 
+		var newmap = $('<video style="' + newmapSize + ' position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay muted loop id="scene_map" src="' + url + '" />');
+		newmap.on("loadeddata", callback);
+		newmap.on("error", map_load_error_cb);
+
+		if (width == null) {
+			newmap.on("loadedmetadata", function (e) {
+				console.log("video width:", this.videoWidth);
+				console.log("video height:", this.videoHeight);
+				$('#scene_map').width(this.videoWidth);
+				$('#scene_map').height(this.videoHeight);
+			});
+		}
+
+		$("#VTT").append(newmap);
+	}
 }
 
 
@@ -750,11 +787,57 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	iframe.attr('data-init_load', 0);
 	container.append(iframe);
 	iframe.on("load", function(event) {
+		$(event.target).contents().find("head").append(`
+			<style>
+			button.avtt-roll-button {
+				/* lifted from DDB encounter stat blocks  */
+				color: #b43c35;
+				border: 1px solid #b43c35;
+				border-radius: 4px;
+				background-color: #fff;
+				white-space: nowrap;
+				font-size: 14px;
+				font-weight: 600;
+				font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+				line-height: 18px;
+				letter-spacing: 1px;
+				padding: 1px 4px 0;
+			}			
+			.MuiPaper-root {
+				padding: 0px 16px;
+				width: 100px;
+			}
+			.MuiListItemText-root {
+				flex: 1 1 auto;
+				min-width: 0;
+				margin-top: 4px;
+				margin-bottom: 4px;
+			}
+			.MuiButtonBase-root {
+				width: 100%;
+			}
+			</style>
+		`);
 		$(event.target).contents().find("#mega-menu-target").remove();
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
 
+		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
+			let addedElement = $(addedEvent.target);
+			if (addedElement.hasClass("ct-sidebar__pane")) {
+				let statBlock = addedElement.find(".ct-creature-pane");
+				if (statBlock.length > 0) {
+					scan_player_creature_pane(statBlock);
+				}
+			}
+		});
+		$(event.target).contents().on("DOMSubtreeModified", ".ct-sidebar__pane", function(modifiedEvent) {
+			let statBlock = $(modifiedEvent.target).find(".ct-creature-pane");
+			if (statBlock.length > 0) {
+				scan_player_creature_pane(statBlock);
+			}
+		});
 
 		// DICE STREAMING ?!?!
 		if(!window.DM){
@@ -957,7 +1040,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 							$(this).css(newcss);
 						});
 
-						html = newobj.html();
+						html = window.MB.encode_message_text(newobj.html());
 						newobj.remove();
 						console.log(html);
 						data = {
@@ -1182,6 +1265,11 @@ function check_versions_match() {
 	return latestVersionSeen;
 }
 
+/** returns true if all connected users are on a version that is greater than or equal to `versionString` */
+function is_supported_version(versionString) {
+	return abovevtt_version >= versionString;
+}
+
 function init_ui() {
 	window.STARTING = true;
 	var gameid = $("#message-broker-client").attr("data-gameId");
@@ -1348,23 +1436,40 @@ function init_ui() {
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
 
-
-			if(validateUrl(text)){
-				text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+			sendLinkOrImage = (text, dmonly, whisper, isImg) => {
+				if (isImg) {
+					text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+				} else {
+					text=`<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`;
+				}
+				data = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: text,
+					dmonly: dmonly,
+				};
+	
+				if(whisper)
+					data.whisper=whisper;
+	
+				window.MB.inject_chat(data);
 			}
 
-			data = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: text,
-				dmonly: dmonly,
-			};
-
-			if(whisper)
-				data.whisper=whisper;
-
-			window.MB.inject_chat(data);
-
+			if(validateUrl(text)){
+				checkImage(text, (isImg) => sendLinkOrImage(text, dmonly, whisper, isImg));
+			} else {
+				data = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: text,
+					dmonly: dmonly,
+				};
+	
+				if(whisper)
+					data.whisper=whisper;
+	
+				window.MB.inject_chat(data);
+			}
 		}
 
 	});

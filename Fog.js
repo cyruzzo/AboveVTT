@@ -437,16 +437,10 @@ function reset_canvas() {
 			ctx_grid.beginPath();
 			ctx_grid.moveTo(al1.x, al1.y);
 			ctx_grid.lineTo(al2.x, al1.y);
-			ctx_grid.stroke();
-			ctx_grid.beginPath();
 			ctx_grid.moveTo(al2.x, al1.y);
 			ctx_grid.lineTo(al2.x, al2.y);
-			ctx_grid.stroke();
-			ctx_grid.beginPath();
 			ctx_grid.moveTo(al2.x, al2.y);
 			ctx_grid.lineTo(al1.x, al2.y);
-			ctx_grid.stroke();
-			ctx_grid.beginPath();
 			ctx_grid.moveTo(al1.x, al2.y);
 			ctx_grid.lineTo(al1.x, al1.y);
 			ctx_grid.stroke();
@@ -470,6 +464,8 @@ function reset_canvas() {
 			var increment = window.CURRENT_SCENE_DATA.hpps;
 			ctx_grid.lineWidth = 1;
 			var skip = true;
+
+			ctx_grid.beginPath();
 			for (var i = startX; i < $("#scene_map").width(); i = i + increment) {
 				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
 					skip = false;
@@ -478,15 +474,15 @@ function reset_canvas() {
 				else {
 					skip = true;
 				}
-
-				ctx_grid.beginPath();
 				ctx_grid.moveTo(i, 0);
 				ctx_grid.lineTo(i, $("#scene_map").height());
-				ctx_grid.stroke();
-
 			}
+			ctx_grid.stroke();
+
 			var increment = window.CURRENT_SCENE_DATA.vpps;
 			skip = true;
+
+			ctx_grid.beginPath();
 			for (var i = startY; i < $("#scene_map").height(); i = i + increment) {
 				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
 					skip = false;
@@ -495,11 +491,10 @@ function reset_canvas() {
 				else {
 					skip = true;
 				}
-				ctx_grid.beginPath();
 				ctx_grid.moveTo(0, i);
 				ctx_grid.lineTo($("#scene_map").width(), i);
-				ctx_grid.stroke();
 			}
+			ctx_grid.stroke();
 		}
 		//alert('sopravvissuto');
 	}
@@ -787,8 +782,6 @@ function drawing_mousemove(e) {
 				ctx.beginPath();
 				ctx.moveTo(window.BEGIN_MOUSEX + i * (width / 3.0), window.BEGIN_MOUSEY);
 				ctx.lineTo(window.BEGIN_MOUSEX + i * (width / 3.0), window.BEGIN_MOUSEY + height);
-				ctx.stroke();
-				ctx.beginPath();
 				ctx.moveTo(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY + i * (height / 3.0));
 				ctx.lineTo(window.BEGIN_MOUSEX + width, window.BEGIN_MOUSEY + i * (height / 3.0));
 				ctx.stroke();
