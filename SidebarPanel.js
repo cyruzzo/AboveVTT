@@ -181,7 +181,7 @@ class SidebarPanel {
       };
     }
     
-    let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`)
+    let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`);
     let urlInput = $(`<input title="${titleText}" placeholder="https://..." name="addCustomImage" type="text" />`);
     urlInput.on('keyup', function(event) {
       let imageUrl = event.target.value;
@@ -219,6 +219,48 @@ class SidebarPanel {
   }
 
   
+  build_select_input(labelText, input) {
+    let wrapper = $(`
+      <div class="token-image-modal-footer-select-wrapper">
+        <div class="token-image-modal-footer-title">${labelText}</div>
+      </div>
+    `);
+    wrapper.append(input);
+    return wrapper;
+  }
+
+  build_toggle_input(name, labelText, enabled, enabledHoverText, disabledHoverText, changeHandler) {
+    if (typeof changeHandler !== 'function') {
+      changeHandler = function(){};
+    }
+    let wrapper = $(`
+      <div class="token-image-modal-footer-select-wrapper sidebar-hovertext">
+        <div class="token-image-modal-footer-title">${labelText}</div>
+      </div>
+    `);
+    let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
+    if (enabled) {
+      input.addClass("rc-switch-checked");
+      wrapper.attr("data-hover", enabledHoverText);
+    } else {
+      wrapper.attr("data-hover", disabledHoverText);
+    }
+    wrapper.append(input);
+    input.click(function(clickEvent) {
+      if ($(clickEvent.currentTarget).hasClass("rc-switch-checked")) {
+        // it was checked. now it is no longer checked
+        $(clickEvent.currentTarget).removeClass("rc-switch-checked");
+        wrapper.attr("data-hover", disabledHoverText);
+        changeHandler(name, false);
+      } else {
+        // it was not checked. now it is checked
+        $(clickEvent.currentTarget).addClass("rc-switch-checked");
+        wrapper.attr("data-hover", enabledHoverText);
+        changeHandler(name, true);
+      }
+    });
+    return wrapper;
+  }
 
   //#endregion UI Construction
 }

@@ -1011,22 +1011,21 @@ function build_custom_token_form_footer(sidebarPanel, path, name, token) {
 		close_sidebar_modal();
 	});
 
-	const selectWrapper = function(labelText, input) {
-		let wrapper = $(`<div class="token-image-modal-footer-select-wrapper"><div class="token-image-modal-footer-title">${labelText}</div></div>`);
-		wrapper.append(input);
-		input.change(function(event) {
-			submit_custom_token_form(sidebarPanel, path);
-		});
-		return wrapper;
-	};
+	const onChange = function() {
+		submit_custom_token_form(sidebarPanel, path);
+	}
+	tokenSizeInput.change(onChange);
+	tokenTypeInput.change(onChange);
+	hideBorderInput.change(onChange);
+	aspectRatioInput.change(onChange);
 
 	inputWrapper.append($(`<div class="token-image-modal-footer-title" style="width:100%;padding-left:0px">Token Name</div>`));
 	inputWrapper.append(nameInput);
-	inputWrapper.append(selectWrapper("Token Size", tokenSizeInput));
+	inputWrapper.append(sidebarPanel.build_select_input("Token Size", tokenSizeInput));
 	inputWrapper.append(`<div class="sidebar-panel-header-explanation" style="padding-bottom:6px;">The following will override global settings for this token. Global settings can be changed in the settings tab.</div>`)
-	inputWrapper.append(selectWrapper("Token Shape", tokenTypeInput)); // class token-round
-	inputWrapper.append(selectWrapper("Border Visibility", hideBorderInput)); // border-width: 4
-	inputWrapper.append(selectWrapper("Aspect Ratio", aspectRatioInput)); // class preserve-aspect-ratio
+	inputWrapper.append(sidebarPanel.build_select_input("Token Shape", tokenTypeInput));        // adds class token-round
+	inputWrapper.append(sidebarPanel.build_select_input("Border Visibility", hideBorderInput)); // sets border-width: 4
+	inputWrapper.append(sidebarPanel.build_select_input("Aspect Ratio", aspectRatioInput));     // adds class preserve-aspect-ratio
 	inputWrapper.append(saveButton);
 
 }
