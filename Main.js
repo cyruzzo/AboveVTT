@@ -1427,7 +1427,6 @@ function init_ui() {
 				dmonly: dmonly,
 			};
 			if(validateUrl(text)){
-				data.originalText = text;
 				data.text = `
 					<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>
 					<img width=200 class='magnify' href='${parse_img(text)}' src='${parse_img(text)}' alt='Chat Image' style='display: none'/>

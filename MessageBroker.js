@@ -174,7 +174,7 @@ class MessageBroker {
 				for(var i=0;i<pend_length;i++){
 					var current=self.chat_pending_messages.shift();
 					
-					var injection_id=data.messageId ?? current.data.rolls[0].rollType;
+					var injection_id=current.data.rolls[0].rollType;
 					var injection_data=current.data.injected_data;
 					console.log(injection_id);
 					console.log(injection_data);
@@ -183,8 +183,8 @@ class MessageBroker {
 					$(".DiceMessage_RollType__wlBsW").each(function(){
 						if($(this).text()==injection_id){
 							found=true;
-							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let li = $(this).closest("li");
+							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let oldheight=li.height();
 							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 							if(newlihtml=="")
