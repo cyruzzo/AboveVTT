@@ -174,7 +174,7 @@ class MessageBroker {
 				for(var i=0;i<pend_length;i++){
 					var current=self.chat_pending_messages.shift();
 					
-					var injection_id=current.data.rolls[0].rollType;
+					var injection_id=data.messageId ?? current.data.rolls[0].rollType;
 					var injection_data=current.data.injected_data;
 					console.log(injection_id);
 					console.log(injection_data);
@@ -182,33 +182,21 @@ class MessageBroker {
 					var found=false;
 					$(".DiceMessage_RollType__wlBsW").each(function(){
 						if($(this).text()==injection_id){
-							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							found=true;
-							let li =$(this).closest("li");
-							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
-							if(newlihtml=="")
-								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
-								
-							li.animate({ opacity: 0 }, 250, function() {
-								li.html(newlihtml);
-								let neweight = li.height();
-								li.height(oldheight);
-								li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
-								li.find(".magnify").magnificPopup({type: 'image', closeOnContentClick: true });
+							console.log("TROVATOOOOOOOOOOOOOOOOO");
+							let li = $(this).closest("li");
+							// post the chat message as is
+							self.postChatMessage(li, injection_data, current);
+							// if the chat message is a link, check if it's a valid image link
+							// use a callback that calls postChatMessage to the same element with the updated injection data
+							let postImage = (isImg, element, injection_data, current) => {
+								if (!isImg) return;
 
-								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
-									let btn = $("<button>Show to Players</button>")
-									li.append(btn);
-									btn.click(() => {
-										li.css("display", "none");
-										delete injection_data.dmonly;
-										self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
-									});
-								}
-							});
-							
-							
+								let text = injection_data.originalText ?? injection_data.text;
+								text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+								self.postChatMessage(element, {...injection_data, text}, current);
+							};
+							checkImage(injection_data.originalText ?? injection_data.text, (isImg) => postImage(isImg, li, injection_data, current));
 						}
 					});
 					if(!found){
@@ -226,6 +214,34 @@ class MessageBroker {
 				}
 			},500);
 		}
+	}
+
+	
+
+	postChatMessage(li, injection_data, current) {
+		let self = this;
+		let oldheight=li.height();
+		var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+		if(newlihtml=="")
+			li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
+			
+		li.animate({ opacity: 0 }, 250, function() {
+			li.html(newlihtml);
+			let neweight = li.height();
+			li.height(oldheight);
+			li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
+			li.find(".magnify").magnificPopup({type: 'image', closeOnContentClick: true });
+
+			if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
+				let btn = $("<button>Show to Players</button>")
+				li.append(btn);
+				btn.click(() => {
+					li.css("display", "none");
+					delete injection_data.dmonly;
+					self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
+				});
+			}
+		});
 	}
 
 	constructor() {

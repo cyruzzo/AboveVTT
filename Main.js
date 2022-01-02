@@ -26,6 +26,27 @@ function checkImage(url, callback){
 	image.src = parse_img(url);
 }
 
+function sendLinkOrImage(text, dmonly, whisper, isImg) {
+	let originalText = text;
+	if (isImg) {
+		text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+	} else {
+		text=`<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`;
+	}
+	data = {
+		player: window.PLAYER_NAME,
+		img: window.PLAYER_IMG,
+		text: text,
+		dmonly: dmonly,
+		originalText: originalText
+	};
+
+	if(whisper)
+		data.whisper=whisper;
+
+	window.MB.inject_chat(data);
+}
+
 function whenAvailable(name, callback) {
     var interval = 10; // ms
     window.setTimeout(function() {
@@ -1436,27 +1457,9 @@ function init_ui() {
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
 
-			sendLinkOrImage = (text, dmonly, whisper, isImg) => {
-				if (isImg) {
-					text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
-				} else {
-					text=`<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`;
-				}
-				data = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: text,
-					dmonly: dmonly,
-				};
-	
-				if(whisper)
-					data.whisper=whisper;
-	
-				window.MB.inject_chat(data);
-			}
-
 			if(validateUrl(text)){
-				checkImage(text, (isImg) => sendLinkOrImage(text, dmonly, whisper, isImg));
+				// checkImage(text, (isImg) => sendLinkOrImage(text, dmonly, whisper, isImg));
+				sendLinkOrImage(text, dmonly, whisper, false);
 			} else {
 				data = {
 					player: window.PLAYER_NAME,
