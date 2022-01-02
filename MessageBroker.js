@@ -196,7 +196,10 @@ class MessageBroker {
 								text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
 								self.postChatMessage(element, {...injection_data, text}, current);
 							};
-							checkImage(injection_data.originalText ?? injection_data.text, (isImg) => postImage(isImg, li, injection_data, current));
+							// originalText will only be set if the text was converted into a link.
+							if (injection_data.originalText != null) {
+								checkImage(injection_data.originalText, (isImg) => postImage(isImg, li, injection_data, current));
+							}
 						}
 					});
 					if(!found){
