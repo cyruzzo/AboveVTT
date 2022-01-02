@@ -187,18 +187,6 @@ class MessageBroker {
 							let li = $(this).closest("li");
 							// post the chat message as is
 							self.postChatMessage(li, injection_data, current);
-							// if the chat message is a link, check if it's a valid image link
-							// originalText will only be set if the text was converted into a link.
-							if (injection_data.originalText != null) {
-								// use a callback that calls postChatMessage to the same element with the updated injection data
-								checkImage(injection_data.originalText, (isImg) => {
-									if (!isImg) return;
-	
-									let text = injection_data.originalText ?? injection_data.text;
-									text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
-									self.postChatMessage(li, {...injection_data, text}, current);
-								});
-							}
 						}
 					});
 					if(!found){
@@ -230,7 +218,16 @@ class MessageBroker {
 			let neweight = li.height();
 			li.height(oldheight);
 			li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
-			li.find(".magnify").magnificPopup({type: 'image', closeOnContentClick: true });
+			let img = li.find(".magnify");
+			if (img) {
+				img[0].onload = () => {
+					if (img[0].naturalWidth > 0) {
+						img.magnificPopup({type: 'image', closeOnContentClick: true });
+						li.find('.chat-link')[0].style.display = 'none';
+						img[0].style.display = 'block';
+					}
+				}
+			}
 
 			if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
 				let btn = $("<button>Show to Players</button>")

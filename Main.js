@@ -11,21 +11,6 @@ function parse_img(url){
 	return retval;
 }
 
-function checkImage(url, callback){
-	var image = new Image();
-	image.onload = function() {
-		if (this.width > 0) {
-			callback(true);
-		} else {
-			callback(false)
-		}
-	}
-	image.onerror = function() {
-		callback(false);
-	}
-	image.src = parse_img(url);
-}
-
 function whenAvailable(name, callback) {
     var interval = 10; // ms
     window.setTimeout(function() {
@@ -36,7 +21,6 @@ function whenAvailable(name, callback) {
         }
     }, interval);
 }
-
 
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
@@ -1444,7 +1428,10 @@ function init_ui() {
 			};
 			if(validateUrl(text)){
 				data.originalText = text;
-				data.text = `<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>`
+				data.text = `
+					<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>
+					<img width=200 class='magnify' href='${parse_img(text)}' src='${parse_img(text)}' alt='Chat Image' style='display: none'/>
+				`
 			}
 			if(whisper)
 				data.whisper=whisper;
