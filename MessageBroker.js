@@ -188,17 +188,16 @@ class MessageBroker {
 							// post the chat message as is
 							self.postChatMessage(li, injection_data, current);
 							// if the chat message is a link, check if it's a valid image link
-							// use a callback that calls postChatMessage to the same element with the updated injection data
-							let postImage = (isImg, element, injection_data, current) => {
-								if (!isImg) return;
-
-								let text = injection_data.originalText ?? injection_data.text;
-								text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
-								self.postChatMessage(element, {...injection_data, text}, current);
-							};
 							// originalText will only be set if the text was converted into a link.
 							if (injection_data.originalText != null) {
-								checkImage(injection_data.originalText, (isImg) => postImage(isImg, li, injection_data, current));
+								// use a callback that calls postChatMessage to the same element with the updated injection data
+								checkImage(injection_data.originalText, (isImg) => {
+									if (!isImg) return;
+	
+									let text = injection_data.originalText ?? injection_data.text;
+									text="<img width=200 class='magnify' href=" + parse_img(text) + " src='" + parse_img(text) + "' alt='Chat Image'>";
+									self.postChatMessage(li, {...injection_data, text}, current);
+								});
 							}
 						}
 					});
