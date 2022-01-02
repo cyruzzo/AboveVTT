@@ -434,7 +434,15 @@ function place_player_token(playerId, hidden, specificImage, eventPageX, eventPa
 		disableborder: window.TOKEN_SETTINGS['disableborder'],
 		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio'],
 		disablestat: window.TOKEN_SETTINGS['disablestat'],
-		color: "#" + get_player_token_border_color(pc.sheet)
+		color: "#" + get_player_token_border_color(pc.sheet),
+		//Doing this the long way because no looping
+
+		strength_save: playerData.abilities[0]['save'],
+		dexterity_save: playerData.abilities[1]['save'],
+		constitution_save: playerData.abilities[2]['save'],
+		intelligence_save: playerData.abilities[3]['save'],
+		wisdom_save: playerData.abilities[4]['save'],
+		charisma_save: playerData.abilities[5]['save'],
 	};
 
 	if (specificImage !== undefined) {
