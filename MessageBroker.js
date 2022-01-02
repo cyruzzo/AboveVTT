@@ -185,8 +185,39 @@ class MessageBroker {
 							found=true;
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let li = $(this).closest("li");
-							// post the chat message as is
-							self.postChatMessage(li, injection_data, current);
+							let oldheight=li.height();
+							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+							if(newlihtml=="")
+								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
+								
+							li.animate({ opacity: 0 }, 250, function() {
+								li.html(newlihtml);
+								let neweight = li.height();
+								li.height(oldheight);
+								li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
+
+								let img = li.find(".magnify");
+								img.magnificPopup({type: 'image', closeOnContentClick: true });
+
+								if (img[0]) {
+									img[0].onload = () => {
+										if (img[0].naturalWidth > 0) {
+											li.find('.chat-link')[0].style.display = 'none';
+											img[0].style.display = 'block';
+										}
+									}
+								}
+
+								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
+									let btn = $("<button>Show to Players</button>")
+									li.append(btn);
+									btn.click(() => {
+										li.css("display", "none");
+										delete injection_data.dmonly;
+										self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
+									});
+								}
+							});
 						}
 					});
 					if(!found){
@@ -208,37 +239,7 @@ class MessageBroker {
 
 	postChatMessage(li, injection_data, current) {
 		let self = this;
-		let oldheight=li.height();
-		var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
-		if(newlihtml=="")
-			li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
-			
-		li.animate({ opacity: 0 }, 250, function() {
-			li.html(newlihtml);
-			let neweight = li.height();
-			li.height(oldheight);
-			li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
-			let img = li.find(".magnify");
-			if (img) {
-				img[0].onload = () => {
-					if (img[0].naturalWidth > 0) {
-						img.magnificPopup({type: 'image', closeOnContentClick: true });
-						li.find('.chat-link')[0].style.display = 'none';
-						img[0].style.display = 'block';
-					}
-				}
-			}
-
-			if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
-				let btn = $("<button>Show to Players</button>")
-				li.append(btn);
-				btn.click(() => {
-					li.css("display", "none");
-					delete injection_data.dmonly;
-					self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
-				});
-			}
-		});
+		
 	}
 
 	constructor() {
