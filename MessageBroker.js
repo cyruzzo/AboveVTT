@@ -237,11 +237,6 @@ class MessageBroker {
 		}
 	}
 
-	postChatMessage(li, injection_data, current) {
-		let self = this;
-		
-	}
-
 	constructor() {
 		var self = this;
 		
