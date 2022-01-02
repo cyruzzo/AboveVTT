@@ -319,7 +319,6 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 	}
 }
 
-
 function build_monster_customization_item(monsterId, monsterName, imageUrl, customImgIndex, placedToken) {
 	let tokenDiv = build_custom_token_item(monsterName, imageUrl, undefined, customImgIndex, placedToken);
 	tokenDiv.attr("data-monster", monsterId);

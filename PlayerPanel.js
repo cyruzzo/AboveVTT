@@ -257,9 +257,6 @@ function get_higher_res_url(thumbnailUrl) {
 	return thumbnailUrl.replace(/\/thumbnails(\/\d+\/\d+\/)\d+\/\d+\//, '$1');
 }
 
-
-
-
 function read_player_token_customizations() {
 	let customMappingData = localStorage.getItem('PlayerTokenCustomization');
 	if (customMappingData !== undefined && customMappingData != null) {
