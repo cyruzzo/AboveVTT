@@ -2694,9 +2694,15 @@ function open_roll_menu() {
 			
 			save_drop = $("#roll_menu_header").children('select')
 			score_bonus = Math.floor((x.options[save_drop.val()] - 10) /2 )
-			if (x.options[`${save_drop.value}_save`]){
-				score_bonus += x.options.prof_bonus
+			if (x.options[`${save_drop.val()}_save`]){
+				if(x.options.monster > 0){
+					score_bonus += x.options.prof_bonus
+				}
+				else {
+					score_bonus = x.options[`${save_drop.val()}_save`]
+				}
 			}
+
 			if (score_bonus >= 0){
 				score_bonus = "+"+score_bonus;
 			}
@@ -2708,7 +2714,7 @@ function open_roll_menu() {
 					modifier = modifier.replace(/[^\d.-]/g, '');
 					dice = '2d20kh1';
 				}
-				else if (modifier.includes("a") == true) {
+				else if (modifier.includes("d") == true) {
 					modifier = modifier.replace(/[^\d.-]/g, '');
 					dice = '2d20kl1';
 				}
