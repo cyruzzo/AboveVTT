@@ -2714,11 +2714,11 @@ function open_roll_menu(e) {
 				var modifier = y.val().toLowerCase()
 				if (modifier.includes("a") == true) {
 					modifier = modifier.replace(/[^\d.-]/g, '');
-					dice = '2d20kh1';
+					dice = '2d20kh1 +';
 				}
 				else if (modifier.includes("d") == true) {
 					modifier = modifier.replace(/[^\d.-]/g, '');
-					dice = '2d20kl1';
+					dice = '2d20kl1 +';
 				}
 			}
 			else {
@@ -2838,7 +2838,7 @@ function add_to_roll_menu(token) {
 
 	name_line = $("<div style='width:100px;'>"+token.options.name+"</div>")
 
-	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' maxlength=3 style='font-size:12px; margin: 1px 1px;' > </input>`);
+	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' style='font-size:12px; margin: 1px 1px;' > </input>`);
 	bonus_input.css('width','30px');
 	bonus_input.css('-webkit-appearance','none');
 
