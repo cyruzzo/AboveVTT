@@ -1503,7 +1503,7 @@ function menu_callback(key, options, event) {
 	}
 	
 	if (key == 'quick_roll_menu') {
-		open_roll_menu()
+		open_roll_menu(event)
 		id = $(this).attr('data-id');
 		add_to_roll_menu(window.TOKEN_OBJECTS[id])						
 	}
@@ -1747,7 +1747,7 @@ function multiple_callback(key, options, event) {
 		});
 	}
 	if (key == 'group_roll') {
-		open_roll_menu()
+		open_roll_menu(event)
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			add_to_roll_menu(window.TOKEN_OBJECTS[id])
@@ -2614,7 +2614,7 @@ function undo_delete_tokens() {
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 }
 
-function open_roll_menu() {
+function open_roll_menu(e) {
 	//opens a roll menu for group rolls 
 	console.log("Opening Roll menu")
 	$("#group_roll_dialog").remove();
@@ -2623,8 +2623,8 @@ function open_roll_menu() {
 	roll_dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 	roll_dialog.css('overflow', 'auto');
 	roll_dialog.css('width', '380px');
-	roll_dialog.css('top', '200px');
-	roll_dialog.css('left', '300px');
+	roll_dialog.css('top', e.clientY+'px');
+	roll_dialog.css('left', e.clientX+'px');
 	roll_dialog.css('height', '250px');
 	roll_dialog.css('z-index', 1);
 	roll_dialog.css('border', 'solid 2px black');
