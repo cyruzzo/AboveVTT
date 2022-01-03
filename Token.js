@@ -2179,6 +2179,8 @@ function token_menu() {
 					if (!id.endsWith(window.PLAYER_ID)) {
 						delete ret.items.sep3;
 						delete ret.items.imgsrcSelect;
+						delete ret.items.quick_roll_menu
+
 					}
 				}
 
