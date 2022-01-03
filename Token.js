@@ -2620,15 +2620,15 @@ function open_roll_menu() {
 	roll_dialog = $("<div id='group_roll_dialog'></div>");
 	roll_dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 	roll_dialog.css('overflow', 'auto');
-	roll_dialog.css('width', '370px');
+	roll_dialog.css('width', '380px');
 	roll_dialog.css('top', '200px');
 	roll_dialog.css('left', '300px');
 	roll_dialog.css('height', '250px');
 	roll_dialog.css('z-index', 9);
-	roll_dialog.css('border', 'solid 1px black');
+	roll_dialog.css('border', 'solid 2px black');
 	roll_dialog.css('display', 'flex');
+	roll_dialog.css('margin', '1px 1px')
 	roll_dialog.css('flex-direction', 'column');
-
 
 	$(roll_dialog).draggable();
 
@@ -2640,7 +2640,6 @@ function open_roll_menu() {
 	roll_menu_header.append($('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc"></input>'))
 
 	save_type_dropdown = $('<select id="save_dropdown" class="dropbtn"" onchange="save_type_change(this)">Save Type</select>')
-	//save_type_dropdown.append($('<option value="0"> Save type </option>'))
 	save_type_dropdown.append($('<option value="dexterity">Dexterity</option>'))
 	save_type_dropdown.append($('<option value="wisdom">Wisdom</option>'))
 	save_type_dropdown.append($('<option value="constitution">Constitution</option>'))
@@ -2648,12 +2647,25 @@ function open_roll_menu() {
 	save_type_dropdown.append($('<option value="intelligence">Intelligence</option>'))
 	save_type_dropdown.append($('<option value="charisma">Charisma</option>'))
 	
-	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage"></input>')
-	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Save Success Damage"></input>')
+	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll"></input>')
+	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage"></input>')
 	
-	damage_input.keyup(function(){
+	damage_input.change(function(){
 		//console.log(this.value)
-		$("#half_damage_save").val(Math.floor($('#damage_failed_save').val()/2));
+		_dmg = $('#damage_failed_save').val();
+		if (_dmg.includes('d')) {
+			var expression = _dmg
+			console.log(expression)
+			var roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			//reassign to the input 
+			_dmg = roll.total
+			$('#damage_failed_save').val(_dmg);
+		}
+		else {
+			_dmg.replace(/[^\d.-]/g, '')
+		}
+		$("#half_damage_save").val(Math.floor(_dmg/2));
 	});
 
 	roll_menu_header.append(damage_input)
@@ -2663,15 +2675,15 @@ function open_roll_menu() {
 	let roll_form = $("<form />");
 	roll_menu_body = $("<div id='roll_menu_body' class='roll_menu_body'></div>");
 	//roll_form.append(roll_dialog_content)
-	roll_menu_body.append($('<span>(+- for custom bonus, add a "A" or "D" for Adv/Disadv)</span>'))
+	roll_menu_body.append($('<span> Use +- for custom bonus, add a "A" or "D" for Adv/Disadv </span>'))
 	roll_menu_body.append(roll_form)
 
-	roll_cancel = $("<button>Cancel</button>");
+	roll_cancel = $("<button style='margin: 1px 1px; float: right; font-size:14px;'>Cancel</button>");
 	roll_cancel.click(function() {
 		$("#group_roll_dialog").remove();
 	});
 
-	roll_button = $("<button>Roll!</button>");
+	roll_button = $("<button style='margin: 1px 1px; font-size:14px;'>Roll!</button>");
 	roll_button.click(function() {
 		$('#roll_menu_footer').children('#apply_damage').show()
 		$("#roll_menu_body").children('tr').each(function (){
@@ -2713,24 +2725,28 @@ function open_roll_menu() {
 			
 			save_dc = $("#roll_menu_header").children('#save_dc').val()
 
-			pass_fail_label = $(this).children('span')[0]
-			
+			pass_fail_label = $(this).children('#save_fail_label')[0]
+			$(pass_fail_label).show()
+
 			if (save_dc != ""){
 				if (parseInt(roll.total) >= parseInt(save_dc)){
 					pass_fail_label.innerHTML = '  Success!'
+					$(pass_fail_label).css('background', 'green')
 				}
 				else {
 					pass_fail_label.innerHTML = '  Fail!'
+					$(pass_fail_label).css('background', 'red')
 				}
 			}
 			else {//if not defined apply full damage.
 				pass_fail_label.innerHTML = '  No DC (Auto-Fail)'
+				//$(pass_fail_label).css('background', 'red')
 			}
 			
 		});
 	});
 
-	update_hp = $("<button id=apply_damage> Apply Damage </button>");
+	update_hp = $("<button id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage </button>");
 	update_hp.click(function() {
 		$("#roll_menu_body").children('tr').each(function (){
 			update_hp=$(this).children("#hp");
@@ -2739,6 +2755,9 @@ function open_roll_menu() {
 				let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
 				damage_failed_save = $("#roll_menu_header").children('#damage_failed_save').val()
 				half_damage_save_success = $("#roll_menu_header").children('#half_damage_save').val()
+
+				damage_failed_save = damage_failed_save.replace(/[^\d.-]/g, '');
+				half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
 
 				save_dc = $("#roll_menu_header").children('#save_dc').val()
 
@@ -2785,9 +2804,10 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.css("height","30px");
 	roll_menu_entry.attr("data-target", token.options.id);	
 
-	img=$("<img width=40 height=40 class='Avatar_AvatarPortrait__2dP8u'>");
+	img=$("<img width=45 height=45 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
+	img.css('margin', '2px 2px');
 	roll_menu_entry.append($("<td/>").append(img));
 
 	if(token.options.monster > 0){
@@ -2806,8 +2826,10 @@ function add_to_roll_menu(token) {
 		}
 	}
 
-	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' maxlength=3 style='font-size:12px;'> </input>`);
-	bonus_input.css('width','30px');
+	name_line = $("<div style='width:10%;'>"+token.options.name+"</div>")
+
+	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' maxlength=3 style='font-size:12px; margin: 1px 1px;' > </input>`);
+	bonus_input.css('width','35px');
 	bonus_input.css('-webkit-appearance','none');
 
 	bonus_input.val(score_bonus);
@@ -2815,16 +2837,18 @@ function add_to_roll_menu(token) {
 	hp=$("<div class='hp'></div>");
 	hp.text(token.options.hp);
 	
-	hp.css('font-size','11px');
-	
+	hp.css('font-size','12px');
+
+	roll_menu_entry.append(name_line);
 	roll_menu_entry.append($("<td/>").append(hp));
+
 	max_hp=$("<div/>");
 	max_hp.text("/"+token.options.max_hp);
-	max_hp.css('font-size','11px');
+	max_hp.css('font-size','12px');
 	
 	roll_menu_entry.append($("<td/>").append(max_hp));
 	
-	find=$("<button style='font-size:10px;'>Find</button>");
+	find=$("<button style='font-size:12px; margin: 1px 1px;'>Find</button>");
 	find.click(function(){
 		var target=$(this).parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
@@ -2834,7 +2858,7 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(bonus_input)
 	roll_menu_entry.append(find);
 	
-	remove_from_list=$("<button style='font-size:10px;'>Remove</button>");
+	remove_from_list=$("<button style='font-size:12px;margin: 1px 1px;'>Remove</button>");
 	remove_from_list.click(
 		function() {
 			console.log('Removing from list')
@@ -2844,7 +2868,7 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(remove_from_list);
 	
 	if(token.options.monster > 0){
-		stat=$("<button style='font-size:10px;'>Stats</button>");
+		stat=$("<button style='font-size:12px;margin: 1px 1px;'>Stats</button>");
 		
 		stat.click(function(){
 			iframe_id="#iframe-monster-"+token.options.monster;
@@ -2858,14 +2882,14 @@ function add_to_roll_menu(token) {
 		roll_menu_entry.append(stat);
 	}	
 	else {
-		stat=$("<button style='font-size:10px;'>Stats</button>");
+		stat=$("<button style='font-size:12px; margin: 1px 1px;'>Stats</button>");
 		stat.click(function(){
 			open_player_sheet(token.options.id);
 		});
 		roll_menu_entry.append(stat);
 	}
 
-	roll_menu_entry.append("<span id=save_fail_label> </span>")
+	roll_menu_entry.append("<div id=save_fail_label> </div>")
 	
 	//$("#group_roll_dialog").append(roll_menu_entry)
 	$("#roll_menu_body").append(roll_menu_entry)
@@ -2892,6 +2916,9 @@ function save_type_change(dropdown) {
 				score_bonus = "+"+score_bonus;
 			}
 		}
+		let label = $(this).children('#save_fail_label')
+		$(label).hide()
+
 		//console.log($(this).children('input'))
 		$(this).children('input').val(score_bonus);
 		
