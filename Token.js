@@ -2624,7 +2624,7 @@ function open_roll_menu() {
 	roll_dialog.css('top', '200px');
 	roll_dialog.css('left', '300px');
 	roll_dialog.css('height', '250px');
-	roll_dialog.css('z-index', 9);
+	roll_dialog.css('z-index', 1);
 	roll_dialog.css('border', 'solid 2px black');
 	roll_dialog.css('display', 'flex');
 	roll_dialog.css('margin', '1px 1px')
@@ -2637,9 +2637,11 @@ function open_roll_menu() {
 	roll_dialog.empty();
 
 	roll_menu_header = $("<div id='roll_menu_header' class=roll_menu_header ></div>");
-	roll_menu_header.append($('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc"></input>'))
+	roll_menu_dc_input = $('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc"></input>')
 
-	save_type_dropdown = $('<select id="save_dropdown" class="dropbtn"" onchange="save_type_change(this)">Save Type</select>')
+	roll_menu_header.append(roll_menu_dc_input)
+
+	save_type_dropdown = $('<select id="save_dropdown" class="dropbtn" onchange="save_type_change(this)">Save Type</select>')
 	save_type_dropdown.append($('<option value="dexterity">Dexterity</option>'))
 	save_type_dropdown.append($('<option value="wisdom">Wisdom</option>'))
 	save_type_dropdown.append($('<option value="constitution">Constitution</option>'))
@@ -2647,9 +2649,9 @@ function open_roll_menu() {
 	save_type_dropdown.append($('<option value="intelligence">Intelligence</option>'))
 	save_type_dropdown.append($('<option value="charisma">Charisma</option>'))
 	
-	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll"></input>')
-	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage"></input>')
-	
+	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll""></input>')
+	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage""></input>')
+
 	damage_input.change(function(){
 		//console.log(this.value)
 		_dmg = $('#damage_failed_save').val();
@@ -2674,7 +2676,7 @@ function open_roll_menu() {
 
 	let roll_form = $("<form />");
 	roll_menu_body = $("<div id='roll_menu_body' class='roll_menu_body'></div>");
-	//roll_form.append(roll_dialog_content)
+
 	roll_menu_body.append($('<span> Use +- for custom bonus, add a "A" or "D" for Adv/Disadv </span>'))
 	roll_menu_body.append(roll_form)
 
@@ -2804,7 +2806,7 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.css("height","30px");
 	roll_menu_entry.attr("data-target", token.options.id);	
 
-	img=$("<img width=45 height=45 class='Avatar_AvatarPortrait__2dP8u'>");
+	img=$("<img width=42 height=42 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
 	img.css('margin', '2px 2px');
@@ -2826,17 +2828,16 @@ function add_to_roll_menu(token) {
 		}
 	}
 
-	name_line = $("<div style='width:10%;'>"+token.options.name+"</div>")
+	name_line = $("<div style='width:100px;'>"+token.options.name+"</div>")
 
 	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' maxlength=3 style='font-size:12px; margin: 1px 1px;' > </input>`);
-	bonus_input.css('width','35px');
+	bonus_input.css('width','30px');
 	bonus_input.css('-webkit-appearance','none');
 
 	bonus_input.val(score_bonus);
 
 	hp=$("<div class='hp'></div>");
 	hp.text(token.options.hp);
-	
 	hp.css('font-size','12px');
 
 	roll_menu_entry.append(name_line);

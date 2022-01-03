@@ -1766,13 +1766,14 @@ input[type=roll_menu] {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-input[type=roll_menu_roll] {
+input[type=roll_menu_roll]{
     width: 10%;
     padding: 1px 1px;
     margin: 2px 2px;
     box-sizing: border-box;
     display: inline-block;
 }
+
 #roll_menu_header {
     width: 100%;
     padding: 2px 2px;
