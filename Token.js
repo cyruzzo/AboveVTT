@@ -2639,20 +2639,23 @@ function open_roll_menu(e) {
 	roll_dialog.empty();
 
 	roll_menu_header = $("<div id='roll_menu_header' class=roll_menu_header ></div>");
-	roll_menu_dc_input = $('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc"></input>')
+	roll_menu_dc_input = $('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
+	roll_menu_dc_input.tooltip();
 
 	roll_menu_header.append(roll_menu_dc_input)
 
-	save_type_dropdown = $('<select id="save_dropdown" class="dropbtn" onchange="save_type_change(this)">Save Type</select>')
+	save_type_dropdown = $('<select id="save_dropdown" class="dropbtn" onchange="save_type_change(this)" title="Select the type of saving throw to be made. ">Save Type</select>')
 	save_type_dropdown.append($('<option value="dexterity">Dexterity</option>'))
 	save_type_dropdown.append($('<option value="wisdom">Wisdom</option>'))
 	save_type_dropdown.append($('<option value="constitution">Constitution</option>'))
 	save_type_dropdown.append($('<option value="strength">Strength</option>'))
 	save_type_dropdown.append($('<option value="intelligence">Intelligence</option>'))
 	save_type_dropdown.append($('<option value="charisma">Charisma</option>'))
-	
-	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll""></input>')
-	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage""></input>')
+	save_type_dropdown.tooltip()
+	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
+	damage_input.tooltip()
+	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
+	half_damage_input.tooltip()
 
 	damage_input.change(function(){
 		//console.log(this.value)
@@ -2679,7 +2682,7 @@ function open_roll_menu(e) {
 	let roll_form = $("<form />");
 	roll_menu_body = $("<div id='roll_menu_body' class='roll_menu_body'></div>");
 
-	roll_menu_body.append($('<span> Use +- for custom bonus, add a "A" or "D" for Adv/Disadv </span>'))
+	//roll_menu_body.append($('<span> Use +- for custom bonus, add a "A" or "D" for Adv/Disadv </span>'))
 	roll_menu_body.append(roll_form)
 
 	roll_cancel = $("<button style='margin: 1px 1px; float: right; font-size:14px;'>Cancel</button>");
@@ -2838,10 +2841,10 @@ function add_to_roll_menu(token) {
 
 	name_line = $("<div style='width:100px;'>"+token.options.name+"</div>")
 
-	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' style='font-size:12px; margin: 1px 1px;' > </input>`);
+	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' style='font-size:12px; margin: 1px 1px;' title='Use +- for custom bonus, add a "A" or "D" for Adv/Disadv'> </input>`);
 	bonus_input.css('width','30px');
 	bonus_input.css('-webkit-appearance','none');
-
+	bonus_input.tooltip()
 	bonus_input.val(score_bonus);
 
 	hp=$("<div class='hp'></div>");
@@ -2857,7 +2860,8 @@ function add_to_roll_menu(token) {
 	
 	roll_menu_entry.append($("<td/>").append(max_hp));
 	
-	find=$("<button style='font-size:12px; margin: 1px 1px;'>Find</button>");
+	find=$("<button style='font-size:12px; margin: 1px 1px;' title='Find the token on the map.'>Find</button>");
+	find.tooltip()
 	find.click(function(){
 		var target=$(this).parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
@@ -2867,7 +2871,8 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(bonus_input)
 	roll_menu_entry.append(find);
 	
-	remove_from_list=$("<button style='font-size:12px;margin: 1px 1px;'>Remove</button>");
+	remove_from_list=$("<button style='font-size:12px;margin: 1px 1px;' title='Remove this entry from this roll menu.'>Remove</button>");
+	find.tooltip()
 	remove_from_list.click(
 		function() {
 			console.log('Removing from list')
@@ -2877,7 +2882,8 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(remove_from_list);
 	
 	if(token.options.monster > 0){
-		stat=$("<button style='font-size:12px;margin: 1px 1px;'>Stats</button>");
+		stat=$("<button style='font-size:12px;margin: 1px 1px;' title='Open this monster's stat block'>Stats</button>");
+		stat.tooltip()
 		
 		stat.click(function(){
 			iframe_id="#iframe-monster-"+token.options.monster;
@@ -2891,7 +2897,8 @@ function add_to_roll_menu(token) {
 		roll_menu_entry.append(stat);
 	}	
 	else {
-		stat=$("<button style='font-size:12px; margin: 1px 1px;'>Stats</button>");
+		stat=$("<button style='font-size:12px; margin: 1px 1px;' title='Open this character's stat block'>Stats</button>");
+		stat.tooltip()
 		stat.click(function(){
 			open_player_sheet(token.options.id);
 		});
