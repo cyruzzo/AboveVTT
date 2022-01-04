@@ -191,6 +191,34 @@ function edit_scene_dialog(scene_id) {
 	if (typeof scene.fog_of_war == "undefined")
 		scene.fog_of_war = "1";
 
+	var dupe_button = $("<button>Duplicate Scene</button>");
+
+	dupe_button.click(function() {
+		f.find("input").each(function() {
+			var n = $(this).attr('name');
+			let nValue = $(this).val();
+
+			if ( ((n === 'player_map') || (n==='dm_map'))   
+					&& nValue.startsWith("https://drive.google.com")
+					&& nValue.indexOf("uc?id=") < 0
+			) {
+				nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
+			}
+
+			scene[n] = nValue;
+			console.log('setto ' + n + ' a ' + $(this).val());
+		});
+		
+		window.ScenesHandler.scenes.push(JSON.parse(JSON.stringify(scene)))
+		window.ScenesHandler.persist();
+		$("#edit_dialog").remove();
+		$("#scene_selector").removeAttr("disabled");
+		$("#scene_selector_toggle").click();
+		$("#scene_selector_toggle").click();// Reopen?
+
+		//path = scene.folderpath; //Go to the 'folder' of this scene
+	});
+
 	var save_button = $("<button>Save</button>");
 
 	save_button.click(function() {
@@ -217,7 +245,7 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector_toggle").click();
 		$("#scene_selector_toggle").click();// Reopen on just save?
 
-		path = scene.folderpath; //Go to the 'folder' of this scene
+		//path = scene.folderpath; //Go to the 'folder' of this scene
 	});
 
 	var sub = $("<button>Save And Switch</button>");
@@ -742,6 +770,7 @@ function edit_scene_dialog(scene_id) {
 
 	f.append(sub);
 	f.append(save_button);
+	f.append(dupe_button)
 	f.append(cancel);
 	f.append(hide_all_button);
 	//		f.append(export_grid);
