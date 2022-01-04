@@ -2872,7 +2872,7 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(find);
 	
 	remove_from_list=$("<button style='font-size:12px;margin: 1px 1px;' title='Remove this entry from this roll menu.'>Remove</button>");
-	find.tooltip()
+	remove_from_list.tooltip()
 	remove_from_list.click(
 		function() {
 			console.log('Removing from list')
@@ -2882,7 +2882,7 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(remove_from_list);
 	
 	if(token.options.monster > 0){
-		stat=$("<button style='font-size:12px;margin: 1px 1px;' title='Open this monster's stat block'>Stats</button>");
+		stat=$("<button style='font-size:12px;margin: 1px 1px;' title='Open this monster`s stat block'>Stats</button>");
 		stat.tooltip()
 		
 		stat.click(function(){
@@ -2897,7 +2897,7 @@ function add_to_roll_menu(token) {
 		roll_menu_entry.append(stat);
 	}	
 	else {
-		stat=$("<button style='font-size:12px; margin: 1px 1px;' title='Open this character's stat block'>Stats</button>");
+		stat=$("<button style='font-size:12px; margin: 1px 1px;' title='Open this character`s stat block'>Stats</button>");
 		stat.tooltip()
 		stat.click(function(){
 			open_player_sheet(token.options.id);
