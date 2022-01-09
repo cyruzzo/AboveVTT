@@ -2777,17 +2777,32 @@ function open_roll_menu(e) {
 				if (save_dc != "undefined"){
 					if (parseInt(rolled_value) >= parseInt(save_dc)){
 						x.options.hp -= half_damage_save_success
+						damage = half_damage_save_success
 					}
 					else {
 						x.options.hp -= damage_failed_save
+						damage = damage_failed_save
 					}
 				}
 				//if not defined apply full damage.
 				else {
 					x.options.hp -= damage_failed_save
+					damage = damage_failed_save
 				}
-				x.place()
-				update_hp.text(x.options.hp);
+				if(x.options.monster > 0){
+					x.place()
+					update_hp.text(x.options.hp);
+				}
+				else {
+					// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
+					var msgdata = {
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: x.options.name + " takes " + damage +" damage",	
+					};
+					window.MB.inject_chat(msgdata);
+					x.place()
+				}
 			}
 		});
 	});
@@ -2823,6 +2838,7 @@ function add_to_roll_menu(token) {
 	img.css('margin', '2px 2px');
 	roll_menu_entry.append($("<td/>").append(img));
 
+	console.log(token.options)
 	if(token.options.monster > 0){
 		score_bonus = Math.floor((token.options.dexterity - 10) /2 )
 		if (token.options.dexterity_save){
