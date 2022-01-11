@@ -64,6 +64,10 @@ function scan_monster(target, stats) {
 
 		expression = dice + mod;
 		console.log(expression);
+		let sentAsDDB = send_rpg_dice_to_ddb(expression);
+		if (sentAsDDB) {
+			return;
+		}
 		roll = new rpgDiceRoller.DiceRoll(expression);
 
 		let output_beauty = roll.output.replace(/=(.*)/, "= <b>$1</b>")
