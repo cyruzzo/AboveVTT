@@ -1,5 +1,5 @@
 
-function scan_monster(target, stats) {
+function scan_monster(target, stats, token_id=false) {
 	target.find(".mon-stat-block__description-block-content p").each(function(idx, element) {
 
 		$(element).find("span[data-rolltype='to hit']").each(function() {
@@ -30,13 +30,19 @@ function scan_monster(target, stats) {
 		})
 
 
-		// those two covers "text parsing" for things that do not support the new DDB roll notations
+		// these covers "text parsing" for things that do not support the new DDB roll notations
 		description = $(element).html();
 		description = description.replace(/([\+-][0-9]+) to hit/, "<button data-exp='1d20' data-mod='$1' class='above-roll20'>$1</button><button class='above-roll20' data-exp='2d20kh1' data-mod='$1'>A</button><button class='above-roll20' data-exp='2d20kl1' data-mod='$1'>D</button> to hit");
-
-
+		//Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
+		description = description.replace(/([0-9]) slot/, '<input style="font-size: 14px; width: 40px; appearance: none;" type="number" value="$1">/$1</input> slot');
+		//Actions which go #/Day... again probably could refine the regex a bit better.
+		description = description.replace(/([0-9])\/Day/i, '<input style="font-size: 14px; width: 40px; appearance: none;" type="number" value="$1">/$1</input>Day');
+		//Legendary actions which go #/Day... again probably could refine the regex a bit better.
+		description = description.replace(/can take ([0-9]) legendary actions/i, '<input id=legendary_actions style="font-size: 14px; width: 40px; appearance: none;" type="number" value="$1">can take $1 legendary actions</input>');
+		
 		description = description.replaceAll(/\(([0-9]+d[0-9]+( [\+-] [0-9]+)?)\)/g, "(<button data-exp='$1' data-mod='' class='above-roll20'>$1</button><button data-exp='$1' class='above-roll20' data-mod='CRIT'>CRIT</button>)");
 		$(element).html(description);
+		
 		
 	});
 
@@ -64,6 +70,10 @@ function scan_monster(target, stats) {
 
 		expression = dice + mod;
 		console.log(expression);
+		let sentAsDDB = send_rpg_dice_to_ddb(expression);
+		if (sentAsDDB) {
+			return;
+		}
 		roll = new rpgDiceRoller.DiceRoll(expression);
 
 		let output_beauty = roll.output.replace(/=(.*)/, "= <b>$1</b>")
