@@ -307,10 +307,13 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function load_monster_stat(monsterid) {
+function load_monster_stat(monsterid, token_id=false) {
 	$(".monster_frame").hide();
+	
+	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
+	console.log(iframe_id)
+	console.log(token_id)
 
-	iframe_id = "iframe-monster-" + monsterid;
 	if ($("#" + iframe_id).length > 0) {
 		// RENDI VISIBILE
 		oldframe = $("#" + iframe_id);
@@ -384,7 +387,7 @@ function load_monster_stat(monsterid) {
 			}
 
 
-			scan_monster($(event.target).contents(), stats);
+			scan_monster($(event.target).contents(), stats, token_id=token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
 		});
 
