@@ -267,7 +267,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				$(iframe_id).hide();
 			else{
 				$(".monster_frame").hide();
-				load_monster_stat(token.options.monster,this.options.id);
+				load_monster_stat(token.options.monster, token.options.id);
 				}
 		});
 		if(window.DM)
