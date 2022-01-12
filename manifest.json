@@ -2,7 +2,7 @@
   "manifest_version": 2,
 "name": "AboveVTT",
 "description": "Integrated VTT for D&DBeyond",
-"version": "0.66",
+"version": "0.67",
 "content_scripts":[
     {
       "matches":[
