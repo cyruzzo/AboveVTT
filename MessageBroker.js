@@ -191,6 +191,7 @@ class MessageBroker {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
 								// ADD THE "Send To Player Buttons"
+								/* temporarily disable
 								let currentMessage = $(`<div></div>`).append(newlihtml);
 								let timeWrapper = $(`<div style="width:100%;"></div>`); // move time into a wrapper object so we can flex it horizontally with our new button
 								currentMessage.find(".GameLogEntry_MessageContainer__RhcYB").append(timeWrapper);
@@ -202,6 +203,7 @@ class MessageBroker {
 									time.css("float", "right")
 								}
 								newlihtml = currentMessage.html();
+								*/
 							}
 								
 							li.animate({ opacity: 0 }, 250, function() {
