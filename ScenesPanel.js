@@ -208,8 +208,12 @@ function edit_scene_dialog(scene_id) {
 			scene[n] = nValue;
 			console.log('setto ' + n + ' a ' + $(this).val());
 		});
-		
-		window.ScenesHandler.scenes.push(JSON.parse(JSON.stringify(scene)))
+		//copy the scene token and all 
+		duped_scene = JSON.parse(JSON.stringify(scene))
+		//make a new unique id. 
+		duped_scene.id = uuid()
+		duped_scene.title += ' (Duplicated)'
+		window.ScenesHandler.scenes.push(duped_scene)
 		window.ScenesHandler.persist();
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
