@@ -157,13 +157,12 @@ function init_settings(){
 				toggle.click();
 			}
 			if (setting.name == 'hidden') toggle.click();
-			//window.TOKEN_SETTINGS[setting.name] = (settings.name == 'hidden'); // Should be able to remove this line since the click does the exact same thing
 		}
 		persist_token_settings(window.TOKEN_SETTINGS);
 		redraw_settings_panel_token_examples();
 	});
 	body.append(resetToDefaults);
-	resetToDefaults.click(); // Sets the default settings instead of all false.
+	resetToDefaults.click(); // Sets the default token settings
 
 
 	const experimental_features = [
