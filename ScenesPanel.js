@@ -228,7 +228,14 @@ function edit_scene_dialog(scene_id) {
 	save_button.click(function() {
 		f.find("input").each(function() {
 			var n = $(this).attr('name');
-			let nValue = $(this).val();
+			var t = $(this).attr('type');
+			let nValue = null;
+			if (t == "checkbox") {
+				nValue = $(this).prop("checked") ? "1" : "0";
+			}
+			else {
+				nValue = $(this).val();
+			}
 
 			if ( ((n === 'player_map') || (n==='dm_map'))   
 					&& nValue.startsWith("https://drive.google.com")
