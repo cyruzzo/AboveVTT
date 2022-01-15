@@ -128,7 +128,6 @@ function init_settings(){
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
 		let currentValue = window.TOKEN_SETTINGS[setting.name];
-		console.log('CURRENT VALUE: ', currentValue);
 		let inputWrapper = settingsPanel.build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`${name} setting is now ${newValue}`);
 			window.TOKEN_SETTINGS[name] = newValue;
@@ -163,7 +162,6 @@ function init_settings(){
 			if (toggle.hasClass("rc-switch-checked")) {
 				toggle.click();
 			}
-			if (setting.name == 'restrictPlayerMove') toggle.click();
 		}
 		persist_token_settings(window.TOKEN_SETTINGS);
 		redraw_settings_panel_token_examples();
