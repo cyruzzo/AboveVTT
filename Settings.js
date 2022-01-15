@@ -169,8 +169,6 @@ function init_settings(){
 		redraw_settings_panel_token_examples();
 	});
 	body.append(resetToDefaults);
-	resetToDefaults.click(); // Sets the default token settings
-
 
 	const experimental_features = [
 		// {
