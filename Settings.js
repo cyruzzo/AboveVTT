@@ -82,6 +82,12 @@ function init_settings(){
 			disabledDescription: 'New tokens will be movable'
 		},
 		{
+			name: 'restrictPlayerMove',
+			label: 'Restrict Player Movement',
+			enabledDescription: 'Player will not be able to move new tokens',
+			disabledDescription: 'Player will be able to move new tokens'
+		},
+		{
 			name: 'disablestat',
 			label: 'Disable HP/AC',
 			enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
@@ -156,13 +162,11 @@ function init_settings(){
 			if (toggle.hasClass("rc-switch-checked")) {
 				toggle.click();
 			}
-			window.TOKEN_SETTINGS[setting.name] = false;
 		}
 		persist_token_settings(window.TOKEN_SETTINGS);
 		redraw_settings_panel_token_examples();
 	});
 	body.append(resetToDefaults);
-
 
 	const experimental_features = [
 		// {
@@ -255,6 +259,12 @@ function redraw_settings_panel_token_examples() {
 	}
 
 	if (window.TOKEN_SETTINGS['hidestat']) {
+		// anything to show here? This only affects players
+	} else {
+		// anything to show here? This only affects players
+	}
+
+	if (window.TOKEN_SETTINGS['restrictPlayerMove']) {
 		// anything to show here? This only affects players
 	} else {
 		// anything to show here? This only affects players
