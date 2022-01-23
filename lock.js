@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 // basic script to create a simple LOCK file of our external dependencies
 
 const crypto = require('crypto');
@@ -16,7 +18,7 @@ let out = "# This file was generated, to update it run `node lock.js`"
 
 externalDependencies.forEach(file => {
     const fileBuffer = fs.readFileSync(file);
-    const hashSum = crypto.createHash('sha1');
+    const hashSum = crypto.createHash('sha256');
     hashSum.update(fileBuffer);
     const hex = hashSum.digest('hex');
     out += `\n${hex}\t${file}`
