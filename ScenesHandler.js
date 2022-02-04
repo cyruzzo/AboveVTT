@@ -1,20 +1,20 @@
 // Helper functions to check max map size - data from https://github.com/jhildenbiddle/canvas-size
 function get_canvas_max_length() {
-	var version_split = $.browser.version.split(".");
+	var browser = get_browser();
 
-	if ($.browser.mozilla) {
+	if (browser.mozilla) {
 		// Firefox
 		return 32767;		
-	} else if ($.browser.msie) {
+	} else if (browser.msie) {
 		// IE
-		if (version_split[0] >= 11.0) {
+		if (browser >= '11.0') {
 			return 16384;
 		} else {
 			return 8192;
 		}
-	} else if (!$.browser.opera) {
+	} else if (!browser.opera) {
 		// Chrome
-		if (version_split[0] >= 73.0) {
+		if (browser.version >= '73.0') {
 			return 65535;
 		} else {
 			return 32767;
@@ -26,27 +26,24 @@ function get_canvas_max_length() {
 }
 
 function get_canvas_max_area() {
-	var browser_str = "Unknown";	
+	var browser = get_browser();
 	var max_area = 0;
 
-	if ($.browser.mozilla) {
+	if (browser.mozilla) {
 		// Firefox
-		browser_str = "Mozilla Firefox"
 		max_area = (11180 * 11180);
-	} else if ($.browser.msie) {
+	} else if (browser.msie) {
 		// IE
-		browser_str = "Internet Explorer"
 		max_area = (8192 * 8192);		
-	} else if (!$.browser.opera) {
+	} else if (!browser.opera) {
 		// Chrome
-		browser_str = "Chrome"
 		max_area = (16384 * 16384);
 	} else {
 		// Unsupported
 		max_area = (16384 * 16384);
 	}
 
-	console.log("Browser detected as " + browser_str + " with version " + $.browser.version);
+	console.log("Browser detected as " + browser.name + " with version " + browser.version);
 	return max_area;
 }
 
@@ -253,6 +250,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			if (callback != null)
 				callback();
+
+			if (window.EncounterHandler !== undefined) {
+				console.log("Updating avtt encounter");
+				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+			} else {
+				console.log("Not updating avtt encounter");
+			}
 		});
 
 
