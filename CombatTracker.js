@@ -25,7 +25,7 @@ function init_combat_tracker(){
 	ct_list_wrapper.append(ct_area);
 	ct_inside.append(ct_list_wrapper);
 	
-	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 24px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
+	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 42px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
 	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
 	
 	reset_rounds.click(function (){
@@ -267,7 +267,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				$(iframe_id).hide();
 			else{
 				$(".monster_frame").hide();
-				load_monster_stat(token.options.monster);
+				load_monster_stat(token.options.monster, token.options.id);
 				}
 		});
 		if(window.DM)

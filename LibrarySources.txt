@@ -5,31 +5,27 @@ wget https://github.com/cure53/DOMPurify/archive/refs/tags/2.3.3.tar.gz
 tar zxf 2.3.3.tar.gz
 
 sha1sum DOMPurify-2.3.3/dist/purify.min.js
-7445f68a73c8a71c2927ceaeb3a632fc0325cb1b  DOMPurify-2.3.3/dist/purify.min.js
 
-# color-picker.js 
+# color-picker.js
 
 wget https://github.com/taufik-nurrohman/color-picker/archive/refs/tags/v2.2.4.tar.gz
 tar zxvf v2.2.4.tar.gz
 
 ./color-picker-2.2.4/index.min.js  (gets renamed to color-picker.js)
 sha1sum color-picker-2.2.4/index.min.js
-3f14019544c2460be94aec14902b3e3d93aff08d  color-picker-2.2.4/index.min.js
 
 # rpg-dice-roller.bundle.min.js (https://greenimp.github.io/rpg-dice-roller/guide/getting-started.html)
 
 npm -i rpg-dice-roller@4.5.2
 sha1sum node_modules/rpg-dice-roller/lib/umd/bundle.min.js
-02e40d6c4cfd99f8ff4df06cc96778dc46968c07  node_modules/rpg-dice-roller/lib/umd/bundle.min.js
 
 # mousetrap.1.6.5.min.js (https://github.com/ccampbell/mousetrap/archive/refs/tags/1.6.5.tar.gz)
 tar zxvf 1.6.5.tar.gz
 sha1sum mousetrap-1.6.5/mousetrap.min.js
-ca18da6cb4e82fcb57e846928ef97b48ae4ccc39  mousetrap-1.6.5/mousetrap.min.js
 
-# jitsi_external_api.js (npm package lib-jitsi-meet-dist version 2.1.5 )
-npm install lib-jitsi-meet-dist@2.1.5 
-cp node_modules/lib-jitsi-meet-dist/dist/external_api.min.js  jitsi_external_api.js
-sha1sum node_modules/lib-jitsi-meet-dist/dist/external_api.min.js
-070fa5d2355aff9efaa58f229d245dabad3d8f9a  external_api.min.js
+# jitsi_external_api.js (https://meet.jit.si/external_api.js)
+wget https://raw.githubusercontent.com/hypergig/jitsi-external-api/49e66044f1e6e5e6d4afcf16cdb09c26a5172dea/external_api.js
+sha1sum external_api.js
 
+# move files to correct locations
+# update lock file by running `node lock.js`

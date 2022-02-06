@@ -70,6 +70,31 @@ body > button:hover,
     background: #e6e6e6;
 }
 
+.custom-gamelog-message {
+    width: 100%;
+    font-size: 14px;
+    font-family: Roboto,Helvetica,sans-serif;
+    font-weight: 400;
+}
+button.gamelog-to-everyone-button {
+    background-color: rgb(255, 255, 255);
+    border-top: none;
+    border-right: 1px solid rgb(206, 217, 224);
+    border-bottom: 1px solid rgb(206, 217, 224);
+    border-left: 1px solid rgb(206, 217, 224);
+    border-image: initial;
+    border-radius: 0px 0px 4px 4px;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    font-family: "Roboto Condensed", "Arial Narrow", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 0.7rem;
+    line-height: 16px;
+    letter-spacing: 0.4px;
+    color: #5c7080;
+}
+
 .material-icons.md-10 { font-size: 10px; }
 .material-icons.md-12 { font-size: 12px; }
 .material-icons.md-16 { font-size: 16px; }
