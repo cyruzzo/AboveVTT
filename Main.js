@@ -1258,12 +1258,30 @@ function is_supported_version(versionString) {
 	return abovevtt_version >= versionString;
 }
 
+function init_above(){
+	let http_api_gw="https://services.abovevtt.net";
+	window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+
+	$.ajax({
+		url:http_api_gw+"/services?action=getCampaignData&campaign="+window.CAMPAIGN_SECRET,
+		success:function(campaignData){
+			console.log(campaignData);
+			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
+				window.CLOUD=true;
+			}
+			init_ui();
+		}
+	}
+	)
+}
+
 function init_ui() {
 	window.STARTING = true;
 	let searchParams = new URLSearchParams(window.location.search)
-		if(searchParams.has("cloud"))
-			window.CLOUD=true;
-	
 	var gameid = $("#message-broker-client").attr("data-gameId");
 	init_splash();
 	window.TOKEN_OBJECTS = {};
@@ -2137,7 +2155,7 @@ $(function() {
 			window.PLAYER_NAME = name;
 			window.PLAYER_ID = getPlayerIDFromSheet(sheet);
 			window.DM = false;
-			init_ui();
+			init_above();
 		});
 
 		$(this).prepend(newlink);
@@ -2211,7 +2229,7 @@ $(function() {
 			window.PLAYER_NAME = "THE DM";
 			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_ui();
+			init_above();
 		});
 });
 
