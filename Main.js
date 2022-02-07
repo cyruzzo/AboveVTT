@@ -1261,7 +1261,16 @@ function is_supported_version(versionString) {
 function init_above(){
 	let http_api_gw="https://services.abovevtt.net";
 	window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+	let gameid = $("#message-broker-client").attr("data-gameId");
 	let searchParams = new URLSearchParams(window.location.search);
+	let hasData=false;
+	if (localStorage.getItem('ScenesHandler' + gameid) != null){
+		hasData=true;
+	}
+	if (localStorage.getItem('Migrated' + gameid) != null){
+		hasData=false;
+	}
+
 	if(searchParams.has("dev")){
 		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
 	}
@@ -1270,10 +1279,36 @@ function init_above(){
 		url:http_api_gw+"/services?action=getCampaignData&campaign="+window.CAMPAIGN_SECRET,
 		success:function(campaignData){
 			console.log(campaignData);
-			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
+			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){			
 				window.CLOUD=true;
+				init_ui();
 			}
-			init_ui();
+			else{ // CHECK IF THIS IS A NEW CAMPAIGN
+				if (localStorage.getItem('ScenesHandler' + gameid) != null) {
+					console.log("**********UNMIGRATED CAMPAIGN*************");
+					window.CLOUD=false;
+					init_ui();
+				}
+				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
+					$.ajax({
+						url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
+						type:'PUT',
+						contentType:'application/json',
+						data:JSON.stringify({
+							cloud:1
+						}),
+						success: function(){
+							console.log("******* WELCOME TO THE CLOUD*************")
+							window.CLOUD=true;
+							init_ui();
+						}
+					});
+
+				}
+
+
+			}
+			
 		}
 	}
 	)
@@ -2202,9 +2237,9 @@ $(function() {
 	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
-	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
+	/*campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
 	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data, and all active player sheets must be public</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected, or if you cannot view all active player sheets<br><br>");
-	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
+	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");*/
 	campaign_banner.append(delete_button);
 	campaign_banner.append(delete_button2);
 	campaign_banner.hide();
