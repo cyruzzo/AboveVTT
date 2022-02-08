@@ -1260,9 +1260,14 @@ function is_supported_version(versionString) {
 
 function init_above(){
 	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+
 	window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	let gameid = $("#message-broker-client").attr("data-gameId");
-	let searchParams = new URLSearchParams(window.location.search);
+	
 	let hasData=false;
 	if (localStorage.getItem('ScenesHandler' + gameid) != null){
 		hasData=true;
@@ -1271,20 +1276,18 @@ function init_above(){
 		hasData=false;
 	}
 
-	if(searchParams.has("dev")){
-		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-	}
+	
 
 	$.ajax({
 		url:http_api_gw+"/services?action=getCampaignData&campaign="+window.CAMPAIGN_SECRET,
 		success:function(campaignData){
 			console.log(campaignData);
-			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){			
+			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
 				window.CLOUD=true;
 				init_ui();
 			}
 			else{ // CHECK IF THIS IS A NEW CAMPAIGN
-				if (localStorage.getItem('ScenesHandler' + gameid) != null) {
+				if (hasData) {
 					console.log("**********UNMIGRATED CAMPAIGN*************");
 					window.CLOUD=false;
 					init_ui();

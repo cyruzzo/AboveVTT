@@ -37,6 +37,27 @@ function download(data, filename, type) {
 }
 
 
+function cloud_migration(){
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+	let gameid = $("#message-broker-client").attr("data-gameId");
+
+	$.ajax({
+		url:http_api_gw+"/services?action=migrate&campaign="+window.CAMPAIGN_SECRET,
+		type:"POST",
+		contentType:'application/json',
+		data: localStorage.getItem("ScenesHandler"+gameid),
+		success:function(data){
+			localStorage.setItem("Migrated"+gameid,"1");
+			alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
+			location.reload();
+		}
+	});
+}
+
 function init_settings(){
 	
 	let body = settingsPanel.body;
@@ -45,6 +66,8 @@ function init_settings(){
 	body.append(`
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
+		    <p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
+			<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
 			<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
 			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads. 
 			Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
