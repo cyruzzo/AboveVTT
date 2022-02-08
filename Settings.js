@@ -41,6 +41,7 @@ function init_settings(){
 	
 	let body = settingsPanel.body;
 
+	if(!window.CLOUD){
 	body.append(`
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
@@ -54,6 +55,8 @@ function init_settings(){
 			<div>
 		</div>
 	`);
+	}
+
 	$("#input_file").change(import_readfile);
 	
 	body.append(`
