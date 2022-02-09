@@ -65,7 +65,7 @@ function init_settings(){
 	let body = settingsPanel.body;
 
 	
-	if(!window.CLOUD){
+	if((!window.CLOUD) && (!window.FORCED_DM)){
 		body.append(`
 		<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
 		<div class="sidebar-panel-header-explanation">
@@ -74,7 +74,7 @@ function init_settings(){
 		</div>
 		`)
 	}
-	else{
+	else if(window.CLOUD){
 		body.append('<b>Your scenes are stored in the "cloud"</b>');
 	}
 

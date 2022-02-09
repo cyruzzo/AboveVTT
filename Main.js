@@ -511,7 +511,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+"(Nice!)</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+".1 (still Nice!)</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -1287,7 +1287,7 @@ function init_above(){
 				init_ui();
 			}
 			else{ // CHECK IF THIS IS A NEW CAMPAIGN
-				if (hasData) {
+				if (hasData || (window.FORCED_DM)) {
 					console.log("**********UNMIGRATED CAMPAIGN*************");
 					window.CLOUD=false;
 					init_ui();
@@ -2239,9 +2239,9 @@ $(function() {
 	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
-	/*campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
+	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='forcedjoindm'>click here</a>.<br>");
 	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data, and all active player sheets must be public</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected, or if you cannot view all active player sheets<br><br>");
-	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");*/
+	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
 	campaign_banner.append(delete_button2);
 	campaign_banner.hide();
@@ -2268,6 +2268,20 @@ $(function() {
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 			init_above();
 		});
+
+		$(".forcedjoindm").click(function(e) {
+			e.preventDefault();
+			window.DM = true;
+			window.FORCED_DM=true;
+			window.PLAYER_SHEET = false;
+			window.PLAYER_NAME = "THE DM";
+			window.PLAYER_ID = false;
+			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
+			init_above();
+		});
+
+		
+
 });
 
 
