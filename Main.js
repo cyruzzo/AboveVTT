@@ -1293,19 +1293,25 @@ function init_above(){
 					init_ui();
 				}
 				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
-					$.ajax({
-						url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
-						type:'PUT',
-						contentType:'application/json',
-						data:JSON.stringify({
-							cloud:1
-						}),
-						success: function(){
-							console.log("******* WELCOME TO THE CLOUD*************")
-							window.CLOUD=true;
-							init_ui();
-						}
-					});
+					if(window.DM){
+						$.ajax({
+							url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
+							type:'PUT',
+							contentType:'application/json',
+							data:JSON.stringify({
+								cloud:1
+							}),
+							success: function(){
+								console.log("******* WELCOME TO THE CLOUD*************")
+								window.CLOUD=true;
+								init_ui();
+							}
+						});
+					}
+					else{ // PLAYER SHOULD NOT FORCE CLOUD MIGRATION
+						window.CLOUD=false;
+						init_ui();
+					}
 
 				}
 
