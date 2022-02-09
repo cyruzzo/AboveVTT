@@ -51,7 +51,7 @@ class JournalManager{
 
 		journalPanel.body.empty();
 		if (journalPanel.header.find(".panel-warning").length == 0) {
-			journalPanel.header.append("<div class='panel-warning'>Experimental</div>");
+			journalPanel.header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS THE JOURNAL IS CURRENTLY STORED IN YOUR BROWSER STORAGE. DON'T DELETE BROWSER HISTORY</div>");
 		}
 		
 		let btn_add_chapter=$("<button id='btn_add_chapter'>Add Chapter</button>");

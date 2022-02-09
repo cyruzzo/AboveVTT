@@ -37,7 +37,7 @@ function download(data, filename, type) {
 }
 
 
-function cloud_migration(){
+function cloud_migration(scenedata=null){
 	let http_api_gw="https://services.abovevtt.net";
 	let searchParams = new URLSearchParams(window.location.search);
 	if(searchParams.has("dev")){
@@ -45,11 +45,13 @@ function cloud_migration(){
 	}
 	let gameid = $("#message-broker-client").attr("data-gameId");
 
+	if(scenedata==null)
+		scenedata=localStorage.getItem("ScenesHandler"+gameid);
 	$.ajax({
 		url:http_api_gw+"/services?action=migrate&campaign="+window.CAMPAIGN_SECRET,
 		type:"POST",
 		contentType:'application/json',
-		data: localStorage.getItem("ScenesHandler"+gameid),
+		data: scenedata,
 		success:function(data){
 			localStorage.setItem("Migrated"+gameid,"1");
 			alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
@@ -62,7 +64,7 @@ function init_settings(){
 	
 	let body = settingsPanel.body;
 
-	if(!window.CLOUD){
+	
 	body.append(`
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
@@ -78,7 +80,6 @@ function init_settings(){
 			<div>
 		</div>
 	`);
-	}
 
 	$("#input_file").change(import_readfile);
 	
@@ -330,8 +331,34 @@ function persist_token_settings(settings){
 	localStorage.setItem("TokenSettings" + gameid, JSON.stringify(settings));
 }
 
+
+function export_scenes(callback){
+	if(window.CLOUD){
+		let http_api_gw="https://services.abovevtt.net";
+		let searchParams = new URLSearchParams(window.location.search);
+		if(searchParams.has("dev")){
+			http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+		}
+
+		$.ajax({
+			url:http_api_gw+"/services?action=export_scenes&campaign="+window.CAMPAIGN_SECRET,
+			success: function(data){
+				callback(JSON.parse(data))
+			}
+		})
+	}
+	else{
+		let scenes=[];
+		for(i=0;i<window.ScenesHandler.scenes.length;i++){
+			var scene=Object.assign({}, window.ScenesHandler.scenes[i]);
+			scenes.push(scene);
+		}
+		callback(scenes);
+	}
+}
+
 function export_file(){
-	var DataFile={
+	let DataFile={
 		version: 2,
 		scenes:[],
 		soundpads:{},
@@ -339,28 +366,23 @@ function export_file(){
 		notes:{},
 		journalchapters:[],
 		};
-	for(i=0;i<window.ScenesHandler.scenes.length;i++){
-		// CHECK IF THE MAP IS FROM DNDBEYOND
-		var scene=Object.assign({}, window.ScenesHandler.scenes[i]);
-		console.log(scene);
-		/*if(scene.player_map.includes("media-waterdeep.cursecdn.com/") && uuid!=""){
-			scene.player_map="##UUID##";
+	
+	export_scenes(
+		(scenes)=>{
+			DataFile.scenes=scenes;
+
+			DataFile.tokendata=Object.assign({}, tokendata);
+			var tmp=DataFile.tokendata.folders['AboveVTT BUILTIN'];
+			delete DataFile.tokendata.folders['AboveVTT BUILTIN'];
+			DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
+			
+			DataFile.notes=window.JOURNAL.notes;
+			DataFile.journalchapters=window.JOURNAL.chapters;	
+			DataFile.soundpads=window.SOUNDPADS;
+			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		}
-		if(scene.dm_map.includes("media-waterdeep.cursecdn.com/") && uuid!=""){
-			scene.dm_map="##UUID##";
-		}*/ 
-		DataFile.scenes.push(scene);
-	}
-	DataFile.tokendata=Object.assign({}, tokendata);
-	var tmp=DataFile.tokendata.folders['AboveVTT BUILTIN'];
-	delete DataFile.tokendata.folders['AboveVTT BUILTIN'];
-	DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
-	
-	DataFile.notes=window.JOURNAL.notes;
-	DataFile.journalchapters=window.JOURNAL.chapters;
-	
-	DataFile.soundpads=window.SOUNDPADS;
-	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+	);
+
 };
 
 function import_openfile(){
@@ -383,9 +405,8 @@ function import_readfile() {
 		}
 		
 		console.log(DataFile);
-		for(i=0;i<DataFile.scenes.length;i++){
-			window.ScenesHandler.scenes.push(DataFile.scenes[i]);
-		}
+		
+		
 		for(k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
@@ -411,8 +432,16 @@ function import_readfile() {
 			window.JOURNAL.persist();
 			window.JOURNAL.build_journal();
 		}
-		
-		
+
+
+		if(window.CLOUD){
+			cloud_migration(JSON.stringify(DataFile.scenes));
+		}
+		else{
+			for(i=0;i<DataFile.scenes.length;i++){
+				window.ScenesHandler.scenes.push(DataFile.scenes[i]);
+			}
+		}
 	};
 	reader.readAsText($("#input_file").get(0).files[0]);
 }
