@@ -84,10 +84,19 @@ class MessageBroker {
 		// current dev wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1
 		// current prod wss://blackjackandhookers.abovevtt.net/v1
 		let searchParams = new URLSearchParams(window.location.search)
-		if(searchParams.has("dev"))
-			this.abovews = new WebSocket("wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1?campaign="+window.CAMPAIGN_SECRET);	
-		else
-			this.abovews = new WebSocket("wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET);
+		if(searchParams.has("dev")){
+			let url="wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1?campaign="+window.CAMPAIGN_SECRET;
+			if(window.DM)
+				url=url+="&DM=1";
+			this.abovews = new WebSocket(url);	
+		}
+		else{
+			let url="wss://blackjackandhookers.abovevtt.net/v1?campaign="+window.CAMPAIGN_SECRET;
+			if(window.DM)
+				url=url+="&DM=1";
+			this.abovews = new WebSocket(url);
+			
+		}
 		this.abovews.onopen=function(){
 
 		}
@@ -288,7 +297,6 @@ class MessageBroker {
 			console.log(msg.eventType);
 			
 			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
-
 				if(msg.sender==self.mysenderid){
 					self.stats.reflected++;
 					console.error("WARNING. WE RECEIVED BACK OUR OWN MESSAGE");
@@ -341,8 +349,31 @@ class MessageBroker {
 				}
 			}
 
+			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
+				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
+					if(["custom/myVTT/token",
+					    "custom/myVTT/delete_token",
+						"custom/myVTT/createtoken",
+						"custom/myVTT/reveal",
+						"custom/myVTT/fogdata",
+						"custom/myVTT/drawing",
+						"custom/myVTT/drawdata",
+						"custom/myVTT/highlight",
+						"custom/myVTT/pointer",
+					   ].includes(msg.eventType)){
+						   console.log("skipping msg from a different scene");
+					   	return;
+					   }
+				}
+			}
+
 			if (msg.eventType == "custom/myVTT/token") {
 				self.handleToken(msg);
+			}
+			if(msg.eventType=="custom/myVTT/delete_token"){
+				let tokenid=msg.data.id;
+				if(tokenid in window.TOKEN_OBJECTS)
+					window.TOKEN_OBJECTS[tokenid].delete(false,false);
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
@@ -352,6 +383,24 @@ class MessageBroker {
 					fake.remove();
 				}
 			}
+
+			if(msg.eventType == "custom/myVTT/scenelist"){
+				if(window.DM){
+					console.log("got scene list");
+
+					msg.data.sort((a,b) => {
+						if(a.order < b.order)
+							return -1;
+						if(a.order > b.order)
+							return 1;
+						return 0
+					});
+					window.ScenesHandler.scenes=msg.data;
+					window.PLAYER_SCENE_ID=msg.playersSceneId;
+					refresh_scenes();
+				}
+			}
+
 			if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
 			}
@@ -368,8 +417,20 @@ class MessageBroker {
 				redraw_canvas();
 				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 			}
+
+			if(msg.eventType== "custom/myVTT/fogdata"){ // WE RESEND ALL THE FOG EVERYTIME NOW
+				window.REVEALED=msg.data;
+				redraw_canvas();
+				check_token_visibility();
+			}
+
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
+				redraw_drawings();
+			}
+
+			if(msg.eventType=="custom/myVTT/drawdata"){
+				window.DRAWINGS=msg.data;
 				redraw_drawings();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
@@ -837,7 +898,7 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
-		if (window.DM) {
+		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
 		}
@@ -847,33 +908,46 @@ class MessageBroker {
 			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
 		}*/
 
-
 		window.TOKEN_OBJECTS = {};
 		var data = msg.data;
 
-		window.CURRENT_SCENE_DATA = msg.data;
+		if(window.CLOUD){
+			if(window.DM && data.dm_map_usable=="1")
+				data.map=data.dm_map;
+			else
+				data.map=data.player_map;
+		}
 
+		window.CURRENT_SCENE_DATA = msg.data;
+		if(window.CLOUD && window.DM){
+			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
+		}
+		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
+		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
+		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
+		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
+		
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
-		$("#scene_map").width(data.width);
-		$("#scene_map").height(data.height);
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
+			var owidth = $("#scene_map").width();
+			var oheight = $("#scene_map").height();
+
+			if (window.CURRENT_SCENE_DATA.scale_factor) {
+				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
+				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
+			}
+			reset_canvas();
+			redraw_canvas();
+			redraw_drawings();
 			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
 			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
 			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
-			/*if(old_src!=$("#scene_map").attr('src')){
-			window.ZOOM=(60.0/window.CURRENT_SCENE_DATA.hpps);		
-			$("#VTT").css("transform", "scale("+window.ZOOM+")");
-			$("#VTTWRAPPER").width($("#scene_map").width()*window.ZOOM+400);
-			$("#VTTWRAPPER").height($("#scene_map").height()*window.ZOOM+400);
-			$("#black_layer").width($("#scene_map").width()*window.ZOOM+400);
-			$("#black_layer").height($("#scene_map").height()*window.ZOOM+400)
-		}*/
+			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
 		});
 
 
@@ -899,11 +973,17 @@ class MessageBroker {
 		redraw_drawings();
 
 
-
+		
 		for (var i = 0; i < data.tokens.length; i++) { // QUICK HACK
 			this.handleToken({
 				data: data.tokens[i]
 			});
+			if(!window.DM)
+				check_token_visibility();
+		}
+
+		if(window.CLOUD && window.DM){
+			refresh_scenes();
 		}
 	}
 
@@ -1009,9 +1089,15 @@ class MessageBroker {
 			campaignId:window.CAMPAIGN_SECRET,
 			eventType: eventType,
 			sender: this.mysenderid,
-			sequence: this.above_sequence++,
 			data: data,
 		}
+
+		if(window.CLOUD)
+			message.cloud=1;
+
+		if(!["custom/myVTT/switch_scene"].includes(eventType))
+			message.sequence=this.above_sequence++;
+
 		if(window.CURRENT_SCENE_DATA)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
 		

@@ -194,6 +194,9 @@ function edit_scene_dialog(scene_id) {
 
 	var sub = $("<button>Save And Switch</button>");
 
+	if(window.CLOUD)
+		sub.html("Save");
+
 	sub.click(function() {
 		f.find("input").each(function() {
 			var n = $(this).attr('name');
@@ -216,8 +219,13 @@ function edit_scene_dialog(scene_id) {
 			scene[n] = nValue;
 			console.log('setto ' + n + ' a ' + $(this).val());
 		});
-		window.ScenesHandler.persist();
-		window.ScenesHandler.switch_scene(scene_id);
+		if(window.CLOUD){
+			window.ScenesHandler.persist_scene(scene_id,true,true);
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.switch_scene(scene_id);
+		}
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
@@ -249,8 +257,10 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
-		
-		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			window.ScenesHandler.persist_current_scene();
+		else
+			window.ScenesHandler.persist();	
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
 
@@ -280,7 +290,10 @@ function edit_scene_dialog(scene_id) {
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
-			window.ScenesHandler.persist();
+			if(window.CLOUD)
+				window.ScenesHandler.persist_current_scene();
+			else
+				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
 		});
 
@@ -294,7 +307,10 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.fpsq = "10";
 			window.ScenesHandler.scene.upsq = "ft";
 			consider_upscaling(window.ScenesHandler.scene);
-			window.ScenesHandler.persist();
+			if(window.CLOUD)
+				window.ScenesHandler.persist_current_scene();
+			else
+				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
@@ -319,7 +335,10 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			window.ScenesHandler.persist_current_scene();
+		else
+			window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 	}
 
@@ -340,7 +359,10 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			window.ScenesHandler.persist_current_scene();
+		else
+			window.ScenesHandler.persist();
 		window.ScenesHandler.reload();
 	}
 
@@ -643,7 +665,10 @@ function edit_scene_dialog(scene_id) {
 
 			scene.scale_factor=1;
 
-			window.ScenesHandler.persist();
+			if(window.CLOUD)
+				window.ScenesHandler.persist_current_scene();
+			else
+				window.ScenesHandler.persist();
 			window.ScenesHandler.switch_scene(scene_id);
 
 
@@ -693,6 +718,9 @@ function edit_scene_dialog(scene_id) {
 
 
 	var hide_all_button = $("<button>COVER WITH FOG</button>");
+	if(window.CLOUD){
+		hide_all_button.hide();
+	}
 	hide_all_button.click(function() {
 		r = confirm("This will delete all current FOG zones on this scene and HIDE ALL THE MAP to the player. Are you sure?");
 		if (r == true) {
@@ -741,36 +769,82 @@ function refresh_scenes() {
 		title = $("<div class='scene_title' style='text-align:center;'/>");
 		title.html(scene.title);
 
-		if (i == window.ScenesHandler.current_scene_id)
+		if ( (i == window.ScenesHandler.current_scene_id)   && (!window.CLOUD))
 			newobj.addClass('active_scene');
 		newobj.append(title);
 		controls = $("<div/>");
-		switch_button = $("<button>SWITCH</button>");
-		if(scene.player_map)
-			switch_button.removeAttr("disabled");
-		else
-			switch_button.attr("disabled","true");
+		if(window.CLOUD){
+			let switch_players=$("<button>PLAYERS</button>");
+
+			if(window.PLAYER_SCENE_ID==window.ScenesHandler.scenes[scene_id].id){
+				console.log("players are here!");
+				switch_players.css("background","#FF7F7F");
+			}
+
+			switch_players.click(function(){
+				let msg={
+					sceneId:window.ScenesHandler.scenes[scene_id].id,
+				};
+				window.PLAYER_SCENE_ID=window.ScenesHandler.scenes[scene_id].id;
+				refresh_scenes();
+				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
+			});
 			
-		switch_button.click(function() {
-			window.ScenesHandler.switch_scene(scene_id);
-			$("#scene_selector_toggle").click();
-			refresh_scenes();
-		});
+			let switch_dm=$("<button>DM</button>");
+			if(window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.id==window.ScenesHandler.scenes[scene_id].id)){
+				switch_dm.css("background","#FF7F7F");
+			}
+			switch_dm.click(function(){
+				let msg={
+					sceneId:window.ScenesHandler.scenes[scene_id].id,
+					switch_dm: true
+				};
+				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
+			});
+			if(scene.player_map){
+				switch_players.removeAttr("disabled");
+				switch_dm.removeAttr("disabled");
+			}
+			else{
+				switch_players.attr("disabled","true");
+				switch_dm.attr("disabled","true");
+			}
 
-
-		controls.append(switch_button);
-		edit_button = $("<button>EDIT</button>");
+			controls.append(switch_players);
+			controls.append(switch_dm);
+		}
+		else{
+			switch_button = $("<button>SWITCH</button>");
+			if(scene.player_map)
+				switch_button.removeAttr("disabled");
+			else
+				switch_button.attr("disabled","true");
+				
+			switch_button.click(function() {
+				window.ScenesHandler.switch_scene(scene_id);
+				$("#scene_selector_toggle").click();
+				refresh_scenes();
+			});
+			controls.append(switch_button);
+		}
+		edit_button = $("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/edit.svg'></button>");
 		edit_button.click(function() {
 			edit_scene_dialog(scene_id);
 		});
 		controls.append(edit_button);
-		delete_button = $("<button>DELETE</button>")
+		delete_button=$("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 		delete_button.click(function() {
 			r = confirm("Are you sure that you want to delete this scene?");
 			if (r == true) {
+				if(window.CLOUD){
+					window.MB.sendMessage("custom/myVTT/delete_scene",{id:window.ScenesHandler.scenes[scene_id].id})
+				}
 				window.ScenesHandler.scenes.splice(scene_id, 1);
-				window.ScenesHandler.persist();
+				if(!window.CLOUD){
+					window.ScenesHandler.persist();
+				}
 				refresh_scenes();
+				
 			}
 		});
 		controls.append(delete_button);
@@ -800,6 +874,25 @@ function refresh_scenes() {
 					j++;
 				});
 				console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
+				if(window.CLOUD){
+					let neworder;
+					console.log(window.ScenesHandler.scenes);
+					if(toSceneIndex < fromSceneIndex){ // moving back
+						if(toSceneIndex==0)
+							neworder=window.ScenesHandler.scenes[0].order-100;
+						else
+							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex-1].order)/2);
+					}
+					else{
+						if(toSceneIndex==(window.ScenesHandler.scenes.length-1)){
+							neworder=window.ScenesHandler.scenes[toSceneIndex].order+100;
+						}
+						else
+							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex+1].order)/2);
+					}
+					window.ScenesHandler.scenes[fromSceneIndex].order=neworder;
+					window.ScenesHandler.persist_scene(fromSceneIndex);
+				}
 				window.ScenesHandler.scenes = tempScenes;
 				window.ScenesHandler.persist();
 				refresh_scenes();
@@ -838,9 +931,15 @@ function init_scene_selector() {
 			grid: 0,
 			snap: 0,
 			reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+			order: Date.now()
 		}
 		);
-		window.ScenesHandler.persist();
+		if(window.CLOUD){
+			window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length -1,true);
+		}
+		else{
+			window.ScenesHandler.persist();
+		}
 		refresh_scenes();
 	});
 

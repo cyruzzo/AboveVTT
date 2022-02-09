@@ -167,7 +167,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		callback();
 	}
 	else if (is_video === "0" || !is_video) {
-		newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
+		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
 		newmap.on("error", map_load_error_cb);
 		if (width != null) {
@@ -176,6 +176,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		}
 
 		if (callback != null) {
+			newmap.on("load", () => newmap.animate({opacity:1},2000));
 			newmap.on("load", callback);
 		}
 
@@ -1257,8 +1258,68 @@ function is_supported_version(versionString) {
 	return abovevtt_version >= versionString;
 }
 
+function init_above(){
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+
+	window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+	let gameid = $("#message-broker-client").attr("data-gameId");
+	
+	let hasData=false;
+	if (localStorage.getItem('ScenesHandler' + gameid) != null){
+		hasData=true;
+	}
+	if (localStorage.getItem('Migrated' + gameid) != null){
+		hasData=false;
+	}
+
+	
+
+	$.ajax({
+		url:http_api_gw+"/services?action=getCampaignData&campaign="+window.CAMPAIGN_SECRET,
+		success:function(campaignData){
+			console.log(campaignData);
+			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
+				window.CLOUD=true;
+				init_ui();
+			}
+			else{ // CHECK IF THIS IS A NEW CAMPAIGN
+				if (hasData) {
+					console.log("**********UNMIGRATED CAMPAIGN*************");
+					window.CLOUD=false;
+					init_ui();
+				}
+				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
+					$.ajax({
+						url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
+						type:'PUT',
+						contentType:'application/json',
+						data:JSON.stringify({
+							cloud:1
+						}),
+						success: function(){
+							console.log("******* WELCOME TO THE CLOUD*************")
+							window.CLOUD=true;
+							init_ui();
+						}
+					});
+
+				}
+
+
+			}
+			
+		}
+	}
+	)
+}
+
 function init_ui() {
 	window.STARTING = true;
+	let searchParams = new URLSearchParams(window.location.search)
 	var gameid = $("#message-broker-client").attr("data-gameId");
 	init_splash();
 	window.TOKEN_OBJECTS = {};
@@ -1603,6 +1664,11 @@ function init_ui() {
 			notify_player_join();
 		}, 5000);
 	}
+	if(DM && window.CLOUD){
+		setTimeout(function(){
+			window.MB.sendMessage("custom/myVTT/dmjoin"); // join and ask for the scene list
+		},4000);
+	}
 
 	init_controls();
 	init_sheet();
@@ -1676,8 +1742,9 @@ function init_ui() {
 
 	if (window.DM) {
 		setTimeout(function() {
-			window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
-
+			if(!window.CLOUD){
+				window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
+			}
 			// also sync the journal
 			window.JOURNAL.sync();
 		}, 5000);
@@ -1809,8 +1876,13 @@ function init_buttons() {
 		if (r == true) {
 			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
 			redraw_canvas();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
@@ -1820,8 +1892,13 @@ function init_buttons() {
 		if (r == true) {
 			window.REVEALED = [];
 			redraw_canvas();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
@@ -1846,8 +1923,13 @@ function init_buttons() {
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_canvas();
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
+		if(window.CLOUD){
+			sync_fog();
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
 	});
 
 
@@ -1882,16 +1964,26 @@ function init_buttons() {
 		if (r === true) {
 			window.DRAWINGS = [];
 			redraw_drawings();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_drawings();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
 	draw_menu.find("#draw_undo").click(function() {
 		window.DRAWINGS.pop();
 		redraw_drawings();
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
+		if(window.CLOUD){
+			sync_drawings();
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
 	});
 
 	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
@@ -2101,7 +2193,7 @@ $(function() {
 			window.PLAYER_NAME = name;
 			window.PLAYER_ID = getPlayerIDFromSheet(sheet);
 			window.DM = false;
-			init_ui();
+			init_above();
 		});
 
 		$(this).prepend(newlink);
@@ -2148,9 +2240,9 @@ $(function() {
 	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
 	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
 	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
-	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
+	/*campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>");
 	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data, and all active player sheets must be public</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected, or if you cannot view all active player sheets<br><br>");
-	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
+	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");*/
 	campaign_banner.append(delete_button);
 	campaign_banner.append(delete_button2);
 	campaign_banner.hide();
@@ -2175,7 +2267,7 @@ $(function() {
 			window.PLAYER_NAME = "THE DM";
 			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_ui();
+			init_above();
 		});
 });
 
