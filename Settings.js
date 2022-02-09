@@ -65,11 +65,22 @@ function init_settings(){
 	let body = settingsPanel.body;
 
 	
+	if(!window.CLOUD){
+		body.append(`
+		<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
+		<div class="sidebar-panel-header-explanation">
+			<p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
+			<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
+		</div>
+		`)
+	}
+	else{
+		body.append('<b>Your scenes are stored in the "cloud"</b>');
+	}
+
 	body.append(`
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
-		    <p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
-			<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
 			<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
 			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads. 
 			Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
@@ -77,7 +88,6 @@ function init_settings(){
 			<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
 			<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
 				<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
-			<div>
 		</div>
 	`);
 

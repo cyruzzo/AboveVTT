@@ -737,7 +737,7 @@ class MessageBroker {
 		setInterval(function() {
 			self.sendPing();
 			self.sendAbovePing();
-		}, 60000);
+		}, 180000);
 	}
 
     	handleCT(data){
