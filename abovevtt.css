@@ -234,10 +234,14 @@ div#scene_selector,
 }
 
 #combat_tracker_inside {
+    resize: vertical;
+    overflow: hidden;
     position: relative;
+    min-height: 60%;
     height: 100%;
+    max-height: 160%;
     margin: 10px 0;
-    padding-bottom:3px;
+    padding-bottom:25px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
 
@@ -530,7 +534,7 @@ div#scene_properties form > div {
 }
 
 .tracker-dm {
-    width: 200px;
+    width: 215px;
 }
 
 .tracker-player {
