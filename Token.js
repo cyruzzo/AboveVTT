@@ -363,7 +363,7 @@ class Token {
 
 		return (hpbar);
 	}
-//this is where i built elev tracker
+
 	build_ac() {
 		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
 		var ac = $("<div class='ac'/>");
