@@ -2169,10 +2169,10 @@ function token_menu() {
 					delete ret.items.name;
 					delete ret.items.sep2;
 					delete ret.items.ac;
+					delete ret.items.elev;
 					if (!id.endsWith(window.PLAYER_ID)) {
 						delete ret.items.sep3;
 						delete ret.items.imgsrcSelect;
-						delete ret.items.elev;
 					}
 				}
 
