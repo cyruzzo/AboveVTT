@@ -232,7 +232,7 @@ div#scene_selector,
 #edit_dialog {
     height: 400px !important;
 }
-
+/*changes to combat tracker*/
 #combat_tracker_inside {
     resize: vertical;
     overflow: hidden;
