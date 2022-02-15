@@ -424,7 +424,7 @@ class Token {
 					const data = {
 						player: window.PLAYER_NAME,
 						img: window.PLAYER_IMG,
-						text: `<div>${[conditionName, ...conditionDescription].map(line => `<p>${line}</p>`).join(``)}</div>`
+						text: window.MB.encode_message_text(`<div>${[conditionName, ...conditionDescription].map(line => `<p>${line}</p>`).join(``)}</div>`)
 					};
 					window.MB.inject_chat(data);
 				});
