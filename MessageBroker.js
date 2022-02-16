@@ -912,10 +912,16 @@ class MessageBroker {
 		var data = msg.data;
 
 		if(window.CLOUD){
-			if(window.DM && data.dm_map_usable=="1")
+			if(window.DM && data.dm_map_usable=="1"){
 				data.map=data.dm_map;
-			else
+				if(data.dm_map_is_video=="1")
+					data.is_video=true;
+			}
+			else{
 				data.map=data.player_map;
+				if(data.player_map_is_video=="1")
+					data.is_video=true;
+			}
 		}
 
 		window.CURRENT_SCENE_DATA = msg.data;
