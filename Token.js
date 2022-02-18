@@ -1361,6 +1361,8 @@ function place_token_at_point(tokenObject, x, y) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 3;
 			} else if (options.sizeId == 7) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 4;
+			} else if (options.sizeId == 2) {
+				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5;
 			} else {
 				// default to small/medium size
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
@@ -1401,6 +1403,10 @@ function menu_callback(key, options, event) {
 	if (key == "delete") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].delete();
+	}
+	if (key == "token_tiny") {
+		id = $(this).attr('data-id');
+		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
 	}
 	if (key == "token_medium") {
 		id = $(this).attr('data-id'); window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps));
@@ -1855,6 +1861,7 @@ function token_menu() {
 						token_size: {
 							name: "Size",
 							items: {
+								token_tiny: { name: 'Tiny' },
 								token_medium: { name: 'Small or Medium' },
 								token_large: { name: 'Large' },
 								token_huge: { name: 'Huge' },
