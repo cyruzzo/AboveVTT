@@ -87,8 +87,6 @@ function init_monster_panel() {
 
 
 			window.StatHandler.getStat(monsterid, function(stat) {
-				if (stat.data.sizeId == 2)
-					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
 				if (stat.data.sizeId == 5)
 					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 2);
 				if (stat.data.sizeId == 6)

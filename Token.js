@@ -387,6 +387,42 @@ class Token {
 		return ac;
 	}
 
+	build_elev() {
+		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
+		var elev = $("<div class='elev'/>");
+		let bar_width = Math.floor(this.options.size * 0.2);
+		elev.css("position", "absolute");
+		elev.css('right', bar_width * 4.35 + "px");
+		elev.css('width', bar_height + "px");
+		elev.css('height', bar_height + "px");
+		elev.css('bottom', '3px');
+		elev.css('color', 'white');
+		if (this.options.elev == 0){
+			elev.css('display', 'none');
+		}else if (this.options.elev == undefined){
+			elev.css('display', 'none');
+		}else if (this.options.elev > 0){
+			elev.append(
+			$(`
+			<svg width="${bar_height + 5}px" height="${bar_height + 5}px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path fill="#fff" stroke="#000" stroke-width="0.5" d="M18,17 L18,18 C18,21 16,22 13,22 L11,22 C8,22 6,21 6,18 L6,17 C3.23857625,17 1,14.7614237 1,12 C1,9.23857625 3.23857625,7 6,7 L12,7 M6,7 L6,6 C6,3 8,2 11,2 L13,2 C16,2 18,3 18,6 L18,7 C20.7614237,7 23,9.23857625 23,12 C23,14.7614237 20.7614237,17 18,17 L12,17"/>
+			<svg fill="#FFF" width="29px" height="19.5px" viewBox="-60 -205 750 750" xmlns="http://www.w3.org/2000/svg"><path stroke-width="1500" d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"></path> </svg>
+			<text style="position:absolute;top:4px;left:8px;font-size:12px;color:#000;transform:translate(${this.options.elev > 9 ? 5.5 + 'px': 8.5 + 'px'},16px);">${this.options.elev}</text>
+			</svg>
+			`));
+		}else if (this.options.elev < 0){
+			elev.append(
+			$(`
+			<svg width="${bar_height + 5}px" height="${bar_height + 5}px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path fill="#fff" stroke="#000" stroke-width="0.5" d="M18,17 L18,18 C18,21 16,22 13,22 L11,22 C8,22 6,21 6,18 L6,17 C3.23857625,17 1,14.7614237 1,12 C1,9.23857625 3.23857625,7 6,7 L12,7 M6,7 L6,6 C6,3 8,2 11,2 L13,2 C16,2 18,3 18,6 L18,7 C20.7614237,7 23,9.23857625 23,12 C23,14.7614237 20.7614237,17 18,17 L12,17"/>
+			<svg fill="#FFF" width="29px" height="19.5px" viewBox="-60 -205 750 750" xmlns="http://www.w3.org/2000/svg"><path stroke-width="1500" d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"></path> </svg>
+			<text style="position:absolute;top:4px;left:5px;font-size:12px;color:#000;transform:translate(${this.options.elev < -9 ? 1.5 + 'px': 6 + 'px'},16px);">${this.options.elev}</text>
+			</svg>
+			`)
+		);}
+		return elev;
+	}
+
 	build_conditions(parent) {
 		let self=this;
 		let bar_width = Math.floor(this.options.size * 0.2);
@@ -552,6 +588,7 @@ class Token {
 			if ((!(this.options.monster > 0)) || window.DM) {
 				old.find(".hpbar").replaceWith(this.build_hp());
 				old.find(".ac").replaceWith(this.build_ac());
+				old.find(".elev").replaceWith(this.build_elev());
 			}
 			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
 				old.find(".hpbar").hide();
@@ -749,16 +786,19 @@ class Token {
 				if(!this.options.disablestat || (!window.DM && this.options.hidestat)){
 					tok.append(this.build_hp());
 					tok.append(this.build_ac());
+					tok.append(this.build_elev());
 				}
 			}
 			
 			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
 				tok.find(".hpbar").hide();
 				tok.find(".ac").hide();
+				tok.find(".elev").hide();
 			}
 			else{
 				tok.find(".hpbar").show();
 				tok.find(".ac").show();
+				tok.find(".elev").show();
 			}
 
 			// HEALTH AURA / DEAD CROSS
@@ -1225,6 +1265,10 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		options.ac = $(e.target).attr('data-ac');
 	}
 
+	if ($(e.target).attr('data-elev')) {
+		options.elev = $(e.target).attr('data-elev');
+	}
+
 
 	if ($(e.target).attr('data-hidden')) {
 		options.hidden = true;
@@ -1361,8 +1405,6 @@ function place_token_at_point(tokenObject, x, y) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 3;
 			} else if (options.sizeId == 7) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 4;
-			} else if (options.sizeId == 2) {
-				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5;
 			} else {
 				// default to small/medium size
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
@@ -1403,10 +1445,6 @@ function menu_callback(key, options, event) {
 	if (key == "delete") {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].delete();
-	}
-	if (key == "token_tiny") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
 	}
 	if (key == "token_medium") {
 		id = $(this).attr('data-id'); window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps));
@@ -1591,6 +1629,7 @@ function token_inputs(opt) {
 		tok.options.imgsrc = parse_img(data.imgsrc);
 	}
 
+
 	if (window.DM) {
 		if (is_monster) {
 			if (data.hp.startsWith("+") || data.hp.startsWith("-"))
@@ -1606,10 +1645,14 @@ function token_inputs(opt) {
 			if (!isNaN(data.ac)) {
 				tok.options.ac = data.ac;
 			}
+			if (!isNaN(data.elev)) {
+				tok.options.elev = data.elev;
+			}
 		}
 
 		
 		tok.options.name = data.name;
+		tok.options.elev = data.elev;
 
 		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
 			tok.options.imgsrc = parse_img(opt.imgsrcSelection);
@@ -1861,7 +1904,6 @@ function token_menu() {
 						token_size: {
 							name: "Size",
 							items: {
-								token_tiny: { name: 'Tiny' },
 								token_medium: { name: 'Small or Medium' },
 								token_large: { name: 'Large' },
 								token_huge: { name: 'Huge' },
@@ -2024,6 +2066,16 @@ function token_menu() {
 							}
 						},
 						sep1: "-------",
+						name: {
+							type: 'text',
+							name: 'Name',
+							value: window.TOKEN_OBJECTS[id].options.name,
+							events: {
+								click: function(e) {
+									$(e.target).select();
+								}
+							}
+						},
 						hp: {
 							type: 'text',
 							name: 'Current HP',
@@ -2059,10 +2111,11 @@ function token_menu() {
 								}
 							}
 						},
-						name: {
+						elev: {
 							type: 'text',
-							name: 'Name',
-							value: window.TOKEN_OBJECTS[id].options.name,
+							name: 'Elevation',
+							className: 'ac-context-input',
+							value: window.TOKEN_OBJECTS[id].options.elev,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2116,6 +2169,7 @@ function token_menu() {
 					delete ret.items.name;
 					delete ret.items.sep2;
 					delete ret.items.ac;
+					delete ret.items.elev;
 					if (!id.endsWith(window.PLAYER_ID)) {
 						delete ret.items.sep3;
 						delete ret.items.imgsrcSelect;
