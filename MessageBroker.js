@@ -956,6 +956,7 @@ class MessageBroker {
 			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
 			if(!window.DM)
 				check_token_visibility();
+
 		});
 
 
@@ -992,6 +993,8 @@ class MessageBroker {
 
 		if(window.CLOUD && window.DM){
 			refresh_scenes();
+			$("#combat_area").empty();
+			ct_load();
 		}
 	}
 
