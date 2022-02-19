@@ -105,6 +105,7 @@ function init_combat_tracker(){
 			}
 			next.attr('data-current','1');
 		}
+		
 		ct_persist();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
 	});
@@ -175,123 +176,130 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry=$("<tr/>");
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);	
+	entry.attr("ishidden", token.options.hidden);
 	entry.addClass("CTToken");
-	
-	if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
-		entry.attr("data-name", token.options.name);
-		entry.addClass("hasTooltip");
-	}
-
-	if(token.options.monster > 0)
-		entry.attr('data-monster',token.options.monster);
-	
-	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
-	img.attr('src',token.options.imgsrc);
-	img.css('border','3px solid '+token.options.color);
-	
-	entry.append($("<td/>").append(img));
-	let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
-	init.css('width','20px');
-	init.css('-webkit-appearance','none');
-	if(window.DM){
-		init.val(0);
-		init.change(ct_reorder);
-	}
-	else{
-		init.attr("disabled","disabled");
-	}
-	entry.append($("<td/>").append(init));
-	
-	// auto roll initiative for monsters
-	
-	if(window.DM && (token.options.monster > 0) && (!disablerolling)){
-		window.StatHandler.rollInit(token.options.monster,function(value){
-				init.val(value);
-				setTimeout(ct_reorder,1000);
-			});
-	}
-	
-	
-	
-	hp=$("<div class='hp'/>");
-	hp.text(token.options.hp);
-	
-	hp.css('font-size','11px');
-	//hp.css('width','20px');
-	if(window.DM || !(token.options.monster > 0) )
-		entry.append($("<td/>").append(hp));
-	else
-		entry.append($("<td/>"))
-	max_hp=$("<div/>");
-	max_hp.text("/"+token.options.max_hp);
-	max_hp.css('font-size','11px');
-	//max_hp.css('width','20px');
-	if(window.DM || !(token.options.monster > 0) )
-		entry.append($("<td/>").append(max_hp));
-	else
-		entry.append($("<td/>"));
-	
-	
-	var buttons=$("<td/>");
-	
-	
-	find=$("<button style='font-size:10px;'>FIND</button>");
-	find.click(function(){
-		var target=$(this).parent().parent().attr('data-target');
-		if(target in window.TOKEN_OBJECTS){
-			window.TOKEN_OBJECTS[target].highlight();
+	if (token.options.hidden != true || window.DM){
+		if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
+			entry.attr("data-name", token.options.name);
+			entry.addClass("hasTooltip");
 		}
-	});
-	
-	
-	buttons.append(find);
-	
-	del=$("<button style='font-size:10px;'>DEL</button>");
-	del.click(
-		function(){
-			if($(this).parent().parent().attr("data-current")=="1"){
-				$("#combat_next_button").click();
+
+		if(token.options.monster > 0)
+			entry.attr('data-monster',token.options.monster);
+		
+		img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
+		img.attr('src',token.options.imgsrc);
+		img.css('border','3px solid '+token.options.color);
+		if (token.options.hidden == true){
+			img.css('opacity','0.5');
+		}
+		
+		entry.append(img);
+
+		entry.append($("<td/>").append(img));
+		let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
+		init.css('width','20px');
+		init.css('-webkit-appearance','none');
+		if(window.DM){
+			init.val(0);
+			init.change(ct_reorder);
+		}
+		else{
+			init.attr("disabled","disabled");
+		}
+		entry.append($("<td/>").append(init));
+		
+		// auto roll initiative for monsters
+		
+		if(window.DM && (token.options.monster > 0) && (!disablerolling)){
+			window.StatHandler.rollInit(token.options.monster,function(value){
+					init.val(value);
+					setTimeout(ct_reorder,1000);
+				});
+		}
+		
+		
+		
+		hp=$("<div class='hp'/>");
+		hp.text(token.options.hp);
+		
+		hp.css('font-size','11px');
+		//hp.css('width','20px');
+		if(window.DM || !(token.options.monster > 0) )
+			entry.append($("<td/>").append(hp));
+		else
+			entry.append($("<td/>"))
+		max_hp=$("<div/>");
+		max_hp.text("/"+token.options.max_hp);
+		max_hp.css('font-size','11px');
+		//max_hp.css('width','20px');
+		if(window.DM || !(token.options.monster > 0) )
+			entry.append($("<td/>").append(max_hp));
+		else
+			entry.append($("<td/>"));
+		
+		
+		var buttons=$("<td/>");
+		
+		
+		find=$("<button style='font-size:10px;'>FIND</button>");
+		find.click(function(){
+			var target=$(this).parent().parent().attr('data-target');
+			if(target in window.TOKEN_OBJECTS){
+				window.TOKEN_OBJECTS[target].highlight();
 			}
-			$(this).parent().parent().remove();
+		});
+		
+		
+		buttons.append(find);
+		
+		del=$("<button style='font-size:10px;'>DEL</button>");
+		del.click(
+			function(){
+				if($(this).parent().parent().attr("data-current")=="1"){
+					$("#combat_next_button").click();
+				}
+				$(this).parent().parent().remove();
+				ct_persist();
+			}
+		);
+		if(window.DM)
+			buttons.append(del);
+		
+		if(token.options.monster > 0){
+			stat=$("<button style='font-size:10px;'>STAT</button>");
+			
+			stat.click(function(){
+				iframe_id="#iframe-monster-"+token.options.monster;
+				if($(iframe_id).is(":visible"))
+					$(iframe_id).hide();
+				else{
+					$(".monster_frame").hide();
+					load_monster_stat(token.options.monster);
+					}
+			});
+			if(window.DM)
+				buttons.append(stat);
+			
+		}	
+		else{
+			stat=$("<button style='font-size:10px;'>STAT</button>");
+			stat.click(function(){
+				open_player_sheet(token.options.id);
+			});
+			if(window.DM)
+				buttons.append(stat);
+		}
+		
+			entry.append(buttons);
+		
+		
+		$("#combat_area").append(entry);
+		$("#combat_area td").css("vertical-align","middle");
+		
+		if(persist){
 			ct_persist();
 		}
-	);
-	if(window.DM)
-		buttons.append(del);
-	
-	if(token.options.monster > 0){
-		stat=$("<button style='font-size:10px;'>STAT</button>");
-		
-		stat.click(function(){
-			iframe_id="#iframe-monster-"+token.options.monster;
-			if($(iframe_id).is(":visible"))
-				$(iframe_id).hide();
-			else{
-				$(".monster_frame").hide();
-				load_monster_stat(token.options.monster, token.options.id);
-				}
-		});
-		if(window.DM)
-			buttons.append(stat);
-		
-	}	
-	else{
-		stat=$("<button style='font-size:10px;'>STAT</button>");
-		stat.click(function(){
-			open_player_sheet(token.options.id);
-		});
-		if(window.DM)
-			buttons.append(stat);
-	}
-	
-		entry.append(buttons);
-	
-	
-	$("#combat_area").append(entry);
-	$("#combat_area td").css("vertical-align","middle");
-	
-	if(persist){
-		ct_persist();
 	}
 }
 

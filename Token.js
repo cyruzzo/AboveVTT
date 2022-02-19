@@ -51,7 +51,6 @@ class Token {
 		}
 	}
 
-
 	stopAnimation(){
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tok = $("#tokens").find(selector);
@@ -86,6 +85,7 @@ class Token {
 		if (this.persist != null)
 			this.persist();
 	}
+
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
@@ -113,6 +113,7 @@ class Token {
 			draw_selected_token_bounding_box(); // redraw the selection box
 		}
 	}
+
 	rotate(newRotation) {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow rotating if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow rotating if the token is locked
@@ -132,22 +133,27 @@ class Token {
 		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");
 		
 	}
+
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		this.move(newTop, this.options.left)
 	}
+
 	moveDown() {
 		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		this.move(newTop, this.options.left)
 	}
+
 	moveLeft() {
 		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		this.move(this.options.top, newLeft)
 	}
+
 	moveRight() {
 		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		this.move(this.options.top, newLeft)
 	}
+
 	move(top, left) {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
@@ -160,6 +166,7 @@ class Token {
 			this.persist();
 		}
 	}
+
 	place_sync_persist() {
 		this.place();
 		this.sync();
@@ -202,7 +209,6 @@ class Token {
 
 
 	}
-
 
 	notify(text) {
 		var n = $("<div/>");
@@ -285,7 +291,6 @@ class Token {
 
 	}
 
-
 	update_and_sync(e) {
 		self = this;
 		self.update_from_page();
@@ -295,11 +300,25 @@ class Token {
 			self.persist(e);
 		check_token_visibility();
 
+		this.update_combat_tracker()
+	}
 
+	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
 		if (window.DM) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
+			
+			if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
+				console.log("Setting combat tracker opacity to 1.0")
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','1.0');
+			}
+			else {
+				console.log("Setting combat tracker opacity to 0.5")
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
+			}
 		}
+
+
 	}
 
 	build_hp() {
@@ -542,7 +561,6 @@ class Token {
 		}
 	}
 
-
 	place(animationDuration) {
 		if(!window.CURRENT_SCENE_DATA){
 			// No scene loaded!
@@ -557,9 +575,7 @@ class Token {
 		var self = this;
 
 		/* UPDATE COMBAT TRACKER */
-		if (window.DM) {
-			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
-		}
+		self.update_combat_tracker()
 
 
 		if (old.length > 0) {
@@ -1138,7 +1154,6 @@ class Token {
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
 	}
-
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -1232,6 +1247,49 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		}
 	}
 	
+	if ($(e.target).attr(`data-ability-1`)) {
+		options.strength = $(e.target).attr('data-ability-1');
+	}
+	if ($(e.target).attr(`data-ability-2`)) {
+		options.dexterity = $(e.target).attr('data-ability-2');
+	}
+	if ($(e.target).attr(`data-ability-3`)) {
+		options.constitution = $(e.target).attr('data-ability-3');
+	}
+	if ($(e.target).attr(`data-ability-4`)) {
+		options.wisdom = $(e.target).attr('data-ability-4');
+	}
+	if ($(e.target).attr(`data-ability-5`)) {
+		options.intelligence = $(e.target).attr('data-ability-5');
+	}
+	if ($(e.target).attr(`data-ability-6`)) {
+		options.charisma = $(e.target).attr('data-ability-6');
+	}
+
+
+	if ($(e.target).attr(`data-save-1`)) {
+		options.strength_save = $(e.target).attr('data-save-1');
+	}
+	if ($(e.target).attr(`data-save-2`)) {
+		options.dexterity_save = $(e.target).attr('data-save-2');
+	}
+	if ($(e.target).attr(`data-save-3`)) {
+		options.constitution_save = $(e.target).attr('data-save-3');
+	}
+	if ($(e.target).attr(`data-save-4`)) {
+		options.wisdom_save = $(e.target).attr('data-save-4');
+	}
+	if ($(e.target).attr(`data-save-5`)) {
+		options.intelligence_save = $(e.target).attr('data-save-5');
+	}
+	if ($(e.target).attr(`data-save-6`)) {
+		options.charisma_save = $(e.target).attr('data-save-6');
+	}
+
+
+	if ($(e.target).attr('data-prof-bonus')) {
+		options.prof_bonus = $(e.target).attr('data-prof-bonus');
+	}	
 	
 	if ($(e.target).attr('data-size')) {
 		options.size = $(e.target).attr('data-size');
@@ -1498,6 +1556,11 @@ function menu_callback(key, options, event) {
 		
 	}
 	
+	if (key == 'quick_roll_menu') {
+		open_roll_menu()
+		id = $(this).attr('data-id');
+		add_to_roll_menu(window.TOKEN_OBJECTS[id])						
+	}
 
 	if (key == "token_combat") {
 		id = $(this).attr('data-id');
@@ -1742,6 +1805,13 @@ function multiple_callback(key, options, event) {
 			ct_persist();
 		});
 	}
+	if (key == 'group_roll') {
+		open_roll_menu()
+		$("#tokens .tokenselected").each(function() {
+			id = $(this).attr('data-id');
+			add_to_roll_menu(window.TOKEN_OBJECTS[id])
+		});							
+	}
 	if (key == "hide") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
@@ -1800,6 +1870,7 @@ function token_menu() {
 					callback: multiple_callback,
 					items: {
 						token_combat: { name: 'Add to Combat Tracker' },
+						group_roll: { name: 'Quick Group Roll' },
 						hide: { name: 'Hide From Players' },
 						show: { name: 'Show To Players' },
 						delete: { name: 'Delete Token' },
@@ -2065,6 +2136,11 @@ function token_menu() {
 								note_delete: {name: 'Delete Note'},
 							}
 						},
+
+						quick_roll_menu: { 
+							name: 'Quick Roll Menu' 
+						},	
+
 						sep1: "-------",
 						name: {
 							type: 'text',
@@ -2612,4 +2688,291 @@ function undo_delete_tokens() {
 		}
 	}
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+}
+
+function open_roll_menu() {
+	//opens a roll menu for group rolls 
+	console.log("Opening Roll menu")
+	$("#group_roll_dialog").remove();
+
+	roll_dialog = $("<div id='group_roll_dialog'></div>");
+	roll_dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+	roll_dialog.css('overflow', 'auto');
+	roll_dialog.css('width', '370px');
+	roll_dialog.css('top', '200px');
+	roll_dialog.css('left', '300px');
+	roll_dialog.css('height', '250px');
+	roll_dialog.css('z-index', 9);
+	roll_dialog.css('border', 'solid 1px black');
+	roll_dialog.css('display', 'flex');
+	roll_dialog.css('flex-direction', 'column');
+
+
+	$(roll_dialog).draggable();
+
+	$("#site").append(roll_dialog);
+
+	roll_dialog.empty();
+
+	roll_menu_header = $("<div id='roll_menu_header' class=roll_menu_header ></div>");
+	roll_menu_header.append($('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc"></input>'))
+
+	save_type_dropdown = $('<select id="save_dropdown" class="dropbtn"" onchange="save_type_change(this)">Save Type</select>')
+	//save_type_dropdown.append($('<option value="0"> Save type </option>'))
+	save_type_dropdown.append($('<option value="dexterity">Dexterity</option>'))
+	save_type_dropdown.append($('<option value="wisdom">Wisdom</option>'))
+	save_type_dropdown.append($('<option value="constitution">Constitution</option>'))
+	save_type_dropdown.append($('<option value="strength">Strength</option>'))
+	save_type_dropdown.append($('<option value="intelligence">Intelligence</option>'))
+	save_type_dropdown.append($('<option value="charisma">Charisma</option>'))
+	
+	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage"></input>')
+	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Save Success Damage"></input>')
+	
+	damage_input.keyup(function(){
+		//console.log(this.value)
+		$("#half_damage_save").val(Math.floor($('#damage_failed_save').val()/2));
+	});
+
+	roll_menu_header.append(damage_input)
+	roll_menu_header.append(half_damage_input)
+	roll_menu_header.append(save_type_dropdown)
+
+	let roll_form = $("<form />");
+	roll_menu_body = $("<div id='roll_menu_body' class='roll_menu_body'></div>");
+	//roll_form.append(roll_dialog_content)
+	roll_menu_body.append($('<span>(+- for custom bonus, add a "A" or "D" for Adv/Disadv)</span>'))
+	roll_menu_body.append(roll_form)
+
+	roll_cancel = $("<button>Cancel</button>");
+	roll_cancel.click(function() {
+		$("#group_roll_dialog").remove();
+	});
+
+	roll_button = $("<button>Roll!</button>");
+	roll_button.click(function() {
+		$('#roll_menu_footer').children('#apply_damage').show()
+		$("#roll_menu_body").children('tr').each(function (){
+			let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+			let y = $(this).children('input');
+			
+			save_drop = $("#roll_menu_header").children('select')
+			score_bonus = Math.floor((x.options[save_drop.val()] - 10) /2 )
+			if (x.options[`${save_drop.value}_save`]){
+				score_bonus += x.options.prof_bonus
+			}
+			if (score_bonus >= 0){
+				score_bonus = "+"+score_bonus;
+			}
+
+			dice = '1d20';
+			if (y.val().includes('+') == true || y.val().includes('-') == true){
+				var modifier = y.val().toLowerCase()
+				if (modifier.includes("a") == true) {
+					modifier = modifier.replace(/[^\d.-]/g, '');
+					dice = '2d20kh1';
+				}
+				else if (modifier.includes("a") == true) {
+					modifier = modifier.replace(/[^\d.-]/g, '');
+					dice = '2d20kl1';
+				}
+			}
+			else {
+				var modifier = score_bonus
+			}
+			
+			var expression = dice + modifier;
+			//console.log(expression)
+			var roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			//reassign to the input 
+			y.val(roll.total);
+			//display a Save success or failure. ]
+			
+			save_dc = $("#roll_menu_header").children('#save_dc').val()
+
+			pass_fail_label = $(this).children('span')[0]
+			
+			if (save_dc != ""){
+				if (parseInt(roll.total) >= parseInt(save_dc)){
+					pass_fail_label.innerHTML = '  Success!'
+				}
+				else {
+					pass_fail_label.innerHTML = '  Fail!'
+				}
+			}
+			else {//if not defined apply full damage.
+				pass_fail_label.innerHTML = '  No DC (Auto-Fail)'
+			}
+			
+		});
+	});
+
+	update_hp = $("<button id=apply_damage> Apply Damage </button>");
+	update_hp.click(function() {
+		$("#roll_menu_body").children('tr').each(function (){
+			update_hp=$(this).children("#hp");
+			let rolled_value = $(this).children('input').val();
+			if (!rolled_value.includes('+') && !rolled_value.includes('-')) {
+				let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+				damage_failed_save = $("#roll_menu_header").children('#damage_failed_save').val()
+				half_damage_save_success = $("#roll_menu_header").children('#half_damage_save').val()
+
+				save_dc = $("#roll_menu_header").children('#save_dc').val()
+
+				if (save_dc != "undefined"){
+					if (parseInt(rolled_value) >= parseInt(save_dc)){
+						x.options.hp -= half_damage_save_success
+					}
+					else {
+						x.options.hp -= damage_failed_save
+					}
+				}
+				//if not defined apply full damage.
+				else {
+					x.options.hp -= damage_failed_save
+				}
+				x.place()
+				update_hp.text(x.options.hp);
+			}
+		});
+	});
+	
+
+	roll_menu_footer = $("<div id='roll_menu_footer' class=roll_menu_footer/>");
+	roll_menu_footer.append(roll_button);
+	roll_menu_footer.append(update_hp);
+	roll_menu_footer.append(roll_cancel);
+	update_hp.hide()
+
+	roll_dialog.append(roll_menu_header);
+	roll_dialog.append(roll_menu_body);
+	roll_dialog.append(roll_menu_footer);
+	
+	roll_dialog.css('opacity', '0.0');
+	roll_dialog.animate({
+		opacity: '1.0'
+	}, 1000);
+}
+
+function add_to_roll_menu(token) {
+	//Adds a specific target to the roll menu
+
+	//console.log(token);
+	roll_menu_entry=$("<tr/>");
+	roll_menu_entry.css("height","30px");
+	roll_menu_entry.attr("data-target", token.options.id);	
+
+	img=$("<img width=40 height=40 class='Avatar_AvatarPortrait__2dP8u'>");
+	img.attr('src',token.options.imgsrc);
+	img.css('border','3px solid '+token.options.color);
+	roll_menu_entry.append($("<td/>").append(img));
+
+	if(token.options.monster > 0){
+		score_bonus = Math.floor((token.options.dexterity - 10) /2 )
+		if (token.options.dexterity_save){
+			score_bonus += token.options.prof_bonus
+		}
+		if (score_bonus >= 0){
+			score_bonus = "+"+score_bonus;
+		}
+	}
+	else {
+		score_bonus = token.options.dexterity_save
+		if (score_bonus >= 0){
+			score_bonus = "+"+score_bonus;
+		}
+	}
+
+	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' maxlength=3 style='font-size:12px;'> </input>`);
+	bonus_input.css('width','30px');
+	bonus_input.css('-webkit-appearance','none');
+
+	bonus_input.val(score_bonus);
+
+	hp=$("<div class='hp'></div>");
+	hp.text(token.options.hp);
+	
+	hp.css('font-size','11px');
+	
+	roll_menu_entry.append($("<td/>").append(hp));
+	max_hp=$("<div/>");
+	max_hp.text("/"+token.options.max_hp);
+	max_hp.css('font-size','11px');
+	
+	roll_menu_entry.append($("<td/>").append(max_hp));
+	
+	find=$("<button style='font-size:10px;'>Find</button>");
+	find.click(function(){
+		var target=$(this).parent().attr('data-target');
+		if(target in window.TOKEN_OBJECTS){
+			window.TOKEN_OBJECTS[target].highlight();
+		}
+	});
+	roll_menu_entry.append(bonus_input)
+	roll_menu_entry.append(find);
+	
+	remove_from_list=$("<button style='font-size:10px;'>Remove</button>");
+	remove_from_list.click(
+		function() {
+			console.log('Removing from list')
+			$(this).parent().remove();
+		}
+	);
+	roll_menu_entry.append(remove_from_list);
+	
+	if(token.options.monster > 0){
+		stat=$("<button style='font-size:10px;'>Stats</button>");
+		
+		stat.click(function(){
+			iframe_id="#iframe-monster-"+token.options.monster;
+			if($(iframe_id).is(":visible"))
+				$(iframe_id).hide();
+			else{
+				$(".monster_frame").hide();
+				load_monster_stat(token.options.monster);
+				}
+		});
+		roll_menu_entry.append(stat);
+	}	
+	else {
+		stat=$("<button style='font-size:10px;'>Stats</button>");
+		stat.click(function(){
+			open_player_sheet(token.options.id);
+		});
+		roll_menu_entry.append(stat);
+	}
+
+	roll_menu_entry.append("<span id=save_fail_label> </span>")
+	
+	//$("#group_roll_dialog").append(roll_menu_entry)
+	$("#roll_menu_body").append(roll_menu_entry)
+}
+
+function save_type_change(dropdown) {
+	console.log("Save type is: "+ dropdown.value );
+	$('#roll_menu_footer').children('#apply_damage').hide()
+	//$('#group_roll_dialog').children('tr').each(function () {
+	$('#roll_menu_body').children('tr').each(function () {
+		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+		if(x.options.monster > 0){
+			score_bonus = Math.floor((x.options[dropdown.value] - 10) /2 )
+			if (x.options[`${dropdown.value}_save`]){
+				score_bonus += x.options.prof_bonus
+			}
+			if (score_bonus >= 0){
+				score_bonus = "+"+score_bonus;
+			}
+		}
+		else {
+			score_bonus = x.options[`${dropdown.value}_save`]
+			if (score_bonus >= 0){
+				score_bonus = "+"+score_bonus;
+			}
+		}
+		//console.log($(this).children('input'))
+		$(this).children('input').val(score_bonus);
+		
+
+	});
 }

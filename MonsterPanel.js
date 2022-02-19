@@ -96,6 +96,58 @@ function init_monster_panel() {
 				button.attr('data-hp', stat.data.averageHitPoints);
 				button.attr('data-maxhp', stat.data.averageHitPoints);
 				button.attr('data-ac', stat.data.armorClass);
+								
+				console.log(stat.data);
+
+				// determine the Proficiency bonus, based on CR -> actually CR ID which has 0, 1/8, 1/4, 1/2, 1, 2, ...etc
+				//console.log(stat.data.challengeRatingId)
+				CR = stat.data.challengeRatingId;
+				switch (true) {
+					case CR >= 34://CR 29
+						prof = 9;
+						break;
+					case CR >= 30://CR 25 
+						prof = 8;
+						break;
+					case CR >= 25://CR 21
+						prof = 7;
+						break;
+					case CR >= 21://CR 17
+						prof = 6;
+						break;
+					case CR >= 17://CR 13
+						prof = 5;
+						break;
+					case CR >= 13://CR 9 
+						prof = 4;
+						break;
+					case CR >= 9://CR 5
+						prof = 3;
+						break;
+					case CR <= 8://CR <4 
+						prof = 2;
+						break;
+				}
+				button.attr('data-prof-bonus', prof);
+
+				//Data for Rolls 
+				console.log(stat.data.stats[0])
+
+				button.attr('data-ability-scores', stat.data.stats)
+				button.attr('data-saving-throws', stat.data.savingThrows)
+
+				for (let x of stat.data.stats){
+					button.attr(`data-ability-${[x.statId]}`, x.value);
+				}
+				for (let y of stat.data.savingThrows){
+					button.attr(`data-save-${[y.statId]}`, y.value);
+				}
+
+				console.log(button.attr('data-ability-1'))
+				// Damage mods could be added, but will require determining each of DDB's index values for different damage types. Tedious.
+				//options.damage_vul = stat.data.damage_vul
+				//options.damge_resist = stat.data.damge_resist
+				//
 				token_button(e);
 			});
 
@@ -448,6 +500,56 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 			options.hp = stat.data.averageHitPoints;
 			options.max_hp = stat.data.averageHitPoints;
 			options.ac = stat.data.armorClass;
+						//Data for Rolls  
+
+			// determine the Proficiency bonus, based on CR -> actually CR ID which has 0, 1/8, 1/4, 1/2, 1, 2, ...etc
+			console.log(stat.data.challengeRatingId)
+			CR = stat.data.challengeRatingId;
+			switch (true) {
+				case CR >= 34://CR 29
+					prof = 9;
+					break;
+				case CR >= 30://CR 25 
+					prof = 8;
+					break;
+				case CR >= 25://CR 21
+					prof = 7;
+					break;
+				case CR >= 21://CR 17
+					prof = 6;
+					break;
+				case CR >= 17://CR 13
+					prof = 5;
+					break;
+				case CR >= 13://CR 9 
+					prof = 4;
+					break;
+				case CR >= 9://CR 5
+					prof = 3;
+					break;
+				case CR <= 8://CR <4 
+					prof = 2;
+					break;
+			}
+			options.prof_bonus = prof;
+
+			options.ability_scores = [];
+			for (let x of stat.data.stats){
+				console.log(x.statId)
+				console.log(x.value)
+				options.ability_scores[x.statId] = x.value;
+			}
+			options.saving_throws = [];
+			for (let y of stat.data.savingThrows){
+				console.log(y.statId)
+				console.log(y.value)
+				options.saving_throws[y.statId] = prof
+			}
+
+			// Damage mods could be added, but will require determining each of DDB's index values for different damage types. Tedious.
+			//options.damage_vul = stat.data.damage_vul
+			//options.damge_resist = stat.data.damge_resist
+			//
 			if (eventPageX == undefined || eventPageY == undefined) {
 				place_token_in_center_of_map(options);
 			} else {
