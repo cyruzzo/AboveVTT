@@ -1399,7 +1399,9 @@ function place_token_at_point(tokenObject, x, y) {
 	if (options.size == undefined) {
 		if (options.sizeId != undefined) {
 			// sizeId was specified, convert it to size. This is used when adding from the monster pane
-			if (options.sizeId == 5) {
+			if (options.sizeId == 2) {
+				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5;
+			} else if (options.sizeId == 5) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 2;
 			} else if (options.sizeId == 6) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 3;
@@ -1448,6 +1450,10 @@ function menu_callback(key, options, event) {
 	}
 	if (key == "token_medium") {
 		id = $(this).attr('data-id'); window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps));
+	}
+	if (key == "token_tiny") {
+		id = $(this).attr('data-id');
+		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
 	}
 	if (key == "token_large") {
 		id = $(this).attr('data-id');
@@ -1904,6 +1910,7 @@ function token_menu() {
 						token_size: {
 							name: "Size",
 							items: {
+								token_tiny: { name: 'Tiny' },
 								token_medium: { name: 'Small or Medium' },
 								token_large: { name: 'Large' },
 								token_huge: { name: 'Huge' },
