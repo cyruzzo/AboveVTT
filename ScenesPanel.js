@@ -778,7 +778,8 @@ function refresh_scenes() {
 
 			if(window.PLAYER_SCENE_ID==window.ScenesHandler.scenes[scene_id].id){
 				console.log("players are here!");
-				switch_players.css("background","#FF7F7F");
+				switch_players.css("background","#C53131");
+				switch_players.css("color","#FFF");
 			}
 
 			switch_players.click(function(){
@@ -792,7 +793,8 @@ function refresh_scenes() {
 			
 			let switch_dm=$("<button>DM</button>");
 			if(window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.id==window.ScenesHandler.scenes[scene_id].id)){
-				switch_dm.css("background","#FF7F7F");
+				switch_dm.css("background","#C53131");
+				switch_dm.css("color","#FFF");
 			}
 			switch_dm.click(function(){
 				let msg={

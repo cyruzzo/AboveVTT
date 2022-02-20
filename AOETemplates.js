@@ -41,13 +41,13 @@ function setup_aoe_button() {
     aoe_menu.css("position", "fixed");
     aoe_menu.css("top", "25px");
     aoe_menu.css("width", "75px");
-    aoe_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+    aoe_menu.css('background', "-webkit-linear-gradient(top, #fff, #e6e6e6)")
 
     $("body").append(aoe_menu);
 
 
     buttons.append(aoe_button);
-    aoe_menu.css("left", aoe_button.position().left);
+    aoe_menu.css("left", aoe_button.position().left - 1);
 
 
     $("#aoe_feet").keydown(function(e) {
