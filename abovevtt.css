@@ -289,6 +289,7 @@ button#combat_button{
 }
 
 #combat_footer {
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     text-align: center;
 }
 
