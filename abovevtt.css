@@ -403,9 +403,11 @@ div#scene_properties form > div {
 
 #zoom_buttons {
     position: absolute;
-    top: 0;
+    top: -5px;
     z-index: 60;
 }
+
+
 
 #scene_selector {
     position: fixed;
@@ -1141,8 +1143,12 @@ div#scene_properties form > div {
 #hide_rightpanel{
 	position: absolute;
 	left: -34px;
+    top: -5px;
 }
 
+button#stream_button {
+    top: -5px;
+}
 
 .soundpad-section-title{
 	font-weight: bold;
