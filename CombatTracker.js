@@ -12,7 +12,7 @@ function init_combat_tracker(){
 		}
 		else{
 			$("#combat_tracker_inside").attr('style', 'display: block;');
-			$("#combat_tracker").css("height","450px"); // IMPORTANT
+			$("#combat_tracker").css("height","425px"); // IMPORTANT
 		}
 	});
 	ct.append(toggle);

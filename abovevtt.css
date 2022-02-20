@@ -23,14 +23,34 @@ body > button,
 .stream_button,
 .GameLogEntry_Message__1GoY3 button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
-    color: #3d3d3d;
-    height: 22px;
-    margin: 0 2px;
-    border-radius: 7px;
+    height: 28px;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
-    padding: 2px 8px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
+
+    font-family: "Roboto Condensed", Roboto, Helvetica, sans-serif;
+    cursor: pointer;
+    color: rgb(131, 131, 131);
+    line-height: 1;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    background-color: rgb(242, 242, 242);
+    margin: 3px 2px;
+    border-radius: 3px;
+    padding: 5px 7px;
+    white-space: nowrap;
+}
+
+button#scene_selector_toggle.hideable.menu_opened{
+    color: white;
+    background-image: -webkit-linear-gradient(270deg, #c53131, #c32020);
+    border: #ff7777;
+    box-shadow: 0 0 12px 0px #f10000;
+}
+
+.scene button{
+    padding: 0px 11px;
 }
 
 #cpick{
@@ -116,24 +136,28 @@ button.gamelog-to-everyone-button {
 
 .aoeshape:focus,
 .drawbutton.button-enabled {
-    background-image: -webkit-linear-gradient(270deg, #f7a6a6, #ff7777);
+    background-image: -webkit-linear-gradient(270deg, #c53131, #c32020);
     box-shadow: 0 0 12px 0px #f10000;
     border: #ff7777;
+    color: #fff;
 }
 
 .aoeshape:focus:hover,
 .drawbutton.button-enabled:hover {
-    background-image: -webkit-linear-gradient(270deg, #e29393, #f37a7a);
+    color: #fff;
+    background-image: -webkit-linear-gradient(270deg, #c32020, #c32020);
 }
 
 .top_menu .aoeshape:focus,
 .top_menu .drawbutton.button-enabled {
+    color: #fff;
     box-shadow: none;
 }
 
 .top_menu {
+    z-index: 10;
     margin: 0 8px;
-    top: 28px !important;
+    top: 32px !important;
     border-radius: 5px;
     max-height: 0;
     overflow: hidden;
@@ -142,7 +166,7 @@ button.gamelog-to-everyone-button {
 }
 
 .top_menu.visible {
-    max-height: 420px;
+    max-height: 502px;
 }
 
 .sidebar__controls > div button {
@@ -174,7 +198,7 @@ button#scene_selector_toggle {
 }
 
 button[id$='-button'].button-enabled:hover {
-    color: #000;
+    color: #fff;
 }
 
 #addscene {
@@ -182,19 +206,19 @@ button[id$='-button'].button-enabled:hover {
 }
 
 .scene {
-    border-radius: 5px;
-    border: 1px solid #3d3d3d;
-    width: 171px;
-    height: 50px;
+    border-radius: 3px;
+    border: 1px solid rgb(160 160 160);
+    width: 176px;
+    height: 55px;
     float: left;
     overflow: hidden;
     margin: 5px;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background-color: rgb(242, 242, 242) !important;
 }
 
 .sortable_placeholder {
-    width: 171px;
-    height: 50px;
+    width: 176px;
+    height: 55px;
     border: 1px dashed #3d3d3d !important;
     background-image: -webkit-linear-gradient(270deg, #f7a6a6, #ff7777);
     float: left;
@@ -226,17 +250,22 @@ div#scene_selector,
 #prewiz,
 #wizard_popup,
 .top_menu {
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
 }
 
 #edit_dialog {
     height: 400px !important;
 }
 
+button#combat_button{
+    width: 75px;
+    margin-top: -1px;
+}
+
 #combat_tracker_inside {
+    transition: all 0.4s ease-in-out;
     position: relative;
     height: 100%;
-    margin: 10px 0;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
@@ -254,7 +283,8 @@ div#scene_selector,
 }
 
 #combat_tracker_inside .tracker-list {
-    height: calc(100% - 22px);
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    height: calc(100% - 52px);
     overflow: auto;
 }
 
@@ -267,6 +297,7 @@ div#scene_selector,
 }
 
 #round_number_label {
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
     font-size: 11px;
     vertical-align: middle;
     padding-left: 8px;
@@ -379,13 +410,14 @@ div#scene_properties form > div {
     position: fixed;
     left: 50%;
     transform: translate(-50%, 0);
-    top: 27px;
+    top: 38px;
     max-height: 60vh;
     min-width: 200px;
     width: calc(100vw - 720px);
     max-width: 748px;
     z-index: 9999;
-    border: solid black 2px;
+    border: solid rgb(242, 242, 242) 2px;
+    border-radius: 3px;
     overflow: auto;
 }
 
@@ -523,10 +555,10 @@ div#scene_properties form > div {
 
 #combat_tracker {
     position: fixed;
-    height: 450px;
+    height: 425px;
     left: 5px;
     top: 40px;
-    z-index: 99999000;
+    z-index: 9;
 }
 
 .tracker-dm {
@@ -673,11 +705,14 @@ div#scene_properties form > div {
 }
 
 .player-token-hp {
-    background: #FF7777;
+    background: #c53131;
     position: absolute;
     top: 56px;
     left: 1px;
     padding: 0 3px;
+    color: white;
+    border: solid white 1px;
+    border-radius: 3px;
 }
 
 .player-token-ac {

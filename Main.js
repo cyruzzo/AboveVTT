@@ -1923,7 +1923,7 @@ function init_buttons() {
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
 	fog_menu.css("width", "75px");
-	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+	fog_menu.css('background', "-webkit-linear-gradient(top, #fff, #e6e6e6)")
 	$("body").append(fog_menu);
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
@@ -1949,9 +1949,10 @@ function init_buttons() {
 
 	if (window.DM)
 		buttons.append(fog_button);
-	fog_menu.css("left",fog_button.position().left);
+	fog_menu.css("left",fog_button.position().left - 1);
 
 	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
+	draw_menu.append("<div style='font-weight:bold;'>Tool</div>");
 	draw_menu.append("<div><button id='draw_square' style='width:75px' class='drawbutton menu-option draw-option remembered-selection' data-shape='rect' data-type='draw'>Square</button></div>");
 	draw_menu.append("<div><button id='draw_circle' style='width:75px' class='drawbutton menu-option draw-option' data-shape='arc' data-type='draw'>Circle</button></div>");
 	draw_menu.append("<div><button id='draw_cone' style='width:75px' class='drawbutton menu-option draw-option' data-shape='cone' data-type='draw'>Cone</button></div>");
@@ -1993,7 +1994,7 @@ function init_buttons() {
 
 	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
 		
-	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
+	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#C53131' style='width: 48px;'></div>");
 
 	colors.find("#cpick").click(function(e)	{ //open the color picker
 		$('body').append("<div id='cpicker_overlay'></div>");
@@ -2040,7 +2041,7 @@ function init_buttons() {
 	}
 
 	//create default cPick coloroption
-	cPick = "#E29393";
+	cPick = "#C53131";
 	cc = $("<div class='coloroption'/>");
 	cc.width(27);
 	cc.height(27);
@@ -2064,8 +2065,10 @@ function init_buttons() {
 	draw_menu.find(".drawType").click(function(e) {
 		$(".drawType").removeClass('drawTypeSelected');
 		$(".drawType").css('background', '');
+		$(".drawType").css('color', 'rgb(131, 131, 131)');
 		$(this).addClass('drawTypeSelected');
-		$(this).css('background', '-webkit-linear-gradient(270deg, #e29393, #f37a7a)');
+		$(this).css('background', '-webkit-linear-gradient(270deg, #c53131, #c32020)');	
+		$(this).css('color', '#FFF');	
 	});
 
 	draw_menu.append("<div style='font-weight:bold'>Line Width</div>");
@@ -2074,7 +2077,7 @@ function init_buttons() {
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
 	draw_menu.css("width", "75px");
-	draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+	draw_menu.css('background', "-webkit-linear-gradient(top, #fff, #e6e6e6)")
 
 	$("body").append(draw_menu);
 
@@ -2117,18 +2120,22 @@ function init_buttons() {
 function init_stream_button() {
 	var stream_button = $("<button id='stream_button' class='hasTooltip button-icon hideable' data-name='Stream dice rolls'></button>");
 	stream_button.attr("data-name", "SHARE/SEE player's DDB dice rolling visuals (Experimental/stable).\nDisclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.\nOn by default = RED.");
-	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
+	stream_button.append("<img style='filter: brightness(0.4)' height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
 	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
 
 	stream_button.click(() => {
 		if (!window.JOINTHEDICESTREAM) {
 			window.JOINTHEDICESTREAM = true;
 			window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
-			stream_button.css("background", "red");
+			stream_button.css("background", "#C53131");
+			stream_button.css("border", "#FF7777");
+			stream_button.css("box-shadow", "0 0 12px 0px #f10000");
 		}
 		else {
 			window.JOINTHEDICESTREAM = false;
 			stream_button.css("background", "");
+			stream_button.css("border-color", "lightgray");
+			stream_button.css("box-shadow", "");
 			for (let i in window.STREAMPEERS) {
 				window.STREAMPEERS[i].close();
 				delete window.STREAMPEERS[i];

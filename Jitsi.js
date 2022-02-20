@@ -9,6 +9,7 @@ function create_jitsi_button() {
 	b.css("gap", "6px");
 	b.css("display", "inline-flex");
 	b.css("z-index", 9999);
+	b.css("font-size", 15);
 	$("body").append(b);
 
 	b.click(function () {
