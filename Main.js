@@ -606,7 +606,12 @@ function init_splash() {
 // UNIFIED TOKEN HANDLING
 var MYCOBALT_TOKEN = false;
 var MYCOBALT_TOKEN_EXPIRATION = 0;
-function get_cobalt_token(callback) {
+function get_cobalt_token(callback, force_reconnect = true) {
+
+	if (force_reconnect && forceDdbWsReconnect() == true) {
+		// forceDdbWsReconnect will call get_cobalt_token
+		return;
+	}
 
 	if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
 		console.log("TOKEN IS CACHED");
@@ -628,6 +633,58 @@ function get_cobalt_token(callback) {
 			callback(data.token);
 		}
 	});
+}
+
+/* Attempts to force DDBs WebSocket to re-connect.
+* Return false - wasn't able to force / no need
+* Return true - was able to attempt force reconnect */
+var DDB_WS_OBJ = null;
+var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+function forceDdbWsReconnect() {
+	try {
+		if (DDB_WS_FORCE_RECONNECT_LOCK) {
+			console.log("forceDdbWsReconnect is already locked!");
+			return false;
+		}
+
+		if (window.navigator && !window.navigator.onLine) {
+			console.log("No internet connection, cannot re-connect to DDBs WebSocket.");
+			return false;
+		}
+
+		DDB_WS_FORCE_RECONNECT_LOCK = true;
+
+		const key = Symbol.for('@dndbeyond/message-broker-lib');
+		if (key) {
+			DDB_WS_OBJ = window[key];
+		}
+
+		if (DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') {
+			console.log("Detected that DDBs WebSocket is disconnected - attempting to force reconnect.");
+			DDB_WS_OBJ.reset();
+			DDB_WS_OBJ.connect();
+			get_cobalt_token(function(token) {
+				window.MB.loadWS(token, null);
+
+				// Wait 8 seconds before checking again if the websocket is connected
+				setTimeout(function() {
+					if (DDB_WS_OBJ.status == 'open') {
+						console.log("Managed to reconnect DDBs WebSocket successfully!");
+					}
+					DDB_WS_FORCE_RECONNECT_LOCK = false;
+				}, 8000);
+			}, false);
+
+			return true;
+		}
+
+		DDB_WS_FORCE_RECONNECT_LOCK = false;
+
+		return false;
+	} catch(e) {
+		console.log("forceDdbWsReconnect error: " + e);
+		DDB_WS_FORCE_RECONNECT_LOCK = false;
+	}
 }
 
 
