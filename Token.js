@@ -314,7 +314,7 @@ class Token {
 		hpbar.css('height', bar_height);
 		hpbar.css('left', (Math.floor(this.options.size * 0.35) / 2));
 		hpbar.css('top', this.options.size - bar_height);
-		hpbar.css('background', '#C53131');
+		hpbar.css('background-image', '-webkit-linear-gradient(270deg, #c53131BB, #c32020CC)');
 		hpbar.width("max-width: 95%");
 		hpbar.css("border", "solid white 1px");
 		hpbar.css("border-radius", "3px");
