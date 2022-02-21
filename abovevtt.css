@@ -274,7 +274,7 @@ button#combat_button{
 }
 
 #combat_area tr[data-current] {
-    background-color: lightgreen;
+    background-color: indianred;
 }
 
 #combat_area td:last-of-type {
