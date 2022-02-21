@@ -2,14 +2,16 @@
 function create_jitsi_button() {
 	window.gameId = $("#message-broker-client").attr("data-gameId");
 
-	b = $("<button id='jitsi_switch' class='hasTooltip button-icon hideable' data-name='Connect video call'><span>VIDEO</span><span class='material-icons button-icon'>video_call</span></button>");
+	b = $("<button id='jitsi_switch' class='hasTooltip button-icon hideable' data-name='Connect video call' style='padding-top: 5px'><span>VIDEO</span><span class='material-icons button-icon'>video_call</span></button>");
 	b.css("position", "fixed");
 	b.css("bottom", "3px");
 	b.css("left", "3px");
 	b.css("gap", "6px");
 	b.css("display", "inline-flex");
 	b.css("z-index", 9999);
-	b.css("font-size", 15);
+	b.css("font-size", 13);
+	b.css("font-weight", 700);
+	b.css("color", "rgb(131 131 131)")
 	$("body").append(b);
 
 	b.click(function () {
