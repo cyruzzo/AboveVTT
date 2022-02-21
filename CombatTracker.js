@@ -145,6 +145,7 @@ function init_combat_tracker(){
 	} else {
 		ct.addClass('tracker-player');
 		ct_list_wrapper.addClass('tracker-player');
+		ct_inside.addClass('tracker-player');
 	}
 
 	$("#site").append(ct);

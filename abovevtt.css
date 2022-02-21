@@ -263,12 +263,17 @@ button#combat_button{
 
 #combat_tracker_inside {
     position: relative;
-    height: 100%;
+    height: 77%;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
     resize: vertical;
     overflow: hidden;
-    min-height: 70%;
+    min-height: 77%;
     max-height: 170%;
+}
+
+#combat_tracker_inside.tracker-player{
+    height: 66%;
+    min-height:66%;
 }
 
 #combat_area button {
