@@ -673,17 +673,17 @@ function init_sheet(){
 	container.css('width', 1025);
 	container.css('background', '#242527');
 	container.css('z-index', 0);
-	var buttonleft = 0;
-	var buttonprev = 0;
+	var buttonleft = 16;
+	var buttonprev = 16;
 
 	var close_button = $("<button>X</button>");
 
 	close_button.css("position", "absolute");
 	close_button.css('display', 'none');
 	close_button.css("top", "0px");
-	close_button.css("left", buttonleft);
-	buttonleft+=27;
-	buttonprev+=54;
+	close_button.css("right", buttonleft);
+	buttonleft+=26;
+	buttonprev+=52;
 	close_button.css("height", "23px");
 	close_button.css("width", "25px");
 	close_button.click(function() {
@@ -701,7 +701,7 @@ function init_sheet(){
 	reload_button.css("position", "absolute");
 	reload_button.css('display', 'none');
 	reload_button.css("top", "0px");
-	reload_button.css("left", buttonleft);
+	reload_button.css("right", buttonleft);
 	reload_button.css("height", "23px");
 	reload_button.css("width", "25px");
 	reload_button.click(function() {
@@ -719,7 +719,7 @@ function init_sheet(){
 	resize_button.css("position", "absolute");
 	resize_button.css('display', 'none');
 	resize_button.css("top", "0px");
-	resize_button.css("left", buttonprev);
+	resize_button.css("right", buttonprev);
 	resize_button.css("height", "23px");
 	resize_button.css("width", "25px");
 	resize_button.click(function() {
@@ -747,8 +747,8 @@ function init_sheet(){
 		let iframe =  $("[id='PlayerSheet"+window.PLAYER_ID+"']");
 		sheet_button = $("<button id='sheet_button' class='hasTooltip button-icon hideable' data-name='Show/hide character sheet (SPACE)'>SHEET</button>");
 		sheet_button.css("position", "absolute");
-		sheet_button.css("top", 0);
-		sheet_button.css("left", -86);
+		sheet_button.css("top", -5);
+		sheet_button.css("left", -82);
 		sheet_button.css("z-index", 999);
 
 		$(".sidebar__controls").append(sheet_button);
@@ -1144,6 +1144,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		}
 
 		// show sheet container and sheet iframe
+		$("#sheet").css('display', 'inherit').css('border-top-right-radius', '15px').css('border-top-left-radius', '15px').css('background', '#171717');
 		$("#sheet").find("button").css('display', 'inherit');
 		container.css("z-index", 99999999);
 		var containerHeight = $(".sidebar__inner").height() - 20;
