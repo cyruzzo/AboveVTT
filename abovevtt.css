@@ -422,11 +422,11 @@ div#scene_properties form > div {
     max-height: 60vh;
     min-width: 200px;
     width: calc(100vw - 720px);
-    max-width: 748px;
+    max-width: 768px;
     z-index: 9999;
     border: solid rgb(242, 242, 242) 2px;
     border-radius: 3px;
-    overflow: auto;
+    overflow-x: scroll;
 }
 
 #scene_selector .scene_title {

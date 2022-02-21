@@ -902,7 +902,7 @@ function refresh_scenes() {
 				refresh_scenes();
 			}
 		});
-		$("#scene_selector").css("overflow","auto");
+		$("#scene_selector").css("overflow-y","scroll");
 	}
 }
 
