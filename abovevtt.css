@@ -262,11 +262,13 @@ button#combat_button{
 }
 
 #combat_tracker_inside {
-    transition: all 0.4s ease-in-out;
     position: relative;
     height: 100%;
-    padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
+    resize: vertical;
+    overflow: hidden;
+    min-height: 70%;
+    max-height: 170%;
 }
 
 #combat_area button {
@@ -283,7 +285,6 @@ button#combat_button{
 
 #combat_tracker_inside .tracker-list {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
-    height: calc(100% - 52px);
     overflow: auto;
 }
 
@@ -565,10 +566,12 @@ div#scene_properties form > div {
 
 .tracker-dm {
     width: 200px;
+    height: calc(100% - 52px);
 }
 
 .tracker-player {
-    width: 199px;
+    width: 200px;
+    height: 100%;
 }
 
 #campaign_banner {

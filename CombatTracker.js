@@ -5,17 +5,17 @@ function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
 	toggle=$("<button id='combat_button' class='hideable'><u>C</u>OMBAT TRACKER</button>");
-	$("button#combat_button").css("border-radius","13px").css("margin","0px").css("padding","0px").css("background-image", "-webkit-linear-gradient(top, #fff, #e6e6e6)").css("color", "rgb(131, 131, 131)").css("border", "lightgray"); // IMPORTANT
+	$("button#combat_button").css("border-radius","10px").css("margin","0px").css("padding","0px").css("background-image", "-webkit-linear-gradient(top, #fff, #e6e6e6)").css("color", "rgb(131, 131, 131)").css("border", "lightgray").css("box-shadow", ""); // IMPORTANT
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").attr('style', 'display: none;');
 			$("#combat_tracker").css("height","20px"); // IMPORTANT
-			$("button#combat_button").css("border-radius","13px").css("background-image", "-webkit-linear-gradient(top, #fff, #e6e6e6)").css("color", "rgb(131, 131, 131)").css("border", "lightgray"); // IMPORTANT
+			$("button#combat_button").css("border-radius","10px").css("background-image", "-webkit-linear-gradient(top, #fff, #e6e6e6)").css("color", "rgb(131, 131, 131)").css("border", "lightgray").css("box-shadow", ""); // IMPORTANT
 		}
 		else{
 			$("#combat_tracker_inside").attr('style', 'display: block;');
 			$("#combat_tracker").css("height","450px"); // IMPORTANT
-			$("button#combat_button").css("border-radius","0px").css("background-image", "-webkit-linear-gradient(270deg, #c53131, #c32020)").css("color", "white").css("border", "#FF7777"); // IMPORTANT
+			$("button#combat_button").css("border-bottom-left-radius","0px").css("border-bottom-right-radius","0px").css("background-image", "-webkit-linear-gradient(270deg, #c53131, #c32020)").css("color", "white").css("border", "#FF7777").css("box-shadow", "red 0 0 12px 0"); // IMPORTANT
 		}
 	});
 	ct.append(toggle);
@@ -141,8 +141,10 @@ function init_combat_tracker(){
 	
 	if(window.DM) {
 		ct.addClass('tracker-dm');
+		ct_list_wrapper.addClass('tracker-dm');
 	} else {
 		ct.addClass('tracker-player');
+		ct_list_wrapper.addClass('tracker-player');
 	}
 
 	$("#site").append(ct);
