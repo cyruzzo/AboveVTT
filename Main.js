@@ -293,6 +293,7 @@ function report_connection(){
 }
 
 function load_monster_stat(monsterid, token_id=false) {
+	token_id=false; // DISABLE HAVING AN IFRAME FOR EACH TOKEN NPC. WE GO BACK TO USING A SINGLE IFRAME FOR EACH MONSTER TYPE
 	$(".monster_frame").hide();
 	
 	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
