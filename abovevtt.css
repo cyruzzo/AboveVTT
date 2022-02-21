@@ -23,7 +23,7 @@ body > button,
 .stream_button,
 .GameLogEntry_Message__1GoY3 button {
     background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
-    height: 28px;
+    height: 26px;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
@@ -36,7 +36,7 @@ body > button,
     text-transform: uppercase;
     background-color: rgb(242, 242, 242);
     margin: 3px 2px;
-    border-radius: 3px;
+    border-radius: 12px;
     padding: 5px 7px;
     white-space: nowrap;
 }
