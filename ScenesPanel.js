@@ -62,7 +62,7 @@ function edit_scene_dialog(scene_id) {
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
 	dialog = $("<div id='edit_dialog'></div>");
-	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+	dialog.css('background-image', "-webkit-linear-gradient(top, #fff, #e6e6e6)");
 
 	template_section = $("<div id='template_section'/>");
 
@@ -774,10 +774,11 @@ function refresh_scenes() {
 		newobj.append(title);
 		controls = $("<div/>");
 		if(window.CLOUD){
-			let switch_players=$("<button>PLAYERS</button>");
+			let switch_players=$("<button title='Switch Player View'>PLAYERS</button>");
 
 			if(window.PLAYER_SCENE_ID==window.ScenesHandler.scenes[scene_id].id){
 				console.log("players are here!");
+				switch_players=$("<button title='Current Player View'>PLAYERS</button>");
 				switch_players.css("background","#C53131");
 				switch_players.css("color","#FFF");
 			}
@@ -791,8 +792,9 @@ function refresh_scenes() {
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 			});
 			
-			let switch_dm=$("<button>DM</button>");
+			let switch_dm=$("<button title='Switch DM View'>DM</button>");
 			if(window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.id==window.ScenesHandler.scenes[scene_id].id)){
+				switch_dm=$("<button title='Current DM View'>DM</button>");
 				switch_dm.css("background","#C53131");
 				switch_dm.css("color","#FFF");
 			}
@@ -829,12 +831,12 @@ function refresh_scenes() {
 			});
 			controls.append(switch_button);
 		}
-		edit_button = $("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/edit.svg'></button>");
+		edit_button = $("<button title='Edit Scene'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/edit.svg'></button>");
 		edit_button.click(function() {
 			edit_scene_dialog(scene_id);
 		});
 		controls.append(edit_button);
-		delete_button=$("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
+		delete_button=$("<button title='DELETE Scene'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 		delete_button.click(function() {
 			r = confirm("Are you sure that you want to delete this scene?");
 			if (r == true) {
@@ -910,7 +912,7 @@ function init_scene_selector() {
 
 
 	addblock = $("<div style='float:left;overflow: hidden;display:block;'/>");
-	addbutton = $("<button id='addscene'><span class='material-icons button-icon md-dark md-32'>add</span></button></button>");
+	addbutton = $("<button title='New Scene' id='addscene'><span class='material-icons button-icon md-dark md-32'>add</span></button></button>");
 
 	addbutton.click(function() {
 		window.ScenesHandler.scenes.push({

@@ -24,16 +24,16 @@ function setup_aoe_button() {
     aoe_button = $("<button style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable'><u>A</u>OE</button>");
     aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
 
-    aoe_menu.append("<div style='font-weight:bold'>Size</div>");
+    aoe_menu.append("<div style='font-weight:900'>Size</div>");
     aoe_menu.append("<div><input tabindex='2' id='aoe_feet' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10'></div>");
 
-    aoe_menu.append("<div style='font-weight:bold'>Color</div>");
+    aoe_menu.append("<div style='font-weight:900'>Color</div>");
     aoe_menu.append("<div><button tabindex='3' id='aoe_default' class='drawbutton menu-option aoe-option aoecolor remembered-selection' style='width:75px'>Default</button></div>");
     aoe_menu.append("<div><button tabindex='3' id='aoe_fire' class='drawbutton menu-option aoe-option aoecolor' style='width:75px'>Fire</button></div>");
     aoe_menu.append("<div><button tabindex='3' id='aoe_dark' class='drawbutton menu-option aoe-option aoecolor' style='width:75px'>Dark</button></div>");
     aoe_menu.append("<div><button tabindex='3' id='aoe_green' class='drawbutton menu-option aoe-option aoecolor' style='width:75px'>Green</button></div>");
 
-    aoe_menu.append("<div style='font-weight:bold'>Shape</div>");
+    aoe_menu.append("<div style='font-weight:900'>Shape</div>");
     aoe_menu.append("<div><button tabindex='1' id='aoe_cone' class='aoeshape' style='width:75px'>Cone</button></div>");
     aoe_menu.append("<div><button tabindex='1' id='aoe_square' class='aoeshape' style='width:75px'>Square</button></div>");
     aoe_menu.append("<div><button tabindex='1' id='aoe_circle'class='aoeshape' style='width:75px'>Circle</button></div>");

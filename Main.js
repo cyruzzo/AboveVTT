@@ -1909,12 +1909,12 @@ function init_buttons() {
 
 
 	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
-	fog_menu.append("<div style='font-weight: bold;'>Reveal</div>");
+	fog_menu.append("<div style='font-weight: 900;'>Reveal</div>");
 	fog_menu.append("<div><button id='fog_square-r' style='width:75px' class='drawbutton menu-option fog-option remembered-selection' data-shape='rect' data-type=0>Square</button></div>");
 	fog_menu.append("<div><button id='fog_circle_r' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc'  data-type=0>Circle</button></div>");
 	fog_menu.append("<div><button id='fog_polygon_r' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=0>Polygon</button></div>");
 	fog_menu.append($("<div/>").append(clear_button));
-	fog_menu.append("<div style='font-weight: bold;'>Hide</div>");
+	fog_menu.append("<div style='font-weight: 900;'>Hide</div>");
 	fog_menu.append("<div><button id='fog_square_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='rect' data-type=1>Square</button></div>");
 	fog_menu.append("<div><button id='fog_circle_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</button></div>");
 	fog_menu.append("<div><button id='fog_polygon_h' style='width:75px' class='drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</button></div>");
@@ -1952,7 +1952,7 @@ function init_buttons() {
 	fog_menu.css("left",fog_button.position().left - 1);
 
 	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
-	draw_menu.append("<div style='font-weight:bold;'>Tool</div>");
+	draw_menu.append("<div style='font-weight:900;'>Tool</div>");
 	draw_menu.append("<div><button id='draw_square' style='width:75px' class='drawbutton menu-option draw-option remembered-selection' data-shape='rect' data-type='draw'>Square</button></div>");
 	draw_menu.append("<div><button id='draw_circle' style='width:75px' class='drawbutton menu-option draw-option' data-shape='arc' data-type='draw'>Circle</button></div>");
 	draw_menu.append("<div><button id='draw_cone' style='width:75px' class='drawbutton menu-option draw-option' data-shape='cone' data-type='draw'>Cone</button></div>");
@@ -1992,7 +1992,7 @@ function init_buttons() {
 		}
 	});
 
-	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
+	colors = $("<div class='ccpicker' style='background: #D32F2F; border-top: solid black 1px' />");
 		
 	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#C53131' style='width: 48px;'></div>");
 
@@ -2057,7 +2057,7 @@ function init_buttons() {
 	});
 
 	draw_menu.append(colors);
-	draw_menu.append("<div style='font-weight:bold;'>Type</div>");
+	draw_menu.append("<div style='font-weight:900; border-top: solid black 62px'>Fill Type</div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='transparent'>TRANSP</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='border'>BORDER</button></div>");
 	draw_menu.append("<div><button style='width:75px' class='drawType' data-value='filled'>FILLED</button></div>");
@@ -2119,7 +2119,7 @@ function init_buttons() {
 
 function init_stream_button() {
 	var stream_button = $("<button id='stream_button' class='hasTooltip button-icon hideable' data-name='Stream dice rolls'></button>");
-	stream_button.attr("data-name", "SHARE/SEE player's DDB dice rolling visuals (Experimental/stable).\nDisclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.\nOn by default = RED.");
+	stream_button.attr("data-name", "SHARE/SEE player's DDB dice rolling visuals (Experimental/stable).\nDisclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.\nFeature is not currently being maintained.\nOn by default = RED.");
 	stream_button.append("<img style='filter: brightness(0.4)' height='20px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
 	stream_button.append("<img height='20px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
 
@@ -2127,15 +2127,19 @@ function init_stream_button() {
 		if (!window.JOINTHEDICESTREAM) {
 			window.JOINTHEDICESTREAM = true;
 			window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
-			stream_button.css("background", "#C53131");
-			stream_button.css("border", "#FF7777");
-			stream_button.css("box-shadow", "0 0 12px 0px #f10000");
+			stream_button.css("background", "rgb(58 206 206)");
+			stream_button.css("border", "rgb(58 206 206)");
+			stream_button.css("box-shadow", "0 0 12px 0px rgb(58 206 206)");
+			stream_button.css("filter", "invert(1)");
+			stream_button.css("transition", "color 0s ease-in-out, background 0s ease-in-out, background-color 0s ease-in-out, background-image 0s ease-in-out");
 		}
 		else {
 			window.JOINTHEDICESTREAM = false;
 			stream_button.css("background", "");
 			stream_button.css("border", "lightgray");
 			stream_button.css("box-shadow", "");
+			stream_button.css("filter", "");
+			stream_button.css("transition", "color 0s ease-in-out, background 0s ease-in-out, background-color 0s ease-in-out, background-image 0s ease-in-out");
 			for (let i in window.STREAMPEERS) {
 				window.STREAMPEERS[i].close();
 				delete window.STREAMPEERS[i];

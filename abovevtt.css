@@ -27,7 +27,6 @@ body > button,
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
-
     font-family: "Roboto Condensed", Roboto, Helvetica, sans-serif;
     cursor: pointer;
     color: rgb(131, 131, 131);
@@ -87,7 +86,7 @@ body > button:hover,
 .GameLogEntry_Message__1GoY3 button:hover {
     color: #333;
     background-image: none;
-    background: #e6e6e6;
+    background: #c7c6c6;
 }
 
 .custom-gamelog-message {
