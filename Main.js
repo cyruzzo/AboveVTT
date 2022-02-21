@@ -169,14 +169,16 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 	else if (is_video === "0" || !is_video) {
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
+		
 		newmap.on("error", map_load_error_cb);
 		if (width != null) {
 			newmap.width(width);
 			newmap.height(height);
 		}
 
-		if (callback != null) {
-			newmap.on("load", () => newmap.animate({opacity:1},2000));
+		newmap.css("opacity","0");
+		newmap.on("load", () => newmap.animate({opacity:1},2000));
+		if (callback != null) {	
 			newmap.on("load", callback);
 		}
 

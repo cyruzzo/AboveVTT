@@ -907,10 +907,10 @@ class MessageBroker {
 		}*/
 
 		window.TOKEN_OBJECTS = {};
-		var data = msg.data;
+		let data = msg.data;
 
 		if(window.CLOUD){
-			if(window.DM && data.dm_map_usable=="1"){
+			if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
 				data.map=data.dm_map;
 				if(data.dm_map_is_video=="1")
 					data.is_video=true;
@@ -954,6 +954,19 @@ class MessageBroker {
 			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
 			if(!window.DM)
 				check_token_visibility();
+
+			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
+			if(window.CLOUD && !window.DM && data.dm_map_usable=="1"){
+				$("#scene_map").stop();
+				$("#scene_map").css("opacity","0");
+				console.log("switching back to player map");
+				$("#scene_map").off("load");
+				$("#scene_map").on("load", () => $("#scene_map").animate({opacity:1},2000));
+				$("#scene_map").attr("src",data.player_map);
+				
+			}
+
+			
 
 		});
 
