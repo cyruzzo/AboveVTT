@@ -257,8 +257,8 @@ div#scene_selector,
 }
 
 button#combat_button{
-    width: 75px;
-    margin-top: -1px;
+    width: 200px;
+    margin: 0px;
 }
 
 #combat_tracker_inside {
@@ -274,7 +274,7 @@ button#combat_button{
 }
 
 #combat_area tr[data-current] {
-    background-color: indianred;
+    background-color: #FF7777;
 }
 
 #combat_area td:last-of-type {
@@ -568,7 +568,7 @@ div#scene_properties form > div {
 }
 
 .tracker-player {
-    width: 150px;
+    width: 199px;
 }
 
 #campaign_banner {
