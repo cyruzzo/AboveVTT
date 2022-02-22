@@ -21,7 +21,7 @@ const AOE_TEMPLATES = {
 
 
 function setup_aoe_button() {
-    aoe_button = $("<button style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable'><u>A</u>OE</button>");
+    aoe_button = $("<button style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable button-trans'><u>A</u>OE</button>");
     aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
 
     aoe_menu.append("<div style='font-weight:900; background: #888; color: white'>Size</div>");

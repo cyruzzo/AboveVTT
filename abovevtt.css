@@ -36,9 +36,49 @@ body > button,
     text-transform: uppercase;
     background-color: rgb(242, 242, 242);
     margin: 3px 2px;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 5px 7px;
     white-space: nowrap;
+    z-index: 10;
+}
+
+button#select-button {
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+button#measure-button{
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+button#draw_button.button-enabled{
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+button#draw_button.button-enabled.button-selected{
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+button#fog_button.button-enabled{
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+button#fog_button.button-enabled.button-selected{
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.button-trans{
+    -webkit-transition: border-radius 0.5s !important;
+    transition: border-radius 0.5s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+button#sheet_button {
+    color: #838383;
 }
 
 button#scene_selector_toggle.hideable.menu_opened{
@@ -128,9 +168,18 @@ button.gamelog-to-everyone-button {
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 .material-icons.button-icon {
-    color: rgba(0, 0, 0, 0.8);
+    color: #838383;
     font-size: 22px;
     margin: -4px -5px;
+}
+
+.material-icons.button-icon:hover {
+    color: black;
+}
+
+.stream-icon{
+    filter: brightness(0);
+    color: black;
 }
 
 .aoeshape:focus,
@@ -139,6 +188,8 @@ button.gamelog-to-everyone-button {
     box-shadow: 0 0 12px 0px #f10000;
     border: #ff7777;
     color: #fff;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
 }
 
 .aoeshape:focus:hover,
@@ -154,10 +205,12 @@ button.gamelog-to-everyone-button {
 }
 
 .top_menu {
-    z-index: 10;
+    z-index: 9;
     margin: 0 8px;
-    top: 32px !important;
-    border-radius: 5px;
+    top: 34px !important;
+    border-radius: 8px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
     max-height: 0;
     overflow: hidden;
     transition: all 0.4s ease-in-out;

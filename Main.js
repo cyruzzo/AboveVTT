@@ -673,19 +673,24 @@ function init_sheet(){
 	container.css('width', 1025);
 	container.css('background', '#242527');
 	container.css('z-index', 0);
-	var buttonleft = 16;
-	var buttonprev = 16;
+	var buttonleft = 2;
+	var buttonprev = 2;
 
 	var close_button = $("<button>X</button>");
 
 	close_button.css("position", "absolute");
+	close_button.css("color", "#000000CC");
 	close_button.css('display', 'none');
-	close_button.css("top", "0px");
+	close_button.css("top", "1px");
 	close_button.css("right", buttonleft);
-	buttonleft+=26;
-	buttonprev+=52;
-	close_button.css("height", "23px");
-	close_button.css("width", "25px");
+	close_button.css("border-radius", "8px");
+	close_button.css("border", "0px");
+	close_button.css("font-size", "16px");
+	close_button.css("font-weight", "800");
+	buttonleft+=28;
+	buttonprev+=56;
+	close_button.css("height", "24px");
+	close_button.css("width", "26px");
 	close_button.click(function() {
 		$("#sheet").find("iframe").each(function(){
 			if($(this).css('height') !== '0px')
@@ -699,11 +704,16 @@ function init_sheet(){
 	var reload_button = $("<button>🗘</button>");
 
 	reload_button.css("position", "absolute");
+	reload_button.css("color", "#000000CC");
 	reload_button.css('display', 'none');
-	reload_button.css("top", "0px");
+	reload_button.css("top", "1px");
 	reload_button.css("right", buttonleft);
-	reload_button.css("height", "23px");
-	reload_button.css("width", "25px");
+	reload_button.css("border-radius", "8px");
+	reload_button.css("border", "0px");
+	reload_button.css("font-size", "16px");
+	reload_button.css("font-weight", "800");
+	reload_button.css("height", "24px");
+	reload_button.css("width", "26px");
 	reload_button.click(function() {
 		$("#sheet").find("iframe").each(function(){
 			if($(this).css('height') !== '0px')
@@ -717,11 +727,16 @@ function init_sheet(){
 	var resize_button = $("<button>⇹</button>");
 
 	resize_button.css("position", "absolute");
+	reload_button.css("color", "#000000CC");
 	resize_button.css('display', 'none');
-	resize_button.css("top", "0px");
+	resize_button.css("top", "1px");
 	resize_button.css("right", buttonprev);
-	resize_button.css("height", "23px");
-	resize_button.css("width", "25px");
+	resize_button.css("border-radius", "8px");
+	resize_button.css("border", "0px");
+	resize_button.css("font-size", "16px");
+	resize_button.css("font-weight", "800");
+	resize_button.css("height", "24px");
+	resize_button.css("width", "26px");
 	resize_button.click(function() {
 		$("#sheet").each(function(){
 			if($(this).css('width') == '1025px')
@@ -768,7 +783,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	//iframe.css('display', 'none');
 	iframe.css("width", "100%");
 	iframe.css("position", "absolute");
-	iframe.css("top", "24px");
+	iframe.css("top", "26px");
 	iframe.css("left", "0px");
 	iframe.css("height", "0px");
 	iframe.attr('data-sheet_url', pc_sheet);
@@ -1144,11 +1159,11 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		}
 
 		// show sheet container and sheet iframe
-		$("#sheet").css('display', 'inherit').css('border-top-right-radius', '15px').css('border-top-left-radius', '15px').css('background', '#171717');
+		$("#sheet").css('display', 'inherit').css('background', '#171717');
 		$("#sheet").find("button").css('display', 'inherit');
 		container.css("z-index", 99999999);
-		var containerHeight = $(".sidebar__inner").height() - 20;
-		var iframeHeight = containerHeight -20;
+		var containerHeight = $(".sidebar__inner").height() - 14;
+		var iframeHeight = containerHeight - 20;
 		container.animate({
 			//right: $(".sidebar__inner").width()
 			right: 343 + parseInt($(".sidebar").css("right")),
@@ -1943,10 +1958,10 @@ function init_buttons() {
 	$("body").append(buttons);
 
 	
-	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable' data-shape='select'><u>S</u>ELECT</button>"));
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable button-trans' data-shape='select'><u>S</u>ELECT</button>"));
 
-	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton hideable' data-shape='measure'><u>R</u>ULER</button>"));
-	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable'><u>F</u>OG</button>");
+	buttons.append($("<button style='display:inline;width:75px;;' id='measure-button' class='drawbutton hideable button-trans' data-shape='measure'><u>R</u>ULER</button>"));
+	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable button-trans'><u>F</u>OG</button>");
 
 	if (window.DM)
 		buttons.append(fog_button);
@@ -2082,7 +2097,7 @@ function init_buttons() {
 
 	$("body").append(draw_menu);
 
-	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable'><u>D</u>RAW</button>");
+	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable button-trans'><u>D</u>RAW</button>");
 
 	if (window.DM){
 		buttons.append(draw_button);
@@ -2121,8 +2136,8 @@ function init_buttons() {
 function init_stream_button() {
 	var stream_button = $("<button id='stream_button' class='hasTooltip button-icon hideable' data-name='Stream dice rolls'></button>");
 	stream_button.attr("data-name", "SHARE/SEE player's DDB dice rolling visuals (Experimental/stable).\nDisclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.\nFeature is not currently being maintained.\nOn by default = RED.");
-	stream_button.append("<img style='filter: brightness(0.4)' height='16px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
-	stream_button.append("<img height='16px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
+	stream_button.append("<img class='stream-icon' height='16px' src='"+window.EXTENSION_PATH+ "assets/dice/d6.png'>");
+	stream_button.append("<img class='stream-icon' height='16px' src='"+window.EXTENSION_PATH + "assets/icons/share.svg'>");
 
 	stream_button.click(() => {
 		if (!window.JOINTHEDICESTREAM) {
