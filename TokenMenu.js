@@ -506,7 +506,7 @@ function init_tokenmenu(){
 	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
 
 	let header = tokensPanel.header;
-	header.append("<div class='panel-warning'>THIS IS AN EXPERIMENTAL FEATURE. DON'T START SPENDING HOURS ADDING TOKENS YET. YOU MAY LOSE THEM</div>");
+	header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
 	
 	let backButton = $(`<div class="tokens-panel-back-button"><div>Back</div></div>`);
 	header.append(backButton);

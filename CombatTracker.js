@@ -168,6 +168,7 @@ function ct_reorder(persist=true) {
 function ct_add_token(token,persist=true,disablerolling=false){
 	// TODO: check if the token is already in the tracker..
 	
+	
 	token.options.combat = true;
 	//token.sync();
 	if (token.persist != null) token.persist();
@@ -332,17 +333,32 @@ function ct_load(data=null){
 	
 	if(data){	
 		for(i=0;i<data.length;i++){
-			if(  (data[i]['data-target'] in window.TOKEN_OBJECTS)){
-				ct_add_token(window.TOKEN_OBJECTS[data[i]['data-target']] ,false,true);
+			if (data[i]['data-target'] === 'round'){
+				window.ROUND_NUMBER = data[i]['round_number'];
+				document.getElementById('round_number').value = window.ROUND_NUMBER;
+			}
+			else{
+				let token;
+				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
+					token=window.TOKEN_OBJECTS[data[i]['data-target']];
+				}
+				else{
+					token={
+						options:{
+							name: 'Not in the current map',
+							id: data[i]['data-target'],
+							imgsrc: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
+							hp:"0",
+							max_hp:"0",
+						}
+					}
+				}
+
+				ct_add_token(token,false,true);
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 				}
-			}
-			else if (data[i]['data-target'] === 'round')
-			{
-				window.ROUND_NUMBER = data[i]['round_number'];
-				document.getElementById('round_number').value = window.ROUND_NUMBER;
 			}
 		}
 	}

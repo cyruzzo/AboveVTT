@@ -1,4 +1,4 @@
-var abovevtt_version = '0.68';
+var abovevtt_version = '0.70';
 
 function parse_img(url){
 	if (url === undefined) {
@@ -176,15 +176,18 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		callback();
 	}
 	else if (is_video === "0" || !is_video) {
-		newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
+		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
+		
 		newmap.on("error", map_load_error_cb);
 		if (width != null) {
 			newmap.width(width);
 			newmap.height(height);
 		}
 
-		if (callback != null) {
+		newmap.css("opacity","0");
+		newmap.on("load", () => newmap.animate({opacity:1},2000));
+		if (callback != null) {	
 			newmap.on("load", callback);
 		}
 
@@ -315,6 +318,7 @@ function report_connection(){
 }
 
 function load_monster_stat(monsterid, token_id=false) {
+	token_id=false; // DISABLE HAVING AN IFRAME FOR EACH TOKEN NPC. WE GO BACK TO USING A SINGLE IFRAME FOR EACH MONSTER TYPE
 	$(".monster_frame").hide();
 	
 	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
@@ -575,7 +579,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+"</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+".1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -623,11 +627,11 @@ function init_splash() {
 
 	cont.append("<br>AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>. Here's a list of the current supporters");
 
-	patreons = $("<div id='patreons' style='margin-top:4px;'/>");
+	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","Dread Pirate Mittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","jtechcomputers","Mike Miller"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","RenoGeek","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Chris Cannon","Tom","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson","Joe King","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Luke Barton","Eric Mason","Jack Sherman","Sunscryer"];
-	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Daniel Villablanca","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Adam Connor","mad4ever","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Joseph Bendickson","CheekySausageGames","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","William Clem","Chris Meece","Victor Martinez","Ian Leyco","Michael Gisby","Dorian Arcos","Arish Rustomji","Christian Johansson","Gregory Willis","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Kyle Kroeker","Keith Richard","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Jason Sas","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeartGaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson"];
+	l1 = ["Max Puplett","Jordan Cohen","MichaelSaintGregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The DreadPirateMittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Mike Miller","Tobias Ates"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Chris Cannon","Carl Cedarstaff","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","CameronPatterson","Joe King","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Eric Mason","Avilar"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Daniel Villablanca","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Adam Connor","Johan Surac","Chris Sells","Sarah(ExpQuest)","Randy Zuendel","Invictus92","Robert Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Joseph Bendickson","CheekySausageGames","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Ian Leyco","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Kyle Kroeker","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Jason Sas","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Marcin Nowicki","Steven Van Eckeren","Tirent_Tv","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morris","Tomi Skibinski","Eric VanSingel","Joey Lalor","Chris Tornton","Jeffrey Weist","Don Clemson","Nomad CLL","Stumpt","Gabby Alexander","John Ramsburg"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -671,7 +675,12 @@ function init_splash() {
 // UNIFIED TOKEN HANDLING
 var MYCOBALT_TOKEN = false;
 var MYCOBALT_TOKEN_EXPIRATION = 0;
-function get_cobalt_token(callback) {
+function get_cobalt_token(callback, force_reconnect = true) {
+
+	if (force_reconnect && forceDdbWsReconnect() == true) {
+		// forceDdbWsReconnect will call get_cobalt_token
+		return;
+	}
 
 	if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
 		console.log("TOKEN IS CACHED");
@@ -693,6 +702,58 @@ function get_cobalt_token(callback) {
 			callback(data.token);
 		}
 	});
+}
+
+/* Attempts to force DDBs WebSocket to re-connect.
+* Return false - wasn't able to force / no need
+* Return true - was able to attempt force reconnect */
+var DDB_WS_OBJ = null;
+var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+function forceDdbWsReconnect() {
+	try {
+		if (DDB_WS_FORCE_RECONNECT_LOCK) {
+			console.log("forceDdbWsReconnect is already locked!");
+			return false;
+		}
+
+		if (window.navigator && !window.navigator.onLine) {
+			console.log("No internet connection, cannot re-connect to DDBs WebSocket.");
+			return false;
+		}
+
+		DDB_WS_FORCE_RECONNECT_LOCK = true;
+
+		const key = Symbol.for('@dndbeyond/message-broker-lib');
+		if (key) {
+			DDB_WS_OBJ = window[key];
+		}
+
+		if (DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') {
+			console.log("Detected that DDBs WebSocket is disconnected - attempting to force reconnect.");
+			DDB_WS_OBJ.reset();
+			DDB_WS_OBJ.connect();
+			get_cobalt_token(function(token) {
+				window.MB.loadWS(token, null);
+
+				// Wait 8 seconds before checking again if the websocket is connected
+				setTimeout(function() {
+					if (DDB_WS_OBJ.status == 'open') {
+						console.log("Managed to reconnect DDBs WebSocket successfully!");
+					}
+					DDB_WS_FORCE_RECONNECT_LOCK = false;
+				}, 8000);
+			}, false);
+
+			return true;
+		}
+
+		DDB_WS_FORCE_RECONNECT_LOCK = false;
+
+		return false;
+	} catch(e) {
+		console.log("forceDdbWsReconnect error: " + e);
+		DDB_WS_FORCE_RECONNECT_LOCK = false;
+	}
 }
 
 
@@ -1342,10 +1403,85 @@ function is_supported_version(versionString) {
 	return abovevtt_version >= versionString;
 }
 
-function init_things() {
-	window.STARTING = true;
-	gather_pcs();
+
+
+
+function init_above(){
+	console.log("init_above");
+	//window.STARTING = true;
 	let gameId = find_game_id();
+
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+
+	//THIS SHOULD HAVE ALREADY BEEN SET
+	// window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+	//let gameid = $("#message-broker-client").attr("data-gameId");
+	
+	let hasData=false;
+	if (localStorage.getItem('ScenesHandler' + gameId) != null){
+		hasData=true;
+	}
+	if (localStorage.getItem('Migrated' + gameId) != null){
+		hasData=false;
+	}
+
+	
+
+	$.ajax({
+		url:http_api_gw+"/services?action=getCampaignData&campaign="+window.CAMPAIGN_SECRET,
+		success:function(campaignData){
+			console.log(campaignData);
+			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
+				window.CLOUD=true;
+				init_things();
+			}
+			else{ // CHECK IF THIS IS A NEW CAMPAIGN
+				if (hasData || (window.FORCED_DM)) {
+					console.log("**********UNMIGRATED CAMPAIGN*************");
+					window.CLOUD=false;
+					init_things();
+				}
+				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
+					if(window.DM){
+						$.ajax({
+							url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
+							type:'PUT',
+							contentType:'application/json',
+							data:JSON.stringify({
+								cloud:1
+							}),
+							success: function(){
+								console.log("******* WELCOME TO THE CLOUD*************")
+								window.CLOUD=true;
+								init_things();
+							}
+						});
+					}
+					else{ // PLAYER SHOULD NOT FORCE CLOUD MIGRATION
+						window.CLOUD=false;
+						init_things();
+					}
+
+				}
+
+
+			}
+			
+		}
+	}
+	)
+}
+
+function init_things() {
+	console.log("init things");
+	window.STARTING = true;
+	let searchParams = new URLSearchParams(window.location.search)
+	var gameid = $("#message-broker-client").attr("data-gameId");
+	init_splash();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
 	window.DRAWINGS = [];
@@ -1371,6 +1507,7 @@ function init_things() {
 		window.EncounterHandler = new EncounterHandler(function() {
 			init_ui();
 			if (is_encounters_page()) {
+
 				$("#site-main").css({"display": "block", "visibility": "hidden"});
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
@@ -1400,8 +1537,10 @@ function init_things() {
 					}
 				});
 			}
+			
 			init_scene_selector();
 			init_splash();
+			
 		});
 	} else if (is_characters_page()) {
 		
@@ -1860,6 +1999,7 @@ function inject_chat_buttons() {
 }
 
 function init_ui() {
+	console.log("init_ui");
 	// ATTIVA GAMELOG
 	$(".gamelog-button").click();
 	$(".glc-game-log").addClass("sidepanel-content");
@@ -1997,6 +2137,11 @@ function init_ui() {
 			notify_player_join();
 		}, 5000);
 	}
+	if(DM && window.CLOUD){
+		setTimeout(function(){
+			window.MB.sendMessage("custom/myVTT/dmjoin"); // join and ask for the scene list
+		},4000);
+	}
 
 	init_controls();
 	init_sheet();
@@ -2031,8 +2176,9 @@ function init_ui() {
 
 	if (window.DM) {
 		setTimeout(function() {
-			window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
-
+			if(!window.CLOUD){
+				window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
+			}
 			// also sync the journal
 			window.JOURNAL.sync();
 		}, 5000);
@@ -2130,8 +2276,7 @@ function init_ui() {
 			retriveRules();
 			loadModules(initalModules);
 		},10000);
-		//setTimeout(get_pclist_player_data,25000);
-		setInterval(get_pclist_player_data,25000); // ACTIVED POLLING CAUSE DDB DISABLED character-update-fullfilled
+		setTimeout(get_pclist_player_data,25000);
 	}
 
 	if (!is_encounters_page()) {
@@ -2164,8 +2309,13 @@ function init_buttons() {
 		if (r == true) {
 			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
 			redraw_canvas();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
@@ -2175,8 +2325,13 @@ function init_buttons() {
 		if (r == true) {
 			window.REVEALED = [];
 			redraw_canvas();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
 		}
 	});
 
@@ -2201,8 +2356,13 @@ function init_buttons() {
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_canvas();
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
+		if(window.CLOUD){
+			sync_fog();
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
 	});
 
 
@@ -2247,9 +2407,27 @@ function init_buttons() {
 		draw_menu.find("#draw_undo").click(function() {
 			window.DRAWINGS.pop();
 			redraw_drawings();
+			if(window.CLOUD){
+				sync_drawings();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
+		}
+	);
+
+	draw_menu.find("#draw_undo").click(function() {
+		window.DRAWINGS.pop();
+		redraw_drawings();
+		if(window.CLOUD){
+			sync_drawings();
+		}
+		else{
 			window.ScenesHandler.persist();
 			window.ScenesHandler.sync();
-		});
+		}
+	});
 
 		colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
 			
@@ -2483,11 +2661,16 @@ $(function() {
 	// SCB:Create a 'content DIV' for AboveVTT to add our controls to, so we can control styling better
 	var contentDiv = $("<div class='above-vtt-content-div'>").appendTo($(".ddb-campaigns-detail-header-secondary-sharing"));
 
+	var warningDiv = $("<div class='above-vtt-warning-div' style='padding-top: 20px;'>").appendTo($(".ddb-campaigns-invite-container"));
+	var warningtitleDiv = $("<div class='above-vtt-warning-secondary-div'>").appendTo($(".above-vtt-warning-div"));
+
 	// SCB: Append our logo
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
 	if(is_dm){
 		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
+		warningDiv.append($("<a class='ddb-campaigns-warning-div' style='color: #333; padding-left: 15%'>If you press 'RESET INVITE LINK' you will lose your cloud data!</a>"));
+		warningtitleDiv.append($("<a class='above-vtt-warning-secondary-div' style='color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto; background-color: #fff; border: 2px solid #c53131; border-radius: 4px; padding: 10px 145px 30px 145px;'>WARNING FOR ABOVEVTT!!!</a>"));
 	}
 
 	$(".ddb-campaigns-character-card-footer-links").each(function() {
@@ -2516,7 +2699,7 @@ $(function() {
 				window.PLAYER_NAME = name;
 				window.PLAYER_ID = getPlayerIDFromSheet(sheet);
 				window.DM = false;
-				init_things();
+				init_above();
 			}
 		});
 
@@ -2553,21 +2736,20 @@ $(function() {
 		}
 	});
 
-	var campaign_banner=$(`
-		<div id='campaign_banner'>
-			<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='${window.EXTENSION_PATH}assets/logo.png'>Basic Instructions!</h4>
-			<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>
-			Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>
-			Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>
-			If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>
-			If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>
-			Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>
-			<h4>Advanced!</h4>
-			If you are not the DM of this campaign but would like to join as the DM then <a class='joindm'>click here</a>.<br>
-			(Please note that <b>you will not be able to see the other DM's data, and all active player sheets must be public</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected, or if you cannot view all active player sheets<br><br>
-			Use this button to delete all locally held data, to 'clear the cache' as it were: <br>
-		</div>
-	`);
+
+
+
+	var campaign_banner=$("<div id='campaign_banner'></div>")
+	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
+	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
+	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>");
+	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
+	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
+	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
+	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
+	campaign_banner.append("<b>Advanced</b><br>If you are not the DM of this campaign but would like to join as the DM then <a class='forcedjoindm'>click here</a>.<br>");
+	campaign_banner.append("(Please note that <b>you will not be able to see the other DM's data, and all active player sheets must be public</b>.)<br>Do <b>NOT</b> press this if there's already another DM connected, or if you cannot view all active player sheets<br><br>");
+	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
 	campaign_banner.append(delete_button);
 	campaign_banner.append(delete_button2);
 	campaign_banner.hide();
@@ -2627,7 +2809,7 @@ $(function() {
 				window.PLAYER_NAME = "THE DM";
 				window.PLAYER_ID = false;
 				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-				init_things();
+				init_above();
 			}
 		});
 	});
@@ -2644,7 +2826,7 @@ $(function() {
 			window.PLAYER_NAME = "THE DM";
 			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_things();
+			init_above();
 		} else if (is_characters_page()) {
 			let path = window.location.href;
 			let pathWithoutQuery = path.split("?")[0];
@@ -2658,14 +2840,14 @@ $(function() {
 			// these will be updated after the initial load
 			window.PLAYER_NAME = "";
 			window.PLAYER_IMG = "https://www.dndbeyond.com/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-			init_things();
+			init_above();
 		} else {
 			window.DM = true;
 			window.PLAYER_SHEET = false;
 			window.PLAYER_NAME = "THE DM";
 			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_things();
+			init_above();
 		}
 	}
 
