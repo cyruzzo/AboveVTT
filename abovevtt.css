@@ -272,7 +272,7 @@ button[id$='-button'].button-enabled:hover {
     width: 176px;
     height: 55px;
     border: 1px dashed #3d3d3d !important;
-    background-image: -webkit-linear-gradient(270deg, #f7a6a6, #ff7777);
+    background-image: -webkit-linear-gradient(270deg, #ff7777, #C53131);
     float: left;
     overflow: hidden;
     display: block;
