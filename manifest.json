@@ -2,13 +2,13 @@
 	"manifest_version": 2,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.70.1",
+	"version": "0.71",
 	"content_scripts": [
 		{
 			"matches": [
 				"https://www.dndbeyond.com/campaigns/*",
-				"https://www.dndbeyond.com/encounters/*",
-				"https://www.dndbeyond.com/profile/*/characters/*"
+				"https://www.dndbeyond.com/encounters/*abovevtt=true",
+                "https://www.dndbeyond.com/profile/*/characters/*abovevtt=true"
 			],
 			"exclude_matches": [
 				"https://www.dndbeyond.com/campaigns/join/*"

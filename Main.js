@@ -579,7 +579,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+abovevtt_version+".1</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.BETA</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -2781,8 +2781,10 @@ $(function() {
 	);
 	ddbDiceToggle.css({ "width": "400px", "margin-top": "8px", "margin-left": "4px" });
 	ddbDiceToggle.find(".token-image-modal-footer-title").css({ "text-transform": "none" });
-	contentDiv.append(`<br/><br/><h5 style="margin:8px">A new beta feature is now available!</h5><p style="margin:8px">It will eventually be turned on by default so consider testing it out.<br/>Please consider giving feedback to the developers in the <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a>.<br/>Thank you.</p>`);
-	contentDiv.append(ddbDiceToggle);
+	//contentDiv.append(`<br/><br/><h5 style="margin:8px">A new beta feature is now available!</h5><p style="margin:8px">It will eventually be turned on by default so consider testing it out.<br/>Please consider giving feedback to the developers in the <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a>.<br/>Thank you.</p>`);
+	//contentDiv.append(ddbDiceToggle);
+	// FORCE DDB DICE
+	window.EXPERIMENTAL_SETTINGS[ddbDiceKey]=true;
 
 	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
 
