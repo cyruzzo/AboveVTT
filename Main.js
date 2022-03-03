@@ -505,7 +505,7 @@ function init_controls() {
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	sidebarControls.append(b4);*/
 
-	if (get_browser().chrome || window.DM) {
+	if (window.DM) {
 		b7 = $("<div id='switch_settings' class='tab-btn hasTooltip button-icon trailing-edge blue-tab' data-name='Settings' data-target='#settings-panel'></div>");
 
 		let b7ImageDiv = $('<div></div>');
