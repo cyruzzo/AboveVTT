@@ -69,6 +69,10 @@ class Token {
 		return this.options.id.includes("/");
 	}
 
+	isMonster() {
+		return (typeof this.options.monster == "string") && this.options.monster.length > 0
+	}
+
 	size(newsize) {
 		this.update_from_page();
 		this.options.size = newsize;
@@ -569,14 +573,15 @@ class Token {
 				
 				remove_selected_token_bounding_box();
 				if(old.is(':animated')){
-					this.stopAnimation();
+					// this token is being moved quickly, speed up the animation
+					animationDuration = 100;
 				}
 				
 				old.animate(
 					{
 						left: this.options.left,
 						top: this.options.top,
-					}, { duration: animationDuration, queue: false, complete: function() {
+					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
 					} });
 				
@@ -656,7 +661,8 @@ class Token {
 				}, { duration: 1000, queue: false });
 
 				old.animate({
-					width: this.options.size
+					width: this.options.size,
+					height: this.options.size
 				}, { duration: 1000, queue: false });
 				
 				var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
@@ -778,6 +784,7 @@ class Token {
 			
 			tok.css("z-index", 32+zindexdiff);
 			tok.width(this.options.size);
+			tok.height(this.options.size);
 			tok.addClass('token');
 
 			tok.append(tokimg);
@@ -1139,6 +1146,32 @@ class Token {
 		}
 	}
 
+	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
+	track_ability(key, numberRemaining) {
+		if (this.options.abilityTracker === undefined) {
+			this.options.abilityTracker = {};
+		}
+		let asNumber = parseInt(numberRemaining);
+		if (isNaN(asNumber)) {
+			console.warn(`track_ability was given an invalid value to track. key: ${key}, numberRemaining: ${numberRemaining}`);
+			return;
+		}
+		this.options.abilityTracker[key] = asNumber;
+		if (this.persist !== undefined && this.persist != null) {
+			this.persist();
+		}
+	}
+	// returns the stored value as a number or returns defaultValue
+	get_tracked_ability(key, defaultValue) {
+		if (this.options.abilityTracker === undefined) {
+			return defaultValue;
+		}
+		let storedValue = parseInt(this.options.abilityTracker[key]);
+		if (storedValue === undefined || isNaN(storedValue)) {
+			return defaultValue;
+		}
+		return storedValue;
+	}
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -1188,7 +1221,7 @@ function default_options() {
 }
 
 function token_button(e, tokenIndex = null, tokenTotal = null) {
-	console.log($(e.target).outerHTML());
+	console.log(e.target.outerHTML);
 	let imgsrc = parse_img($(e.target).attr("data-img"));
 	if (imgsrc.startsWith("data:")){
 		alert("WARNING! Support for token urls that starts with data: will be removed soon (as they can cause problems). Please find an image with url that begins with http:// or https://");
@@ -1426,6 +1459,9 @@ function place_token_at_point(tokenObject, x, y) {
 		window.MB.handlePlayerData(window.PLAYER_STATS[options.id]);
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
+
+	
+	window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 }
 
 function array_remove_index_by_value(arr, item) {
@@ -1437,7 +1473,12 @@ function array_remove_index_by_value(arr, item) {
 function menu_callback(key, options, event) {
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
-			load_monster_stat($(this).attr('data-monster'), token_id=$(this).attr('data-id'));
+			if (encounter_builder_dice_supported()) {
+				console.log(`attempting to open monster stat block with monsterId ${$(this).attr('data-monster')} and tokenId ${$(this).attr('data-id')}`);
+				open_monster_stat_block_with_id($(this).attr('data-monster'), $(this).attr('data-id'));
+			} else {
+				load_monster_stat($(this).attr('data-monster'), token_id=$(this).attr('data-id'));	
+			}
 		}
 		else {
 			//load_frame($(this).attr('data-id'));
@@ -2282,6 +2323,12 @@ function get_custom_monster_images(monsterId) {
 		customImages = [];
 	}
 	return customImages;
+}
+
+function get_random_custom_monster_image(monsterId) {
+	let customImgs = get_custom_monster_images(monsterId);
+	let randomIndex = getRandomInt(0, customImgs.length);
+	return customImgs[randomIndex];
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {

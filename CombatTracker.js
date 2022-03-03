@@ -4,18 +4,24 @@ function init_combat_tracker(){
 	
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
-	toggle=$("<button id='combat_button' class='hideable'><u>C</u>OMBAT</button>");
+	toggle=$("<div id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</div>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").attr('style', 'display: none;');
 			$("#combat_tracker").css("height","20px"); // IMPORTANT
+			toggle.removeClass("ddbc-tab-options__header-heading--is-active");
 		}
 		else{
 			$("#combat_tracker_inside").attr('style', 'display: block;');
 			$("#combat_tracker").css("height","450px"); // IMPORTANT
+			toggle.addClass("ddbc-tab-options__header-heading--is-active");
 		}
+		reposition_enounter_combat_tracker_iframe();
+		reposition_player_sheet(); // not sure if this needs to be here, but maybe for smaller screens?
 	});
-	ct.append(toggle);
+	let pill = $(`<div class="ddbc-tab-options--layout-pill" />`);
+	pill.append(toggle);
+	ct.append(pill);
 	ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
 	ct.append(ct_inside);
@@ -263,13 +269,18 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		stat=$("<button style='font-size:10px;'>STAT</button>");
 		
 		stat.click(function(){
-			iframe_id="#iframe-monster-"+token.options.monster;
-			if($(iframe_id).is(":visible"))
-				$(iframe_id).hide();
-			else{
-				$(".monster_frame").hide();
-				load_monster_stat(token.options.monster, token.options.id);
+			if (encounter_builder_dice_supported()) {
+				console.log(`attempting to open monster with monsterId ${token.options.monster} and tokenId ${token.options.id}`);
+				open_monster_stat_block_with_id(token.options.monster, token.options.id);
+			} else {
+				iframe_id="#iframe-monster-"+token.options.monster;
+				if($(iframe_id).is(":visible")) {
+					$(iframe_id).hide();
+				} else {
+					$(".monster_frame").hide();
+					load_monster_stat(token.options.monster, token.options.id);
 				}
+			}
 		});
 		if(window.DM)
 			buttons.append(stat);
@@ -307,7 +318,7 @@ function ct_persist(){
 	data.push({'data-target': 'round',
 				'round_number':window.ROUND_NUMBER});
 	
-	var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
+	var itemkey="CombatTracker"+find_game_id();
 	
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
@@ -316,7 +327,7 @@ function ct_persist(){
 function ct_load(data=null){
 	
 	if(data==null){
-		var itemkey="CombatTracker"+$("#message-broker-client").attr("data-gameId");
+		var itemkey="CombatTracker"+find_game_id();
 		data=$.parseJSON(localStorage.getItem(itemkey));
 	}
 	

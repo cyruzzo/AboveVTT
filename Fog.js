@@ -1141,6 +1141,7 @@ function setup_draw_buttons() {
 			if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
 				stop_drawing();
 				$(".drawbutton").removeClass('button-enabled');
+				$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
 				$("#fog_overlay").css("z-index", "20");
 
 				if (window.ALIGNING == true) {
@@ -1154,21 +1155,26 @@ function setup_draw_buttons() {
 
 			stop_drawing();
 			$(".drawbutton").removeClass('button-enabled');
+			$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
 			$(clicked).addClass('button-enabled');
+			$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
 			if ($(clicked).hasClass('fog-option')) {
 				$(".fog-option").removeClass('remembered-selection');
 				$(clicked).addClass('remembered-selection');
 				$("#fog_button").addClass('button-enabled');
+				$("#fog_button").addClass('ddbc-tab-options__header-heading--is-active');
 			}
 			if ($(clicked).hasClass('draw-option')) {
 				$(".draw-option").removeClass('remembered-selection');
 				$(clicked).addClass('remembered-selection');
 				$("#draw_button").addClass('button-enabled');
+				$("#draw_button").addClass('ddbc-tab-options__header-heading--is-active');
 			}
 			if ($(clicked).hasClass('aoe-option')) {
 				$(".aoe-option").removeClass('remembered-selection');
 				$(clicked).addClass('remembered-selection');
 				$("#aoe_button").addClass('button-enabled');
+				$("#aoe_button").addClass('ddbc-tab-options__header-heading--is-active');
 			}
 
 			var target = $("#fog_overlay");
@@ -1192,6 +1198,7 @@ function setup_draw_buttons() {
 			}
 
 			$(clicked).addClass('button-enabled');
+			$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
 
 			var data = {
 				shape: $(clicked).attr('data-shape'),
@@ -1220,6 +1227,9 @@ function setup_draw_buttons() {
 			target.on('mouseup', data, drawing_mouseup);
 			target.on('mousemove', data, drawing_mousemove);
 			target.on('contextmenu', data, drawing_contextmenu);
+
+			
+			close_monster_stat_block();
 		}
 	})
 	$('#select-button').click();

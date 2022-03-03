@@ -171,9 +171,34 @@ class MessageBroker {
 		
 	}
 
-	handle_injected_data(data){
+	/// this will find all pending messages and reprocess them if needed. This is necessary on the characters page because DDB removes/injects the gamelog frequently. Any time they inject it, this gets called
+	reprocess_chat_message_history() {
+		for (let i = 0; i < window.MB.chat_message_history.length; i++) {
+			window.MB.chat_pending_messages.push(window.MB.chat_message_history[i]);
+		}
+		window.MB.handle_injected_data(window.MB.chat_pending_messages[0], false);
+	}
+
+	// we keep a list of the 100 most recent messages so we can re-inject them when DDB re-injects the gamelog on the characters page.
+	track_message_history(data) {
+		let existingMessage = window.MB.chat_message_history.find(message => message.id == data.id);
+		if (existingMessage) {
+			// already have this one
+			return;
+		}
+		window.MB.chat_message_history.unshift(data);
+		if (window.MB.chat_message_history > 100) {
+			window.MB.chat_message_history.pop();
+		}
+	}
+
+	handle_injected_data(data, trackHistory = true){
 		let self=this;
 		self.chat_pending_messages.push(data);
+		let animationDuration = trackHistory ? 250 : 0; // don't animate if we're reprocessing messages
+		if (trackHistory) {
+			window.MB.track_message_history(data);
+		}
 		// start the task
 		
 		if(self.chat_decipher_task==null){
@@ -189,7 +214,7 @@ class MessageBroker {
 					console.log(injection_data);
 					
 					var found=false;
-					$(".DiceMessage_RollType__wlBsW").each(function(){
+					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
 						if($(this).text()==injection_id){
 							found=true;
 							let li = $(this).closest("li");
@@ -215,11 +240,11 @@ class MessageBroker {
 								*/
 							}
 								
-							li.animate({ opacity: 0 }, 250, function() {
-								li.html(newlihtml);
+							li.animate({ opacity: 0 }, animationDuration, function() {
+							 	li.html(newlihtml);
 								let neweight = li.height();
 								li.height(oldheight);
-								li.animate({ opacity: 1, height: neweight }, 250, () => { li.height("") });
+								li.animate({ opacity: 1, height: neweight }, animationDuration, () => { li.height("") });
 								let img = li.find(".magnify");
 								img.magnificPopup({type: 'image', closeOnContentClick: true });
 
@@ -275,14 +300,21 @@ class MessageBroker {
 		this.chat_id=uuid();
 		this.chat_counter=0;
 		this.chat_pending_messages=[];
+		this.chat_message_history=[];
 		this.chat_decipher_task=null;
 
 		this.callbackQueue = [];
 		this.callbackAboveQueue = [];
 
 		this.userid = $("#message-broker-client").attr("data-userId");
-		this.gameid = $("#message-broker-client").attr("data-gameId");
+		this.gameid = find_game_id();
 		this.url = $("#message-broker-client").attr("data-connectUrl");
+		this.diceMessageSelector = "DiceMessage_RollType__wlBsW";
+		if (is_encounters_page()) {
+			this.diceMessageSelector = "DiceMessage_RollType__3a3Yo";
+		} else if (is_characters_page()) {
+			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
+		}
 
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
@@ -385,6 +417,7 @@ class MessageBroker {
 			}
 
 			if(msg.eventType == "custom/myVTT/scenelist"){
+				remove_loading_overlay();
 				if(window.DM){
 					console.log("got scene list");
 
@@ -462,15 +495,28 @@ class MessageBroker {
 					lock_display.css('font-weight', "bold");
 					lock_display.css('background', "rgba(255,255,0,0.7)");
 					lock_display.css('position', 'absolute');
-					lock_display.css('top', '27px');
-					lock_display.css('left', '0px');
-					lock_display.width($("#sheet").width());
-					//lock_display.height($("#sheet").height());
-					lock_display.height(25);
-					//lock_display.css('padding-top', '50px');
-					//$("#sheet iframe").css('opacity', '0.8');
-					$("#sheet").append(lock_display);
-					//$("#sheet iframe").attr('disabled', 'disabled');
+
+					if (is_characters_page()) {
+						lock_display.css({
+							"top": "0px",
+							"left": "0px",
+							"width": "100%",
+							"height": "100%"
+						});
+						$(".site-bar").append(lock_display);
+						adjust_site_bar();
+					} else {
+						lock_display.css('top', '27px');
+						lock_display.css('left', '0px');
+						lock_display.width($("#sheet").width());
+						//lock_display.height($("#sheet").height());
+						lock_display.height(25);
+						//lock_display.css('padding-top', '50px');
+						//$("#sheet iframe").css('opacity', '0.8');
+						$("#sheet").append(lock_display);
+						//$("#sheet iframe").attr('disabled', 'disabled');
+					}
+
 				}
 			}
 			if (msg.eventType == "custom/myVTT/unlock") {
@@ -481,6 +527,7 @@ class MessageBroker {
 				else if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
 					//alert('unlocked');
 					$("#lock_display").remove();
+					adjust_site_bar();
 					$("#sheet iframe").removeAttr('disabled');
 					$("#sheet iframe").css('opacity', '1');
 					$("#sheet iframe").attr('src', function(i, val) { return val; }); // RELOAD IFRAME
@@ -833,6 +880,37 @@ class MessageBroker {
 			return $("<div/>");
 		//notify_gamelog();
 		
+		if (is_encounters_page()) {
+			return $(`
+				<li class="GameLogEntry_GameLogEntry__1vYGY GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-end__2tv2W Flex_Flex__justifyContent-flex-start__3bvHH">
+					<p role="img" class="Avatar_Avatar__3dpoQ Flex_Flex__3K1Dd">
+						<img class="Avatar_AvatarPortrait__1B7vl" src="${data.img}" alt="">
+					</p>
+					<div class="GameLogEntry_MessageContainer__19nlL Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-start__JUhHW Flex_Flex__flexDirection-column__2o9lU">
+						<div class="GameLogEntry_Line__2g9hr Flex_Flex__3K1Dd Flex_Flex__justifyContent-space-between__E7BLY">
+						<span class="GameLogEntry_Sender__275Cs">${data.player}</span>
+					</div>
+					<div class="GameLogEntry_Message___nA2h GameLogEntry_Collapsed__1D6Vi GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd">${data.text}</div>
+					<time datetime="2021-12-21T13:11:06-06:00" title="12/21/2021 1:11 PM" class="GameLogEntry_TimeAgo__NX7ml TimeAgo_TimeAgo__2bZoF">27 mins ago</time></div>
+				</li>
+			`);
+		} else if (is_characters_page()) {
+			return $(`
+				<li class="cwBGi-s80YSXZFf9zFTAGg== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA== _42x6X+dUmW-21eOxSO1c7Q== _9ORHCNDFVTb1uWMCEaGDYg==">
+					<p role="img" class="TILdlgSwOYvXr2yBdjxU7A== QXDbdjnpeXLRB22KlOxDsA==">
+						<img class="U5icMJo74qXY3K0pjow8zA==" src="${data.img}" alt="">
+					</p>
+					<div class="pw06vls7GmA2pPxoGyDytQ== QXDbdjnpeXLRB22KlOxDsA== VwlMdrxdj-7VFbj4bhgJCg== bDu7knPli3v29ahk5PQFIQ==">
+						<div class="zmFwkmlgaKJ3kVU14zW8Lg== QXDbdjnpeXLRB22KlOxDsA== CoBE7nCohYcFyEBBP3K93A==">
+							<span class="_22SVeI3ayk2KgS4V+GqCCA==">${data.player}</span>
+						</div>
+						<div class="oDA6c7IdLEVJ7uSe5103CQ== iQqUeZkD8989e4pBhSqIrQ== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA==">${data.text}</div>
+						<time datetime="2022-01-06T07:46:19-06:00" title="1/6/2022 7:46 AM" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">24 mins ago</time>
+					</div>
+				</li>
+			`);
+		}
+
 		var newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
 		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + data.img + "'></p>"));
@@ -1026,7 +1104,6 @@ class MessageBroker {
 		let characterId=msg.data.characterId;
 
 		window.pcs.forEach(function(pc){
-			
 			if(!pc.sheet.endsWith(characterId)) // we only poll for the characterId that sent this message
 				return;
 

@@ -1,135 +1,288 @@
+let monster_panel_init_started = false;
+
 function init_monster_panel() {
-	panel = $("<div id='monster-panel' class='sidepanel-content'></div>");
-
-
-	iframe = $("<iframe id='iframe-monster-panel'></iframe>");
-
-
-	iframe.on("load", function(event) {
-		$(event.target).contents().find("body").css("zoom", "0.8");
-		console.log('sistemo panello mostro');
-
-		$(event.target).contents().find(".encounter-builder__header").hide();
-		$(event.target).contents().find(".release-indicator").hide();
-		$(event.target).contents().find("#site-main").css("padding", "0");
-		$(event.target).contents().find("header").hide();
-		$(event.target).contents().find(".main-filter-container").hide();
-		$(event.target).contents().find("#mega-menu-target").remove();
-		$(event.target).contents().find(".site-bar").remove();
-		$(event.target).contents().find(".page-header").remove();
-		$(event.target).contents().find(".homebrew-comments").remove();
-		$(event.target).contents().find("footer").remove();
-		$(event.target).contents().find(".encounter-builder__sidebar").remove();
-		$(event.target).contents().find(".dice-rolling-panel").remove();
-
-		var list = $(event.target).contents().find(".monster-listing__body");
-		
-		// limit the width of monster entries
-		list.css("max-width", "400px");
-	
-		// prevent right click menu on the monster image so we can use our own custom menu
-		list.on("contextmenu", ".monster-row__cell--avatar", function(e) {
-			e.preventDefault();
-		});
-		// find the monster row, grab the monster details, then open the token customization modal
-		const open_token_customization_modal_from_monster_row = function(event) {
-			event.preventDefault();
-			event.stopPropagation();
-			let monsterRow = event.target.closest(".monster-row");
-			let monsterId = monsterRow.id.replace("monster-row-", "");
-			let monsterName = $(monsterRow).find(".monster-row__name").text();
-			let defaultImg = parse_img($(monsterRow).find(".monster-row__cell--avatar img").attr("src"));
-			display_monster_customization_modal(undefined, monsterId, monsterName, defaultImg);
-		};
-		// clicking the menu looking button opens our token customization modal
-		list.on("click", ".monster-row__cell--drag-handle", function(event) {
-			open_token_customization_modal_from_monster_row(event);
-		});
-		// right clicking the monster image used to open a contextMenu. our token customization modal to preserve that functionality
-		list.on("mouseup", ".monster-row__cell--avatar", function(event) {
-			open_token_customization_modal_from_monster_row(event);
-		});
-		register_custom_monster_image_context_menu();
-
-		list.on("contextmenu", "button.monster-row__add-button", function(e) {
-			e.preventDefault();
-		});
-
-		list.on("mousedown", "button.monster-row__add-button", function(e) {
-
-
-			e.stopPropagation();
-			e.target = this; // hack per passarlo a token_button
-			let button = $(this);
-			console.log(button.outerHTML());
-
-			img = button.parent().parent().find("img");
-
-			if (img.length > 0) {
-				url = img.attr('src');
-			}
-			else {
-				url = "";
-			}
-
-			mname = button.parent().parent().find(".monster-row__name").html();
-			button.attr("data-name", mname);
-			var monsterid = $(this).parent().parent().parent().attr('id').replace("monster-row-", "");
-
-			button.attr('data-img', url);
-			button.attr('data-stat', monsterid);
-
-			if (e.button == 2) {
-				button.attr('data-hidden', 1)
-			}
-			else
-				button.removeAttr('data-hidden');
-
-
-			window.StatHandler.getStat(monsterid, function(stat) {
-				if (stat.data.sizeId == 2)
-					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
-				if (stat.data.sizeId == 5)
-					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 2);
-				if (stat.data.sizeId == 6)
-					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 3);
-				if (stat.data.sizeId == 7)
-					button.attr("data-size", Math.round(window.CURRENT_SCENE_DATA.hpps) * 4);
-				button.attr('data-hp', stat.data.averageHitPoints);
-				button.attr('data-maxhp', stat.data.averageHitPoints);
-				button.attr('data-ac', stat.data.armorClass);
-				token_button(e);
-			});
-
-
-
-
-		});
-
-		list.on("click", ".monster-row", function() { // BAD HACKZZZZZZZZZZZZZ
-			var monsterid = $(this).attr("id").replace("monster-row-", "");
-			window.StatHandler.getStat(monsterid, function(stat) {
-				setTimeout(function() {
-					scan_monster($("#iframe-monster-panel").contents().find(".ddbeb-modal"), stat);
-					$("#iframe-monster-panel").contents().find(".add-monster-modal__footer").remove();
-				}, 1000);
-
-			});
-
-
-
-		});
+	if (!window.DM) {
+		return;
+	}
+	if (monster_panel_init_started) {
+		return;
+	}
+	monster_panel_init_started = true;
+	// cover the panel while we fetch, and alter it
+	window.EncounterHandler.fetch_or_create_avtt_encounter(function(encounter) {
+		init_monster_panel_with_encounter();
 	});
-	panel.append(iframe);
-	$(".sidebar__pane-content").append(panel);
-	iframe.css("width", "100%");
+}
 
+function init_monster_panel_with_encounter() {
+
+	if ($("#iframe-monster-panel").length > 0) {
+		// we already did this
+		return;
+	}	
+	let iframe = $("<iframe id='iframe-monster-panel'></iframe>");
+	monstersPanel.body.append(iframe);
+	// cover the panel while we fetch, and alter it
+	monstersPanel.display_sidebar_loading_indicator("Making a Wisdom (Perception) check to find monsters...");
+	iframe.css({ "width": "100%", "border": "none" });
 	$("#iframe-monster-panel").height(window.innerHeight - 50);
 
 	$(window).resize(function() {
 		$("#iframe-monster-panel").height(window.innerHeight - 50);
 	});
-	iframe.attr("src", "/encounter-builder");
+
+	iframe.on("load", function(event) {
+
+		if (!this.src) {
+			// it was just created. no need to do anything until it actually loads something
+			return;
+		}
+
+		if (this.src.endsWith("/encounter-builder")) {
+			setTimeout(function() {
+				$(event.target).contents().find(".add-monster-modal__footer").hide();
+				$(event.target).contents().find("div.encounter-builder").removeClass("sidebar-open");	
+				$(event.target).contents().find(".ddb-page-header").hide();
+				$(event.target).contents().find(".beholder-dm-screen").css({"overflow": "overlay", "margin-top": "100px"});
+				$(event.target).contents().find("body").css("zoom", "0.8");
+				$(event.target).contents().find(".encounter-builder__header").hide();
+				$(event.target).contents().find(".release-indicator").hide();
+				$(event.target).contents().find(".header-wrapper").hide();
+				$(event.target).contents().find("footer").hide();
+				$(event.target).contents().find(".encounter-builder-sidebar__open-button").hide();
+				$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
+				$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
+				$(event.target).contents().find(".dice-toolbar").hide()
+
+				monster_panel_did_load();
+			}, 2000);
+		}
+
+		$(event.target).contents().find("body").on("DOMNodeInserted", function(addedEvent) {
+
+			// once the encounter builder is loaded, we can start stripping away all the elements we don't want our users to see
+			let encounterBuilder = $(event.target).contents().find("#encounter-builder-root div.encounter-builder");
+			let addedElement = $(addedEvent.target);
+
+			// console.log(addedEvent.target.outerHTML);
+
+			if (encounterBuilder.length > 0) {
+				if (addedElement.hasClass("noty_layout")) {
+					setTimeout(function() {
+						addedElement.find(".dice_notification_control i").css("padding", "0px");
+					}, 0);
+				}
+				if (addedElement.hasClass("monster-row")) {
+					setTimeout(function() {
+						// after the initial load, these elements are either replaced, or messed with in a way that we need to find the new one
+						let elementId = addedElement[0].id;
+						let replacedRow = $(event.target).contents().find(`#${elementId}`);
+						update_monster_row(replacedRow);
+					}, 0);
+				} else if (addedElement.closest(".monster-row").length == 0) { // completely ignore anything that's added to a monster-row. Those happen a lot
+					$(addedElement).find(".add-monster-modal__footer").hide();
+					$(event.target).contents().find("div.encounter-builder").removeClass("sidebar-open");	
+					$(event.target).contents().find(".ddb-page-header").hide();
+					$(event.target).contents().find(".beholder-dm-screen").css({"overflow": "overlay", "margin-top": "100px"});
+					$(event.target).contents().find("body").css("zoom", "0.8");
+					$(event.target).contents().find(".encounter-builder__header").hide();
+					$(event.target).contents().find(".release-indicator").hide();
+					$(event.target).contents().find(".header-wrapper").hide();
+					$(event.target).contents().find("footer").hide();
+					$(event.target).contents().find(".encounter-builder-sidebar__open-button").hide();
+					$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
+					$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
+					$(event.target).contents().find(".dice-toolbar").hide();
+				}
+			}
+		});
+	});
+
+
+	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] == true && window.EXPERIMENTAL_SETTINGS["disableDdbDiceMonsterPanel"] != true) {
+		if (window.EncounterHandler.has_avtt_encounter() && window.EncounterHandler.encounterBuilderDiceSupported) {
+			iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+		} else {
+			iframe.attr("src", `/encounter-builder`);
+		}
+	} else {
+		iframe.attr("src", `/encounter-builder`);
+	}
+
+	console.log("starting monster_panel_init_loop");
+	monster_panel_init_loop();
+}
+
+// keep trying until the damn thing loads
+let numberOfTimesFindingMonsterRows = 0;
+function monster_panel_init_loop() {
+	let iframe = $("#iframe-monster-panel");
+	if (iframe.length == 0) {
+		// nothing to do
+		console.log("monster_panel_init_loop nothing to do");
+		return;
+	}
+	let iframeBody = $(iframe[0].contentDocument.body);
+
+	let monsterRows = iframeBody.find(".encounter-builder__monster-listing .monster-listing__main .monster-listing__monsters .monster-row");
+	if (monsterRows.length > 0) {
+		numberOfTimesFindingMonsterRows += 1;
+	} else {
+		numberOfTimesFindingMonsterRows = 0;
+	}
+	console.log(`monster_panel_init_loop numberOfTimesFindingMonsterRows: ${numberOfTimesFindingMonsterRows}`);
+	if (numberOfTimesFindingMonsterRows > 2) {
+		console.log("monster_panel_init_loop we have monster rows!");
+		monster_panel_did_load();
+		console.log("monster_panel_init_loop all done!!!");
+		// we can end our loop now
+		return;
+	} else {
+		console.log("monster_panel_init_loop looking for the edit link");
+		// try to open the thing with the edit link
+		let editLink = iframeBody.find(`a[href='/encounters/${window.EncounterHandler.avttId}/edit']`);
+		if (editLink.length > 0) {
+			// DDB has injected the link. Let's click it and keep trying until that screen finishes loading
+			editLink[0].click();
+			console.log("monster_panel_init_loop clicked the edit link");
+		} else {
+			// need to click the button to have DDB inject the edit link.
+			let expandButton = iframeBody.find(".ddb-page-header__controls .encounter-details__actions > button");
+			if (expandButton.length > 0) {
+				expandButton.click();
+				console.log("monster_panel_init_loop clicked the button to get the edit link injected");
+			} else {
+				console.log("monster_panel_init_loop the button to get the edit link is not on the screen");
+			}
+		}
+		console.log("monster_panel_init_loop retrying in 1 second");
+	
+		// the edit screen hasn't fully loaded yet. Try again in 1 second
+		setTimeout(function() {
+			monster_panel_init_loop()
+		}, 1000);
+	}
+}
+
+function monster_panel_did_load() {
+	setTimeout(function() {
+		let iframe = $("#iframe-monster-panel");
+		if (iframe.length == 0) {
+			// nothing to do
+			console.log("monster_panel_did_load nothing to do");
+			return;
+		}
+		let iframeBody = $(iframe[0].contentDocument.body);
+		let monsterRows = iframeBody.find(".encounter-builder__monster-listing .monster-listing__main .monster-listing__monsters .monster-row");
+		monstersPanel.remove_sidebar_loading_indicator();
+		for (let i = 0; i < monsterRows.length; i++) {
+			let row = $(monsterRows[i]);
+			update_monster_row(row);
+		}
+
+		iframeBody.find(".add-monster-modal__footer").hide();
+		iframeBody.find("div.encounter-builder").removeClass("sidebar-open");	
+		iframeBody.find(".ddb-page-header").hide();
+		iframeBody.find(".beholder-dm-screen").css({"overflow": "overlay", "margin-top": "100px"});
+		iframeBody.find("body").css("zoom", "0.8");
+		iframeBody.find(".encounter-builder__header").hide();
+		iframeBody.find(".release-indicator").hide();
+		iframeBody.find(".header-wrapper").hide();
+		iframeBody.find("footer").hide();
+		iframeBody.find(".encounter-builder-sidebar__open-button").hide();
+		iframeBody.find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
+		iframeBody.find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
+		iframeBody.find(".dice-toolbar").hide();
+
+
+	}, 2000);
+}
+
+// any time the monsters tab updates via init or search, it injects each element one at a time. 
+// This updates them to look/feel how we want them to.
+function update_monster_row(monsterRow) {
+	if (monsterRow.length == 0 || monsterRow.find(".monster-row__config-handle").length > 0) {
+		// all ready set this up once, no need to do it again. This shouldn't happen, but just in case they give us a cached element
+		return;
+	}
+
+	let elementId = monsterRow[0].id;
+	let monsterId = elementId.replace("monster-row-", "");
+	let monsterName = monsterRow.find(".monster-row__name").text();
+	let avatar = monsterRow.find(".monster-row__cell--avatar");
+	avatar.attr('data-monster', monsterId);
+	avatar.attr('data-name', monsterName);
+	make_element_draggable_token(avatar, true);
+	avatar.click(function(event) {
+		event.stopPropagation();
+		event.preventDefault();
+	});
+
+	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] != true || window.EXPERIMENTAL_SETTINGS["disableDdbDiceMonsterPanel"] == true || !window.EncounterHandler.has_avtt_encounter() || !window.EncounterHandler.encounterBuilderDiceSupported) {
+		// if we don't have a backing encounter or if the DM isn't a DDB subscriber, we need to inject roll buttons
+		// replace all the DDB roll buttons with AVTT roll buttons
+		monsterRow.click(function(event) {
+			window.StatHandler.getStat(monsterId, function(stat) {
+				setTimeout(function() {
+					scan_monster($("#iframe-monster-panel").contents().find(".ddbeb-modal"), stat);
+				}, 1000);
+			});
+		});
+	}
+
+
+
+	// swap the encounter drag element for configuration element of our own
+	let dragHandle = monsterRow.find('.monster-row__cell--drag-handle');
+	let configHandle = $(`
+		<div class="monster-row__config-handle">
+			<img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;" />
+		</div>
+	`);
+	configHandle.css({
+		"flex-basis": "46px",
+		"flex-grow": "0",
+		"align-self": "stretch",
+		"border-left": "1px solid #d8e1e8",
+		"margin": "-8px -8px -8px 8px",
+		"padding": "8px",
+		"background-color": "#f2f6f8",
+		"cursor": "pointer",
+		"border-top-right-radius": "3px",
+		"border-bottom-right-radius": "3px"
+	});
+	configHandle.click(function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		let monsterRow = event.target.closest(".monster-row");
+		let monsterId = monsterRow.id.replace("monster-row-", "");
+		let monsterName = $(monsterRow).find(".monster-row__name").text();
+		let defaultImg = parse_img($(monsterRow).find(".monster-row__cell--avatar img").attr("src"));
+		display_monster_customization_modal(undefined, monsterId, monsterName, defaultImg);
+	});
+	dragHandle.after(configHandle);
+	dragHandle.remove();
+
+	// replace the default behavior for the add button to add tokens to our scene instead of the encounter
+	let addButton = monsterRow.find(".monster-row__cell--add-button");
+	addButton.on("mousedown", function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		let token = $(event.target).clone();
+		let hidden = event.button == 2;
+		let monsterRow = event.target.closest(".monster-row");
+		let imgSrc = parse_img($(monsterRow).find(".monster-row__cell--avatar img").attr("src"));
+		let randomImage = get_random_custom_monster_image(monsterId);
+		if (randomImage !== undefined && randomImage.length > 0) {
+			imgSrc = parse_img(randomImage);
+		}		
+		place_monster_at_point(token, monsterId, monsterName, imgSrc, undefined, hidden);
+	});
+	monsterRow.on("contextmenu", ".monster-row__cell--add-button", function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		
+	});
 }
 
 function register_custom_monster_image_context_menu() {
@@ -349,17 +502,32 @@ function build_custom_token_item(name, imageUrl, tokenSize, customImgIndex, plac
 			placedToken.place_sync_persist();
 		});
 	}
+	return make_element_draggable_token(tokenDiv);
+}
 
-
-	tokenDiv.draggable({
+function make_element_draggable_token(element, randomImage = false) {
+	// most of the time this is used from token customization modals which the user is dragging a specific image.
+	// the monsters tab also uses this, and needs a randomImage to be used at the time of drag.
+	// if you want a random image to be draw at the time of drag, pass true. 
+	// If you're using this for more than just monsters, you will need to update the helper function.
+	element.draggable({
 		helper: "clone",
 		appendTo: "#VTTWRAPPER",
 		zIndex: 100000,
+		cancel: '.monster-row__config-handle,.monster-row__cell--add-button',
+		cursorAt: {top: 0, left: 0},
 		helper: function(event) {
-			return $(event.currentTarget).find("img").clone();
+			let clonedImage = $(event.currentTarget).find("img").clone();
+			if (randomImage) {
+				let monsterId = $(event.currentTarget).attr("data-monster");
+				let randomImage = get_random_custom_monster_image(monsterId);
+				if (randomImage !== undefined && randomImage.length > 0) {
+					clonedImage.attr("src", parse_img(randomImage));
+				}
+			}
+			return clonedImage[0];
 		},
 		start: function (event, ui) {
-
 			let tokenSize = $(event.currentTarget).attr("data-token-size");
 			let monsterId = $(event.target).attr("data-monster");
 
@@ -393,15 +561,26 @@ function build_custom_token_item(name, imageUrl, tokenSize, customImgIndex, plac
 				updateHelperSize();
 			}
 		},
-		stop: function (event) { 
+		drag: function (event, ui) {
+			if (event.shiftKey) {
+				$(ui.helper).css("opacity", 0.5);
+			} else {
+				$(ui.helper).css("opacity", 1);
+			}
+		},
+		stop: function (event, ui) { 
 			// place a token where this was dropped
 			let token = $(event.target).clone();
 			let hidden = event.shiftKey;
+			let helperImage = ui.helper[0].src;
+			if (randomImage && helperImage !== undefined && helperImage.length > 0) {
+				token.attr("data-img", helperImage)
+			}
 			place_custom_token_at_point(token, hidden, event.pageX, event.pageY);
 		}
 	});
 
-	return tokenDiv;
+	return element;
 }
 
 function place_custom_token_at_point(htmlElement, hidden, eventPageX, eventPageY) {
@@ -410,7 +589,10 @@ function place_custom_token_at_point(htmlElement, hidden, eventPageX, eventPageY
 	let playerId = htmlElement.attr("data-player-id");
 	let name = htmlElement.attr("data-name");
 	let tokenSize = htmlElement.attr("data-token-size");
-	let imgSrc = htmlElement.find("img").attr("src");
+	let imgSrc = htmlElement.attr("data-img");
+	if (imgSrc === undefined || imgSrc.length == 0) {
+		imgSrc = htmlElement.find("img").attr("src");
+	}
 	if (monsterId !== undefined) {
 		// placing from the monster pane
 		place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize, hidden, eventPageX, eventPageY);
@@ -440,7 +622,8 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 		name: name,
 		imgsrc: imgSrc,
 		tokenSize: tokenSize,
-		hidden: hidden
+		hidden: hidden,
+		monster: monsterId
 	});
 
 	if (monsterId != undefined) {

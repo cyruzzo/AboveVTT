@@ -1,5 +1,7 @@
 
+/// this injects roll buttons into the monster details page
 function scan_monster(target, stats, token_id=false) {
+	target.find(".integrated-dice__container").hide();
 	target.find(".mon-stat-block__description-block-content p").each(function(idx, element) {
 
 		$(element).find("span[data-rolltype='to hit']").each(function() {
@@ -90,10 +92,54 @@ function scan_monster(target, stats, token_id=false) {
 				dmonly:true,
 			};
 		window.MB.inject_chat(data);
+		notify_gamelog();
 	});
 }
 
-function scan_player_creature_pane(target) {
+// this is intended to be used with the encounterHandler only. It will need some rework if we want to use it for non-encounter stat blocks
+function add_ability_tracker_inputs(target, tokenId) {
+
+	let token = window.TOKEN_OBJECTS[tokenId];
+	if (token === undefined) {
+		// nothing to track if we don't have a token
+		return;
+	}
+
+	// Unfortunately, we can't just do a regex replace because DDB breaks if we mess with their html.
+	// However, it seems to work just fine if we append the input at the end instead of inline.
+
+	const processInput = function(element, regex, descriptionPostfix, includeMatchingDescription = true) {
+		let foundMatches = element.text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
+		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
+			let numberFound = parseInt(foundMatches[1]);
+			if (!isNaN(numberFound)) {
+				let foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
+				let key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
+				let remaining = token.get_tracked_ability(key, numberFound);
+				let input = $(`<input class="injected-input" data-token-id="${tokenId}" data-tracker-key="${key}" type="number" value="${remaining}" style="font-size: 14px; width: 40px; appearance: none; border: 1px solid #d8e1e8; border-radius: 3px;"> ${foundDescription} ${descriptionPostfix}</input>`);
+				input.off("change").on("change", function(changeEvent) {
+					let updatedValue = changeEvent.target.value;
+					console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
+					token.track_ability(key, updatedValue);
+				});
+				element.append(`<br>`);
+				element.append(input);
+			}
+		}
+	}
+
+	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
+	target.find(".mon-stat-block__description-block-content > p").each(function() {
+		let element = $(this);
+		if (element.find(".injected-input").length == 0) {
+			processInput(element, /\(([0-9]) slots?\)/, "slots remaining");
+			processInput(element, /\(([0-9])\/Day\)/i, "remaining");
+			processInput(element, /can take ([0-9]) legendary actions/i, "Legendary Actions remaining", false);
+		}
+	});	
+}
+
+function scan_player_creature_pane(target, tokenId) {
 
 	let creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
 	let creatureName = target.find(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
@@ -185,9 +231,16 @@ function roll_our_dice(displayName, imgUrl, expression, modifier, damageType, dm
 		dmonly: dmOnly,
 	};
 	window.MB.inject_chat(data);
+	if (is_characters_page()) {
+		// TODO: there's gotta be a better way
+		notify_gamelog();
+	}
 }
 
 function find_currently_open_character_sheet() {
+	if (is_characters_page()) {
+		return window.location.pathname;
+	}
 	let sheet;
 	$("#sheet").find("iframe").each(function () {
 		let src = $(this).attr("src");
