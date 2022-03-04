@@ -900,6 +900,7 @@ function init_enounter_combat_tracker_iframe() {
 	}
 
 	let iframe = $(`<iframe class='iframe-encounter-combat-tracker iframe-encounter-combat-tracker-is-loading'></iframe>`);
+	iframe.attr("scrolling", "no");
 	iframe.attr("data-count", ++window.EncounterHandler.combatIframeCount);
 	iframe.css({
 		"width": "100%",
