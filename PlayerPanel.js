@@ -24,9 +24,29 @@ function update_pclist() {
 
 	const addPartyButtonContainer = $("<div class='add-party-container'></div>");
 	const addPartyButton = $("<button id='add-party'>ADD PARTY</button>");
-	addPartyButton.on('click', () => {
+	addPartyButton.on('click', (event) => {
+		// place all the players at the center of the window, and then fan them out from there
 		window.pcs.forEach(function (player, i) {
-			token_button({ target: $(`[data-set-token-id='${player.sheet}']`) }, i, window.pcs.length);
+			if (player.sheet !== undefined && player.sheet.length > 0) {
+				let playerId = player.sheet;
+				if (window.TOKEN_OBJECTS[playerId] === undefined) {
+					// no need to do aything for already placed tokens
+					place_player_token(playerId, event.shiftKey);
+					let token = window.TOKEN_OBJECTS[playerId];
+					let size = token.options.size;
+					let numberOfPlayers = window.pcs.length - 1; // don't count the DM
+					let left = (parseFloat(token.options.left) + (((size || 68.33) * 5) / 2) * Math.cos(2 * Math.PI * i / numberOfPlayers));
+					let top = (parseFloat(token.options.top) + (((size || 68.33) * 5) / 2) * Math.sin(2 * Math.PI * i / numberOfPlayers));
+					token.options.top = `${top}px`;
+					token.options.left = `${left}px`;
+					let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
+					if (shallwesnap) {
+						token.snap_to_closest_square();
+					} else {
+						token.place_sync_persist();
+					}
+				}
+			}
 		});
 	});
 	
@@ -457,7 +477,7 @@ function place_player_token(playerId, hidden, specificImage, eventPageX, eventPa
 	}
 
 
-	if (eventPageX == undefined || eventPageY == undefined) {
+	if (eventPageX === undefined || eventPageY === undefined) {
 		place_token_in_center_of_map(options);
 	} else {
 		place_token_under_cursor(options, eventPageX, eventPageY);
