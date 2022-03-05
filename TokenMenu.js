@@ -650,7 +650,7 @@ function draw_custom_token_list(folder, path) {
 			row.find(".custom-token-image-row-add").attr('data-tokendatapath', path);
 			row.find(".custom-token-image-row-add").attr('data-tokendataname', t);
 			row.find(".custom-token-image-row-add").click(function(event) {
-				place_token_from_modal(path, t, false);
+				place_token_from_modal(path, t, window.TOKEN_SETTINGS["hidden"]);
 			});
 	
 			row.attr('data-tokendatapath', path);
@@ -734,7 +734,8 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 				let addButton = $(event.target).find(".custom-token-image-row-add");
 				let path = addButton.attr("data-tokendatapath");
 				let name = addButton.attr("data-tokendataname");
-				place_token_from_modal(path, name, event.shiftKey, src, event.pageX, event.pageY);
+				let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
+				place_token_from_modal(path, name, hidden, src, event.pageX, event.pageY);
 			}
 		});
 	}
