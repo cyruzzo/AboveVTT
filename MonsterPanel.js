@@ -572,7 +572,7 @@ function make_element_draggable_token(element, randomImage = false) {
 		stop: function (event, ui) { 
 			// place a token where this was dropped
 			let token = $(event.target).clone();
-			let hidden = event.shiftKey;
+			let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
 			let helperImage = ui.helper[0].src;
 			if (randomImage && helperImage !== undefined && helperImage.length > 0) {
 				token.attr("data-img", helperImage)
