@@ -691,7 +691,11 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 			<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
 		</button>
 	`);
-	let handle = $(`<div class="custom-token-image-row-handle"><svg class="monster-row__cell--drag-handle__icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 2a1 1 0 110 2H1a1 1 0 110-2h10zm0 6a1 1 0 110 2H1a1 1 0 110-2h10z"></path></svg></div>`);
+	let handle = $(`
+		<div class="custom-token-image-row-handle">
+			<img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;" />
+		</div>	
+	`);
 
 	rowItem.append(imgHolder);
 	rowItem.append(details);
