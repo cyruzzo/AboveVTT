@@ -269,7 +269,8 @@ function update_monster_row(monsterRow) {
 		event.preventDefault();
 		event.stopPropagation();
 		let token = $(event.target).clone();
-		let hidden = event.button == 2;
+		let isRightClick = event.button == 2;
+		let hidden = isRightClick || window.TOKEN_SETTINGS["hidden"];
 		let monsterRow = event.target.closest(".monster-row");
 		let imgSrc = parse_img($(monsterRow).find(".monster-row__cell--avatar img").attr("src"));
 		let randomImage = get_random_custom_monster_image(monsterId);
@@ -571,7 +572,7 @@ function make_element_draggable_token(element, randomImage = false) {
 		stop: function (event, ui) { 
 			// place a token where this was dropped
 			let token = $(event.target).clone();
-			let hidden = event.shiftKey;
+			let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
 			let helperImage = ui.helper[0].src;
 			if (randomImage && helperImage !== undefined && helperImage.length > 0) {
 				token.attr("data-img", helperImage)
