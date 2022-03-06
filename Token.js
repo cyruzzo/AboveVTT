@@ -164,6 +164,32 @@ class Token {
 			this.persist();
 		}
 	}
+	snap_to_closest_square() {
+		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
+		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
+		// shamelessly copied from the draggable code later in this file
+		// this should be a XOR... (A AND !B) OR (!A AND B)
+		let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);		
+		if (shallwesnap) {
+			// calculate offset in real coordinates
+			const startX = window.CURRENT_SCENE_DATA.offsetx;
+			const startY = window.CURRENT_SCENE_DATA.offsety;
+
+			const selectedOldTop = parseInt(this.options.top);
+			const selectedOldleft = parseInt(this.options.left);
+			
+			const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
+			const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+			console.log("Snapping from "+selectedOldleft+ " "+selectedOldTop + " -> "+selectedNewleft + " "+selectedNewtop);
+			console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
+
+			this.update_from_page();
+			this.options.top = `${selectedNewtop}px`;
+			this.options.left = `${selectedNewleft}px`;
+			this.place_sync_persist();
+		}		
+	}
 	place_sync_persist() {
 		this.place();
 		this.sync();
