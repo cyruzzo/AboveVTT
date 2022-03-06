@@ -157,7 +157,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 
-
+		// this is no more used in the cloud
 		load_scenemap(map_url, map_is_video, null, null, function() {
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();

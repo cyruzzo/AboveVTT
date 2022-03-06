@@ -119,7 +119,7 @@ function remove_loading_overlay() {
 		$("#loading_overlay").hide();
 	});
 }
-
+// both DM and players use this when you're in the cloud
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
 
 	remove_loading_overlay();
@@ -1221,7 +1221,7 @@ function init_player_sheets()
 
 
 function open_player_sheet(sheet_url, closeIfOpen = true) {
-
+	console.log("open_player_sheet"+sheet_url);
 	let container = $("#sheet");
 	let iframe = $("[id='PlayerSheet"+getPlayerIDFromSheet(sheet_url)+"']");
 	if(iframe.height() == 0)
@@ -1299,6 +1299,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	else if (closeIfOpen)
 	{
 		//sheet is already open, close the sheet
+		console.log("close since it's already open?!");
 		close_player_sheet(sheet_url);
 	}
 }

@@ -1044,7 +1044,10 @@ class MessageBroker {
 				
 			}
 
-			
+			if (window.EncounterHandler !== undefined) {
+				console.log("Updating avtt encounter");
+				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+			}
 
 		});
 
