@@ -923,6 +923,10 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 		// characters page manipulates the html on the page instead of loading an iframe
 		return;
 	}
+	if (pc_sheet === undefined || pc_sheet.length == 0) {
+		// This happens for the DM representation.
+		return;
+	}
 
 	let container = $("#sheet");
 	iframe = $("<iframe id='PlayerSheet"+getPlayerIDFromSheet(pc_sheet)+"' src=''></iframe>")

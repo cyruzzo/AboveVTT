@@ -162,49 +162,60 @@ function update_pclist() {
 			newplayer.find(".add-token-btn,.open-sheet-btn").remove();
 			newplayer.find(".player-no-attributes").html("");
 		}
-		let token = newplayer.find(".player-token");
-		token.draggable({
-			appendTo: "#VTTWRAPPER",
-			zIndex: 100000,
-			cursorAt: {top: 0, left: 0},
-			helper: function(event) {
-				let helper = $(event.currentTarget).find("img").clone();
-				let playerId = $(event.currentTarget).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
-				let image = random_image_for_player_token(playerId);
-				if (image !== undefined) {
-					helper.attr("src", parse_img(image));
+		if (pc.sheet.length == 0) {
+			// this is the DM representation, so let's remove things that don't make sense
+			newplayer.find(".add-token-btn,.open-sheet-btn").remove();
+		}
+
+		if (window.DM && pc.sheet.length > 0) {
+			let token = newplayer.find(".player-token");
+			token.draggable({
+				appendTo: "#VTTWRAPPER",
+				zIndex: 100000,
+				cursorAt: {top: 0, left: 0},
+				helper: function(event) {
+					let helper = $(event.currentTarget).find("img").clone();
+					let playerId = $(event.currentTarget).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
+					let image = random_image_for_player_token(playerId);
+					if (image !== undefined) {
+						helper.attr("src", parse_img(image));
+					}
+					return helper;
+				},
+				start: function (event, ui) {
+					isDraggingPlayerToken = true;
+					console.log("row-item drag start");
+					let width = window.CURRENT_SCENE_DATA !== undefined ? Math.round(window.CURRENT_SCENE_DATA.hpps) : 100; // the scene hasn't fully loaded, 100 seems like an ok default
+					let helperWidth = width / (1.0 / window.ZOOM);
+					$(ui.helper).css('width', `${helperWidth}px`);
+					$(ui.helper).css('height', `${helperWidth}px`);
+					$(this).draggable('instance').offset.click = {
+						left: Math.floor(ui.helper.width() / 2),
+						top: Math.floor(ui.helper.height() / 2)
+					};
+				},
+				stop: function (event, ui) { 
+					// place a token where this was dropped
+					console.log("row-item drag stop");
+					let src = $(ui.helper).attr("src");
+					let playerId = $(event.target).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
+					place_player_token(playerId, event.shiftKey, src, event.pageX, event.pageY);
+					isDraggingPlayerToken = false;
+					if (pclistUpdateRequired) {
+						// update_pclist was called while the user was dragging a player token. 
+						// we prevented that call, because jquery draggable breaks if the target is removed while dragging
+						// so call it now
+						pclistUpdateRequired = false;
+						update_pclist();
+					}
 				}
-				return helper;
-			},
-			start: function (event, ui) {
-				isDraggingPlayerToken = true;
-				console.log("row-item drag start");
-				let width = window.CURRENT_SCENE_DATA !== undefined ? Math.round(window.CURRENT_SCENE_DATA.hpps) : 100; // the scene hasn't fully loaded, 100 seems like an ok default
-				let helperWidth = width / (1.0 / window.ZOOM);
-				$(ui.helper).css('width', `${helperWidth}px`);
-				$(ui.helper).css('height', `${helperWidth}px`);
-				$(this).draggable('instance').offset.click = {
-					left: Math.floor(ui.helper.width() / 2),
-					top: Math.floor(ui.helper.height() / 2)
-				};
-			},
-			stop: function (event, ui) { 
-				// place a token where this was dropped
-				console.log("row-item drag stop");
-				let src = $(ui.helper).attr("src");
-				let playerId = $(event.target).closest(".player-card").find(".add-token-btn").attr('data-set-token-id');
-				place_player_token(playerId, event.shiftKey, src, event.pageX, event.pageY);
-				isDraggingPlayerToken = false;
-				if (pclistUpdateRequired) {
-					// update_pclist was called while the user was dragging a player token. 
-					// we prevented that call, because jquery draggable breaks if the target is removed while dragging
-					// so call it now
-					pclistUpdateRequired = false;
-					update_pclist();
-				}
-			}
-		});
-		playersPanel.body.append(newplayer);
+			});
+		}
+
+		if (!window.DM || pc.sheet.length > 0) {
+			// Players should see all cards including the DM card. The DM does not need the DM card
+			playersPanel.body.append(newplayer);
+		}
 	});
 
 	$(".add-token-btn").on("click", function (event) {
