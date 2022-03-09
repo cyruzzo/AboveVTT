@@ -913,7 +913,98 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	iframe.attr('src', '');
 	iframe.attr('data-sheet_url', pc_sheet);
 	iframe.attr('data-init_load', 0);
+
+	if((!window.DM) ||(window.KEEP_PLAYER_SHEET_LOADED))
+	{
+		var loadSheet = function (sheetFrame, sheet_url) {
+			sheetFrame.attr('src', sheet_url);
+		};
+		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+	}
+}
+
+/// documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
+function observe_character_sheet_aoe(documentToObserve) {
+
+	let mutation_target = documentToObserve.get(0);
+	let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+	let container = $("#sheet");
+	if (is_characters_page()) {
+		container = $(".ct-character-sheet__inner");
+	}
+
+	let aoe_observer = new MutationObserver(function() {
+		let icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
+		if (icons.length > 0){
+			icons.wrap(function(){
+				$(this).addClass("above-vtt-visited");
+				let button = $("<button class='above-aoe integrated-dice__container'></button>");
+				button.css("border-width","1px");
+				button.click(function(e){
+					e.stopPropagation();
+
+					// figure out color
+					color = 'default';
+					dmg_icon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
+					if (dmg_icon.length == 1){
+						color = dmg_icon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
+					}
+
+					// grab shape (this should always exist)
+					shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
+
+					// grab feet (this should always exist)
+					feet = $(this).prev().children().first().children().first().text();
+
+					// drop the token
+					container.animate({opacity:"0.1"},1000);
+					setTimeout( ()=>drop_aoe_token(color, shape, feet),1000);
+					setTimeout( ()=>container.animate({opacity:"1.0"},2000),3000);
+				});
+				return button;
+			});
+			console.log(`${icons.length} aoe spells discovered`);
+		}
+	});
+
+	aoe_observer.observe(mutation_target,mutation_config);
+}
+
+function init_player_sheets()
+{
+	return;
+	// preload character sheets
+	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
+	var sheetLoadWait = 4000;
+	window.pcs.forEach(function(pc, index) {
+		init_player_sheet(pc.sheet, sheetLoadWait);
+		sheetLoadWait += 1500;
+	});
+}
+
+
+function open_player_sheet(sheet_url, closeIfOpen = true) {
+	console.log("open_player_sheet"+sheet_url);
+	if (is_characters_page()) {
+		return;
+	}
+	close_player_sheet(); // always close before opening
+
+	let container = $("#sheet");
+	let iframe = container.find("iframe");
+	
+	
+	iframe.css('height', container.height() - 25);
+	container.addClass("open");
+
+
+	iframe.attr('data-sheet_url',sheet_url);
+	iframe.attr('src', sheet_url);
+
+	// lock this sheet
+	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
+		console.log("fixing up the character sheet");
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {
@@ -945,6 +1036,7 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 			}
 			</style>
 		`);
+		console.log("removing headers");
 		$(event.target).contents().find("#mega-menu-target").remove();
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
@@ -1129,127 +1221,14 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 			})
 		}, 1000);
 	});
-
-	if((!window.DM) ||(window.KEEP_PLAYER_SHEET_LOADED))
+	
+	$("#sheet").find("button").css('display', 'inherit');
+	// reload if there have been changes
+	if(iframe.attr('data-changed') == 'true')
 	{
-		var loadSheet = function (sheetFrame, sheet_url) {
-			sheetFrame.attr('src', sheet_url);
-		};
-		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+		iframe.attr('data-changed','false');
+		iframe.attr('src', function(i, val) { return val; });
 	}
-}
-
-/// documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
-function observe_character_sheet_aoe(documentToObserve) {
-
-	let mutation_target = documentToObserve.get(0);
-	let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-	let container = $("#sheet");
-	if (is_characters_page()) {
-		container = $(".ct-character-sheet__inner");
-	}
-
-	let aoe_observer = new MutationObserver(function() {
-		let icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
-		if (icons.length > 0){
-			icons.wrap(function(){
-				$(this).addClass("above-vtt-visited");
-				let button = $("<button class='above-aoe integrated-dice__container'></button>");
-				button.css("border-width","1px");
-				button.click(function(e){
-					e.stopPropagation();
-
-					// figure out color
-					color = 'default';
-					dmg_icon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
-					if (dmg_icon.length == 1){
-						color = dmg_icon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
-					}
-
-					// grab shape (this should always exist)
-					shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
-
-					// grab feet (this should always exist)
-					feet = $(this).prev().children().first().children().first().text();
-
-					// drop the token
-					container.animate({opacity:"0.1"},1000);
-					setTimeout( ()=>drop_aoe_token(color, shape, feet),1000);
-					setTimeout( ()=>container.animate({opacity:"1.0"},2000),3000);
-				});
-				return button;
-			});
-			console.log(`${icons.length} aoe spells discovered`);
-		}
-	});
-
-	aoe_observer.observe(mutation_target,mutation_config);
-}
-
-function init_player_sheets()
-{
-	// preload character sheets
-	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
-	var sheetLoadWait = 4000;
-	window.pcs.forEach(function(pc, index) {
-		init_player_sheet(pc.sheet, sheetLoadWait);
-		sheetLoadWait += 1500;
-	});
-}
-
-
-function open_player_sheet(sheet_url, closeIfOpen = true) {
-	console.log("open_player_sheet"+sheet_url);
-	if (is_characters_page()) {
-		return;
-	}
-	let container = $("#sheet");
-	let iframe = container.find("iframe");
-	if (closeIfOpen && container.hasClass("open") && iframe.attr('src') == sheet_url) {
-		close_player_sheet();
-		return;
-	}
-	iframe.css('height', container.height() - 25);
-	container.addClass("open");
-
-
-		// Open the sheet
-		if(window.DM)
-		{
-			iframe.attr('data-sheet_url') == sheet_url
-			iframe.attr('src', sheet_url);
-			// lock this sheet
-			window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
-		}
-		else
-		{
-			if (window.JOINTHEDICESTREAM) {
-				let diceRollPanel = iframe.contents().find(".dice-rolling-panel__container");
-				if (diceRollPanel.length > 0) {
-					diceRollPanel.get(0).height = 600;
-					diceRollPanel.height(600);
-
-					if (!window.STREAMTASK) {
-						window.STREAMTASK = setInterval(() => {
-							if (window.MYMEDIASTREAM.requestFrame)
-								window.MYMEDIASTREAM.requestFrame(); // Firefox :(
-							else
-								window.MYMEDIASTREAM.getVideoTracks()[0].requestFrame(); // Chrome :|
-						}, 1000 / 30)
-					}
-				}
-			}
-		}
-
-		// show sheet container and sheet iframe
-		$("#sheet").find("button").css('display', 'inherit');
-
-		// reload if there have been changes
-		if(iframe.attr('data-changed') == 'true')
-		{
-			iframe.attr('data-changed','false');
-			iframe.attr('src', function(i, val) { return val; });
-		}
 }
 
 function close_player_sheet()
