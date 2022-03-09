@@ -828,11 +828,6 @@ function init_sheet(){
 	let iframe = $("<iframe src=''></iframe>")
 	container.append(iframe);
 
-	//container.css('display', 'none');
-	// container.css('height', '0px');
-	// container.css('width', 1030);
-	// container.css('background', '#242527');
-	// container.css('z-index', 0);
 	var buttonleft = 0;
 	var buttonprev = 0;
 
@@ -886,13 +881,9 @@ function init_sheet(){
 	//container.height($(".sidebar__inner").height() - 20);
 
 	$("#site").append(container);
-	// container.css('position', 'fixed');
-	// container.css('right', 343 - 1530);
-	// container.css('top', 40);
 
 	if (!window.DM) {
 
-		// let iframe =  $("[id='PlayerSheet"+window.PLAYER_ID+"']");
 		sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
 		sheet_button.css({ "position": "absolute", "top": "-3px", "left": "-80px", "z-index": "999" });
 		sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
@@ -919,12 +910,6 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 
 	let container = $("#sheet");
 	let iframe = container.find("iframe");
-	//iframe.css('display', 'none');
-	// iframe.css("width", "100%");
-	// iframe.css("position", "absolute");
-	// iframe.css("top", "24px");
-	// iframe.css("left", "0px");
-	// iframe.css("height", container.height() - 24);
 	iframe.attr('src', '');
 	iframe.attr('data-sheet_url', pc_sheet);
 	iframe.attr('data-init_load', 0);
@@ -1258,17 +1243,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		// show sheet container and sheet iframe
 		$("#sheet").find("button").css('display', 'inherit');
-		// container.css("z-index", 99999999);
-		// var containerHeight = $(".sidebar__inner").height() - 20;
-		// var iframeHeight = containerHeight -20;
-		// container.animate({
-		// 	//right: $(".sidebar__inner").width()
-		// 	right: 343 + parseInt($(".sidebar").css("right")),
-		// 	height: containerHeight
-		// }, 500);
-		// iframe.animate({
-		// 	height: iframeHeight
-		// }, 500);
 
 		// reload if there have been changes
 		if(iframe.attr('data-changed') == 'true')
@@ -3350,7 +3324,6 @@ function show_sidebar() {
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
-		// $("#sheet").css("transform", "translateX(0px)");
 		$("#sheet").removeClass("sidebar_hidden");
 	}
 }
@@ -3371,7 +3344,6 @@ function hide_sidebar() {
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
-		// $("#sheet").css("transform", "translateX(343px)");
 		$("#sheet").addClass("sidebar_hidden");
 	}
 }
