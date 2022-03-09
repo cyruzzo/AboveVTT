@@ -1135,7 +1135,7 @@ div#scene_properties form > div {
 #splash {
     position: fixed;
     transform: translate(0%, -4%);
-    top: 0px;
+    top: 10px;
     bottom: 0px;
     left: 0px;
     right: 0px;
