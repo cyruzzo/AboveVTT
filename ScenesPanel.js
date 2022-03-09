@@ -209,11 +209,8 @@ function edit_scene_dialog(scene_id) {
 				nValue = $(this).val();
 			}
 
-			if ( ((n === 'player_map') || (n==='dm_map'))   
-					&& nValue.startsWith("https://drive.google.com")
-					&& nValue.indexOf("uc?id=") < 0
-			) {
-				nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
+			if ( ((n === 'player_map') || (n==='dm_map')) ) {
+				nValue = parse_img(nValue);
 			}
 
 			scene[n] = nValue;
