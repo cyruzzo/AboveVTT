@@ -209,6 +209,45 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: rotate(180deg);
     transition: 0.5s ease-in-out;
 }
+#sheet {
+    border: none;
+    position: fixed;
+    top: 30px;
+    bottom: 0px;
+    right: -1030px;
+    left: auto;
+    width: 1030px;
+    height: auto;
+    background: #242527;
+    z-index: 0;
+    
+    transition: -webkit-transform ease-in-out 0.5s;
+    transform-origin: top;
+    transition-delay: 0.1s; /* Needed to calculate the vertical area to shift with translateX */
+
+}
+#sheet iframe {
+    border: none;
+    position: absolute;
+    height: auto;
+    width: 100%;
+    top: 24px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+#sheet.thin {
+    width: 420px;
+}
+#sheet.sidebar_hidden.open {
+    transform: translateX(-1030px);
+    transition: 0.5s ease-in-out;
+}
+#sheet.open {
+    transform: translateX(-1370px);
+    transition: 0.5s ease-in-out;
+    z-index: 99999999;
+}
 
 #addscene {
     margin: 5px;

@@ -825,12 +825,14 @@ function init_sheet(){
 	}
 
 	let container = $("<div id='sheet'></div>");
+	let iframe = $("<iframe src=''></iframe>")
+	container.append(iframe);
 
 	//container.css('display', 'none');
-	container.css('height', '0px');
-	container.css('width', 1030);
-	container.css('background', '#242527');
-	container.css('z-index', 0);
+	// container.css('height', '0px');
+	// container.css('width', 1030);
+	// container.css('background', '#242527');
+	// container.css('z-index', 0);
 	var buttonleft = 0;
 	var buttonprev = 0;
 
@@ -845,12 +847,7 @@ function init_sheet(){
 	close_button.css("height", "23px");
 	close_button.css("width", "25px");
 	close_button.click(function() {
-		$("#sheet").find("iframe").each(function(){
-			if($(this).css('height') !== '0px')
-			{
-				close_player_sheet($(this).attr('src'));
-			}
-		});
+		close_player_sheet();
 	});
 	container.append(close_button);
 
@@ -863,12 +860,9 @@ function init_sheet(){
 	reload_button.css("height", "23px");
 	reload_button.css("width", "25px");
 	reload_button.click(function() {
-		$("#sheet").find("iframe").each(function(){
-			if($(this).css('height') !== '0px')
-			{
-				$(this).attr('src', $(this).attr('src'));
-			}
-		});
+		let iframe = $("#sheet").find("iframe");
+		let currentSrc = iframe.attr('src');
+		iframe.attr('src', currentSrc);
 	});
 	container.append(reload_button);
 	
@@ -881,28 +875,24 @@ function init_sheet(){
 	resize_button.css("height", "23px");
 	resize_button.css("width", "25px");
 	resize_button.click(function() {
-		$("#sheet").each(function(){
-			if($(this).css('width') == '1030px')
-			{
-				$(this).css('width', '420px');
-			}
-			else{
-				$(this).css('width', '1030px');
-				};
-		});
+		if (container.hasClass("thin")) {
+			container.removeClass("thin");
+		} else {
+			container.addClass("thin");
+		}
 	});
 	container.append(resize_button);
 
 	//container.height($(".sidebar__inner").height() - 20);
 
 	$("#site").append(container);
-	container.css('position', 'fixed');
-	container.css('right', 343 - 1530);
-	container.css('top', 40);
+	// container.css('position', 'fixed');
+	// container.css('right', 343 - 1530);
+	// container.css('top', 40);
 
 	if (!window.DM) {
 
-		let iframe =  $("[id='PlayerSheet"+window.PLAYER_ID+"']");
+		// let iframe =  $("[id='PlayerSheet"+window.PLAYER_ID+"']");
 		sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
 		sheet_button.css({ "position": "absolute", "top": "-3px", "left": "-80px", "z-index": "999" });
 		sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
@@ -911,7 +901,6 @@ function init_sheet(){
 
 		sheet_button.click(function(e) {
 			open_player_sheet(window.PLAYER_SHEET);
-
 		});
 	}
 }
@@ -929,17 +918,17 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	}
 
 	let container = $("#sheet");
-	iframe = $("<iframe id='PlayerSheet"+getPlayerIDFromSheet(pc_sheet)+"' src=''></iframe>")
+	let iframe = container.find("iframe");
 	//iframe.css('display', 'none');
-	iframe.css("width", "100%");
-	iframe.css("position", "absolute");
-	iframe.css("top", "24px");
-	iframe.css("left", "0px");
-	iframe.css("height", "0px");
+	// iframe.css("width", "100%");
+	// iframe.css("position", "absolute");
+	// iframe.css("top", "24px");
+	// iframe.css("left", "0px");
+	// iframe.css("height", container.height() - 24);
+	iframe.attr('src', '');
 	iframe.attr('data-sheet_url', pc_sheet);
 	iframe.attr('data-init_load', 0);
-	container.append(iframe);
-	iframe.on("load", function(event) {
+	iframe.off("load").on("load", function(event) {
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {
@@ -1226,38 +1215,26 @@ function init_player_sheets()
 
 function open_player_sheet(sheet_url, closeIfOpen = true) {
 	console.log("open_player_sheet"+sheet_url);
+	if (is_characters_page()) {
+		return;
+	}
 	let container = $("#sheet");
-	let iframe = $("[id='PlayerSheet"+getPlayerIDFromSheet(sheet_url)+"']");
-	if(iframe.height() == 0)
-	{
+	let iframe = container.find("iframe");
+	if (closeIfOpen && container.hasClass("open") && iframe.attr('src') == sheet_url) {
+		close_player_sheet();
+		return;
+	}
+	iframe.css('height', container.height() - 25);
+	container.addClass("open");
+
+
 		// Open the sheet
 		if(window.DM)
 		{
-			$("#sheet").find("iframe").each(function(){
-
-				if($(this).attr('data-sheet_url') == sheet_url)
-				{
-					if($(this).attr('src') !== sheet_url)
-					{
-						console.log("loading player sheet" + sheet_url);
-						$(this).attr('src', sheet_url);
-					}
-				}
-				else
-				{
-					//unlock and hide any other open sheets
-					if($(this).css('height') !== '0px')
-					{
-						close_player_sheet($(this).attr('data-sheet_url'), false);
-					}
-				}
-			});
-
+			iframe.attr('data-sheet_url') == sheet_url
+			iframe.attr('src', sheet_url);
 			// lock this sheet
-			data = {
-				player_sheet: sheet_url
-			};
-			window.MB.sendMessage("custom/myVTT/lock", data);
+			window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 		}
 		else
 		{
@@ -1281,17 +1258,17 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		// show sheet container and sheet iframe
 		$("#sheet").find("button").css('display', 'inherit');
-		container.css("z-index", 99999999);
-		var containerHeight = $(".sidebar__inner").height() - 20;
-		var iframeHeight = containerHeight -20;
-		container.animate({
-			//right: $(".sidebar__inner").width()
-			right: 343 + parseInt($(".sidebar").css("right")),
-			height: containerHeight
-		}, 500);
-		iframe.animate({
-			height: iframeHeight
-		}, 500);
+		// container.css("z-index", 99999999);
+		// var containerHeight = $(".sidebar__inner").height() - 20;
+		// var iframeHeight = containerHeight -20;
+		// container.animate({
+		// 	//right: $(".sidebar__inner").width()
+		// 	right: 343 + parseInt($(".sidebar").css("right")),
+		// 	height: containerHeight
+		// }, 500);
+		// iframe.animate({
+		// 	height: iframeHeight
+		// }, 500);
 
 		// reload if there have been changes
 		if(iframe.attr('data-changed') == 'true')
@@ -1299,63 +1276,25 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			iframe.attr('data-changed','false');
 			iframe.attr('src', function(i, val) { return val; });
 		}
-	}
-	else if (closeIfOpen)
-	{
-		//sheet is already open, close the sheet
-		console.log("close since it's already open?!");
-		close_player_sheet(sheet_url);
-	}
 }
 
-function close_player_sheet(sheet_url, hide_container = true)
+function close_player_sheet()
 {
 	let container = $("#sheet");
-	let iframe = $("[id='PlayerSheet"+getPlayerIDFromSheet(sheet_url)+"']");
-	// hide the buttons first, they tend to float over everything
-	if(hide_container)
-	{
-		container.find("button").css('display', 'none');
-		if (container.css("z-index") > 0) {
-			container.animate({
-							right: 343 - 1530,
-							'z-index': 0,
-							height: 0
-						}, 500);
-		}
-	}
-	setTimeout(function(_iframe){
-		console.log("animating close sheet" + _iframe.attr('data-sheet_url'));
-		_iframe.animate({
-			height:0
-		},500);
-	},50, iframe)
-
-	if(window.DM)
-	{
-		data = {
-			player_sheet: sheet_url
-		};
-		window.MB.sendMessage("custom/myVTT/unlock", data);
-		if(!window.KEEP_PLAYER_SHEET_LOADED)
-		{
-			setTimeout(function(_iframe){
-				console.log("closing sheet" + _iframe.attr('data-sheet_url'));
-				_iframe.attr('src','');
-			},500, iframe)
-		}
-	}
-	else
-	{
+	container.removeClass("open");
+	let iframe = container.find("iframe");
+	let sheet_url = iframe.attr('data-sheet_url');
+	iframe.attr('data-sheet_url', '');
+	iframe.attr('src', '');
+	iframe.off("load");
+	if(window.DM) {
+		window.MB.sendMessage("custom/myVTT/unlock", { player_sheet: sheet_url });
+	} else {
 		if(window.STREAMTASK){
-				clearInterval(window.STREAMTASK);
-				window.STREAMTASK=false;
-			}
-
-			data = {
-				player_sheet: window.PLAYER_SHEET
-			};
-			window.MB.sendMessage("custom/myVTT/player_sheet_closed", data);
+			clearInterval(window.STREAMTASK);
+			window.STREAMTASK=false;
+		}
+		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
 	}
 }
 
@@ -3411,7 +3350,8 @@ function show_sidebar() {
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
-		$("#sheet").css("transform", "translateX(0px)");
+		// $("#sheet").css("transform", "translateX(0px)");
+		$("#sheet").removeClass("sidebar_hidden");
 	}
 }
 
@@ -3431,7 +3371,8 @@ function hide_sidebar() {
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
-		$("#sheet").css("transform", "translateX(343px)");
+		// $("#sheet").css("transform", "translateX(343px)");
+		$("#sheet").addClass("sidebar_hidden");
 	}
 }
 
