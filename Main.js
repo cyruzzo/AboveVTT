@@ -1378,7 +1378,6 @@ function init_things() {
 	window.STARTING = true;
 	let searchParams = new URLSearchParams(window.location.search)
 	var gameid = $("#message-broker-client").attr("data-gameId");
-	init_splash();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
 	window.DRAWINGS = [];
