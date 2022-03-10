@@ -83,6 +83,7 @@ function init_jitsi_popout() {
 		script.innerHTML = [
 			init_jitsi.toString(),
 			init_layout.toString(),
+			"var find_game_id=()=> '" + find_game_id() +"'", // redefine find_game_id in the jitsi popout window context
 			"init_jitsi(true)",
 		].join(';\n');
 		pop.document.head.appendChild(script);
