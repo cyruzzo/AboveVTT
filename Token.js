@@ -1913,8 +1913,8 @@ function token_menu() {
 				custom_cond_items = {};
 				custom_reminders = {}
 				id = $(element).attr('data-id');
-				is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
-				
+				is_monster = window.TOKEN_OBJECTS[id].isMonster();
+				is_player = window.TOKEN_OBJECTS[id].isPlayer();
 				has_note=id in window.JOURNAL.notes;
 
 				if (!window.TOKEN_OBJECTS[id].options.aura1) {
@@ -2210,6 +2210,11 @@ function token_menu() {
 						delete: { name: 'Delete' }
 					}
 				};
+
+				if (!is_monster && !is_player) {
+					delete ret.items.view;
+				}
+
 				if (is_monster) {
 					delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
