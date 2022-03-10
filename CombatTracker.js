@@ -265,7 +265,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(window.DM)
 		buttons.append(del);
 	
-	if(token.options.monster > 0){
+	if(token.isMonster()){
 		stat=$("<button style='font-size:10px;'>STAT</button>");
 		
 		stat.click(function(){
@@ -286,7 +286,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			buttons.append(stat);
 		
 	}	
-	else{
+	else if (token.isPlayer()) {
 		stat=$("<button style='font-size:10px;'>STAT</button>");
 		stat.click(function(){
 			open_player_sheet(token.options.id);
