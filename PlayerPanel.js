@@ -58,27 +58,28 @@ function update_pclist() {
 	window.pcs.forEach(function(item, index) {
 
 		pc = item;
-		color = "#" + get_player_token_border_color(pc.sheet);
+		let pcSheet = pc.sheet === undefined ? '' : pc.sheet;
+		color = "#" + get_player_token_border_color(pcSheet);
 
 		let playerData;
 		if (pc.sheet in window.PLAYER_STATS) {
-			playerData = window.PLAYER_STATS[pc.sheet];
+			playerData = window.PLAYER_STATS[pcSheet];
 		}
 
 		const newPlayerTemplate = `
-			<div class="player-card" data-player-id="${pc.sheet}">
+			<div class="player-card" data-player-id="${pcSheet}">
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
 					<div class="player-actions">
 						<button 
-							data-set-token-id='${pc.sheet}' data-img='${pc.image}' data-name="${pc.name}"
+							data-set-token-id='${pcSheet}' data-img='${pc.image}' data-name="${pc.name}"
 							data-hp="${playerData ? playerData.hp : ''}"
 							data-ac="${playerData ? playerData.ac : ''}"
 							data-maxhp="${playerData ? playerData.max_hp : ''}"
 							data-color="${color}" class="add-token-btn">
 							TOKEN
 						</button>
-						<button data-target='${pc.sheet}' class="open-sheet-btn">SHEET</button>
+						<button data-target='${pcSheet}' class="open-sheet-btn">SHEET</button>
 						<button class="whisper-btn" data-to="${pc.name}">WHISPER</button>
 					</div>
 				</div>
@@ -162,12 +163,12 @@ function update_pclist() {
 			newplayer.find(".add-token-btn,.open-sheet-btn").remove();
 			newplayer.find(".player-no-attributes").html("");
 		}
-		if (pc.sheet.length == 0) {
+		if (pcSheet.length == 0) {
 			// this is the DM representation, so let's remove things that don't make sense
 			newplayer.find(".add-token-btn,.open-sheet-btn").remove();
 		}
 
-		if (window.DM && pc.sheet.length > 0) {
+		if (window.DM && pcSheet.length > 0) {
 			let token = newplayer.find(".player-token");
 			token.draggable({
 				appendTo: "#VTTWRAPPER",
@@ -212,7 +213,7 @@ function update_pclist() {
 			});
 		}
 
-		if (!window.DM || pc.sheet.length > 0) {
+		if (!window.DM || pcSheet.length > 0) {
 			// Players should see all cards including the DM card. The DM does not need the DM card
 			playersPanel.body.append(newplayer);
 		}
@@ -282,7 +283,7 @@ function gather_pcs() {
 		let pc = {
 			name: name,
 			image: image,
-			sheet: sheet,
+			sheet: sheet === undefined ? "" : sheet,
 			data: {}
 		};
 		console.log("trovato sheet " + sheet);
