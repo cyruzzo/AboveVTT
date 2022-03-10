@@ -12,7 +12,21 @@ var rulesData = {};
 //onload(charIDs);
 
 
-function get_pclist_player_data() {
+function get_pclist_player_data(retrying=false) {
+
+    if((window.moduleExport === undefined) && retrying){
+        console.error("get_pclist_player_data: FAILED LOADING DDB CHARACTER MODULES :( ")
+        return;
+    }
+
+    if(window.moduleExport === undefined){
+        console.warn("get_pclist_player_data: DDB CHARACTER MODULES ARE NOT LOADED. RETRYING IN 10 sec")
+        loadModules(initalModules);
+        setTimeout(()=>{get_pclist_player_data(true)},10000);
+        return;
+    }
+    console.log("get_pclist_player_data: ddb character modules are loaded. grabbing data")
+
     var processedPlayers = [];
     window.pcs.forEach(function (pc) {
         getPlayerData(pc.sheet, function (playerData) {
