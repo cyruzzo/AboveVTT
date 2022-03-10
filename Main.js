@@ -675,13 +675,7 @@ function init_splash() {
 // UNIFIED TOKEN HANDLING
 var MYCOBALT_TOKEN = false;
 var MYCOBALT_TOKEN_EXPIRATION = 0;
-function get_cobalt_token(callback, force_reconnect = true) {
-
-	if (force_reconnect && forceDdbWsReconnect() == true) {
-		// forceDdbWsReconnect will call get_cobalt_token
-		return;
-	}
-
+function get_cobalt_token(callback) {
 	if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
 		console.log("TOKEN IS CACHED");
 		callback(MYCOBALT_TOKEN);
@@ -742,7 +736,7 @@ function forceDdbWsReconnect() {
 					}
 					DDB_WS_FORCE_RECONNECT_LOCK = false;
 				}, 8000);
-			}, false);
+			});
 
 			return true;
 		}
