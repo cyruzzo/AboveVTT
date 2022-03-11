@@ -156,7 +156,7 @@ function monster_panel_init_loop() {
 			}
 		}
 		console.log("monster_panel_init_loop retrying in 1 second");
-	
+		
 		// the edit screen hasn't fully loaded yet. Try again in 1 second
 		setTimeout(function() {
 			monster_panel_init_loop()
@@ -225,6 +225,96 @@ function update_monster_row(monsterRow) {
 			window.StatHandler.getStat(monsterId, function(stat) {
 				setTimeout(function() {
 					scan_monster($("#iframe-monster-panel").contents().find(".ddbeb-modal"), stat);
+									// determine the Proficiency bonus, based on CR -> actually CR ID which has 0, 1/8, 1/4, 1/2, 1, 2, ...etc
+				//console.log(stat.data.challengeRatingId)
+				CR = stat.data.challengeRatingId;
+				switch (true) {
+					case CR >= 34://CR 29
+						prof = 9;
+						break;
+					case CR >= 30://CR 25 
+						prof = 8;
+						break;
+					case CR >= 25://CR 21
+						prof = 7;
+						break;
+					case CR >= 21://CR 17
+						prof = 6;
+						break;
+					case CR >= 17://CR 13
+						prof = 5;
+						break;
+					case CR >= 13://CR 9 
+						prof = 4;
+						break;
+					case CR >= 9://CR 5
+						prof = 3;
+						break;
+					case CR <= 8://CR <4 
+						prof = 2;
+						break;
+				}
+				button.attr('data-prof-bonus', prof);
+
+				//Data for Rolls 
+				//console.log(stat.data.stats[0])
+
+				button.attr('data-ability-scores', stat.data.stats)
+				button.attr('data-saving-throws', stat.data.savingThrows)
+
+				for (let x of stat.data.stats){
+					button.attr(`data-ability-${[x.statId]}`, x.value);
+				}
+				for (let y of stat.data.savingThrows){
+					button.attr(`data-save-${[y.statId]}`, y.value);
+				}
+				//begin group roll data
+				if ($(e.target).attr(`data-ability-1`)) {
+					options.strength = $(e.target).attr('data-ability-1');
+				}
+				if ($(e.target).attr(`data-ability-2`)) {
+					options.dexterity = $(e.target).attr('data-ability-2');
+				}
+				if ($(e.target).attr(`data-ability-3`)) {
+					options.constitution = $(e.target).attr('data-ability-3');
+				}
+				if ($(e.target).attr(`data-ability-4`)) {
+					options.wisdom = $(e.target).attr('data-ability-4');
+				}
+				if ($(e.target).attr(`data-ability-5`)) {
+					options.intelligence = $(e.target).attr('data-ability-5');
+				}
+				if ($(e.target).attr(`data-ability-6`)) {
+					options.charisma = $(e.target).attr('data-ability-6');
+				}
+
+				if ($(e.target).attr(`data-save-1`)) {
+					options.strength_save = $(e.target).attr('data-save-1');
+				}
+				if ($(e.target).attr(`data-save-2`)) {
+					options.dexterity_save = $(e.target).attr('data-save-2');
+				}
+				if ($(e.target).attr(`data-save-3`)) {
+					options.constitution_save = $(e.target).attr('data-save-3');
+				}
+				if ($(e.target).attr(`data-save-4`)) {
+					options.wisdom_save = $(e.target).attr('data-save-4');
+				}
+				if ($(e.target).attr(`data-save-5`)) {
+					options.intelligence_save = $(e.target).attr('data-save-5');
+				}
+				if ($(e.target).attr(`data-save-6`)) {
+					options.charisma_save = $(e.target).attr('data-save-6');
+				}
+				if ($(e.target).attr('data-prof-bonus')) {
+					options.prof_bonus = $(e.target).attr('data-prof-bonus');
+				}
+
+				//console.log(button.attr('data-ability-1'))
+				// Damage mods could be added, but will require determining each of DDB's index values for different damage types. Tedious.
+				//options.damage_vul = stat.data.damage_vul
+				//options.damge_resist = stat.data.damge_resist
+				//End group roll data
 				}, 1000);
 			});
 		});
@@ -475,7 +565,6 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 	}
 }
 
-
 function build_monster_customization_item(monsterId, monsterName, imageUrl, customImgIndex, placedToken) {
 	let tokenDiv = build_custom_token_item(monsterName, imageUrl, undefined, customImgIndex, placedToken);
 	tokenDiv.attr("data-monster", monsterId);
@@ -634,6 +723,56 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 			options.hp = stat.data.averageHitPoints;
 			options.max_hp = stat.data.averageHitPoints;
 			options.ac = stat.data.armorClass;
+
+			//Data for Rolls  
+			// determine the Proficiency bonus, based on CR -> actually CR ID which has 0, 1/8, 1/4, 1/2, 1, 2, ...etc
+			console.log(stat.data.challengeRatingId)
+			CR = stat.data.challengeRatingId;
+			switch (true) {
+				case CR >= 34://CR 29
+					prof = 9;
+					break;
+				case CR >= 30://CR 25 
+					prof = 8;
+					break;
+				case CR >= 25://CR 21
+					prof = 7;
+					break;
+				case CR >= 21://CR 17
+					prof = 6;
+					break;
+				case CR >= 17://CR 13
+					prof = 5;
+					break;
+				case CR >= 13://CR 9 
+					prof = 4;
+					break;
+				case CR >= 9://CR 5
+					prof = 3;
+					break;
+				case CR <= 8://CR <4 
+					prof = 2;
+					break;
+			}
+			options.prof_bonus = prof;
+
+			options.ability_scores = [];
+			for (let x of stat.data.stats){
+				console.log(x.statId)
+				console.log(x.value)
+				options.ability_scores[x.statId] = x.value;
+			}
+			options.saving_throws = [];
+			for (let y of stat.data.savingThrows){
+				console.log(y.statId)
+				console.log(y.value)
+				options.saving_throws[y.statId] = prof
+			}
+
+			// Damage mods could be added, but will require determining each of DDB's index values for different damage types. Tedious.
+			//options.damage_vul = stat.data.damage_vul
+			//options.damge_resist = stat.data.damge_resist
+			//
 			if (eventPageX == undefined || eventPageY == undefined) {
 				place_token_in_center_of_map(options);
 			} else {

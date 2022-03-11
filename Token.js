@@ -1291,7 +1291,6 @@ function token_button(e, tokenIndex = null, tokenTotal = null) {
 		}
 	}
 	
-	
 	if ($(e.target).attr('data-size')) {
 		options.size = $(e.target).attr('data-size');
 	}
@@ -1570,7 +1569,11 @@ function menu_callback(key, options, event) {
 		}
 		
 	}
-	
+	if (key == 'quick_roll_menu') {
+		open_roll_menu(event)
+		id = $(this).attr('data-id');
+		add_to_roll_menu(window.TOKEN_OBJECTS[id])						
+	}
 
 	if (key == "token_combat") {
 		id = $(this).attr('data-id');
@@ -1848,6 +1851,13 @@ function multiple_callback(key, options, event) {
 		window.ScenesHandler.persist();
 		window.ScenesHandler.sync();
 	}
+	if (key == 'group_roll') {
+		open_roll_menu(event)
+		$("#tokens .tokenselected").each(function() {
+			id = $(this).attr('data-id');
+			add_to_roll_menu(window.TOKEN_OBJECTS[id])
+		});							
+	}
 }
 
 function token_menu() {
@@ -1873,6 +1883,7 @@ function token_menu() {
 					callback: multiple_callback,
 					items: {
 						token_combat: { name: 'Add to Combat Tracker' },
+						group_roll: { name: 'Quick Group Roll' },
 						hide: { name: 'Hide From Players' },
 						show: { name: 'Show To Players' },
 						delete: { name: 'Delete Token' },
@@ -2139,6 +2150,9 @@ function token_menu() {
 								note_delete: {name: 'Delete Note'},
 							}
 						},
+						quick_roll_menu: { 
+							name: 'Quick Roll Menu' 
+						},
 						sep1: "-------",
 						name: {
 							type: 'text',
@@ -2252,6 +2266,7 @@ function token_menu() {
 					if (!id.endsWith(window.PLAYER_ID)) {
 						delete ret.items.sep3;
 						delete ret.items.imgsrcSelect;
+						delete ret.items.quick_roll_menu
 					}
 				}
 
@@ -2697,4 +2712,360 @@ function undo_delete_tokens() {
 		}
 	}
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+}
+
+function open_roll_menu(e) {
+	//opens a roll menu for group rolls 
+	console.log("Opening Roll menu")
+	$("#group_roll_dialog").remove();
+
+	roll_dialog = $("<div id='group_roll_dialog'></div>");
+	roll_dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+	roll_dialog.css('overflow', 'auto');
+	roll_dialog.css('width', '380px');
+	roll_dialog.css('top', e.clientY+'px');
+	roll_dialog.css('left', e.clientX+'px');
+	roll_dialog.css('height', '250px');
+	roll_dialog.css('z-index', 100);
+	roll_dialog.css('border', 'solid 2px red');
+	roll_dialog.css('display', 'flex');
+	roll_dialog.css('margin', '1px 1px')
+	roll_dialog.css('flex-direction', 'column');
+	$(roll_dialog).draggable();
+
+	$("#tokens").append(roll_dialog);
+
+	roll_dialog.empty();
+
+	roll_menu_header = $("<div id='roll_menu_header' class=roll_menu_header ></div>");
+	roll_menu_dc_input = $('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
+	//roll_menu_dc_input.tooltip();
+
+	roll_menu_header.append(roll_menu_dc_input)
+
+	save_type_dropdown = $('<select id="save_dropdown" onchange="save_type_change(this)" title="Select the type of saving throw to be made. ">Save Type</select>')
+	save_type_dropdown.append($('<option value="2">Dexterity</option>')) 
+	save_type_dropdown.append($('<option value="4">Wisdom</option>'))
+	save_type_dropdown.append($('<option value="3">Constitution</option>'))
+	save_type_dropdown.append($('<option value="1">Strength</option>'))
+	save_type_dropdown.append($('<option value="5">Intelligence</option>'))
+	save_type_dropdown.append($('<option value="6">Charisma</option>'))
+	//save_type_dropdown.tooltip()
+	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
+	//damage_input.tooltip()
+	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
+	//half_damage_input.tooltip()
+
+	damage_input.change(function(){
+		//console.log(this.value)
+		_dmg = $('#damage_failed_save').val();
+		if (_dmg.includes('d')) {
+			var expression = _dmg
+			console.log(expression)
+			var roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			//reassign to the input 
+			_dmg = roll.total
+			$('#damage_failed_save').val(_dmg);
+		}
+		else {
+			_dmg.replace(/[^\d.-]/g, '')
+		}
+		$("#half_damage_save").val(Math.floor(_dmg/2));
+	});
+
+	roll_menu_header.append(damage_input)
+	roll_menu_header.append(half_damage_input)
+	roll_menu_header.append(save_type_dropdown)
+
+	let roll_form = $("<form />");
+	roll_menu_body = $("<div id='roll_menu_body' class='roll_menu_body'></div>");
+
+	//roll_menu_body.append($('<span> Use +- for custom bonus, add a "A" or "D" for Adv/Disadv </span>'))
+	roll_menu_body.append(roll_form)
+
+	roll_cancel = $("<button class='avtt-roll-button' style='margin: 1px 1px; float: right; font-size:14px;'>Cancel</button>");
+	roll_cancel.click(function() {
+		$("#group_roll_dialog").remove();
+	});
+
+	roll_button = $("<button class='avtt-roll-button' style='margin: 1px 1px; font-size:14px;'>Roll!</button>");
+	roll_button.click(function() {
+
+		$('#roll_menu_footer').children('#apply_damage').show()
+		$("#roll_menu_body").children('tr').each(function (){
+			let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+			let y = $(this).children('input');
+
+			save_drop = $("#roll_menu_header").children('select')
+			
+			if(x.options.monster > 0){
+				score_bonus = Math.floor((x.options.ability_scores[save_drop.val()] - 10) /2 )
+				if (x.options.saving_throws[save_drop.val()]){
+					score_bonus += x.options.prof_bonus
+				}
+			}
+			else {
+				var ability_names = {0: 'null', 1: 'strength', 2: 'dexterity', 3:'constitution', 4:'wisdom', 5:'intelligence', 6:'charisma'}
+				ability_name = ability_names[save_drop.val()]
+				score_bonus = x.options[`${ability_name}_save`]
+			}
+			
+			if (score_bonus >= 0){
+				score_bonus = "+"+score_bonus;
+			}
+			console.log(score_bonus)
+			dice = '1d20';
+			if (y.val().includes('+') == true || y.val().includes('-') == true){
+				var modifier = y.val().toLowerCase()
+				if (modifier.includes("a") == true) {
+					modifier = modifier.replace(/[^\d.-]/g, '');
+					dice = '2d20kh1 +';
+				}
+				else if (modifier.includes("d") == true) {
+					modifier = modifier.replace(/[^\d.-]/g, '');
+					dice = '2d20kl1 +';
+				}
+			}
+			else {
+				var modifier = score_bonus
+			}
+			
+			var expression = dice + modifier;
+			console.log(expression)
+			var roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			//reassign to the input 
+			y.val(roll.total);
+			//display a Save success or failure.
+			save_dc = $("#roll_menu_header").children('#save_dc').val()
+			console.log($("#roll_menu_header"))
+			console.log($("#roll_menu_header").children('#save_dc'))
+			console.log(save_dc)
+			pass_fail_label = $(this).children('#save_fail_label')[0]
+			$(pass_fail_label).show()
+
+			if (save_dc != ""){
+				if (parseInt(roll.total) >= parseInt(save_dc)){
+					pass_fail_label.innerHTML = '  Success!'
+					$(pass_fail_label).css('background', 'green')
+				}
+				else {
+					pass_fail_label.innerHTML = '  Fail!'
+					$(pass_fail_label).css('background', 'red')
+				}
+			}
+			else {//if not defined apply full damage.
+				pass_fail_label.innerHTML = '  No DC (Auto-Fail)'
+				$(pass_fail_label).css('background', 'yellow')
+			}
+
+		});
+	});
+	
+	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage </button>");
+	update_hp.click(function() {
+		$("#roll_menu_body").children('tr').each(function (){
+			update_hp=$(this).children("#hp");
+			let rolled_value = $(this).children('input').val();
+			if (!rolled_value.includes('+') && !rolled_value.includes('-')) {
+				let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+				damage_failed_save = $("#roll_menu_header").children('#damage_failed_save').val()
+				half_damage_save_success = $("#roll_menu_header").children('#half_damage_save').val()
+
+				damage_failed_save = damage_failed_save.replace(/[^\d.-]/g, '');
+				half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
+
+				save_dc = $("#roll_menu_header").children('#save_dc').val()
+
+				if (save_dc != "undefined"){
+					if (parseInt(rolled_value) >= parseInt(save_dc)){
+						x.options.hp -= half_damage_save_success
+						damage = half_damage_save_success
+					}
+					else {
+						x.options.hp -= damage_failed_save
+						damage = damage_failed_save
+					}
+				}
+				//if not defined apply full damage.
+				else {
+					x.options.hp -= damage_failed_save
+					damage = damage_failed_save
+				}
+				if(x.options.monster > 0){
+					x.place()
+					update_hp.text(x.options.hp);
+				}
+				else {
+					// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
+					var msgdata = {
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: x.options.name + " takes " + damage +" damage (adjust manually)",	
+					};
+					window.MB.inject_chat(msgdata);
+					x.place()
+				}
+			}
+		});
+	});
+
+
+	roll_menu_footer = $("<div id='roll_menu_footer' class=roll_menu_footer/>");
+	roll_menu_footer.append(roll_button);
+	roll_menu_footer.append(update_hp);
+	roll_menu_footer.append(roll_cancel);
+	update_hp.hide()
+
+	roll_dialog.append(roll_menu_header);
+	roll_dialog.append(roll_menu_body);
+	roll_dialog.append(roll_menu_footer);
+
+	roll_dialog.css('opacity', '0.0');
+	roll_dialog.animate({
+		opacity: '1.0'
+	}, 1000);
+}
+
+function add_to_roll_menu(token) {
+	//Adds a specific target to the roll menu
+
+	//console.log(token);
+	roll_menu_entry=$("<tr/>");
+	roll_menu_entry.css("height","30px");
+	roll_menu_entry.attr("data-target", token.options.id);	
+
+	img=$("<img width=42 height=42 class='Avatar_AvatarPortrait__2dP8u'>");
+	img.attr('src',token.options.imgsrc);
+	img.css('border','3px solid '+token.options.color);
+	img.css('margin', '2px 2px');
+	roll_menu_entry.append($("<td/>").append(img));
+
+	//if its a monster it needs to be calulated.
+	if(token.options.monster > 0){
+		score_bonus = Math.floor((token.options.ability_scores[2] - 10) /2 )
+		if (token.options.saving_throws[2]){
+			score_bonus += token.options.prof_bonus
+		}
+		if (score_bonus >= 0){
+			score_bonus = "+"+score_bonus;
+		}
+	}
+	else {//if its a player character they have the save stored.
+		score_bonus = token.options.dexterity_save
+		if (score_bonus >= 0){
+			score_bonus = "+"+score_bonus;
+		}
+	}
+
+	name_line = $("<div style='width:100px;'>"+token.options.name+"</div>")
+
+	bonus_input = $(`<input id=bonus_input type='roll_menu_roll' style='font-size:12px; margin: 1px 1px;' title='Use +- for custom bonus, add a "A" or "D" for Adv/Disadv'> </input>`);
+	bonus_input.css('width','30px');
+	bonus_input.css('-webkit-appearance','none');
+	//bonus_input.tooltip()
+	bonus_input.val(score_bonus);
+
+	hp=$("<div class='hp'></div>");
+	hp.text(token.options.hp);
+	hp.css('font-size','12px');
+
+	roll_menu_entry.append(name_line);
+	roll_menu_entry.append($("<td/>").append(hp));
+
+	max_hp=$("<div/>");
+	max_hp.text("/"+token.options.max_hp);
+	max_hp.css('font-size','12px');
+
+	roll_menu_entry.append($("<td/>").append(max_hp));
+
+	find=$("<button class='avtt-roll-button' style='font-size:12px; margin: 1px 1px;' title='Find the token on the map.'>Find</button>");
+	//find.tooltip()
+	find.click(function(){
+		var target=$(this).parent().attr('data-target');
+		if(target in window.TOKEN_OBJECTS){
+			window.TOKEN_OBJECTS[target].highlight();
+		}
+	});
+	roll_menu_entry.append(bonus_input)
+	roll_menu_entry.append(find);
+
+	remove_from_list=$("<button class='avtt-roll-button' style='font-size:12px;margin: 1px 1px;' title='Remove this entry from this roll menu.'>Remove</button>");
+	//remove_from_list.tooltip()
+	remove_from_list.click(
+		function() {
+			console.log('Removing from list')
+			$(this).parent().remove();
+		}
+	);
+	roll_menu_entry.append(remove_from_list);
+
+	if(token.isMonster()){
+		stat=$("<button class='avtt-roll-button' style='font-size:12px;margin: 1px 1px;' title='Open this monster`s stat block'>Stats</button>");
+		
+		stat.click(function(){
+			if (encounter_builder_dice_supported()) {
+				console.log(`attempting to open monster with monsterId ${token.options.monster} and tokenId ${token.options.id}`);
+				open_monster_stat_block_with_id(token.options.monster, token.options.id);
+			} else {
+				iframe_id="#iframe-monster-"+token.options.monster;
+				if($(iframe_id).is(":visible")) {
+					$(iframe_id).hide();
+				} else {
+					$(".monster_frame").hide();
+					load_monster_stat(token.options.monster, token.options.id);
+				}
+			}
+		});
+		if(window.DM)
+			roll_menu_entry.append(stat);
+		
+	}	
+	else if (token.isPlayer()) {
+		stat=$("<button class='avtt-roll-button' style='font-size:12px;margin: 1px 1px;' title='Open this character`s stat block'>Stats</button>");
+		stat.click(function(){
+			open_player_sheet(token.options.id);
+		});
+		if(window.DM)
+			roll_menu_entry.append(stat);
+	}
+
+	roll_menu_entry.append("<div id=save_fail_label> </div>")
+
+	//$("#group_roll_dialog").append(roll_menu_entry)
+	$("#roll_menu_body").append(roll_menu_entry)
+}
+
+function save_type_change(dropdown) {
+	var ability_names = {0: 'null', 1: 'strength', 2: 'dexterity', 3:'constitution', 4:'wisdom', 5:'intelligence', 6:'charisma'}
+	console.log("Save type is: "+ dropdown.value );
+	$('#roll_menu_footer').children('#apply_damage').hide()
+	//$('#group_roll_dialog').children('tr').each(function () {
+	$('#roll_menu_body').children('tr').each(function () {
+		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+		if(x.options.monster > 0){
+			score_bonus = Math.floor((x.options.ability_scores[dropdown.value] - 10) /2 )
+			if (x.options.saving_throws[dropdown.value]){
+				score_bonus += x.options.prof_bonus
+			}
+			if (score_bonus >= 0){
+				score_bonus = "+"+score_bonus;
+			}
+		}
+		else {
+			ability_name = ability_names[dropdown.value]
+			score_bonus = x.options[`${ability_name}_save`]
+			if (score_bonus >= 0){
+				score_bonus = "+"+score_bonus;
+			}
+		}
+		let label = $(this).children('#save_fail_label')
+		$(label).hide()
+
+		//console.log($(this).children('input'))
+		$(this).children('input').val(score_bonus);
+
+
+	});
 }

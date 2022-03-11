@@ -2011,3 +2011,104 @@ button.avtt-roll-button {
 .MuiButtonBase-root {
     width: 100%;
 }
+
+.dropbtn {
+    border-radius: 0;
+    height: 25px;
+    padding: 4px 4px;
+    margin: 2px 2px;
+    background-color: white;
+    box-shadow: inset 0 0 4px 0 rgba(138,177,198,0.48);
+    border: solid 1px #d8dde3;
+}
+input[type=roll_menu] {
+    width: 22%;
+    padding: 4px 4px;
+    margin: 2px 2px;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 5px;
+    font-family: sans-serif;
+    font-size: 100%;
+    color: #666;
+    outline: 0;
+    border: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+input[type=roll_menu_roll]{
+    width: 10%;
+    padding: 1px 1px;
+    margin: 2px 2px;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+#roll_menu_header {
+    width: 100%;
+    padding: 2px 2px;
+    /*background-color: #1b9af0;*/
+    background-color: #1b9af0;
+
+}
+#roll_menu_footer {
+    padding: 2px 2px;
+    width: 100%;
+    background-color: #1b9af0;
+}
+#roll_menu_body {
+    flex: 1;
+    overflow: auto;
+    background-color: rgb(235, 241, 245);
+}
+
+.dropbtn {
+    border-radius: 0;
+    height: 25px;
+    padding: 4px 4px;
+    margin: 2px 2px;
+    background-color: red;
+    box-shadow: inset 0 0 4px 0 rgba(138,177,198,0.48);
+    border: solid 1px red;
+}
+input[type=roll_menu] {
+    width: 22%;
+    padding: 4px 4px;
+    margin: 2px 2px;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 5px;
+    font-family: sans-serif;
+    font-size: 100%;
+    color: #666;
+    outline: 0;
+    border: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+input[type=roll_menu_roll]{
+    width: 10%;
+    padding: 1px 1px;
+    margin: 2px 2px;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+#roll_menu_header {
+    width: 100%;
+    padding: 2px 2px;
+    /*background-color: #1b9af0;*/
+    background-color: rgb(0, 0, 0);
+
+}
+#roll_menu_footer {
+    padding: 2px 2px;
+    width: 100%;
+    background-color: rgb(0, 0, 0);
+}
+#roll_menu_body {
+    flex: 1;
+    overflow: auto;
+    background-color: rgb(235, 241, 245);
+}
+
