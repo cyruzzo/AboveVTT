@@ -679,30 +679,6 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 	}
 }
 
-
-function fetch_mon_image(url) {
-	console.debug(`fetch_mon_image starting`);
-	get_cobalt_token(function (token) {
-		$.ajax({
-			url: url,
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-			},
-			xhrFields: {
-				withCredentials: true
-			},
-			success: function (responseData) {
-				console.log(`fetch_mon_image succeeded`);
-				return 200
-			},
-			failure: function (errorMessage) {
-				console.warn(`fetch_mon_image failed ${errorMessage}`);
-				return 403
-			}
-		});
-	});
-}
-
 function inject_monster_image(stat) {
 	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length > 0) {
 		// we only need one
@@ -713,8 +689,12 @@ function inject_monster_image(stat) {
 		return;
 	}
 	let url = stat.data.largeAvatarUrl;
-	
-	if (url === undefined || url == null || url.length == 0 || fetch_mon_image(url) !== 200) {
+	// attempt to get the avatar to
+	let largeAvatarReponse = $.ajax({
+		async: false,
+		url: url,
+	})
+	if (url === undefined || url == null || url.length == 0 || largeAvatarReponse.status !== 200) {
 		console.log("using monsters avatar instead of large avatar")
 		url = stat.data.avatarUrl;
 	}
