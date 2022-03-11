@@ -2866,7 +2866,6 @@ function open_roll_menu(e) {
 	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage </button>");
 	update_hp.click(function() {
 		$("#roll_menu_body").children('tr').each(function (){
-			update_hp=$(this).children("#hp");
 			let rolled_value = $(this).children('input').val();
 			if (!rolled_value.includes('+') && !rolled_value.includes('-')) {
 				let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
@@ -2894,8 +2893,8 @@ function open_roll_menu(e) {
 					damage = damage_failed_save
 				}
 				if(x.options.monster > 0){
+					$(this).children()[2].textContent = x.options.hp
 					x.place()
-					update_hp.text(x.options.hp);
 				}
 				else {
 					// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
