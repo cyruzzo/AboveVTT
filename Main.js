@@ -86,7 +86,31 @@ function decrease_zoom() {
 }
 
 function reset_zoom () {
-	change_zoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
+	console.group("reset_zoom")
+	// as we zoom in the difference between these values gets larger
+	vttHeight = $("#VTTWRAPPER")[0].offsetHeight
+	sceneMapHeight = $("#scene_map")[0].height
+	heightDiff = Math.abs( ( vttHeight - sceneMapHeight ) / ( (vttHeight+sceneMapHeight)/2 ) );
+	
+	vttWidth = $("#VTTWRAPPER")[0].offsetWidth
+	sceneMapWidth = $("#scene_map")[0].width
+	widthDiff = Math.abs( ( vttWidth - sceneMapWidth ) / ( (vttWidth+sceneMapWidth)/2 ) );
+	zoom = 1
+	if (sceneMapWidth === sceneMapHeight){
+		console.log("square maps are dumb :D")
+		zoom = 1
+	}
+	else{
+		zoom = heightDiff > widthDiff ? heightDiff : widthDiff
+	}
+	console.log("setting zoom to ", zoom)
+	change_zoom(zoom);
+	$("#scene_map")[0].scrollIntoView({
+		behavior: 'auto',
+		block: 'center',
+		inline: 'center'
+	});
+	console.groupEnd()
 }
 
 function increase_zoom() {
