@@ -688,11 +688,10 @@ function inject_monster_image(stat) {
 		console.warn(`inject_monster_image ids don't match ${window.EncounterHandler.currently_open_monster_id} != ${stat.data.id}`);
 		return;
 	}
-	let url = stat.data.largeAvatarUrl;
-
-	if (url !== undefined && url != null && url.length > 0 && window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
+	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
 		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");
-		let image = `<img style="width:100%" class="injected-image" src="${url}" alt="${stat.data.name}" class="monster-image" onerror="this.src='${stat.data.avatarUrl}'"></img>`;
+		let image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
+			alt="${stat.data.name}" class="monster-image" onerror="this.src='${stat.data.avatarUrl}'";onerror=''></img>`;
 		content.find(".mon-stat-block").after(image);
 		let button = $("<button class='ddbeb-button monster-details-link'>SEND IMAGE TO GAMELOG</button>");
 		button.css({ "float": "right" });
