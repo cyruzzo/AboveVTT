@@ -210,6 +210,17 @@ class EncounterHandler {
 
 	}
 
+	get_or_fetch_campaign_info(callback) {
+		if (typeof callback !== 'function') {
+			callback = function(){};
+		}
+		if (this.campaign !== undefined) {
+			callback(this.campaign);
+		} else {
+			this.fetch_campaign_info(callback);
+		}
+	}
+
 	/// This is gathers info about the current campaign. It is used to to create our `AboveVTT` backing encounter
 	fetch_campaign_info(callback) {
 		if (typeof callback !== 'function') {
@@ -221,7 +232,7 @@ class EncounterHandler {
 			success: function (responseData) {
 				console.log(`fetch_campaign_info succeeded`);
 				window.EncounterHandler.campaign = responseData.data;
-				callback();
+				callback(window.EncounterHandler.campaign);
 			},
 			error: function (errorMessage) {
 				console.warn(`fetch_campaign_info failed ${errorMessage}`);

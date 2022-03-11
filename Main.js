@@ -1597,8 +1597,33 @@ function is_supported_version(versionString) {
 	return abovevtt_version >= versionString;
 }
 
+function get_user_cloud_key(callback) {
+	if (!window.DM || (typeof callback !== 'function') || window.EncounterHandler === undefined || !is_encounters_page()) {
+		return;
+	}
+	window.EncounterHandler.get_or_fetch_campaign_info(function(response, responseType) {
+		if (response === false) {
+			callback(response, responseType);
+			return;
+		}
+		let campaign = response;
+		if (campaign !== undefined && campaign.dmId !== undefined && campaign.dmUsername !== undefined) {
+			let userCloudKey = b64EncodeUnicode(`${campaign.dmId}|${campaign.dmUsername}`);
+			callback(encodeURIComponent(userCloudKey));
+		} else {
+			callback(undefined);
+		}
+	});
+}
 
-
+function get_cloud_base_url() {
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+	return http_api_gw;
+}
 
 function init_above(){
 	console.log("init_above");
@@ -1609,11 +1634,7 @@ function init_above(){
 	//window.STARTING = true;
 	let gameId = find_game_id();
 
-	let http_api_gw="https://services.abovevtt.net";
-	let searchParams = new URLSearchParams(window.location.search);
-	if(searchParams.has("dev")){
-		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-	}
+	let http_api_gw = get_cloud_base_url();
 
 	//THIS SHOULD HAVE ALREADY BEEN SET
 	// window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();

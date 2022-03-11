@@ -1181,3 +1181,43 @@ function build_token_size_input(currentTokenSize, changeHandler) {
 
 	return output;
 }
+
+function persist_custom_tokens_in_cloud() {
+	if (!window.CLOUD || !window.DM) return;
+	let customTokenData = Object.assign({}, window.tokendata);
+	let http_api_gw = get_cloud_base_url();
+
+	get_user_cloud_key(function(userKey) {
+		if (userKey !== undefined) {
+			let url = `${http_api_gw}/services?action=setCustomTokens&userKey=${userKey}`;
+			console.log(`sending tokens to ${url}`);
+			$.ajax({
+				url: url,
+				type: 'PUT',
+				contentType: 'application/json',
+				data: JSON.stringify(customTokenData),
+				success: function(){
+					console.log("sent window.tokendata to the cloud");
+				}
+			});
+		}
+	});
+}
+
+function fetch_custom_tokens_from_cloud() {
+	if (!window.CLOUD || !window.DM) return;
+	let http_api_gw = get_cloud_base_url();
+	get_user_cloud_key(function(userKey) {
+		if (userKey !== undefined) {
+			$.ajax({
+				url: `${http_api_gw}/services?action=getCustomTokens&userKey=${userKey}`,
+				success:function(customTokenData){
+					if(customTokenData.Item && customTokenData.Item.data){
+						console.log("retrieved window.tokendata from the cloud");
+						window.tokendata = customTokenData.Item.data;
+					}
+				}
+			});
+		}
+	});
+}
