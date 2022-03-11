@@ -689,18 +689,10 @@ function inject_monster_image(stat) {
 		return;
 	}
 	let url = stat.data.largeAvatarUrl;
-	// attempt to get the avatar to
-	let largeAvatarReponse = $.ajax({
-		async: false,
-		url: url,
-	})
-	if (url === undefined || url == null || url.length == 0 || largeAvatarReponse.status !== 200) {
-		console.log("using monsters avatar instead of large avatar")
-		url = stat.data.avatarUrl;
-	}
+
 	if (url !== undefined && url != null && url.length > 0 && window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
-		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");				
-		let image = `<img style="width:100%" class="injected-image" src="${url}" alt="${stat.data.name}" class="monster-image">`;
+		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");
+		let image = `<img style="width:100%" class="injected-image" src="${url}" alt="${stat.data.name}" class="monster-image" onerror="this.src='${stat.data.avatarUrl}'"></img>`;
 		content.find(".mon-stat-block").after(image);
 		let button = $("<button class='ddbeb-button monster-details-link'>SEND IMAGE TO GAMELOG</button>");
 		button.css({ "float": "right" });
