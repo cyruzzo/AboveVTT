@@ -934,6 +934,7 @@ div#scene_properties form > div {
     position: absolute;
     right: 0;
     top: 28px;
+    height: calc(100vh - 30px) !important;
 }
 
 .ddbc-tab-list__nav-item {
