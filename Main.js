@@ -1328,6 +1328,10 @@ function init_above(){
 			console.log(campaignData);
 			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
 				window.CLOUD=true;
+				if (campaignData.Item.data.playerTokenCustomizations) {
+					console.log(campaignData.Item.data.playerTokenCustomizations);
+					write_player_token_customizations(campaignData.Item.data.playerTokenCustomizations, false);
+				}
 				init_things();
 			}
 			else{ // CHECK IF THIS IS A NEW CAMPAIGN
@@ -1338,18 +1342,10 @@ function init_above(){
 				}
 				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
 					if(window.DM){
-						$.ajax({
-							url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
-							type:'PUT',
-							contentType:'application/json',
-							data:JSON.stringify({
-								cloud:1
-							}),
-							success: function(){
-								console.log("******* WELCOME TO THE CLOUD*************")
-								window.CLOUD=true;
-								init_things();
-							}
+						persist_campaign_data_in_cloud(function() {
+							console.log("******* WELCOME TO THE CLOUD*************")
+							window.CLOUD=true;
+							init_things();
 						});
 					}
 					else{ // PLAYER SHOULD NOT FORCE CLOUD MIGRATION
@@ -1365,6 +1361,36 @@ function init_above(){
 		}
 	}
 	)
+}
+
+function persist_campaign_data_in_cloud(callback) {
+	if (typeof callback !== 'function') {
+		callback = function(){};
+	}
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+
+	var allPlayerTokenCustomizations = read_player_token_customizations()
+	var campaignPlayerTokenCustomizations = {};
+	window.pcs.forEach(function(pc) {
+		if (pc.sheet.length > 0 && allPlayerTokenCustomizations[pc.sheet] !== undefined) {
+			campaignPlayerTokenCustomizations[pc.sheet] = allPlayerTokenCustomizations[pc.sheet];
+		}
+	});
+
+	$.ajax({
+		url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
+		type:'PUT',
+		contentType:'application/json',
+		data:JSON.stringify({
+			cloud:1,
+			playerTokenCustomizations: campaignPlayerTokenCustomizations
+		}),
+		success: callback
+	});
 }
 
 function init_things() {

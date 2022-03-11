@@ -310,9 +310,14 @@ function read_player_token_customizations() {
 	}
 }
 
-function write_player_token_customizations(customMappingData) {
+function write_player_token_customizations(customMappingData, sendToCloud = true) {
 	if (customMappingData !== undefined && customMappingData != null) {
 		localStorage.setItem("PlayerTokenCustomization", JSON.stringify(customMappingData));
+	}
+	if (sendToCloud && window.CLOUD) {
+		persist_campaign_data_in_cloud(function() {
+			console.log("sent player token customizations to the cloud!");
+		});
 	}
 }
 
