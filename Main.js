@@ -86,72 +86,17 @@ function decrease_zoom() {
 }
 
 function reset_zoom () {
-	console.group("reset_zoom")
-	sceneHeight = $("#scene_map")[0].height
-	sceneWidth = $("#scene_map")[0].width
-	mapSize = sceneHeight >= sceneWidth ? sceneHeight : sceneWidth
-    zoom = 0
-    console.log(mapSize)
-    // super crude but mostly does the job
-	switch (true) {
-        case (mapSize > 12000):
-			zoom  = 0.095
-			break;
-        case (mapSize > 11000):
-			zoom  = 0.10
-			break;
-        case (mapSize > 10000):
-			zoom  = 0.115
-			break;
-        case (mapSize > 9000):
-            zoom  = 0.12
-            break;
-        case (mapSize > 8000):
-			zoom  = 0.14
-			break;
-		case (mapSize > 7000):
-			zoom  = 0.16
-			break;
-        case (mapSize > 6000):
-            zoom  = 0.18
-            break;
-        case (mapSize > 5000):
-			zoom  = 0.22
-			break;
-        case (mapSize > 4000):
-			zoom  = 0.28
-			break;
-        case (mapSize > 3000):
-			zoom  = 0.36
-			break;
-        case (mapSize > 2000):
-            zoom  = 0.45
-            break;
-        case (mapSize > 1750):
-            zoom  = 0.6
-            break;
-        case (mapSize > 1500):
-			zoom  = 0.75
-			break;
-        case (mapSize > 1000):
-            zoom  = 0.9
-            break;
-        case (mapSize < 1000):
-            zoom  = 1.2
-            break;
-		default:
-            zoom = 1
-			break;
-	}
-    console.log(`mapsize: ${mapSize}, zoom: ${zoom}`)
-	change_zoom(zoom);
+	wH = $(window).height();
+	mH = $("#scene_map")[0].height
+	wW = $(window).width();
+	mW = $("#scene_map")[0].width
+    zoom = Math.min((wH / mH),(wW / mW))
+	change_zoom(zoom)
 	$("#scene_map")[0].scrollIntoView({
 		behavior: 'auto',
 		block: 'center',
 		inline: 'center'
 	});
-    console.log(window.ZOOM)
-	console.groupEnd()
 }
 
 function increase_zoom() {
