@@ -1098,6 +1098,7 @@ function init_enounter_combat_tracker_iframe() {
 		});
 		$("#resizeDragMon").resizable({
 			addClasses: false,
+			handles: "all",
 			start: function () {
 				$("#resizeDragMon").each(function (index, element) {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
@@ -1117,6 +1118,7 @@ function init_enounter_combat_tracker_iframe() {
 		});
 		$("#sheet").resizable({
 			addClasses: false,
+			handles: "all",
 			start: function () {
 				$("#resizeDragMon").each(function (index, element) {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
