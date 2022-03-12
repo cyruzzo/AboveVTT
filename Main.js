@@ -110,7 +110,7 @@ function reset_zoom () {
 			zoom  = 0.14
 			break;
 		case (mapSize > 7000):
-			zoom  = 0.18
+			zoom  = 0.16
 			break;
         case (mapSize > 6000):
             zoom  = 0.18
