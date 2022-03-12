@@ -282,7 +282,8 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
      opacity: 1;
      min-height: 200px !important;
      background: #242527;  
-     cursor: move;   
+     cursor: move;  
+     z-index: 10010; 
      max-width: 98%;
      max-height: 98%;
 }  
