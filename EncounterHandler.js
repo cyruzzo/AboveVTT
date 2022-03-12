@@ -153,7 +153,7 @@ class EncounterHandler {
 		console.debug("combat_iframe_did_load starting");
 		// remove any outdated iframes now that we've finished loading a replacement
 		$(".iframe-encounter-combat-tracker-replaced").remove();
-		$("#resizeDragMon:last-of-type").remove();
+		$("#resizeDragMon ~ #resizeDragMon").remove();
 		// we are no longer loading, so remove our loading marker
 		if (window.EncounterHandler.combat_iframe.hasClass("iframe-encounter-combat-tracker-is-loading")) {
 			console.log("combat_iframe_did_load attempting to open after loading");
