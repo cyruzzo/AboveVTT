@@ -1058,16 +1058,48 @@ function init_enounter_combat_tracker_iframe() {
 		$("body").append(draggable_resizable_div);	
 		$("#resizeDragMon").append(iframe);
 		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+		
+		/*Set draggable and resizeable on monster and player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 		$("#resizeDragMon").draggable({
-			addClasses: false
+			addClasses: false,
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
 		});
 		$("#sheet").draggable({
-			addClasses: false
+			addClasses: false,
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
 		});
 		$("#resizeDragMon").resizable({
 			addClasses: false,
 			start: function () {
 				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
@@ -1079,6 +1111,10 @@ function init_enounter_combat_tracker_iframe() {
 		$("#sheet").resizable({
 			addClasses: false,
 			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
 				$("#sheet").each(function (index, element) {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
