@@ -1059,17 +1059,35 @@ function init_enounter_combat_tracker_iframe() {
 		$("#resizeDragMon").append(iframe);
 		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
 		$("#resizeDragMon").draggable({
-	        addClasses: false
-	    });
-	    $("#sheet").draggable({
-	        addClasses: false
-	    });
-	    $("#resizeDragMon").resizable({
-	        addClasses: false
-	    });
-	    $("#sheet").resizable({
-	        addClasses: false
-	    });
+			addClasses: false
+		});
+		$("#sheet").draggable({
+			addClasses: false
+		});
+		$("#resizeDragMon").resizable({
+			addClasses: false,
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		$("#sheet").resizable({
+			addClasses: false,
+			start: function () {
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
 	}
 	else {
 		$("body").append(iframe);	
