@@ -2863,7 +2863,17 @@ function open_roll_menu(e) {
 		});
 	});
 	
-	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage </button>");
+	apply_condition_dropdown = $('<select id="apply_condition" title="Does failing this save apply a condition ">Condition</select>')
+	apply_condition_dropdown.append('<option selected value=0> -- Select an Condition -- </option>')
+	// CONDITIONS
+	STANDARD_CONDITIONS.forEach(
+		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
+	)
+	CUSTOM_CONDITIONS.forEach(
+		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
+	)
+	
+	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage/Conditions </button>");
 	update_hp.click(function() {
 		$("#roll_menu_body").children('tr').each(function (){
 			let rolled_value = $(this).children('input').val();
@@ -2881,18 +2891,26 @@ function open_roll_menu(e) {
 					if (parseInt(rolled_value) >= parseInt(save_dc)){
 						x.options.hp -= half_damage_save_success
 						damage = half_damage_save_success
+						save_success = true
 					}
 					else {
 						x.options.hp -= damage_failed_save
 						damage = damage_failed_save
+						save_success = false
 					}
 				}
 				//if not defined apply full damage.
 				else {
 					x.options.hp -= damage_failed_save
 					damage = damage_failed_save
+					save_success = false
 				}
+
 				if(x.options.monster > 0){
+					if (apply_condition_dropdown.val() != 0 && save_success == false) {
+						x.options.conditions.push(apply_condition_dropdown.val())
+						console.log(x.options.conditions + 'Applied to' + x.options.name)
+					}
 					$(this).children()[2].textContent = x.options.hp
 					x.place()
 				}
@@ -2904,6 +2922,15 @@ function open_roll_menu(e) {
 						text: x.options.name + " takes " + damage +" damage (adjust manually)",	
 					};
 					window.MB.inject_chat(msgdata);
+					if (apply_condition_dropdown.val() != 0 && save_success == false){
+						console.log(apply_condition_dropdown.val())
+						var msgdata = {
+							player: window.PLAYER_NAME,
+							img: window.PLAYER_IMG,
+							text: x.options.name + " becomes " + apply_condition_dropdown.val() +" (adjust manually)",	
+						};
+						window.MB.inject_chat(msgdata);
+					}
 					x.place()
 				}
 			}
@@ -2914,6 +2941,7 @@ function open_roll_menu(e) {
 	roll_menu_footer = $("<div id='roll_menu_footer' class=roll_menu_footer/>");
 	roll_menu_footer.append(roll_button);
 	roll_menu_footer.append(update_hp);
+	roll_menu_footer.append(apply_condition_dropdown);
 	roll_menu_footer.append(roll_cancel);
 	update_hp.hide()
 
