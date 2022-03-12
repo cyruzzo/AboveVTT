@@ -1026,6 +1026,7 @@ class MessageBroker {
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
+			reset_zoom();
 			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
 			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
 			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);

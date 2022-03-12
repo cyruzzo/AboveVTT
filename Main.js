@@ -62,7 +62,6 @@ function validateUrl(value) {
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
 function change_zoom(newZoom, x, y) {
-	console.log("change_zoom", newZoom, x , y)
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
 	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
@@ -78,12 +77,6 @@ function change_zoom(newZoom, x, y) {
 	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
-	
-	localStorage.setItem('zoom', JSON.stringify({
-		"zoom":newZoom,
-		"x":pageX,
-		"y":pageY
-	})); 
 }
 
 function decrease_zoom() {
@@ -99,7 +92,6 @@ function reset_zoom () {
 	mW = $("#scene_map")[0].width
 	zoom = Math.min((wH / mH),(wW / mW))
 	change_zoom(zoom)
-	console.log("zooming on centre of map")
 	$("#scene_map")[0].scrollIntoView({
 		behavior: 'auto',
 		block: 'center',
@@ -232,17 +224,6 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		}
 
 		$("#VTT").append(newmap);
-	}
-	console.log("getting zoom storage")
-	const zoom = localStorage.getItem('zoom')
-	if (zoom){
-		console.log("applying previous zoom")
-		console.log(zoom)
-		change_zoom(JSON.parse(zoom))
-	}
-	else{
-		console.log("resetting zoom as none in storage")
-		reset_zoom()
 	}
 }
 
