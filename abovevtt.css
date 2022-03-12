@@ -249,6 +249,75 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index: 99999999;
 }
 
+/*for resizable monsters and sheets in DM view - to be cleaned up/remove unecesarry !importants*/
+
+#sheet{
+     left: 50px;
+     right: auto;
+     display: none;
+     position: fixed !important;
+     min-width: 200px !important;
+     min-height: 200px !important;
+     max-width: 98%;
+     max-height: 98%;
+}
+
+#sheet.open{
+    display: block !important;  
+    transition: none;
+    transform: none;
+    backdrop-filter: opacity(0);
+    cursor: move;
+}
+
+#resizeDragMon{
+     display: flex;
+     left: 40px;
+     top: 80px;
+     right: auto;
+     width: 400px;
+     height: 85%;
+     position: fixed !important;
+     min-width: 200px !important;
+     opacity: 1;
+     min-height: 200px !important;
+     background: #242527;  
+     cursor: move;   
+     max-width: 98%;
+     max-height: 98%;
+}  
+}
+
+#resizeDragMon.hideMon{
+    visibility: hidden;
+}
+
+#sheet iframe{
+    width: 100% !important;
+    height: calc(100% - 25px) !important;
+}
+
+#resizeDragMon iframe{
+    width: 100% !important;
+    height: calc(100% - 25px) !important;
+    position: relative !important;
+    left: 0 !important;
+    top: 20px !important;
+    max-height: 100% !important;
+}
+
+
+#resizeDragMon iframe{
+    z-index: -10000 !important;
+}
+#resizeDragMon:visible iframe{
+    z-index: 10000 !important;
+}
+.ui-resizable-handle{
+        z-index: 10005 !important;  
+         border: 1px dotted gray;
+}
+/*end resizeable*/
 #addscene {
     margin: 5px;
 }
