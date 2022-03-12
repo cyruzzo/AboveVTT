@@ -153,6 +153,7 @@ class EncounterHandler {
 		console.debug("combat_iframe_did_load starting");
 		// remove any outdated iframes now that we've finished loading a replacement
 		$(".iframe-encounter-combat-tracker-replaced").remove();
+		$("#resizeDragMon:last-of-type").remove();
 		// we are no longer loading, so remove our loading marker
 		if (window.EncounterHandler.combat_iframe.hasClass("iframe-encounter-combat-tracker-is-loading")) {
 			console.log("combat_iframe_did_load attempting to open after loading");
@@ -583,9 +584,9 @@ function close_monster_stat_block() {
 	}
 
 	console.debug("close_monster_stat_block is closing the stat block")
-
+	$("#resizeDragMon").addClass("hideMon");
 	// hide and update all iframes that we find. Even if we're currently loading one.
-	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000, "visibility": "hidden" });
+	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000/*, "visibility": "hidden"*/ });
 	$(".iframe-encounter-combat-tracker").attr("data-monster", undefined);
 	$(".iframe-encounter-combat-tracker").attr("data-token", undefined);
 
@@ -645,6 +646,11 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 	// update all that exist in case we're currently loading one in the background or anything
 	$(".iframe-encounter-combat-tracker").attr("data-monster", monsterId);
 	$(".iframe-encounter-combat-tracker").attr("data-token", tokenId);
+
+	//unhide monster frame
+	$("#resizeDragMon").removeClass("hideMon")
+
+
 
 	// find the monster element that matches monsterId
 	let encounter = window.EncounterHandler.encounters[window.EncounterHandler.avttId];
@@ -810,10 +816,10 @@ function reposition_enounter_combat_tracker_iframe() {
 	window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block .mon-stat-block").css({
 		"column-count": "1"
 	});
-	
+
 	window.EncounterHandler.combat_iframe.css({
 		"z-index": isEmpty ? -10000 : 10000,
-		"visibility": "visible",
+		/*"visibility": "visible",*/
 		"display": "block",
 		"top": "72px",
 		"left": `${left}px`,
@@ -914,7 +920,6 @@ function init_enounter_combat_tracker_iframe() {
 	$(window).resize(function() {
 		iframe.height(window.innerHeight - 50);
 	});
-
 	iframe.on("load", function(event) {
 
 		if (!this.src) {
@@ -1041,7 +1046,32 @@ function init_enounter_combat_tracker_iframe() {
 			}
 		});
 	});
+	if (window.DM) {
 
-	$("body").append(iframe);
-	iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+		let draggable_resizable_div = $(`<div id='resizeDragMon' class='hideMon'></div>`)
+		console.log("resizeDragMon");
+
+		$("body").append(draggable_resizable_div);	
+		$("#resizeDragMon").append(iframe);
+		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+		$("#resizeDragMon").draggable({
+	        addClasses: false
+	    });
+	    $("#sheet").draggable({
+	        addClasses: false
+	    });
+	    $("#resizeDragMon").resizable({
+	        addClasses: false
+	    });
+	    $("#sheet").resizable({
+	        addClasses: false
+	    });
+	}
+	else {
+		$("body").append(iframe);	
+		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+	}
+		
 }
+
+
