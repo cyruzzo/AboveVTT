@@ -1058,7 +1058,7 @@ function init_enounter_combat_tracker_iframe() {
 		$("body").append(draggable_resizable_div);	
 		$("#resizeDragMon").append(iframe);
 		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
-		
+
 		/*Set draggable and resizeable on monster and player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 		$("#resizeDragMon").draggable({
 			addClasses: false,
@@ -1071,6 +1071,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
+				$("#resizeDragMon").css("z-index", "10015");
+				$("#sheet").css("z-index", "10010");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -1087,6 +1089,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
+				$("#sheet").css("z-index", "10015");
+				$("#resizeDragMon").css("z-index", "10010");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -1103,9 +1107,12 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
+				$("#resizeDragMon").css("z-index", "10015");
+				$("#sheet").css("z-index", "10010");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
+
 			}
 		});
 		$("#sheet").resizable({
@@ -1119,6 +1126,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
+				$("#sheet").css("z-index", "10015");
+				$("#resizeDragMon").css("z-index", "10010");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
