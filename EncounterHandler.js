@@ -949,6 +949,10 @@ function init_enounter_combat_tracker_iframe() {
 					"left": `${left}px`,
 					"top": "72px"
 				});
+				/*hide original tooltip so larger windows don't have it popup when resized*/
+				addedElement.css({
+					"visibility": `hidden`
+				});
 				$("#ddbeb-popup-container").first().append(clonedElement);
 				return;
 			}
