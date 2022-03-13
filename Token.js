@@ -1858,6 +1858,13 @@ function multiple_callback(key, options, event) {
 			add_to_roll_menu(window.TOKEN_OBJECTS[id])
 		});							
 	}
+	if (key == 'remove_conditions'){
+		$("#tokens .tokenselected").each(function() {
+			id = $(this).attr('data-id');
+			window.TOKEN_OBJECTS[id].options.conditions = [];
+			window.TOKEN_OBJECTS[id].place()
+		});		
+	}
 }
 
 function token_menu() {
@@ -1884,6 +1891,7 @@ function token_menu() {
 					items: {
 						token_combat: { name: 'Add to Combat Tracker' },
 						group_roll: { name: 'Quick Group Roll' },
+						remove_conditions: {name: 'Remove ALL Conditions'},
 						hide: { name: 'Hide From Players' },
 						show: { name: 'Show To Players' },
 						delete: { name: 'Delete Token' },
@@ -2723,8 +2731,10 @@ function open_roll_menu(e) {
 	roll_dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 	roll_dialog.css('overflow', 'auto');
 	roll_dialog.css('width', '380px');
-	roll_dialog.css('top', e.clientY+'px');
-	roll_dialog.css('left', e.clientX+'px');
+	var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
+	var mousey = Math.round((e.pageY - 200) * (1.0 / window.ZOOM));
+	roll_dialog.css('top', mousey+'px');
+	roll_dialog.css('left', mousex+'px');
 	roll_dialog.css('height', '250px');
 	roll_dialog.css('z-index', 100);
 	roll_dialog.css('border', 'solid 2px red');
@@ -2866,7 +2876,7 @@ function open_roll_menu(e) {
 	apply_condition_dropdown = $('<select id="apply_condition" title="Does failing this save apply a condition ">Condition</select>')
 	apply_condition_dropdown.append('<option selected value=0> -- Select an Condition -- </option>')
 
-	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
+	
 	// CONDITIONS
 	STANDARD_CONDITIONS.forEach(
 		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
@@ -2874,6 +2884,7 @@ function open_roll_menu(e) {
 	CUSTOM_CONDITIONS.forEach(
 		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
 	)
+	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
 	
 	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage/Conditions </button>");
 	update_hp.click(function() {
