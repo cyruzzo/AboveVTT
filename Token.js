@@ -325,10 +325,22 @@ class Token {
 			self.persist(e);
 		check_token_visibility();
 
+		this.update_combat_tracker()
+	}
 
+	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
 		if (window.DM) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
+
+			if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
+				console.log("Setting combat tracker opacity to 1.0")
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','1.0');
+			}
+			else {
+				console.log("Setting combat tracker opacity to 0.5")
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
+			}
 		}
 	}
 
@@ -587,10 +599,7 @@ class Token {
 		var self = this;
 
 		/* UPDATE COMBAT TRACKER */
-		if (window.DM) {
-			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
-		}
-
+		self.update_combat_tracker()
 
 		if (old.length > 0) {
 			console.log("trovato!!");
