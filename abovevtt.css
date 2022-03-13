@@ -375,6 +375,9 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     background:  transparent;
     border:  none;
 }
+#combat_tracker{
+    width: 0px !important;
+}
 
 /*end resizeable*/
 #addscene {
