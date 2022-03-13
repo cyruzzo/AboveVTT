@@ -282,9 +282,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     width: 400px;
     height: 85%;
     position: fixed !important;
-    min-width: 200px !important;
     opacity: 1;
-    min-height: 200px !important;
     background: #242527;  
     cursor: move;   
     z-index: 10010;
