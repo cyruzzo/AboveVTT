@@ -1125,7 +1125,7 @@ function init_enounter_combat_tracker_iframe() {
 					$(element).append(d);
 				});
 				$("#sheet").each(function (index, element) {
-					var d = $('<div class="iframeResizeCover></div>');
+					var d = $('<div class="iframeResizeCover"></div>');
 					$(element).append(d);
 				});
 				$("#sheet").css("z-index", "10015");
