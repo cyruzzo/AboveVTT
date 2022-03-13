@@ -1071,8 +1071,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover"></div>');
 					$(element).append(d);
 				});
-				$("#resizeDragMon").css("z-index", "10015");
-				$("#sheet").css("z-index", "10010");
+				$(".frameOnTop").removeClass("frameOnTop");
+				$("#resizeDragMon").addClass("frameOnTop");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -1089,8 +1089,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover"></div>');
 					$(element).append(d);
 				});
-				$("#sheet").css("z-index", "10015");
-				$("#resizeDragMon").css("z-index", "10010");
+				$(".frameOnTop").removeClass("frameOnTop");
+				$("#sheet").addClass("frameOnTop");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -1108,8 +1108,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover"></div>');
 					$(element).append(d);
 				});
-				$("#resizeDragMon").css("z-index", "10015");
-				$("#sheet").css("z-index", "10010");
+				$(".frameOnTop").removeClass("frameOnTop");
+				$("#resizeDragMon").addClass("frameOnTop");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -1128,8 +1128,8 @@ function init_enounter_combat_tracker_iframe() {
 					var d = $('<div class="iframeResizeCover"></div>');
 					$(element).append(d);
 				});
-				$("#sheet").css("z-index", "10015");
-				$("#resizeDragMon").css("z-index", "10010");
+				$(".frameOnTop").removeClass("frameOnTop");
+				$("#sheet").addClass("frameOnTop");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
