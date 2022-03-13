@@ -1121,11 +1121,11 @@ function init_enounter_combat_tracker_iframe() {
 			handles: "all",
 			start: function () {
 				$("#resizeDragMon").each(function (index, element) {
-					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;right:0px;bottom:0px;top:0px;left:0px;width:100%;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
 				$("#sheet").each(function (index, element) {
-					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
+					var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;right:0px;bottom:0px;top:0px;left:0px;width:100%;height:' + $(element).height() + 'px"></div>');
 					$(element).append(d);
 				});
 				$("#sheet").css("z-index", "10015");
