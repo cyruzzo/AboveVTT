@@ -1114,7 +1114,9 @@ function init_enounter_combat_tracker_iframe() {
 			stop: function () {
 				$('.iframeResizeCover').remove();
 
-			}
+			},
+			minWidth: 200,
+			minHeight: 200
 		});
 		$("#sheet").resizable({
 			addClasses: false,
@@ -1133,7 +1135,9 @@ function init_enounter_combat_tracker_iframe() {
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
-			}
+			},
+			minWidth: 200,
+			minHeight: 200
 		});
 	}
 	else {
