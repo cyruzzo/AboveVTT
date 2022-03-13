@@ -61,9 +61,12 @@ function validateUrl(value) {
 
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
-function change_zoom(newZoom, x, y) {
+function change_zoom(newZoom, x, y, store=true) {
+	console.group("change_zoom")
+	console.log("zoom", newZoom, x , y)
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
+	// 200 is the size of the black area to the left and top of the map
 	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
 	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
 	window.ZOOM = newZoom;
@@ -77,6 +80,76 @@ function change_zoom(newZoom, x, y) {
 	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
+	console.groupEnd()
+	if(store) add_zoom_to_storage(window.ZOOM)
+
+}
+
+function add_zoom_to_storage(z, x, y){
+	console.group("add_zoom_to_storage")
+	console.log("storing zoom")
+	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
+	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+	if (zoomIndex !== -1){
+		zooms[zoomIndex].zoom = z
+		zooms[zoomIndex].leftScroll = Math.round($(window).scrollLeft())
+		zooms[zoomIndex].topScroll = Math.round($(window).scrollTop())
+	}
+	else{
+		// zoom doesn't exist
+		zooms.push({
+			"title": window.CURRENT_SCENE_DATA.title,
+			"zoom":z,
+			"leftScroll": Math.round($(window).scrollLeft()),
+			"topScroll": Math.round($(window).scrollTop())
+		}); 
+	}
+	localStorage.setItem('zoom', JSON.stringify(zooms));
+	console.groupEnd("add_zoom_to_storage")
+}
+
+function remove_zoom_from_storage(){
+	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
+	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+	if (zoomIndex !== -1){
+		console.log("removing zoom from storage", zooms[zoomIndex])
+		zooms.splice(zoomIndex, 1)
+	}
+	localStorage.setItem('zoom', JSON.stringify(zooms));
+}
+
+
+
+function apply_zoom_from_storage(){
+	console.group("apply_zoom_from_storage")
+	const zoomState = localStorage.getItem("zoom")
+	if (zoomState){
+		const zooms = JSON.parse(zoomState)
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+		if(zoomIndex !== -1){
+			console.log("restoring zoom level", zooms[zoomIndex])
+			change_zoom(
+				zooms[zoomIndex].zoom,
+				undefined,
+				undefined,
+				false)
+			// this bit doesn't work
+			$(window).scrollLeft(zooms[zoomIndex].scrollLeft);
+			$(window).scrollTop(zooms[zoomIndex].scrollTop);
+			
+		}
+		else{
+			// zooms in storage but not for this scene
+			console.log("scene does not have a zoom stored")
+			reset_zoom()
+		}
+	}
+	else{
+		// no zooms in storage
+		console.log("no zooms in storage")
+		reset_zoom()
+	}
+	console.groupEnd()
 }
 
 function decrease_zoom() {
@@ -86,17 +159,27 @@ function decrease_zoom() {
 }
 
 function reset_zoom () {
-	wH = $(window).height();
-	mH = $("#scene_map")[0].height
-	wW = $(window).width();
-	mW = $("#scene_map")[0].width
-	zoom = Math.min((wH / mH),(wW / mW))
-	change_zoom(zoom)
+	console.group("reset_zoom")
+	console.log("zooming on centre of map")
+	// sometimes scene_map height/width is 0 as the map hasn't loaded in yet and it doesn't do the zoom correctly
+	const wH = $(window).height();
+	const mH = $("#scene_map").height()
+	const wW = $(window).width();
+	const mW = $("#scene_map").width()
+
+	console.log(wH, mH, wW, mW)
+	const zoom = Math.min((wH / mH),(wW / mW))
+	// change_zoom is great for mousezooming, but tricky when just hitting the centre of the map
+	// so don't give it any x/y and just use the scrollintoview center instead
+	change_zoom(zoom, undefined, undefined, store=false)
 	$("#scene_map")[0].scrollIntoView({
 		behavior: 'auto',
 		block: 'center',
 		inline: 'center'
 	});
+	// don't store any zoom for this scene as we default to map fit on load
+	remove_zoom_from_storage()
+	console.groupEnd()
 }
 
 function increase_zoom() {

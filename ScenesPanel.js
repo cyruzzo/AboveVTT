@@ -809,7 +809,7 @@ function refresh_scenes() {
 				switch_players.attr("disabled","true");
 				switch_dm.attr("disabled","true");
 			}
-
+			
 			controls.append(switch_players);
 			controls.append(switch_dm);
 		}
