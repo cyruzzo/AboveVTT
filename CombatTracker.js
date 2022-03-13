@@ -185,7 +185,9 @@ function init_combat_tracker(){
 		},
 		stop: function () {
 			$('.iframeResizeCover').remove();
-		}
+		},
+		minWidth: 200,
+		minHeight: 200
 	});
 }
 
