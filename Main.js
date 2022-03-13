@@ -950,10 +950,10 @@ function observe_character_sheet_aoe(documentToObserve) {
 					// grab feet (this should always exist)
 					feet = $(this).prev().children().first().children().first().text();
 
-					// drop the token
-					container.animate({opacity:"0.1"},1000);
-					setTimeout( ()=>drop_aoe_token(color, shape, feet),1000);
-					setTimeout( ()=>container.animate({opacity:"1.0"},2000),3000);
+					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
+					hide_player_sheet();
+					close_player_sheet();
+					drop_aoe_token(color, shape, feet);
 				});
 				return button;
 			});

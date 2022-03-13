@@ -409,10 +409,13 @@ class MessageBroker {
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
-					let fake=$("<div/>");
-					fake.attr(msg.data);
-					token_button({target:fake.get(0)});
-					fake.remove();
+					let left = parseInt(msg.data.left);
+					let top = parseInt(msg.data.top);
+					if (!isNaN(top) && !isNaN(left)) {
+						place_token_at_point(msg.data, left, top);
+					} else {
+						place_token_in_center_of_map(msg.data);
+					}
 				}
 			}
 

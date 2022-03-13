@@ -753,7 +753,6 @@ function register_token_row_context_menu() {
 	$(".custom-token-image-row").on("contextmenu", ".custom-token-image-row-add", function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		// token_button uses target which will often be the svg inside of the button, but we want to use the button which will always be currentTarget
 		let tokendatapath = $(event.currentTarget).attr("data-tokendatapath");
 		let tokendataname = $(event.currentTarget).attr("data-tokendataname");
 		if (tokendataname === undefined) {
