@@ -2865,6 +2865,8 @@ function open_roll_menu(e) {
 	
 	apply_condition_dropdown = $('<select id="apply_condition" title="Does failing this save apply a condition ">Condition</select>')
 	apply_condition_dropdown.append('<option selected value=0> -- Select an Condition -- </option>')
+
+	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
 	// CONDITIONS
 	STANDARD_CONDITIONS.forEach(
 		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
@@ -2910,6 +2912,10 @@ function open_roll_menu(e) {
 					if (apply_condition_dropdown.val() != 0 && save_success == false) {
 						x.options.conditions.push(apply_condition_dropdown.val())
 						console.log(x.options.conditions + 'Applied to' + x.options.name)
+					}
+					if (apply_condition_dropdown.val() == 1 && save_success == false) {
+						x.options.conditions = [];
+						console.log('All Conditions removed from ' + x.options.name)
 					}
 					$(this).children()[2].textContent = x.options.hp
 					x.place()
@@ -2971,6 +2977,7 @@ function add_to_roll_menu(token) {
 
 	//if its a monster it needs to be calulated.
 	if(token.options.monster > 0){
+		console.log(token.options)
 		score_bonus = Math.floor((token.options.ability_scores[2] - 10) /2 )
 		if (token.options.saving_throws[2]){
 			score_bonus += token.options.prof_bonus
