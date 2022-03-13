@@ -324,27 +324,8 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .ui-resizable-handle{
     z-index: 10020 !important;
 }
-.ui-resizable-handle.ui-resizable-e,
-.ui-resizable-handle.ui-resizable-w {
-    width: 8px;
-}
-.ui-resizable-handle.ui-resizable-n,
-.ui-resizable-handle.ui-resizable-s {
-    height: 8px;
-}
 
-.ui-resizable-handle.ui-resizable-e {
-    right: -2px;
-}
-.ui-resizable-handle.ui-resizable-w {
-    left: -2px;
-}
-.ui-resizable-handle.ui-resizable-n {
-    top: -2px;
-} 
-.ui-resizable-handle.ui-resizable-s {
-    bottom: -2px;
-}
+
 /*end resizeable*/
 #addscene {
     margin: 5px;
