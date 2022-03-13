@@ -261,6 +261,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     max-width: 98%;
     max-height: 98%;
     border-radius: 5px; 
+    z-index: 10010;
     border: 1px solid gray;  
 }
 
@@ -270,6 +271,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: none;
     backdrop-filter: opacity(0);
     cursor: move;
+    z-index:  10010 !important; 
 }
 
 #resizeDragMon{
@@ -285,7 +287,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     min-height: 200px !important;
     background: #242527;  
     cursor: move;   
-    z-index: 10015;
+    z-index: 10010;
     max-width: 98%;
     max-height: 98%;
     border-radius: 3px;   
@@ -301,6 +303,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: calc(100% - 25px) !important;
     border-radius: 3px;   
 }
+
 
 #resizeDragMon iframe{
     width: 100% !important;
@@ -335,7 +338,43 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     top:-100px;
     left:-100px;
 }
+#combat_tracker {
+    z-index:  10010 !important;
+}
+#combat_tracker_inside {
+    position: fixed !important;
+    height: 40%;
+}
+#sheet.open.frameOnTop,
+#resizeDragMon.frameOnTop,
+#combat_tracker.frameOnTop,
+.frameOnTop{
+    z-index: 10015 !important;
+}
 
+#combat_tracker_inside .ui-resizable-s,
+#combat_tracker_inside .ui-resizable-se,
+#combat_tracker_inside .ui-resizable-sw{
+    bottom:-25px !important;  
+}
+#combat_tracker_inside{
+    min-width: 215px !important;   
+    min-height: 200px !important;
+}
+#combat_tracker_inside .ui-resizable-e,
+#combat_tracker_inside .ui-resizable-w  {
+    height: calc(100% + 25px) !important;  
+}
+
+#combat_tracker_inside .ui-resizable-se{
+    right: -3px;
+    bottom: -22px !important;
+}
+
+.ui-resizable-s{
+    background:  transparent;
+    border:  none;
+}
 
 /*end resizeable*/
 #addscene {
@@ -396,7 +435,7 @@ div#scene_selector,
 
 #combat_tracker_inside {
     position: relative;
-    height: 100%;
+    /*height: 100%; removed for resizeable windows*/
     margin: 10px 0;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
