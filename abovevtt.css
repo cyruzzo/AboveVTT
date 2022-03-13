@@ -249,7 +249,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index: 99999999;
 }
 
-/*for resizable monsters and sheets in DM view - to be cleaned up/remove unecesarry !importants*/
+/*for resizable and moveable monsters and sheets in DM view - to be cleaned up/remove unecesarry !importants*/
 
 #sheet{
     left: 50px;
@@ -323,6 +323,17 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 
 .ui-resizable-handle{
     z-index: 10020 !important;
+}
+.iframeResizeCover{
+    z-index:99;
+    position:absolute;
+    width:calc(100% + 200px);
+    height:calc(100% + 200px);
+    display: block;
+    right:-100px;
+    bottom:-100px;
+    top:-100px;
+    left:-100px;
 }
 
 
