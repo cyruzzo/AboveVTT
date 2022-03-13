@@ -378,6 +378,9 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #combat_tracker{
     width: 0px !important;
 }
+ul.context-menu-list.context-menu-root{
+    z-index: 10025 !important;
+}
 
 /*end resizeable*/
 #addscene {
