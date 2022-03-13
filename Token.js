@@ -1859,12 +1859,18 @@ function multiple_callback(key, options, event) {
 		});							
 	}
 	if (key == 'remove_conditions'){
-		$("#tokens .tokenselected").each(function() {
-			id = $(this).attr('data-id');
-			window.TOKEN_OBJECTS[id].options.conditions = [];
-			window.TOKEN_OBJECTS[id].options.custom_conditions = [];
-			window.TOKEN_OBJECTS[id].place()
-		});		
+		if (confirm("Remove all conditions from the selected tokens?")){
+			$("#tokens .tokenselected").each(function() {
+				id = $(this).attr('data-id');
+				window.TOKEN_OBJECTS[id].options.conditions = [];
+				window.TOKEN_OBJECTS[id].options.custom_conditions = [];
+				window.TOKEN_OBJECTS[id].place()
+				console.log("Removing all conditions from "+window.TOKEN_OBJECTS[id].name)
+			});	
+		}
+		else {
+			console.log("Not removing Conditions from selected tokens. ")
+		}
 	}
 }
 
@@ -2886,7 +2892,7 @@ function open_roll_menu(e) {
 		if (!val.startsWith("#")) {
 			apply_condition_dropdown.append(`<option value='${val}'>${val}</option>`)
 		}
-		// this is where any custom color condition stuff would go. 
+		// this is where any custom color condition stuff would go.
 	})
 	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
 	
