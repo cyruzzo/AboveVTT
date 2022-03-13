@@ -1862,6 +1862,7 @@ function multiple_callback(key, options, event) {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
 			window.TOKEN_OBJECTS[id].options.conditions = [];
+			window.TOKEN_OBJECTS[id].options.custom_conditions = [];
 			window.TOKEN_OBJECTS[id].place()
 		});		
 	}
@@ -2881,9 +2882,12 @@ function open_roll_menu(e) {
 	STANDARD_CONDITIONS.forEach(
 		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
 	)
-	CUSTOM_CONDITIONS.forEach(
-		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
-	)
+	CUSTOM_CONDITIONS.forEach(function(val, index, arr){
+		if (!val.startsWith("#")) {
+			apply_condition_dropdown.append(`<option value='${val}'>${val}</option>`)
+		}
+		// this is where any custom color condition stuff would go. 
+	})
 	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
 	
 	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage/Conditions </button>");
@@ -2921,11 +2925,17 @@ function open_roll_menu(e) {
 
 				if(x.options.monster > 0){
 					if (apply_condition_dropdown.val() != 0 && save_success == false) {
-						x.options.conditions.push(apply_condition_dropdown.val())
-						console.log(x.options.conditions + 'Applied to' + x.options.name)
+						if (CUSTOM_CONDITIONS.includes(apply_condition_dropdown.val())){
+							x.options.custom_conditions.push(apply_condition_dropdown.val())
+						}
+						else {
+							x.options.conditions.push(apply_condition_dropdown.val())
+						}
+						console.log(apply_condition_dropdown.val() + 'Applied to' + x.options.name)
 					}
 					if (apply_condition_dropdown.val() == 1 && save_success == false) {
 						x.options.conditions = [];
+						x.options.custom_conditions = [];
 						console.log('All Conditions removed from ' + x.options.name)
 					}
 					$(this).children()[2].textContent = x.options.hp
