@@ -629,7 +629,20 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 		monster: monsterId
 	});
 
-	if (monsterId != undefined) {
+	if (monsterId !== undefined) {
+		var count = 1;
+		for (var tokenId in window.TOKEN_OBJECTS) {
+			if (window.TOKEN_OBJECTS[tokenId].options.monster == monsterId) {
+				count++;
+			}
+		}
+		if (count > 1) {
+			let color = TOKEN_COLORS[(count - 1) % 54];
+			console.log(`updating monster name with count: ${count}, and setting color: ${color}`);
+			options.name = `${name} ${count}`;
+			options.color = `#${color}`;
+		}
+	
 		options.stat = monsterId
 		window.StatHandler.getStat(monsterId, function(stat) {
 			options.sizeId = stat.data.sizeId;
