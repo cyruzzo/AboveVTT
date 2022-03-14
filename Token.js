@@ -70,7 +70,15 @@ class Token {
 	}
 
 	isMonster() {
-		return (typeof this.options.monster == "string") && this.options.monster.length > 0
+		if (this.options.monster === undefined) {
+			return false;
+		} else if (typeof this.options.monster === "string") {
+			return this.options.monster.length > 0;
+		} else if (typeof this.options.monster === "number") {
+			return this.options.monster > 0;
+		} else {
+			return false;
+		}
 	}
 
 	size(newsize) {
