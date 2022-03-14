@@ -53,6 +53,7 @@ function init_monster_panel_with_encounter() {
 				$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
 				$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
 				$(event.target).contents().find(".dice-toolbar").hide()
+				$(event.target).contents().find(".encounter-builder__tabs ul.ddb-tabs__tabs").hide()
 
 				monster_panel_did_load();
 			}, 2000);
@@ -93,6 +94,7 @@ function init_monster_panel_with_encounter() {
 					$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
 					$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
 					$(event.target).contents().find(".dice-toolbar").hide();
+					$(event.target).contents().find(".encounter-builder__tabs ul.ddb-tabs__tabs").hide()
 				}
 			}
 		});
