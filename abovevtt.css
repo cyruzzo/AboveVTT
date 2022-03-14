@@ -355,10 +355,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #combat_tracker_inside .ui-resizable-sw{
     bottom:-25px !important;  
 }
-#combat_tracker_inside{
-    min-width: 215px !important;   
-    min-height: 200px !important;
-}
+
 #combat_tracker_inside .ui-resizable-e,
 #combat_tracker_inside .ui-resizable-w  {
     height: calc(100% + 25px) !important;  
