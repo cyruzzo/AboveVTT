@@ -115,8 +115,8 @@ function add_zoom_to_storage(z){
 function set_default_vttwrapper_size(){
 	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
 	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
 }
 
 function remove_zoom_from_storage(){
