@@ -1490,6 +1490,11 @@ body {
     padding: 10px;
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
+    width: 340px;
+    top: 30px;
+    right: 0px;
+    left: auto;
+    height: calc(100vh - 30px);
 }
 .sidebar-modal-background {
     position: absolute;

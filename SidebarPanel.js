@@ -169,12 +169,8 @@ class SidebarPanel {
   }
 
   build_modal_wrapper() {
-    let sidebarContent = $(".sidebar__pane-content");
-    let width = parseInt(sidebarContent.width());
-    let top = parseInt(sidebarContent.position().top) + 2;
-    let height = parseInt(sidebarContent.height());
     return $(`
-      <div class="sidebar-modal" style="width:${width}px;top:${top}px;right:0px;left:auto;height:${height}px;position:fixed;">
+      <div class="sidebar-modal" style="">
         <div class="sidebar-modal-background"></div>
       </div>
     `);
