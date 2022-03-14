@@ -1005,6 +1005,7 @@ class MessageBroker {
 		if(window.CLOUD && window.DM){
 			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
 		}
+		
 		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
 		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
@@ -1019,16 +1020,23 @@ class MessageBroker {
 			console.group("load_scenemap callback")
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
+			console.log("this bit looks good")
 			if (window.CURRENT_SCENE_DATA.scale_factor) {
+				console.log("scale factor = ", scale_factor)
+				console.log("map width", $("#scene_map").width())
 				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
 				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
+				console.log("new map width", $("#scene_map").width())
 			}
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
-			apply_zoom_from_storage();
-
-			set_default_vttwrapper_size()
+			console.log()
+			// get_zoom_from_storage();
+			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
+			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
 			if(!window.DM)
 				check_token_visibility();
 
@@ -1271,6 +1279,7 @@ class MessageBroker {
 			self.loadAboveWS(null);
 		}
 	}
+
 }
 
 function monitor_messages() {

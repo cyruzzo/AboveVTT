@@ -74,16 +74,16 @@ function change_zoom(newZoom, x, y) {
 	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
 
 	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
+	set_default_vttwrapper_size()
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
 	console.groupEnd()
 }
-
-function add_zoom_to_storage(z, x, y){
+/** 
+* Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene
+* @param {float} z - current zoom level
+*/
+function add_zoom_to_storage(z){
 	console.group("add_zoom_to_storage")
 	console.log("storing zoom")
 	
@@ -109,6 +109,15 @@ function add_zoom_to_storage(z, x, y){
 	
 	console.groupEnd("add_zoom_to_storage")
 }
+/** 
+* sets default values for VTTWRAPPER and black_layer based off zoom
+*/
+function set_default_vttwrapper_size(){
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
+}
 
 function remove_zoom_from_storage(){
 	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
@@ -120,8 +129,9 @@ function remove_zoom_from_storage(){
 	localStorage.setItem('zoom', JSON.stringify(zooms));
 }
 
-
-
+/** 
+* Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found
+*/
 function apply_zoom_from_storage(){
 	console.group("apply_zoom_from_storage")
 	const zoomState = localStorage.getItem("zoom")
@@ -159,7 +169,10 @@ function decrease_zoom() {
 		change_zoom(window.ZOOM * 0.9)
 	}
 }
-
+/** 
+* gets the zoom value that will fit the map to the viewport
+* @return {float} 
+*/
 function get_reset_zoom () {
 	const wH = $(window).height();
 	const mH = $("#scene_map").height()
@@ -170,11 +183,12 @@ function get_reset_zoom () {
 	return Math.min((wH / mH),(wW / mW))
 }
 
+/** 
+* entrypoint for user clicking the fit map button. will remove local storage state as by default this func is called when no state is found
+*/
 function reset_zoom () {
 	console.group("reset_zoom")
-	console.log("zooming on centre of map")
-	// sometimes scene_map height/width is 0 as the map hasn't loaded in yet and it doesn't do the zoom correctly
-	
+	console.log("zooming on centre of map")	
 	// change_zoom is great for mousezooming, but tricky when just hitting the centre of the map
 	// so don't give it any x/y and just use the scrollintoview center instead
 	change_zoom(get_reset_zoom(), undefined, undefined)

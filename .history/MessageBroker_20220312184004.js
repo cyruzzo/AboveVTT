@@ -974,7 +974,6 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
-		console.group("handlescene")
 		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
@@ -1009,6 +1008,7 @@ class MessageBroker {
 		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
 		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
+		
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 
@@ -1016,9 +1016,9 @@ class MessageBroker {
 		$("#scene_map").attr('src', data.map);
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
-			console.group("load_scenemap callback")
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
+
 			if (window.CURRENT_SCENE_DATA.scale_factor) {
 				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
 				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
@@ -1026,9 +1026,11 @@ class MessageBroker {
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
-			apply_zoom_from_storage();
-
-			set_default_vttwrapper_size()
+			get_zoom_from_storage();
+			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
+			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
 			if(!window.DM)
 				check_token_visibility();
 
@@ -1047,7 +1049,7 @@ class MessageBroker {
 				console.log("Updating avtt encounter");
 				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 			}
-			console.groupEnd()
+
 		});
 
 
@@ -1087,7 +1089,6 @@ class MessageBroker {
 			$("#combat_area").empty();
 			ct_load();
 		}
-		console.groupEnd()
 	}
 
 	handleSyncMeUp(msg) {
@@ -1271,6 +1272,7 @@ class MessageBroker {
 			self.loadAboveWS(null);
 		}
 	}
+
 }
 
 function monitor_messages() {
