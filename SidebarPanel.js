@@ -170,7 +170,7 @@ class SidebarPanel {
 
   build_modal_wrapper() {
     return $(`
-      <div class="sidebar-modal" style="">
+      <div class="sidebar-modal">
         <div class="sidebar-modal-background"></div>
       </div>
     `);
