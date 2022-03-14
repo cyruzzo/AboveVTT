@@ -382,12 +382,14 @@ class Token {
 		hpbar.append(maxhp_input);
 		if (this.options.monster > 0) {
 			hp_input.change(function(e) {
+				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
+				maxhp_input.val(maxhp_input.val().trim());
 				self.update_and_sync(e);
 			});
 			maxhp_input.click(function(e) {
