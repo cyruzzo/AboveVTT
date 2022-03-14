@@ -186,7 +186,7 @@ function init_combat_tracker(){
 		stop: function () {
 			$('.iframeResizeCover').remove();
 		},
-		minWidth: 200,
+		minWidth: 215,
 		minHeight: 200
 	});
 }
