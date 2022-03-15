@@ -102,7 +102,6 @@ class WaypointManagerClass {
 
 	// Increment the current index into the array of waypoints, and draw a small indicator
 	checkNewWaypoint(mousex, mousey) {
-
 			//console.log("Incrementing waypoint");
 			this.currentWaypointIndex++;
 
@@ -870,7 +869,9 @@ function drawing_mouseup(e) {
 
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (window.DRAWSHAPE == "measure" && e.button == 2) {
-		WaypointManager.checkNewWaypoint(mousex, mousey);
+		if(window.MOUSEDOWN) {
+			WaypointManager.checkNewWaypoint(mousex, mousey);
+		}
 		//console.log("Measure right click");
 		return;
 	}
