@@ -53,6 +53,7 @@ function init_monster_panel_with_encounter() {
 				$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
 				$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
 				$(event.target).contents().find(".dice-toolbar").hide()
+				$(event.target).contents().find(".encounter-builder__tabs ul.ddb-tabs__tabs").hide()
 
 				monster_panel_did_load();
 			}, 2000);
@@ -93,6 +94,7 @@ function init_monster_panel_with_encounter() {
 					$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
 					$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
 					$(event.target).contents().find(".dice-toolbar").hide();
+					$(event.target).contents().find(".encounter-builder__tabs ul.ddb-tabs__tabs").hide()
 				}
 			}
 		});
@@ -627,7 +629,20 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 		monster: monsterId
 	});
 
-	if (monsterId != undefined) {
+	if (monsterId !== undefined) {
+		var count = 1;
+		for (var tokenId in window.TOKEN_OBJECTS) {
+			if (window.TOKEN_OBJECTS[tokenId].options.monster == monsterId) {
+				count++;
+			}
+		}
+		if (count > 1) {
+			let color = TOKEN_COLORS[(count - 1) % 54];
+			console.log(`updating monster name with count: ${count}, and setting color: ${color}`);
+			options.name = `${name} ${count}`;
+			options.color = `#${color}`;
+		}
+	
 		options.stat = monsterId
 		window.StatHandler.getStat(monsterId, function(stat) {
 			options.sizeId = stat.data.sizeId;

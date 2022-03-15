@@ -70,7 +70,15 @@ class Token {
 	}
 
 	isMonster() {
-		return (typeof this.options.monster == "string") && this.options.monster.length > 0
+		if (this.options.monster === undefined) {
+			return false;
+		} else if (typeof this.options.monster === "string") {
+			return this.options.monster.length > 0;
+		} else if (typeof this.options.monster === "number") {
+			return this.options.monster > 0;
+		} else {
+			return false;
+		}
 	}
 
 	size(newsize) {
@@ -374,12 +382,14 @@ class Token {
 		hpbar.append(maxhp_input);
 		if (this.options.monster > 0) {
 			hp_input.change(function(e) {
+				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
+				maxhp_input.val(maxhp_input.val().trim());
 				self.update_and_sync(e);
 			});
 			maxhp_input.click(function(e) {

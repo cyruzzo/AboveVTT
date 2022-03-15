@@ -1463,7 +1463,11 @@ function init_character_page_sidebar() {
 		}, 1000);
 		return;
 	}
+
+	// open the gamelog, and lock it open
 	$(".ct-character-header__group--game-log").click();
+	$(".ct-sidebar__control--unlock").click();
+	
 	// after that click, give it a second to inject and render the sidebar
 	setTimeout(function() {
 

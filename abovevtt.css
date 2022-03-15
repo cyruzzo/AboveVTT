@@ -934,6 +934,7 @@ div#scene_properties form > div {
     position: absolute;
     right: 0;
     top: 28px;
+    height: calc(100vh - 30px) !important;
 }
 
 .ddbc-tab-list__nav-item {
@@ -1490,6 +1491,11 @@ body {
     padding: 10px;
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
+    width: 340px;
+    top: 30px;
+    right: 0px;
+    left: auto;
+    height: calc(100vh - 30px);
 }
 .sidebar-modal-background {
     position: absolute;
