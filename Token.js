@@ -1034,14 +1034,8 @@ class Token {
 					}
 					
 					// for dragging behind iframes so tokens don't "jump" when you move past it
-					$("#resizeDragMon").each(function (index, element) {
-						var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
-						$(element).append(d);
-					});
-					$("#sheet").each(function (index, element) {
-						var d = $('<div class="iframeResizeCover" style="z-index:99;position:absolute;width:100%;top:0px;left:0px;height:' + $(element).height() + 'px"></div>');
-						$(element).append(d);
-					});
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 
 					console.log("Click x: " + click.x + " y: " + click.y);
 
