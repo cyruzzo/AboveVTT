@@ -1895,7 +1895,7 @@ function inject_chat_buttons() {
 function init_ui() {
 	console.log("init_ui");
 	// ATTIVA GAMELOG
-	$(".gamelog-button").click();
+	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
 	if (!is_characters_page()) {
