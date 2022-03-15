@@ -2017,3 +2017,7 @@ button.avtt-roll-button {
 .MuiButtonBase-root {
     width: 100%;
 }
+
+.MuiModal-root{
+    z-index: -1 !important;
+}

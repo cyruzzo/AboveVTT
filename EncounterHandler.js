@@ -853,7 +853,8 @@ function sync_send_to_default() {
 	let combatSendTo = window.EncounterHandler.combat_body.find(".sidebar .MuiButtonBase-root.MuiButton-root");
 	if (combatSendTo.length == 0) {
 		// open the combat gamelog and try again
-		let gamelogButton = window.EncounterHandler.combat_body.find(".gamelog-button");
+		//let gamelogButton = 
+		let gamelogButton = window.EncounterHandler.combat_body.find(".sidebar__control");
 		if (gamelogButton.length == 0) {
 			console.warn("sync_send_to_default failed to find and open the combat gamelog")
 			return;
