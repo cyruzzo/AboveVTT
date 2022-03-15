@@ -153,6 +153,7 @@ class EncounterHandler {
 		console.debug("combat_iframe_did_load starting");
 		// remove any outdated iframes now that we've finished loading a replacement
 		$(".iframe-encounter-combat-tracker-replaced").remove();
+		$("#resizeDragMon ~ #resizeDragMon").remove();
 		// we are no longer loading, so remove our loading marker
 		if (window.EncounterHandler.combat_iframe.hasClass("iframe-encounter-combat-tracker-is-loading")) {
 			console.log("combat_iframe_did_load attempting to open after loading");
@@ -583,9 +584,9 @@ function close_monster_stat_block() {
 	}
 
 	console.debug("close_monster_stat_block is closing the stat block")
-
+	$("#resizeDragMon").addClass("hideMon");
 	// hide and update all iframes that we find. Even if we're currently loading one.
-	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000, "visibility": "hidden" });
+	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000/*, "visibility": "hidden"*/ });
 	$(".iframe-encounter-combat-tracker").attr("data-monster", undefined);
 	$(".iframe-encounter-combat-tracker").attr("data-token", undefined);
 
@@ -645,6 +646,11 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 	// update all that exist in case we're currently loading one in the background or anything
 	$(".iframe-encounter-combat-tracker").attr("data-monster", monsterId);
 	$(".iframe-encounter-combat-tracker").attr("data-token", tokenId);
+
+	//unhide monster frame
+	$("#resizeDragMon").removeClass("hideMon")
+
+
 
 	// find the monster element that matches monsterId
 	let encounter = window.EncounterHandler.encounters[window.EncounterHandler.avttId];
@@ -810,10 +816,10 @@ function reposition_enounter_combat_tracker_iframe() {
 	window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block .mon-stat-block").css({
 		"column-count": "1"
 	});
-	
+
 	window.EncounterHandler.combat_iframe.css({
 		"z-index": isEmpty ? -10000 : 10000,
-		"visibility": "visible",
+		/*"visibility": "visible",*/
 		"display": "block",
 		"top": "72px",
 		"left": `${left}px`,
@@ -914,7 +920,6 @@ function init_enounter_combat_tracker_iframe() {
 	$(window).resize(function() {
 		iframe.height(window.innerHeight - 50);
 	});
-
 	iframe.on("load", function(event) {
 
 		if (!this.src) {
@@ -943,6 +948,10 @@ function init_enounter_combat_tracker_iframe() {
 				clonedElement.css({
 					"left": `${left}px`,
 					"top": "72px"
+				});
+				/*hide original tooltip so larger windows don't have it popup when resized*/
+				addedElement.css({
+					"visibility": `hidden`
 				});
 				$("#ddbeb-popup-container").first().append(clonedElement);
 				return;
@@ -1042,6 +1051,124 @@ function init_enounter_combat_tracker_iframe() {
 		});
 	});
 
-	$("body").append(iframe);
-	iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+	if (window.DM) {
+
+		let draggable_resizable_div = $(`<div id='resizeDragMon' class='hideMon'></div>`)
+		console.log("resizeDragMon");
+
+		$("body").append(draggable_resizable_div);	
+		$("#resizeDragMon").append(iframe);
+		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+		/*Set draggable and resizeable on monster and player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+
+		$("#resizeDragMon").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		$("#sheet").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		$("#resizeDragMon").resizable({
+			addClasses: false,
+			handles: "all",
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			},
+			minWidth: 200,
+			minHeight: 200
+		});
+		$("#sheet").resizable({
+			addClasses: false,
+			handles: "all",
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			},
+			minWidth: 200,
+			minHeight: 200
+		});
+		$("#sheet").mousedown(function(){
+			if($("#sheet.frameOnTop").length) {
+			}
+			else{
+				$(".lastFrame").each(function() {
+					$(this).removeClass("lastFrame");
+				});			
+				$(".frameOnTop").each(function() {
+					$(this).addClass("lastFrame");
+					$(this).removeClass("frameOnTop");
+				});		
+				$("#sheet").addClass("frameOnTop");
+			}	
+		});
+
+		$("#resizeDragMon").mousedown(function() {
+			if($("#resizeDragMon.frameOnTop").length) {
+			}
+			else{
+				$(".lastFrame").each(function() {
+					$(this).removeClass("lastFrame");
+					console.log("last frame removed");
+				});
+				$(".frameOnTop").each(function() {
+					$(this).addClass("lastFrame");
+					$(this).removeClass("frameOnTop");
+				});			
+				$("#resizeDragMon").addClass("frameOnTop");	
+			}
+		});
+	}
+	else {
+		$("body").append(iframe);	
+		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+	}
+		
 }
