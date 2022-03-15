@@ -1059,7 +1059,8 @@ function init_enounter_combat_tracker_iframe() {
 		$("#resizeDragMon").append(iframe);
 		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
 		/*Set draggable and resizeable on monster and player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-
+		$("#resizeDragMon").addClass("moveableWindow");
+		$("#sheet").addClass("moveableWindow");
 		$("#resizeDragMon").draggable({
 			addClasses: false,
 			scroll: false,
@@ -1134,34 +1135,23 @@ function init_enounter_combat_tracker_iframe() {
 			minWidth: 200,
 			minHeight: 200
 		});
+
 		$("#sheet").mousedown(function(){
-			if($("#sheet.frameOnTop").length) {
+			if($("#sheet").zIndex() != 50000) {
+				$("#sheet").zIndex(50000);
+				$(".moveableWindow:not(#sheet)").each(function() {
+					$(this).zIndex($(this).zIndex()-1);
+				});
 			}
-			else{
-				$(".lastFrame").each(function() {
-					$(this).removeClass("lastFrame");
-				});			
-				$(".frameOnTop").each(function() {
-					$(this).addClass("lastFrame");
-					$(this).removeClass("frameOnTop");
-				});		
-				$("#sheet").addClass("frameOnTop");
-			}	
 		});
 
+	
 		$("#resizeDragMon").mousedown(function() {
-			if($("#resizeDragMon.frameOnTop").length) {
-			}
-			else{
-				$(".lastFrame").each(function() {
-					$(this).removeClass("lastFrame");
-					console.log("last frame removed");
+			if($("#resizeDragMon").zIndex() != 50000) {
+				$("#resizeDragMon").zIndex(50000);
+				$(".moveableWindow:not(#resizeDragmon)").each(function() {
+					$(this).zIndex($(this).zIndex()-1);
 				});
-				$(".frameOnTop").each(function() {
-					$(this).addClass("lastFrame");
-					$(this).removeClass("frameOnTop");
-				});			
-				$("#resizeDragMon").addClass("frameOnTop");	
 			}
 		});
 	}
