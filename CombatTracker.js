@@ -149,6 +149,7 @@ function init_combat_tracker(){
 
 	$("#site").append(ct);
 	/*draggable and resizeable combat tracker - set which frame should be on top and remove others. Cover iframes to prevent mouse interference*/
+	$("#combat_tracker").addClass("moveableWindow");
 	$("#combat_tracker_inside").draggable({
 			addClasses: false,
 			scroll: false,
@@ -162,8 +163,6 @@ function init_combat_tracker(){
 					var d = $('<div class="iframeResizeCover"></div>');
 					$(element).append(d);
 				});
-				$(".frameOnTop").removeClass("frameOnTop");
-				$("#combat_tracker").addClass("frameOnTop");
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -182,8 +181,6 @@ function init_combat_tracker(){
 				var d = $('<div class="iframeResizeCover"></div>');
 				$(element).append(d);
 			});
-			$("frameOnTop").removeClass("frameOnTop");
-			$("#combat_tracker").addClass("frameOnTop");
 		},
 		stop: function () {
 			$('.iframeResizeCover').remove();
@@ -193,20 +190,13 @@ function init_combat_tracker(){
 	});
 	
 	$("#combat_tracker").mousedown(function() {
-		if($("#combat_tracker.frameOnTop").length) {
-		}
-		else {
-			$(".lastFrame").each(function() {
-				$(this).removeClass("lastFrame");
-				console.log("last frame removed");
+		if($("#combat_tracker").zIndex() != 50000) {
+			$("#combat_tracker").zIndex(50000);
+			$(".moveableWindow:not(#combat_tracker)").each(function() {
+				$(this).zIndex($(this).zIndex()-1);
 			});
-			$(".frameOnTop").each(function() {
-				$(this).addClass("lastFrame");
-				$(this).removeClass("frameOnTop");
-			});			
-			$("#combat_tracker").addClass("frameOnTop");
-		}	
-	});
+		}
+		});
 }
 
 function ct_reorder(persist=true) {
