@@ -2512,6 +2512,9 @@ function init_loading_overlay_beholder() {
 		"right": "0px"
 	});
 	$("#loading_overlay").append(loadingIndicator);
+	// For safety reasons.. if something don't work.. it's better to just remove this overlay to make it easier to fix stuff
+	setTimeout(remove_loading_overlay,15000);
+
 }
 
 /// the first time the window loads, start doing all the things
