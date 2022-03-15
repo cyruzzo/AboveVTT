@@ -88,12 +88,12 @@ class WaypointManagerClass {
 	drawBobble(x, y, radius) {
 
 		if(radius == undefined) {
-			radius = 5;
+			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0), 3);
 		}
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = 5;
+		this.ctx.lineWidth = Math.max(25 * Math.max((1 - window.ZOOM), 0), 5);
 		this.ctx.strokeStyle = "black";
 		this.ctx.stroke();
 		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
@@ -103,15 +103,12 @@ class WaypointManagerClass {
 	// Increment the current index into the array of waypoints, and draw a small indicator
 	checkNewWaypoint(mousex, mousey) {
 
-		if (this.mouseDownCoords.mousex == mousex && this.mouseDownCoords.mousey == mousey) {
-
 			//console.log("Incrementing waypoint");
 			this.currentWaypointIndex++;
 
 			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
-			this.drawBobble(snapCoords.x, snapCoords.y, 20);
-		}
+			this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 	}
 
 	// Track mouse moving
@@ -198,8 +195,11 @@ class WaypointManagerClass {
 		var slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.Max((1 - window.ZOOM), 0), 30) + "px Arial";
-		var text = "" + (distance + cumulativeDistance) + unitSymbol;
+		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + "px Arial";
+		const totalDistance = Number.isInteger(distance + cumulativeDistance)
+			? (distance + cumulativeDistance)
+			: (distance + cumulativeDistance).toFixed(1)
+		var text = `${totalDistance}${unitSymbol}`
 		var textMetrics = this.ctx.measureText(text);
 
 		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or
@@ -246,12 +246,12 @@ class WaypointManagerClass {
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
 			contrastRect.y = snapPointYEnd - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height = Math.max(150 * Math.Max((1 - window.ZOOM), 0), 30) + (margin * 3);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
 
 			textRect.x = snapPointXEnd + slopeModifier;
 			textRect.y = snapPointYEnd + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height = Math.max(150 * Math.Max((1 - window.ZOOM), 0), 30) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
 
 			textX = snapPointXEnd + margin + slopeModifier;
 			textY = snapPointYEnd + (margin * 2) + slopeModifier;
@@ -259,17 +259,17 @@ class WaypointManagerClass {
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = "black";
-		this.ctx.lineWidth = 5;
+		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
 		this.ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-		this.ctx.lineWidth = 3;
+		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
-		this.ctx.lineWidth = 3;
+		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 		this.ctx.strokeStyle = "black";
 		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
@@ -280,7 +280,7 @@ class WaypointManagerClass {
 		this.ctx.fillText(text, textX, textY);
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
-		this.drawBobble(snapPointXEnd, snapPointYEnd, 3);
+		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 	}
 };
 
