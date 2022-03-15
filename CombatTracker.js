@@ -184,7 +184,7 @@ function init_combat_tracker(){
 				$(this).zIndex($(this).zIndex()-1);
 			});
 		}
-		});
+	});
 }
 
 function ct_reorder(persist=true) {
