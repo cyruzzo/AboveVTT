@@ -2160,10 +2160,10 @@ function init_ui() {
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
-		let el=$("[src*=mega-menu]:nth-of-type(2)");
-		let s=el.attr("src");
+		let old=$("[src*=mega-menu]:nth-of-type(2)");
+		let s=old.attr("src");
+		let el=$("<"+old.prop('nodeName')+">");
 		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
-		el.detach();
 		$("#site").append(el);
 		setTimeout(function(){
 			console.log(2);
