@@ -1054,7 +1054,6 @@ function init_enounter_combat_tracker_iframe() {
 	if (window.DM) {
 
 		let draggable_resizable_div = $(`<div id='resizeDragMon' class='hideMon'></div>`)
-		console.log("resizeDragMon");
 
 		$("body").append(draggable_resizable_div);	
 		$("#resizeDragMon").append(iframe);
