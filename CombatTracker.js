@@ -25,7 +25,6 @@ function init_combat_tracker(){
 	ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
 	ct.append(ct_inside);
-	
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_list_wrapper.append(ct_area);
@@ -149,6 +148,65 @@ function init_combat_tracker(){
 	}
 
 	$("#site").append(ct);
+	/*draggable and resizeable combat tracker - set which frame should be on top and remove others. Cover iframes to prevent mouse interference*/
+	$("#combat_tracker_inside").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+				$("#sheet").each(function (index, element) {
+					var d = $('<div class="iframeResizeCover"></div>');
+					$(element).append(d);
+				});
+				$(".frameOnTop").removeClass("frameOnTop");
+				$("#combat_tracker").addClass("frameOnTop");
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+
+			}
+		});
+	$("#combat_tracker_inside").resizable({
+		addClasses: false,
+		handles: "all",
+		start: function () {
+			$("#resizeDragMon").each(function (index, element) {
+				var d = $('<div class="iframeResizeCover"></div>');
+				$(element).append(d);
+			});
+			$("#sheet").each(function (index, element) {
+				var d = $('<div class="iframeResizeCover"></div>');
+				$(element).append(d);
+			});
+			$("frameOnTop").removeClass("frameOnTop");
+			$("#combat_tracker").addClass("frameOnTop");
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 215,
+		minHeight: 200
+	});
+	
+	$("#combat_tracker").mousedown(function() {
+		if($("#combat_tracker.frameOnTop").length) {
+		}
+		else {
+			$(".lastFrame").each(function() {
+				$(this).removeClass("lastFrame");
+				console.log("last frame removed");
+			});
+			$(".frameOnTop").each(function() {
+				$(this).addClass("lastFrame");
+				$(this).removeClass("frameOnTop");
+			});			
+			$("#combat_tracker").addClass("frameOnTop");
+		}	
+	});
 }
 
 function ct_reorder(persist=true) {
