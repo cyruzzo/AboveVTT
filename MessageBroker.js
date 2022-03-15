@@ -224,20 +224,6 @@ class MessageBroker {
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
-								// ADD THE "Send To Player Buttons"
-								/* temporarily disable
-								let currentMessage = $(`<div></div>`).append(newlihtml);
-								let timeWrapper = $(`<div style="width:100%;"></div>`); // move time into a wrapper object so we can flex it horizontally with our new button
-								currentMessage.find(".GameLogEntry_MessageContainer__RhcYB").append(timeWrapper);
-								let sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-								timeWrapper.append(sendToEveryone)
-								var time = currentMessage.find(".GameLogEntry_MessageContainer__RhcYB > time");
-								if (time.length > 0) {
-									timeWrapper.append(time);
-									time.css("float", "right")
-								}
-								newlihtml = currentMessage.html();
-								*/
 							}
 								
 							li.animate({ opacity: 0 }, animationDuration, function() {
