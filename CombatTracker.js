@@ -152,14 +152,14 @@ function init_combat_tracker(){
 }
 
 function ct_reorder(persist=true) {
-	var items = $("#combat_area tbody").children().sort(
+	var items = $("#combat_area").children().sort(
 		function(a, b) {
 			var vA = parseInt($(".init", a).val());
 			var vB = parseInt($(".init", b).val());
 			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
 		});
 
-	$("#combat_area tbody").append(items);
+	$("#combat_area").append(items);
 	if(persist)
 		ct_persist();
 }
