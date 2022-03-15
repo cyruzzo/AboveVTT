@@ -198,7 +198,7 @@ class WaypointManagerClass {
 		var slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(Math.abs(Math.round(100 * (1 - window.ZOOM))), 30) + "px Arial";
+		this.ctx.font = Math.max(150 * Math.Max((1 - window.ZOOM), 0), 30) + "px Arial";
 		var text = "" + (distance + cumulativeDistance) + unitSymbol;
 		var textMetrics = this.ctx.measureText(text);
 
@@ -246,12 +246,12 @@ class WaypointManagerClass {
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
 			contrastRect.y = snapPointYEnd - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height = Math.max(Math.abs(Math.round(100 * (1 - window.ZOOM))), 30) + (margin * 3);
+			contrastRect.height = Math.max(150 * Math.Max((1 - window.ZOOM), 0), 30) + (margin * 3);
 
 			textRect.x = snapPointXEnd + slopeModifier;
 			textRect.y = snapPointYEnd + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height = Math.max(Math.abs(Math.round(100 * (1 - window.ZOOM))), 30) + margin;
+			textRect.height = Math.max(150 * Math.Max((1 - window.ZOOM), 0), 30) + margin;
 
 			textX = snapPointXEnd + margin + slopeModifier;
 			textY = snapPointYEnd + (margin * 2) + slopeModifier;
