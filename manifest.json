@@ -42,6 +42,8 @@
 		"jquery.contextMenu.js",
 		"jquery.magnific-popup.min.js",
 		"purify.min.js",
+		"spectrum-2.0.8.min.js",
+		"spectrum-2.0.8.min.css",
 		"AjaxQueueModule.js",
 		"DnDBeyond/DDBCharacterData.js",
 		"EncounterHandler.js",

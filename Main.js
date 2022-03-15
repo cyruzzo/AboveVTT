@@ -556,7 +556,7 @@ function init_controls() {
 	}
 	$(".sidebar").css("height", "calc(100vh - 24px)");
 
-	$("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto
+	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto.  // This is safe to call multiple times
 
 	let sidebarControlsParent = is_characters_page() ? $(".ct-sidebar__controls") : $(".sidebar__controls");
 	sidebarControlsParent.find(".avtt-sidebar-controls").remove();
@@ -2030,6 +2030,7 @@ function init_ui() {
 	console.log("init_ui");
 	// ATTIVA GAMELOG
 	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
+	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
 	if (!is_characters_page()) {
@@ -2254,8 +2255,10 @@ function init_ui() {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
 		if (sidebar_modal_is_open() && event.which == 1) {
+			// check if the click was within the modal or within an element that we specifically don't want to close the modal
 			let modal = event.target.closest(".sidebar-modal");
-			if (modal === undefined || modal == null) {
+			let preventSidebarModalClose = event.target.closest(".prevent-sidebar-modal-close");
+			if (!modal && !preventSidebarModalClose) {
 				close_sidebar_modal();
 			}
 		}
