@@ -1,10 +1,8 @@
 # purify.min.js (DOMPURIFY)
 
-wget https://github.com/cure53/DOMPurify/archive/refs/tags/2.3.3.tar.gz
-
+wget https://github.com/cure53/DOMPurify/archive/refs/tags/2.3.6.tar.gz
 tar zxf 2.3.3.tar.gz
 
-sha1sum DOMPurify-2.3.3/dist/purify.min.js
 
 # color-picker.js
 
