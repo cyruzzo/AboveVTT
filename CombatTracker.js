@@ -155,14 +155,8 @@ function init_combat_tracker(){
 			scroll: false,
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").each(function (index, element) {
-					var d = $('<div class="iframeResizeCover"></div>');
-					$(element).append(d);
-				});
-				$("#sheet").each(function (index, element) {
-					var d = $('<div class="iframeResizeCover"></div>');
-					$(element).append(d);
-				});
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
 				$('.iframeResizeCover').remove();
@@ -173,14 +167,8 @@ function init_combat_tracker(){
 		addClasses: false,
 		handles: "all",
 		start: function () {
-			$("#resizeDragMon").each(function (index, element) {
-				var d = $('<div class="iframeResizeCover"></div>');
-				$(element).append(d);
-			});
-			$("#sheet").each(function (index, element) {
-				var d = $('<div class="iframeResizeCover"></div>');
-				$(element).append(d);
-			});
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 		},
 		stop: function () {
 			$('.iframeResizeCover').remove();
