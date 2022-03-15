@@ -199,7 +199,10 @@ class WaypointManagerClass {
 
 		// Setup text metrics
 		this.ctx.font = "30px Arial";
-		var text = "" + (distance + cumulativeDistance) + unitSymbol;
+		const totalDistance = Number.isInteger(distance + cumulativeDistance)
+			? (distance + cumulativeDistance)
+			: (distance + cumulativeDistance).toFixed(1)
+		var text = `${totalDistance}${unitSymbol}`
 		var textMetrics = this.ctx.measureText(text);
 
 		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or
@@ -259,17 +262,17 @@ class WaypointManagerClass {
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = "black";
-		this.ctx.lineWidth = 5;
+		this.ctx.lineWidth = Math.round(Math.max(60 * Math.max((1 - window.ZOOM), 0), 5));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
 		this.ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-		this.ctx.lineWidth = 3;
+		this.ctx.lineWidth = Math.round(Math.max(40 * Math.max((1 - window.ZOOM), 0), 3))
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
-		this.ctx.lineWidth = 3;
+		this.ctx.lineWidth = Math.round(Math.max(40 * Math.max((1 - window.ZOOM), 0), 3))
 		this.ctx.strokeStyle = "black";
 		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
