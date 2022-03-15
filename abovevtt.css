@@ -274,7 +274,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: none;
     backdrop-filter: opacity(0);
     cursor: move;
-    z-index:  10010 !important; 
+    z-index:  10010;
 }
 
 #resizeDragMon{
@@ -340,24 +340,11 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     left:-100px;
 }
 #combat_tracker {
-    z-index:  10010 !important;
+    z-index:  10010;
 }
 #combat_tracker_inside {
     position: fixed !important;
     height: 40%;
-}
-
-#sheet.lastFrame,
-#resizeDragMon.lastFrame,
-#combat_tracker.lastFrame {
-    z-index: 10015 !important;
-}
-
-#sheet.open.frameOnTop,
-#resizeDragMon.frameOnTop,
-#combat_tracker.frameOnTop,
-.frameOnTop{
-    z-index: 10025 !important;
 }
 
 #combat_tracker_inside .ui-resizable-s,
@@ -384,7 +371,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     width: 0px !important;
 }
 ul.context-menu-list.context-menu-root{
-    z-index: 10025 !important;
+    z-index: 51000 !important;
 }
 #windowContainment{
     height:  100vh;
