@@ -26,6 +26,7 @@
 	},
 	"web_accessible_resources": [
 		"jquery-3.6.0.min.js",
+		"jquery-migrate-3.3.2.min",
 		"assets/*",
 		"images/*",
 		"jquery-ui.min.css",

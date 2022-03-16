@@ -33,6 +33,7 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 let scripts = [
 	// External Dependencies
 	"jquery-3.6.0.min.js",
+	"jquery-migrate-3.3.2.min",
 	"jquery-ui.min.js",
 	//"jquery.ui.widget.min.js",
 	//"jquery.ui.mouse.min.js",
