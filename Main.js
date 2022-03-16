@@ -2022,7 +2022,7 @@ function init_ui() {
 	black_layer.css("opacity", "0");
 	$("body").append(black_layer);
 	black_layer.animate({ opacity: "1" }, 5000);
-	black_layer.css("z-index", "-1");
+	black_layer.css("z-index", "1");
 
 
 	if (!DM) {
