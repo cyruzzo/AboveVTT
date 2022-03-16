@@ -49,14 +49,11 @@ class EncounterHandler {
 		this.combatIframeCount = 0;
 		this.fetch_feature_flags(function() {
 			window.EncounterHandler.fetch_all_encounters(function () {
-				if (window.EncounterHandler.avttId === undefined || window.EncounterHandler.avttId.length == 0) {
-					// we don't have an encounter named AboveVTT so create one
+				window.EncounterHandler.delete_all_avtt_encounters(function () {
 					window.EncounterHandler.create_avtt_encounter(function() {
 						callback();
 					});
-				} else {
-					callback();
-				}
+				});
 			});
 		});
 	}
@@ -207,7 +204,8 @@ class EncounterHandler {
 		console.log(`fetch_all_encounters starting with pageNumber: ${pageNumber}`);
 		get_cobalt_token(function (token) {
 			$.ajax({
-				url: `https://encounter-service.dndbeyond.com/v1/encounters?campaignIds=${get_campaign_id()}&page=${pageNumber}`,
+				// TODO: remove campaignIds from this url
+				url: `https://encounter-service.dndbeyond.com/v1/encounters?page=${pageNumber}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
 				},
@@ -226,6 +224,9 @@ class EncounterHandler {
 								// we found our AboveVTT encounter. Store the id locally so we can easily find it later
 								window.EncounterHandler.avttId = encounter.id;
 							}
+						} else if (encounter.name == "AboveVTT") {
+							// we found our AboveVTT encounter. Store the id locally so we can easily find it later
+							window.EncounterHandler.encounters[encounter.id] = encounter;
 						}
 					}
 					if (responseData.pagination.currentPage < responseData.pagination.pages) {
@@ -243,6 +244,50 @@ class EncounterHandler {
 				}
 			});
 		});
+	}
+
+	// we only want a single encounter of AboveVTT so delete any that we've created in the past
+	delete_all_avtt_encounters(callback) {
+		if (typeof callback !== 'function') {
+			callback = function(){};
+		}
+
+		console.log(JSON.stringify(window.EncounterHandler.encounters));
+
+		get_cobalt_token(function (token) {
+			for (let encounterId in window.EncounterHandler.encounters) {
+				let encounter = window.EncounterHandler.encounters[encounterId];
+				if (encounter.name == "AboveVTT") {
+					console.log(`attempting to delete AboveVTT encounter! id: ${encounterId}`);
+					window.ajaxQueue.addRequest({
+						type: "DELETE",
+						url: `https://encounter-service.dndbeyond.com/v1/encounters/${encounterId}`,
+						beforeSend: function (xhr) {
+							xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+						},
+						xhrFields: {
+							withCredentials: true
+						},
+						success: function (responseData) {
+							console.warn(`delete_all_avtt_encounters deleted encounter ${JSON.stringify(encounter)}`);
+						},
+						failure: function (errorMessage) {
+							console.warn(`delete_all_avtt_encounters failed; ${errorMessage}`);
+						}	
+					});
+				} else {
+					console.log(`not delete encounter id: ${encounterId}, name: ${encounter.name}`);
+				}
+			}
+		});
+
+		window.ajaxQueue.addRequest({
+			complete: function() {
+				console.log("delete_all_avtt_encounters all done!")
+				callback();
+			}
+		});
+
 	}
 
 	/// This is gathers info about the current campaign. It is used to to create our `AboveVTT` backing encounter
@@ -302,8 +347,8 @@ class EncounterHandler {
 					data: JSON.stringify({
 						"campaign": campaignInfo,
 						"name": "AboveVTT",
-						"flavorText": `This encounter is maintained by AboveVTT for the "${campaignInfo.name}" campaign`,
-						"description": `If you delete this encounter, a new one will be created the next time you DM a game in the "${campaignInfo.name}" campaign. If you edit this encounter, your changes will be overwritten by AboveVTT. This encounter contains one monster for each monster token in the current scene excluding duplicate monster types.`
+						"flavorText": "This encounter is maintained by AboveVTT",
+						"description": "If you delete this encounter, a new one will be created the next time you DM a game. If you edit this encounter, your changes will be overwritten by AboveVTT. This encounter contains one monster for each monster token in the current scene excluding duplicate monster types."
 					}),
 					beforeSend: function (xhr) {
 						xhr.setRequestHeader('Authorization', 'Bearer ' + token);

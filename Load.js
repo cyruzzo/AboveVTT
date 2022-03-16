@@ -39,6 +39,7 @@ let scripts = [
 	"jquery.ui.touch-punch.js",
 	"jquery.contextMenu.js",
 	"jquery.magnific-popup.min.js",
+	// "jquery.ajax.queue.js",
 	"purify.min.js",
 	"jitsi_external_api.js",
 	"rpg-dice-roller.bundle.min.js",
@@ -89,3 +90,16 @@ function injectScript() {
 }
 
 injectScript();
+
+
+// javascript modules
+const modules = [
+	"ajaxQueue/ajaxQueueIndex.js"
+]
+
+modules.forEach(m => {
+	var s = document.createElement('script');
+	s.src = chrome.runtime.getURL(m);
+	s.setAttribute('type', 'module');
+	(document.head || document.documentElement).appendChild(s);
+});
