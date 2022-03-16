@@ -1,10 +1,8 @@
 # purify.min.js (DOMPURIFY)
 
-wget https://github.com/cure53/DOMPurify/archive/refs/tags/2.3.3.tar.gz
-
+wget https://github.com/cure53/DOMPurify/archive/refs/tags/2.3.6.tar.gz
 tar zxf 2.3.3.tar.gz
 
-sha1sum DOMPurify-2.3.3/dist/purify.min.js
 
 # color-picker.js
 
@@ -28,4 +26,11 @@ wget https://raw.githubusercontent.com/hypergig/jitsi-external-api/49e66044f1e6e
 sha1sum external_api.js
 
 # move files to correct locations
-# update lock file by running `node lock.js`
+
+# jquery 3.6.0
+https://code.jquery.com/jquery-3.6.0.min.js
+
+# jquery ui  1.31.1
+https://jqueryui.com/resources/download/jquery-ui-1.13.1.zip
+cp jquery-ui.min.js [root]
+cp jquery-ui.min.css [root]

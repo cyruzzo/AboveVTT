@@ -210,8 +210,8 @@ class MessageBroker {
 					
 					var injection_id=current.data.rolls[0].rollType;
 					var injection_data=current.data.injected_data;
-					console.log(injection_id);
-					console.log(injection_data);
+					console.log(`injection_id = ${injection_id}`);
+					console.log(`injection_data = ${injection_data}`);
 					
 					var found=false;
 					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
@@ -224,20 +224,6 @@ class MessageBroker {
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
-								// ADD THE "Send To Player Buttons"
-								/* temporarily disable
-								let currentMessage = $(`<div></div>`).append(newlihtml);
-								let timeWrapper = $(`<div style="width:100%;"></div>`); // move time into a wrapper object so we can flex it horizontally with our new button
-								currentMessage.find(".GameLogEntry_MessageContainer__RhcYB").append(timeWrapper);
-								let sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-								timeWrapper.append(sendToEveryone)
-								var time = currentMessage.find(".GameLogEntry_MessageContainer__RhcYB > time");
-								if (time.length > 0) {
-									timeWrapper.append(time);
-									time.css("float", "right")
-								}
-								newlihtml = currentMessage.html();
-								*/
 							}
 								
 							li.animate({ opacity: 0 }, animationDuration, function() {
@@ -311,7 +297,7 @@ class MessageBroker {
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 		this.diceMessageSelector = "DiceMessage_RollType__wlBsW";
 		if (is_encounters_page()) {
-			this.diceMessageSelector = "DiceMessage_RollType__3a3Yo";
+			this.diceMessageSelector = "tss-r93asv-RollType";
 		} else if (is_characters_page()) {
 			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
 		}
@@ -882,16 +868,17 @@ class MessageBroker {
 		
 		if (is_encounters_page()) {
 			return $(`
-				<li class="GameLogEntry_GameLogEntry__1vYGY GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-end__2tv2W Flex_Flex__justifyContent-flex-start__3bvHH">
-					<p role="img" class="Avatar_Avatar__3dpoQ Flex_Flex__3K1Dd">
-						<img class="Avatar_AvatarPortrait__1B7vl" src="${data.img}" alt="">
+				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">
+					<p role="img" class="tss-wyeh8h-Avatar-Flex">
+						<img class="tss-1e4a2a1-AvatarPortrait" src="${data.img}" alt="">
 					</p>
-					<div class="GameLogEntry_MessageContainer__19nlL Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-start__JUhHW Flex_Flex__flexDirection-column__2o9lU">
-						<div class="GameLogEntry_Line__2g9hr Flex_Flex__3K1Dd Flex_Flex__justifyContent-space-between__E7BLY">
-						<span class="GameLogEntry_Sender__275Cs">${data.player}</span>
+					<div class="tss-1e6zv06-MessageContainer-Flex">
+						<div class="tss-dr2its-Line-Flex">
+							<span class="tss-1tj70tb-Sender">${data.player}</span>
+						</div>
+						<div class="tss-8-Collapsed-ref tss-8-Other-ref tss-11w0h4e-Message-Collapsed-Other-Flex">${data.text}</div>
+						<time datetime="2022-03-15T17:34:18-05:00" title="3/15/2022 5:34 PM" class="tss-1yxh2yy-TimeAgo-TimeAgo">14 mins ago</time>
 					</div>
-					<div class="GameLogEntry_Message___nA2h GameLogEntry_Collapsed__1D6Vi GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd">${data.text}</div>
-					<time datetime="2021-12-21T13:11:06-06:00" title="12/21/2021 1:11 PM" class="GameLogEntry_TimeAgo__NX7ml TimeAgo_TimeAgo__2bZoF">27 mins ago</time></div>
 				</li>
 			`);
 		} else if (is_characters_page()) {

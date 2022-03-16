@@ -579,7 +579,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.8</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -1896,7 +1896,7 @@ function inject_chat_buttons() {
 function init_ui() {
 	console.log("init_ui");
 	// ATTIVA GAMELOG
-	$(".gamelog-button").click();
+	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
 	if (!is_characters_page()) {
@@ -2166,10 +2166,10 @@ function init_ui() {
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
-		let el=$("[src*=mega-menu]:nth-of-type(2)");
-		let s=el.attr("src");
+		let old=$("[src*=mega-menu]:nth-of-type(2)");
+		let s=old.attr("src");
+		let el=$("<"+old.prop('nodeName')+">");
 		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
-		el.detach();
 		$("#site").append(el);
 		setTimeout(function(){
 			console.log(2);
@@ -2518,6 +2518,9 @@ function init_loading_overlay_beholder() {
 		"right": "0px"
 	});
 	$("#loading_overlay").append(loadingIndicator);
+	// For safety reasons.. if something don't work.. it's better to just remove this overlay to make it easier to fix stuff
+	setTimeout(remove_loading_overlay,15000);
+
 }
 
 /// the first time the window loads, start doing all the things

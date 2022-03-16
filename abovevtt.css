@@ -2147,6 +2147,7 @@ button.avtt-roll-button {
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
+    pointer-events: auto;
 }
 .MuiListItemText-root {
     flex: 1 1 auto;
@@ -2156,4 +2157,8 @@ button.avtt-roll-button {
 }
 .MuiButtonBase-root {
     width: 100%;
+}
+
+.MuiModal-root{
+    pointer-events: none;
 }

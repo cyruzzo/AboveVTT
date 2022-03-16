@@ -32,10 +32,10 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 // load scripts
 let scripts = [
 	// External Dependencies
-	"jquery-1.8.2.min.js",
+	"jquery-3.6.0.min.js",
 	"jquery-ui.min.js",
-	"jquery.ui.widget.min.js",
-	"jquery.ui.mouse.min.js",
+	//"jquery.ui.widget.min.js",
+	//"jquery.ui.mouse.min.js",
 	"jquery.ui.touch-punch.js",
 	"jquery.contextMenu.js",
 	"jquery.magnific-popup.min.js",
