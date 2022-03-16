@@ -1188,10 +1188,10 @@ function setup_draw_buttons() {
 			} else {
 				target.css("z-index", "31");
 			}
-			target = $("#fog_overlay, #black_layer");
+			target = $("#fog_overlay, #site");
 
 			if ($(e.target).attr('id') == "measure-button") {
-				target = $("#VTT, #black_layer");
+				target = $("#VTT, #site");
 			}
 
 
