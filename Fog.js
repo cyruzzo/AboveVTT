@@ -1184,7 +1184,7 @@ function setup_draw_buttons() {
 
 			if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
 				console.log("setto a 50 per via di " + e.currentTarget.id);
-				target.css("z-index", "50");			
+				target.css("z-index", "50");
 			} else {
 				target.css("z-index", "31");
 			}
