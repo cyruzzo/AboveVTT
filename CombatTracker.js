@@ -178,10 +178,10 @@ function init_combat_tracker(){
 	});
 	
 	$("#combat_tracker").mousedown(function() {
-		if($("#combat_tracker").zIndex() != 50000) {
-			$("#combat_tracker").zIndex(50000);
+		if($("#combat_tracker").css('z-index') != 50000) {
+			$("#combat_tracker").css('z-index', 50000);
 			$(".moveableWindow:not(#combat_tracker)").each(function() {
-				$(this).zIndex($(this).zIndex()-1);
+				$(this).css('z-index',($(this).css('z-index')-1));
 			});
 		}
 	});
