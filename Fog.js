@@ -651,7 +651,13 @@ function redraw_drawings() {
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
-	var target = $("#VTT, #fog_overlay, #site");
+	var target = $("#fog_overlay");
+	target.css('cursor', '');
+	target.off('mousedown', drawing_mousedown);
+	target.off('mouseup', drawing_mouseup);
+	target.off('mousemove', drawing_mousemove);
+	target.off('contextmenu', drawing_contextmenu);
+	var target = $("#VTT");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
@@ -1178,15 +1184,14 @@ function setup_draw_buttons() {
 
 			if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
 				console.log("setto a 50 per via di " + e.currentTarget.id);
-				target.css("z-index", "50");
-				target = $("#fog_overlay, #site");
+				target.css("z-index", "50");			
 			} else {
 				target.css("z-index", "31");
 			}
-
+			target = $("#fog_overlay, #black_layer");
 
 			if ($(e.target).attr('id') == "measure-button") {
-				target = $("#VTT, #site");
+				target = $("#VTT, #black_layer");
 			}
 
 
@@ -1220,7 +1225,7 @@ function setup_draw_buttons() {
 				window.ScenesHandler.reload();
 			}
 
-			target = $("#VTT, #fog_overlay, #site");
+
 			target.on('mousedown', data, drawing_mousedown);
 			target.on('mouseup', data, drawing_mouseup);
 			target.on('mousemove', data, drawing_mousemove);
