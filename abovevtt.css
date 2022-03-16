@@ -2022,3 +2022,10 @@ button.avtt-roll-button {
 .MuiModal-root{
     pointer-events: none;
 }
+#VTTWRAPPER{
+	z-index:2;
+}
+.top_menu.visible{
+	z-index: 57000;
+}
+
