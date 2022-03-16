@@ -1111,20 +1111,20 @@ function init_enounter_combat_tracker_iframe() {
 		});
 
 		$("#sheet").mousedown(function(){
-			if($("#sheet").zIndex() != 50000) {
-				$("#sheet").zIndex(50000);
+			if($("#sheet").css('z-index') != 50000) {
+				$("#sheet").css('z-index', 50000);
 				$(".moveableWindow:not(#sheet)").each(function() {
-					$(this).zIndex($(this).zIndex()-1);
+					$(this).css('z-index',($(this).css('z-index')-1));
 				});
 			}
 		});
 
 	
 		$("#resizeDragMon").mousedown(function() {
-			if($("#resizeDragMon").zIndex() != 50000) {
-				$("#resizeDragMon").zIndex(50000);
+			if($("#resizeDragMon").css('z-index') != 50000) {
+				$("#resizeDragMon").css('z-index', 50000);
 				$(".moveableWindow:not(#resizeDragmon)").each(function() {
-					$(this).zIndex($(this).zIndex()-1);
+					$(this).css('z-index',($(this).css('z-index')-1));
 				});
 			}
 		});
