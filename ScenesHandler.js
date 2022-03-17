@@ -186,15 +186,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
-			window.ZOOM = (60.0 / window.CURRENT_SCENE_DATA.hpps);
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
-			window.scrollTo(200, 200);
-
-			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
+			set_default_vttwrapper_size()
 
 			let found_data_tokens=false;
 			for (const property in scene.tokens) {
