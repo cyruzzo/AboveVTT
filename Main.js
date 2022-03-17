@@ -5,9 +5,12 @@ function parse_img(url){
 		console.warn("parse_img was called without a url");
 		return "";
 	}
-	retval=url;
-	if(retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0)
-		retval='https://drive.google.com/uc?id=' + retval.split('/')[5];
+	retval = url;
+	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
+		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
+		retval = retval.split("?dl=")[0] + "?raw=1";
+	}
 	return retval;
 }
 

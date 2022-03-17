@@ -409,6 +409,7 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 			modalBody.empty();
 			removeAllButton.show();
 		}
+		imageUrl = parse_img(imageUrl);
 		add_custom_monster_image_mapping(monsterId, imageUrl);
 		let updatedImages = get_custom_monster_images(monsterId);
 		let imgIndex = updatedImages.indexOf(imageUrl);
@@ -469,7 +470,7 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 		addForAllButton.click(function(event) {
 			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
-				add_token_customization_image(imageUrl);
+				add_token_customization_image(parse_img(imageUrl));
 			}
 		});
 		inputWrapper.append(addForAllButton);
