@@ -302,6 +302,7 @@ class MessageBroker {
 			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
 		}
 
+		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
 
@@ -601,6 +602,14 @@ class MessageBroker {
 				self.handlePlayerData(msg.data);
 			}
 			if (msg.eventType == "dice/roll/pending"){
+				// Hook requestAnimationFrame so DDB's animated dice rolls keep rolling when focus is lost
+				// We hook only if the roll originated from self
+				if (this.origRequestAnimFrame == null &&
+				    ((window.DM && msg.data.context.entityType === "user") || window.PLAYER_ID == msg.data.context.entityId)) {
+					console.log("Hooking requestAnimationFrame for dice roll");
+					this.origRequestAnimFrame = window.requestAnimationFrame;
+					window.requestAnimationFrame = function(cb) { setTimeout(cb, 33); }
+				}
 				// check for injected_data!
 				if(msg.data.injected_data){
 					notify_gamelog();
@@ -719,11 +728,16 @@ class MessageBroker {
 			}
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
+				if (this.origRequestAnimFrame != null) {
+					console.log("Stop hooking requestAnimationFrame for dice roll");
+					window.requestAnimationFrame = this.origRequestAnimFrame;
+					this.origRequestAnimFrame = null;
+				}
+
 				notify_gamelog();
-								if (!window.DM)
+				if (!window.DM)
 					return;
 				
-					
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action == "Initiative") {
 					console.log(msg.data);
