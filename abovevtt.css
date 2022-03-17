@@ -390,6 +390,29 @@ div.top_menu.visible{
 #scene_selector{
 	z-index: 58000;
 }
+#combat_footer,
+#combat_tracker_inside{
+	border-style: solid;
+	border-color: /*[[borderColor]]*/;      
+}
+#combat_footer{
+	border-width: 0px 1px 1px 1px;
+	border-radius: 0px 0px 5px 5px; 
+	left: -1px;
+	right: -1px;
+	position: absolute;
+}
+
+#combat_footer button{
+	flex-grow: 1;   
+}
+#combat_footer{
+	display: flex;   
+}
+#combat_tracker_inside {
+    border-radius: 5px 5px 0 0;
+    width: 250px;
+}
 
 /*end resizeable*/
 #addscene {
