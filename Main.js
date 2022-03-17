@@ -1518,6 +1518,9 @@ function init_things() {
 			init_ui();
 			if (is_encounters_page()) {
 
+				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
+				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
+
 				$("#site-main").css({"display": "block", "visibility": "hidden"});
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
