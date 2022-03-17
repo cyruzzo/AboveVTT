@@ -240,7 +240,11 @@ class JournalManager{
 			draggable: true,
 			width: 800,
 			height: 600,
-			position: [200,100],
+			.position({
+			   my: "center",
+			   at: "center",
+			   of: window
+			});,
 			close: function( event, ui ) {
 				$(this).remove();
 				}
