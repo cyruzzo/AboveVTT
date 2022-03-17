@@ -1299,6 +1299,10 @@ function is_supported_version(versionString) {
 
 function init_above(){
 	console.log("init_above");
+
+	// WORKAROUND FOR ANNOYING DDB BUG WITH COOKIES AND UPVOTING STUFF
+	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
+	// END OF IT
 	//window.STARTING = true;
 	let gameId = find_game_id();
 
