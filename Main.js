@@ -1491,7 +1491,7 @@ function init_character_page_sidebar() {
 			"position": "fixed",
 			"bottom": "0px",
 			"top": "0px",
-			"z-index": 2
+			"z-index": 5
 		});
 		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
@@ -3058,11 +3058,11 @@ function is_player_sheet_open() {
 function show_player_sheet() {
 	$(".ct-character-sheet__inner").css({
 		"visibility": "visible",
-		"z-index": 1
+		"z-index": 3
 	});
 	$(".site-bar").css({
 		"visibility": "visible",
-		"z-index": 1
+		"z-index": 3
 	});
 	if (window.innerWidth > 1540) { // DDB resize point + sidebar width 
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead
