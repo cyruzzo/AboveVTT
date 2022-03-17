@@ -1120,15 +1120,15 @@ function init_enounter_combat_tracker_iframe() {
 			}
 		});
 
-	
 		$("#resizeDragMon").mousedown(function() {
 			if($("#resizeDragMon").css('z-index') != 50000) {
 				$("#resizeDragMon").css('z-index', 50000);
-				$(".moveableWindow:not(#resizeDragmon)").each(function() {
+				$(".moveableWindow:not(#resizeDragMon)").each(function() {
 					$(this).css('z-index',($(this).css('z-index')-1));
 				});
 			}
 		});
+	
 	}
 	else {
 		$("body").append(iframe);	
