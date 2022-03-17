@@ -242,7 +242,7 @@ class JournalManager{
 			height: 600,
 			position:{
 			   my: "center",
-			   at: "center",
+			   at: "center-200",
 			   of: window
 			},
 			close: function( event, ui ) {
@@ -296,7 +296,7 @@ class JournalManager{
 			height: 600,
 			position: {
 			   my: "center",
-			   at: "center",
+			   at: "center-200",
 			   of: window
 			},
 			close: function( event, ui ) {
