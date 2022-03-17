@@ -4,6 +4,8 @@ function init_combat_tracker(){
 	
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
+	ct.css("z-index", 1)
+	
 	toggle=$("<div id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</div>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside").is(":visible")){
