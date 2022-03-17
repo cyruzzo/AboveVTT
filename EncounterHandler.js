@@ -906,6 +906,7 @@ function init_enounter_combat_tracker_iframe() {
 	let iframe = $(`<iframe class='iframe-encounter-combat-tracker iframe-encounter-combat-tracker-is-loading'></iframe>`);
 	iframe.attr("scrolling", "no");
 	iframe.attr("data-count", ++window.EncounterHandler.combatIframeCount);
+	/* commented out for moveable frames - css in css file
 	iframe.css({
 		"width": "100%",
 		"top": "0px",
@@ -917,7 +918,7 @@ function init_enounter_combat_tracker_iframe() {
 	iframe.height(window.innerHeight - 50);
 	$(window).resize(function() {
 		iframe.height(window.innerHeight - 50);
-	});
+	});*/
 	iframe.on("load", function(event) {
 
 		if (!this.src) {
