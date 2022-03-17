@@ -393,7 +393,7 @@ div.top_menu.visible{
 #combat_footer,
 #combat_tracker_inside{
 	border-style: solid;
-	border-color: /*[[borderColor]]*/;      
+	border-color: #ddd; 
 }
 #combat_footer{
 	border-width: 0px 1px 1px 1px;
@@ -410,8 +410,15 @@ div.top_menu.visible{
 	display: flex;   
 }
 #combat_tracker_inside {
+	border-width: 1px 1px 0px 1px;
     border-radius: 5px 5px 0 0;
     width: 250px;
+}
+#combat_tracker_inside #combat_footer button:last-of-type{
+	border-bottom-right-radius: 5px;   
+}
+#combat_tracker_inside #combat_footer button:first-of-type{
+	border-bottom-left-radius: 5px; 
 }
 
 /*end resizeable*/
