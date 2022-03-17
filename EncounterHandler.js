@@ -203,8 +203,7 @@ class EncounterHandler {
 		}
 		console.log(`fetch_all_encounters starting with pageNumber: ${pageNumber}`);
 		get_cobalt_token(function (token) {
-			$.ajax({
-				// TODO: remove campaignIds from this url
+			window.ajaxQueue.addRequest({
 				url: `https://encounter-service.dndbeyond.com/v1/encounters?page=${pageNumber}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -297,7 +296,7 @@ class EncounterHandler {
 		}
 		console.log(`fetch_campaign_info starting`);
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				url: `https://www.dndbeyond.com/api/campaign/stt/active-campaigns/${get_campaign_id()}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -339,7 +338,7 @@ class EncounterHandler {
 			}
 
 			get_cobalt_token(function (token) {
-				$.ajax({
+				window.ajaxQueue.addRequest({
 					type: "POST",
 					contentType: "application/json; charset=utf-8",
 					dataType: "json",
@@ -380,7 +379,7 @@ class EncounterHandler {
 		}
 		console.log(`fetch_campaign_characters starting`);
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				url: `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${get_campaign_id()}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -543,7 +542,7 @@ class EncounterHandler {
 		encounter.players = players;
 
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				type: "PUT",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
@@ -587,7 +586,7 @@ class EncounterHandler {
 			]
 		};
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				type: "POST",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
