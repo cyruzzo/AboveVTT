@@ -4,7 +4,7 @@ function init_combat_tracker(){
 	
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
-	ct.css("z-index", 1)
+	ct.css("z-index", 49000)
 	
 	toggle=$("<div id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</div>");
 	toggle.click(function(){
@@ -180,13 +180,17 @@ function init_combat_tracker(){
 	});
 	
 	$("#combat_tracker").mousedown(function() {
-		if($("#combat_tracker").css('z-index') != 50000) {
-			$("#combat_tracker").css('z-index', 50000);
-			$(".moveableWindow:not(#combat_tracker)").each(function() {
-				$(this).css('z-index',($(this).css('z-index')-1));
-			});
-		}
+		frame_z_index_when_click($(this));
 	});
+}
+
+function frame_z_index_when_click(moveableFrame){
+	if(moveableFrame.css('z-index') != 50000) {
+		moveableFrame.css('z-index', 50000);
+		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
+			$(this).css('z-index',($(this).css('z-index')-1));
+		});
+	}
 }
 
 function ct_reorder(persist=true) {

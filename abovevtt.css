@@ -162,7 +162,6 @@ button.gamelog-to-everyone-button {
     max-height: 100%;
     overflow-y: auto;
     border: solid black 1px;
-    z-index: 2;
 }
 
 div.ct-sidebar__controls {
@@ -199,7 +198,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     justify-content: center;
     width: 75px;
     top: 2px;
-    z-index: 9999;
+    z-index: 57000;
 }
 
 #scene_selector_toggle > span {
@@ -231,8 +230,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet iframe {
     border: none;
     position: absolute;
-    height: auto;
-    width: 100%;
     top: 24px;
     left: 0px;
     right: 0px;
@@ -247,21 +244,16 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 }
 #sheet.open {
     transform: translateX(-1370px);
-    transition: 0.5s ease-in-out;
     z-index: 99999999;
 }
 
 /*for resizable and moveable monsters and sheets in DM view - to be cleaned up/remove unecesarry !importants*/
 
 #sheet{
-    left: 50px;
+    left: 20px;
     right: auto;
     display: none;
     position: fixed !important;
-    min-width: 200px !important;
-    min-height: 200px !important;
-    max-width: 98%;
-    max-height: 98%;
     border-radius: 5px; 
     z-index: 10010;
     border: 1px solid gray;  
@@ -276,7 +268,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: none;
     backdrop-filter: opacity(0);
     cursor: move;
-    z-index:  10010;
+    z-index:  49000;
 }
 
 #resizeDragMon{
@@ -290,7 +282,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     opacity: 1;
     background: #242527;  
     cursor: move;   
-    z-index: 10010;
+    z-index: 49000;
     max-width: 98%;
     max-height: 98%;
     border-radius: 3px;   
@@ -302,33 +294,33 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 }
 
 #sheet iframe{
-    width: 100% !important;
+    width: 100%;
     height: calc(100% - 25px) !important;
     border-radius: 3px;   
 }
 
 
 #resizeDragMon iframe{
-    width: 100% !important;
+    width: 100%;
     height: calc(100% - 20px) !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 20px !important;
-    max-height: 100% !important;
+    position: absolute;
+    left: 0;
+    top: 20px;
+    max-height: 100%;
     border-radius: 3px 0px;  
 }
 
 
 #resizeDragMon iframe{
-    z-index: -10000 !important;
+    z-index: -10000;
 }
 
 #resizeDragMon:visible iframe{
-    z-index: 10000 !important;
+    z-index: 10000;
 }
 
 .ui-resizable-handle{
-    z-index: 10020 !important;
+    z-index: 50100 !important;
 }
 .iframeResizeCover{
     z-index:9999999;
@@ -343,48 +335,51 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 }
 
 #combat_tracker_inside {
-    position: fixed !important;
-    height: 40%;
+    position: fixed;
+    height: 450px;
 }
 
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
 #combat_tracker_inside .ui-resizable-sw{
-    bottom:-25px !important;  
+    bottom:-25px;  
 }
 
 #combat_tracker_inside .ui-resizable-e,
 #combat_tracker_inside .ui-resizable-w  {
-    height: calc(100% + 25px) !important;  
+    height: calc(100% + 25px);  
 }
 
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: 0 !important;  
+    bottom: 0;  
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w  {
-    height: 100% !important;  
+    height: 100%;  
 }
 
 
 #combat_tracker_inside .ui-resizable-se{
     right: -3px;
-    bottom: -22px !important;
+    bottom: -22px;
 }
-
+div#combat_button {
+    z-index: 57000;
+    position: fixed;
+}
 .ui-resizable-s{
     background:  transparent;
     border:  none;
 }
 #combat_tracker{
-    width: 0px !important;
+    width: 0px;
 }
 ul.context-menu-list.context-menu-root{
-    z-index: 51000 !important;
+    z-index: 51000;
 }
 #windowContainment{
     height:  100vh;
@@ -398,7 +393,8 @@ ul.context-menu-list.context-menu-root{
     bottom: 0;
 }
 
-div.top_menu.visible{
+div.top_menu.visible,
+.ddbc-tab-options--layout-pill{
     z-index: 57000;
 }
 
@@ -638,7 +634,7 @@ div#scene_properties form > div {
 #zoom_buttons {
     position: absolute;
     top: -3px;
-    z-index: 60;
+    z-index: 57000;
     display: flex;
     flex-direction: row;
 }

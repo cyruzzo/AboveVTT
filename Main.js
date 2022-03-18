@@ -2559,7 +2559,7 @@ function init_buttons() {
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
-	buttons.css("z-index", '2');
+	buttons.css("z-index", '57000');
 
 
 	// HIDE default SEND TO functiontality in the campaign page:

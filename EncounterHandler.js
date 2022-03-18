@@ -816,15 +816,8 @@ function reposition_enounter_combat_tracker_iframe() {
 
 	window.EncounterHandler.combat_iframe.css({
 		"z-index": isEmpty ? -10000 : 10000,
-		/*"visibility": "visible",*/
 		"display": "block",
-		"top": "72px",
-		"left": `${left}px`,
-		"position": "fixed",
-		"width": "400px",
-		"overflow-y": "scroll",
-		"max-height": maxHeight,
-		"height": maxHeight
+		"overflow-y": "scroll"
 	});
 	window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block").css({
 		"z-index": 10000,
@@ -835,7 +828,7 @@ function reposition_enounter_combat_tracker_iframe() {
 		"position": "absolute",
 		"width": "100%",
 		"overflow-y": "scroll",
-		"height": "100%",
+		"height": "100%"
 	});
 	window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block").show();
 	let iframeHeight = Math.min(
@@ -881,6 +874,15 @@ function sync_send_to_default() {
 		}
 	});
 	console.debug(`sync_send_to_default finished encounterSendToText: ${encounterSendToText}, combatSendToText: ${combatSendTo.text()}`);
+}
+
+function frame_z_index_when_click(moveableFrame){
+	if(moveableFrame.css('z-index') != 50000) {
+		moveableFrame.css('z-index', 50000);
+		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
+			$(this).css('z-index',($(this).css('z-index')-1));
+		});
+	}
 }
 
 /// This will create and load a new iframe. Once fully loaded, it will call `window.EncounterHandler.combat_iframe_did_load();`
@@ -1112,21 +1114,11 @@ function init_enounter_combat_tracker_iframe() {
 		});
 
 		$("#sheet").mousedown(function(){
-			if($("#sheet").css('z-index') != 50000) {
-				$("#sheet").css('z-index', 50000);
-				$(".moveableWindow:not(#sheet)").each(function() {
-					$(this).css('z-index',($(this).css('z-index')-1));
-				});
-			}
+			frame_z_index_when_click($(this));
 		});
 
 		$("#resizeDragMon").mousedown(function() {
-			if($("#resizeDragMon").css('z-index') != 50000) {
-				$("#resizeDragMon").css('z-index', 50000);
-				$(".moveableWindow:not(#resizeDragMon)").each(function() {
-					$(this).css('z-index',($(this).css('z-index')-1));
-				});
-			}
+			frame_z_index_when_click($(this));
 		});
 	
 	}
