@@ -371,7 +371,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 			}
 			else {
-				iframe.contents().find(".adventure-chapter-header a,li >strong>a").each(function(idx) {
+				let elements;
+				if(keyword=="cotn")
+					elements=iframe.contents().find("h3 >a");
+				else
+					elements=iframe.contents().find(".adventure-chapter-header a,li >strong>a")
+				elements.each(function(idx) {
 					var title = $(this).html();
 					var url = $(this).attr('href');
 					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
