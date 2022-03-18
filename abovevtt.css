@@ -361,7 +361,9 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w  {
     height: 100%;  
 }
-
+#combat_tracker_inside #combat_area{
+    width: 100%;
+}
 
 #combat_tracker_inside .ui-resizable-se{
     right: -3px;
