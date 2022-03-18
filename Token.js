@@ -79,7 +79,6 @@ class Token {
 		} else {
 			return false;
 		}
-		return (typeof this.options.monster == "string") && this.options.monster.length > 0
 	}
 
 	size(newsize) {
