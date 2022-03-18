@@ -5,9 +5,12 @@ function parse_img(url){
 		console.warn("parse_img was called without a url");
 		return "";
 	}
-	retval=url;
-	if(retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0)
-		retval='https://drive.google.com/uc?id=' + retval.split('/')[5];
+	retval = url;
+	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
+		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
+		retval = retval.split("?dl=")[0] + "?raw=1";
+	}
 	return retval;
 }
 
@@ -62,8 +65,11 @@ function validateUrl(value) {
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
 function change_zoom(newZoom, x, y) {
+	console.group("change_zoom")
+	console.log("zoom", newZoom, x , y)
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
+	// 200 is the size of the black area to the left and top of the map
 	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
 	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
 	window.ZOOM = newZoom;
@@ -71,12 +77,94 @@ function change_zoom(newZoom, x, y) {
 	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
 
 	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
+	set_default_vttwrapper_size()
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
+	console.groupEnd()
+}
+/** 
+* Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene
+* @param {float} z - current zoom level
+*/
+function add_zoom_to_storage(z){
+	console.group("add_zoom_to_storage")
+	console.log("storing zoom")
+	
+	if(window.ZOOM !== get_reset_zoom()){
+		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+		if (zoomIndex !== -1){
+			zooms[zoomIndex].zoom = z
+			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft())
+			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop())
+		}
+		else{
+			// zoom doesn't exist
+			zooms.push({
+				"title": window.CURRENT_SCENE_DATA.title,
+				"zoom":z,
+				"leftOffset": Math.round($(window).scrollLeft()),
+				"topOffset": Math.round($(window).scrollTop())
+			}); 
+		}
+		localStorage.setItem('zoom', JSON.stringify(zooms));
+	} else {console.log("zoom has not changed, skipping storage")}
+	
+	console.groupEnd("add_zoom_to_storage")
+}
+/** 
+* sets default values for VTTWRAPPER and black_layer based off zoom
+*/
+function set_default_vttwrapper_size(){
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
+}
+
+function remove_zoom_from_storage(){
+	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
+	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+	if (zoomIndex !== -1){
+		console.log("removing zoom from storage", zooms[zoomIndex])
+		zooms.splice(zoomIndex, 1)
+	}
+	localStorage.setItem('zoom', JSON.stringify(zooms));
+}
+
+/** 
+* Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found
+*/
+function apply_zoom_from_storage(){
+	console.group("apply_zoom_from_storage")
+	const zoomState = localStorage.getItem("zoom")
+	if (zoomState){
+		const zooms = JSON.parse(zoomState)
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+		if(zoomIndex !== -1){
+			console.log("restoring zoom level", zooms[zoomIndex])
+			change_zoom(
+				zooms[zoomIndex].zoom,
+				undefined,
+				undefined,
+				false)
+			// this bit doesn't work
+			$(window).scrollLeft(zooms[zoomIndex].leftOffset);
+			$(window).scrollTop(zooms[zoomIndex].topOffset);
+			
+		}
+		else{
+			// zooms in storage but not for this scene
+			console.log("scene does not have a zoom stored")
+			reset_zoom()
+		}
+	}
+	else{
+		// no zooms in storage
+		console.log("no zooms in storage")
+		reset_zoom()
+	}
+	console.groupEnd()
 }
 
 function decrease_zoom() {
@@ -84,9 +172,37 @@ function decrease_zoom() {
 		change_zoom(window.ZOOM * 0.9)
 	}
 }
+/** 
+* gets the zoom value that will fit the map to the viewport
+* @return {float} 
+*/
+function get_reset_zoom () {
+	const wH = $(window).height();
+	const mH = $("#scene_map").height()
+	const wW = $(window).width();
+	const mW = $("#scene_map").width()
 
+	console.log(wH, mH, wW, mW)
+	return Math.min((wH / mH),(wW / mW))
+}
+
+/** 
+* entrypoint for user clicking the fit map button. will remove local storage state as by default this func is called when no state is found
+*/
 function reset_zoom () {
-	change_zoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
+	console.group("reset_zoom")
+	console.log("zooming on centre of map")	
+	// change_zoom is great for mousezooming, but tricky when just hitting the centre of the map
+	// so don't give it any x/y and just use the scrollintoview center instead
+	change_zoom(get_reset_zoom(), undefined, undefined)
+	$("#scene_map")[0].scrollIntoView({
+		behavior: 'auto',
+		block: 'center',
+		inline: 'center'
+	});
+	// don't store any zoom for this scene as we default to map fit on load
+	remove_zoom_from_storage()
+	console.groupEnd()
 }
 
 function increase_zoom() {
@@ -579,7 +695,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.8</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -950,10 +1066,10 @@ function observe_character_sheet_aoe(documentToObserve) {
 					// grab feet (this should always exist)
 					feet = $(this).prev().children().first().children().first().text();
 
-					// drop the token
-					container.animate({opacity:"0.1"},1000);
-					setTimeout( ()=>drop_aoe_token(color, shape, feet),1000);
-					setTimeout( ()=>container.animate({opacity:"1.0"},2000),3000);
+					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
+					hide_player_sheet();
+					close_player_sheet();
+					drop_aoe_token(color, shape, feet);
 				});
 				return button;
 			});
@@ -1299,6 +1415,10 @@ function is_supported_version(versionString) {
 
 function init_above(){
 	console.log("init_above");
+
+	// WORKAROUND FOR ANNOYING DDB BUG WITH COOKIES AND UPVOTING STUFF
+	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
+	// END OF IT
 	//window.STARTING = true;
 	let gameId = find_game_id();
 
@@ -1398,6 +1518,9 @@ function init_things() {
 			init_ui();
 			if (is_encounters_page()) {
 
+				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
+				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
+
 				$("#site-main").css({"display": "block", "visibility": "hidden"});
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
@@ -1463,7 +1586,11 @@ function init_character_page_sidebar() {
 		}, 1000);
 		return;
 	}
+
+	// open the gamelog, and lock it open
 	$(".ct-character-header__group--game-log").click();
+	$(".ct-sidebar__control--unlock").click();
+	
 	// after that click, give it a second to inject and render the sidebar
 	setTimeout(function() {
 
@@ -1891,7 +2018,7 @@ function inject_chat_buttons() {
 function init_ui() {
 	console.log("init_ui");
 	// ATTIVA GAMELOG
-	$(".gamelog-button").click();
+	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
 	if (!is_characters_page()) {
@@ -2156,10 +2283,10 @@ function init_ui() {
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
-		let el=$("[src*=mega-menu]:nth-of-type(2)");
-		let s=el.attr("src");
+		let old=$("[src*=mega-menu]:nth-of-type(2)");
+		let s=old.attr("src");
+		let el=$("<"+old.prop('nodeName')+">");
 		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
-		el.detach();
 		$("#site").append(el);
 		setTimeout(function(){
 			console.log(2);
@@ -2508,6 +2635,9 @@ function init_loading_overlay_beholder() {
 		"right": "0px"
 	});
 	$("#loading_overlay").append(loadingIndicator);
+	// For safety reasons.. if something don't work.. it's better to just remove this overlay to make it easier to fix stuff
+	setTimeout(remove_loading_overlay,15000);
+
 }
 
 /// the first time the window loads, start doing all the things

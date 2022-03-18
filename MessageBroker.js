@@ -210,8 +210,8 @@ class MessageBroker {
 					
 					var injection_id=current.data.rolls[0].rollType;
 					var injection_data=current.data.injected_data;
-					console.log(injection_id);
-					console.log(injection_data);
+					console.log(`injection_id = ${injection_id}`);
+					console.log(`injection_data = ${injection_data}`);
 					
 					var found=false;
 					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
@@ -224,20 +224,6 @@ class MessageBroker {
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
-								// ADD THE "Send To Player Buttons"
-								/* temporarily disable
-								let currentMessage = $(`<div></div>`).append(newlihtml);
-								let timeWrapper = $(`<div style="width:100%;"></div>`); // move time into a wrapper object so we can flex it horizontally with our new button
-								currentMessage.find(".GameLogEntry_MessageContainer__RhcYB").append(timeWrapper);
-								let sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-								timeWrapper.append(sendToEveryone)
-								var time = currentMessage.find(".GameLogEntry_MessageContainer__RhcYB > time");
-								if (time.length > 0) {
-									timeWrapper.append(time);
-									time.css("float", "right")
-								}
-								newlihtml = currentMessage.html();
-								*/
 							}
 								
 							li.animate({ opacity: 0 }, animationDuration, function() {
@@ -311,11 +297,12 @@ class MessageBroker {
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 		this.diceMessageSelector = "DiceMessage_RollType__wlBsW";
 		if (is_encounters_page()) {
-			this.diceMessageSelector = "DiceMessage_RollType__3a3Yo";
+			this.diceMessageSelector = "tss-r93asv-RollType";
 		} else if (is_characters_page()) {
 			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
 		}
 
+		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
 
@@ -409,10 +396,13 @@ class MessageBroker {
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
-					let fake=$("<div/>");
-					fake.attr(msg.data);
-					token_button({target:fake.get(0)});
-					fake.remove();
+					let left = parseInt(msg.data.left);
+					let top = parseInt(msg.data.top);
+					if (!isNaN(top) && !isNaN(left)) {
+						place_token_at_point(msg.data, left, top);
+					} else {
+						place_token_in_center_of_map(msg.data);
+					}
 				}
 			}
 
@@ -615,6 +605,14 @@ class MessageBroker {
 				self.handlePlayerData(msg.data);
 			}
 			if (msg.eventType == "dice/roll/pending"){
+				// Hook requestAnimationFrame so DDB's animated dice rolls keep rolling when focus is lost
+				// We hook only if the roll originated from self
+				if (this.origRequestAnimFrame == null &&
+				    ((window.DM && msg.data.context.entityType === "user") || window.PLAYER_ID == msg.data.context.entityId)) {
+					console.log("Hooking requestAnimationFrame for dice roll");
+					this.origRequestAnimFrame = window.requestAnimationFrame;
+					window.requestAnimationFrame = function(cb) { setTimeout(cb, 33); }
+				}
 				// check for injected_data!
 				if(msg.data.injected_data){
 					notify_gamelog();
@@ -733,11 +731,16 @@ class MessageBroker {
 			}
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
+				if (this.origRequestAnimFrame != null) {
+					console.log("Stop hooking requestAnimationFrame for dice roll");
+					window.requestAnimationFrame = this.origRequestAnimFrame;
+					this.origRequestAnimFrame = null;
+				}
+
 				notify_gamelog();
-								if (!window.DM)
+				if (!window.DM)
 					return;
 				
-					
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action == "Initiative") {
 					console.log(msg.data);
@@ -882,16 +885,17 @@ class MessageBroker {
 		
 		if (is_encounters_page()) {
 			return $(`
-				<li class="GameLogEntry_GameLogEntry__1vYGY GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-end__2tv2W Flex_Flex__justifyContent-flex-start__3bvHH">
-					<p role="img" class="Avatar_Avatar__3dpoQ Flex_Flex__3K1Dd">
-						<img class="Avatar_AvatarPortrait__1B7vl" src="${data.img}" alt="">
+				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">
+					<p role="img" class="tss-wyeh8h-Avatar-Flex">
+						<img class="tss-1e4a2a1-AvatarPortrait" src="${data.img}" alt="">
 					</p>
-					<div class="GameLogEntry_MessageContainer__19nlL Flex_Flex__3K1Dd Flex_Flex__alignItems-flex-start__JUhHW Flex_Flex__flexDirection-column__2o9lU">
-						<div class="GameLogEntry_Line__2g9hr Flex_Flex__3K1Dd Flex_Flex__justifyContent-space-between__E7BLY">
-						<span class="GameLogEntry_Sender__275Cs">${data.player}</span>
+					<div class="tss-1e6zv06-MessageContainer-Flex">
+						<div class="tss-dr2its-Line-Flex">
+							<span class="tss-1tj70tb-Sender">${data.player}</span>
+						</div>
+						<div class="tss-8-Collapsed-ref tss-8-Other-ref tss-11w0h4e-Message-Collapsed-Other-Flex">${data.text}</div>
+						<time datetime="2022-03-15T17:34:18-05:00" title="3/15/2022 5:34 PM" class="tss-1yxh2yy-TimeAgo-TimeAgo">14 mins ago</time>
 					</div>
-					<div class="GameLogEntry_Message___nA2h GameLogEntry_Collapsed__1D6Vi GameLogEntry_Other__NDy4Y Flex_Flex__3K1Dd">${data.text}</div>
-					<time datetime="2021-12-21T13:11:06-06:00" title="12/21/2021 1:11 PM" class="GameLogEntry_TimeAgo__NX7ml TimeAgo_TimeAgo__2bZoF">27 mins ago</time></div>
 				</li>
 			`);
 		} else if (is_characters_page()) {
@@ -974,6 +978,7 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
+		console.group("handlescene")
 		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
@@ -1008,7 +1013,6 @@ class MessageBroker {
 		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
 		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
-		
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 
@@ -1016,9 +1020,9 @@ class MessageBroker {
 		$("#scene_map").attr('src', data.map);
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
+			console.group("load_scenemap callback")
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
-
 			if (window.CURRENT_SCENE_DATA.scale_factor) {
 				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
 				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
@@ -1026,10 +1030,9 @@ class MessageBroker {
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
-			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
+			apply_zoom_from_storage();
+
+			set_default_vttwrapper_size()
 			if(!window.DM)
 				check_token_visibility();
 
@@ -1048,7 +1051,7 @@ class MessageBroker {
 				console.log("Updating avtt encounter");
 				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 			}
-
+			console.groupEnd()
 		});
 
 
@@ -1088,6 +1091,7 @@ class MessageBroker {
 			$("#combat_area").empty();
 			ct_load();
 		}
+		console.groupEnd()
 	}
 
 	handleSyncMeUp(msg) {
@@ -1271,7 +1275,6 @@ class MessageBroker {
 			self.loadAboveWS(null);
 		}
 	}
-
 }
 
 function monitor_messages() {

@@ -161,6 +161,8 @@ button.gamelog-to-everyone-button {
 .top_menu.visible {
     max-height: 100%;
     overflow-y: auto;
+    border: solid black 1px;
+    z-index: 2;
 }
 
 div.ct-sidebar__controls {
@@ -934,6 +936,7 @@ div#scene_properties form > div {
     position: absolute;
     right: 0;
     top: 28px;
+    height: calc(100vh - 30px) !important;
 }
 
 .ddbc-tab-list__nav-item {
@@ -1490,6 +1493,11 @@ body {
     padding: 10px;
     overflow-y: auto;
     background-color: rgb(235, 241, 245);
+    width: 340px;
+    top: 30px;
+    right: 0px;
+    left: auto;
+    height: calc(100vh - 30px);
 }
 .sidebar-modal-background {
     position: absolute;
@@ -2001,6 +2009,7 @@ button.avtt-roll-button {
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
+    pointer-events: auto;
 }
 .MuiListItemText-root {
     flex: 1 1 auto;
@@ -2010,4 +2019,8 @@ button.avtt-roll-button {
 }
 .MuiButtonBase-root {
     width: 100%;
+}
+
+.MuiModal-root{
+    pointer-events: none;
 }

@@ -688,13 +688,10 @@ function inject_monster_image(stat) {
 		console.warn(`inject_monster_image ids don't match ${window.EncounterHandler.currently_open_monster_id} != ${stat.data.id}`);
 		return;
 	}
-	let url = stat.data.largeAvatarUrl;
-	if (url === undefined || url == null || url.length == 0) {
-		url = stat.data.avatarUrl;
-	}
-	if (url !== undefined && url != null && url.length > 0 && window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
-		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");				
-		let image = `<img style="width:100%" class="injected-image" src="${url}" alt="${stat.data.name}" class="monster-image">`;
+	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
+		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");
+		let image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
+			alt="${stat.data.name}" class="monster-image" onerror="this.src='${stat.data.avatarUrl}'";onerror=''></img>`;
 		content.find(".mon-stat-block").after(image);
 		let button = $("<button class='ddbeb-button monster-details-link'>SEND IMAGE TO GAMELOG</button>");
 		button.css({ "float": "right" });
@@ -856,7 +853,8 @@ function sync_send_to_default() {
 	let combatSendTo = window.EncounterHandler.combat_body.find(".sidebar .MuiButtonBase-root.MuiButton-root");
 	if (combatSendTo.length == 0) {
 		// open the combat gamelog and try again
-		let gamelogButton = window.EncounterHandler.combat_body.find(".gamelog-button");
+		//let gamelogButton = 
+		let gamelogButton = window.EncounterHandler.combat_body.find(".sidebar__control");
 		if (gamelogButton.length == 0) {
 			console.warn("sync_send_to_default failed to find and open the combat gamelog")
 			return;

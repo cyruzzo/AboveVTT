@@ -70,7 +70,15 @@ class Token {
 	}
 
 	isMonster() {
-		return (typeof this.options.monster == "string") && this.options.monster.length > 0
+		if (this.options.monster === undefined) {
+			return false;
+		} else if (typeof this.options.monster === "string") {
+			return this.options.monster.length > 0;
+		} else if (typeof this.options.monster === "number") {
+			return this.options.monster > 0;
+		} else {
+			return false;
+		}
 	}
 
 	size(newsize) {
@@ -99,6 +107,10 @@ class Token {
 			this.persist();
 	}
 	delete(persist=true,sync=true) {
+		if (!window.DM && this.options.deleteableByPlayers != true) {
+			// only allow the DM to delete tokens unless the token specifies deleteableByPlayers == true which is used by AoE tokens and maybe others
+			return;
+		}
 		ct_remove_token(this, false);
 		let id = this.options.id;
 		let selector = "div[data-id='" + id + "']";
@@ -386,12 +398,14 @@ class Token {
 		hpbar.append(maxhp_input);
 		if (this.options.monster > 0) {
 			hp_input.change(function(e) {
+				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
+				maxhp_input.val(maxhp_input.val().trim());
 				self.update_and_sync(e);
 			});
 			maxhp_input.click(function(e) {
@@ -1255,162 +1269,6 @@ function default_options() {
 	};
 }
 
-function token_button(e, tokenIndex = null, tokenTotal = null) {
-	console.log(e.target.outerHTML);
-	let imgsrc = parse_img($(e.target).attr("data-img"));
-	if (imgsrc.startsWith("data:")){
-		alert("WARNING! Support for token urls that starts with data: will be removed soon (as they can cause problems). Please find an image with url that begins with http:// or https://");
-	}
-	let id;
-	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
-	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
-
-	centerX = Math.round(centerX * (1.0 / window.ZOOM));
-	centerY = Math.round(centerY * (1.0 / window.ZOOM));
-
-	if( $(e.target).attr("data-top"))
-		centerY=$(e.target).attr("data-top");
-	if( $(e.target).attr("data-left"))
-		centerX=$(e.target).attr("data-left");
-	id = $(e.target).attr('data-set-token-id');
-	if (typeof (id) === "undefined") {
-		id = uuid();
-	}
-
-	// if this is a player token, check if the token is already on the map
-	if(id in window.TOKEN_OBJECTS){
-		if(window.TOKEN_OBJECTS[id].isPlayer())
-		{
-			window.TOKEN_OBJECTS[id].highlight();
-			return;
-		}
-	}
-	
-	let options = default_options();
-	options.id = id;
-	options.imgsrc = imgsrc;
-	options.left = `${centerX}px`;
-	options.top = `${centerY}px`;
-	
-	if(typeof $(e.target).attr('data-stat') !== "undefined"){ // APPLY SAVED TOKEN SETTINGS ONLY FOR MONSTERS
-		for(let o in window.TOKEN_SETTINGS){
-				if(window.TOKEN_SETTINGS[o]){
-					options[o]="1";
-				}
-		}
-	}
-	
-	
-	if ($(e.target).attr('data-size')) {
-		options.size = $(e.target).attr('data-size');
-	}
-
-	if ($(e.target).attr('data-disablestat')) {
-		options.disablestat = $(e.target).attr('data-disablestat');
-	}
-
-	if ($(e.target).attr('data-hidestat')) {
-		options.hidestat = $(e.target).attr('data-hidestat');
-	}
-	
-	if ($(e.target).attr('data-disableborder')) {
-		options.disableborder = $(e.target).attr('data-disableborder');
-	}
-	
-	if ($(e.target).attr('data-square')=="1") {
-		options.square = true;
-	}
-
-	if ($(e.target).attr('data-hp')) {
-		options.hp = $(e.target).attr('data-hp');
-	}
-
-	if ($(e.target).attr('data-maxhp')) {
-		options.max_hp = $(e.target).attr('data-maxhp');
-	}
-
-	if ($(e.target).attr('data-ac')) {
-		options.ac = $(e.target).attr('data-ac');
-	}
-
-	if ($(e.target).attr('data-elev')) {
-		options.elev = $(e.target).attr('data-elev');
-	}
-
-
-	if ($(e.target).attr('data-hidden')) {
-		options.hidden = true;
-	}
-
-	if ($(e.target).attr('data-revealname')) {
-		options.revealname = true;
-	}
-
-	if (typeof $(e.target).attr('data-stat') !== "undefined") {
-		options.monster = $(e.target).attr('data-stat');
-	}
-
-	if (options.monster || options.id.includes("/")) {
-		// monsters and players should use the global setting as the default
-		options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
-	} else if ($(e.target).attr('data-legacyaspectratio') == true || $(e.target).attr('data-legacyaspectratio') == 'true' || $(e.target).attr('data-legacyaspectratio') == undefined) {
-		// this is a custom token. It should use the setting that was defined when it was created
-		// if the option is undefined, this token was created before the option existed and should therefore use the legacy behavior
-		// if the option is true, the user actively enabled the option.
-		// if the option is false, then we want to preserve aspect ratio
-		options.legacyaspectratio = true;
-	}
-
-
-	if ($(e.target).attr('data-name')) {
-		options.name = $(e.target).attr('data-name');
-		if (options.monster > 0) { // ADD number to the end of named monsters
-			var count = 1;
-			for (var tokenid in window.TOKEN_OBJECTS) {
-				if (window.TOKEN_OBJECTS[tokenid].options.monster == options.monster)
-					count++;
-			}
-			if (count > 1) {
-				console.log("Count " + count);
-				options.name = $(e.target).attr('data-name') + " " + count;
-				options.color = "#" + TOKEN_COLORS[(count - 1) % 54];
-			}
-		}
-
-		let specifiedCustomImg = $(e.target).data('custom-img');
-		if (specifiedCustomImg != undefined && specifiedCustomImg.length > 0) {
-			// the user has specifically chosen a custom image so use it
-			options.imgsrc = specifiedCustomImg;
-		} else {
-			// if there are custom images defined, use those instead of the default DDB image
-			let customImgs = get_custom_monster_images($(e.target).attr('data-stat'));
-			if (customImgs != undefined && customImgs.length > 0) {
-				let randomIndex = getRandomInt(0, customImgs.length);
-				options.imgsrc = customImgs[randomIndex];
-			}
-		}
-	}
-
-	if (typeof $(e.target).attr('data-color') !== "undefined") {
-		options.color = $(e.target).attr('data-color');
-	}
-
-	if (tokenIndex !== null && tokenTotal !== null) {
-		options.left = (centerX + (((options.size || 68.33) * 5) / 2) * Math.cos(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
-		options.top = (centerY + (((options.size || 68.33) * 5) / 2) * Math.sin(2 * Math.PI * tokenIndex / tokenTotal)) + 'px';
-	}
-
-	//options = Object.assign({}, options, window.TOKEN_SETTINGS);
-	window.ScenesHandler.create_update_token(options);
-
-	if (id in window.PLAYER_STATS) {
-		window.MB.handlePlayerData(window.PLAYER_STATS[id]);
-	}
-
-	window.MB.sendMessage('custom/myVTT/token', options);
-
-}
-
 function place_token_in_center_of_map(tokenObject) {
 	let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
 	let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
@@ -2222,6 +2080,7 @@ function token_menu() {
 
 				if (!is_monster && !is_player) {
 					delete ret.items.view;
+					delete ret.items.helptext;
 				}
 
 				if (is_monster) {
@@ -2252,7 +2111,6 @@ function token_menu() {
 					delete ret.items.sep1;
 					delete ret.items.hp;
 					delete ret.items.max_hp;
-					delete ret.items.delete;
 					delete ret.items.note_menu;
 					delete ret.items.name;
 					delete ret.items.sep2;
@@ -2262,6 +2120,11 @@ function token_menu() {
 						delete ret.items.sep3;
 						delete ret.items.imgsrcSelect;
 					}
+				}
+
+				if (!window.DM && window.TOKEN_OBJECTS[id].options.deleteableByPlayers != true) {
+					delete ret.items.delete;
+					delete ret.items.sep4;
 				}
 
 				return ret;
@@ -2666,17 +2529,21 @@ function paste_selected_tokens() {
 }
 
 function delete_selected_tokens() {
-	if (!window.DM) return;
-	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+	
 	// move all the tokens into a separate list so the DM can "undo" the deletion
 	let tokensToDelete = [];
 	for (id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) {
-			window.TOKEN_OBJECTS_RECENTLY_DELETED[id] = Object.assign({}, token.options);
-			tokensToDelete.push(token);
+			if (window.DM || token.options.deleteableByPlayers == true) {				
+				window.TOKEN_OBJECTS_RECENTLY_DELETED[id] = Object.assign({}, token.options);
+				tokensToDelete.push(token);
+			}
 		}
 	}
+
+	if (tokensToDelete.length == 0) return;
+	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 
 	if(window.CLOUD){
 		for (let i = 0; i < tokensToDelete.length; i++) {
