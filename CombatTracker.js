@@ -185,6 +185,7 @@ function init_combat_tracker(){
 }
 
 function frame_z_index_when_click(moveableFrame){
+	//move frames behind each other in the order they were clicked
 	if(moveableFrame.css('z-index') != 50000) {
 		moveableFrame.css('z-index', 50000);
 		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {

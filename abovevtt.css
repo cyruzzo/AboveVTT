@@ -247,7 +247,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index: 99999999;
 }
 
-/*for resizable and moveable monsters and sheets in DM view - to be cleaned up/remove unecesarry !importants*/
+/*for resizable and moveable monsters and sheets in DM view*/
 
 #sheet{
     left: 20px;
@@ -495,7 +495,6 @@ div#scene_selector,
 
 #combat_tracker_inside {
     position: relative;
-    /*height: 100%; removed for resizeable windows*/
     margin: 10px 0;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
@@ -659,7 +658,6 @@ div#scene_properties form > div {
     min-width: 200px;
     width: calc(100vw - 720px);
     max-width: 748px;
-   /*z-index: 9999; commented for resize above*/
     border: solid black 2px;
     overflow: auto;
 }

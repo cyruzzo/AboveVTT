@@ -586,7 +586,7 @@ function close_monster_stat_block() {
 	console.debug("close_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
 	// hide and update all iframes that we find. Even if we're currently loading one.
-	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000/*, "visibility": "hidden"*/ });
+	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000 });
 	$(".iframe-encounter-combat-tracker").attr("data-monster", undefined);
 	$(".iframe-encounter-combat-tracker").attr("data-token", undefined);
 
@@ -877,6 +877,7 @@ function sync_send_to_default() {
 }
 
 function frame_z_index_when_click(moveableFrame){
+	//move frames behind each other in the order they were clicked
 	if(moveableFrame.css('z-index') != 50000) {
 		moveableFrame.css('z-index', 50000);
 		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
@@ -908,19 +909,6 @@ function init_enounter_combat_tracker_iframe() {
 	let iframe = $(`<iframe class='iframe-encounter-combat-tracker iframe-encounter-combat-tracker-is-loading'></iframe>`);
 	iframe.attr("scrolling", "no");
 	iframe.attr("data-count", ++window.EncounterHandler.combatIframeCount);
-	/* commented out for moveable frames - css in css file
-	iframe.css({
-		"width": "100%",
-		"top": "0px",
-		"left": "0px",
-		"position": "fixed",
-		"border": "none",
-		"z-index": -10
-	});
-	iframe.height(window.innerHeight - 50);
-	$(window).resize(function() {
-		iframe.height(window.innerHeight - 50);
-	});*/
 	iframe.on("load", function(event) {
 
 		if (!this.src) {
