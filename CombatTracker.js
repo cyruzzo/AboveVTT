@@ -185,8 +185,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.attr("data-target",token.options.id);	
 	entry.attr("ishidden", token.options.hidden);
 	entry.addClass("CTToken");
-	
-	if (token.options.hidden != true || window.DM){
+	if (typeof(token.options.ct_show) == 'undefined'){
+		token.options.ct_show = true;
+	}
+
+	if (token.options.ct_show == true || window.DM){
 		if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
 			entry.attr("data-name", token.options.name);
 			entry.addClass("hasTooltip");
@@ -287,9 +290,22 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					}
 				}
 			});
-			if(window.DM)
+			if(window.DM){
 				buttons.append(stat);
-			
+				ct_show_checkbox = $("<input type='checkbox' title='Show in players Combat Tracker?' target_id='"+token.options.id+"' checked='"+token.options.ct_show+"'></input>");
+				ct_show_checkbox.tooltip({ show: { effect: "blind", duration: 600 } });//Make this tooltip show a little quicker
+				$(ct_show_checkbox).change(function() {
+					if($(this).is(':checked')) {
+						token.options.ct_show = true;
+					}
+					else{
+						token.options.ct_show = false;
+					}
+					token.update_and_sync()
+					ct_persist();
+				});
+				buttons.append(ct_show_checkbox);
+			}
 		}	
 		else if (token.isPlayer()) {
 			stat=$("<button style='font-size:10px;'>STAT</button>");

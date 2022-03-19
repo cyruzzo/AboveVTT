@@ -93,6 +93,7 @@ class Token {
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
+		this.options.ct_show = true;
 		this.place();
 		this.sync();
 		if (this.persist != null)
@@ -101,6 +102,7 @@ class Token {
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
+		this.options.ct_show = false;
 		this.place();
 		this.sync();
 		if (this.persist != null)
@@ -353,6 +355,7 @@ class Token {
 				console.log("Setting combat tracker opacity to 0.5")
 				$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
 			}
+			//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
 		}
 	}
 
@@ -1588,6 +1591,7 @@ function token_inputs(opt) {
 			if (!isNaN(data.elev)) {
 				tok.options.elev = data.elev;
 			}
+			
 		}
 
 		
