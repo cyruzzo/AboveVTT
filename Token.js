@@ -1169,9 +1169,9 @@ class Token {
 		}
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
-		old = $("#tokens").find(selector);
-		this.update_health_aura(old)
-		this.update_dead_cross(old)
+		let token = $("#tokens").find(selector);
+		this.update_health_aura(token)
+		this.update_dead_cross(token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
 	}
