@@ -2137,10 +2137,10 @@ button.avtt-roll-button {
 #round_number_label input{
     border-radius: 3px;
     border-color: #ddd;
-    width: 30px;
+    width: 30px !important;
     height:22px;
     text-align:center;
-    font-size: 14px;
+    font-size: 14px !important;
 }
 #round_number_label input{
     font-weight: 600;
@@ -2155,10 +2155,9 @@ button.avtt-roll-button {
 
 
 #combat_area tr td div{
-    font-size: 20px; 
     top: 1px;
     position: relative;
-    font-size: 18px; 
+    font-size: 18px !important; 
 }
 
 #combat_area tr td div.hp{
