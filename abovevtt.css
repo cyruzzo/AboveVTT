@@ -2025,6 +2025,43 @@ button.avtt-roll-button {
     pointer-events: none;
 }
 /*combat tracker face lift*/
+/* Also used in resize can remove if that goes in*/
+#combat_footer,
+#combat_tracker_inside{
+    border-style: solid;
+    border-color: #ddd; 
+}
+#combat_footer{
+    border-width: 0px 1px 1px 1px;
+    border-radius: 0px 0px 5px 5px; 
+    left: -1px;
+    right: -1px;
+    position: absolute;
+}
+
+#combat_footer button{
+    flex-grow: 1;   
+}
+#combat_footer{
+    display: flex;   
+}
+#combat_tracker_inside {
+    border-width: 1px 1px 0px 1px;
+    border-radius: 5px 5px 0 0;
+    width: 250px;
+}
+#combat_tracker_inside #combat_footer button:last-of-type{
+    border-bottom-right-radius: 5px;   
+}
+#combat_tracker_inside #combat_footer button:first-of-type{
+    border-bottom-left-radius: 5px; 
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+/* end also used in resize can remove if that goes in*/
+
 #combat_footer,
 #combat_tracker_inside{
     border-style: solid;
@@ -2212,78 +2249,82 @@ button.avtt-roll-button {
     content:'Remove from Combat';
 }
 .openSheetCombatButton:after{
-content:'Open Sheet';   
+    content:'Open Sheet';   
 }
 
 .rollInitiativeCombatButton:after,
 .findTokenCombatButton:after,
 .removeTokenCombatButton:after,
 .openSheetCombatButton:after{
-background: #444e;
-transition: 0.3s ease-in-out all;
-transition-delay: 0s;
-position: absolute;
-font-size: 14px;
-z-index: 59000;
-height: fit-content;
-padding: 3px;
-width: fit-content;
-white-space: nowrap;
-border-radius: 2px;
-text-shadow: 0px 1px 1px #000;
-display: block;
-opacity: 0;
-pointer-events: none;
+    background: #444e;
+    transition: 0.3s ease-in-out all;
+    transition-delay: 0s;
+    position: absolute;
+    font-size: 14px;
+    z-index: 59000;
+    height: fit-content;
+    padding: 3px;
+    width: fit-content;
+    white-space: nowrap;
+    border-radius: 2px;
+    text-shadow: 0px 1px 1px #000;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
 }
 
 #combat_area tr td div{
-line-height: 100%;
+    line-height: 100%;
 }
 
 .rollInitiativeCombatButton:hover:after,
 .findTokenCombatButton:hover:after,
 .removeTokenCombatButton:hover:after,
 .openSheetCombatButton:hover:after {
-transition-delay: 0.7s;
-opacity: 1;
-color: #fff;
-pointer-events: none;
+    transition-delay: 0.7s;
+    opacity: 1;
+    color: #fff;
+    pointer-events: none;
 }
 
 .encounter-builder-app #combat_tracker td button:first-child:nth-last-child(1) {
-margin-right:60px;
+    margin-right:60px;
 }
 
 /* two buttons */
 .encounter-builder-app #combat_tracker td button:first-child:nth-last-child(2) ~ button:last-of-type {
-margin-right:30px;
+    margin-right:30px;
 }
 
 /* three buttons */
 .encounter-builder-app #combat_tracker td button:first-child:nth-last-child(3) ~ button:last-of-type {
-margin-right:0px;
+    margin-right:0px;
 }
 .tracker-list{
-overflow: visible;
+    overflow: visible;
 }
 
 .delSVG,
 .findSVG,
 .statSVG {
-bottom: 3px;
-position:relative;
+    bottom: 3px;
+    position:relative;
 }
 
 #combat_tracker{
-width: 245px !important;
+    width: 245px !important;
 }
 
 #combat_tracker td button,
 #combat_tracker td button svg{
-display: inline-block;
-vertical-align: middle;
+    display: inline-block;
+    vertical-align: middle;
 } 
 #combat_area{
-width: 100%;
+    width: 100%;
+}
+#combat_tracker_inside {
+    position: fixed;
+    height: 450px;
 }
 /*end combat tracker face lift*/
