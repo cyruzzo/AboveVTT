@@ -2050,6 +2050,9 @@ button.avtt-roll-button {
     border-radius: 5px 5px 0 0;
     width: 250px;
 }
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    width: 200px;   
+}
 #combat_tracker_inside #combat_footer button:last-of-type{
     border-bottom-right-radius: 5px;   
 }
