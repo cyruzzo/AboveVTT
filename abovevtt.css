@@ -323,6 +323,10 @@ div#scene_selector,
     background-color: lightgreen;
 }
 
+#combat_area td:last-of-type {
+    text-align: right;
+}
+
 #combat_tracker_inside .tracker-list {
     height: calc(100% - 22px);
     overflow-x: hidden;
