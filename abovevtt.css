@@ -2176,7 +2176,9 @@ button.avtt-roll-button {
     top:2px;
     left: 2px;
     position: relative;
-
+}
+#combat_area td [class*="AvatarPortrait"]{
+    border-radius: 5px;
 }
  #combat_tracker button:focus{
     outline: 1px solid #ddd;
