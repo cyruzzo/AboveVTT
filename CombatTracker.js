@@ -112,6 +112,10 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
+			if($(".iframe-encounter-combat-tracker").css("z-index")>9999) {
+				$("[data-current][data-monster] button.openSheetCombatButton").click();
+			}
+						
 		}
 		ct_persist();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
