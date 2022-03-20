@@ -294,8 +294,6 @@ class Token {
 	 */
 	update_health_aura(token){
 		console.group("update_health_aura")
-		console.log(token)
-		console.log(this.options)
 		if ((!this.options.disableaura) && this.options.max_hp > 0) {
 
 			token.find(".token-image").css('box-shadow',
@@ -1170,7 +1168,6 @@ class Token {
 			console.groupEnd()
 		}
 		// HEALTH AURA / DEAD CROSS
-		console.log("hp aura and dead cross calls")
 		selector = "div[data-id='" + this.options.id + "']";
 		old = $("#tokens").find(selector);
 		this.update_health_aura(old)
