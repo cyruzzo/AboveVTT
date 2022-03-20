@@ -272,20 +272,34 @@ class Token {
 	 * @param token jquery selected div with the class token
 	 */
 	update_dead_cross(token){
-		if(this.options.max_hp > 0){
+		console.group("update_dead_cross")
+		let tokenData = this.munge_token_data()
+		if(tokenData.max_hp > 0){
 			// add a cross if it doesn't exist
 			if(token.find(".dead").length === 0) 
 				token.prepend(`<div class="dead" hidden></div>`);
 			// update cross scale
 			const deadCross = token.find('.dead')
-			deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / 10}px;`)
+			deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(tokenData.size) / 10}px;`)
 			// check token death
-			if (this.options.max_hp > 0 && parseInt(this.options.hp) === 0) {
+			if (tokenData.max_hp > 0 && parseInt(tokenData.hp) === 0) {
 				deadCross.show()
 			} else {
 				deadCross.hide()
 			}
 		}
+		console.groupEnd()
+	}
+
+	/**
+	 * Some details come from the token, some from DDB especially for players. So munge the objects together
+	 * @return object containing this tokens data and possibly the players data if it's a player token
+	 */
+	munge_token_data(){
+		if (window.PLAYER_STATS[this.options.id]) {
+			return {...this.options, ...window.PLAYER_STATS[this.options.id]}
+		}
+		return {...this.options}
 	}
 
 	/**
@@ -294,11 +308,13 @@ class Token {
 	 */
 	update_health_aura(token){
 		console.group("update_health_aura")
-		if ((!this.options.disableaura) && this.options.max_hp > 0) {
+		// set token data to the player if this token is a player token, otherwise just use this tokens data
+		let tokenData = this.munge_token_data()
+		if (!tokenData.disableaura && tokenData.max_hp > 0) {
 
 			token.find(".token-image").css('box-shadow',
 				`${token_health_aura(
-					Math.round((this.options.hp / this.options.max_hp) * 100)
+					Math.round((tokenData.hp / tokenData.max_hp) * 100)
 				)} 0px 0px 7px 7px`
 			);
 		}
@@ -310,11 +326,10 @@ class Token {
 	 * @returns scale of token
 	 */
 	get_token_scale(){
-		let scale = (((this.options.size - 15) * 100) / this.options.size) / 100;
-			
-		if (!(this.options.max_hp) > 0 || (this.options.disableaura))
-			scale = 1;
-		return scale
+		let tokenData = this.munge_token_data()
+		if (!(tokenData.max_hp) > 0 || (tokenData.disableaura))
+			return 1
+		return (((tokenData.size - 15) * 100) / tokenData.size) / 100;
 	}
 
 	update_from_page() {
