@@ -2335,7 +2335,6 @@ button.avtt-roll-button {
     width: 100%;
 }
 #combat_tracker_inside {
-    position: fixed;
     height: 450px;
 }
 /*end combat tracker face lift*/
