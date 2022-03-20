@@ -323,10 +323,6 @@ div#scene_selector,
     background-color: lightgreen;
 }
 
-#combat_area td:last-of-type {
-    text-align: right;
-}
-
 #combat_tracker_inside .tracker-list {
     height: calc(100% - 22px);
     overflow-x: hidden;
@@ -2048,7 +2044,7 @@ button.avtt-roll-button {
 #combat_tracker_inside {
     border-width: 1px 1px 0px 1px;
     border-radius: 5px 5px 0 0;
-    width: 250px;
+    width: 235px;
 }
 .body-rpgcharacter-sheet #combat_tracker_inside{
     width: 200px;   
@@ -2065,37 +2061,6 @@ button.avtt-roll-button {
 }
 /* end also used in resize can remove if that goes in*/
 
-#combat_footer,
-#combat_tracker_inside{
-    border-style: solid;
-    border-color: #ddd; 
-}
-#combat_footer{
-    border-width: 0px 1px 1px 1px;
-    border-radius: 0px 0px 5px 5px; 
-    left: -1px;
-    right: -1px;
-    position: absolute;
-}
-
-#combat_footer button{
-    flex-grow: 1;   
-}
-#combat_footer{
-    display: flex;   
-}
-
-#combat_tracker_inside {
-    border-width: 1px 1px 0px 1px;
-    border-radius: 5px 5px 0 0;
-    width: 255px;
-}
-#combat_tracker_inside #combat_footer button:last-of-type{
-    border-bottom-right-radius: 5px;   
-}
-#combat_tracker_inside #combat_footer button:first-of-type{
-    border-bottom-left-radius: 5px; 
-}
 
 .body-rpgcharacter-sheet #combat_tracker_inside{
     border-radius: 5px;
