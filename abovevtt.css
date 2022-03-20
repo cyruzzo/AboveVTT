@@ -2215,6 +2215,13 @@ button.avtt-roll-button {
     box-shadow: 1px 1px 1px 0px #00000047;
 }
 
+#combat_tracker input[disabled=disabled], 
+#combat_tracker input[disabled=disabled]:hover,
+#combat_tracker input[readonly]{
+    opacity: 1;
+    border-style: solid;
+}
+
 #combat_footer{
     background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
     padding-top: 13px;
