@@ -652,9 +652,6 @@ function close_monster_stat_block() {
 	console.debug("close_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
 	// hide and update all iframes that we find. Even if we're currently loading one.
-	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000 });
-	$(".iframe-encounter-combat-tracker").attr("data-monster", undefined);
-	$(".iframe-encounter-combat-tracker").attr("data-token", undefined);
 
 
 	console.group("close_monster_stat_block");
