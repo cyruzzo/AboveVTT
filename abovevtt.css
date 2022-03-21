@@ -309,8 +309,7 @@ div#scene_selector,
 
 #combat_tracker_inside {
     position: relative;
-    height: 100%;
-    margin: 10px 0;
+    margin: 28px 0;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
@@ -330,7 +329,7 @@ div#scene_selector,
 
 #combat_tracker_inside .tracker-list {
     height: calc(100% - 22px);
-    overflow: auto;
+    overflow-x: hidden;
 }
 
 #combat_footer {
@@ -343,10 +342,11 @@ div#scene_selector,
 }
 
 #round_number_label {
-    font-size: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
     vertical-align: middle;
-    padding-left: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 input.roundNum::-webkit-outer-spin-button,
@@ -2024,6 +2024,289 @@ button.avtt-roll-button {
 .MuiModal-root{
     pointer-events: none;
 }
+/*combat tracker face lift*/
+/* Also used in resize can remove if that goes in*/
+#combat_footer,
+#combat_tracker_inside{
+    border-style: solid;
+    border-color: #ddd; 
+}
+#combat_footer{
+    border-width: 0px 1px 1px 1px;
+    border-radius: 0px 0px 5px 5px; 
+    left: -1px;
+    right: -1px;
+    position: absolute;
+}
+
+#combat_footer button{
+    flex-grow: 1;   
+}
+#combat_footer{
+    display: flex;   
+}
+#combat_tracker_inside {
+    border-width: 1px 1px 0px 1px;
+    border-radius: 5px 5px 0 0;
+    width: 250px;
+}
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    width: 200px;   
+}
+#combat_tracker_inside #combat_footer button:last-of-type{
+    border-bottom-right-radius: 5px;   
+}
+#combat_tracker_inside #combat_footer button:first-of-type{
+    border-bottom-left-radius: 5px; 
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+/* end also used in resize can remove if that goes in*/
+
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+
+#combat_area tr[data-current] td{
+    background: none;  
+}
+#combat_area tr[data-current] td{  
+    background: none;
+    border: none;
+}
+#combat_area tr[data-current]{
+    box-shadow: inset 0 0 50px 2px #1b9af0;
+    border-radius: 6px;
+    padding: 5px;
+}
+#combat_area tr td:last-of-type{
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px; 
+}
+ #combat_area tr td:first-of-type{
+    border-bottom-left-radius: 8px;
+    border-top-left-radius: 8px;  
+}
+
+#combat_area tr[data-current][data-target*="characters"]{
+    background: #0F0;  
+}
+#combat_area tr[data-current]:not([data-target*="characters"]){
+    background: #0000;  
+}
+
+#combat_area tr[data-current] input{
+    border-color: #1b9af0;
+}
+#combat_area{
+    border-collapse:collapse;  
+}
+
+#combat_area td input,
+#round_number_label input{
+    border-radius: 3px;
+    border-color: #ddd;
+    width: 30px !important;
+    height:22px;
+    text-align:center;
+    font-size: 14px !important;
+}
+#round_number_label input{
+    font-weight: 600;
+}
+
+#combat_area td button{
+    border-radius: 3px;
+    padding: 2px;
+    margin: 2px;
+    border: 1px solid #ddd;
+}
+
+
+#combat_area tr td div{
+    top: 1px;
+    position: relative;
+    font-size: 18px !important; 
+}
+
+#combat_area tr td div.hp{
+    float: right;  
+}
+
+#round_number_label{
+    height: 25px;  
+}
+
+.encounter-builder-app #combat_area td [class*="AvatarPortrait"]{
+    border-radius: 5px;
+    top:2px;
+    left: 2px;
+    position: relative;
+}
+#combat_area td [class*="AvatarPortrait"]{
+    border-radius: 5px;
+}
+ #combat_tracker button:focus{
+    outline: 1px solid #ddd;
+
+}
+#combat_tracker button{
+     font-weight:600;
+     background:#fff;
+     color: #1b9af0;
+     text-shadow: 1px 1px 2px  #fff;
+     border: 1px solid #1b9af0;
+     margin: 2px;
+     border-radius:2px; 
+     width: fit-content;
+     height: 22px;
+}
+#round_number_label button{
+    margin-left: 6px;
+}
+#round_number_label strong{
+    margin-right: 2px;
+    top: 1px;
+    position: relative;
+}
+ #combat_tracker button:focus{
+    outline: 1px solid #ddd;
+}
+#combat_area tr[data-current] td img{      
+     box-shadow: 1px 1px 2px 0px #000000;  
+}
+#combat_area tr td input,
+.roundNum,
+#combat_area tr td img {
+    box-shadow: 1px 1px 1px 0px #00000047;
+}
+
+#combat_tracker input[disabled=disabled], 
+#combat_tracker input[disabled=disabled]:hover,
+#combat_tracker input[readonly]{
+    opacity: 1;
+    border-style: solid;
+}
+
+#combat_footer{
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    padding-top: 13px;
+}
+
+.rollSVG path:not([fill*="none"]),
+.findSVG path:not([fill*="none"]),
+.delSVG path:not([fill*="none"]),
+.statSVG path:not([fill*="none"]){
+    fill: #1b9af0;
+}
+
+.findSVG path.cls-1{
+    fill: transparent;
+}
+
+.findSVG,
+.delSVG,
+.statSVG {
+    width: 20px
+}
+
+.rollSVG{
+    width: 17px;
+    position: relative;
+    bottom: 2px;
+}
+
+.rollInitiativeCombatButton:after{
+    content:'Roll Initiative';         
+}
+.findTokenCombatButton:after{
+    content:'Find Token';
+}
+.removeTokenCombatButton:after{
+    content:'Remove from Combat';
+}
+.openSheetCombatButton:after{
+    content:'Open Sheet';   
+}
+
+.rollInitiativeCombatButton:after,
+.findTokenCombatButton:after,
+.removeTokenCombatButton:after,
+.openSheetCombatButton:after{
+    background: #444e;
+    transition: 0.3s ease-in-out all;
+    transition-delay: 0s;
+    position: absolute;
+    font-size: 14px;
+    z-index: 59000;
+    height: fit-content;
+    padding: 3px;
+    width: fit-content;
+    white-space: nowrap;
+    border-radius: 2px;
+    text-shadow: 0px 1px 1px #000;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#combat_area tr td div{
+    line-height: 100%;
+}
+
+.rollInitiativeCombatButton:hover:after,
+.findTokenCombatButton:hover:after,
+.removeTokenCombatButton:hover:after,
+.openSheetCombatButton:hover:after {
+    transition-delay: 0.7s;
+    opacity: 1;
+    color: #fff;
+    pointer-events: none;
+}
+
+.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(1) {
+    margin-right:60px;
+}
+
+/* two buttons */
+.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(2) ~ button:last-of-type {
+    margin-right:30px;
+}
+
+/* three buttons */
+.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(3) ~ button:last-of-type {
+    margin-right:0px;
+}
+.tracker-list{
+    overflow: visible;
+}
+
+.delSVG,
+.findSVG,
+.statSVG {
+    bottom: 3px;
+    position:relative;
+}
+
+#combat_tracker{
+    width: 245px !important;
+}
+
+#combat_tracker td button,
+#combat_tracker td button svg{
+    display: inline-block;
+    vertical-align: middle;
+} 
+#combat_area{
+    width: 100%;
+}
+#combat_tracker_inside {
+    height: 450px;
+}
+/*end combat tracker face lift*/
 
 .button-loading::after {
     content: "";
