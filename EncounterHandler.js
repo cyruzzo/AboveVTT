@@ -726,16 +726,23 @@ function inject_monster_image(stat) {
 	}
 	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
 		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");
-		let image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
-			alt="${stat.data.name}" class="monster-image" onerror="this.src='${stat.data.avatarUrl}'";onerror=''></img>`;
+		const image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
+			alt="${stat.data.name}" class="monster-image"></img>`;
+		$(image).on("error", () => {
+			window.EncounterHandler.combat_body.find(".injected-image").remove()
+			content.find(".mon-stat-block").after(`<img style="width:100%" class="injected-image" src="${stat.data.avatarUrl}"
+			alt="${stat.data.name}" class="monster-image"></img>`);
+		})
+
 		content.find(".mon-stat-block").after(image);
 		let button = $("<button class='ddbeb-button monster-details-link'>SEND IMAGE TO GAMELOG</button>");
 		button.css({ "float": "right" });
 		button.click(function() {
+			renderedImage = window.EncounterHandler.combat_body.find(".injected-image").map(function() { return this.outerHTML; }).get().join("");
 			var msgdata = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
-				text: image
+				text: renderedImage
 			};
 			window.MB.inject_chat(msgdata);
 			notify_gamelog();
