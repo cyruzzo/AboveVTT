@@ -38,25 +38,17 @@ class EncounterHandler {
 		if (typeof callback !== 'function') {
 			callback = function(){};
 		}
-		if (is_encounters_page()) {
-			const urlParams = new URLSearchParams(window.location.search);
-			this.avttId = window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1);
-		} else {
-			this.avttId = "";
-		}
+		this.avttId = is_encounters_page() ? window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1) : "";
 		this.encounters = {};
 		this.encounterBuilderDiceSupported = false;
 		this.combatIframeCount = 0;
 		this.fetch_feature_flags(function() {
 			window.EncounterHandler.fetch_all_encounters(function () {
-				if (window.EncounterHandler.avttId === undefined || window.EncounterHandler.avttId.length == 0) {
-					// we don't have an encounter named AboveVTT so create one
+				window.EncounterHandler.delete_all_avtt_encounters(function () {
 					window.EncounterHandler.create_avtt_encounter(function() {
 						callback();
 					});
-				} else {
-					callback();
-				}
+				});
 			});
 		});
 	}
@@ -112,7 +104,7 @@ class EncounterHandler {
 			console.warn("EncounterHandler.combat_iframe has a contentDocument, but not a body. How did this even happen?");
 			return undefined;
 		}
-		console.debug(`combat_body ${iframe.attr("data-count")}`);
+		console.debug(`combat_body count ${iframe.attr("data-count")}`);
 		return $(document.body);
 	}
 
@@ -121,12 +113,30 @@ class EncounterHandler {
 		return $(".iframe-encounter-combat-tracker-is-loading").length > 0;
 	}
 
+	/// if the DM is viewing a monster stat block, this is the name of that monster
+	get currently_open_monster_name() {
+		return window.EncounterHandler.combat_iframe.attr("data-monster-name");
+	}
+	set currently_open_monster_name(monsterName) {
+		console.debug(`set currently_open_monster_name(${monsterName})`)
+		if (monsterName === undefined) {
+			$(".iframe-encounter-combat-tracker").removeAttr("data-monster-name");
+		} else {
+			$(".iframe-encounter-combat-tracker").attr("data-monster-name", monsterName);
+		}
+	}
+
 	/// if the DM is viewing a monster stat block, this is the id for that monster
 	get currently_open_monster_id() {
 		return window.EncounterHandler.combat_iframe.attr("data-monster");
 	}
 	set currently_open_monster_id(monsterId) {
-		$(".iframe-encounter-combat-tracker").attr("data-monster", monsterId);
+		console.debug(`set currently_open_monster_id(${monsterId})`)
+		if (monsterId === undefined) {
+			$(".iframe-encounter-combat-tracker").removeAttr("data-monster");
+		} else {
+			$(".iframe-encounter-combat-tracker").attr("data-monster", monsterId);
+		}
 	}
 
 	/// if the DM is viewing a monster stat block, this is the id for the token the monster represents
@@ -134,42 +144,50 @@ class EncounterHandler {
 		return window.EncounterHandler.combat_iframe.attr("data-token");
 	}
 	set currently_open_token_id(tokenId) {
-		$(".iframe-encounter-combat-tracker").attr("data-token", tokenId);
+		console.debug(`set currently_open_token_id(${tokenId})`)
+		if (tokenId === undefined) {
+			$(".iframe-encounter-combat-tracker").removeAttr("data-token");
+		} else {
+			$(".iframe-encounter-combat-tracker").attr("data-token", tokenId);
+		}
 	}
 
 	/// this happens when when a monster is added to the scene if the encounter doesn't already have a monster of that type
 	reload_combat_iframe() {
-		console.debug("reload_combat_iframe starting");
+		console.group("reload_combat_iframe");
 		// if there is a monster stat block open, store it so we know to reopen it once reloading has finished
 		// mark our current iframe as "replaced" so we know which one to remove once the new one finishes loading
 		$(".iframe-encounter-combat-tracker").addClass("iframe-encounter-combat-tracker-replaced");
 		// reinitialize our iframe. Once it's done loading, we'll clean all this up in combat_iframe_did_load below
 		init_enounter_combat_tracker_iframe();
-		console.debug("reload_combat_iframe finished");
+		console.groupEnd();
 	}
 
 	/// this happens when the iframe has finished loading, and is ready to be shown
 	combat_iframe_did_load() {
-		console.debug("combat_iframe_did_load starting");
+		console.group("combat_iframe_did_load");
 		// remove any outdated iframes now that we've finished loading a replacement
+		let previouslyOpenMonsterId = $(".iframe-encounter-combat-tracker-replaced").attr("data-monster");
+		let previouslyOpenTokenId = $(".iframe-encounter-combat-tracker-replaced").attr("data-token");
+		console.log(`combat_iframe_did_load replacing previouslyOpenMonsterId: ${previouslyOpenMonsterId}, previouslyOpenTokenId: ${previouslyOpenTokenId}`);
 		$(".iframe-encounter-combat-tracker-replaced").remove();
 		$("#resizeDragMon ~ #resizeDragMon").remove();
 		// we are no longer loading, so remove our loading marker
 		if (window.EncounterHandler.combat_iframe.hasClass("iframe-encounter-combat-tracker-is-loading")) {
 			console.log("combat_iframe_did_load attempting to open after loading");
 			window.EncounterHandler.combat_iframe.removeClass("iframe-encounter-combat-tracker-is-loading");
-			open_monster_stat_block_with_id(window.EncounterHandler.currently_open_monster_id, window.EncounterHandler.currently_open_token_id);
+			open_monster_stat_block_with_id(previouslyOpenMonsterId, previouslyOpenTokenId);
 			remove_combat_tracker_loading_indicator();
 		} else if (
-			window.EncounterHandler.currently_open_monster_id !== undefined && window.EncounterHandler.currently_open_token_id != undefined &&
+			previouslyOpenMonsterId !== undefined && previouslyOpenTokenId != undefined &&
 			window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block .mon-stat-block").length == 0) {
 				console.log("combat_iframe_did_load attempting to open because nothing is open");
 				// supposed to be open, but isn't so try again?
-				open_monster_stat_block_with_id(window.EncounterHandler.currently_open_monster_id, window.EncounterHandler.currently_open_token_id);
+				open_monster_stat_block_with_id(previouslyOpenMonsterId, previouslyOpenTokenId);
 				remove_combat_tracker_loading_indicator();
 		}
 		sync_send_to_default();
-		console.debug("combat_iframe_did_load finished");
+		console.groupEnd();
 	}
 
 	/// We build an encounter named `AboveVTT`. We should always have one, and this tells us if we have it locally
@@ -207,8 +225,8 @@ class EncounterHandler {
 		}
 		console.log(`fetch_all_encounters starting with pageNumber: ${pageNumber}`);
 		get_cobalt_token(function (token) {
-			$.ajax({
-				url: `https://encounter-service.dndbeyond.com/v1/encounters?campaignIds=${get_campaign_id()}&page=${pageNumber}`,
+			window.ajaxQueue.addRequest({
+				url: `https://encounter-service.dndbeyond.com/v1/encounters?page=${pageNumber}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
 				},
@@ -227,6 +245,9 @@ class EncounterHandler {
 								// we found our AboveVTT encounter. Store the id locally so we can easily find it later
 								window.EncounterHandler.avttId = encounter.id;
 							}
+						} else if (encounter.name == "AboveVTT") {
+							// we found our AboveVTT encounter. Store the id locally so we can easily find it later
+							window.EncounterHandler.encounters[encounter.id] = encounter;
 						}
 					}
 					if (responseData.pagination.currentPage < responseData.pagination.pages) {
@@ -246,6 +267,50 @@ class EncounterHandler {
 		});
 	}
 
+	// we only want a single encounter of AboveVTT so delete any that we've created in the past
+	delete_all_avtt_encounters(callback) {
+		if (typeof callback !== 'function') {
+			callback = function(){};
+		}
+
+		console.log(JSON.stringify(window.EncounterHandler.encounters));
+
+		get_cobalt_token(function (token) {
+			for (let encounterId in window.EncounterHandler.encounters) {
+				let encounter = window.EncounterHandler.encounters[encounterId];
+				if (encounter.name == "AboveVTT") {
+					console.log(`attempting to delete AboveVTT encounter! id: ${encounterId}`);
+					window.ajaxQueue.addRequest({
+						type: "DELETE",
+						url: `https://encounter-service.dndbeyond.com/v1/encounters/${encounterId}`,
+						beforeSend: function (xhr) {
+							xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+						},
+						xhrFields: {
+							withCredentials: true
+						},
+						success: function (responseData) {
+							console.warn(`delete_all_avtt_encounters deleted encounter ${JSON.stringify(encounter)}`);
+						},
+						failure: function (errorMessage) {
+							console.warn(`delete_all_avtt_encounters failed; ${errorMessage}`);
+						}	
+					});
+				} else {
+					console.log(`not delete encounter id: ${encounterId}, name: ${encounter.name}`);
+				}
+			}
+		});
+
+		window.ajaxQueue.addRequest({
+			complete: function() {
+				console.log("delete_all_avtt_encounters all done!")
+				callback();
+			}
+		});
+
+	}
+
 	/// This is gathers info about the current campaign. It is used to to create our `AboveVTT` backing encounter
 	fetch_campaign_info(callback) {
 		if (typeof callback !== 'function') {
@@ -253,7 +318,7 @@ class EncounterHandler {
 		}
 		console.log(`fetch_campaign_info starting`);
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				url: `https://www.dndbeyond.com/api/campaign/stt/active-campaigns/${get_campaign_id()}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -295,7 +360,7 @@ class EncounterHandler {
 			}
 
 			get_cobalt_token(function (token) {
-				$.ajax({
+				window.ajaxQueue.addRequest({
 					type: "POST",
 					contentType: "application/json; charset=utf-8",
 					dataType: "json",
@@ -303,8 +368,8 @@ class EncounterHandler {
 					data: JSON.stringify({
 						"campaign": campaignInfo,
 						"name": "AboveVTT",
-						"flavorText": `This encounter is maintained by AboveVTT for the "${campaignInfo.name}" campaign`,
-						"description": `If you delete this encounter, a new one will be created the next time you DM a game in the "${campaignInfo.name}" campaign. If you edit this encounter, your changes will be overwritten by AboveVTT. This encounter contains one monster for each monster token in the current scene excluding duplicate monster types.`
+						"flavorText": "This encounter is maintained by AboveVTT",
+						"description": "If you delete this encounter, a new one will be created the next time you DM a game. If you edit this encounter, your changes will be overwritten by AboveVTT. This encounter contains one monster for each monster token in the current scene excluding duplicate monster types."
 					}),
 					beforeSend: function (xhr) {
 						xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -336,7 +401,7 @@ class EncounterHandler {
 		}
 		console.log(`fetch_campaign_characters starting`);
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				url: `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${get_campaign_id()}`,
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -366,7 +431,7 @@ class EncounterHandler {
 		if (typeof callback !== 'function') {
 			callback = function(){};
 		}
-		let encounter = Object.assign({}, window.EncounterHandler.encounters[window.EncounterHandler.avttId]); // use a cloned object so we don't accidentally update our list 
+		let encounter = Object.assign({}, window.EncounterHandler.encounters[window.EncounterHandler.avttId]); // use a cloned object so we don't accidentally update our list
 		if (encounter === undefined) {
 			console.warn("update_avtt_encounter_with_players_and_monsters failed because there isn't an encounter to update");
 			window.EncounterHandler.encounterUpdateInProgress = false;
@@ -499,7 +564,7 @@ class EncounterHandler {
 		encounter.players = players;
 
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				type: "PUT",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
@@ -543,7 +608,7 @@ class EncounterHandler {
 			]
 		};
 		get_cobalt_token(function (token) {
-			$.ajax({
+			window.ajaxQueue.addRequest({
 				type: "POST",
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
@@ -583,6 +648,7 @@ function close_monster_stat_block() {
 		return;
 	}
 
+
 	console.debug("close_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
 	// hide and update all iframes that we find. Even if we're currently loading one.
@@ -590,52 +656,71 @@ function close_monster_stat_block() {
 	$(".iframe-encounter-combat-tracker").attr("data-monster", undefined);
 	$(".iframe-encounter-combat-tracker").attr("data-token", undefined);
 
+
+	console.group("close_monster_stat_block");
+
+	// hide and update all iframes that we find. Even if we're currently loading one.
+
 	let currentlyOpen = window.EncounterHandler.combat_body.find(".combat-tracker-page__content-section--monster-stat-block");
 	if (currentlyOpen.length > 0) {
 		// close the currently open stat block
 		let currentlyOpenMonsterName = currentlyOpen.find(".mon-stat-block__name-link").text();
-		console.debug(`close_monster_stat_block is attempting to close ${currentlyOpenMonsterName}`)
-		click_combat_monster_with_name(currentlyOpenMonsterName);
+		console.log(`close_monster_stat_block is attempting to close mon-stat-block__name-link: ${currentlyOpenMonsterName}, currently_open_monster_name: ${window.EncounterHandler.currently_open_monster_name}, currently_open_monster_id: ${window.EncounterHandler.currently_open_monster_id}`)
+		click_combat_monster_with_name(window.EncounterHandler.currently_open_monster_name, window.EncounterHandler.currently_open_monster_id);
 	}
+
+	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000, "visibility": "hidden" });
+	window.EncounterHandler.currently_open_monster_name = undefined;
+	window.EncounterHandler.currently_open_monster_id = undefined;
+	window.EncounterHandler.currently_open_token_id = undefined;
+	console.groupEnd();
 }
 
 /// this will find the monster matching `monsterId`. If the monster does not exist for some reason, it will attempt to update the backing encounter. the tokenId is used for the `add_ability_tracker_inputs` function call which can be found in MonsterDice.js
 function open_monster_stat_block_with_id(monsterId, tokenId) {
+	console.group("open_monster_stat_block_with_id");
 	if (window.EncounterHandler === undefined) {
 		// only the DM should have an EncounterHandler. If they don't for some reason, we have a problem.
 		if (window.DM) {
 			console.warn("open_monster_stat_block_with_id was called without an EncounterHandler!!!");
 		}
+		console.groupEnd();
 		return;
 	}
 	if (monsterId === undefined) {
 		// nothing else to do here
 		console.log("open_monster_stat_block_with_id was called without a monsterId");
+		console.groupEnd();
 		return;
 	}
 	console.log("open_monster_stat_block_with_id is fetching stat");
 	window.StatHandler.getStat(monsterId, function(stat) {
 		open_monster_stat_block_with_stat(stat, tokenId);
 	});
+	console.groupEnd();
 }
 
 function open_monster_stat_block_with_stat(stat, tokenId) {
+	console.group("open_monster_stat_block_with_stat");
 	if (window.EncounterHandler === undefined) {
 		// only the DM should have an EncounterHandler. If they don't for some reason, we have a problem.
 		if (window.DM) {
 			console.warn("open_monster_stat_block_with_stat was called without an EncounterHandler!!!");
 		}
+		console.groupEnd();
 		return;
 	}
 	if (stat === undefined) {
 		// nothing else to do here
 		console.warn("open_monster_stat_block_with_stat was called without a stat");
+		console.groupEnd();
 		return;
 	}
 	let monsterId = stat.data.id;
 	let monsterName = stat.data.name;
 	if (monsterId === undefined || monsterName === undefined) {
 		console.warn(`open_monster_stat_block_with_stat was called with a stat that is either missing an id or a name ${JSON.stringify(stat)}`);
+		console.groupEnd();
 		return;
 	}
 
@@ -644,8 +729,9 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 	close_monster_stat_block();
 
 	// update all that exist in case we're currently loading one in the background or anything
-	$(".iframe-encounter-combat-tracker").attr("data-monster", monsterId);
-	$(".iframe-encounter-combat-tracker").attr("data-token", tokenId);
+	window.EncounterHandler.currently_open_monster_name = monsterName;
+	window.EncounterHandler.currently_open_monster_id = monsterId;
+	window.EncounterHandler.currently_open_token_id = tokenId;
 
 	//unhide monster frame
 	$("#resizeDragMon").removeClass("hideMon")
@@ -663,7 +749,7 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 
 	if (monster !== undefined) {
 		// we have our monster, now let's find which element on the page to click to show the stat block
-		found = click_combat_monster_with_name(monsterName);
+		found = click_combat_monster_with_name(monsterName, monsterId);
 	}
 
 	if (!found) {
@@ -683,39 +769,53 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 		remove_combat_tracker_loading_indicator();
 		console.log(`open_monster_stat_block_with_stat finished showing a stat block for monsterId: ${monsterId}, tokenId: ${tokenId}`);
 	}
+	console.groupEnd();
 }
 
 function inject_monster_image(stat) {
+	console.group("inject_monster_image");
 	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length > 0) {
 		// we only need one
+		console.groupEnd();
 		return;
 	}
 	if (window.EncounterHandler.currently_open_monster_id != stat.data.id) {
 		console.warn(`inject_monster_image ids don't match ${window.EncounterHandler.currently_open_monster_id} != ${stat.data.id}`);
+		console.groupEnd();
 		return;
 	}
 	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
 		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");
-		let image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
-			alt="${stat.data.name}" class="monster-image" onerror="this.src='${stat.data.avatarUrl}'";onerror=''></img>`;
+		const image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
+			alt="${stat.data.name}" class="monster-image"></img>`;
+		$(image).on("error", () => {
+			window.EncounterHandler.combat_body.find(".injected-image").remove()
+			content.find(".mon-stat-block").after(`<img style="width:100%" class="injected-image" src="${stat.data.avatarUrl}"
+			alt="${stat.data.name}" class="monster-image"></img>`);
+		})
+
 		content.find(".mon-stat-block").after(image);
 		let button = $("<button class='ddbeb-button monster-details-link'>SEND IMAGE TO GAMELOG</button>");
 		button.css({ "float": "right" });
 		button.click(function() {
+			renderedImage = window.EncounterHandler.combat_body.find(".injected-image").map(function() { return this.outerHTML; }).get().join("");
 			var msgdata = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
-				text: image
+				text: renderedImage
 			};
 			window.MB.inject_chat(msgdata);
+			notify_gamelog();
 		});
 		content.append(button);
 	}
+	console.groupEnd();
 }
 
 /// nothing should call this except for open_monster_stat_block and close_monster_stat_block. This is the function that shows/hides the monster stat block within the iframe
-function click_combat_monster_with_name(name) {
-	console.debug(`click_combat_monster_with_name looking for ${name}`);
+function click_combat_monster_with_name(name, monsterId) {
+	console.group(`click_combat_monster_with_name`);
+	console.log(`looking for ${name} or ${monsterId}`);
 	// we have our monster, now let's find which element on the page to click to show the stat block
 	var combatants = window.EncounterHandler.combat_body.find(`.combatant-card--monster .combatant-summary__name`);
 	let found = false;
@@ -724,7 +824,7 @@ function click_combat_monster_with_name(name) {
 			continue;
 		}
 		let combatantName = $(combatants[i]);
-		if (combatantName.text() == name) {
+		if (combatantName.text() == name || combatantName.text() == `${monsterId}`) {
 			// we found the element that matches our monster. Clicking it shows the stat block.
 			window.EncounterHandler.combat_body.find(".encounter-details-summary__group-item.is-selected").click(); // close any that are currently open, then click to open the one we found
 			combatantName.click();
@@ -732,10 +832,11 @@ function click_combat_monster_with_name(name) {
 		}
 	}
 	if (found) {
-		console.log(`click_combat_monster_with_name clicked ${name}`);
+		console.log(`click_combat_monster_with_name clicked ${name} ${monsterId}`);
 	} else {
-		console.log(`click_combat_monster_with_name could not find ${name}`);
+		console.log(`click_combat_monster_with_name could not find ${name} ${monsterId}`);
 	}
+	console.groupEnd();
 	return found;
 }
 
@@ -770,34 +871,34 @@ function remove_combat_tracker_loading_indicator() {
 
 /// builds and displays a loading indicator on all iframes. There can be mutliple iframes while the backing encounter is being updated.
 function display_combat_tracker_loading_indicator() {
+	console.group("display_combat_tracker_loading_indicator");
 	if (window.EncounterHandler === undefined) {
 		// only the DM should have an EncounterHandler. If they don't for some reason, we have a problem.
 		if (window.DM) {
 			console.warn("display_combat_tracker_loading_indicator was called without an EncounterHandler!!!");
 		}
+		console.groupEnd();
 		return;
 	}
-	console.debug("display_combat_tracker_loading_indicator starting");
 	$(".iframe-encounter-combat-tracker").each(function() {
 		$(this.contentDocument.body).find(".sidebar-panel-loading-indicator").remove(); // just in case there was already one shown we don't want to add a second one
 		$(this.contentDocument.body).append(build_combat_tracker_loading_indicator());
 	});
 	reposition_enounter_combat_tracker_iframe();
-	console.debug("display_combat_tracker_loading_indicator finished");
+	console.groupEnd();
 }
 
 /// This is just css changes for iframes. When the combat tracker or jitsi windows are shown/hidden this is called.
 function reposition_enounter_combat_tracker_iframe() {
-
+	console.group("reposition_enounter_combat_tracker_iframe");
 	if (window.EncounterHandler === undefined) {
 		// only the DM should have an EncounterHandler. If they don't for some reason, we have a problem.
 		if (window.DM) {
 			console.warn("reposition_enounter_combat_tracker_iframe was called without an EncounterHandler!!!");
 		}
+		console.groupEnd();
 		return;
 	}
-
-	console.debug("reposition_enounter_combat_tracker_iframe starting");
 
 	let maxHeight = $("#jitsi_container").length == 0 ? "89%" : "78%"; // if the video is on, don't cover it
 	let left = $("#combat_tracker_inside").is(":visible") ? $("#combat_tracker_inside").width() + 10 : 10; // place it just to the right of the combat tracker
@@ -836,7 +937,7 @@ function reposition_enounter_combat_tracker_iframe() {
 		window.EncounterHandler.combat_iframe.height()
 	);	
 	window.EncounterHandler.combat_iframe.css("height", iframeHeight > 20 ? `${iframeHeight}px` : maxHeight);
-	console.debug("reposition_enounter_combat_tracker_iframe finished");
+	console.groupEnd();
 }
 
 /// the gamelog has a `Send to (Default)` button that toggles dice rolls between `Self` and `Everyone`. The combat iframe also has a gamelog so this function keeps it synchronized with the visible gamelog. 
@@ -888,16 +989,19 @@ function frame_z_index_when_click(moveableFrame){
 
 /// This will create and load a new iframe. Once fully loaded, it will call `window.EncounterHandler.combat_iframe_did_load();`
 function init_enounter_combat_tracker_iframe() {
+	console.group("init_enounter_combat_tracker_iframe");
 	if (window.EncounterHandler === undefined) {
 		// only the DM should have an EncounterHandler. If they don't for some reason, we have a problem.
 		if (window.DM) {
 			console.warn("init_enounter_combat_tracker_iframe was called without an EncounterHandler");
-		}		
+		}
+		console.groupEnd();
 		return;
 	}
 
 	if (!window.EncounterHandler.has_avtt_encounter()) {
 		console.warn("init_enounter_combat_tracker_iframe was called without an encounter");
+		console.groupEnd();
 		return;
 	}
 
@@ -1040,6 +1144,7 @@ function init_enounter_combat_tracker_iframe() {
 		});
 	});
 
+
 	if (window.DM) {
 
 		let draggable_resizable_div = $(`<div id='resizeDragMon' class='hideMon'></div>`)
@@ -1111,8 +1216,8 @@ function init_enounter_combat_tracker_iframe() {
 	
 	}
 	else {
-		$("body").append(iframe);	
-		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
+		$("body").append(iframe);
+	  iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);	  
 	}
-		
+	console.groupEnd();
 }

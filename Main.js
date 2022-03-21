@@ -2694,7 +2694,7 @@ $(function() {
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
 	if(is_dm){
-		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
+		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link' style='position:relative'>JOIN AS DM</a>"));
 		warningDiv.append($("<a class='ddb-campaigns-warning-div' style='color: #333; padding-left: 15%'>If you press 'RESET INVITE LINK' you will lose your cloud data!</a>"));
 		warningtitleDiv.append($("<a class='above-vtt-warning-secondary-div' style='color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto; background-color: #fff; border: 2px solid #c53131; border-radius: 4px; padding: 10px 145px 30px 145px;'>WARNING FOR ABOVEVTT!!!</a>"));
 	}
@@ -2824,6 +2824,7 @@ $(function() {
 
 	$(".joindm").click(function(e) {
 		e.preventDefault();
+		$(".joindm").addClass("button-loading");
 		gather_pcs();
 		window.EncounterHandler = new EncounterHandler(function() {
 			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true && window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
@@ -2838,6 +2839,7 @@ $(function() {
 				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 				init_above();
 			}
+			$(".joindm").removeClass("button-loading");
 		});
 	});
 	

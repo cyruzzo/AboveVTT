@@ -240,7 +240,11 @@ class JournalManager{
 			draggable: true,
 			width: 800,
 			height: 600,
-			position: [200,100],
+			position:{
+			   my: "center",
+			   at: "center-200",
+			   of: window
+			},
 			close: function( event, ui ) {
 				$(this).remove();
 				}
@@ -311,7 +315,11 @@ class JournalManager{
 			draggable: true,
 			width: 800,
 			height: 600,
-			position: [200,100],
+			position: {
+			   my: "center",
+			   at: "center-200",
+			   of: window
+			},
 			close: function( event, ui ) {
 				console.log(event);
 				let taid=$(event.target).find("textarea").attr('id');

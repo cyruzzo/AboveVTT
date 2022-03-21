@@ -214,7 +214,8 @@ function update_monster_row(monsterRow) {
 	let avatar = monsterRow.find(".monster-row__cell--avatar");
 	avatar.attr('data-monster', monsterId);
 	avatar.attr('data-name', monsterName);
-	make_element_draggable_token(avatar, true);
+	// this is currently broken as of the update to jquery 3.6.0. https://github.com/cyruzzo/AboveVTT/issues/287
+	// make_element_draggable_token(avatar, true);
 	avatar.click(function(event) {
 		event.stopPropagation();
 		event.preventDefault();
