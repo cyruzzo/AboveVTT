@@ -731,7 +731,7 @@ function open_monster_stat_block_with_stat(stat, tokenId) {
 	window.EncounterHandler.currently_open_token_id = tokenId;
 
 	//unhide monster frame
-	$("#resizeDragMon").removeClass("hideMon")
+	$("#resizeDragMon").removeClass("hideMon");
 
 
 
@@ -1144,7 +1144,7 @@ function init_enounter_combat_tracker_iframe() {
 
 	if (window.DM) {
 
-		let draggable_resizable_div = $(`<div id='resizeDragMon' class='hideMon'></div>`)
+		let draggable_resizable_div = $(`<div id='resizeDragMon' class='hideMon'></div>`);
 
 		$("body").append(draggable_resizable_div);	
 		$("#resizeDragMon").append(iframe);
