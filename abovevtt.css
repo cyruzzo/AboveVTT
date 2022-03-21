@@ -162,7 +162,6 @@ button.gamelog-to-everyone-button {
     max-height: 100%;
     overflow-y: auto;
     border: solid black 1px;
-    z-index: 2;
 }
 
 div.ct-sidebar__controls {
@@ -199,7 +198,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     justify-content: center;
     width: 75px;
     top: 2px;
-    z-index: 9999;
+    z-index: 57000;
 }
 
 #scene_selector_toggle > span {
@@ -231,8 +230,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet iframe {
     border: none;
     position: absolute;
-    height: auto;
-    width: 100%;
     top: 24px;
     left: 0px;
     right: 0px;
@@ -247,10 +244,201 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 }
 #sheet.open {
     transform: translateX(-1370px);
-    transition: 0.5s ease-in-out;
     z-index: 99999999;
 }
 
+/*for resizable and moveable monsters and sheets in DM view*/
+
+#sheet{
+    left: 20px;
+    right: auto;
+    display: none;
+    position: fixed !important;
+    border-radius: 5px; 
+    z-index: 10010;
+    border: 1px solid gray;  
+    top: 20px;
+    bottom: auto;
+    height: calc(100vh - 40px);
+}
+
+#sheet.open{
+    display: block !important;  
+    transition: none;
+    transform: none;
+    backdrop-filter: opacity(0);
+    cursor: move;
+    z-index:  49000;
+}
+
+#resizeDragMon{
+    display: flex;
+    left: 40px;
+    top: 80px;
+    right: auto;
+    width: 400px;
+    height: 85%;
+    position: fixed !important;
+    opacity: 1;
+    background: #242527;  
+    cursor: move;   
+    z-index: 49000;
+    max-width: 98%;
+    max-height: 98%;
+    border-radius: 3px;   
+    border: 1px solid gray;
+}  
+
+#resizeDragMon.hideMon{
+    visibility: hidden;
+}
+
+#sheet iframe{
+    width: 100%;
+    height: calc(100% - 25px) !important;
+    border-radius: 3px;   
+}
+
+
+#resizeDragMon iframe{
+    width: 100%;
+    height: calc(100% - 20px) !important;
+    position: absolute;
+    left: 0;
+    top: 20px;
+    max-height: 100%;
+    border-radius: 3px 0px;  
+}
+
+
+#resizeDragMon iframe{
+    z-index: -10000;
+}
+
+#resizeDragMon:visible iframe{
+    z-index: 10000;
+}
+
+.ui-resizable-handle{
+    z-index: 50100 !important;
+}
+.iframeResizeCover{
+    z-index:9999999;
+    position:absolute;
+    width:calc(100% + 200px);
+    height:calc(100% + 200px);
+    display: block;
+    right:-100px;
+    bottom:-100px;
+    top:-100px;
+    left:-100px;
+}
+
+#combat_tracker_inside {
+    position: fixed;
+    height: 450px;
+}
+
+#combat_tracker_inside .ui-resizable-s,
+#combat_tracker_inside .ui-resizable-se,
+#combat_tracker_inside .ui-resizable-sw{
+    bottom:-25px;  
+}
+
+#combat_tracker_inside .ui-resizable-e,
+#combat_tracker_inside .ui-resizable-w  {
+    height: calc(100% + 25px);  
+}
+
+
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
+    bottom: 0;  
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w  {
+    height: 100%;  
+}
+#combat_tracker_inside #combat_area{
+    width: 100%;
+}
+
+#combat_tracker_inside .ui-resizable-se{
+    right: -3px;
+    bottom: -22px;
+}
+div#combat_button {
+    z-index: 57000;
+    position: fixed;
+}
+.ui-resizable-s{
+    background:  transparent;
+    border:  none;
+}
+#combat_tracker{
+    width: 0px;
+}
+ul.context-menu-list.context-menu-root{
+    z-index: 51000;
+}
+#windowContainment{
+    height:  100vh;
+    width:  100vw;
+    pointer-events:  none;
+    display:  block !important;
+    position:  fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+div.top_menu.visible,
+.ddbc-tab-options--layout-pill{
+    z-index: 57000;
+}
+
+#scene_selector{
+	z-index: 58000;
+}
+#combat_footer,
+#combat_tracker_inside{
+	border-style: solid;
+	border-color: #ddd; 
+}
+#combat_footer{
+	border-width: 0px 1px 1px 1px;
+	border-radius: 0px 0px 5px 5px; 
+	left: -1px;
+	right: -1px;
+	position: absolute;
+}
+
+#combat_footer button{
+	flex-grow: 1;   
+}
+#combat_footer{
+	display: flex;   
+}
+#combat_tracker_inside {
+	border-width: 1px 1px 0px 1px;
+    border-radius: 5px 5px 0 0;
+    width: 250px;
+}
+#combat_tracker_inside #combat_footer button:last-of-type{
+	border-bottom-right-radius: 5px;   
+}
+#combat_tracker_inside #combat_footer button:first-of-type{
+	border-bottom-left-radius: 5px; 
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+
+/*end resizeable*/
 #addscene {
     margin: 5px;
 }
@@ -448,7 +636,7 @@ div#scene_properties form > div {
 #zoom_buttons {
     position: absolute;
     top: -3px;
-    z-index: 60;
+    z-index: 57000;
     display: flex;
     flex-direction: row;
 }
@@ -473,7 +661,6 @@ div#scene_properties form > div {
     min-width: 200px;
     width: calc(100vw - 720px);
     max-width: 748px;
-    z-index: 9999;
     border: solid black 2px;
     overflow: auto;
 }
@@ -2330,3 +2517,4 @@ button.avtt-roll-button {
         transform: rotate(1turn);
     }
 }
+

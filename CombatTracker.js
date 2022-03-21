@@ -4,7 +4,7 @@ function init_combat_tracker(){
 	
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
-	ct.css("z-index", 1)
+	ct.css("z-index", 49000)
 	
 	toggle=$("<div id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</div>");
 	toggle.click(function(){
@@ -27,7 +27,6 @@ function init_combat_tracker(){
 	ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
 	ct.append(ct_inside);
-	
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_list_wrapper.append(ct_area);
@@ -155,6 +154,48 @@ function init_combat_tracker(){
 	}
 
 	$("#site").append(ct);
+	/*draggable and resizeable combat tracker - set which frame should be on top and remove others. Cover iframes to prevent mouse interference*/
+	$("#combat_tracker").addClass("moveableWindow");
+	$("#combat_tracker_inside").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+
+			}
+		});
+	$("#combat_tracker_inside").resizable({
+		addClasses: false,
+		handles: "all",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 215,
+		minHeight: 200
+	});
+	
+	$("#combat_tracker").mousedown(function() {
+		frame_z_index_when_click($(this));
+	});
+}
+
+function frame_z_index_when_click(moveableFrame){
+	//move frames behind each other in the order they were clicked
+	if(moveableFrame.css('z-index') != 50000) {
+		moveableFrame.css('z-index', 50000);
+		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
+			$(this).css('z-index',($(this).css('z-index')-1));
+		});
+	}
 }
 
 function ct_reorder(persist=true) {

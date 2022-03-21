@@ -1572,6 +1572,7 @@ function init_things() {
 		init_ui();
 		init_splash();
 	}
+	$("#site").append("<div id='windowContainment'></div>");
 		
 }
 
@@ -1590,7 +1591,7 @@ function init_character_page_sidebar() {
 	// open the gamelog, and lock it open
 	$(".ct-character-header__group--game-log").click();
 	$(".ct-sidebar__control--unlock").click();
-	
+
 	// after that click, give it a second to inject and render the sidebar
 	setTimeout(function() {
 
@@ -2231,6 +2232,9 @@ function init_ui() {
 			//e.preventDefault();
 			curDown = true;
 			$("body").css("cursor", "grabbing");
+			//cover iframes so you can drag through windows
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			//return false;
 		}
 	}
@@ -2239,6 +2243,8 @@ function init_ui() {
 	function mouseup(event) {
 		curDown = false;
 		$("body").css("cursor", "");
+		//remove iframe cover that prevents mouse interaction
+		$('.iframeResizeCover').remove();
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
@@ -2553,7 +2559,7 @@ function init_buttons() {
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
-	buttons.css("z-index", '2');
+	buttons.css("z-index", '57000');
 
 
 	// HIDE default SEND TO functiontality in the campaign page:

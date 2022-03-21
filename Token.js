@@ -934,6 +934,9 @@ class Token {
 			tok.draggable({
 				stop:
 					function (event) {
+						//remove cover for smooth drag
+						$('.iframeResizeCover').remove();
+			
 						// this should be a XOR... (A AND !B) OR (!A AND B)
 						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 						console.log("shallwesnap",shallwesnap);
@@ -1032,6 +1035,10 @@ class Token {
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
+					
+					// for dragging behind iframes so tokens don't "jump" when you move past it
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 
 					console.log("Click x: " + click.x + " y: " + click.y);
 
