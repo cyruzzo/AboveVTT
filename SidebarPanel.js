@@ -195,8 +195,8 @@ class SidebarPanel {
     let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`);
     let urlInput = $(`<input title="${titleText}" placeholder="https://..." name="addCustomImage" type="text" />`);
     urlInput.on('keyup', function(event) {
-      let imageUrl = event.target.value;
-      if (event.key == "Enter" && imageUrl != undefined && imageUrl.length > 0) {
+      let imageUrl = parse_img(event.target.value);
+      if (event.key == "Enter" && imageUrl !== undefined && imageUrl.length > 0) {
         if(imageUrl.startsWith("data:")){
           alert("You cannot use urls starting with data:");
           return;

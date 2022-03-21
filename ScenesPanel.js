@@ -209,11 +209,8 @@ function edit_scene_dialog(scene_id) {
 				nValue = $(this).val();
 			}
 
-			if ( ((n === 'player_map') || (n==='dm_map'))   
-					&& nValue.startsWith("https://drive.google.com")
-					&& nValue.indexOf("uc?id=") < 0
-			) {
-				nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
+			if ( ((n === 'player_map') || (n==='dm_map')) ) {
+				nValue = parse_img(nValue);
 			}
 
 			scene[n] = nValue;
@@ -788,6 +785,7 @@ function refresh_scenes() {
 				window.PLAYER_SCENE_ID=window.ScenesHandler.scenes[scene_id].id;
 				refresh_scenes();
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
+				add_zoom_to_storage(window.ZOOM)
 			});
 			
 			let switch_dm=$("<button>DM</button>");
@@ -800,6 +798,7 @@ function refresh_scenes() {
 					switch_dm: true
 				};
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
+				add_zoom_to_storage(window.ZOOM)
 			});
 			if(scene.player_map){
 				switch_players.removeAttr("disabled");
@@ -809,7 +808,7 @@ function refresh_scenes() {
 				switch_players.attr("disabled","true");
 				switch_dm.attr("disabled","true");
 			}
-
+			
 			controls.append(switch_players);
 			controls.append(switch_dm);
 		}

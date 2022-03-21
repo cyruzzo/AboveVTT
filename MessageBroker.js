@@ -302,6 +302,7 @@ class MessageBroker {
 			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
 		}
 
+		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
 
@@ -395,10 +396,13 @@ class MessageBroker {
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
-					let fake=$("<div/>");
-					fake.attr(msg.data);
-					token_button({target:fake.get(0)});
-					fake.remove();
+					let left = parseInt(msg.data.left);
+					let top = parseInt(msg.data.top);
+					if (!isNaN(top) && !isNaN(left)) {
+						place_token_at_point(msg.data, left, top);
+					} else {
+						place_token_in_center_of_map(msg.data);
+					}
 				}
 			}
 
@@ -601,6 +605,14 @@ class MessageBroker {
 				self.handlePlayerData(msg.data);
 			}
 			if (msg.eventType == "dice/roll/pending"){
+				// Hook requestAnimationFrame so DDB's animated dice rolls keep rolling when focus is lost
+				// We hook only if the roll originated from self
+				if (this.origRequestAnimFrame == null &&
+				    ((window.DM && msg.data.context.entityType === "user") || window.PLAYER_ID == msg.data.context.entityId)) {
+					console.log("Hooking requestAnimationFrame for dice roll");
+					this.origRequestAnimFrame = window.requestAnimationFrame;
+					window.requestAnimationFrame = function(cb) { setTimeout(cb, 33); }
+				}
 				// check for injected_data!
 				if(msg.data.injected_data){
 					notify_gamelog();
@@ -719,11 +731,16 @@ class MessageBroker {
 			}
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
+				if (this.origRequestAnimFrame != null) {
+					console.log("Stop hooking requestAnimationFrame for dice roll");
+					window.requestAnimationFrame = this.origRequestAnimFrame;
+					this.origRequestAnimFrame = null;
+				}
+
 				notify_gamelog();
-								if (!window.DM)
+				if (!window.DM)
 					return;
 				
-					
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action == "Initiative") {
 					console.log(msg.data);
@@ -961,6 +978,7 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
+		console.group("handlescene")
 		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
@@ -995,7 +1013,6 @@ class MessageBroker {
 		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
 		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
-		
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 
@@ -1003,9 +1020,9 @@ class MessageBroker {
 		$("#scene_map").attr('src', data.map);
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
+			console.group("load_scenemap callback")
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
-
 			if (window.CURRENT_SCENE_DATA.scale_factor) {
 				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
 				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
@@ -1013,10 +1030,9 @@ class MessageBroker {
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
-			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400);
+			apply_zoom_from_storage();
+
+			set_default_vttwrapper_size()
 			if(!window.DM)
 				check_token_visibility();
 
@@ -1035,7 +1051,7 @@ class MessageBroker {
 				console.log("Updating avtt encounter");
 				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 			}
-
+			console.groupEnd()
 		});
 
 
@@ -1075,6 +1091,7 @@ class MessageBroker {
 			$("#combat_area").empty();
 			ct_load();
 		}
+		console.groupEnd()
 	}
 
 	handleSyncMeUp(msg) {
@@ -1258,7 +1275,6 @@ class MessageBroker {
 			self.loadAboveWS(null);
 		}
 	}
-
 }
 
 function monitor_messages() {
