@@ -669,7 +669,7 @@ function close_monster_stat_block() {
 		click_combat_monster_with_name(window.EncounterHandler.currently_open_monster_name, window.EncounterHandler.currently_open_monster_id);
 	}
 
-	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000, "visibility": "hidden" });
+	$(".iframe-encounter-combat-tracker").css({ "z-index": -10000 });
 	window.EncounterHandler.currently_open_monster_name = undefined;
 	window.EncounterHandler.currently_open_monster_id = undefined;
 	window.EncounterHandler.currently_open_token_id = undefined;
