@@ -1,4 +1,4 @@
-var abovevtt_version = '0.71';
+var abovevtt_version = '0.72';
 
 function parse_img(url){
 	if (url === undefined) {
@@ -695,7 +695,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.8</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.72</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -713,13 +713,12 @@ function init_splash() {
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></div>
 		</div>
 		<div class="splashLinkRow">
-			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></div>
 		</div>
 
 	</div>
-
+	<div style='padding-top:10px;'>Project Owner/Founder: <b>Daniele <i>cyruzzo</i> Martini</b></div>
 	</div>
 	`
 	);
@@ -737,17 +736,16 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></li>");
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
-	cont.append("Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b>");
-	cont.append("<br>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael</b>");
-	//cont.append("<h3>Patreon Supporters</h3>");
+	cont.append("");
+	cont.append("<br>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria</b>");
 
-	cont.append("<br>AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>. Here's a list of the current supporters");
+	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
 	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Max Puplett","Jordan Cohen","MichaelSaintGregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","DreadPirateMittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey","Mike Miller"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","JoaquinAtwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson","Joe King","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Eric Mason","Avilar","Don Clemson","Bain .",];
-	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Joseph Bendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Kyle Kroeker","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Jason Sas","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel @ the Digital Art Ranch","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson"];
+	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","TheDreadPirateMittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","JoaquinAtwoodWard","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Eric Mason","Avilar","Don Clemson","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","JosephBendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","ChristianJohansson","Kat Wells","DH Ford","Dirk Wynkoop","MichaelAugusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","RobertSanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","CiaraMcCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","NickolasOlmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","MarshallSúileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -768,7 +766,7 @@ function init_splash() {
 	patreons.append(l3div);
 	patreons.append(l3ul);
 	for (i = 0; i < l3.length; i++)
-		l3ul.append($("<li/>").text(l3[i]));
+		l3ul.append($("<li/>").text(l3[i].replaceAll(" ","")));
 
 	//patreons.append(l1div).append(l2div).append(l3div)
 
