@@ -45,7 +45,7 @@ class EncounterHandler {
 		this.fetch_feature_flags(function() {
 			window.EncounterHandler.fetch_all_encounters(function () {
 				window.EncounterHandler.delete_all_avtt_encounters(function () {
-					window.EncounterHandler.create_avtt_encounter(function() {
+					window.EncounterHandler.fetch_or_create_avtt_encounter(function() {
 						callback();
 					});
 				});
