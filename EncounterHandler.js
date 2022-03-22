@@ -274,6 +274,12 @@ class EncounterHandler {
 
 		console.log(JSON.stringify(window.EncounterHandler.encounters));
 
+		if (is_encounters_page()) {
+			// we're already on an encounter page so don't delete it!
+			callback();
+			return;
+		}
+
 		get_cobalt_token(function (token) {
 			for (let encounterId in window.EncounterHandler.encounters) {
 				let encounter = window.EncounterHandler.encounters[encounterId];
