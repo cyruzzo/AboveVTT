@@ -677,13 +677,16 @@ function drawing_mousedown(e) {
 		if (e.which == 1) {
 			$("#fog_overlay").css('cursor', 'crosshair');
 		}
+		if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible").length>0){
+			return;
+		}
 	}
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
 	if (e.button != 0)
 		return;
-	deselect_all_tokens();
+
 	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
 		deselect_all_tokens();
 	}
