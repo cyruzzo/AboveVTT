@@ -2308,6 +2308,13 @@ button.avtt-roll-button {
 }
 /*end combat tracker face lift*/
 
+#VTT{
+	z-index:2;
+}
+.top_menu.visible{
+	z-index: 57000;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;
@@ -2330,3 +2337,4 @@ button.avtt-roll-button {
         transform: rotate(1turn);
     }
 }
+
