@@ -324,7 +324,7 @@ class Token {
 				);
 			}
 		}
-
+		this.toggle_player_selectable(old)
 	}
 
 
@@ -584,6 +584,29 @@ class Token {
 		} else {
 			return [cond, moreCond];
 		}
+	}
+
+	toggle_player_selectable(token){
+		console.group("toggle_player_selectable")
+		if (!window.DM){
+			console.log("bain not the DM")
+			let classesThatAllowSelect = ["ui-draggable", "ui-draggable-handle", "hasTooltip", "ui-draggable-disabled"]
+			if (this.options.locked && this.options.restrictPlayerMove){
+				console.log("bain, removing classes")
+				token.removeClass(...classesThatAllowSelect)
+				token.find("img").css("cursor","default")
+			}
+			else{
+				classesThatAllowSelect.forEach((c) => {
+					if (!token.hasClass(c)){
+						console.log("bain, adding classes back in")
+						token.addClass(c)
+					}
+				})
+				token.find("img").css("cursor","move")
+			}
+		}
+		console.groupEnd()
 	}
 
 
@@ -1184,6 +1207,8 @@ class Token {
 
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
+		let token = $("#tokens").find(selector);
+		this.toggle_player_selectable(token)
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
