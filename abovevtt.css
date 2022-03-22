@@ -2025,7 +2025,7 @@ button.avtt-roll-button {
     pointer-events: none;
 }
 
-#VTTWRAPPER{
+#VTT{
 	z-index:2;
 }
 .top_menu.visible{
