@@ -1165,8 +1165,6 @@ class Token {
 				}
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
-					// TODO this doesn't work as this is the image and not the token class
-
 					toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
 				} else {
 					parentToken.removeClass('tokenselected');
