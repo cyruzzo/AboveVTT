@@ -672,14 +672,15 @@ function drawing_mousedown(e) {
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
 
+	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible").length>0){
+		return;
+	}
+
 	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "50");
 		if (e.which == 1) {
 			$("#fog_overlay").css('cursor', 'crosshair');
-		}
-		if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible").length>0){
-			return;
-		}
+		}		
 	}
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
