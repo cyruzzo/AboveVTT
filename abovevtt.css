@@ -2032,6 +2032,10 @@ button.avtt-roll-button {
 .ddbc-tab-options--layout-pill{
 	z-index: 57000;
 }
+#prewiz, 
+#wizard_popup{
+    z-index: 58000;
+}
 
 .button-loading::after {
     content: "";
