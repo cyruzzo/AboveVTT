@@ -964,7 +964,7 @@ function sync_send_to_default() {
 		return;
 	}
 
-	let encounterSendToText = $(".MuiButtonBase-root.MuiButton-root.gl1 .MuiButton-label.gl2").text();
+	let encounterSendToText = $("[class*='Container-Flex']  .MuiButtonBase-root.MuiButton-text").textContent;
 	window.EncounterHandler.combat_body.find(".MuiList-root.MuiMenu-list .MuiListItemText-root").each(function() {
 		if (this.textContent.includes(encounterSendToText)) {
 			console.debug(`sync_send_to_default is about to click ${this}`);
