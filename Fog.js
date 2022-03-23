@@ -672,7 +672,7 @@ function drawing_mousedown(e) {
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
 
-	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible").length>0){
+	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
 		return;
 	}
 
