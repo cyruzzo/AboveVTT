@@ -365,7 +365,7 @@ class Token {
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
 		}
-		this.toggle_player_selectable(old)
+		toggle_player_selectable(this, old)
 		console.groupEnd()
 	}
 
@@ -628,30 +628,6 @@ class Token {
 		}
 	}
 
-	toggle_player_selectable(token){
-		console.group("toggle_player_selectable")
-		if (!window.DM){
-			console.log("bain not the DM")
-			let classesThatAllowSelect = ["ui-draggable", "ui-draggable-handle", "hasTooltip", "ui-draggable-disabled"]
-			if (this.options.locked && this.options.restrictPlayerMove){
-				console.log("bain, removing classes")
-				token.removeClass(...classesThatAllowSelect)
-				token.find("img").css("cursor","default")
-			}
-			else{
-				classesThatAllowSelect.forEach((c) => {
-					if (!token.hasClass(c)){
-						console.log("bain, adding classes back in")
-						token.addClass(c)
-					}
-				})
-				token.find("img").css("cursor","move")
-			}
-		}
-		console.groupEnd()
-	}
-
-
 	place(animationDuration) {
 		
 		if(!window.CURRENT_SCENE_DATA){
@@ -776,6 +752,7 @@ class Token {
 
 			if (this.selected) {
 				old.addClass("tokenselected");
+				toggle_player_selectable(this, old)
 			}
 			else {
 				old.css("border", "");
@@ -1188,6 +1165,8 @@ class Token {
 				}
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
+					// TODO this doesn't work as this is the image and not the token class
+					toggle_player_selectable(this, parentToken)
 				} else {
 					parentToken.removeClass('tokenselected');
 				}				
@@ -1212,7 +1191,7 @@ class Token {
 		let token = $("#tokens").find(selector);
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
-		this.toggle_player_selectable(token)
+		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
 	}
@@ -1244,6 +1223,30 @@ class Token {
 		return storedValue;
 	}
 	
+}
+
+function toggle_player_selectable(tokenInstance, token){
+	console.group("toggle_player_selectable", tokenInstance)
+	if (!window.DM){
+		console.log("bain not the DM")
+		let classesThatAllowSelect = ["ui-draggable", "ui-draggable-handle", "hasTooltip", "ui-draggable-disabled", "tokenselected"]
+		if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove){
+			tokenInstance.selected = false
+			console.log("bain, removing classes", ...classesThatAllowSelect)
+			token.removeClass(classesThatAllowSelect.join().replaceAll(","," "))
+			token.find("img").css("cursor","default")
+		}
+		else{
+			classesThatAllowSelect.forEach((c) => {
+				if (!token.hasClass(c)){
+					console.log("bain, adding classes back in")
+					token.addClass(c)
+				}
+			})
+			token.find("img").css("cursor","move")
+		}
+	}
+	console.groupEnd()
 }
 
 // Stop the right click mouse down from cancelling our drag
