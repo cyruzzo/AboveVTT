@@ -1166,7 +1166,8 @@ class Token {
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
 					// TODO this doesn't work as this is the image and not the token class
-					toggle_player_selectable(this, parentToken)
+
+					toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
 				} else {
 					parentToken.removeClass('tokenselected');
 				}				
@@ -2339,6 +2340,7 @@ function draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
+		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(`div[data-id=${id}]`))
 		if (window.TOKEN_OBJECTS[id].selected) {
 			window.CURRENTLY_SELECTED_TOKENS.push(id);
 		}
