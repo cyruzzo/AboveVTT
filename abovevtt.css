@@ -2025,6 +2025,17 @@ button.avtt-roll-button {
     pointer-events: none;
 }
 
+#VTT{
+	z-index:2;
+}
+.top_menu.visible{
+	z-index: 57000;
+}
+#prewiz, 
+#wizard_popup{
+    z-index: 58000;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;
@@ -2047,3 +2058,4 @@ button.avtt-roll-button {
         transform: rotate(1turn);
     }
 }
+
