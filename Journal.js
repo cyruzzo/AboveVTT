@@ -322,7 +322,7 @@ class JournalManager{
 			},
 			relative_urls : false,
 			remove_script_host : false,
-			convert_urls : true
+			convert_urls : true,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
 				let note_id = $(this.getElement()).attr('data-note-id');
