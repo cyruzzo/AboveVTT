@@ -1018,8 +1018,9 @@ function drawing_mouseup(e) {
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				// DM can always select tokens, but players can only select non-hidden tokens
-				curr.selected = true;
+				if($("#tokens>div[data-id='" + curr.options.id + "']").css("pointer-events")!="none") {
+					curr.selected = true;
+				}
 			}
 			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
 			curr.place();

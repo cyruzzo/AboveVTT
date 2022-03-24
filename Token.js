@@ -1224,28 +1224,22 @@ class Token {
 	
 }
 
+/**
+ * disables player selection of a token when token is locked & restricted
+ * @param tokenInstance token instance ofc
+ * @param token jquery selected div with the class token
+ */
 function toggle_player_selectable(tokenInstance, token){
 	console.group("toggle_player_selectable", tokenInstance)
-	if (!window.DM){
-		console.log("bain not the DM")
-		let classesThatAllowSelect = ["ui-draggable", "ui-draggable-handle", "hasTooltip", "ui-draggable-disabled", "tokenselected"]
-		if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove){
-			tokenInstance.selected = false
-			console.log("bain, removing classes", ...classesThatAllowSelect)
-			token.removeClass(classesThatAllowSelect.join().replaceAll(","," "))
-			token.find("img").css("cursor","default")
-		}
-		else{
-			classesThatAllowSelect.forEach((c) => {
-				if (!token.hasClass(c)){
-					console.log("bain, adding classes back in")
-					token.addClass(c)
-				}
-			})
-			token.find("img").css("cursor","move")
-		}
+	if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove && $(".body-rpgcharacter-sheet").length>0){
+		token?.css("cursor","default");
+		token?.css("pointer-events","none");
 	}
-	console.groupEnd()
+	else{
+		token?.css("cursor","move");
+		token?.css("pointer-events","auto");
+	}
+	console.groupEnd();
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -2338,7 +2332,9 @@ function draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
-		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(`div[data-id=${id}]`))
+		console.log(id)
+		let selector = "div[data-id='" + id + "']";
+		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {
 			window.CURRENTLY_SELECTED_TOKENS.push(id);
 		}
