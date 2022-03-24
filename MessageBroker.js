@@ -392,6 +392,7 @@ class MessageBroker {
 			if(msg.eventType=="custom/myVTT/delete_token"){
 				let tokenid=msg.data.id;
 				if(tokenid in window.TOKEN_OBJECTS)
+					window.TOKEN_OBJECTS[tokenid].options.deleteableByPlayers = true;
 					window.TOKEN_OBJECTS[tokenid].delete(false,false);
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
