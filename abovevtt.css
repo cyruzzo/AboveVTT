@@ -2069,7 +2069,7 @@ input[type=roll_menu_roll]{
     flex: 1;
     overflow: auto;
     background-color: rgb(235, 241, 245);
-
+}
 .MuiModal-root{
     pointer-events: none;
 }
