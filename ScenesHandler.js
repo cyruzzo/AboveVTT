@@ -186,15 +186,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			reset_canvas();
 			redraw_canvas();
 			redraw_drawings();
-			window.ZOOM = (60.0 / window.CURRENT_SCENE_DATA.hpps);
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
-			window.scrollTo(200, 200);
-
-			$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 400);
-			$("#black_layer").width($("#scene_map").width() * window.ZOOM + 400);
-			$("#black_layer").height($("#scene_map").height() * window.ZOOM + 400)
+			set_default_vttwrapper_size()
 
 			let found_data_tokens=false;
 			for (const property in scene.tokens) {
@@ -377,7 +371,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 			}
 			else {
-				iframe.contents().find(".adventure-chapter-header a,li >strong>a").each(function(idx) {
+				let elements;
+				if(keyword=="cotn")
+					elements=iframe.contents().find("h3 >a");
+				else
+					elements=iframe.contents().find(".adventure-chapter-header a,li >strong>a")
+				elements.each(function(idx) {
 					var title = $(this).html();
 					var url = $(this).attr('href');
 					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');

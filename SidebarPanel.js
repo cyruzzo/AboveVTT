@@ -169,12 +169,8 @@ class SidebarPanel {
   }
 
   build_modal_wrapper() {
-    let sidebarContent = $(".sidebar__pane-content");
-    let width = parseInt(sidebarContent.width());
-    let top = parseInt(sidebarContent.position().top) + 2;
-    let height = parseInt(sidebarContent.height());
     return $(`
-      <div class="sidebar-modal" style="width:${width}px;top:${top}px;right:0px;left:auto;height:${height}px;position:fixed;">
+      <div class="sidebar-modal">
         <div class="sidebar-modal-background"></div>
       </div>
     `);
@@ -199,8 +195,8 @@ class SidebarPanel {
     let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`);
     let urlInput = $(`<input title="${titleText}" placeholder="https://..." name="addCustomImage" type="text" />`);
     urlInput.on('keyup', function(event) {
-      let imageUrl = event.target.value;
-      if (event.key == "Enter" && imageUrl != undefined && imageUrl.length > 0) {
+      let imageUrl = parse_img(event.target.value);
+      if (event.key == "Enter" && imageUrl !== undefined && imageUrl.length > 0) {
         if(imageUrl.startsWith("data:")){
           alert("You cannot use urls starting with data:");
           return;

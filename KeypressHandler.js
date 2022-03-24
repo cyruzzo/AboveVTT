@@ -71,6 +71,10 @@ Mousetrap.bind('=', function () {       //zoom plus
     $('#zoom_plus').click()
 });
 
+Mousetrap.bind('+', function () {       //zoom plus
+    $('#zoom_plus').click()
+});
+
 Mousetrap.bind('-', function () {       //zoom minus
     $('#zoom_minus').click()
 });

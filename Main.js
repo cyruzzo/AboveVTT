@@ -1,13 +1,16 @@
-var abovevtt_version = '0.71';
+var abovevtt_version = '0.72';
 
 function parse_img(url){
 	if (url === undefined) {
 		console.warn("parse_img was called without a url");
 		return "";
 	}
-	retval=url;
-	if(retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0)
-		retval='https://drive.google.com/uc?id=' + retval.split('/')[5];
+	retval = url;
+	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
+		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
+		retval = retval.split("?dl=")[0] + "?raw=1";
+	}
 	return retval;
 }
 
@@ -62,8 +65,11 @@ function validateUrl(value) {
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
 function change_zoom(newZoom, x, y) {
+	console.group("change_zoom")
+	console.log("zoom", newZoom, x , y)
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
+	// 200 is the size of the black area to the left and top of the map
 	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
 	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
 	window.ZOOM = newZoom;
@@ -71,12 +77,94 @@ function change_zoom(newZoom, x, y) {
 	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
 
 	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 1400)
+	set_default_vttwrapper_size()
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
+	console.groupEnd()
+}
+/** 
+* Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene
+* @param {float} z - current zoom level
+*/
+function add_zoom_to_storage(z){
+	console.group("add_zoom_to_storage")
+	console.log("storing zoom")
+	
+	if(window.ZOOM !== get_reset_zoom()){
+		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+		if (zoomIndex !== -1){
+			zooms[zoomIndex].zoom = z
+			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft())
+			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop())
+		}
+		else{
+			// zoom doesn't exist
+			zooms.push({
+				"title": window.CURRENT_SCENE_DATA.title,
+				"zoom":z,
+				"leftOffset": Math.round($(window).scrollLeft()),
+				"topOffset": Math.round($(window).scrollTop())
+			}); 
+		}
+		localStorage.setItem('zoom', JSON.stringify(zooms));
+	} else {console.log("zoom has not changed, skipping storage")}
+	
+	console.groupEnd("add_zoom_to_storage")
+}
+/** 
+* sets default values for VTTWRAPPER and black_layer based off zoom
+*/
+function set_default_vttwrapper_size(){
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
+}
+
+function remove_zoom_from_storage(){
+	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
+	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+	if (zoomIndex !== -1){
+		console.log("removing zoom from storage", zooms[zoomIndex])
+		zooms.splice(zoomIndex, 1)
+	}
+	localStorage.setItem('zoom', JSON.stringify(zooms));
+}
+
+/** 
+* Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found
+*/
+function apply_zoom_from_storage(){
+	console.group("apply_zoom_from_storage")
+	const zoomState = localStorage.getItem("zoom")
+	if (zoomState){
+		const zooms = JSON.parse(zoomState)
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
+		if(zoomIndex !== -1){
+			console.log("restoring zoom level", zooms[zoomIndex])
+			change_zoom(
+				zooms[zoomIndex].zoom,
+				undefined,
+				undefined,
+				false)
+			// this bit doesn't work
+			$(window).scrollLeft(zooms[zoomIndex].leftOffset);
+			$(window).scrollTop(zooms[zoomIndex].topOffset);
+			
+		}
+		else{
+			// zooms in storage but not for this scene
+			console.log("scene does not have a zoom stored")
+			reset_zoom()
+		}
+	}
+	else{
+		// no zooms in storage
+		console.log("no zooms in storage")
+		reset_zoom()
+	}
+	console.groupEnd()
 }
 
 function decrease_zoom() {
@@ -84,9 +172,37 @@ function decrease_zoom() {
 		change_zoom(window.ZOOM * 0.9)
 	}
 }
+/** 
+* gets the zoom value that will fit the map to the viewport
+* @return {float} 
+*/
+function get_reset_zoom () {
+	const wH = $(window).height();
+	const mH = $("#scene_map").height()
+	const wW = $(window).width();
+	const mW = $("#scene_map").width()
 
+	console.log(wH, mH, wW, mW)
+	return Math.min((wH / mH),(wW / mW))
+}
+
+/** 
+* entrypoint for user clicking the fit map button. will remove local storage state as by default this func is called when no state is found
+*/
 function reset_zoom () {
-	change_zoom(60.0 / window.CURRENT_SCENE_DATA.hpps);
+	console.group("reset_zoom")
+	console.log("zooming on centre of map")	
+	// change_zoom is great for mousezooming, but tricky when just hitting the centre of the map
+	// so don't give it any x/y and just use the scrollintoview center instead
+	change_zoom(get_reset_zoom(), undefined, undefined)
+	$("#scene_map")[0].scrollIntoView({
+		behavior: 'auto',
+		block: 'center',
+		inline: 'center'
+	});
+	// don't store any zoom for this scene as we default to map fit on load
+	remove_zoom_from_storage()
+	console.groupEnd()
 }
 
 function increase_zoom() {
@@ -579,7 +695,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.71.2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.72.3</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -597,13 +713,12 @@ function init_splash() {
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></div>
 		</div>
 		<div class="splashLinkRow">
-			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://trello.com/b/00FhvA1n/bugtracking'>Trello Roadmap</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></div>
 		</div>
 
 	</div>
-
+	<div style='padding-top:10px;'>Project Owner/Founder: <b>Daniele <i>cyruzzo</i> Martini</b></div>
 	</div>
 	`
 	);
@@ -621,17 +736,16 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></li>");
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
-	cont.append("Author, owner and technowizard: <b>Daniele <i>cyruzzo</i> Martini</b>");
-	cont.append("<br>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael</b>");
-	//cont.append("<h3>Patreon Supporters</h3>");
+	cont.append("");
+	cont.append("<br>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria</b>");
 
-	cont.append("<br>AboveVTT is not financed by any company. It started as a hobby project and I'm dedicating a lot of my time to it. It's totally opensource and there won't be any paid version. If you like it, and want to see it grow, please consider supporting me on <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a>. Here's a list of the current supporters");
+	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
 	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Max Puplett","Jordan Cohen","MichaelSaintGregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","DreadPirateMittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey","Mike Miller"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","JoaquinAtwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson","Joe King","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Eric Mason","Avilar","Don Clemson","Bain .",];
-	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Joseph Bendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Kyle Kroeker","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Jason Sas","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel @ the Digital Art Ranch","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson"];
+	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","TheDreadPirateMittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","JoaquinAtwoodWard","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Eric Mason","Avilar","Don Clemson","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","JosephBendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","ChristianJohansson","Kat Wells","DH Ford","Dirk Wynkoop","MichaelAugusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","RobertSanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","CiaraMcCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","NickolasOlmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","MarshallSúileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -652,7 +766,7 @@ function init_splash() {
 	patreons.append(l3div);
 	patreons.append(l3ul);
 	for (i = 0; i < l3.length; i++)
-		l3ul.append($("<li/>").text(l3[i]));
+		l3ul.append($("<li/>").text(l3[i].replaceAll(" ","")));
 
 	//patreons.append(l1div).append(l2div).append(l3div)
 
@@ -950,10 +1064,10 @@ function observe_character_sheet_aoe(documentToObserve) {
 					// grab feet (this should always exist)
 					feet = $(this).prev().children().first().children().first().text();
 
-					// drop the token
-					container.animate({opacity:"0.1"},1000);
-					setTimeout( ()=>drop_aoe_token(color, shape, feet),1000);
-					setTimeout( ()=>container.animate({opacity:"1.0"},2000),3000);
+					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
+					hide_player_sheet();
+					close_player_sheet();
+					drop_aoe_token(color, shape, feet);
 				});
 				return button;
 			});
@@ -1299,6 +1413,10 @@ function is_supported_version(versionString) {
 
 function init_above(){
 	console.log("init_above");
+
+	// WORKAROUND FOR ANNOYING DDB BUG WITH COOKIES AND UPVOTING STUFF
+	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
+	// END OF IT
 	//window.STARTING = true;
 	let gameId = find_game_id();
 
@@ -1398,6 +1516,9 @@ function init_things() {
 			init_ui();
 			if (is_encounters_page()) {
 
+				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
+				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
+
 				$("#site-main").css({"display": "block", "visibility": "hidden"});
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
@@ -1463,7 +1584,11 @@ function init_character_page_sidebar() {
 		}, 1000);
 		return;
 	}
+
+	// open the gamelog, and lock it open
 	$(".ct-character-header__group--game-log").click();
+	$(".ct-sidebar__control--unlock").click();
+	
 	// after that click, give it a second to inject and render the sidebar
 	setTimeout(function() {
 
@@ -1487,7 +1612,7 @@ function init_character_page_sidebar() {
 			"position": "fixed",
 			"bottom": "0px",
 			"top": "0px",
-			"z-index": 2
+			"z-index": 5
 		});
 		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
@@ -1891,7 +2016,7 @@ function inject_chat_buttons() {
 function init_ui() {
 	console.log("init_ui");
 	// ATTIVA GAMELOG
-	$(".gamelog-button").click();
+	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
 	if (!is_characters_page()) {
@@ -2018,7 +2143,7 @@ function init_ui() {
 	black_layer.css("opacity", "0");
 	$("body").append(black_layer);
 	black_layer.animate({ opacity: "1" }, 5000);
-	black_layer.css("z-index", "-1");
+	black_layer.css("z-index", "1");
 
 
 	if (!DM) {
@@ -2156,10 +2281,10 @@ function init_ui() {
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
-		let el=$("[src*=mega-menu]:nth-of-type(2)");
-		let s=el.attr("src");
+		let old=$("[src*=mega-menu]:nth-of-type(2)");
+		let s=old.attr("src");
+		let el=$("<"+old.prop('nodeName')+">");
 		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
-		el.detach();
 		$("#site").append(el);
 		setTimeout(function(){
 			console.log(2);
@@ -2508,6 +2633,9 @@ function init_loading_overlay_beholder() {
 		"right": "0px"
 	});
 	$("#loading_overlay").append(loadingIndicator);
+	// For safety reasons.. if something don't work.. it's better to just remove this overlay to make it easier to fix stuff
+	setTimeout(remove_loading_overlay,15000);
+
 }
 
 /// the first time the window loads, start doing all the things
@@ -2558,7 +2686,7 @@ $(function() {
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
 	if(is_dm){
-		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>JOIN AS DM</a>"));
+		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link' style='position:relative'>JOIN AS DM</a>"));
 		warningDiv.append($("<a class='ddb-campaigns-warning-div' style='color: #333; padding-left: 15%'>If you press 'RESET INVITE LINK' you will lose your cloud data!</a>"));
 		warningtitleDiv.append($("<a class='above-vtt-warning-secondary-div' style='color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto; background-color: #fff; border: 2px solid #c53131; border-radius: 4px; padding: 10px 145px 30px 145px;'>WARNING FOR ABOVEVTT!!!</a>"));
 	}
@@ -2688,6 +2816,7 @@ $(function() {
 
 	$(".joindm").click(function(e) {
 		e.preventDefault();
+		$(".joindm").addClass("button-loading");
 		gather_pcs();
 		window.EncounterHandler = new EncounterHandler(function() {
 			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true && window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
@@ -2702,6 +2831,7 @@ $(function() {
 				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 				init_above();
 			}
+			$(".joindm").removeClass("button-loading");
 		});
 	});
 	
@@ -3051,11 +3181,11 @@ function is_player_sheet_open() {
 function show_player_sheet() {
 	$(".ct-character-sheet__inner").css({
 		"visibility": "visible",
-		"z-index": 1
+		"z-index": 3
 	});
 	$(".site-bar").css({
 		"visibility": "visible",
-		"z-index": 1
+		"z-index": 3
 	});
 	if (window.innerWidth > 1540) { // DDB resize point + sidebar width 
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead

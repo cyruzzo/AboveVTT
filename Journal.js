@@ -240,7 +240,11 @@ class JournalManager{
 			draggable: true,
 			width: 800,
 			height: 600,
-			position: [200,100],
+			position:{
+			   my: "center",
+			   at: "center-200",
+			   of: window
+			},
 			close: function( event, ui ) {
 				$(this).remove();
 				}
@@ -290,7 +294,11 @@ class JournalManager{
 			draggable: true,
 			width: 800,
 			height: 600,
-			position: [200,100],
+			position: {
+			   my: "center",
+			   at: "center-200",
+			   of: window
+			},
 			close: function( event, ui ) {
 				console.log(event);
 				let taid=$(event.target).find("textarea").attr('id');
@@ -312,6 +320,9 @@ class JournalManager{
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
 				'videoembed': "/content/1-0-1688-0/js/tinymce/custom_plugins/videoembed/plugin.js",
 			},
+			relative_urls : false,
+			remove_script_host : false,
+			convert_urls : true,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
 				let note_id = $(this.getElement()).attr('data-note-id');

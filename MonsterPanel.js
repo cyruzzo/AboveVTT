@@ -53,6 +53,7 @@ function init_monster_panel_with_encounter() {
 				$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
 				$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
 				$(event.target).contents().find(".dice-toolbar").hide()
+				$(event.target).contents().find(".encounter-builder__tabs ul.ddb-tabs__tabs").hide()
 
 				monster_panel_did_load();
 			}, 2000);
@@ -93,6 +94,7 @@ function init_monster_panel_with_encounter() {
 					$(event.target).contents().find(".dice-die-button .dice-icon-die--d100").css("width", "101%");
 					$(event.target).contents().find(".dice_result__info .dice-icon-die--d100").css({ "width": "50%", "min-width": "50%" });
 					$(event.target).contents().find(".dice-toolbar").hide();
+					$(event.target).contents().find(".encounter-builder__tabs ul.ddb-tabs__tabs").hide()
 				}
 			}
 		});
@@ -212,7 +214,8 @@ function update_monster_row(monsterRow) {
 	let avatar = monsterRow.find(".monster-row__cell--avatar");
 	avatar.attr('data-monster', monsterId);
 	avatar.attr('data-name', monsterName);
-	make_element_draggable_token(avatar, true);
+	// this is currently broken as of the update to jquery 3.6.0. https://github.com/cyruzzo/AboveVTT/issues/287
+	// make_element_draggable_token(avatar, true);
 	avatar.click(function(event) {
 		event.stopPropagation();
 		event.preventDefault();
@@ -497,6 +500,7 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 			modalBody.empty();
 			removeAllButton.show();
 		}
+		imageUrl = parse_img(imageUrl);
 		add_custom_monster_image_mapping(monsterId, imageUrl);
 		let updatedImages = get_custom_monster_images(monsterId);
 		let imgIndex = updatedImages.indexOf(imageUrl);
@@ -557,7 +561,7 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 		addForAllButton.click(function(event) {
 			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
-				add_token_customization_image(imageUrl);
+				add_token_customization_image(parse_img(imageUrl));
 			}
 		});
 		inputWrapper.append(addForAllButton);
@@ -716,7 +720,20 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 		monster: monsterId
 	});
 
-	if (monsterId != undefined) {
+	if (monsterId !== undefined) {
+		var count = 1;
+		for (var tokenId in window.TOKEN_OBJECTS) {
+			if (window.TOKEN_OBJECTS[tokenId].options.monster == monsterId) {
+				count++;
+			}
+		}
+		if (count > 1) {
+			let color = TOKEN_COLORS[(count - 1) % 54];
+			console.log(`updating monster name with count: ${count}, and setting color: ${color}`);
+			options.name = `${name} ${count}`;
+			options.color = `#${color}`;
+		}
+	
 		options.stat = monsterId
 		window.StatHandler.getStat(monsterId, function(stat) {
 			options.sizeId = stat.data.sizeId;

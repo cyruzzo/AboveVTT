@@ -12,6 +12,8 @@ const externalDependencies = [
     "mousetrap.1.6.5.min.js",
     "purify.min.js",
     "rpg-dice-roller.bundle.min.js",
+    'jquery-ui.min.js',
+    'jquery-3.6.0.min.js',
 ]
 
 let out = "# This file was generated, to update it run `node lock.js`"
