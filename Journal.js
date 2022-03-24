@@ -309,20 +309,20 @@ class JournalManager{
 		
 		tinyMCE.init({
 			selector: '#' + tmp,
+   			height: 440,
 			menu: {},
-			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,videoembed',
-			toolbar: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,code,|,formatselect,|,alignleft,|,aligncenter,|,alignright,|,fontselect,|,fontsizeselect,|,forecolor,|,bullist,|,numlist,|,hr,|,removeformat,|,outdent,|,indent,|,spoiler,|,link,|,unlink,|,image,|,videoembed,|,|,codeBlock,|,dieroller',
+			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor',
+			toolbar: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,code,|,formatselect,|,alignleft,|,aligncenter,|,alignright,|,fontselect,|,fontsizeselect,|,forecolor,|,bullist,|,numlist,|,hr,|,removeformat,|,outdent,|,indent,|,spoiler,|,link,|,unlink,|,image,|,media,|,codeBlock,|,dieroller',
 			image_class_list: [
 				{title: 'None', value: ''},
 				{title: 'Magnify', value: 'magnify'},
 			],
 			external_plugins: {
-				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
-				'videoembed': "/content/1-0-1688-0/js/tinymce/custom_plugins/videoembed/plugin.js",
+				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js"
 			},
 			relative_urls : false,
 			remove_script_host : false,
-			convert_urls : true,
+			convert_urls : true
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
 				let note_id = $(this.getElement()).attr('data-note-id');
