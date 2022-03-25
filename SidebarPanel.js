@@ -214,6 +214,7 @@ class SidebarPanel {
           return;
         }	
         imageUrlEntered(imageUrl);
+        $(this).parent().find("input").val("")
       }
     });
 
