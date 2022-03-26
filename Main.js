@@ -939,7 +939,7 @@ function init_sheet(){
 	var buttonleft = 0;
 	var buttonprev = 0;
 
-	var close_button = $("<button>X</button>");
+	/*var close_button = $("<button>X</button>");
 
 	close_button.css("position", "absolute");
 	close_button.css('display', 'none');
@@ -952,7 +952,14 @@ function init_sheet(){
 	close_button.click(function() {
 		close_player_sheet();
 	});
-	container.append(close_button);
+	container.append(close_button);*/
+
+
+	const player_close_title_button=$('<div id="player_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	container.append(player_close_title_button);
+	player_close_title_button.click(function() {
+		close_player_sheet();
+	});
 
 	var reload_button = $("<button>🗘</button>");
 
@@ -969,7 +976,7 @@ function init_sheet(){
 	});
 	container.append(reload_button);
 	
-	var resize_button = $("<button>⇹</button>");
+	/*var resize_button = $("<button>⇹</button>");
 
 	resize_button.css("position", "absolute");
 	resize_button.css('display', 'none');
@@ -984,7 +991,7 @@ function init_sheet(){
 			container.addClass("thin");
 		}
 	});
-	container.append(resize_button);
+	container.append(resize_button);*/
 
 	//container.height($(".sidebar__inner").height() - 20);
 
@@ -1570,6 +1577,7 @@ function init_things() {
 		init_ui();
 		init_splash();
 	}
+	$("#site").append("<div id='windowContainment'></div>");
 		
 }
 
@@ -1588,7 +1596,7 @@ function init_character_page_sidebar() {
 	// open the gamelog, and lock it open
 	$(".ct-character-header__group--game-log").click();
 	$(".ct-sidebar__control--unlock").click();
-	
+
 	// after that click, give it a second to inject and render the sidebar
 	setTimeout(function() {
 
@@ -2229,6 +2237,9 @@ function init_ui() {
 			//e.preventDefault();
 			curDown = true;
 			$("body").css("cursor", "grabbing");
+			//cover iframes so you can drag through windows
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			//return false;
 		}
 	}
@@ -2237,6 +2248,8 @@ function init_ui() {
 	function mouseup(event) {
 		curDown = false;
 		$("body").css("cursor", "");
+		//remove iframe cover that prevents mouse interaction
+		$('.iframeResizeCover').remove();
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
@@ -2551,7 +2564,7 @@ function init_buttons() {
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
-	buttons.css("z-index", '2');
+	buttons.css("z-index", '57000');
 
 
 	// HIDE default SEND TO functiontality in the campaign page:
