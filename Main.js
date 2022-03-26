@@ -686,16 +686,37 @@ function ga_heartbeat() {
 }
 
 
-function init_splash() {
+
+async function init_splash() {
+	// post a message to be picked up by the load script
+	// which has access to the manifest file to see if we're in an unpacked extension
+	let version=null
+	function recieve_dev_mode(event) {
+		if(event.data?.type === "fromContent")
+			console.log("BAIN REQUEST FROM LOAD RECIEVED:", event.data.message)
+			window.isDevMode = event.data.message.isDevMode
+			
+			version = event.data.message.isDevMode ? `${event.data.message.version}-dev` : event.data.message.version
+			if (window.isDevMode){
+				window.removeEventListener('message', recieve_dev_mode);
+			}
+	}
+	window.addEventListener("message", recieve_dev_mode)
+
+	let message = "please"
+	window.postMessage({type: "requestDevMode", message})
+
 	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT');
 	ga('AboveVTT.send', 'pageview');
 
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
 
+	await new Promise(r => setTimeout(r, 2000));
+
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.72.3</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>"+version+"</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");

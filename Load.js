@@ -72,10 +72,38 @@ let scripts = [
 	{ src: "Main.js" }
 ]
 
+function is_dev_mode(){
+	return !('update_url' in chrome.runtime.getManifest());
+}
+
+function get_extension_version(){
+	return chrome.runtime.getManifest().version
+}
+
+function send_dev_mode(event) {
+	
+	let message = {
+		"isDevMode" : is_dev_mode(),
+		"version": get_extension_version()
+	}
+	if(event.data?.type === "requestDevMode")
+		console.log("BAIN REQUEST TO LOAD RECIEVED", event.data.message)
+		window.postMessage({type: "fromContent", message})
+		if (window.isDevMode){
+			window.removeEventListener('message', send_dev_mode);
+		}
+}
+window.addEventListener("message", send_dev_mode)
+
 // Too many of our scripts depend on each other. 
 // This ensures that they are loaded sequentially to avoid any race conditions.
 
+
 function injectScript() {
+	if (is_dev_mode()){
+		console.log("------------------------------ RUNNING IN DEVELOPMENT MODE ------------------------------")
+	}
+	
 	if (scripts.length === 0) {
 		return;
 	}
@@ -85,12 +113,13 @@ function injectScript() {
 	if (nextScript.type !== undefined) {
 		s.setAttribute('type', nextScript.type);
 	}
-	console.log(`attempting to append ${nextScript}`);
+	console.log(`attempting to append ${nextScript.src}`);
 	s.onload = function() {
-		console.log(`finished injecting ${nextScript}`);
+		console.log(`finished injecting ${nextScript.src}`);
 		injectScript();
 	};
 	(document.head || document.documentElement).appendChild(s);
 }
+
 
 injectScript();
