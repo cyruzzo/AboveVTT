@@ -187,6 +187,10 @@ class EncounterHandler {
 				open_monster_stat_block_with_id(previouslyOpenMonsterId, previouslyOpenTokenId);
 				remove_combat_tracker_loading_indicator();
 		}
+
+		//lock game log open in monster stat block so that default rolls can be sync'd
+		window.EncounterHandler.combat_body.find(".sidebar__control-group--visibility ~ .sidebar__control-group--lock button.sidebar__control").click()
+	
 		sync_send_to_default();
 		console.groupEnd();
 	}
@@ -966,13 +970,11 @@ function sync_send_to_default() {
 		}
 		console.debug("sync_send_to_default is opening the combat gamelog and trying again");
 		gamelogButton.click();
-		setTimeout(function() {
-			sync_send_to_default();
-		}, 1000);
+		sync_send_to_default();
 		return;
 	}
 
-	let encounterSendToText = $(".MuiButtonBase-root.MuiButton-root.gl1 .MuiButton-label.gl2").text();
+	let encounterSendToText = $(".glc-game-log [class*='SendToLabel'] ~ .MuiButtonBase-root.MuiButton-text")[0].textContent;
 	window.EncounterHandler.combat_body.find(".MuiList-root.MuiMenu-list .MuiListItemText-root").each(function() {
 		if (this.textContent.includes(encounterSendToText)) {
 			console.debug(`sync_send_to_default is about to click ${this}`);

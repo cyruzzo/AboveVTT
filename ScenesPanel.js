@@ -785,7 +785,7 @@ function refresh_scenes() {
 				window.PLAYER_SCENE_ID=window.ScenesHandler.scenes[scene_id].id;
 				refresh_scenes();
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
-				add_zoom_to_storage(window.ZOOM)
+				add_zoom_to_storage()
 			});
 			
 			let switch_dm=$("<button>DM</button>");
@@ -799,7 +799,7 @@ function refresh_scenes() {
 				};
 				close_monster_stat_block(); //moved here so only when dm view moves does the monster stat window close
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
-				add_zoom_to_storage(window.ZOOM)
+				add_zoom_to_storage()
 			});
 			if(scene.player_map){
 				switch_players.removeAttr("disabled");
