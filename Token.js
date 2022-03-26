@@ -84,27 +84,18 @@ class Token {
 	size(newsize) {
 		this.update_from_page();
 		this.options.size = newsize;
-		this.place();
-		this.sync();
-		if (this.persist != null)
-			this.persist();
+		this.place_sync_persist
 	}
 
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
-		this.place();
-		this.sync();
-		if (this.persist != null)
-			this.persist();
+		this.place_sync_persist
 	}
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
-		this.place();
-		this.sync();
-		if (this.persist != null)
-			this.persist();
+		this.place_sync_persist
 	}
 	delete(persist=true,sync=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
@@ -269,7 +260,7 @@ class Token {
 	/**
 	 * adds a hidden dead cross to tokens
 	 * makes dead cross visible if token has 0 hp
-	 * @param token jquery selected div with the class token
+	 * @param token jquery selected div with the class "token"
 	 */
 	update_dead_cross(token){
 		console.group("update_dead_cross")
@@ -304,7 +295,7 @@ class Token {
 
 	/**
 	 * updates the colour of the health aura if enabled
-	 * @param token jquery selected div with the class token
+	 * @param token jquery selected div with the class "token"
 	 */
 	update_health_aura(token){
 		console.group("update_health_aura")
@@ -349,16 +340,21 @@ class Token {
 			this.options.hidden = true;
 		else
 			delete this.options.hidden;
-
-		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.hidestat)) && !this.options.disablestat && old.find(".hp").length > 0) {
+		
+		// one of either
+		// is a monster?
+		// is the DM
+		// not the DM and player controlled
+		// AND stats aren't disabled and has hp bar
+		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && !this.options.disablestat && old.has(".hp").length > 0) {
 			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
 				old.find(".hp").val(Math.max(0, parseInt(this.options.hp) + parseInt(old.find(".hp").val())));
 			}
-			if (old.find(".max_hp").val().startsWith("+") || old.find(".max_hp").val().startsWith("-")) {
+			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
 				old.find(".max_hp").val(Math.max(0, parseInt(this.options.max_hp) + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-
+			console.log("UPDATING TOKEN HP")
 			this.options.hp = old.find(".hp").val();
 			this.options.max_hp = old.find(".max_hp").val();
 			
@@ -508,6 +504,60 @@ class Token {
 		return elev;
 	}
 
+	/**
+	 * hides or shows stats based on this.options
+	 * @param token jquery selected div with the class "token"
+	 */
+	show_stats(token){
+		if(this.options.disablestat || this.options.hidestat){
+			token.find(".hpbar").hide();
+			token.find(".ac").hide();
+			token.find(".elev").hide();
+		}
+		else{
+			token.find(".hpbar").show();
+			token.find(".ac").show();
+			token.find(".elev").show();
+		}
+	}
+
+	/**
+	 * Gives monster tokens stats - hp/ac/elev if this token is player_owned
+	 * changes additional options to allow "full" control of token
+	 * @param token jquery selected div with the class "token"
+	 */
+	player_owned(token){
+		console.group("player_owned", this.options.player_owned)
+		// give player "full" control of token
+		if (this.options.player_owned){
+			console.log("owned token id ", this.options.id)
+			this.options.hidden = false
+			this.options.restrictPlayerMove = false
+			this.options.hidestat = false
+			this.options.disablestat = false
+			this.options.locked = false
+			// monster tokens don't get built with any stats for players so build them here
+			if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
+				console.log("adding hp/ac/elev")
+				token.append(this.build_hp());
+				token.append(this.build_ac());
+				token.append(this.build_elev());
+			}
+			token.show()
+			this.show_stats(token)
+		}
+		// restrict access and stats for players
+		else if (!this.options.player_owned && !window.DM){
+			this.options.restrictPlayerMove = true
+			this.options.hidestat = true
+			console.log("removing hp/ac/elev")
+			token.find(".hpbar").remove()
+			token.find(".ac").remove()
+			token.find(".elev").remove()
+		}
+		console.groupEnd()
+	}
+
 	build_conditions(parent) {
 		let self=this;
 		let bar_width = Math.floor(this.options.size * 0.2);
@@ -641,7 +691,6 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
 		var self = this;
-
 		/* UPDATE COMBAT TRACKER */
 		if (window.DM) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
@@ -673,18 +722,10 @@ class Token {
 			// CONCENTRATION REMINDER
 
 
-			if ((!(this.options.monster > 0)) || window.DM) {
+			if ((!(this.options.monster > 0)) || window.DM || this.options.player_owned) {
 				old.find(".hpbar").replaceWith(this.build_hp());
 				old.find(".ac").replaceWith(this.build_ac());
 				old.find(".elev").replaceWith(this.build_elev());
-			}
-			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
-				old.find(".hpbar").hide();
-				old.find(".ac").hide();
-			}
-			else{
-				old.find(".hpbar").show();
-				old.find(".ac").show();
 			}
 			let scale = this.get_token_scale()
 			var rotation = 0;
@@ -855,19 +896,6 @@ class Token {
 				}
 			}
 			
-			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
-				tok.find(".hpbar").hide();
-				tok.find(".ac").hide();
-				tok.find(".elev").hide();
-			}
-			else{
-				tok.find(".hpbar").show();
-				tok.find(".ac").show();
-				tok.find(".elev").show();
-			}
-
-			
-
 			tok.attr("data-id", this.options.id);
 			tokimg.attr("src", this.options.imgsrc);
 			tokimg.width(this.options.size);
@@ -1141,7 +1169,7 @@ class Token {
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
-			// 
+
 			tok.find(".token-image").dblclick(function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
@@ -1185,6 +1213,8 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
+		this.show_stats(token)
+		this.player_owned(token)
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
@@ -1361,6 +1391,7 @@ function array_remove_index_by_value(arr, item) {
 }
 
 function menu_callback(key, options, event) {
+	console.log(key, options, event)
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
 			if (encounter_builder_dice_supported()) {
@@ -1374,6 +1405,10 @@ function menu_callback(key, options, event) {
 			//load_frame($(this).attr('data-id'));
 			open_player_sheet($(this).attr('data-id'));
 		}
+	}
+	if (key == "delete") {
+		id = $(this).attr('data-id');
+		window.TOKEN_OBJECTS[id].delete();
 	}
 	if (key == "delete") {
 		id = $(this).attr('data-id');
@@ -1526,7 +1561,7 @@ function token_inputs(opt) {
 		return;
 
 	data = $.contextMenu.getInputValues(opt, $(this).data());
-
+	console.log("bain", data)
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
 	tok = window.TOKEN_OBJECTS[id];
@@ -1618,6 +1653,8 @@ function token_inputs(opt) {
 			tok.options.hidestat = false;
 		}
 
+		tok.options.player_owned = data.token_player_owned ? true : false
+
 		if (data.token_locked) {
 			tok.options.locked = 1;
 		}
@@ -1685,6 +1722,18 @@ function multiple_callback(key, options, event) {
 			window.TOKEN_OBJECTS[id].hide();
 		});
 	}
+	if (key == "show_stat") {
+		$("#tokens .tokenselected").each(function() {
+			id = $(this).attr('data-id');
+			window.TOKEN_OBJECTS[id].options.hidestat = false;
+		});
+	}
+	if (key == "player_owned") {
+		$("#tokens .tokenselected").each(function() {
+			id = $(this).attr('data-id');
+			window.TOKEN_OBJECTS[id].options.player_owned = !window.TOKEN_OBJECTS[id].options.player_owned
+		});
+	}
 	if (key == "show") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
@@ -1738,6 +1787,7 @@ function token_menu() {
 					items: {
 						token_combat: { name: 'Add to Combat Tracker' },
 						hide: { name: 'Hide From Players' },
+						player_owned: { name: 'Give to Players' },
 						show: { name: 'Show To Players' },
 						delete: { name: 'Delete Token' },
 						token_locked: {
@@ -1972,6 +2022,11 @@ function token_menu() {
 									type: 'checkbox',
 									name: 'Hide HP/AC from players',
 									selected: window.TOKEN_OBJECTS[id].options.hidestat,
+								},
+								token_player_owned: {
+									type: 'checkbox',
+									name: '"Full" control to players',
+									selected: window.TOKEN_OBJECTS[id].options.player_owned,
 								},
 								token_disableborder: {
 									type: 'checkbox',

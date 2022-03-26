@@ -900,6 +900,39 @@ function init_spells() {
 
 }
 
+
+function observe_character_sheet_companion(documentToObserve){
+	console.group("observe_character_sheet_companion")
+	let mutation_target = documentToObserve.get(0);
+	let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+
+	function handle_observe_character_sheet_companion(e) {
+		e.stopPropagation();
+		console.log(e)
+		let tokenName = $(this).parent().find('.ddbc-extra-name').find("span").text()
+		console.log("pretending to add a companion ", tokenName)
+	}
+
+	let companion_observer = new MutationObserver(function() {
+		let extras = documentToObserve.find(".ct-extra-row__preview:not('.above-vtt-visited')");
+		if (extras.length > 0){
+			extras.wrap(function() {
+				$(this).addClass("above-vtt-visited");
+				let button = $("<button class='above-aoe integrated-dice__container' aria-label=Add "+$(this.closest(".ddbc-extra-name"))+" to encounter></button>");
+				button.css("border-width","1px");
+				button.css("min-height","34px");
+				button.click((e) => handle_observe_character_sheet_companion(e))
+				return button;
+			})
+			console.log(`${extras.length} companions discovered`);
+		}
+	});
+	companion_observer.observe(mutation_target,mutation_config);
+	console.groupEnd()
+}
+
+
+
 function init_sheet(){	
 	if (is_characters_page()) {
 		
@@ -1296,6 +1329,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
 		observe_character_sheet_aoe($(event.target).contents());
+		// WIP to allow players to add in tokens from their extra tab
+		// observe_character_sheet_companion($(event.target).contents());
 		
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
@@ -1631,6 +1666,9 @@ function init_character_page_sidebar() {
 			init_splash();
 			$("#loading_overlay").css("z-index", 0); // allow them to see their character sheets, etc even if the DM isn't online yet
 			observe_character_sheet_aoe($(document));
+			// WIP to allow players to add in tokens from their extra tab
+			// observe_character_sheet_companion($(document));
+			
 		} else {
 			init_controls();
 			init_sheet();	
