@@ -2289,15 +2289,18 @@ button.avtt-roll-button {
 }
 #combat_tracker_title_bar {
     width: 100%;
-    background: #1b9af0;
-    height: 28px;
+    background: #242527;
+    height: 26px;
     font-size: 16px;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     color: #fff;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-color:  gray;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    line-height: 28px;
+    line-height: 26px;
     text-shadow: 0px 0px  #000,
         -1px -1px 0  #000,  
          1px -1px 0  #000,
@@ -2320,29 +2323,40 @@ button.avtt-roll-button {
     bottom: -8px;
     background:  linear-gradient(to bottom, #0005 5%, #0000 40%);
 }
-
+#monster_title_bar_name,
+#player_title_bar_name{
+    font-size: 16px;
+    line-height: 25px;
+    font-weight: bold;
+    text-align: left;
+    width: 100%;
+    color: #fff;
+}
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
-#player_close_title_button {
+#player_close_title_button,
+#reload_player_frame_button {
     fill: #fff5;
     filter: drop-shadow(1px 1px 1px #000e);
     cursor: pointer;
     background: #0000;
 }
+#reload_player_frame_button{
+    fill:  #ddd;
+}
 
 #monster_close_title_button:hover,
-#player_close_title_button:hover {
+#player_close_title_button:hover,
+#reload_player_frame_button:hover,
+#combat_tracker_title_bar_exit:hover {
     background: #ddd3;
     transition: all linear 0.2s;
 }
-#combat_tracker_title_bar_exit:hover {
-   background: #dddddd4d;
-    transition: all linear 0.2s;
-
-}
+ 
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
-#player_close_title_button svg {
+#player_close_title_button svg,
+#reload_player_frame_button svg {
     height: 20px;
     width: 20px;
 }
@@ -2365,15 +2379,20 @@ button.avtt-roll-button {
     width: 20px;
     height: 20px
 }
+#reload_player_frame_button{
+    position: absolute;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+}
 
 #monster_close_title_button,
-#player_close_title_button {
+#player_close_title_button,
+#reload_player_frame_button,
+#combat_tracker_title_bar_exit {
     top: 2px;
 }
 
-#combat_tracker_title_bar_exit {
-    top: 4px;
-}
 
 #round_number_label{
     position: relative;
@@ -2383,11 +2402,11 @@ button.avtt-roll-button {
     content: '';
     left: 0;
     right: 0;
-    height: 6px;
+    height: 7px;
     position: absolute;
     z-index: -1;
-    top: -6px;
-    background: linear-gradient(to top, #0005 5%, #0000 40%);
+    top: -7px;
+    background: linear-gradient(to top, #0004 5%, #0000 40%);
 }
 
 
