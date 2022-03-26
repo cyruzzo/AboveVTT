@@ -1725,12 +1725,7 @@ function multiple_callback(key, options, event) {
 			window.TOKEN_OBJECTS[id].options.hidestat = false;
 		});
 	}
-	if (key == "player_owned") {
-		$("#tokens .tokenselected").each(function() {
-			id = $(this).attr('data-id');
-			window.TOKEN_OBJECTS[id].options.player_owned = !window.TOKEN_OBJECTS[id].options.player_owned
-		});
-	}
+	
 	if (key == "show") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
@@ -1784,7 +1779,6 @@ function token_menu() {
 					items: {
 						token_combat: { name: 'Add to Combat Tracker' },
 						hide: { name: 'Hide From Players' },
-						player_owned: { name: 'Give to Players' },
 						show: { name: 'Show To Players' },
 						delete: { name: 'Delete Token' },
 						token_locked: {
