@@ -1525,7 +1525,10 @@ function init_things() {
 	if (window.DM) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
-		window.EncounterHandler = new EncounterHandler(function(wasSuccessful) {
+		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+			if (didSucceed === false) {
+				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+			}
 			init_ui();
 			if (is_encounters_page()) {
 
@@ -2830,8 +2833,11 @@ $(function() {
 		e.preventDefault();
 		$(".joindm").addClass("button-loading");
 		gather_pcs();
-		window.EncounterHandler = new EncounterHandler(function() {
-			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true && window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
+		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+			if (didSucceed === false) {
+				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+			}
+			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] === true && window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
 				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
 			} else {
