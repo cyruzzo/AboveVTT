@@ -1525,7 +1525,7 @@ function init_things() {
 	if (window.DM) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
-		window.EncounterHandler = new EncounterHandler(function() {
+		window.EncounterHandler = new EncounterHandler(function(wasSuccessful) {
 			init_ui();
 			if (is_encounters_page()) {
 
