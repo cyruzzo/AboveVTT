@@ -2849,7 +2849,13 @@ $(function() {
 				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 				init_above();
 			}
+
+			let oldText = $(".joindm").text();
 			$(".joindm").removeClass("button-loading");
+			$(".joindm").text("Check for blocked pop ups!");
+			setTimeout(function () {
+				$(".joindm").text(oldText);
+			}, 2000);
 		});
 	});
 	
