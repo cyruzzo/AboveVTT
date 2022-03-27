@@ -1,5 +1,15 @@
 var abovevtt_version = '0.72';
 
+/**
+ * before the page refreshes perform the innards
+ * @param {*} event 
+ */
+window.onbeforeunload = function(event)
+{
+	console.log("refreshing page, storing zoom first")
+	add_zoom_to_storage()
+};
+
 function parse_img(url){
 	if (url === undefined) {
 		console.warn("parse_img was called without a url");
@@ -86,7 +96,7 @@ function change_zoom(newZoom, x, y) {
 * Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene
 * @param {float} z - current zoom level
 */
-function add_zoom_to_storage(z){
+function add_zoom_to_storage(){
 	console.group("add_zoom_to_storage")
 	console.log("storing zoom")
 	
@@ -94,7 +104,7 @@ function add_zoom_to_storage(z){
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
 		if (zoomIndex !== -1){
-			zooms[zoomIndex].zoom = z
+			zooms[zoomIndex].zoom = window.ZOOM
 			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft())
 			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop())
 		}
@@ -102,7 +112,7 @@ function add_zoom_to_storage(z){
 			// zoom doesn't exist
 			zooms.push({
 				"title": window.CURRENT_SCENE_DATA.title,
-				"zoom":z,
+				"zoom":window.ZOOM,
 				"leftOffset": Math.round($(window).scrollLeft()),
 				"topOffset": Math.round($(window).scrollTop())
 			}); 
@@ -122,6 +132,9 @@ function set_default_vttwrapper_size(){
 	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
 }
 
+/**
+ * Removes the zoom for the current scene from local storage, applied when user click "fit zoom" button
+ */
 function remove_zoom_from_storage(){
 	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
@@ -2551,7 +2564,6 @@ function init_buttons() {
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
-	buttons.css("z-index", '2');
 
 
 	// HIDE default SEND TO functiontality in the campaign page:
@@ -3391,7 +3403,7 @@ function reset_character_sheet_css() {
 	$(".ct-character-sheet-desktop").css({
 		"height": maxHeight,
 	});
-	$(".ct-sidebar").css({ "height": "100%" });
+	$(".ct-sidebar").css({ "height": "calc(100vh - 15px)" });
 	$(".ct-character-header-tablet").css({ "background": "rgba(0, 0, 0, 0.85)" });
 }
 

@@ -2311,7 +2311,8 @@ button.avtt-roll-button {
 #VTT{
 	z-index:2;
 }
-.top_menu.visible{
+.top_menu.visible,
+.ddbc-tab-options--layout-pill{
 	z-index: 57000;
 }
 #prewiz, 
