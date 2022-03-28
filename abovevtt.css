@@ -2710,11 +2710,15 @@ button.avtt-roll-button {
     display: none !important;
 }
 
-.minimized,
-#resizeDragMon.minimized{
+#combat_tracker_title_bar.minimized,
+#resizeDragMon.minimized,
+#sheet.minimized,
+.minimized{
     border-radius: 5px;
-    border: 1px solid gray;
-    opacity: 0.7;
+    border: 1px solid #fffd;
+    opacity: 1;
+    filter: drop-shadow(1px 1px 1px #000);
+    background: linear-gradient(45deg, #000b, #fffb);
     color: #fff;
     font-size: 16px;
     font-weight: bold;
@@ -2724,6 +2728,7 @@ button.avtt-roll-button {
         1px -1px 0  #000,
         -1px 1px 0  #000,
         1px 1px 0  #000;
+    padding-left: 3px;
 }
 .minimized .monster_title,
 .minimized .player_title,
