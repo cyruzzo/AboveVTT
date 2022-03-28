@@ -966,7 +966,7 @@ function sync_send_to_default() {
 		return;
 	}
 
-	let encounterSendToText = $(".glc-game-log [class*='SendToLabel'] ~ .MuiButtonBase-root.MuiButton-text")[0].textContent;
+	let encounterSendToText = $(".glc-game-log [class*='SendToLabel'] ~ .MuiButtonBase-root.MuiButton-text").text();
 	window.EncounterHandler.combat_body.find(".MuiList-root.MuiMenu-list .MuiListItemText-root").each(function() {
 		if (this.textContent.includes(encounterSendToText)) {
 			console.debug(`sync_send_to_default is about to click ${this}`);

@@ -101,12 +101,8 @@ function init_monster_panel_with_encounter() {
 	});
 
 
-	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] == true && window.EXPERIMENTAL_SETTINGS["disableDdbDiceMonsterPanel"] != true) {
-		if (window.EncounterHandler.has_avtt_encounter() && window.EncounterHandler.encounterBuilderDiceSupported) {
-			iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
-		} else {
-			iframe.attr("src", `/encounter-builder`);
-		}
+	if (window.EncounterHandler.has_avtt_encounter()) {
+		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
 	} else {
 		iframe.attr("src", `/encounter-builder`);
 	}
@@ -221,7 +217,7 @@ function update_monster_row(monsterRow) {
 		event.preventDefault();
 	});
 
-	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] != true || window.EXPERIMENTAL_SETTINGS["disableDdbDiceMonsterPanel"] == true || !window.EncounterHandler.has_avtt_encounter() || !window.EncounterHandler.encounterBuilderDiceSupported) {
+	if (!window.EncounterHandler.has_avtt_encounter()) {
 		// if we don't have a backing encounter or if the DM isn't a DDB subscriber, we need to inject roll buttons
 		// replace all the DDB roll buttons with AVTT roll buttons
 		monsterRow.click(function(event) {

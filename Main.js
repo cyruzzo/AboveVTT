@@ -659,7 +659,7 @@ function init_controls() {
 	}
 
 	
-	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] == true && window.EXPERIMENTAL_SETTINGS["disableDdbDiceMonsterPanel"] != true && window.EXPERIMENTAL_SETTINGS["DEBUGddbDiceMonsterPanel"] == true) {
+	if (window.EXPERIMENTAL_SETTINGS["DEBUGddbDiceMonsterPanel"] === true) {
 		change_sidbar_tab($("#switch_monsters"));
 		$("#loading_overlay").css({ "opacity": "0.25" })
 		$(".sidebar-panel-loading-indicator").css({ "opacity": "0.25" })
@@ -2720,17 +2720,8 @@ $(function() {
 		newlink.click(function(e) {
 			e.preventDefault();
 			gather_pcs();
-			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true) {				
-				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-				window.open(`https://www.dndbeyond.com${sheet}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
-			} else {
-				window.PLAYER_IMG = img;
-				window.PLAYER_SHEET = sheet;
-				window.PLAYER_NAME = name;
-				window.PLAYER_ID = getPlayerIDFromSheet(sheet);
-				window.DM = false;
-				init_above();
-			}
+			let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+			window.open(`https://www.dndbeyond.com${sheet}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
 		});
 
 		$(this).prepend(newlink);
@@ -2789,32 +2780,6 @@ $(function() {
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
 
 	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + find_game_id())) || {};
-	let ddbDiceKey = "useDdbDice";
-	let ddbDiceValue = window.EXPERIMENTAL_SETTINGS[ddbDiceKey];
-	if (ddbDiceValue != true) {
-		// unless this user has explicitly enabled this feature, we want to set the default value
-		ddbDiceValue = false;
-		window.EXPERIMENTAL_SETTINGS[ddbDiceKey] = false;
-		persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-	}
-	let ddbDiceToggle = build_toggle_input(
-		ddbDiceKey,
-		"Use DndBeyond Dice when possible",
-		ddbDiceValue,
-		"Your DndBeyond Dice will be used when possible. The buttons at the bottom of the gamelog will roll DndBeyond's dice instead of the AboveVTT rolling mechanism. For DMs, monster stat blocks will roll DndBeyond's dice as well. The game will also be played in a different tab instead of this one. If you are experiencing unexpected behavior, disabling this feature will give you the legacy version of AboveVTT. The legacy version will not exist for much longer so please report any bugs in the Discord Server so we can fix them quickly. Thank you.",
-		"When enabled, your DndBeyond Dice will be used when possible. The buttons at the bottom of the gamelog will roll DndBeyond's dice instead of the AboveVTT rolling mechanism. For DMs, monster stat blocks will roll DndBeyond's dice as well. The game will also be played in a different tab instead of this one. If you are experiencing unexpected behavior, disabling this feature will give you the legacy version of AboveVTT. The legacy version will not exist for much longer so please report any bugs in the Discord Server so we can fix them quickly. Thank you.",
-		function(name, newValue) {
-			window.EXPERIMENTAL_SETTINGS[name] = newValue;
-			persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-		}
-	);
-	ddbDiceToggle.css({ "width": "400px", "margin-top": "8px", "margin-left": "4px" });
-	ddbDiceToggle.find(".token-image-modal-footer-title").css({ "text-transform": "none" });
-	//contentDiv.append(`<br/><br/><h5 style="margin:8px">A new beta feature is now available!</h5><p style="margin:8px">It will eventually be turned on by default so consider testing it out.<br/>Please consider giving feedback to the developers in the <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a>.<br/>Thank you.</p>`);
-	//contentDiv.append(ddbDiceToggle);
-	// FORCE DDB DICE
-	window.EXPERIMENTAL_SETTINGS[ddbDiceKey]=true;
-
 	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
 
 	$(".instructions").click(function(){
@@ -2831,7 +2796,7 @@ $(function() {
 		$(".joindm").addClass("button-loading");
 		gather_pcs();
 		window.EncounterHandler = new EncounterHandler(function() {
-			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true && window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
+			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
 				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
 			} else {
