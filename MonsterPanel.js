@@ -654,3 +654,25 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 		}
 	}
 }
+
+function search_monsters(searchTerm, pageNumber, callback) {
+	if (typeof callback !== 'function') {
+		callback = function(){};
+	}
+	let offset = 0;
+	let pageNumberInt = parseInt(pageNumber);
+	if (!isNaN(pageNumberInt)) {
+		offset = 10 * pageNumberInt;
+	}
+	window.ajaxQueue.addDDBRequest({
+		url: `https://monster-service.dndbeyond.com/v1/Monster?search=${encodeURIComponent(searchTerm)}&skip=${offset}&take=10`,
+		success: function (responseData) {
+			console.log(`search_monsters succeeded`, responseData);
+			callback(responseData); // TODO: return normalized data vs raw data?
+		},
+		failure: function (errorMessage) {
+			console.warn(`search_monsters failed`, errorMessage);
+			callback(false);
+		}
+	});
+}
