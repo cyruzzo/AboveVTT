@@ -664,8 +664,12 @@ function search_monsters(searchTerm, pageNumber, callback) {
 	if (!isNaN(pageNumberInt)) {
 		offset = 10 * pageNumberInt;
 	}
+	let searchParam = "";
+	if (searchTerm !== undefined && searchTerm.length > 0) {
+		searchParam = `&search=${encodeURIComponent(searchTerm)}`;
+	}
 	window.ajaxQueue.addDDBRequest({
-		url: `https://monster-service.dndbeyond.com/v1/Monster?search=${encodeURIComponent(searchTerm)}&skip=${offset}&take=10`,
+		url: `https://monster-service.dndbeyond.com/v1/Monster?skip=${offset}&take=10${searchParam}`,
 		success: function (responseData) {
 			console.log(`search_monsters succeeded`, responseData);
 			callback(responseData); // TODO: return normalized data vs raw data?

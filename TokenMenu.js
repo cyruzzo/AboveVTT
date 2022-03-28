@@ -586,7 +586,12 @@ function fill_tokenmenu(path){
 	}
 
 	draw_custom_token_list(folder, path);
-	
+	console.log("search_monsters");
+	search_monsters(undefined, 0, function (results) {
+		console.log("after search_monsters");
+		draw_monster_token_list(results);
+	});
+
 	if (is_builtin(path)) {
 		// don't allow users to add tokens or folders inside the builtin folder
 		tokensPanel.footer.hide();
@@ -666,6 +671,21 @@ function draw_custom_token_list(folder, path) {
 	let body = tokensPanel.body;
 	body.empty();
 	body.append(list);
+}
+
+function draw_monster_token_list(monsterSearchResponse) {
+	if (typeof monsterSearchResponse !== "object") {
+		console.warn("draw_monster_token_list was called with unexpected object: ", monsterSearchResponse);
+		return;
+	}
+	console.log("draw_monster_token_list", monsterSearchResponse);
+	let list = $(".custom-token-list");
+	for (let i = 0; i < monsterSearchResponse.data.length; i++) {
+		let monsterData = monsterSearchResponse.data[i];
+		let row = build_custom_token_row(monsterData.name, monsterData.avatarUrl, monsterData.isReleased ? "" : "NOT AVAILABLE TO YOU!");
+
+		list.append(row);
+	}
 }
 
 function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
