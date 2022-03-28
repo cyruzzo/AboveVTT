@@ -250,16 +250,16 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 /*for resizable and moveable monsters and sheets in DM view*/
 
 #sheet{
-    left: 20px;
-    right: auto;
+    left: auto;
+    right: 340px;
     display: none;
     position: fixed !important;
     border-radius: 5px; 
     z-index: 10010;
     border: 1px solid gray;  
-    top: 20px;
+    top: 28px;
     bottom: auto;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 50px);
 }
 
 #sheet.open{
@@ -273,8 +273,8 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 
 #resizeDragMon{
     display: flex;
-    left: 40px;
-    top: 80px;
+    left: 271px;
+    top: 67px;
     right: auto;
     width: 410px;
     height: 85%;
@@ -496,7 +496,6 @@ div#scene_selector,
 
 #combat_tracker_inside {
     position: relative;
-    margin: 28px 0;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
@@ -808,8 +807,11 @@ div#scene_properties form > div {
     position: fixed;
     height: 450px;
     left: 5px;
-    top: 40px;
+    top: 67px;
     z-index: 56000;
+}
+div#combat_button{
+    top: 40px;
 }
 
 .tracker-dm {
@@ -2730,6 +2732,9 @@ button.avtt-roll-button {
         -1px 1px 0  #000,
         1px 1px 0  #000;
     padding-left: 3px;
+}
+#combat_tracker_inside{
+    margin: 0px;
 }
 .minimized .monster_title,
 .minimized .player_title,

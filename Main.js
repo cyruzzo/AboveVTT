@@ -941,6 +941,16 @@ function minimize_player_window_double_click(titleBar) {
 	});
 }
 
+function frame_z_index_when_click(moveableFrame){
+	//move frames behind each other in the order they were clicked
+	if(moveableFrame.css('z-index') != 50000) {
+		moveableFrame.css('z-index', 50000);
+		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
+			$(this).css('z-index',($(this).css('z-index')-1));
+		});
+	}
+}
+
 function init_sheet(){	
 	if (is_characters_page()) {
 		
@@ -980,22 +990,6 @@ function init_sheet(){
 	var buttonleft = 0;
 	var buttonprev = 0;
 
-	/*var close_button = $("<button>X</button>");
-
-	close_button.css("position", "absolute");
-	close_button.css('display', 'none');
-	close_button.css("top", "0px");
-	close_button.css("left", buttonleft);
-	buttonleft+=27;
-	buttonprev+=54;
-	close_button.css("height", "23px");
-	close_button.css("width", "25px");
-	close_button.click(function() {
-		close_player_sheet();
-	});
-	container.append(close_button);*/
-
-
 	const player_close_title_button=$('<div id="player_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>');
 	container.append(player_close_title_button);
 	player_close_title_button.click(function() {
@@ -1004,13 +998,6 @@ function init_sheet(){
 
 	var reload_button = $('<div id="reload_player_frame_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>)');
 
-	/*reload_button.css("position", "absolute");
-	reload_button.css('display', 'none');
-	reload_button.css("top", "0px");
-	reload_button.css("left", buttonleft);
-	reload_button.css("height", "23px");
-	reload_button.css("width", "25px");
-	*/
 
 	reload_button.click(function() {
 		let iframe = $("#sheet").find("iframe");
@@ -1019,27 +1006,45 @@ function init_sheet(){
 	});
 	container.append(reload_button);
 	
-	/*var resize_button = $("<button>⇹</button>");
-
-	resize_button.css("position", "absolute");
-	resize_button.css('display', 'none');
-	resize_button.css("top", "0px");
-	resize_button.css("left", buttonprev);
-	resize_button.css("height", "23px");
-	resize_button.css("width", "25px");
-	resize_button.click(function() {
-		if (container.hasClass("thin")) {
-			container.removeClass("thin");
-		} else {
-			container.addClass("thin");
-		}
-	});
-	container.append(resize_button);*/
-
-	//container.height($(".sidebar__inner").height() - 20);
-
 	$("#site").append(container);
-	minimize_player_window_double_click($("#sheet"));
+
+	if(window.DM){
+		/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+		$("#sheet").addClass("moveableWindow");
+		if(!$("#sheet").hasClass("minimized")){
+			$("#sheet").addClass("restored"); 
+		}
+		$("#sheet").resizable({
+			addClasses: false,
+			handles: "all",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			},
+			minWidth: 200,
+			minHeight: 200
+		});
+
+		$("#sheet").mousedown(function(){
+			frame_z_index_when_click($(this));
+		});
+		$("#sheet").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		minimize_player_window_double_click($("#sheet"));
+	}
 	if (!window.DM) {
 
 		sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");

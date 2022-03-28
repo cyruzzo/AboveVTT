@@ -1128,10 +1128,6 @@ function init_enounter_combat_tracker_iframe() {
 				// a monster stat block was shown, make sure it shows up on screen
 				reposition_enounter_combat_tracker_iframe();
 				addedElement.find(".combat-tracker-page__content-section-close-button").css("display", "none");
-			/*	addedElement.find(".combat-tracker-page__content-section-close-button").css("position", "fixed");
-				addedElement.find(".combat-tracker-page__content-section-close-button").click(function() {
-					close_monster_stat_block();
-				});*/
 			}
 
 			if (addedElement.hasClass("encounter-details-content-section")) {
@@ -1200,9 +1196,8 @@ function init_enounter_combat_tracker_iframe() {
 		
 		$("#resizeDragMon").append(iframe);
 		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
-		/*Set draggable and resizeable on monster and player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+		/*Set draggable and resizeable on monster  sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 		$("#resizeDragMon").addClass("moveableWindow");
-		$("#sheet").addClass("moveableWindow");
 		$("#resizeDragMon").draggable({
 			addClasses: false,
 			scroll: false,
@@ -1215,18 +1210,7 @@ function init_enounter_combat_tracker_iframe() {
 				$('.iframeResizeCover').remove();
 			}
 		});
-		$("#sheet").draggable({
-			addClasses: false,
-			scroll: false,
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			}
-		});
+		
 		$("#resizeDragMon").resizable({
 			addClasses: false,
 			handles: "all",
@@ -1240,30 +1224,11 @@ function init_enounter_combat_tracker_iframe() {
 			minWidth: 200,
 			minHeight: 200
 		});
-		$("#sheet").resizable({
-			addClasses: false,
-			handles: "all",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			},
-			minWidth: 200,
-			minHeight: 200
-		});
-
-		$("#sheet").mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
-
+		
 		$("#resizeDragMon").mousedown(function() {
 			frame_z_index_when_click($(this));
 		});	
-		if(!$("#sheet").hasClass("minimized")){
-			$("#sheet").addClass("restored"); 
-		}
+	
 		if(!$("#resizeDragMon").hasClass("minimized")){
 			$("#resizeDragMon").addClass("restored");
 		}
