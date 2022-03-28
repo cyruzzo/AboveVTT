@@ -917,9 +917,7 @@ function minimize_player_window_double_click(titleBar) {
 	titleBar.off('dblclick').on('dblclick', function() {
 		if(titleBar.hasClass("restored")) {
 			titleBar.data("prev-height", titleBar.height());
-			console.log(titleBar.data("prev-width");
-			titleBar.data("prev-width", (titleBar.width() - 6));
-			console.log(titleBar.data("prev-width");
+			titleBar.data("prev-width", titleBar.width() - 3);
 			titleBar.data("prev-top", titleBar.css("top"));
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
