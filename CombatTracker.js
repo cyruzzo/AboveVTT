@@ -53,7 +53,7 @@ function init_combat_tracker(){
 			$(ct_title_bar).css("visibility", "visible");
 			$(ct_title_bar).addClass("minimized");
 			$(ct_title_bar).removeClass("restored");
-			$(ct_title_bar).prepend("<div id='ct_text_title'>CombatTracker</div>")
+			$(ct_title_bar).prepend("<div id='ct_text_title'>Combat Tracker</div>")
 		}
 		else if($(ct_title_bar).hasClass("minimized")){
 			$(ct_title_bar).data("prev-minimized-top", $("#combat_tracker_inside").css("top"));
