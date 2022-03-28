@@ -8,13 +8,6 @@ function init_monster_panel() {
 		return;
 	}
 	monster_panel_init_started = true;
-	// cover the panel while we fetch, and alter it
-	window.EncounterHandler.fetch_or_create_avtt_encounter(function(encounter) {
-		init_monster_panel_with_encounter();
-	});
-}
-
-function init_monster_panel_with_encounter() {
 
 	if ($("#iframe-monster-panel").length > 0) {
 		// we already did this
