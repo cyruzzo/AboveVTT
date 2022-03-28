@@ -2718,7 +2718,8 @@ button.avtt-roll-button {
     border: 1px solid #fffd;
     opacity: 1;
     filter: drop-shadow(1px 1px 1px #000);
-    background: linear-gradient(45deg, #000b, #fffb);
+    background: linear-gradient(45deg, #0008, #fff8);
+    backdrop-filter: blur(2px);
     color: #fff;
     font-size: 16px;
     font-weight: bold;
