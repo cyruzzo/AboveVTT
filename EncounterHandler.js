@@ -221,26 +221,18 @@ class EncounterHandler {
 			// we have it locally, just return it
 			callback(this.encounters[id]);
 		} else {
-			get_cobalt_token(function (token) {
-				window.ajaxQueue.addRequest({
-					url: `https://encounter-service.dndbeyond.com/v1/encounters/${id}`,
-					beforeSend: function (xhr) {
-						xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-					},
-					xhrFields: {
-						withCredentials: true
-					},
-					success: function (responseData) {
-						let encounter = responseData.data;
-						console.log(`fetch_avtt_encounter successfully fetched encounter with id ${id}`);
-						window.EncounterHandler.encounters[encounter.id] = encounter;
-						callback(encounter);
-					},
-					failure: function (errorMessage) {
-						console.warn(`fetch_avtt_encounter failed; ${errorMessage}`);
-						callback(false);
-					}
-				});
+			window.ajaxQueue.addDDBRequest({
+				url: `https://encounter-service.dndbeyond.com/v1/encounters/${id}`,
+				success: function (responseData) {
+					let encounter = responseData.data;
+					console.log(`fetch_avtt_encounter successfully fetched encounter with id ${id}`);
+					window.EncounterHandler.encounters[encounter.id] = encounter;
+					callback(encounter);
+				},
+				error: function (errorMessage) {
+					console.warn(`fetch_avtt_encounter failed; ${errorMessage}`);
+					callback(false, errorMessage?.responseJSON?.type);
+				}
 			});
 		}
 	}
@@ -271,42 +263,57 @@ class EncounterHandler {
 		}
 	}
 
+	/// We build an encounter named `AboveVTT` this will fetch it if it exists, and create it if it doesn't
+	fetch_encounter(encounterId, callback) {
+		if (typeof callback !== 'function') {
+			callback = function(){};
+		}
+		window.ajaxQueue.addDDBRequest({
+			url: `https://encounter-service.dndbeyond.com/v1/encounters/${encounterId}`,
+			success: function (responseData) {
+				let encounter = responseData.data;
+				console.log(`fetch_encounter succeeded`);
+				window.EncounterHandler.encounters[encounter.id] = encounter;
+				callback(encounter);
+			},
+			error: function (errorMessage) {
+				console.warn(`fetch_all_encounters failed; ${errorMessage}`);
+				callback(false, errorMessage?.responseJSON?.type);
+			}
+		});
+	}
+
 	/// this fetches all encounters associated with the current campaign
 	fetch_all_encounters(callback, pageNumber = 0) {
 		if (typeof callback !== 'function') {
 			callback = function(){};
 		}
 		console.log(`fetch_all_encounters starting with pageNumber: ${pageNumber}`);
-		get_cobalt_token(function (token) {
-			window.ajaxQueue.addRequest({
-				url: `https://encounter-service.dndbeyond.com/v1/encounters?page=${pageNumber}`,
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-				},
-				xhrFields: {
-					withCredentials: true
-				},
-				success: function (responseData) {
-					let encountersList = responseData.data;
-					console.log(`fetch_all_encounters successfully fetched ${encountersList.length} encounters; pageNumber: ${pageNumber}`);
-					for (let i = 0; i < encountersList.length; i++) {
-						let encounter = encountersList[i];
-						window.EncounterHandler.encounters[encounter.id] = encounter;
-					}
-					if (responseData.pagination.currentPage < responseData.pagination.pages) {
-						// there are more pages of encounters to fetch so let's keep going
-						window.EncounterHandler.fetch_all_encounters(callback, pageNumber + 1);
-					} else {
-						// there are no more pages of encounter to fetch so call our callback
-						console.log(`fetch_all_encounters successfully fetched all encounters; pageNumber: ${[pageNumber]}`);
-						callback(true);
-					}
-				},
-				failure: function (errorMessage) {
-					console.warn(`fetch_all_encounters failed; ${errorMessage}`);
-					callback(false);
+		window.ajaxQueue.addDDBRequest({
+			url: `https://encounter-service.dndbeyond.com/v1/encounters?page=${pageNumber}`,
+			success: function (responseData) {
+				let encountersList = responseData.data;
+				console.log(`fetch_all_encounters successfully fetched ${encountersList.length} encounters; pageNumber: ${pageNumber}`);
+				for (let i = 0; i < encountersList.length; i++) {
+					let encounter = encountersList[i];
+					window.EncounterHandler.encounters[encounter.id] = encounter;
 				}
-			});
+				if (responseData.pagination.currentPage < responseData.pagination.pages) {
+					// there are more pages of encounters to fetch so let's keep going
+					window.EncounterHandler.fetch_all_encounters(callback, pageNumber + 1);
+				} else {
+					// there are no more pages of encounter to fetch so call our callback
+					console.log(`fetch_all_encounters successfully fetched all encounters; pageNumber: ${[pageNumber]}`);
+					callback(true);
+					if (is_encounters_page()) {
+						did_change_mytokens_items(); // there's probably a better way to do this ¯\_(ツ)_/¯
+					}
+				}
+			},
+			error: function (errorMessage) {
+				console.warn(`fetch_all_encounters failed; ${errorMessage}`);
+				callback(false, errorMessage?.responseJSON?.type);
+			}
 		});
 	}
 
@@ -318,32 +325,24 @@ class EncounterHandler {
 		
 		console.log(JSON.stringify(window.EncounterHandler.encounters));
 
-		get_cobalt_token(function (token) {
-			for (let encounterId in window.EncounterHandler.encounters) {
-				let encounter = window.EncounterHandler.encounters[encounterId];
-				if (encounter.name === "AboveVTT" && encounter.id !== window.EncounterHandler.avttId) {
-					console.log(`attempting to delete AboveVTT encounter! id: ${encounterId}`);
-					window.ajaxQueue.addRequest({
-						type: "DELETE",
-						url: `https://encounter-service.dndbeyond.com/v1/encounters/${encounterId}`,
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-						},
-						xhrFields: {
-							withCredentials: true
-						},
-						success: function (responseData) {
-							console.warn(`delete_all_avtt_encounters deleted encounter ${JSON.stringify(encounter)}`);
-						},
-						failure: function (errorMessage) {
-							console.warn(`delete_all_avtt_encounters failed; ${errorMessage}`);
-						}	
-					});
-				} else {
-					console.log(`not delete encounter id: ${encounterId}, name: ${encounter.name}`);
-				}
+		for (let encounterId in window.EncounterHandler.encounters) {
+			let encounter = window.EncounterHandler.encounters[encounterId];
+			if (encounter.name === "AboveVTT" && encounter.id !== window.EncounterHandler.avttId) {
+				console.log(`attempting to delete AboveVTT encounter! id: ${encounterId}`);
+				window.ajaxQueue.addDDBRequest({
+					type: "DELETE",
+					url: `https://encounter-service.dndbeyond.com/v1/encounters/${encounterId}`,
+					success: function (responseData) {
+						console.warn(`delete_all_avtt_encounters deleted encounter ${JSON.stringify(encounter)}`);
+					},
+					error: function (errorMessage) {
+						console.warn(`delete_all_avtt_encounters failed; ${errorMessage}`);
+					}
+				});
+			} else {
+				console.log(`not delete encounter id: ${encounterId}, name: ${encounter.name}`);
 			}
-		});
+		}
 
 		window.ajaxQueue.addRequest({
 			complete: function() {
@@ -360,25 +359,17 @@ class EncounterHandler {
 			callback = function(){};
 		}
 		console.log(`fetch_campaign_info starting`);
-		get_cobalt_token(function (token) {
-			window.ajaxQueue.addRequest({
-				url: `https://www.dndbeyond.com/api/campaign/stt/active-campaigns/${get_campaign_id()}`,
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-				},
-				xhrFields: {
-					withCredentials: true
-				},
-				success: function (responseData) {
-					console.log(`fetch_campaign_info succeeded`);
-					window.EncounterHandler.campaign = responseData.data;
-					callback();
-				},
-				failure: function (errorMessage) {
-					console.warn(`fetch_campaign_info failed ${errorMessage}`);
-					callback();
-				}
-			});
+		window.ajaxQueue.addDDBRequest({
+			url: `https://www.dndbeyond.com/api/campaign/stt/active-campaigns/${get_campaign_id()}`,
+			success: function (responseData) {
+				console.log(`fetch_campaign_info succeeded`);
+				window.EncounterHandler.campaign = responseData.data;
+				callback();
+			},
+			error: function (errorMessage) {
+				console.warn(`fetch_campaign_info failed ${errorMessage}`);
+				callback(false, errorMessage?.responseJSON?.type);
+			}
 		});
 	}
 
@@ -402,37 +393,29 @@ class EncounterHandler {
 				campaignInfo.id = get_campaign_id();
 			}
 
-			get_cobalt_token(function (token) {
-				window.ajaxQueue.addRequest({
-					type: "POST",
-					contentType: "application/json; charset=utf-8",
-					dataType: "json",
-					url: `https://encounter-service.dndbeyond.com/v1/encounters`,
-					data: JSON.stringify({
-						"campaign": campaignInfo,
-						"name": "AboveVTT",
-						"flavorText": "This encounter is maintained by AboveVTT",
-						"description": "If you delete this encounter, a new one will be created the next time you DM a game. If you edit this encounter, your changes will be overwritten by AboveVTT. This encounter contains one monster for each monster token in the current scene excluding duplicate monster types."
-					}),
-					beforeSend: function (xhr) {
-						xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-					},
-					xhrFields: {
-						withCredentials: true
-					},
-					success: function (responseData) {
-						console.log(`create_avtt_encounter successfully created encounter`);
-						let avttEncounter = responseData.data;
-						console.log(JSON.stringify(avttEncounter));
-						window.EncounterHandler.avttId = avttEncounter.id;
-						window.EncounterHandler.encounters[avttEncounter.id] = avttEncounter;
-						callback(avttEncounter);
-					},
-					failure: function (errorMessage) {
-						console.warn(`create_avtt_encounter failed ${errorMessage}`);
-						callback(false);
-					}
-				});
+			window.ajaxQueue.addDDBRequest({
+				type: "POST",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				url: `https://encounter-service.dndbeyond.com/v1/encounters`,
+				data: JSON.stringify({
+					"campaign": campaignInfo,
+					"name": "AboveVTT",
+					"flavorText": "This encounter is maintained by AboveVTT",
+					"description": "If you delete this encounter, a new one will be created the next time you DM a game. If you edit this encounter, your changes will be overwritten by AboveVTT. This encounter contains one monster for each monster token in the current scene excluding duplicate monster types."
+				}),
+				success: function (responseData) {
+					console.log(`create_avtt_encounter successfully created encounter`);
+					let avttEncounter = responseData.data;
+					console.log(JSON.stringify(avttEncounter));
+					window.EncounterHandler.avttId = avttEncounter.id;
+					window.EncounterHandler.encounters[avttEncounter.id] = avttEncounter;
+					callback(avttEncounter);
+				},
+				error: function (errorMessage) {
+					console.warn(`create_avtt_encounter failed ${errorMessage}`);
+					callback(false, errorMessage?.responseJSON?.type);
+				}
 			});
 		});
 	}
@@ -443,30 +426,68 @@ class EncounterHandler {
 			callback = function(){};
 		}
 		console.log(`fetch_campaign_characters starting`);
-		get_cobalt_token(function (token) {
-			window.ajaxQueue.addRequest({
-				url: `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${get_campaign_id()}`,
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-				},
-				xhrFields: {
-					withCredentials: true
-				},
-				success: function (responseData) {
-					console.log(`fetch_campaign_characters succeeded`);
-					window.EncounterHandler.campaignShortCharacters = responseData.data;
-					callback();
-				},
-				failure: function (errorMessage) {
-					console.warn(`fetch_campaign_characters failed ${errorMessage}`);
-					callback();
-				}
-			});
+		window.ajaxQueue.addDDBRequest({
+			url: `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${get_campaign_id()}`,
+			success: function (responseData) {
+				console.log(`fetch_campaign_characters succeeded`);
+				window.EncounterHandler.campaignShortCharacters = responseData.data;
+				callback();
+			},
+			error: function (errorMessage) {
+				console.warn(`fetch_campaign_characters failed ${errorMessage}`);
+				callback(false, errorMessage?.responseJSON?.type);
+			}
 		});
 	}
 
+	fetch_monsters(monsterIds, callback) {
+		if (typeof callback !== 'function') {
+			console.warn("fetch_monsters was called without a callback.");
+			return;
+		}
+		if (typeof monsterIds === undefined || monsterIds.length === 0) {
+			callback([]);
+			return;
+		}
+		let uniqueMonsterIds = [...new Set(monsterIds)];
+		let queryParam = uniqueMonsterIds.map(id => `ids=${id}`).join("&");
+		console.log("fetch_monsters starting with ids", uniqueMonsterIds);
+		window.ajaxQueue.addDDBRequest({
+			url: `https://monster-service.dndbeyond.com/v1/Monster?${queryParam}`,
+			success: function (responseData) {
+				console.log(`fetch_monsters succeeded`);
+				callback(responseData.data);
+			},
+			error: function (errorMessage) {
+				console.warn("fetch_monsters failed", errorMessage);
+				callback(false, errorMessage?.responseJSON?.type);
+			}
+		})
+	}
+
+	fetch_encounter_monsters(encounterId, callback) {
+		if (typeof callback !== 'function') {
+			console.warn("fetch_encounter_monsters was called without a callback");
+			return;
+		}
+		let encounter = this.encounters[encounterId];
+		if (encounter?.monsters === undefined || encounter.monsters === null || encounter.monsters.length === 0) {
+			// nothing to fetch
+			callback([]);
+			return;
+		}
+		let monsterIds = encounter.monsters.map(m => m.id);
+		if (monsterIds.length > 0) {
+			console.log("fetch_encounter_monsters starting");
+			this.fetch_monsters(monsterIds, callback);
+		}
+	}
+
+
+
 	/// every time a scene is loaded or a monster is added to a scene this will update our backing encounter with any new monster types, but won't do anything if nothing new has been added.
 	update_avtt_encounter_with_players_and_monsters(callback) {
+		return;
 		if (window.EncounterHandler.encounterUpdateInProgress == true) {
 			return;
 		}
@@ -606,35 +627,27 @@ class EncounterHandler {
 		encounter.monsters = monsters;
 		encounter.players = players;
 
-		get_cobalt_token(function (token) {
-			window.ajaxQueue.addRequest({
-				type: "PUT",
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				url: `https://encounter-service.dndbeyond.com/v1/encounters/${window.EncounterHandler.avttId}`,
-				data: JSON.stringify(encounter),
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-				},
-				xhrFields: {
-					withCredentials: true
-				},
-				success: function (responseData) {
-					console.log("update_avtt_encounter_with_players_and_monsters succeeded");
-					let avttEncounter = responseData.data;
-					// console.log(JSON.stringify(avttEncounter));
-					window.EncounterHandler.avttId = avttEncounter.id;
-					window.EncounterHandler.encounters[avttEncounter.id] = avttEncounter;
-					window.EncounterHandler.encounterUpdateInProgress = false;
-					window.EncounterHandler.reload_combat_iframe();
-					callback(avttEncounter);
-				},
-				failure: function (errorMessage) {
-					console.warn(`update_avtt_encounter_with_players_and_monsters failed ${errorMessage}`);
-					window.EncounterHandler.encounterUpdateInProgress = false;
-					callback();
-				}
-			});
+		window.ajaxQueue.addDDBRequest({
+			type: "PUT",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			url: `https://encounter-service.dndbeyond.com/v1/encounters/${window.EncounterHandler.avttId}`,
+			data: JSON.stringify(encounter),
+			success: function (responseData) {
+				console.log("update_avtt_encounter_with_players_and_monsters succeeded");
+				let avttEncounter = responseData.data;
+				// console.log(JSON.stringify(avttEncounter));
+				window.EncounterHandler.avttId = avttEncounter.id;
+				window.EncounterHandler.encounters[avttEncounter.id] = avttEncounter;
+				window.EncounterHandler.encounterUpdateInProgress = false;
+				window.EncounterHandler.reload_combat_iframe();
+				callback(avttEncounter);
+			},
+			error: function (errorMessage) {
+				console.warn(`update_avtt_encounter_with_players_and_monsters failed ${errorMessage}`);
+				window.EncounterHandler.encounterUpdateInProgress = false;
+				callback(false, errorMessage?.responseJSON?.type);
+			}
 		});
 	}
 
@@ -650,29 +663,21 @@ class EncounterHandler {
 				"encounter-builder-dice-tray"
 			]
 		};
-		get_cobalt_token(function (token) {
-			window.ajaxQueue.addRequest({
-				type: "POST",
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				url: `https://www.dndbeyond.com/api/feature-flags/bulkget`,
-				data: JSON.stringify(flagsToFetch),
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-				},
-				xhrFields: {
-					withCredentials: true
-				},
-				success: function (responseData) {
-					console.log(`fetch_feature_flags succeeded`);
-					window.EncounterHandler.encounterBuilderDiceSupported = responseData["encounter-builder-dice-tray"];
-					callback();
-				},
-				failure: function (errorMessage) {
-					console.warn(`fetch_feature_flags failed ${errorMessage}`);
-					callback();
-				}
-			});
+		window.ajaxQueue.addDDBRequest({
+			type: "POST",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			url: `https://www.dndbeyond.com/api/feature-flags/bulkget`,
+			data: JSON.stringify(flagsToFetch),
+			success: function (responseData) {
+				console.log(`fetch_feature_flags succeeded`);
+				window.EncounterHandler.encounterBuilderDiceSupported = responseData["encounter-builder-dice-tray"];
+				callback();
+			},
+			error: function (errorMessage) {
+				console.warn(`fetch_feature_flags failed ${errorMessage}`);
+				callback(false, errorMessage?.responseJSON?.type);
+			}
 		});
 	}
 }

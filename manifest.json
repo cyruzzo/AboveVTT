@@ -76,8 +76,9 @@
 		"jitsi_external_api.js",
 		"MessageBroker.js",
 		"ScenesHandler.js",
-		"MonsterPanel.js",
 		"ScenesPanel.js",
+		"TokensPanel.js",
+		"built-in-tokens.js",
 		"mousetrap.1.6.5.min.js",
 		"KeypressHandler.js",
 		"Main.js"
