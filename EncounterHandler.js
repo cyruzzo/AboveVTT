@@ -656,7 +656,7 @@ function close_monster_stat_block() {
 		return;
 	}
 
-
+	$("#resizeDragMon.minimized").dblclick();
 	console.debug("close_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
 	// hide and update all iframes that we find. Even if we're currently loading one.
@@ -1263,7 +1263,13 @@ function init_enounter_combat_tracker_iframe() {
 		$("#resizeDragMon").mousedown(function() {
 			frame_z_index_when_click($(this));
 		});	
-		$("#sheet, #resizeDragMon").addClass("restored");
+		if(!$("#sheet").hasClass("minimized")){
+			$("#sheet").addClass("restored"); 
+		}
+		if(!$("#resizeDragMon").hasClass("minimized")){
+			$("#resizeDragMon").addClass("restored");
+		}
+			
 	} else {
 	  $("body").append(iframe);
 	  iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);	  
