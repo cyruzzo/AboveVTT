@@ -1001,7 +1001,7 @@ function minimize_monster_window_double_click(titleBar){
 	titleBar.off('dblclick').on('dblclick', function() {
 		if (titleBar.hasClass("restored")) {
 			titleBar.data("prev-height", titleBar.height());
-			titleBar.data("prev-width", titleBar.width());
+			titleBar.data("prev-width", (titleBar.width() - 6));
 			titleBar.data("prev-top", titleBar.css("top"));
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
@@ -1016,7 +1016,7 @@ function minimize_monster_window_double_click(titleBar){
 			titleBar.data("prev-minimized-top", titleBar.css("top"));
 			titleBar.data("prev-minimized-left", titleBar.css("left"));
 			titleBar.height(titleBar.data("prev-height"));
-			titleBar.width(titleBar.data("prev-width"));
+			titleBar.width(titleBar.data("prev-width");
 			titleBar.css("top", titleBar.data("prev-top"));
 			titleBar.css("left", titleBar.data("prev-left"));
 			titleBar.addClass("restored");
