@@ -249,7 +249,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 
 /*for resizable and moveable monsters and sheets in DM view*/
 
-#sheet{
+#sheet {
     left: auto;
     right: 340px;
     display: none;
@@ -262,7 +262,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: calc(100vh - 50px);
 }
 
-#sheet.open{
+#sheet.open {
     display: block !important;  
     transition: none;
     transform: none;
@@ -271,7 +271,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index:  49000;
 }
 
-#resizeDragMon{
+#resizeDragMon {
     display: flex;
     left: 271px;
     top: 67px;
@@ -283,8 +283,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     background: #242527;  
     cursor: move;   
     z-index: 49000;
-    max-width: 98%;
-    max-height: 98%;
     border-radius: 3px;   
     border: 1px solid gray;
 }  
@@ -293,37 +291,36 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     visibility: hidden;
 }
 
-#sheet iframe{
+#sheet iframe {
     width: 100%;
-    height: calc(100% - 25px) !important;
-    border-radius: 3px;   
+    height: calc(100% - 24px) !important;
+    border-radius: 0 0 3px 3px;   
 }
 
 
-#resizeDragMon iframe{
+#resizeDragMon iframe {
     width: 100%;
-    height: calc(100% - 24px) !important;
+    height: calc(100% - 23px) !important;
     position: absolute;
     left: 0;
     top: 24px;
     max-height: 100%;
-    border-radius: 0px 0px 5px 5px;
-    border-radius: 3px 0px;  
+    border-radius: 0px 0px 3px 3px;
 }
 
 
-#resizeDragMon iframe{
+#resizeDragMon iframe {
     z-index: -10000;
 }
 
-#resizeDragMon:visible iframe{
+#resizeDragMon:visible iframe {
     z-index: 10000;
 }
 
-.ui-resizable-handle{
+.ui-resizable-handle {
     z-index: 50100 !important;
 }
-.iframeResizeCover{
+.iframeResizeCover {
     z-index:9999999;
     position:absolute;
     width:calc(100% + 200px);
@@ -335,19 +332,15 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     left:-100px;
 }
 
-#combat_tracker_inside {
-    position: fixed;
-    height: 450px;
-}
 
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
-#combat_tracker_inside .ui-resizable-sw{
+#combat_tracker_inside .ui-resizable-sw {
     bottom:-45px;  
 }
 
 #combat_tracker_inside .ui-resizable-e,
-#combat_tracker_inside .ui-resizable-w  {
+#combat_tracker_inside .ui-resizable-w {
     height: calc(100% + 45px);  
 }
 
@@ -355,7 +348,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: 0;  
+    bottom: -5px;  
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
@@ -435,7 +428,12 @@ div.top_menu.visible,
     border-radius: 5px;
 }
 
-
+#combat_tracker_inside input[readonly],
+#combat_tracker_inside input[disabled=disabled],
+#combat_tracker_inside input[disabled=disabled]:hover{
+    opacity: 1;
+    border-style: solid;
+}
 
 /*end resizeable*/
 #addscene {
@@ -495,7 +493,9 @@ div#scene_selector,
 }
 
 #combat_tracker_inside {
-    position: relative;
+    position: fixed;
+    top: 67px;
+    left: 2px;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
@@ -544,7 +544,7 @@ div#scene_selector,
 #round_number_label {
     font-size: 14px;
     font-weight: 600;
-    line-height: 22px;
+    line-height: 40px;
     vertical-align: middle;
     text-align: center;
 }
@@ -2258,7 +2258,6 @@ button.avtt-roll-button {
 #combat_tracker_inside {
     border-width: 1px 1px 0px 1px;
     border-radius: 5px 5px 0 0;
-    width: 250px;
 }
 .body-rpgcharacter-sheet #combat_tracker_inside{
     width: 200px;   
@@ -2295,7 +2294,7 @@ button.avtt-roll-button {
 #combat_tracker_title_bar {
     width: 100%;
     background: #242527;
-    height: 26px;
+    height: 25px;
     font-size: 16px;
     font-weight: bold;
     text-align: left;
@@ -2311,7 +2310,7 @@ button.avtt-roll-button {
          1px -1px 0  #000,
          -1px 1px 0  #000,
          1px 1px 0  #000;
-    top: -2px;
+    top: -1px;
     position: relative;
     width: calc(100% + 2px);
     left: -1px;
@@ -2464,7 +2463,7 @@ button.avtt-roll-button {
 }
 
 #combat_tracker_inside{
-    width: 265px;
+    width: 267px;
 }
 /*End changes for UI*/
 
@@ -2539,7 +2538,7 @@ button.avtt-roll-button {
 }
 
 #round_number_label{
-    height: 25px;  
+    height: 30px;  
 }
 
 .encounter-builder-app #combat_area td [class*="AvatarPortrait"]{
@@ -2703,6 +2702,7 @@ button.avtt-roll-button {
 }
 #combat_tracker_inside {
     height: 450px;
+    z-index: 49000;
 }
 /*minimize windows*/
 
@@ -2742,6 +2742,10 @@ button.avtt-roll-button {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#combat_tracker_inside *:focus{
+    outline: none;
 }
 
 /*end combat tracker face lift*/

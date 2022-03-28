@@ -28,7 +28,7 @@ function init_combat_tracker(){
 	ct.append(pill);
 	ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
-	ct.append(ct_inside);
+	$('#site').append(ct_inside);
 	const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	ct_area=$("<table id='combat_area'/>");
@@ -191,7 +191,7 @@ function init_combat_tracker(){
 
 	$("#site").append(ct);
 	/*draggable and resizeable combat tracker - set which frame should be on top and remove others. Cover iframes to prevent mouse interference*/
-	$("#combat_tracker").addClass("moveableWindow");
+	$("#combat_tracker_inside").addClass("moveableWindow");
 	$("#combat_tracker_inside").draggable({
 			addClasses: false,
 			scroll: false,
@@ -208,6 +208,7 @@ function init_combat_tracker(){
 	$("#combat_tracker_inside").resizable({
 		addClasses: false,
 		handles: "all",
+		containment: "#windowContainment",
 		start: function () {
 			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
@@ -219,7 +220,7 @@ function init_combat_tracker(){
 		minHeight: 200
 	});
 	
-	$("#combat_tracker").mousedown(function() {
+	$("#combat_tracker_inside").mousedown(function() {
 		frame_z_index_when_click($(this));
 	});
 }

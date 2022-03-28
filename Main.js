@@ -922,7 +922,7 @@ function minimize_player_window_double_click(titleBar) {
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
 			titleBar.css("left", titleBar.data("prev-minimized-left"));	
-			titleBar.height(24);
+			titleBar.height(23);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
 			titleBar.removeClass("restored");
@@ -1017,6 +1017,7 @@ function init_sheet(){
 		$("#sheet").resizable({
 			addClasses: false,
 			handles: "all",
+			containment: "#windowContainment",
 			start: function () {
 				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
