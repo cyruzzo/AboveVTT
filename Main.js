@@ -922,7 +922,7 @@ function minimize_player_window_double_click(titleBar) {
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
 			titleBar.css("left", titleBar.data("prev-minimized-left"));	
-			titleBar.height(25);
+			titleBar.height(24);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
 			titleBar.removeClass("restored");

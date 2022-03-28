@@ -1006,15 +1006,13 @@ function minimize_monster_window_double_click(titleBar){
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
 			titleBar.css("left", titleBar.data("prev-minimized-left"));	
-			titleBar.height(25);
+			titleBar.height(24);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
 			titleBar.removeClass("restored");
 			titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
-			console.log("111111111111111111111111111111111111111111");
 			
 		} else if(titleBar.hasClass("minimized")) {
-			console.log("REEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			titleBar.data("prev-minimized-top", titleBar.css("top"));
 			titleBar.data("prev-minimized-left", titleBar.css("left"));
 			titleBar.height(titleBar.data("prev-height"));
