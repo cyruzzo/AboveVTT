@@ -187,10 +187,7 @@ class EncounterHandler {
 				open_monster_stat_block_with_id(previouslyOpenMonsterId, previouslyOpenTokenId);
 				remove_combat_tracker_loading_indicator();
 		}
-
-		//lock game log open in monster stat block so that default rolls can be sync'd
-		window.EncounterHandler.combat_body.find(".sidebar__control-group--visibility ~ .sidebar__control-group--lock button.sidebar__control").click()
-	
+		minimize_monster_window_double_click($("#resizeDragMon"));
 		sync_send_to_default();
 		console.groupEnd();
 	}
@@ -687,6 +684,7 @@ function close_monster_stat_block() {
 /// this will find the monster matching `monsterId`. If the monster does not exist for some reason, it will attempt to update the backing encounter. the tokenId is used for the `add_ability_tracker_inputs` function call which can be found in MonsterDice.js
 function open_monster_stat_block_with_id(monsterId, tokenId) {
 	console.group("open_monster_stat_block_with_id");
+	$("#resizeDragMon.minimized").dblclick();
 	if (window.EncounterHandler === undefined) {
 		// only the DM should have an EncounterHandler. If they don't for some reason, we have a problem.
 		if (window.DM) {
@@ -705,6 +703,9 @@ function open_monster_stat_block_with_id(monsterId, tokenId) {
 	window.StatHandler.getStat(monsterId, function(stat) {
 		open_monster_stat_block_with_stat(stat, tokenId);
 	});
+
+
+
 	console.groupEnd();
 }
 
@@ -970,11 +971,13 @@ function sync_send_to_default() {
 		}
 		console.debug("sync_send_to_default is opening the combat gamelog and trying again");
 		gamelogButton.click();
-		sync_send_to_default();
+		setTimeout(function() {
+			sync_send_to_default();
+		}, 1000);
 		return;
 	}
 
-	let encounterSendToText = $(".glc-game-log [class*='SendToLabel'] ~ .MuiButtonBase-root.MuiButton-text")[0].textContent;
+	let encounterSendToText = $(".MuiButtonBase-root.MuiButton-root.gl1 .MuiButton-label.gl2").text();
 	window.EncounterHandler.combat_body.find(".MuiList-root.MuiMenu-list .MuiListItemText-root").each(function() {
 		if (this.textContent.includes(encounterSendToText)) {
 			console.debug(`sync_send_to_default is about to click ${this}`);
@@ -993,6 +996,40 @@ function frame_z_index_when_click(moveableFrame){
 		});
 	}
 }
+
+function minimize_monster_window_double_click(titleBar){
+	titleBar.off('dblclick').on('dblclick', function() {
+		if (titleBar.hasClass("restored")) {
+			titleBar.data("prev-height", titleBar.height());
+			titleBar.data("prev-width", titleBar.width());
+			titleBar.data("prev-top", titleBar.css("top"));
+			titleBar.data("prev-left", titleBar.css("left"));
+			titleBar.css("top", titleBar.data("prev-minimized-top"));
+			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.height(25);
+			titleBar.width(200);
+			titleBar.addClass("minimized");
+			titleBar.removeClass("restored");
+			titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
+			console.log("111111111111111111111111111111111111111111");
+			
+		} else if(titleBar.hasClass("minimized")) {
+			console.log("REEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			titleBar.data("prev-minimized-top", titleBar.css("top"));
+			titleBar.data("prev-minimized-left", titleBar.css("left"));
+			titleBar.height(titleBar.data("prev-height"));
+			titleBar.width(titleBar.data("prev-width"));
+			titleBar.css("top", titleBar.data("prev-top"));
+			titleBar.css("left", titleBar.data("prev-left"));
+			titleBar.addClass("restored");
+			titleBar.removeClass("minimized");
+			$(".monster_title").remove();
+			
+		}
+	});
+}
+
+
 
 /// This will create and load a new iframe. Once fully loaded, it will call `window.EncounterHandler.combat_iframe_did_load();`
 function init_enounter_combat_tracker_iframe() {
@@ -1159,7 +1196,10 @@ function init_enounter_combat_tracker_iframe() {
 		$("body").append(draggable_resizable_div);	
 		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 		$("#resizeDragMon").append(monster_close_title_button);
-		monster_close_title_button.click(function(){close_monster_stat_block()});
+		monster_close_title_button.click(function() {
+			close_monster_stat_block()
+		});
+		
 		$("#resizeDragMon").append(iframe);
 		iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);
 		/*Set draggable and resizeable on monster and player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
@@ -1222,11 +1262,10 @@ function init_enounter_combat_tracker_iframe() {
 
 		$("#resizeDragMon").mousedown(function() {
 			frame_z_index_when_click($(this));
-		});
-	
-	}
-	else {
-		$("body").append(iframe);
+		});	
+		$("#sheet, #resizeDragMon").addClass("restored");
+	} else {
+	  $("body").append(iframe);
 	  iframe.attr("src", `/combat-tracker/${window.EncounterHandler.avttId}`);	  
 	}
 	console.groupEnd();

@@ -435,6 +435,8 @@ div.top_menu.visible,
     border-radius: 5px;
 }
 
+
+
 /*end resizeable*/
 #addscene {
     margin: 5px;
@@ -2700,6 +2702,37 @@ button.avtt-roll-button {
 #combat_tracker_inside {
     height: 450px;
 }
+/*minimize windows*/
+
+.minimized > *:not(#ct_text_title, .player_title, .monster_title), 
+#combat_tracker_title_bar.minimized:after,
+#combat_tracker_title_bar.minimized ~ *{
+    display: none !important;
+}
+
+.minimized,
+#resizeDragMon.minimized{
+    border-radius: 5px;
+    border: 1px solid gray;
+    opacity: 0.7;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 25px;
+    text-shadow: 0px 0px  #000,
+        -1px -1px 0  #000,  
+        1px -1px 0  #000,
+        -1px 1px 0  #000,
+        1px 1px 0  #000;
+}
+.minimized .monster_title,
+.minimized .player_title,
+.minimized #ct_text_title{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /*end combat tracker face lift*/
 #prewiz, 
 #wizard_popup{

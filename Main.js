@@ -912,6 +912,34 @@ function init_spells() {
 	});
 
 }
+		
+function minimize_player_window_double_click(titleBar) {
+	titleBar.off('dblclick').on('dblclick', function() {
+		if(titleBar.hasClass("restored")) {
+			titleBar.data("prev-height", titleBar.height());
+			titleBar.data("prev-width", titleBar.width());
+			titleBar.data("prev-top", titleBar.css("top"));
+			titleBar.data("prev-left", titleBar.css("left"));
+			titleBar.css("top", titleBar.data("prev-minimized-top"));
+			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.height(25);
+			titleBar.width(200);
+			titleBar.addClass("minimized");
+			titleBar.removeClass("restored");
+			titleBar.prepend('<div class="player_title">Player: '+$("#sheet iframe").contents().find(".ddbc-character-name").text()+"</div>");
+		} else if(titleBar.hasClass("minimized")) {
+			titleBar.data("prev-minimized-top", titleBar.css("top"));
+			titleBar.data("prev-minimized-left", titleBar.css("left"));
+			titleBar.height(titleBar.data("prev-height"));
+			titleBar.width(titleBar.data("prev-width"));
+			titleBar.css("top", titleBar.data("prev-top"));
+			titleBar.css("left", titleBar.data("prev-left"));
+			titleBar.addClass("restored");
+			titleBar.removeClass("minimized");
+			$(".player_title").remove();
+		}
+	});
+}
 
 function init_sheet(){	
 	if (is_characters_page()) {
@@ -1011,7 +1039,7 @@ function init_sheet(){
 	//container.height($(".sidebar__inner").height() - 20);
 
 	$("#site").append(container);
-
+	minimize_player_window_double_click($("#sheet"));
 	if (!window.DM) {
 
 		sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
@@ -1114,6 +1142,9 @@ function init_player_sheets()
 
 
 function open_player_sheet(sheet_url, closeIfOpen = true) {
+	if($("#sheet.minimized").length>0) {
+		$("#sheet.minimized").dblclick();
+	}
 	console.log("open_player_sheet"+sheet_url);
 	if (is_characters_page()) {
 		return;

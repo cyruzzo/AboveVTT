@@ -7,6 +7,9 @@ function init_combat_tracker(){
 	
 	toggle=$("<div id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</div>");
 	toggle.click(function(){
+		if($("#combat_tracker_inside #combat_tracker_title_bar.minimized").length>0) {
+			$("#combat_tracker_title_bar").dblclick();
+		}
 		if($("#combat_tracker_inside").is(":visible")){
 			$("#combat_tracker_inside").attr('style', 'display: none;');
 			$("#combat_tracker").css("height","20px"); // IMPORTANT
@@ -26,7 +29,7 @@ function init_combat_tracker(){
 	ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
 	ct.append(ct_inside);
-	const ct_title_bar=$("<div id='combat_tracker_title_bar'></div>")
+	const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
@@ -35,6 +38,36 @@ function init_combat_tracker(){
 	ct_inside.append(ct_title_bar);
 	ct_list_wrapper.append(ct_area);
 	ct_inside.append(ct_list_wrapper);
+
+	$(ct_title_bar).dblclick(function(){
+		if($(ct_title_bar).hasClass("restored")){
+			$(ct_title_bar).data("prev-height", $("#combat_tracker_inside").height());
+			$(ct_title_bar).data("prev-width", $("#combat_tracker_inside").width());
+			$(ct_title_bar).data("prev-top", $("#combat_tracker_inside").css("top"));
+			$(ct_title_bar).data("prev-left", $("#combat_tracker_inside").css("left"));
+			$("#combat_tracker_inside").css("top", $(ct_title_bar).data("prev-minimized-top"));
+			$("#combat_tracker_inside").css("left", $(ct_title_bar).data("prev-minimized-left"));
+			$("#combat_tracker_inside").height(25);
+			$("#combat_tracker_inside").width(200);
+			$("#combat_tracker_inside").css("visibility", "hidden");
+			$(ct_title_bar).css("visibility", "visible");
+			$(ct_title_bar).addClass("minimized");
+			$(ct_title_bar).removeClass("restored");
+			$(ct_title_bar).prepend("<div id='ct_text_title'>CombatTracker</div>")
+		}
+		else if($(ct_title_bar).hasClass("minimized")){
+			$(ct_title_bar).data("prev-minimized-top", $("#combat_tracker_inside").css("top"));
+			$(ct_title_bar).data("prev-minimized-left", $("#combat_tracker_inside").css("left"));
+			$("#combat_tracker_inside").height($(ct_title_bar).data("prev-height"));
+			$("#combat_tracker_inside").width($(ct_title_bar).data("prev-width"));
+			$("#combat_tracker_inside").css("top", $(ct_title_bar).data("prev-top"));
+			$("#combat_tracker_inside").css("left", $(ct_title_bar).data("prev-left"));
+			$(ct_title_bar).addClass("restored");
+			$(ct_title_bar).removeClass("minimized");
+			$("#combat_tracker_inside").css("visibility", "visible");
+			$("#ct_text_title").remove();
+		}
+	});
 	
 	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 42px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
 	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
