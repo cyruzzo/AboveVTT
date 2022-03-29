@@ -38,19 +38,27 @@ class EncounterHandler {
 		if (typeof callback !== 'function') {
 			callback = function(){};
 		}
-		this.avttId = is_encounters_page() ? window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1) : "";
 		this.encounters = {};
-		this.encounterBuilderDiceSupported = false;
+		this.encounterBuilderDiceSupported = true; // no longer behind a feature flag
 		this.combatIframeCount = 0;
-		this.fetch_feature_flags(function() {
-			window.EncounterHandler.fetch_all_encounters(function () {
+
+		if (is_encounters_page()) {
+			// we really only care about the encounter that we're currently on the page of
+			this.avttId = window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1);
+			this.fetch_avtt_encounter(this.avttId, function (fetchSucceeded) {
+				callback(fetchSucceeded);
+				window.EncounterHandler.fetch_all_encounters(); // we'll eventually want these around
+			});
+		} else {
+			// fetch all encounters, grab our AboveVTT encounter, delete any duplicates, and then move on.
+			// We only care if the final fetch_or_create_avtt_encounter fails
+			this.fetch_all_encounters(function () {
+				console.log(`about to delete all except ${window.EncounterHandler.avttId}`);
 				window.EncounterHandler.delete_all_avtt_encounters(function () {
-					window.EncounterHandler.create_avtt_encounter(function() {
-						callback();
-					});
+					window.EncounterHandler.fetch_or_create_avtt_encounter(callback);
 				});
 			});
-		});
+		}
 	}
 
 	/// The current iframe that the monster stat blocks are loaded in. This is frequently replaced as monsters are added to the scene.
@@ -185,6 +193,10 @@ class EncounterHandler {
 				open_monster_stat_block_with_id(previouslyOpenMonsterId, previouslyOpenTokenId);
 				remove_combat_tracker_loading_indicator();
 		}
+
+		//lock game log open in monster stat block so that default rolls can be sync'd
+		window.EncounterHandler.combat_body.find(".sidebar__control-group--visibility ~ .sidebar__control-group--lock button.sidebar__control").click()
+	
 		sync_send_to_default();
 		console.groupEnd();
 	}
@@ -194,6 +206,43 @@ class EncounterHandler {
 		return (this.avttId !== undefined && this.avttId.length > 0);
 	}
 
+	// fetches a specific encounter by the given id
+	fetch_avtt_encounter(id, callback) {
+		if (typeof callback !== 'function') {
+			callback = function(){};
+		}
+		if (id === undefined || typeof(id) !== "string" || id.length === 0) {
+			callback(false);
+			return;
+		}
+		if (id in this.encounters) {
+			// we have it locally, just return it
+			callback(this.encounters[id]);
+		} else {
+			get_cobalt_token(function (token) {
+				window.ajaxQueue.addRequest({
+					url: `https://encounter-service.dndbeyond.com/v1/encounters/${id}`,
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+					},
+					xhrFields: {
+						withCredentials: true
+					},
+					success: function (responseData) {
+						let encounter = responseData.data;
+						console.log(`fetch_avtt_encounter successfully fetched encounter with id ${id}`);
+						window.EncounterHandler.encounters[encounter.id] = encounter;
+						callback(encounter);
+					},
+					failure: function (errorMessage) {
+						console.warn(`fetch_avtt_encounter failed; ${errorMessage}`);
+						callback(false);
+					}
+				});
+			});
+		}
+	}
+
 	/// We build an encounter named `AboveVTT` this will fetch it if it exists, and create it if it doesn't
 	fetch_or_create_avtt_encounter(callback) {
 		if (typeof callback !== 'function') {
@@ -201,13 +250,16 @@ class EncounterHandler {
 		}
 		if (this.avttId !== undefined && this.avttId.length > 0 && this.avttId in this.encounters) {
 			// we have it locally, just return it
+			console.log(`returning ${this.encounters[this.avttId]}`);
 			callback(this.encounters[this.avttId]);
 		} else {
 			// we don't have it locally, so fetch all encounters and see if we have it locally then
 			this.fetch_all_encounters(function () {
+				console.log(`returning ${window.EncounterHandler.encounters[window.EncounterHandler.avttId]}`);
 				let avttEncounter = window.EncounterHandler.encounters[window.EncounterHandler.avttId];
 				if (avttEncounter !== undefined) {
 					// we found it!
+					console.log(`returning ${this.encounters[this.avttId]}`);
 					callback(avttEncounter);
 				} else {
 					// there isn't an encounter for this campaign with the name AboveVTT so let's create one
@@ -237,17 +289,7 @@ class EncounterHandler {
 					console.log(`fetch_all_encounters successfully fetched ${encountersList.length} encounters; pageNumber: ${pageNumber}`);
 					for (let i = 0; i < encountersList.length; i++) {
 						let encounter = encountersList[i];
-						if (encounter.campaign !== undefined && encounter.campaign != null && encounter.campaign.id == get_campaign_id()) {
-							// only collect encounters for this campaign
-							window.EncounterHandler.encounters[encounter.id] = encounter;
-							if (encounter.name == "AboveVTT") {
-								// we found our AboveVTT encounter. Store the id locally so we can easily find it later
-								window.EncounterHandler.avttId = encounter.id;
-							}
-						} else if (encounter.name == "AboveVTT") {
-							// we found our AboveVTT encounter. Store the id locally so we can easily find it later
-							window.EncounterHandler.encounters[encounter.id] = encounter;
-						}
+						window.EncounterHandler.encounters[encounter.id] = encounter;
 					}
 					if (responseData.pagination.currentPage < responseData.pagination.pages) {
 						// there are more pages of encounters to fetch so let's keep going
@@ -255,12 +297,12 @@ class EncounterHandler {
 					} else {
 						// there are no more pages of encounter to fetch so call our callback
 						console.log(`fetch_all_encounters successfully fetched all encounters; pageNumber: ${[pageNumber]}`);
-						callback();
+						callback(true);
 					}
 				},
 				failure: function (errorMessage) {
 					console.warn(`fetch_all_encounters failed; ${errorMessage}`);
-					callback();
+					callback(false);
 				}
 			});
 		});
@@ -272,18 +314,10 @@ class EncounterHandler {
 			callback = function(){};
 		}
 
-		console.log(JSON.stringify(window.EncounterHandler.encounters));
-
-		if (is_encounters_page()) {
-			// we're already on an encounter page so don't delete it!
-			callback();
-			return;
-		}
-
 		get_cobalt_token(function (token) {
 			for (let encounterId in window.EncounterHandler.encounters) {
 				let encounter = window.EncounterHandler.encounters[encounterId];
-				if (encounter.name == "AboveVTT") {
+				if (encounter.name === "AboveVTT" && encounter.id !== window.EncounterHandler.avttId) {
 					console.log(`attempting to delete AboveVTT encounter! id: ${encounterId}`);
 					window.ajaxQueue.addRequest({
 						type: "DELETE",
@@ -392,7 +426,7 @@ class EncounterHandler {
 					},
 					failure: function (errorMessage) {
 						console.warn(`create_avtt_encounter failed ${errorMessage}`);
-						callback();
+						callback(false);
 					}
 				});
 			});
@@ -958,13 +992,11 @@ function sync_send_to_default() {
 		}
 		console.debug("sync_send_to_default is opening the combat gamelog and trying again");
 		gamelogButton.click();
-		setTimeout(function() {
-			sync_send_to_default();
-		}, 1000);
+		sync_send_to_default();
 		return;
 	}
 
-	let encounterSendToText = $(".MuiButtonBase-root.MuiButton-root.gl1 .MuiButton-label.gl2").text();
+	let encounterSendToText = $(".glc-game-log [class*='SendToLabel'] ~ .MuiButtonBase-root.MuiButton-text").text();
 	window.EncounterHandler.combat_body.find(".MuiList-root.MuiMenu-list .MuiListItemText-root").each(function() {
 		if (this.textContent.includes(encounterSendToText)) {
 			console.debug(`sync_send_to_default is about to click ${this}`);

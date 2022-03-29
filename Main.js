@@ -1,4 +1,14 @@
-var abovevtt_version = '0.72';
+var abovevtt_version = '0.73';
+
+/**
+ * before the page refreshes perform the innards
+ * @param {*} event 
+ */
+window.onbeforeunload = function(event)
+{
+	console.log("refreshing page, storing zoom first")
+	add_zoom_to_storage()
+};
 
 function parse_img(url){
 	if (url === undefined) {
@@ -86,7 +96,7 @@ function change_zoom(newZoom, x, y) {
 * Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene
 * @param {float} z - current zoom level
 */
-function add_zoom_to_storage(z){
+function add_zoom_to_storage(){
 	console.group("add_zoom_to_storage")
 	console.log("storing zoom")
 	
@@ -94,7 +104,7 @@ function add_zoom_to_storage(z){
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
 		if (zoomIndex !== -1){
-			zooms[zoomIndex].zoom = z
+			zooms[zoomIndex].zoom = window.ZOOM
 			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft())
 			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop())
 		}
@@ -102,7 +112,7 @@ function add_zoom_to_storage(z){
 			// zoom doesn't exist
 			zooms.push({
 				"title": window.CURRENT_SCENE_DATA.title,
-				"zoom":z,
+				"zoom":window.ZOOM,
 				"leftOffset": Math.round($(window).scrollLeft()),
 				"topOffset": Math.round($(window).scrollTop())
 			}); 
@@ -122,6 +132,9 @@ function set_default_vttwrapper_size(){
 	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
 }
 
+/**
+ * Removes the zoom for the current scene from local storage, applied when user click "fit zoom" button
+ */
 function remove_zoom_from_storage(){
 	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
@@ -646,7 +659,7 @@ function init_controls() {
 	}
 
 	
-	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] == true && window.EXPERIMENTAL_SETTINGS["disableDdbDiceMonsterPanel"] != true && window.EXPERIMENTAL_SETTINGS["DEBUGddbDiceMonsterPanel"] == true) {
+	if (window.EXPERIMENTAL_SETTINGS["DEBUGddbDiceMonsterPanel"] === true) {
 		change_sidbar_tab($("#switch_monsters"));
 		$("#loading_overlay").css({ "opacity": "0.25" })
 		$(".sidebar-panel-loading-indicator").css({ "opacity": "0.25" })
@@ -695,7 +708,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.72.3</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.73</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -745,7 +758,7 @@ function init_splash() {
 
 	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","TheDreadPirateMittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey"];
 	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","JoaquinAtwoodWard","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Eric Mason","Avilar","Don Clemson","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
-	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","JosephBendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","ChristianJohansson","Kat Wells","DH Ford","Dirk Wynkoop","MichaelAugusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","RobertSanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","CiaraMcCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","NickolasOlmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","MarshallSúileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","William Geisbert","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","JosephBendickson","Cheeky Sausage Games","Jerry Jones","David Hollenbeck","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","ChristianJohansson","Kat Wells","DH Ford","Dirk Wynkoop","MichaelAugusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Garry Rose","Mage","RobertSanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","N M","Andrew Thomas","Yavor Vlaskov","CiaraMcCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","gwaihirwindlord","Vlad Batory","glenn boardman","Urchin Prince","NickolasOlmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Adam Davies","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","MarshallSúileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France","Volhov_Velez","Fabrizio Tronci","Michael Whittington"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -1547,7 +1560,10 @@ function init_things() {
 	if (window.DM) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
-		window.EncounterHandler = new EncounterHandler(function() {
+		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+			if (didSucceed === false) {
+				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+			}
 			init_ui();
 			if (is_encounters_page()) {
 
@@ -2589,7 +2605,6 @@ function init_buttons() {
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
-	buttons.css("z-index", '2');
 
 
 	// HIDE default SEND TO functiontality in the campaign page:
@@ -2746,17 +2761,8 @@ $(function() {
 		newlink.click(function(e) {
 			e.preventDefault();
 			gather_pcs();
-			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true) {				
-				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-				window.open(`https://www.dndbeyond.com${sheet}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
-			} else {
-				window.PLAYER_IMG = img;
-				window.PLAYER_SHEET = sheet;
-				window.PLAYER_NAME = name;
-				window.PLAYER_ID = getPlayerIDFromSheet(sheet);
-				window.DM = false;
-				init_above();
-			}
+			let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
+			window.open(`https://www.dndbeyond.com${sheet}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
 		});
 
 		$(this).prepend(newlink);
@@ -2815,32 +2821,6 @@ $(function() {
 	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
 
 	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + find_game_id())) || {};
-	let ddbDiceKey = "useDdbDice";
-	let ddbDiceValue = window.EXPERIMENTAL_SETTINGS[ddbDiceKey];
-	if (ddbDiceValue != true) {
-		// unless this user has explicitly enabled this feature, we want to set the default value
-		ddbDiceValue = false;
-		window.EXPERIMENTAL_SETTINGS[ddbDiceKey] = false;
-		persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-	}
-	let ddbDiceToggle = build_toggle_input(
-		ddbDiceKey,
-		"Use DndBeyond Dice when possible",
-		ddbDiceValue,
-		"Your DndBeyond Dice will be used when possible. The buttons at the bottom of the gamelog will roll DndBeyond's dice instead of the AboveVTT rolling mechanism. For DMs, monster stat blocks will roll DndBeyond's dice as well. The game will also be played in a different tab instead of this one. If you are experiencing unexpected behavior, disabling this feature will give you the legacy version of AboveVTT. The legacy version will not exist for much longer so please report any bugs in the Discord Server so we can fix them quickly. Thank you.",
-		"When enabled, your DndBeyond Dice will be used when possible. The buttons at the bottom of the gamelog will roll DndBeyond's dice instead of the AboveVTT rolling mechanism. For DMs, monster stat blocks will roll DndBeyond's dice as well. The game will also be played in a different tab instead of this one. If you are experiencing unexpected behavior, disabling this feature will give you the legacy version of AboveVTT. The legacy version will not exist for much longer so please report any bugs in the Discord Server so we can fix them quickly. Thank you.",
-		function(name, newValue) {
-			window.EXPERIMENTAL_SETTINGS[name] = newValue;
-			persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-		}
-	);
-	ddbDiceToggle.css({ "width": "400px", "margin-top": "8px", "margin-left": "4px" });
-	ddbDiceToggle.find(".token-image-modal-footer-title").css({ "text-transform": "none" });
-	//contentDiv.append(`<br/><br/><h5 style="margin:8px">A new beta feature is now available!</h5><p style="margin:8px">It will eventually be turned on by default so consider testing it out.<br/>Please consider giving feedback to the developers in the <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a>.<br/>Thank you.</p>`);
-	//contentDiv.append(ddbDiceToggle);
-	// FORCE DDB DICE
-	window.EXPERIMENTAL_SETTINGS[ddbDiceKey]=true;
-
 	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
 
 	$(".instructions").click(function(){
@@ -2856,8 +2836,11 @@ $(function() {
 		e.preventDefault();
 		$(".joindm").addClass("button-loading");
 		gather_pcs();
-		window.EncounterHandler = new EncounterHandler(function() {
-			if (window.EXPERIMENTAL_SETTINGS[ddbDiceKey] == true && window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
+		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+			if (didSucceed === false) {
+				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+			}
+			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
 				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
 			} else {
@@ -2869,7 +2852,13 @@ $(function() {
 				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
 				init_above();
 			}
+
+			let oldText = $(".joindm").text();
 			$(".joindm").removeClass("button-loading");
+			$(".joindm").text("Check for blocked pop ups!");
+			setTimeout(function () {
+				$(".joindm").text(oldText);
+			}, 2000);
 		});
 	});
 	
@@ -3429,7 +3418,7 @@ function reset_character_sheet_css() {
 	$(".ct-character-sheet-desktop").css({
 		"height": maxHeight,
 	});
-	$(".ct-sidebar").css({ "height": "100%" });
+	$(".ct-sidebar").css({ "height": "calc(100vh - 15px)" });
 	$(".ct-character-header-tablet").css({ "background": "rgba(0, 0, 0, 0.85)" });
 }
 
