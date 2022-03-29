@@ -442,7 +442,7 @@ class Token {
 			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
 
-		return (hpbar);
+		return hpbar;
 	}
 
 	build_ac() {
@@ -509,7 +509,7 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	toggle_stats(token){
-		if(this.options.disablestat || this.options.hidestat){
+		if(!window.DM && !this.isPlayer() && (this.options.disablestat || this.options.hidestat) ){
 			token.find(".hpbar").hide();
 			token.find(".ac").hide();
 			token.find(".elev").hide();
@@ -526,6 +526,7 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	build_stats(token){
+		console.group("build_stats")
 		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
 			console.log("adding hp/ac/elev")
 			token.append(this.build_hp());
@@ -533,10 +534,12 @@ class Token {
 			token.append(this.build_elev());
 		}
 		else{
+			console.log("replacing")
 			token.find(".hpbar").replaceWith(this.build_hp());
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
 		}
+		console.groupEnd()
 	}
 
 	/**
@@ -551,19 +554,9 @@ class Token {
 			this.options.hidestat = false
 			this.options.disablestat = false
 		}
-		// allow player owned, player and their tokens, and the dm to see stats
-		if (this.options.player_owned || (!window.DM && this.isPlayer() || window.DM )){
-			console.log("owned token id ", this.options.id)
-			// monster tokens don't get built with any stats for players so build them here
-			this.toggle_stats(token)
-		}
-		// token access revoked, remove stats for the player
 		else if (!this.options.player_owned && !window.DM){		
 			this.options.restrictPlayerMove = true
 			this.options.hidestat = true
-			token.find(".hpbar").remove()
-			token.find(".ac").remove()
-			token.find(".elev").remove()
 		}
 		console.groupEnd()
 	}
@@ -1209,9 +1202,9 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
-		this.toggle_stats(token)
 		this.build_stats(token)
 		this.toggle_player_owned(token)
+		this.toggle_stats(token)
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
@@ -2143,10 +2136,14 @@ function token_menu() {
 					delete ret.items.note_menu.items.note_view;
 					delete ret.items.note_menu.items.note_delete;
 				}
+
+				if(!window.DM && !ret.items.options.items.token_player_owned.selected){
+					console.log("bain token is not owned by player")
+					delete ret.items.view;
+				}
 				
 				if(!window.DM){
 					delete ret.items.sep0;
-					delete ret.items.view;
 					delete ret.items.token_combat;
 					delete ret.items.token_hidden;
 					//delete ret.items.token_size;
