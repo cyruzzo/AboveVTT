@@ -883,6 +883,11 @@ class MessageBroker {
 		if(data.whisper && (data.whisper!=window.PLAYER_NAME) && (!local))
 			return $("<div/>");
 		//notify_gamelog();
+
+		var d = new Date();
+		var datetime = d.toISOString();
+		var timestamp = d.toLocaleTimeString();
+		var datestamp = d.toLocaleDateString();
 		
 		if (is_encounters_page()) {
 			return $(`
@@ -895,7 +900,7 @@ class MessageBroker {
 							<span class="tss-1tj70tb-Sender">${data.player}</span>
 						</div>
 						<div class="tss-8-Collapsed-ref tss-8-Other-ref tss-11w0h4e-Message-Collapsed-Other-Flex">${data.text}</div>
-						<time datetime="2022-03-15T17:34:18-05:00" title="3/15/2022 5:34 PM" class="tss-1yxh2yy-TimeAgo-TimeAgo">14 mins ago</time>
+						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="tss-1yxh2yy-TimeAgo-TimeAgo">${timestamp}</time>
 					</div>
 				</li>
 			`);
@@ -910,7 +915,7 @@ class MessageBroker {
 							<span class="_22SVeI3ayk2KgS4V+GqCCA==">${data.player}</span>
 						</div>
 						<div class="oDA6c7IdLEVJ7uSe5103CQ== iQqUeZkD8989e4pBhSqIrQ== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA==">${data.text}</div>
-						<time datetime="2022-01-06T07:46:19-06:00" title="1/6/2022 7:46 AM" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">24 mins ago</time>
+						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">${timestamp}</time>
 					</div>
 				</li>
 			`);
@@ -924,9 +929,6 @@ class MessageBroker {
 		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
 		container.append(entry);
 
-
-		var d = new Date();
-		var datetime = d.toISOString();
 		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
