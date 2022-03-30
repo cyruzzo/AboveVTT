@@ -84,18 +84,18 @@ class Token {
 	size(newsize) {
 		this.update_from_page();
 		this.options.size = newsize;
-		this.place_sync_persist
+		this.place_sync_persist()
 	}
 
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
-		this.place_sync_persist
+		this.place_sync_persist()
 	}
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
-		this.place_sync_persist
+		this.place_sync_persist()
 	}
 	delete(persist=true,sync=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
@@ -354,7 +354,6 @@ class Token {
 				old.find(".max_hp").val(Math.max(0, parseInt(this.options.max_hp) + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-			console.log("UPDATING TOKEN HP")
 			this.options.hp = old.find(".hp").val();
 			this.options.max_hp = old.find(".max_hp").val();
 			
@@ -528,13 +527,11 @@ class Token {
 	build_stats(token){
 		console.group("build_stats")
 		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
-			console.log("adding hp/ac/elev")
 			token.append(this.build_hp());
 			token.append(this.build_ac());
 			token.append(this.build_elev());
 		}
 		else{
-			console.log("replacing")
 			token.find(".hpbar").replaceWith(this.build_hp());
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
@@ -547,7 +544,7 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	toggle_player_owned(token){
-		console.group("player_owned", this.options.player_owned)
+		console.group("toggle_player_owned")
 		// give player "full" control of token
 		if (this.options.player_owned){
 			this.options.restrictPlayerMove = false
@@ -1381,7 +1378,6 @@ function array_remove_index_by_value(arr, item) {
 }
 
 function menu_callback(key, options, event) {
-	console.log(key, options, event)
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
 			if (encounter_builder_dice_supported()) {
@@ -1395,10 +1391,6 @@ function menu_callback(key, options, event) {
 			//load_frame($(this).attr('data-id'));
 			open_player_sheet($(this).attr('data-id'));
 		}
-	}
-	if (key == "delete") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].delete();
 	}
 	if (key == "delete") {
 		id = $(this).attr('data-id');
@@ -1551,7 +1543,6 @@ function token_inputs(opt) {
 		return;
 
 	data = $.contextMenu.getInputValues(opt, $(this).data());
-	console.log("bain", data)
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
 	tok = window.TOKEN_OBJECTS[id];
@@ -1712,13 +1703,6 @@ function multiple_callback(key, options, event) {
 			window.TOKEN_OBJECTS[id].hide();
 		});
 	}
-	if (key == "show_stat") {
-		$("#tokens .tokenselected").each(function() {
-			id = $(this).attr('data-id');
-			window.TOKEN_OBJECTS[id].options.hidestat = false;
-		});
-	}
-	
 	if (key == "show") {
 		$("#tokens .tokenselected").each(function() {
 			id = $(this).attr('data-id');
@@ -2136,9 +2120,8 @@ function token_menu() {
 					delete ret.items.note_menu.items.note_view;
 					delete ret.items.note_menu.items.note_delete;
 				}
-
+				// token isn't owned by a player, only the DM should see "character sheet" option in context menu
 				if(!window.DM && !ret.items.options.items.token_player_owned.selected){
-					console.log("bain token is not owned by player")
 					delete ret.items.view;
 				}
 				
