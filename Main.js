@@ -2038,6 +2038,8 @@ function init_ui() {
 	if (!is_characters_page()) {
 		$("#site").children().hide();
 		$("#loading_overlay").show();
+	} else {
+		reposition_player_sheet();
 	}
 	$(".sidebar__controls").width(340);
 	// $(".ct-sidebar__control").width(340);
@@ -3168,6 +3170,10 @@ function is_player_sheet_open() {
 
 /// When playing on the characters page, this will show the character sheet. When not on the character page, `open_player_sheet` is used.
 function show_player_sheet() {
+	$("#character-tools-target").css({
+		"visibility": "visible",
+		"z-index": 3
+	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "visible",
 		"z-index": 3
@@ -3190,6 +3196,10 @@ function show_player_sheet() {
 
 /// When playing on the characters page, this will hide the character sheet. When not on the characters page, `close_player_sheet` is used.
 function hide_player_sheet() {
+	$("#character-tools-target").css({
+		"visibility": "hidden",
+		"z-index": -1
+	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "hidden",
 		"z-index": -1
