@@ -495,43 +495,165 @@ tokenbuiltin = {
 tokendata={
 	folders:{},
 };
+mytokens = [];
 
-// simple object representing a token
+function migrate_to_my_tokens() {
+	if (mytokens.length > 0) {
+		// we already did this. no need to continue
+		return;
+	}
+
+	console.group("migrate_to_my_tokens");
+
+	const migrateFolderAtPath = function(currentFolderPath) {
+		currentFolderPath = currentFolderPath.replaceAll("//", "/");
+		if (!currentFolderPath.startsWith("/")) {
+			currentFolderPath = `/${currentFolderPath}`;
+		}
+		let folder = convert_path(currentFolderPath);
+		if (folder.tokens) {
+			for(let tokenKey in folder.tokens) {
+				let token = folder.tokens[tokenKey];
+				token['data-folderpath'] = currentFolderPath;
+				token['data-oldFolderKey'] = tokenKey; // not sure if we'll need this, but hopefully not
+				if (token['data-name'] === undefined) {
+					token['data-name'] = tokenKey;
+				}
+				mytokens.push(token);
+			}
+		}
+		if (folder.folders) {
+			for (let folderKey in folder.folders) {
+				migrateFolderAtPath(`${currentFolderPath}/${folderKey}`);
+			}
+		}
+	}
+
+	migrateFolderAtPath(TokenListItem.PathRoot);
+	console.groupEnd()
+}
+
+function rollback_from_my_tokens() {
+	mytokens = [];
+}
+
+/**
+ * A ViewModel that represents a token (or folder) listed in the sidebar.
+ * This is a transient object and is not intended to be used as a data source. Instead, each {type} determines where the data source is.
+ * This is not a token that has been placed on a scene; that is an instance of {Token} and is
+ * represented as a many {Token} to one {TokenListItem} relationship.
+ * For example:
+ *   This could represent a "Goblin" monster. Placing this on the scene several times would create several {Token} instances.
+ *   Each of those {Token}s would be of type "monster".
+*/
 class TokenListItem {
-	constructor(name, image, tokenType, subtitle = "") {
+	static TypeFolder = "folder";
+	static TypeMyToken = "myToken";
+	static TypePC = "pc";
+	static TypeMonster = "monster";
+	static PathRoot = "/";
+
+	/** Generic constructor for a TokenListItem. Do not call this directly. Use one of the static functions instead.
+	 * @param name {string} the name displayed to the user
+	 * @param image {string} the src of the img tag
+	 * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
+	 * @param subtitle {string} the string displayed under the name
+	 * @param folderpath {string} the folder this token is in
+	 */
+	constructor(name, image, type, subtitle, folderpath = TokenListItem.PathRoot) {
 		this.name = name;
 		this.image = image;
-		this.tokenType = tokenType;
+		this.type = type;
 		this.subtitle = subtitle;
+		this.folderpath = folderpath;
 	}
-	static Custom(tokendatapath, tokendataname) {
-		console.log("Custom", tokendatapath, tokendataname);
-		let folderData = convert_path(tokendatapath);
-		let tokenData = folderData.tokens[tokendataname];
-		console.log(tokenData)
-		let name = tokenData["data-name"] !== undefined ? tokenData["data-name"] : tokendataname;
-		let item = new TokenListItem(name, tokenData["data-img"], "custom", "custom token yo");
-		item.tokendatapath = tokendatapath;
-		item.tokendataname = tokendataname;
+	static Folder(folderpath, name) {
+		console.log("TokenListItem.Folder", folderpath, name);
+		if (!folderpath.startsWith("/")) {
+			folderpath = `/${folderpath}`;
+		}
+		let item = new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, "FOLDER", folderpath);
+		return item;
+	}
+	static MyToken(tokenData) {
+		console.log("TokenListItem.MyToken", tokenData);
+		let item = new TokenListItem(tokenData["data-name"], tokenData["data-img"], TokenListItem.TypeMyToken, "MyToken", tokenData["data-folderpath"]);
 		return item;
 	}
 	static Monster(monsterId, monsterName, imgsrc, isReleased, isHomebrew) {
-		console.log("Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
-		let item = new TokenListItem(monsterName, imgsrc, "monster", "Ahhh real monsters!");
+		console.log("TokenListItem.Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
+		let item = new TokenListItem(monsterName, imgsrc, TokenListItem.TypeMonster, "MONSTER", "/monsters");
 		item.monsterId = monsterId;
 		item.isReleased = isReleased;
 		item.isHomebrew = isHomebrew;
 		return item;
 	}
 	static PC(sheet, name, imgSrc) {
-		console.log("PC", sheet, name, imgSrc);
-		let item = new TokenListItem(name, imgSrc, "pc", "PLAYER");
+		console.log("TokenListItem.PC", sheet, name, imgSrc);
+		let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, "PLAYER", "/players");
 		item.sheet = sheet;
 		return item;
 	}
+
+	/**
+	 * A comparator for sorting by name
+	 * @param lhs {TokenListItem}
+	 * @param rhs {TokenListItem}
+	 * @returns {number}
+	 */
+	static nameComparator(lhs, rhs) {
+		if (lhs.name < rhs.name) { return -1; }
+		if (lhs.name > rhs.name) { return 1; }
+		return 0;
+	}
+}
+
+function rebuild_token_items_list() {
+
+	migrate_to_my_tokens();
+
+
+	let tokenItems = window.pcs.map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image));
+
+	let knownPaths = [];
+
+	for (let i = 0; i < mytokens.length; i++) {
+		let myToken = mytokens[i];
+		console.log(myToken);
+		let path = myToken['data-folderpath'];
+		if (path !== TokenListItem.PathRoot && !knownPaths.includes(path)) {
+			let pathComponents = path.split("/");
+			let folderName = pathComponents.pop();
+			let folderPath = pathComponents.join("/");
+			console.log()
+			tokenItems.push(TokenListItem.Folder(folderPath, folderName));
+			knownPaths.push(path);
+		}
+		tokenItems.push(TokenListItem.MyToken(myToken));
+	}
+
+	// const pushTokensInFolder = function(tokendatapath) {
+	// 	let folder = convert_path(tokendatapath);
+	// 	if (folder.tokens) {
+	// 		for (let tokendataname in folder.tokens) {
+	// 			tokenItems.push(TokenListItem.MyToken(tokendatapath, tokendataname));
+	// 		}
+	// 	}
+	// 	if (folder.folders) {
+	// 		for (let currentPathName in folder.folders) {
+	// 			tokenItems.push(TokenListItem.Folder(tokendatapath, currentPathName));
+	// 			pushTokensInFolder(`${tokendatapath}/${currentPathName}`);
+	// 		}
+	// 	}
+	// }
+	// pushTokensInFolder("/");
+
+	window.tokenListItems = tokenItems;
 }
 
 function filter_token_list(searchTerm) {
+
+	// return;
 
 	if (searchTerm === undefined || typeof searchTerm !== "string") {
 		searchTerm = "";
@@ -539,7 +661,9 @@ function filter_token_list(searchTerm) {
 
 	if (searchTerm.length === 0) {
 		// we're at the root so show everything
-		draw_custom_token_list(convert_path("/"), "/");
+		redraw_token_list(searchTerm);
+		return;
+		// draw_custom_token_list(convert_path("/"), "/");
 	} else {
 		// the user has searched something so only show the results
 		tokensPanel.body.empty();
@@ -547,41 +671,16 @@ function filter_token_list(searchTerm) {
 	}
 
 	// reset to an empty list so we can rebuild it
-	let displayedTokens = [];
+	let displayedTokens = window.tokenListItems.filter(item => item.name.toLowerCase().includes(searchTerm));
 
 	// TODO: display spinner?
-
-	displayedTokens = displayedTokens.concat(window.pcs
-		.filter(pc => pc.name.toLowerCase().includes(searchTerm))
-		.map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image))
-	);
-
-	const pushTokensInFolder = function(tokendatapath) {
-		let folder = convert_path(tokendatapath);
-		if (folder.tokens) {
-			for (let tokendataname in folder.tokens) {
-				if (tokendataname.toLowerCase().includes(searchTerm)) {
-					displayedTokens.push(TokenListItem.Custom(tokendatapath, tokendataname));
-				}
-			}
-		}
-		if (folder.folders) {
-			for (let currentPathName in folder.folders) {
-				pushTokensInFolder(`${tokendatapath}/${currentPathName}`);
-			}
-		}
-	}
-	pushTokensInFolder("/")
 
 	search_monsters(searchTerm, 0, function (monsterSearchResponse) {
 		let converted = monsterSearchResponse.data.map(m => TokenListItem.Monster(m.id, m.name, m.avatarUrl, m.isReleased, m.isHomebrew));
 		console.log("converted", converted);
+		// no need to filter... the API already did that for us
 		displayedTokens = displayedTokens.concat(converted);
-		displayedTokens.sort(function (lhs, rhs) {
-			if (lhs.name < rhs.name) { return -1; }
-			if (lhs.name > rhs.name) { return 1; }
-			return 0;
-		});
+		displayedTokens.sort(TokenListItem.nameComparator);
 		console.log(displayedTokens);
 		let list = $(".custom-token-list");
 		for (let i = 0; i < displayedTokens.length; i++) {
@@ -621,14 +720,16 @@ function debounce(func, wait, immediate) {
 // }
 
 function init_tokenmenu() {
-	
+
 	
 	if(localStorage.getItem('CustomTokens') != null){
 		tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
 	}
 	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
+	rebuild_token_items_list();
 
 	let header = tokensPanel.header;
+	// TODO: remove this warning once tokens are saved in the cloud
 	header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
 	
 	let backButton = $(`<div class="tokens-panel-back-button"><div>Back</div></div>`);
@@ -642,7 +743,7 @@ function init_tokenmenu() {
 	searchInput.off("input").on("input", debounce(() => {
 		let textValue = tokensPanel.header.find("input[name='token-search']").val();
 		filter_token_list(textValue)
-	}, 500, tokensPanel.header.find("input[name='token-search']").val() === ""));
+	}, 500));
 	header.append(searchInput);
 	
 	fill_tokenmenu("");
@@ -731,12 +832,74 @@ function persist_customtokens(){
 	tokendata.folders["AboveVTT BUILTIN"]=tokenbuiltin;
 }
 
+function redraw_token_list(searchTerm) {
+	console.group("redraw_token_list");
+	let list = $(`<div class="custom-token-list"></div>`);
+
+	let nameFilter = "";
+	if (searchTerm !== undefined && typeof searchTerm === "string") {
+		nameFilter = searchTerm;
+	}
+
+	// display folders at the top of the list if the user hasn't searched anything. Otherwise omit them entirely
+	if (nameFilter.length === 0) {
+		let rootFolders = window.tokenListItems
+			.filter(item => item.type === TokenListItem.TypeFolder && item.folderpath === TokenListItem.PathRoot)
+			.sort(TokenListItem.nameComparator); // TODO: float builtin folders to the top; players, monsters, builtin, placed tokens, etc; then custom folders
+		for (let i = 0; i < rootFolders.length; i++) {
+			let listItem = rootFolders[i];
+			let row = build_custom_token_row(listItem.name, `${window.EXTENSION_PATH}assets/folder.svg`, undefined, false);
+			row.addClass("folder");
+			row.find(".custom-token-image-row-handle").remove(); // no drag handle on the right side of folders
+			row.find(".custom-token-image-row-add svg").css("fill", "#fff");
+			row.find(".custom-token-image-row-add").css("border", "#fff");
+			row.find(".custom-token-image-row-add").prop("disabled", true);
+			row.attr('data-folder-name', listItem.name);
+			row.attr('data-folder-path', listItem.folderpath);
+			// let currentFolderPath = `${listItem.folderpath}/${listItem.name}`;
+			row.click(function (clickEvent) {
+				let clickedFolderName = $(clickEvent.currentTarget).attr("data-folder-name");
+				console.log("TODO: Expand this folder ", clickedFolderName);
+			});
+			list.append(row);
+		}
+	}
+
+	// now let's add all the other items
+	let items = window.tokenListItems
+		.filter(item => item.type !== TokenListItem.TypeFolder && item.name.toLowerCase().includes(nameFilter))
+		.sort(TokenListItem.nameComparator);
+
+	console.log(`drawing nameFilter: ${nameFilter} items: `, items);
+
+	for (let i = 0; i < items.length; i++) {
+		let item = items[i];
+
+		let row = build_custom_token_row(item.name, item.image, item.subtitle);
+
+		if (item.folderpath === TokenListItem.PathRoot || item.folderpath === "") {
+			list.append(row);
+		} else {
+			// TODO: find the fold, and add the item there
+		}
+	}
+
+	tokensPanel.body.empty();
+	tokensPanel.body.append(list);
+	console.groupEnd()
+}
+
 function draw_custom_token_list(folder, path) {
+
+	redraw_token_list();
+
+	return;
 
 	let list = $(`<div class="custom-token-list"></div>`);
 	if (folder.folders) {
 		for(let f in folder.folders) {
 			let row = build_custom_token_row(f, window.EXTENSION_PATH + "assets/folder.svg", undefined, false);
+			row.addClass("folder");
 			row.find(".custom-token-image-row-handle").remove(); // no drag handle on the right side of folders
 			row.find(".custom-token-image-row-add svg").css("fill", "#fff");
 			row.find(".custom-token-image-row-add").css("border", "#fff");
