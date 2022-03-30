@@ -496,8 +496,131 @@ tokendata={
 	folders:{},
 };
 
+// simple object representing a token
+class TokenListItem {
+	constructor(name, image, tokenType, subtitle = "") {
+		this.name = name;
+		this.image = image;
+		this.tokenType = tokenType;
+		this.subtitle = subtitle;
+	}
+	static Custom(tokendatapath, tokendataname) {
+		console.log("Custom", tokendatapath, tokendataname);
+		let folderData = convert_path(tokendatapath);
+		let tokenData = folderData.tokens[tokendataname];
+		console.log(tokenData)
+		let name = tokenData["data-name"] !== undefined ? tokenData["data-name"] : tokendataname;
+		let item = new TokenListItem(name, tokenData["data-img"], "custom", "custom token yo");
+		item.tokendatapath = tokendatapath;
+		item.tokendataname = tokendataname;
+		return item;
+	}
+	static Monster(monsterId, monsterName, imgsrc, isReleased, isHomebrew) {
+		console.log("Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
+		let item = new TokenListItem(monsterName, imgsrc, "monster", "Ahhh real monsters!");
+		item.monsterId = monsterId;
+		item.isReleased = isReleased;
+		item.isHomebrew = isHomebrew;
+		return item;
+	}
+	static PC(sheet, name, imgSrc) {
+		console.log("PC", sheet, name, imgSrc);
+		let item = new TokenListItem(name, imgSrc, "pc", "PLAYER");
+		item.sheet = sheet;
+		return item;
+	}
+}
 
-function init_tokenmenu(){
+function filter_token_list(searchTerm) {
+
+	if (searchTerm === undefined || typeof searchTerm !== "string") {
+		searchTerm = "";
+	}
+
+	if (searchTerm.length === 0) {
+		// we're at the root so show everything
+		draw_custom_token_list(convert_path("/"), "/");
+	} else {
+		// the user has searched something so only show the results
+		tokensPanel.body.empty();
+		tokensPanel.body.append(`<div class="custom-token-list"></div>`);
+	}
+
+	// reset to an empty list so we can rebuild it
+	let displayedTokens = [];
+
+	// TODO: display spinner?
+
+	displayedTokens = displayedTokens.concat(window.pcs
+		.filter(pc => pc.name.toLowerCase().includes(searchTerm))
+		.map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image))
+	);
+
+	const pushTokensInFolder = function(tokendatapath) {
+		let folder = convert_path(tokendatapath);
+		if (folder.tokens) {
+			for (let tokendataname in folder.tokens) {
+				if (tokendataname.toLowerCase().includes(searchTerm)) {
+					displayedTokens.push(TokenListItem.Custom(tokendatapath, tokendataname));
+				}
+			}
+		}
+		if (folder.folders) {
+			for (let currentPathName in folder.folders) {
+				pushTokensInFolder(`${tokendatapath}/${currentPathName}`);
+			}
+		}
+	}
+	pushTokensInFolder("/")
+
+	search_monsters(searchTerm, 0, function (monsterSearchResponse) {
+		let converted = monsterSearchResponse.data.map(m => TokenListItem.Monster(m.id, m.name, m.avatarUrl, m.isReleased, m.isHomebrew));
+		console.log("converted", converted);
+		displayedTokens = displayedTokens.concat(converted);
+		displayedTokens.sort(function (lhs, rhs) {
+			if (lhs.name < rhs.name) { return -1; }
+			if (lhs.name > rhs.name) { return 1; }
+			return 0;
+		});
+		console.log(displayedTokens);
+		let list = $(".custom-token-list");
+		for (let i = 0; i < displayedTokens.length; i++) {
+			let tokenItem = displayedTokens[i];
+			let row = build_custom_token_row(tokenItem.name, tokenItem.image, tokenItem.subtitle);
+			list.append(row);
+		}
+	});
+}
+
+// https://davidwalsh.name/javascript-debounce-function
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+}
+
+// function debounce(fn, duration) {
+// 	var timer;
+// 	return function() {
+// 		clearTimeout(timer);
+// 		timer = setTimeout(fn, duration)
+// 	}
+// }
+
+function init_tokenmenu() {
 	
 	
 	if(localStorage.getItem('CustomTokens') != null){
@@ -514,6 +637,13 @@ function init_tokenmenu(){
 		let previous = containing_folder_path(window.CURRENT_TOKEN_PATH);
 		fill_tokenmenu(previous);
 	});
+
+	let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
+	searchInput.off("input").on("input", debounce(() => {
+		let textValue = tokensPanel.header.find("input[name='token-search']").val();
+		filter_token_list(textValue)
+	}, 500, tokensPanel.header.find("input[name='token-search']").val() === ""));
+	header.append(searchInput);
 	
 	fill_tokenmenu("");
 
@@ -579,18 +709,13 @@ function fill_tokenmenu(path){
 	// TODO: consider storing current path on the tokensPanel object
 	footer.find("#add-token-btn").attr("data-folder-path", path);
 	footer.find("#add-token-btn").attr("data-folder-path", path);
-	if (path == "") {
+	if (path === "") {
 		tokensPanel.header.find(".tokens-panel-back-button").hide();
 	} else {
 		tokensPanel.header.find(".tokens-panel-back-button").show();
 	}
 
 	draw_custom_token_list(folder, path);
-	console.log("search_monsters");
-	search_monsters(undefined, 0, function (results) {
-		console.log("after search_monsters");
-		draw_monster_token_list(results);
-	});
 
 	if (is_builtin(path)) {
 		// don't allow users to add tokens or folders inside the builtin folder
@@ -627,16 +752,20 @@ function draw_custom_token_list(folder, path) {
 	}
 
 	if (folder.tokens) {
-		for(let t in folder.tokens) {
+		let tokenNames = Object.keys(folder.tokens).sort();
+		for (let i = 0; i < tokenNames.length; i++) {
+			let t = tokenNames[i];
+		// }
+		// for(let t in folder.tokens) {
 			let token = folder.tokens[t]
 			let name = token["data-name"];
-			if (name == undefined) {
+			if (name === undefined) {
 				name = t;
 			}
 			let imgSrc = token["data-img"];
 			let tokenSize = token["data-token-size"];
 			let subtitleText = "Small / Medium (5ft)";
-			if (tokenSize != undefined) {
+			if (tokenSize !== undefined) {
 				switch (tokenSize) {
 					case "custom": 
 						subtitleText = "Custom (Xft)"; // figure this out
