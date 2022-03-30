@@ -2312,7 +2312,7 @@ function init_ui() {
 		setTimeout(get_pclist_player_data,25000);
 	}
 
-	if (!is_encounters_page()) {
+	if (!is_encounters_page() && (typeof Cobalt !== 'undefined')) { // THIS IS NOW BROKEN AS COBALT IS UNDEFINED FOR SOME REASON
 		// Hook DDB's processFlashMessages function to avoid calling it during animations
 		// It gets called every 2.5 seconds and runs for approx. 200ms, depending on cookie size
 		var origProcessFlashMessages = Cobalt.Core.processFlashMessages;
