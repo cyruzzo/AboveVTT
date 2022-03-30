@@ -1712,6 +1712,12 @@ h5.token-image-modal-footer-title:after {
     background: rgb(235, 241, 245);
     height: 100%;
 }
+.folder .folder-token-list {
+    padding-left: 1em;
+}
+.folder.collapsed .folder-token-list {
+    display: none;
+}
 .custom-token-image-row {
     padding: 4px;
     width: 100%;

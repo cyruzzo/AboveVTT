@@ -590,7 +590,7 @@ class TokenListItem {
 	}
 	static PC(sheet, name, imgSrc) {
 		console.log("TokenListItem.PC", sheet, name, imgSrc);
-		let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, "PLAYER", "/players");
+		let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, "PLAYER", "/Players");
 		item.sheet = sheet;
 		return item;
 	}
@@ -682,7 +682,7 @@ function filter_token_list(searchTerm) {
 		displayedTokens = displayedTokens.concat(converted);
 		displayedTokens.sort(TokenListItem.nameComparator);
 		console.log(displayedTokens);
-		let list = $(".custom-token-list");
+		let list = tokensPanel.body.find(".custom-token-list");
 		for (let i = 0; i < displayedTokens.length; i++) {
 			let tokenItem = displayedTokens[i];
 			let row = build_custom_token_row(tokenItem.name, tokenItem.image, tokenItem.subtitle);
@@ -846,20 +846,27 @@ function redraw_token_list(searchTerm) {
 		let rootFolders = window.tokenListItems
 			.filter(item => item.type === TokenListItem.TypeFolder && item.folderpath === TokenListItem.PathRoot)
 			.sort(TokenListItem.nameComparator); // TODO: float builtin folders to the top; players, monsters, builtin, placed tokens, etc; then custom folders
+		rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Players"))
 		for (let i = 0; i < rootFolders.length; i++) {
 			let listItem = rootFolders[i];
 			let row = build_custom_token_row(listItem.name, `${window.EXTENSION_PATH}assets/folder.svg`, undefined, false);
-			row.addClass("folder");
+			row.addClass("folder collapsed");
 			row.find(".custom-token-image-row-handle").remove(); // no drag handle on the right side of folders
 			row.find(".custom-token-image-row-add svg").css("fill", "#fff");
 			row.find(".custom-token-image-row-add").css("border", "#fff");
 			row.find(".custom-token-image-row-add").prop("disabled", true);
 			row.attr('data-folder-name', listItem.name);
 			row.attr('data-folder-path', listItem.folderpath);
+			row.attr('data-full-path', `/${listItem.name}`);
+			row.append(`<div class="folder-token-list"></div>`);
 			// let currentFolderPath = `${listItem.folderpath}/${listItem.name}`;
 			row.click(function (clickEvent) {
-				let clickedFolderName = $(clickEvent.currentTarget).attr("data-folder-name");
-				console.log("TODO: Expand this folder ", clickedFolderName);
+				let folderRow = $(clickEvent.currentTarget);
+				if (folderRow.hasClass("collapsed")) {
+					folderRow.removeClass("collapsed");
+				} else {
+					folderRow.addClass("collapsed");
+				}
 			});
 			list.append(row);
 		}
@@ -877,10 +884,10 @@ function redraw_token_list(searchTerm) {
 
 		let row = build_custom_token_row(item.name, item.image, item.subtitle);
 
-		if (item.folderpath === TokenListItem.PathRoot || item.folderpath === "") {
+		if (item.folderpath === TokenListItem.PathRoot) {
 			list.append(row);
 		} else {
-			// TODO: find the fold, and add the item there
+			list.find(`[data-full-path='${item.folderpath}'] .folder-token-list`).append(row);
 		}
 	}
 
@@ -965,20 +972,20 @@ function draw_custom_token_list(folder, path) {
 	body.append(list);
 }
 
-function draw_monster_token_list(monsterSearchResponse) {
-	if (typeof monsterSearchResponse !== "object") {
-		console.warn("draw_monster_token_list was called with unexpected object: ", monsterSearchResponse);
-		return;
-	}
-	console.log("draw_monster_token_list", monsterSearchResponse);
-	let list = $(".custom-token-list");
-	for (let i = 0; i < monsterSearchResponse.data.length; i++) {
-		let monsterData = monsterSearchResponse.data[i];
-		let row = build_custom_token_row(monsterData.name, monsterData.avatarUrl, monsterData.isReleased ? "" : "NOT AVAILABLE TO YOU!");
-
-		list.append(row);
-	}
-}
+// function draw_monster_token_list(monsterSearchResponse) {
+// 	if (typeof monsterSearchResponse !== "object") {
+// 		console.warn("draw_monster_token_list was called with unexpected object: ", monsterSearchResponse);
+// 		return;
+// 	}
+// 	console.log("draw_monster_token_list", monsterSearchResponse);
+// 	let list = $(".custom-token-list");
+// 	for (let i = 0; i < monsterSearchResponse.data.length; i++) {
+// 		let monsterData = monsterSearchResponse.data[i];
+// 		let row = build_custom_token_row(monsterData.name, monsterData.avatarUrl, monsterData.isReleased ? "" : "NOT AVAILABLE TO YOU!");
+//
+// 		list.append(row);
+// 	}
+// }
 
 function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 
