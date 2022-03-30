@@ -296,11 +296,9 @@ class MessageBroker {
 		this.gameid = find_game_id();
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 		this.diceMessageSelector = "DiceMessage_RollType__wlBsW";
-		if (is_encounters_page()) {
+		if (is_encounters_page() || is_characters_page()) {
 			this.diceMessageSelector = "tss-r93asv-RollType";
-		} else if (is_characters_page()) {
-			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
-		}
+		} 
 
 		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
@@ -830,7 +828,7 @@ class MessageBroker {
 						text: "<b>Check for concentration!!</b>",
 					};
 
-					window.MB.inject_chat(msgdata);
+					// window.MB.inject_chat(msgdata);
 				}
 				cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
 
@@ -889,7 +887,7 @@ class MessageBroker {
 		var timestamp = d.toLocaleTimeString();
 		var datestamp = d.toLocaleDateString();
 		
-		if (is_encounters_page()) {
+		if (is_encounters_page() || is_characters_page()) {
 			return $(`
 				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">
 					<p role="img" class="tss-wyeh8h-Avatar-Flex">
@@ -904,7 +902,7 @@ class MessageBroker {
 					</div>
 				</li>
 			`);
-		} else if (is_characters_page()) {
+		} /*else if (is_characters_page()) {
 			return $(`
 				<li class="cwBGi-s80YSXZFf9zFTAGg== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA== _42x6X+dUmW-21eOxSO1c7Q== _9ORHCNDFVTb1uWMCEaGDYg==">
 					<p role="img" class="TILdlgSwOYvXr2yBdjxU7A== QXDbdjnpeXLRB22KlOxDsA==">
@@ -919,7 +917,7 @@ class MessageBroker {
 					</div>
 				</li>
 			`);
-		}
+		}*/
 
 		var newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
