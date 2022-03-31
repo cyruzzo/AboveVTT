@@ -68,16 +68,23 @@ function rollback_from_my_tokens() {
  *   Each of those {Token}s would be of type "monster".
  */
 class TokenListItem {
+
     static TypeFolder = "folder";
     static TypeMyToken = "myToken";
     static TypePC = "pc";
     static TypeMonster = "monster";
     static TypeBuiltinToken = "builtinToken";
+
     static PathRoot = "/";
     static PathPlayers = "/Players";
     static PathMonsters = "/Monsters";
     static PathMyTokens = "/My Tokens";
     static PathAboveVTT = "/AboveVTT Tokens";
+
+    static NamePlayers = "Players";
+    static NameMonsters = "Monsters";
+    static NameMyTokens = "My Tokens";
+    static NameAboveVTT = "AboveVTT Tokens";
 
     /** Generic constructor for a TokenListItem. Do not call this directly. Use one of the static functions instead.
      * @param name {string} the name displayed to the user
@@ -317,10 +324,10 @@ function debounce(func, wait, immediate) {
 function init_tokens_panel() {
 
     rootfolders = [
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathPlayers.replaceAll("/", "")),
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathMonsters.replaceAll("/", "")),
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathMyTokens.replaceAll("/", "")),
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathAboveVTT.replaceAll("/", ""))
+        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NamePlayers),
+        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameMonsters),
+        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameMyTokens),
+        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameAboveVTT)
     ];
 
     if(localStorage.getItem('CustomTokens') != null){
@@ -458,6 +465,11 @@ function build_token_row(listItem, enableDrag = true) {
         case TokenListItem.TypeFolder:
             row.addClass("folder collapsed");
             row.append(`<div class="folder-token-list"></div>`);
+            if (listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+                // add buttons for creating subfolders and tokens
+            } else {
+                handle.remove(); // only allow configuration of "My Tokens" folders
+            }
             break;
         case TokenListItem.TypeMyToken:
             break;
@@ -475,46 +487,46 @@ function build_token_row(listItem, enableDrag = true) {
         console.log("addButton clicked", itemPath, item);
     });
 
-    if (enableDrag) {
-        // rowItem.draggable({
-        //     appendTo: "#VTTWRAPPER",
-        //     zIndex: 100000,
-        //     cursorAt: {top: 0, left: 0},
-        //     cancel: '.custom-token-image-row-handle',
-        //     helper: function(event) {
-        //         let helper = $(event.currentTarget).find(".custom-token-image-row-img img").clone();
-        //         let addButton = $(event.currentTarget).find(".custom-token-image-row-add");
-        //         let path = addButton.attr("data-tokendatapath");
-        //         let name = addButton.attr("data-tokendataname");
-        //         helper.attr("src", random_image_for_token(path, name));
-        //         return helper;
-        //     },
-        //     start: function (event, ui) {
-        //         console.log("row-item drag start");
-        //         let addButton = $(event.currentTarget).find(".custom-token-image-row-add");
-        //         let tokenSize = addButton.data('token-size');
-        //         if (tokenSize === undefined) {
-        //             tokenSize = 1;
-        //         }
-        //         let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
-        //         let helperWidth = width / (1.0 / window.ZOOM);
-        //         $(ui.helper).css('width', `${helperWidth}px`);
-        //         $(this).draggable('instance').offset.click = {
-        //             left: Math.floor(ui.helper.width() / 2),
-        //             top: Math.floor(ui.helper.height() / 2)
-        //         };
-        //     },
-        //     stop: function (event, ui) {
-        //         // place a token where this was dropped
-        //         console.log("row-item drag stop");
-        //         let src = $(ui.helper).attr("src");
-        //         let addButton = $(event.target).find(".custom-token-image-row-add");
-        //         let path = addButton.attr("data-tokendatapath");
-        //         let name = addButton.attr("data-tokendataname");
-        //         let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
-        //         place_token_from_modal(path, name, hidden, src, event.pageX, event.pageY);
-        //     }
-        // });
+    if (enableDrag && !listItem.isFolder()) {
+        rowItem.draggable({
+            appendTo: "#VTTWRAPPER",
+            zIndex: 100000,
+            cursorAt: {top: 0, left: 0},
+            cancel: '.custom-token-image-row-handle',
+            helper: function(event) {
+                let draggedRow = $(event.target).closest(".custom-token-image-row");
+                let draggedRowPath = draggedRow.attr("data-full-path");
+                let draggedItem = find_token_list_item(draggedRowPath);
+                let randomImage = random_image_for_item(draggedItem);
+                let helper = draggedRow.find(".custom-token-image-row-img img").clone();
+                helper.attr("src", randomImage);
+                return helper;
+            },
+            start: function (event, ui) {
+                console.log("row-item drag start");
+                let draggedRow = $(event.target).closest(".custom-token-image-row");
+                let draggedRowPath = draggedRow.attr("data-full-path");
+                let draggedItem = find_token_list_item(draggedRowPath);
+                let tokenSize = token_size_for_item(draggedItem);
+                let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
+                let helperWidth = width / (1.0 / window.ZOOM);
+                $(ui.helper).css('width', `${helperWidth}px`);
+                $(this).draggable('instance').offset.click = {
+                    left: Math.floor(ui.helper.width() / 2),
+                    top: Math.floor(ui.helper.height() / 2)
+                };
+            },
+            stop: function (event, ui) {
+                // place a token where this was dropped
+                console.log("row-item drag stop");
+                let draggedRow = $(event.target).closest(".custom-token-image-row");
+                let draggedRowPath = draggedRow.attr("data-full-path");
+                let draggedItem = find_token_list_item(draggedRowPath);
+                let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
+                let src = $(ui.helper).attr("src");
+                create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
+            }
+        });
     }
     return row;
 }
@@ -689,6 +701,32 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
         place_token_in_center_of_map(options);
     } else {
         place_token_under_cursor(options, eventPageX, eventPageY);
+    }
+}
+
+function token_size_for_item(listItem) {
+    switch (listItem.type) {
+        case TokenListItem.TypeFolder:
+            return 1;
+        case TokenListItem.TypeMyToken:
+            let myToken = find_my_token(listItem.fullPath());
+            let tokenSizeSetting = myToken['data-token-size'];
+            let tokenSize = parseInt(tokenSizeSetting);
+            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+                tokenSize = 1; // TODO: handle custom sizes
+            }
+            return tokenSize;
+        case TokenListItem.TypePC:
+            return 1;
+        case TokenListItem.TypeMonster:
+            switch (listItem.monsterData.sizeId) {
+                case 5: return 2;
+                case 6: return 3;
+                case 7: return 4;
+                default: return 1;
+            }
+        case TokenListItem.TypeBuiltinToken:
+            return 1;
     }
 }
 
