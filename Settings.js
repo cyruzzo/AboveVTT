@@ -468,8 +468,10 @@ function import_readfile() {
 			tokendata.tokens[k]=DataFile.tokendata.tokens[k];
 		}
 		persist_customtokens();
-		$("#token-panel").remove(); init_tokenmenu();
-		
+		$("#token-panel").remove();
+		init_tokenmenu();
+		init_tokens_panel();
+
 		alert('Loading completed. Data merged');
 		
 		if(DataFile.notes){

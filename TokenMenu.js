@@ -495,286 +495,28 @@ tokenbuiltin = {
 tokendata={
 	folders:{},
 };
-mytokens = [];
-emptyfolders = []; // a list of strings. not sure how to do this yet, but this will be a temporary place to store empty folders
 
-function sanitize_folder_path(dirtyPath) {
-	let cleanPath = dirtyPath.replaceAll("//", "/");
-	// remove trailing slashes before adding one at the beginning. Otherwise we return an empty string
-	if (cleanPath.endsWith("/")) {
-		cleanPath = cleanPath.slice(0, -1);
-	}
-	if (!cleanPath.startsWith("/")) {
-		cleanPath = `/${cleanPath}`;
-	}
-	return cleanPath;
-}
 
-function migrate_to_my_tokens() {
-	if (mytokens.length > 0) {
-		// we already did this. no need to continue
-		return;
-	}
+function init_tokenmenu(){
 
-	console.group("migrate_to_my_tokens");
-
-	const migrateFolderAtPath = function(oldFolderPath) {
-		let currentFolderPath = sanitize_folder_path(oldFolderPath);
-		let folder = convert_path(currentFolderPath);
-		if (folder.tokens) {
-			for(let tokenKey in folder.tokens) {
-				let token = folder.tokens[tokenKey];
-				token['data-folderpath'] = currentFolderPath;
-				token['data-oldFolderKey'] = tokenKey; // not sure if we'll need this, but hopefully not
-				if (token['data-name'] === undefined) {
-					token['data-name'] = tokenKey;
-				}
-				mytokens.push(token);
-			}
-		} else {
-			emptyfolders.push(currentFolderPath);
-		}
-		if (folder.folders) {
-			for (let folderKey in folder.folders) {
-				migrateFolderAtPath(`${currentFolderPath}/${folderKey}`);
-			}
-		}
-	}
-
-	migrateFolderAtPath(TokenListItem.PathRoot);
-	console.groupEnd()
-}
-
-function rollback_from_my_tokens() {
-	mytokens = [];
-}
-
-/**
- * A ViewModel that represents a token (or folder) listed in the sidebar.
- * This is a transient object and is not intended to be used as a data source. Instead, each {type} determines where the data source is.
- * This is not a token that has been placed on a scene; that is an instance of {Token} and is
- * represented as a many {Token} to one {TokenListItem} relationship.
- * For example:
- *   This could represent a "Goblin" monster. Placing this on the scene several times would create several {Token} instances.
- *   Each of those {Token}s would be of type "monster".
-*/
-class TokenListItem {
-	static TypeFolder = "folder";
-	static TypeMyToken = "myToken";
-	static TypePC = "pc";
-	static TypeMonster = "monster";
-	static PathRoot = "/";
-	static PathPlayers = "/Players";
-	static PathMonsters = "/Monsters";
-	static PathMyTokens = "/My Tokens";
-
-	/** Generic constructor for a TokenListItem. Do not call this directly. Use one of the static functions instead.
-	 * @param name {string} the name displayed to the user
-	 * @param image {string} the src of the img tag
-	 * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
-	 * @param subtitle {string} the string displayed under the name
-	 * @param folderPath {string} the folder this token is in
-	 */
-	constructor(name, image, type, subtitle, folderPath = TokenListItem.PathRoot) {
-		this.name = name;
-		this.image = image;
-		this.type = type;
-		this.subtitle = subtitle;
-		this.folderPath = sanitize_folder_path(folderPath);
-		if (type === TokenListItem.TypeMyToken && !folderPath.startsWith(TokenListItem.PathMyTokens)) {
-			console.warn(this);
-		} else {
-			console.log(this);
-		}
-		console.groupEnd()
-	}
-	static Folder(folderPath, name, subtitle = "FOLDER") {
-		console.group(`TokenListItem.Folder ${name}`);
-		console.log("TokenListItem.Folder", folderPath, name);
-		return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, subtitle, folderPath);
-	}
-	static MyToken(tokenData, subtitle = "MyToken") {
-		let name = tokenData["data-name"];
-		console.group(`TokenListItem.MyToken ${name}`);
-		console.log("TokenListItem.MyToken", tokenData);
-		let myTokenPath = tokenData["data-folderpath"];
-		return new TokenListItem(name, tokenData["data-img"], TokenListItem.TypeMyToken, subtitle, `${TokenListItem.PathMyTokens}/${myTokenPath}`);
-	}
-	static Monster(monsterId, monsterName, imgsrc, isReleased, isHomebrew, subtitle = "MONSTER") {
-		console.group(`TokenListItem.Monster ${monsterName}`);
-		console.log("TokenListItem.Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
-		let item = new TokenListItem(monsterName, imgsrc, TokenListItem.TypeMonster, subtitle, TokenListItem.PathMonsters);
-		item.monsterId = monsterId;
-		item.isReleased = isReleased;
-		item.isHomebrew = isHomebrew;
-		return item;
-	}
-	static PC(sheet, name, imgSrc, subtitle = "PLAYER") {
-		console.group(`TokenListItem.PC ${name}`);
-		console.log("TokenListItem.PC", sheet, name, imgSrc);
-		let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, subtitle, TokenListItem.PathPlayers);
-		item.sheet = sheet;
-		return item;
-	}
-
-	/**
-	 * A comparator for sorting by folder, then alphabetically.
-	 * @param lhs {TokenListItem}
-	 * @param rhs {TokenListItem}
-	 * @returns {number}
-	 */
-	static sortComparator(lhs, rhs) {
-		// always folders before tokens
-		if (lhs.isFolder() && !rhs.isFolder()) { return -1; }
-		if (!lhs.isFolder() && rhs.isFolder()) { return 1; }
-		// alphabetically by name
-		if (lhs.name < rhs.name) { return -1; }
-		if (lhs.name > rhs.name) { return 1; }
-		// equal
-		return 0;
-	}
-
-	/** @returns {boolean} whether or not this item represents a folder */
-	isFolder() {
-		return this.type === TokenListItem.TypeFolder;
-	}
-}
-
-function rebuild_token_items_list() {
-
-	let tokenItems = window.pcs.map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image));
-
-	let knownPaths = [];
-
-	for (let i = 0; i < mytokens.length; i++) {
-		let myToken = mytokens[i];
-		let path = myToken['data-folderpath'];
-		if (path !== TokenListItem.PathRoot && !knownPaths.includes(path)) {
-			// we haven't built this folder item yet so do that now
-			let pathComponents = path.split("/");
-			let folderName = pathComponents.pop();
-			let folderPath = pathComponents.join("/");
-			let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
-			tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName));
-			knownPaths.push(path);
-		}
-		tokenItems.push(TokenListItem.MyToken(myToken));
-	}
-
-	for (let i = 0; i < emptyfolders.length; i++) {
-		let emptyFolderPath = emptyfolders[i];
-		let components = emptyFolderPath.split("/");
-		let folderName = components.pop();
-		let folderPath = components.join("/");
-		let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
-		tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName, "EMPTY FOLDER"));
-	}
-
-	window.tokenListItems = tokenItems;
-}
-
-function filter_token_list(searchTerm) {
-
-	if (searchTerm === undefined || typeof searchTerm !== "string") {
-		searchTerm = "";
-	}
-
-	redraw_token_list(searchTerm);
-
-	let allFolders = tokensPanel.body.find(".folder");
-	if (searchTerm.length > 0) {
-		allFolders.removeClass("collapsed"); // auto expand all folders
-		for (let i = 0; i < allFolders.length; i++) {
-			let currentFolder = $(allFolders[i]);
-			if (currentFolder.attr("data-full-path") !== "/Monsters" && currentFolder.find("> .folder-token-list").is(':empty')) {
-				// TODO: figure out how to hide empty folders that have empty subfolders
-				currentFolder.hide(); // don't show any that are empty when searching
-			}
-		}
-	}
-
-	inject_monster_tokens(searchTerm, 0);
-}
-
-function inject_monster_tokens(searchTerm, skip) {
-	search_monsters(searchTerm, skip, function (monsterSearchResponse) {
-		let displayedTokens = monsterSearchResponse.data.map(m => TokenListItem.Monster(m.id, m.name, m.avatarUrl, m.isReleased, m.isHomebrew));
-		console.log("converted", displayedTokens);
-		let list = tokensPanel.body.find(".custom-token-list");
-		let monsterFolder = list.find(`[data-full-path='/Monsters']`);
-		for (let i = 0; i < displayedTokens.length; i++) {
-			let item = displayedTokens[i];
-			let row = build_token_row(item);
-			monsterFolder.find(`> .folder-token-list`).append(row);
-		}
-		if (searchTerm.length > 0) {
-			monsterFolder.removeClass("collapsed");
-		}
-		console.log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
-		monsterFolder.find(".load-more-button").remove();
-		if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)) {
-			// add load more button
-			let loadMoreButton = $(`<button class="ddbeb-button load-more-button" data-skip="${monsterSearchResponse.pagination.skip}">Load More</button>`);
-			loadMoreButton.click(function(loadMoreClickEvent) {
-				console.log("load more!", loadMoreClickEvent);
-				let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
-				inject_monster_tokens(searchTerm, skip + 10)
-			});
-			monsterFolder.find(`> .folder-token-list`).append(loadMoreButton);
-		}
-	});
-}
-
-// https://davidwalsh.name/javascript-debounce-function
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-}
-
-// function debounce(fn, duration) {
-// 	var timer;
-// 	return function() {
-// 		clearTimeout(timer);
-// 		timer = setTimeout(fn, duration)
-// 	}
-// }
-
-function init_tokenmenu() {
 
 	if(localStorage.getItem('CustomTokens') != null){
-		tokendata = $.parseJSON(localStorage.getItem('CustomTokens'));
-		// mytokens = $.parseJSON(localStorage.getItem('MyTokens'));
+		tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
 	}
-	tokendata.folders['AboveVTT BUILTIN'] = tokenbuiltin; // TODO: migrate this to the new way, but don't store it to localStorage
-	migrate_to_my_tokens();
-	rebuild_token_items_list();
-	filter_token_list();
+	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
 
 	let header = tokensPanel.header;
-	// TODO: remove this warning once tokens are saved in the cloud
 	header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
-	
-	let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
-	searchInput.off("input").on("input", debounce(() => {
-		let textValue = tokensPanel.header.find("input[name='token-search']").val();
-		filter_token_list(textValue)
-	}, 500));
-	header.append(searchInput);
-	
+
+	let backButton = $(`<div class="tokens-panel-back-button"><div>Back</div></div>`);
+	header.append(backButton);
+	backButton.click(function(event) {
+		let previous = containing_folder_path(window.CURRENT_TOKEN_PATH);
+		fill_tokenmenu(previous);
+	});
+
+	fill_tokenmenu("");
+
 	let addTokenButton = $(`<button id="add-token-btn" class="sidebar-panel-footer-button">Add Token</button>`);
 	addTokenButton.click(function(event) {
 		let path = $(event.target).attr("data-folder-path");
@@ -786,7 +528,7 @@ function init_tokenmenu() {
 	let addFolderButton = $(`<button id="add-folder-btn" class="sidebar-panel-footer-button">Add Folder</button>`);
 	addFolderButton.click(function(event) {
 		var newfoldername = prompt("Enter the name of the new folder");
-		if (newfoldername === undefined || newfoldername === "") {
+		if (newfoldername == undefined || newfoldername == "") {
 			// don't add folders when cancel is pressed or if they didn't enter a folder name at all
 			return;
 		}
@@ -800,6 +542,7 @@ function init_tokenmenu() {
 		}
 		folder.folders[newfoldername] = {};
 		persist_customtokens();
+		fill_tokenmenu(`${path}/${newfoldername}`);
 	});
 
 	let buttonWrapper = $(`<div class="sidebar-panel-footer-horizontal-wrapper"></div>`)
@@ -814,7 +557,7 @@ function init_tokenmenu() {
 function convert_path(path){
 	var pieces=path.split("/");
 	var current=tokendata;
-	
+
 	for(var i=0;i<pieces.length;i++){
 		if(pieces[i]=="")
 			continue;
@@ -823,128 +566,128 @@ function convert_path(path){
 	return current;
 }
 
-// function fill_tokenmenu(path){
-// 	console.log(`fill_tokenmenu ${path}`);
-// 	if (path === undefined) {
-// 		path = "";
-// 	}
-// 	window.CURRENT_TOKEN_PATH = path; // be careful using this. It should only be used for folder navigation
-// 	let folder = convert_path(path);
-// 	// $("#tokens-panel-data").empty();
-// 	tokensPanel.body.empty();
-// 	let footer = tokensPanel.footer;
-// 	// TODO: consider storing current path on the tokensPanel object
-// 	footer.find("#add-token-btn").attr("data-folder-path", path);
-// 	footer.find("#add-token-btn").attr("data-folder-path", path);
-// 	if (path === "") {
-// 		tokensPanel.header.find(".tokens-panel-back-button").hide();
-// 	} else {
-// 		tokensPanel.header.find(".tokens-panel-back-button").show();
-// 	}
-//
-// 	if (is_builtin(path)) {
-// 		// don't allow users to add tokens or folders inside the builtin folder
-// 		tokensPanel.footer.hide();
-// 	} else {
-// 		tokensPanel.footer.show();
-// 	}
-// }
+function fill_tokenmenu(path){
+	console.log(`fill_tokenmenu ${path}`);
+	if (path === undefined) {
+		path = "";
+	}
+	window.CURRENT_TOKEN_PATH = path; // be careful using this. It should only be used for folder navigation
+	let folder = convert_path(path);
+	// $("#tokens-panel-data").empty();
+	tokensPanel.body.empty();
+	let footer = tokensPanel.footer;
+	// TODO: consider storing current path on the tokensPanel object
+	footer.find("#add-token-btn").attr("data-folder-path", path);
+	footer.find("#add-token-btn").attr("data-folder-path", path);
+	if (path == "") {
+		tokensPanel.header.find(".tokens-panel-back-button").hide();
+	} else {
+		tokensPanel.header.find(".tokens-panel-back-button").show();
+	}
 
-function persist_customtokens() {
-	// TODO: save mytokens instead
+	draw_custom_token_list(folder, path);
+
+	if (is_builtin(path)) {
+		// don't allow users to add tokens or folders inside the builtin folder
+		tokensPanel.footer.hide();
+	} else {
+		tokensPanel.footer.show();
+	}
+}
+
+function persist_customtokens(){
 	tokendata.folders["AboveVTT BUILTIN"]={};
 	localStorage.setItem("CustomTokens",JSON.stringify(tokendata));
 	tokendata.folders["AboveVTT BUILTIN"]=tokenbuiltin;
 }
 
-function redraw_token_list(searchTerm) {
-	console.group("redraw_token_list");
+function draw_custom_token_list(folder, path) {
+
 	let list = $(`<div class="custom-token-list"></div>`);
-
-	let nameFilter = "";
-	if (searchTerm !== undefined && typeof searchTerm === "string") {
-		nameFilter = searchTerm;
-	}
-
-	list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "Players")));
-	list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "Monsters")));
-	list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "My Tokens")));
-
-	// display folders at the top of the list if the user hasn't searched anything. Otherwise omit them entirely
-	// if (nameFilter.length === 0) {
-	// 	let rootFolders = window.tokenListItems
-	// 		.filter(item => item.isFolder() && item.folderpath === TokenListItem.PathRoot)
-	// 		.sort(TokenListItem.sortComparator); // TODO: float builtin folders to the top; players, monsters, builtin, placed tokens, etc; then custom folders
-	//
-	// 	rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Monsters"));
-	// 	rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Players"));
-	//
-	// 	for (let i = 0; i < rootFolders.length; i++) {
-	// 		let listItem = rootFolders[i];
-	// 		let row = build_token_folder_row(listItem)
-	// 		list.append(row);
-	// 	}
-	// }
-
-	// now let's add all the other items
-	let items = window.tokenListItems
-		.filter(item => {
-			if (item.isFolder()) {
-				return item.folderPath !== TokenListItem.PathRoot
-			}
-			return item.name.toLowerCase().includes(nameFilter)
-		}).sort(TokenListItem.sortComparator);
-
-	console.log(`drawing nameFilter: ${nameFilter} items: `, items);
-
-	for (let i = 0; i < items.length; i++) {
-		let item = items[i];
-		console.log(item.folderPath, item.name, item);
-		if (item.isFolder()) {
-			let row = build_token_folder_row(item);
-			console.log("about to inject subfolder into folder", item, list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`), row);
-			list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
-		} else {
-			let row = build_token_row(item);
-			if (item.folderPath === TokenListItem.PathRoot) {
-				list.append(row);
-			} else {
-				console.log("about to inject token into folder", item, list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`), row);
-				list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
-			}
+	if (folder.folders) {
+		for(let f in folder.folders) {
+			let row = build_custom_token_row(f, window.EXTENSION_PATH + "assets/folder.svg", undefined, false);
+			row.find(".custom-token-image-row-handle").remove(); // no drag handle on the right side of folders
+			row.find(".custom-token-image-row-add svg").css("fill", "#fff");
+			row.find(".custom-token-image-row-add").css("border", "#fff");
+			row.find(".custom-token-image-row-add").prop("disabled", true);
+			let currentFolderPath = path + "/" + f;
+			row.click(function () {
+				fill_tokenmenu(currentFolderPath);
+			});
+			row.attr('data-folder-name', f);
+			row.attr('data-folder-path', path);
+			list.append(row);
 		}
 	}
 
-	tokensPanel.body.empty();
-	tokensPanel.body.append(list);
-	console.groupEnd()
+	if (folder.tokens) {
+		for(let t in folder.tokens) {
+			let token = folder.tokens[t]
+			let name = token["data-name"];
+			if (name == undefined) {
+				name = t;
+			}
+			let imgSrc = token["data-img"];
+			let tokenSize = token["data-token-size"];
+			let subtitleText = "Small / Medium (5ft)";
+			if (tokenSize != undefined) {
+				switch (tokenSize) {
+					case "custom":
+						subtitleText = "Custom (Xft)"; // figure this out
+						break;
+					case 2: subtitleText = "Large (10ft)"; break;
+					case 3: subtitleText = "Huge (15ft)"; break;
+					case 4: subtitleText = "Gargantuan (20ft)"; break;
+				}
+			}
+			let row = build_custom_token_row(name, imgSrc, subtitleText);
+			for(prop in token){
+				row.find(".custom-token-image-row-add").attr(prop, token[prop]);
+			}
+			row.find(".custom-token-image-row-add").attr("data-disablestat", true);
+			row.find(".custom-token-image-row-add").attr("data-token-size", tokenSize);
+			row.find(".custom-token-image-row-add").attr('data-tokendatapath', path);
+			row.find(".custom-token-image-row-add").attr('data-tokendataname', t);
+			row.find(".custom-token-image-row-add").click(function(event) {
+				place_token_from_modal(path, t, window.TOKEN_SETTINGS["hidden"]);
+			});
+
+			row.attr('data-tokendatapath', path);
+			row.attr('data-tokendataname', t);
+			row.find(".custom-token-image-row-handle").click(function() {
+				display_custom_token_form(path, t, token);
+			});
+
+			list.append(row);
+		}
+	}
+
+	let body = tokensPanel.body;
+	body.empty();
+	body.append(list);
 }
 
-/**
- * @param listItem the list item that this row will represent
- * @param enableDrag whether or not this row can be dragged onto a scene to place a {Token} on the scene
- * @returns {*|jQuery|HTMLElement} that represents a row in the list of tokens in the sidebar
- */
-function build_token_row(listItem, enableDrag = true) {
+function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 
 	let row = $(`<div class="custom-token-image-row"></div>`);
 	let rowItem = $(`<div class="custom-token-image-row-item"></div>`);
 	row.append(rowItem);
 
 	let imgHolder = $(`<div class="custom-token-image-row-img"></div>`);
-	let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" />`);
+	let img = $(`<img src="${parse_img(imgSrc)}" />`);
 	imgHolder.append(img);
 
 	let details = $(`<div class="custom-token-image-row-details"></div>`);
-	let title = $(`<div class="custom-token-image-row-details-title">${listItem.name}</div>`);
+	let title = $(`<div class="custom-token-image-row-details-title">${name}</div>`);
 	details.append(title);
-	if (listItem.subtitle !== undefined) {
-		let subtitle = $(`<div class="custom-token-image-row-details-subtitle">${listItem.subtitle}</div>`);
+	if (subtitleText != undefined) {
+		let subtitle = $(`<div class="custom-token-image-row-details-subtitle">${subtitleText}</div>`);
 		details.append(subtitle);
 	}
 
 	let addButton = $(`
-		<button class="custom-token-image-row-add" title="${listItem.name}" data-name="${listItem.name}" data-img="${listItem.image}">
+		<button class="custom-token-image-row-add" title="${name}" data-name="${name}" data-img="${imgSrc}">
 			<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
 		</button>
 	`);
@@ -988,7 +731,7 @@ function build_token_row(listItem, enableDrag = true) {
 					top: Math.floor(ui.helper.height() / 2)
 				};
 			},
-			stop: function (event, ui) { 
+			stop: function (event, ui) {
 				// place a token where this was dropped
 				console.log("row-item drag stop");
 				let src = $(ui.helper).attr("src");
@@ -1003,32 +746,6 @@ function build_token_row(listItem, enableDrag = true) {
 	return row;
 }
 
-/** @param listItem {TokenListItem} */
-function build_token_folder_row(listItem) {
-	let row = build_token_row(listItem, false); // TODO: allow drag and drop of entire folders?
-	row.addClass("folder collapsed");
-	row.find(".custom-token-image-row-handle").remove(); // no drag handle on the right side of folders
-	row.find(".custom-token-image-row-add svg").css("fill", "#fff");
-	row.find(".custom-token-image-row-add").css("border", "#fff");
-	row.find(".custom-token-image-row-add").prop("disabled", true);
-	row.attr('data-folder-name', listItem.name);
-	row.attr('data-folder-path', listItem.folderPath);
-	let fullPath = `${listItem.folderPath}/${listItem.name}`;
-	fullPath = fullPath.replaceAll("//", "/");
-	console.log(fullPath);
-	row.attr('data-full-path', fullPath);
-	row.append(`<div class="folder-token-list"></div>`);
-	// let currentFolderPath = `${listItem.folderPath}/${listItem.name}`;
-	row.find(".custom-token-image-row-item").click(function (clickEvent) {
-		let folderRow = $(clickEvent.currentTarget).parent();
-		if (folderRow.hasClass("collapsed")) {
-			folderRow.removeClass("collapsed");
-		} else {
-			folderRow.addClass("collapsed");
-		}
-	});
-	return row;
-}
 
 function register_token_row_context_menu() {
 
@@ -1049,10 +766,10 @@ function register_token_row_context_menu() {
 		build: function(element, e) {
 
 			let items = {};
-			
+
 			let folderName = $(element).attr("data-folder-name");
 			let isFolder = folderName !== undefined;
-			
+
 			let tokenAddButton = $(element).find(".custom-token-image-row-add");
 
 			let path = "";
@@ -1070,7 +787,7 @@ function register_token_row_context_menu() {
 			if (tokenName === undefined) {
 				tokenName = tokenAddButton.attr("data-name");
 			}
-			
+
 			if (!isFolder) {
 				// add token items
 
@@ -1080,7 +797,7 @@ function register_token_row_context_menu() {
 						place_token_from_modal(path, tokenName, false);
 					}
 				};
-				
+
 				items["placeHidden"] = {
 					name: "Place Hidden Token",
 					callback: function(itemKey, opt, originalEvent) {
@@ -1096,7 +813,7 @@ function register_token_row_context_menu() {
 					}
 				};
 
-			} 
+			}
 
 			// add delete menu option
 			if (path.startsWith("/AboveVTT BUILTIN")) {
@@ -1117,7 +834,7 @@ function register_token_row_context_menu() {
 								}
 								folder.folders[newfoldername] = folder.folders[folderName];
 								delete folder.folders[folderName];
-								// fill_tokenmenu(path);
+								fill_tokenmenu(path);
 								persist_customtokens();
 							}
 						} else {
@@ -1125,9 +842,9 @@ function register_token_row_context_menu() {
 						}
 					}
 				};
-	
+
 				items["border"] = "---";
-	
+
 				// not a built in folder or token, add an option to delete
 				items["delete"] = {
 					name: "Delete",
@@ -1136,14 +853,14 @@ function register_token_row_context_menu() {
 							console.log(`delete selected; folderName = ${folderName}`);
 							if (confirm(`Are you sure you want to delete the folder "${folderName}"? The folder and all tokens in it will be deleted. This cannot be undone.`)) {
 								delete folder.folders[folderName];
-								// fill_tokenmenu(path);
+								fill_tokenmenu(path);
 								persist_customtokens();
 							}
 						} else {
 							console.log(`delete selected; tokenName = ${tokenName}`);
 							if (confirm(`Are you sure you want to delete the token "${tokenName}"? This cannot be undone.`)) {
 								delete folder.tokens[tokenName];
-								// fill_tokenmenu(path);
+								fill_tokenmenu(path);
 								persist_customtokens();
 							}
 						}
@@ -1228,7 +945,7 @@ function build_custom_token_form_footer(sidebarPanel, path, name, token) {
 			<option value="3">Huge (15ft)</option>
 			<option value="4">Gargantuan (20ft)</option>
 		</select>
-	`);	
+	`);
 	let tokenSize = token == undefined ? undefined : token["data-token-size"];
 	if (tokenSize != undefined) {
 		if (tokenSize > 4) {
@@ -1247,7 +964,7 @@ function build_custom_token_form_footer(sidebarPanel, path, name, token) {
 			<option value="square">Square</option>
 		</select>
 	`);
-	// this is explicitly looking for 
+	// this is explicitly looking for
 	let tokenType = token == undefined ? undefined : token["data-square"];
 	// this is explicitly looking for true/false because the default value is undefined
 	if (tokenType == true) {
@@ -1349,7 +1066,7 @@ function populate_token_from_form(sidebarPanel, token) {
 		case "square":
 			token['data-square'] = true;
 			break;
-		case "round": 
+		case "round":
 			token['data-square'] = false;
 			break;
 		default:
@@ -1358,7 +1075,7 @@ function populate_token_from_form(sidebarPanel, token) {
 
 	let hideBorder = inputWrapper.find(`select[name='data-disableborder']`)[0].value;
 	switch (hideBorder) {
-		case "disabled": 
+		case "disabled":
 			token['data-disableborder'] = true;
 			break;
 		case "enabled":
@@ -1370,7 +1087,7 @@ function populate_token_from_form(sidebarPanel, token) {
 
 	let aspectRatio = inputWrapper.find(`select[name='data-legacyaspectratio']`)[0].value;
 	switch (aspectRatio) {
-		case "legacy": 
+		case "legacy":
 			token['data-legacyaspectratio'] = true;
 			break;
 		case "maintain":
@@ -1387,7 +1104,7 @@ function submit_custom_token_form(sidebarPanel, path) {
 	if (sidebarPanel === undefined) {
 		console.warn("submit_custom_token_form was called without a sidebarPanel");
 		return;
-	}	
+	}
 	if (path === undefined) {
 		console.warn("submit_custom_token_form was called without a path");
 		path = "";
@@ -1398,7 +1115,7 @@ function submit_custom_token_form(sidebarPanel, path) {
 	}
 
 	let inputWrapper = sidebarPanel.inputWrapper;
-	
+
 	let nameInput = inputWrapper.find(`input[name='addCustomName']`)[0];
 	let name = nameInput.value;
 	if (name === undefined || name.length == 0) {
@@ -1447,9 +1164,9 @@ function submit_custom_token_form(sidebarPanel, path) {
 
 	folder.tokens[name] = populate_token_from_form(sidebarPanel, token);
 	persist_customtokens();
-	
+
 	if (isNewToken || didRename) {
-		// redraw the entire modal so we get all the updated information about the token. 
+		// redraw the entire modal so we get all the updated information about the token.
 		// if you submit the same name twice in a row, we seem to get a cached DOM element for some reason
 		// TODO: figure out everything that needs to be updated, and do that instead of redrawing the entire thing
 		display_custom_token_form(path, name, token);
@@ -1457,8 +1174,8 @@ function submit_custom_token_form(sidebarPanel, path) {
 		redraw_images_in_modal_body(sidebarPanel.body, path, name, token);
 	}
 	// just reload the body instead of the entire modal
-	
-	// fill_tokenmenu(path);
+
+	fill_tokenmenu(path);
 	update_modal_images(sidebarPanel, folder.tokens[name]);
 }
 
@@ -1664,7 +1381,7 @@ function display_placed_token_customization_modal(placedToken) {
 			redraw_images_in_modal_body(modalBody, tokenDataPath, tokenDataName, savedTokenData, placedToken);
 		}
 	};
-	
+
 	let imageInput = sidebarPanel.build_image_url_input("Enter a new image URL", add_token_customization_image);
 	imageInput.find(`.token-image-modal-add-button`).remove();
 	sidebarPanel.inputWrapper.append(imageInput);
@@ -1688,7 +1405,7 @@ function display_placed_token_customization_modal(placedToken) {
 			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
 				add_image_to_token_data(imageUrl, tokenDataPath, placedToken.options.name);
-				display_placed_token_customization_modal(placedToken);	
+				display_placed_token_customization_modal(placedToken);
 			}
 		});
 		sidebarPanel.inputWrapper.append(addForAllButton);
@@ -1700,15 +1417,15 @@ function display_placed_token_customization_modal(placedToken) {
 
 function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedToken) {
 	if (tokenData === undefined) {
-		// Don't display any images if we haven't associated a saved token yet. 
-		// We don't want to give the impression that the user could interact with this image. 
+		// Don't display any images if we haven't associated a saved token yet.
+		// We don't want to give the impression that the user could interact with this image.
 		// Once the placed token has been associated with a saved token, then this will work as expected.
 		return;
 	}
 
 	// clear it out before we fill it up
 	modalBody.empty();
-	
+
 	let tokenSize = tokenData['data-token-size'];
 	let dataImg = parse_img(tokenData['data-img']);
 
@@ -1719,7 +1436,7 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 		let parsedImage = parse_img(tokenData['data-alternative-images'][i]);
 		images.push(parsedImage);
 	}
-	
+
 	let indexOffset = 0;
 	if (dataImg !== undefined && !images.includes(dataImg)) {
 		// the main image somehow isn't in the list so put it at the front
@@ -1745,8 +1462,8 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 		tokenSize = 1;
 	}
 
-	
-	for (let i = 0; i < images.length; i++) { 
+
+	for (let i = 0; i < images.length; i++) {
 		let imageUrl = parse_img(images[i]);
 		let tokenDiv = build_custom_token_item(name, imageUrl, tokenSize, i - indexOffset);
 		if (placedToken !== undefined) {
@@ -1764,7 +1481,7 @@ function redraw_images_in_modal_body(modalBody, path, name, tokenData, placedTok
 			if (placedToken.options.tokendataname !== undefined) {
 				tokenDiv.attr("data-tokendataname", placedToken.options.tokendataname);
 			} else {
-				tokenDiv.attr("data-tokendataname", name);	
+				tokenDiv.attr("data-tokendataname", name);
 			}
 		} else {
 			tokenDiv.attr("data-tokendatapath", path);

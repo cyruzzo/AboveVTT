@@ -76,6 +76,7 @@
 		"ScenesHandler.js",
 		"MonsterPanel.js",
 		"ScenesPanel.js",
+		"TokensPanel.js",
 		"mousetrap.1.6.5.min.js",
 		"KeypressHandler.js",
 		"Main.js"

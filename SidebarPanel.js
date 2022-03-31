@@ -21,7 +21,7 @@ function init_sidebar_tabs() {
     $("#tokens-panel").remove();
     tokensPanel = new SidebarPanel("tokens-panel", false);
     sidebarContent.append(tokensPanel.build());
-    init_tokenmenu();
+    init_tokens_panel();
   }
 
   $("#sounds-panel").remove();

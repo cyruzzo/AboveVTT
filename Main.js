@@ -580,37 +580,24 @@ function init_controls() {
 	b1.append('<div class="sidebar-tab-image ct-primary-box__tab--extras ddbc-tab-list__nav-item ddbc-tab-list__nav-item--is-active" style="width:100%;height:100%;"><svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg></div>');
 	sidebarControls.append(b1);
 
-	b2 = $("<div id='switch_characters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Players' data-target='#players-panel'></div>").click(switch_control);
-	let b2ImageDiv = $('<div></div>');
-	let b2ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-	let b2Image = `${window.EXTENSION_PATH}assets/icons/character.svg`;
-	b2ImageDiv.css({ "mask": `url(${b2Image}) no-repeat center / contain`, "-webkit-mask": `url(${b2Image}) no-repeat center / contain` });
-	b2ImageDivWrapper.append(b2ImageDiv);
-	b2.append(b2ImageDivWrapper);
-	sidebarControls.append(b2);
 	if (DM) {
-
-		b3 = $("<div id='switch_monsters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Monsters' data-target='#monsters-panel'></div>").click(switch_control);
-
-
-		let b3ImageDiv = $('<div></div>');
-		let b3ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b3Image = `${window.EXTENSION_PATH}assets/icons/mimic-chest.svg`;
-		b3ImageDiv.css({ "mask": `url(${b3Image}) no-repeat center / contain`, "-webkit-mask": `url(${b3Image}) no-repeat center / contain` });
-		b3ImageDivWrapper.append(b3ImageDiv);
-		b3.append(b3ImageDivWrapper);
-		sidebarControls.append(b3);
-		b5=$("<div id='switch_tokens' class='tab-btn hasTooltip button-icon blue-tab' data-name='Tokens' data-target='#tokens-panel'></div>");
-
-		let b5ImageDiv = $('<div></div>');
-		let b5ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b5Image = `${window.EXTENSION_PATH}assets/icons/photo.svg`;
-		b5ImageDiv.css({ "mask": `url(${b5Image}) no-repeat center / contain`, "-webkit-mask": `url(${b5Image}) no-repeat center / contain` });
-		b5ImageDivWrapper.append(b5ImageDiv);
-		b5.append(b5ImageDivWrapper);
-		b5.click(switch_control);
-		sidebarControls.append(b5);
-
+		let b2 = $("<div id='switch_tokens' class='tab-btn hasTooltip button-icon blue-tab' data-name='Tokens' data-target='#tokens-panel'></div>").click(switch_control);
+		let b2ImageDiv = $('<div></div>');
+		let b2ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+		let b2Image = `${window.EXTENSION_PATH}assets/icons/character.svg`;
+		b2ImageDiv.css({ "mask": `url(${b2Image}) no-repeat center / contain`, "-webkit-mask": `url(${b2Image}) no-repeat center / contain` });
+		b2ImageDivWrapper.append(b2ImageDiv);
+		b2.append(b2ImageDivWrapper);
+		sidebarControls.append(b2);
+	} else {
+		let b2 = $("<div id='switch_characters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Players' data-target='#players-panel'></div>").click(switch_control);
+		let b2ImageDiv = $('<div></div>');
+		let b2ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+		let b2Image = `${window.EXTENSION_PATH}assets/icons/character.svg`;
+		b2ImageDiv.css({ "mask": `url(${b2Image}) no-repeat center / contain`, "-webkit-mask": `url(${b2Image}) no-repeat center / contain` });
+		b2ImageDivWrapper.append(b2ImageDiv);
+		b2.append(b2ImageDivWrapper);
+		sidebarControls.append(b2);
 	}
 
 	b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
