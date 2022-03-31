@@ -1311,10 +1311,11 @@ function place_token_at_point(tokenObject, x, y) {
 		return;
 	}
 
-	// overwrite the defaults with global settings
-	let options = Object.assign(default_options(), window.TOKEN_SETTINGS);
-	// now overwrite with anything that we were given
-	options = Object.assign(options, tokenObject);
+	let options = {
+		...default_options(),
+		...window.TOKEN_SETTINGS,
+		...tokenObject
+	};
 	options.imgsrc = parse_img(options.imgsrc);
 
 	options.left = `${x}px`;

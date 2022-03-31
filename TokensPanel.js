@@ -106,14 +106,12 @@ class TokenListItem {
     static BuiltinToken(tokenData, subtitle = "Builtin") {
         let name = tokenData.name;
         console.debug("TokenListItem.BuiltinToken", tokenData);
-        return new TokenListItem(name, tokenData.image, TokenListItem.TypeBuiltinToken, subtitle, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
+        return new TokenListItem(name, tokenData.imgsrc, TokenListItem.TypeBuiltinToken, subtitle, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
     }
-    static Monster(monsterId, monsterName, imgsrc, isReleased, isHomebrew, subtitle = "MONSTER") {
-        console.debug("TokenListItem.Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
-        let item = new TokenListItem(monsterName, imgsrc, TokenListItem.TypeMonster, subtitle, TokenListItem.PathMonsters);
-        item.monsterId = monsterId;
-        item.isReleased = isReleased;
-        item.isHomebrew = isHomebrew;
+    static Monster(monsterData, subtitle = "MONSTER") {
+        console.debug("TokenListItem.Monster", monsterData);
+        let item = new TokenListItem(monsterData.name, monsterData.avatarUrl, TokenListItem.TypeMonster, subtitle, TokenListItem.PathMonsters);
+        item.monsterData = monsterData;
         return item;
     }
     static PC(sheet, name, imgSrc, subtitle = "PLAYER") {
@@ -246,7 +244,7 @@ function inject_monster_tokens(searchTerm, skip) {
 
         for (let i = 0; i < monsterSearchResponse.data.length; i++) {
             let m = monsterSearchResponse.data[i];
-            let item = TokenListItem.Monster(m.id, m.name, m.avatarUrl, m.isReleased, m.isHomebrew)
+            let item = TokenListItem.Monster(m)
             window.monsterListItems.push(item);
             listItems.push(item);
         }
@@ -571,12 +569,107 @@ function did_click_add_button(clickEvent) {
     let clickedRowPath = clickedRow.attr("data-full-path");
     let clickedItem = find_token_list_item(clickedRowPath);
     console.log("did_click_add_button", clickedItem);
-    create_and_place_token(clickedItem);
+    let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
+    create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
 }
 
-/** @param listItem {TokenListItem} */
-function create_and_place_token(listItem) {
+/**
+ * @param listItem {TokenListItem} the item to create a token from
+ * @param hidden {boolean} whether or not the created token should be hidden
+ * @param specificImage {string} the image to use. if undefined, a random image will be used
+ * */
+function create_and_place_token(listItem, hidden, specificImage, eventPageX, eventPageY) {
     console.log("TODO: create_and_place_token", listItem);
+
+    let options = {
+        name: listItem.name,
+        listItemPath: listItem.fullPath(),
+        hidden: hidden,
+        imgsrc: listItem.image
+    };
+
+    switch (listItem.type) {
+        case TokenListItem.TypeFolder:
+            console.log("TODO: place all tokens in folder?", listItem);
+            break;
+        case TokenListItem.TypeMyToken:
+            let myToken = mytokens.find(t => t.name === name);
+            options.square = myToken['data-square'];
+            options.disableborder = myToken['data-disableborder'];
+            options.legacyaspectratio = myToken['data-legacyaspectratio'];
+            // Todo: random image
+            // options.imgsrc = myToken['data-imgsrc'];
+            options.disablestat = true;
+            break;
+        case TokenListItem.TypePC:
+            let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
+            let playerData = window.PLAYER_STATS[listItem.sheet];
+            if (pc === undefined) {
+                console.warn(`failed to find pc for id ${listItem.sheet}`);
+                return;
+            }
+            options.id = listItem.sheet;
+            options.tokenSize = 1;
+            options.hp = playerData ? playerData.hp : '';
+            options.ac = playerData ? playerData.ac : '';
+            options.max_hp = playerData ? playerData.max_hp : '';
+            options.square = window.TOKEN_SETTINGS["square"];
+            options.disableborder = window.TOKEN_SETTINGS['disableborder'];
+            options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
+            options.disablestat = window.TOKEN_SETTINGS['disablestat'];
+            options.color = "#" + get_player_token_border_color(pc.sheet);
+            let image = random_image_for_player_token(pc.sheet);
+            if (image !== undefined) {
+                options.imgsrc = parse_img(image);
+            }
+            break;
+        case TokenListItem.TypeMonster:
+            options.monster = listItem.monsterData.id;
+            options.stat = listItem.monsterData.id;
+            options.sizeId = listItem.monsterData.sizeId;
+            options.hp = listItem.monsterData.averageHitPoints;
+            options.max_hp = listItem.monsterData.averageHitPoints;
+            options.ac = listItem.monsterData.armorClass;
+            let randomImage = get_random_custom_monster_image(listItem.monsterData.id);
+            if (randomImage !== undefined && randomImage !== "") {
+                options.imgsrc = randomImage;
+            } else {
+                options.imgsrc = listItem.monsterData.avatarUrl;
+            }
+            let placedCount = 1;
+            for (let tokenId in window.TOKEN_OBJECTS) {
+                if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id) {
+                    placedCount++;
+                }
+            }
+            if (placedCount > 1) {
+                let color = TOKEN_COLORS[(placedCount - 1) % 54];
+                console.log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
+                options.name = `${listItem.name} ${placedCount}`;
+                options.color = `#${color}`;
+            }
+            break;
+        case TokenListItem.TypeBuiltinToken:
+            let builtinToken = builtInTokens.find(t => t.name === listItem.name);
+            console.log("create_and_place_token TokenListItem.TypeBuiltinToken options before", options, builtinToken);
+            options = {...options, ...builtinToken}
+            options.disablestat = true;
+            break;
+    }
+
+    if (specificImage !== undefined) {
+        options.imgsrc = parse_img(specificImage);
+    }
+
+    // TODO: figure out token size
+
+    console.log("create_and_place_token about to place token with options", options);
+
+    if (eventPageX === undefined || eventPageY === undefined) {
+        place_token_in_center_of_map(options);
+    } else {
+        place_token_under_cursor(options, eventPageX, eventPageY);
+    }
 }
 
 function search_monsters(searchTerm, skip, callback) {
