@@ -164,6 +164,17 @@ function find_token_list_item(fullPath) {
     return foundItem;
 }
 
+function find_my_token(fullPath) {
+    let found = mytokens.find(t => {
+        let dirtyPath = `${TokenListItem.PathMyTokens}${t["data-folderpath"]}/${t["data-name"]}`;
+        let fullTokenPath = sanitize_folder_path(dirtyPath);
+        console.log("find_my_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
+        return fullTokenPath === fullPath;
+    });
+    console.log("find_my_token found: ", found);
+    return found;
+}
+
 function rebuild_token_items_list() {
 
     // Players
@@ -585,7 +596,7 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
         name: listItem.name,
         listItemPath: listItem.fullPath(),
         hidden: hidden,
-        imgsrc: listItem.image
+        imgsrc: random_image_for_item(listItem, specificImage)
     };
 
     switch (listItem.type) {
@@ -593,13 +604,18 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
             console.log("TODO: place all tokens in folder?", listItem);
             break;
         case TokenListItem.TypeMyToken:
-            let myToken = mytokens.find(t => t.name === name);
+            let myToken = find_my_token(listItem.fullPath());
             options.square = myToken['data-square'];
             options.disableborder = myToken['data-disableborder'];
             options.legacyaspectratio = myToken['data-legacyaspectratio'];
-            // Todo: random image
-            // options.imgsrc = myToken['data-imgsrc'];
             options.disablestat = true;
+            let tokenSizeSetting = myToken['data-token-size'];
+            let tokenSize = parseInt(tokenSizeSetting);
+            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+                tokenSize = 1;
+                // TODO: handle custom sizes
+            }
+            options.tokenSize = tokenSize;
             break;
         case TokenListItem.TypePC:
             let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
@@ -618,10 +634,6 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
             options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
             options.disablestat = window.TOKEN_SETTINGS['disablestat'];
             options.color = "#" + get_player_token_border_color(pc.sheet);
-            let image = random_image_for_player_token(pc.sheet);
-            if (image !== undefined) {
-                options.imgsrc = parse_img(image);
-            }
             break;
         case TokenListItem.TypeMonster:
             options.monster = listItem.monsterData.id;
@@ -630,12 +642,6 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
             options.hp = listItem.monsterData.averageHitPoints;
             options.max_hp = listItem.monsterData.averageHitPoints;
             options.ac = listItem.monsterData.armorClass;
-            let randomImage = get_random_custom_monster_image(listItem.monsterData.id);
-            if (randomImage !== undefined && randomImage !== "") {
-                options.imgsrc = randomImage;
-            } else {
-                options.imgsrc = listItem.monsterData.avatarUrl;
-            }
             let placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id) {
@@ -657,11 +663,25 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
             break;
     }
 
-    if (specificImage !== undefined) {
-        options.imgsrc = parse_img(specificImage);
+    // set reasonable defaults
+    if (options.square === undefined) {
+        options.square = window.TOKEN_SETTINGS["square"];
+        if (options.square === undefined) {
+            options.square = false;
+        }
     }
-
-    // TODO: figure out token size
+    if (options.disableborder === undefined) {
+        options.disableborder = window.TOKEN_SETTINGS["disableborder"];
+        if (options.disableborder === undefined) {
+            options.disableborder = false;
+        }
+    }
+    if (options.legacyaspectratio === undefined) {
+        options.legacyaspectratio = window.TOKEN_SETTINGS["legacyaspectratio"];
+        if (options.legacyaspectratio === undefined) {
+            options.legacyaspectratio = false;
+        }
+    }
 
     console.log("create_and_place_token about to place token with options", options);
 
@@ -669,6 +689,38 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
         place_token_in_center_of_map(options);
     } else {
         place_token_under_cursor(options, eventPageX, eventPageY);
+    }
+}
+
+function random_image_for_item(listItem, specificImage) {
+    let validSpecifiedImage = parse_img(specificImage);
+    if (validSpecifiedImage !== undefined && validSpecifiedImage.length > 0) {
+        return validSpecifiedImage
+    }
+    switch (listItem.type) {
+        case TokenListItem.TypeMyToken:
+            let myToken = find_my_token(listItem.fullPath());
+            let myTokenAltImages = myToken["data-alternative-images"];
+            if (myTokenAltImages !== undefined && myTokenAltImages.length > 0) {
+                let randomIndex = getRandomInt(0, myTokenAltImages.length);
+                return myTokenAltImages[randomIndex];
+            } else {
+                return listItem.image;
+            }
+        case TokenListItem.TypePC:
+            return random_image_for_player_token(listItem.sheet);
+        case TokenListItem.TypeMonster:
+            return get_random_custom_monster_image(listItem.monsterData.id);
+        case TokenListItem.TypeBuiltinToken:
+            if (listItem.alternativeImages) {
+                let randomIndex = getRandomInt(0, listItem.alternativeImages.length);
+                return listItem.alternativeImages[randomIndex];
+            } else {
+                return listItem.image;
+            }
+        case TokenListItem.TypeFolder:
+        default:
+            return listItem.image;
     }
 }
 
