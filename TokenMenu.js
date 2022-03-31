@@ -503,7 +503,7 @@ function init_tokenmenu(){
 	if(localStorage.getItem('CustomTokens') != null){
 		tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
 	}
-	tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
+	// tokendata.folders['AboveVTT BUILTIN']=tokenbuiltin;
 
 	let header = tokensPanel.header;
 	header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
@@ -596,9 +596,9 @@ function fill_tokenmenu(path){
 }
 
 function persist_customtokens(){
-	tokendata.folders["AboveVTT BUILTIN"]={};
+	delete tokendata.folders["AboveVTT BUILTIN"];
 	localStorage.setItem("CustomTokens",JSON.stringify(tokendata));
-	tokendata.folders["AboveVTT BUILTIN"]=tokenbuiltin;
+	delete tokendata.folders["AboveVTT BUILTIN"];
 }
 
 function draw_custom_token_list(folder, path) {

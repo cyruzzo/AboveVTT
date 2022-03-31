@@ -68,6 +68,7 @@ let scripts = [
 	{ src: "Token.js" },
 	{ src: "TokenMenu.js" },
 	{ src: "TokensPanel.js" },
+	{ src: "built-in-tokens.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "Main.js" }

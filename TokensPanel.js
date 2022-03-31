@@ -71,10 +71,12 @@ class TokenListItem {
     static TypeMyToken = "myToken";
     static TypePC = "pc";
     static TypeMonster = "monster";
+    static TypeBuiltinToken = "builtinToken";
     static PathRoot = "/";
     static PathPlayers = "/Players";
     static PathMonsters = "/Monsters";
     static PathMyTokens = "/My Tokens";
+    static PathAboveVTT = "/AboveVTT Tokens";
 
     /** Generic constructor for a TokenListItem. Do not call this directly. Use one of the static functions instead.
      * @param name {string} the name displayed to the user
@@ -89,28 +91,24 @@ class TokenListItem {
         this.type = type;
         this.subtitle = subtitle;
         this.folderPath = sanitize_folder_path(folderPath);
-        if (type === TokenListItem.TypeMyToken && !folderPath.startsWith(TokenListItem.PathMyTokens)) {
-            console.warn(this);
-        } else {
-            console.log(this);
-        }
-        console.groupEnd()
     }
     static Folder(folderPath, name, subtitle = "FOLDER") {
-        console.group(`TokenListItem.Folder ${name}`);
-        console.log("TokenListItem.Folder", folderPath, name);
+        console.debug("TokenListItem.Folder", folderPath, name);
         return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, subtitle, folderPath);
     }
     static MyToken(tokenData, subtitle = "MyToken") {
         let name = tokenData["data-name"];
-        console.group(`TokenListItem.MyToken ${name}`);
-        console.log("TokenListItem.MyToken", tokenData);
+        console.debug("TokenListItem.MyToken", tokenData);
         let myTokenPath = tokenData["data-folderpath"];
         return new TokenListItem(name, tokenData["data-img"], TokenListItem.TypeMyToken, subtitle, `${TokenListItem.PathMyTokens}/${myTokenPath}`);
     }
+    static BuiltinToken(tokenData, subtitle = "Builtin") {
+        let name = tokenData.name;
+        console.debug("TokenListItem.BuiltinToken", tokenData);
+        return new TokenListItem(name, tokenData.image, TokenListItem.TypeBuiltinToken, subtitle, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
+    }
     static Monster(monsterId, monsterName, imgsrc, isReleased, isHomebrew, subtitle = "MONSTER") {
-        console.group(`TokenListItem.Monster ${monsterName}`);
-        console.log("TokenListItem.Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
+        console.debug("TokenListItem.Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
         let item = new TokenListItem(monsterName, imgsrc, TokenListItem.TypeMonster, subtitle, TokenListItem.PathMonsters);
         item.monsterId = monsterId;
         item.isReleased = isReleased;
@@ -118,8 +116,7 @@ class TokenListItem {
         return item;
     }
     static PC(sheet, name, imgSrc, subtitle = "PLAYER") {
-        console.group(`TokenListItem.PC ${name}`);
-        console.log("TokenListItem.PC", sheet, name, imgSrc);
+        console.debug("TokenListItem.PC", sheet, name, imgSrc);
         let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, subtitle, TokenListItem.PathPlayers);
         item.sheet = sheet;
         return item;
@@ -189,6 +186,23 @@ function rebuild_token_items_list() {
         let folderPath = components.join("/");
         let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
         tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName, "EMPTY FOLDER"));
+    }
+
+    let allBuiltinPaths = builtInTokens
+        .filter(item => item.folderPath !== TokenListItem.PathRoot && item.folderPath !== "" && item.folderPath !== undefined)
+        .map(item => item.folderPath);
+    let builtinPaths = [...new Set(allBuiltinPaths)];
+    for (let i = 0; i < builtinPaths.length; i++) {
+        let path = builtinPaths[i];
+        let pathComponents = path.split("/");
+        let folderName = pathComponents.pop();
+        let folderPath = pathComponents.join("/");
+        let builtinFolderPath = `${TokenListItem.PathAboveVTT}/${folderPath}`;
+        tokenItems.push(TokenListItem.Folder(builtinFolderPath, folderName));
+    }
+
+    for (let i = 0; i < builtInTokens.length; i++) {
+        tokenItems.push(TokenListItem.BuiltinToken(builtInTokens[i]));
     }
 
     window.tokenListItems = tokenItems;
@@ -281,7 +295,7 @@ function init_tokens_panel() {
         tokendata = $.parseJSON(localStorage.getItem('CustomTokens'));
         // mytokens = $.parseJSON(localStorage.getItem('MyTokens'));
     }
-    tokendata.folders['AboveVTT BUILTIN'] = tokenbuiltin; // TODO: migrate this to the new way, but don't store it to localStorage
+    // tokendata.folders['AboveVTT BUILTIN'] = tokenbuiltin; // TODO: migrate this to the new way, but don't store it to localStorage
     migrate_to_my_tokens();
     rebuild_token_items_list();
     filter_token_list();
@@ -297,37 +311,38 @@ function init_tokens_panel() {
     }, 500));
     header.append(searchInput);
 
-    let addTokenButton = $(`<button id="add-token-btn" class="sidebar-panel-footer-button">Add Token</button>`);
-    addTokenButton.click(function(event) {
-        let path = $(event.target).attr("data-folder-path");
-        if (path === undefined) {
-            path = "";
-        }
-        display_custom_token_form(path);
-    });
-    let addFolderButton = $(`<button id="add-folder-btn" class="sidebar-panel-footer-button">Add Folder</button>`);
-    addFolderButton.click(function(event) {
-        var newfoldername = prompt("Enter the name of the new folder");
-        if (newfoldername === undefined || newfoldername === "") {
-            // don't add folders when cancel is pressed or if they didn't enter a folder name at all
-            return;
-        }
-        let path = window.CURRENT_TOKEN_PATH;
-        if (path === undefined) {
-            path = "";
-        }
-        let folder = convert_path(path);
-        if(!folder.folders) {
-            folder.folders = {};
-        }
-        folder.folders[newfoldername] = {};
-        persist_customtokens();
-    });
-
-    let buttonWrapper = $(`<div class="sidebar-panel-footer-horizontal-wrapper"></div>`)
-    buttonWrapper.append(addTokenButton);
-    buttonWrapper.append(addFolderButton);
-    tokensPanel.footer.append(buttonWrapper);
+    // TODO: save this to use on folder rows
+    // let addTokenButton = $(`<button id="add-token-btn" class="sidebar-panel-footer-button">Add Token</button>`);
+    // addTokenButton.click(function(event) {
+    //     let path = $(event.target).attr("data-folder-path");
+    //     if (path === undefined) {
+    //         path = "";
+    //     }
+    //     display_custom_token_form(path);
+    // });
+    // let addFolderButton = $(`<button id="add-folder-btn" class="sidebar-panel-footer-button">Add Folder</button>`);
+    // addFolderButton.click(function(event) {
+    //     var newfoldername = prompt("Enter the name of the new folder");
+    //     if (newfoldername === undefined || newfoldername === "") {
+    //         // don't add folders when cancel is pressed or if they didn't enter a folder name at all
+    //         return;
+    //     }
+    //     let path = window.CURRENT_TOKEN_PATH;
+    //     if (path === undefined) {
+    //         path = "";
+    //     }
+    //     let folder = convert_path(path);
+    //     if(!folder.folders) {
+    //         folder.folders = {};
+    //     }
+    //     folder.folders[newfoldername] = {};
+    //     persist_customtokens();
+    // });
+    //
+    // let buttonWrapper = $(`<div class="sidebar-panel-footer-horizontal-wrapper"></div>`)
+    // buttonWrapper.append(addTokenButton);
+    // buttonWrapper.append(addFolderButton);
+    // tokensPanel.footer.append(buttonWrapper);
 
     register_token_row_context_menu();             // context menu for each row
     register_custom_monster_image_context_menu();  // context menu for images within the customization modal
@@ -342,9 +357,10 @@ function redraw_token_list(searchTerm) {
         nameFilter = searchTerm;
     }
 
-    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "Players")));
-    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "Monsters")));
-    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "My Tokens")));
+    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathPlayers.replaceAll("/", ""))));
+    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathMonsters.replaceAll("/", ""))));
+    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathMyTokens.replaceAll("/", ""))));
+    list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.PathAboveVTT.replaceAll("/", ""))));
 
     // now let's add all the other items
     let items = window.tokenListItems

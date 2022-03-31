@@ -1712,10 +1712,20 @@ h5.token-image-modal-footer-title:after {
     background: rgb(235, 241, 245);
     height: 100%;
 }
+.custom-token-image-row.folder {
+    background-color: rgb(235, 241, 245);
+}
+.custom-token-image-row.folder.collapsed {
+    background-color: #fff;
+}
 .folder .folder-token-list {
     padding-left: 1em;
+    padding-top: 0.3em;
 }
 .folder.collapsed .folder-token-list {
+    display: none;
+}
+.folder .custom-token-image-row-add {
     display: none;
 }
 .custom-token-image-row {
@@ -1725,6 +1735,7 @@ h5.token-image-modal-footer-title:after {
     border: 1px solid #d8e1e8;
     border-radius: 3px;
     background-color: #fff;
+    cursor: pointer;
 }
 .custom-token-image-row-item {
     display: flex;
