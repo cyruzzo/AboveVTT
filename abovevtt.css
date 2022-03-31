@@ -1725,8 +1725,11 @@ h5.token-image-modal-footer-title:after {
 .folder.collapsed .folder-token-list {
     display: none;
 }
-.folder .custom-token-image-row-add {
-    display: none;
+.folder > .custom-token-image-row-item > .custom-token-image-row-add {
+    background-color: rgb(235, 241, 245);
+}
+.folder.collapsed > .custom-token-image-row-item > .custom-token-image-row-add {
+    background-color: #fff;
 }
 .custom-token-image-row {
     padding: 4px;
