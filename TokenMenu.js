@@ -1400,8 +1400,7 @@ function display_placed_token_customization_modal(placedToken) {
 
 	if (savedTokenData !== undefined && !is_builtin(tokenDataPath)) {
 		// Only show the add for all button if the placed token has been associated with a saved token object. We can't save what we don't know about
-		let addForAllButton = $(`<button class="sidebar-panel-footer-button" title="New tokens will use this new image. If you have more than one image, one will be chosen at random when you place a new token.">Add for all future 
-tokens</button>`);
+		let addForAllButton = $(`<button class="sidebar-panel-footer-button" title="New tokens will use this new image. If you have more than one image, one will be chosen at random when you place a new token.">Add for all future tokens</button>`);
 		addForAllButton.click(function(event) {
 			let imageUrl = $(`input[name='addCustomImage']`)[0].value;
 			if (imageUrl != undefined && imageUrl.length > 0) {
