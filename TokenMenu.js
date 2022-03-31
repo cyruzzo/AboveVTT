@@ -498,6 +498,18 @@ tokendata={
 mytokens = [];
 emptyfolders = []; // a list of strings. not sure how to do this yet, but this will be a temporary place to store empty folders
 
+function sanitize_folder_path(dirtyPath) {
+	let cleanPath = dirtyPath.replaceAll("//", "/");
+	// remove trailing slashes before adding one at the beginning. Otherwise we return an empty string
+	if (cleanPath.endsWith("/")) {
+		cleanPath = cleanPath.slice(0, -1);
+	}
+	if (!cleanPath.startsWith("/")) {
+		cleanPath = `/${cleanPath}`;
+	}
+	return cleanPath;
+}
+
 function migrate_to_my_tokens() {
 	if (mytokens.length > 0) {
 		// we already did this. no need to continue
@@ -506,11 +518,8 @@ function migrate_to_my_tokens() {
 
 	console.group("migrate_to_my_tokens");
 
-	const migrateFolderAtPath = function(currentFolderPath) {
-		currentFolderPath = currentFolderPath.replaceAll("//", "/");
-		if (!currentFolderPath.startsWith("/")) {
-			currentFolderPath = `/${currentFolderPath}`;
-		}
+	const migrateFolderAtPath = function(oldFolderPath) {
+		let currentFolderPath = sanitize_folder_path(oldFolderPath);
 		let folder = convert_path(currentFolderPath);
 		if (folder.tokens) {
 			for(let tokenKey in folder.tokens) {
@@ -555,43 +564,55 @@ class TokenListItem {
 	static TypePC = "pc";
 	static TypeMonster = "monster";
 	static PathRoot = "/";
+	static PathPlayers = "/Players";
+	static PathMonsters = "/Monsters";
+	static PathMyTokens = "/My Tokens";
 
 	/** Generic constructor for a TokenListItem. Do not call this directly. Use one of the static functions instead.
 	 * @param name {string} the name displayed to the user
 	 * @param image {string} the src of the img tag
 	 * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
 	 * @param subtitle {string} the string displayed under the name
-	 * @param folderpath {string} the folder this token is in
+	 * @param folderPath {string} the folder this token is in
 	 */
-	constructor(name, image, type, subtitle, folderpath = TokenListItem.PathRoot) {
+	constructor(name, image, type, subtitle, folderPath = TokenListItem.PathRoot) {
 		this.name = name;
 		this.image = image;
 		this.type = type;
 		this.subtitle = subtitle;
-		this.folderpath = folderpath;
-	}
-	static Folder(folderpath, name, subtitle = "FOLDER") {
-		console.log("TokenListItem.Folder", folderpath, name);
-		if (!folderpath.startsWith("/")) {
-			folderpath = `/${folderpath}`;
+		this.folderPath = sanitize_folder_path(folderPath);
+		if (type === TokenListItem.TypeMyToken && !folderPath.startsWith(TokenListItem.PathMyTokens)) {
+			console.warn(this);
+		} else {
+			console.log(this);
 		}
-		return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, subtitle, folderpath);
+		console.groupEnd()
+	}
+	static Folder(folderPath, name, subtitle = "FOLDER") {
+		console.group(`TokenListItem.Folder ${name}`);
+		console.log("TokenListItem.Folder", folderPath, name);
+		return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, subtitle, folderPath);
 	}
 	static MyToken(tokenData, subtitle = "MyToken") {
+		let name = tokenData["data-name"];
+		console.group(`TokenListItem.MyToken ${name}`);
 		console.log("TokenListItem.MyToken", tokenData);
-		return new TokenListItem(tokenData["data-name"], tokenData["data-img"], TokenListItem.TypeMyToken, subtitle, tokenData["data-folderpath"]);
+		let myTokenPath = tokenData["data-folderpath"];
+		return new TokenListItem(name, tokenData["data-img"], TokenListItem.TypeMyToken, subtitle, `${TokenListItem.PathMyTokens}/${myTokenPath}`);
 	}
 	static Monster(monsterId, monsterName, imgsrc, isReleased, isHomebrew, subtitle = "MONSTER") {
+		console.group(`TokenListItem.Monster ${monsterName}`);
 		console.log("TokenListItem.Monster", monsterId, monsterName, imgsrc, isReleased, isHomebrew);
-		let item = new TokenListItem(monsterName, imgsrc, TokenListItem.TypeMonster, subtitle, "/monsters");
+		let item = new TokenListItem(monsterName, imgsrc, TokenListItem.TypeMonster, subtitle, TokenListItem.PathMonsters);
 		item.monsterId = monsterId;
 		item.isReleased = isReleased;
 		item.isHomebrew = isHomebrew;
 		return item;
 	}
 	static PC(sheet, name, imgSrc, subtitle = "PLAYER") {
+		console.group(`TokenListItem.PC ${name}`);
 		console.log("TokenListItem.PC", sheet, name, imgSrc);
-		let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, subtitle, "/Players");
+		let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, subtitle, TokenListItem.PathPlayers);
 		item.sheet = sheet;
 		return item;
 	}
@@ -629,10 +650,12 @@ function rebuild_token_items_list() {
 		let myToken = mytokens[i];
 		let path = myToken['data-folderpath'];
 		if (path !== TokenListItem.PathRoot && !knownPaths.includes(path)) {
+			// we haven't built this folder item yet so do that now
 			let pathComponents = path.split("/");
 			let folderName = pathComponents.pop();
 			let folderPath = pathComponents.join("/");
-			tokenItems.push(TokenListItem.Folder(folderPath, folderName));
+			let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
+			tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName));
 			knownPaths.push(path);
 		}
 		tokenItems.push(TokenListItem.MyToken(myToken));
@@ -643,7 +666,8 @@ function rebuild_token_items_list() {
 		let components = emptyFolderPath.split("/");
 		let folderName = components.pop();
 		let folderPath = components.join("/");
-		tokenItems.push(TokenListItem.Folder(folderPath, folderName, "EMPTY FOLDER"));
+		let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
+		tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName, "EMPTY FOLDER"));
 	}
 
 	window.tokenListItems = tokenItems;
@@ -663,7 +687,7 @@ function filter_token_list(searchTerm) {
 		for (let i = 0; i < allFolders.length; i++) {
 			let currentFolder = $(allFolders[i]);
 			if (currentFolder.attr("data-full-path") !== "/Monsters" && currentFolder.find("> .folder-token-list").is(':empty')) {
-				// TODO: figure out how to hide empty folders that have subfolders
+				// TODO: figure out how to hide empty folders that have empty subfolders
 				currentFolder.hide(); // don't show any that are empty when searching
 			}
 		}
@@ -842,27 +866,31 @@ function redraw_token_list(searchTerm) {
 		nameFilter = searchTerm;
 	}
 
+	list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "Players")));
+	list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "Monsters")));
+	list.append(build_token_folder_row(TokenListItem.Folder(TokenListItem.PathRoot, "My Tokens")));
+
 	// display folders at the top of the list if the user hasn't searched anything. Otherwise omit them entirely
 	// if (nameFilter.length === 0) {
-		let rootFolders = window.tokenListItems
-			.filter(item => item.isFolder() && item.folderpath === TokenListItem.PathRoot)
-			.sort(TokenListItem.sortComparator); // TODO: float builtin folders to the top; players, monsters, builtin, placed tokens, etc; then custom folders
-
-		rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Monsters"));
-		rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Players"));
-
-		for (let i = 0; i < rootFolders.length; i++) {
-			let listItem = rootFolders[i];
-			let row = build_token_folder_row(listItem)
-			list.append(row);
-		}
+	// 	let rootFolders = window.tokenListItems
+	// 		.filter(item => item.isFolder() && item.folderpath === TokenListItem.PathRoot)
+	// 		.sort(TokenListItem.sortComparator); // TODO: float builtin folders to the top; players, monsters, builtin, placed tokens, etc; then custom folders
+	//
+	// 	rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Monsters"));
+	// 	rootFolders.unshift(TokenListItem.Folder(TokenListItem.PathRoot, "Players"));
+	//
+	// 	for (let i = 0; i < rootFolders.length; i++) {
+	// 		let listItem = rootFolders[i];
+	// 		let row = build_token_folder_row(listItem)
+	// 		list.append(row);
+	// 	}
 	// }
 
 	// now let's add all the other items
 	let items = window.tokenListItems
 		.filter(item => {
 			if (item.isFolder()) {
-				return item.folderpath !== TokenListItem.PathRoot
+				return item.folderPath !== TokenListItem.PathRoot
 			}
 			return item.name.toLowerCase().includes(nameFilter)
 		}).sort(TokenListItem.sortComparator);
@@ -871,18 +899,18 @@ function redraw_token_list(searchTerm) {
 
 	for (let i = 0; i < items.length; i++) {
 		let item = items[i];
-		console.log(item.folderpath, item.name, item);
+		console.log(item.folderPath, item.name, item);
 		if (item.isFolder()) {
 			let row = build_token_folder_row(item);
-			console.log("about to inject subfolder into folder", item, list.find(`[data-full-path='${item.folderpath}'] > .folder-token-list`), row);
-			list.find(`[data-full-path='${item.folderpath}'] > .folder-token-list`).append(row);
+			console.log("about to inject subfolder into folder", item, list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`), row);
+			list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
 		} else {
 			let row = build_token_row(item);
-			if (item.folderpath === TokenListItem.PathRoot) {
+			if (item.folderPath === TokenListItem.PathRoot) {
 				list.append(row);
 			} else {
-				console.log("about to inject token into folder", item, list.find(`[data-full-path='${item.folderpath}'] > .folder-token-list`), row);
-				list.find(`[data-full-path='${item.folderpath}'] > .folder-token-list`).append(row);
+				console.log("about to inject token into folder", item, list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`), row);
+				list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
 			}
 		}
 	}
@@ -975,7 +1003,7 @@ function build_token_row(listItem, enableDrag = true) {
 	return row;
 }
 
-/** @param listItem {TokenListItem.Folder} */
+/** @param listItem {TokenListItem} */
 function build_token_folder_row(listItem) {
 	let row = build_token_row(listItem, false); // TODO: allow drag and drop of entire folders?
 	row.addClass("folder collapsed");
@@ -984,13 +1012,13 @@ function build_token_folder_row(listItem) {
 	row.find(".custom-token-image-row-add").css("border", "#fff");
 	row.find(".custom-token-image-row-add").prop("disabled", true);
 	row.attr('data-folder-name', listItem.name);
-	row.attr('data-folder-path', listItem.folderpath);
-	let fullPath = `${listItem.folderpath}/${listItem.name}`;
+	row.attr('data-folder-path', listItem.folderPath);
+	let fullPath = `${listItem.folderPath}/${listItem.name}`;
 	fullPath = fullPath.replaceAll("//", "/");
 	console.log(fullPath);
 	row.attr('data-full-path', fullPath);
 	row.append(`<div class="folder-token-list"></div>`);
-	// let currentFolderPath = `${listItem.folderpath}/${listItem.name}`;
+	// let currentFolderPath = `${listItem.folderPath}/${listItem.name}`;
 	row.find(".custom-token-image-row-item").click(function (clickEvent) {
 		let folderRow = $(clickEvent.currentTarget).parent();
 		if (folderRow.hasClass("collapsed")) {
