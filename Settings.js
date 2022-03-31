@@ -469,7 +469,6 @@ function import_readfile() {
 		}
 		persist_customtokens();
 		$("#token-panel").remove();
-		init_tokenmenu();
 		init_tokens_panel();
 
 		alert('Loading completed. Data merged');
