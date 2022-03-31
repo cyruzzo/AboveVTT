@@ -655,14 +655,14 @@ function place_monster_at_point(htmlElement, monsterId, name, imgSrc, tokenSize,
 	}
 }
 
-function search_monsters(searchTerm, pageNumber, callback) {
+function search_monsters(searchTerm, skip, callback) {
 	if (typeof callback !== 'function') {
 		callback = function(){};
 	}
 	let offset = 0;
-	let pageNumberInt = parseInt(pageNumber);
-	if (!isNaN(pageNumberInt)) {
-		offset = 10 * pageNumberInt;
+	let skipInt = parseInt(skip);
+	if (!isNaN(skipInt)) {
+		offset = skipInt;
 	}
 	let searchParam = "";
 	if (searchTerm !== undefined && searchTerm.length > 0) {

@@ -658,8 +658,8 @@ function filter_token_list(searchTerm) {
 	redraw_token_list(searchTerm);
 
 	let allFolders = tokensPanel.body.find(".folder");
-	allFolders.removeClass("collapsed"); // auto expand all folders
 	if (searchTerm.length > 0) {
+		allFolders.removeClass("collapsed"); // auto expand all folders
 		for (let i = 0; i < allFolders.length; i++) {
 			let currentFolder = $(allFolders[i]);
 			if (currentFolder.attr("data-full-path") !== "/Monsters" && currentFolder.find("> .folder-token-list").is(':empty')) {
@@ -669,16 +669,35 @@ function filter_token_list(searchTerm) {
 		}
 	}
 
-	search_monsters(searchTerm, 0, function (monsterSearchResponse) {
+	inject_monster_tokens(searchTerm, 0);
+}
+
+function inject_monster_tokens(searchTerm, skip) {
+	search_monsters(searchTerm, skip, function (monsterSearchResponse) {
 		let displayedTokens = monsterSearchResponse.data.map(m => TokenListItem.Monster(m.id, m.name, m.avatarUrl, m.isReleased, m.isHomebrew));
 		console.log("converted", displayedTokens);
 		let list = tokensPanel.body.find(".custom-token-list");
+		let monsterFolder = list.find(`[data-full-path='/Monsters']`);
 		for (let i = 0; i < displayedTokens.length; i++) {
 			let item = displayedTokens[i];
 			let row = build_token_row(item);
-			list.find(`[data-full-path='/Monsters'] > .folder-token-list`).append(row);
+			monsterFolder.find(`> .folder-token-list`).append(row);
 		}
-		list.find(`[data-full-path='/Monsters']`).removeClass("collapsed");
+		if (searchTerm.length > 0) {
+			monsterFolder.removeClass("collapsed");
+		}
+		console.log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
+		monsterFolder.find(".load-more-button").remove();
+		if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)) {
+			// add load more button
+			let loadMoreButton = $(`<button class="ddbeb-button load-more-button" data-skip="${monsterSearchResponse.pagination.skip}">Load More</button>`);
+			loadMoreButton.click(function(loadMoreClickEvent) {
+				console.log("load more!", loadMoreClickEvent);
+				let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
+				inject_monster_tokens(searchTerm, skip + 10)
+			});
+			monsterFolder.find(`> .folder-token-list`).append(loadMoreButton);
+		}
 	});
 }
 
@@ -719,7 +738,7 @@ function init_tokenmenu() {
 	tokendata.folders['AboveVTT BUILTIN'] = tokenbuiltin; // TODO: migrate this to the new way, but don't store it to localStorage
 	migrate_to_my_tokens();
 	rebuild_token_items_list();
-	redraw_token_list();
+	filter_token_list();
 
 	let header = tokensPanel.header;
 	// TODO: remove this warning once tokens are saved in the cloud
