@@ -51,6 +51,7 @@
 		"jquery.ui.touch-punch.js",
 		"jquery.contextMenu.js",
 		"jquery.magnific-popup.min.js",
+		"jquery.csv.js",
 		"purify.min.js",
 		"AjaxQueueModule.js",
 		"DnDBeyond/DDBCharacterData.js",

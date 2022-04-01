@@ -34,6 +34,7 @@ let scripts = [
 	// External Dependencies
 	{ src: "jquery-3.6.0.min.js" },
 	{ src: "jquery-ui.min.js" },
+	{ src: "jquery.csv.js" },
 	//{ src: "jquery.ui.widget.min.js" },
 	//{ src: "jquery.ui.mouse.min.js" },
 	{ src: "jquery.ui.touch-punch.js" },
@@ -72,7 +73,7 @@ let scripts = [
 	{ src: "Main.js" }
 ]
 
-// Too many of our scripts depend on each other. 
+// Too many of our scripts depend on each other.
 // This ensures that they are loaded sequentially to avoid any race conditions.
 
 function injectScript() {
