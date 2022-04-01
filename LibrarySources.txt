@@ -34,3 +34,7 @@ https://code.jquery.com/jquery-3.6.0.min.js
 https://jqueryui.com/resources/download/jquery-ui-1.13.1.zip
 cp jquery-ui.min.js [root]
 cp jquery-ui.min.css [root]
+
+
+# fuse.js
+https://raw.githubusercontent.com/krisk/Fuse/v6.5.3/dist/fuse.esm.min.js

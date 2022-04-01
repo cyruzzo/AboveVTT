@@ -39,6 +39,7 @@
 		"assets/*",
 		"images/*",
 		"ajaxQueue/*",
+		"fuse.esm.min.js",
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
 		"jquery.contextMenu.css",

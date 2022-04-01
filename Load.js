@@ -45,6 +45,7 @@ let scripts = [
 	{ src: "rpg-dice-roller.bundle.min.js" },
 	{ src: "color-picker.js" },
 	{ src: "mousetrap.1.6.5.min.js" },
+	{ src: "fuse.esm.min.js", type: "module" },
 	// AboveVTT Files
 	{ src: "AOETemplates.js" },
 	{ src: "CombatTracker.js" },
@@ -72,7 +73,7 @@ let scripts = [
 	{ src: "Main.js" }
 ]
 
-// Too many of our scripts depend on each other. 
+// Too many of our scripts depend on each other.
 // This ensures that they are loaded sequentially to avoid any race conditions.
 
 function injectScript() {
