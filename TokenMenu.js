@@ -607,10 +607,10 @@ function draw_custom_token_list(folder, path) {
 	if (folder.folders) {
 		for(let f in folder.folders) {
 			let row = build_custom_token_row(f, window.EXTENSION_PATH + "assets/folder.svg", undefined, false);
-			row.find(".custom-token-image-row-handle").remove(); // no drag handle on the right side of folders
-			row.find(".custom-token-image-row-add svg").css("fill", "#fff");
-			row.find(".custom-token-image-row-add").css("border", "#fff");
-			row.find(".custom-token-image-row-add").prop("disabled", true);
+			row.find(".token-row-gear").remove(); // no drag handle on the right side of folders
+			row.find(".token-row-add svg").css("fill", "#fff");
+			row.find(".token-row-add").css("border", "#fff");
+			row.find(".token-row-add").prop("disabled", true);
 			let currentFolderPath = path + "/" + f;
 			row.click(function () {
 				fill_tokenmenu(currentFolderPath);
@@ -643,19 +643,19 @@ function draw_custom_token_list(folder, path) {
 			}
 			let row = build_custom_token_row(name, imgSrc, subtitleText);
 			for(prop in token){
-				row.find(".custom-token-image-row-add").attr(prop, token[prop]);
+				row.find(".token-row-add").attr(prop, token[prop]);
 			}
-			row.find(".custom-token-image-row-add").attr("data-disablestat", true);
-			row.find(".custom-token-image-row-add").attr("data-token-size", tokenSize);
-			row.find(".custom-token-image-row-add").attr('data-tokendatapath', path);
-			row.find(".custom-token-image-row-add").attr('data-tokendataname', t);
-			row.find(".custom-token-image-row-add").click(function(event) {
+			row.find(".token-row-add").attr("data-disablestat", true);
+			row.find(".token-row-add").attr("data-token-size", tokenSize);
+			row.find(".token-row-add").attr('data-tokendatapath', path);
+			row.find(".token-row-add").attr('data-tokendataname', t);
+			row.find(".token-row-add").click(function(event) {
 				place_token_from_modal(path, t, window.TOKEN_SETTINGS["hidden"]);
 			});
 	
 			row.attr('data-tokendatapath', path);
 			row.attr('data-tokendataname', t);
-			row.find(".custom-token-image-row-handle").click(function() {
+			row.find(".token-row-gear").click(function() {
 				display_custom_token_form(path, t, token);
 			});
 	
@@ -687,12 +687,12 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 	}
 
 	let addButton = $(`
-		<button class="custom-token-image-row-add" title="${name}" data-name="${name}" data-img="${imgSrc}">
+		<button class="token-row-button token-row-add" title="${name}" data-name="${name}" data-img="${imgSrc}">
 			<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
 		</button>
 	`);
 	let handle = $(`
-		<div class="custom-token-image-row-handle">
+		<div class="token-row-gear">
 			<img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;" />
 		</div>	
 	`);
@@ -707,10 +707,10 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 			appendTo: "#VTTWRAPPER",
 			zIndex: 100000,
 			cursorAt: {top: 0, left: 0},
-			cancel: '.custom-token-image-row-handle',
+			cancel: '.token-row-gear',
 			helper: function(event) {
 				let helper = $(event.currentTarget).find(".custom-token-image-row-img img").clone();
-				let addButton = $(event.currentTarget).find(".custom-token-image-row-add");
+				let addButton = $(event.currentTarget).find(".token-row-add");
 				let path = addButton.attr("data-tokendatapath");
 				let name = addButton.attr("data-tokendataname");
 				helper.attr("src", random_image_for_token(path, name));
@@ -718,7 +718,7 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 			},
 			start: function (event, ui) {
 				console.log("row-item drag start");
-				let addButton = $(event.currentTarget).find(".custom-token-image-row-add");
+				let addButton = $(event.currentTarget).find(".token-row-add");
 				let tokenSize = addButton.data('token-size');
 				if (tokenSize === undefined) {
 					tokenSize = 1;
@@ -735,7 +735,7 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 				// place a token where this was dropped
 				console.log("row-item drag stop");
 				let src = $(ui.helper).attr("src");
-				let addButton = $(event.target).find(".custom-token-image-row-add");
+				let addButton = $(event.target).find(".token-row-add");
 				let path = addButton.attr("data-tokendatapath");
 				let name = addButton.attr("data-tokendataname");
 				let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
@@ -751,7 +751,7 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 function register_tokenmenu_context_menu() {
 
 	// don't allow the context menu when right clicking on the add button since that adds a hidden token
-	$(".custom-token-image-row").on("contextmenu", ".custom-token-image-row-add", function(event) {
+	$(".custom-token-image-row").on("contextmenu", ".token-row-add", function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 		let tokendatapath = $(event.currentTarget).attr("data-tokendatapath");
@@ -771,7 +771,7 @@ function register_tokenmenu_context_menu() {
 			let folderName = $(element).attr("data-folder-name");
 			let isFolder = folderName !== undefined;
 
-			let tokenAddButton = $(element).find(".custom-token-image-row-add");
+			let tokenAddButton = $(element).find(".token-row-add");
 
 			let path = "";
 			if (isFolder) {

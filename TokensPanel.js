@@ -490,12 +490,15 @@ function build_token_row(listItem, enableDrag = true) {
 
     let rowItem = $(`<div class="custom-token-image-row-item"></div>`);
     row.append(rowItem);
+    rowItem.on("click", did_click_row);
 
     let imgHolder = $(`<div class="custom-token-image-row-img"></div>`);
+    rowItem.append(imgHolder);
     let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" />`);
     imgHolder.append(img);
 
     let details = $(`<div class="custom-token-image-row-details"></div>`);
+    rowItem.append(details);
     let title = $(`<div class="custom-token-image-row-details-title">${listItem.name}</div>`);
     details.append(title);
     if (listItem.subtitle !== undefined) {
@@ -503,62 +506,69 @@ function build_token_row(listItem, enableDrag = true) {
         details.append(subtitle);
     }
 
-    let addButton = $(`
-		<button class="custom-token-image-row-add" title="${listItem.name}" data-name="${listItem.name}" data-img="${listItem.image}">
-			<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
-		</button>
-	`);
-    let handle = $(`
-		<div class="custom-token-image-row-handle">
-			<img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
-		</div>
-	`);
-
-    rowItem.append(imgHolder);
-    rowItem.append(details);
-    rowItem.append(addButton);
-    rowItem.append(handle);
-
-    rowItem.on("click", did_click_row);
-    handle.on("click", did_click_row_gear);
-    addButton.on("click", did_click_add_button);
+    if (!listItem.isTypeFolder()) {
+        let addButton = $(`
+            <button class="token-row-button token-row-add" title="${listItem.name}" data-name="${listItem.name}" data-img="${listItem.image}">
+                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
+            </button>
+        `);
+        rowItem.append(addButton);
+        addButton.on("click", did_click_add_button);
+    }
 
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
-            row.addClass("folder"); // should we add "collapsed" here, too?
             row.append(`<div class="folder-token-list"></div>`);
+            row.addClass("folder");
             if (!rootfolders.includes(listItem)) {
-                row.addClass("collapsed"); // should we add "collapsed" here, too?
+                row.addClass("collapsed"); // only expand root folders by default
             }
             if (listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
                 // add buttons for creating subfolders and tokens
-            } else {
-                handle.remove(); // only allow configuration of "My Tokens" folders
+                let addFolder = $(`<button class="token-row-button"><span class="material-icons">create_new_folder</span></button>`);
+                rowItem.append(addFolder);
+                addFolder.on("click", function(clickEvent) {
+                    clickEvent.stopPropagation();
+                    console.log("ADD FOLDER!!!");
+                });
+                let addToken = $(`<button class="token-row-button"><span class="material-icons">person_add_alt_1</span></button>`);
+                rowItem.append(addToken);
+                addToken.on("click", function(clickEvent) {
+                    clickEvent.stopPropagation();
+                    console.log("ADD TOKEN!!!");
+                });
             }
             break;
         case TokenListItem.TypeMyToken:
+            // TODO: Style specifically for My Tokens
             break;
         case TokenListItem.TypePC:
+            // TODO: Style specifically for Players
             break;
         case TokenListItem.TypeMonster:
+            // TODO: Style specifically for Monsters
             break;
         case TokenListItem.TypeBuiltinToken:
-            handle.remove(); // not allowed to edit builtin tokens
+            // TODO: Style specifically for Builtin
             break;
     }
 
-    addButton.on("click", function(clickEvent) {
-        let itemPath = $(clickEvent.currentTarget).closest(".custom-token-image-row").attr("data-full-path");
-        let item = find_token_list_item(itemPath);
-        console.log("addButton clicked", itemPath, item);
-    });
+    if (listItem.canEdit()) {
+        let settingsButton = $(`
+            <div class="token-row-gear">
+                <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
+            </div>
+    	`);
+        rowItem.append(settingsButton);
+        settingsButton.on("click", did_click_row_gear);
+    }
 
     if (enableDrag && !listItem.isTypeFolder()) {
         rowItem.draggable({
             appendTo: "#VTTWRAPPER",
             zIndex: 100000,
             cursorAt: {top: 0, left: 0},
-            cancel: '.custom-token-image-row-handle',
+            cancel: '.token-row-gear',
             helper: function(event) {
                 let draggedRow = $(event.target).closest(".custom-token-image-row");
                 let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
@@ -654,6 +664,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
 
     if (listItem === undefined) {
         console.warn("create_and_place_token was called without a listItem");
+        return;
+    }
+
+    if (listItem.isTypeFolder()) {
+        // find and place all items in this folder... but not subfolders
+        (listItem.folderPath.startsWith(TokenListItem.PathMonsters) ? window.monsterListItems : window.tokenListItems)
+            .filter(item => !item.isTypeFolder()) // if we ever want to add everything at every subfolder depth, remove this line
+            .forEach(item => create_and_place_token(item, hidden));
         return;
     }
 
@@ -854,7 +872,7 @@ function search_monsters(searchTerm, skip, callback) {
 function register_token_row_context_menu() {
 
     // don't allow the context menu when right clicking on the add button since that adds a hidden token
-    tokensPanel.body.find(".custom-token-image-row").on("contextmenu", ".custom-token-image-row-add", function(event) {
+    tokensPanel.body.find(".custom-token-image-row").on("contextmenu", ".token-row-add", function(event) {
         event.preventDefault();
         event.stopPropagation();
         let clickedRow = $(event.target).closest(".custom-token-image-row");
@@ -878,25 +896,24 @@ function register_token_row_context_menu() {
                 return { items: menuItems };
             }
 
+            menuItems["place"] = {
+                name: rowItem.isTypeFolder() ? "Place Tokens" : "Place Token",
+                callback: function(itemKey, opt, originalEvent) {
+                    let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                    create_and_place_token(itemToPlace);
+                }
+            };
+
+            menuItems["placeHidden"] = {
+                name: rowItem.isTypeFolder() ? "Place Hidden Tokens" : "Place Hidden Token",
+                callback: function(itemKey, opt, originalEvent) {
+                    let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                    create_and_place_token(itemToPlace, true);
+                }
+            };
+
             if (!rowItem.isTypeFolder()) {
-                // add non-folder items
-
-                menuItems["place"] = {
-                    name: "Place Token",
-                    callback: function(itemKey, opt, originalEvent) {
-                        let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
-                        create_and_place_token(itemToPlace);
-                    }
-                };
-
-                menuItems["placeHidden"] = {
-                    name: "Place Hidden Token",
-                    callback: function(itemKey, opt, originalEvent) {
-                        let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
-                        create_and_place_token(itemToPlace, true);
-                    }
-                };
-
+                // copy url doesn't make sense for folders
                 menuItems["copyUrl"] = {
                     name: "Copy Url",
                     callback: function(itemKey, opt, originalEvent) {

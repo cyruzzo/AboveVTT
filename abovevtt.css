@@ -1725,10 +1725,10 @@ h5.token-image-modal-footer-title:after {
 .folder.collapsed .folder-token-list {
     display: none;
 }
-.folder > .custom-token-image-row-item > .custom-token-image-row-add {
+.folder > .custom-token-image-row-item > .token-row-button {
     background-color: rgb(235, 241, 245);
 }
-.folder.collapsed > .custom-token-image-row-item > .custom-token-image-row-add {
+.folder.collapsed > .custom-token-image-row-item > .token-row-button {
     background-color: #fff;
 }
 .custom-token-image-row {
@@ -1753,7 +1753,6 @@ h5.token-image-modal-footer-title:after {
     max-height: 38px;
     border-radius: 3px;
     object-fit: cover;
-    margin-left: 4px;
 }
 .custom-token-image-row-img img {
     object-fit: contain;
@@ -1790,39 +1789,43 @@ h5.token-image-modal-footer-title:after {
     color: #738694;
     font-size: 10px;
 }
-.custom-token-image-row-add {
-    margin-left: auto;
-    display: flex;
-    flex-basis: 38px;
-    max-width: 38px;
-    max-height: 38px;
+.token-row-button {
+    display: block;
+    width: 30px;
+    height: 30px;
     border-radius: 3px;
     object-fit: cover;
     background: #fff;
     border: 1px solid #d8e1e8;
     cursor: pointer;
+    margin: 0 2px;
+    min-width: 30px;
 }
-.custom-token-image-row-add svg {
+.token-row-button.token-row-add {
+
+}
+.token-row-button .material-icons {
+    padding: 2px 0px 0px 0px;
+    margin-left: -4px;
+}
+.token-row-button svg {
     width: 100%;
     height: 100%;
     fill: #1b9af0;
 }
-.custom-token-image-row-handle {
-    background-color: #d8e1e8;
-    display: flex;
-    width: 38px;
-    max-width: 38px;
-    object-fit: cover;
+.token-row-gear {
+    display: block;
+    width: 30px;
     padding: 7px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
     background-color: #f2f6f8;
-    align-self: stretch;
     border-left: 1px solid #d8e1e8;
-    margin: -4px -4px -4px 8px;
+    margin: -4px -4px -4px 2px;
     cursor: pointer;
+    min-width: 30px;
 }
-.custom-token-image-row-handle img {
+.token-row-gear img {
     width: 100%;
     height: 100%;
     fill: #738694;
