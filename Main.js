@@ -3172,7 +3172,6 @@ function is_player_sheet_open() {
 function show_player_sheet() {
 	$("#character-tools-target").css({
 		"visibility": "visible",
-		"z-index": 3
 	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "visible",
@@ -3198,7 +3197,6 @@ function show_player_sheet() {
 function hide_player_sheet() {
 	$("#character-tools-target").css({
 		"visibility": "hidden",
-		"z-index": -1
 	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "hidden",
