@@ -136,8 +136,8 @@ class TokenListItem {
      */
     static sortComparator(lhs, rhs) {
         // always folders before tokens
-        if (lhs.isFolder() && !rhs.isFolder()) { return -1; }
-        if (!lhs.isFolder() && rhs.isFolder()) { return 1; }
+        if (lhs.isTypeFolder() && !rhs.isTypeFolder()) { return -1; }
+        if (!lhs.isTypeFolder() && rhs.isTypeFolder()) { return 1; }
         // alphabetically by name
         if (lhs.name < rhs.name) { return -1; }
         if (lhs.name > rhs.name) { return 1; }
@@ -145,15 +145,25 @@ class TokenListItem {
         return 0;
     }
 
-    /** @returns {boolean} whether or not this item represents a folder */
-    isFolder() {
-        return this.type === TokenListItem.TypeFolder;
-    }
-
     /** @returns {string} path + name */
     fullPath() {
         return sanitize_folder_path(`${this.folderPath}/${this.name}`);
     }
+
+    /** @returns {boolean} whether or not this item represents a Folder */
+    isTypeFolder() { return this.type === TokenListItem.TypeFolder }
+
+    /** @returns {boolean} whether or not this item represents a "My Token" */
+    isTypeMyToken() { return this.type === TokenListItem.TypeMyToken }
+
+    /** @returns {boolean} whether or not this item represents a Player */
+    isTypePC() { return this.type === TokenListItem.TypePC }
+
+    /** @returns {boolean} whether or not this item represents a Monster */
+    isTypeMonster() { return this.type === TokenListItem.TypeMonster }
+
+    /** @returns {boolean} whether or not this item represents a Builtin Token */
+    isTypeBuiltinToken() { return this.type === TokenListItem.TypeBuiltinToken }
 }
 
 /**
@@ -167,6 +177,9 @@ function find_token_list_item(fullPath) {
     }
     if (foundItem === undefined) {
         foundItem = window.monsterListItems.find(item => item.fullPath() === fullPath);
+    }
+    if (foundItem === undefined) {
+        console.warn(`find_token_list_item found nothing at path: ${fullPath}`);
     }
     return foundItem;
 }
@@ -487,7 +500,7 @@ function build_token_row(listItem, enableDrag = true) {
         console.log("addButton clicked", itemPath, item);
     });
 
-    if (enableDrag && !listItem.isFolder()) {
+    if (enableDrag && !listItem.isTypeFolder()) {
         rowItem.draggable({
             appendTo: "#VTTWRAPPER",
             zIndex: 100000,
@@ -495,8 +508,7 @@ function build_token_row(listItem, enableDrag = true) {
             cancel: '.custom-token-image-row-handle',
             helper: function(event) {
                 let draggedRow = $(event.target).closest(".custom-token-image-row");
-                let draggedRowPath = draggedRow.attr("data-full-path");
-                let draggedItem = find_token_list_item(draggedRowPath);
+                let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
                 let randomImage = random_image_for_item(draggedItem);
                 let helper = draggedRow.find(".custom-token-image-row-img img").clone();
                 helper.attr("src", randomImage);
@@ -505,8 +517,7 @@ function build_token_row(listItem, enableDrag = true) {
             start: function (event, ui) {
                 console.log("row-item drag start");
                 let draggedRow = $(event.target).closest(".custom-token-image-row");
-                let draggedRowPath = draggedRow.attr("data-full-path");
-                let draggedItem = find_token_list_item(draggedRowPath);
+                let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
                 let tokenSize = token_size_for_item(draggedItem);
                 let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
                 let helperWidth = width / (1.0 / window.ZOOM);
@@ -520,8 +531,7 @@ function build_token_row(listItem, enableDrag = true) {
                 // place a token where this was dropped
                 console.log("row-item drag stop");
                 let draggedRow = $(event.target).closest(".custom-token-image-row");
-                let draggedRowPath = draggedRow.attr("data-full-path");
-                let draggedItem = find_token_list_item(draggedRowPath);
+                let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
                 let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
                 let src = $(ui.helper).attr("src");
                 create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
@@ -534,8 +544,7 @@ function build_token_row(listItem, enableDrag = true) {
 function did_click_row(clickEvent) {
     console.log("did_click_row", clickEvent);
     let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-    let clickedRowPath = clickedRow.attr("data-full-path");
-    let clickedItem = find_token_list_item(clickedRowPath);
+    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
     console.log("did_click_row", clickedItem);
 
     switch (clickedItem.type) {
@@ -565,8 +574,7 @@ function did_click_row_gear(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_row_gear", clickEvent);
     let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-    let clickedRowPath = clickedRow.attr("data-full-path");
-    let clickedItem = find_token_list_item(clickedRowPath);
+    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
     console.log("did_click_row_gear", clickedItem);
     switch (clickedItem.type) {
         case TokenListItem.TypeFolder:
@@ -589,20 +597,26 @@ function did_click_add_button(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_add_button", clickEvent);
     let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-    let clickedRowPath = clickedRow.attr("data-full-path");
-    let clickedItem = find_token_list_item(clickedRowPath);
+    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
     console.log("did_click_add_button", clickedItem);
     let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
     create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
 }
 
 /**
+ * Creates a {Token} object and places it on the scene.
  * @param listItem {TokenListItem} the item to create a token from
- * @param hidden {boolean} whether or not the created token should be hidden
+ * @param hidden {boolean} whether or not the created token should be hidden. Passing undefined will use whatever the global token setting is.
  * @param specificImage {string} the image to use. if undefined, a random image will be used
- * */
-function create_and_place_token(listItem, hidden, specificImage, eventPageX, eventPageY) {
-    console.log("TODO: create_and_place_token", listItem);
+ * @param eventPageX {MouseEvent.pageX} if supplied, the token will be placed at this x coordinate, else centered in the view
+ * @param eventPageY {MouseEvent.pageY} if supplied, the token will be placed at this y coordinate, else centered in the view
+ */
+function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined) {
+
+    if (listItem === undefined) {
+        console.warn("create_and_place_token was called without a listItem");
+        return;
+    }
 
     let options = {
         name: listItem.name,
@@ -670,29 +684,11 @@ function create_and_place_token(listItem, hidden, specificImage, eventPageX, eve
         case TokenListItem.TypeBuiltinToken:
             let builtinToken = builtInTokens.find(t => t.name === listItem.name);
             console.log("create_and_place_token TokenListItem.TypeBuiltinToken options before", options, builtinToken);
+            let imgsrc = options.imgsrc; // don't overwrite the imgsrc... we already went through the hassle of finding a random one
             options = {...options, ...builtinToken}
+            options.imgsrc = imgsrc;
             options.disablestat = true;
             break;
-    }
-
-    // set reasonable defaults
-    if (options.square === undefined) {
-        options.square = window.TOKEN_SETTINGS["square"];
-        if (options.square === undefined) {
-            options.square = false;
-        }
-    }
-    if (options.disableborder === undefined) {
-        options.disableborder = window.TOKEN_SETTINGS["disableborder"];
-        if (options.disableborder === undefined) {
-            options.disableborder = false;
-        }
-    }
-    if (options.legacyaspectratio === undefined) {
-        options.legacyaspectratio = window.TOKEN_SETTINGS["legacyaspectratio"];
-        if (options.legacyaspectratio === undefined) {
-            options.legacyaspectratio = false;
-        }
     }
 
     console.log("create_and_place_token about to place token with options", options);
@@ -733,6 +729,7 @@ function token_size_for_item(listItem) {
 function random_image_for_item(listItem, specificImage) {
     let validSpecifiedImage = parse_img(specificImage);
     if (validSpecifiedImage !== undefined && validSpecifiedImage.length > 0) {
+        console.debug("random_image_for_item validSpecifiedImage", validSpecifiedImage);
         return validSpecifiedImage
     }
     switch (listItem.type) {
@@ -741,23 +738,50 @@ function random_image_for_item(listItem, specificImage) {
             let myTokenAltImages = myToken["data-alternative-images"];
             if (myTokenAltImages !== undefined && myTokenAltImages.length > 0) {
                 let randomIndex = getRandomInt(0, myTokenAltImages.length);
+                console.debug("random_image_for_item myTokenAltImages", myTokenAltImages, randomIndex);
                 return myTokenAltImages[randomIndex];
             } else {
+                console.debug("random_image_for_item myTokenAltImages empty, returning", listItem.image);
                 return listItem.image;
             }
         case TokenListItem.TypePC:
-            return random_image_for_player_token(listItem.sheet);
-        case TokenListItem.TypeMonster:
-            return get_random_custom_monster_image(listItem.monsterData.id);
-        case TokenListItem.TypeBuiltinToken:
-            if (listItem.alternativeImages) {
-                let randomIndex = getRandomInt(0, listItem.alternativeImages.length);
-                return listItem.alternativeImages[randomIndex];
+            console.debug("random_image_for_item calling random_image_for_player_token with", listItem.sheet);
+            let randomPlayerImage = parse_img(random_image_for_player_token(listItem.sheet));
+            if (randomPlayerImage !== undefined && randomPlayerImage.length > 0) {
+                console.debug("random_image_for_item randomPlayerImage", randomPlayerImage);
+                return randomPlayerImage;
             } else {
+                console.debug("random_image_for_item randomPlayerImage not found, returning", listItem.image);
+                return listItem.image;
+            }
+        case TokenListItem.TypeMonster:
+            let randomMonsterImage = get_random_custom_monster_image(listItem.monsterData.id);
+            if (randomMonsterImage !== undefined && randomMonsterImage.length > 0) {
+                console.debug("random_image_for_item randomMonsterImage", randomMonsterImage);
+                return randomMonsterImage;
+            } else {
+                console.debug("random_image_for_item randomMonsterImage not found, returning", listItem.image);
+                return listItem.image;
+            }
+        case TokenListItem.TypeBuiltinToken:
+            let bt = builtInTokens.find(bt => {
+                console.log("random_image_for_item TypeBuiltinToken", listItem.fullPath(), sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`), listItem, bt);
+                return listItem.fullPath() === sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`)
+            })
+            console.log("random_image_for_item TypeBuiltinToken found", bt);
+            if (bt?.alternativeImages !== undefined && bt.alternativeImages.length > 0) {
+                let randomIndex = getRandomInt(0, bt.alternativeImages.length);
+                console.debug("random_image_for_item listItem.alternativeImages", bt.alternativeImages, randomIndex, bt.alternativeImages[randomIndex]);
+                return bt.alternativeImages[randomIndex];
+            } else {
+                console.debug("random_image_for_item listItem.alternativeImages not found, returning", listItem.image);
                 return listItem.image;
             }
         case TokenListItem.TypeFolder:
+            console.debug("random_image_for_item folder returning", listItem.image);
+            return listItem.image;
         default:
+            console.warn("random_image_for_item unknown item type", listItem);
             return listItem.image;
     }
 }
@@ -786,4 +810,168 @@ function search_monsters(searchTerm, skip, callback) {
             callback(false);
         }
     });
+}
+
+function register_token_row_context_menu() {
+
+    // don't allow the context menu when right clicking on the add button since that adds a hidden token
+    tokensPanel.body.find(".custom-token-image-row").on("contextmenu", ".custom-token-image-row-add", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        let clickedRow = $(event.target).closest(".custom-token-image-row");
+        let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+        create_and_place_token(clickedItem, true);
+    });
+
+    $.contextMenu({
+        selector: ".custom-token-image-row",
+        build: function(element, e) {
+
+            let menuItems = {};
+
+            let rowItem = find_token_list_item($(element).attr("data-full-path"));
+            if (rowItem === undefined) {
+                console.warn("register_token_row_context_menu failed to find row item", element, e)
+                menuItems["no-delete"] = {
+                    name: "An unexpected error occurred",
+                    disabled: true
+                };
+                return { items: menuItems };
+            }
+
+            if (!rowItem.isTypeFolder()) {
+                // add non-folder items
+
+                menuItems["place"] = {
+                    name: "Place Token",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        create_and_place_token(itemToPlace);
+                    }
+                };
+
+                menuItems["placeHidden"] = {
+                    name: "Place Hidden Token",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        create_and_place_token(itemToPlace, true);
+                    }
+                };
+
+                menuItems["copyUrl"] = {
+                    name: "Copy Url",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToCopy = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        copy_to_clipboard(itemToCopy.image);
+                    }
+                };
+            }
+
+            // add delete menu option
+            if (rowItem.isTypeBuiltinToken() || rootfolders.includes(rowItem)) {
+                menuItems["no-delete"] = {
+                    name: "Folders and Tokens provided by AboveVTT cannot be edited or deleted",
+                    disabled: true
+                };
+            } else {
+
+                menuItems["edit"] = {
+                    name: "Edit",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToEdit = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        if (itemToEdit.isTypeFolder()) {
+                            // TODO: build a modal for this instead of using prompt
+                            let newfoldername = prompt("Enter the name of the folder", itemToEdit.name);
+                            rename_folder(itemToEdit, newfoldername);
+                        } else {
+                            display_token_item_edit_modal(itemToEdit);
+                        }
+                    }
+                };
+
+                menuItems["border"] = "---";
+
+                // not a built in folder or token, add an option to delete
+                menuItems["delete"] = {
+                    name: "Delete",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToDelete = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        delete_item(itemToDelete);
+                    }
+                };
+            }
+            return { items: menuItems };
+        }
+    });
+}
+
+function display_token_item_edit_modal(listItem) {
+    console.error("TODO: display_token_item_edit_modal");
+    switch (listItem.type) {
+        case TokenListItem.TypeFolder:
+            break;
+        case TokenListItem.TypeMyToken:
+            break;
+        case TokenListItem.TypePC:
+            break;
+        case TokenListItem.TypeMonster:
+            break;
+        case TokenListItem.TypeBuiltinToken:
+            break;
+    }
+}
+
+function path_exists(folderPath) {
+    if (mytokens.filter(token => token['data-folderpath'] === folderPath).length > 0) {
+        return true;
+    }
+    return emptyfolders.includes(folderPath);
+}
+
+function rename_folder(item, newName) {
+    console.group("rename_folder");
+
+    let fromFullPath = item.fullPath();
+    let toFullPath = sanitize_folder_path(`${item.folderPath}/${newName}`);
+    if (path_exists(toFullPath)) {
+        console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
+        return;
+    }
+
+    console.log(`updating tokens from ${fromFullPath} to ${toFullPath}`);
+    let didUpdateTokens = false;
+    mytokens.filter(token => token['data-folderpath'] === fromFullPath).forEach(token => {
+        console.debug(`changing ${token.name} folderpath`);
+        token['data-folderpath'] = toFullPath;
+        didUpdateTokens = true;
+    });
+
+    // if we updated a token with this path, that means that path is not empty so it's safe to remove it form our list
+    // if the folder is empty, we want to replace it with toFullPath so we have to remove it anyway.
+    array_remove_index_by_value(emptyfolders, fromFullPath);
+
+    if (!didUpdateTokens) {
+        // no tokens were updated which means fromFullPath was an empty folder
+        emptyfolders.push(fromFullPath);
+    }
+
+    did_change_items();
+
+    console.groupEnd();
+}
+
+function delete_item(item) {
+    console.error("TODO: delete_item", item);
+    did_change_items();
+}
+
+function persist_mytokens() {
+    console.error("TODO: persist_mytokens");
+}
+
+function did_change_items() {
+    persist_mytokens()
+    rebuild_token_items_list();
+    redraw_token_list()
+    // filter_token_list(tokensPanel.body.find(".token-search").val());
 }

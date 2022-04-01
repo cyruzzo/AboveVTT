@@ -747,7 +747,8 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 }
 
 
-function register_token_row_context_menu() {
+// old and no longer used
+function register_tokenmenu_context_menu() {
 
 	// don't allow the context menu when right clicking on the add button since that adds a hidden token
 	$(".custom-token-image-row").on("contextmenu", ".custom-token-image-row-add", function(event) {
@@ -766,10 +767,10 @@ function register_token_row_context_menu() {
 		build: function(element, e) {
 
 			let items = {};
-			
+
 			let folderName = $(element).attr("data-folder-name");
 			let isFolder = folderName !== undefined;
-			
+
 			let tokenAddButton = $(element).find(".custom-token-image-row-add");
 
 			let path = "";
@@ -787,7 +788,7 @@ function register_token_row_context_menu() {
 			if (tokenName === undefined) {
 				tokenName = tokenAddButton.attr("data-name");
 			}
-			
+
 			if (!isFolder) {
 				// add token items
 
@@ -797,7 +798,7 @@ function register_token_row_context_menu() {
 						place_token_from_modal(path, tokenName, false);
 					}
 				};
-				
+
 				items["placeHidden"] = {
 					name: "Place Hidden Token",
 					callback: function(itemKey, opt, originalEvent) {
@@ -813,7 +814,7 @@ function register_token_row_context_menu() {
 					}
 				};
 
-			} 
+			}
 
 			// add delete menu option
 			if (path.startsWith("/AboveVTT BUILTIN")) {
@@ -842,9 +843,9 @@ function register_token_row_context_menu() {
 						}
 					}
 				};
-	
+
 				items["border"] = "---";
-	
+
 				// not a built in folder or token, add an option to delete
 				items["delete"] = {
 					name: "Delete",

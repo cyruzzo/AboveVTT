@@ -1261,8 +1261,7 @@ function default_options() {
 			feet: "0",
 			color: "rgba(255, 255, 0, 0.1)"
 		},
-		auraVisible: true,
-		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio']
+		auraVisible: false
 	};
 }
 
@@ -1343,6 +1342,22 @@ function place_token_at_point(tokenObject, x, y) {
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 		}
 	}
+
+	// set reasonable defaults for any global settings that aren't already set
+	const setReasonableDefault = function(optionName, reasonableDefault) {
+		if (options[optionName] === undefined) {
+			options[optionName] = window.TOKEN_SETTINGS[optionName];
+			if (options[optionName] === undefined) {
+				options[optionName] = reasonableDefault;
+			}
+		}
+	}
+	for (let i = 0; i < token_setting_options; i++) {
+		// all global token settings default to false
+		setReasonableDefault(token_setting_options[i].name, false);
+	}
+	// unless otherwise specified, tokens should not be hidden when they are placed
+	setReasonableDefault("hidden", false);
 
 	// place the token
 	window.ScenesHandler.create_update_token(options);

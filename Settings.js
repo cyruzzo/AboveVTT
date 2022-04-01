@@ -1,3 +1,65 @@
+const token_setting_options = [
+	{
+		name: 'hidden',
+		label: 'Hide',
+		enabledDescription: 'New tokens will be hidden from players when placed on the scene',
+		disabledDescription: 'New tokens will be visible to players when placed on the scene'
+	},
+	{
+		name: 'square',
+		label: 'Square Token',
+		enabledDescription: 'New tokens will be square',
+		disabledDescription: 'New tokens will be round'
+	},
+	{
+		name: 'locked',
+		label: 'Lock Token in Position',
+		enabledDescription: 'New tokens will not be movable',
+		disabledDescription: 'New tokens will be movable'
+	},
+	{
+		name: 'restrictPlayerMove',
+		label: 'Restrict Player Movement',
+		enabledDescription: 'Player will not be able to move new tokens',
+		disabledDescription: 'Player will be able to move new tokens'
+	},
+	{
+		name: 'disablestat',
+		label: 'Disable HP/AC',
+		enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
+		disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
+	},
+	{
+		name: 'hidestat',
+		label: 'Hide HP/AC from players',
+		enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
+		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
+	},
+	{
+		name: 'disableborder',
+		label: 'Disable Border',
+		enabledDescription: 'New tokens will not have a border around them',
+		disabledDescription: 'New tokens will have a border around them'
+	},
+	{
+		name: 'disableaura',
+		label: 'Disable Aura',
+		enabledDescription: 'New tokens will not have an aura around them that represents their current health',
+		disabledDescription: 'New tokens will have an aura around them that represents their current health'
+	},
+	{
+		name: 'revealname',
+		label: 'Show name to players',
+		enabledDescription: 'New tokens will have their name visible to players',
+		disabledDescription: 'New tokens will have their name hidden from players'
+	},
+	{
+		name: 'legacyaspectratio',
+		label: 'Ignore Image Aspect Ratio',
+		enabledDescription: 'New tokens will stretch non-square images to fill the token space',
+		disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
+	}
+];
 
 function b64EncodeUnicode(str) {
         // first we use encodeURIComponent to get percent-encoded UTF-8,
@@ -99,71 +161,8 @@ function init_settings(){
 		<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. Custom tokens allow you to override these settings on a per-token basis.</div>
 	`);
 
-	const token_settings = [
-		{
-			name: 'hidden',
-			label: 'Hide',
-			enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-			disabledDescription: 'New tokens will be visible to players when placed on the scene'
-		},
-		{
-			name: 'square',
-			label: 'Square Token',
-			enabledDescription: 'New tokens will be square',
-			disabledDescription: 'New tokens will be round'
-		},
-		{
-			name: 'locked',
-			label: 'Lock Token in Position',
-			enabledDescription: 'New tokens will not be movable',
-			disabledDescription: 'New tokens will be movable'
-		},
-		{
-			name: 'restrictPlayerMove',
-			label: 'Restrict Player Movement',
-			enabledDescription: 'Player will not be able to move new tokens',
-			disabledDescription: 'Player will be able to move new tokens'
-		},
-		{
-			name: 'disablestat',
-			label: 'Disable HP/AC',
-			enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-			disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
-		},
-		{
-			name: 'hidestat',
-			label: 'Hide HP/AC from players',
-			enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-			disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
-		},
-		{
-			name: 'disableborder',
-			label: 'Disable Border',
-			enabledDescription: 'New tokens will not have a border around them',
-			disabledDescription: 'New tokens will have a border around them'
-		},
-		{
-			name: 'disableaura',
-			label: 'Disable Aura',
-			enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-			disabledDescription: 'New tokens will have an aura around them that represents their current health'
-		},
-		{
-			name: 'revealname',
-			label: 'Show name to players',
-			enabledDescription: 'New tokens will have their name visible to players',
-			disabledDescription: 'New tokens will have their name hidden from players'
-		},
-		{
-			name: 'legacyaspectratio',
-			label: 'Ignore Image Aspect Ratio',
-			enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-			disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
-		}
-	];
-
-	for(let i = 0; i < token_settings.length; i++) {
-		let setting = token_settings[i];
+	for(let i = 0; i < token_setting_options.length; i++) {
+		let setting = token_setting_options[i];
 		let currentValue = window.TOKEN_SETTINGS[setting.name];
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`${name} setting is now ${newValue}`);
