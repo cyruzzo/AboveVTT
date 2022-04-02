@@ -795,7 +795,6 @@ function refresh_scenes() {
 			}
 			switch_dm.click(function(){
 				$(".dm_scenes_button.selected").removeClass("selected");
-				console.log("remove selected!!!!!!!!!!!!!!!!!!!!!!!!!");
 				let msg={
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 					switch_dm: true
