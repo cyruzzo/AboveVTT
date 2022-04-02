@@ -417,7 +417,7 @@ function display_monster_customization_modal(placedToken, monsterId, monsterName
 	let modalBody = sidebarPanel.body;
 
 	// add a "remove all" button between the body and the footer
-	let removeAllButton = $(`<button class="token-image-modal-remove-all-button" data-monster-id="${monsterId}" title="Reset this monster back to the default image.">Remove All Custom Images</button><`);
+	let removeAllButton = $(`<button class="token-image-modal-remove-all-button" data-monster-id="${monsterId}" title="Reset this monster back to the default image.">Remove All Custom Images</button>`);
 	modalBody.after(removeAllButton);
 	removeAllButton.click(function(event) {
 		let monsterId = $(event.target).attr("data-monster-id");

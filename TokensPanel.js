@@ -139,10 +139,24 @@ class TokenListItem {
         if (lhs.isTypeFolder() && !rhs.isTypeFolder()) { return -1; }
         if (!lhs.isTypeFolder() && rhs.isTypeFolder()) { return 1; }
         // alphabetically by name
-        if (lhs.name < rhs.name) { return -1; }
-        if (lhs.name > rhs.name) { return 1; }
+        if (lhs.name.toLowerCase() < rhs.name.toLowerCase()) { return -1; }
+        if (lhs.name.toLowerCase() > rhs.name.toLowerCase()) { return 1; }
         // equal
         return 0;
+    }
+
+    /**
+     * A comparator for sorting by folder depth, then by folder, then alphabetically.
+     * @param lhs {TokenListItem}
+     * @param rhs {TokenListItem}
+     * @returns {number}
+     */
+    static folderDepthComparator(lhs, rhs) {
+        if (lhs.isTypeFolder() && rhs.isTypeFolder()) {
+            if (lhs.folderDepth() < rhs.folderDepth()) { return -1; }
+            if (lhs.folderDepth() > rhs.folderDepth()) { return 1; }
+        }
+        return TokenListItem.sortComparator(lhs, rhs);
     }
 
     /** @returns {string} path + name */
@@ -456,7 +470,7 @@ function redraw_token_list(searchTerm) {
     // now let's add all other folders without filtering by searchTerm because we need the folder to exist in order to add items into it
     window.tokenListItems
         .filter(item => item.isTypeFolder())
-        .sort(TokenListItem.sortComparator)
+        .sort(TokenListItem.folderDepthComparator)
         .forEach(item => {
             let row = build_token_row(item);
             console.debug("appending item", item);
@@ -639,7 +653,7 @@ function did_click_row_gear(clickEvent) {
     let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
     let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
     console.log("did_click_row_gear", clickedItem);
-    display_token_item_edit_modal(clickedItem);
+    display_token_item_configuration_modal(clickedItem);
 }
 
 function did_click_add_button(clickEvent) {
@@ -928,7 +942,7 @@ function register_token_row_context_menu() {
                     name: "Edit",
                     callback: function(itemKey, opt, originalEvent) {
                         let itemToEdit = find_token_list_item(opt.$trigger.attr("data-full-path"));
-                        display_token_item_edit_modal(itemToEdit);
+                        display_token_item_configuration_modal(itemToEdit);
                     }
                 };
             }
@@ -958,13 +972,12 @@ function register_token_row_context_menu() {
     });
 }
 
-function display_token_item_edit_modal(listItem) {
+function display_token_item_configuration_modal(listItem) {
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
             if (listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
                 console.log("TODO: handle folder editing")
-                let newfoldername = prompt("Enter the name of the folder", listItem.name);
-                rename_folder(listItem, newfoldername);
+                display_folder_configure_modal(listItem);
             } else {
                 console.warn("Only allowed to folders within the My Tokens folder");
                 return;
@@ -983,6 +996,51 @@ function display_token_item_edit_modal(listItem) {
             display_monster_customization_modal(undefined, listItem.monsterData.id, listItem.name, listItem.image);
             break;
     }
+}
+
+function display_folder_configure_modal(listItem) {
+    if (listItem === undefined || !listItem.isTypeFolder()) {
+        console.warn("display_folder_configure_modal was called with an incorrect type", listItem);
+        return;
+    }
+
+    let sidebarId = "token-folder-configuration-modal";
+    let sidebarModal = new SidebarPanel(sidebarId, true);
+    let listItemFullPath = listItem.fullPath();
+
+    display_sidebar_modal(sidebarModal);
+
+    sidebarModal.updateHeader(listItem.name, listItem.fullPath(), "Edit or delete this folder.");
+
+    sidebarModal.body.append(build_text_input_wrapper("Folder Name",
+        `<input type="text" title="Folder Name" name="folderName" data-full-path="${listItemFullPath}" />`,
+        `<button>Save</button>`,
+        function(newFolderName, input, event) {
+            let fullPath = $(input).attr("data-full-path");
+            let foundItem = find_token_list_item(fullPath);
+            rename_folder(foundItem, newFolderName);
+            close_sidebar_modal();
+        }
+    ));
+
+    let deleteButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder">Delete</button>`);
+    sidebarModal.footer.append(deleteButton);
+    deleteButton.on("click", function(event) {
+        let fullPath = $(event.currentTarget).attr("data-full-path");
+        let foundItem = find_token_list_item(fullPath);
+        delete_item(foundItem);
+        close_sidebar_modal();
+    });
+
+    sidebarModal.body.find(`input[name="folderName"]`).focus();
+}
+
+function display_my_token_configure_modal(listItem) {
+    if (listItem === undefined || !listItem.isTypeMyToken()) {
+        console.warn("display_my_token_configure_modal was called with an incorrect type", listItem);
+        return;
+    }
+
 }
 
 function path_exists(folderPath) {
@@ -1006,6 +1064,7 @@ function rename_folder(item, newName) {
     if (path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
         console.groupEnd();
+        alert("A folder with that name already exists");
         return;
     }
 
@@ -1021,7 +1080,7 @@ function rename_folder(item, newName) {
         didUpdateTokens = true;
     });
 
-    // if we updated a token with this path, that means that path is not empty so it's safe to remove it form our list
+    // if we updated a token with this path, that means that path is not empty so it's safe to remove it from our list
     // if the folder is empty, we want to replace it with toFullPath so we have to remove it anyway.
     array_remove_index_by_value(emptyfolders, adjustedPath);
 
@@ -1030,17 +1089,40 @@ function rename_folder(item, newName) {
         emptyfolders.push(toFullPath);
     }
 
+    console.debug(emptyfolders);
+    emptyfolders = emptyfolders.map(f => {
+        let oldName = f;
+        let newName = f.replace(adjustedPath, toFullPath);
+        console.debug(`changing empty folder ${oldName} to ${newName}`);
+        return newName;
+    });
+    console.debug(emptyfolders);
+
     did_change_items();
 
     console.groupEnd();
 }
 
-function delete_item(item) {
-    if (!item.canDelete()) {
-        console.warn("Not allowed to delete item", item);
+function delete_item(listItem) {
+    if (!listItem.canDelete()) {
+        console.warn("Not allowed to delete item", listItem);
         return;
     }
-    console.error("TODO: delete_item", item);
+    console.error("TODO: delete_item", listItem);
+
+    switch (listItem.type) {
+        case TokenListItem.TypeFolder:
+            break;
+        case TokenListItem.TypeMyToken:
+            break;
+        case TokenListItem.TypePC:
+            break;
+        case TokenListItem.TypeMonster:
+            break;
+        case TokenListItem.TypeBuiltinToken:
+            break;
+    }
+
     did_change_items();
 }
 

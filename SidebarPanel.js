@@ -179,57 +179,71 @@ class SidebarPanel {
   // imageUrlEntered is a function that takes a string in the form of a url
   build_image_url_input(titleText, imageUrlEntered) {
 
-    /* This is the general layout of what we're building. A label above an input, both of which are to the left of an "Add" button that spans the entire height
-      |--------------------|
-      | Label     |  Add   |
-      | Input     | Button |
-      |--------------------|
-    */
-
     if (typeof imageUrlEntered !== 'function') {
       imageUrlEntered = function(newImageUrl) {
         console.warn(`Failed to provide a valid function to handle ${newImageUrl}`);
       };
     }
-    
-    let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`);
-    let urlInput = $(`<input title="${titleText}" placeholder="https://..." name="addCustomImage" type="text" />`);
-    urlInput.on('keyup', function(event) {
-      let imageUrl = parse_img(event.target.value);
-      if (event.key == "Enter" && imageUrl !== undefined && imageUrl.length > 0) {
-        if(imageUrl.startsWith("data:")){
-          alert("You cannot use urls starting with data:");
-          return;
-        }	
-        imageUrlEntered(imageUrl);
-      }
-    });
-  
-    let addButton = $(`<button class="sidebar-panel-footer-button token-image-modal-add-button">Add</button>`);
-    addButton.click(function(event) {
-      let imageUrl = $(event.target).closest(".token-image-modal-url-label-add-wrapper").find(`input[name="addCustomImage"]`)[0].value;
-      if (imageUrl != undefined && imageUrl.length > 0) {
-        if(imageUrl.startsWith("data:")){
-          alert("You cannot use urls starting with data:");
-          return;
-        }	
-        imageUrlEntered(imageUrl);
-        $(this).parent().find("input").val("")
+
+    return build_text_input_wrapper(titleText,
+        `<input title="${titleText}" placeholder="https://..." name="addCustomImage" type="text" />`,
+        `<button>Add</button>`,
+        function(imageUrl, input, event) {
+          if(imageUrl.startsWith("data:")){
+            alert("You cannot use urls starting with data:");
+          } else {
+            imageUrlEntered(imageUrl);
+          }
+        }
+    );
+  }
+}
+
+/**
+ * @param titleText {string} the text to be displayed above the input
+ * @param input {string} the text input to build a wrapper for. eg: `<input type="text" name="someUniqueName" title="this is an input" placeholder="https://..." />`
+ * @param sideButton {string|undefined} the button to the right of the label, undefined if you don't want a button. eg: `<button>Add</button>`
+ * @param inputSubmitCallback {function|undefined} the function to be called when the user presses enter, or clicks the button. function(inputValue, input, event) { ... }
+ * @returns {*|jQuery|HTMLElement}
+ */
+function build_text_input_wrapper(titleText, input, sideButton, inputSubmitCallback) {
+  let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`);
+  let textInput = $(input);
+  let submitButton = (sideButton !== undefined && sideButton.length > 0) ? $(sideButton) : $(`<button style="display:none;">Add</button>`);
+  submitButton.addClass("sidebar-panel-footer-button token-image-modal-add-button");
+
+  if (typeof inputSubmitCallback !== 'undefined') {
+    textInput.on('keyup', function(event) {
+      let inputValue = event.target.value;
+      if (event.key === "Enter" && inputValue !== undefined && inputValue.length > 0) {
+        inputSubmitCallback(inputValue, event.target, event);
       }
     });
 
-    
-    let labelAndUrlWrapper = $(`<div class="token-image-modal-url-label-wrapper"></div>`); // this is to keep the label and input stacked vertically
-    labelAndUrlWrapper.append(inputLabel);                  // label above input
-    labelAndUrlWrapper.append(urlInput);                    // input below label
-    
-    let addButtonAndLabelUrlWrapper = $(`<div class="token-image-modal-url-label-add-wrapper"></div>`); // this is to keep the add button on the right side of the label and input
-    addButtonAndLabelUrlWrapper.append(labelAndUrlWrapper); // label/input on the left
-    addButtonAndLabelUrlWrapper.append(addButton);          // add button on the right
-    
-    return addButtonAndLabelUrlWrapper;
+    let inputName = textInput.attr("name");
+    submitButton.on("click", function(event) {
+      let inputElement = $(event.target).closest(".token-image-modal-url-label-add-wrapper").find(`input[name="${inputName}"]`);
+      let inputValue = inputElement[0].value;
+      if (inputElement.length > 0 && inputValue !== undefined && inputValue.length > 0) {
+        inputSubmitCallback(inputValue, inputElement, event);
+        inputElement.val("")
+      }
+    });
   }
 
+  /* This is the general layout of what we're building. A label above an input, both of which are to the left of an "Add" button that spans the entire height
+  |--------------------|
+  | Label     |  Add   |
+  | Input     | Button |
+  |--------------------|
+  */
+  let labelAndUrlWrapper = $(`<div class="token-image-modal-url-label-wrapper"></div>`); // this is to keep the label and input stacked vertically
+  labelAndUrlWrapper.append(inputLabel);                  // label above input
+  labelAndUrlWrapper.append(textInput);                   // input below label
+  let addButtonAndLabelUrlWrapper = $(`<div class="token-image-modal-url-label-add-wrapper"></div>`); // this is to keep the add button on the right side of the label and input
+  addButtonAndLabelUrlWrapper.append(labelAndUrlWrapper); // label/input on the left
+  addButtonAndLabelUrlWrapper.append(submitButton);       // add button on the right
+  return addButtonAndLabelUrlWrapper;
 }
 
 function build_select_input(labelText, input) {
@@ -252,7 +266,7 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
     </div>
   `);
   let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
-  if (enabled == true) {
+  if (enabled === true) {
     input.addClass("rc-switch-checked");
     wrapper.attr("data-hover", enabledHoverText);
   } else {
