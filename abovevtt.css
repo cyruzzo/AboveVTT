@@ -2049,6 +2049,15 @@ button.avtt-roll-button {
     z-index: 58000;
 }
 
+.dm_scenes_button.selected,
+.player_scenes_button.selected{
+    background: #ff7f7f;
+}
+.scene .dm_scenes_button,
+.scene .player_scenes_button{
+    transition: none;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;

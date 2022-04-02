@@ -771,11 +771,11 @@ function refresh_scenes() {
 		newobj.append(title);
 		controls = $("<div/>");
 		if(window.CLOUD){
-			let switch_players=$("<button>PLAYERS</button>");
+			let switch_players=$("<button class='player_scenes_button'>PLAYERS</button>");
 
 			if(window.PLAYER_SCENE_ID==window.ScenesHandler.scenes[scene_id].id){
 				console.log("players are here!");
-				switch_players.css("background","#FF7F7F");
+				switch_players.addClass("selected");
 			}
 
 			switch_players.click(function(){
@@ -783,20 +783,24 @@ function refresh_scenes() {
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 				};
 				window.PLAYER_SCENE_ID=window.ScenesHandler.scenes[scene_id].id;
-				refresh_scenes();
+				$(".player_scenes_button.selected").removeClass("selected");
+				$(this).addClass("selected");
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 				add_zoom_to_storage()
 			});
 			
-			let switch_dm=$("<button>DM</button>");
+			let switch_dm=$("<button class='dm_scenes_button'>DM</button>");
 			if(window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.id==window.ScenesHandler.scenes[scene_id].id)){
-				switch_dm.css("background","#FF7F7F");
+				switch_dm.addClass("selected");
 			}
 			switch_dm.click(function(){
+				$(".dm_scenes_button.selected").removeClass("selected");
+				console.log("remove selected!!!!!!!!!!!!!!!!!!!!!!!!!");
 				let msg={
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 					switch_dm: true
 				};
+				$(this).addClass("selected");
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 				add_zoom_to_storage()
 			});
