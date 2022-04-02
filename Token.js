@@ -1,6 +1,6 @@
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
 
-const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
+const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Flying", "Flamed", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
 							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
@@ -317,7 +317,18 @@ class Token {
 					Math.round((tokenData.hp / tokenData.max_hp) * 100)
 				)} 0px 0px 7px 7px`
 			);
+			// add another aura to show you have temp hp
+			console.log("updating hp aura", tokenData)
+			if (tokenData.temp_hp && tokenData.temp_hp > 0){
+				console.log("Adding extra dropshadow")
+				token.find(".token-image").css('box-shadow',
+				`${token_health_aura(
+					Math.round((tokenData.hp / tokenData.max_hp) * 100)
+					)} 0px 0px 6px 6px, #0015ff 0px 0px 8px 8px`
+				)
+			}
 		}
+		
 		console.groupEnd()
 	}
 
@@ -408,15 +419,18 @@ class Token {
 		if (input_width > 90)
 			input_width = 90;
 
-
-
 		var hp_input = $("<input class='hp'>").css("height", bar_height).css('font-weight', 'bold').css('float', 'left').css('background', 'rgba(0,0,0,0)').css('text-align', 'center').css('width', input_width).css("border", '0').css("padding", 0).css('font-size', fs);
 		hp_input.val(this.options.hp);
 
 		var maxhp_input = $("<input class='max_hp'>").css("height", bar_height).css('font-weight', 'bold').css('float', 'left').css('background', 'rgba(0,0,0,0)').css('text-align', 'center').css('width', input_width).css("border", '0').css("padding", 0).css('font-size', fs);
 		maxhp_input.val(this.options.max_hp);
 
-
+		if (this.options.disableaura){
+			console.log("building hp bar", this.options)
+			this.options.temp_hp && this.options.temp_hp > 0 ?
+				hpbar.css('background', '#77a2ff')
+				: hpbar.css('background', '#ff7777');
+		}
 
 		var divider = $("<div style='display:inline-block;float:left'>/</>");
 		divider.css('font-size', fs);
@@ -509,6 +523,7 @@ class Token {
 	}
 
 	build_conditions(parent) {
+		console.group("build_conditions")
 		let self=this;
 		let bar_width = Math.floor(this.options.size * 0.2);
 		const cond = $("<div class='conditions' style='padding:0;margin:0'/>");
@@ -522,7 +537,16 @@ class Token {
 			cond_bar.width(symbolSize);
 			cond_bar.height(this.options.size - bar_width);
 		})
-
+		if (this.options.inspiration){
+			if (!this.options.custom_conditions.includes("Inspiration")){
+				this.options.custom_conditions.push("Inspiration")
+			}
+		}
+		else{
+			this.options.custom_conditions.pop("Inspiration")
+		}
+		
+		
 		const conditionsTotal = this.options.conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player));
 
 		if (conditionsTotal > 0) {
@@ -625,6 +649,7 @@ class Token {
 		} else {
 			return [cond, moreCond];
 		}
+		console.groupEnd()
 	}
 
 	place(animationDuration) {
@@ -668,11 +693,6 @@ class Token {
 						draw_selected_token_bounding_box();
 					} });
 				
-
-
-			// CONCENTRATION REMINDER
-
-
 			if ((!(this.options.monster > 0)) || window.DM) {
 				old.find(".hpbar").replaceWith(this.build_hp());
 				old.find(".ac").replaceWith(this.build_ac());
