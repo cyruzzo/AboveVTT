@@ -1028,9 +1028,9 @@ function display_folder_configure_modal(listItem) {
         function(newFolderName, input, event) {
             let fullPath = $(input).attr("data-full-path");
             let foundItem = find_token_list_item(fullPath);
-            rename_folder(foundItem, newFolderName);
+            let updateFullPath = rename_folder(foundItem, newFolderName);
             close_sidebar_modal();
-            // TODO: expand all folders up to this point
+            expand_all_folders_up_to(updateFullPath);
         }
     ));
 
@@ -1041,7 +1041,7 @@ function display_folder_configure_modal(listItem) {
         let foundItem = find_token_list_item(fullPath);
         delete_folder_and_move_children_up_one_level(foundItem);
         close_sidebar_modal();
-        // TODO: expand all folders up to this point
+        expand_all_folders_up_to(fullPath);
     });
     let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
     sidebarModal.footer.append(deleteFolderAndChildrenButton);
@@ -1050,7 +1050,7 @@ function display_folder_configure_modal(listItem) {
         let foundItem = find_token_list_item(fullPath);
         delete_folder_and_delete_children(foundItem);
         close_sidebar_modal();
-        // TODO: expand all folders up to this point
+        expand_all_folders_up_to(fullPath);
     });
 
     sidebarModal.body.find(`input[name="folderName"]`).select();
@@ -1081,7 +1081,7 @@ function create_folder_inside(listItem) {
     let newListItem = TokenListItem.Folder(adjustedPath, "New Folder");
     emptyfolders.push(newListItem.fullPath());
     did_change_items();
-    // TODO: expand all folders up to this point
+    // expand_all_folders_up_to(newListItem.fullPath());
     display_folder_configure_modal(newListItem);
 }
 
@@ -1139,6 +1139,7 @@ function rename_folder(item, newName) {
     did_change_items();
 
     console.groupEnd();
+    return toFullPath;
 }
 
 function delete_folder_and_delete_children(listItem) {
@@ -1169,6 +1170,8 @@ function delete_folder_and_delete_children(listItem) {
     console.debug("after deleting emptyfolders", emptyfolders);
 
     did_change_items();
+    let oneLevelUp = sanitize_folder_path(listItem.folderPath);
+    expand_all_folders_up_to(oneLevelUp);
 
     console.groupEnd();
 }
@@ -1208,6 +1211,7 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     console.debug("after moving emptyfolders", emptyfolders);
 
     did_change_items();
+    expand_all_folders_up_to(oneLevelUp);
 
     console.groupEnd();
 }
@@ -1251,4 +1255,27 @@ function did_change_items() {
     rebuild_token_items_list();
     redraw_token_list()
     // filter_token_list(tokensPanel.body.find(".token-search").val());
+}
+
+function expand_all_folders_up_to(fullPath) {
+    console.group("expand_all_folders_up_to");
+    if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
+        let myTokensPath = sanitize_folder_path(TokenListItem.PathMyTokens + fullPath);
+        console.log(`fullPath: ${fullPath}, myTokensPath: ${myTokensPath}`);
+        let folderElement = tokensPanel.body.find(`[data-full-path='${myTokensPath}']`);
+        console.log(folderElement);
+        let parents = folderElement.parents(".collapsed")
+        console.log(parents);
+        parents.removeClass("collapsed");
+        console.log(parents);
+    } else {
+        console.log(`fullPath: ${fullPath}`);
+        let folderElement = tokensPanel.body.find(`[data-full-path='${fullPath}']`);
+        console.log(folderElement);
+        let parents = folderElement.parents(".collapsed")
+        console.log(parents);
+        parents.removeClass("collapsed");
+        console.log(parents);
+    }
+    console.groupEnd();
 }
