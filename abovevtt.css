@@ -1732,6 +1732,7 @@ h5.token-image-modal-footer-title:after {
     background-color: #fff;
 }
 .custom-token-image-row {
+    position: relative;
     padding: 4px;
     width: 100%;
     margin: 2px 0px 2px 0px;
@@ -2093,8 +2094,8 @@ button.avtt-roll-button {
 .button-loading::after {
     content: "";
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 25px;
+    height: 25px;
     top: 0;
     left: 10px;
     bottom: 0;

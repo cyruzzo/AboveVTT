@@ -2248,11 +2248,15 @@ function init_ui() {
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
-		if (sidebar_modal_is_open() && event.which == 1) {
+		if (sidebar_modal_is_open() && event.which === 1) {
 			let modal = event.target.closest(".sidebar-modal");
 			if (modal === undefined || modal == null) {
 				close_sidebar_modal();
 			}
+		}
+		let sidebarMonsterStatBlock = $("#monster-details-page-iframe");
+		if (sidebarMonsterStatBlock.length > 0 && !event.target.closest("#monster-details-page-iframe")) {
+			sidebarMonsterStatBlock.remove();
 		}
 	}
 

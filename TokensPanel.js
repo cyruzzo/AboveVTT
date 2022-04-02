@@ -649,7 +649,7 @@ function did_click_row(clickEvent) {
             open_player_sheet(clickedItem.sheet);
             break;
         case TokenListItem.TypeMonster:
-
+            open_monster_item(clickedItem);
             break;
         case TokenListItem.TypeBuiltinToken:
 
@@ -1278,4 +1278,85 @@ function expand_all_folders_up_to(fullPath) {
         console.log(parents);
     }
     console.groupEnd();
+}
+
+function open_monster_item(listItem) {
+    if (!listItem.isTypeMonster()) {
+        console.warn("open_monster_item was called with the wrong item type", listItem);
+        return;
+    }
+
+    let iframe = $(`<iframe id='monster-details-page-iframe'></iframe>`);
+    iframe.css({
+        "width": "100%",
+        "height": "100%",
+        "top": "0px",
+        "left": "0px",
+        "position": "absolute",
+        "border": "none",
+        "z-index": 10
+    });
+    tokensPanel.container.append(iframe);
+
+    let rowHtml = tokensPanel.body.find(`[data-full-path='${listItem.fullPath()}']`);
+    console.log(listItem.fullPath(), rowHtml);
+    rowHtml.addClass("button-loading");
+    iframe.on("load", function(event) {
+        rowHtml.removeClass("button-loading");
+        if (!this.src) {
+            // it was just created. no need to do anything until it actually loads something
+            return;
+        }
+
+        let contents = $(event.target).contents();
+        contents.find("#site > footer").hide();
+        contents.find("#site-main > header.main").hide();
+        contents.find("#site-main").css("padding-top", 0);
+        contents.find(".site-bar").hide();
+        contents.find(".ad-container").hide();
+        contents.find(".homebrew-comments").hide();
+
+        // move the image below the stat block
+        let image = contents.find(".detail-content > .image");
+        let statBlock = contents.find(".detail-content > .mon-stat-block");
+        statBlock.after(image);
+
+
+        let closeButton = $(`
+            <button title="Close stat block" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+                    <g transform="rotate(-45 50 50)"><rect x="0" y="40" width="100" height="20"></rect></g>
+                    <g transform="rotate(45 50 50)"><rect x="0" y="40" width="100" height="20"></rect></g>
+                </svg>
+            </button>
+        `);
+        closeButton.css({
+            "align-items": "center",
+            "-webkit-appearance": "none",
+            "-o-appearance": "none",
+            "appearance": "none",
+            "background": "#fff",
+            "border": "1px solid #d8e1e8",
+            "border-radius": "50%",
+            "display": "flex",
+            "justify-content": "center",
+            "padding": "8px",
+            "position": "absolute",
+            "right": "8px",
+            "top": "-8px",
+            "height": "40px",
+            "width": "40px"
+        });
+        contents.find(".page-header__primary > .page-heading").append(closeButton);
+        closeButton.on("click", function () {
+            $("#monster-details-page-iframe").remove();
+        });
+
+        contents.find(".main.content-container").attr("style", "padding:0!important");
+        contents.find(".more-info.details-more-info").css("padding", "8");
+        contents.find("a").attr("target", "_blank");
+    });
+
+
+    iframe.attr("src", listItem.monsterData.url);
 }
