@@ -224,6 +224,13 @@ function find_token_list_item(fullPath) {
     if (foundItem === undefined) {
         foundItem = window.monsterListItems.find(item => item.fullPath() === fullPath);
     }
+    if (foundItem === undefined && emptyfolders.includes(fullPath)) {
+        let pathComponents = fullPath.split("/");
+        let folderName = pathComponents.pop();
+        let folderPath = pathComponents.join("/");
+        let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
+        foundItem = TokenListItem.Folder(myTokensFolderPath, folderName);
+    }
     if (foundItem === undefined) {
         console.warn(`find_token_list_item found nothing at path: ${fullPath}`);
     }
@@ -543,13 +550,16 @@ function build_token_row(listItem, enableDrag = true) {
                 rowItem.append(addFolder);
                 addFolder.on("click", function(clickEvent) {
                     clickEvent.stopPropagation();
-                    console.log("ADD FOLDER!!!");
+                    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
+                    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+                    create_folder_inside(clickedItem);
                 });
                 let addToken = $(`<button class="token-row-button"><span class="material-icons">person_add_alt_1</span></button>`);
                 rowItem.append(addToken);
                 addToken.on("click", function(clickEvent) {
-                    clickEvent.stopPropagation();
-                    console.log("ADD TOKEN!!!");
+                    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
+                    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+                    create_token_inside(clickedItem);
                 });
             }
             break;
@@ -1013,13 +1023,14 @@ function display_folder_configure_modal(listItem) {
     sidebarModal.updateHeader(listItem.name, listItem.fullPath(), "Edit or delete this folder.");
 
     sidebarModal.body.append(build_text_input_wrapper("Folder Name",
-        `<input type="text" title="Folder Name" name="folderName" data-full-path="${listItemFullPath}" />`,
+        `<input type="text" title="Folder Name" name="folderName" data-full-path="${listItemFullPath}" value="${listItem.name}" />`,
         `<button>Save</button>`,
         function(newFolderName, input, event) {
             let fullPath = $(input).attr("data-full-path");
             let foundItem = find_token_list_item(fullPath);
             rename_folder(foundItem, newFolderName);
             close_sidebar_modal();
+            // TODO: expand all folders up to this point
         }
     ));
 
@@ -1030,6 +1041,7 @@ function display_folder_configure_modal(listItem) {
         let foundItem = find_token_list_item(fullPath);
         delete_folder_and_move_children_up_one_level(foundItem);
         close_sidebar_modal();
+        // TODO: expand all folders up to this point
     });
     let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
     sidebarModal.footer.append(deleteFolderAndChildrenButton);
@@ -1038,9 +1050,10 @@ function display_folder_configure_modal(listItem) {
         let foundItem = find_token_list_item(fullPath);
         delete_folder_and_delete_children(foundItem);
         close_sidebar_modal();
+        // TODO: expand all folders up to this point
     });
 
-    sidebarModal.body.find(`input[name="folderName"]`).focus();
+    sidebarModal.body.find(`input[name="folderName"]`).select();
 }
 
 function display_my_token_configure_modal(listItem) {
@@ -1058,7 +1071,25 @@ function path_exists(folderPath) {
     return emptyfolders.includes(folderPath);
 }
 
+function create_folder_inside(listItem) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+        console.warn("create_folder_inside called with an incorrect item type", listItem);
+        return;
+    }
+
+    let adjustedPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
+    let newListItem = TokenListItem.Folder(adjustedPath, "New Folder");
+    emptyfolders.push(newListItem.fullPath());
+    did_change_items();
+    // TODO: expand all folders up to this point
+    display_folder_configure_modal(newListItem);
+}
+
 function rename_folder(item, newName) {
+    if (!item.isTypeFolder() || !item.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+        console.warn("rename_folder called with an incorrect item type", listItem);
+        return;
+    }
     console.groupCollapsed("rename_folder");
     if (!item.canEdit()) {
         console.warn("Not allowed to rename folder", item);
@@ -1072,7 +1103,6 @@ function rename_folder(item, newName) {
     if (path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
         console.groupEnd();
-        alert("A folder with that name already exists");
         return;
     }
 
@@ -1202,6 +1232,14 @@ function delete_item(listItem) {
         case TokenListItem.TypeBuiltinToken:
             break;
     }
+}
+
+function create_token_inside(listItem) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+        console.warn("create_token_inside called with an incorrect item type", listItem);
+        return;
+    }
+    console.error("TODO: create a mytoken inside", listItem);
 }
 
 function persist_mytokens() {
