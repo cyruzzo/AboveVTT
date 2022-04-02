@@ -1023,12 +1023,20 @@ function display_folder_configure_modal(listItem) {
         }
     ));
 
-    let deleteButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder">Delete</button>`);
-    sidebarModal.footer.append(deleteButton);
-    deleteButton.on("click", function(event) {
+    let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
+    sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
+    deleteFolderAndMoveChildrenButton.on("click", function(event) {
         let fullPath = $(event.currentTarget).attr("data-full-path");
         let foundItem = find_token_list_item(fullPath);
-        delete_item(foundItem);
+        delete_folder_and_move_children_up_one_level(foundItem);
+        close_sidebar_modal();
+    });
+    let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
+    sidebarModal.footer.append(deleteFolderAndChildrenButton);
+    deleteFolderAndChildrenButton.on("click", function(event) {
+        let fullPath = $(event.currentTarget).attr("data-full-path");
+        let foundItem = find_token_list_item(fullPath);
+        delete_folder_and_delete_children(foundItem);
         close_sidebar_modal();
     });
 
@@ -1103,6 +1111,68 @@ function rename_folder(item, newName) {
     console.groupEnd();
 }
 
+function delete_folder_and_delete_children(listItem) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+        console.warn("delete_folder_and_delete_children called with an incorrect item type", listItem);
+        return;
+    }
+    console.groupCollapsed("delete_folder_and_delete_children");
+
+    let adjustedPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
+    console.log("about to delete folder and everything in", adjustedPath);
+
+    mytokens.filter(token => {
+        console.debug(`filtering ${token['data-name']} folderpath`, token['data-folderpath'], adjustedPath);
+        return token['data-folderpath'] === adjustedPath;
+    }).forEach(token => {
+        console.debug(`deleting ${token['data-name']}`, token);
+        array_remove_index_by_value(mytokens, token);
+    });
+
+    console.debug("before deleting emptyfolders", emptyfolders);
+    emptyfolders = emptyfolders.filter(f => !f.startsWith(adjustedPath));
+    console.debug("after deleting emptyfolders", emptyfolders);
+
+    did_change_items();
+
+    console.groupEnd();
+}
+
+function delete_folder_and_move_children_up_one_level(listItem) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+        console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
+        return;
+    }
+    console.groupCollapsed("delete_folder_and_move_children_up_one_level");
+
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(TokenListItem.PathMyTokens, ""));
+    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(TokenListItem.PathMyTokens, ""));
+    console.log(`about to delete folder ${adjustedPath} and move its children up one level to ${oneLevelUp}`);
+
+    mytokens.forEach(token => {
+        if (token['data-folderpath'] === adjustedPath) {
+            console.debug(`moving ${token['data-name']} up one level`, token);
+            token['data-folderpath'] = oneLevelUp;
+        }
+    });
+
+
+    console.debug("before moving emptyfolders", emptyfolders);
+    array_remove_index_by_value(emptyfolders, adjustedPath);
+    emptyfolders = emptyfolders.map(f => {
+        if (f.startsWith(adjustedPath)) {
+            return f.replace(adjustedPath, oneLevelUp);
+        } else {
+            return f;
+        }
+    });
+    console.debug("after moving emptyfolders", emptyfolders);
+
+    did_change_items();
+
+    console.groupEnd();
+}
+
 function delete_item(listItem) {
     if (!listItem.canDelete()) {
         console.warn("Not allowed to delete item", listItem);
@@ -1112,6 +1182,7 @@ function delete_item(listItem) {
 
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
+            delete_folder_and_delete_children(listItem);
             break;
         case TokenListItem.TypeMyToken:
             break;
@@ -1122,8 +1193,6 @@ function delete_item(listItem) {
         case TokenListItem.TypeBuiltinToken:
             break;
     }
-
-    did_change_items();
 }
 
 function persist_mytokens() {
