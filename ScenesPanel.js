@@ -898,7 +898,6 @@ function refresh_scenes() {
 				}
 				window.ScenesHandler.scenes = tempScenes;
 				window.ScenesHandler.persist();
-				refresh_scenes();
 			}
 		});
 		$("#scene_selector").css("overflow","auto");
