@@ -1116,6 +1116,11 @@ function delete_folder_and_delete_children(listItem) {
         console.warn("delete_folder_and_delete_children called with an incorrect item type", listItem);
         return;
     }
+    if (!confirm(`Are you sure you want to delete "${listItem.name}"?\nAll items within it will also be deleted`)) {
+        console.debug("delete_folder_and_delete_children was canceled by user", listItem);
+        return;
+    }
+
     console.groupCollapsed("delete_folder_and_delete_children");
 
     let adjustedPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
@@ -1141,6 +1146,10 @@ function delete_folder_and_delete_children(listItem) {
 function delete_folder_and_move_children_up_one_level(listItem) {
     if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
+        return;
+    }
+    if (!confirm(`Are you sure you want to delete "${listItem.name}"?\nAll items within it will be moved up one level.`)) {
+        console.debug("delete_folder_and_move_children_up_one_level was canceled by user", listItem);
         return;
     }
     console.groupCollapsed("delete_folder_and_move_children_up_one_level");
