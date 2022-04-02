@@ -791,6 +791,7 @@ class MessageBroker {
 	}
 
 	sendTokenUpdateFromPlayerData(data) {
+		console.group("sendTokenUpdateFromPlayerData")
 		if (data.id in window.TOKEN_OBJECTS) {
 			var cur = window.TOKEN_OBJECTS[data.id];
 
@@ -798,15 +799,13 @@ class MessageBroker {
 			if ((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
 				(cur.options.max_hp != data.max_hp) ||
 				(cur.options.ac != data.ac) ||
+				(cur.options.temp_hp != data.temp_hp) ||
+				(cur.options.inspiration != data.inspiration) ||
 				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
 			{
-				console.log(cur.options);
-				console.log(data);
-				console.log("4 expresision list following");
-				console.log((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))));
-				console.log((cur.options.max_hp != data.max_hp));
-				console.log((cur.options.ac != data.ac));
-				console.log((!areArraysEqualSets(cur.options.conditions, data.conditions)));
+				console.log("player sheet chanegs detected")
+				console.log("current token options", cur.options);
+				console.log("new data", data);				
 				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
 					var msgdata = {
 						player: cur.options.name,
@@ -822,11 +821,13 @@ class MessageBroker {
 				cur.options.max_hp = data.max_hp;
 				cur.options.ac = data.ac;
 				cur.options.conditions = data.conditions;
-
+				cur.options.inspiration = data.inspiration;
+				cur.options.temp_hp = data.temp_hp;
 				cur.place();
 				window.MB.sendMessage('custom/myVTT/token', cur.options);
 			}
 		}
+		console.groupEnd()
 	}
 
 	encode_message_text(text) {
