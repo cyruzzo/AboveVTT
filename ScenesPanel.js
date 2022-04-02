@@ -852,56 +852,55 @@ function refresh_scenes() {
 		controls.append(delete_button);
 		newobj.append(controls);
 
-		$("#addscene").parent().before(newobj);
-
-		$("#scene_selector").sortable({
-			handle: ".scene_title",
-			forcePlaceholderSize: true,
-			placeholder: "sortable_placeholder", 
-			update: function(event, ui) {
-				let fromSceneIndex = ui.item.attr("data-scene-index");
-				let toSceneIndex;
-				let j = 0;
-				let tempScenes = [];
-				$("#scene_selector").children('.scene').each(function(j) {
-					let oldSceneID = $(this).attr("data-scene-index");
-					if (fromSceneIndex == oldSceneID) {
-						toSceneIndex = j;
-					}
-					tempScenes.push(window.ScenesHandler.scenes[oldSceneID]);
-					$(this).attr("data-scene-index", j);
-					if ($(this).hasClass('active_scene')) {
-						window.ScenesHandler.current_scene_id = j;
-					}
-					j++;
-				});
-				console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
-				if(window.CLOUD){
-					let neworder;
-					console.log(window.ScenesHandler.scenes);
-					if(toSceneIndex < fromSceneIndex){ // moving back
-						if(toSceneIndex==0)
-							neworder=window.ScenesHandler.scenes[0].order-100;
-						else
-							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex-1].order)/2);
-					}
-					else{
-						if(toSceneIndex==(window.ScenesHandler.scenes.length-1)){
-							neworder=window.ScenesHandler.scenes[toSceneIndex].order+100;
-						}
-						else
-							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex+1].order)/2);
-					}
-					window.ScenesHandler.scenes[fromSceneIndex].order=neworder;
-					window.ScenesHandler.persist_scene(fromSceneIndex);
-				}
-				window.ScenesHandler.scenes = tempScenes;
-				window.ScenesHandler.persist();
-				refresh_scenes();
-			}
-		});
-		$("#scene_selector").css("overflow","auto");
+		$("#addscene").parent().before(newobj);	
 	}
+	$("#scene_selector").sortable({
+		handle: ".scene_title",
+		forcePlaceholderSize: true,
+		placeholder: "sortable_placeholder", 
+		update: function(event, ui) {
+			let fromSceneIndex = ui.item.attr("data-scene-index");
+			let toSceneIndex;
+			let j = 0;
+			let tempScenes = [];
+			$("#scene_selector").children('.scene').each(function(j) {
+				let oldSceneID = $(this).attr("data-scene-index");
+				if (fromSceneIndex == oldSceneID) {
+					toSceneIndex = j;
+				}
+				tempScenes.push(window.ScenesHandler.scenes[oldSceneID]);
+				$(this).attr("data-scene-index", j);
+				if ($(this).hasClass('active_scene')) {
+					window.ScenesHandler.current_scene_id = j;
+				}
+				j++;
+			});
+			console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
+			if(window.CLOUD){
+				let neworder;
+				console.log(window.ScenesHandler.scenes);
+				if(toSceneIndex < fromSceneIndex){ // moving back
+					if(toSceneIndex==0)
+						neworder=window.ScenesHandler.scenes[0].order-100;
+					else
+						neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex-1].order)/2);
+				}
+				else{
+					if(toSceneIndex==(window.ScenesHandler.scenes.length-1)){
+						neworder=window.ScenesHandler.scenes[toSceneIndex].order+100;
+					}
+					else
+						neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex+1].order)/2);
+				}
+				window.ScenesHandler.scenes[fromSceneIndex].order=neworder;
+				window.ScenesHandler.persist_scene(fromSceneIndex);
+			}
+			window.ScenesHandler.scenes = tempScenes;
+			window.ScenesHandler.persist();
+			refresh_scenes();
+		}
+	});
+	$("#scene_selector").css("overflow","auto");
 }
 
 function init_scene_selector() {
