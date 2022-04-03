@@ -128,6 +128,7 @@ class Token {
 			}
 			draw_selected_token_bounding_box(); // redraw the selection box
 		}
+		update_pc_token_rows();
 	}
 	rotate(newRotation) {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow rotating if the token is locked
@@ -1368,6 +1369,7 @@ function place_token_at_point(tokenObject, x, y) {
 
 	
 	window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+	update_pc_token_rows();
 }
 
 function array_remove_index_by_value(arr, item) {

@@ -14,6 +14,7 @@ function update_pclist() {
 		pclistUpdateRequired = true;
 		return;
 	}
+	update_pc_token_rows();
 
 	// get scroll position
 	var scroll_y = $(".sidebar__pane-content").scrollTop();

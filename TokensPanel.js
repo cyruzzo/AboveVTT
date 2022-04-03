@@ -100,8 +100,8 @@ class TokenListItem {
         this.subtitle = subtitle;
         this.folderPath = sanitize_folder_path(folderPath);
     }
-    static Folder(folderPath, name, subtitle = "FOLDER") {
-        console.debug("TokenListItem.Folder", folderPath, name);
+    static Folder(folderPath, name, subtitle) {
+        console.debug(`TokenListItem.Folder ${folderPath}/${name}`);
         return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, subtitle, folderPath);
     }
     static MyToken(tokenData, subtitle = "MyToken") {
@@ -121,7 +121,7 @@ class TokenListItem {
         item.monsterData = monsterData;
         return item;
     }
-    static PC(sheet, name, imgSrc, subtitle = "PLAYER") {
+    static PC(sheet, name, imgSrc, subtitle) {
         console.debug("TokenListItem.PC", sheet, name, imgSrc);
         let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, subtitle, TokenListItem.PathPlayers);
         item.sheet = sheet;
@@ -237,6 +237,34 @@ function find_token_list_item(fullPath) {
     return foundItem;
 }
 
+function find_html_row(fullPath, container = tokensPanel.body) {
+    return container?.find(`[data-full-path='${encode_full_path(fullPath)}']`);
+}
+function harvest_full_path(htmlRow) {
+    return decode_full_path(htmlRow.attr("data-full-path"));
+}
+function set_full_path(html, fullPath) {
+    return html.attr("data-full-path", encode_full_path(fullPath));
+}
+function encode_full_path(fullPath) {
+    if (fullPath.startsWith("base64")) {
+        // already encoded. just return it
+        return fullPath;
+    }
+    return `base64${btoa(fullPath)}`;
+}
+function decode_full_path(fullPath) {
+    if (fullPath.startsWith("base64")) {
+        return atob(fullPath.replace("base64", ""));
+    }
+    // no need to decode
+    return fullPath;
+}
+function matches_full_path(html, fullPath) {
+    return html.attr("data-full-path") === encode_full_path(fullPath);
+}
+
+
 function find_my_token(fullPath) {
     let found = mytokens.find(t => {
         let dirtyPath = `${TokenListItem.PathMyTokens}${t["data-folderpath"]}/${t["data-name"]}`;
@@ -313,11 +341,11 @@ function filter_token_list(searchTerm) {
         allFolders.removeClass("collapsed"); // auto expand all folders
         for (let i = 0; i < allFolders.length; i++) {
             let currentFolder = $(allFolders[i]);
-            if (currentFolder.attr("data-full-path") === "/Monsters") {
+            if (matches_full_path(currentFolder, TokenListItem.PathMonsters)) {
                 // we always want the monsters folder to be open when searching
                 continue;
             }
-            let nonFolderDescendents = currentFolder.find(".custom-token-image-row:not(.folder)");
+            let nonFolderDescendents = currentFolder.find(".tokens-panel-row:not(.folder)");
             if (nonFolderDescendents.length === 0) {
                 // hide folders without results in them
                 currentFolder.hide();
@@ -340,8 +368,7 @@ function inject_monster_tokens(searchTerm, skip) {
             listItems.push(item);
         }
         console.log("converted", listItems);
-        let list = tokensPanel.body.find(".custom-token-list");
-        let monsterFolder = list.find(`[data-full-path='/Monsters']`);
+        let monsterFolder = find_html_row('/Monsters');
         for (let i = 0; i < listItems.length; i++) {
             let item = listItems[i];
             let row = build_token_row(item);
@@ -366,34 +393,6 @@ function inject_monster_tokens(searchTerm, skip) {
     });
 }
 
-// https://davidwalsh.name/javascript-debounce-function
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-    var timeout;
-    return function() {
-        var context = this, args = arguments;
-        var later = function() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
-}
-
-// function debounce(fn, duration) {
-// 	var timer;
-// 	return function() {
-// 		clearTimeout(timer);
-// 		timer = setTimeout(fn, duration)
-// 	}
-// }
-
 function init_tokens_panel() {
 
     rootfolders = [
@@ -417,7 +416,7 @@ function init_tokens_panel() {
     header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
-    searchInput.off("input").on("input", debounce(() => {
+    searchInput.off("input").on("input", mydebounce(() => {
         let textValue = tokensPanel.header.find("input[name='token-search']").val();
         filter_token_list(textValue)
     }, 500));
@@ -461,6 +460,10 @@ function init_tokens_panel() {
 }
 
 function redraw_token_list(searchTerm) {
+    if (!window.tokenListItems) {
+        // don't do anything on startup
+        return;
+    }
     console.groupCollapsed("redraw_token_list");
     let list = $(`<div class="custom-token-list"></div>`);
 
@@ -481,7 +484,8 @@ function redraw_token_list(searchTerm) {
         .forEach(item => {
             let row = build_token_row(item);
             console.debug("appending item", item);
-            list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
+            find_html_row(item.folderPath, list).find(` > .folder-token-list`).append(row);
+            // list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
         });
 
     // now let's add all the other items
@@ -491,11 +495,13 @@ function redraw_token_list(searchTerm) {
         .forEach(item => {
             let row = build_token_row(item);
             console.debug("appending item", item);
-            list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
+            find_html_row(item.folderPath, list).find(` > .folder-token-list`).append(row);
+            // list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
         });
 
     tokensPanel.body.empty();
     tokensPanel.body.append(list);
+    update_pc_token_rows();
     console.groupEnd()
 }
 
@@ -506,25 +512,26 @@ function redraw_token_list(searchTerm) {
  */
 function build_token_row(listItem, enableDrag = true) {
 
-    let row = $(`<div class="custom-token-image-row"></div>`);
-    row.attr('data-full-path', listItem.fullPath());
+    let row = $(`<div class="tokens-panel-row"></div>`);
+    set_full_path(row, listItem.fullPath());
 
-    let rowItem = $(`<div class="custom-token-image-row-item"></div>`);
+    let rowItem = $(`<div class="tokens-panel-row-item"></div>`);
     row.append(rowItem);
     rowItem.on("click", did_click_row);
 
-    let imgHolder = $(`<div class="custom-token-image-row-img"></div>`);
+    let imgHolder = $(`<div class="tokens-panel-row-img"></div>`);
     rowItem.append(imgHolder);
     let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" />`);
     imgHolder.append(img);
 
-    let details = $(`<div class="custom-token-image-row-details"></div>`);
+    let details = $(`<div class="tokens-panel-row-details"></div>`);
     rowItem.append(details);
-    let title = $(`<div class="custom-token-image-row-details-title">${listItem.name}</div>`);
+    let title = $(`<div class="tokens-panel-row-details-title">${listItem.name}</div>`);
     details.append(title);
+    let subtitle = $(`<div class="tokens-panel-row-details-subtitle"></div>`);
+    details.append(subtitle);
     if (listItem.subtitle !== undefined) {
-        let subtitle = $(`<div class="custom-token-image-row-details-subtitle">${listItem.subtitle}</div>`);
-        details.append(subtitle);
+        subtitle.text(listItem.subtitle);
     }
 
     if (!listItem.isTypeFolder()) {
@@ -539,6 +546,9 @@ function build_token_row(listItem, enableDrag = true) {
 
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
+            if (listItem.subtitle === undefined || listItem.subtitle.length === 0) {
+                subtitle.hide();
+            }
             row.append(`<div class="folder-token-list"></div>`);
             row.addClass("folder");
             if (!rootfolders.includes(listItem)) {
@@ -550,15 +560,15 @@ function build_token_row(listItem, enableDrag = true) {
                 rowItem.append(addFolder);
                 addFolder.on("click", function(clickEvent) {
                     clickEvent.stopPropagation();
-                    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-                    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+                    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+                    let clickedItem = find_token_list_item(harvest_full_path(clickedRow));
                     create_folder_inside(clickedItem);
                 });
                 let addToken = $(`<button class="token-row-button"><span class="material-icons">person_add_alt_1</span></button>`);
                 rowItem.append(addToken);
                 addToken.on("click", function(clickEvent) {
-                    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-                    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+                    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+                    let clickedItem = find_token_list_item(harvest_full_path(clickedRow));
                     create_token_inside(clickedItem);
                 });
             }
@@ -567,7 +577,65 @@ function build_token_row(listItem, enableDrag = true) {
             // TODO: Style specifically for My Tokens
             break;
         case TokenListItem.TypePC:
-            // TODO: Style specifically for Players
+
+            let playerData = window.PLAYER_STATS[listItem.sheet];
+            if (playerData === undefined) {
+                subtitle.text("loading character details");
+                playerData = {
+                    abilities: [
+                        {abilityName: 'Strength', abilityAbbr: 'str', modifier: '?', score: '?', save: '?' },
+                        {abilityName: 'Dexterity', abilityAbbr: 'dex', modifier: '?', score: '?', save: '?' },
+                        {abilityName: 'Constitution', abilityAbbr: 'con', modifier: '?', score: '?', save: '?' },
+                        {abilityName: 'Intelligence', abilityAbbr: 'int', modifier: '?', score: '?', save: '?' },
+                        {abilityName: 'Wisdom', abilityAbbr: 'wis', modifier: '?', score: '?', save: '?' },
+                        {abilityName: 'Charisma', abilityAbbr: 'cha', modifier: '?', score: '?', save: '?' }
+                    ],
+                    pp: '?',
+                    inspiration: false,
+                    walking: '?'
+                };
+            }
+            row.addClass("player-row");
+            let abilities = $(`<div class="player-card-footer">`);
+            abilities.hide();
+            abilities.append(playerData.abilities.map(a => `
+                <div class="ability_value" data-ability="${a.abilityAbbr}">
+                    <div class="ability_name">${a.abilityAbbr.toUpperCase()}</div>
+                    <div class="ability_modifier">${a.modifier}</div>
+                    <div class="ability_score">${a.score}</div>
+                </div>
+            `).join(''));
+            row.append(abilities);
+            let expandButton = $(`<div class="player-expansion-button"><span class="material-icons">expand_more</span></div>`);
+            row.append(expandButton);
+            expandButton.on("click", function (clickEvent) {
+                clickEvent.stopPropagation();
+                let r = $(clickEvent.target).closest(".tokens-panel-row");
+                console.log(r);
+                if (r.hasClass("expanded")) {
+                    r.removeClass("expanded");
+                    r.find(".player-card-footer").hide();
+                    r.find(".player-expansion-button .material-icons").text("expand_more");
+                } else {
+                    r.addClass("expanded");
+                    r.find(".player-card-footer").show();
+                    r.find(".player-expansion-button .material-icons").text("expand_less");
+                }
+            });
+
+            subtitle.text("");
+            subtitle.show();
+            subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">visibility</span><span class="pp-value">${playerData.pp}</span></div>`);
+            subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
+            subtitle.append(`<div class="subtitle-attibute inspiration"><img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration"  alt="inspiration"/></div>`);
+            if (playerData.inspiration) {
+                subtitle.find(".inspiration").show();
+            } else {
+                subtitle.find(".inspiration").hide();
+            }
+
+            row.find(".token-row-add").append(`<span class="material-icons">place</span>`);
+
             break;
         case TokenListItem.TypeMonster:
             // TODO: Style specifically for Monsters
@@ -594,17 +662,17 @@ function build_token_row(listItem, enableDrag = true) {
             cursorAt: {top: 0, left: 0},
             cancel: '.token-row-gear',
             helper: function(event) {
-                let draggedRow = $(event.target).closest(".custom-token-image-row");
-                let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
+                let draggedRow = $(event.target).closest(".tokens-panel-row");
+                let draggedItem = find_token_list_item(harvest_full_path(draggedRow));
                 let randomImage = random_image_for_item(draggedItem);
-                let helper = draggedRow.find(".custom-token-image-row-img img").clone();
+                let helper = draggedRow.find(".tokens-panel-row-img img").clone();
                 helper.attr("src", randomImage);
                 return helper;
             },
             start: function (event, ui) {
                 console.log("row-item drag start");
-                let draggedRow = $(event.target).closest(".custom-token-image-row");
-                let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
+                let draggedRow = $(event.target).closest(".tokens-panel-row");
+                let draggedItem = find_token_list_item(harvest_full_path(draggedRow));
                 let tokenSize = token_size_for_item(draggedItem);
                 let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
                 let helperWidth = width / (1.0 / window.ZOOM);
@@ -617,8 +685,8 @@ function build_token_row(listItem, enableDrag = true) {
             stop: function (event, ui) {
                 // place a token where this was dropped
                 console.log("row-item drag stop");
-                let draggedRow = $(event.target).closest(".custom-token-image-row");
-                let draggedItem = find_token_list_item(draggedRow.attr("data-full-path"));
+                let draggedRow = $(event.target).closest(".tokens-panel-row");
+                let draggedItem = find_token_list_item(harvest_full_path(draggedRow));
                 let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
                 let src = $(ui.helper).attr("src");
                 create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
@@ -630,8 +698,8 @@ function build_token_row(listItem, enableDrag = true) {
 
 function did_click_row(clickEvent) {
     console.log("did_click_row", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+    let clickedItem = find_token_list_item(harvest_full_path(clickedRow));
     console.log("did_click_row", clickedItem);
 
     switch (clickedItem.type) {
@@ -660,8 +728,8 @@ function did_click_row(clickEvent) {
 function did_click_row_gear(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_row_gear", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+    let clickedItem = find_token_list_item(harvest_full_path(clickedRow));
     console.log("did_click_row_gear", clickedItem);
     display_token_item_configuration_modal(clickedItem);
 }
@@ -669,11 +737,40 @@ function did_click_row_gear(clickEvent) {
 function did_click_add_button(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_add_button", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".custom-token-image-row");
-    let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+    let clickedItem = find_token_list_item(harvest_full_path(clickedRow));
     console.log("did_click_add_button", clickedItem);
     let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
     create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
+    update_pc_token_rows();
+}
+
+function update_pc_token_rows() {
+    window.tokenListItems?.filter(listItem => listItem.isTypePC()).forEach(listItem => {
+        let row = find_html_row(listItem.fullPath());
+        if (listItem.sheet in window.TOKEN_OBJECTS) {
+            row.addClass("on-scene");
+        } else {
+            row.removeClass("on-scene");
+        }
+
+        let playerData = window.PLAYER_STATS[listItem.sheet];
+        if (playerData !== undefined) {
+            playerData.abilities.forEach(a => {
+                let abilityValue = row.find(`[data-ability='${a.abilityAbbr}']`);
+                abilityValue.find(".ability_modifier").text(a.modifier);
+                abilityValue.find(".ability_score").text(a.score);
+
+            });
+            row.find(".tokens-panel-row-details-subtitle .pp-value").text(playerData.pp);
+            row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.pp);
+            if (playerData.inspiration) {
+                row.find(".tokens-panel-row-details-subtitle .inspiration").show();
+            } else {
+                row.find(".tokens-panel-row-details-subtitle .inspiration").hide();
+            }
+        }
+    });
 }
 
 /**
@@ -896,21 +993,21 @@ function search_monsters(searchTerm, skip, callback) {
 function register_token_row_context_menu() {
 
     // don't allow the context menu when right clicking on the add button since that adds a hidden token
-    tokensPanel.body.find(".custom-token-image-row").on("contextmenu", ".token-row-add", function(event) {
+    tokensPanel.body.find(".tokens-panel-row").on("contextmenu", ".token-row-add", function(event) {
         event.preventDefault();
         event.stopPropagation();
-        let clickedRow = $(event.target).closest(".custom-token-image-row");
-        let clickedItem = find_token_list_item(clickedRow.attr("data-full-path"));
+        let clickedRow = $(event.target).closest(".tokens-panel-row");
+        let clickedItem = find_token_list_item(harvest_full_path(clickedRow));
         create_and_place_token(clickedItem, true);
     });
 
     $.contextMenu({
-        selector: ".custom-token-image-row",
+        selector: ".tokens-panel-row",
         build: function(element, e) {
 
             let menuItems = {};
 
-            let rowItem = find_token_list_item($(element).attr("data-full-path"));
+            let rowItem = find_token_list_item(harvest_full_path($(element)));
             if (rowItem === undefined) {
                 console.warn("register_token_row_context_menu failed to find row item", element, e)
                 menuItems["unexpected-error"] = {
@@ -923,7 +1020,7 @@ function register_token_row_context_menu() {
             menuItems["place"] = {
                 name: rowItem.isTypeFolder() ? "Place Tokens" : "Place Token",
                 callback: function(itemKey, opt, originalEvent) {
-                    let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                    let itemToPlace = find_token_list_item(harvest_full_path(opt.$trigger));
                     create_and_place_token(itemToPlace);
                 }
             };
@@ -931,7 +1028,7 @@ function register_token_row_context_menu() {
             menuItems["placeHidden"] = {
                 name: rowItem.isTypeFolder() ? "Place Hidden Tokens" : "Place Hidden Token",
                 callback: function(itemKey, opt, originalEvent) {
-                    let itemToPlace = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                    let itemToPlace = find_token_list_item(harvest_full_path(opt.$trigger));
                     create_and_place_token(itemToPlace, true);
                 }
             };
@@ -941,7 +1038,7 @@ function register_token_row_context_menu() {
                 menuItems["copyUrl"] = {
                     name: "Copy Url",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToCopy = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        let itemToCopy = find_token_list_item(harvest_full_path(opt.$trigger));
                         copy_to_clipboard(itemToCopy.image);
                     }
                 };
@@ -951,7 +1048,7 @@ function register_token_row_context_menu() {
                 menuItems["edit"] = {
                     name: "Edit",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToEdit = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        let itemToEdit = find_token_list_item(harvest_full_path(opt.$trigger));
                         display_token_item_configuration_modal(itemToEdit);
                     }
                 };
@@ -965,7 +1062,7 @@ function register_token_row_context_menu() {
                 menuItems["delete"] = {
                     name: "Delete",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToDelete = find_token_list_item(opt.$trigger.attr("data-full-path"));
+                        let itemToDelete = find_token_list_item(harvest_full_path(opt.$trigger));
                         delete_item(itemToDelete);
                     }
                 };
@@ -1022,31 +1119,34 @@ function display_folder_configure_modal(listItem) {
 
     sidebarModal.updateHeader(listItem.name, listItem.fullPath(), "Edit or delete this folder.");
 
+    let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
+    set_full_path(folderNameInput, listItemFullPath);
     sidebarModal.body.append(build_text_input_wrapper("Folder Name",
-        `<input type="text" title="Folder Name" name="folderName" data-full-path="${listItemFullPath}" value="${listItem.name}" />`,
+        folderNameInput,
         `<button>Save</button>`,
         function(newFolderName, input, event) {
-            let fullPath = $(input).attr("data-full-path");
-            let foundItem = find_token_list_item(fullPath);
+            let foundItem = find_token_list_item(harvest_full_path($(input)));
             let updateFullPath = rename_folder(foundItem, newFolderName);
             close_sidebar_modal();
             expand_all_folders_up_to(updateFullPath);
         }
     ));
 
-    let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
+    let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
+    set_full_path(deleteFolderAndMoveChildrenButton, listItemFullPath);
     sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
     deleteFolderAndMoveChildrenButton.on("click", function(event) {
-        let fullPath = $(event.currentTarget).attr("data-full-path");
+        let fullPath = harvest_full_path($(event.currentTarget));
         let foundItem = find_token_list_item(fullPath);
         delete_folder_and_move_children_up_one_level(foundItem);
         close_sidebar_modal();
         expand_all_folders_up_to(fullPath);
     });
-    let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" data-full-path="${listItemFullPath}" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
+    let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
+    set_full_path(deleteFolderAndChildrenButton, listItemFullPath);
     sidebarModal.footer.append(deleteFolderAndChildrenButton);
     deleteFolderAndChildrenButton.on("click", function(event) {
-        let fullPath = $(event.currentTarget).attr("data-full-path");
+        let fullPath = harvest_full_path($(event.currentTarget));
         let foundItem = find_token_list_item(fullPath);
         delete_folder_and_delete_children(foundItem);
         close_sidebar_modal();
@@ -1251,9 +1351,9 @@ function persist_mytokens() {
 }
 
 function did_change_items() {
-    persist_mytokens()
+    persist_mytokens();
     rebuild_token_items_list();
-    redraw_token_list()
+    redraw_token_list();
     // filter_token_list(tokensPanel.body.find(".token-search").val());
 }
 
@@ -1262,7 +1362,7 @@ function expand_all_folders_up_to(fullPath) {
     if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
         let myTokensPath = sanitize_folder_path(TokenListItem.PathMyTokens + fullPath);
         console.log(`fullPath: ${fullPath}, myTokensPath: ${myTokensPath}`);
-        let folderElement = tokensPanel.body.find(`[data-full-path='${myTokensPath}']`);
+        let folderElement = find_html_row(myTokensPath);
         console.log(folderElement);
         let parents = folderElement.parents(".collapsed")
         console.log(parents);
@@ -1270,7 +1370,7 @@ function expand_all_folders_up_to(fullPath) {
         console.log(parents);
     } else {
         console.log(`fullPath: ${fullPath}`);
-        let folderElement = tokensPanel.body.find(`[data-full-path='${fullPath}']`);
+        let folderElement = find_html_row(fullPath);
         console.log(folderElement);
         let parents = folderElement.parents(".collapsed")
         console.log(parents);
@@ -1298,7 +1398,7 @@ function open_monster_item(listItem) {
     });
     tokensPanel.container.append(iframe);
 
-    let rowHtml = tokensPanel.body.find(`[data-full-path='${listItem.fullPath()}']`);
+    let rowHtml = find_html_row(listItem.fullPath());
     console.log(listItem.fullPath(), rowHtml);
     rowHtml.addClass("button-loading");
     iframe.on("load", function(event) {
@@ -1359,4 +1459,30 @@ function open_monster_item(listItem) {
 
 
     iframe.attr("src", listItem.monsterData.url);
+}
+
+function fetch_characters() {
+
+    // TODO: figure out the CORS errors here. This exact API is called from the page we're trying to call this from, and it works for them, but not for us :(
+
+    console.log("fetch_characters starting");
+    let pcIds = window.pcs
+        .filter(pc => pc.sheet.includes("/")) // only pcs that have a valid sheet structure
+        .map(pc => parseInt(pc.sheet.split("/").pop())) // grab the id which is the last component of the path
+        .filter(id => id !== undefined); // ignore any ids that failed to parse
+    let body = JSON.stringify({"characterIds": pcIds});
+    console.log("fetch_characters", body);
+    window.ajaxQueue.addDDBRequest({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        url: `https://character-service-scds.dndbeyond.com/v1/characters`,
+        data: body,
+        success: function (responseData) {
+            console.log("fetch_characters success", responseData);
+        },
+        failure: function (errorMessage) {
+            console.log("fetch_characters failure", errorMessage);
+        }
+    });
 }

@@ -1712,10 +1712,10 @@ h5.token-image-modal-footer-title:after {
     background: rgb(235, 241, 245);
     height: 100%;
 }
-.custom-token-image-row.folder {
+.tokens-panel-row.folder {
     background-color: rgb(235, 241, 245);
 }
-.custom-token-image-row.folder.collapsed {
+.tokens-panel-row.folder.collapsed {
     background-color: #fff;
 }
 .folder .folder-token-list {
@@ -1725,13 +1725,13 @@ h5.token-image-modal-footer-title:after {
 .folder.collapsed .folder-token-list {
     display: none;
 }
-.folder > .custom-token-image-row-item > .token-row-button {
+.folder > .tokens-panel-row-item > .token-row-button {
     background-color: rgb(235, 241, 245);
 }
-.folder.collapsed > .custom-token-image-row-item > .token-row-button {
+.folder.collapsed > .tokens-panel-row-item > .token-row-button {
     background-color: #fff;
 }
-.custom-token-image-row {
+.tokens-panel-row {
     position: relative;
     padding: 4px;
     width: 100%;
@@ -1741,11 +1741,11 @@ h5.token-image-modal-footer-title:after {
     background-color: #fff;
     cursor: pointer;
 }
-.custom-token-image-row-item {
+.tokens-panel-row-item {
     display: flex;
     width: 100%;
 }
-.custom-token-image-row-img {
+.tokens-panel-row-img {
     display: flex;
     flex-basis: 38px;
     width: 38px;
@@ -1755,14 +1755,14 @@ h5.token-image-modal-footer-title:after {
     border-radius: 3px;
     object-fit: cover;
 }
-.custom-token-image-row-img img {
+.tokens-panel-row-img img {
     object-fit: contain;
     width: 38px;
     max-width: 38px;
     height: 100%;
     max-height: 38px;
 }
-.custom-token-image-row-details {
+.tokens-panel-row-details {
     text-overflow: ellipsis;
     overflow: hidden;
     display: flex;
@@ -1776,24 +1776,23 @@ h5.token-image-modal-footer-title:after {
     text-align: left;
     white-space: nowrap;
 }
-.custom-token-image-row-details div {
+.tokens-panel-row-details div {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     justify-content: center;
 }
-.custom-token-image-row-details-title {
+.tokens-panel-row-details-title {
     font-size: 13px;
     font-weight: 700;
 }
-.custom-token-image-row-details-subtitle {
+.tokens-panel-row-details-subtitle {
     color: #738694;
     font-size: 10px;
 }
 .token-row-button {
     display: block;
     width: 30px;
-    height: 30px;
     border-radius: 3px;
     object-fit: cover;
     background: #fff;
@@ -1802,8 +1801,75 @@ h5.token-image-modal-footer-title:after {
     margin: 0 2px;
     min-width: 30px;
 }
-.token-row-button.token-row-add {
-
+.tokens-panel-row.player-row {
+    height: 68px;
+}
+.tokens-panel-row.player-row .player-expansion-button {
+    height: 16px;
+    margin: 0px 0px -8px 0px;
+    bottom: 8px;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    color: #838383;
+    line-height: 1;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    background-color: #f2f2f2;
+}
+.tokens-panel-row.player-row .tokens-panel-row-details-subtitle {
+    flex-direction: row;
+    justify-content: start;
+}
+.tokens-panel-row.player-row .tokens-panel-row-details-subtitle .subtitle-attibute {
+    flex-direction: row;
+    margin-right: 4px;
+    flex-grow: 0;
+}
+.tokens-panel-row.player-row .tokens-panel-row-details-subtitle .subtitle-attibute img {
+    width: 24px;
+    height: 24px;
+}
+.tokens-panel-row.player-row .player-expansion-button .material-icons {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+.tokens-panel-row.player-row.expanded {
+    height: 142px;
+}
+.tokens-panel-row.player-row .player-card-footer {
+    max-height: 0px;
+    height: 0px;
+}
+.tokens-panel-row.player-row.expanded .player-card-footer {
+    max-height: 76px;
+    height: 76px;
+}
+.tokens-panel-row.player-row .ability_value {
+    margin: 8px 0;
+}
+.tokens-panel-row.player-row .token-row-add > .material-icons {
+    display: none;
+}
+.tokens-panel-row.player-row.on-scene .token-row-add > .material-icons {
+    display: inline-block;
+    color: #1b9af0;
+}
+.tokens-panel-row.player-row.on-scene .token-row-add > svg {
+    display: none;
+}
+.tokens-panel-row.player-row .token-row-gear {
+    border-bottom-right-radius: 0;
+}
+.tokens-panel-row.player-row.button-loading .tokens-panel-row-details-subtitle {
+    content: "loading character sheet yo!";
+}
+.tokens-panel-row.player-row.expanded .token-row-gear {
+    border-bottom: 1px solid #d8e1e8;
 }
 .token-row-button .material-icons {
     padding: 2px 0px 0px 0px;
@@ -1831,8 +1897,14 @@ h5.token-image-modal-footer-title:after {
     height: 100%;
     fill: #738694;
 }
-.custom-token-image-row.folder .custom-token-image-row-item {
-    height: 30px;
+.tokens-panel-row.folder .tokens-panel-row-item {
+    height: 38px;
+}
+.tokens-panel-row.folder .player-row > .tokens-panel-row-item {
+    height: 42px; /* players are taller than everything else */
+}
+.tokens-panel-row.folder > .tokens-panel-row-item {
+    height: 30px; /* folders are shorter than everything else */
 }
 
 .sidebar-panel-content {

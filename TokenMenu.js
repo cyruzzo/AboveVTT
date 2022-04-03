@@ -670,19 +670,19 @@ function draw_custom_token_list(folder, path) {
 
 function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 
-	let row = $(`<div class="custom-token-image-row"></div>`);
-	let rowItem = $(`<div class="custom-token-image-row-item"></div>`);
+	let row = $(`<div class="tokens-panel-row"></div>`);
+	let rowItem = $(`<div class="tokens-panel-row-item"></div>`);
 	row.append(rowItem);
 
-	let imgHolder = $(`<div class="custom-token-image-row-img"></div>`);
+	let imgHolder = $(`<div class="tokens-panel-row-img"></div>`);
 	let img = $(`<img src="${parse_img(imgSrc)}" />`);
 	imgHolder.append(img);
 
-	let details = $(`<div class="custom-token-image-row-details"></div>`);
-	let title = $(`<div class="custom-token-image-row-details-title">${name}</div>`);
+	let details = $(`<div class="tokens-panel-row-details"></div>`);
+	let title = $(`<div class="tokens-panel-row-details-title">${name}</div>`);
 	details.append(title);
 	if (subtitleText != undefined) {
-		let subtitle = $(`<div class="custom-token-image-row-details-subtitle">${subtitleText}</div>`);
+		let subtitle = $(`<div class="tokens-panel-row-details-subtitle">${subtitleText}</div>`);
 		details.append(subtitle);
 	}
 
@@ -709,7 +709,7 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 			cursorAt: {top: 0, left: 0},
 			cancel: '.token-row-gear',
 			helper: function(event) {
-				let helper = $(event.currentTarget).find(".custom-token-image-row-img img").clone();
+				let helper = $(event.currentTarget).find(".tokens-panel-row-img img").clone();
 				let addButton = $(event.currentTarget).find(".token-row-add");
 				let path = addButton.attr("data-tokendatapath");
 				let name = addButton.attr("data-tokendataname");
@@ -751,7 +751,7 @@ function build_custom_token_row(name, imgSrc, subtitleText, enableDrag = true) {
 function register_tokenmenu_context_menu() {
 
 	// don't allow the context menu when right clicking on the add button since that adds a hidden token
-	$(".custom-token-image-row").on("contextmenu", ".token-row-add", function(event) {
+	$(".tokens-panel-row").on("contextmenu", ".token-row-add", function(event) {
 		event.preventDefault();
 		event.stopPropagation();
 		let tokendatapath = $(event.currentTarget).attr("data-tokendatapath");
@@ -763,7 +763,7 @@ function register_tokenmenu_context_menu() {
 	});
 
 	$.contextMenu({
-		selector: ".custom-token-image-row",
+		selector: ".tokens-panel-row",
 		build: function(element, e) {
 
 			let items = {};

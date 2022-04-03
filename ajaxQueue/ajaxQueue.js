@@ -31,7 +31,11 @@ class AjaxQueueTask {
       delete this.options.getCobaltToken;
       let self = this;
       get_cobalt_token(function (token) {
+        let previousBeforeSend = self.options.beforeSend;
         self.options.beforeSend = function (xhr) {
+          if (previousBeforeSend) {
+            previousBeforeSend(xhr);
+          }
           xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         };
         self.options.xhrFields = {
