@@ -2311,18 +2311,6 @@ function init_ui() {
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
 	}
-
-	if (!is_encounters_page() && (typeof Cobalt !== 'undefined')) { // THIS IS NOW BROKEN AS COBALT IS UNDEFINED FOR SOME REASON
-		// Hook DDB's processFlashMessages function to avoid calling it during animations
-		// It gets called every 2.5 seconds and runs for approx. 200ms, depending on cookie size
-		var origProcessFlashMessages = Cobalt.Core.processFlashMessages;
-		Cobalt.Core.processFlashMessages = function(i, r) {
-			// Allow DDB to process only while we're not during animation to avoid stutters
-			if (!window.MOUSEDOWN || i != "FlashMessageAjax") {
-				return origProcessFlashMessages(i, r);
-			}
-		};
-	}
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 

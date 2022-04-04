@@ -472,7 +472,7 @@ div#scene_properties form > div {
     max-height: 60vh;
     min-width: 200px;
     width: calc(100vw - 720px);
-    max-width: 748px;
+    max-width: 750px;
     z-index: 9999;
     border: solid black 2px;
     overflow: auto;
@@ -2051,6 +2051,18 @@ button.avtt-roll-button {
 
 #character-tools-target{
     z-index: unset !important; /*important to override dndbeyond's index.scss*/
+}
+
+.dm_scenes_button.selected,
+.player_scenes_button.selected,
+.dm_scenes_button.selected:hover,
+.player_scenes_button.selected:hover{
+    background: #ff7f7f;
+}
+
+.scene .dm_scenes_button,
+.scene .player_scenes_button {
+    transition: none;
 }
 
 .button-loading::after {
