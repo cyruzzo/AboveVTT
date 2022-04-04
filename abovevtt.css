@@ -549,8 +549,11 @@ div#scene_properties form > div {
     z-index: 4;
     left: 50%;
     font-size: 0.85em;
+    font-size: var(--font-size-zoom);
     bottom: -1.2em;
+    bottom: calc(-1 * (var(--font-size-zoom) + var(--font-size-zoom) / 1.5));
     transform: translate(-50%);
+    pointer-events: none;
 }
 
 .hasTooltip.CTToken::after{
