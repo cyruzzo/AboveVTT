@@ -1072,7 +1072,6 @@ class MessageBroker {
 		}
 
 		if(window.CLOUD && window.DM){
-			refresh_scenes();
 			$("#combat_area").empty();
 			ct_load();
 		}
