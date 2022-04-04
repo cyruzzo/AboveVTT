@@ -1,4 +1,4 @@
-var abovevtt_version = '0.73';
+var abovevtt_version = '0.74';
 
 /**
  * before the page refreshes perform the innards
@@ -85,6 +85,9 @@ function change_zoom(newZoom, x, y) {
 	window.ZOOM = newZoom;
 	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + 200;
 	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
+
+	//Set scaling token names CSS variable this variable can be used with anything in #tokens
+	$("#tokens").get(0).style.setProperty("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
 
 	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 	set_default_vttwrapper_size()
@@ -708,7 +711,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.73</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.74</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -2076,6 +2079,8 @@ function init_ui() {
 	if (!is_characters_page()) {
 		$("#site").children().hide();
 		$("#loading_overlay").show();
+	} else {
+		reposition_player_sheet();
 	}
 	$(".sidebar__controls").width(340);
 	// $(".ct-sidebar__control").width(340);
@@ -2346,18 +2351,6 @@ function init_ui() {
 			loadModules(initalModules);
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
-	}
-
-	if (!is_encounters_page()) {
-		// Hook DDB's processFlashMessages function to avoid calling it during animations
-		// It gets called every 2.5 seconds and runs for approx. 200ms, depending on cookie size
-		var origProcessFlashMessages = Cobalt.Core.processFlashMessages;
-		Cobalt.Core.processFlashMessages = function(i, r) {
-			// Allow DDB to process only while we're not during animation to avoid stutters
-			if (!window.MOUSEDOWN || i != "FlashMessageAjax") {
-				return origProcessFlashMessages(i, r);
-			}
-		};
 	}
 }
 
@@ -3206,6 +3199,9 @@ function is_player_sheet_open() {
 
 /// When playing on the characters page, this will show the character sheet. When not on the character page, `open_player_sheet` is used.
 function show_player_sheet() {
+	$("#character-tools-target").css({
+		"visibility": "visible",
+	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "visible",
 		"z-index": 3
@@ -3228,6 +3224,9 @@ function show_player_sheet() {
 
 /// When playing on the characters page, this will hide the character sheet. When not on the characters page, `close_player_sheet` is used.
 function hide_player_sheet() {
+	$("#character-tools-target").css({
+		"visibility": "hidden",
+	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "hidden",
 		"z-index": -1
