@@ -610,7 +610,7 @@ class MessageBroker {
 				    ((window.DM && msg.data.context.entityType === "user") || window.PLAYER_ID == msg.data.context.entityId)) {
 					console.log("Hooking requestAnimationFrame for dice roll");
 					this.origRequestAnimFrame = window.requestAnimationFrame;
-					window.requestAnimationFrame = function(cb) { setTimeout(cb, 33); }
+					window.requestAnimationFrame = function(cb) { setTimeout(cb, 1); }
 				}
 				// check for injected_data!
 				if(msg.data.injected_data){
