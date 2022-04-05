@@ -1818,18 +1818,35 @@ h5.token-image-modal-footer-title:after {
     text-transform: uppercase;
     background-color: #f2f2f2;
 }
-.tokens-panel-row.player-row .tokens-panel-row-details-subtitle {
+.tokens-panel-row .tokens-panel-row-details-subtitle {
     flex-direction: row;
     justify-content: start;
 }
-.tokens-panel-row.player-row .tokens-panel-row-details-subtitle .subtitle-attibute {
+.tokens-panel-row .tokens-panel-row-details-subtitle .subtitle-attibute {
     flex-direction: row;
     margin-right: 4px;
     flex-grow: 0;
 }
-.tokens-panel-row.player-row .tokens-panel-row-details-subtitle .subtitle-attibute img {
+.tokens-panel-row .tokens-panel-row-details-subtitle .subtitle-attibute img {
     width: 24px;
     height: 24px;
+}
+.tokens-panel-row .tokens-panel-row-details-subtitle .subtitle-attibute .material-icons {
+    font-size: 18px;
+}
+.tokens-panel-row .tokens-panel-row-details-subtitle .subtitle-attibute .plain-text {
+    font-size: 18px;
+    margin-top: -2px;
+    font-family: 'Material Icons', serif;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
 }
 .tokens-panel-row.player-row .player-expansion-button .material-icons {
     width: 100%;
