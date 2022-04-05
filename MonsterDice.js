@@ -161,31 +161,44 @@ function scan_player_creature_pane(target, tokenId) {
 	}
 
 	// replace ability scores modifiers
-	$(target).find(".ddbc-creature-block__abilities .ddbc-creature-block__ability-modifier").each(function() {
-		let currentElement = $(this)
+	$(target).find(".ddbc-creature-block__ability-stat").each(function() {
+		const currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
-			let innerHtml = currentElement.html();
-			let foundModifiers = innerHtml.match(/([\+\-] ?[0-9][0-9]?)/g);
-			if (foundModifiers.length > 0) {
-				let mod = foundModifiers[0];
-				let button = $(`<button data-exp='1d20' data-mod='${mod}' data-rolltype='tohit' class='avtt-roll-button'>${innerHtml}</button>`);
-				button.click(clickHandler);
-				button.on("contextmenu", rightClickHandler)
-				$(currentElement).html(button);
-			}
+			const abilityType = $(this).find(".ddbc-creature-block__ability-heading").html()
+			// matches (+1) 
+			let updated = currentElement.html()
+				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button'>$1</button>`); 
+			$(currentElement).html(updated);
 		}
 	});
 
 	// replace saving throws, skills, etc
-	$(target).find(".ddbc-creature-block__tidbits .ddbc-creature-block__tidbit-data").each(function() {
+	$(target).find(".ddbc-creature-block__tidbit").each(function() {
+		let tidbitIterator = 0
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
-			let updated = currentElement.html()
-				.replaceAll(/([\+\-] ?[0-9][0-9]?)/g, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>"); // <button class='avtt-roll-button' data-exp='2d20kh1' data-mod='$1'>A</button><button class='avtt-roll-button' data-exp='2d20kl1' data-mod='$1'>D</button>
-			$(currentElement).html(updated);
-			$(currentElement).find(".avtt-roll-button").click(clickHandler);
-			$(currentElement).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+			const label = $(currentElement).find(".ddbc-creature-block__tidbit-label").html()
+			console.log("label", label)
+			if (label === "Saving Throws" || label === "Skills"){
+				console.log("TIIIIIIIIIIIIIITY BITTS!")
+				// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
+				const tidbitData = $(currentElement).find(".ddbc-creature-block__tidbit-data").html().split(",")
+				console.log(tidbitData)
+				const allTidBits = []
+				tidbitData.forEach((tidbit) => {
+					// can only be saving throw or skills here, which is either save/check respectively
+					const rollType = label === "Saving Throws" ? "save" : "check"
+					// will be DEX/CON/ATHLETICS/PERCEPTION
+					const actionType = tidbit.trim().split(" ")[0]
+					// matches "+1"
+					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`) )
+					
+				})
+				const thisTidBit = $(currentElement).find(".ddbc-creature-block__tidbit-data")[tidbitIterator]
+				$(thisTidBit).html(allTidBits);				
+			}
 		}
+		tidbitIterator+=1
 	});
 
 	// replace all "to hit" and "damage" rolls
@@ -199,22 +212,29 @@ function scan_player_creature_pane(target, tokenId) {
 			const damageRollRegex = /([0-9]+d[0-9]+\s?([\+-]\s?[0-9]+)?)/g
 			// matches " +1 " or " + 1 "
 			const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
+			console.log("adding buttons")
+			let actionType = currentElement.find("strong").html()
+			console.log(actionType)
 			let updated = currentElement.html()
-				.replaceAll(damageRollRegex, "<button data-exp='$1' data-mod='' data-rolltype='damage' class='avtt-roll-button'>$1</button>")
-				.replaceAll(hitRollRegex, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>")
+				.replaceAll(damageRollRegex, `<button data-exp='$1' data-mod='' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
+				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
 			$(currentElement).html(updated);
-			$(currentElement).find(".avtt-roll-button").click(clickHandler);
-			$(currentElement).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 		}
 	});
+	$(target).find(".avtt-roll-button").click(clickHandler);
+	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 	console.groupEnd()
 }
 
 // exp: 1d20, modifier: +1, damageType: bludgeoning
-function roll_our_dice(displayName, imgUrl, expression, modifier, damageType, dmOnly) {
+function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, dmOnly) {
+	console.group("rolling_our_dice")
+	console.log(displayName, imgUrl, expression, modifier, damageType, actionType, dmOnly)
+	
 	let dice = expression;
 	// rpgDiceRoller.DiceRoll expects a modifier, so if none is supplied give a +0
-	let mod = modifier || "+0";
+	let mod = modifier.replace(/\(/g,"").replace(/\)/g,"") || "+0";
+	
 
 	if (mod && mod == "CRIT") {
 		mod = dice.replace(/^([0-9]+d[0-9]+).*$/, "$1");
@@ -238,11 +258,14 @@ function roll_our_dice(displayName, imgUrl, expression, modifier, damageType, dm
 		text: output_beauty,
 		dmonly: dmOnly,
 	};
-	window.MB.inject_chat(data);
-	if (is_characters_page()) {
-		// TODO: there's gotta be a better way
-		notify_gamelog();
-	}
+	console.log(modifier)
+	send_rpg_dice_to_ddb(expression+mod, displayName, imgUrl, rollType, damageType,  actionType, dmOnly)
+	notify_gamelog();
+// 	window.MB.inject_chat(data);
+// 	if (is_characters_page()) {
+// 		// TODO: there's gotta be a better way
+// 		notify_gamelog();
+// 	}
 }
 
 function find_currently_open_character_sheet() {
@@ -265,6 +288,7 @@ function find_currently_open_character_sheet() {
  * @param {Boolean} isDamageRoll        true if this is a damage roll, false if it's a "to hit" roll.
  * @param {function} rollButtonCallback a function that will be called with a string representation of each user selection: sendTo:[everyone|self], rollWith:[advantage|flat|disadvantage], rollAs:[crit|flat]
  */
+// TODO figure out the sendto options panel not showing up.
 function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollButtonCallback) {
 	// lifted from the player screen with a few tweaks for easier manipulation and reading
 	let overlay = $(`
@@ -276,7 +300,7 @@ function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollBut
 					<ul class="MuiList-root MuiList-padding MuiList-subheader">
 						<li class="jss3"></li>
 						
-						<li class="dm-only-option sendto-options">
+						<li class="sendto-options">
 							<ul class="jss4">
 								<li class="MuiListSubheader-root MuiListSubheader-sticky MuiListSubheader-gutters">Send To:</li>
 								<div data-sendto="everyone" class="MuiButtonBase-root MuiListItem-root jss6 MuiListItem-gutters MuiListItem-button" tabindex="0" role="button" aria-disabled="false">
@@ -431,6 +455,7 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 	let rollType = pressedButton.attr('data-rolltype');
 
 	display_roll_button_contextmenu(contextmenuEvent, rollType == "damage", function(sendTo, rollWith, rollAs) {
+		let rollType = "to hit"
 		if (rollWith == "advantage") {
 			expression = "2d20kh1";
 		} else if (rollWith == "disadvantage") {
@@ -438,8 +463,10 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 		}
 		if (rollAs == "crit") {
 			modifier = "CRIT";
+			rollType = "damage"
 		}
-		roll_our_dice(displayName, imgUrl, expression, modifier, damageType, sendTo == "self");
+		const rolltype = rollWith === ""
+		roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, sendTo == "self");
 	});
 }
 
@@ -448,5 +475,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl) {
 	let expression = pressedButton.attr('data-exp');
 	let modifier = pressedButton.attr('data-mod');
 	let damageType = pressedButton.attr('data-rolldamagetype');
-	roll_our_dice(displayName, imgUrl, expression, modifier, damageType, false);
+	let rollType = pressedButton.attr('data-rolltype');
+	let actionType = pressedButton.attr('data-actiontype');
+	roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, false);
 }

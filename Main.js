@@ -2990,10 +2990,22 @@ function init_help_menu() {
  * @param {Boolean} toSelf    whether this is sent to self or everyone
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
-function send_rpg_dice_to_ddb(expression, toSelf = true) {
-	return false;
+// send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
+function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType, damageType, actionType, dmOnly) {
+	// TODOS
+	// DM ONLY / TO SELF
+	// ACTION NAMES?!
+	// SAVING THROWS?!
+
+
+	console.group("send_rpg_dice_to_ddb")
+	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, dmOnly)
+	// return false;
 	try {
 		expression = expression.replace(/\s+/g, ''); // remove all whitespace
+		if (expression.startsWith("+") || expression.startsWith("-")){
+			expression.prepend("1d20")
+		}
 
 		const supportedDieTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"];
 
@@ -3012,10 +3024,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				choppedExpression = choppedExpression.slice(idx + currentRoll.length);
 			}
 		}
+		console.log("chopped expression", choppedExpression)
 		notationList.push(choppedExpression); // our last notation will still be here so add it to the list
 
 		if (roll.rolls.length != notationList.length) {
 			console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
+			console.groupEnd()
 			return false;
 		}
 
@@ -3030,6 +3044,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
 				if (!supportedDieTypes.includes(currentDieType)) {
 					console.warn(`found an unsupported dieType ${currentNotation}`);
+					console.groupEnd()
 					return false;
 				}
 				if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
@@ -3044,6 +3059,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 				let dice = currentRoll.rolls.map(d => {
 					allValues.push(d.value);
+					console.groupEnd()
 					return { dieType: currentDieType, dieValue: d.value };
 				});
 
@@ -3064,6 +3080,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 						constantsTotal += currentRoll;
 					} else {
 						console.warn(`found an unexpected symbol ${convertedExpression[i-1]}`);
+						console.groupEnd()
 						return false;
 					}
 				} else {
@@ -3071,6 +3088,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 			}
 		}
+		console.log("convertedExpression", convertedExpression)
 
 		let ddbJson = {
 			id: uuid(),
@@ -3079,18 +3097,19 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 			userId: window.MB.userid,
 			source: "web",
 			persist: true,
-			messageScope: toSelf ? "userId" : "gameId",
-			messageTarget: toSelf ? window.MB.userid : window.MB.gameid,
+			messageScope: "gameId",
+			messageTarget: window.MB.gameid,
 			entityId: window.MB.userid,
 			entityType: "user",
 			eventType: "dice/roll/fulfilled",
 			data: {
-				action: "custom",
+				action: actionType || "custom",
 				context: {
 					entityId: window.MB.userid,
 					entityType: "user",
 					messageScope: "userId",
-					messageTarget: window.MB.userid
+					messageTarget: window.MB.gameid,
+					name: displayName
 				},
 				rollId: uuid(),
 				rolls: [
@@ -3100,7 +3119,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 							constant: constantsTotal
 						},
 						diceNotationStr: expression,
-						rollType: "roll",
+						rollType: rollType,
 						rollKind: expression.includes("kh") ? "advantage" : expression.includes("kl") ? "disadvantage" : "",
 						result: {
 							constant: constantsTotal,
@@ -3112,9 +3131,10 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				]
 			}
 		};
-
+		console.log(ddbJson)
 		if (window.MB.ws.readyState == window.MB.ws.OPEN) {
 			window.MB.ws.send(JSON.stringify(ddbJson));
+			console.groupEnd()
 			return true;
 		} else { // TRY TO RECOVER
 			get_cobalt_token(function(token) {
@@ -3123,10 +3143,13 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 					window.MB.ws.send(JSON.stringify(ddbJson));
 				});
 			});
+			console.groupEnd()
 			return true; // we can't guarantee that this actually worked, unfortunately
 		}
+		console.groupEnd()
 	} catch (error) {
 		console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
+		console.groupEnd()
 		return false;
 	}
 }
