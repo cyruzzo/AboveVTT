@@ -38,7 +38,6 @@
 		"jquery-3.6.0.min.js",
 		"assets/*",
 		"images/*",
-		"font/*",
 		"ajaxQueue/*",
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
