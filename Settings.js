@@ -420,7 +420,8 @@ function export_file(){
 			var tmp=DataFile.tokendata.folders['AboveVTT BUILTIN'];
 			delete DataFile.tokendata.folders['AboveVTT BUILTIN'];
 			DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
-			
+			DataFile.mytokens=mytokens;
+			DataFile.emptyfolders=emptyfolders;
 			DataFile.notes=window.JOURNAL.notes;
 			DataFile.journalchapters=window.JOURNAL.chapters;	
 			DataFile.soundpads=window.SOUNDPADS;
@@ -457,6 +458,15 @@ function import_readfile() {
 		}
 		$("#sounds-panel").remove(); init_audio();
 		persist_soundpad();
+
+		if (DataFile.mytokens !== undefined) {
+			mytokens = DataFile.mytokens;
+		}
+		if (DataFile.emptyfolders !== undefined) {
+			emptyfolders = DataFile.emptyfolders;
+		}
+		persist_mytokens();
+
 		for(k in DataFile.tokendata.folders){
 			tokendata.folders[k]=DataFile.tokendata.folders[k];
 		}

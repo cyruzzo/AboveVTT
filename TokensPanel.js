@@ -20,10 +20,6 @@ function sanitize_folder_path(dirtyPath) {
 }
 
 function migrate_to_my_tokens() {
-    if (mytokens.length > 0) {
-        // we already did this. no need to continue
-        return;
-    }
 
     console.groupCollapsed("migrate_to_my_tokens");
 
@@ -38,10 +34,18 @@ function migrate_to_my_tokens() {
                 if (token['data-name'] === undefined) {
                     token['data-name'] = tokenKey;
                 }
-                mytokens.push(token);
+                if (mytokens.includes(token)) {
+                    console.log("not adding duplicate token", token);
+                } else {
+                    mytokens.push(token);
+                }
             }
         } else {
-            emptyfolders.push(currentFolderPath);
+            if (emptyfolders.includes(currentFolderPath)) {
+                console.log("not adding duplicate empty folder", currentFolderPath);
+            } else {
+                emptyfolders.push(currentFolderPath);
+            }
         }
         if (folder.folders) {
             for (let folderKey in folder.folders) {
@@ -424,11 +428,13 @@ function init_tokens_panel() {
         TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameMonsters)
     ];
 
-    if(localStorage.getItem('CustomTokens') != null){
-        tokendata = $.parseJSON(localStorage.getItem('CustomTokens'));
-        // mytokens = $.parseJSON(localStorage.getItem('MyTokens'));
+    if(localStorage.getItem('MyTokens') != null){
+        mytokens = $.parseJSON(localStorage.getItem('MyTokens'));
     }
-    // tokendata.folders['AboveVTT BUILTIN'] = tokenbuiltin; // TODO: migrate this to the new way, but don't store it to localStorage
+    if(localStorage.getItem('MyTokensEmptyFolders') != null){
+        emptyfolders = $.parseJSON(localStorage.getItem('MyTokensEmptyFolders'));
+    }
+
     migrate_to_my_tokens();
     rebuild_token_items_list();
     filter_token_list();
@@ -443,39 +449,6 @@ function init_tokens_panel() {
         filter_token_list(textValue)
     }, 500));
     header.append(searchInput);
-
-    // TODO: save this to use on folder rows
-    // let addTokenButton = $(`<button id="add-token-btn" class="sidebar-panel-footer-button">Add Token</button>`);
-    // addTokenButton.click(function(event) {
-    //     let path = $(event.target).attr("data-folder-path");
-    //     if (path === undefined) {
-    //         path = "";
-    //     }
-    //     display_custom_token_form(path);
-    // });
-    // let addFolderButton = $(`<button id="add-folder-btn" class="sidebar-panel-footer-button">Add Folder</button>`);
-    // addFolderButton.click(function(event) {
-    //     var newfoldername = prompt("Enter the name of the new folder");
-    //     if (newfoldername === undefined || newfoldername === "") {
-    //         // don't add folders when cancel is pressed or if they didn't enter a folder name at all
-    //         return;
-    //     }
-    //     let path = window.CURRENT_TOKEN_PATH;
-    //     if (path === undefined) {
-    //         path = "";
-    //     }
-    //     let folder = convert_path(path);
-    //     if(!folder.folders) {
-    //         folder.folders = {};
-    //     }
-    //     folder.folders[newfoldername] = {};
-    //     persist_customtokens();
-    // });
-    //
-    // let buttonWrapper = $(`<div class="sidebar-panel-footer-horizontal-wrapper"></div>`)
-    // buttonWrapper.append(addTokenButton);
-    // buttonWrapper.append(addFolderButton);
-    // tokensPanel.footer.append(buttonWrapper);
 
     register_token_row_context_menu();             // context menu for each row
     register_custom_monster_image_context_menu();  // context menu for images within the customization modal
@@ -1386,7 +1359,8 @@ function create_token_inside(listItem) {
 }
 
 function persist_mytokens() {
-    console.error("TODO: persist_mytokens");
+    localStorage.setItem("MyTokens", JSON.stringify(mytokens));
+    localStorage.setItem("MyTokensEmptyFolders", JSON.stringify(emptyfolders));
 }
 
 function did_change_items() {
