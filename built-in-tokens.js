@@ -3,62 +3,62 @@ const builtInTokens = [
   {
     "name": "Blood",
     "folderPath": "/Overlays",
-    "imgsrc": "https://drive.google.com/file/d/1frTuvq-64DA23ayC6P0XGZyo0M6paEID/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1frTuvq-64DA23ayC6P0XGZyo0M6paEID/view?usp=sharing",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Big Bang",
     "folderPath": "/Overlays",
-    "imgsrc": "https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/19pbEuWVSQo15vmlsnJry-q3ordcAlaej/view?usp=sharing",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Fire",
     "folderPath": "/Overlays",
-    "imgsrc": "https://drive.google.com/file/d/1_wE3B5rvr38cM9NMbCQ__WUf0RIXIuhQ/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1_wE3B5rvr38cM9NMbCQ__WUf0RIXIuhQ/view?usp=sharing",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Flame 1",
     "folderPath": "/Overlays",
-    "imgsrc": "https://thumbs.gfycat.com/GiddyMajorDingo-small.gif",
+    "image": "https://thumbs.gfycat.com/GiddyMajorDingo-small.gif",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Flame 2",
     "folderPath": "/Overlays",
-    "imgsrc": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
+    "image": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Nebula",
     "folderPath": "/Overlays",
-    "imgsrc": "https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Web",
     "folderPath": "/Overlays",
-    "imgsrc": "https://drive.google.com/file/d/1rGuD7FMtzy6XR0qcsewndhS33wZL8vEM/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1rGuD7FMtzy6XR0qcsewndhS33wZL8vEM/view?usp=sharing",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Heartseeker Blade",
     "folderPath": "/Weapons",
-    "imgsrc": "https://drive.google.com/file/d/1Ft84c1VwnEhwKPew8Yyq8w8NFViC7Mr7/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1Ft84c1VwnEhwKPew8Yyq8w8NFViC7Mr7/view?usp=sharing",
     "disablestat": true
   },
   {
     "name": "Commoner",
     "folderPath": "/",
-    "imgsrc": "https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
     "alternativeImages": [
       "https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
       "https://drive.google.com/file/d/14sNpLcJlzOfL4A5Qb_zdrYmOTZk51GTM/view?usp=sharing",
@@ -80,7 +80,7 @@ const builtInTokens = [
   {
     "name": "Dragonborn [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/92aaNuq.png",
+    "image": "https://i.imgur.com/92aaNuq.png",
     "alternativeImages": [
       "https://i.imgur.com/92aaNuq.png",
       "https://i.imgur.com/4WTK514.png",
@@ -91,7 +91,7 @@ const builtInTokens = [
   {
     "name": "Dragonborn [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/0qQpdH6.png",
+    "image": "https://i.imgur.com/0qQpdH6.png",
     "alternativeImages": [
       "https://i.imgur.com/0qQpdH6.png",
       "https://i.imgur.com/EnMudqy.png",
@@ -113,7 +113,7 @@ const builtInTokens = [
   {
     "name": "Drow [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/lwPqseX.png",
+    "image": "https://i.imgur.com/lwPqseX.png",
     "alternativeImages": [
       "https://i.imgur.com/lwPqseX.png",
       "https://i.imgur.com/cVaeAum.png",
@@ -139,7 +139,7 @@ const builtInTokens = [
   {
     "name": "Drow [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/RgY5TkF.png",
+    "image": "https://i.imgur.com/RgY5TkF.png",
     "alternativeImages": [
       "https://i.imgur.com/RgY5TkF.png",
       "https://i.imgur.com/RsCAhou.png",
@@ -160,7 +160,7 @@ const builtInTokens = [
   {
     "name": "Dwarf [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/4Xuzbp6.png",
+    "image": "https://i.imgur.com/4Xuzbp6.png",
     "alternativeImages": [
       "https://i.imgur.com/4Xuzbp6.png",
       "https://i.imgur.com/AmuvYtQ.png",
@@ -173,7 +173,7 @@ const builtInTokens = [
   {
     "name": "Dwarf [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/T6K1v8s.png",
+    "image": "https://i.imgur.com/T6K1v8s.png",
     "alternativeImages": [
       "https://i.imgur.com/T6K1v8s.png",
       "https://i.imgur.com/7xgLl17.png",
@@ -199,7 +199,7 @@ const builtInTokens = [
   {
     "name": "Elf [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/5brExHK.png",
+    "image": "https://i.imgur.com/5brExHK.png",
     "alternativeImages": [
       "https://i.imgur.com/5brExHK.png",
       "https://i.imgur.com/97Ssvg7.png",
@@ -224,7 +224,7 @@ const builtInTokens = [
   {
     "name": "Elf [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/KhyErAR.png",
+    "image": "https://i.imgur.com/KhyErAR.png",
     "alternativeImages": [
       "https://i.imgur.com/KhyErAR.png",
       "https://i.imgur.com/bh9ZIeg.png",
@@ -275,7 +275,7 @@ const builtInTokens = [
   {
     "name": "Genasi",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/YnlG0US.png",
+    "image": "https://i.imgur.com/YnlG0US.png",
     "alternativeImages": [
       "https://i.imgur.com/YnlG0US.png",
       "https://i.imgur.com/6TrSNc8.png",
@@ -288,7 +288,7 @@ const builtInTokens = [
   {
     "name": "Guard [M]",
     "folderPath": "/",
-    "imgsrc": "https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing",
     "alternativeImages": [
       "https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing"
     ]
@@ -296,7 +296,7 @@ const builtInTokens = [
   {
     "name": "Human [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/NjP2sGL.png",
+    "image": "https://i.imgur.com/NjP2sGL.png",
     "alternativeImages": [
       "https://i.imgur.com/NjP2sGL.png",
       "https://i.imgur.com/H8Q36Zh.png",
@@ -329,7 +329,7 @@ const builtInTokens = [
   {
     "name": "Human [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/vyeBFvg.png",
+    "image": "https://i.imgur.com/vyeBFvg.png",
     "alternativeImages": [
       "https://i.imgur.com/vyeBFvg.png",
       "https://i.imgur.com/iicVOSh.png",
@@ -436,7 +436,7 @@ const builtInTokens = [
   {
     "name": "Maid [F]",
     "folderPath": "/",
-    "imgsrc": "https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing",
+    "image": "https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing",
     "alternativeImages": [
       "https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing"
     ]
@@ -444,7 +444,7 @@ const builtInTokens = [
   {
     "name": "Orc [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/gmUUKun.png",
+    "image": "https://i.imgur.com/gmUUKun.png",
     "alternativeImages": [
       "https://i.imgur.com/gmUUKun.png",
       "https://i.imgur.com/L0lLPWH.png",
@@ -455,7 +455,7 @@ const builtInTokens = [
   {
     "name": "Orc [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/4pWxSUn.png",
+    "image": "https://i.imgur.com/4pWxSUn.png",
     "alternativeImages": [
       "https://i.imgur.com/4pWxSUn.png",
       "https://i.imgur.com/OCrXvMz.png",
@@ -473,7 +473,7 @@ const builtInTokens = [
   {
     "name": "Tiefling [F]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/r6fKPlI.png",
+    "image": "https://i.imgur.com/r6fKPlI.png",
     "alternativeImages": [
       "https://i.imgur.com/r6fKPlI.png",
       "https://i.imgur.com/gbs56aT.png",
@@ -498,7 +498,7 @@ const builtInTokens = [
   {
     "name": "Tiefling [M]",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/iLKRQF5.png",
+    "image": "https://i.imgur.com/iLKRQF5.png",
     "alternativeImages": [
       "https://i.imgur.com/iLKRQF5.png",
       "https://i.imgur.com/H6EYE4b.png",
@@ -516,7 +516,7 @@ const builtInTokens = [
   {
     "name": "Warforged",
     "folderPath": "/",
-    "imgsrc": "https://i.imgur.com/N5Nvgkw.png",
+    "image": "https://i.imgur.com/N5Nvgkw.png",
     "alternativeImages": [
       "https://i.imgur.com/N5Nvgkw.png",
       "https://i.imgur.com/8K3HZZJ.png",

@@ -28,16 +28,31 @@ function migrate_to_my_tokens() {
         let folder = convert_path(currentFolderPath);
         if (folder.tokens) {
             for(let tokenKey in folder.tokens) {
-                let token = folder.tokens[tokenKey];
-                token['data-folderpath'] = currentFolderPath;
-                token['data-oldFolderKey'] = tokenKey; // not sure if we'll need this, but hopefully not
-                if (token['data-name'] === undefined) {
-                    token['data-name'] = tokenKey;
+                let oldToken = folder.tokens[tokenKey];
+                let newToken = {};
+                for (let k in oldToken) {
+                    let v = oldToken[k];
+                    if (k === "data-token-size") {
+                        newToken.tokenSize = v;
+                    } else if (k === "data-alternative-images") {
+                        newToken.alternativeImages = v;
+                    } else if (k.startsWith("data-")) {
+                        newToken[k.replace("data-", "")] = v;
+                    } else {
+                        newToken[k] = v;
+                    }
                 }
-                if (mytokens.includes(token)) {
-                    console.log("not adding duplicate token", token);
+                if (newToken.name === undefined) {
+                    newToken.name = tokenKey;
+                }
+                newToken.folderPath = currentFolderPath;
+                newToken.image = parse_img(newToken.img);
+                delete newToken.img;
+                if (mytokens.includes(newToken)) {
+                    console.log("not adding duplicate token", newToken);
                 } else {
-                    mytokens.push(token);
+                    console.log("successfully migrated token", newToken, "from", oldToken);
+                    mytokens.push(newToken);
                 }
             }
         } else {
@@ -94,40 +109,35 @@ class TokenListItem {
      * @param name {string} the name displayed to the user
      * @param image {string} the src of the img tag
      * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
-     * @param subtitle {string} the string displayed under the name
      * @param folderPath {string} the folder this token is in
      */
-    constructor(name, image, type, subtitle, folderPath = TokenListItem.PathRoot) {
+    constructor(name, image, type, folderPath = TokenListItem.PathRoot) {
         this.name = name;
         this.image = image;
         this.type = type;
-        this.subtitle = subtitle;
         this.folderPath = sanitize_folder_path(folderPath);
     }
-    static Folder(folderPath, name, subtitle) {
+    static Folder(folderPath, name) {
         console.debug(`TokenListItem.Folder ${folderPath}/${name}`);
-        return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, subtitle, folderPath);
+        return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, folderPath);
     }
-    static MyToken(tokenData, subtitle) {
-        let name = tokenData["data-name"];
+    static MyToken(tokenData) {
         console.debug("TokenListItem.MyToken", tokenData);
-        let myTokenPath = tokenData["data-folderpath"];
-        return new TokenListItem(name, tokenData["data-img"], TokenListItem.TypeMyToken, subtitle, `${TokenListItem.PathMyTokens}/${myTokenPath}`);
+        return new TokenListItem(tokenData.name, tokenData.image, TokenListItem.TypeMyToken, `${TokenListItem.PathMyTokens}/${tokenData.folderPath}`);
     }
-    static BuiltinToken(tokenData, subtitle) {
-        let name = tokenData.name;
+    static BuiltinToken(tokenData) {
         console.debug("TokenListItem.BuiltinToken", tokenData);
-        return new TokenListItem(name, tokenData.imgsrc, TokenListItem.TypeBuiltinToken, subtitle, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
+        return new TokenListItem(tokenData.name, tokenData.image, TokenListItem.TypeBuiltinToken, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
     }
-    static Monster(monsterData, subtitle) {
+    static Monster(monsterData) {
         console.debug("TokenListItem.Monster", monsterData);
-        let item = new TokenListItem(monsterData.name, monsterData.avatarUrl, TokenListItem.TypeMonster, subtitle, TokenListItem.PathMonsters);
+        let item = new TokenListItem(monsterData.name, monsterData.avatarUrl, TokenListItem.TypeMonster, TokenListItem.PathMonsters);
         item.monsterData = monsterData;
         return item;
     }
-    static PC(sheet, name, imgSrc, subtitle) {
-        console.debug("TokenListItem.PC", sheet, name, imgSrc);
-        let item = new TokenListItem(name, imgSrc, TokenListItem.TypePC, subtitle, TokenListItem.PathPlayers);
+    static PC(sheet, name, image) {
+        console.debug("TokenListItem.PC", sheet, name, image);
+        let item = new TokenListItem(name, image, TokenListItem.TypePC, TokenListItem.PathPlayers);
         item.sheet = sheet;
         return item;
     }
@@ -293,7 +303,7 @@ function matches_full_path(html, fullPath) {
 
 function find_my_token(fullPath) {
     let found = mytokens.find(t => {
-        let dirtyPath = `${TokenListItem.PathMyTokens}${t["data-folderpath"]}/${t["data-name"]}`;
+        let dirtyPath = `${TokenListItem.PathMyTokens}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.log("find_my_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -312,7 +322,7 @@ function rebuild_token_items_list() {
     let knownPaths = [];
     for (let i = 0; i < mytokens.length; i++) {
         let myToken = mytokens[i];
-        let path = myToken['data-folderpath'];
+        let path = myToken.folderPath;
         if (path !== TokenListItem.PathRoot && !knownPaths.includes(path)) {
             // we haven't built this folder item yet so do that now
             let pathComponents = path.split("/");
@@ -330,7 +340,7 @@ function rebuild_token_items_list() {
         let folderName = components.pop();
         let folderPath = components.join("/");
         let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
-        tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName, "EMPTY FOLDER"));
+        tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName));
     }
 
     // AboveVTT Tokens
@@ -434,6 +444,9 @@ function init_tokens_panel() {
     if(localStorage.getItem('MyTokensEmptyFolders') != null){
         emptyfolders = $.parseJSON(localStorage.getItem('MyTokensEmptyFolders'));
     }
+    if(localStorage.getItem('CustomTokens') != null){
+        tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
+    }
 
     migrate_to_my_tokens();
     rebuild_token_items_list();
@@ -480,7 +493,6 @@ function redraw_token_list(searchTerm) {
             let row = build_token_row(item);
             console.debug("appending item", item);
             find_html_row_from_path(item.folderPath, list).find(` > .folder-token-list`).append(row);
-            // list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
         });
 
     // now let's add all the other items
@@ -491,7 +503,6 @@ function redraw_token_list(searchTerm) {
             let row = build_token_row(item);
             console.debug("appending item", item);
             find_html_row_from_path(item.folderPath, list).find(` > .folder-token-list`).append(row);
-            // list.find(`[data-full-path='${item.folderPath}'] > .folder-token-list`).append(row);
         });
 
     tokensPanel.body.empty();
@@ -525,13 +536,10 @@ function build_token_row(listItem, enableDrag = true) {
     details.append(title);
     let subtitle = $(`<div class="tokens-panel-row-details-subtitle"></div>`);
     details.append(subtitle);
-    if (listItem.subtitle !== undefined) {
-        subtitle.text(listItem.subtitle);
-    }
 
     if (!listItem.isTypeFolder()) {
         let addButton = $(`
-            <button class="token-row-button token-row-add" title="${listItem.name}" data-name="${listItem.name}" data-img="${listItem.image}">
+            <button class="token-row-button token-row-add" title="${listItem.name}">
                 <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
             </button>
         `);
@@ -541,9 +549,7 @@ function build_token_row(listItem, enableDrag = true) {
 
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
-            if (listItem.subtitle === undefined || listItem.subtitle.length === 0) {
-                subtitle.hide();
-            }
+            subtitle.hide();
             row.append(`<div class="folder-token-list"></div>`);
             row.addClass("folder");
             if (!rootfolders.includes(listItem)) {
@@ -569,10 +575,10 @@ function build_token_row(listItem, enableDrag = true) {
             }
             break;
         case TokenListItem.TypeMyToken:
+            subtitle.hide();
             // TODO: Style specifically for My Tokens
             break;
         case TokenListItem.TypePC:
-
             let playerData = window.PLAYER_STATS[listItem.sheet];
             if (playerData === undefined) {
                 subtitle.text("loading character details");
@@ -633,25 +639,22 @@ function build_token_row(listItem, enableDrag = true) {
 
             break;
         case TokenListItem.TypeMonster:
-
             row.attr("data-monster", listItem.monsterData.id);
-
-            if (listItem.subtitle === undefined || listItem.subtitle.length === 0) {
-                subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
-                if (listItem.monsterData.isHomebrew === true) {
-                    subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">alt_route</span>Homebrew</div>`);
-                } else if (listItem.monsterData.isReleased === false) {
-                    subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="color:darkred">block</span>No Access</div>`);
-                }
+            subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
+            if (listItem.monsterData.isHomebrew === true) {
+                subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">alt_route</span>Homebrew</div>`);
+            } else if (listItem.monsterData.isReleased === false) {
+                subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="color:darkred">block</span>No Access</div>`);
             }
 
             break;
         case TokenListItem.TypeBuiltinToken:
+            subtitle.hide();
             // TODO: Style specifically for Builtin
             break;
     }
 
-    if (listItem.canEdit()) {
+    if (listItem.canEdit() || listItem.isTypeBuiltinToken()) { // can't edit builtin, but need access to the list of images for drag and drop reasons.
         let settingsButton = $(`
             <div class="token-row-gear">
                 <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
@@ -821,11 +824,11 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             break;
         case TokenListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
-            options.square = myToken['data-square'];
-            options.disableborder = myToken['data-disableborder'];
-            options.legacyaspectratio = myToken['data-legacyaspectratio'];
+            options.square = myToken.square;
+            options.disableborder = myToken.disableborder;
+            options.legacyaspectratio = myToken.legacyaspectratio;
             options.disablestat = true;
-            let tokenSizeSetting = myToken['data-token-size'];
+            let tokenSizeSetting = myToken.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1;
@@ -896,7 +899,7 @@ function token_size_for_item(listItem) {
             return 1;
         case TokenListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
-            let tokenSizeSetting = myToken['data-token-size'];
+            let tokenSizeSetting = myToken.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1; // TODO: handle custom sizes
@@ -925,7 +928,7 @@ function random_image_for_item(listItem, specificImage) {
     switch (listItem.type) {
         case TokenListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
-            let myTokenAltImages = myToken["data-alternative-images"];
+            let myTokenAltImages = myToken.alternativeImages;
             if (myTokenAltImages !== undefined && myTokenAltImages.length > 0) {
                 let randomIndex = getRandomInt(0, myTokenAltImages.length);
                 console.debug("random_image_for_item myTokenAltImages", myTokenAltImages, randomIndex);
@@ -1177,7 +1180,7 @@ function display_my_token_configure_modal(listItem) {
 }
 
 function path_exists(folderPath) {
-    if (mytokens.filter(token => token['data-folderpath'] === folderPath).length > 0) {
+    if (mytokens.filter(token => token.folderPath === folderPath).length > 0) {
         return true;
     }
     return emptyfolders.includes(folderPath);
@@ -1222,11 +1225,11 @@ function rename_folder(item, newName) {
     let didUpdateTokens = false;
     let adjustedPath = fromFullPath.replace(TokenListItem.PathMyTokens, "");
     mytokens.filter(token => {
-        console.debug(`filtering ${token['data-name']} folderpath`, token['data-folderpath'], adjustedPath);
-        return token['data-folderpath'] === adjustedPath
+        console.debug(`filtering ${token.name} folderPath`, token.folderPath, adjustedPath);
+        return token.folderPath === adjustedPath
     }).forEach(token => {
         console.debug(`changing ${token.name} folderpath`);
-        token['data-folderpath'] = toFullPath;
+        token.folderPath = toFullPath;
         didUpdateTokens = true;
     });
 
@@ -1270,10 +1273,10 @@ function delete_folder_and_delete_children(listItem) {
     console.log("about to delete folder and everything in", adjustedPath);
 
     mytokens.filter(token => {
-        console.debug(`filtering ${token['data-name']} folderpath`, token['data-folderpath'], adjustedPath);
-        return token['data-folderpath'] === adjustedPath;
+        console.debug(`filtering ${token.name} folderPath`, token.folderPath, adjustedPath);
+        return token.folderPath === adjustedPath;
     }).forEach(token => {
-        console.debug(`deleting ${token['data-name']}`, token);
+        console.debug(`deleting ${token.name}`, token);
         array_remove_index_by_value(mytokens, token);
     });
 
@@ -1304,9 +1307,9 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     console.log(`about to delete folder ${adjustedPath} and move its children up one level to ${oneLevelUp}`);
 
     mytokens.forEach(token => {
-        if (token['data-folderpath'] === adjustedPath) {
-            console.debug(`moving ${token['data-name']} up one level`, token);
-            token['data-folderpath'] = oneLevelUp;
+        if (token.folderPath === adjustedPath) {
+            console.debug(`moving ${token.name} up one level`, token);
+            token.folderPath = oneLevelUp;
         }
     });
 
@@ -1355,7 +1358,29 @@ function create_token_inside(listItem) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
     }
-    console.error("TODO: create a mytoken inside", listItem);
+
+    // TODO: add default token settings?
+    let newItem = TokenListItem.MyToken({
+        name: "New Token",
+        folderPath: listItem.fullPath()
+    });
+    console.log("create_token_inside created a new item", newItem);
+
+    display_mytoken_configuration_modal(newItem);
+}
+
+function display_mytoken_configuration_modal(listItem) {
+    if (!listItem?.isTypeMyToken()) {
+        console.warn("display_mytoken_configuration_modal was called with incorrect item type", listItem);
+        return;
+    }
+
+    // close any that are already open just to be safe
+    close_sidebar_modal();
+
+
+
+
 }
 
 function persist_mytokens() {
