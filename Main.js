@@ -1964,18 +1964,19 @@ function inject_chat_buttons() {
 					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image);
 				}
 				if (sentAsDDB) {
+					console.groupEnd()
 					return;
 				}
 			}
 
 			if(text.startsWith("/help")) {
 				window.open("https://dice-roller.github.io/documentation/guide/notation/dice.html#standard-d-n")
+				console.groupEnd()
 				return
 			}
 
 			if(text.startsWith("/w")) {
 				let matches = text.match(/\[(.*?)\] (.*)/);
-				console.log(matches);
 				whisper=matches[1]
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}

@@ -71,7 +71,6 @@ function scan_monster(target, stats, token_id=false) {
 			mod = mod;
 
 		expression = dice + mod;
-		console.log(expression);
 		let sentAsDDB = send_rpg_dice_to_ddb(expression);
 		if (sentAsDDB) {
 			return;
@@ -178,12 +177,9 @@ function scan_player_creature_pane(target, tokenId) {
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
 			const label = $(currentElement).find(".ddbc-creature-block__tidbit-label").html()
-			console.log("label", label)
 			if (label === "Saving Throws" || label === "Skills"){
-				console.log("TIIIIIIIIIIIIIITY BITTS!")
 				// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
 				const tidbitData = $(currentElement).find(".ddbc-creature-block__tidbit-data").html().split(",")
-				console.log(tidbitData)
 				const allTidBits = []
 				tidbitData.forEach((tidbit) => {
 					// can only be saving throw or skills here, which is either save/check respectively
@@ -212,9 +208,7 @@ function scan_player_creature_pane(target, tokenId) {
 			const damageRollRegex = /(([0-9]+d[0-9]+)\s?([\+-]\s?[0-9]+)?)/g
 			// matches " +1 " or " + 1 "
 			const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
-			console.log("adding buttons")
 			let actionType = currentElement.find("strong").html() || "custom"
-			console.log(actionType)
 			let updated = currentElement.html()
 				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
 				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
@@ -229,7 +223,6 @@ function scan_player_creature_pane(target, tokenId) {
 // exp: 1d20, modifier: +1, damageType: bludgeoning
 function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo) {
 	console.group("rolling_our_dice")
-	console.log(displayName, imgUrl, expression, modifier, damageType, actionType, sendTo)
 
 	let dice = expression;
 	// rpgDiceRoller.DiceRoll expects a modifier, so if none is supplied give a +0
@@ -251,9 +244,6 @@ function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, dama
 	if(damageType){
 		output_beauty += ` <b>${damageType}</b>`;
 	}
-	
-	
-	console.log(modifier)
 	
 	const result = send_rpg_dice_to_ddb(expression+mod, displayName, imgUrl, rollType, damageType,  actionType, sendTo)
 	result ? notify_gamelog() : console.warn("Message could not be sent to DDB")
@@ -281,7 +271,6 @@ function find_currently_open_character_sheet() {
  */
 function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollButtonCallback) {
 	// lifted from the player screen with a few tweaks for easier manipulation and reading
-	console.log("DISPLAYING BUTTON CONTEXT MENU is damage=", isDamageRoll)
 	let overlay = $(`
 		<div role="presentation" class="MuiPopover-root jss2" id="options-menu" style="position: fixed; z-index: 1300; inset: 0px;">
 			<div aria-hidden="true" style="z-index: -1; position: fixed; inset: 0px; background-color: transparent;"></div>
@@ -441,7 +430,6 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 	let actionType = pressedButton.attr('data-actiontype');
 
 	display_roll_button_contextmenu(contextmenuEvent, rollType === "damage", function(sendTo, rollWith, rollAs) {
-		console.log(contextmenuEvent, sendTo, rollWith, rollAs)
 		if (rollWith == "advantage") {
 			expression = "2d20kh1";
 		} else if (rollWith == "disadvantage") {
@@ -464,6 +452,5 @@ function roll_button_clicked(clickEvent, displayName, imgUrl) {
 	let damageType = pressedButton.attr('data-rolldamagetype');
 	let rollType = pressedButton.attr('data-rolltype');
 	let actionType = pressedButton.attr('data-actiontype');
-	console.log(displayName, imgUrl, expression, modifier, rollType, damageType, actionType)
 	roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType);
 }
