@@ -209,14 +209,14 @@ function scan_player_creature_pane(target, tokenId) {
 			// to account for all the nuances of DNDB dice notation.
 			// numbers can be swapped for any number in the following comment
 			// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-			const damageRollRegex = /([0-9]+d[0-9]+\s?([\+-]\s?[0-9]+)?)/g
+			const damageRollRegex = /(([0-9]+d[0-9]+)\s?([\+-]\s?[0-9]+)?)/g
 			// matches " +1 " or " + 1 "
 			const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
 			console.log("adding buttons")
-			let actionType = currentElement.find("strong").html()
+			let actionType = currentElement.find("strong").html() || "custom"
 			console.log(actionType)
 			let updated = currentElement.html()
-				.replaceAll(damageRollRegex, `<button data-exp='$1' data-mod='' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
+				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
 				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
 			$(currentElement).html(updated);
 		}
@@ -227,10 +227,10 @@ function scan_player_creature_pane(target, tokenId) {
 }
 
 // exp: 1d20, modifier: +1, damageType: bludgeoning
-function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, dmOnly) {
+function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo) {
 	console.group("rolling_our_dice")
-	console.log(displayName, imgUrl, expression, modifier, damageType, actionType, dmOnly)
-	
+	console.log(displayName, imgUrl, expression, modifier, damageType, actionType, sendTo)
+
 	let dice = expression;
 	// rpgDiceRoller.DiceRoll expects a modifier, so if none is supplied give a +0
 	let mod = modifier.replace(/\(/g,"").replace(/\)/g,"") || "+0";
@@ -252,20 +252,11 @@ function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, dama
 		output_beauty += ` <b>${damageType}</b>`;
 	}
 	
-	let data = {
-		player: displayName,
-		img: imgUrl,
-		text: output_beauty,
-		dmonly: dmOnly,
-	};
+	
 	console.log(modifier)
-	send_rpg_dice_to_ddb(expression+mod, displayName, imgUrl, rollType, damageType,  actionType, dmOnly)
-	notify_gamelog();
-// 	window.MB.inject_chat(data);
-// 	if (is_characters_page()) {
-// 		// TODO: there's gotta be a better way
-// 		notify_gamelog();
-// 	}
+	
+	const result = send_rpg_dice_to_ddb(expression+mod, displayName, imgUrl, rollType, damageType,  actionType, sendTo)
+	result ? notify_gamelog() : console.warn("Message could not be sent to DDB")
 }
 
 function find_currently_open_character_sheet() {
@@ -288,9 +279,9 @@ function find_currently_open_character_sheet() {
  * @param {Boolean} isDamageRoll        true if this is a damage roll, false if it's a "to hit" roll.
  * @param {function} rollButtonCallback a function that will be called with a string representation of each user selection: sendTo:[everyone|self], rollWith:[advantage|flat|disadvantage], rollAs:[crit|flat]
  */
-// TODO figure out the sendto options panel not showing up.
 function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollButtonCallback) {
 	// lifted from the player screen with a few tweaks for easier manipulation and reading
+	console.log("DISPLAYING BUTTON CONTEXT MENU is damage=", isDamageRoll)
 	let overlay = $(`
 		<div role="presentation" class="MuiPopover-root jss2" id="options-menu" style="position: fixed; z-index: 1300; inset: 0px;">
 			<div aria-hidden="true" style="z-index: -1; position: fixed; inset: 0px; background-color: transparent;"></div>
@@ -319,7 +310,7 @@ function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollBut
 							</ul>
 						</li>
 						
-						<hr class="MuiDivider-root dm-only-option">
+						<hr class="MuiDivider-root">
 						
 						<li class="rollwith-options">
 							<ul class="jss4">
@@ -380,12 +371,6 @@ function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollBut
 		top: `${top}px`,
 		left: `${left}px`
 	});
-	
-	if (!window.DM) {
-		// only DMs get the ability to roll to self
-		overlay.find(".dm-only-option").hide();
-	}
-
 	if (isDamageRoll) {
 		// damage rolls allow a "crit damage" option
 		overlay.find(".rollwith-options").hide();
@@ -453,9 +438,10 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 	let modifier = pressedButton.attr('data-mod');
 	let damageType = pressedButton.attr('data-rolldamagetype');
 	let rollType = pressedButton.attr('data-rolltype');
+	let actionType = pressedButton.attr('data-actiontype');
 
-	display_roll_button_contextmenu(contextmenuEvent, rollType == "damage", function(sendTo, rollWith, rollAs) {
-		let rollType = "to hit"
+	display_roll_button_contextmenu(contextmenuEvent, rollType === "damage", function(sendTo, rollWith, rollAs) {
+		console.log(contextmenuEvent, sendTo, rollWith, rollAs)
 		if (rollWith == "advantage") {
 			expression = "2d20kh1";
 		} else if (rollWith == "disadvantage") {
@@ -466,7 +452,8 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 			rollType = "damage"
 		}
 		const rolltype = rollWith === ""
-		roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, sendTo == "self");
+		// displayName, imgUrl, expression, modifier, rollType, damageType, actionType, dmOnly
+		roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo);
 	});
 }
 
@@ -477,5 +464,6 @@ function roll_button_clicked(clickEvent, displayName, imgUrl) {
 	let damageType = pressedButton.attr('data-rolldamagetype');
 	let rollType = pressedButton.attr('data-rolltype');
 	let actionType = pressedButton.attr('data-actiontype');
-	roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, false);
+	console.log(displayName, imgUrl, expression, modifier, rollType, damageType, actionType)
+	roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType);
 }

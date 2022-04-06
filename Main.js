@@ -1777,7 +1777,7 @@ function inject_chat_buttons() {
 		return;
 	}
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
+	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4, /help ..' title='Chat &#10;Roll dice using &quot;/roll 1d20&quot; or &quot;/r 1d4&quot; see /help for more &#10;Add custom actions/types to rolls with &quot;{Action:Type}&quot;&#10;To make &quot;/roll 40d20 {my death ray:to hit}&quot;&#10;/help &#10;/w [playername] a whisper'></div>"));
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
 			<div>
@@ -1942,43 +1942,38 @@ function inject_chat_buttons() {
 
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
+			console.group("chat_entered")
 			var dmonly=false;
 			var whisper=null;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
 
-			if(text.startsWith("/roll")) {
+			if(text.startsWith("/r")) {
 				dmonly = window.DM;
-				expression = text.substring(6);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
+				const rollRegex = /(\/r|\/roll)\s/g
+				const commandRegex = /\{(.*?)\:(.*?)\}/
+				const command = text.match(commandRegex);
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace(rollRegex, "");
+				let sentAsDDB
+				if (command){
+					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType=command[2], undefined, actionType=command[1], );
+				}
+				else{
+					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image);
+				}
 				if (sentAsDDB) {
 					return;
 				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
 			}
 
-			if(text.startsWith("/r ")) {
-				dmonly = window.DM;
-				expression = text.substring(3);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
+			if(text.startsWith("/help")) {
+				window.open("https://dice-roller.github.io/documentation/guide/notation/dice.html#standard-d-n")
+				return
 			}
 
-			if(text.startsWith("/dmroll")) {
-				expression = text.substring(8);
-				// TODO: send_rpg_dice_to_ddb doesn't currently handle rolls to self or to dm
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-				dmonly=true;
-			}
-
-			if(text.startsWith("/whisper")) {
+			if(text.startsWith("/w")) {
 				let matches = text.match(/\[(.*?)\] (.*)/);
 				console.log(matches);
 				whisper=matches[1]
@@ -2007,8 +2002,8 @@ function inject_chat_buttons() {
 			}
 			if(whisper)
 				data.whisper=whisper;
-
 			window.MB.inject_chat(data);
+			console.groupEnd()
 		}
 
 	});
@@ -2178,6 +2173,7 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
+	init_my_dice_details()
 	if(window.DM)
 	{
 		init_player_sheets();
@@ -2982,6 +2978,25 @@ function init_help_menu() {
 	});
 }
 
+function init_my_dice_details(){
+	get_cobalt_token(function (token) {
+		window.ajaxQueue.addRequest({	
+			type: 'GET',
+			url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json', // added data type
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function(res) {
+				window.mydice = res
+			}
+    	});
+	});
+}
 /**
  * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
  * If the conversion is successful, it will be sent over the websocket, and this will return true.
@@ -2991,21 +3006,19 @@ function init_help_menu() {
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
 // send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
-function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType, damageType, actionType, dmOnly) {
+function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="custom", damageType, actionType="custom", sendTo="everyone") {
 	// TODOS
 	// DM ONLY / TO SELF
-	// ACTION NAMES?!
-	// SAVING THROWS?!
-
-
 	console.group("send_rpg_dice_to_ddb")
-	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, dmOnly)
+	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
 	// return false;
+	// translate dice context menu "sendTo" into their actual values for sending to ddnb dice
+	
 	try {
 		expression = expression.replace(/\s+/g, ''); // remove all whitespace
-		if (expression.startsWith("+") || expression.startsWith("-")){
-			expression.prepend("1d20")
-		}
+		// if (expression.startsWith("+") || expression.startsWith("-")){
+		// 	expression.prepend("1d20")
+		// }
 
 		const supportedDieTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"];
 
@@ -3089,6 +3102,7 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType, damageT
 			}
 		}
 		console.log("convertedExpression", convertedExpression)
+		sendTo === "everyone" ?  console.log("SENDING TO EVERYONE") : console.log("SENDING TO SELF")
 
 		let ddbJson = {
 			id: uuid(),
@@ -3097,19 +3111,21 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType, damageT
 			userId: window.MB.userid,
 			source: "web",
 			persist: true,
-			messageScope: "gameId",
-			messageTarget: window.MB.gameid,
+			messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+			messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
 			entityId: window.MB.userid,
 			entityType: "user",
 			eventType: "dice/roll/fulfilled",
 			data: {
-				action: actionType || "custom",
+				action: actionType,
+				setId: window.mydice.data.setId,
 				context: {
 					entityId: window.MB.userid,
 					entityType: "user",
-					messageScope: "userId",
-					messageTarget: window.MB.gameid,
-					name: displayName
+					messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+					messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
+					name: displayName,
+					avatarUrl: imgUrl
 				},
 				rollId: uuid(),
 				rolls: [
