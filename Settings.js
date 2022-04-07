@@ -206,23 +206,14 @@ function init_settings(){
 	body.append(resetToDefaults);
 
 	const experimental_features = [
-	]
-	if (window.EXPERIMENTAL_SETTINGS["useDdbDice"] == true) {
-		experimental_features.push({
-			name: 'disableDdbDiceMonsterPanel',
-			label: 'Disable DDB Dice in Monsters Tab',
-			enabledDescription: "Stat blocks loaded in the monsters tab will use the AboveVTT rolling mechanism. (Changing this requires a page reload)",
-			disabledDescription: "Stat blocks opened in the monsters tab will use DDB Dice. If the tab doesn't load properly, please inform the devs in Discord thank you. (Changing this requires a page reload)",
-			dmOnly: true
-		});
-		experimental_features.push({
+		{
 			name: 'DEBUGddbDiceMonsterPanel',
 			label: 'Debug Monsters Tab Loading',
 			enabledDescription: "All of the loading indicators will be transparent, and the monsters tab will be selected by default. This is to allow developers to visually see what is happening while debugging. (Changing this requires a page reload)",
 			disabledDescription: "If you are not a developer, please ignore this feature. It is to allow developers to visually see what is happening in the monsters panel while debugging. (Changing this requires a page reload)",
 			dmOnly: true
-		});
-	}
+		}
+	];
 	if (get_browser().chrome) {
 		experimental_features.push({
 			name: 'streamDiceRolls',
@@ -231,44 +222,42 @@ function init_settings(){
 			disabledDescription: `SHARE/SEE player's DDB dice rolling visuals. Disclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.`
 		});
 	}
-	if (experimental_features.length > 0) {
-		body.append(`
-			<br />
-			<h5 class="token-image-modal-footer-title">Experimental Features</h5>
-			<div class="sidebar-panel-header-explanation">These are experimental features. You must explicitly opt-in to them. Use at your own risk.</div>
-		`);
-		for(let i = 0; i < experimental_features.length; i++) {
-			let setting = experimental_features[i];
-			if (setting.dmOnly == true && !window.DM) {
-				continue;
-			}
-			let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name];
-			if (currentValue === undefined && setting.defaultValue !== undefined) {
-				currentValue = setting.defaultValue;
-			}
-			let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-				console.log(`experimental setting ${name} is now ${newValue}`);
-				if (name == "streamDiceRolls") {
-					update_dice_streaming_feature(newValue)
-				} else {
-					window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
-					persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-				}
-			});
-			body.append(inputWrapper);
+	body.append(`
+		<br />
+		<h5 class="token-image-modal-footer-title">Experimental Features</h5>
+		<div class="sidebar-panel-header-explanation">These are experimental features. You must explicitly opt-in to them. Use at your own risk.</div>
+	`);
+	for(let i = 0; i < experimental_features.length; i++) {
+		let setting = experimental_features[i];
+		if (setting.dmOnly === true && !window.DM) {
+			continue;
 		}
-		let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Opt out of all expirimental features." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Opt out of all</button>`);
-		optOutOfAll.click(function () {
-			for (let i = 0; i < experimental_features.length; i++) {
-				let setting = experimental_features[i];
-				let toggle = body.find(`button[name=${setting.name}]`);
-				if (toggle.hasClass("rc-switch-checked")) {
-					toggle.click();
-				}
+		let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name];
+		if (currentValue === undefined && setting.defaultValue !== undefined) {
+			currentValue = setting.defaultValue;
+		}
+		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
+			console.log(`experimental setting ${name} is now ${newValue}`);
+			if (name === "streamDiceRolls") {
+				update_dice_streaming_feature(newValue)
+			} else {
+				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
+				persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
 			}
 		});
-		body.append(optOutOfAll);
+		body.append(inputWrapper);
 	}
+	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Opt out of all expirimental features." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Opt out of all</button>`);
+	optOutOfAll.click(function () {
+		for (let i = 0; i < experimental_features.length; i++) {
+			let setting = experimental_features[i];
+			let toggle = body.find(`button[name=${setting.name}]`);
+			if (toggle.hasClass("rc-switch-checked")) {
+				toggle.click();
+			}
+		}
+	});
+	body.append(optOutOfAll);
 
 	redraw_settings_panel_token_examples();
 }

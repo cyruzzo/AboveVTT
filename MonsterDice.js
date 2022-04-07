@@ -140,6 +140,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 }
 
 function scan_player_creature_pane(target, tokenId) {
+	console.group("scan_player_creature_pan")
 
 	let creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
 	let creatureName = target.find(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
@@ -148,7 +149,7 @@ function scan_player_creature_pane(target, tokenId) {
  		// not all creatures have an avatar for some reason
  		creatureAvatar = target.find(".ct-sidebar__header .ct-sidebar__header-preview-image").css("background-image").slice(4, -1).replace(/"/g, "");
  	} catch { }
-	let pc = window.pcs.find(t => t.sheet == find_currently_open_character_sheet());
+	let pc = window.pcs.find(t => t.sheet.includes(find_currently_open_character_sheet()));
 	let displayName = `${pc.name} (${creatureName} ${creatureType})`;
 	
 	const clickHandler = function(clickEvent) {
@@ -191,21 +192,29 @@ function scan_player_creature_pane(target, tokenId) {
 	$(target).find(".ct-creature-pane__block p").each(function() {
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
+			// apply most specific regex first matching all possible ways to write a dice notation
+			// to account for all the nuances of DNDB dice notation.
+			// numbers can be swapped for any number in the following comment
+			// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
+			const damageRollRegex = /([0-9]+d[0-9]+\s?([\+-]\s?[0-9]+)?)/g
+			// matches " +1 " or " + 1 "
+			const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
 			let updated = currentElement.html()
-				.replace(/([\+-][0-9]+) to hit/, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button> to hit")
-				.replaceAll(/\(([0-9]+d[0-9]+( [\+-] [0-9]+)?)\)/g, "(<button data-exp='$1' data-mod='' data-rolltype='damage' class='avtt-roll-button'>$1</button>)");
+				.replaceAll(damageRollRegex, "<button data-exp='$1' data-mod='' data-rolltype='damage' class='avtt-roll-button'>$1</button>")
+				.replaceAll(hitRollRegex, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>")
 			$(currentElement).html(updated);
 			$(currentElement).find(".avtt-roll-button").click(clickHandler);
 			$(currentElement).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 		}
 	});
-
+	console.groupEnd()
 }
 
 // exp: 1d20, modifier: +1, damageType: bludgeoning
 function roll_our_dice(displayName, imgUrl, expression, modifier, damageType, dmOnly) {
 	let dice = expression;
-	let mod = modifier;
+	// rpgDiceRoller.DiceRoll expects a modifier, so if none is supplied give a +0
+	let mod = modifier || "+0";
 
 	if (mod && mod == "CRIT") {
 		mod = dice.replace(/^([0-9]+d[0-9]+).*$/, "$1");
@@ -216,7 +225,6 @@ function roll_our_dice(displayName, imgUrl, expression, modifier, damageType, dm
 	} else {
 		mod = mod;
 	}
-
 	let roll = new rpgDiceRoller.DiceRoll(dice + mod);
 	let output_beauty = roll.output.replace(/=(.*)/, "= <b>$1</b>")
 	
@@ -263,7 +271,7 @@ function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollBut
 		<div role="presentation" class="MuiPopover-root jss2" id="options-menu" style="position: fixed; z-index: 1300; inset: 0px;">
 			<div aria-hidden="true" style="z-index: -1; position: fixed; inset: 0px; background-color: transparent;"></div>
 			<div tabindex="0" data-test="sentinelStart"></div>
-			<div class="MuiPaper-root MuiPopover-paper MuiPaper-elevation8 MuiPaper-rounded" tabindex="-1" style="opacity: 1; transform: none; transition: opacity 306ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 291px; left: 1125px; transform-origin: 0px 348px;">
+			<div class="MuiPaper-root MuiPopover-paper MuiPaper-elevation8 MuiPaper-rounded" tabindex="-1" style="opacity: 1; transform: none; transition: opacity 306ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transform-origin: 0px 348px;">
 				<div class="MuiBox-root jss5 jss2">
 					<ul class="MuiList-root MuiList-padding MuiList-subheader">
 						<li class="jss3"></li>
@@ -342,8 +350,8 @@ function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollBut
 	// likewise, if the button is too far right, move it left of the cursor so it doesn't go off screen
 	let body = $(contextmenuEvent.currentTarget).closest("body");
 	let bodyHeight = body.height();
-	let top = (contextmenuEvent.pageY + 320) > bodyHeight ? contextmenuEvent.pageY - 320 : contextmenuEvent.pageY;
-	let left = contextmenuEvent.pageX - 200; // the thing is about 215 wide
+	let top = (contextmenuEvent.clientY + 320) > bodyHeight ? contextmenuEvent.clientY - 320 : contextmenuEvent.clientY;
+	let left = contextmenuEvent.clientX - 200; // the thing is about 215 wide
 	overlay.find(".MuiPaper-root").css({
 		top: `${top}px`,
 		left: `${left}px`

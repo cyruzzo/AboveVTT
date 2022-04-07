@@ -472,7 +472,7 @@ div#scene_properties form > div {
     max-height: 60vh;
     min-width: 200px;
     width: calc(100vw - 720px);
-    max-width: 748px;
+    max-width: 750px;
     z-index: 9999;
     border: solid black 2px;
     overflow: auto;
@@ -549,8 +549,11 @@ div#scene_properties form > div {
     z-index: 4;
     left: 50%;
     font-size: 0.85em;
+    font-size: var(--font-size-zoom);
     bottom: -1.2em;
+    bottom: calc(-1 * (var(--font-size-zoom) + var(--font-size-zoom) / 1.5));
     transform: translate(-50%);
+    pointer-events: none;
 }
 
 .hasTooltip.CTToken::after{
@@ -1310,14 +1313,26 @@ audio::-webkit-media-controls-time-remaining-display{
 }
 
 .visibility-container{
-	border: 1px solid black;
-	width: auto;
+	border: 1px solid #dddddd;
+    background: #e9e9e9;
+    padding: 5px;
+    width: 350px;
+	margin-right: auto;
 }
-
+.visibility-container button {
+    margin: 5px;
+}
+.visibility-container input[type="checkbox"] {
+    margin-top: 10px;
+}
 .btn-del-chapter{
     right: 0;
     position: absolute;
     margin-top: 4px;
+}
+
+.note .mce-panel { 
+    border:  none;
 }
 
 #help-overlay{
@@ -2035,6 +2050,22 @@ button.avtt-roll-button {
 #prewiz, 
 #wizard_popup{
     z-index: 58000;
+}
+
+#character-tools-target{
+    z-index: unset !important; /*important to override dndbeyond's index.scss*/
+}
+
+.dm_scenes_button.selected,
+.player_scenes_button.selected,
+.dm_scenes_button.selected:hover,
+.player_scenes_button.selected:hover{
+    background: #ff7f7f;
+}
+
+.scene .dm_scenes_button,
+.scene .player_scenes_button {
+    transition: none;
 }
 
 .button-loading::after {

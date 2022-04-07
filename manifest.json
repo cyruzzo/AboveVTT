@@ -2,19 +2,29 @@
 	"manifest_version": 2,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.72.3",
+	"version": "0.74.1",
 	"content_scripts": [
 		{
 			"matches": [
 				"https://www.dndbeyond.com/campaigns/*",
 				"https://www.dndbeyond.com/encounters/*abovevtt=true",
-                "https://www.dndbeyond.com/profile/*/characters/*abovevtt=true"
+                "https://www.dndbeyond.com/profile/*/characters/*abovevtt=true",
+				"https://www.dndbeyond.com/characters/*abovevtt=true"
 			],
 			"exclude_matches": [
 				"https://www.dndbeyond.com/campaigns/join/*"
 			],
 			"js": [
 				"Load.js"
+			]
+		},
+		{
+			"matches": [
+				"https://www.dndbeyond.com/characters/*",
+				"https://www.dndbeyond.com/profile/*/characters/*"
+			],
+			"js": [
+				"LoadCharacterPage.js"
 			]
 		}
 	],

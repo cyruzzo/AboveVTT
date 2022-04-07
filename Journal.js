@@ -230,7 +230,6 @@ class JournalManager{
 			
 			note.append(visibility_container);
 			
-			
 		}
 		let note_text=$("<div/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
@@ -300,7 +299,7 @@ class JournalManager{
 			   of: window
 			},
 			close: function( event, ui ) {
-				console.log(event);
+				// console.log(event);
 				let taid=$(event.target).find("textarea").attr('id');
 				tinyMCE.get(taid).execCommand('mceSave');
 				$(this).remove();
@@ -309,20 +308,24 @@ class JournalManager{
 		
 		tinyMCE.init({
 			selector: '#' + tmp,
-			menu: {},
-			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,videoembed',
-			toolbar: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,code,|,formatselect,|,alignleft,|,aligncenter,|,alignright,|,fontselect,|,fontsizeselect,|,forecolor,|,bullist,|,numlist,|,hr,|,removeformat,|,outdent,|,indent,|,spoiler,|,link,|,unlink,|,image,|,videoembed,|,|,codeBlock,|,dieroller',
+			menubar: false,
+			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize',
+			toolbar1: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,alignleft,|,aligncenter,|,alignright,|,outdent,|,indent,|,bullist,|,numlist',
+			toolbar2: 'forecolor,|,backcolor,|,fontselect,|,fontsizeselect,|,formatselect,|,removeformat,|,hr',
+			toolbar3: 'link,|,unlink,|,image,|,media',
 			image_class_list: [
 				{title: 'None', value: ''},
 				{title: 'Magnify', value: 'magnify'},
 			],
 			external_plugins: {
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
-				'videoembed': "/content/1-0-1688-0/js/tinymce/custom_plugins/videoembed/plugin.js",
 			},
 			relative_urls : false,
 			remove_script_host : false,
 			convert_urls : true,
+			media_alt_source: false,
+			media_poster: false,
+			statusbar: false,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
 				let note_id = $(this.getElement()).attr('data-note-id');
