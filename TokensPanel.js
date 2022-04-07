@@ -48,7 +48,8 @@ function migrate_to_my_tokens() {
                 newToken.folderPath = currentFolderPath;
                 newToken.image = parse_img(newToken.img);
                 delete newToken.img;
-                if (mytokens.includes(newToken)) {
+                let existing = mytokens.find(t => t.name === newToken.name && t.folderPath === newToken.folderPath)
+                if (existing !== undefined) {
                     console.log("not adding duplicate token", newToken);
                 } else {
                     console.log("successfully migrated token", newToken, "from", oldToken);
@@ -70,11 +71,14 @@ function migrate_to_my_tokens() {
     }
 
     migrateFolderAtPath(TokenListItem.PathRoot);
-    console.groupEnd()
+    persist_mytokens();
+    console.groupEnd();
 }
 
 function rollback_from_my_tokens() {
     mytokens = [];
+    emptyfolders = [];
+    persist_mytokens();
 }
 
 /**
@@ -277,7 +281,7 @@ function harvest_full_path(htmlRow) {
 }
 function set_full_path(html, fullPath) {
     if (html === undefined) return;
-    return html.attr("data-full-path", encode_full_path(fullPath));
+    return html.attr("data-full-path", encode_full_path(fullPath)).addClass("list-item-identifier");
 }
 function encode_full_path(fullPath) {
     if (fullPath === undefined) return "";
@@ -305,10 +309,20 @@ function find_my_token(fullPath) {
     let found = mytokens.find(t => {
         let dirtyPath = `${TokenListItem.PathMyTokens}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
-        console.log("find_my_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
+        console.debug("find_my_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
     });
-    console.log("find_my_token found: ", found);
+    console.debug("find_my_token found: ", found);
+    return found;
+}
+function find_builtin_token(fullPath) {
+    let found = builtInTokens.find(t => {
+        let dirtyPath = `${TokenListItem.PathAboveVTT}${t.folderPath}/${t.name}`;
+        let fullTokenPath = sanitize_folder_path(dirtyPath);
+        console.debug("find_builtin_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
+        return fullTokenPath === fullPath;
+    });
+    console.debug("find_builtin_token found: ", found);
     return found;
 }
 
@@ -431,6 +445,8 @@ function inject_monster_tokens(searchTerm, skip) {
 
 function init_tokens_panel() {
 
+    console.log("init_tokens_panel");
+
     rootfolders = [
         TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NamePlayers),
         TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameMyTokens),
@@ -527,7 +543,7 @@ function build_token_row(listItem, enableDrag = true) {
 
     let imgHolder = $(`<div class="tokens-panel-row-img"></div>`);
     rowItem.append(imgHolder);
-    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" />`);
+    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
     imgHolder.append(img);
 
     let details = $(`<div class="tokens-panel-row-details"></div>`);
@@ -561,14 +577,14 @@ function build_token_row(listItem, enableDrag = true) {
                 rowItem.append(addFolder);
                 addFolder.on("click", function(clickEvent) {
                     clickEvent.stopPropagation();
-                    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+                    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
                     let clickedItem = find_token_list_item(clickedRow);
                     create_folder_inside(clickedItem);
                 });
                 let addToken = $(`<button class="token-row-button"><span class="material-icons">person_add_alt_1</span></button>`);
                 rowItem.append(addToken);
                 addToken.on("click", function(clickEvent) {
-                    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+                    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
                     let clickedItem = find_token_list_item(clickedRow);
                     create_token_inside(clickedItem);
                 });
@@ -577,6 +593,7 @@ function build_token_row(listItem, enableDrag = true) {
         case TokenListItem.TypeMyToken:
             subtitle.hide();
             // TODO: Style specifically for My Tokens
+            row.css("cursor", "default");
             break;
         case TokenListItem.TypePC:
             let playerData = window.PLAYER_STATS[listItem.sheet];
@@ -651,6 +668,7 @@ function build_token_row(listItem, enableDrag = true) {
         case TokenListItem.TypeBuiltinToken:
             subtitle.hide();
             // TODO: Style specifically for Builtin
+            row.css("cursor", "default");
             break;
     }
 
@@ -665,49 +683,59 @@ function build_token_row(listItem, enableDrag = true) {
     }
 
     if (enableDrag && !listItem.isTypeFolder()) {
-        rowItem.draggable({
-            appendTo: "#VTTWRAPPER",
-            zIndex: 100000,
-            cursorAt: {top: 0, left: 0},
-            cancel: '.token-row-gear',
-            helper: function(event) {
-                let draggedRow = $(event.target).closest(".tokens-panel-row");
-                let draggedItem = find_token_list_item(draggedRow);
-                let randomImage = random_image_for_item(draggedItem);
-                let helper = draggedRow.find(".tokens-panel-row-img img").clone();
-                helper.attr("src", randomImage);
-                return helper;
-            },
-            start: function (event, ui) {
-                console.log("row-item drag start");
-                let draggedRow = $(event.target).closest(".tokens-panel-row");
-                let draggedItem = find_token_list_item(draggedRow);
-                let tokenSize = token_size_for_item(draggedItem);
-                let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
-                let helperWidth = width / (1.0 / window.ZOOM);
-                $(ui.helper).css('width', `${helperWidth}px`);
-                $(this).draggable('instance').offset.click = {
-                    left: Math.floor(ui.helper.width() / 2),
-                    top: Math.floor(ui.helper.height() / 2)
-                };
-            },
-            stop: function (event, ui) {
-                // place a token where this was dropped
-                console.log("row-item drag stop");
-                let draggedRow = $(event.target).closest(".tokens-panel-row");
-                let draggedItem = find_token_list_item(draggedRow);
-                let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
-                let src = $(ui.helper).attr("src");
-                create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
-            }
-        });
+        enable_draggable_token_creation(rowItem);
     }
     return row;
 }
 
+function enable_draggable_token_creation(html, specificImage = undefined) {
+    html.draggable({
+        appendTo: "#VTTWRAPPER",
+        zIndex: 100000,
+        cursorAt: {top: 0, left: 0},
+        cancel: '.token-row-gear',
+        helper: function(event) {
+            console.log("enable_draggable_token_creation helper");
+            let draggedRow = $(event.target).closest(".list-item-identifier");
+            let draggedItem = find_token_list_item(draggedRow);
+            let helper = draggedRow.find("img.token-image").clone();
+            if (specificImage !== undefined) {
+                helper.attr("src", specificImage);
+            } else {
+                let randomImage = random_image_for_item(draggedItem);
+                helper.attr("src", randomImage);
+            }
+            return helper;
+        },
+        start: function (event, ui) {
+            console.log("enable_draggable_token_creation start");
+            let draggedRow = $(event.target).closest(".list-item-identifier");
+            let draggedItem = find_token_list_item(draggedRow);
+            let tokenSize = token_size_for_item(draggedItem);
+            let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
+            let helperWidth = width / (1.0 / window.ZOOM);
+            $(ui.helper).css('width', `${helperWidth}px`);
+            $(this).draggable('instance').offset.click = {
+                left: Math.floor(ui.helper.width() / 2),
+                top: Math.floor(ui.helper.height() / 2)
+            };
+        },
+        stop: function (event, ui) {
+            event.stopPropagation(); // prevent the mouseup event from closing the modal
+            // place a token where this was dropped
+            console.log("enable_draggable_token_creation stop");
+            let draggedRow = $(event.target).closest(".list-item-identifier");
+            let draggedItem = find_token_list_item(draggedRow);
+            let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
+            let src = $(ui.helper).attr("src");
+            create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
+        }
+    });
+}
+
 function did_click_row(clickEvent) {
     console.log("did_click_row", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
     let clickedItem = find_token_list_item(clickedRow);
     console.log("did_click_row", clickedItem);
 
@@ -720,7 +748,7 @@ function did_click_row(clickEvent) {
             }
             break;
         case TokenListItem.TypeMyToken:
-
+            // display_token_item_configuration_modal(clickedItem);
             break;
         case TokenListItem.TypePC:
             open_player_sheet(clickedItem.sheet);
@@ -735,7 +763,7 @@ function did_click_row(clickEvent) {
             }
             break;
         case TokenListItem.TypeBuiltinToken:
-
+            // display_builtin_token_details_modal(clickedItem);
             break;
     }
 }
@@ -743,7 +771,7 @@ function did_click_row(clickEvent) {
 function did_click_row_gear(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_row_gear", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
     let clickedItem = find_token_list_item(clickedRow);
     console.log("did_click_row_gear", clickedItem);
     display_token_item_configuration_modal(clickedItem);
@@ -752,7 +780,7 @@ function did_click_row_gear(clickEvent) {
 function did_click_add_button(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_add_button", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".tokens-panel-row");
+    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
     let clickedItem = find_token_list_item(clickedRow);
     console.log("did_click_add_button", clickedItem);
     let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
@@ -877,9 +905,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         case TokenListItem.TypeBuiltinToken:
             let builtinToken = builtInTokens.find(t => t.name === listItem.name);
             console.log("create_and_place_token TokenListItem.TypeBuiltinToken options before", options, builtinToken);
-            let imgsrc = options.imgsrc; // don't overwrite the imgsrc... we already went through the hassle of finding a random one
             options = {...options, ...builtinToken}
-            options.imgsrc = imgsrc;
             options.disablestat = true;
             break;
     }
@@ -1011,7 +1037,7 @@ function register_token_row_context_menu() {
     tokensPanel.body.find(".tokens-panel-row").on("contextmenu", ".token-row-add", function(event) {
         event.preventDefault();
         event.stopPropagation();
-        let clickedRow = $(event.target).closest(".tokens-panel-row");
+        let clickedRow = $(event.target).closest(".list-item-identifier");
         let clickedItem = find_token_list_item(clickedRow);
         create_and_place_token(clickedItem, true);
     });
@@ -1106,15 +1132,16 @@ function display_token_item_configuration_modal(listItem) {
             }
             break;
         case TokenListItem.TypeBuiltinToken:
-            console.warn("Not allowed to edit build in tokens");
+            display_builtin_token_details_modal(listItem);
             break;
         case TokenListItem.TypeMyToken:
-            // TODO: rebuild custom token form to use the new structure
+            display_mytoken_configuration_modal(listItem);
             break;
         case TokenListItem.TypePC:
             display_player_token_customization_modal(listItem.sheet);
             break;
         case TokenListItem.TypeMonster:
+            // TODO: rebuild this to use listItem like the others do
             display_monster_customization_modal(undefined, listItem.monsterData.id, listItem.name, listItem.image);
             break;
     }
@@ -1359,7 +1386,6 @@ function create_token_inside(listItem) {
         return;
     }
 
-    // TODO: add default token settings?
     let newItem = TokenListItem.MyToken({
         name: "New Token",
         folderPath: listItem.fullPath()
@@ -1369,7 +1395,7 @@ function create_token_inside(listItem) {
     display_mytoken_configuration_modal(newItem);
 }
 
-function display_mytoken_configuration_modal(listItem) {
+function display_mytoken_configuration_modal(listItem, placedToken) {
     if (!listItem?.isTypeMyToken()) {
         console.warn("display_mytoken_configuration_modal was called with incorrect item type", listItem);
         return;
@@ -1378,9 +1404,122 @@ function display_mytoken_configuration_modal(listItem) {
     // close any that are already open just to be safe
     close_sidebar_modal();
 
+    let sidebarPanel = new SidebarPanel("mytokens-customization-modal");
+    display_sidebar_modal(sidebarPanel);
+    sidebarPanel.updateHeader(listItem.name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
 
+    redraw_token_images_in_modal(sidebarPanel, listItem);
 
+    // MyToken footer form
 
+}
+
+function display_builtin_token_details_modal(listItem) {
+    if (!listItem?.isTypeBuiltinToken()) {
+        console.warn("display_builtin_token_details_modal was called with incorrect item type", listItem);
+        return;
+    }
+
+    // close any that are already open just to be safe
+    close_sidebar_modal();
+
+    let sidebarPanel = new SidebarPanel("builtin-token-details-modal");
+    display_sidebar_modal(sidebarPanel);
+    sidebarPanel.updateHeader(listItem.name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
+
+    redraw_token_images_in_modal(sidebarPanel, listItem);
+}
+
+function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
+    sidebarPanel.body.empty();
+
+    let name = listItem.name;
+    let tokenSize = listItem.tokenSize;
+    let image = parse_img(listItem.image);
+
+    // clone our images array instead of using a reference so we don't accidentally change the current images for all tokens
+    // we also need to parse and compare every image to know if we need to add the placedToken image
+    let images = alternative_images(listItem).map(image => parse_img(image));
+
+    let indexOffset = 0;
+    if (image !== undefined && !images.includes(image)) {
+        // the main image somehow isn't in the list so put it at the front. This can happen when you update the image for a placed token but not saving it
+        images.unshift(image);
+        indexOffset++;
+    }
+
+    if (placedToken !== undefined) {
+        if (placedToken.options.tokenSize !== undefined) {
+            tokenSize = placedToken.options.tokenSize;
+        }
+        if (placedToken.options.name !== undefined && placedToken.options.name !== listItem.name) {
+            // this token has a different name than the saved object
+            name = placedToken.options.name;
+        }
+        let placedImg = parse_img(placedToken.options.imgsrc);
+        if (placedImg !== undefined && !images.includes(placedImg)) {
+            // the placedToken image has been changed by the user so put it at the front
+            images.unshift(placedImg);
+            indexOffset++;
+        }
+    }
+    if (tokenSize === undefined) {
+        // we haven't figured out the tokenSize yet so default to 1
+        tokenSize = 1;
+    }
+
+    for (let i = 0; i < images.length; i++) {
+        let imageUrl = images[i];
+        let tokenDiv = build_alternative_image_for_modal(imageUrl, placedToken);
+        set_full_path(tokenDiv, listItem.fullPath());
+        enable_draggable_token_creation(tokenDiv, imageUrl);
+        sidebarPanel.body.append(tokenDiv);
+    }
+}
+
+function build_alternative_image_for_modal(image, placedToken) {
+    let tokenDiv = $(`
+		    <div class="custom-token-image-item">
+			    <div class="token-image-sizing-dummy"></div>
+			    <img alt="token-img" class="token-image token-round" src="${image}" />
+	    	</div>
+    	`);
+    if (placedToken !== undefined) {
+        // the user is changing their token image, allow them to simply click an image
+        // we don't want to allow drag and drop from this modal
+        tokenDiv.on("click", function() {
+            placedToken.options.imgsrc = parse_img(image);
+            close_sidebar_modal();
+            placedToken.place_sync_persist();
+        });
+    }
+    return tokenDiv;
+}
+
+function alternative_images(listItem) {
+    let alternativeImages = [];
+    switch (listItem.type) {
+        case TokenListItem.TypeBuiltinToken:
+            let builtin = find_builtin_token(listItem.fullPath());
+            alternativeImages = builtin?.alternativeImages;
+            break;
+        case TokenListItem.TypeMyToken:
+            let myToken = find_my_token(listItem.fullPath());
+            alternativeImages = myToken?.alternativeImages;
+            break;
+        case TokenListItem.TypePC:
+            alternativeImages = get_player_image_mappings(listItem.sheet);
+            break;
+        case TokenListItem.TypeMonster:
+            alternativeImages = get_custom_monster_images(listItem.monsterData.id);
+            break;
+        case TokenListItem.TypeFolder:
+            break;
+    }
+    if (alternativeImages === undefined) {
+        alternativeImages = [];
+    }
+    return alternativeImages;
 }
 
 function persist_mytokens() {

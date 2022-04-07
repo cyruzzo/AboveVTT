@@ -1721,6 +1721,7 @@ h5.token-image-modal-footer-title:after {
 .folder .folder-token-list {
     padding-left: 1em;
     padding-top: 0.3em;
+    cursor: default;
 }
 .folder.collapsed .folder-token-list {
     display: none;
