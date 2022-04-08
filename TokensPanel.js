@@ -82,20 +82,29 @@ function migrate_to_my_tokens() {
 }
 
 function rollback_from_my_tokens() {
+    console.groupCollapsed("rollback_from_my_tokens");
     mytokens = [];
     emptyfolders = [];
     persist_my_tokens();
     const rollbackFolderAtPath = function(oldFolderPath) {
         let currentFolderPath = sanitize_folder_path(oldFolderPath);
         let folder = convert_path(currentFolderPath);
+        console.log("attempting to roll back all tokens in folder", currentFolderPath, folder);
         if (folder.tokens) {
             for (let tokenKey in folder.tokens) {
                 let oldToken = folder.tokens[tokenKey];
                 oldToken.didMigrateToMyToken = false;
+                console.log("rolling back oldToken", oldToken);
             }
+        }
+        for (let folderName in folder.folders) {
+            let nextFolderPath = `${currentFolderPath}/${folderName}`;
+            rollbackFolderAtPath(nextFolderPath);
         }
     };
     rollbackFolderAtPath(TokenListItem.PathRoot);
+    persist_customtokens();
+    console.groupEnd();
 }
 
 /**
@@ -600,7 +609,7 @@ function build_token_row(listItem, enableDrag = true) {
             if (!rootfolders.includes(listItem)) {
                 row.addClass("collapsed"); // only expand root folders by default
             }
-            if (listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+            if (listItem.fullPath().startsWith(TokenListItem.PathMyTokens)) {
                 // add buttons for creating subfolders and tokens
                 let addFolder = $(`<button class="token-row-button"><span class="material-icons">create_new_folder</span></button>`);
                 rowItem.append(addFolder);
@@ -617,6 +626,11 @@ function build_token_row(listItem, enableDrag = true) {
                     let clickedItem = find_token_list_item(clickedRow);
                     create_token_inside(clickedItem);
                 });
+
+                if (emptyfolders.includes(listItem.fullPath().replace(TokenListItem.PathMyTokens, ""))) {
+                    subtitle.append(`<div>This folder is empty</div>`);
+                    subtitle.show();
+                }
             }
             break;
         case TokenListItem.TypeMyToken:
@@ -1198,8 +1212,12 @@ function display_folder_configure_modal(listItem) {
         function(newFolderName, input, event) {
             let foundItem = find_token_list_item($(input));
             let updateFullPath = rename_folder(foundItem, newFolderName);
-            close_sidebar_modal();
-            expand_all_folders_up_to(updateFullPath);
+            if (updateFullPath === undefined) {
+                $(input).select();
+            } else {
+                close_sidebar_modal();
+                expand_all_folders_up_to(updateFullPath);
+            }
         }
     ));
 
@@ -1235,7 +1253,7 @@ function path_exists(folderPath) {
 }
 
 function create_folder_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(TokenListItem.PathMyTokens)) {
         console.warn("create_folder_inside called with an incorrect item type", listItem);
         return;
     }
@@ -1248,15 +1266,21 @@ function create_folder_inside(listItem) {
     display_folder_configure_modal(newListItem);
 }
 
-function rename_folder(item, newName) {
+function rename_folder(item, newName, alertUser = true) {
     if (!item.isTypeFolder() || !item.folderPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("rename_folder called with an incorrect item type", listItem);
+        if (alertUser !== false) {
+            alert("An unexpected error occurred");
+        }
         return;
     }
     console.groupCollapsed("rename_folder");
     if (!item.canEdit()) {
         console.warn("Not allowed to rename folder", item);
         console.groupEnd();
+        if (alertUser !== false) {
+            alert("An unexpected error occurred");
+        }
         return;
     }
 
@@ -1266,6 +1290,9 @@ function rename_folder(item, newName) {
     if (path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
         console.groupEnd();
+        if (alertUser !== false) {
+            alert(`A Folder with the name "${newName}" already exists at "${toFullPath}"`);
+        }
         return;
     }
 
@@ -1384,19 +1411,24 @@ function delete_item(listItem) {
         console.warn("Not allowed to delete item", listItem);
         return;
     }
-    console.error("TODO: delete_item", listItem);
 
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
             delete_folder_and_delete_children(listItem);
             break;
         case TokenListItem.TypeMyToken:
+            let myToken = find_my_token(listItem.fullPath());
+            array_remove_index_by_value(mytokens, myToken);
+            did_change_items();
             break;
         case TokenListItem.TypePC:
+            console.warn("Not allowed to delete player", listItem);
             break;
         case TokenListItem.TypeMonster:
+            console.warn("Not allowed to delete monster", listItem);
             break;
         case TokenListItem.TypeBuiltinToken:
+            console.warn("Not allowed to delete builtin token", listItem);
             break;
     }
 }
@@ -1407,17 +1439,34 @@ function create_token_inside(listItem) {
         return;
     }
 
-    let newItem = TokenListItem.MyToken({
-        name: "New Token",
-        folderPath: listItem.fullPath()
-    });
-    console.log("create_token_inside created a new item", newItem);
+    let folderPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
+    let newTokenName = "New Token";
+    let newTokenCount = mytokens.filter(t => t.folderPath === folderPath && t.name.startsWith(newTokenName)).length;
+    console.log("newTokenCount", newTokenCount);
+    if (newTokenCount > 0) {
+        newTokenName += ` ${newTokenCount + 1}`;
+    }
 
+    let myToken = {
+        name: newTokenName,
+        folderPath: folderPath
+    };
+    let newItem = TokenListItem.MyToken(myToken);
+
+    let justInCase = find_my_token(newItem.fullPath())
+    if (justInCase !== undefined) {
+        console.error("Failed to create My Token", myToken, "found existing token", justInCase)
+        alert("An unexpected Error Occurred!");
+        return;
+    }
+
+    console.log("create_token_inside created a new item", newItem);
+    mytokens.push(myToken);
+    did_change_items()
     display_my_token_configuration_modal(newItem);
 }
 
-// TODO: Don't need placedToken here :(
-function display_my_token_configuration_modal(listItem, placedToken) {
+function display_my_token_configuration_modal(listItem) {
     if (!listItem?.isTypeMyToken()) {
         console.warn("display_my_token_configuration_modal was called with incorrect item type", listItem);
         return;
@@ -1430,22 +1479,13 @@ function display_my_token_configuration_modal(listItem, placedToken) {
 
     let name = listItem.name;
     let tokenSize = listItem.tokenSize;
-    if (placedToken !== undefined) {
-        if (placedToken.options.tokenSize !== undefined) {
-            tokenSize = placedToken.options.tokenSize;
-        }
-        if (placedToken.options.name !== undefined && placedToken.options.name !== listItem.name) {
-            // this token has a different name than the saved object
-            name = placedToken.options.name;
-        }
-    }
     if (tokenSize === undefined) {
         // we haven't figured out the tokenSize yet so default to 1
         tokenSize = 1;
     }
 
     sidebarPanel.updateHeader(name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
-    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    redraw_token_images_in_modal(sidebarPanel, listItem);
 
     // MyToken footer form
 
@@ -1462,9 +1502,6 @@ function display_my_token_configuration_modal(listItem, placedToken) {
 
         // explicitly look for true/false because the default value is undefined
         let configuredValue = myToken[name];
-        if (placedToken?.options[name] === true || placedToken?.options[name] === false) {
-            configuredValue = placedToken.options[name];
-        }
         if (configuredValue === true) {
             inputElement.val("enabled");
         } else if (configuredValue === false) {
@@ -1474,57 +1511,34 @@ function display_my_token_configuration_modal(listItem, placedToken) {
         }
         inputElement.change(function(event) {
             console.log("update", event.target.name , "to", event.target.value);
-            switch (event.target.value) {
-                case "enabled":
-                    if (placedToken !== undefined) {
-                        placedToken.options[name] = true;
-                    } else {
-                        myToken[name] = true;
-                    }
-                    break;
-                case "disabled":
-                    if (placedToken !== undefined) {
-                        placedToken.options[name] = false;
-                    } else {
-                        myToken[name] = false;
-                    }
-                    break;
-                default:
-                    if (placedToken !== undefined) {
-                        delete placedToken.options[name];
-                    } else {
-                        delete myToken[name];
-                    }
-                    break;
-            }
-            // is there a way to update all the images instead of redrawing them?
-            if (placedToken !== undefined) {
-                placedToken.place_sync_persist();
+            if (event.target.value === "enabled") {
+                myToken[name] = true;
+            } else if (event.target.value === "disabled") {
+                myToken[name] = false;
             } else {
-                persist_my_tokens();
+                delete myToken[name];
             }
+            persist_my_tokens();
             decorate_modal_images(sidebarPanel, listItem);
         });
-       return inputElement;
+        return inputElement;
     };
 
     let inputWrapper = sidebarPanel.inputWrapper;
 
     // images
-    let footerText = placedToken !== undefined ? "Enter a new Image Url" : "Add More Images";
-    let imageUrlInput = sidebarPanel.build_image_url_input(footerText, function (newImageUrl) {
-        if (placedToken !== undefined) {
-            placedToken.imgsrc = newImageUrl;
-            placedToken.place_sync_persist();
-            close_sidebar_modal();
-        } else {
-            if (myToken.alternativeImages === undefined) {
-                myToken.alternativeImages = [];
-            }
-            myToken.alternativeImages.push(newImageUrl);
-            persist_my_tokens();
-            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    let imageUrlInput = sidebarPanel.build_image_url_input("Add More Images", function (newImageUrl) {
+        if (myToken.image === undefined || myToken.image === "") {
+            // this is a new token. Replace the default image
+            myToken.image = newImageUrl;
+            listItem.image = newImageUrl;
         }
+        if (myToken.alternativeImages === undefined) {
+            myToken.alternativeImages = [];
+        }
+        myToken.alternativeImages.push(newImageUrl);
+        persist_my_tokens();
+        redraw_token_images_in_modal(sidebarPanel, listItem);
     });
     inputWrapper.append(imageUrlInput);
 
@@ -1535,22 +1549,15 @@ function display_my_token_configuration_modal(listItem, placedToken) {
     nameInput.on('keyup', function(event) {
         if (event.key === "Enter" && event.target.value !== undefined && event.target.value.length > 0) {
             console.log("update token name to", event.target.value);
-            if (placedToken !== undefined) {
-                placedToken.options.name = event.target.value;
-                placedToken.place_sync_persist();
+            let renameSucceeded = rename_my_token(myToken, event.target.value, true);
+            if (renameSucceeded) {
+                did_change_items();
+                listItem.name = event.target.value;
+                sidebarPanel.updateHeader(event.target.value, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
+                redraw_token_images_in_modal(sidebarPanel, listItem);
             } else {
-                let renameSucceeded = rename_my_token(myToken, event.target.value, true);
-                if (renameSucceeded) {
-                    persist_my_tokens();
-                    rebuild_token_items_list();
-                } else {
-                    $(event.target).select();
-                    return;
-                }
+                $(event.target).select();
             }
-            listItem.name = event.target.value;
-            sidebarPanel.updateHeader(event.target.value, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
-            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
         }
     });
     inputWrapper.append(nameInput);
@@ -1583,23 +1590,18 @@ function display_my_token_configuration_modal(listItem, placedToken) {
         console.log("submit token form?", event);
         let nameInput = $(event.target).parent().find("input[name='addCustomName']");
         let updatedName = nameInput.val();
-        if (placedToken !== undefined) {
-            placedToken.options.name = updatedName;
-            close_sidebar_modal();
-            return;
-        }
         let previousName = nameInput.attr("data-previous-name");
         if (updatedName !== previousName) {
             let renameSucceeded = rename_my_token(myToken, updatedName, true);
             if (renameSucceeded) {
                 listItem.name = updatedName;
             } else {
+                // we can't save this token until they change the name
                 nameInput.select();
+                return;
             }
         }
-        persist_my_tokens();
-        rebuild_token_items_list();
-        redraw_token_list();
+        did_change_items();
         close_sidebar_modal();
     });
     inputWrapper.append(saveButton);
@@ -1774,7 +1776,36 @@ function alternative_images(listItem) {
 
 function persist_my_tokens() {
     localStorage.setItem("MyTokens", JSON.stringify(mytokens));
+    rebuild_emptyfolders();
     localStorage.setItem("MyTokensEmptyFolders", JSON.stringify(emptyfolders));
+}
+
+function rebuild_emptyfolders() {
+    console.groupCollapsed("rebuild_emptyfolders");
+    let allFolderPaths = mytokens.map(t => t.folderPath)
+    const addAllFolderParts = function(folderPath) {
+        console.debug("adding", folderPath)
+        if (folderPath !== undefined && folderPath !== "" && folderPath !== "/") {
+            allFolderPaths.push(folderPath);
+            if (folderPath.includes("/")) {
+                addAllFolderParts(folderPath.split("/").slice(0, -1).join("/"));
+            }
+        }
+    }
+    emptyfolders.forEach(folder => {
+        addAllFolderParts(folder);
+    });
+    allFolderPaths = [...new Set(allFolderPaths)]; // unique only
+    console.debug("all known folders", allFolderPaths);
+    mytokens.forEach(t => {
+        if (allFolderPaths.includes(t.folderPath)) {
+            console.debug("not an empty folder", t.folderPath);
+            allFolderPaths = allFolderPaths.filter(f => f !== t.folderPath);
+        }
+    });
+    console.log("updating emptyfolders from", emptyfolders, "to", allFolderPaths);
+    emptyfolders = allFolderPaths;
+    console.groupEnd();
 }
 
 function did_change_items() {
