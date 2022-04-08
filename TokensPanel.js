@@ -8,7 +8,7 @@ rootfolders = [];
  * @returns {string} the sanitized path
  */
 function sanitize_folder_path(dirtyPath) {
-    let cleanPath = dirtyPath.replaceAll("//", "/");
+    let cleanPath = dirtyPath.replaceAll("///", "/").replaceAll("//", "/");
     // remove trailing slashes before adding one at the beginning. Otherwise, we return an empty string
     if (cleanPath.endsWith("/")) {
         cleanPath = cleanPath.slice(0, -1);
@@ -29,6 +29,10 @@ function migrate_to_my_tokens() {
         if (folder.tokens) {
             for(let tokenKey in folder.tokens) {
                 let oldToken = folder.tokens[tokenKey];
+                if (oldToken.didMigrateToMyToken === true) {
+                    // this token has already been migrated no need to migrate it again
+                    continue;
+                }
                 let newToken = {};
                 for (let k in oldToken) {
                     let v = oldToken[k];
@@ -55,6 +59,7 @@ function migrate_to_my_tokens() {
                     console.log("successfully migrated token", newToken, "from", oldToken);
                     mytokens.push(newToken);
                 }
+                oldToken.didMigrateToMyToken = true;
             }
         } else {
             if (emptyfolders.includes(currentFolderPath)) {
@@ -71,14 +76,26 @@ function migrate_to_my_tokens() {
     }
 
     migrateFolderAtPath(TokenListItem.PathRoot);
-    persist_mytokens();
+    persist_my_tokens();
+    persist_customtokens();
     console.groupEnd();
 }
 
 function rollback_from_my_tokens() {
     mytokens = [];
     emptyfolders = [];
-    persist_mytokens();
+    persist_my_tokens();
+    const rollbackFolderAtPath = function(oldFolderPath) {
+        let currentFolderPath = sanitize_folder_path(oldFolderPath);
+        let folder = convert_path(currentFolderPath);
+        if (folder.tokens) {
+            for (let tokenKey in folder.tokens) {
+                let oldToken = folder.tokens[tokenKey];
+                oldToken.didMigrateToMyToken = false;
+            }
+        }
+    };
+    rollbackFolderAtPath(TokenListItem.PathRoot);
 }
 
 /**
@@ -306,23 +323,35 @@ function matches_full_path(html, fullPath) {
 
 
 function find_my_token(fullPath) {
+    if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
+        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", TokenListItem.PathMyTokens);
+        return undefined;
+    }
+    console.groupCollapsed("find_my_token");
     let found = mytokens.find(t => {
         let dirtyPath = `${TokenListItem.PathMyTokens}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
-        console.debug("find_my_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
+        console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
     });
-    console.debug("find_my_token found: ", found);
+    console.debug("found: ", found);
+    console.groupEnd();
     return found;
 }
 function find_builtin_token(fullPath) {
+    if (!fullPath.startsWith(TokenListItem.PathAboveVTT)) {
+        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", TokenListItem.PathAboveVTT);
+        return undefined;
+    }
+    console.groupCollapsed("find_builtin_token");
     let found = builtInTokens.find(t => {
         let dirtyPath = `${TokenListItem.PathAboveVTT}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
-        console.debug("find_builtin_token looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
+        console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
     });
-    console.debug("find_builtin_token found: ", found);
+    console.debug("found: ", found);
+    console.groupEnd();
     return found;
 }
 
@@ -1135,7 +1164,7 @@ function display_token_item_configuration_modal(listItem) {
             display_builtin_token_details_modal(listItem);
             break;
         case TokenListItem.TypeMyToken:
-            display_mytoken_configuration_modal(listItem);
+            display_my_token_configuration_modal(listItem);
             break;
         case TokenListItem.TypePC:
             display_player_token_customization_modal(listItem.sheet);
@@ -1196,14 +1225,6 @@ function display_folder_configure_modal(listItem) {
     });
 
     sidebarModal.body.find(`input[name="folderName"]`).select();
-}
-
-function display_my_token_configure_modal(listItem) {
-    if (listItem === undefined || !listItem.isTypeMyToken()) {
-        console.warn("display_my_token_configure_modal was called with an incorrect type", listItem);
-        return;
-    }
-
 }
 
 function path_exists(folderPath) {
@@ -1392,26 +1413,188 @@ function create_token_inside(listItem) {
     });
     console.log("create_token_inside created a new item", newItem);
 
-    display_mytoken_configuration_modal(newItem);
+    display_my_token_configuration_modal(newItem);
 }
 
-function display_mytoken_configuration_modal(listItem, placedToken) {
+function display_my_token_configuration_modal(listItem, placedToken) {
     if (!listItem?.isTypeMyToken()) {
-        console.warn("display_mytoken_configuration_modal was called with incorrect item type", listItem);
+        console.warn("display_my_token_configuration_modal was called with incorrect item type", listItem);
         return;
     }
 
     // close any that are already open just to be safe
     close_sidebar_modal();
-
     let sidebarPanel = new SidebarPanel("mytokens-customization-modal");
     display_sidebar_modal(sidebarPanel);
-    sidebarPanel.updateHeader(listItem.name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
 
-    redraw_token_images_in_modal(sidebarPanel, listItem);
+    let name = listItem.name;
+    let tokenSize = listItem.tokenSize;
+    if (placedToken !== undefined) {
+        if (placedToken.options.tokenSize !== undefined) {
+            tokenSize = placedToken.options.tokenSize;
+        }
+        if (placedToken.options.name !== undefined && placedToken.options.name !== listItem.name) {
+            // this token has a different name than the saved object
+            name = placedToken.options.name;
+        }
+    }
+    if (tokenSize === undefined) {
+        // we haven't figured out the tokenSize yet so default to 1
+        tokenSize = 1;
+    }
+
+    sidebarPanel.updateHeader(name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
+    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 
     // MyToken footer form
 
+    let myToken = find_my_token(listItem.fullPath());
+
+    const buildOptionSelect = function(name, disabledLabel, enabledLabel) {
+        let inputElement = $(`
+            <select name="${name}">
+                <option value="default">Default</option>
+                <option value="disabled">${disabledLabel}</option>
+                <option value="enabled">${enabledLabel}</option>
+            </select>
+        `);
+
+        // explicitly look for true/false because the default value is undefined
+        let configuredValue = myToken[name];
+        if (placedToken?.options[name] === true || placedToken?.options[name] === false) {
+            configuredValue = placedToken.options[name];
+        }
+        if (configuredValue === true) {
+            inputElement.val("enabled");
+        } else if (configuredValue === false) {
+            inputElement.val("disabled");
+        } else {
+            inputElement.val("default");
+        }
+        inputElement.change(function(event) {
+            console.log("update", event.target.name , "to", event.target.value);
+            switch (event.target.value) {
+                case "enabled":
+                    if (placedToken !== undefined) {
+                        placedToken.options[name] = true;
+                    } else {
+                        myToken[name] = true;
+                    }
+                    break;
+                case "disabled":
+                    if (placedToken !== undefined) {
+                        placedToken.options[name] = false;
+                    } else {
+                        myToken[name] = false;
+                    }
+                    break;
+                default:
+                    if (placedToken !== undefined) {
+                        delete placedToken.options[name];
+                    } else {
+                        delete myToken[name];
+                    }
+                    break;
+            }
+            // is there a way to update all the images instead of redrawing them?
+            if (placedToken !== undefined) {
+                placedToken.place_sync_persist();
+            } else {
+                persist_my_tokens();
+            }
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        });
+       return inputElement;
+    };
+
+    // token name
+    let inputWrapper = sidebarPanel.inputWrapper;
+    inputWrapper.append($(`<div class="token-image-modal-footer-title" style="width:100%;padding-left:0px">Token Name</div>`));
+    let nameInput = $(`<input data-previous-name="${name}" title="token name" placeholder="my token name" name="addCustomName" type="text" style="width:100%" value="${name === undefined ? '' : name}" />`);
+    nameInput.on('keyup', function(event) {
+        if (event.key === "Enter" && event.target.value !== undefined && event.target.value.length > 0) {
+            console.log("update token name to", event.target.value);
+            if (placedToken !== undefined) {
+                placedToken.options.name = event.target.value;
+                placedToken.place_sync_persist();
+            } else {
+                let renameSucceeded = rename_my_token(myToken, event.target.value, true);
+                if (renameSucceeded) {
+                    persist_my_tokens();
+                    rebuild_token_items_list();
+                } else {
+                    $(event.target).select();
+                    return;
+                }
+            }
+            listItem.name = event.target.value;
+            sidebarPanel.updateHeader(event.target.value, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        }
+    });
+    inputWrapper.append(nameInput);
+
+    // token size
+    let tokenSizeInput = temp_build_token_size_input(tokenSize, function (newSize) {
+        console.log("do something with new token size", newSize)
+    });
+    inputWrapper.append(tokenSizeInput);
+    inputWrapper.append(`<div class="sidebar-panel-header-explanation" style="padding-bottom:6px;">The following will override global settings for this token. Global settings can be changed in the settings tab.</div>`)
+
+    // token type
+    let tokenTypeInput = buildOptionSelect("square", "Round", "Square");
+    let tokenTypeInputWrapper = build_select_input("Token Shape", tokenTypeInput);
+    inputWrapper.append(tokenTypeInputWrapper);        // adds class token-round
+
+    // token border
+    let hideBorderInput = buildOptionSelect("disableborder", "Border", "No Border");
+    let hideBorderInputWrapper = build_select_input("Border Visibility", hideBorderInput);
+    inputWrapper.append(hideBorderInputWrapper); // sets border-width: 4
+
+    // token aspect ratio
+    let aspectRatioInput = buildOptionSelect("legacyaspectratio", "Maintain", "Stretch")
+    let aspectRatioInputWrapper = build_select_input("Aspect Ratio", aspectRatioInput);
+    inputWrapper.append(aspectRatioInputWrapper);     // adds class preserve-aspect-ratio
+
+    // submit form button
+    let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Token</button>`);
+    saveButton.on("click", function(event) {
+        console.log("submit token form?", event);
+        let nameInput = $(event.target).parent().find("input[name='addCustomName']");
+        let updatedName = nameInput.val();
+        if (placedToken !== undefined) {
+            placedToken.options.name = updatedName;
+            listItem.name = updatedName;
+            close_sidebar_modal();
+        } else {
+            let renameSucceeded = rename_my_token(myToken, updatedName, true);
+            if (renameSucceeded) {
+                listItem.name = updatedName;
+                persist_my_tokens();
+                rebuild_token_items_list();
+                redraw_token_list();
+                close_sidebar_modal();
+            } else {
+                nameInput.select();
+            }
+        }
+    });
+    inputWrapper.append(saveButton);
+}
+
+function rename_my_token(myToken, newName, alertUser) {
+    let newPath = sanitize_folder_path(`${myToken.folderPath}/${newName}`);
+    let newFullPath = sanitize_folder_path(`${TokenListItem.PathMyTokens}${newPath}`);
+    let existing = find_my_token(newFullPath);
+    if (existing !== undefined) {
+        if (alertUser !== false) {
+            alert(`A Token with the name "${newName}" already exists at "${newFullPath}"`);
+        }
+        console.warn(`A Token with the name ${newName} already exists in the folder "${TokenListItem.PathMyTokens}${myToken.folderPath}"`);
+        return false;
+    }
+    myToken.name = newName;
+    return true;
 }
 
 function display_builtin_token_details_modal(listItem) {
@@ -1433,39 +1616,23 @@ function display_builtin_token_details_modal(listItem) {
 function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     sidebarPanel.body.empty();
 
-    let name = listItem.name;
-    let tokenSize = listItem.tokenSize;
     let image = parse_img(listItem.image);
 
     // clone our images array instead of using a reference so we don't accidentally change the current images for all tokens
     // we also need to parse and compare every image to know if we need to add the placedToken image
     let images = alternative_images(listItem).map(image => parse_img(image));
 
-    let indexOffset = 0;
     if (image !== undefined && !images.includes(image)) {
         // the main image somehow isn't in the list so put it at the front. This can happen when you update the image for a placed token but not saving it
         images.unshift(image);
-        indexOffset++;
     }
 
     if (placedToken !== undefined) {
-        if (placedToken.options.tokenSize !== undefined) {
-            tokenSize = placedToken.options.tokenSize;
-        }
-        if (placedToken.options.name !== undefined && placedToken.options.name !== listItem.name) {
-            // this token has a different name than the saved object
-            name = placedToken.options.name;
-        }
         let placedImg = parse_img(placedToken.options.imgsrc);
-        if (placedImg !== undefined && !images.includes(placedImg)) {
+        if (placedImg !== undefined && placedImg !== "" && !images.includes(placedImg)) {
             // the placedToken image has been changed by the user so put it at the front
             images.unshift(placedImg);
-            indexOffset++;
         }
-    }
-    if (tokenSize === undefined) {
-        // we haven't figured out the tokenSize yet so default to 1
-        tokenSize = 1;
     }
 
     for (let i = 0; i < images.length; i++) {
@@ -1522,13 +1689,13 @@ function alternative_images(listItem) {
     return alternativeImages;
 }
 
-function persist_mytokens() {
+function persist_my_tokens() {
     localStorage.setItem("MyTokens", JSON.stringify(mytokens));
     localStorage.setItem("MyTokensEmptyFolders", JSON.stringify(emptyfolders));
 }
 
 function did_change_items() {
-    persist_mytokens();
+    persist_my_tokens();
     rebuild_token_items_list();
     redraw_token_list();
     // filter_token_list(tokensPanel.body.find(".token-search").val());
@@ -1672,4 +1839,70 @@ function convert_challenge_rating_id(crId) {
         case 3: return "1/4";
         default: return crId - 4;
     }
+}
+
+/// this is a duplicate from a different PR that will be replaced once https://github.com/cyruzzo/AboveVTT/pull/314 is merged
+function temp_build_token_size_input(currentTokenSize, changeHandler) {
+    let sizeNumber = parseInt(currentTokenSize); // 0, 1, 2, 3, 4, 5, etc
+    if (isNaN(sizeNumber)) {
+        sizeNumber = 1;
+    }
+
+    let upsq = window.CURRENT_SCENE_DATA.upsq;
+    if (upsq === undefined || upsq.length === 0) {
+        upsq = "ft";
+    }
+
+    let customStyle = sizeNumber > 4 ? "display:flex;" : "display:none;"
+
+    let output = $(`
+ 		<div class="token-image-modal-footer-select-wrapper">
+ 			<div class="token-image-modal-footer-title">Token Size</div>
+ 			<select name="data-token-size">
+ 				<option value="0">Tiny (2.5${upsq})</option>
+ 				<option value="1">Small/Medium (5${upsq})</option>
+ 				<option value="2">Large (10${upsq})</option>
+ 				<option value="3">Huge (15${upsq})</option>
+ 				<option value="4">Gargantuan (20${upsq})</option>
+ 				<option value="custom">Custom</option>
+ 			</select>
+ 		</div>
+ 		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
+ 			<div class="token-image-modal-footer-title">Number Of Squares</div>
+ 			<input type="text" name="data-token-size-custom" placeholder="5" style="width: 3rem;">
+ 		</div>
+ 	`);
+
+    let tokenSizeInput = output.find("select");
+    let customSizeInput = output.find("input");
+    if (sizeNumber > 4) {
+        tokenSizeInput.val("custom");
+        customSizeInput.val(`${sizeNumber}`);
+    } else {
+        tokenSizeInput.val(`${sizeNumber}`);
+    }
+
+    tokenSizeInput.change(function(changeEvent) {
+        let selectInput = $(changeEvent.target);
+        let newValue = selectInput.val();
+        let customInputWrapper = selectInput.parent().next();
+        console.log("tokenSizeInput changed");
+        if (newValue === "custom") {
+            customInputWrapper.show();
+        } else {
+            customInputWrapper.hide();
+            changeHandler(parseInt(newValue));
+        }
+    });
+
+    customSizeInput.change(function(changeEvent) {
+        console.log("customSizeInput changed");
+        let textInput = $(changeEvent.target);
+        let numberOfSquares = parseInt(textInput.val());
+        if (!isNaN(numberOfSquares)) {
+            changeHandler(numberOfSquares);
+        }
+    });
+
+    return output;
 }
