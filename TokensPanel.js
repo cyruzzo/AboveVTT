@@ -368,7 +368,9 @@ function rebuild_token_items_list() {
     console.groupCollapsed("rebuild_token_items_list");
 
     // Players
-    let tokenItems = window.pcs.map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image));
+    let tokenItems = window.pcs
+        .filter(pc => pc.sheet !== undefined && pc.sheet !== "")
+        .map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image));
 
     // My Tokens
     let knownPaths = [];
@@ -696,6 +698,21 @@ function build_token_row(listItem, enableDrag = true) {
             }
 
             row.find(".token-row-add").append(`<span class="material-icons">place</span>`);
+
+            let whisperButton = $(`
+                <button class="token-row-button token-row-whisper" title="${listItem.name}">
+                    <span class="material-icons">spatial_audio</span>
+                </button>
+            `);
+            row.find(".token-row-add").before(whisperButton);
+            whisperButton.on("click", function(clickEvent) {
+                clickEvent.stopPropagation();
+                let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
+                let clickedItem = find_token_list_item(clickedRow);
+                $("#switch_gamelog").click();
+                $("#chat-text").val(`/whisper [${clickedItem.name}] `);
+                $("#chat-text").focus();
+            });
 
             break;
         case TokenListItem.TypeMonster:
