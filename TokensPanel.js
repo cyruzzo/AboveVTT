@@ -1416,6 +1416,7 @@ function create_token_inside(listItem) {
     display_my_token_configuration_modal(newItem);
 }
 
+// TODO: Don't need placedToken here :(
 function display_my_token_configuration_modal(listItem, placedToken) {
     if (!listItem?.isTypeMyToken()) {
         console.warn("display_my_token_configuration_modal was called with incorrect item type", listItem);
@@ -1507,8 +1508,28 @@ function display_my_token_configuration_modal(listItem, placedToken) {
        return inputElement;
     };
 
-    // token name
     let inputWrapper = sidebarPanel.inputWrapper;
+
+    // images
+    let footerText = placedToken !== undefined ? "Enter a new Image Url" : "Add More Images";
+    let imageUrlInput = sidebarPanel.build_image_url_input(footerText, function (newImageUrl) {
+        if (placedToken !== undefined) {
+            placedToken.imgsrc = newImageUrl;
+            placedToken.place_sync_persist();
+            close_sidebar_modal();
+        } else {
+            if (myToken.alternativeImages === undefined) {
+                myToken.alternativeImages = [];
+            }
+            myToken.alternativeImages.push(newImageUrl);
+            persist_my_tokens();
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        }
+    });
+    inputWrapper.append(imageUrlInput);
+
+
+    // token name
     inputWrapper.append($(`<div class="token-image-modal-footer-title" style="width:100%;padding-left:0px">Token Name</div>`));
     let nameInput = $(`<input data-previous-name="${name}" title="token name" placeholder="my token name" name="addCustomName" type="text" style="width:100%" value="${name === undefined ? '' : name}" />`);
     nameInput.on('keyup', function(event) {
