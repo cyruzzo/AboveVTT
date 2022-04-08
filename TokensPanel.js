@@ -1503,7 +1503,7 @@ function display_my_token_configuration_modal(listItem, placedToken) {
             } else {
                 persist_my_tokens();
             }
-            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+            decorate_modal_images(sidebarPanel, listItem);
         });
        return inputElement;
     };
@@ -1585,20 +1585,22 @@ function display_my_token_configuration_modal(listItem, placedToken) {
         let updatedName = nameInput.val();
         if (placedToken !== undefined) {
             placedToken.options.name = updatedName;
-            listItem.name = updatedName;
             close_sidebar_modal();
-        } else {
+            return;
+        }
+        let previousName = nameInput.attr("data-previous-name");
+        if (updatedName !== previousName) {
             let renameSucceeded = rename_my_token(myToken, updatedName, true);
             if (renameSucceeded) {
                 listItem.name = updatedName;
-                persist_my_tokens();
-                rebuild_token_items_list();
-                redraw_token_list();
-                close_sidebar_modal();
             } else {
                 nameInput.select();
             }
         }
+        persist_my_tokens();
+        rebuild_token_items_list();
+        redraw_token_list();
+        close_sidebar_modal();
     });
     inputWrapper.append(saveButton);
 }
@@ -1663,6 +1665,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
         enable_draggable_token_creation(tokenDiv, imageUrl);
         sidebarPanel.body.append(tokenDiv);
     }
+
+    decorate_modal_images(sidebarPanel, listItem);
 }
 
 function build_alternative_image_for_modal(image, placedToken) {
@@ -1682,6 +1686,64 @@ function build_alternative_image_for_modal(image, placedToken) {
         });
     }
     return tokenDiv;
+}
+
+function decorate_modal_images(sidebarPanel, listItem) {
+
+    if (listItem === undefined) {
+        console.warn("decorate_modal_images was called without a listItem");
+        return;
+    }
+
+    let myToken = undefined;
+    if (listItem.isTypeMyToken()) {
+        // use myToken overrides if they exist, else fall back to global setting
+        myToken = find_my_token(listItem.fullPath());
+    }
+
+    let items = sidebarPanel.body.find(".custom-token-image-item");
+
+    let tokenSquareSetting = myToken?.square;
+    let globalSquareSetting = window.TOKEN_SETTINGS["square"];
+    if (tokenSquareSetting === true) {
+        items.find("img").removeClass("token-round");
+    } else if (tokenSquareSetting === false) {
+        items.find("img").addClass("token-round");
+    } else if (globalSquareSetting === true) {
+        items.find("img").removeClass("token-round");
+    } else {
+        items.find("img").addClass("token-round");
+    }
+
+    let tokenBorderSetting = myToken?.disableborder;
+    let globalBorderSetting = window.TOKEN_SETTINGS["disableborder"];
+    if (tokenBorderSetting === true) {
+        items.find("img").css("border", "0px solid #000")
+    } else if (tokenBorderSetting === false) {
+        items.find("img").css("border", "4px solid #000")
+    } else if (globalBorderSetting === true) {
+        items.find("img").css("border", "0px solid #000")
+    } else {
+        items.find("img").css("border", "4px solid #000")
+    }
+
+    let tokenLegacyaspectratio = myToken?.legacyaspectratio;
+    let globalLegacyaspectratio = window.TOKEN_SETTINGS["legacyaspectratio"];
+    if (tokenLegacyaspectratio === true) {
+        items.find("img").removeClass("preserve-aspect-ratio");
+    } else if (tokenLegacyaspectratio === false) {
+        items.find("img").addClass("preserve-aspect-ratio");
+    } else if (globalLegacyaspectratio === true) {
+        items.find("img").removeClass("preserve-aspect-ratio");
+    } else {
+        items.find("img").addClass("preserve-aspect-ratio");
+    }
+
+    let tokenSize = myToken?.tokenSize;
+    if (tokenSize === undefined) {
+        tokenSize = 1;
+    }
+    items.attr("data-token-size", tokenSize);
 }
 
 function alternative_images(listItem) {

@@ -1353,7 +1353,7 @@ function place_token_at_point(tokenObject, x, y) {
 			}
 		}
 	}
-	for (let i = 0; i < token_setting_options; i++) {
+	for (let i = 0; i < token_setting_options.length; i++) {
 		// all global token settings default to false
 		setReasonableDefault(token_setting_options[i].name, false);
 	}
