@@ -1335,9 +1335,9 @@ function place_token_at_point(tokenObject, x, y) {
 				// default to small/medium size
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 			}
-		} else if (options.tokenSize != undefined && parseInt(options.tokenSize) != NaN) {
+		} else if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
 			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
-			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseInt(options.tokenSize);
+			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseFloat(options.tokenSize);
 		} else {
 			// default to small/medium size
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;

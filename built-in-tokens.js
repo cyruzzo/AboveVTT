@@ -532,3 +532,40 @@ const builtInTokens = [
     ]
   }
 ];
+
+[...Array(26).keys()]
+    .map(i => (i+10).toString(36).toUpperCase())
+    .forEach(letter => {
+      builtInTokens.push({
+        "name": letter,
+        "folderPath": "/Letters",
+        "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/${letter}.png`,
+        "disableborder": true,
+        "hidden": true
+      })
+    });
+[...Array(99).keys()]
+    .forEach(zeroBasedNumber => {
+      let number = zeroBasedNumber+1;
+      builtInTokens.push({
+        "name": `${number}`.padStart(2, "0"),
+        "folderPath": "/Numbers",
+        "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/${number}.png`,
+        "disableborder": true,
+        "hidden": true
+      })
+    });
+builtInTokens.push({
+  "name": `!`,
+  "folderPath": "/Letters",
+  "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png`,
+  "disableborder": true,
+  "hidden": true
+})
+builtInTokens.push({
+  "name": `?`,
+  "folderPath": "/Letters",
+  "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/QUESTION.png`,
+  "disableborder": true,
+  "hidden": true
+})

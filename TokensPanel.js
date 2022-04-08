@@ -397,6 +397,7 @@ function rebuild_token_items_list() {
         tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName));
     }
 
+
     // AboveVTT Tokens
     let allBuiltinPaths = builtInTokens
         .filter(item => item.folderPath !== TokenListItem.PathRoot && item.folderPath !== "" && item.folderPath !== undefined)
@@ -553,7 +554,7 @@ function redraw_token_list(searchTerm) {
 
     // now let's add all the other items
     window.tokenListItems
-        .filter(item => !item.isTypeFolder() && item.name.toLowerCase().includes(nameFilter))
+        .filter(item => !item.isTypeFolder() && item.name.toLowerCase().includes(nameFilter.toLowerCase()))
         .sort(TokenListItem.sortComparator)
         .forEach(item => {
             let row = build_token_row(item);
@@ -1044,9 +1045,9 @@ function random_image_for_item(listItem, specificImage) {
             }
         case TokenListItem.TypeBuiltinToken:
             let bt = builtInTokens.find(bt => {
-                console.log("random_image_for_item TypeBuiltinToken", listItem.fullPath(), sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`), listItem, bt);
+                console.debug("random_image_for_item TypeBuiltinToken", listItem.fullPath(), sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`), listItem, bt);
                 return listItem.fullPath() === sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`)
-            })
+            });
             console.log("random_image_for_item TypeBuiltinToken found", bt);
             if (bt?.alternativeImages !== undefined && bt.alternativeImages.length > 0) {
                 let randomIndex = getRandomInt(0, bt.alternativeImages.length);
