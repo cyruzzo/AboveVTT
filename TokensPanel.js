@@ -3,22 +3,7 @@ mytokens = [];
 emptyfolders = []; // a list of strings. not sure how to do this yet, but this will be a temporary place to store empty folders
 rootfolders = [];
 
-/**
- * @param dirtyPath {string} the path to sanitize
- * @returns {string} the sanitized path
- */
-function sanitize_folder_path(dirtyPath) {
-    let cleanPath = dirtyPath.replaceAll("///", "/").replaceAll("//", "/");
-    // remove trailing slashes before adding one at the beginning. Otherwise, we return an empty string
-    if (cleanPath.endsWith("/")) {
-        cleanPath = cleanPath.slice(0, -1);
-    }
-    if (!cleanPath.startsWith("/")) {
-        cleanPath = `/${cleanPath}`;
-    }
-    return cleanPath;
-}
-
+/** Reads in tokendata, and writes to mytokens and emptyfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function migrate_to_my_tokens() {
 
     console.groupCollapsed("migrate_to_my_tokens");
@@ -81,6 +66,7 @@ function migrate_to_my_tokens() {
     console.groupEnd();
 }
 
+/** erases mytokens and emptyfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function rollback_from_my_tokens() {
     console.groupCollapsed("rollback_from_my_tokens");
     mytokens = [];
@@ -135,7 +121,7 @@ class TokenListItem {
     static NameMyTokens = "My Tokens";
     static NameAboveVTT = "AboveVTT Tokens";
 
-    /** Generic constructor for a TokenListItem. Do not call this directly. Use one of the static functions instead.
+    /** Do not call this directly! It is a generic constructor for a TokenListItem. Use one of the static functions instead.
      * @param name {string} the name displayed to the user
      * @param image {string} the src of the img tag
      * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
@@ -147,24 +133,62 @@ class TokenListItem {
         this.type = type;
         this.folderPath = sanitize_folder_path(folderPath);
     }
+
+    /**
+     * Creates a Folder list item.
+     * @param folderPath {string} the path that the folder is in (not including the name of this folder)
+     * @param name {string} the name of the folder
+     * @returns {TokenListItem} the list item this creates
+     * @constructor
+     */
     static Folder(folderPath, name) {
         console.debug(`TokenListItem.Folder ${folderPath}/${name}`);
         return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, folderPath);
     }
+
+    /**
+     * Creates a "My Token" list item.
+     * @param tokenData {object} an object that represents the "My Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
+     * @returns {TokenListItem} the list item this creates
+     * @constructor
+     */
     static MyToken(tokenData) {
         console.debug("TokenListItem.MyToken", tokenData);
         return new TokenListItem(tokenData.name, tokenData.image, TokenListItem.TypeMyToken, `${TokenListItem.PathMyTokens}/${tokenData.folderPath}`);
     }
+
+    /**
+     * Creates a Builtin list item.
+     * @param tokenData {object} an object that represents the "Builtin Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
+     * @returns {TokenListItem} the list item this creates
+     * @constructor
+     */
     static BuiltinToken(tokenData) {
         console.debug("TokenListItem.BuiltinToken", tokenData);
         return new TokenListItem(tokenData.name, tokenData.image, TokenListItem.TypeBuiltinToken, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
     }
+
+    /**
+     * Creates a Monster list item.
+     * @param monsterData {object} the object returned by the DDB API call that searches for monsters
+     * @returns {TokenListItem} the list item this creates
+     * @constructor
+     */
     static Monster(monsterData) {
         console.debug("TokenListItem.Monster", monsterData);
         let item = new TokenListItem(monsterData.name, monsterData.avatarUrl, TokenListItem.TypeMonster, TokenListItem.PathMonsters);
         item.monsterData = monsterData;
         return item;
     }
+
+    /**
+     * Creates a PC list item.
+     * @param sheet {string} the url path for the character that this represents
+     * @param name {string} the name of the character
+     * @param image {string} the url for the image of this character
+     * @returns {TokenListItem} the list item this creates
+     * @constructor
+     */
     static PC(sheet, name, image) {
         console.debug("TokenListItem.PC", sheet, name, image);
         let item = new TokenListItem(name, image, TokenListItem.TypePC, TokenListItem.PathPlayers);
@@ -223,6 +247,7 @@ class TokenListItem {
     /** @returns {boolean} whether or not this item represents a Builtin Token */
     isTypeBuiltinToken() { return this.type === TokenListItem.TypeBuiltinToken }
 
+    /** @returns {boolean} whether or not this item represents an object that can be edited by the user */
     canEdit() {
         switch (this.type) {
             case TokenListItem.TypeFolder:
@@ -237,6 +262,7 @@ class TokenListItem {
         }
     }
 
+    /** @returns {boolean} whether or not this item represents an object that can be deleted by the user */
     canDelete() {
         switch (this.type) {
             case TokenListItem.TypeFolder:
@@ -251,14 +277,31 @@ class TokenListItem {
         }
     }
 
+    /** @returns {number} how deeply nested is this object */
     folderDepth() {
         return this.fullPath().split("/").length;
     }
 }
 
 /**
- * @param html {*|jQuery|HTMLElement} the full path of the item.
- * @returns {TokenListItem|undefined} if found, else undefined
+ * @param dirtyPath {string} the path to sanitize
+ * @returns {string} the sanitized path
+ */
+function sanitize_folder_path(dirtyPath) {
+    let cleanPath = dirtyPath.replaceAll("///", "/").replaceAll("//", "/");
+    // remove trailing slashes before adding one at the beginning. Otherwise, we return an empty string
+    if (cleanPath.endsWith("/")) {
+        cleanPath = cleanPath.slice(0, -1);
+    }
+    if (!cleanPath.startsWith("/")) {
+        cleanPath = `/${cleanPath}`;
+    }
+    return cleanPath;
+}
+
+/**
+ * @param html {*|jQuery|HTMLElement} the html representation of the item
+ * @returns {TokenListItem|undefined} TokenListItem if found, else undefined
  */
 function find_token_list_item(html) {
     if (html === undefined) return undefined;
@@ -290,6 +333,12 @@ function find_token_list_item(html) {
     return foundItem;
 }
 
+/**
+ * locates the html the given item represents in the list of tokens
+ * @param item {TokenListItem} the item to find in the list
+ * @param container {HTMLElement|undefined} the specific HTML element to search within. Defaults to {tokensPanel.body}
+ * @returns {*|jQuery|HTMLElement} the row that corresponds to the {item} you're looking for
+ */
 function find_html_row(item, container = tokensPanel.body) {
     if (item === undefined) return undefined;
     if (item.isTypeMonster()) {
@@ -297,18 +346,43 @@ function find_html_row(item, container = tokensPanel.body) {
     }
     return find_html_row_from_path(item.fullPath(), container);
 }
+
+/**
+ *
+ * @param fullPath {string} the full path of the item you're looking for
+ * @param container {HTMLElement|undefined} the specific HTML element to search within. Defaults to {tokensPanel.body}
+ * @returns {*|jQuery|HTMLElement} the row that corresponds to the {item} you're looking for
+ */
 function find_html_row_from_path(fullPath, container = tokensPanel.body) {
     if (fullPath === undefined) return undefined;
     return container?.find(`[data-full-path='${encode_full_path(fullPath)}']`);
 }
+
+/**
+ * decodes and returns the path of the item this HTML element represents
+ * @param htmlRow {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
+ * @returns {string|string|*} the full path of the given element represents
+ */
 function harvest_full_path(htmlRow) {
     if (htmlRow === undefined) return "";
     return decode_full_path(htmlRow.attr("data-full-path"));
 }
+
+/**
+ * encodes and sets the full path of an item on an html element
+ * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
+ * @param fullPath {string} the full path of an item that the html corresponds to
+ */
 function set_full_path(html, fullPath) {
     if (html === undefined) return;
     return html.attr("data-full-path", encode_full_path(fullPath)).addClass("list-item-identifier");
 }
+
+/**
+ * encodes the path of an item so it can be safely stored on an html object
+ * @param fullPath {string} the path to encode
+ * @returns {string} the encoded path
+ */
 function encode_full_path(fullPath) {
     if (fullPath === undefined) return "";
     if (fullPath.startsWith("base64")) {
@@ -317,6 +391,12 @@ function encode_full_path(fullPath) {
     }
     return `base64${btoa(fullPath)}`;
 }
+
+/**
+ * decodes the path of an item that was stored on an html object
+ * @param fullPath {string} the encoded path to decode
+ * @returns {string} the decoded path
+ */
 function decode_full_path(fullPath) {
     if (fullPath === undefined) return "";
     if (fullPath.startsWith("base64")) {
@@ -325,12 +405,23 @@ function decode_full_path(fullPath) {
     // no need to decode
     return fullPath;
 }
+
+/**
+ * determines if the encoded path on the html matches the unencoded path provided
+ * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
+ * @param fullPath {string} the path of the item you are looking for
+ * @returns {boolean} whether or not the path matches the encded path on the html
+ */
 function matches_full_path(html, fullPath) {
     if (html === undefined || fullPath === undefined) return false;
     return html.attr("data-full-path") === encode_full_path(fullPath);
 }
 
-
+/**
+ * Finds a "My Token" that matches the given path
+ * @param fullPath {string} the path of the "My Token" you're looking for
+ * @returns {undefined|*} the "My Token" object if found; else undefined
+ */
 function find_my_token(fullPath) {
     if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", TokenListItem.PathMyTokens);
@@ -347,6 +438,12 @@ function find_my_token(fullPath) {
     console.groupEnd();
     return found;
 }
+
+/**
+ * Finds a "Builtin Token" that matches the given path
+ * @param fullPath {string} the path of the "Builtin Token" you're looking for
+ * @returns {undefined|*} the "Builtin Token" object if found; else undefined
+ */
 function find_builtin_token(fullPath) {
     if (!fullPath.startsWith(TokenListItem.PathAboveVTT)) {
         console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", TokenListItem.PathAboveVTT);
@@ -364,6 +461,10 @@ function find_builtin_token(fullPath) {
     return found;
 }
 
+/**
+ * iterates over all the token sources and replaces window.tokenListItems with new objects.
+ * token sources are window.pcs, mytokens, emptyfolders, and builtInTokens
+ */
 function rebuild_token_items_list() {
     console.groupCollapsed("rebuild_token_items_list");
 
@@ -419,6 +520,10 @@ function rebuild_token_items_list() {
     console.groupEnd();
 }
 
+/**
+ * replaces window.monsterListItems with a list of items where the item.name matches the searchTerm (case-insensitive)
+ * @param searchTerm {string} the search term that the user typed into the search input
+ */
 function filter_token_list(searchTerm) {
 
     if (searchTerm === undefined || typeof searchTerm !== "string") {
@@ -448,6 +553,11 @@ function filter_token_list(searchTerm) {
     inject_monster_tokens(searchTerm, 0);
 }
 
+/**
+ * Calls the DDB API to search for monsters matching the given searchTerm and injects the results into the sidebar panel
+ * @param searchTerm {string} the search term that the user typed into the search input
+ * @param skip {number} the pagination offset. This function will inject a "Load More" button with the skip details embedded. You don't need to pass anything for this.
+ */
 function inject_monster_tokens(searchTerm, skip) {
     search_monsters(searchTerm, skip, function (monsterSearchResponse) {
         let listItems = [];
@@ -484,6 +594,7 @@ function inject_monster_tokens(searchTerm, skip) {
     });
 }
 
+/** Called on startup. It reads from localStorage, and initializes all the things needed for the TokensPanel to function properly */
 function init_tokens_panel() {
 
     console.log("init_tokens_panel");
@@ -524,6 +635,10 @@ function init_tokens_panel() {
     register_custom_monster_image_context_menu();  // context menu for images within the customization modal
 }
 
+/**
+ * clears and redraws the list of tokens in the sidebar
+ * @param searchTerm {string} the search term used to filter the list of tokens
+ */
 function redraw_token_list(searchTerm) {
     if (!window.tokenListItems) {
         // don't do anything on startup
@@ -749,6 +864,12 @@ function build_token_row(listItem, enableDrag = true) {
     return row;
 }
 
+/**
+ * Enables dragging the given html and dropping it on a scene to create a token.
+ * The given html MUST be a decendent of an item marked with the class .list-item-identifier which is set by calling {set_full_path}
+ * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
+ * @param specificImage {string} the url of the image to use. If nothing is provided, an image will be selected at random from the token's specified alternative-images.
+ */
 function enable_draggable_token_creation(html, specificImage = undefined) {
     html.draggable({
         appendTo: "#VTTWRAPPER",
@@ -794,6 +915,11 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
     });
 }
 
+/**
+ * When a row in the sidebar is clicked, this handles that click based on the item represented byt the row. Not all item types are clickable.
+ * This should only be called with someElement.on("click", did_click_row);
+ * @param clickEvent {Event} the click event
+ */
 function did_click_row(clickEvent) {
     console.log("did_click_row", clickEvent);
     let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
@@ -829,6 +955,11 @@ function did_click_row(clickEvent) {
     }
 }
 
+/**
+ * When a configuration (gear) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and presents the configuration modal for that item.
+ * This should only be called with someElement.on("click", did_click_row_gear);
+ * @param clickEvent {Event} the click event
+ */
 function did_click_row_gear(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_row_gear", clickEvent);
@@ -838,6 +969,11 @@ function did_click_row_gear(clickEvent) {
     display_token_item_configuration_modal(clickedItem);
 }
 
+/**
+ * When an AddToken (plus) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and adds a token to the scene for that item.
+ * This should only be called with someElement.on("click", did_click_add_button);
+ * @param clickEvent {Event} the click event
+ */
 function did_click_add_button(clickEvent) {
     clickEvent.stopPropagation();
     console.log("did_click_add_button", clickEvent);
@@ -849,6 +985,7 @@ function did_click_add_button(clickEvent) {
     update_pc_token_rows();
 }
 
+/** When new PC data comes in, this updates the rows with the data found in window.PLAYER_STATS */
 function update_pc_token_rows() {
     window.tokenListItems?.filter(listItem => listItem.isTypePC()).forEach(listItem => {
         let row = find_html_row(listItem);
@@ -980,6 +1117,11 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
 }
 
+/**
+ * determines the size of the token the given item represents
+ * @param listItem {TokenListItem} the item representing a token
+ * @returns {number} the tokenSize that corresponds to the token you're looking for
+ */
 function token_size_for_item(listItem) {
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
@@ -1006,6 +1148,12 @@ function token_size_for_item(listItem) {
     }
 }
 
+/**
+ * finds a random image for the given item
+ * @param listItem {TokenListItem} the item you need a random image for
+ * @param specificImage {string|undefined} the url of an image to use if it properly parses; if undefined or unparsable, a random image will be returned instead
+ * @returns {string} the url an image associated with the provided listItem
+ */
 function random_image_for_item(listItem, specificImage) {
     let validSpecifiedImage = parse_img(specificImage);
     if (validSpecifiedImage !== undefined && validSpecifiedImage.length > 0) {
@@ -1066,6 +1214,12 @@ function random_image_for_item(listItem, specificImage) {
     }
 }
 
+/**
+ * queues an API request to DDB that searches for monsters
+ * @param searchTerm {string} the search term used to search for monsters
+ * @param skip {number} the pagination offset. (This is used with the "load more" button)
+ * @param callback {function} a function that takes the JSON object returned by the DDB API
+ */
 function search_monsters(searchTerm, skip, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
@@ -1092,6 +1246,7 @@ function search_monsters(searchTerm, skip, callback) {
     });
 }
 
+/** sets up the contextMenu for token rows in the sidebar */
 function register_token_row_context_menu() {
 
     // don't allow the context menu when right clicking on the add button since that adds a hidden token
@@ -1181,6 +1336,10 @@ function register_token_row_context_menu() {
     });
 }
 
+/**
+ * Displays a SidebarPanel as a modal that allows the user to configure the given listItem
+ * @param listItem {TokenListItem} the item to configure
+ */
 function display_token_item_configuration_modal(listItem) {
     switch (listItem.type) {
         case TokenListItem.TypeFolder:
@@ -1208,6 +1367,10 @@ function display_token_item_configuration_modal(listItem) {
     }
 }
 
+/**
+ * Displays a SidebarPanel as a modal that allows the user to configure a folder
+ * @param listItem {TokenListItem} the item to configure
+ */
 function display_folder_configure_modal(listItem) {
     if (listItem === undefined || !listItem.isTypeFolder()) {
         console.warn("display_folder_configure_modal was called with an incorrect type", listItem);
@@ -1263,13 +1426,22 @@ function display_folder_configure_modal(listItem) {
     sidebarModal.body.find(`input[name="folderName"]`).select();
 }
 
-function path_exists(folderPath) {
+/**
+ * determines if the given path exists or not.
+ * @param folderPath {string} the path you are looking for
+ * @returns {boolean} whether or not the path exists
+ */
+function my_token_path_exists(folderPath) {
     if (mytokens.filter(token => token.folderPath === folderPath).length > 0) {
         return true;
     }
     return emptyfolders.includes(folderPath);
 }
 
+/**
+ * Creates a "My Tokens" folder within another "My Tokens" folder
+ * @param listItem {TokenListItem} The folder to create a new folder within
+ */
 function create_folder_inside(listItem) {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(TokenListItem.PathMyTokens)) {
         console.warn("create_folder_inside called with an incorrect item type", listItem);
@@ -1284,6 +1456,13 @@ function create_folder_inside(listItem) {
     display_folder_configure_modal(newListItem);
 }
 
+/**
+ * renames a "My Tokens" folder and updates any children within that folder
+ * @param item {TokenListItem} the folder item to update
+ * @param newName {string} the new name of the folder
+ * @param alertUser {boolean} whether or not to alert the user if an error occurs. The most common error is naming conflicts
+ * @returns {string|undefined} the path of the newly created folder; undefined if the folder could not be created.
+ */
 function rename_folder(item, newName, alertUser = true) {
     if (!item.isTypeFolder() || !item.folderPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("rename_folder called with an incorrect item type", listItem);
@@ -1305,7 +1484,7 @@ function rename_folder(item, newName, alertUser = true) {
     let fromFullPath = item.fullPath();
     let adjustedFolderPath = item.folderPath.replace(TokenListItem.PathMyTokens, "");
     let toFullPath = sanitize_folder_path(`${adjustedFolderPath}/${newName}`);
-    if (path_exists(toFullPath)) {
+    if (my_token_path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
         console.groupEnd();
         if (alertUser !== false) {
@@ -1350,6 +1529,10 @@ function rename_folder(item, newName, alertUser = true) {
     return toFullPath;
 }
 
+/**
+ * deletes a folder and all tokens/folders within it
+ * @param listItem {TokenListItem} the item representing the folder you want to delete
+ */
 function delete_folder_and_delete_children(listItem) {
     if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("delete_folder_and_delete_children called with an incorrect item type", listItem);
@@ -1384,6 +1567,10 @@ function delete_folder_and_delete_children(listItem) {
     console.groupEnd();
 }
 
+/**
+ * deletes a folder and moves all tokens/folders within it to the given folder's parent
+ * @param listItem {TokenListItem} the item representing the folder you want to delete
+ */
 function delete_folder_and_move_children_up_one_level(listItem) {
     if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
@@ -1424,6 +1611,10 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     console.groupEnd();
 }
 
+/**
+ * deletes the object represented by the given item if that object can be deleted. (pretty much only My Tokens)
+ * @param listItem {TokenListItem} the item to delete
+ */
 function delete_item(listItem) {
     if (!listItem.canDelete()) {
         console.warn("Not allowed to delete item", listItem);
@@ -1451,6 +1642,10 @@ function delete_item(listItem) {
     }
 }
 
+/**
+ * Creates a new "My Token" object within a folder
+ * @param listItem {TokenListItem} the folder item to create a token in
+ */
 function create_token_inside(listItem) {
     if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
@@ -1484,6 +1679,10 @@ function create_token_inside(listItem) {
     display_my_token_configuration_modal(newItem);
 }
 
+/**
+ * presents a SidebarPanel modal for configuring the given item
+ * @param listItem {TokenListItem} the item to configure
+ */
 function display_my_token_configuration_modal(listItem) {
     if (!listItem?.isTypeMyToken()) {
         console.warn("display_my_token_configuration_modal was called with incorrect item type", listItem);
@@ -1625,6 +1824,13 @@ function display_my_token_configuration_modal(listItem) {
     inputWrapper.append(saveButton);
 }
 
+/**
+ * Renames the given "My Token" object
+ * @param myToken {*} The "My Token" object to rename
+ * @param newName {string} the new name
+ * @param alertUser {boolean} whether or not to alert the user if an error occurs. The most common error is naming conflicts
+ * @returns {boolean} whether or not object was successfully renamed
+ */
 function rename_my_token(myToken, newName, alertUser) {
     let newPath = sanitize_folder_path(`${myToken.folderPath}/${newName}`);
     let newFullPath = sanitize_folder_path(`${TokenListItem.PathMyTokens}${newPath}`);
@@ -1640,6 +1846,10 @@ function rename_my_token(myToken, newName, alertUser) {
     return true;
 }
 
+/**
+ * displays a SidebarPanel modal with the details of the given Builtin token. This is not editable, but shows multiple images, that can be drag and dropped onto the scene
+ * @param listItem {TokenListItem} the builtin item to display a modal for
+ */
 function display_builtin_token_details_modal(listItem) {
     if (!listItem?.isTypeBuiltinToken()) {
         console.warn("display_builtin_token_details_modal was called with incorrect item type", listItem);
@@ -1656,6 +1866,12 @@ function display_builtin_token_details_modal(listItem) {
     redraw_token_images_in_modal(sidebarPanel, listItem);
 }
 
+/**
+ * Clears the body of the given sidebarPanel and adds a new element for every alternative image the listItem has
+ * @param sidebarPanel {SidebarPanel} the modal to display objects in
+ * @param listItem {TokenListItem} the list item the modal represents
+ * @param placedToken {Token|undefined} undefined if this modal does not represnet a token that is placed on the scene; else the Token object that corresponds to a token that is placed on the scene
+ */
 function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     sidebarPanel.body.empty();
 
@@ -1689,6 +1905,12 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     decorate_modal_images(sidebarPanel, listItem);
 }
 
+/**
+ * builds an HTML element for the given image
+ * @param image {string} the url to display in the image
+ * @param placedToken {Token} the Token object that as been placed on the scene; else undefined
+ * @returns {*|jQuery|HTMLElement} the HTML that you can add to a sidebarPanel modal
+ */
 function build_alternative_image_for_modal(image, placedToken) {
     let tokenDiv = $(`
 		    <div class="custom-token-image-item">
@@ -1708,6 +1930,11 @@ function build_alternative_image_for_modal(image, placedToken) {
     return tokenDiv;
 }
 
+/**
+ * iterates over all the images in a sidebarPanel modal and udpates them to match the settings of the given listItem.
+ * @param sidebarPanel {SidebarPanel} the modal to update
+ * @param listItem {TokenListItem} the item the modal represents
+ */
 function decorate_modal_images(sidebarPanel, listItem) {
 
     if (listItem === undefined) {
@@ -1766,6 +1993,11 @@ function decorate_modal_images(sidebarPanel, listItem) {
     items.attr("data-token-size", tokenSize);
 }
 
+/**
+ * finds and returns alternative images for the given listItem.
+ * @param listItem {TokenListItem} the item you need a random image for
+ * @returns {string[]} a list of url strings
+ */
 function alternative_images(listItem) {
     let alternativeImages = [];
     switch (listItem.type) {
@@ -1792,12 +2024,14 @@ function alternative_images(listItem) {
     return alternativeImages;
 }
 
+/** writes mytokens and emptyfolders to localStorage */
 function persist_my_tokens() {
     localStorage.setItem("MyTokens", JSON.stringify(mytokens));
     rebuild_emptyfolders();
     localStorage.setItem("MyTokensEmptyFolders", JSON.stringify(emptyfolders));
 }
 
+/** cleans up emptyfolders and makes sure that there aren't duplicates, missing folders, or folders that are no longer empty */
 function rebuild_emptyfolders() {
     console.groupCollapsed("rebuild_emptyfolders");
     let allFolderPaths = mytokens.map(t => t.folderPath)
@@ -1826,6 +2060,7 @@ function rebuild_emptyfolders() {
     console.groupEnd();
 }
 
+/** A convenience function to be called after any "My Tokens" are updated */
 function did_change_items() {
     persist_my_tokens();
     rebuild_token_items_list();
@@ -1833,6 +2068,10 @@ function did_change_items() {
     // filter_token_list(tokensPanel.body.find(".token-search").val());
 }
 
+/**
+ * removes the .collapsed class from all folders leading up to the secified path
+ * @param fullPath {string} the path to expand
+ */
 function expand_all_folders_up_to(fullPath) {
     console.group("expand_all_folders_up_to");
     if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
@@ -1856,6 +2095,10 @@ function expand_all_folders_up_to(fullPath) {
     console.groupEnd();
 }
 
+/**
+ * creates an iframe that loads a monster stat block for the given item
+ * @param listItem {TokenListItem} the list item representing the monster that you want to display a stat block for
+ */
 function open_monster_item(listItem) {
     if (!listItem.isTypeMonster()) {
         console.warn("open_monster_item was called with the wrong item type", listItem);
@@ -1937,6 +2180,7 @@ function open_monster_item(listItem) {
     iframe.attr("src", listItem.monsterData.url);
 }
 
+/** calls the DDB API to fetch all PCs in the campaign... It currently throws a CORS error */
 function fetch_characters() {
 
     // TODO: figure out the CORS errors here. This exact API is called from the page we're trying to call this from, and it works for them, but not for us :(
@@ -1963,13 +2207,18 @@ function fetch_characters() {
     });
 }
 
+/**
+ * translates a DDB challenge rating identifier to a human-readable string
+ * @param crId {number} the challenge rating identifier to translate
+ * @returns {string} a human-readable challenge rating
+ */
 function convert_challenge_rating_id(crId) {
     switch (crId) {
         case 0: return "0"; // ???
         case 1: return "0";
         case 2: return "1/8";
         case 3: return "1/4";
-        default: return crId - 4;
+        default: return `${crId - 4}`;
     }
 }
 
