@@ -1,9 +1,9 @@
 
 mytokens = [];
-emptyfolders = []; // a list of strings. not sure how to do this yet, but this will be a temporary place to store empty folders
-rootfolders = [];
+mytokens_emptyfolders = []; // a list of strings
+tokens_rootfolders = [];
 
-/** Reads in tokendata, and writes to mytokens and emptyfolders; marks tokendata objects with didMigrateToMyToken = false; */
+/** Reads in tokendata, and writes to mytokens and mytokens_emptyfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function migrate_to_my_tokens() {
 
     console.groupCollapsed("migrate_to_my_tokens");
@@ -47,10 +47,10 @@ function migrate_to_my_tokens() {
                 oldToken.didMigrateToMyToken = true;
             }
         } else {
-            if (emptyfolders.includes(currentFolderPath)) {
+            if (mytokens_emptyfolders.includes(currentFolderPath)) {
                 console.log("not adding duplicate empty folder", currentFolderPath);
             } else {
-                emptyfolders.push(currentFolderPath);
+                mytokens_emptyfolders.push(currentFolderPath);
             }
         }
         if (folder.folders) {
@@ -60,17 +60,17 @@ function migrate_to_my_tokens() {
         }
     }
 
-    migrateFolderAtPath(TokenListItem.PathRoot);
+    migrateFolderAtPath(SidebarListItem.PathRoot);
     persist_my_tokens();
     persist_customtokens();
     console.groupEnd();
 }
 
-/** erases mytokens and emptyfolders; marks tokendata objects with didMigrateToMyToken = false; */
+/** erases mytokens and mytokens_emptyfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function rollback_from_my_tokens() {
     console.groupCollapsed("rollback_from_my_tokens");
     mytokens = [];
-    emptyfolders = [];
+    mytokens_emptyfolders = [];
     persist_my_tokens();
     const rollbackFolderAtPath = function(oldFolderPath) {
         let currentFolderPath = sanitize_folder_path(oldFolderPath);
@@ -88,333 +88,9 @@ function rollback_from_my_tokens() {
             rollbackFolderAtPath(nextFolderPath);
         }
     };
-    rollbackFolderAtPath(TokenListItem.PathRoot);
+    rollbackFolderAtPath(SidebarListItem.PathRoot);
     persist_customtokens();
     console.groupEnd();
-}
-
-/**
- * A ViewModel that represents a token (or folder) listed in the sidebar.
- * This is a transient object and is not intended to be used as a data source. Instead, each {type} determines where the data source is.
- * This is not a token that has been placed on a scene; that is an instance of {Token} and is
- * represented as a many {Token} to one {TokenListItem} relationship.
- * For example:
- *   This could represent a "Goblin" monster. Placing this on the scene several times would create several {Token} instances.
- *   Each of those {Token}s would be of type "monster".
- */
-class TokenListItem {
-
-    static TypeFolder = "folder";
-    static TypeMyToken = "myToken";
-    static TypePC = "pc";
-    static TypeMonster = "monster";
-    static TypeBuiltinToken = "builtinToken";
-
-    static PathRoot = "/";
-    static PathPlayers = "/Players";
-    static PathMonsters = "/Monsters";
-    static PathMyTokens = "/My Tokens";
-    static PathAboveVTT = "/AboveVTT Tokens";
-
-    static NamePlayers = "Players";
-    static NameMonsters = "Monsters";
-    static NameMyTokens = "My Tokens";
-    static NameAboveVTT = "AboveVTT Tokens";
-
-    /** Do not call this directly! It is a generic constructor for a TokenListItem. Use one of the static functions instead.
-     * @param name {string} the name displayed to the user
-     * @param image {string} the src of the img tag
-     * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
-     * @param folderPath {string} the folder this token is in
-     */
-    constructor(name, image, type, folderPath = TokenListItem.PathRoot) {
-        this.name = name;
-        this.image = image;
-        this.type = type;
-        this.folderPath = sanitize_folder_path(folderPath);
-    }
-
-    /**
-     * Creates a Folder list item.
-     * @param folderPath {string} the path that the folder is in (not including the name of this folder)
-     * @param name {string} the name of the folder
-     * @returns {TokenListItem} the list item this creates
-     * @constructor
-     */
-    static Folder(folderPath, name) {
-        console.debug(`TokenListItem.Folder ${folderPath}/${name}`);
-        return new TokenListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, TokenListItem.TypeFolder, folderPath);
-    }
-
-    /**
-     * Creates a "My Token" list item.
-     * @param tokenData {object} an object that represents the "My Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
-     * @returns {TokenListItem} the list item this creates
-     * @constructor
-     */
-    static MyToken(tokenData) {
-        console.debug("TokenListItem.MyToken", tokenData);
-        return new TokenListItem(tokenData.name, tokenData.image, TokenListItem.TypeMyToken, `${TokenListItem.PathMyTokens}/${tokenData.folderPath}`);
-    }
-
-    /**
-     * Creates a Builtin list item.
-     * @param tokenData {object} an object that represents the "Builtin Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
-     * @returns {TokenListItem} the list item this creates
-     * @constructor
-     */
-    static BuiltinToken(tokenData) {
-        console.debug("TokenListItem.BuiltinToken", tokenData);
-        return new TokenListItem(tokenData.name, tokenData.image, TokenListItem.TypeBuiltinToken, `${TokenListItem.PathAboveVTT}/${tokenData.folderPath}`);
-    }
-
-    /**
-     * Creates a Monster list item.
-     * @param monsterData {object} the object returned by the DDB API call that searches for monsters
-     * @returns {TokenListItem} the list item this creates
-     * @constructor
-     */
-    static Monster(monsterData) {
-        console.debug("TokenListItem.Monster", monsterData);
-        let item = new TokenListItem(monsterData.name, monsterData.avatarUrl, TokenListItem.TypeMonster, TokenListItem.PathMonsters);
-        item.monsterData = monsterData;
-        return item;
-    }
-
-    /**
-     * Creates a PC list item.
-     * @param sheet {string} the url path for the character that this represents
-     * @param name {string} the name of the character
-     * @param image {string} the url for the image of this character
-     * @returns {TokenListItem} the list item this creates
-     * @constructor
-     */
-    static PC(sheet, name, image) {
-        console.debug("TokenListItem.PC", sheet, name, image);
-        let item = new TokenListItem(name, image, TokenListItem.TypePC, TokenListItem.PathPlayers);
-        item.sheet = sheet;
-        return item;
-    }
-
-    /**
-     * A comparator for sorting by folder, then alphabetically.
-     * @param lhs {TokenListItem}
-     * @param rhs {TokenListItem}
-     * @returns {number}
-     */
-    static sortComparator(lhs, rhs) {
-        // always folders before tokens
-        if (lhs.isTypeFolder() && !rhs.isTypeFolder()) { return -1; }
-        if (!lhs.isTypeFolder() && rhs.isTypeFolder()) { return 1; }
-        // alphabetically by name
-        if (lhs.name.toLowerCase() < rhs.name.toLowerCase()) { return -1; }
-        if (lhs.name.toLowerCase() > rhs.name.toLowerCase()) { return 1; }
-        // equal
-        return 0;
-    }
-
-    /**
-     * A comparator for sorting by folder depth, then by folder, then alphabetically.
-     * @param lhs {TokenListItem}
-     * @param rhs {TokenListItem}
-     * @returns {number}
-     */
-    static folderDepthComparator(lhs, rhs) {
-        if (lhs.isTypeFolder() && rhs.isTypeFolder()) {
-            if (lhs.folderDepth() < rhs.folderDepth()) { return -1; }
-            if (lhs.folderDepth() > rhs.folderDepth()) { return 1; }
-        }
-        return TokenListItem.sortComparator(lhs, rhs);
-    }
-
-    /** @returns {string} path + name */
-    fullPath() {
-        return sanitize_folder_path(`${this.folderPath}/${this.name}`);
-    }
-
-    /** @returns {boolean} whether or not this item represents a Folder */
-    isTypeFolder() { return this.type === TokenListItem.TypeFolder }
-
-    /** @returns {boolean} whether or not this item represents a "My Token" */
-    isTypeMyToken() { return this.type === TokenListItem.TypeMyToken }
-
-    /** @returns {boolean} whether or not this item represents a Player */
-    isTypePC() { return this.type === TokenListItem.TypePC }
-
-    /** @returns {boolean} whether or not this item represents a Monster */
-    isTypeMonster() { return this.type === TokenListItem.TypeMonster }
-
-    /** @returns {boolean} whether or not this item represents a Builtin Token */
-    isTypeBuiltinToken() { return this.type === TokenListItem.TypeBuiltinToken }
-
-    /** @returns {boolean} whether or not this item represents an object that can be edited by the user */
-    canEdit() {
-        switch (this.type) {
-            case TokenListItem.TypeFolder:
-                return this.folderPath.startsWith(TokenListItem.PathMyTokens);
-            case TokenListItem.TypeMyToken:
-            case TokenListItem.TypePC:
-            case TokenListItem.TypeMonster:
-                return true;
-            case TokenListItem.TypeBuiltinToken:
-            default:
-                return false;
-        }
-    }
-
-    /** @returns {boolean} whether or not this item represents an object that can be deleted by the user */
-    canDelete() {
-        switch (this.type) {
-            case TokenListItem.TypeFolder:
-                return this.folderPath.startsWith(TokenListItem.PathMyTokens);
-            case TokenListItem.TypeMyToken:
-                return true;
-            case TokenListItem.TypePC:
-            case TokenListItem.TypeMonster:
-            case TokenListItem.TypeBuiltinToken:
-            default:
-                return false;
-        }
-    }
-
-    /** @returns {number} how deeply nested is this object */
-    folderDepth() {
-        return this.fullPath().split("/").length;
-    }
-}
-
-/**
- * @param dirtyPath {string} the path to sanitize
- * @returns {string} the sanitized path
- */
-function sanitize_folder_path(dirtyPath) {
-    let cleanPath = dirtyPath.replaceAll("///", "/").replaceAll("//", "/");
-    // remove trailing slashes before adding one at the beginning. Otherwise, we return an empty string
-    if (cleanPath.endsWith("/")) {
-        cleanPath = cleanPath.slice(0, -1);
-    }
-    if (!cleanPath.startsWith("/")) {
-        cleanPath = `/${cleanPath}`;
-    }
-    return cleanPath;
-}
-
-/**
- * @param html {*|jQuery|HTMLElement} the html representation of the item
- * @returns {TokenListItem|undefined} TokenListItem if found, else undefined
- */
-function find_token_list_item(html) {
-    if (html === undefined) return undefined;
-    let foundItem;
-    let fullPath = harvest_full_path(html);
-    if (html.attr("data-monster") !== undefined) {
-        // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
-        foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
-    }
-    if (foundItem === undefined) {
-        foundItem = rootfolders.find(item => item.fullPath() === fullPath);
-    }
-    if (foundItem === undefined) {
-        foundItem = window.tokenListItems.find(item => item.fullPath() === fullPath);
-    }
-    if (foundItem === undefined) {
-        foundItem = window.monsterListItems.find(item => item.fullPath() === fullPath);
-    }
-    if (foundItem === undefined && emptyfolders.includes(fullPath)) {
-        let pathComponents = fullPath.split("/");
-        let folderName = pathComponents.pop();
-        let folderPath = pathComponents.join("/");
-        let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
-        foundItem = TokenListItem.Folder(myTokensFolderPath, folderName);
-    }
-    if (foundItem === undefined) {
-        console.warn(`find_token_list_item found nothing at path: ${fullPath}`);
-    }
-    return foundItem;
-}
-
-/**
- * locates the html the given item represents in the list of tokens
- * @param item {TokenListItem} the item to find in the list
- * @param container {HTMLElement|undefined} the specific HTML element to search within. Defaults to {tokensPanel.body}
- * @returns {*|jQuery|HTMLElement} the row that corresponds to the {item} you're looking for
- */
-function find_html_row(item, container = tokensPanel.body) {
-    if (item === undefined) return undefined;
-    if (item.isTypeMonster()) {
-        return container?.find(`[data-monster='${item.monsterData.id}']`);
-    }
-    return find_html_row_from_path(item.fullPath(), container);
-}
-
-/**
- *
- * @param fullPath {string} the full path of the item you're looking for
- * @param container {HTMLElement|undefined} the specific HTML element to search within. Defaults to {tokensPanel.body}
- * @returns {*|jQuery|HTMLElement} the row that corresponds to the {item} you're looking for
- */
-function find_html_row_from_path(fullPath, container = tokensPanel.body) {
-    if (fullPath === undefined) return undefined;
-    return container?.find(`[data-full-path='${encode_full_path(fullPath)}']`);
-}
-
-/**
- * decodes and returns the path of the item this HTML element represents
- * @param htmlRow {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
- * @returns {string|string|*} the full path of the given element represents
- */
-function harvest_full_path(htmlRow) {
-    if (htmlRow === undefined) return "";
-    return decode_full_path(htmlRow.attr("data-full-path"));
-}
-
-/**
- * encodes and sets the full path of an item on an html element
- * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
- * @param fullPath {string} the full path of an item that the html corresponds to
- */
-function set_full_path(html, fullPath) {
-    if (html === undefined) return;
-    return html.attr("data-full-path", encode_full_path(fullPath)).addClass("list-item-identifier");
-}
-
-/**
- * encodes the path of an item so it can be safely stored on an html object
- * @param fullPath {string} the path to encode
- * @returns {string} the encoded path
- */
-function encode_full_path(fullPath) {
-    if (fullPath === undefined) return "";
-    if (fullPath.startsWith("base64")) {
-        // already encoded. just return it
-        return fullPath;
-    }
-    return `base64${btoa(fullPath)}`;
-}
-
-/**
- * decodes the path of an item that was stored on an html object
- * @param fullPath {string} the encoded path to decode
- * @returns {string} the decoded path
- */
-function decode_full_path(fullPath) {
-    if (fullPath === undefined) return "";
-    if (fullPath.startsWith("base64")) {
-        return atob(fullPath.replace("base64", ""));
-    }
-    // no need to decode
-    return fullPath;
-}
-
-/**
- * determines if the encoded path on the html matches the unencoded path provided
- * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
- * @param fullPath {string} the path of the item you are looking for
- * @returns {boolean} whether or not the path matches the encded path on the html
- */
-function matches_full_path(html, fullPath) {
-    if (html === undefined || fullPath === undefined) return false;
-    return html.attr("data-full-path") === encode_full_path(fullPath);
 }
 
 /**
@@ -423,13 +99,13 @@ function matches_full_path(html, fullPath) {
  * @returns {undefined|*} the "My Token" object if found; else undefined
  */
 function find_my_token(fullPath) {
-    if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
-        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", TokenListItem.PathMyTokens);
+    if (!fullPath.startsWith(SidebarListItem.PathMyTokens)) {
+        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", SidebarListItem.PathMyTokens);
         return undefined;
     }
     console.groupCollapsed("find_my_token");
     let found = mytokens.find(t => {
-        let dirtyPath = `${TokenListItem.PathMyTokens}${t.folderPath}/${t.name}`;
+        let dirtyPath = `${SidebarListItem.PathMyTokens}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -445,13 +121,13 @@ function find_my_token(fullPath) {
  * @returns {undefined|*} the "Builtin Token" object if found; else undefined
  */
 function find_builtin_token(fullPath) {
-    if (!fullPath.startsWith(TokenListItem.PathAboveVTT)) {
-        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", TokenListItem.PathAboveVTT);
+    if (!fullPath.startsWith(SidebarListItem.PathAboveVTT)) {
+        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", SidebarListItem.PathAboveVTT);
         return undefined;
     }
     console.groupCollapsed("find_builtin_token");
     let found = builtInTokens.find(t => {
-        let dirtyPath = `${TokenListItem.PathAboveVTT}${t.folderPath}/${t.name}`;
+        let dirtyPath = `${SidebarListItem.PathAboveVTT}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -463,7 +139,7 @@ function find_builtin_token(fullPath) {
 
 /**
  * iterates over all the token sources and replaces window.tokenListItems with new objects.
- * token sources are window.pcs, mytokens, emptyfolders, and builtInTokens
+ * token sources are window.pcs, mytokens, mytokens_emptyfolders, and builtInTokens
  */
 function rebuild_token_items_list() {
     console.groupCollapsed("rebuild_token_items_list");
@@ -471,37 +147,37 @@ function rebuild_token_items_list() {
     // Players
     let tokenItems = window.pcs
         .filter(pc => pc.sheet !== undefined && pc.sheet !== "")
-        .map(pc => TokenListItem.PC(pc.sheet, pc.name, pc.image));
+        .map(pc => SidebarListItem.PC(pc.sheet, pc.name, pc.image));
 
     // My Tokens
     let knownPaths = [];
     for (let i = 0; i < mytokens.length; i++) {
         let myToken = mytokens[i];
         let path = myToken.folderPath;
-        if (path !== TokenListItem.PathRoot && !knownPaths.includes(path)) {
+        if (path !== SidebarListItem.PathRoot && !knownPaths.includes(path)) {
             // we haven't built this folder item yet so do that now
             let pathComponents = path.split("/");
             let folderName = pathComponents.pop();
             let folderPath = pathComponents.join("/");
-            let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
-            tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName));
+            let myTokensFolderPath = `${SidebarListItem.PathMyTokens}/${folderPath}`;
+            tokenItems.push(SidebarListItem.Folder(myTokensFolderPath, folderName));
             knownPaths.push(path);
         }
-        tokenItems.push(TokenListItem.MyToken(myToken));
+        tokenItems.push(SidebarListItem.MyToken(myToken));
     }
-    for (let i = 0; i < emptyfolders.length; i++) {
-        let emptyFolderPath = emptyfolders[i];
+    for (let i = 0; i < mytokens_emptyfolders.length; i++) {
+        let emptyFolderPath = mytokens_emptyfolders[i];
         let components = emptyFolderPath.split("/");
         let folderName = components.pop();
         let folderPath = components.join("/");
-        let myTokensFolderPath = `${TokenListItem.PathMyTokens}/${folderPath}`;
-        tokenItems.push(TokenListItem.Folder(myTokensFolderPath, folderName));
+        let myTokensFolderPath = `${SidebarListItem.PathMyTokens}/${folderPath}`;
+        tokenItems.push(SidebarListItem.Folder(myTokensFolderPath, folderName));
     }
 
 
     // AboveVTT Tokens
     let allBuiltinPaths = builtInTokens
-        .filter(item => item.folderPath !== TokenListItem.PathRoot && item.folderPath !== "" && item.folderPath !== undefined)
+        .filter(item => item.folderPath !== SidebarListItem.PathRoot && item.folderPath !== "" && item.folderPath !== undefined)
         .map(item => item.folderPath);
     let builtinPaths = [...new Set(allBuiltinPaths)];
     for (let i = 0; i < builtinPaths.length; i++) {
@@ -509,11 +185,11 @@ function rebuild_token_items_list() {
         let pathComponents = path.split("/");
         let folderName = pathComponents.pop();
         let folderPath = pathComponents.join("/");
-        let builtinFolderPath = `${TokenListItem.PathAboveVTT}/${folderPath}`;
-        tokenItems.push(TokenListItem.Folder(builtinFolderPath, folderName));
+        let builtinFolderPath = `${SidebarListItem.PathAboveVTT}/${folderPath}`;
+        tokenItems.push(SidebarListItem.Folder(builtinFolderPath, folderName));
     }
     for (let i = 0; i < builtInTokens.length; i++) {
-        tokenItems.push(TokenListItem.BuiltinToken(builtInTokens[i]));
+        tokenItems.push(SidebarListItem.BuiltinToken(builtInTokens[i]));
     }
 
     window.tokenListItems = tokenItems;
@@ -537,7 +213,7 @@ function filter_token_list(searchTerm) {
         allFolders.removeClass("collapsed"); // auto expand all folders
         for (let i = 0; i < allFolders.length; i++) {
             let currentFolder = $(allFolders[i]);
-            if (matches_full_path(currentFolder, TokenListItem.PathMonsters)) {
+            if (matches_full_path(currentFolder, SidebarListItem.PathMonsters)) {
                 // we always want the monsters folder to be open when searching
                 continue;
             }
@@ -564,15 +240,16 @@ function inject_monster_tokens(searchTerm, skip) {
 
         for (let i = 0; i < monsterSearchResponse.data.length; i++) {
             let m = monsterSearchResponse.data[i];
-            let item = TokenListItem.Monster(m)
+            let item = SidebarListItem.Monster(m)
             window.monsterListItems.push(item);
             listItems.push(item);
         }
         console.log("converted", listItems);
-        let monsterFolder = find_html_row_from_path('/Monsters');
+        let monsterFolder = find_html_row_from_path('/Monsters', tokensPanel.body);
         for (let i = 0; i < listItems.length; i++) {
             let item = listItems[i];
-            let row = build_token_row(item);
+            let row = build_sidebar_list_row(item);
+            enable_draggable_token_creation(row);
             row.click();
             monsterFolder.find(`> .folder-token-list`).append(row);
         }
@@ -599,18 +276,18 @@ function init_tokens_panel() {
 
     console.log("init_tokens_panel");
 
-    rootfolders = [
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NamePlayers),
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameMyTokens),
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameAboveVTT),
-        TokenListItem.Folder(TokenListItem.PathRoot, TokenListItem.NameMonsters)
+    tokens_rootfolders = [
+        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NamePlayers),
+        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameMyTokens),
+        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameAboveVTT),
+        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameMonsters)
     ];
 
     if(localStorage.getItem('MyTokens') != null){
         mytokens = $.parseJSON(localStorage.getItem('MyTokens'));
     }
     if(localStorage.getItem('MyTokensEmptyFolders') != null){
-        emptyfolders = $.parseJSON(localStorage.getItem('MyTokensEmptyFolders'));
+        mytokens_emptyfolders = $.parseJSON(localStorage.getItem('MyTokensEmptyFolders'));
     }
     if(localStorage.getItem('CustomTokens') != null){
         tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
@@ -653,16 +330,19 @@ function redraw_token_list(searchTerm) {
     }
 
     // first let's add our root folders
-    for (let i = 0; i < rootfolders.length; i++) {
-        list.append(build_token_row(rootfolders[i]));
+    for (let i = 0; i < tokens_rootfolders.length; i++) {
+        let row = build_sidebar_list_row(tokens_rootfolders[i]);
+        enable_draggable_token_creation(row);
+        list.append(row);
     }
 
     // now let's add all other folders without filtering by searchTerm because we need the folder to exist in order to add items into it
     window.tokenListItems
         .filter(item => item.isTypeFolder())
-        .sort(TokenListItem.folderDepthComparator)
+        .sort(SidebarListItem.folderDepthComparator)
         .forEach(item => {
-            let row = build_token_row(item);
+            let row = build_sidebar_list_row(item);
+            enable_draggable_token_creation(row);
             console.debug("appending item", item);
             find_html_row_from_path(item.folderPath, list).find(` > .folder-token-list`).append(row);
         });
@@ -670,9 +350,10 @@ function redraw_token_list(searchTerm) {
     // now let's add all the other items
     window.tokenListItems
         .filter(item => !item.isTypeFolder() && item.name.toLowerCase().includes(nameFilter.toLowerCase()))
-        .sort(TokenListItem.sortComparator)
+        .sort(SidebarListItem.sortComparator)
         .forEach(item => {
-            let row = build_token_row(item);
+            let row = build_sidebar_list_row(item);
+            enable_draggable_token_creation(row);
             console.debug("appending item", item);
             find_html_row_from_path(item.folderPath, list).find(` > .folder-token-list`).append(row);
         });
@@ -681,187 +362,6 @@ function redraw_token_list(searchTerm) {
     tokensPanel.body.append(list);
     update_pc_token_rows();
     console.groupEnd()
-}
-
-/**
- * @param listItem {TokenListItem} the list item that this row will represent
- * @param enableDrag {Boolean} whether or not this row can be dragged onto a scene to place a {Token} on the scene
- * @returns {*|jQuery|HTMLElement} that represents a row in the list of tokens in the sidebar
- */
-function build_token_row(listItem, enableDrag = true) {
-
-    let row = $(`<div class="tokens-panel-row"></div>`);
-    set_full_path(row, listItem.fullPath());
-
-    let rowItem = $(`<div class="tokens-panel-row-item"></div>`);
-    row.append(rowItem);
-    rowItem.on("click", did_click_row);
-
-    let imgHolder = $(`<div class="tokens-panel-row-img"></div>`);
-    rowItem.append(imgHolder);
-    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
-    imgHolder.append(img);
-
-    let details = $(`<div class="tokens-panel-row-details"></div>`);
-    rowItem.append(details);
-    let title = $(`<div class="tokens-panel-row-details-title">${listItem.name}</div>`);
-    details.append(title);
-    let subtitle = $(`<div class="tokens-panel-row-details-subtitle"></div>`);
-    details.append(subtitle);
-
-    if (!listItem.isTypeFolder()) {
-        let addButton = $(`
-            <button class="token-row-button token-row-add" title="${listItem.name}">
-                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
-            </button>
-        `);
-        rowItem.append(addButton);
-        addButton.on("click", did_click_add_button);
-    }
-
-    switch (listItem.type) {
-        case TokenListItem.TypeFolder:
-            subtitle.hide();
-            row.append(`<div class="folder-token-list"></div>`);
-            row.addClass("folder");
-            if (!rootfolders.includes(listItem)) {
-                row.addClass("collapsed"); // only expand root folders by default
-            }
-            if (listItem.fullPath().startsWith(TokenListItem.PathMyTokens)) {
-                // add buttons for creating subfolders and tokens
-                let addFolder = $(`<button class="token-row-button"><span class="material-icons">create_new_folder</span></button>`);
-                rowItem.append(addFolder);
-                addFolder.on("click", function(clickEvent) {
-                    clickEvent.stopPropagation();
-                    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
-                    let clickedItem = find_token_list_item(clickedRow);
-                    create_folder_inside(clickedItem);
-                });
-                let addToken = $(`<button class="token-row-button"><span class="material-icons">person_add_alt_1</span></button>`);
-                rowItem.append(addToken);
-                addToken.on("click", function(clickEvent) {
-                    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
-                    let clickedItem = find_token_list_item(clickedRow);
-                    create_token_inside(clickedItem);
-                });
-
-                if (emptyfolders.includes(listItem.fullPath().replace(TokenListItem.PathMyTokens, ""))) {
-                    subtitle.append(`<div>This folder is empty</div>`);
-                    subtitle.show();
-                }
-            }
-            break;
-        case TokenListItem.TypeMyToken:
-            subtitle.hide();
-            // TODO: Style specifically for My Tokens
-            row.css("cursor", "default");
-            break;
-        case TokenListItem.TypePC:
-            let playerData = window.PLAYER_STATS[listItem.sheet];
-            if (playerData === undefined) {
-                subtitle.text("loading character details");
-                playerData = {
-                    abilities: [
-                        {abilityName: 'Strength', abilityAbbr: 'str', modifier: '?', score: '?', save: '?' },
-                        {abilityName: 'Dexterity', abilityAbbr: 'dex', modifier: '?', score: '?', save: '?' },
-                        {abilityName: 'Constitution', abilityAbbr: 'con', modifier: '?', score: '?', save: '?' },
-                        {abilityName: 'Intelligence', abilityAbbr: 'int', modifier: '?', score: '?', save: '?' },
-                        {abilityName: 'Wisdom', abilityAbbr: 'wis', modifier: '?', score: '?', save: '?' },
-                        {abilityName: 'Charisma', abilityAbbr: 'cha', modifier: '?', score: '?', save: '?' }
-                    ],
-                    pp: '?',
-                    inspiration: false,
-                    walking: '?'
-                };
-            }
-            row.addClass("player-row");
-            let abilities = $(`<div class="player-card-footer">`);
-            abilities.hide();
-            abilities.append(playerData.abilities.map(a => `
-                <div class="ability_value" data-ability="${a.abilityAbbr}">
-                    <div class="ability_name">${a.abilityAbbr.toUpperCase()}</div>
-                    <div class="ability_modifier">${a.modifier}</div>
-                    <div class="ability_score">${a.score}</div>
-                </div>
-            `).join(''));
-            row.append(abilities);
-            let expandButton = $(`<div class="player-expansion-button"><span class="material-icons">expand_more</span></div>`);
-            row.append(expandButton);
-            expandButton.on("click", function (clickEvent) {
-                clickEvent.stopPropagation();
-                let r = $(clickEvent.target).closest(".tokens-panel-row");
-                console.log(r);
-                if (r.hasClass("expanded")) {
-                    r.removeClass("expanded");
-                    r.find(".player-card-footer").hide();
-                    r.find(".player-expansion-button .material-icons").text("expand_more");
-                } else {
-                    r.addClass("expanded");
-                    r.find(".player-card-footer").show();
-                    r.find(".player-expansion-button .material-icons").text("expand_less");
-                }
-            });
-
-            subtitle.text("");
-            subtitle.show();
-            subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">visibility</span><span class="pp-value">${playerData.pp}</span></div>`);
-            subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
-            subtitle.append(`<div class="subtitle-attibute inspiration"><img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration"  alt="inspiration"/></div>`);
-            if (playerData.inspiration) {
-                subtitle.find(".inspiration").show();
-            } else {
-                subtitle.find(".inspiration").hide();
-            }
-
-            row.find(".token-row-add").append(`<span class="material-icons">place</span>`);
-
-            let whisperButton = $(`
-                <button class="token-row-button token-row-whisper" title="${listItem.name}">
-                    <span class="material-icons">spatial_audio</span>
-                </button>
-            `);
-            row.find(".token-row-add").before(whisperButton);
-            whisperButton.on("click", function(clickEvent) {
-                clickEvent.stopPropagation();
-                let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
-                let clickedItem = find_token_list_item(clickedRow);
-                $("#switch_gamelog").click();
-                $("#chat-text").val(`/whisper [${clickedItem.name}] `);
-                $("#chat-text").focus();
-            });
-
-            break;
-        case TokenListItem.TypeMonster:
-            row.attr("data-monster", listItem.monsterData.id);
-            subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
-            if (listItem.monsterData.isHomebrew === true) {
-                subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">alt_route</span>Homebrew</div>`);
-            } else if (listItem.monsterData.isReleased === false) {
-                subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="color:darkred">block</span>No Access</div>`);
-            }
-
-            break;
-        case TokenListItem.TypeBuiltinToken:
-            subtitle.hide();
-            // TODO: Style specifically for Builtin
-            row.css("cursor", "default");
-            break;
-    }
-
-    if (listItem.canEdit() || listItem.isTypeBuiltinToken()) { // can't edit builtin, but need access to the list of images for drag and drop reasons.
-        let settingsButton = $(`
-            <div class="token-row-gear">
-                <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
-            </div>
-    	`);
-        rowItem.append(settingsButton);
-        settingsButton.on("click", did_click_row_gear);
-    }
-
-    if (enableDrag && !listItem.isTypeFolder()) {
-        enable_draggable_token_creation(rowItem);
-    }
-    return row;
 }
 
 /**
@@ -879,7 +379,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
-            let draggedItem = find_token_list_item(draggedRow);
+            let draggedItem = find_sidebar_list_item(draggedRow);
             let helper = draggedRow.find("img.token-image").clone();
             if (specificImage !== undefined) {
                 helper.attr("src", specificImage);
@@ -892,7 +392,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         start: function (event, ui) {
             console.log("enable_draggable_token_creation start");
             let draggedRow = $(event.target).closest(".list-item-identifier");
-            let draggedItem = find_token_list_item(draggedRow);
+            let draggedItem = find_sidebar_list_item(draggedRow);
             let tokenSize = token_size_for_item(draggedItem);
             let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
             let helperWidth = width / (1.0 / window.ZOOM);
@@ -907,7 +407,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
             // place a token where this was dropped
             console.log("enable_draggable_token_creation stop");
             let draggedRow = $(event.target).closest(".list-item-identifier");
-            let draggedItem = find_token_list_item(draggedRow);
+            let draggedItem = find_sidebar_list_item(draggedRow);
             let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
             let src = $(ui.helper).attr("src");
             create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
@@ -915,80 +415,10 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
     });
 }
 
-/**
- * When a row in the sidebar is clicked, this handles that click based on the item represented byt the row. Not all item types are clickable.
- * This should only be called with someElement.on("click", did_click_row);
- * @param clickEvent {Event} the click event
- */
-function did_click_row(clickEvent) {
-    console.log("did_click_row", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
-    let clickedItem = find_token_list_item(clickedRow);
-    console.log("did_click_row", clickedItem);
-
-    switch (clickedItem.type) {
-        case TokenListItem.TypeFolder:
-            if (clickedRow.hasClass("collapsed")) {
-                clickedRow.removeClass("collapsed");
-            } else {
-                clickedRow.addClass("collapsed");
-            }
-            break;
-        case TokenListItem.TypeMyToken:
-            // display_token_item_configuration_modal(clickedItem);
-            break;
-        case TokenListItem.TypePC:
-            open_player_sheet(clickedItem.sheet);
-            break;
-        case TokenListItem.TypeMonster:
-            if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
-                console.log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
-                open_monster_item(clickedItem);
-            } else {
-                console.log(`User does not have access to monster with id ${clickedItem.monsterData.id}. Opening ${clickedItem.monsterData.url}`);
-                window.open(clickedItem.monsterData.url, '_blank');
-            }
-            break;
-        case TokenListItem.TypeBuiltinToken:
-            // display_builtin_token_details_modal(clickedItem);
-            break;
-    }
-}
-
-/**
- * When a configuration (gear) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and presents the configuration modal for that item.
- * This should only be called with someElement.on("click", did_click_row_gear);
- * @param clickEvent {Event} the click event
- */
-function did_click_row_gear(clickEvent) {
-    clickEvent.stopPropagation();
-    console.log("did_click_row_gear", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
-    let clickedItem = find_token_list_item(clickedRow);
-    console.log("did_click_row_gear", clickedItem);
-    display_token_item_configuration_modal(clickedItem);
-}
-
-/**
- * When an AddToken (plus) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and adds a token to the scene for that item.
- * This should only be called with someElement.on("click", did_click_add_button);
- * @param clickEvent {Event} the click event
- */
-function did_click_add_button(clickEvent) {
-    clickEvent.stopPropagation();
-    console.log("did_click_add_button", clickEvent);
-    let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
-    let clickedItem = find_token_list_item(clickedRow);
-    console.log("did_click_add_button", clickedItem);
-    let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
-    create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
-    update_pc_token_rows();
-}
-
 /** When new PC data comes in, this updates the rows with the data found in window.PLAYER_STATS */
 function update_pc_token_rows() {
     window.tokenListItems?.filter(listItem => listItem.isTypePC()).forEach(listItem => {
-        let row = find_html_row(listItem);
+        let row = find_html_row(listItem, tokensPanel.body);
         if (listItem.sheet in window.TOKEN_OBJECTS) {
             row.addClass("on-scene");
         } else {
@@ -1016,7 +446,7 @@ function update_pc_token_rows() {
 
 /**
  * Creates a {Token} object and places it on the scene.
- * @param listItem {TokenListItem} the item to create a token from
+ * @param listItem {SidebarListItem} the item to create a token from
  * @param hidden {boolean} whether or not the created token should be hidden. Passing undefined will use whatever the global token setting is.
  * @param specificImage {string} the image to use. if undefined, a random image will be used
  * @param eventPageX {MouseEvent.pageX} if supplied, the token will be placed at this x coordinate, else centered in the view
@@ -1031,7 +461,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
 
     if (listItem.isTypeFolder()) {
         // find and place all items in this folder... but not subfolders
-        (listItem.folderPath.startsWith(TokenListItem.PathMonsters) ? window.monsterListItems : window.tokenListItems)
+        (listItem.folderPath.startsWith(SidebarListItem.PathMonsters) ? window.monsterListItems : window.tokenListItems)
             .filter(item => !item.isTypeFolder()) // if we ever want to add everything at every subfolder depth, remove this line
             .forEach(item => create_and_place_token(item, hidden));
         return;
@@ -1045,10 +475,10 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     };
 
     switch (listItem.type) {
-        case TokenListItem.TypeFolder:
+        case SidebarListItem.TypeFolder:
             console.log("TODO: place all tokens in folder?", listItem);
             break;
-        case TokenListItem.TypeMyToken:
+        case SidebarListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
             options.square = myToken.square;
             options.disableborder = myToken.disableborder;
@@ -1062,7 +492,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             options.tokenSize = tokenSize;
             break;
-        case TokenListItem.TypePC:
+        case SidebarListItem.TypePC:
             let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
             let playerData = window.PLAYER_STATS[listItem.sheet];
             if (pc === undefined) {
@@ -1080,7 +510,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.disablestat = window.TOKEN_SETTINGS['disablestat'];
             options.color = "#" + get_player_token_border_color(pc.sheet);
             break;
-        case TokenListItem.TypeMonster:
+        case SidebarListItem.TypeMonster:
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
             options.sizeId = listItem.monsterData.sizeId;
@@ -1100,9 +530,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 options.color = `#${color}`;
             }
             break;
-        case TokenListItem.TypeBuiltinToken:
+        case SidebarListItem.TypeBuiltinToken:
             let builtinToken = builtInTokens.find(t => t.name === listItem.name);
-            console.log("create_and_place_token TokenListItem.TypeBuiltinToken options before", options, builtinToken);
+            console.log("create_and_place_token SidebarListItem.TypeBuiltinToken options before", options, builtinToken);
             options = {...options, ...builtinToken}
             options.disablestat = true;
             break;
@@ -1119,14 +549,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
 
 /**
  * determines the size of the token the given item represents
- * @param listItem {TokenListItem} the item representing a token
+ * @param listItem {SidebarListItem} the item representing a token
  * @returns {number} the tokenSize that corresponds to the token you're looking for
  */
 function token_size_for_item(listItem) {
     switch (listItem.type) {
-        case TokenListItem.TypeFolder:
+        case SidebarListItem.TypeFolder:
             return 1;
-        case TokenListItem.TypeMyToken:
+        case SidebarListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
             let tokenSizeSetting = myToken.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
@@ -1134,23 +564,23 @@ function token_size_for_item(listItem) {
                 tokenSize = 1; // TODO: handle custom sizes
             }
             return tokenSize;
-        case TokenListItem.TypePC:
+        case SidebarListItem.TypePC:
             return 1;
-        case TokenListItem.TypeMonster:
+        case SidebarListItem.TypeMonster:
             switch (listItem.monsterData.sizeId) {
                 case 5: return 2;
                 case 6: return 3;
                 case 7: return 4;
                 default: return 1;
             }
-        case TokenListItem.TypeBuiltinToken:
+        case SidebarListItem.TypeBuiltinToken:
             return 1;
     }
 }
 
 /**
  * finds a random image for the given item
- * @param listItem {TokenListItem} the item you need a random image for
+ * @param listItem {SidebarListItem} the item you need a random image for
  * @param specificImage {string|undefined} the url of an image to use if it properly parses; if undefined or unparsable, a random image will be returned instead
  * @returns {string} the url an image associated with the provided listItem
  */
@@ -1161,7 +591,7 @@ function random_image_for_item(listItem, specificImage) {
         return validSpecifiedImage
     }
     switch (listItem.type) {
-        case TokenListItem.TypeMyToken:
+        case SidebarListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
             let myTokenAltImages = myToken.alternativeImages;
             if (myTokenAltImages !== undefined && myTokenAltImages.length > 0) {
@@ -1172,7 +602,7 @@ function random_image_for_item(listItem, specificImage) {
                 console.debug("random_image_for_item myTokenAltImages empty, returning", listItem.image);
                 return listItem.image;
             }
-        case TokenListItem.TypePC:
+        case SidebarListItem.TypePC:
             console.debug("random_image_for_item calling random_image_for_player_token with", listItem.sheet);
             let randomPlayerImage = parse_img(random_image_for_player_token(listItem.sheet));
             if (randomPlayerImage !== undefined && randomPlayerImage.length > 0) {
@@ -1182,7 +612,7 @@ function random_image_for_item(listItem, specificImage) {
                 console.debug("random_image_for_item randomPlayerImage not found, returning", listItem.image);
                 return listItem.image;
             }
-        case TokenListItem.TypeMonster:
+        case SidebarListItem.TypeMonster:
             let randomMonsterImage = get_random_custom_monster_image(listItem.monsterData.id);
             if (randomMonsterImage !== undefined && randomMonsterImage.length > 0) {
                 console.debug("random_image_for_item randomMonsterImage", randomMonsterImage);
@@ -1191,10 +621,10 @@ function random_image_for_item(listItem, specificImage) {
                 console.debug("random_image_for_item randomMonsterImage not found, returning", listItem.image);
                 return listItem.image;
             }
-        case TokenListItem.TypeBuiltinToken:
+        case SidebarListItem.TypeBuiltinToken:
             let bt = builtInTokens.find(bt => {
-                console.debug("random_image_for_item TypeBuiltinToken", listItem.fullPath(), sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`), listItem, bt);
-                return listItem.fullPath() === sanitize_folder_path(`${TokenListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`)
+                console.debug("random_image_for_item TypeBuiltinToken", listItem.fullPath(), sanitize_folder_path(`${SidebarListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`), listItem, bt);
+                return listItem.fullPath() === sanitize_folder_path(`${SidebarListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`)
             });
             console.log("random_image_for_item TypeBuiltinToken found", bt);
             if (bt?.alternativeImages !== undefined && bt.alternativeImages.length > 0) {
@@ -1205,7 +635,7 @@ function random_image_for_item(listItem, specificImage) {
                 console.debug("random_image_for_item listItem.alternativeImages not found, returning", listItem.image);
                 return listItem.image;
             }
-        case TokenListItem.TypeFolder:
+        case SidebarListItem.TypeFolder:
             console.debug("random_image_for_item folder returning", listItem.image);
             return listItem.image;
         default:
@@ -1254,7 +684,7 @@ function register_token_row_context_menu() {
         event.preventDefault();
         event.stopPropagation();
         let clickedRow = $(event.target).closest(".list-item-identifier");
-        let clickedItem = find_token_list_item(clickedRow);
+        let clickedItem = find_sidebar_list_item(clickedRow);
         create_and_place_token(clickedItem, true);
     });
 
@@ -1264,7 +694,7 @@ function register_token_row_context_menu() {
 
             let menuItems = {};
 
-            let rowItem = find_token_list_item($(element));
+            let rowItem = find_sidebar_list_item($(element));
             if (rowItem === undefined) {
                 console.warn("register_token_row_context_menu failed to find row item", element, e)
                 menuItems["unexpected-error"] = {
@@ -1277,7 +707,7 @@ function register_token_row_context_menu() {
             menuItems["place"] = {
                 name: rowItem.isTypeFolder() ? "Place Tokens" : "Place Token",
                 callback: function(itemKey, opt, originalEvent) {
-                    let itemToPlace = find_token_list_item(opt.$trigger);
+                    let itemToPlace = find_sidebar_list_item(opt.$trigger);
                     create_and_place_token(itemToPlace);
                 }
             };
@@ -1285,7 +715,7 @@ function register_token_row_context_menu() {
             menuItems["placeHidden"] = {
                 name: rowItem.isTypeFolder() ? "Place Hidden Tokens" : "Place Hidden Token",
                 callback: function(itemKey, opt, originalEvent) {
-                    let itemToPlace = find_token_list_item(opt.$trigger);
+                    let itemToPlace = find_sidebar_list_item(opt.$trigger);
                     create_and_place_token(itemToPlace, true);
                 }
             };
@@ -1295,7 +725,7 @@ function register_token_row_context_menu() {
                 menuItems["copyUrl"] = {
                     name: "Copy Url",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToCopy = find_token_list_item(opt.$trigger);
+                        let itemToCopy = find_sidebar_list_item(opt.$trigger);
                         copy_to_clipboard(itemToCopy.image);
                     }
                 };
@@ -1305,7 +735,7 @@ function register_token_row_context_menu() {
                 menuItems["edit"] = {
                     name: "Edit",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToEdit = find_token_list_item(opt.$trigger);
+                        let itemToEdit = find_sidebar_list_item(opt.$trigger);
                         display_token_item_configuration_modal(itemToEdit);
                     }
                 };
@@ -1319,7 +749,7 @@ function register_token_row_context_menu() {
                 menuItems["delete"] = {
                     name: "Delete",
                     callback: function(itemKey, opt, originalEvent) {
-                        let itemToDelete = find_token_list_item(opt.$trigger);
+                        let itemToDelete = find_sidebar_list_item(opt.$trigger);
                         delete_item(itemToDelete);
                     }
                 };
@@ -1338,12 +768,12 @@ function register_token_row_context_menu() {
 
 /**
  * Displays a SidebarPanel as a modal that allows the user to configure the given listItem
- * @param listItem {TokenListItem} the item to configure
+ * @param listItem {SidebarListItem} the item to configure
  */
 function display_token_item_configuration_modal(listItem) {
     switch (listItem.type) {
-        case TokenListItem.TypeFolder:
-            if (listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+        case SidebarListItem.TypeFolder:
+            if (listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
                 console.log("TODO: handle folder editing")
                 display_folder_configure_modal(listItem);
             } else {
@@ -1351,80 +781,22 @@ function display_token_item_configuration_modal(listItem) {
                 return;
             }
             break;
-        case TokenListItem.TypeBuiltinToken:
+        case SidebarListItem.TypeBuiltinToken:
             display_builtin_token_details_modal(listItem);
             break;
-        case TokenListItem.TypeMyToken:
+        case SidebarListItem.TypeMyToken:
             display_my_token_configuration_modal(listItem);
             break;
-        case TokenListItem.TypePC:
+        case SidebarListItem.TypePC:
             display_player_token_customization_modal(listItem.sheet);
             break;
-        case TokenListItem.TypeMonster:
+        case SidebarListItem.TypeMonster:
             // TODO: rebuild this to use listItem like the others do
             display_monster_customization_modal(undefined, listItem.monsterData.id, listItem.name, listItem.image);
             break;
     }
 }
 
-/**
- * Displays a SidebarPanel as a modal that allows the user to configure a folder
- * @param listItem {TokenListItem} the item to configure
- */
-function display_folder_configure_modal(listItem) {
-    if (listItem === undefined || !listItem.isTypeFolder()) {
-        console.warn("display_folder_configure_modal was called with an incorrect type", listItem);
-        return;
-    }
-
-    let sidebarId = "token-folder-configuration-modal";
-    let sidebarModal = new SidebarPanel(sidebarId, true);
-    let listItemFullPath = listItem.fullPath();
-
-    display_sidebar_modal(sidebarModal);
-
-    sidebarModal.updateHeader(listItem.name, listItem.fullPath(), "Edit or delete this folder.");
-
-    let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
-    set_full_path(folderNameInput, listItemFullPath);
-    sidebarModal.body.append(build_text_input_wrapper("Folder Name",
-        folderNameInput,
-        `<button>Save</button>`,
-        function(newFolderName, input, event) {
-            let foundItem = find_token_list_item($(input));
-            let updateFullPath = rename_folder(foundItem, newFolderName);
-            if (updateFullPath === undefined) {
-                $(input).select();
-            } else {
-                close_sidebar_modal();
-                expand_all_folders_up_to(updateFullPath);
-            }
-        }
-    ));
-
-    let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
-    set_full_path(deleteFolderAndMoveChildrenButton, listItemFullPath);
-    sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
-    deleteFolderAndMoveChildrenButton.on("click", function(event) {
-        let fullPath = harvest_full_path($(event.currentTarget));
-        let foundItem = find_token_list_item($(event.currentTarget));
-        delete_folder_and_move_children_up_one_level(foundItem);
-        close_sidebar_modal();
-        expand_all_folders_up_to(fullPath);
-    });
-    let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
-    set_full_path(deleteFolderAndChildrenButton, listItemFullPath);
-    sidebarModal.footer.append(deleteFolderAndChildrenButton);
-    deleteFolderAndChildrenButton.on("click", function(event) {
-        let fullPath = harvest_full_path($(event.currentTarget));
-        let foundItem = find_token_list_item($(event.currentTarget));
-        delete_folder_and_delete_children(foundItem);
-        close_sidebar_modal();
-        expand_all_folders_up_to(fullPath);
-    });
-
-    sidebarModal.body.find(`input[name="folderName"]`).select();
-}
 
 /**
  * determines if the given path exists or not.
@@ -1435,36 +807,36 @@ function my_token_path_exists(folderPath) {
     if (mytokens.filter(token => token.folderPath === folderPath).length > 0) {
         return true;
     }
-    return emptyfolders.includes(folderPath);
+    return mytokens_emptyfolders.includes(folderPath);
 }
 
 /**
  * Creates a "My Tokens" folder within another "My Tokens" folder
- * @param listItem {TokenListItem} The folder to create a new folder within
+ * @param listItem {SidebarListItem} The folder to create a new folder within
  */
 function create_folder_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(TokenListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
         console.warn("create_folder_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let adjustedPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
-    let newListItem = TokenListItem.Folder(adjustedPath, "New Folder");
-    emptyfolders.push(newListItem.fullPath());
-    did_change_items();
+    let adjustedPath = listItem.fullPath().replace(SidebarListItem.PathMyTokens, "");
+    let newListItem = SidebarListItem.Folder(adjustedPath, "New Folder");
+    mytokens_emptyfolders.push(newListItem.fullPath());
+    did_change_mytokens_items();
     // expand_all_folders_up_to(newListItem.fullPath());
     display_folder_configure_modal(newListItem);
 }
 
 /**
  * renames a "My Tokens" folder and updates any children within that folder
- * @param item {TokenListItem} the folder item to update
+ * @param item {SidebarListItem} the folder item to update
  * @param newName {string} the new name of the folder
  * @param alertUser {boolean} whether or not to alert the user if an error occurs. The most common error is naming conflicts
  * @returns {string|undefined} the path of the newly created folder; undefined if the folder could not be created.
  */
 function rename_folder(item, newName, alertUser = true) {
-    if (!item.isTypeFolder() || !item.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+    if (!item.isTypeFolder() || !item.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
         console.warn("rename_folder called with an incorrect item type", listItem);
         if (alertUser !== false) {
             alert("An unexpected error occurred");
@@ -1482,7 +854,7 @@ function rename_folder(item, newName, alertUser = true) {
     }
 
     let fromFullPath = item.fullPath();
-    let adjustedFolderPath = item.folderPath.replace(TokenListItem.PathMyTokens, "");
+    let adjustedFolderPath = item.folderPath.replace(SidebarListItem.PathMyTokens, "");
     let toFullPath = sanitize_folder_path(`${adjustedFolderPath}/${newName}`);
     if (my_token_path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
@@ -1495,7 +867,7 @@ function rename_folder(item, newName, alertUser = true) {
 
     console.log(`updating tokens from ${fromFullPath} to ${toFullPath}`);
     let didUpdateTokens = false;
-    let adjustedPath = fromFullPath.replace(TokenListItem.PathMyTokens, "");
+    let adjustedPath = fromFullPath.replace(SidebarListItem.PathMyTokens, "");
     mytokens.filter(token => {
         console.debug(`filtering ${token.name} folderPath`, token.folderPath, adjustedPath);
         return token.folderPath === adjustedPath
@@ -1507,23 +879,23 @@ function rename_folder(item, newName, alertUser = true) {
 
     // if we updated a token with this path, that means that path is not empty so it's safe to remove it from our list
     // if the folder is empty, we want to replace it with toFullPath so we have to remove it anyway.
-    array_remove_index_by_value(emptyfolders, adjustedPath);
+    array_remove_index_by_value(mytokens_emptyfolders, adjustedPath);
 
     if (!didUpdateTokens) {
         // no tokens were updated which means fromFullPath was an empty folder
-        emptyfolders.push(toFullPath);
+        mytokens_emptyfolders.push(toFullPath);
     }
 
-    console.debug(emptyfolders);
-    emptyfolders = emptyfolders.map(f => {
+    console.debug(mytokens_emptyfolders);
+    mytokens_emptyfolders = mytokens_emptyfolders.map(f => {
         let oldName = f;
         let newName = f.replace(adjustedPath, toFullPath);
         console.debug(`changing empty folder ${oldName} to ${newName}`);
         return newName;
     });
-    console.debug(emptyfolders);
+    console.debug(mytokens_emptyfolders);
 
-    did_change_items();
+    did_change_mytokens_items();
 
     console.groupEnd();
     return toFullPath;
@@ -1531,10 +903,10 @@ function rename_folder(item, newName, alertUser = true) {
 
 /**
  * deletes a folder and all tokens/folders within it
- * @param listItem {TokenListItem} the item representing the folder you want to delete
+ * @param listItem {SidebarListItem} the item representing the folder you want to delete
  */
 function delete_folder_and_delete_children(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
         console.warn("delete_folder_and_delete_children called with an incorrect item type", listItem);
         return;
     }
@@ -1545,7 +917,7 @@ function delete_folder_and_delete_children(listItem) {
 
     console.groupCollapsed("delete_folder_and_delete_children");
 
-    let adjustedPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
+    let adjustedPath = listItem.fullPath().replace(SidebarListItem.PathMyTokens, "");
     console.log("about to delete folder and everything in", adjustedPath);
 
     mytokens.filter(token => {
@@ -1556,11 +928,11 @@ function delete_folder_and_delete_children(listItem) {
         array_remove_index_by_value(mytokens, token);
     });
 
-    console.debug("before deleting emptyfolders", emptyfolders);
-    emptyfolders = emptyfolders.filter(f => !f.startsWith(adjustedPath));
-    console.debug("after deleting emptyfolders", emptyfolders);
+    console.debug("before deleting mytokens_emptyfolders", mytokens_emptyfolders);
+    mytokens_emptyfolders = mytokens_emptyfolders.filter(f => !f.startsWith(adjustedPath));
+    console.debug("after deleting mytokens_emptyfolders", mytokens_emptyfolders);
 
-    did_change_items();
+    did_change_mytokens_items();
     let oneLevelUp = sanitize_folder_path(listItem.folderPath);
     expand_all_folders_up_to(oneLevelUp);
 
@@ -1569,10 +941,10 @@ function delete_folder_and_delete_children(listItem) {
 
 /**
  * deletes a folder and moves all tokens/folders within it to the given folder's parent
- * @param listItem {TokenListItem} the item representing the folder you want to delete
+ * @param listItem {SidebarListItem} the item representing the folder you want to delete
  */
 function delete_folder_and_move_children_up_one_level(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
         console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
         return;
     }
@@ -1582,8 +954,8 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     }
     console.groupCollapsed("delete_folder_and_move_children_up_one_level");
 
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(TokenListItem.PathMyTokens, ""));
-    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(TokenListItem.PathMyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(SidebarListItem.PathMyTokens, ""));
     console.log(`about to delete folder ${adjustedPath} and move its children up one level to ${oneLevelUp}`);
 
     mytokens.forEach(token => {
@@ -1594,65 +966,34 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     });
 
 
-    console.debug("before moving emptyfolders", emptyfolders);
-    array_remove_index_by_value(emptyfolders, adjustedPath);
-    emptyfolders = emptyfolders.map(f => {
+    console.debug("before moving mytokens_emptyfolders", mytokens_emptyfolders);
+    array_remove_index_by_value(mytokens_emptyfolders, adjustedPath);
+    mytokens_emptyfolders = mytokens_emptyfolders.map(f => {
         if (f.startsWith(adjustedPath)) {
             return f.replace(adjustedPath, oneLevelUp);
         } else {
             return f;
         }
     });
-    console.debug("after moving emptyfolders", emptyfolders);
+    console.debug("after moving mytokens_emptyfolders", mytokens_emptyfolders);
 
-    did_change_items();
+    did_change_mytokens_items();
     expand_all_folders_up_to(oneLevelUp);
 
     console.groupEnd();
 }
 
 /**
- * deletes the object represented by the given item if that object can be deleted. (pretty much only My Tokens)
- * @param listItem {TokenListItem} the item to delete
- */
-function delete_item(listItem) {
-    if (!listItem.canDelete()) {
-        console.warn("Not allowed to delete item", listItem);
-        return;
-    }
-
-    switch (listItem.type) {
-        case TokenListItem.TypeFolder:
-            delete_folder_and_delete_children(listItem);
-            break;
-        case TokenListItem.TypeMyToken:
-            let myToken = find_my_token(listItem.fullPath());
-            array_remove_index_by_value(mytokens, myToken);
-            did_change_items();
-            break;
-        case TokenListItem.TypePC:
-            console.warn("Not allowed to delete player", listItem);
-            break;
-        case TokenListItem.TypeMonster:
-            console.warn("Not allowed to delete monster", listItem);
-            break;
-        case TokenListItem.TypeBuiltinToken:
-            console.warn("Not allowed to delete builtin token", listItem);
-            break;
-    }
-}
-
-/**
  * Creates a new "My Token" object within a folder
- * @param listItem {TokenListItem} the folder item to create a token in
+ * @param listItem {SidebarListItem} the folder item to create a token in
  */
 function create_token_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(TokenListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let folderPath = listItem.fullPath().replace(TokenListItem.PathMyTokens, "");
+    let folderPath = listItem.fullPath().replace(SidebarListItem.PathMyTokens, "");
     let newTokenName = "New Token";
     let newTokenCount = mytokens.filter(t => t.folderPath === folderPath && t.name.startsWith(newTokenName)).length;
     console.log("newTokenCount", newTokenCount);
@@ -1664,7 +1005,7 @@ function create_token_inside(listItem) {
         name: newTokenName,
         folderPath: folderPath
     };
-    let newItem = TokenListItem.MyToken(myToken);
+    let newItem = SidebarListItem.MyToken(myToken);
 
     let justInCase = find_my_token(newItem.fullPath())
     if (justInCase !== undefined) {
@@ -1675,13 +1016,13 @@ function create_token_inside(listItem) {
 
     console.log("create_token_inside created a new item", newItem);
     mytokens.push(myToken);
-    did_change_items()
+    did_change_mytokens_items()
     display_my_token_configuration_modal(newItem);
 }
 
 /**
  * presents a SidebarPanel modal for configuring the given item
- * @param listItem {TokenListItem} the item to configure
+ * @param listItem {SidebarListItem} the item to configure
  */
 function display_my_token_configuration_modal(listItem) {
     if (!listItem?.isTypeMyToken()) {
@@ -1768,7 +1109,7 @@ function display_my_token_configuration_modal(listItem) {
             console.log("update token name to", event.target.value);
             let renameSucceeded = rename_my_token(myToken, event.target.value, true);
             if (renameSucceeded) {
-                did_change_items();
+                did_change_mytokens_items();
                 listItem.name = event.target.value;
                 sidebarPanel.updateHeader(event.target.value, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
                 redraw_token_images_in_modal(sidebarPanel, listItem);
@@ -1818,7 +1159,7 @@ function display_my_token_configuration_modal(listItem) {
                 return;
             }
         }
-        did_change_items();
+        did_change_mytokens_items();
         close_sidebar_modal();
     });
     inputWrapper.append(saveButton);
@@ -1833,13 +1174,13 @@ function display_my_token_configuration_modal(listItem) {
  */
 function rename_my_token(myToken, newName, alertUser) {
     let newPath = sanitize_folder_path(`${myToken.folderPath}/${newName}`);
-    let newFullPath = sanitize_folder_path(`${TokenListItem.PathMyTokens}${newPath}`);
+    let newFullPath = sanitize_folder_path(`${SidebarListItem.PathMyTokens}${newPath}`);
     let existing = find_my_token(newFullPath);
     if (existing !== undefined) {
         if (alertUser !== false) {
             alert(`A Token with the name "${newName}" already exists at "${newFullPath}"`);
         }
-        console.warn(`A Token with the name ${newName} already exists in the folder "${TokenListItem.PathMyTokens}${myToken.folderPath}"`);
+        console.warn(`A Token with the name ${newName} already exists in the folder "${SidebarListItem.PathMyTokens}${myToken.folderPath}"`);
         return false;
     }
     myToken.name = newName;
@@ -1848,7 +1189,7 @@ function rename_my_token(myToken, newName, alertUser) {
 
 /**
  * displays a SidebarPanel modal with the details of the given Builtin token. This is not editable, but shows multiple images, that can be drag and dropped onto the scene
- * @param listItem {TokenListItem} the builtin item to display a modal for
+ * @param listItem {SidebarListItem} the builtin item to display a modal for
  */
 function display_builtin_token_details_modal(listItem) {
     if (!listItem?.isTypeBuiltinToken()) {
@@ -1869,7 +1210,7 @@ function display_builtin_token_details_modal(listItem) {
 /**
  * Clears the body of the given sidebarPanel and adds a new element for every alternative image the listItem has
  * @param sidebarPanel {SidebarPanel} the modal to display objects in
- * @param listItem {TokenListItem} the list item the modal represents
+ * @param listItem {SidebarListItem} the list item the modal represents
  * @param placedToken {Token|undefined} undefined if this modal does not represnet a token that is placed on the scene; else the Token object that corresponds to a token that is placed on the scene
  */
 function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
@@ -1933,7 +1274,7 @@ function build_alternative_image_for_modal(image, placedToken) {
 /**
  * iterates over all the images in a sidebarPanel modal and udpates them to match the settings of the given listItem.
  * @param sidebarPanel {SidebarPanel} the modal to update
- * @param listItem {TokenListItem} the item the modal represents
+ * @param listItem {SidebarListItem} the item the modal represents
  */
 function decorate_modal_images(sidebarPanel, listItem) {
 
@@ -1995,27 +1336,27 @@ function decorate_modal_images(sidebarPanel, listItem) {
 
 /**
  * finds and returns alternative images for the given listItem.
- * @param listItem {TokenListItem} the item you need a random image for
+ * @param listItem {SidebarListItem} the item you need a random image for
  * @returns {string[]} a list of url strings
  */
 function alternative_images(listItem) {
     let alternativeImages = [];
     switch (listItem.type) {
-        case TokenListItem.TypeBuiltinToken:
+        case SidebarListItem.TypeBuiltinToken:
             let builtin = find_builtin_token(listItem.fullPath());
             alternativeImages = builtin?.alternativeImages;
             break;
-        case TokenListItem.TypeMyToken:
+        case SidebarListItem.TypeMyToken:
             let myToken = find_my_token(listItem.fullPath());
             alternativeImages = myToken?.alternativeImages;
             break;
-        case TokenListItem.TypePC:
+        case SidebarListItem.TypePC:
             alternativeImages = get_player_image_mappings(listItem.sheet);
             break;
-        case TokenListItem.TypeMonster:
+        case SidebarListItem.TypeMonster:
             alternativeImages = get_custom_monster_images(listItem.monsterData.id);
             break;
-        case TokenListItem.TypeFolder:
+        case SidebarListItem.TypeFolder:
             break;
     }
     if (alternativeImages === undefined) {
@@ -2024,16 +1365,16 @@ function alternative_images(listItem) {
     return alternativeImages;
 }
 
-/** writes mytokens and emptyfolders to localStorage */
+/** writes mytokens and mytokens_emptyfolders to localStorage */
 function persist_my_tokens() {
     localStorage.setItem("MyTokens", JSON.stringify(mytokens));
-    rebuild_emptyfolders();
-    localStorage.setItem("MyTokensEmptyFolders", JSON.stringify(emptyfolders));
+    rebuild_mytokens_emptyfolders();
+    localStorage.setItem("MyTokensEmptyFolders", JSON.stringify(mytokens_emptyfolders));
 }
 
-/** cleans up emptyfolders and makes sure that there aren't duplicates, missing folders, or folders that are no longer empty */
-function rebuild_emptyfolders() {
-    console.groupCollapsed("rebuild_emptyfolders");
+/** cleans up mytokens_emptyfolders and makes sure that there aren't duplicates, missing folders, or folders that are no longer empty */
+function rebuild_mytokens_emptyfolders() {
+    console.groupCollapsed("rebuild_mytokens_emptyfolders");
     let allFolderPaths = mytokens.map(t => t.folderPath)
     const addAllFolderParts = function(folderPath) {
         console.debug("adding", folderPath)
@@ -2044,7 +1385,7 @@ function rebuild_emptyfolders() {
             }
         }
     }
-    emptyfolders.forEach(folder => {
+    mytokens_emptyfolders.forEach(folder => {
         addAllFolderParts(folder);
     });
     allFolderPaths = [...new Set(allFolderPaths)]; // unique only
@@ -2055,13 +1396,13 @@ function rebuild_emptyfolders() {
             allFolderPaths = allFolderPaths.filter(f => f !== t.folderPath);
         }
     });
-    console.log("updating emptyfolders from", emptyfolders, "to", allFolderPaths);
-    emptyfolders = allFolderPaths;
+    console.log("updating mytokens_emptyfolders from", mytokens_emptyfolders, "to", allFolderPaths);
+    mytokens_emptyfolders = allFolderPaths;
     console.groupEnd();
 }
 
 /** A convenience function to be called after any "My Tokens" are updated */
-function did_change_items() {
+function did_change_mytokens_items() {
     persist_my_tokens();
     rebuild_token_items_list();
     redraw_token_list();
@@ -2069,35 +1410,8 @@ function did_change_items() {
 }
 
 /**
- * removes the .collapsed class from all folders leading up to the secified path
- * @param fullPath {string} the path to expand
- */
-function expand_all_folders_up_to(fullPath) {
-    console.group("expand_all_folders_up_to");
-    if (!fullPath.startsWith(TokenListItem.PathMyTokens)) {
-        let myTokensPath = sanitize_folder_path(TokenListItem.PathMyTokens + fullPath);
-        console.log(`fullPath: ${fullPath}, myTokensPath: ${myTokensPath}`);
-        let folderElement = find_html_row_from_path(myTokensPath);
-        console.log(folderElement);
-        let parents = folderElement.parents(".collapsed")
-        console.log(parents);
-        parents.removeClass("collapsed");
-        console.log(parents);
-    } else {
-        console.log(`fullPath: ${fullPath}`);
-        let folderElement = find_html_row_from_path(fullPath);
-        console.log(folderElement);
-        let parents = folderElement.parents(".collapsed")
-        console.log(parents);
-        parents.removeClass("collapsed");
-        console.log(parents);
-    }
-    console.groupEnd();
-}
-
-/**
  * creates an iframe that loads a monster stat block for the given item
- * @param listItem {TokenListItem} the list item representing the monster that you want to display a stat block for
+ * @param listItem {SidebarListItem} the list item representing the monster that you want to display a stat block for
  */
 function open_monster_item(listItem) {
     if (!listItem.isTypeMonster()) {
@@ -2117,7 +1431,7 @@ function open_monster_item(listItem) {
     });
     tokensPanel.container.append(iframe);
 
-    let rowHtml = find_html_row(listItem);
+    let rowHtml = find_html_row(listItem, tokensPanel.body);
     console.log(listItem.fullPath(), rowHtml);
     rowHtml.addClass("button-loading");
     iframe.on("load", function(event) {
