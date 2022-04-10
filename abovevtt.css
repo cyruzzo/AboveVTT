@@ -2535,6 +2535,7 @@ button.avtt-roll-button {
 }
 
 #combat_area td button{
+    vertical-align: middle;
     border-radius: 3px;
     padding: 2px;
     margin: 2px;
