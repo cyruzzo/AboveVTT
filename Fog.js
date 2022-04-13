@@ -650,13 +650,7 @@ function redraw_drawings() {
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
-	var target = $("#fog_overlay");
-	target.css('cursor', '');
-	target.off('mousedown', drawing_mousedown);
-	target.off('mouseup', drawing_mouseup);
-	target.off('mousemove', drawing_mousemove);
-	target.off('contextmenu', drawing_contextmenu);
-	var target = $("#VTT");
+	var target = $("#fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
@@ -1233,7 +1227,7 @@ function setup_draw_buttons() {
 			target.on('contextmenu', data, drawing_contextmenu);
 
 			
-			close_monster_stat_block();
+			//close_monster_stat_block(); don't close moster window on menu clicks
 		}
 	})
 	$('#select-button').click();
