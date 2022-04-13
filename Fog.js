@@ -666,18 +666,22 @@ function drawing_mousedown(e) {
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
 
+	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
+		return;
+	}
+
 	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "50");
 		if (e.which == 1) {
 			$("#fog_overlay").css('cursor', 'crosshair');
-		}
+		}		
 	}
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
 	if (e.button != 0)
 		return;
-	deselect_all_tokens();
+
 	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
 		deselect_all_tokens();
 	}
