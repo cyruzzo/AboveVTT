@@ -1777,7 +1777,7 @@ function inject_chat_buttons() {
 		return;
 	}
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4, /help ..' title='Chat &#10;Roll dice using &quot;/roll 1d20&quot; or &quot;/r 1d4&quot; see /help for more &#10;Add custom actions/types to rolls with &quot;{Action:Type}&quot;&#10;To make &quot;/roll 40d20 {my death ray:to hit}&quot;&#10;/help &#10;/w [playername] a whisper'></div>"));
+	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4, /help ..' title='Chat &#10;Roll dice using &quot;/roll 1d20&quot; or &quot;/r 1d4&quot; see /help for more &#10;Add custom actions & types to rolls with &quot;-a=<action> -t=<type> or --action=<action> --type=<type> &quot;&#10;To make &quot;/roll 40d20 -a=punch -t=to hit &quot;&#10;/help &#10;/w [playername] a whisper'></div>"));
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
 			<div>
@@ -1952,13 +1952,13 @@ function inject_chat_buttons() {
 			if(text.startsWith("/r")) {
 				dmonly = window.DM;
 				const rollRegex = /(\/r|\/roll)\s/g
-				const commandRegex = /\{(.*?)\:(.*?)\}/
+				const commandRegex = /(-a=|--action=)(.*)(-t=|--type=)(.*)/
 				const command = text.match(commandRegex);
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace(rollRegex, "");
 				let sentAsDDB
 				if (command){
-					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType=command[2], undefined, actionType=command[1], );
+					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType=command[4], undefined, actionType=command[2], );
 				}
 				else{
 					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image);
@@ -3008,18 +3008,12 @@ function init_my_dice_details(){
  */
 // send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
 function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="custom", damageType, actionType="custom", sendTo="everyone") {
-	// TODOS
-	// DM ONLY / TO SELF
 	console.group("send_rpg_dice_to_ddb")
 	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
-	// return false;
-	// translate dice context menu "sendTo" into their actual values for sending to ddnb dice
+	
 	
 	try {
 		expression = expression.replace(/\s+/g, ''); // remove all whitespace
-		// if (expression.startsWith("+") || expression.startsWith("-")){
-		// 	expression.prepend("1d20")
-		// }
 
 		const supportedDieTypes = ["d4", "d6", "d8", "d10", "d12", "d20", "d100"];
 
