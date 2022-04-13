@@ -396,6 +396,7 @@ class Token {
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
 		}
+		toggle_player_selectable(this, old)
 		console.groupEnd()
 	}
 
@@ -782,6 +783,7 @@ class Token {
 
 			if (this.selected) {
 				old.addClass("tokenselected");
+				toggle_player_selectable(this, old)
 			}
 			else {
 				old.css("border", "");
@@ -1201,6 +1203,7 @@ class Token {
 				}
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
+					toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
 				} else {
 					parentToken.removeClass('tokenselected');
 				}				
@@ -1225,6 +1228,7 @@ class Token {
 		let token = $("#tokens").find(selector);
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
+		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
 	}
@@ -1256,6 +1260,24 @@ class Token {
 		return storedValue;
 	}
 	
+}
+
+/**
+ * disables player selection of a token when token is locked & restricted
+ * @param tokenInstance token instance ofc
+ * @param token jquery selected div with the class token
+ */
+function toggle_player_selectable(tokenInstance, token){
+	console.group("toggle_player_selectable", tokenInstance)
+	if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove && $(".body-rpgcharacter-sheet").length>0){
+		token?.css("cursor","default");
+		token?.css("pointer-events","none");
+	}
+	else{
+		token?.css("cursor","move");
+		token?.css("pointer-events","auto");
+	}
+	console.groupEnd();
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -2238,6 +2260,9 @@ function draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
+		console.log(id)
+		let selector = "div[data-id='" + id + "']";
+		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {
 			window.CURRENTLY_SELECTED_TOKENS.push(id);
 		}
