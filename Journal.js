@@ -248,7 +248,28 @@ class JournalManager{
 				$(this).remove();
 				}
 			});	
-		
+		$("[role='dialog']").draggable({
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();			
+			}
+		});
+		$("[role='dialog']").resizable({
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();			
+			}
+		});
+		note.parent().mousedown(function() {
+			frame_z_index_when_click($(this));
+		});		
 	}
 	
 	note_visibility(id,visibility){
@@ -305,6 +326,30 @@ class JournalManager{
 				$(this).remove();
 			}
 		});
+
+		$("[role='dialog']").draggable({
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();			
+			}
+		});
+		$("[role='dialog']").resizable({
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();			
+			}
+		});
+		note.parent().mousedown(function() {
+			frame_z_index_when_click($(this));
+		});
+		
 		
 		tinyMCE.init({
 			selector: '#' + tmp,
@@ -345,6 +390,16 @@ class JournalManager{
 			}
 		});
 				
+	}
+}
+
+function frame_z_index_when_click(moveableFrame){
+	//move frames behind each other in the order they were clicked
+	if(moveableFrame.css('z-index') != 50000) {
+		moveableFrame.css('z-index', 50000);
+		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
+			$(this).css('z-index',($(this).css('z-index')-1));
+		});
 	}
 }
 
