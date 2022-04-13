@@ -292,8 +292,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			});
 			if(window.DM){
 				buttons.append(stat);
-				ct_show_checkbox = $("<input type='checkbox' title='Show in players Combat Tracker?' target_id='"+token.options.id+"' checked='"+token.options.ct_show+"'></input>");
+				ct_show_checkbox = $(`<input type='checkbox' class='ct_checkbox' title="Show in player's Combat Tracker?" z-index=100000 target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'></input>`);
 				ct_show_checkbox.tooltip({ show: { effect: "blind", duration: 600 } });//Make this tooltip show a little quicker
+		
 				$(ct_show_checkbox).change(function() {
 					if($(this).is(':checked')) {
 						token.options.ct_show = true;

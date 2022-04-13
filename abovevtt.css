@@ -2024,3 +2024,17 @@ button.avtt-roll-button {
 .MuiModal-root{
     pointer-events: none;
 }
+
+.ct_checkbox[type=checkbox] {
+    display: block;
+    width: 20px;
+    height: 20px;
+    -webkit-appearance: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+}
+
+.ct_checkbox[type=checkbox]:checked {
+    background-image: url('assets/eye.png');
+}
