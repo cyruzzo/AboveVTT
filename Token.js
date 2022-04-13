@@ -2155,6 +2155,16 @@ function setTokenAuras (token, options) {
 			auraElement.contextmenu(function(){return false;});
 			$("#tokens").prepend(auraElement);
 		}
+		if(window.DM){
+			options.hidden ? token.parent().find("#aura_" + tokenId).css("opacity", 0.5)
+			: token.parent().find("#aura_" + tokenId).css("opacity", 1)
+		}
+		else{
+			options.hidden ? token.parent().find("#aura_" + tokenId).hide()
+			: token.parent().find("#aura_" + tokenId).show()
+		}
+
+		
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().find("#aura_" + tokenId).remove();
