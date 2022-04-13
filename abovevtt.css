@@ -162,7 +162,6 @@ button.gamelog-to-everyone-button {
     max-height: 100%;
     overflow-y: auto;
     border: solid black 1px;
-    z-index: 2;
 }
 
 div.ct-sidebar__controls {
@@ -199,7 +198,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     justify-content: center;
     width: 75px;
     top: 2px;
-    z-index: 9999;
+    z-index: 57000;
 }
 
 #scene_selector_toggle > span {
@@ -231,8 +230,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet iframe {
     border: none;
     position: absolute;
-    height: auto;
-    width: 100%;
     top: 24px;
     left: 0px;
     right: 0px;
@@ -247,10 +244,198 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 }
 #sheet.open {
     transform: translateX(-1370px);
-    transition: 0.5s ease-in-out;
     z-index: 99999999;
 }
 
+/*for resizable and moveable monsters and sheets in DM view*/
+
+#sheet {
+    left: auto;
+    right: 340px;
+    display: none;
+    position: fixed !important;
+    border-radius: 5px; 
+    z-index: 10010;
+    border: 1px solid gray;  
+    top: 28px;
+    bottom: auto;
+    height: calc(100vh - 50px);
+}
+
+#sheet.open {
+    display: block !important;  
+    transition: none;
+    transform: none;
+    backdrop-filter: opacity(0);
+    cursor: move;
+    z-index:  49000;
+}
+
+#resizeDragMon {
+    display: flex;
+    left: 271px;
+    top: 67px;
+    right: auto;
+    width: 410px;
+    height: 85%;
+    position: fixed !important;
+    opacity: 1;
+    background: #242527;  
+    cursor: move;   
+    z-index: 49000;
+    border-radius: 3px;   
+    border: 1px solid gray;
+}  
+
+#resizeDragMon.hideMon{
+    visibility: hidden;
+}
+
+#sheet iframe {
+    width: 100%;
+    height: calc(100% - 24px) !important;
+    border-radius: 0 0 3px 3px;   
+}
+
+
+#resizeDragMon iframe {
+    width: 100%;
+    height: calc(100% - 23px) !important;
+    position: absolute;
+    left: 0;
+    top: 24px;
+    max-height: 100%;
+    border-radius: 0px 0px 3px 3px;
+}
+
+
+#resizeDragMon iframe {
+    z-index: -10000;
+}
+
+#resizeDragMon:visible iframe {
+    z-index: 10000;
+}
+
+.ui-resizable-handle {
+    z-index: 50100 !important;
+}
+.iframeResizeCover {
+    z-index:9999999;
+    position:absolute;
+    width:calc(100% + 200px);
+    height:calc(100% + 200px);
+    display: block;
+    right:-100px;
+    bottom:-100px;
+    top:-100px;
+    left:-100px;
+}
+
+
+#combat_tracker_inside .ui-resizable-s,
+#combat_tracker_inside .ui-resizable-se,
+#combat_tracker_inside .ui-resizable-sw {
+    bottom:-45px;  
+}
+
+#combat_tracker_inside .ui-resizable-e,
+#combat_tracker_inside .ui-resizable-w {
+    height: calc(100% + 45px);  
+}
+
+
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
+    bottom: -5px;  
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w  {
+    height: 100%;  
+}
+#combat_tracker_inside #combat_area{
+    width: 100%;
+}
+
+div#combat_button {
+    z-index: 57000;
+    position: fixed;
+}
+.ui-resizable-s{
+    background:  transparent;
+    border:  none;
+}
+#combat_tracker{
+    width: 0px;
+}
+ul.context-menu-list.context-menu-root{
+    z-index: 58000 !important;
+}
+#windowContainment{
+    height:  100vh;
+    width:  100vw;
+    pointer-events:  none;
+    display:  block !important;
+    position:  fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+div.top_menu.visible,
+.ddbc-tab-options--layout-pill{
+    z-index: 57000;
+}
+
+#scene_selector{
+	z-index: 58000;
+}
+#combat_footer,
+#combat_tracker_inside{
+	border-style: solid;
+	border-color: #ddd; 
+}
+#combat_footer{
+	border-width: 0px 1px 1px 1px;
+	border-radius: 0px 0px 5px 5px; 
+	left: -1px;
+	right: -1px;
+	position: absolute;
+}
+
+#combat_footer button{
+	flex-grow: 1;   
+}
+#combat_footer{
+	display: flex;   
+}
+#combat_tracker_inside {
+	border-width: 1px 1px 0px 1px;
+    border-radius: 5px 5px 0 0;
+    width: 250px;
+}
+#combat_tracker_inside #combat_footer button:last-of-type{
+	border-bottom-right-radius: 5px;   
+}
+#combat_tracker_inside #combat_footer button:first-of-type{
+	border-bottom-left-radius: 5px; 
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+
+#combat_tracker_inside input[readonly],
+#combat_tracker_inside input[disabled=disabled],
+#combat_tracker_inside input[disabled=disabled]:hover{
+    opacity: 1;
+    border-style: solid;
+}
+
+/*end resizeable*/
 #addscene {
     margin: 5px;
 }
@@ -308,9 +493,9 @@ div#scene_selector,
 }
 
 #combat_tracker_inside {
-    position: relative;
-    height: 100%;
-    margin: 10px 0;
+    position: fixed;
+    top: 67px;
+    left: 2px;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }
@@ -329,9 +514,23 @@ div#scene_selector,
 }
 
 #combat_tracker_inside .tracker-list {
-    height: calc(100% - 22px);
-    overflow: auto;
+    height: calc(100% - 55px);
+    overflow-x: hidden;
 }
+/*combat UI Changes 2*/
+#combat_tracker_inside .tracker-list{
+    height: calc(100% - 55px);
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+}
+#round_number_label{
+    width: calc(100% + 2px);
+    left: -1px;
+    position: relative;
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+}
+
+
+/*end combat ui changes 2*/
 
 #combat_footer {
     text-align: center;
@@ -343,10 +542,11 @@ div#scene_selector,
 }
 
 #round_number_label {
-    font-size: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 40px;
     vertical-align: middle;
-    padding-left: 8px;
-    text-align: left;
+    text-align: center;
 }
 
 input.roundNum::-webkit-outer-spin-button,
@@ -448,7 +648,7 @@ div#scene_properties form > div {
 #zoom_buttons {
     position: absolute;
     top: -3px;
-    z-index: 60;
+    z-index: 57000;
     display: flex;
     flex-direction: row;
 }
@@ -473,7 +673,6 @@ div#scene_properties form > div {
     min-width: 200px;
     width: calc(100vw - 720px);
     max-width: 750px;
-    z-index: 9999;
     border: solid black 2px;
     overflow: auto;
 }
@@ -611,8 +810,11 @@ div#scene_properties form > div {
     position: fixed;
     height: 450px;
     left: 5px;
-    top: 40px;
+    top: 67px;
     z-index: 56000;
+}
+div#combat_button{
+    top: 40px;
 }
 
 .tracker-dm {
@@ -1216,6 +1418,169 @@ div#scene_properties form > div {
     width: 70%;
 }
 
+.context-menu-item.context-menu-input {
+    padding: 0.3em !important;
+}
+.context-menu-icon.material-icon:before {
+    left: -8px !important;
+    font-family: "Material Icons", sans-serif !important;
+    font-size: 20px !important;
+}
+.context-menu-icon-edit:before {
+    content: "\e3c9" !important;
+}
+.context-menu-icon-delete-red:before {
+    content: "\e872" !important;
+    color: #e40712 !important;
+}
+.context-menu-icon-close-red:before {
+    content: "\e5cd" !important;
+    color: #e40712 !important;
+}
+.context-menu-icon-note:before {
+    content: "\e745" !important;
+}
+.context-menu-icon-person:before {
+    content: "\e7fd" !important;
+}
+.context-menu-icon-person-add:before {
+    content: "\e7fe" !important;
+}
+.context-menu-icon-person-remove:before {
+    content: "\ef66" !important;
+}
+.context-menu-icon-view:before {
+    content: "\f22e" !important;
+}
+.context-menu-icon-add-circle:before {
+    content: "\e148" !important;
+}
+
+.context-menu-icon-condition {
+    margin: 4px;
+    border: 1px solid white;
+}
+.context-menu-icon-condition:before {
+    width: 1.4em !important;
+    margin-left: 0.2em;
+}
+.context-menu-icon-condition:after {
+    float: right;
+    margin-right: -20px;
+    font-family: "Material Icons", sans-serif;
+    font-size: 20px;
+    margin-top: -5px;
+    margin-bottom: -10px;
+}
+.context-menu-icon-condition.single-active:after {
+    content: "\e876";
+}
+.context-menu-icon-condition.all-active:after {
+    content: "\e6b1";
+}
+.context-menu-icon-condition.some-active:after {
+    content: "\f1c2";
+}
+.context-menu-icon-blinded:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/blinded.svg);
+}
+.context-menu-icon-charmed:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/charmed.svg);
+}
+.context-menu-icon-deafened:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/deafened.svg);
+}
+.context-menu-icon-exhaustion:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/exhaustion.svg);
+}
+.context-menu-icon-frightened:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/frightened.svg);
+}
+.context-menu-icon-grappled:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/grappled.svg);
+}
+.context-menu-icon-incapacitated:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/incapacitated.svg);
+}
+.context-menu-icon-invisible:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/invisible.svg);
+}
+.context-menu-icon-paralyzed:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/paralyzed.svg);
+}
+.context-menu-icon-petrified:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/petrified.svg);
+}
+.context-menu-icon-poisoned:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/poisoned.svg);
+}
+.context-menu-icon-prone:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/prone.svg);
+}
+.context-menu-icon-restrained:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/restrained.svg);
+}
+.context-menu-icon-stunned:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/stunned.svg);
+}
+.context-menu-icon-unconscious:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
+}
+.context-menu-icon-unconscious:before {
+    content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
+}
+
+.context-menu-markers-icon:before {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    content: "";
+    background-size: 100%;
+    background-position-x: 0;
+    background-position-y: 0;
+    background-repeat: no-repeat;
+}
+.context-menu-icon-advantage:before {
+    background-image: url(../assets/conditons/advantage.png);
+}
+.context-menu-icon-baned:before {
+    background-image: url(../assets/conditons/baned.png);
+}
+.context-menu-icon-bardic-inspiration:before {
+    background-image: url(../assets/conditons/bardic_inspiration.png);
+}
+.context-menu-icon-bardic-inspiration:before {
+    background-image: url(../assets/conditons/bardic_inspiration.png);
+}
+.context-menu-icon-blessed:before {
+    background-image: url(../assets/conditons/blessed.png);
+}
+.context-menu-icon-bloodied:before {
+    background-image: url(../assets/conditons/bloodied.png);
+}
+.context-menu-icon-concentration-reminder:before {
+    background-image: url(../assets/conditons/concentration\(reminder\).png);
+}
+.context-menu-icon-disadvantage:before {
+    background-image: url(../assets/conditons/disadvantage.png);
+}
+.context-menu-icon-flamed:before {
+    background-image: url(../assets/conditons/flamed.png);
+}
+.context-menu-icon-flying:before {
+    background-image: url(../assets/conditons/flying.png);
+}
+.context-menu-icon-hasted:before {
+    background-image: url(../assets/conditons/hasted.png);
+}
+.context-menu-icon-inspiration:before {
+    background-image: url(../assets/conditons/inspiration.png);
+}
+.context-menu-icon-rage:before {
+    background-image: url(../assets/conditons/rage.png);
+}
+
 .aura-color button {
     width: 70%;
     height: 23px;
@@ -1231,14 +1596,36 @@ div#scene_properties form > div {
     float: right;
 }
 
-.context-menu-input.hp-context-input{
+ul.context-menu-root {
+    max-width: 180px;
+}
+ul.context-menu-list {
+    column-count: 2;
+    column-gap: 0;
+}
+ul.context-menu-list > li {
+    column-span: all;
+}
+.context-menu-item.split-column-context-input {
+    column-span: none;
     display: inline-block;
     zoom: 1;
-    max-width: 75px;
+    width: 100%;
+    padding: 0.3em 0 !important;
+}
+.context-menu-item.split-column-context-input-text {
+    width: 90%;
+    margin: 0 5% !important;
 }
 
-.context-menu-input.hp-context-input > label > input{
-    width: 100%;
+.active-condition {
+    border: 1px solid #cbc6c3;
+    border-radius: 4px;
+    background-color: rgba(203, 198, 195, 0.4) !important
+}
+.active-condition:hover {
+    box-shadow: inset 0 0 4px 0 #dcd1c7;
+    background-color: rgba(41, 128, 185, 0.9) !important;
 }
 
 .context-menu-helptext {
@@ -1899,6 +2286,12 @@ h5.token-image-modal-footer-title:after {
 .rc-switch-checked:after {
     left: 22px;
 }
+.rc-switch-unknown {
+    border: 1px solid #1b9af0;
+}
+.rc-switch-unknown:after {
+    left: 11px;
+}
 .rc-switch:after {
     position: absolute;
     width: 18px;
@@ -1929,8 +2322,14 @@ h5.token-image-modal-footer-title:after {
 .rc-switch-checked .rc-switch-inner {
     left: 6px;
 }
+.rc-switch-unknown .rc-switch-inner {
+    left: 9px;
+}
 .rc-switch-checked:after {
     left: 22px;
+}
+.rc-switch-unknown:after {
+    left: 11px;
 }
 .rc-switch:hover:after {
     transform: scale(1.1);
@@ -2047,6 +2446,524 @@ button.avtt-roll-button {
 .ddbc-tab-options--layout-pill{
 	z-index: 57000;
 }
+
+/*combat tracker face lift*/
+/* Also used in resize can remove if that goes in*/
+#combat_footer,
+#combat_tracker_inside{
+    border-style: solid;
+    border-color: #ddd; 
+}
+#combat_footer{
+    border-width: 0px 1px 1px 1px;
+    border-radius: 0px 0px 5px 5px; 
+    left: -1px;
+    right: -1px;
+    position: absolute;
+}
+
+#combat_footer button{
+    flex-grow: 1;   
+}
+#combat_footer{
+    display: flex;   
+}
+#combat_tracker_inside {
+    border-width: 1px 1px 0px 1px;
+    border-radius: 5px 5px 0 0;
+}
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    width: 200px;   
+}
+#combat_tracker_inside #combat_footer button:last-of-type{
+    border-bottom-right-radius: 5px;   
+}
+#combat_tracker_inside #combat_footer button:first-of-type{
+    border-bottom-left-radius: 5px; 
+}
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+/* end also used in resize can remove if that goes in*/
+/*Changes for combat tracker UI*/
+#combat_footer{
+    padding: 13px 4px 4px 4px;
+}
+#combat_area tr td:first-of-type,
+#combat_area tr td:nth-of-type(2),
+#combat_area tr td:nth-of-type(4){
+    width: 10%;
+}
+#combat_area tr td:nth-of-type(3){
+    width: 15%;
+}
+#combat_area tr td:first-of-type,
+#combat_area tr td:nth-of-type(2),
+#combat_area tr td:nth-of-type(3)
+#combat_area td:last-of-type {
+        padding: 0px 5px 0px 0px;
+}
+#combat_tracker_title_bar {
+    width: 100%;
+    background: #242527;
+    height: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    color: #fff;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-color:  gray;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    line-height: 26px;
+    text-shadow: 0px 0px  #000,
+        -1px -1px 0  #000,  
+         1px -1px 0  #000,
+         -1px 1px 0  #000,
+         1px 1px 0  #000;
+    top: -1px;
+    position: relative;
+    width: calc(100% + 2px);
+    left: -1px;
+    cursor: move;
+    z-index: 1;
+}
+#combat_tracker_title_bar:after {
+    content: '';
+    height: 8px;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+    bottom: -8px;
+    background:  linear-gradient(to bottom, #0005 5%, #0000 40%);
+}
+#monster_title_bar_name,
+#player_title_bar_name{
+    font-size: 16px;
+    line-height: 25px;
+    font-weight: bold;
+    text-align: left;
+    width: 100%;
+    color: #fff;
+}
+#combat_tracker_title_bar_exit,
+#monster_close_title_button,
+#player_close_title_button,
+#reload_player_frame_button {
+    fill: #fff5;
+    filter: drop-shadow(1px 1px 1px #000e);
+    cursor: pointer;
+    background: #0000;
+}
+#reload_player_frame_button{
+    fill:  #ddd;
+}
+
+#monster_close_title_button:hover,
+#player_close_title_button:hover,
+#reload_player_frame_button:hover,
+#combat_tracker_title_bar_exit:hover {
+    background: #ddd3;
+    transition: all linear 0.2s;
+}
+ 
+#combat_tracker_title_bar_exit svg,
+#monster_close_title_button svg,
+#player_close_title_button svg,
+#reload_player_frame_button svg {
+    height: 20px;
+    width: 20px;
+}
+
+#combat_tracker_title_bar_exit svg g rect,
+#monster_close_title_button svg g rect,
+#player_close_title_button svg g rect {
+    height: 80px;
+    width: 10px;
+    fill: #ddd;
+    x: 45;
+    y: 10;
+}
+
+#combat_tracker_title_bar_exit,
+#monster_close_title_button,
+#player_close_title_button {
+    position: absolute;
+    right: 5px;
+    width: 20px;
+    height: 20px
+}
+#reload_player_frame_button{
+    position: absolute;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+}
+
+#monster_close_title_button,
+#player_close_title_button,
+#reload_player_frame_button,
+#combat_tracker_title_bar_exit {
+    top: 2px;
+}
+
+
+#round_number_label{
+    position: relative;
+    z-index:  1;
+}
+#round_number_label:before{
+    content: '';
+    left: 0;
+    right: 0;
+    height: 7px;
+    position: absolute;
+    z-index: -1;
+    top: -7px;
+    background: linear-gradient(to top, #0004 5%, #0000 40%);
+}
+
+
+
+#combat_tracker_inside .ui-resizable-ne,
+#combat_tracker_inside .ui-resizable-se,
+#combat_tracker_inside .ui-resizable-e{
+    right: -7px;
+}
+
+#combat_tracker_inside .ui-resizable-nw,
+#combat_tracker_inside .ui-resizable-sw,
+#combat_tracker_inside .ui-resizable-w{
+   left: -7px;
+}
+#combat_tracker_inside .ui-resizable-se{
+    width: 10px;
+    height: 10px;
+}
+
+#resizeDragMon .ui-resizable-s,
+#resizeDragMon .ui-resizable-sw,
+#sheet .ui-resizable-s,
+#sheet .ui-resizable-sw{
+    bottom: -7px;  
+}
+
+#resizeDragMon .ui-resizable-se,
+#sheet .ui-resizable-se{
+    height: 10px;
+    width: 10px;
+    right: -7px;
+    bottom: -10px;
+}
+#resizeDragMon .ui-resizable-e,
+#resizeDragMon .ui-resizable-w,
+#sheet .ui-resizable-e,
+#sheet .ui-resizable-w   {
+    height: calc(100% + 4px);  
+}
+
+/*Resizable Handle Test code */
+/*[class*="ui-resizable"]{
+    border:  1px dotted #ddd;
+}*/
+
+[class*="ui-resizable"]
+#combat_area tr td:last-of-type{
+    padding-right: 5px;
+}
+
+#combat_tracker_inside{
+    width: 267px;
+}
+/*End changes for UI*/
+
+.body-rpgcharacter-sheet #combat_tracker_inside{
+    border-radius: 5px;
+}
+
+#combat_area tr[data-current] td{
+    background: none;  
+}
+#combat_area tr[data-current] td{  
+    background: none;
+    border: none;
+}
+#combat_area tr[data-current]{
+    box-shadow: inset 0 0 50px 2px #1b9af0;
+    border-radius: 6px;
+    padding: 5px;
+}
+#combat_area tr td:last-of-type{
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px; 
+}
+ #combat_area tr td:first-of-type{
+    border-bottom-left-radius: 8px;
+    border-top-left-radius: 8px;  
+}
+
+#combat_area tr[data-current][data-target*="characters"]{
+    background: #0F0;  
+}
+#combat_area tr[data-current]:not([data-target*="characters"]){
+    background: #0000;  
+}
+
+#combat_area tr[data-current] input{
+    border-color: #1b9af0;
+}
+#combat_area{
+    border-collapse:collapse;  
+}
+
+#combat_area td input,
+#round_number_label input{
+    border-radius: 3px;
+    border-color: #ddd;
+    width: 30px !important;
+    height:22px;
+    text-align:center;
+    font-size: 14px !important;
+}
+#round_number_label input{
+    font-weight: 600;
+}
+
+#combat_area td button{
+    vertical-align: middle;
+    border-radius: 3px;
+    padding: 2px;
+    margin: 2px;
+    border: 1px solid #ddd;
+}
+
+
+#combat_area tr td div{
+    top: 1px;
+    position: relative;
+    font-size: 18px !important; 
+}
+
+#combat_area tr td div.hp{
+    float: right;  
+}
+
+#round_number_label{
+    height: 30px;  
+}
+
+.encounter-builder-app #combat_area td [class*="AvatarPortrait"]{
+    border-radius: 5px;
+    top:2px;
+    left: 2px;
+    position: relative;
+}
+#combat_area td [class*="AvatarPortrait"]{
+    border-radius: 5px;
+}
+ #combat_tracker button:focus{
+    outline: 1px solid #ddd;
+
+}
+#combat_tracker button{
+     font-weight:600;
+     background:#fff;
+     color: #1b9af0;
+     text-shadow: 1px 1px 2px  #fff;
+     border: 1px solid #1b9af0;
+     margin: 2px;
+     border-radius:2px; 
+     width: fit-content;
+     height: 22px;
+}
+#round_number_label button{
+    margin-left: 6px;
+}
+#round_number_label strong{
+    margin-right: 2px;
+    top: 1px;
+    position: relative;
+}
+ #combat_tracker button:focus{
+    outline: 1px solid #ddd;
+}
+#combat_area tr[data-current] td img{      
+     box-shadow: 1px 1px 2px 0px #000000;  
+}
+#combat_area tr td input,
+.roundNum,
+#combat_area tr td img {
+    box-shadow: 1px 1px 1px 0px #00000047;
+}
+
+#combat_tracker input[disabled=disabled], 
+#combat_tracker input[disabled=disabled]:hover,
+#combat_tracker input[readonly]{
+    opacity: 1;
+    border-style: solid;
+}
+
+#combat_footer{
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    padding-top: 13px;
+}
+
+.rollSVG path:not([fill*="none"]),
+.findSVG path:not([fill*="none"]),
+.delSVG path:not([fill*="none"]),
+.statSVG path:not([fill*="none"]){
+    fill: #1b9af0;
+}
+
+.findSVG path.cls-1{
+    fill: transparent;
+}
+
+.findSVG,
+.delSVG,
+.statSVG {
+    width: 20px
+}
+
+.rollSVG{
+    width: 17px;
+    position: relative;
+    bottom: 2px;
+}
+
+.rollInitiativeCombatButton:after{
+    content:'Roll Initiative';         
+}
+.findTokenCombatButton:after{
+    content:'Find Token';
+}
+.removeTokenCombatButton:after{
+    content:'Remove from Combat';
+}
+.openSheetCombatButton:after{
+    content:'Open Sheet';   
+}
+
+.rollInitiativeCombatButton:after,
+.findTokenCombatButton:after,
+.removeTokenCombatButton:after,
+.openSheetCombatButton:after{
+    background: #444e;
+    transition: 0.3s ease-in-out all;
+    transition-delay: 0s;
+    position: absolute;
+    font-size: 14px;
+    z-index: 59000;
+    height: fit-content;
+    padding: 3px;
+    width: fit-content;
+    white-space: nowrap;
+    border-radius: 2px;
+    text-shadow: 0px 1px 1px #000;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#combat_area tr td div{
+    line-height: 100%;
+}
+
+.rollInitiativeCombatButton:hover:after,
+.findTokenCombatButton:hover:after,
+.removeTokenCombatButton:hover:after,
+.openSheetCombatButton:hover:after {
+    transition-delay: 0.7s;
+    opacity: 1;
+    color: #fff;
+    pointer-events: none;
+}
+
+.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(1) {
+    margin-right:60px;
+}
+
+/* two buttons */
+.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(2) ~ button:last-of-type {
+    margin-right:30px;
+}
+
+/* three buttons */
+.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(3) ~ button:last-of-type {
+    margin-right:0px;
+}
+.tracker-list{
+    overflow: visible;
+}
+
+.delSVG,
+.findSVG,
+.statSVG {
+    bottom: 3px;
+    position:relative;
+}
+
+#combat_tracker td button,
+#combat_tracker td button svg{
+    display: inline-block;
+    vertical-align: middle;
+} 
+#combat_area{
+    width: 100%;
+}
+#combat_tracker_inside {
+    height: 450px;
+    z-index: 49000;
+}
+/*minimize windows*/
+
+.minimized > *:not(#ct_text_title, .player_title, .monster_title), 
+#combat_tracker_title_bar.minimized:after,
+#combat_tracker_title_bar.minimized ~ *{
+    display: none !important;
+}
+
+#combat_tracker_title_bar.minimized,
+#resizeDragMon.minimized,
+#sheet.minimized,
+.minimized{
+    border-radius: 5px;
+    border: 1px solid #fffd;
+    opacity: 1;
+    filter: drop-shadow(1px 1px 1px #000);
+    background-color: #24252788;
+    backdrop-filter: blur(2px);
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 25px;
+    text-shadow: 0px 0px  #000,
+        -1px -1px 0  #000,  
+        1px -1px 0  #000,
+        -1px 1px 0  #000,
+        1px 1px 0  #000;
+    padding-left: 3px;
+}
+#combat_tracker_inside{
+    margin: 0px;
+}
+.minimized .monster_title,
+.minimized .player_title,
+.minimized #ct_text_title{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#combat_tracker_inside *:focus{
+    outline: none;
+}
+
+/*end combat tracker face lift*/
+
 #prewiz, 
 #wizard_popup{
     z-index: 58000;
@@ -2091,3 +3008,10 @@ button.avtt-roll-button {
     }
 }
 
+.sp-container {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: auto !important;
+    right: 340px !important;
+}

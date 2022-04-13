@@ -799,6 +799,7 @@ function refresh_scenes() {
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 					switch_dm: true
 				};
+				close_monster_stat_block(); //moved here so only when dm view moves does the monster stat window close
 				$(this).addClass("selected");
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 				add_zoom_to_storage()
@@ -965,7 +966,7 @@ function init_scene_selector() {
 			refresh_scenes();
 		}
 
-		close_monster_stat_block();
+		
 
 	});
 	$(window.document.body).append(ss);
