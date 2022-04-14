@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.74",
+	"version": "0.74.1",
 	"content_scripts": [
 		{
 			"matches": [
@@ -52,6 +52,8 @@
 		"jquery.contextMenu.js",
 		"jquery.magnific-popup.min.js",
 		"purify.min.js",
+		"spectrum-2.0.8.min.js",
+		"spectrum-2.0.8.min.css",
 		"AjaxQueueModule.js",
 		"DnDBeyond/DDBCharacterData.js",
 		"EncounterHandler.js",

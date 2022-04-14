@@ -19,6 +19,7 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 	"jquery.ui.theme.min.css",
 	"jquery.contextMenu.css",
 	"color-picker.min.css",
+	"spectrum-2.0.8.min.css",
 	"magnific-popup.css"
 ].forEach(function(value, index, array) {
 	let l = document.createElement('link');
@@ -39,6 +40,7 @@ let scripts = [
 	{ src: "jquery.ui.touch-punch.js" },
 	{ src: "jquery.contextMenu.js" },
 	{ src: "jquery.magnific-popup.min.js" },
+	{ src: "spectrum-2.0.8.min.js" },
 	// { src: "jquery.ajax.queue.js" },
 	{ src: "purify.min.js" },
 	{ src: "jitsi_external_api.js" },

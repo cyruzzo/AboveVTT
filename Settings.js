@@ -144,7 +144,7 @@ function init_settings(){
 		},
 		{
 			name: 'disableaura',
-			label: 'Disable Aura',
+			label: 'Disable Health Meter',
 			enabledDescription: 'New tokens will not have an aura around them that represents their current health',
 			disabledDescription: 'New tokens will have an aura around them that represents their current health'
 		},

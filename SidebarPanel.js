@@ -214,6 +214,7 @@ class SidebarPanel {
           return;
         }	
         imageUrlEntered(imageUrl);
+        $(this).parent().find("input").val("")
       }
     });
 
@@ -246,28 +247,41 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
     changeHandler = function(){};
   }
   let wrapper = $(`
-    <div class="token-image-modal-footer-select-wrapper sidebar-hovertext">
+    <div class="token-image-modal-footer-select-wrapper">
       <div class="token-image-modal-footer-title">${labelText}</div>
     </div>
   `);
   let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
-  if (enabled == true) {
+  const updateHoverText = function(hoverElement, hoverText) {
+    if (hoverText !== undefined && hoverText.length > 0) {
+      hoverElement.addClass("sidebar-hovertext");
+      hoverElement.attr("data-hover", hoverText);
+    } else {
+      hoverElement.removeClass("sidebar-hovertext");
+      hoverElement.removeAttr("data-hover");
+    }
+  }
+  if (enabled === null) {
+    input.addClass("rc-switch-unknown");
+    updateHoverText(wrapper, "This has multiple values. Clicking this will enable it for all.");
+  } else if (enabled === true) {
     input.addClass("rc-switch-checked");
-    wrapper.attr("data-hover", enabledHoverText);
+    updateHoverText(wrapper, enabledHoverText);
   } else {
-    wrapper.attr("data-hover", disabledHoverText);
+    updateHoverText(wrapper, disabledHoverText);
   }
   wrapper.append(input);
   input.click(function(clickEvent) {
     if ($(clickEvent.currentTarget).hasClass("rc-switch-checked")) {
       // it was checked. now it is no longer checked
       $(clickEvent.currentTarget).removeClass("rc-switch-checked");
-      wrapper.attr("data-hover", disabledHoverText);
+      updateHoverText(wrapper, disabledHoverText);
       changeHandler(name, false);
     } else {
       // it was not checked. now it is checked
+      $(clickEvent.currentTarget).removeClass("rc-switch-unknown");
       $(clickEvent.currentTarget).addClass("rc-switch-checked");
-      wrapper.attr("data-hover", enabledHoverText);
+      updateHoverText(wrapper, enabledHoverText);
       changeHandler(name, true);
     }
   });
