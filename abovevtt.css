@@ -2985,6 +2985,21 @@ button.avtt-roll-button {
     transition: none;
 }
 
+.context-menu-icon-concentration-reminder:before,
+.context-menu-icon-inspiration:before,
+.context-menu-icon-flying:before,
+.context-menu-icon-flamed:before,
+.context-menu-icon-rage:before,
+.context-menu-icon-blessed:before,
+.context-menu-icon-baned:before,
+.context-menu-icon-bloodied:before,
+.context-menu-icon-advantage:before,
+.context-menu-icon-disadvantage:before,
+.context-menu-icon-bardic-inspiration:before,
+.context-menu-icon-hasted:before {
+    background-position: center;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;
