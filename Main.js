@@ -530,7 +530,7 @@ function load_monster_stat(monsterid, token_id=false) {
 			}
 
 
-			scan_monster($(event.target).contents(), stats, token_id=token_id);
+			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
 		});
 

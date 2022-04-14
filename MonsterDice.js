@@ -1,98 +1,81 @@
 
 /// this injects roll buttons into the monster details page
 function scan_monster(target, stats, token_id=false) {
+	// check if player here and if so remove homebrew panel with .homebrew-creation-actions
+	target.find(".homebrew-creation-actions").remove();
+	target.find(".homebrew-previous-versions").remove();
+	target.find(".homebrew-details-footer").remove();
+	$("iframe")
 	target.find(".integrated-dice__container").hide();
-	target.find(".mon-stat-block__description-block-content p").each(function(idx, element) {
+	const creatureName = target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
+	const creatureAvatar = target.find(".monster-image")
+	const displayName = `${pc.name} (${creatureName})`;
 
-		$(element).find("span[data-rolltype='to hit']").each(function() {
-			newblock = $("<div/>");
-			newblock.css("display", "inline-block");
+	const clickHandler = function(clickEvent) {
+		roll_button_clicked(clickEvent, displayName, creatureAvatar)
+	};
 
+	const rightClickHandler = function(contextmenuEvent) {
+		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar);
+	}
 
-
-			modifier = $(this).text();
-
-			newblock.append("<button data-exp='1d20' data-mod='" + modifier + "' class='above-roll20'>" + modifier + "</button><button class='above-roll20' data-exp='2d20kh1' data-mod='" + modifier + "'>A</button><button class='above-roll20' data-exp='2d20kl1' data-mod='" + modifier + "'>D</button> to hit");
-
-			$(this).replaceWith(newblock);
-			newblock = $("<div/>");
-			newblock.css("display", "inline-block");
-
-
-		});
-		
-		$(element).find("span[data-rolltype='damage']").each(function(){
-			newblock = $("<div/>");
-			newblock.css("display", "inline-block");
-			dice_notation=$(this).attr('data-dicenotation');
-			dice_damagetype=$(this).attr('data-rolldamagetype')
-			newblock.append(`<button data-rolldamagetype='${dice_damagetype}' data-exp='${dice_notation}' data-mod='' class='above-roll20'>${dice_notation}</button><button data-rolldamagetype='${dice_damagetype}' data-exp='${dice_notation}' class='above-roll20' data-mod='CRIT'>CRIT</button>`);
-			$(this).replaceWith(newblock);
-
-		})
-
-
-		// these covers "text parsing" for things that do not support the new DDB roll notations
-		description = $(element).html();
-		description = description.replace(/([\+-][0-9]+) to hit/, "<button data-exp='1d20' data-mod='$1' class='above-roll20'>$1</button><button class='above-roll20' data-exp='2d20kh1' data-mod='$1'>A</button><button class='above-roll20' data-exp='2d20kl1' data-mod='$1'>D</button> to hit");
-		//Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
-		//TEMPORARILY DISABLED  description = description.replace(/([0-9]) slot/, '<input style="font-size: 14px; width: 40px; appearance: none;" type="number" value="$1">/$1</input> slot');
-		//Actions which go #/Day... again probably could refine the regex a bit better.
-		//TEMPORARILY DISABLED  description = description.replace(/([0-9])\/Day/i, '<input style="font-size: 14px; width: 40px; appearance: none;" type="number" value="$1">/$1</input>Day');
-		//Legendary actions which go #/Day... again probably could refine the regex a bit better.
-		//TEMPORARILY DISABLED description = description.replace(/can take ([0-9]) legendary actions/i, '<input id=legendary_actions style="font-size: 14px; width: 40px; appearance: none;" type="number" value="$1">can take $1 legendary actions</input>');
-		
-		description = description.replaceAll(/\(([0-9]+d[0-9]+( [\+-] [0-9]+)?)\)/g, "(<button data-exp='$1' data-mod='' class='above-roll20'>$1</button><button data-exp='$1' class='above-roll20' data-mod='CRIT'>CRIT</button>)");
-		$(element).html(description);
-		
-		
+	// replace ability scores modifiers
+	$(target).find(".ability-block__stat").each(function() {
+		const currentElement = $(this)
+		if (currentElement.find(".avtt-roll-button").length == 0) {
+			const abilityType = $(this).find(".ability-block__heading").html()
+			// matches (+1) 
+			let updated = currentElement.html()
+				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button'>$1</button>`); 
+			$(currentElement).html(updated);
+		}
 	});
 
-	statnew = target.find(".ability-block").html().replaceAll(/\(([\+\-]?[0-9]+)\)/g, "<br><button data-exp='1d20' data-mod='$1' class='above-roll20'>$1</button><button class='above-roll20' data-exp='2d20kh1' data-mod='$1'>A</button><button class='above-roll20' data-exp='2d20kl1' data-mod='$1'>D</button>");
-	target.find(".ability-block").html(statnew);
+	// replace saving throws, skills, etc
+	$(target).find(".mon-stat-block__tidbit").each(function() {
+		let currentElement = $(this)
+		if (currentElement.find(".avtt-roll-button").length == 0) {
+			const label = $(currentElement).find(".mon-stat-block__tidbit-label").html()
+			if (label === "Saving Throws" || label === "Skills"){
+				// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
+				let tidbitData = $($(currentElement).find(".mon-stat-block__tidbit-data")).text().trim().split(",")
 
-	tidbits = target.find(".mon-stat-block__tidbits").html();
-	newtidbits = tidbits.replaceAll(/([\+\-] ?[0-9][0-9]?)/g, "<button data-exp='1d20' data-mod='$1' class='above-roll20'>$1</button><button class='above-roll20' data-exp='2d20kh1' data-mod='$1'>A</button><button class='above-roll20' data-exp='2d20kl1' data-mod='$1'>D</button>");
-	target.find(".mon-stat-block__tidbits").html(newtidbits);
-
-
-	console.log('set handler');
-	target.on("click", ".above-roll20", function(e) {
-		dice = $(this).attr('data-exp');
-		mod = $(this).attr('data-mod');
-
-		if (mod && mod == "CRIT") {
-			mod = dice.replace(/^([0-9]+d[0-9]+).*$/, "$1");
+				const allTidBits = []
+				tidbitData.forEach((tidbit) => {
+					// can only be saving throw or skills here, which is either save/check respectively
+					const rollType = label === "Saving Throws" ? "save" : "check"
+					// will be DEX/CON/ATHLETICS/PERCEPTION
+					const actionType = tidbit.trim().split(" ")[0]
+					// matches "+1"
+					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`) )
+					
+				})
+				const thisTidBitsData = $(currentElement).find(".mon-stat-block__tidbit-data")
+				$(thisTidBitsData).html(allTidBits);				
+			}
 		}
-
-		if (mod && mod.charAt(0) != "+")
-			mod = "+" + mod;
-		else
-			mod = mod;
-
-		expression = dice + mod;
-		let sentAsDDB = send_rpg_dice_to_ddb(expression);
-		if (sentAsDDB) {
-			return;
-		}
-		roll = new rpgDiceRoller.DiceRoll(expression);
-
-		let output_beauty = roll.output.replace(/=(.*)/, "= <b>$1</b>")
-		
-
-		if($(this).attr('data-rolldamagetype')){
-			output_beauty+= " <b>"+$(this).attr('data-rolldamagetype')+"</b>";
-		}
-		
-		data = {
-				player: stats.data.name,
-				img: stats.data.avatarUrl,
-				text: output_beauty,
-				dmonly:true,
-			};
-		window.MB.inject_chat(data);
-		notify_gamelog();
 	});
+
+	// replace all "to hit" and "damage" rolls
+	$(target).find(".mon-stat-block p").each(function() {
+		let currentElement = $(this)
+		if (currentElement.find(".avtt-roll-button").length == 0) {
+			$(currentElement).find("span").each(function (){
+				const diceNotation = $(this).attr("data-dicenotation")?.split(/\+|-/gm)
+				const rollType = $(this).attr("data-rolltype").replace(" ","-")
+				const actionType = $(this).attr("data-rollaction").replace(" ","-")
+				const text = $(this).text()
+				$(this).replaceWith(`<button data-exp=${diceNotation[0]} data-mod=${diceNotation[1]} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>${text}</button>`)
+			})
+		}
+	});
+
+
+
+	$(target).find(".avtt-roll-button").click(clickHandler);
+	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+	// this was a WIP idea of getting it going but might be more hassle than it's worth
+	// add_ability_tracker_inputs(target, token_id)
 }
 
 // this is intended to be used with the encounterHandler only. It will need some rework if we want to use it for non-encounter stat blocks
@@ -173,7 +156,6 @@ function scan_player_creature_pane(target, tokenId) {
 
 	// replace saving throws, skills, etc
 	$(target).find(".ddbc-creature-block__tidbit").each(function() {
-		let tidbitIterator = 0
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
 			const label = $(currentElement).find(".ddbc-creature-block__tidbit-label").html()
@@ -190,11 +172,10 @@ function scan_player_creature_pane(target, tokenId) {
 					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`) )
 					
 				})
-				const thisTidBit = $(currentElement).find(".ddbc-creature-block__tidbit-data")[tidbitIterator]
-				$(thisTidBit).html(allTidBits);				
+				const thisTidBitData = $(currentElement).find(".ddbc-creature-block__tidbit-data")
+				$(thisTidBitData).html(allTidBits);				
 			}
 		}
-		tidbitIterator+=1
 	});
 
 	// replace all "to hit" and "damage" rolls
