@@ -1804,17 +1804,17 @@ function token_context_menu_expanded(tokenIds) {
 	// options
 	body.append("<h3 class='token-image-modal-footer-title' style='margin-top: 30px;'>Options</h3>");
 	const token_settings = [
-		{ name: 'hidden', label: 'Hide' },
-		{ name: 'square', label: 'Square Token' },
-		{ name: 'locked', label: 'Lock Token in Position' },
-		{ name: 'restrictPlayerMove', label: 'Restrict Player Movement' },
-		{ name: 'disablestat', label: 'Disable HP/AC' },
-		{ name: 'hidestat', label: 'Hide HP/AC from players' },
-		{ name: 'disableborder', label: 'Disable Border' },
-		{ name: 'disableaura', label: 'Disable Health Meter' },
-		{ name: 'revealname', label: 'Show name to players' },
-		{ name: 'legacyaspectratio', label: 'Ignore Image Aspect Ratio' },
-		{ name: 'player_owned', label: 'Players can access this token (HP/Stats)'}
+		{ name: 'hidden', label: 'Hide', enabledDescription:'Token is hidden to players', disabledDescription: 'Token is visible to players' },
+		{ name: 'square', label: 'Square Token', enabledDescription:'Token is square', disabledDescription: 'Token is round' },
+		{ name: 'locked', label: 'Lock Token in Position', enabledDescription:'Token is not moveable. Combine with "Restrict Player Movement" to make token appear as part of background to players', disabledDescription: 'Token is moveable' },
+		{ name: 'restrictPlayerMove', label: 'Restrict Player Movement', enabledDescription:'Token is not moveable by players. Combine with "Lock Token in Position" to make token appear as part of background to players', disabledDescription: 'Players can move token' },
+		{ name: 'disablestat', label: 'Disable HP/AC', enabledDescription:'Token stats are not visible to players', disabledDescription: 'Token stats are visible to players' },
+		{ name: 'hidestat', label: 'Hide Player HP/AC from players', enabledDescription:'If player token, other players wont see token stats. Does not affect monster tokens', disabledDescription: 'Players can view token stats of other players' },
+		{ name: 'disableborder', label: 'Disable Border', enabledDescription:'No border', disabledDescription: 'Token has a random coloured border'  },
+		{ name: 'disableaura', label: 'Disable Health Meter', enabledDescription:'No health glow', disabledDescription: 'Token has health glow corresponding with their current health' },
+		{ name: 'revealname', label: 'Show name to players', enabledDescription:'Players will see token name on hover', disabledDescription: 'Token name is hidden' },
+		{ name: 'legacyaspectratio', label: 'Ignore Image Aspect Ratio', enabledDescription:'Ignores image aspect ratio', disabledDescription: 'Does not ignore aspect ratio' },
+		{ name: 'player_owned', label: 'Players can access this tokens sheet', enabledDescription:'Allows players to view this tokens sheet', disabledDescription: 'Players cant view this tokens sheet'}
 	];
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
@@ -1834,7 +1834,7 @@ function token_context_menu_expanded(tokenIds) {
 		body.append(inputWrapper);
 	}
 
-	let resetToDefaults = $(`<button class="token-image-modal-remove-all-button" title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
+	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button" title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
 		for (let i = 0; i < token_settings.length; i++) {
 			let setting = token_settings[i];
