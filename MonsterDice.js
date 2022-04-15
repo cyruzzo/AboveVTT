@@ -1,14 +1,20 @@
+function iframe_contextmenu() {
+
+}
+
 
 /// this injects roll buttons into the monster details page
-function scan_monster(target, stats, token_id=false) {
-	// check if player here and if so remove homebrew panel with .homebrew-creation-actions
+function scan_monster(target, stats, tokenId) {
+	console.group("scan_monster")
+	console.log("adding in avtt dice buttons")
+	// remove homebrew panels
 	target.find(".homebrew-creation-actions").remove();
 	target.find(".homebrew-previous-versions").remove();
 	target.find(".homebrew-details-footer").remove();
 	$("iframe")
 	target.find(".integrated-dice__container").hide();
 	const creatureName = target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
-	const creatureAvatar = target.find(".monster-image")
+	const creatureAvatar = stats.data.avatarUrl
 	const displayName = `${pc.name} (${creatureName})`;
 
 	const clickHandler = function(clickEvent) {
@@ -19,68 +25,92 @@ function scan_monster(target, stats, token_id=false) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar);
 	}
 
-	// replace ability scores modifiers
-	$(target).find(".ability-block__stat").each(function() {
-		const currentElement = $(this)
-		if (currentElement.find(".avtt-roll-button").length == 0) {
-			const abilityType = $(this).find(".ability-block__heading").html()
-			// matches (+1) 
-			let updated = currentElement.html()
-				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button'>$1</button>`); 
-			$(currentElement).html(updated);
-		}
-	});
-
-	// replace saving throws, skills, etc
-	$(target).find(".mon-stat-block__tidbit").each(function() {
-		let currentElement = $(this)
-		if (currentElement.find(".avtt-roll-button").length == 0) {
-			const label = $(currentElement).find(".mon-stat-block__tidbit-label").html()
-			if (label === "Saving Throws" || label === "Skills"){
-				// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
-				let tidbitData = $($(currentElement).find(".mon-stat-block__tidbit-data")).text().trim().split(",")
-
-				const allTidBits = []
-				tidbitData.forEach((tidbit) => {
-					// can only be saving throw or skills here, which is either save/check respectively
-					const rollType = label === "Saving Throws" ? "save" : "check"
-					// will be DEX/CON/ATHLETICS/PERCEPTION
-					const actionType = tidbit.trim().split(" ")[0]
-					// matches "+1"
-					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`) )
-					
-				})
-				const thisTidBitsData = $(currentElement).find(".mon-stat-block__tidbit-data")
-				$(thisTidBitsData).html(allTidBits);				
-			}
-		}
-	});
+	replace_ability_scores_with_avtt_rollers(target, ".ability-block__stat" ,".ability-block__heading", true)
+	replace_saves_skill_with_avtt_rollers(target, ".mon-stat-block__tidbit", ".mon-stat-block__tidbit-label", ".mon-stat-block__tidbit-data", true )
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find(".mon-stat-block p").each(function() {
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
 			$(currentElement).find("span").each(function (){
-				const diceNotation = $(this).attr("data-dicenotation")?.split(/\+|-/gm)
+				const modMatch = $(this).attr("data-dicenotation")?.match(/(\+|-).*/gm)
+				const modifier = modMatch ? modMatch.shift() : ""
+				const dice = $(this).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "")
 				const rollType = $(this).attr("data-rolltype").replace(" ","-")
 				const actionType = $(this).attr("data-rollaction").replace(" ","-")
 				const text = $(this).text()
-				$(this).replaceWith(`<button data-exp=${diceNotation[0]} data-mod=${diceNotation[1]} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>${text}</button>`)
+				if (rollType === "damage"){
+					$(this).after(`<button data-exp=${dice} data-mod="${modifier}CRIT" data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Crit</button>`)
+				} else if (rollType === "to-hit"){
+					$(this).after(`<button data-exp="2d20kh1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Adv</button>
+								   <button data-exp="2d20kl1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Dis</button>`)
+				}
+				$(this).replaceWith(`<button data-exp=${dice} data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>${text}</button>`)				
 			})
 		}
 	});
 
+	// the iframe all these button exist in doesn't have the styling from above.css so add the styling here
+	$(target).find(".avtt-roll-button").css(
+	{
+		"color": "#b43c35",
+		"border": "1px solid #b43c35",
+		"border-radius": "4px",
+		"background-color":" #fff",
+		"white-space":" nowrap",
+		"font-size": "14px",
+		"font-weight": "600",
+		"font-family":"Roboto Condensed,Open Sans,Helvetica,sans-serif",
+		"line-height": "18px",
+		"letter-spacing": "1px",
+		"padding": "1px 4px 0"
+	}
+	)
 
 
 	$(target).find(".avtt-roll-button").click(clickHandler);
 	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
-	// this was a WIP idea of getting it going but might be more hassle than it's worth
-	// add_ability_tracker_inputs(target, token_id)
+	add_ability_tracker_inputs(target, tokenId)
+	
+	console.groupEnd()
+}
+
+function add_ability_tracker_inputs_on_each(target, tokenId){
+	const token = window.TOKEN_OBJECTS[tokenId];
+	target.find(".mon-stat-block__description-block-content > p").each(function() {
+		let element = $(this);
+		if (element.find(".injected-input").length == 0) {
+			const matchForEachSlot = element.text().match(/([0-9])\/Day each:/i)
+			if (matchForEachSlot){
+				const numberFound = parseInt(matchForEachSlot[1]);
+				console.log("MATCH FOR SLOT", matchForEachSlot)
+				element.children().each(function (indexInArray, valueOfElement) { 
+					console.log("VALUE OF ELE", valueOfElement)
+					const key  = $(valueOfElement).text()
+					const remaining = token.get_tracked_ability(key, numberFound);
+
+					$(valueOfElement).append(createCountTracker(tokenId, key.replace(/\s/g, ""), remaining, "", ""))
+				});			
+			}
+			
+		}
+	});	
+}
+
+
+function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix) {
+	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}" style="font-size: 14px; width: 40px; appearance: none; border: 1px solid #d8e1e8; border-radius: 3px;"> ${foundDescription} ${descriptionPostfix}</input>`);
+	input.off("change").on("change", function(changeEvent) {
+		const updatedValue = changeEvent.target.value;
+		console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
+		token.track_ability(key, updatedValue);
+	});
+	return input
 }
 
 // this is intended to be used with the encounterHandler only. It will need some rework if we want to use it for non-encounter stat blocks
 function add_ability_tracker_inputs(target, tokenId) {
-
+console.log(tokenId)
 	let token = window.TOKEN_OBJECTS[tokenId];
 	if (token === undefined) {
 		// nothing to track if we don't have a token
@@ -98,12 +128,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 				let foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
 				let key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
 				let remaining = token.get_tracked_ability(key, numberFound);
-				let input = $(`<input class="injected-input" data-token-id="${tokenId}" data-tracker-key="${key}" type="number" value="${remaining}" style="font-size: 14px; width: 40px; appearance: none; border: 1px solid #d8e1e8; border-radius: 3px;"> ${foundDescription} ${descriptionPostfix}</input>`);
-				input.off("change").on("change", function(changeEvent) {
-					let updatedValue = changeEvent.target.value;
-					console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
-					token.track_ability(key, updatedValue);
-				});
+				const input = createCountTracker(token, key, remaining, foundDescription, descriptionPostfix)
 				element.append(`<br>`);
 				element.append(input);
 			}
@@ -119,7 +144,65 @@ function add_ability_tracker_inputs(target, tokenId) {
 			processInput(element, /can take ([0-9]) legendary actions/i, "Legendary Actions remaining", false);
 		}
 	});	
+	add_ability_tracker_inputs_on_each(target, tokenId)
 }
+
+function replace_ability_scores_with_avtt_rollers(target, outerSelector, innerSelector, addAdvDisButton) {
+	$(target).find(outerSelector).each(function() {
+		const currentElement = $(this)
+		if (currentElement.find(".avtt-roll-button").length == 0) {
+			const abilityType = $(this).find(innerSelector).html()
+			
+			// matches (+1) 
+			let updated = currentElement.html()
+				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button' title=${abilityType}>$1</button>`); 
+			$(currentElement).html(updated);
+			
+			if (addAdvDisButton){
+				// matches just the +1
+				const modMatch = currentElement.text().match(/[\+\-] ?[0-9]?/g)
+				const modifier = modMatch ? modMatch.shift() : ""
+				currentElement.find(".avtt-roll-button").after(`<button data-exp="2d20kh1" data-mod=${modifier} data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button' title=${abilityType}>Adv</button><button data-exp="2d20kl1" data-mod=${modifier}' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button' title=${abilityType}>Dis</button>`)
+				$(this).css("display","flex")
+			}
+
+		}
+	});
+}
+
+function replace_saves_skill_with_avtt_rollers(target, outerSelector, labelSelector, dataSelector, addAdvDisButton){
+// replace saving throws, skills, etc
+$(target).find(outerSelector).each(function() {
+	let currentElement = $(this)
+	if (currentElement.find(".avtt-roll-button").length == 0) {
+		const label = $(currentElement).find(labelSelector).html()
+		if (label === "Saving Throws" || label === "Skills"){
+			// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
+			const tidbitData = $(currentElement).find(dataSelector).text().trim().split(",")
+			const allTidBits = []
+			tidbitData.forEach((tidbit) => {
+				// can only be saving throw or skills here, which is either save/check respectively
+				const rollType = label === "Saving Throws" ? "save" : "check"
+				// will be DEX/CON/ATHLETICS/PERCEPTION
+				const actionType = tidbit.trim().split(" ")[0]
+				// matches "+1"
+				const modMatcher = tidbit.match(/([\+\-] ?[0-9][0-9]?)/)
+				const modifier = modMatcher ? modMatcher.shift() : ""
+				if (addAdvDisButton){
+					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`))
+					allTidBits.push(
+					`<button data-exp='2d20kh1' data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Adv</button><button data-exp='2d20kl1' data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Dis</button>`)
+				} else{
+					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`) )
+				}
+				
+				
+			})
+			const thisTidBitData = $(currentElement).find(dataSelector)
+			$(thisTidBitData).html(allTidBits);				
+		}
+	}
+});}
 
 function scan_player_creature_pane(target, tokenId) {
 	console.group("scan_player_creature_pan")
@@ -142,41 +225,9 @@ function scan_player_creature_pane(target, tokenId) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar);
 	}
 
-	// replace ability scores modifiers
-	$(target).find(".ddbc-creature-block__ability-stat").each(function() {
-		const currentElement = $(this)
-		if (currentElement.find(".avtt-roll-button").length == 0) {
-			const abilityType = $(this).find(".ddbc-creature-block__ability-heading").html()
-			// matches (+1) 
-			let updated = currentElement.html()
-				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button'>$1</button>`); 
-			$(currentElement).html(updated);
-		}
-	});
 
-	// replace saving throws, skills, etc
-	$(target).find(".ddbc-creature-block__tidbit").each(function() {
-		let currentElement = $(this)
-		if (currentElement.find(".avtt-roll-button").length == 0) {
-			const label = $(currentElement).find(".ddbc-creature-block__tidbit-label").html()
-			if (label === "Saving Throws" || label === "Skills"){
-				// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
-				const tidbitData = $(currentElement).find(".ddbc-creature-block__tidbit-data").html().split(",")
-				const allTidBits = []
-				tidbitData.forEach((tidbit) => {
-					// can only be saving throw or skills here, which is either save/check respectively
-					const rollType = label === "Saving Throws" ? "save" : "check"
-					// will be DEX/CON/ATHLETICS/PERCEPTION
-					const actionType = tidbit.trim().split(" ")[0]
-					// matches "+1"
-					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`) )
-					
-				})
-				const thisTidBitData = $(currentElement).find(".ddbc-creature-block__tidbit-data")
-				$(thisTidBitData).html(allTidBits);				
-			}
-		}
-	});
+	replace_ability_scores_with_avtt_rollers(target, ".ddbc-creature-block__ability-stat", ".ddbc-creature-block__ability-heading")
+	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit",".ddbc-creature-block__tidbit-label", ".ddbc-creature-block__tidbit-data" )
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find(".ct-creature-pane__block p").each(function() {
@@ -191,8 +242,8 @@ function scan_player_creature_pane(target, tokenId) {
 			const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
 			let actionType = currentElement.find("strong").html() || "custom"
 			let updated = currentElement.html()
-				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
-				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button'>$1</button>`)
+				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`)
+				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`)
 			$(currentElement).html(updated);
 		}
 	});
@@ -203,31 +254,18 @@ function scan_player_creature_pane(target, tokenId) {
 
 // exp: 1d20, modifier: +1, damageType: bludgeoning
 function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo) {
-	console.group("rolling_our_dice")
+	console.group("rolling_our_dice", expression, modifier)
 
-	let dice = expression;
-	// rpgDiceRoller.DiceRoll expects a modifier, so if none is supplied give a +0
-	let mod = modifier.replace(/\(/g,"").replace(/\)/g,"") || "+0";
-	
-
-	if (mod && mod == "CRIT") {
-		mod = dice.replace(/^([0-9]+d[0-9]+).*$/, "$1");
-	}
-
-	if (mod && mod.charAt(0) != "+") {
-		mod = "+" + mod;
-	} else {
-		mod = mod;
-	}
-	let roll = new rpgDiceRoller.DiceRoll(dice + mod);
-	let output_beauty = roll.output.replace(/=(.*)/, "= <b>$1</b>")
-	
-	if(damageType){
-		output_beauty += ` <b>${damageType}</b>`;
+	const isCrit = modifier.includes("CRIT")
+	modifier = modifier.replace(/[\(\)']+/g, "")
+	if (isCrit){
+		expression = `${expression}+${expression}`
+		modifier = modifier.replace("CRIT", "")
 	}
 	
-	const result = send_rpg_dice_to_ddb(expression+mod, displayName, imgUrl, rollType, damageType,  actionType, sendTo)
+	const result = send_rpg_dice_to_ddb(expression+modifier, displayName, imgUrl, rollType, damageType,  actionType, sendTo)
 	result ? notify_gamelog() : console.warn("Message could not be sent to DDB")
+	console.groupEnd()
 }
 
 function find_currently_open_character_sheet() {
@@ -417,10 +455,9 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 			expression = "2d20kl1";
 		}
 		if (rollAs == "crit") {
-			modifier = "CRIT";
+			modifier = `${modifier}CRIT`;
 			rollType = "damage"
 		}
-		const rolltype = rollWith === ""
 		// displayName, imgUrl, expression, modifier, rollType, damageType, actionType, dmOnly
 		roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo);
 	});

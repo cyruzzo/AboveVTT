@@ -449,54 +449,58 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function load_monster_stat(monsterid, token_id=false) {
-	token_id=false; // DISABLE HAVING AN IFRAME FOR EACH TOKEN NPC. WE GO BACK TO USING A SINGLE IFRAME FOR EACH MONSTER TYPE
-	$(".monster_frame").hide();
+function load_monster_stat(monsterid, token_id) {
 	
-	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
-	console.log(iframe_id)
-	console.log(token_id)
+	
+	const draggable_resizable_div = $(`<div id='resizeDragMon' ></div>`);	
+	if (! $("#resizeDragMon").length) $("body").append(draggable_resizable_div);
+		
+	const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	$("#resizeDragMon").append(monster_close_title_button);
+	$(monster_close_title_button).on("click", function () {
+		console.log("closing mon panel")
+		$("#resizeDragMon").remove()
+	});
+	
+	/*Set draggable and resizeable on monster  sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	$("#resizeDragMon").addClass("moveableWindow");
+	$("#resizeDragMon").draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	
+	$("#resizeDragMon").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 200,
+		minHeight: 200
+	});
+	
+	$("#resizeDragMon").mousedown(function() {
+		frame_z_index_when_click($(this));
+	});	
 
-	if ($("#" + iframe_id).length > 0) {
-		// RENDI VISIBILE
-		oldframe = $("#" + iframe_id);
-		oldframe.show();
-		oldframe.animate({
-			left: '220px'
-		}, 500);
-		return;
+	if(!$("#resizeDragMon").hasClass("minimized")){
+		$("#resizeDragMon").addClass("restored");
 	}
 
-	let container = $("<div class='monster_frame'/>");
-	container.attr('id', iframe_id);
-	container.css("position", "fixed");
-	container.css("left", "-500px"); // 190-1030
-	container.css("top", "80px");
-	container.css("z-index", "1000");
-	container.css("background", "white");
-	container.css("width", "850px");
-	container.css("height", "450px");
-	close_button = $("<button>X</button>");
-	close_button.css("position", "absolute");
-	close_button.css("left", "0");
-	close_button.css("top", "0");
-	close_button.css("z-index", "1001");
-	close_button.click(function() {
-		container.animate({
-			left: "-500px"
-		}, 500);
-		container.hide();
-	});
-	container.append(close_button);
-	//container.css("width","900px");
-	let iframe = $("<iframe>");
-	iframe.css("position", "absoute");
-	iframe.css("left", 0);
-	iframe.css("top", 0);
-	iframe.css("width", "900px");
-	iframe.css("height", "450px"); // UGUALE A COMBAT TRACKER INSIDE
-	//iframe.css("transform","scale(0.75)");
-
+	let iframe = $(`<iframe id='mon-iframe' data-monid=${monsterid}  class='hideMon'>`);
 
 	window.StatHandler.getStat(monsterid, function(stats) {
 
@@ -532,15 +536,35 @@ function load_monster_stat(monsterid, token_id=false) {
 
 			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
+			iframe.removeClass("hideMon")
 		});
 
 		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
 	})
-	container.append(iframe);
-	$("#site").append(container);
-	container.animate({
-		left: '220px'
-	}, 500);
+	if ($("#resizeDragMon iframe").attr("data-monid") !== undefined && $("#resizeDragMon iframe").attr("data-monid") !== monsterid){
+		$("#resizeDragMon iframe").replaceWith(iframe);
+	}
+	else{
+		draggable_resizable_div.append(iframe)
+	}
+	// draggable_resizable_div.find("iframe").remove()
+	
+	// attempt to add in style sheets to the iframe
+	// const links = $("head").find("link").filter(function(){
+	// 	return $(this).attr('rel') == "stylesheet"
+	//  });
+	
+	// console.log("SHEETS", links)
+	// const head = $("#mon-iframe").contents().find("head");
+	// links.each(function (indexInArray, valueOfElement) { 
+	// 	setTimeout(function() {
+	// 		try {
+	// 			head.append(valueOfElement);  
+	// 			console.log("APPENDING STYLESHEET", valueOfElement)              	
+	// 		} catch {}
+	// 	}, 1);
+	// });
+
 }
 
 function init_controls() {
