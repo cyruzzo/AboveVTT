@@ -1565,15 +1565,15 @@ function check_versions_match() {
 /** @returns {String} The id of the `game` which is usually the same as the campaign id */
 function find_game_id() {
 	if (window.gameId === undefined) {
-		if (is_encounters_page()) {
-			const urlParams = new URLSearchParams(window.location.search);
-			window.gameId = urlParams.get('cid');
+		if (is_encounters_page() || is_characters_page()) {
+			const campaignInfo = read_campaign_info();
+			window.gameId = campaignInfo.id;
 		} else {
 			window.gameId = $("#message-broker-client").attr("data-gameId");
 		}
 	}
 	return window.gameId;
-};
+}
 
 /** returns true if all connected users are on a version that is greater than or equal to `versionString` */
 function is_supported_version(versionString) {
@@ -1660,8 +1660,7 @@ function init_above(){
 function init_things() {
 	console.log("init things");
 	window.STARTING = true;
-	let searchParams = new URLSearchParams(window.location.search)
-	var gameid = $("#message-broker-client").attr("data-gameId");
+	let gameId = find_game_id();
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
 	window.DRAWINGS = [];
@@ -2878,9 +2877,9 @@ $(function() {
 
 		newlink.click(function(e) {
 			e.preventDefault();
+			store_campaign_info();
 			gather_pcs();
-			let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-			window.open(`https://www.dndbeyond.com${sheet}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
+			window.open(`https://www.dndbeyond.com${sheet}?abovevtt=true`, '_blank');
 		});
 
 		$(this).prepend(newlink);
@@ -2953,14 +2952,14 @@ $(function() {
 	$(".joindm").click(function(e) {
 		e.preventDefault();
 		$(".joindm").addClass("button-loading");
+		store_campaign_info();
 		gather_pcs();
 		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
 			if (didSucceed === false) {
 				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
 			}
 			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
-				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
+				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?abovevtt=true`, '_blank');
 			} else {
 				// DDB doesn't support dice on their encounters page for non-subscribers so load the non-DDB dice version
 				window.DM = true;
@@ -2984,9 +2983,9 @@ $(function() {
 	if (window.location.search.includes("abovevtt=true")) {
 		gather_pcs();
 		if (is_encounters_page()) {
-			const urlParams = new URLSearchParams(window.location.search);
-			window.gameId = urlParams.get('cid');
-			window.CAMPAIGN_SECRET = urlParams.get('cs');
+			const campaignInfo = read_campaign_info();
+			window.gameId = campaignInfo.id;
+			window.CAMPAIGN_SECRET = campaignInfo.cs;
 			window.DM = true;
 			window.PLAYER_SHEET = false;
 			window.PLAYER_NAME = "THE DM";
@@ -2997,9 +2996,9 @@ $(function() {
 			let path = window.location.href;
 			let pathWithoutQuery = path.split("?")[0];
 			let lastComponent = pathWithoutQuery.substring(pathWithoutQuery.lastIndexOf('/') + 1);
-			const urlParams = new URLSearchParams(window.location.search);
-			window.gameId = urlParams.get('cid');
-			window.CAMPAIGN_SECRET = urlParams.get('cs');
+			const campaignInfo = read_campaign_info();
+			window.gameId = campaignInfo.id;
+			window.CAMPAIGN_SECRET = campaignInfo.cs;
 			window.DM = false;
 			window.PLAYER_SHEET = window.location.pathname;
 			window.PLAYER_ID = lastComponent;
@@ -3019,6 +3018,27 @@ $(function() {
 
 });
 
+function store_campaign_info() {
+	if (!is_campaign_page()) {
+		console.warn("store_campaign_info was not called from the campaign page");
+		return;
+	}
+	let campaignInfo = {
+		id: find_game_id(),
+		cs: $(".ddb-campaigns-invite-primary").text().split("/").pop()
+	};
+	localStorage.setItem("AVTT-CampaignInfo", JSON.stringify(campaignInfo));
+}
+
+function read_campaign_info() {
+	let campaignInfo = localStorage.getItem("AVTT-CampaignInfo");
+	if (campaignInfo == null) {
+		// alert the user?
+		console.error("Failed to fetch campaign info from localStorage");
+		return {};
+	}
+	return $.parseJSON(campaignInfo);
+}
 
 function init_help_menu() {
 	$('body').append(`

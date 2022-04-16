@@ -260,7 +260,7 @@ function get_higher_res_url(thumbnailUrl) {
 }
 
 function gather_pcs() {
-	let campaignId = get_campaign_id();
+	let campaignId = find_game_id();
 	if (is_encounters_page() || is_characters_page()) {
 		// they aren't on this page, but we've added them to localStorage to handle this scenario
 		window.pcs = $.parseJSON(localStorage.getItem(`CampaignCharacters${campaignId}`));
