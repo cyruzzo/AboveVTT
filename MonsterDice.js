@@ -99,7 +99,7 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 					const key  = $(valueOfElement).text()
 					const remaining = token.get_tracked_ability(key, numberFound);
 
-					$(valueOfElement).append(createCountTracker(tokenId, key.replace(/\s/g, ""), remaining, "", ""))
+					$(valueOfElement).after(createCountTracker(tokenId, key.replace(/\s/g, ""), remaining, "", ""))
 				});			
 			}
 			

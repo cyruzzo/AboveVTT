@@ -467,7 +467,7 @@ function load_monster_stat(monsterid, token_id) {
 	// check if the monster pane is not open open
 	if (! $("#resizeDragMon").length) {
 		$("body").append(draggable_resizable_div)
-		draggable_resizable_div.append(loadingSpinner)
+		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
 		draggable_resizable_div.show("slow")
 	}
 		
@@ -550,7 +550,7 @@ function load_monster_stat(monsterid, token_id) {
 
 			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
-			$(".sk-folding-cube").hide()
+			$(".sidebar-panel-loading-indicator").hide()
 			iframe.fadeIn("slow")
 			console.groupEnd()
 		});
@@ -560,11 +560,8 @@ function load_monster_stat(monsterid, token_id) {
 	
 
 	if ($(`#resizeDragMon iframe[id!='mon-iframe-${monsterid}']`).length){
-		// monFrame.hide('slow', function(){ monFrame.replaceWith(iframe)})
-		$(".sk-folding-cube").show()
-		monFrame.fadeOut("slow", function(){
-			$(this).replaceWith(iframe);
-		});
+		$(".sidebar-panel-loading-indicator").show()
+		monFrame.replaceWith(iframe)
 	}
 	else{
 		draggable_resizable_div.append(iframe)
