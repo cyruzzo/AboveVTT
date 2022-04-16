@@ -452,7 +452,7 @@ class Token {
 		hpbar.append(hp_input);
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
-		if (this.options.monster > 0) {
+		if (!this.isPlayer()) {
 			hp_input.change(function(e) {
 				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
@@ -540,7 +540,7 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	toggle_stats(token){
-		if(!window.DM && !this.isPlayer() && (this.options.disablestat || this.options.hidestat) ){
+		if(this.options.disablestat || this.options.hidestat){
 			token.find(".hpbar").hide();
 			token.find(".ac").hide();
 			token.find(".elev").hide();
@@ -1240,12 +1240,10 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
-		if (this.options.hp){
-			this.build_stats(token)
-			this.toggle_stats(token)
-			this.update_health_aura(token)
-			this.update_dead_cross(token)
-		}
+		this.build_stats(token)
+		this.toggle_stats(token)
+		this.update_health_aura(token)
+		this.update_dead_cross(token)
 		this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
@@ -1287,7 +1285,6 @@ class Token {
  * @param token jquery selected div with the class token
  */
 function toggle_player_selectable(tokenInstance, token){
-	console.group("toggle_player_selectable", tokenInstance)
 	if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove && $(".body-rpgcharacter-sheet").length>0){
 		token?.css("cursor","default");
 		token?.css("pointer-events","none");
@@ -1296,7 +1293,6 @@ function toggle_player_selectable(tokenInstance, token){
 		token?.css("cursor","move");
 		token?.css("pointer-events","auto");
 	}
-	console.groupEnd();
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -1559,8 +1555,8 @@ function token_inputs(opt) {
 
 
 	if (window.DM) {
-		if (is_monster) {
-			if (data.hp.startsWith("+") || data.hp.startsWith("-"))
+		if (!is_player_id(id)) {
+			if (data.hp?.startsWith("+") || data.hp?.startsWith("-"))
 				data.hp = parseInt(tok.options.hp) + parseInt(data.hp);
 
 			tok.options.hp = data.hp;
@@ -2045,7 +2041,6 @@ function token_menu() {
 							name: 'Current HP',
 							className: 'split-column-context-input split-column-context-input-text',
 							value: window.TOKEN_OBJECTS[id].options.hp,
-							disabled: !is_monster,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2068,7 +2063,6 @@ function token_menu() {
 							name: 'Max Hp',
 							className: 'split-column-context-input split-column-context-input-text',
 							value: window.TOKEN_OBJECTS[id].options.max_hp,
-							disabled: !is_monster,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2078,7 +2072,7 @@ function token_menu() {
 						elev: {
 							type: 'text',
 							name: 'Elevation',
-							className: window.TOKEN_OBJECTS[id].isMonster() ? 'split-column-context-input split-column-context-input-text' : '',
+							className: 'split-column-context-input split-column-context-input-text',
 							value: window.TOKEN_OBJECTS[id].options.elev,
 							events: {
 								click: function(e) {
@@ -2119,14 +2113,6 @@ function token_menu() {
 				if (is_monster) {
 					// delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
-				}
-				else {
-					delete ret.items.sep1;
-					delete ret.items.hp;
-					delete ret.items.max_hp;
-					// delete ret.items.token_cond;
-					// delete ret.items.options.items.token_revealname;
-					delete ret.items.ac;
 				}
 				
 				if(!has_note){
