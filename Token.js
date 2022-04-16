@@ -1240,11 +1240,13 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
-		this.build_stats(token)
+		if (this.options.hp){
+			this.build_stats(token)
+			this.toggle_stats(token)
+			this.update_health_aura(token)
+			this.update_dead_cross(token)
+		}
 		this.toggle_player_owned(token)
-		this.toggle_stats(token)
-		this.update_health_aura(token)
-		this.update_dead_cross(token)
 		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
