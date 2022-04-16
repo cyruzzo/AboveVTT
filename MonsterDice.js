@@ -1,9 +1,11 @@
-function iframe_contextmenu() {
 
-}
-
-
-/// this injects roll buttons into the monster details page
+/**
+ * Adds in rolling buttons and spell tracker inputs to monster frames that are not encounter frames.
+ * Specifically monster frames that appear to the player
+ * @param {$} target jqeury selected element to put rolling buttons into
+ * @param {object} stats stats of the monster
+ * @param {string} tokenId id of the token
+ */
 function scan_monster(target, stats, tokenId) {
 	console.group("scan_monster")
 	console.log("adding in avtt dice buttons")
@@ -11,6 +13,9 @@ function scan_monster(target, stats, tokenId) {
 	target.find(".homebrew-creation-actions").remove();
 	target.find(".homebrew-previous-versions").remove();
 	target.find(".homebrew-details-footer").remove();
+	target.find("footer").remove()
+	target.find("#footer-push").remove();
+	target.find("#footer").remove();
 	$("iframe")
 	target.find(".integrated-dice__container").hide();
 	const creatureName = target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
@@ -40,12 +45,12 @@ function scan_monster(target, stats, tokenId) {
 				const actionType = $(this).attr("data-rollaction").replace(" ","-")
 				const text = $(this).text()
 				if (rollType === "damage"){
-					$(this).after(`<button data-exp=${dice} data-mod="${modifier}CRIT" data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Crit</button>`)
+					$(this).after(`<button data-exp=${dice} data-mod="${modifier}CRIT" data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType} critical">Crit</button>`)
 				} else if (rollType === "to-hit"){
-					$(this).after(`<button data-exp="2d20kh1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Adv</button>
-								   <button data-exp="2d20kl1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Dis</button>`)
+					$(this).after(`<button data-exp="2d20kh1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType} advantage">Adv</button>
+								   <button data-exp="2d20kl1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType} disadvantage">Dis</button>`)
 				}
-				$(this).replaceWith(`<button data-exp=${dice} data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>${text}</button>`)				
+				$(this).replaceWith(`<button data-exp=${dice} data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)				
 			})
 		}
 	});
@@ -75,6 +80,11 @@ function scan_monster(target, stats, tokenId) {
 	console.groupEnd()
 }
 
+/**
+ * Adds in tracker input slot on elements that appear as "2/Day each"
+ * @param {$} target 
+ * @param {string} tokenId 
+ */
 function add_ability_tracker_inputs_on_each(target, tokenId){
 	const token = window.TOKEN_OBJECTS[tokenId];
 	target.find(".mon-stat-block__description-block-content > p").each(function() {
@@ -83,9 +93,7 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 			const matchForEachSlot = element.text().match(/([0-9])\/Day each:/i)
 			if (matchForEachSlot){
 				const numberFound = parseInt(matchForEachSlot[1]);
-				console.log("MATCH FOR SLOT", matchForEachSlot)
 				element.children().each(function (indexInArray, valueOfElement) { 
-					console.log("VALUE OF ELE", valueOfElement)
 					const key  = $(valueOfElement).text()
 					const remaining = token.get_tracked_ability(key, numberFound);
 
@@ -97,7 +105,15 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 	});	
 }
 
-
+/**
+ * Creates the input tracker used for spell/legendaries and then calls token.track_ability
+ * @param {object} token 
+ * @param {string} key 
+ * @param {string} remaining 
+ * @param {string} foundDescription 
+ * @param {string} descriptionPostfix 
+ * @returns 
+ */
 function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix) {
 	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}" style="font-size: 14px; width: 40px; appearance: none; border: 1px solid #d8e1e8; border-radius: 3px;"> ${foundDescription} ${descriptionPostfix}</input>`);
 	input.off("change").on("change", function(changeEvent) {
@@ -108,9 +124,13 @@ function createCountTracker(token, key, remaining, foundDescription, description
 	return input
 }
 
-// this is intended to be used with the encounterHandler only. It will need some rework if we want to use it for non-encounter stat blocks
+/**
+ * Adds spell/feature/legendary tracker inputs to a monster block
+ * @param {$} target 
+ * @param {string} tokenId 
+ * @returns 
+ */
 function add_ability_tracker_inputs(target, tokenId) {
-console.log(tokenId)
 	let token = window.TOKEN_OBJECTS[tokenId];
 	if (token === undefined) {
 		// nothing to track if we don't have a token
@@ -147,22 +167,31 @@ console.log(tokenId)
 	add_ability_tracker_inputs_on_each(target, tokenId)
 }
 
+/**
+ * replaces ability scores with rolling buttons
+ * used by both the extra pane scanning and monster frame scanning
+ * they're both slightly different and have different selectors as well button count
+ * @param {$} target jquery selected target to add buttons into
+ * @param {string} outerSelector an outer selector to find against
+ * @param {string} innerSelector and inner selector to find against
+ * @param {bool} addAdvDisButton whether to add in additional Crit/Adv/Dis buttons (currently only used by monster frame)
+ */
 function replace_ability_scores_with_avtt_rollers(target, outerSelector, innerSelector, addAdvDisButton) {
 	$(target).find(outerSelector).each(function() {
 		const currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
 			const abilityType = $(this).find(innerSelector).html()
-			
+			const rollType="check"
 			// matches (+1) 
 			let updated = currentElement.html()
-				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button' title=${abilityType}>$1</button>`); 
+				.replaceAll(/(\([\+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${abilityType} class='avtt-roll-button' title="${abilityType} ${rollType}">$1</button>`); 
 			$(currentElement).html(updated);
 			
 			if (addAdvDisButton){
 				// matches just the +1
 				const modMatch = currentElement.text().match(/[\+\-] ?[0-9]?/g)
 				const modifier = modMatch ? modMatch.shift() : ""
-				currentElement.find(".avtt-roll-button").after(`<button data-exp="2d20kh1" data-mod=${modifier} data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button' title=${abilityType}>Adv</button><button data-exp="2d20kl1" data-mod=${modifier}' data-rolltype="check" data-actiontype=${abilityType} class='avtt-roll-button' title=${abilityType}>Dis</button>`)
+				currentElement.find(".avtt-roll-button").after(`<button data-exp="2d20kh1" data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${abilityType} class='avtt-roll-button' title="${abilityType} ${rollType} advantage">Adv</button><button data-exp="2d20kl1" data-mod=${modifier}' data-rolltype=${rollType} data-actiontype=${abilityType} class='avtt-roll-button' title="${abilityType}${rollType} disadvantage">Dis</button>`)
 				$(this).css("display","flex")
 			}
 
@@ -170,6 +199,15 @@ function replace_ability_scores_with_avtt_rollers(target, outerSelector, innerSe
 	});
 }
 
+/**
+ * replaces "tidbits" with avtt roller buttons
+ * tidbits are skills/saving throws as well as additional monster stat items that don't have buttons added to
+ * @param {$} target jquery selected element
+ * @param {string} outerSelector an outer selector to find against
+ * @param {string} labelSelector a selector for the tidbit label
+ * @param {string} dataSelector a selector for the data section of the tidbit
+ * @param {bool} addAdvDisButton 
+ */
 function replace_saves_skill_with_avtt_rollers(target, outerSelector, labelSelector, dataSelector, addAdvDisButton){
 // replace saving throws, skills, etc
 $(target).find(outerSelector).each(function() {
@@ -189,14 +227,12 @@ $(target).find(outerSelector).each(function() {
 				const modMatcher = tidbit.match(/([\+\-] ?[0-9][0-9]?)/)
 				const modifier = modMatcher ? modMatcher.shift() : ""
 				if (addAdvDisButton){
-					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`))
+					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">$1</button>`))
 					allTidBits.push(
-					`<button data-exp='2d20kh1' data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Adv</button><button data-exp='2d20kl1' data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>Dis</button>`)
+					`<button data-exp='2d20kh1' data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType} advantage">Adv</button><button data-exp='2d20kl1' data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType} disadvantage">Dis</button>`)
 				} else{
-					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`) )
+					allTidBits.push(tidbit.replace(/([\+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">$1</button>`) )
 				}
-				
-				
 			})
 			const thisTidBitData = $(currentElement).find(dataSelector)
 			$(thisTidBitData).html(allTidBits);				
@@ -204,7 +240,12 @@ $(target).find(outerSelector).each(function() {
 	}
 });}
 
-function scan_player_creature_pane(target, tokenId) {
+
+/**
+ * Scans the player sheet to add in roller buttons to the extra tab
+ * @param {$} target jquery selected element
+ */
+function scan_player_creature_pane(target) {
 	console.group("scan_player_creature_pan")
 
 	let creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
@@ -242,8 +283,8 @@ function scan_player_creature_pane(target, tokenId) {
 			const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
 			let actionType = currentElement.find("strong").html() || "custom"
 			let updated = currentElement.html()
-				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`)
-				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title=${actionType}>$1</button>`)
+				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} damage">$1</button>`)
+				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} to hit">$1</button>`)
 			$(currentElement).html(updated);
 		}
 	});
@@ -252,7 +293,19 @@ function scan_player_creature_pane(target, tokenId) {
 	console.groupEnd()
 }
 
-// exp: 1d20, modifier: +1, damageType: bludgeoning
+/**
+ * Stepping stone function to go on to send the dice expressions to DDB via MB
+ * makes adjustments to the expression if it's a crit
+ * notifies the user if successfully sent to DDB combat log
+ * @param {string} displayName how to display the dice roll
+ * @param {string} imgUrl the image url to use in the dice roll
+ * @param {string} expression dice expression
+ * @param {string} modifier dice modifier
+ * @param {string} rollType usually "to hit" or "damage" but can also be custom / anything else
+ * @param {string} damageType not actually used by DND just yet so this is a placeholder
+ * @param {string} actionType the action being performed
+ * @param {string} sendTo everyone/DM, open only exists when using extra tab context menu
+ */
 function roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo) {
 	console.group("rolling_our_dice", expression, modifier)
 
@@ -456,13 +509,18 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) 
 		}
 		if (rollAs == "crit") {
 			modifier = `${modifier}CRIT`;
-			rollType = "damage"
 		}
 		// displayName, imgUrl, expression, modifier, rollType, damageType, actionType, dmOnly
 		roll_our_dice(displayName, imgUrl, expression, modifier, rollType, damageType, actionType, sendTo);
 	});
 }
 
+/**
+ * click handler for all avtt roller buttons
+ * @param {event} clickEvent 
+ * @param {string} displayName display name to send to combat log
+ * @param {string} imgUrl image url to sent to combat log
+ */
 function roll_button_clicked(clickEvent, displayName, imgUrl) {
 	let pressedButton = $(clickEvent.currentTarget);
 	let expression = pressedButton.attr('data-exp');
