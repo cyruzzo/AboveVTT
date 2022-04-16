@@ -540,7 +540,11 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	toggle_stats(token){
-		if(this.options.disablestat || this.options.hidestat){
+		if(this.options.disablestat ){
+			token.find(".hpbar").hide();
+			token.find(".ac").hide();
+			token.find(".elev").hide();
+		} else if (this.options.hidestat && !window.DM){
 			token.find(".hpbar").hide();
 			token.find(".ac").hide();
 			token.find(".elev").hide();
@@ -1547,117 +1551,48 @@ function token_inputs(opt) {
 	data = $.contextMenu.getInputValues(opt, $(this).data());
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
-	tok = window.TOKEN_OBJECTS[id];
+	token = window.TOKEN_OBJECTS[id];
 
 	if (data.imgsrc != undefined) {
-		tok.options.imgsrc = parse_img(data.imgsrc);
+		token.options.imgsrc = parse_img(data.imgsrc);
 	}
 
 
 	if (window.DM) {
 		if (!is_player_id(id)) {
 			if (data.hp?.startsWith("+") || data.hp?.startsWith("-"))
-				data.hp = parseInt(tok.options.hp) + parseInt(data.hp);
+				data.hp = parseInt(token.options.hp) + parseInt(data.hp);
 
-			tok.options.hp = data.hp;
+			token.options.hp = data.hp;
 
 			if (data.max_hp.startsWith("+") || data.max_hp.startsWith("-"))
-				data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
+				data.max_hp = parseInt(token.options.max_hp) + parseInt(data.max_hp);
 
-			tok.options.max_hp = data.max_hp;
+			token.options.max_hp = data.max_hp;
 
 			if (!isNaN(data.ac)) {
-				tok.options.ac = data.ac;
+				token.options.ac = data.ac;
 			}
 			if (!isNaN(data.elev)) {
-				tok.options.elev = data.elev;
+				token.options.elev = data.elev;
 			}
 		}
 
 		
-		tok.options.name = data.name;
-		tok.options.elev = data.elev;
+		token.options.name = data.name;
+		token.options.elev = data.elev;
 
 		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
-			tok.options.imgsrc = parse_img(opt.imgsrcSelection);
+			token.options.imgsrc = parse_img(opt.imgsrcSelection);
 		} else if (data.imgsrc != undefined) {
-			tok.options.imgsrc = parse_img(data.imgsrc);
-		}
-
-		if (data.token_square) {
-			tok.options.square = true;
-		}
-		else {
-			tok.options.square = false;
-		}
-
-		if (data.token_disablestat) {
-			tok.options.disablestat = 1;
-		}
-		else {
-			tok.options.disablestat = false;
-		}
-
-		if (data.token_hidestat) {
-			tok.options.hidestat = 1;
-		}
-		else {
-			tok.options.hidestat = false;
-		}
-
-		tok.options.player_owned = data.token_player_owned ? true : false
-
-		if (data.token_locked) {
-			tok.options.locked = 1;
-		}
-		else {
-			tok.options.locked = false;
-		}
-
-		if (data.token_restrictPlayerMove) {
-			tok.options.restrictPlayerMove = 1;
-		}
-		else {
-			tok.options.restrictPlayerMove = false;
-		}
-
-		if (data.token_disableborder) {
-			tok.options.disableborder = true;
-		}
-		else {
-			tok.options.disableborder = false;
-		}
-
-		if (data.token_disableaura) {
-			tok.options.disableaura = true;
-		}
-		else {
-			tok.options.disableaura = false;
-		}
-		if (data.token_hidden) {
-			tok.options.hidden = true;
-		}
-		else {
-			tok.options.hidden = false;
-		}
-		if (data.token_revealname) {
-			tok.options.revealname = true;
-		}
-		else {
-			tok.options.revealname = false;
-		}
-		if (data.token_legacyaspectratio) {
-			tok.options.legacyaspectratio = true;
-		}
-		else {
-			tok.options.legacyaspectratio = false;
+			token.options.imgsrc = parse_img(data.imgsrc);
 		}
 	}
 	
-	tok.place();
-	tok.sync();
+	token.place();
+	token.sync();
 	if(window.DM)
-		tok.persist();
+		token.persist();
 }
 
 function multiple_callback(key, options, event) {
