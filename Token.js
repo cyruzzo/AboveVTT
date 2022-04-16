@@ -1289,7 +1289,7 @@ class Token {
  * @param token jquery selected div with the class token
  */
 function toggle_player_selectable(tokenInstance, token){
-	if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove && $(".body-rpgcharacter-sheet").length>0){
+	if (tokenInstance.options.locked && !window.DM){
 		token?.css("cursor","default");
 		token?.css("pointer-events","none");
 	}
@@ -2007,7 +2007,7 @@ function token_menu() {
 						elev: {
 							type: 'text',
 							name: 'Elevation',
-							className: 'split-column-context-input split-column-context-input-text',
+							className: !is_player ? 'split-column-context-input split-column-context-input-text' : "",
 							value: window.TOKEN_OBJECTS[id].options.elev,
 							events: {
 								click: function(e) {
@@ -2048,6 +2048,11 @@ function token_menu() {
 				if (is_monster) {
 					// delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
+				}
+				if (is_player){
+					delete ret.items.hp
+					delete ret.items.max_hp
+					delete ret.items.ac
 				}
 				
 				if(!has_note){
