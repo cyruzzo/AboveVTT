@@ -476,6 +476,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					dm_map = img1;
 					player_map = $(this).next().find(".compendium-image-center").attr("href");
 				}
+				else if ($(this).find(".compendium-image-view-player a").length > 0) {
+					dm_map = img1;
+					player_map = $(this).find(".compendium-image-view-player a").attr("href");
+				}
 				else {
 					player_map = img1;
 				}
