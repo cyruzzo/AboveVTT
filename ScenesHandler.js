@@ -460,59 +460,68 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					reveals: [],
 				});
 			});
-			// COMPENDIUM IMAGE WITH SUBTITLE
-			iframe.contents().find(".compendium-image-with-subtitle-center,.compendium-image-with-subtitle-right,.compendium-image-with-subtitle-left").each(function(idx) {
-				var id = $(this).attr('id');
-				if (typeof id == typeof undefined) {
-					id = $(this).attr('data-content-chunk-id');
-				}
-				var thumb = $(this).find("img").attr('src');
-				var img1 = $(this).find(".compendium-image-center,.compendium-image-right,.compendium-image-left").attr("href");
-				var title = $(this).find(".compendium-image-subtitle").text();
-				var player_map;
-				var dm_map;
 
-				if ($(this).next().hasClass("compendium-image-view-player")) {
-					dm_map = img1;
-					player_map = $(this).next().find(".compendium-image-center").attr("href");
-				}
-				else if ($(this).find(".compendium-image-view-player a").length > 0) {
-					dm_map = img1;
-					player_map = $(this).find(".compendium-image-view-player a").attr("href");
-				}
-				else {
-					player_map = img1;
-				}
+			// COMPENDIUM IMAGES
+			let compendiumWithSubtitle = iframe.contents().find(".compendium-image-with-subtitle-center,.compendium-image-with-subtitle-right,.compendium-image-with-subtitle-left");
+			let compendiumWithoutSubtitle = iframe.contents().find(".compendium-image-center");
 
-				self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
-					id: id,
-					uuid: source_keyword + "/" + chapter_keyword + "/" + id,
-					title: title,
-					dm_map: dm_map,
-					player_map: player_map,
-					player_map_is_video: "0",
-					dm_map_is_video: "0",
-					scale: "100",
-					dm_map_usable: "0",
-					fog_of_war: "0",
-					thumb: thumb,
-					tokens: {},
-					reveals: [],
+			if (compendiumWithSubtitle.length > 0) {
+				compendiumWithSubtitle.each(function(idx) {
+					var id = $(this).attr('id');
+					if (typeof id == typeof undefined) {
+						id = $(this).attr('data-content-chunk-id');
+					}
+					var thumb = $(this).find("img").attr('src');
+					var img1 = $(this).find(".compendium-image-center,.compendium-image-right,.compendium-image-left").attr("href");
+					var title = $(this).find(".compendium-image-subtitle").text();
+					var player_map;
+					var dm_map;
+
+					if ($(this).next().hasClass("compendium-image-view-player")) {
+						dm_map = img1;
+						player_map = $(this).next().find(".compendium-image-center").attr("href");
+					}
+					else if ($(this).find(".compendium-image-view-player a").length > 0) {
+						dm_map = img1;
+						player_map = $(this).find(".compendium-image-view-player a").attr("href");
+					}
+					else {
+						player_map = img1;
+					}
+
+					self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
+						id: id,
+						uuid: source_keyword + "/" + chapter_keyword + "/" + id,
+						title: title,
+						dm_map: dm_map,
+						player_map: player_map,
+						player_map_is_video: "0",
+						dm_map_is_video: "0",
+						scale: "100",
+						dm_map_usable: "0",
+						fog_of_war: "0",
+						thumb: thumb,
+						tokens: {},
+						reveals: [],
+					});
 				});
-			});
-
-			// AND HERE WE START TO HANDLE EXCEPTIONS.
-
-			if (["gos", "wdh", "wdotmm", "llok"].includes(source_keyword)) {
-				iframe.contents().find(".compendium-image-center").each(function(idx) {
+			} else if (compendiumWithoutSubtitle.length > 0) {
+				compendiumWithoutSubtitle.each(function(idx) {
 					// import it only if there's a player version
 
-					if (!$(this).parent().next().is(".compendium-image-view-player"))
+					let playerMapContainer;
+					if ($(this).parent().next().is(".compendium-image-view-player")) {
+						playerMapContainer = $(this).parent().next().find(".compendium-image-center");
+					} else if ($(this).parent().next().find(".compendium-image-center a").length > 0) {
+						playerMapContainer = $(this).parent().next().find(".compendium-image-center a");
+					}
+					if (playerMapContainer === undefined || playerMapContainer.length === 0) {
 						return;
+					}
 
 
 					var dm_map = $(this).attr('href');
-					var player_map = $(this).parent().next().find(".compendium-image-center").attr("href");
+					var player_map = playerMapContainer.attr("href");
 					var header = $(this).parent().prevAll("[id]:first");
 					var thumb = $(this).find("img").attr('src');
 					var id = header.attr("id");
