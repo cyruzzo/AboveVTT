@@ -449,11 +449,27 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
+function create_monster_loading_spinner(element){
+	return $(`<div class="sk-folding-cube">
+		<div class="sk-cube1 sk-cube"></div>
+		<div class="sk-cube2 sk-cube"></div>
+		<div class="sk-cube4 sk-cube"></div>
+		<div class="sk-cube3 sk-cube"></div>
+  	</div>`)
+}
+
 function load_monster_stat(monsterid, token_id) {
 	
-	
-	const draggable_resizable_div = $(`<div id='resizeDragMon' ></div>`);	
-	if (! $("#resizeDragMon").length) $("body").append(draggable_resizable_div);
+	console.group("load_monster_stat")
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+	const loadingSpinner = create_monster_loading_spinner()
+	monFrame = $("#resizeDragMon iframe")
+	// check if the monster pane is not open open
+	if (! $("#resizeDragMon").length) {
+		$("body").append(draggable_resizable_div)
+		draggable_resizable_div.append(loadingSpinner)
+		draggable_resizable_div.show("slow")
+	}
 		
 	const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	$("#resizeDragMon").append(monster_close_title_button);
@@ -500,12 +516,10 @@ function load_monster_stat(monsterid, token_id) {
 		$("#resizeDragMon").addClass("restored");
 	}
 
-	let iframe = $(`<iframe id='mon-iframe' data-monid=${monsterid}  class='hideMon'>`);
-
+	const iframe = $(`<iframe id='mon-iframe-${monsterid}' style="display:none">`);
 	window.StatHandler.getStat(monsterid, function(stats) {
-
 		iframe.on("load", function(event) {
-			console.log('carico mostro');
+			console.group("monster iframe loaded")
 			$(event.target).contents().find("#mega-menu-target").remove();
 			$(event.target).contents().find(".site-bar").remove();
 			$(event.target).contents().find(".page-header").remove();
@@ -536,17 +550,26 @@ function load_monster_stat(monsterid, token_id) {
 
 			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
-			iframe.removeClass("hideMon")
+			$(".sk-folding-cube").hide()
+			iframe.fadeIn("slow")
+			console.groupEnd()
 		});
 
 		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
 	})
-	if ($("#resizeDragMon iframe").attr("data-monid") !== undefined && $("#resizeDragMon iframe").attr("data-monid") !== monsterid){
-		$("#resizeDragMon iframe").replaceWith(iframe);
+	
+
+	if ($(`#resizeDragMon iframe[id!='mon-iframe-${monsterid}']`).length){
+		// monFrame.hide('slow', function(){ monFrame.replaceWith(iframe)})
+		$(".sk-folding-cube").show()
+		monFrame.fadeOut("slow", function(){
+			$(this).replaceWith(iframe);
+		});
 	}
 	else{
 		draggable_resizable_div.append(iframe)
 	}
+	console.groupEnd()
 	// draggable_resizable_div.find("iframe").remove()
 	
 	// attempt to add in style sheets to the iframe

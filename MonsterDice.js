@@ -18,7 +18,8 @@ function scan_monster(target, stats, tokenId) {
 	target.find("#footer").remove();
 	$("iframe")
 	target.find(".integrated-dice__container").hide();
-	const creatureName = target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
+	// attempt to the tokens name first, failing tha
+	const creatureName = window.TOKEN_OBJECTS[tokenId]?.options.name || target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
 	const creatureAvatar = stats.data.avatarUrl
 	const displayName = `${pc.name} (${creatureName})`;
 
@@ -38,12 +39,13 @@ function scan_monster(target, stats, tokenId) {
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
 			$(currentElement).find("span").each(function (){
+				console.log("this",$(this))
 				const modMatch = $(this).attr("data-dicenotation")?.match(/(\+|-).*/gm)
-				const modifier = modMatch ? modMatch.shift() : ""
+				const modifier = modMatch ? modMatch.shift() : "+0"
 				const dice = $(this).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "")
-				const rollType = $(this).attr("data-rolltype").replace(" ","-")
-				const actionType = $(this).attr("data-rollaction").replace(" ","-")
-				const text = $(this).text()
+				const rollType = $(this).attr("data-rolltype")?.replace(" ","-")
+				const actionType = $(this).attr("data-rollaction")?.replace(" ","-") || "custom"
+				const text = $(this)?.text()
 				if (rollType === "damage"){
 					$(this).after(`<button data-exp=${dice} data-mod="${modifier}CRIT" data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType} critical">Crit</button>`)
 				} else if (rollType === "to-hit"){
