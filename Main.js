@@ -417,7 +417,6 @@ function deselect_all_sidebar_tabs() {
 }
 
 function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
-
 	deselect_all_sidebar_tabs();
 	clickedTab.addClass("selected-tab").removeClass("notification");
 	clickedTab.find(".sidebar-tab-image").addClass("ct-primary-box__tab--extras ddbc-tab-list__nav-item ddbc-tab-list__nav-item--is-active");
@@ -429,6 +428,12 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 	}
+	if (clickedTab.attr("data-target") === ".glc-game-log") {
+		observe_messages();
+	} else{
+		observe_messages(false);
+	}
+
 
 	// switch back to gamelog if they change tabs
 	if (!isCharacterSheetInfo) {
@@ -2233,10 +2238,6 @@ function init_ui() {
 	wrapper.width(window.width);
 	wrapper.height(window.height);
 
-
-
-
-
 	wrapper.append(VTT);
 	$("body").append(wrapper);
 
@@ -2407,6 +2408,8 @@ function init_ui() {
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
 	}
+	observe_messages()
+
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 

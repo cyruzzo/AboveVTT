@@ -1261,44 +1261,57 @@ class MessageBroker {
 	}
 }
 
-function monitor_messages() {
-	$(".GameLog_GameLogEntries__3oNPD").on("DOMNodeInserted", function(addedEvent) {
-		// currentTarget is the <ol> that contains every message
-		// target is the <li> that represents the current message
-		let currentMessage = $(addedEvent.target);
-		if (currentMessage.find(".DiceMessage_Target__18rOt").text().includes("Self")) {
-			let timeWrapper = $(`<div style="width:100%;"></div>`); // move time into a wrapper object so we can flex it horizontally with our new button
-			currentMessage.find(".GameLogEntry_MessageContainer__RhcYB").append(timeWrapper);
-			let sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-			timeWrapper.append(sendToEveryone)
-			var time = currentMessage.find(".GameLogEntry_MessageContainer__RhcYB > time");
-			if (time.length > 0) {
-				timeWrapper.append(time);
-				time.css("float", "right")
-			}
-			let toEveryoneHtml = currentMessage.find(".DiceMessage_Container__1rmut")[0].outerHTML;
-			sendToEveryone.click(function(clickEvent) {
-				// we want to send the expanded version so we have the click handler here and stopPropogation so that the on("click") below doesn't also fire. 
-				// The other handler will send the current html which could be the collapsed version. Since the collapse mechanism won't work in this situation, let's always send the expanded version
-				clickEvent.stopPropagation();
-				data = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: toEveryoneHtml,
-					dmonly: false,
-				};
-				window.MB.inject_chat(data);	
-			});
+/**
+ * Observes the combat log for any expanded rolls and adds a sent to everyone button
+ * Works with previous rolls as once they become expanded the button is added
+ * once clicked the button text will change to and then hidden
+ * if a roll already has a send button, it will show it
+ * @param {bool} connect whether to connect or disconnect, 
+ */
+function observe_messages(connect=true) {
+	console.group("observe_messages")
+	const mutation_target = $(".tss-jmihpx-GameLogEntries").get(0)
+	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+	
+	const message_observer = new MutationObserver(function() {
+		const openMessage = $(mutation_target).find(".tss-1qn6fu1-Message-Other-Flex");
+		$(mutation_target).find(".tss-11w0h4e-Message-Collapsed-Other-Flex .gamelog-to-everyone-button").hide();
+		if (openMessage.length > 0){
+			openMessage.each(function(index, message) {
+				const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+				
+				sendToEveryone.click(function(clickEvent) {
+					// we want to send the expanded version so we have the click handler here and stopPropogation so that the on("click") below doesn't also fire. 
+					// The other handler will send the current html which could be the collapsed version. Since the collapse mechanism won't work in this situation, let's always send the expanded version
+					const rollDetails = $(this).parent().parent().clone()
+	
+					rollDetails.find(".gamelog-to-everyone-button").remove()
+					rollDetails.find(".tss-d12ile-Target-Other").remove()
+					
+					clickEvent.stopPropagation();
+					// the name and image live within the grandparent of this message
+					data = {
+						player: $(message).parent().parent().find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
+						img: $(message).parent().parent().find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
+						text: $(rollDetails).html(),
+						dmonly: false,
+					};
+					window.MB.inject_chat(data);
+					sendToEveryone.html("Send Again")
+				});
+
+				if (!$(message).find(".gamelog-to-everyone-button").length){
+					$(message).find(">:first-child").append(sendToEveryone)
+				}else{
+					$(message).find(".gamelog-to-everyone-button").show()
+				}
+			})
 		}
 	});
-	$(".GameLog_GameLogEntries__3oNPD").on("click", ".gamelog-to-everyone-button", function(clickEvent) {
-		let toEveryoneHtml = $(clickEvent.currentTarget).closest(".GameLogEntry_MessageContainer__RhcYB").find(".GameLogEntry_Message__1J8lC").html();
-		data = {
-			player: window.PLAYER_NAME,
-			img: window.PLAYER_IMG,
-			text: toEveryoneHtml,
-			dmonly: false,
-		};
-		window.MB.inject_chat(data);
-	});
+	if (connect){
+		message_observer.observe(mutation_target,mutation_config);
+	}else{
+		message_observer.disconnect()
+	}
+	console.groupEnd()
 }
