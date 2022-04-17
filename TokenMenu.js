@@ -1804,17 +1804,17 @@ function token_context_menu_expanded(tokenIds) {
 	// options
 	body.append("<h3 class='token-image-modal-footer-title' style='margin-top: 30px;'>Options</h3>");
 	const token_settings = [
-		{ name: 'hidden', label: 'Hide', enabledDescription:'Token is hidden to players', disabledDescription: 'Token is visible to players' },
-		{ name: 'square', label: 'Square Token', enabledDescription:'Token is square', disabledDescription: 'Token is round' },
-		{ name: 'locked', label: 'Lock Token in Position', enabledDescription:'Token is not moveable. Combine with "Restrict Player Movement" to make token appear as part of background to players', disabledDescription: 'Token is moveable' },
-		{ name: 'restrictPlayerMove', label: 'Restrict Player Movement', enabledDescription:'Token is not moveable by players. Combine with "Lock Token in Position" to make token appear as part of background to players', disabledDescription: 'Players can move token' },
-		{ name: 'disablestat', label: 'Disable HP/AC', enabledDescription:'Token stats are not visible to players', disabledDescription: 'Token stats are visible to players' },
-		{ name: 'hidestat', label: 'Hide Player HP/AC from players', enabledDescription:'If player token, other players wont see token stats. Does not affect monster tokens', disabledDescription: 'Players can view token stats of other players' },
-		{ name: 'disableborder', label: 'Disable Border', enabledDescription:'No border', disabledDescription: 'Token has a random coloured border'  },
-		{ name: 'disableaura', label: 'Disable Health Meter', enabledDescription:'No health glow', disabledDescription: 'Token has health glow corresponding with their current health' },
-		{ name: 'revealname', label: 'Show name to players', enabledDescription:'Players will see token name on hover', disabledDescription: 'Token name is hidden' },
-		{ name: 'legacyaspectratio', label: 'Ignore Image Aspect Ratio', enabledDescription:'Ignores image aspect ratio', disabledDescription: 'Does not ignore aspect ratio' },
-		{ name: 'player_owned', label: 'Players can access this tokens sheet', enabledDescription:'Allows players to view this tokens sheet', disabledDescription: 'Players cant view this tokens sheet'}
+		{ name: "hidden", label: "Hide", enabledDescription:"Token is hidden to players", disabledDescription: "Token is visible to players" },
+		{ name: "square", label: "Square Token", enabledDescription:"Token is square", disabledDescription: "Token is round" },
+		{ name: "locked", label: "Lock Token in Position", enabledDescription:"Token is not moveable, Players can not select this token", disabledDescription: "Token is moveable by at least the DM, players can select it however" },
+		{ name: "restrictPlayerMove", label: "Restrict Player Movement", enabledDescription:"Token is not moveable by players", disabledDescription: "Token is moveable by any player" },
+		{ name: "disablestat", label: "Disable HP/AC", enabledDescription:"Token stats are not visible", disabledDescription: "Token stats are visible to at least the DM" },
+		{ name: "hidestat", label: "Hide Player HP/AC from players", enabledDescription:"Token stats are hidden from players", disabledDescription: "Token stats are visible to players" },
+		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
+		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
+		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
+		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
+		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
 	];
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
