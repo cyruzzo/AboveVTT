@@ -1248,7 +1248,7 @@ class Token {
 		this.toggle_stats(token)
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
-		this.toggle_player_owned(token)
+		// this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
