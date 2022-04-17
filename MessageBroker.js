@@ -723,6 +723,12 @@ class MessageBroker {
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
+				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
+					let gamelogItem = $("ol.tss-jmihpx-GameLogEntries li").first();
+					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
+					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
+					replace_gamelog_message_expressions(gamelogItem);
+				}
 				if (!window.DM)
 					return;
 				
