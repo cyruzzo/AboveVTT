@@ -1300,7 +1300,7 @@ function observe_messages(connect=true) {
 					sendToEveryone.html("Send Again")
 				});
 
-				if (!$(message).find(".gamelog-to-everyone-button").length){
+				if (!$(message).find(".gamelog-to-everyone-button").length && $(message).find(".tss-d12ile-Target-Other").length) {
 					$(message).find(">:first-child").append(sendToEveryone)
 				}else{
 					$(message).find(".gamelog-to-everyone-button").show()
