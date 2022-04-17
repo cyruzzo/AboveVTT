@@ -449,15 +449,6 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function create_monster_loading_spinner(element){
-	return $(`<div class="sk-folding-cube">
-		<div class="sk-cube1 sk-cube"></div>
-		<div class="sk-cube2 sk-cube"></div>
-		<div class="sk-cube4 sk-cube"></div>
-		<div class="sk-cube3 sk-cube"></div>
-  	</div>`)
-}
-
 function load_monster_stat(monsterid, token_id) {
 	
 	console.group("load_monster_stat")
@@ -567,24 +558,6 @@ function load_monster_stat(monsterid, token_id) {
 		draggable_resizable_div.append(iframe)
 	}
 	console.groupEnd()
-	// draggable_resizable_div.find("iframe").remove()
-	
-	// attempt to add in style sheets to the iframe
-	// const links = $("head").find("link").filter(function(){
-	// 	return $(this).attr('rel') == "stylesheet"
-	//  });
-	
-	// console.log("SHEETS", links)
-	// const head = $("#mon-iframe").contents().find("head");
-	// links.each(function (indexInArray, valueOfElement) { 
-	// 	setTimeout(function() {
-	// 		try {
-	// 			head.append(valueOfElement);  
-	// 			console.log("APPENDING STYLESHEET", valueOfElement)              	
-	// 		} catch {}
-	// 	}, 1);
-	// });
-
 }
 
 function init_controls() {
