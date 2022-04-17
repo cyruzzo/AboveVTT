@@ -3199,9 +3199,6 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="custom"
 				}
 			}
 		}
-		console.log("convertedExpression", convertedExpression)
-		sendTo === "everyone" ?  console.log("SENDING TO EVERYONE") : console.log("SENDING TO SELF")
-
 		let ddbJson = {
 			id: uuid(),
 			dateTime: `${Date.now()}`,
@@ -3245,7 +3242,6 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="custom"
 				]
 			}
 		};
-		console.log(ddbJson)
 		if (window.MB.ws.readyState == window.MB.ws.OPEN) {
 			window.MB.ws.send(JSON.stringify(ddbJson));
 			console.groupEnd()
@@ -3260,7 +3256,6 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="custom"
 			console.groupEnd()
 			return true; // we can't guarantee that this actually worked, unfortunately
 		}
-		console.groupEnd()
 	} catch (error) {
 		console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
 		console.groupEnd()
