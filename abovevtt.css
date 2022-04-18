@@ -2359,6 +2359,12 @@ h5.token-image-modal-footer-title:after {
     width: 90%;
 }
 
+.chat-text-wrapper.sidebar-hovertext:before{
+ bottom: 100px;
+ text-align: left;
+ white-space: pre;
+}
+
 .sidebar-hovertext:hover:before {
     opacity: 1;
     visibility: visible;

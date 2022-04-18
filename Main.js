@@ -1882,7 +1882,18 @@ function inject_chat_buttons() {
 		return;
 	}
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4, /help ..' title='Chat &#10;Roll dice using &quot;/roll 1d20&quot; or &quot;/r 1d4&quot; see /help for more &#10;Add custom actions & types to rolls with &quot;-a=<action> -t=<type> or --action=<action> --type=<type> &quot;&#10;To make &quot;/roll 40d20 -a=punch -t=to hit &quot;&#10;/help &#10;/w [playername] a whisper'></div>"));
+	// the text has to be up against the left for it to style correctly
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Chat &#xa;\
+'/roll 1d20' or '/r 1d4' see /help for more &#10;\
+'/roll 1d20 &quot;punch:to hit&quot;'&#xa;\
+'/hit 1d20' or '/hit 1d4 &quot;punch&quot'&#xa;\
+'/dmg 1d20' or '/dmg 1d4 &quot;punch&quot'&#xa;\
+'/save 1d20' or '/save 1d4 &quot;Dex&quot'&#xa;\
+'/skill 1d20' or '/save 1d4 &quot;Acrobatics&quot'&#xa;\
+'/help' &#xa;\
+'/w [playername] a whisper'"> \
+		<input id='chat-text' autocomplete="off" class= placeholder='Chat, /roll 1d20+4, /help ..'></div>`));
+
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
 			<div>
@@ -2048,30 +2059,63 @@ function inject_chat_buttons() {
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
 			console.group("chat_entered")
-			var dmonly=false;
-			var whisper=null;
+			let dmonly=false;
+			let whisper=null;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
+			const commandRegex = /(?:"|')(.*?)(?:"|')/
 
 			if(text.startsWith("/r")) {
-				dmonly = window.DM;
+				// remove the roll and extract the roll/actiontype which leaves the expression
 				const rollRegex = /(\/r|\/roll)\s/g
-				const commandRegex = /(-a=|--action=)(.*)(-t=|--type=)(.*)/
 				const command = text.match(commandRegex);
+				const [actionType, rollType] = command?.[1].split(":") || [undefined, undefined]
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace(rollRegex, "");
-				let sentAsDDB
-				if (command){
-					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType=command[4], undefined, actionType=command[2], );
-				}
-				else{
-					sentAsDDB = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image);
-				}
-				if (sentAsDDB) {
-					console.groupEnd()
-					return;
-				}
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
+			}
+
+			if(text.startsWith("/hit")) {
+				const rollType = "to hit"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/hit", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
+			}
+
+			if(text.startsWith("/dmg")) {
+				const rollType = "damage"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/dmg", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
+			}
+
+			if(text.startsWith("/skill")) {
+				const rollType = "check"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/skill", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
+			}
+
+			if(text.startsWith("/save")) {
+				const rollType = "save"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/save", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
 			}
 
 			if(text.startsWith("/help")) {
