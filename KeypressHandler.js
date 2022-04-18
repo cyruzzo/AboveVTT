@@ -35,6 +35,12 @@ Mousetrap.bind('d', function () {       //draw menu
     }
 });
 
+Mousetrap.bind('t', function () {       //draw menu
+    if (window.DM){
+        $('#text_button').click()
+    }
+});
+
 Mousetrap.bind('a', function () {       //aoe menu
     $('#aoe_button').click()
     return false;

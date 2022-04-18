@@ -2488,7 +2488,7 @@ function init_buttons() {
 
 	
 	buttons.append($("<div style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='select'><u>S</u>ELECT</div>"));
-
+	
 	buttons.append($("<div style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='measure'><u>R</u>ULER</div>"));
 	
 	if (window.DM) {
@@ -2642,11 +2642,12 @@ function init_buttons() {
 
 		draw_menu.find(".drawType").first().click();
 		draw_menu.find(".coloroption").first().click();
-
 	}
 
 	setup_aoe_button();
-	setup_draw_buttons();
+	setup_text_button(buttons)
+	setup_button_controller();
+
 
 	buttons.append("<div style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</div>");
 

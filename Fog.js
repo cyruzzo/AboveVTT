@@ -1096,7 +1096,7 @@ function drawing_contextmenu(e) {
 	}
 }
 
-function setup_draw_buttons() {
+function setup_button_controller() {
 
 	var canvas = document.getElementById('fog_overlay');
 	var ctx = canvas.getContext('2d');
@@ -1106,9 +1106,9 @@ function setup_draw_buttons() {
 		if (!($(clicked).hasClass('menu-option'))) {						//handle menu open/close toggling
 			$(".menu-button").not(clicked).removeClass('button-selected');
 		}
-
+		// allow clicking the same button to toggle it off and go back to select
 		if ($(clicked).hasClass('menu-button')) {
-			if($(clicked).is("#aoe_button") && $(clicked).hasClass('button-selected')) {
+			if($(clicked).hasClass('button-selected')) {
 				$('#select-button').click();
 				return;
 			}
@@ -1135,8 +1135,14 @@ function setup_draw_buttons() {
 			$("#aoe_menu").addClass('visible');
 			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
 				clicked = $(".aoe-option.remembered-selection");
-				$("#aoe_feet").focus();
 				$("#fog_overlay").css("z-index", "20");
+			}
+		}
+
+		if ($("#text_button").hasClass('button-selected')) {
+			$("#text_menu").addClass('visible');
+			if ($(clicked).is("#text_button") && !($(clicked).hasClass('button-enabled'))) {
+				clicked = $(".text-option.remembered-selection");
 			}
 		}
 
