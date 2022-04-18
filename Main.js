@@ -2455,14 +2455,51 @@ function init_buttons() {
 
 	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
 	fog_menu.append("<div class='menu-subtitle'>Reveal</div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_square-r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option remembered-selection' data-shape='rect' data-type=0>Square</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='arc'  data-type=0>Circle</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='polygon' data-type=0>Polygon</div></div>");
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'> 
+			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option remembered-selection'
+				data-shape='rect' data-type=0 data-unique-with="fog"> 
+					Square 
+			</div> 
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'> 
+			<div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='arc' data-type=0 data-unique-with="fog"> 
+					Circle 
+				</div> 
+			</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='polygon' data-type=0 data-unique-with="fog">
+					Polygon
+			</div>
+		</div>`);
+
 	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' />").append(clear_button));
 	fog_menu.append("<div class='menu-subtitle'>Hide</div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='rect' data-type=1>Square</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</div></div>");
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='rect' data-type=1 data-unique-with="fog">
+					Square
+			</div>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='arc' data-type=1 data-unique-with="fog">
+					Circle
+			</div>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='polygon' data-type=1>
+					Polygon
+			</div>
+		</div>`);
 	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' />").append(hide_all_button));
 	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='fog_undo'>UNDO</div></div>")
 	fog_menu.css("position", "fixed");

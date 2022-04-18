@@ -3016,3 +3016,9 @@ button.avtt-roll-button {
     left: auto !important;
     right: 340px !important;
 }
+
+.text-option{
+    width:20px;
+    height:20px;
+    float:left;
+}

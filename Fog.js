@@ -659,10 +659,14 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
-
+	console.log(e)
+	
 	window.LINEWIDTH = $("#draw_line_width").val();
 	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
 	window.DRAWCOLOR = $(".colorselected").css('background-color');
+	console.log(window.LINEWIDTH)
+	console.log(window.DRAWTYPE)
+	console.log(window.DRAWCOLOR)
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
 
@@ -1096,150 +1100,216 @@ function drawing_contextmenu(e) {
 	}
 }
 
+/**
+ * Hides all open menus from the top buttons and deselects all the buttons
+ */
+function deselect_all_top_buttons(buttonSelectedClasses) {
+	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button"]
+	$(".top_menu").removeClass("visible")
+	topButtonIDs.forEach(function(id) {
+		$(`#${id}`).removeClass(buttonSelectedClasses)
+	})
+}
+
+/**
+ * 
+ * @param {$} button 
+ * @param {$} menuSelector 
+ */
+function get_draw_target_data(button, menuSelector){
+
+	switch (button.id) {
+		case "select-button":
+			return [$("#fog_overlay"), {shape:button.datashape, type:undefined}]
+		case "measure-button":
+			return [$("#fog_overlay"), {shape:button.datashape, type:undefined}]
+		case "fog-button":
+			// do some fancy shit to find out what shape and stuff to draw
+			break;
+		case "draw-button":
+			break;
+		case "aoe-button":
+			break;
+		default:
+			return [undefined, undefined]
+	}
+// this is the rubbish from the other function
+// if (!($(clicked).hasClass('menu-button'))) {
+// 	if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
+// 		stop_drawing();
+// 		$(".drawbutton").removeClass('button-enabled');
+// 		$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
+// 		$("#fog_overlay").css("z-index", "20");
+
+// 		if (window.ALIGNING == true) {
+// 			window.ALIGNING = false;
+// 			window.ScenesHandler.reload();
+// 		}
+
+// 		$('#select-button').click();
+// 		return;
+// 	}
+
+// 	stop_drawing();
+// 	$(".drawbutton").removeClass('button-enabled');
+// 	$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
+// 	$(clicked).addClass('button-enabled');
+// 	$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
+// 	if ($(clicked).hasClass('fog-option')) {
+// 		$(".fog-option").removeClass('remembered-selection');
+// 		$(clicked).addClass('remembered-selection');
+// 		$("#fog_button").addClass('button-enabled');
+// 		$("#fog_button").addClass('ddbc-tab-options__header-heading--is-active');
+// 	}
+// 	if ($(clicked).hasClass('draw-option')) {
+// 		$(".draw-option").removeClass('remembered-selection');
+// 		$(clicked).addClass('remembered-selection');
+// 		$("#draw_button").addClass('button-enabled');
+// 		$("#draw_button").addClass('ddbc-tab-options__header-heading--is-active');
+// 	}
+// 	if ($(clicked).hasClass('aoe-option')) {
+// 		$(".aoe-option").removeClass('remembered-selection');
+// 		$(clicked).addClass('remembered-selection');
+// 		$("#aoe_button").addClass('button-enabled');
+// 		$("#aoe_button").addClass('ddbc-tab-options__header-heading--is-active');
+// 	}
+
+// 	var target = $("#fog_overlay");
+
+// 	if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
+// 		console.log("setto a 50 per via di " + e.currentTarget.id);
+// 		target.css("z-index", "50");
+// 	} else {
+// 		target.css("z-index", "31");
+// 	}
+// 	target = $("#fog_overlay, #black_layer");
+
+// 	if ($(e.target).attr('id') == "measure-button") {
+// 		target = $("#VTT, #black_layer");
+// 	}
+
+
+// 	target.css('cursor', 'crosshair');
+// 	if (e.currentTarget.id != "select-button") {
+// 		target.css('cursor', 'crosshair');
+// 	}
+
+// 	$(clicked).addClass('button-enabled');
+// 	$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
+
+// 	var data = {
+// 		shape: $(clicked).attr('data-shape'),
+// 		type: $(clicked).attr('data-type'),
+// 	}
+
+// 	if ($(clicked).attr('id') == "align-button") {
+// 		window.ALIGNING = true;
+
+// 		// ALIGNING REQURES SPECIAL SETTINGS
+// 		$("#scene_map").css("width", "auto");
+// 		$("#scene_map").css("height", "auto");
+// 		reset_canvas();
+// 		redraw_canvas();
+// 		$("#tokens").hide();
+// 		$("#grid_overlay").hide();
+
+// 	}
+// 	else if (window.ALIGNING == true) {
+// 		window.ALIGNING = false;
+// 		window.ScenesHandler.reload();
+// 	}
+}
+
 function setup_button_controller() {
-
-	var canvas = document.getElementById('fog_overlay');
-	var ctx = canvas.getContext('2d');
-
 	$(".drawbutton").click(function(e) {
-		var clicked = this;
-		if (!($(clicked).hasClass('menu-option'))) {						//handle menu open/close toggling
-			$(".menu-button").not(clicked).removeClass('button-selected');
-		}
-		// allow clicking the same button to toggle it off and go back to select
-		if ($(clicked).hasClass('menu-button')) {
-			if($(clicked).hasClass('button-selected')) {
+		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+		const remembered = "remembered-selection"
+		const clicked = this;
+		// this button is already selected
+		if ($(clicked).hasClass(buttonSelectedClasses)){
+			// menu options just get unselected
+			if($(clicked).hasClass("menu-option")){
+				$(clicked).removeClass(buttonSelectedClasses)
+			// non menu options reset back to select
+			}else{
 				$('#select-button').click();
-				return;
+				return
 			}
-			$(clicked).toggleClass('button-selected');
+		}else{
+			if($(clicked).hasClass("menu-option")){
+				const uniqueWith = $(clicked).attr("data-unique-with")
+				$(clicked).closest("[id*='menu']").find(`[data-unique-with=${uniqueWith}]`).removeClass(`${buttonSelectedClasses} ${remembered}` )
+			}
+			// button isn't selected
+			deselect_all_top_buttons(buttonSelectedClasses)
 		}
-
-		$(".top_menu").removeClass('visible');
-		$("#aoe_feet").blur();
-		if ($("#fog_button").hasClass('button-selected')) {
-			$("#fog_menu").addClass('visible');
-			if ($(clicked).is("#fog_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".fog-option.remembered-selection");
-			}
-		}
-
-		if ($("#draw_button").hasClass('button-selected')) {
-			$("#draw_menu").addClass('visible');
-			if ($(clicked).is("#draw_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".draw-option.remembered-selection");
-			}
-		}
-
-		if ($("#aoe_button").hasClass('button-selected')) {
-			$("#aoe_menu").addClass('visible');
-			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".aoe-option.remembered-selection");
-				$("#fog_overlay").css("z-index", "20");
-			}
-		}
-
-		if ($("#text_button").hasClass('button-selected')) {
-			$("#text_menu").addClass('visible');
-			if ($(clicked).is("#text_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".text-option.remembered-selection");
-			}
-		}
-
-		if (!($(clicked).hasClass('menu-button'))) {
-			if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
-				stop_drawing();
-				$(".drawbutton").removeClass('button-enabled');
-				$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-				$("#fog_overlay").css("z-index", "20");
-
-				if (window.ALIGNING == true) {
-					window.ALIGNING = false;
-					window.ScenesHandler.reload();
-				}
-
-				$('#select-button').click();
-				return;
-			}
-
-			stop_drawing();
-			$(".drawbutton").removeClass('button-enabled');
-			$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-			$(clicked).addClass('button-enabled');
-			$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-			if ($(clicked).hasClass('fog-option')) {
-				$(".fog-option").removeClass('remembered-selection');
-				$(clicked).addClass('remembered-selection');
-				$("#fog_button").addClass('button-enabled');
-				$("#fog_button").addClass('ddbc-tab-options__header-heading--is-active');
-			}
-			if ($(clicked).hasClass('draw-option')) {
-				$(".draw-option").removeClass('remembered-selection');
-				$(clicked).addClass('remembered-selection');
-				$("#draw_button").addClass('button-enabled');
-				$("#draw_button").addClass('ddbc-tab-options__header-heading--is-active');
-			}
-			if ($(clicked).hasClass('aoe-option')) {
-				$(".aoe-option").removeClass('remembered-selection');
-				$(clicked).addClass('remembered-selection');
-				$("#aoe_button").addClass('button-enabled');
-				$("#aoe_button").addClass('ddbc-tab-options__header-heading--is-active');
-			}
-
-			var target = $("#fog_overlay");
-
-			if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
-				console.log("setto a 50 per via di " + e.currentTarget.id);
-				target.css("z-index", "50");
-			} else {
-				target.css("z-index", "31");
-			}
-			target = $("#fog_overlay, #black_layer");
-
-			if ($(e.target).attr('id') == "measure-button") {
-				target = $("#VTT, #black_layer");
-			}
-
-
-			target.css('cursor', 'crosshair');
-			if (e.currentTarget.id != "select-button") {
-				target.css('cursor', 'crosshair');
-			}
-
-			$(clicked).addClass('button-enabled');
-			$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-
-			var data = {
-				shape: $(clicked).attr('data-shape'),
-				type: $(clicked).attr('data-type'),
-			}
-
-			if ($(clicked).attr('id') == "align-button") {
-				window.ALIGNING = true;
-
-				// ALIGNING REQURES SPECIAL SETTINGS
-				$("#scene_map").css("width", "auto");
-				$("#scene_map").css("height", "auto");
-				reset_canvas();
-				redraw_canvas();
-				$("#tokens").hide();
-				$("#grid_overlay").hide();
-
-			}
-			else if (window.ALIGNING == true) {
-				window.ALIGNING = false;
-				window.ScenesHandler.reload();
-			}
-
-
-			target.on('mousedown', data, drawing_mousedown);
-			target.on('mouseup', data, drawing_mouseup);
-			target.on('mousemove', data, drawing_mousemove);
-			target.on('contextmenu', data, drawing_contextmenu);
-
+		// make this button look selected
+		$(clicked).addClass(buttonSelectedClasses)
+		// button has a menu, display it
+		let menuSelector
+		if ($(clicked).hasClass("menu-button")){
 			
-			//close_monster_stat_block(); don't close moster window on menu clicks
+			menuSelector = clicked.id.replace("button", "menu" )
+			menuSelector = "#" + menuSelector
+			$(menuSelector).addClass("visible")
+			// show all remembered buttons as selected
+			$(menuSelector).find(`.${remembered}`).addClass(buttonSelectedClasses)
 		}
+		console.log("stop and check")
+
+		stop_drawing();
+
+		const [target, data] = get_draw_target_data(clicked, menuSelector )
+	// 		var target = $("#fog_overlay");
+
+	// if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
+	// 	console.log("setto a 50 per via di " + e.currentTarget.id);
+	// 	target.css("z-index", "50");
+	// } else {
+	// 	target.css("z-index", "31");
+	// }
+	// target = $("#fog_overlay, #black_layer");
+
+	// if ($(e.target).attr('id') == "measure-button") {
+	// 	target = $("#VTT, #black_layer");
+	// }
+
+
+	// target.css('cursor', 'crosshair');
+	// if (e.currentTarget.id != "select-button") {
+	// 	target.css('cursor', 'crosshair');
+	// }
+
+	// $(clicked).addClass('button-enabled');
+	// $(clicked).addClass('ddbc-tab-options__header-heading--is-active');
+
+	// var data = {
+	// 	shape: $(clicked).attr('data-shape'),
+	// 	type: $(clicked).attr('data-type'),
+	// }
+
+	// if ($(clicked).attr('id') == "align-button") {
+	// 	window.ALIGNING = true;
+
+	// 	// ALIGNING REQURES SPECIAL SETTINGS
+	// 	$("#scene_map").css("width", "auto");
+	// 	$("#scene_map").css("height", "auto");
+	// 	reset_canvas();
+	// 	redraw_canvas();
+	// 	$("#tokens").hide();
+	// 	$("#grid_overlay").hide();
+
+	// }
+	// else if (window.ALIGNING == true) {
+	// 	window.ALIGNING = false;
+	// 	window.ScenesHandler.reload();
+	// }
+
+		target.on('mousedown', data, drawing_mousedown);
+		target.on('mouseup', data, drawing_mouseup);
+		target.on('mousemove', data, drawing_mousemove);
+		target.on('contextmenu', data, drawing_contextmenu);
+		
 	})
 	$('#select-button').click();
 }
