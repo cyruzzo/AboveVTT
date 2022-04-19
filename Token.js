@@ -571,24 +571,6 @@ class Token {
 		console.groupEnd()
 	}
 
-	/**
-	 * Changes token options to give power over to the player
-	 * @param token jquery selected div with the class "token"
-	 */
-	toggle_player_owned(token){
-		console.group("toggle_player_owned")
-		// give player "full" control of token
-		if (this.options.player_owned){
-			this.options.restrictPlayerMove = false
-			this.options.hidestat = false
-			this.options.disablestat = false
-		}
-		else if (!this.options.player_owned && !window.DM){		
-			this.options.restrictPlayerMove = true
-			this.options.hidestat = true
-		}
-		console.groupEnd()
-	}
 
 	build_conditions(parent) {
 		let self=this;
@@ -1241,7 +1223,6 @@ class Token {
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
 		this.build_stats(token)
-		this.toggle_player_owned(token)
 		this.toggle_stats(token)
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
