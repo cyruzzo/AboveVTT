@@ -3474,7 +3474,9 @@ function reset_character_sheet_css() {
 	$(".ct-character-sheet-desktop").css({
 		"height": maxHeight,
 	});
-	$(".ct-sidebar").css({ "height": "calc(100vh - 15px)" });
+	let scrollBarWidth = $.position.scrollbarWidth();
+	console.debug("scrollBarWidth", scrollBarWidth);
+	$(".ct-sidebar").css({ "height": `calc(100vh - ${scrollBarWidth - 2}px)` });
 	$(".ct-character-header-tablet").css({ "background": "rgba(0, 0, 0, 0.85)" });
 }
 
