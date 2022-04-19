@@ -452,7 +452,7 @@ class Token {
 		hpbar.append(hp_input);
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
-		if (this.options.monster > 0) {
+		if (!this.isPlayer()) {
 			hp_input.change(function(e) {
 				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
@@ -540,7 +540,11 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	toggle_stats(token){
-		if(!window.DM && !this.isPlayer() && (this.options.disablestat || this.options.hidestat) ){
+		if(this.options.disablestat ){
+			token.find(".hpbar").hide();
+			token.find(".ac").hide();
+			token.find(".elev").hide();
+		} else if (this.options.hidestat && !window.DM){
 			token.find(".hpbar").hide();
 			token.find(".ac").hide();
 			token.find(".elev").hide();
@@ -1226,6 +1230,7 @@ class Token {
 		this.toggle_stats(token)
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
+		// this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
@@ -1266,8 +1271,7 @@ class Token {
  * @param token jquery selected div with the class token
  */
 function toggle_player_selectable(tokenInstance, token){
-	console.group("toggle_player_selectable", tokenInstance)
-	if (tokenInstance.options.locked && tokenInstance.options.restrictPlayerMove && $(".body-rpgcharacter-sheet").length>0){
+	if (tokenInstance.options.locked && !window.DM){
 		token?.css("cursor","default");
 		token?.css("pointer-events","none");
 	}
@@ -1275,7 +1279,6 @@ function toggle_player_selectable(tokenInstance, token){
 		token?.css("cursor","move");
 		token?.css("pointer-events","auto");
 	}
-	console.groupEnd();
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -1530,117 +1533,48 @@ function token_inputs(opt) {
 	data = $.contextMenu.getInputValues(opt, $(this).data());
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
-	tok = window.TOKEN_OBJECTS[id];
+	token = window.TOKEN_OBJECTS[id];
 
 	if (data.imgsrc != undefined) {
-		tok.options.imgsrc = parse_img(data.imgsrc);
+		token.options.imgsrc = parse_img(data.imgsrc);
 	}
 
 
 	if (window.DM) {
-		if (is_monster) {
-			if (data.hp.startsWith("+") || data.hp.startsWith("-"))
-				data.hp = parseInt(tok.options.hp) + parseInt(data.hp);
+		if (!is_player_id(id)) {
+			if (data.hp?.startsWith("+") || data.hp?.startsWith("-"))
+				data.hp = parseInt(token.options.hp) + parseInt(data.hp);
 
-			tok.options.hp = data.hp;
+			token.options.hp = data.hp;
 
 			if (data.max_hp.startsWith("+") || data.max_hp.startsWith("-"))
-				data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
+				data.max_hp = parseInt(token.options.max_hp) + parseInt(data.max_hp);
 
-			tok.options.max_hp = data.max_hp;
+			token.options.max_hp = data.max_hp;
 
 			if (!isNaN(data.ac)) {
-				tok.options.ac = data.ac;
+				token.options.ac = data.ac;
 			}
 			if (!isNaN(data.elev)) {
-				tok.options.elev = data.elev;
+				token.options.elev = data.elev;
 			}
 		}
 
 		
-		tok.options.name = data.name;
-		tok.options.elev = data.elev;
+		token.options.name = data.name;
+		token.options.elev = data.elev;
 
 		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
-			tok.options.imgsrc = parse_img(opt.imgsrcSelection);
+			token.options.imgsrc = parse_img(opt.imgsrcSelection);
 		} else if (data.imgsrc != undefined) {
-			tok.options.imgsrc = parse_img(data.imgsrc);
-		}
-
-		if (data.token_square) {
-			tok.options.square = true;
-		}
-		else {
-			tok.options.square = false;
-		}
-
-		if (data.token_disablestat) {
-			tok.options.disablestat = 1;
-		}
-		else {
-			tok.options.disablestat = false;
-		}
-
-		if (data.token_hidestat) {
-			tok.options.hidestat = 1;
-		}
-		else {
-			tok.options.hidestat = false;
-		}
-
-		tok.options.player_owned = data.token_player_owned ? true : false
-
-		if (data.token_locked) {
-			tok.options.locked = 1;
-		}
-		else {
-			tok.options.locked = false;
-		}
-
-		if (data.token_restrictPlayerMove) {
-			tok.options.restrictPlayerMove = 1;
-		}
-		else {
-			tok.options.restrictPlayerMove = false;
-		}
-
-		if (data.token_disableborder) {
-			tok.options.disableborder = true;
-		}
-		else {
-			tok.options.disableborder = false;
-		}
-
-		if (data.token_disableaura) {
-			tok.options.disableaura = true;
-		}
-		else {
-			tok.options.disableaura = false;
-		}
-		if (data.token_hidden) {
-			tok.options.hidden = true;
-		}
-		else {
-			tok.options.hidden = false;
-		}
-		if (data.token_revealname) {
-			tok.options.revealname = true;
-		}
-		else {
-			tok.options.revealname = false;
-		}
-		if (data.token_legacyaspectratio) {
-			tok.options.legacyaspectratio = true;
-		}
-		else {
-			tok.options.legacyaspectratio = false;
+			token.options.imgsrc = parse_img(data.imgsrc);
 		}
 	}
 	
-	tok.place();
-	tok.sync();
+	token.place();
+	token.sync();
 	if(window.DM)
-		tok.persist();
+		token.persist();
 }
 
 function multiple_callback(key, options, event) {
@@ -2024,7 +1958,6 @@ function token_menu() {
 							name: 'Current HP',
 							className: 'split-column-context-input split-column-context-input-text',
 							value: window.TOKEN_OBJECTS[id].options.hp,
-							disabled: !is_monster,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2047,7 +1980,6 @@ function token_menu() {
 							name: 'Max Hp',
 							className: 'split-column-context-input split-column-context-input-text',
 							value: window.TOKEN_OBJECTS[id].options.max_hp,
-							disabled: !is_monster,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2057,7 +1989,7 @@ function token_menu() {
 						elev: {
 							type: 'text',
 							name: 'Elevation',
-							className: window.TOKEN_OBJECTS[id].isMonster() ? 'split-column-context-input split-column-context-input-text' : '',
+							className: !is_player ? 'split-column-context-input split-column-context-input-text' : "",
 							value: window.TOKEN_OBJECTS[id].options.elev,
 							events: {
 								click: function(e) {
@@ -2099,13 +2031,10 @@ function token_menu() {
 					// delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
 				}
-				else {
-					delete ret.items.sep1;
-					delete ret.items.hp;
-					delete ret.items.max_hp;
-					// delete ret.items.token_cond;
-					// delete ret.items.options.items.token_revealname;
-					delete ret.items.ac;
+				if (is_player){
+					delete ret.items.hp
+					delete ret.items.max_hp
+					delete ret.items.ac
 				}
 				
 				if(!has_note){
