@@ -540,19 +540,30 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	toggle_stats(token){
-		if(this.options.disablestat ){
-			token.find(".hpbar").hide();
-			token.find(".ac").hide();
-			token.find(".elev").hide();
-		} else if (this.options.hidestat && !window.DM){
-			token.find(".hpbar").hide();
-			token.find(".ac").hide();
-			token.find(".elev").hide();
+		let showthem=false;
+
+		if(this.options.disablestat){ // if disable-stat.. noone should see HP/AC.. this is for non character tokens
+			showthem=false;
 		}
-		else{
+		else if(window.DM){ // in all the other cases.. the DM should always see HP/AC
+			showthem=true;
+		}
+		else if(this.options.player_owned){ // if it's player_owned.. always showthem
+			showthem=true;
+		}
+		else if(this.isPlayer() && (!this.options.hidestat)){
+			showthem=true;
+		}
+
+		if(showthem){
 			token.find(".hpbar").show();
 			token.find(".ac").show();
 			token.find(".elev").show();
+		}
+		else{
+			token.find(".hpbar").hide();
+			token.find(".ac").hide();
+			token.find(".elev").hide();
 		}
 	}
 
