@@ -1834,7 +1834,7 @@ function token_context_menu_expanded(tokenIds) {
 		body.append(inputWrapper);
 	}
 
-	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button" title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
+	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
 		for (let i = 0; i < token_settings.length; i++) {
 			let setting = token_settings[i];
