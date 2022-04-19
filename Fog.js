@@ -1116,23 +1116,19 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
  * @param {$} button 
  * @param {$} menuSelector 
  */
-function get_draw_target_data(button, menuSelector){
-
-	switch (button.id) {
-		case "select-button":
-			return [$("#fog_overlay"), {shape:button.datashape, type:undefined}]
-		case "measure-button":
-			return [$("#fog_overlay"), {shape:button.datashape, type:undefined}]
-		case "fog-button":
-			// do some fancy shit to find out what shape and stuff to draw
-			break;
-		case "draw-button":
-			break;
-		case "aoe-button":
-			break;
-		default:
-			return [undefined, undefined]
+function get_draw_target_data(button, menu){
+	console.log(button)
+	// find all active buttons within this menu
+	if($(button).is("#fog-button") || $(button).attr("id").includes("fog")){
+		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
+		return [target =  $("#fog_overlay"), 
+			data = {
+					shape:$(selectedInMenu).attr("data-shape"),
+					type:$(selectedInMenu).attr("data-type")
+				}
+			]
 	}
+}
 // this is the rubbish from the other function
 // if (!($(clicked).hasClass('menu-button'))) {
 // 	if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
@@ -1218,48 +1214,68 @@ function get_draw_target_data(button, menuSelector){
 // 		window.ALIGNING = false;
 // 		window.ScenesHandler.reload();
 // 	}
-}
+
 
 function setup_button_controller() {
 	$(".drawbutton").click(function(e) {
 		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
-		const remembered = "remembered-selection"
 		const clicked = this;
+		let menu
+		// HANDLE SELECTING OF BUTTONS
 		// this button is already selected
 		if ($(clicked).hasClass(buttonSelectedClasses)){
-			// menu options just get unselected
+			// menu options can be toggled on or off
 			if($(clicked).hasClass("menu-option")){
-				$(clicked).removeClass(buttonSelectedClasses)
+				menu = $(clicked).closest("[id*='menu']")
+				// but only toggled on or off if they're not a unique-with which must always have 
+				// 1 option selected
+				if(!$(clicked).attr("data-unique-with")){
+					$(clicked).removeClass(`${buttonSelectedClasses}`)
+				}
 			// non menu options reset back to select
-			}else{
+			}else if (!$(clicked).is("#select-button")){
 				$('#select-button').click();
 				return
 			}
 		}else{
 			if($(clicked).hasClass("menu-option")){
 				const uniqueWith = $(clicked).attr("data-unique-with")
-				$(clicked).closest("[id*='menu']").find(`[data-unique-with=${uniqueWith}]`).removeClass(`${buttonSelectedClasses} ${remembered}` )
+				menu = $(clicked).closest("[id*='menu']")
+				menu.find(`[data-unique-with=${uniqueWith}]`).removeClass(`${buttonSelectedClasses}` )
+			}else{
+				// clicked on an unselected non menu-option so must be either
+				// select/ruler/fog/draw/aoe/text
+				deselect_all_top_buttons(buttonSelectedClasses)
 			}
 			// button isn't selected
-			deselect_all_top_buttons(buttonSelectedClasses)
+			$(clicked).addClass(buttonSelectedClasses)
 		}
-		// make this button look selected
-		$(clicked).addClass(buttonSelectedClasses)
 		// button has a menu, display it
-		let menuSelector
 		if ($(clicked).hasClass("menu-button")){
-			
-			menuSelector = clicked.id.replace("button", "menu" )
-			menuSelector = "#" + menuSelector
-			$(menuSelector).addClass("visible")
-			// show all remembered buttons as selected
-			$(menuSelector).find(`.${remembered}`).addClass(buttonSelectedClasses)
+			menu = clicked.id.replace("button", "menu" )
+			menu = "#" + menu
+			$(menu).addClass("visible")
 		}
+
+		
 		console.log("stop and check")
 
 		stop_drawing();
-
-		const [target, data] = get_draw_target_data(clicked, menuSelector )
+		// HANDLE GETTING THE RIGHT DATA TO PASS TO EVENT HANDLERS
+		// no menu buttons - select/ruler
+		let target, data
+		if (!$(clicked).hasClass("menu-option") && !$(clicked).hasClass("menu-button")){
+			target =  $("#fog_overlay")
+			data = {
+					shape:$(clicked).attr("data-shape"),
+					type:$(clicked).attr("data-shape")
+				}
+		}
+		else{
+			[target, data] = get_draw_target_data(clicked, menu)
+		}
+		// for menu options find out what options are enabled to do stuff
+		
 	// 		var target = $("#fog_overlay");
 
 	// if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {

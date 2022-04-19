@@ -2457,7 +2457,7 @@ function init_buttons() {
 	fog_menu.append("<div class='menu-subtitle'>Reveal</div>");
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
-			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option remembered-selection'
+			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
 				data-shape='rect' data-type=0 data-unique-with="fog"> 
 					Square 
 			</div> 
@@ -2496,7 +2496,7 @@ function init_buttons() {
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-type=1>
+				data-shape='polygon' data-type=1 data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
