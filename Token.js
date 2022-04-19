@@ -350,9 +350,16 @@ class Token {
 			
 		if(tokenData.disableaura) {
 			token.css('--token-hp-aura-color', 'transparent');
+			token.css('--token-temp-hp', "transparent");
 		} 
 		else {
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
+			if(tokenData.temp_hp) {
+				token.css('--token-temp-hp', "#4444ff");
+			}
+			else {
+				token.css('--token-temp-hp', "transparent");
+			}
 		}
 		if(tokenData.disableborder) {
 			token.css('--token-border-color', 'transparent');
@@ -360,12 +367,7 @@ class Token {
 		else {
 			token.css('--token-border-color', this.options.color + "bb");
 		}
-		if(tokenData.temp_hp) {
-			token.css('--token-temp-hp', "#4444ff");
-		}
-		else {
-			token.css('--token-temp-hp', "transparent");
-		}
+		
 		console.groupEnd()
 	}
 
