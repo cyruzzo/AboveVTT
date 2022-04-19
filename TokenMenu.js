@@ -1873,6 +1873,30 @@ function token_context_menu_expanded(tokenIds) {
 	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	body.append(imageSizeWrapper);
 
+//border color
+	let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
+	let tokenBorderColors = tokens.map(t => t.options.color);
+	if(tokenBorderColors.length === 1) {
+		borderColorInput.val(tokenBorderColors[0] || "#dddddd");	
+	}
+	
+	borderColorInput.on(' input change', function(event) {
+		var borderColor;		
+		borderColor = event.target.value;
+			tokens.forEach(token => {
+				token.options.color = borderColor;
+				token.place_sync_persist();
+			});
+	});
+	
+	
+	let borderColorWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper border-color-wrapper" style="margin: 10px 0 10px 0">
+			<div class="token-image-modal-footer-title border-color-title">Border Color</div>
+		</div>
+	`);
+	borderColorWrapper.append(borderColorInput); 
+	body.append(borderColorWrapper);
 
 	// options
 	body.append("<h3 class='token-image-modal-footer-title' style='margin-top: 30px;'>Options</h3>");

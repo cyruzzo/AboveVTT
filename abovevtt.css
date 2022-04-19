@@ -2968,10 +2968,12 @@ button.avtt-roll-button {
     transition: max-height 0.2s linear, max-width 0.2s linear;
     filter:  drop-shadow(var(--token-border-color) -1px 0px 1px) drop-shadow(var(--token-border-color) 1px 0px 1px) drop-shadow(var(--token-border-color) 0px 1px 1px) drop-shadow(var(--token-border-color) 0px -1px 1px) drop-shadow(var(--token-hp-aura-color) 1px 0px 2px) drop-shadow(var(--token-hp-aura-color) 0px 1px 2px) drop-shadow(var(--token-hp-aura-color) 0px -1px 2px) drop-shadow(var(--token-hp-aura-color) -1px 0px 2px) drop-shadow(var(--token-temp-hp) 1px 0px 2px) drop-shadow(var(--token-temp-hp) -1px 0px 2px) drop-shadow(var(--token-temp-hp) 0px -1px 2px) drop-shadow(var(--token-temp-hp) 0px 1px 2px);
 }
-.image-size-wrapper {
+.image-size-wrapper,
+.border-color-wrapper {
     display: block;
 }
-.image-size-title {
+.image-size-title,
+.border-color-title {
     display:  inline-block;
 }
 .image-scale-input-number {
@@ -2981,6 +2983,15 @@ button.avtt-roll-button {
     height: 24px;
     margin-top: 4px;
     margin-bottom: 2px;
+}
+.border-color-input{
+    float:  right;
+    width: 48px;
+    height: 24px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+    border-radius: 5px;
+    padding: 0;
 }
 .image-scale-input-range {
     width: 100%;
