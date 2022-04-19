@@ -1805,11 +1805,8 @@ function token_context_menu_expanded(tokenIds) {
 	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
 	let tokenImageScales = tokens.map(t => t.options.imageSize);
 	if(tokenImageScales.length === 1) {
-		imageSizeInput.val(tokenImageScales[0]);	
-		imageSizeInputRange.val(tokenImageScales[0]);
-	}
-	else{
-		imageSizeInput.attr("placeholder", "eg. 1.0, 0.5, 2.1, 4.4");
+		imageSizeInput.val(tokenImageScales[0] || 1);	
+		imageSizeInputRange.val(tokenImageScales[0] || 1);
 	}
 	imageSizeInput.on('keyup', function(event) {
 		var imageSize;
@@ -1822,7 +1819,9 @@ function token_context_menu_expanded(tokenIds) {
 		else if(event.target.value < 0.2){
 			imageSize = 0.2;
 		}
-		if (event.key == "Enter" && imageSize !== undefined && imageSize.length > 0) {
+		if (event.key == "Enter") {
+			imageSizeInput.val(imageSize);	
+			imageSizeInputRange.val(imageSize);
 			tokens.forEach(token => {
 				token.options.imageSize = imageSize;
 				token.place_sync_persist();
@@ -1837,16 +1836,19 @@ function token_context_menu_expanded(tokenIds) {
 		}
 		else if(event.target.value > 6){
 			imageSize = 6;
+			imageSizeInput.val(imageSize);	
+			imageSizeInputRange.val(imageSize);
 		}
 		else if(event.target.value < 0.2){
 			imageSize = 0.2;
-		}
-		if (imageSize !== undefined && imageSize.length > 0) {
-			tokens.forEach(token => {
-				token.options.imageSize = imageSize;
-				token.place_sync_persist();
-			});
-		}
+			imageSizeInput.val(imageSize);	
+			imageSizeInputRange.val(imageSize);
+		}	
+		tokens.forEach(token => {
+			token.options.imageSize = imageSize;
+			token.place_sync_persist();
+		});
+
 		imageSizeInputRange.val(imageSizeInput.val());
 	});
 	imageSizeInput.on(' input change', function(){
@@ -1857,12 +1859,10 @@ function token_context_menu_expanded(tokenIds) {
 	});
 	imageSizeInputRange.on('mouseup', function(){
    	 	let imageSize = imageSizeInputRange.val();
-		if (imageSize !== undefined && imageSize.length > 0) {
-			tokens.forEach(token => {
-				token.options.imageSize = imageSize;
-				token.place_sync_persist();
-			});
-		}
+		tokens.forEach(token => {
+			token.options.imageSize = imageSize;
+			token.place_sync_persist();
+		});
 	});
 	let imageSizeWrapper = $(`
 		<div class="token-image-modal-url-label-wrapper image-size-wrapper" style="margin: 10px 0 10px 0">
