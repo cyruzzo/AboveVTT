@@ -355,7 +355,7 @@ class Token {
 		else {
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(tokenData.temp_hp) {
-				token.css('--token-temp-hp', "#4444ff");
+				token.css('--token-temp-hp', "#4444ffbd");
 			}
 			else {
 				token.css('--token-temp-hp', "transparent");
