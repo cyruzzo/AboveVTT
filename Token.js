@@ -779,8 +779,7 @@ class Token {
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
-					} 
-				});
+					} });
 				
 
 
@@ -825,6 +824,7 @@ class Token {
 				}
 			}
 
+
 			if (old.attr('width') != this.options.size) {
 				// NEED RESIZING
 				old.find("img").css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
@@ -850,7 +850,7 @@ class Token {
 				var fs = Math.floor(bar_height / 1.3) + "px";
 				old.css("font-size",fs);
 			}
-			
+
 			if (this.options.hidden) {
 				if (window.DM)
 					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
@@ -905,7 +905,6 @@ class Token {
 
 			this.update_health_aura(old);
 
-	
 			if(this.options.legacyaspectratio == false) {
 				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
 				old.find("img").addClass("preserve-aspect-ratio");
@@ -984,11 +983,6 @@ class Token {
 		
 
 			tok.addClass("VTTToken");
-			//tokimg.css("border","4px solid "+this.options.color);
-
-			//tokimg.css("border-style", "solid");
-			//tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
-			//tokimg.css("border-color", this.options.color);
 
 			this.update_health_aura(tok);
 
