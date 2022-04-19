@@ -1910,7 +1910,7 @@ function token_context_menu_expanded(tokenIds) {
 				let html = $("#tokens").find(selector);
 				let options = Object.assign({}, token.options);
 				token.options.color = borderColor;
-				$("#combat_area tr[data-target=" + token.options.id + "] img[class*='Avatar']").css("border-color", borderColor);
+				
 				token.place_sync_persist();	
 			});
 		}

@@ -363,9 +363,13 @@ class Token {
 		}
 		if(tokenData.disableborder) {
 			token.css('--token-border-color', 'transparent');
+			$("token:before").css('--token-border-color', 'transparent');
+
 		} 
 		else {
-			token.css('--token-border-color', this.options.color + "bb");
+			token.css('--token-border-color', this.options.color);
+			$("token:before").css('--token-border-color', this.options.color);
+			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
 		}
 		
 		console.groupEnd()
