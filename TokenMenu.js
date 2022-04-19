@@ -1800,6 +1800,79 @@ function token_context_menu_expanded(tokenIds) {
 	}
 	body.append(sizeInputs);
 
+	//image scaling size
+	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
+	let tokenImageScales = tokens.map(t => t.options.imageSize);
+	if(tokenImageScales.length === 1) {
+		imageSizeInput.val(tokenImageScales[0]);	
+		imageSizeInputRange.val(tokenImageScales[0]);
+	}
+	else{
+		imageSizeInput.attr("placeholder", "eg. 1.0, 0.5, 2.1, 4.4");
+	}
+	imageSizeInput.on('keyup', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) { 
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+		}
+		if (event.key == "Enter" && imageSize !== undefined && imageSize.length > 0) {
+			tokens.forEach(token => {
+				token.options.imageSize = imageSize;
+				token.place_sync_persist();
+			});
+		}
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on('focusout', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) { 
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+		}
+		if (imageSize !== undefined && imageSize.length > 0) {
+			tokens.forEach(token => {
+				token.options.imageSize = imageSize;
+				token.place_sync_persist();
+			});
+		}
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on(' input change', function(){
+   	 	imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInputRange.on(' input change', function(){
+   	 	imageSizeInput.val(imageSizeInputRange.val());
+	});
+	imageSizeInputRange.on('mouseup', function(){
+   	 	let imageSize = imageSizeInputRange.val();
+		if (imageSize !== undefined && imageSize.length > 0) {
+			tokens.forEach(token => {
+				token.options.imageSize = imageSize;
+				token.place_sync_persist();
+			});
+		}
+	});
+	let imageSizeWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper" style="margin: 10px 0 10px 0">
+			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
+		</div>
+	`);
+	imageSizeWrapper.append(imageSizeInput); // Beside Label
+	imageSizeWrapper.append(imageSizeInputRange); // input below label
+	body.append(imageSizeWrapper);
+
 
 	// options
 	body.append("<h3 class='token-image-modal-footer-title' style='margin-top: 30px;'>Options</h3>");

@@ -118,6 +118,12 @@ class Token {
 		this.place_sync_persist()
 	}
 
+	imageSize(imageScale) {
+		this.update_from_page();
+		this.options.imageSize = imageScale;
+		this.place_sync_persist()
+	}
+
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
@@ -160,13 +166,16 @@ class Token {
 		// this just rotates locally to help with performance.
 		// draggable.stop will call place_sync_persist to finalize the rotation. 
 		// If we ever want this to send to all players in real time, simply comment out the rest of this function and call place_sync_persist() instead.
-		let scale = this.get_token_scale()
-		
+		let scale = this.get_token_scale();
+		if(this.options.imageSize === undefined) {
+			this.imageSize(1) 
+		}
+		let imageScale = this.options.imageSize;
+
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		
-		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");
-		
+		tokenElement.find("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -332,13 +341,30 @@ class Token {
 		console.group("update_health_aura")
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		let tokenData = this.munge_token_data()
-		if (!tokenData.disableaura && tokenData.max_hp > 0) {
-
-			token.find(".token-image").css('box-shadow',
-				`${token_health_aura(
-					Math.round((tokenData.hp / tokenData.max_hp) * 100)
-				)} 0px 0px 7px 7px`
-			);
+		if (tokenData.max_hp > 0) {
+		 	var tokenHpAuraColor = token_health_aura(
+				Math.round((tokenData.hp / tokenData.max_hp) * 100)
+			);	
+		}
+		token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
+			
+		if(tokenData.disableaura) {
+			token.css('--token-hp-aura-color', 'transparent');
+		} 
+		else {
+			token.css('--token-hp-aura-color', tokenHpAuraColor);
+		}
+		if(tokenData.disableborder) {
+			token.css('--token-border-color', 'transparent');
+		} 
+		else {
+			token.css('--token-border-color', this.options.color + "bb");
+		}
+		if(tokenData.temp_hp) {
+			token.css('--token-temp-hp', "#4444ff");
+		}
+		else {
+			token.css('--token-temp-hp', "transparent");
 		}
 		console.groupEnd()
 	}
@@ -747,18 +773,34 @@ class Token {
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
-					} });
+					} 
+				});
 				
 
 
 			// CONCENTRATION REMINDER
 
-			let scale = this.get_token_scale()
+			let scale = this.get_token_scale();
+			let imageScale = this.options.imageSize;
 			var rotation = 0;
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
 			}
-			old.find("img").css("transform", "scale(" + scale + ") rotate("+rotation+"deg)");
+			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
+			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
+			if(this.options.imageSize <= 1 || this.options.imageSize === undefined) {
+				old.find("img").css({
+					"min-height": this.options.size,
+					"min-width": this.options.size
+				})
+			}
+			else {
+				old.find("img").css({
+					"min-height": "",
+					"min-width": ""
+				})
+			}
+			setTimeout(function() {old.find("img").css("transition", "")}, 200);
 			
 			if (old.attr('name') != this.options.name) {
 				var selector = "tr[data-target='"+this.options.id+"']";
@@ -777,14 +819,14 @@ class Token {
 				}
 			}
 
-
 			if (old.attr('width') != this.options.size) {
 				// NEED RESIZING
 				old.find("img").css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
-				old.find("img").animate({
-					width: this.options.size,
-					height: this.options.size
-				}, { duration: 1000, queue: false });
+				old.find("img").css({
+					"max-height": this.options.size,
+					"max-width": this.options.size
+				});
+
 
 				old.animate({
 					width: this.options.size,
@@ -802,7 +844,7 @@ class Token {
 				var fs = Math.floor(bar_height / 1.3) + "px";
 				old.css("font-size",fs);
 			}
-
+			
 			if (this.options.hidden) {
 				if (window.DM)
 					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
@@ -855,10 +897,9 @@ class Token {
 				old.draggable("enable");
 			}
 
-			if(this.options.disableaura){
-				old.find("img").css("box-shadow","");
-			}
-			
+			this.update_health_aura(old);
+
+	
 			if(this.options.legacyaspectratio == false) {
 				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
 				old.find("img").addClass("preserve-aspect-ratio");
@@ -882,6 +923,7 @@ class Token {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
 			let scale = this.get_token_scale()
+			let imageScale = this.options.imageSize;
 			
 			var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -899,9 +941,21 @@ class Token {
 			if(this.options.legacyaspectratio == false) {
 				imgClass = 'token-image preserve-aspect-ratio';
 			}
-			var tokimg = $("<img style='transform:scale(" + scale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+			var tokimg = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
 			if(!(this.options.square)){
 				tokimg.addClass("token-round");
+			}
+			if(this.options.imageSize <= 1 || this.options.imageSize === undefined) {
+				tokimg.css({
+					"min-height": this.options.size,
+					"min-width": this.options.size
+				})
+			}
+			else {
+				tokimg.css({
+					"min-height": "",
+					"min-width": ""
+				})
 			}
 
 
@@ -917,15 +971,21 @@ class Token {
 
 			tok.attr("data-id", this.options.id);
 			tokimg.attr("src", this.options.imgsrc);
-			tokimg.width(this.options.size);
-			tokimg.height(this.options.size);
+			tokimg.width("fit-content");
+			tokimg.height("fit-content");
+			tokimg.css("max-height", this.options.size);
+			tokimg.css("max-width", this.options.size);
+		
+
 			tok.addClass("VTTToken");
 			//tokimg.css("border","4px solid "+this.options.color);
 
-			tokimg.css("border-style", "solid");
-			tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
-			tokimg.css("border-color", this.options.color);
-			
+			//tokimg.css("border-style", "solid");
+			//tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
+			//tokimg.css("border-color", this.options.color);
+
+			this.update_health_aura(tok);
+
 			if(this.options.disableborder)
 				tokimg.css("border-width","0");
 				
@@ -2211,7 +2271,7 @@ function token_health_aura(hpPercentage) {
 		const pHex = (n) => parseInt(n, 16);
 
 		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 80%)` : null;
+		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
 	}
 	return hexToRGB(percentToHEX(hpPercentage));
 }

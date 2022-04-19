@@ -471,6 +471,7 @@ function place_player_token(playerId, hidden, specificImage, eventPageX, eventPa
 		hp: playerData ? playerData.hp : '',
 		ac: playerData ? playerData.ac : '',
 		max_hp: playerData ? playerData.max_hp : '',
+		temp_hp: playerData ? playerData.temp_hp : '',
 		square: window.TOKEN_SETTINGS["square"],
 		disableborder: window.TOKEN_SETTINGS['disableborder'],
 		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio'],

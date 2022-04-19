@@ -798,6 +798,7 @@ class MessageBroker {
 			if ((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
 				(cur.options.max_hp != data.max_hp) ||
 				(cur.options.ac != data.ac) ||
+				(cur.options.temp_hp != data.temp_hp) ||
 				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
 			{
 				console.log(cur.options);
@@ -822,6 +823,7 @@ class MessageBroker {
 				cur.options.max_hp = data.max_hp;
 				cur.options.ac = data.ac;
 				cur.options.conditions = data.conditions;
+				cur.options.temp_hp = data.temp_hp;
 
 				cur.place();
 				window.MB.sendMessage('custom/myVTT/token', cur.options);
