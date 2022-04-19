@@ -1915,7 +1915,7 @@ function token_context_menu_expanded(tokenIds) {
 			});
 		}
 	};
-	colorPicker.on('move.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
+	colorPicker.on('dragstop.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
 	colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
 	colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
