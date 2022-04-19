@@ -1169,6 +1169,8 @@ function submit_custom_token_form(sidebarPanel, path) {
 	let nameInput = inputWrapper.find(`input[name='addCustomName']`)[0];
 	let name = nameInput.value;
 	if (name === undefined || name.length == 0) {
+		$(nameInput).css("border","1px solid red")
+		$(nameInput).attr("placeholder","token name is required")
 		console.warn("not saving a token with no name");
 		return;
 	}
