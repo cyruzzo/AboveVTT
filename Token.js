@@ -822,7 +822,7 @@ class Token {
 				old.removeClass("tokenselected");
 			}
 			
-			if(old.find("img").attr("src")!=this.options.imgsrc && !this.options.hidden){
+			if(old.find("img").attr("src")!=this.options.imgsrc){
 				old.find("img").attr("src",this.options.imgsrc);
 			}
 		
