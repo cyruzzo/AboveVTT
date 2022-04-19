@@ -1169,6 +1169,8 @@ function submit_custom_token_form(sidebarPanel, path) {
 	let nameInput = inputWrapper.find(`input[name='addCustomName']`)[0];
 	let name = nameInput.value;
 	if (name === undefined || name.length == 0) {
+		$(nameInput).css("border","1px solid red")
+		$(nameInput).attr("placeholder","token name is required")
 		console.warn("not saving a token with no name");
 		return;
 	}
@@ -1922,17 +1924,17 @@ function token_context_menu_expanded(tokenIds) {
 	// options
 	body.append("<h3 class='token-image-modal-footer-title' style='margin-top: 30px;'>Options</h3>");
 	const token_settings = [
-		{ name: 'hidden', label: 'Hide' },
-		{ name: 'square', label: 'Square Token' },
-		{ name: 'locked', label: 'Lock Token in Position' },
-		{ name: 'restrictPlayerMove', label: 'Restrict Player Movement' },
-		{ name: 'disablestat', label: 'Disable HP/AC' },
-		{ name: 'hidestat', label: 'Hide HP/AC from players' },
-		{ name: 'disableborder', label: 'Disable Border' },
-		{ name: 'disableaura', label: 'Disable Health Meter' },
-		{ name: 'revealname', label: 'Show name to players' },
-		{ name: 'legacyaspectratio', label: 'Ignore Image Aspect Ratio' },
-		{ name: 'player_owned', label: 'Players can access this token (HP/Stats)'}
+		{ name: "hidden", label: "Hide", enabledDescription:"Token is hidden to players", disabledDescription: "Token is visible to players" },
+		{ name: "square", label: "Square Token", enabledDescription:"Token is square", disabledDescription: "Token is round" },
+		{ name: "locked", label: "Lock Token in Position", enabledDescription:"Token is not moveable, Players can not select this token", disabledDescription: "Token is moveable by at least the DM, players can select it however" },
+		{ name: "restrictPlayerMove", label: "Restrict Player Movement", enabledDescription:"Token is not moveable by players", disabledDescription: "Token is moveable by any player" },
+		{ name: "disablestat", label: "Disable HP/AC", enabledDescription:"Token stats are not visible", disabledDescription: "Token stats are visible to at least the DM" },
+		{ name: "hidestat", label: "Hide Player HP/AC from players", enabledDescription:"Token stats are hidden from players", disabledDescription: "Token stats are visible to players" },
+		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
+		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
+		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
+		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
+		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
 	];
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
@@ -1952,7 +1954,7 @@ function token_context_menu_expanded(tokenIds) {
 		body.append(inputWrapper);
 	}
 
-	let resetToDefaults = $(`<button class="token-image-modal-remove-all-button" title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
+	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
 		for (let i = 0; i < token_settings.length; i++) {
 			let setting = token_settings[i];

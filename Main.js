@@ -2516,12 +2516,17 @@ function init_buttons() {
 			if (r === true) {
 				window.DRAWINGS = [];
 				redraw_drawings();
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
+				if(window.CLOUD){
+					sync_drawings();
+				} else {
+					window.ScenesHandler.persist();
+					window.ScenesHandler.sync();
+				}
 			}
 		});
 
 		draw_menu.find("#draw_undo").click(function() {
+			console.log("undo once")
 			window.DRAWINGS.pop();
 			redraw_drawings();
 			if(window.CLOUD){
@@ -2533,18 +2538,6 @@ function init_buttons() {
 			}
 		}
 	);
-
-	draw_menu.find("#draw_undo").click(function() {
-		window.DRAWINGS.pop();
-		redraw_drawings();
-		if(window.CLOUD){
-			sync_drawings();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
 
 		colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
 			
@@ -3474,7 +3467,9 @@ function reset_character_sheet_css() {
 	$(".ct-character-sheet-desktop").css({
 		"height": maxHeight,
 	});
-	$(".ct-sidebar").css({ "height": "calc(100vh - 15px)" });
+	let scrollBarWidth = $.position.scrollbarWidth();
+	console.debug("scrollBarWidth", scrollBarWidth);
+	$(".ct-sidebar").css({ "height": `calc(100vh - ${scrollBarWidth - 2}px)` });
 	$(".ct-character-header-tablet").css({ "background": "rgba(0, 0, 0, 0.85)" });
 }
 

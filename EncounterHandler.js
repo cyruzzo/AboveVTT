@@ -826,6 +826,14 @@ function inject_monster_image(stat) {
 		console.groupEnd();
 		return;
 	}
+	// weirdly if either of the url numbers in these 2 positions aren't 1000 it throws a 403 error...
+	let splitUrl = stat.data.largeAvatarUrl.split("/")
+	if ([splitUrl.length -2] !== 1000 || [splitUrl.length -3] !== 1000){
+		splitUrl[splitUrl.length -2] = 1000
+		splitUrl[splitUrl.length -3] = 1000
+		stat.data.largeAvatarUrl = (splitUrl).join("/")
+	}
+	
 	if (window.EncounterHandler.combat_body.find(".encounter-details-content-section__content .injected-image").length == 0) {
 		let content = window.EncounterHandler.combat_body.find(".encounter-details-content-section__content");
 		const image = `<img style="width:100%" class="injected-image" src="${stat.data.largeAvatarUrl}"
