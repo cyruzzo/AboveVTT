@@ -1873,23 +1873,12 @@ function token_context_menu_expanded(tokenIds) {
 	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	body.append(imageSizeWrapper);
 
-//border color
+//border color selections
 	let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
 	let tokenBorderColors = tokens.map(t => t.options.color);
 	if(tokenBorderColors.length === 1) {
 		borderColorInput.val(tokenBorderColors[0] || "#dddddd");	
 	}
-	
-	borderColorInput.on(' input change', function(event) {
-		var borderColor;		
-		borderColor = event.target.value;
-			tokens.forEach(token => {
-				token.options.color = borderColor;
-				token.place_sync_persist();
-			});
-	});
-	
-	
 	let borderColorWrapper = $(`
 		<div class="token-image-modal-url-label-wrapper border-color-wrapper" style="margin: 10px 0 10px 0">
 			<div class="token-image-modal-footer-title border-color-title">Border Color</div>
@@ -1897,6 +1886,36 @@ function token_context_menu_expanded(tokenIds) {
 	`);
 	borderColorWrapper.append(borderColorInput); 
 	body.append(borderColorWrapper);
+	colorPicker = $(".border-color-input");
+	colorPicker.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		containerClassName: 'prevent-sidebar-modal-close',
+		clickoutFiresChange: false,
+		color: tokens[0].options.color
+	});
+	const borderColorPickerChange = function(e, tinycolor) {
+		let borderColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+		if (e.type === 'change') {
+			tokens.forEach(token => {
+				token.options.color = borderColor;
+				token.place_sync_persist();
+			});
+		}
+		else {
+			tokens.forEach(token => {
+				let selector = "div[data-id='" + token.options.id + "']";
+				let html = $("#tokens").find(selector);
+				let options = Object.assign({}, token.options);
+				token.options.color = borderColor;
+				token.place_sync_persist();	
+			});
+		}
+	};
+	colorPicker.on('move.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
+	colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
+	colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
 	// options
 	body.append("<h3 class='token-image-modal-footer-title' style='margin-top: 30px;'>Options</h3>");

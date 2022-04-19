@@ -2984,7 +2984,7 @@ button.avtt-roll-button {
     margin-top: 4px;
     margin-bottom: 2px;
 }
-.border-color-input{
+.border-color-input ~ .sp-replacer{
     float:  right;
     width: 48px;
     height: 24px;
