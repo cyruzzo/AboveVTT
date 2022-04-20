@@ -1908,14 +1908,14 @@ function init_draw_menu(buttons){
 	draw_menu.append("<div class='menu-subtitle'>Type</div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div class='drawbutton ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+			<div class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
 				data-key="fill" data-type='border' data-unique-with="fill">
 				BORDER
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div class='drawbutton ddbc-tab-options__header-heading'
+			<div class='drawbutton menu-option ddbc-tab-options__header-heading'
 				data-key="fill" data-type='filled' data-unique-with="fill">
 				FILLED
 			</div>
