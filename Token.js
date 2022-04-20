@@ -121,11 +121,13 @@ class Token {
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
+		this.options.ct_show = true;
 		this.place_sync_persist()
 	}
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
+		this.options.ct_show = false;
 		this.place_sync_persist()
 	}
 	delete(persist=true,sync=true) {
@@ -407,9 +409,22 @@ class Token {
 
 
 		/* UPDATE COMBAT TRACKER */
+		this.update_combat_tracker()
+	}
+	update_combat_tracker(){
+		/* UPDATE COMBAT TRACKER */
 		if (window.DM) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
 		}
+		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
+			console.log("Setting combat tracker opacity to 1.0")
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','1.0');
+		}
+		else {
+			console.log("Setting combat tracker opacity to 0.5")
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
+		}
+		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
 	}
 
 	build_hp() {
@@ -721,9 +736,7 @@ class Token {
 		var old = $("#tokens").find(selector);
 		var self = this;
 		/* UPDATE COMBAT TRACKER */
-		if (window.DM) {
-			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
-		}
+		this.update_combat_tracker()
 
 
 		if (old.length > 0) {

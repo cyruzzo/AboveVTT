@@ -265,128 +265,152 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry=$("<tr/>");
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);	
+	entry.attr("ishidden", token.options.hidden);
 	entry.addClass("CTToken");
 	
-	if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
-		entry.attr("data-name", token.options.name);
-		entry.addClass("hasTooltip");
+	if (typeof(token.options.ct_show) == 'undefined'){
+		token.options.ct_show = true;
 	}
 
-	if(token.options.monster > 0)
-		entry.attr('data-monster',token.options.monster);
-	
-	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
-	img.attr('src',token.options.imgsrc);
-	img.css('border','3px solid '+token.options.color);
-	
-	entry.append($("<td/>").append(img));
-	let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
-	init.css('width','20px');
-	init.css('-webkit-appearance','none');
-	if(window.DM){
-		init.val(0);
-		init.change(ct_reorder);
-	}
-	else{
-		init.attr("disabled","disabled");
-	}
-	entry.append($("<td/>").append(init));
-	
-	// auto roll initiative for monsters
-	
-	if(window.DM && (token.options.monster > 0) && (!disablerolling)){
-		window.StatHandler.rollInit(token.options.monster,function(value){
-				init.val(value);
-				setTimeout(ct_reorder,1000);
-			});
-	}
-	
-	
-	
-	hp=$("<div class='hp'/>");
-	hp.text(token.options.hp);
-	
-	hp.css('font-size','11px');
-	//hp.css('width','20px');
-	if(window.DM || !(token.options.monster > 0) )
-		entry.append($("<td/>").append(hp));
-	else
-		entry.append($("<td/>"))
-	max_hp=$("<div/>");
-	max_hp.text("/"+token.options.max_hp);
-	max_hp.css('font-size','11px');
-	//max_hp.css('width','20px');
-	if(window.DM || !(token.options.monster > 0) )
-		entry.append($("<td/>").append(max_hp));
-	else
-		entry.append($("<td/>"));
-	
-	
-	var buttons=$("<td/>");
-	
-	
-	find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
-	find.click(function(){
-		var target=$(this).parent().parent().attr('data-target');
-		if(target in window.TOKEN_OBJECTS){
-			window.TOKEN_OBJECTS[target].highlight();
+	if (token.options.ct_show == true || window.DM){
+		if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
+			entry.attr("data-name", token.options.name);
+			entry.addClass("hasTooltip");
 		}
-	});
-	
-	
-	buttons.append(find);
-	
-	del=$('<button class="removeTokenCombatButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
-	del.click(
-		function(){
-			if($(this).parent().parent().attr("data-current")=="1"){
-				$("#combat_next_button").click();
+
+		if(token.options.monster > 0)
+			entry.attr('data-monster',token.options.monster);
+		
+		img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
+		img.attr('src',token.options.imgsrc);
+		img.css('border','3px solid '+token.options.color);
+		if (token.options.hidden == true){
+			img.css('opacity','0.5');
+		}
+		entry.append($("<td/>").append(img));
+		let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
+		init.css('width','20px');
+		init.css('-webkit-appearance','none');
+		if(window.DM){
+			init.val(0);
+			init.change(ct_reorder);
+		}
+		else{
+			init.attr("disabled","disabled");
+		}
+		entry.append($("<td/>").append(init));
+		
+		// auto roll initiative for monsters
+		
+		if(window.DM && (token.options.monster > 0) && (!disablerolling)){
+			window.StatHandler.rollInit(token.options.monster,function(value){
+					init.val(value);
+					setTimeout(ct_reorder,1000);
+				});
+		}
+		
+		
+		
+		hp=$("<div class='hp'/>");
+		hp.text(token.options.hp);
+		
+		hp.css('font-size','11px');
+		//hp.css('width','20px');
+		if(window.DM || !(token.options.monster > 0) )
+			entry.append($("<td/>").append(hp));
+		else
+			entry.append($("<td/>"))
+		max_hp=$("<div/>");
+		max_hp.text("/"+token.options.max_hp);
+		max_hp.css('font-size','11px');
+		//max_hp.css('width','20px');
+		if(window.DM || !(token.options.monster > 0) )
+			entry.append($("<td/>").append(max_hp));
+		else
+			entry.append($("<td/>"));
+		
+		
+		var buttons=$("<td/>");
+		
+		
+		find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
+		find.click(function(){
+			var target=$(this).parent().parent().attr('data-target');
+			if(target in window.TOKEN_OBJECTS){
+				window.TOKEN_OBJECTS[target].highlight();
 			}
-			$(this).parent().parent().remove();
+		});
+		
+		
+		buttons.append(find);
+		
+		del=$('<button class="removeTokenCombatButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
+		del.click(
+			function(){
+				if($(this).parent().parent().attr("data-current")=="1"){
+					$("#combat_next_button").click();
+				}
+				$(this).parent().parent().remove();
+				ct_persist();
+			}
+		);
+		if(window.DM)
+			buttons.append(del);
+		
+		if(token.isMonster()){
+			stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+			
+			stat.click(function(){
+				if (encounter_builder_dice_supported()) {
+					console.log(`attempting to open monster with monsterId ${token.options.monster} and tokenId ${token.options.id}`);
+					open_monster_stat_block_with_id(token.options.monster, token.options.id);
+				} else {
+					iframe_id="#iframe-monster-"+token.options.monster;
+					if($(iframe_id).is(":visible")) {
+						$(iframe_id).hide();
+					} else {
+						$(".monster_frame").hide();
+						load_monster_stat(token.options.monster, token.options.id);
+					}
+				}
+			});
+			if(window.DM){
+				buttons.append(stat);
+
+				ct_show_checkbox = $(`<input type='checkbox' style="font-size:10px; class='hideInPlayerCombatCheck' title="Show in player's Combat Tracker?" target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'></input>`);
+				//ct_show_checkbox.tooltip({ show: { effect: "blind", duration: 600 } });//Make this tooltip show a little quicker
+
+				$(ct_show_checkbox).change(function() {
+					if($(this).is(':checked')) {
+						token.options.ct_show = true;
+					}
+					else{
+						token.options.ct_show = false;
+					}
+					token.update_and_sync()
+					ct_persist();
+				});
+				buttons.prepend(ct_show_checkbox);
+			}
+		}	
+		else if (token.isPlayer()) {
+			stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+			stat.click(function(){
+				open_player_sheet(token.options.id);
+			});
+			if(window.DM)
+				buttons.append(stat);
+		}
+		
+			entry.append(buttons);
+		
+		
+		$("#combat_area").append(entry);
+		$("#combat_area td").css("vertical-align","middle");
+		
+		if(persist){
 			ct_persist();
 		}
-	);
-	if(window.DM)
-		buttons.append(del);
-	
-	if(token.isMonster()){
-		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
-		
-		stat.click(function(){
-			if (encounter_builder_dice_supported()) {
-				console.log(`attempting to open monster with monsterId ${token.options.monster} and tokenId ${token.options.id}`);
-				open_monster_stat_block_with_id(token.options.monster, token.options.id);
-			} else {
-				iframe_id="#iframe-monster-"+token.options.monster;
-				if($(iframe_id).is(":visible")) {
-					$(iframe_id).hide();
-				} else {
-					$(".monster_frame").hide();
-					load_monster_stat(token.options.monster, token.options.id);
-				}
-			}
-		});
-		if(window.DM)
-			buttons.append(stat);
-		
-	}	
-	else if (token.isPlayer()) {
-		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
-		stat.click(function(){
-			open_player_sheet(token.options.id);
-		});
-		if(window.DM)
-			buttons.append(stat);
-	}
-	
-		entry.append(buttons);
-	
-	
-	$("#combat_area").append(entry);
-	$("#combat_area td").css("vertical-align","middle");
-	
-	if(persist){
-		ct_persist();
 	}
 }
 
