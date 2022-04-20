@@ -1063,11 +1063,11 @@ function drawing_mouseup(e) {
 
 function finalise_drawing_fog(width, height) {
 	if (window.DRAWSHAPE == "arc") {
-		const fogType = window.DRAWFUNCTION === "hide" ? 0 : 1
+		const fogType = window.DRAWFUNCTION === "hide" ? 1 : 0
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = [centerX, centerY, radius, 0, fogType];
+		data = [centerX, centerY, radius, 0, 1, fogType];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1076,8 +1076,8 @@ function finalise_drawing_fog(width, height) {
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	} else if (window.DRAWSHAPE == "rect") {
-		const fogType = window.DRAWFUNCTION === "hide" ? 0 : 1
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, fogType];
+		const fogType = window.DRAWFUNCTION === "hide" ? 1 : 0
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fogType];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
