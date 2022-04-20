@@ -1812,7 +1812,7 @@ function token_context_menu_expanded(tokenIds) {
 		{ name: "restrictPlayerMove", label: "Restrict Player Movement", enabledDescription:"Token is not moveable by players", disabledDescription: "Token is moveable by any player" },
 		{ name: "disablestat", label: "Disable HP/AC", enabledDescription:"Token stats are not visible", disabledDescription: "Token stats are visible to at least the DM" },
 		{ name: "hidestat", label: "Hide Player HP/AC from players", enabledDescription:"Token stats are hidden from players", disabledDescription: "Token stats are visible to players" },
-		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
+		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random colored border"  },
 		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
 		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
 		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },

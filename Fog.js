@@ -659,17 +659,51 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
-	console.log(e)
+	const data = get_draw_data(e.data.clicked,  e.data.menu)
+		// {
+		// 	"shape": "select",
+		// 	"type": "select"
+		// }
+		// {
+		// 	"shape": "measure",
+		// 	"type": "measure"
+		// }
+		// {
+		// 	"shape": "rect",
+		// 	"type": "reveal",
+		// 	"from": "fog_menu",
+		// 	"fog": "reveal"
+		// }
 	
-	window.LINEWIDTH = $("#draw_line_width").val();
-	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
-	window.DRAWCOLOR = $(".colorselected").css('background-color');
-	console.log(window.LINEWIDTH)
-	console.log(window.DRAWTYPE)
-	console.log(window.DRAWCOLOR)
-	window.DRAWSHAPE = e.data.shape;
-	window.DRAWFUNCTION = e.data.type;
+		// {
+		// 	"shape": "rect",
+		// 	"type": "rect",
+		// 	"from": "draw_menu",
+		// 	"draw_line_width": "6",
+		// 	"fill": "transparent"
+		// }
+	
+		// {
+		// 	"shape": "rect",
+		// 	"type": "draw",
+		// 	"from": "text_menu",
+		// 	"text_font": "Roboto",
+		// 	"text_size": "20",
+		// 	"font_color": "rgba(244.79999999999998, 2.741760000000024, 4.637882880000192, 0.785)",
+		// 	"text_bg_color": "rgba(255, 255, 255, 0)",
+		// 	"stroke_size": "1",
+		// 	"stroke_color": "rgba(18.2835, 16.76048445, 16.772414738475, 0.715)",
+		// 	"alignment": "text_left"
+		// }
+		console.log(data)
+		
+		window.LINEWIDTH = data.draw_line_width
+		window.DRAWTYPE = data.fill
+		window.DRAWCOLOR = data.background_color
+		window.DRAWSHAPE = data.shape;
+		window.DRAWFUNCTION = data.function;
 
+	console.log(e)
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
 		return;
 	}
@@ -683,7 +717,7 @@ function drawing_mousedown(e) {
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
-	if (e.button != 0)
+	if (e.button != 0 && window.DRAWSHAPE != "measure")
 		return;
 
 	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
@@ -879,7 +913,7 @@ function drawing_mouseup(e) {
 	}
 
 	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
-	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.which !== 1)
+	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "reveal" || window.DRAWFUNCTION == "hide") && e.which !== 1)
 	{
 		return;
 	}
@@ -895,8 +929,8 @@ function drawing_mouseup(e) {
 	}
 
 	window.MOUSEDOWN = false;
-	var width = mousex - window.BEGIN_MOUSEX;
-	var height = mousey - window.BEGIN_MOUSEY;
+	const width = mousex - window.BEGIN_MOUSEX;
+	const height = mousey - window.BEGIN_MOUSEY;
 
 
 	// [0-3] is always shape data [4] is shape and [5] is type
@@ -963,17 +997,7 @@ function drawing_mouseup(e) {
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (window.DRAWSHAPE == "rect" && (window.DRAWFUNCTION === "0" || window.DRAWFUNCTION === "1")) {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0];
-		data[5] = parseInt(window.DRAWFUNCTION);
-		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
-		redraw_canvas();
-	}
+	
 	if(window.DRAWSHAPE == "brush" && window.DRAWFUNCTION === "draw") {
 		window.BRUSHPOINTS.push({x:mousex, y:mousey});
 		// cap with a dot
@@ -992,20 +1016,10 @@ function drawing_mouseup(e) {
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 
-	if (window.DRAWSHAPE == "arc" && (window.DRAWFUNCTION == 0 || window.DRAWFUNCTION == 1)) {
-		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = [centerX, centerY, radius, 0, 1];
-		data[5] = parseInt(window.DRAWFUNCTION);
-		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
-		redraw_canvas();
+	if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
+		finalise_drawing_fog(width, height)
 	}
+	
 	if (window.DRAWSHAPE == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
@@ -1047,12 +1061,34 @@ function drawing_mouseup(e) {
 	}
 }
 
+function finalise_drawing_fog(width, height) {
+	if (window.DRAWSHAPE == "arc") {
+		const fogType = window.DRAWFUNCTION === "hide" ? 0 : 1
+		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
+		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
+		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
+		data = [centerX, centerY, radius, 0, fogType];
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_canvas();
+	} else if (window.DRAWSHAPE == "rect") {
+		const fogType = window.DRAWFUNCTION === "hide" ? 0 : 1
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, fogType];
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_canvas();
+	}
+}
+
 function drawing_contextmenu(e) {
-	window.LINEWIDTH = $("#draw_line_width").val();
-	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
-	window.DRAWCOLOR = $(".colorselected").css('background-color');
-	window.DRAWSHAPE = e.data.shape;
-	window.DRAWFUNCTION = e.data.type;
 
 	if (window.DRAWSHAPE === "polygon") {
 		window.BEGIN_MOUSEX.pop();
@@ -1092,7 +1128,7 @@ function drawing_contextmenu(e) {
 			redraw_canvas();
 		}
 	}
-	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "1") || (window.DRAWFUNCTION == "0"))
+	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
 		// cancel shape
 		window.MOUSEDOWN = false;
@@ -1116,46 +1152,50 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
  * @param {$} button 
  * @param {$} menuSelector 
  */
-function get_draw_target_data(button, menu){
+function get_draw_data(button, menu){
 	console.log(button)
+	console.log("SETTING DRAW DATA")
 
 	if (!$(button).hasClass("menu-option") && !$(button).hasClass("menu-button")){
-		return (
-			[target =  $("#fog_overlay"),
-			data = {
-					shape:$(button).attr("data-shape"),
-					type:$(button).attr("data-shape")
-				}
-			]
-		)
+		return {
+			shape:$(button).attr("data-shape"),
+			type:$(button).attr("data-shape")
+		}
 	}
 	// find all active buttons within this menu
 	else{
-		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
 		const requiredValuesInMenu = $(menu).find('[data-required]')
-		const allOptions = [...selectedInMenu, ...requiredValuesInMenu]
-		if (menu.attr("id") === "text_menu"){
-			const menuOptions = $(allOptions).map(function() {
-				return $(this).attr("id")
-			}).get()
+		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
+		const requiredOptions = $(requiredValuesInMenu).map(function() {
+			const key = $(this).attr("id")
+			const value = $(this).val()
+			return details = {
+				[key]: value
+			}
+		})
+		const selectedOptions = $(selectedInMenu).map(function() {
+			const key = $(this).attr("data-key")
+			const value = $(this).attr("data-type")
+			return details = {
+				[key]: value
+			}
+		})
+		const options = Object.assign({}, ...requiredOptions, ...selectedOptions);
 
-			return (
-				[target =  $("#fog_overlay"), 
-				data = {
-						shape:$(selectedInMenu).attr("data-shape"),
-						type: menuOptions
-					}
-				]
-			)
+		if (menu.attr("id") === "text_menu"){
+			return {
+				shape: "rect",
+				function:"draw_text",
+				from:menu.attr("id"),
+				...options
+			}
 		}
-		return (
-			[target =  $("#fog_overlay"), 
-			data = {
-					shape:$(selectedInMenu).attr("data-shape"),
-					type:$(selectedInMenu).attr("data-type")
-				}
-			]
-		)
+		return{
+			shape:$(selectedInMenu).attr("data-shape"),
+			function:$(selectedInMenu).attr("data-type"),
+			from:menu.attr("id"),
+			...options
+		}
 	}
 }
 // this is the rubbish from the other function
@@ -1292,8 +1332,12 @@ function setup_button_controller() {
 
 		stop_drawing();
 		// HANDLE GETTING THE RIGHT DATA TO PASS TO EVENT HANDLERS
-					
-		const [target, data] = get_draw_target_data(clicked, $(menu))
+		target =  $("#fog_overlay")
+		data = {
+			clicked:$(clicked),
+			menu:$(menu)
+		}
+		
 	
 		// for menu options find out what options are enabled to do stuff
 		
@@ -1343,7 +1387,7 @@ function setup_button_controller() {
 	// }
 
 		target.on('mousedown', data, drawing_mousedown);
-		target.on('mouseup', data, drawing_mouseup);
+		target.on('mouseup',  data, drawing_mouseup);
 		target.on('mousemove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
 		
@@ -1351,29 +1395,15 @@ function setup_button_controller() {
 	$('#select-button').click();
 }
 
-function getDrawingStyle()
-{
-	var style = window.DRAWCOLOR;
-	if(window.DRAWFUNCTION === "draw")
-	{
-		if(window.DRAWTYPE == "transparent")
-		{
-			style = style.replace(')', ', 0.5)').replace('rgb', 'rgba');
-		}
-		else
-		{
-			style =style.replace(')', ', 0.9)').replace('rgb', 'rgba');
-		}
-	}
-	else if (window.DRAWFUNCTION === "1")
-	{
+function getDrawingStyle(){
+	let style = window.DRAWCOLOR;
+	if (window.DRAWFUNCTION === "hide"){
 		style = "rgba(0,0,0,0.5)";
 	}
-	else
-	{
+	else if(window.DRAWFUNCTION === "reveal"){
 		style = "rgba(255,0,0,0.5)";
 	}
-	return style;
+	return style
 }
 
 function getDrawingLineWidth()
@@ -1687,21 +1717,21 @@ function init_fog_menu(buttons){
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
 			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape='rect' data-type=0 data-unique-with="fog"> 
+				data-shape='rect' data-type="reveal" data-key="fog" data-unique-with="fog"> 
 					Square 
 			</div> 
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
 			<div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-type=0 data-unique-with="fog"> 
+				data-shape='arc' data-type="reveal" data-key="fog" data-unique-with="fog"> 
 					Circle 
 				</div> 
 			</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-type=0 data-unique-with="fog">
+				data-shape='polygon' data-type="reveal" data-key="fog" data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
@@ -1711,21 +1741,21 @@ function init_fog_menu(buttons){
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='rect' data-type=1 data-unique-with="fog">
+				data-shape='rect' data-type="hide" data-key="fog" data-unique-with="fog">
 					Square
 			</div>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-type=1 data-unique-with="fog">
+				data-shape='arc' data-type="hide" data-key="fog" data-unique-with="fog">
 					Circle
 			</div>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-type=1 data-unique-with="fog">
+				data-shape='polygon' data-type="hide" data-key="fog" data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
@@ -1759,49 +1789,49 @@ function init_draw_menu(buttons){
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_square' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape='rect' data-type='draw' data-unique-with="draw">
+				data-shape="rect" data-type='draw' data-unique-with="draw">
 					Rectangle
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='arc' data-type='draw' data-unique-with="draw">
+				data-shape="arc" data-type='draw' data-unique-with="draw">
 					Circle
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='cone' data-type='draw' data-unique-with="draw">
+				data-key="cone" data-type='draw' data-unique-with="draw">
 					Cone
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='line' data-type='draw' data-unique-with="draw">
+				data-key="line" data-type='draw' data-unique-with="draw">
 					Line
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='brush' data-type='draw' data-unique-with="draw">
+				data-key="brush" data-type='draw' data-unique-with="draw">
 					Brush
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				 data-shape='polygon' data-type='draw' data-unique-with="draw">
+				data-key="polygon" data-type='draw' data-unique-with="draw">
 				 	Polygon
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				 data-shape='rect' data-type='eraser'>
+				data-key="rect" data-type='eraser' data-unique-with="draw">
 				 	Erase
 			</div>
 		</div>`);
@@ -1852,87 +1882,52 @@ function init_draw_menu(buttons){
 		}
 	});
 
-	colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
-		
-	colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
+	draw_menu.append(`
+        <input title='Background color' data-required="background_color" class='spectrum'
+            id='background_color' name='background color' value='#e66465' />
+        `)
 
-	colors.find("#cpick").click(function(e)	{ //open the color picker
-		$('body').append("<div id='cpicker_overlay'></div>");
-		$('#cpicker_overlay').click(function(e){
-			$('#cpicker_overlay').remove();
-		});
-		$("#cpick").change(function () { // run when color changed
-			cPick = $("#cpick").val();
-			console.log("cPicked! " + cPick);
-			cc.remove(); //remove previous picked color
-			cc = $("<div class='coloroption'/>");
-			cc.width(27);
-			cc.height(27);
-			cc.css("background", cPick); //set color from cPick
-			cc.css("float", "left");
-			colors.prepend(cc); //Place new color selector
-			$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
-			cc.css('border', '2px solid black'); //highlight new color
-			cc.addClass('colorselected'); //select new color
-			$('#cpicker_overlay').remove();
-
-			cc.click(function(e) {
-				$(".coloroption").css('border', '').removeClass('colorselected');
-				$(e.currentTarget).css('border', '2px solid black');
-				$(e.currentTarget).addClass('colorselected');
-			});
-		});
+    let colorPickers = draw_menu.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		clickoutFiresChange: false
 	});
 
-	for (i = 0; i < 20; i++){
-		var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
-		c = colorOp;
-		c.width(15);
-		c.height(15);
-		c.css("background", DRAW_COLORS[i]);
-		c.css("float", "left");
-		colors.append(c);
+    const colorPickerChange = function(e, tinycolor) {
+		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        $(e.target).val(color)
 
-		c.click(function(e) {
-			$(".coloroption").css('border', '').removeClass('colorselected');
-			$(e.currentTarget).css('border', '2px solid black');
-			$(e.currentTarget).addClass('colorselected');
-		});
-	}
+	};
+	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
-	//create default cPick coloroption
-	cPick = "#E29393";
-	cc = $("<div class='coloroption'/>");
-	cc.width(27);
-	cc.height(27);
-	cc.css("background", cPick); //set color from cPick
-	cc.css("float", "left");
-	colors.prepend(cc); //Place new color selector in front of colorpicker
-	cc.css('border', '2px solid black'); //highlight new color
-	cc.addClass('colorselected'); //select new color
-	cc.click(function(e) {
-		$(".coloroption").css('border', '').removeClass('colorselected');
-		$(e.currentTarget).css('border', '2px solid black');
-		$(e.currentTarget).addClass('colorselected');
-	});
-
-	draw_menu.append(colors);
+	
 	draw_menu.append("<div class='menu-subtitle'>Type</div>");
-	draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='transparent'>TRANSP</div></div>");
-	draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='border'>BORDER</div></div>");
-	draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='filled'>FILLED</div></div>");
-
-	draw_menu.find(".drawType").click(function(e) {
-		$(".drawType").removeClass('drawTypeSelected');
-		$(".drawType").removeClass('ddbc-tab-options__header-heading--is-active');
-		$(".drawType").css('background', '');
-		$(e.currentTarget).addClass('drawTypeSelected');
-		$(e.currentTarget).addClass('ddbc-tab-options__header-heading--is-active');
-		// $(e.currentTarget).css('background', '-webkit-linear-gradient(270deg, #e29393, #f37a7a)');
-	});
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div class='drawbutton ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-key="fill" data-type='border' data-unique-with="fill">
+				BORDER
+			</div>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div class='drawbutton ddbc-tab-options__header-heading'
+				data-key="fill" data-type='filled' data-unique-with="fill">
+				FILLED
+			</div>
+		</div>`);
 
 	draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
-	draw_menu.append("<div><input id='draw_line_width' type='range' style='width:90%' min='1' max='60' value='6' class='drawWidthSlider'></div>");
+	draw_menu.append(`
+		<div>
+			<input id='draw_line_width' data-required="draw_line_width" type='range' style='width:90%' min='1'
+			max='60' value='6' class='drawWidthSlider'>
+		</div>`
+	);
 
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");

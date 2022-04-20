@@ -325,7 +325,7 @@ class Token {
 	}
 
 	/**
-	 * updates the colour of the health aura if enabled
+	 * updates the color of the health aura if enabled
 	 * @param token jquery selected div with the class "token"
 	 */
 	update_health_aura(token){

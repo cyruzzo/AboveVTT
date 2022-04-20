@@ -10,9 +10,9 @@ function init_text_button(buttons) {
     );
     textMenu = $("<div id='text_menu' class='top_menu' style='position:fixed; top:25px; width:75px'></div>");
     textMenu.append("<div class='menu-subtitle'>Font</div>");
-    textMenu.append(`<select id='text_font' name='font' style='width:inherit; margin:0px; text-align:center'>
+    textMenu.append(`<select id='text_font' data-required="text_font" name='font' style='width:inherit; margin:0px; text-align:center'>
         ${availableFonts.map((font) => {
-        return `<option data-required="text_font" style='font-family:${font}'value=${font}>${font}</option>`;
+        return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
     })}
     </select>`);
     textMenu.append(
@@ -43,45 +43,61 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Alignment</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='1' id='text_left' data-type="text_left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
+            <div tabindex='1' id='text_left' data-key="alignment" data-type="text_left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
                 <span class='material-icons' style='font-size: 12px'>format_align_left</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='2' id='text_center' data-type="text_center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <div tabindex='2' id='text_center' data-key="alignment" data-type="text_center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_center</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='3' id='text_right' data-type="text_right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <div tabindex='3' id='text_right' data-key="alignment" data-type="text_right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_right</span>
             </div>
         </div>`);
 
 
     textMenu.append(`<div class='menu-subtitle'>Font</div>
-        <input title='Text colour' class='drawbutton ddbc-tab-options--layout-pill' type='color' id='font_colour' name='Font' value='#e66465'></input> \
-        <input title='Text transparency' data-required="text_alpha" type='range' style='width:inherit' 
-            id='text_alpha' onchange=${updateColorAlpha(this)} min='0' max='1' step='0.1' value='1'>
+        <input title='Text color' data-required="text_color" class='spectrum'
+            id='font_color' name='Font' value='#e66465' />
         `);
 
 
-    textMenu.append(`<div class='menu-subtitle'>Background</div> \
-        <input title='Background colour' type='color' id='text_bg_colour' name='backgroundColour' value='#ffffff'></input>
-        <input title='Background transparency' data-required="text_bg_alpha" type='range' style='width:inherit' \
-            id='text_bg_alpha' onchange=${updateColorAlpha(this)} min='0' max='1' step='0.1' value='0'>
+    textMenu.append(`<div class='menu-subtitle'>Background</div> 
+        <input title='Background color' data-required="background_color" class='spectrum'
+            id='background_color' name='backgroundColor' value='#ffffff' />
         `)
 
 
-    textMenu.append(`<div class='menu-subtitle'>Stroke</div> \
-        <input title='Stroke size' id='stroke_size' data-required="stroke_size" min='0' value='1' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'>"
-        <input title='Stroke colour' type='color' data-required="stroke_colour"  id='stroke_colour' name='strokeColour' value='#e66465'></input>
-        <input title='Stroke transparency' type='range' data-required="stroke_alpha" style='width:inherit' \
-            id='stroke_alpha' onchange=${updateColorAlpha(this)} min='0' max='1' step='0.1' value='0'>
+    textMenu.append(`<div class='menu-subtitle'>Stroke</div> 
+        <input title='Stroke size' id='stroke_size' data-required="stroke_size" min='0'
+            value='1' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'/>
+        <input title='Stroke color' data-required="stroke_color" class='spectrum'
+            id='stroke_color' name='strokeColor' value='#e66465' />
         `)
     $("body").append(textMenu);
+
+
+    let colorPickers = textMenu.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		clickoutFiresChange: false
+	});
+
+    const colorPickerChange = function(e, tinycolor) {
+		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        $(e.target).val(color)
+
+	};
+	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
     buttons.append(textButton);
     textMenu.css("left", textButton.position().left);
