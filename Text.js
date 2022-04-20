@@ -22,19 +22,19 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Font Style</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='1' id='text_bold' data-type="text_bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
+            <div tabindex='1' id='text_bold' data-value="text_bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
                 <span class='material-icons' style='font-size: 12px'>format_bold</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='2' id='text_italic' data-type="text_italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <div tabindex='2' id='text_italic' data-value="text_italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_italic</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='3' id='text_underline' data-type="text_underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <div tabindex='3' id='text_underline' data-value="text_underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_underlined</span>
             </div> 
         </div>`);
@@ -43,19 +43,19 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Alignment</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='1' id='text_left' data-key="alignment" data-type="text_left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
+            <div tabindex='1' id='text_left' data-key="alignment" data-value="text_left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
                 <span class='material-icons' style='font-size: 12px'>format_align_left</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='2' id='text_center' data-key="alignment" data-type="text_center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <div tabindex='2' id='text_center' data-key="alignment" data-value="text_center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_center</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='3' id='text_right' data-key="alignment" data-type="text_right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <div tabindex='3' id='text_right' data-key="alignment" data-value="text_right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_right</span>
             </div>
         </div>`);
@@ -63,13 +63,13 @@ function init_text_button(buttons) {
 
     textMenu.append(`<div class='menu-subtitle'>Font</div>
         <input title='Text color' data-required="text_color" class='spectrum'
-            id='font_color' name='Font' value='#e66465' />
+            id='font_color' name='Font' value='black' />
         `);
 
 
     textMenu.append(`<div class='menu-subtitle'>Background</div> 
         <input title='Background color' data-required="background_color" class='spectrum'
-            id='background_color' name='backgroundColor' value='#ffffff' />
+            id='background_color' name='backgroundColor' value='rgba(17, 17, 17, 0.505)' />
         `)
 
 
@@ -77,7 +77,7 @@ function init_text_button(buttons) {
         <input title='Stroke size' id='stroke_size' data-required="stroke_size" min='0'
             value='1' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'/>
         <input title='Stroke color' data-required="stroke_color" class='spectrum'
-            id='stroke_color' name='strokeColor' value='#e66465' />
+            id='stroke_color' name='strokeColor' value='white' />
         `)
     $("body").append(textMenu);
 

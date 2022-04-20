@@ -709,7 +709,7 @@ function drawing_mousedown(e) {
 	}
 
 	if (window.DRAWSHAPE === 'select') {
-		$("#fog_overlay").css("z-index", "50");
+		toggle_lifting_fog()
 		if (e.which == 1) {
 			$("#fog_overlay").css('cursor', 'crosshair');
 		}		
@@ -899,7 +899,7 @@ function drawing_mouseup(e) {
 	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
 	if (window.DRAWSHAPE === 'select') {
-		$("#fog_overlay").css("z-index", "31");
+		toggle_lifting_fog()
 		$("#fog_overlay").css('cursor', '');
 	}
 
@@ -1163,6 +1163,7 @@ function get_draw_data(button, menu){
 		}
 	}
 	// find all active buttons within this menu
+	// and any required value
 	else{
 		const requiredValuesInMenu = $(menu).find('[data-required]')
 		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
@@ -1175,7 +1176,7 @@ function get_draw_data(button, menu){
 		})
 		const selectedOptions = $(selectedInMenu).map(function() {
 			const key = $(this).attr("data-key")
-			const value = $(this).attr("data-type")
+			const value = $(this).attr("data-value")
 			return details = {
 				[key]: value
 			}
@@ -1192,7 +1193,7 @@ function get_draw_data(button, menu){
 		}
 		return{
 			shape:$(selectedInMenu).attr("data-shape"),
-			function:$(selectedInMenu).attr("data-type"),
+			function:$(selectedInMenu).attr("data-value"),
 			from:menu.attr("id"),
 			...options
 		}
@@ -1285,6 +1286,20 @@ function get_draw_data(button, menu){
 // 	}
 
 
+/**
+ * raises and lowers the z-index of the fog layer
+ * so selecting elements can be done
+ */
+function toggle_lifting_fog(){
+	const height = $("#fog_layer").css("z-index")
+	if (height === "50"){
+		$("#fog_layer").css("z-index", "31")
+	}
+	else if(height === "31"){
+		$("#fog_layer").css("z-index", "50")
+	}
+}
+
 function setup_button_controller() {
 	$(".drawbutton").click(function(e) {
 		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
@@ -1332,11 +1347,12 @@ function setup_button_controller() {
 
 		stop_drawing();
 		// HANDLE GETTING THE RIGHT DATA TO PASS TO EVENT HANDLERS
-		target =  $("#fog_overlay")
+		target =  $("#fog_overlay, #VTT, #black_layer")
 		data = {
 			clicked:$(clicked),
 			menu:$(menu)
 		}
+		
 		
 	
 		// for menu options find out what options are enabled to do stuff
@@ -1717,21 +1733,21 @@ function init_fog_menu(buttons){
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
 			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape='rect' data-type="reveal" data-key="fog" data-unique-with="fog"> 
+				data-shape='rect' data-value="reveal" data-key="fog" data-unique-with="fog"> 
 					Square 
 			</div> 
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
 			<div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-type="reveal" data-key="fog" data-unique-with="fog"> 
+				data-shape='arc' data-value="reveal" data-key="fog" data-unique-with="fog"> 
 					Circle 
 				</div> 
 			</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-type="reveal" data-key="fog" data-unique-with="fog">
+				data-shape='polygon' data-value="reveal" data-key="fog" data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
@@ -1741,21 +1757,21 @@ function init_fog_menu(buttons){
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='rect' data-type="hide" data-key="fog" data-unique-with="fog">
+				data-shape='rect' data-value="hide" data-key="fog" data-unique-with="fog">
 					Square
 			</div>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-type="hide" data-key="fog" data-unique-with="fog">
+				data-shape='arc' data-value="hide" data-key="fog" data-unique-with="fog">
 					Circle
 			</div>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-type="hide" data-key="fog" data-unique-with="fog">
+				data-shape='polygon' data-value="hide" data-key="fog" data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
@@ -1789,49 +1805,49 @@ function init_draw_menu(buttons){
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_square' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape="rect" data-type='draw' data-unique-with="draw">
+				data-shape="rect" data-value='draw' data-unique-with="draw">
 					Rectangle
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape="arc" data-type='draw' data-unique-with="draw">
+				data-shape='arc' data-shape="arc" data-value='draw' data-unique-with="draw">
 					Circle
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-key="cone" data-type='draw' data-unique-with="draw">
+				data-shape='cone' data-key="cone" data-value='draw' data-unique-with="draw">
 					Cone
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-key="line" data-type='draw' data-unique-with="draw">
+				data-shape='line' data-key="line" data-value='draw' data-unique-with="draw">
 					Line
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-key="brush" data-type='draw' data-unique-with="draw">
+				data-shape='brush' data-key="brush" data-value='draw' data-unique-with="draw">
 					Brush
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-key="polygon" data-type='draw' data-unique-with="draw">
+				data-shape='polygon' data-key="polygon" data-value='draw' data-unique-with="draw">
 				 	Polygon
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-key="rect" data-type='eraser' data-unique-with="draw">
+				data-shape='rect' data-key="rect" data-value='eraser' data-unique-with="draw">
 				 	Erase
 			</div>
 		</div>`);
@@ -1909,14 +1925,14 @@ function init_draw_menu(buttons){
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
-				data-key="fill" data-type='border' data-unique-with="fill">
+				data-key="fill" data-value='border' data-unique-with="fill">
 				BORDER
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div class='drawbutton menu-option ddbc-tab-options__header-heading'
-				data-key="fill" data-type='filled' data-unique-with="fill">
+				data-key="fill" data-value='filled' data-unique-with="fill">
 				FILLED
 			</div>
 		</div>`);
