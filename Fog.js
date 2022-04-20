@@ -959,6 +959,23 @@ function drawing_mouseup(e) {
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
+	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw_text") {
+		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
+		var canvas = document.getElementById("fog_overlay");
+		const context = canvas.getContext("2d");
+		window.DRAWINGS.forEach((drawing) => {
+			const [shape, drawType, color, x, y, width, height, lineWidth] = [...drawing]
+			if (shape === "rect"){
+				path = new Path2D();
+				path.rect(x, y, width, height)
+				if (context.isPointInPath(path, e.offsetX, e.offsetY)){
+					console.log("TEXT IN A BOX")
+					addInput(e.offsetX, e.offsetY)
+				}
+			}
+			
+		})
+	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
 		console.log('disegno');
 		data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
@@ -1061,13 +1078,20 @@ function drawing_mouseup(e) {
 	}
 }
 
+/**
+ * maps "hide" or "reveal" to a bool to be stored in window.REVEALED
+ * @returns 1 | 0
+ */
+function fog_type_to_int(){
+	return window.DRAWFUNCTION === "hide" ? 1 : 0
+}
+
 function finalise_drawing_fog(width, height) {
 	if (window.DRAWSHAPE == "arc") {
-		const fogType = window.DRAWFUNCTION === "hide" ? 1 : 0
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
 		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = [centerX, centerY, radius, 0, 1, fogType];
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1076,8 +1100,7 @@ function finalise_drawing_fog(width, height) {
 		window.ScenesHandler.persist();
 		redraw_canvas();
 	} else if (window.DRAWSHAPE == "rect") {
-		const fogType = window.DRAWFUNCTION === "hide" ? 1 : 0
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fogType];
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1347,7 +1370,7 @@ function setup_button_controller() {
 
 		stop_drawing();
 		// HANDLE GETTING THE RIGHT DATA TO PASS TO EVENT HANDLERS
-		target =  $("#fog_overlay, #VTT, #black_layer")
+		target =  $("#fog_overlay, #black_layer")
 		data = {
 			clicked:$(clicked),
 			menu:$(menu)
@@ -1595,7 +1618,18 @@ function drawPolygon (
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
 	let data;
-	if (isNaN(window.DRAWFUNCTION)) {
+	if (window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "reveal"){
+		data = [
+			polygonPoints,
+			null,
+			null,
+			null,
+			3,
+			fog_type_to_int()
+		];
+		window.REVEALED.push(data);
+	}
+	else{
 		data = [
 			'polygon',
 			window.DRAWTYPE,
@@ -1607,16 +1641,6 @@ function savePolygon(e) {
 			window.LINEWIDTH
 		];
 		window.DRAWINGS.push(data);
-	} else {
-		data = [
-			polygonPoints,
-			null,
-			null,
-			null,
-			3,
-			window.DRAWFUNCTION
-		];
-		window.REVEALED.push(data);
 	}
 	redraw_canvas();
 	redraw_drawings();
