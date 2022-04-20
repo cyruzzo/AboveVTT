@@ -103,14 +103,8 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
-    $(".drawbutton").removeClass('button-enabled button-selected');
-    $(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-    $(".top_menu").removeClass('visible');
-    $("#fog_overlay").css("z-index", "20");
     $('#select-button').click();
 });
-
-
 
 //menu specific shortcuts, select the nth element of menu when it's open
 Mousetrap.bind('1', function () {
