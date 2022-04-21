@@ -196,6 +196,9 @@ class EncounterHandler {
 				remove_combat_tracker_loading_indicator();
 		}
 		minimize_monster_window_double_click($("#resizeDragMon"));
+		
+		//lock game log open in monster stat block so that default rolls can be sync'd
+		window.EncounterHandler.combat_body.find(".sidebar__control-group--visibility ~ .sidebar__control-group--lock button.sidebar__control").click();
 		sync_send_to_default();
 		console.groupEnd();
 	}
