@@ -377,19 +377,39 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			if(window.DM){
 				buttons.append(stat);
 
-				ct_show_checkbox = $(`<input type='checkbox' style="font-size:10px; class='hideInPlayerCombatCheck' title="Show in player's Combat Tracker?" target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'></input>`);
+				ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px; class='hideInPlayerCombatCheck' title="Show in player's Combat Tracker?" target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
 				//ct_show_checkbox.tooltip({ show: { effect: "blind", duration: 600 } });//Make this tooltip show a little quicker
-
+				eye_button = $('<button class="hideFromPlayerCombatButton" style="font-size:10px;"></button>');
+				open_eye = $('<svg xmlns="http://www.w3.org/2000/svg" class="openEye" height="24" width="24" viewBox="0 0 24 24"><path xmlns="http://www.w3.org/2000/svg" d="M12 16Q13.875 16 15.188 14.688Q16.5 13.375 16.5 11.5Q16.5 9.625 15.188 8.312Q13.875 7 12 7Q10.125 7 8.812 8.312Q7.5 9.625 7.5 11.5Q7.5 13.375 8.812 14.688Q10.125 16 12 16ZM12 14.2Q10.875 14.2 10.088 13.412Q9.3 12.625 9.3 11.5Q9.3 10.375 10.088 9.587Q10.875 8.8 12 8.8Q13.125 8.8 13.913 9.587Q14.7 10.375 14.7 11.5Q14.7 12.625 13.913 13.412Q13.125 14.2 12 14.2ZM12 19Q8.35 19 5.35 16.962Q2.35 14.925 1 11.5Q2.35 8.075 5.35 6.037Q8.35 4 12 4Q15.65 4 18.65 6.037Q21.65 8.075 23 11.5Q21.65 14.925 18.65 16.962Q15.65 19 12 19ZM12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5Q12 11.5 12 11.5ZM12 17Q14.825 17 17.188 15.512Q19.55 14.025 20.8 11.5Q19.55 8.975 17.188 7.487Q14.825 6 12 6Q9.175 6 6.812 7.487Q4.45 8.975 3.2 11.5Q4.45 14.025 6.812 15.512Q9.175 17 12 17Z"/></svg>');
+				closed_eye = $('<svg class="closedEye" xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><path xmlns="http://www.w3.org/2000/svg" d="M16.1 13.3 14.65 11.85Q14.875 10.675 13.975 9.65Q13.075 8.625 11.65 8.85L10.2 7.4Q10.625 7.2 11.062 7.1Q11.5 7 12 7Q13.875 7 15.188 8.312Q16.5 9.625 16.5 11.5Q16.5 12 16.4 12.438Q16.3 12.875 16.1 13.3ZM19.3 16.45 17.85 15.05Q18.8 14.325 19.538 13.462Q20.275 12.6 20.8 11.5Q19.55 8.975 17.212 7.487Q14.875 6 12 6Q11.275 6 10.575 6.1Q9.875 6.2 9.2 6.4L7.65 4.85Q8.675 4.425 9.75 4.212Q10.825 4 12 4Q15.775 4 18.725 6.087Q21.675 8.175 23 11.5Q22.425 12.975 21.488 14.238Q20.55 15.5 19.3 16.45ZM19.8 22.6 15.6 18.45Q14.725 18.725 13.838 18.863Q12.95 19 12 19Q8.225 19 5.275 16.913Q2.325 14.825 1 11.5Q1.525 10.175 2.325 9.037Q3.125 7.9 4.15 7L1.4 4.2L2.8 2.8L21.2 21.2ZM5.55 8.4Q4.825 9.05 4.225 9.825Q3.625 10.6 3.2 11.5Q4.45 14.025 6.787 15.512Q9.125 17 12 17Q12.5 17 12.975 16.938Q13.45 16.875 13.95 16.8L13.05 15.85Q12.775 15.925 12.525 15.962Q12.275 16 12 16Q10.125 16 8.812 14.688Q7.5 13.375 7.5 11.5Q7.5 11.225 7.537 10.975Q7.575 10.725 7.65 10.45ZM13.525 10.725Q13.525 10.725 13.525 10.725Q13.525 10.725 13.525 10.725Q13.525 10.725 13.525 10.725Q13.525 10.725 13.525 10.725Q13.525 10.725 13.525 10.725Q13.525 10.725 13.525 10.725ZM9.75 12.6Q9.75 12.6 9.75 12.6Q9.75 12.6 9.75 12.6Q9.75 12.6 9.75 12.6Q9.75 12.6 9.75 12.6Q9.75 12.6 9.75 12.6Q9.75 12.6 9.75 12.6Z"/></svg>');
+				eye_button.click(function(){
+					$("#"+token.options.id+"hideCombatTrackerInput").click();
+				});
+				if(token.options.ct_show==true) {
+					open_eye.css('display', 'block');
+					closed_eye.css('display', 'none');
+				}
+				else {
+					closed_eye.css('display', 'block');
+					open_eye.css('display', 'none');
+				}
 				$(ct_show_checkbox).change(function() {
 					if($(this).is(':checked')) {
 						token.options.ct_show = true;
+						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'block');
+						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
 					}
 					else{
 						token.options.ct_show = false;
+						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
+						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 					}
 					token.update_and_sync()
 					ct_persist();
 				});
+				eye_button.append(open_eye);
+				eye_button.append(closed_eye);
+				buttons.prepend(eye_button);
 				buttons.prepend(ct_show_checkbox);
 			}
 		}	
