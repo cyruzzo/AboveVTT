@@ -1,35 +1,73 @@
-//Function to dynamically add an input box: 
-function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
-// do something to figure out if the rect was drawn from the any corner that isn't top left
-    //  25px is the height of the move/close bar
-    ct_inside=$("<div id='draw_text_wrapper'/>");
-    ct_inside.css({"position":"fixed",
+function createMoveableTextWrapper (x,y,width,height) {
+    wrapper=$("<div id='draw_text_wrapper'/>");
+    wrapper.css({"position":"fixed",
                    "left":`${x}px`,
                    "top":`${y-25}px`,
                    "z-index":1000,
                    "width": width,
                    "height":height})
 
-    const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
-    const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
-    $(ct_title_bar_exit).on("click", function () {
+    $("#draw_text_wrapper").addClass("moveableWindow");
+    $("#draw_text_wrapper").draggable({
+            addClasses: false,
+            scroll: false,
+            containment: "#windowContainment",
+            start: function () {
+                $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+                $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+            },
+            stop: function () {
+                $('.iframeResizeCover').remove();
+
+            }
+        });
+    $("#draw_text_wrapper").resizable({
+        addClasses: false,
+        handles: "all",
+        containment: "#windowContainment",
+        start: function () {
+            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+        },
+        stop: function () {
+            $('.iframeResizeCover').remove();
+        },
+        minWidth: 215,
+        minHeight: 200
+    });
+    
+    $("#draw_text_wrapper").mousedown(function() {
+        frame_z_index_when_click($(this));
+    });
+
+    const titleBar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
+    const closeCross=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+    $(closeCross).on("click", function () {
         $(this).parent().parent().remove()
     });
-    ct_title_bar.append(ct_title_bar_exit);
-	ct_inside.append(ct_title_bar);
+    titleBar.append(closeCross);
+	wrapper.append(titleBar);
 
-    $(ct_title_bar).data("prev-minimized-top", $("#combat_tracker_inside").css("top"));
-    $(ct_title_bar).data("prev-minimized-left", $("#combat_tracker_inside").css("left"));
-    $("#combat_tracker_inside").height($(ct_title_bar).data("prev-height"));
-    $("#combat_tracker_inside").width($(ct_title_bar).data("prev-width"));
-    $("#combat_tracker_inside").css("top", $(ct_title_bar).data("prev-top"));
-    $("#combat_tracker_inside").css("left", $(ct_title_bar).data("prev-left"));
-    $(ct_title_bar).addClass("restored");
-    $(ct_title_bar).removeClass("minimized");
-    $("#combat_tracker_inside").css("visibility", "visible");
+    $(titleBar).data("prev-minimized-top", $("#draw_text_wrapper").css("top"));
+    $(titleBar).data("prev-minimized-left", $("#draw_text_wrapper").css("left"));
+    $("#draw_text_wrapper").height($(titleBar).data("prev-height"));
+    $("#draw_text_wrapper").width($(titleBar).data("prev-width"));
+    $("#draw_text_wrapper").css("top", $(titleBar).data("prev-top"));
+    $("#draw_text_wrapper").css("left", $(titleBar).data("prev-left"));
+    $(titleBar).addClass("restored");
+    $(titleBar).removeClass("minimized");
+    $("#draw_text_wrapper").css("visibility", "visible");
+    return wrapper
+}
+
+//Function to dynamically add an input box: 
+function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
+// do something to figure out if the rect was drawn from the any corner that isn't top left
+    //  25px is the height of the move/close bar
+   const wrapper = createMoveableTextWrapper(x,y,width, height)
     
     const input = $(`<input id='drawing_text' type="text" autocomplete="off">`)
-    ct_inside.append(input)
+    wrapper.append(input)
     // do more style here
     input.css({
         "position": "relative",
@@ -43,13 +81,14 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
         "font-weight": window.DRAWDATA.bold || "normal",
         "font-style": window.DRAWDATA.italic || "normal",
         "text-decoration": window.DRAWDATA.underline || "normal",
+        // this text shadow is shit
         "text-shadow": `-${window.DRAWDATA.stroke_size}px 0 ${window.DRAWDATA.stroke_color},
                         0 ${window.DRAWDATA.stroke_size}px ${window.DRAWDATA.stroke_color},
                         ${window.DRAWDATA.stroke_size}px 0 ${window.DRAWDATA.stroke_color},
                         0 -${window.DRAWDATA.stroke_size}px ${window.DRAWDATA.stroke_color}`
 
     })
-    $("#VTT").append(ct_inside)
+    $("#VTT").append(wrapper)
     $(input).on("keypress", handleEnter)
 
     $(input).focus()
@@ -74,18 +113,17 @@ function drawText(textInput, x, y) {
     // context.strokeStyle = window.DRAWDATA.stroke_color
     context.font = `${$(textInput).css("font-size")} ${$(textInput).css("font-family")}`
 
-    context.font = "128px sans-serif";
     context.textBaseline = "top";
     context.lineJoin = "round";
-    context.strokeStyle = "#fff";
-    context.lineWidth = 11;
+    context.strokeStyle = window.DRAWDATA.stroke_color;
+    context.lineWidth = window.DRAWDATA.stroke_size;
 
     context.strokeText(textInput.value, x, y);
     context.globalCompositeOperation = "destination-out";
     context.fillText(textInput.value, x, y);
-    context.globalCompositeOperation = "source-over";      // normal comp. mode
-    context.fillStyle = "rgba(0,0,0,0.5)";                 // draw in target fill/color
-    context.fillText("MY TEXT", 10, 10);
+    context.globalCompositeOperation = "source-over";
+    context.fillStyle = window.DRAWDATA.font_color
+    context.fillText(textInput.value, x, y);
 }
 
 function init_text_button(buttons) {
