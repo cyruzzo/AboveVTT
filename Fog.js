@@ -967,12 +967,7 @@ function drawing_mouseup(e) {
 	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw_text") {
 		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
 		addInput(data)
-		redraw_canvas();
-		redraw_drawings();
-
-		
 	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
 		console.log('disegno');

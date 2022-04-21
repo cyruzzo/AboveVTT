@@ -81,7 +81,7 @@ function handleKeyPress(e) {
         drawText(
             this,
             parseInt($(this).parent().css("left")),
-            parseInt($(this).parent().css("top"))
+            parseInt($(this).parent().css("top")) +25
         );
         $(this).parent().remove();
     } else if (e.key == "Escape") $(this).parent().remove();
@@ -92,9 +92,23 @@ function drawText(textInput, x, y) {
     // the midline should be roughly where the text is within the box
 
     const canvas = document.getElementById("fog_overlay");
-    const fontSize = $(textInput).css("font-size");
+    const fontSize = $(textInput).css("font-size")
+    const fontSizeAsNum = parseInt($(textInput).css("font-size"))
+
     // calc drawline, that being where we will draw the text
-    const drawLine = y + 10 + parseInt(fontSize.replace("px", ""));
+    const verticalStartPos = y + 10 + fontSizeAsNum;
+    let horizontalStartPos = x
+    // do some fuckery to try figure out where to draw if centered/right aligned
+    if ($(textInput).css("text-align") === "center"){
+        // get the centre point of the box then minus off approx the length of text /2 as 
+        // it appears partially left and right of centre point
+        horizontalStartPos = (x + parseInt($(textInput).css("width")) / 2) - (textInput.value.length / 2 * fontSizeAsNum/2)
+    }
+    if ($(textInput).css("text-align") === "right"){
+        // get the right edge and minus off the approx length of text
+        horizontalStartPos = (x + parseInt($(textInput).css("width")) ) - (textInput.value.length * fontSizeAsNum/2)
+    }
+
     const font = $(textInput).css("font-family");
     let fontStyle = "normal";
     // build the font styles that will look like "bold italic" if they're not normal
@@ -111,11 +125,11 @@ function drawText(textInput, x, y) {
     console.log("drawing font", context.font);
 
     context.strokeStyle = $(textInput).css("-webkit-text-stroke-color");
-    context.lineWidth = $(textInput).css("-webkit-text-stroke-width");
+    context.lineWidth = parseInt($(textInput).css("-webkit-text-stroke-width"));
 
     context.fillStyle = $(textInput).css("color");
-    context.fillText(textInput.value, x + 5, drawLine);
-    context.strokeText(textInput.value, x + 5, drawLine);
+    context.fillText(textInput.value, horizontalStartPos, verticalStartPos);
+    context.strokeText(textInput.value, horizontalStartPos, verticalStartPos);
     if ($(textInput).css("text-decoration")?.includes("underline")) {
         // canvas doesn't have an underline feature so draw underscores for each string char
         var underscored = textInput.value
@@ -124,7 +138,7 @@ function drawText(textInput, x, y) {
                 return (char = "_");
             })
             .join("");
-        context.fillText(underscored, x + 5, drawLine);
+        context.fillText(underscored, horizontalStartPos, verticalStartPos);
     }
 
     // data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
@@ -137,6 +151,9 @@ function drawText(textInput, x, y) {
 	// 	else
 	// 		window.MB.sendMessage('custom/myVTT/drawing', data);
 }
+
+
+
 
 function init_text_button(buttons) {
     availableFonts = [
