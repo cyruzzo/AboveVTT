@@ -802,10 +802,7 @@ class MessageBroker {
 				(cur.options.temp_hp != data.temp_hp) ||
 				(cur.options.inspiration != data.inspiration) ||
 				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
-			{
-				console.log("player sheet chanegs detected")
-				console.log("current token options", cur.options);
-				console.log("new data", data);				
+			{			
 				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
 					var msgdata = {
 						player: cur.options.name,
