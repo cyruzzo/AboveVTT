@@ -21,24 +21,6 @@ function createMoveableTextWrapper (x,y,width,height) {
 
             }
         });
-    $("#draw_text_wrapper").resizable({
-        addClasses: false,
-        handles: "all",
-        containment: "#windowContainment",
-        start: function () {
-            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
-        },
-        stop: function () {
-            $('.iframeResizeCover').remove();
-        },
-        minWidth: 215,
-        minHeight: 200
-    });
-    
-    $("#draw_text_wrapper").mousedown(function() {
-        frame_z_index_when_click($(this));
-    });
 
     const titleBar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
     const closeCross=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
@@ -66,7 +48,7 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
     //  25px is the height of the move/close bar
    const wrapper = createMoveableTextWrapper(x,y,width, height)
     
-    const input = $(`<input id='drawing_text' type="text" autocomplete="off">`)
+    const input = $(`<textarea id='drawing_text' type="text" autocomplete="off"/>`)
     wrapper.append(input)
     // do more style here
     input.css({
@@ -82,28 +64,37 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
         "font-style": window.DRAWDATA.italic || "normal",
         "text-decoration": window.DRAWDATA.underline || "normal",
         // this text shadow is shit
-        "text-shadow": `-${window.DRAWDATA.stroke_size}px 0 ${window.DRAWDATA.stroke_color},
-                        0 ${window.DRAWDATA.stroke_size}px ${window.DRAWDATA.stroke_color},
-                        ${window.DRAWDATA.stroke_size}px 0 ${window.DRAWDATA.stroke_color},
-                        0 -${window.DRAWDATA.stroke_size}px ${window.DRAWDATA.stroke_color}`
+        "-webkit-text-stroke-color": window.DRAWDATA.stroke_color,
+        "-webkit-text-stroke-width": `${window.DRAWDATA.stroke_size}px` 
 
     })
     $("#VTT").append(wrapper)
-    $(input).on("keypress", handleEnter)
-
+    $(input).on("keyup", handleKeyPress)
     $(input).focus()
+
+    const myObserver = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+          // get the title bar and resize it to match the box
+          const wrapper = $(entry.target).parent()
+          // no idea why but the textArea is 6 pixels larger than the bar
+          $(wrapper).css("width", entry.contentRect.width + 6)
+        });
+      });
+      
+    const inputEle = document.querySelector('#drawing_text');
+    myObserver.observe(inputEle);
 
 }
 
 //Key handler for input box:
-function handleEnter(e) {
-    var keyCode = e.keyCode;
-    if (keyCode === 13) {
+function handleKeyPress(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
         drawText(this,
                  parseInt($(this).parent().css("left")),
                  parseInt($(this).parent().css("top")))
         $(this).parent().remove()
     }
+    else if (e.key == "Escape") $(this).parent().remove()
 }
 
 //Draw the text onto canvas:
