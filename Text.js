@@ -1,17 +1,30 @@
 //Function to dynamically add an input box: 
-function addInput(x, y) {
-
-    const input = $(`<input id='drawing_text'>`)
+function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
+// do something to figure out if the rect was drawn from the any corner that isn't top left
+    const input = $(`<input id='drawing_text' type="text">`)
     // do more style here
     input.css({
         "position":"fixed",
-        "left":`${x-4}px`,
-        "top":`${y-4}px`,
-        "z-index":1000
+        "left":`${x}px`,
+        "top":`${y}px`,
+        "z-index":1000,
+        "width": width,
+        "height":height,
+        "text-align": window.DRAWDATA.text_align,
+        "color":window.DRAWDATA.font_color,
+        "background-color": color,
+        "font-family": window.DRAWDATA.text_font,
+        "font-size": `${window.DRAWDATA.text_size}px`,
+        "font-weight": window.DRAWDATA.bold || "normal",
+        "font-style": window.DRAWDATA.italic || "normal",
+        "text-decoration": window.DRAWDATA.underline || "normal"
+
     })
+    $("#VTT").append(input)
     $(input).on("keypress", handleEnter)
+
     $(input).focus()
-    $("#fog_overlay").append(input)
+
 }
 
 //Key handler for input box:
@@ -19,16 +32,16 @@ function handleEnter(e) {
     var keyCode = e.keyCode;
     if (keyCode === 13) {
         drawText(this.value, parseInt(this.style.left, 10), parseInt(this.style.top, 10));
-        document.body.removeChild(this);
+        $(this).remove()
     }
 }
 
 //Draw the text onto canvas:
 function drawText(txt, x, y) {
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-    ctx.font = font;
-    ctx.fillText(txt, x - 4, y - 4);
+    var canvas = document.getElementById("fog_overlay");
+    const context = canvas.getContext("2d");
+    context.font = "Roboto Condensed";
+    context.fillText(txt, x, y);
 }
 
 function init_text_button(buttons) {

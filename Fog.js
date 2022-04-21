@@ -702,6 +702,12 @@ function drawing_mousedown(e) {
 		window.DRAWCOLOR = data.background_color
 		window.DRAWSHAPE = data.shape;
 		window.DRAWFUNCTION = data.function;
+		delete data.draw_line_width
+		delete data.fill
+		delete data.background_color
+		delete data.shape;
+		delete data.function;
+		window.DRAWDATA = {...data}
 
 	console.log(e)
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -961,20 +967,12 @@ function drawing_mouseup(e) {
 	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw_text") {
 		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
-		var canvas = document.getElementById("fog_overlay");
-		const context = canvas.getContext("2d");
-		window.DRAWINGS.forEach((drawing) => {
-			const [shape, drawType, color, x, y, width, height, lineWidth] = [...drawing]
-			if (shape === "rect"){
-				path = new Path2D();
-				path.rect(x, y, width, height)
-				if (context.isPointInPath(path, e.offsetX, e.offsetY)){
-					console.log("TEXT IN A BOX")
-					addInput(e.offsetX, e.offsetY)
-				}
-			}
-			
-		})
+		window.DRAWINGS.push(data);
+		addInput(data)
+		redraw_canvas();
+		redraw_drawings();
+
+		
 	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
 		console.log('disegno');
