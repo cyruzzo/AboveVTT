@@ -2897,21 +2897,22 @@ button.avtt-roll-button {
     pointer-events: none;
 }
 
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(1) {
+/*one button*/
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(1) {
     margin-right:60px;
 }
 
 /* two buttons */
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(2) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
     margin-right:30px;
 }
 
 /* three buttons */
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(3) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
     margin-right:0px;
 }
 /* four buttons */
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(4) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
 
     margin-right:0px;
 }
