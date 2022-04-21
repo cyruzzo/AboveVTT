@@ -2912,6 +2912,7 @@ button.avtt-roll-button {
 }
 /* four buttons */
 .encounter-builder-app #combat_area td button:first-child:nth-last-child(4) ~ button:last-of-type {
+
     margin-right:0px;
 }
 .tracker-list{
