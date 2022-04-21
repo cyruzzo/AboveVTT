@@ -1,26 +1,55 @@
 //Function to dynamically add an input box: 
 function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
 // do something to figure out if the rect was drawn from the any corner that isn't top left
-    const input = $(`<input id='drawing_text' type="text">`)
+    //  25px is the height of the move/close bar
+    ct_inside=$("<div id='draw_text_wrapper'/>");
+    ct_inside.css({"position":"fixed",
+                   "left":`${x}px`,
+                   "top":`${y-25}px`,
+                   "z-index":1000,
+                   "width": width,
+                   "height":height})
+
+    const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
+    const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+    $(ct_title_bar_exit).on("click", function () {
+        $(this).parent().parent().remove()
+    });
+    ct_title_bar.append(ct_title_bar_exit);
+	ct_inside.append(ct_title_bar);
+
+    $(ct_title_bar).data("prev-minimized-top", $("#combat_tracker_inside").css("top"));
+    $(ct_title_bar).data("prev-minimized-left", $("#combat_tracker_inside").css("left"));
+    $("#combat_tracker_inside").height($(ct_title_bar).data("prev-height"));
+    $("#combat_tracker_inside").width($(ct_title_bar).data("prev-width"));
+    $("#combat_tracker_inside").css("top", $(ct_title_bar).data("prev-top"));
+    $("#combat_tracker_inside").css("left", $(ct_title_bar).data("prev-left"));
+    $(ct_title_bar).addClass("restored");
+    $(ct_title_bar).removeClass("minimized");
+    $("#combat_tracker_inside").css("visibility", "visible");
+    
+    const input = $(`<input id='drawing_text' type="text" autocomplete="off">`)
+    ct_inside.append(input)
     // do more style here
     input.css({
-        "position":"fixed",
-        "left":`${x}px`,
-        "top":`${y}px`,
-        "z-index":1000,
-        "width": width,
-        "height":height,
-        "text-align": window.DRAWDATA.text_align,
+        "position": "relative",
+        "width": "100%",
+        "height": "100%",
+        "text-align": window.DRAWDATA.alignment,
         "color":window.DRAWDATA.font_color,
         "background-color": color,
         "font-family": window.DRAWDATA.text_font,
         "font-size": `${window.DRAWDATA.text_size}px`,
         "font-weight": window.DRAWDATA.bold || "normal",
         "font-style": window.DRAWDATA.italic || "normal",
-        "text-decoration": window.DRAWDATA.underline || "normal"
+        "text-decoration": window.DRAWDATA.underline || "normal",
+        "text-shadow": `-${window.DRAWDATA.stroke_size}px 0 ${window.DRAWDATA.stroke_color},
+                        0 ${window.DRAWDATA.stroke_size}px ${window.DRAWDATA.stroke_color},
+                        ${window.DRAWDATA.stroke_size}px 0 ${window.DRAWDATA.stroke_color},
+                        0 -${window.DRAWDATA.stroke_size}px ${window.DRAWDATA.stroke_color}`
 
     })
-    $("#VTT").append(input)
+    $("#VTT").append(ct_inside)
     $(input).on("keypress", handleEnter)
 
     $(input).focus()
@@ -31,17 +60,32 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
 function handleEnter(e) {
     var keyCode = e.keyCode;
     if (keyCode === 13) {
-        drawText(this.value, parseInt(this.style.left, 10), parseInt(this.style.top, 10));
-        $(this).remove()
+        drawText(this,
+                 parseInt($(this).parent().css("left")),
+                 parseInt($(this).parent().css("top")))
+        $(this).parent().remove()
     }
 }
 
 //Draw the text onto canvas:
-function drawText(txt, x, y) {
+function drawText(textInput, x, y) {
     var canvas = document.getElementById("fog_overlay");
     const context = canvas.getContext("2d");
-    context.font = "Roboto Condensed";
-    context.fillText(txt, x, y);
+    // context.strokeStyle = window.DRAWDATA.stroke_color
+    context.font = `${$(textInput).css("font-size")} ${$(textInput).css("font-family")}`
+
+    context.font = "128px sans-serif";
+    context.textBaseline = "top";
+    context.lineJoin = "round";
+    context.strokeStyle = "#fff";
+    context.lineWidth = 11;
+
+    context.strokeText(textInput.value, x, y);
+    context.globalCompositeOperation = "destination-out";
+    context.fillText(textInput.value, x, y);
+    context.globalCompositeOperation = "source-over";      // normal comp. mode
+    context.fillStyle = "rgba(0,0,0,0.5)";                 // draw in target fill/color
+    context.fillText("MY TEXT", 10, 10);
 }
 
 function init_text_button(buttons) {
@@ -63,19 +107,19 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Font Style</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='1' id='text_bold' data-value="text_bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
+            <div tabindex='1' id='text_bold' data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
                 <span class='material-icons' style='font-size: 12px'>format_bold</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='2' id='text_italic' data-value="text_italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <div tabindex='2' id='text_italic' data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_italic</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='3' id='text_underline' data-value="text_underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <div tabindex='3' id='text_underline' data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_underlined</span>
             </div> 
         </div>`);
@@ -84,19 +128,19 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Alignment</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='1' id='text_left' data-key="alignment" data-value="text_left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
+            <div tabindex='1' id='text_left' data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
                 <span class='material-icons' style='font-size: 12px'>format_align_left</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='2' id='text_center' data-key="alignment" data-value="text_center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <div tabindex='2' id='text_center' data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_center</span>
             </div>
         </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='3' id='text_right' data-key="alignment" data-value="text_right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <div tabindex='3' id='text_right' data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_right</span>
             </div>
         </div>`);
