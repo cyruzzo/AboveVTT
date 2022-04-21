@@ -1,19 +1,28 @@
 function createMoveableTextWrapper(x, y, width, height) {
     wrapper = $("<div id='draw_text_wrapper'/>");
     wrapper.css({
-        position: "fixed",
-        left: `${x}px`,
-        top: `${y - 25}px`,
+        "position": "fixed",
+        "left": `${x}px`,
+        "top": `${y - 25}px`,
         "z-index": 1000,
-        width: width,
-        height: height,
+        "width": width,
+        "height": height,
+
     });
 
     $(wrapper).addClass("moveableWindow");
     $(wrapper).draggable({
+        handle: "#combat_tracker_title_bar",
         addClasses: false,
         scroll: false,
-        containment: "#VTT",
+        containment: "#fog_overlay",
+        distance: 10,
+        drag: function( event, ui ) {
+            mousex = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
+            mousey = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+            ui.position.left = mousex;
+            ui.position.top = mousey;
+          }
     });
 
     const titleBar = $(
@@ -34,7 +43,7 @@ function createMoveableTextWrapper(x, y, width, height) {
 //Function to dynamically add an input box:
 function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
     // do something to figure out if the rect was drawn from the any corner that isn't top left
-    //  25px is the height of the move/close bar
+
     const wrapper = createMoveableTextWrapper(x, y, width, height);
 
     const input = $(
@@ -43,11 +52,11 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
     wrapper.append(input);
     // do more style here
     input.css({
-        position: "relative",
-        width: "100%",
-        height: "100%",
+        "position": "relative",
+        "width": "100%",
+        "height": "100%",
         "text-align": window.DRAWDATA.alignment,
-        color: window.DRAWDATA.font_color,
+        "color": window.DRAWDATA.font_color,
         "background-color": color,
         "font-family": window.DRAWDATA.text_font,
         "font-size": `${window.DRAWDATA.text_size}px`,
@@ -78,10 +87,12 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
 //Key handler for input box:
 function handleKeyPress(e) {
     if (e.key === "Enter" && !e.shiftKey) {
+        // do more stuff here so make drawText generic enough I can call it from 
+        // redraw_drawings
         drawText(
             this,
             parseInt($(this).parent().css("left")),
-            parseInt($(this).parent().css("top")) +25
+            parseInt($(this).parent().css("top")) + 25
         );
         $(this).parent().remove();
     } else if (e.key == "Escape") $(this).parent().remove();
@@ -89,8 +100,6 @@ function handleKeyPress(e) {
 
 //Draw the text onto canvas:
 function drawText(textInput, x, y) {
-    // the midline should be roughly where the text is within the box
-
     const canvas = document.getElementById("fog_overlay");
     const fontSize = $(textInput).css("font-size")
     const fontSizeAsNum = parseInt($(textInput).css("font-size"))
@@ -99,14 +108,14 @@ function drawText(textInput, x, y) {
     const verticalStartPos = y + 10 + fontSizeAsNum;
     let horizontalStartPos = x
     // do some fuckery to try figure out where to draw if centered/right aligned
-    if ($(textInput).css("text-align") === "center"){
+    if ($(textInput).css("text-align") === "center") {
         // get the centre point of the box then minus off approx the length of text /2 as 
         // it appears partially left and right of centre point
-        horizontalStartPos = (x + parseInt($(textInput).css("width")) / 2) - (textInput.value.length / 2 * fontSizeAsNum/2)
+        horizontalStartPos = (x + parseInt($(textInput).css("width")) / 2) - (textInput.value.length / 2 * fontSizeAsNum / 2)
     }
-    if ($(textInput).css("text-align") === "right"){
+    if ($(textInput).css("text-align") === "right") {
         // get the right edge and minus off the approx length of text
-        horizontalStartPos = (x + parseInt($(textInput).css("width")) ) - (textInput.value.length * fontSizeAsNum/2)
+        horizontalStartPos = (x + parseInt($(textInput).css("width"))) - (textInput.value.length * fontSizeAsNum / 2)
     }
 
     const font = $(textInput).css("font-family");
@@ -142,14 +151,14 @@ function drawText(textInput, x, y) {
     }
 
     // data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
-	// 	window.DRAWINGS.push(data);
-	// 	redraw_canvas();
-	// 	redraw_drawings();
-	// 	window.ScenesHandler.persist();
-	// 	if(window.CLOUD)
-	// 		sync_drawings();
-	// 	else
-	// 		window.MB.sendMessage('custom/myVTT/drawing', data);
+    // 	window.DRAWINGS.push(data);
+    // 	redraw_canvas();
+    // 	redraw_drawings();
+    // 	window.ScenesHandler.persist();
+    // 	if(window.CLOUD)
+    // 		sync_drawings();
+    // 	else
+    // 		window.MB.sendMessage('custom/myVTT/drawing', data);
 }
 
 
@@ -184,21 +193,21 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Font Style</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='1' id='text_bold' data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
+            <div tabindex='1' id='text_bold' data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
                 <span class='material-icons' style='font-size: 12px'>format_bold</span>
             </div>
         </div>`
     );
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='2' id='text_italic' data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <div tabindex='2' id='text_italic' data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_italic</span>
             </div>
         </div>`
     );
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <div tabindex='3' id='text_underline' data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <div tabindex='3' id='text_underline' data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_underlined</span>
             </div> 
         </div>`

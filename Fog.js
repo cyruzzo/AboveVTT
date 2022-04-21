@@ -626,6 +626,12 @@ function redraw_drawings() {
 			lineWidth = data.length > 7 ? data[7] : "6";
 			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
 		}
+		// TODO BAIN
+		if (data[0] == "text") {
+			style = data[2];
+			lineWidth = data.length > 7 ? data[7] : "6";
+			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
+		}
 
 		if (data[0] == "polygon" && data[1] == "filled") {
 			style = data[2];
@@ -660,43 +666,7 @@ function stop_drawing() {
 
 function drawing_mousedown(e) {
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
-		// {
-		// 	"shape": "select",
-		// 	"type": "select"
-		// }
-		// {
-		// 	"shape": "measure",
-		// 	"type": "measure"
-		// }
-		// {
-		// 	"shape": "rect",
-		// 	"type": "reveal",
-		// 	"from": "fog_menu",
-		// 	"fog": "reveal"
-		// }
 	
-		// {
-		// 	"shape": "rect",
-		// 	"type": "rect",
-		// 	"from": "draw_menu",
-		// 	"draw_line_width": "6",
-		// 	"fill": "transparent"
-		// }
-	
-		// {
-		// 	"shape": "rect",
-		// 	"type": "draw",
-		// 	"from": "text_menu",
-		// 	"text_font": "Roboto",
-		// 	"text_size": "20",
-		// 	"font_color": "rgba(244.79999999999998, 2.741760000000024, 4.637882880000192, 0.785)",
-		// 	"text_bg_color": "rgba(255, 255, 255, 0)",
-		// 	"stroke_size": "1",
-		// 	"stroke_color": "rgba(18.2835, 16.76048445, 16.772414738475, 0.715)",
-		// 	"alignment": "text_left"
-		// }
-		console.log(data)
-		
 		window.LINEWIDTH = data.draw_line_width
 		window.DRAWTYPE = data.fill
 		window.DRAWCOLOR = data.background_color
@@ -826,6 +796,9 @@ function drawing_mousemove(e) {
 		if (window.DRAWSHAPE == "rect") {
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
 		}
+		if (window.DRAWSHAPE == "text") {
+			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
+		}
 		else if (window.DRAWSHAPE == "arc") {
 			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
 			centerY = (window.BEGIN_MOUSEY + mousey) / 2;
@@ -952,6 +925,10 @@ function drawing_mouseup(e) {
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
+	if (window.DRAWSHAPE == "text") {
+		data = ['text', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH]
+		addInput(data)
+	}
 
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw") {
 		console.log('disegno');
@@ -964,10 +941,6 @@ function drawing_mouseup(e) {
 			sync_drawings();
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw_text") {
-		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
-		addInput(data)
 	}
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
 		console.log('disegno');
@@ -1201,7 +1174,7 @@ function get_draw_data(button, menu){
 
 		if (menu.attr("id") === "text_menu"){
 			return {
-				shape: "rect",
+				shape: "text",
 				function:"draw_text",
 				from:menu.attr("id"),
 				...options
@@ -1215,92 +1188,6 @@ function get_draw_data(button, menu){
 		}
 	}
 }
-// this is the rubbish from the other function
-// if (!($(clicked).hasClass('menu-button'))) {
-// 	if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
-// 		stop_drawing();
-// 		$(".drawbutton").removeClass('button-enabled');
-// 		$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-// 		$("#fog_overlay").css("z-index", "20");
-
-// 		if (window.ALIGNING == true) {
-// 			window.ALIGNING = false;
-// 			window.ScenesHandler.reload();
-// 		}
-
-// 		$('#select-button').click();
-// 		return;
-// 	}
-
-// 	stop_drawing();
-// 	$(".drawbutton").removeClass('button-enabled');
-// 	$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-// 	$(clicked).addClass('button-enabled');
-// 	$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-// 	if ($(clicked).hasClass('fog-option')) {
-// 		$(".fog-option").removeClass('remembered-selection');
-// 		$(clicked).addClass('remembered-selection');
-// 		$("#fog_button").addClass('button-enabled');
-// 		$("#fog_button").addClass('ddbc-tab-options__header-heading--is-active');
-// 	}
-// 	if ($(clicked).hasClass('draw-option')) {
-// 		$(".draw-option").removeClass('remembered-selection');
-// 		$(clicked).addClass('remembered-selection');
-// 		$("#draw_button").addClass('button-enabled');
-// 		$("#draw_button").addClass('ddbc-tab-options__header-heading--is-active');
-// 	}
-// 	if ($(clicked).hasClass('aoe-option')) {
-// 		$(".aoe-option").removeClass('remembered-selection');
-// 		$(clicked).addClass('remembered-selection');
-// 		$("#aoe_button").addClass('button-enabled');
-// 		$("#aoe_button").addClass('ddbc-tab-options__header-heading--is-active');
-// 	}
-
-// 	var target = $("#fog_overlay");
-
-// 	if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
-// 		console.log("setto a 50 per via di " + e.currentTarget.id);
-// 		target.css("z-index", "50");
-// 	} else {
-// 		target.css("z-index", "31");
-// 	}
-// 	target = $("#fog_overlay, #black_layer");
-
-// 	if ($(e.target).attr('id') == "measure-button") {
-// 		target = $("#VTT, #black_layer");
-// 	}
-
-
-// 	target.css('cursor', 'crosshair');
-// 	if (e.currentTarget.id != "select-button") {
-// 		target.css('cursor', 'crosshair');
-// 	}
-
-// 	$(clicked).addClass('button-enabled');
-// 	$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-
-// 	var data = {
-// 		shape: $(clicked).attr('data-shape'),
-// 		type: $(clicked).attr('data-type'),
-// 	}
-
-// 	if ($(clicked).attr('id') == "align-button") {
-// 		window.ALIGNING = true;
-
-// 		// ALIGNING REQURES SPECIAL SETTINGS
-// 		$("#scene_map").css("width", "auto");
-// 		$("#scene_map").css("height", "auto");
-// 		reset_canvas();
-// 		redraw_canvas();
-// 		$("#tokens").hide();
-// 		$("#grid_overlay").hide();
-
-// 	}
-// 	else if (window.ALIGNING == true) {
-// 		window.ALIGNING = false;
-// 		window.ScenesHandler.reload();
-// 	}
-
 
 /**
  * raises and lowers the z-index of the fog layer
@@ -1335,7 +1222,9 @@ function setup_button_controller() {
 
 		// HANDLE SELECTING OF BUTTONS
 		if ($(clicked).hasClass(buttonSelectedClasses)){
-			$(menu).toggleClass("visible")
+			if(!$(clicked).attr("data-toggle")){
+				$(menu).toggleClass("visible")
+			}
 			// menu options can be toggled on or off
 			if($(clicked).hasClass("menu-option")){
 				// but only toggled on or off if they're not a unique-with which must always have 
@@ -1368,55 +1257,6 @@ function setup_button_controller() {
 			clicked:$(clicked),
 			menu:$(menu)
 		}
-		
-		
-	
-		// for menu options find out what options are enabled to do stuff
-		
-	// 		var target = $("#fog_overlay");
-
-	// if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
-	// 	console.log("setto a 50 per via di " + e.currentTarget.id);
-	// 	target.css("z-index", "50");
-	// } else {
-	// 	target.css("z-index", "31");
-	// }
-	// target = $("#fog_overlay, #black_layer");
-
-	// if ($(e.target).attr('id') == "measure-button") {
-	// 	target = $("#VTT, #black_layer");
-	// }
-
-
-	// target.css('cursor', 'crosshair');
-	// if (e.currentTarget.id != "select-button") {
-	// 	target.css('cursor', 'crosshair');
-	// }
-
-	// $(clicked).addClass('button-enabled');
-	// $(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-
-	// var data = {
-	// 	shape: $(clicked).attr('data-shape'),
-	// 	type: $(clicked).attr('data-type'),
-	// }
-
-	// if ($(clicked).attr('id') == "align-button") {
-	// 	window.ALIGNING = true;
-
-	// 	// ALIGNING REQURES SPECIAL SETTINGS
-	// 	$("#scene_map").css("width", "auto");
-	// 	$("#scene_map").css("height", "auto");
-	// 	reset_canvas();
-	// 	redraw_canvas();
-	// 	$("#tokens").hide();
-	// 	$("#grid_overlay").hide();
-
-	// }
-	// else if (window.ALIGNING == true) {
-	// 	window.ALIGNING = false;
-	// 	window.ScenesHandler.reload();
-	// }
 
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup',  data, drawing_mouseup);
