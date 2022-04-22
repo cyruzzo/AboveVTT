@@ -2505,6 +2505,7 @@ button.avtt-roll-button {
 #combat_area td:last-of-type {
         padding: 0px 5px 0px 0px;
 }
+#draw_text_title_bar,
 #combat_tracker_title_bar {
     width: 100%;
     background: #242527;
@@ -2531,6 +2532,7 @@ button.avtt-roll-button {
     cursor: move;
     z-index: 1;
 }
+#draw_text_title_bar:after,
 #combat_tracker_title_bar:after {
     content: '';
     height: 8px;
@@ -2550,6 +2552,7 @@ button.avtt-roll-button {
     width: 100%;
     color: #fff;
 }
+#draw_text_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
 #player_close_title_button,
@@ -2566,11 +2569,19 @@ button.avtt-roll-button {
 #monster_close_title_button:hover,
 #player_close_title_button:hover,
 #reload_player_frame_button:hover,
+#draw_text_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover {
     background: #ddd3;
     transition: all linear 0.2s;
 }
+
+#draw_text_title_bar_enter:hover {
+    background: #ddd3;
+    transition: all linear 0.2s;
+    cursor: pointer;
+}
  
+#draw_text_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
 #player_close_title_button svg,
@@ -2579,6 +2590,7 @@ button.avtt-roll-button {
     width: 20px;
 }
 
+#draw_text_title_bar_exit svg g rect,
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
 #player_close_title_button svg g rect {
@@ -2589,6 +2601,16 @@ button.avtt-roll-button {
     y: 10;
 }
 
+#draw_text_title_bar_enter {
+    fill: #ddd;
+    position: absolute;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+    top: 2px;
+}
+
+#draw_text_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
 #player_close_title_button {
@@ -2607,6 +2629,7 @@ button.avtt-roll-button {
 #monster_close_title_button,
 #player_close_title_button,
 #reload_player_frame_button,
+#draw_text_title_bar_exit,
 #combat_tracker_title_bar_exit {
     top: 2px;
 }

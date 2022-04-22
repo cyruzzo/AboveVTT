@@ -1,4 +1,4 @@
-function createMoveableTextWrapper(x, y, width, height) {
+function create_moveable_text_wrapper(x, y, width, height) {
     wrapper = $("<div id='draw_text_wrapper'/>");
     wrapper.css({
         position: "fixed",
@@ -7,11 +7,12 @@ function createMoveableTextWrapper(x, y, width, height) {
         "z-index": 1000,
         width: width,
         height: height,
+        "min-width": "55px",
     });
 
     $(wrapper).addClass("moveableWindow");
     $(wrapper).draggable({
-        handle: "#combat_tracker_title_bar",
+        handle: "#draw_text_title_bar",
         addClasses: false,
         scroll: false,
         containment: "#fog_overlay",
@@ -24,26 +25,42 @@ function createMoveableTextWrapper(x, y, width, height) {
         },
     });
 
-    const titleBar = $(
-        "<div id='combat_tracker_title_bar' class='restored'></div>"
-    );
+    const titleBar = $("<div id='draw_text_title_bar' class='restored'></div>");
     const closeCross = $(
-        '<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>'
+        '<div id="draw_text_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>'
+    );
+    const submitButton = $(
+        `<div id="draw_text_title_bar_enter">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        </div>
+        `
     );
     $(closeCross).on("click", function () {
         $(this).parent().parent().remove();
     });
+    $(submitButton).on("click", convert_text_to_drawing);
     titleBar.append(closeCross);
+    titleBar.append(submitButton);
     wrapper.append(titleBar);
 
     return wrapper;
 }
 
 //Function to dynamically add an input box:
-function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
+function add_text_drawing_input([
+    shape,
+    drawType,
+    color,
+    x,
+    y,
+    width,
+    height,
+    linewidth,
+    align,
+]) {
     // do something to figure out if the rect was drawn from the any corner that isn't top left
 
-    const wrapper = createMoveableTextWrapper(x, y, width, height);
+    const wrapper = create_moveable_text_wrapper(x, y, width, height);
 
     const input = $(
         `<textarea id='drawing_text' title="Input your text, this is an approximation of your final text. Press Enter to submit" type="text" autocomplete="off"/>`
@@ -65,17 +82,24 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
         // this text shadow is shit
         "-webkit-text-stroke-color": window.DRAWDATA.stroke_color,
         "-webkit-text-stroke-width": `${window.DRAWDATA.stroke_size}px`,
+        "min-height": "30px",
+        "min-width": "55px",
     });
     $("#VTT").append(wrapper);
-    $(input).on("keyup", handleKeyPress);
+    $(input).on("keyup", handle_key_press);
     $(input).focus();
 
     const myObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
             // get the title bar and resize it to match the box
-            const wrapper = $(entry.target).parent();
+            const bar = $(entry.target).parent().find("#draw_text_title_bar");
             // no idea why but the textArea is 6 pixels larger than the bar
-            $(wrapper).css("width", entry.contentRect.width + 6);
+            // scroll bar is approx 18px
+            if (entry.target.clientHeight < entry.target.scrollHeight) {
+                $(bar).css("width", entry.contentRect.width + 25);
+            } else {
+                $(bar).css("width", entry.contentRect.width + 7);
+            }
         });
     });
 
@@ -83,153 +107,160 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
     myObserver.observe(inputEle);
 }
 
-//Key handler for input box:
-function handleKeyPress(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-        // do more stuff here so make drawText generic enough I can call it from
-        // redraw_drawings
+function convert_text_to_drawing(event) {
+    // do more stuff here so make drawText generic enough I can call it from
+    // redraw_drawings
+    textBox = $(this).parent().parent().find("textarea");
+    const canvas = document.getElementById("fog_overlay");
+    const context = canvas.getContext("2d");
+    const height = Math.max(
+        parseInt($(textBox).css("height")),
+        parseInt($(textBox).css("min-height"))
+    );
+    const width = Math.max(
+        parseInt($(textBox).css("width")),
+        parseInt($(textBox).css("min-width"))
+    );
+    // textbox doesn't have left or top so use the wrapper
+    // with 25 being the bar height
+    const rectX = parseInt($(textBox).parent().css("left"));
+    const rectY = parseInt($(textBox).parent().css("top")) + 25;
 
-        const canvas = document.getElementById("fog_overlay");
-        const context = canvas.getContext("2d");
+    const text = textBox.val();
+    let fontWeight = $(textBox).css("font-weight") || "normal"
+    let fontStyle = $(textBox).css("font-style") || "normal"
 
-        const height = parseInt($(this).parent().css("height"));
-        const width = parseInt($(this).parent().css("width"));
+    const finalFont = {
+        font: $(textBox).css("font-family"),
+        size: parseInt($(textBox).css("font-size")),
+        weight: fontWeight,
+        style: fontStyle,
+        underline: $(textBox).css("text-decoration")?.includes("underline"),
+        align: $(textBox).css("text-align"),
+        color: $(textBox).css("color")
+    }
 
-        const text = this.value;
-        const fontColor = $(this).css("color");
-        const fontSize = parseInt($(this).css("font-size"));
-        const strokeColor = $(this).css("-webkit-text-stroke-color");
-        const strokeSize = parseInt($(this).css("-webkit-text-stroke-width"));
-        const underlined = $(this)
-            .css("text-decoration")
-            ?.includes("underline");
-
-        // calc drawline, that being where we will draw the text
-        // 25 being the height of the title bar, 5 being the text padding inside the box..maybe?
-        const verticalStartPos =
-            parseInt($(this).parent().css("top")) + 25 + 5 + fontSize;
-        let horizontalStartPos = parseInt($(this).parent().css("left"));
-        // do some fuckery to try figure out where to draw if centered/right aligned
-        if ($(this).css("text-align") === "center") {
-            // get the centre point of the box then minus off approx the length of text /2 as
-            // it appears partially left and right of centre point
-            horizontalStartPos =
-                parseInt($(this).parent().css("left")) +
-                parseInt($(this).css("width")) / 2 -
-                ((this.value.length / 2) * fontSize) / 2;
-        }
-        if ($(this).css("text-align") === "right") {
-            // get the right edge and minus off the approx length of text
-            horizontalStartPos =
-                parseInt($(this).parent().css("left")) +
-                parseInt($(this).css("width")) -
-                (this.value.length * fontSize) / 2;
-        }
-
-        const font = $(this).css("font-family");
-        let fontStyle = "normal";
-        // build the font styles that will look like "bold italic" if they're not normal
-        if ($(this).css("font-weight") !== "normal") {
-            fontStyle = $(this).css("font-weight");
-        }
-        if ($(this).css("font-style") !== "normal") {
-            fontStyle = fontStyle.concat(" ", $(this).css("font-style"));
-        }
-        const finalFont = `${fontStyle} ${fontSize}px ${font}`;
-        
-        // only draw a rect if it's not fully transparent
-        let data = [];
-        if (!isRGBATransparent(window.DRAWCOLOR)) {
-            data = [
-                "rect",
-                "filled",
-                window.DRAWCOLOR,
-                window.BEGIN_MOUSEX,
-                window.BEGIN_MOUSEY,
-                width,
-                height,
-                window.LINEWIDTH,
-            ];
-            window.DRAWINGS.push(data);
-        }
+    const stroke = {
+        size: parseInt($(textBox).css("-webkit-text-stroke-width")),
+        color: $(textBox).css("-webkit-text-stroke-color")
+    }
+    // only draw a rect if it's not fully transparent
+    let data = [];
+    if (!isRGBATransparent(window.DRAWCOLOR)) {
         data = [
-            "text",
-            horizontalStartPos,
-            verticalStartPos,
-            text,
-            finalFont,
-            fontColor,
-            strokeSize,
-            strokeColor,
-            underlined,
+            "rect",
+            "filled",
+            window.DRAWCOLOR,
+            rectX,
+            rectY,
+            width,
+            height,
+            window.LINEWIDTH,
         ];
         window.DRAWINGS.push(data);
-        redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-        $(this).parent().remove();
+    }
+    // data should match params in draw_text
+    data = [
+        "text",
+        rectX,
+        rectY + finalFont.size,
+        text,
+        finalFont,
+        stroke
+    ];
+    // make a function for the following like 6 lines as it's all over the place
+    window.DRAWINGS.push(data);
+    redraw_canvas();
+    redraw_drawings();
+    window.ScenesHandler.persist();
+    if (window.CLOUD) sync_drawings();
+    else window.MB.sendMessage("custom/myVTT/drawing", data);
+    $("#draw_text_title_bar_exit").click();
+}
+
+//Key handler for input box:
+function handle_key_press(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
     } else if (e.key == "Escape") $(this).parent().remove();
 }
 
+function get_x_position_of_text(x, text, font) {
+    // do a thing to get the client width of the text via a span
+    //https://stackoverflow.com/questions/14852925/get-string-length-in-pixels-using-javascript
+    if (font.align === "left") {
+        return x;
+    } else if (font.align === "center") {
+        // pull out the details from the font
+        const placeholder = $(`<span id="text">text</span>`);
+    }
+}
+
 //Draw the text onto canvas:
-function drawText(
+function draw_text(
     context,
     type,
-    horizontalStartPos,
-    verticalStartPos,
+    startingX,
+    startingY,
     text,
     font,
-    fontColor,
-    strokeSize,
-    strokeColor,
-    underlined = false
+    stroke
 ) {
+    // TODO BAIN change font and stroke to objects for easier accessing,
+    // only compile into the drawn font style once we're drawing
     // ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
     // draw the background rectangle
     // will look like "bold italic 24px Arial"
-    context.font = font;
-    context.strokeStyle = strokeColor;
-    context.lineWidth = strokeSize;
+    context.font  = `${font.weight} ${font.style} ${font.size}px ${font.font}`;
+    context.strokeStyle = stroke.color;
+    context.lineWidth = stroke.size;
+    context.fillStyle = font.color;
 
-    context.fillStyle = fontColor;
-    context.strokeText(text, horizontalStartPos, verticalStartPos);
-    context.fillText(text, horizontalStartPos, verticalStartPos);
+    const lines = text.split(/\r?\n/);
 
-    if (underlined) {
-        // canvas doesn't have an underline feature so draw underscores for each string char
-        var underscored = text
-            .split("")
-            .map(function (char) {
-                return (char = "_");
-            })
-            .join("");
-        context.fillText(underscored, horizontalStartPos, verticalStartPos);
-    }
+    let x = startingX;
+    let y = startingY;
 
-    // data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
-    // 	window.DRAWINGS.push(data);
-    // 	redraw_canvas();
-    // 	redraw_drawings();
-    // 	window.ScenesHandler.persist();
-    // 	if(window.CLOUD)
-    // 		sync_drawings();
-    // 	else
-    // 		window.MB.sendMessage('custom/myVTT/drawing', data);
+    lines.forEach((line) => {
+        // do some fuckery per line to try get right starting x position
+        const textX = get_x_position_of_text(x, text, font);
+        context.strokeText(line, textX, y);
+        // TODO BAIN this underline is shit make it better
+        if (font.underlined) {
+            // canvas doesn't have an underline feature so draw underscores for each string char
+            var underscored = line
+                .split("")
+                .map(function (char) {
+                    return (char = "_");
+                })
+                .join("");
+            context.fillText(underscored, textX, y);
+        }
+        y += font.size;
+    });
+    // reset any modifications to these as we are going to go around the loop again
+    x = startingX;
+    y = startingY;
+    lines.forEach((line) => {
+        // loop the lines again as large stroke size will overlap the fill text
+        // so add fill text in last
+        const textX = get_x_position_of_text(x, text, font);
+        context.fillText(line, textX, y);
+        y += font.size;
+    });
 }
 
 function init_text_button(buttons) {
     availableFonts = [
-        "Roboto Condensed",
-        "Arial Narrow",
-        "Helvetica Neue",
-        "Helvetica",
         "Arial",
-        "sans-serif",
-        "Gloria Hallelujah",
+        "Verdana",
+        "Helvetica",
+        "Tahoma",
+        "Trebuchet MS",
+        "Times New Roman",
+        "Georgia",
+        "Garamond",
+        "Courier New",
+        "Brush Script MT",
     ];
     textButton = $(
         "<div style='display:inline' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</div>"

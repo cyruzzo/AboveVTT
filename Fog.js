@@ -627,7 +627,7 @@ function redraw_drawings() {
 			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
 		}
 		if (data[0] == "text") {
-			drawText(ctx, ...data);
+			draw_text(ctx, ...data);
 		}
 
 		if (data[0] == "polygon" && data[1] == "filled") {
@@ -936,7 +936,7 @@ function drawing_mouseup(e) {
 	}
 	if (window.DRAWSHAPE == "text") {
 		data = ['text', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH]
-		addInput(data)
+		add_text_drawing_input(data)
 		redraw_canvas();
 	}
 
