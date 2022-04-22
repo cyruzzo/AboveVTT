@@ -452,29 +452,7 @@ class Token {
 		hpbar.append(hp_input);
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
-		if(self.options.id != undefined) {
-			if (!self.isPlayer()) {
-				hp_input.change(function(e) {
-					hp_input.val(hp_input.val().trim());
-					self.update_and_sync(e);
-				});
-				hp_input.click(function(e) {
-					$(e.target).select();
-				});
-				maxhp_input.change(function(e) {
-					maxhp_input.val(maxhp_input.val().trim());
-					self.update_and_sync(e);
-				});
-				maxhp_input.click(function(e) {
-					$(e.target).select();
-				});
-			}
-			else {
-				hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
-				maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
-			}
-		}
-		else{
+		if (!self.isPlayer()) {
 			hp_input.change(function(e) {
 				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
@@ -489,6 +467,10 @@ class Token {
 			maxhp_input.click(function(e) {
 				$(e.target).select();
 			});
+		}
+		else {
+			hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
 
 		return hpbar;
@@ -1659,6 +1641,10 @@ function multiple_callback(key, options, event) {
 function is_player_id(id) {
 	// player tokens have ids with a structure like "/profile/username/characters/someId"
 	// monster tokens have a uuid for their id
+	if (id === undefined)
+	{
+		return false;
+	}
 	return id.includes("/");
 }
 
