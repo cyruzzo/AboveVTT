@@ -38,7 +38,7 @@ function create_moveable_text_wrapper(x, y, width, height) {
     $(closeCross).on("click", function () {
         $(this).parent().parent().remove();
     });
-    $(submitButton).on("click", convert_text_to_drawing);
+    $(submitButton).on("click", handle_draw_text_submit);
     titleBar.append(closeCross);
     titleBar.append(submitButton);
     wrapper.append(titleBar);
@@ -107,12 +107,13 @@ function add_text_drawing_input([
     myObserver.observe(inputEle);
 }
 
-function convert_text_to_drawing(event) {
+function handle_draw_text_submit(event) {
     // do more stuff here so make drawText generic enough I can call it from
     // redraw_drawings
     textBox = $(this).parent().parent().find("textarea");
-    const canvas = document.getElementById("fog_overlay");
-    const context = canvas.getContext("2d");
+    // no text in box, return early
+    if (!textBox.val()) return;
+
     const height = Math.max(
         parseInt($(textBox).css("height")),
         parseInt($(textBox).css("min-height"))
@@ -127,23 +128,23 @@ function convert_text_to_drawing(event) {
     const rectY = parseInt($(textBox).parent().css("top")) + 25;
 
     const text = textBox.val();
-    let fontWeight = $(textBox).css("font-weight") || "normal"
-    let fontStyle = $(textBox).css("font-style") || "normal"
+    let fontWeight = $(textBox).css("font-weight") || "normal";
+    let fontStyle = $(textBox).css("font-style") || "normal";
 
-    const finalFont = {
+    const font = {
         font: $(textBox).css("font-family"),
         size: parseInt($(textBox).css("font-size")),
         weight: fontWeight,
         style: fontStyle,
         underline: $(textBox).css("text-decoration")?.includes("underline"),
         align: $(textBox).css("text-align"),
-        color: $(textBox).css("color")
-    }
+        color: $(textBox).css("color"),
+    };
 
     const stroke = {
         size: parseInt($(textBox).css("-webkit-text-stroke-width")),
-        color: $(textBox).css("-webkit-text-stroke-color")
-    }
+        color: $(textBox).css("-webkit-text-stroke-color"),
+    };
     // only draw a rect if it's not fully transparent
     let data = [];
     if (!isRGBATransparent(window.DRAWCOLOR)) {
@@ -160,14 +161,8 @@ function convert_text_to_drawing(event) {
         window.DRAWINGS.push(data);
     }
     // data should match params in draw_text
-    data = [
-        "text",
-        rectX,
-        rectY + finalFont.size,
-        text,
-        finalFont,
-        stroke
-    ];
+    // push the starting position of y south based on the font size
+    data = ["text", rectX, rectY + font.size, text, font, stroke, width];
     // make a function for the following like 6 lines as it's all over the place
     window.DRAWINGS.push(data);
     redraw_canvas();
@@ -184,14 +179,32 @@ function handle_key_press(e) {
     } else if (e.key == "Escape") $(this).parent().remove();
 }
 
-function get_x_position_of_text(x, text, font) {
+function get_x_start_and_width_of_text(x, width, text, font, stroke) {
     // do a thing to get the client width of the text via a span
     //https://stackoverflow.com/questions/14852925/get-string-length-in-pixels-using-javascript
+
+    const placeholder = $(`<span id="text_measure">${text}</span>`);
+    placeholder.css({
+        "text-align": font.align,
+        "font-family": font.font,
+        "font-size": `${font.size}px`,
+        "font-weight": font.bold || "normal",
+        "font-style": font.italic || "normal",
+        // this text shadow is shit
+        "-webkit-text-stroke-color": stroke.color,
+        "-webkit-text-stroke-width": `${stroke.size}px`,
+    });
+    $("body").append(placeholder);
+    const textWidth = $("#text_measure").width();
+    placeholder.remove();
     if (font.align === "left") {
-        return x;
-    } else if (font.align === "center") {
+        return [x, textWidth];
+    }
+    if (font.align === "center") {
         // pull out the details from the font
-        const placeholder = $(`<span id="text">text</span>`);
+        return [x + width / 2 - textWidth / 2, textWidth];
+    } else {
+        return [x + width - textWidth, textWidth];
     }
 }
 
@@ -203,14 +216,15 @@ function draw_text(
     startingY,
     text,
     font,
-    stroke
+    stroke,
+    width
 ) {
     // TODO BAIN change font and stroke to objects for easier accessing,
     // only compile into the drawn font style once we're drawing
     // ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
     // draw the background rectangle
     // will look like "bold italic 24px Arial"
-    context.font  = `${font.weight} ${font.style} ${font.size}px ${font.font}`;
+    context.font = `${font.weight} ${font.style} ${font.size}px ${font.font}`;
     context.strokeStyle = stroke.color;
     context.lineWidth = stroke.size;
     context.fillStyle = font.color;
@@ -222,19 +236,27 @@ function draw_text(
 
     lines.forEach((line) => {
         // do some fuckery per line to try get right starting x position
-        const textX = get_x_position_of_text(x, text, font);
+        const [textX, textWidth] = get_x_start_and_width_of_text(
+            x,
+            width,
+            line,
+            font,
+            stroke
+        );
         context.strokeText(line, textX, y);
         // TODO BAIN this underline is shit make it better
-        if (font.underlined) {
-            // canvas doesn't have an underline feature so draw underscores for each string char
-            var underscored = line
-                .split("")
-                .map(function (char) {
-                    return (char = "_");
-                })
-                .join("");
-            context.fillText(underscored, textX, y);
+        if (font.underline) {
+            drawLine(
+                context,
+                textX,
+                y + font.size / 10,
+                textX + textWidth,
+                y + font.size / 10,
+                stroke.color,
+                font.size / 10
+            );
         }
+
         y += font.size;
     });
     // reset any modifications to these as we are going to go around the loop again
@@ -243,7 +265,13 @@ function draw_text(
     lines.forEach((line) => {
         // loop the lines again as large stroke size will overlap the fill text
         // so add fill text in last
-        const textX = get_x_position_of_text(x, text, font);
+        const [textX, textWidth] = get_x_start_and_width_of_text(
+            x,
+            width,
+            line,
+            font,
+            stroke
+        );
         context.fillText(line, textX, y);
         y += font.size;
     });
