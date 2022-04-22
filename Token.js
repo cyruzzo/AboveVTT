@@ -1701,6 +1701,9 @@ function multiple_callback(key, options, event) {
 function is_player_id(id) {
 	// player tokens have ids with a structure like "/profile/username/characters/someId"
 	// monster tokens have a uuid for their id
+	if (id === undefined) {
+		return false;
+	}
 	return id.includes("/");
 }
 
