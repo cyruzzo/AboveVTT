@@ -216,16 +216,18 @@ function edit_scene_dialog(scene_id) {
 			scene[n] = nValue;
 			console.log('setto ' + n + ' a ' + $(this).val());
 		});
-		if(window.CLOUD){
-			window.ScenesHandler.persist_scene(scene_id,true,true);						
-			setTimeout(function() {
-				if($(".player_scenes_button.selected").parent().parent().attr("data-scene-index") == scene_id) {
-					$(".player_scenes_button.selected").click();
+		if(window.CLOUD) {
+			$.ajax({
+				url:window.ScenesHandler.persist_scene(scene_id,true,true),
+				success:function(){			  	
+					if($(".player_scenes_button.selected").parent().parent().attr("data-scene-index") == scene_id) {
+						$(".player_scenes_button.selected").click();
+					}
+					if($(".dm_scenes_button.selected").parent().parent().attr("data-scene-index") == scene_id) {
+						$(".dm_scenes_button.selected").click();
+					}
 				}
-				if($(".dm_scenes_button.selected").parent().parent().attr("data-scene-index") == scene_id) {
-					$(".dm_scenes_button.selected").click();
-				}
-			}, 200);			
+			});		
 		}
 		else{
 			window.ScenesHandler.persist();
@@ -235,10 +237,6 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 	});
-	
-
-	
-
 
 	let grid_5 = function(enable_grid = false, enable_snap = true) {
 
