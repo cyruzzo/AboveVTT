@@ -218,6 +218,12 @@ function edit_scene_dialog(scene_id) {
 		});
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
+			if($(".player_scenes_button.selected").parent().parent().attr("data-scene-index") == scene_id) {
+				$(".player_scenes_button.selected").click();
+			}
+			if($(".dm_scenes_button.selected").parent().parent().attr("data-scene-index") == scene_id) {
+				$(".dm_scenes_button.selected").click();
+			}			
 		}
 		else{
 			window.ScenesHandler.persist();
