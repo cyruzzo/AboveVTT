@@ -452,7 +452,7 @@ class Token {
 		hpbar.append(hp_input);
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
-		if (!self.isPlayer()) {
+		if (!this.isPlayer()) {
 			hp_input.change(function(e) {
 				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
