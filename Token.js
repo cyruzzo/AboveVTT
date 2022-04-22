@@ -1233,7 +1233,7 @@ class Token {
 			});
 
 			tok.mouseup(function (e) {
-			  if (e.which === 3 && e.ctrlKey) {
+			  if (e.which === 3 && (e.ctrlKey || e.metaKey)) {
 			      token_context_menu_expanded([tok.attr("data-id")]);			    
 			  }
 			});
