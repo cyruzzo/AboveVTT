@@ -50,8 +50,12 @@ function get_canvas_max_area() {
 class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	reload(callback = null) {
-		this.switch_scene(this.current_scene_id, null);
-	}
+        if (window.CLOUD) {
+            window.MB.handleScene({data: window.CURRENT_SCENE_DATA});
+        } else {
+            this.switch_scene(this.current_scene_id, null);
+        }
+    }
 
 	switch_scene(sceneid, callback = null) { // THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
 		this.current_scene_id = sceneid;

@@ -218,6 +218,7 @@ function edit_scene_dialog(scene_id) {
 		});
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
+			window.ScenesHandler.reload();
 		}
 		else{
 			window.ScenesHandler.persist();
