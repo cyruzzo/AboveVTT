@@ -797,7 +797,16 @@ function drawing_mousemove(e) {
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
 		}
 		if (window.DRAWSHAPE == "text") {
+			const opacity = style.split(",")?.[3]?.trim().replace(")","")
+			ctx.save();
+			if (opacity && opacity === "0"){
+				// fully transparent, do a dash line
+				ctx.strokeStyle = "grey";
+				ctx.setLineDash([2,2]);
+				drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,"white",false,true);
+			}
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
+			ctx.restore();
 		}
 		else if (window.DRAWSHAPE == "arc") {
 			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
@@ -928,6 +937,7 @@ function drawing_mouseup(e) {
 	if (window.DRAWSHAPE == "text") {
 		data = ['text', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH]
 		addInput(data)
+		redraw_canvas();
 	}
 
 	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw") {
