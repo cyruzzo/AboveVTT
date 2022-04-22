@@ -1231,6 +1231,12 @@ class Token {
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 				draw_selected_token_bounding_box(); // update rotation bounding box
 			});
+
+			tok.mouseup(function (e) {
+			  if (e.which === 3 && e.ctrlKey) {
+			      token_context_menu_expanded([tok.attr("data-id")]);			    
+			  }
+			});
 			
 			console.groupEnd()
 		}
