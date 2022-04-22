@@ -92,37 +92,36 @@ function handleKeyPress(e) {
         const canvas = document.getElementById("fog_overlay");
         const context = canvas.getContext("2d");
 
-        const rectColor = $(this).css("background-color");
         const height = parseInt($(this).parent().css("height"));
         const width = parseInt($(this).parent().css("width"));
 
-        const text = this.value
-        const fontColor = $(this).css("color")
+        const text = this.value;
+        const fontColor = $(this).css("color");
         const fontSize = parseInt($(this).css("font-size"));
         const strokeColor = $(this).css("-webkit-text-stroke-color");
-        const strokeSize = parseInt(
-            $(this).css("-webkit-text-stroke-width")
-        );
-        const underlined = $(this).css("text-decoration")?.includes("underline")
+        const strokeSize = parseInt($(this).css("-webkit-text-stroke-width"));
+        const underlined = $(this)
+            .css("text-decoration")
+            ?.includes("underline");
 
         // calc drawline, that being where we will draw the text
         // 25 being the height of the title bar, 5 being the text padding inside the box..maybe?
         const verticalStartPos =
             parseInt($(this).parent().css("top")) + 25 + 5 + fontSize;
-        let horizontalStartPos = parseInt($(this).parent().css("left"))
+        let horizontalStartPos = parseInt($(this).parent().css("left"));
         // do some fuckery to try figure out where to draw if centered/right aligned
         if ($(this).css("text-align") === "center") {
             // get the centre point of the box then minus off approx the length of text /2 as
             // it appears partially left and right of centre point
             horizontalStartPos =
-                x +
+                parseInt($(this).parent().css("left")) +
                 parseInt($(this).css("width")) / 2 -
                 ((this.value.length / 2) * fontSize) / 2;
         }
         if ($(this).css("text-align") === "right") {
             // get the right edge and minus off the approx length of text
             horizontalStartPos =
-                x +
+                parseInt($(this).parent().css("left")) +
                 parseInt($(this).css("width")) -
                 (this.value.length * fontSize) / 2;
         }
@@ -137,17 +136,24 @@ function handleKeyPress(e) {
             fontStyle = fontStyle.concat(" ", $(this).css("font-style"));
         }
         const finalFont = `${fontStyle} ${fontSize}px ${font}`;
-        // parent css left/top+25 will be the top left corner of the input box
-        drawRect(
-            context,
-            parseInt($(this).parent().css("left")),
-            parseInt($(this).parent().css("top")) + 25,
-            width,
-            height,
-            rectColor
-        );
-        drawText(
-            context,
+        
+        // only draw a rect if it's not fully transparent
+        let data = [];
+        if (!isRGBATransparent(window.DRAWCOLOR)) {
+            data = [
+                "rect",
+                "filled",
+                window.DRAWCOLOR,
+                window.BEGIN_MOUSEX,
+                window.BEGIN_MOUSEY,
+                width,
+                height,
+                window.LINEWIDTH,
+            ];
+            window.DRAWINGS.push(data);
+        }
+        data = [
+            "text",
             horizontalStartPos,
             verticalStartPos,
             text,
@@ -155,8 +161,16 @@ function handleKeyPress(e) {
             fontColor,
             strokeSize,
             strokeColor,
-            underlined
-        );
+            underlined,
+        ];
+        window.DRAWINGS.push(data);
+        redraw_canvas();
+		redraw_drawings();
+		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
         $(this).parent().remove();
     } else if (e.key == "Escape") $(this).parent().remove();
 }
@@ -164,6 +178,7 @@ function handleKeyPress(e) {
 //Draw the text onto canvas:
 function drawText(
     context,
+    type,
     horizontalStartPos,
     verticalStartPos,
     text,
@@ -176,11 +191,11 @@ function drawText(
     // ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
     // draw the background rectangle
     // will look like "bold italic 24px Arial"
-    context.font = font
-    context.strokeStyle = strokeColor
-    context.lineWidth = strokeSize
+    context.font = font;
+    context.strokeStyle = strokeColor;
+    context.lineWidth = strokeSize;
 
-    context.fillStyle = fontColor
+    context.fillStyle = fontColor;
     context.strokeText(text, horizontalStartPos, verticalStartPos);
     context.fillText(text, horizontalStartPos, verticalStartPos);
 

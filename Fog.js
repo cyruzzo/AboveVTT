@@ -626,11 +626,8 @@ function redraw_drawings() {
 			lineWidth = data.length > 7 ? data[7] : "6";
 			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
 		}
-		// TODO BAIN
 		if (data[0] == "text") {
-			style = data[2];
-			lineWidth = data.length > 7 ? data[7] : "6";
-			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
+			drawText(ctx, ...data);
 		}
 
 		if (data[0] == "polygon" && data[1] == "filled") {
@@ -762,6 +759,10 @@ function drawing_mousedown(e) {
 
 }
 
+function isRGBATransparent(rgba){
+	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
+}
+
 function drawing_mousemove(e) {
 
 	if (window.MOUSEMOVEWAIT) {
@@ -797,9 +798,8 @@ function drawing_mousemove(e) {
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
 		}
 		if (window.DRAWSHAPE == "text") {
-			const opacity = style.split(",")?.[3]?.trim().replace(")","")
 			ctx.save();
-			if (opacity && opacity === "0"){
+			if (isRGBATransparent(style)) {
 				// fully transparent, do a dash line
 				ctx.strokeStyle = "grey";
 				ctx.setLineDash([2,2]);
@@ -1732,7 +1732,7 @@ function init_draw_menu(buttons){
 		</div>`);
 
 	draw_menu.find("#delete_drawing").click(function() {
-		r = confirm("DELETE ALL DRAWINGS? (cannot be undone!)");
+		r = confirm("DELETE ALL DRAWINGS AND TEXT? (cannot be undone!)");
 		if (r === true) {
 			window.DRAWINGS = [];
 			redraw_drawings();
