@@ -149,7 +149,7 @@ function handle_draw_text_submit(event) {
     let data = [];
     if (!isRGBATransparent(window.DRAWCOLOR)) {
         data = [
-            "rect",
+            "rect-text",
             "filled",
             window.DRAWCOLOR,
             rectX,
@@ -175,8 +175,7 @@ function handle_draw_text_submit(event) {
 
 //Key handler for input box:
 function handle_key_press(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-    } else if (e.key == "Escape") $(this).parent().remove();
+    if (e.key == "Escape") $(this).parent().remove();
 }
 
 function get_x_start_and_width_of_text(x, width, text, font, stroke) {
@@ -368,6 +367,67 @@ function init_text_button(buttons) {
         <input title='Stroke color' data-required="stroke_color" class='spectrum'
             id='stroke_color' name='strokeColor' value='white' />
         `);
+
+    textMenu.append(`<div class='menu-subtitle'>Controls</div>`);
+    textMenu.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+                <div id='text_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+                    data-shape='rect' data-key="rect" data-value='eraser'>
+                        Erase
+                </div>
+            </div>`
+    );
+    textMenu.append(`
+            <div class='ddbc-tab-options--layout-pill'>
+                <div class='ddbc-tab-options__header-heading' id='text_undo'>
+                    UNDO
+                </div>
+            </div>`);
+    textMenu.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+                <div class='ddbc-tab-options__header-heading' id='text_clear'>
+                    CLEAR
+                </div>
+            </div>`
+    );
+
+    textMenu.find("#text_clear").click(function() {
+		r = confirm("DELETE ALL TEXT? (cannot be undone!)");
+		if (r === true) {
+            // keep anything that isn't text 
+			window.DRAWINGS = window.DRAWINGS.filter(d => !d[0].includes("text"));
+			redraw_drawings();
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
+	});
+
+	textMenu.find("#text_undo").click(function() {
+        let lastElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's text
+        while (lastElement--) {
+            if (window.DRAWINGS[lastElement][0].includes("text")){
+                // text may or may not have a box behind it
+                // be safe by using math.max
+                if (window.DRAWINGS[Math.max(lastElement-1,0)][0] === "rect-text"){
+                    // remove 2 elements
+                    window.DRAWINGS.splice(Math.max(lastElement-1,0), 2)
+                }else{
+                    window.DRAWINGS.splice(lastElement, 1)
+                }
+                redraw_drawings();
+                if(window.CLOUD){
+                    sync_drawings();
+                }
+                else{
+                    window.ScenesHandler.persist();
+                    window.ScenesHandler.sync();
+                }
+                break
+            }
+        }
+	});
+
     $("body").append(textMenu);
 
     let colorPickers = textMenu.find("input.spectrum");

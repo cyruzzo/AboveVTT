@@ -582,35 +582,21 @@ function redraw_drawings() {
 		if (data[0] == "eraser") {
 			ctx.clearRect(data[3], data[4], data[5], data[6]);
 		}
-		if (data[0] == "rect" && data[1] == "filled") {
-			style = data[2];
-			drawRect(ctx,data[3], data[4], data[5], data[6], style, true);
-		}
-		if (data[0] == "rect" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawRect(ctx,data[3], data[4], data[5], data[6], style, true);
+		if ((data[0] == "rect" || data[0] === "rect-text") && data[1] == "filled") {
+			drawRect(ctx,data[3], data[4], data[5], data[6], data[2], true);
 		}
 		if (data[0] == "rect" && data[1] == "border") {
 			lineWidth = data.length > 7 ? data[7] : "6";
-			style = data[2];
-			drawRect(ctx,data[3], data[4], data[5], data[6], style, false, true,lineWidth );
+			drawRect(ctx,data[3], data[4], data[5], data[6], data[2], false, true,lineWidth );
 		}
 		if (data[0] == "arc" && data[1] == "filled") {
 			style = data[2];
-			drawCircle(ctx,data[3], data[4], data[5], style);
-		}
-		if (data[0] == "arc" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
 			drawCircle(ctx,data[3], data[4], data[5], style);
 		}
 		if (data[0] == "arc" && data[1] == "border") {
 			style = data[2];
 			lineWidth = data.length > 7 ? data[7] : "6";
 			drawCircle(ctx,data[3], data[4], data[5], style, false, true, lineWidth);
-		}
-		if (data[0] == "cone" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawCone(ctx,data[3], data[4], data[5],data[6], style);
 		}
 		if (data[0] == "cone" && data[1] == "filled") {
 			style = data[2];
@@ -634,10 +620,6 @@ function redraw_drawings() {
 			style = data[2];
 			drawPolygon(ctx,data[3], style, true);
 		}
-		if (data[0] == "polygon" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawPolygon(ctx,data[3], style, true);
-		}
 		if (data[0] == "polygon" && data[1] == "border") {
 			style = data[2];
 			lineWidth = data.length > 7 ? data[7] : "6";
@@ -659,6 +641,11 @@ function stop_drawing() {
 	target.off('mouseup', drawing_mouseup);
 	target.off('mousemove', drawing_mousemove);
 	target.off('contextmenu', drawing_contextmenu);
+}
+
+
+function isRGBATransparent(rgba){
+	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
 }
 
 function drawing_mousedown(e) {
@@ -759,9 +746,6 @@ function drawing_mousedown(e) {
 
 }
 
-function isRGBATransparent(rgba){
-	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
-}
 
 function drawing_mousemove(e) {
 
@@ -795,9 +779,12 @@ function drawing_mousemove(e) {
 		}
 
 		if (window.DRAWSHAPE == "rect") {
+			style = window.DRAWFUNCTION === "eraser" ? "rgba(251, 0, 0, 0.5)" : style
 			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
 		}
-		if (window.DRAWSHAPE == "text") {
+		if (window.DRAWFUNCTION === "draw_text") {
+			// draw a rect that will be removed and replaced with an input box
+			// when mouseup
 			ctx.save();
 			if (isRGBATransparent(style)) {
 				// fully transparent, do a dash line
@@ -920,11 +907,53 @@ function drawing_mouseup(e) {
 	const width = mousex - window.BEGIN_MOUSEX;
 	const height = mousey - window.BEGIN_MOUSEY;
 
+	let data = ['',
+		 window.DRAWTYPE,
+		 window.DRAWCOLOR,
+		 window.BEGIN_MOUSEX,
+		 window.BEGIN_MOUSEY,
+		 width,
+		 height,
+		 window.LINEWIDTH];
 
-	// [0-3] is always shape data [4] is shape and [5] is type
-
-	if (window.DRAWSHAPE == "line" && window.DRAWFUNCTION === "draw") {
-		data = ['line', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, window.LINEWIDTH];
+	if ((window.DRAWSHAPE !== "select" || window.DRAWSHAPE !== "measure") &&
+		(window.DRAWFUNCTION === "draw")){
+		// line is missing as we already have teh data for it
+		switch (window.DRAWSHAPE) {
+			case "line":
+				data[0] = "line"
+				data[5] = mousex
+				data[6] = mousey
+				break
+			case "rect":
+				data[0] = "rect"
+				break;
+			case "arc":
+				data[0] = "arc"
+				data[3] = centerX
+				data[4] = centerY
+				data[5] = radius
+				data[6] = null
+				break;
+			case "cone":
+				data[0] = "cone"
+				data[5] = mousex
+				data[6] = mousey
+				break;
+			case "brush":
+				window.BRUSHPOINTS.push({x:mousex, y:mousey});
+				// cap with a dot
+				window.BRUSHPOINTS.push({x:window.mousex+1, y:window.mousey+1});
+				window.BRUSHPOINTS.push({x:window.mousex-1, y:window.mousey-1});
+				data[0] = "brush"
+				data[3] = window.BRUSHPOINTS
+				data[4] = null
+				data[5] = null
+				data[6] = null
+				break;
+			default:
+				break;
+		}
 		window.DRAWINGS.push(data);
 		redraw_canvas();
 		redraw_drawings();
@@ -934,86 +963,30 @@ function drawing_mouseup(e) {
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (window.DRAWSHAPE == "text") {
-		data = ['text', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH]
+	else if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
+		console.log('disegno');
+		data[0] = "eraser"
+		window.DRAWINGS.push(data);
+		redraw_canvas();
+		redraw_drawings();
+		window.ScenesHandler.persist();
+		if(window.CLOUD)
+			sync_drawings();
+		else
+			window.MB.sendMessage('custom/myVTT/drawing', data);
+	}
+	else if (window.DRAWFUNCTION === "draw_text"){
+		const canvas = document.getElementById("fog_overlay");
+		const context = canvas.getContext("2d");
+		context.restore();
+		data[0] = "text"
 		add_text_drawing_input(data)
-		redraw_canvas();
 	}
-
-	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw") {
-		console.log('disegno');
-		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
-		console.log('disegno');
-		data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-	if (window.DRAWSHAPE == "arc" && window.DRAWFUNCTION === "draw") {
-		console.log('son qua');
-		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = ['arc', window.DRAWTYPE, window.DRAWCOLOR, centerX, centerY, radius,null,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-	if (window.DRAWSHAPE == "cone" && window.DRAWFUNCTION === "draw") {
-		data = ['cone', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-	
-	if(window.DRAWSHAPE == "brush" && window.DRAWFUNCTION === "draw") {
-		window.BRUSHPOINTS.push({x:mousex, y:mousey});
-		// cap with a dot
-		window.BRUSHPOINTS.push({x:window.mousex+1, y:window.mousey+1});
-		window.BRUSHPOINTS.push({x:window.mousex-1, y:window.mousey-1});
-		data = ['brush', window.DRAWTYPE,window.DRAWCOLOR, window.BRUSHPOINTS,null,null,null,window.LINEWIDTH];
-		//console.log("save brush");
-		//console.log(data);
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-
-	if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
+	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
 		finalise_drawing_fog(width, height)
 	}
 	
-	if (window.DRAWSHAPE == "select") {
+	else if (window.DRAWSHAPE == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
@@ -1041,7 +1014,7 @@ function drawing_mouseup(e) {
 		draw_selected_token_bounding_box();
 		console.log("READY");
 	}
-	if (window.DRAWSHAPE == "measure") {
+	else if (window.DRAWSHAPE == "measure") {
 
 		setTimeout(function () {
 			// We do not clear if we are still measuring, added this as it somehow appeared multiple
@@ -1051,39 +1024,6 @@ function drawing_mouseup(e) {
 			}
 		}, 2000);
 		WaypointManager.clearWaypoints();
-	}
-}
-
-/**
- * maps "hide" or "reveal" to a bool to be stored in window.REVEALED
- * @returns 1 | 0
- */
-function fog_type_to_int(){
-	return window.DRAWFUNCTION === "hide" ? 1 : 0
-}
-
-function finalise_drawing_fog(width, height) {
-	if (window.DRAWSHAPE == "arc") {
-		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
-		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
-		redraw_canvas();
-	} else if (window.DRAWSHAPE == "rect") {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
-		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
-		redraw_canvas();
 	}
 }
 
@@ -1136,6 +1076,39 @@ function drawing_contextmenu(e) {
 }
 
 /**
+ * maps "hide" or "reveal" to a bool to be stored in window.REVEALED
+ * @returns 1 | 0
+ */
+ function fog_type_to_int(){
+	return window.DRAWFUNCTION === "hide" ? 1 : 0
+}
+
+function finalise_drawing_fog(width, height) {
+	if (window.DRAWSHAPE == "arc") {
+		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
+		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
+		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_canvas();
+	} else if (window.DRAWSHAPE == "rect") {
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_canvas();
+	}
+}
+
+/**
  * Hides all open menus from the top buttons and deselects all the buttons
  */
 function deselect_all_top_buttons(buttonSelectedClasses) {
@@ -1166,6 +1139,9 @@ function get_draw_data(button, menu){
 	else{
 		const requiredValuesInMenu = $(menu).find('[data-required]')
 		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
+		const selectedShape = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-shape]").attr("data-shape")
+		const selectedFunction = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-function]").attr("data-function")
+
 		const requiredOptions = $(requiredValuesInMenu).map(function() {
 			const key = $(this).attr("id")
 			const value = $(this).val()
@@ -1191,8 +1167,8 @@ function get_draw_data(button, menu){
 			}
 		}
 		return{
-			shape:$(selectedInMenu).attr("data-shape"),
-			function:$(selectedInMenu).attr("data-value"),
+			shape:selectedShape,
+			function:selectedFunction,
 			from:menu.attr("id"),
 			...options
 		}
@@ -1600,21 +1576,21 @@ function init_fog_menu(buttons){
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
 			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape='rect' data-value="reveal" data-key="fog" data-unique-with="fog"> 
+				data-shape='rect' data-function="reveal" data-unique-with="fog"> 
 					Square 
 			</div> 
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
 			<div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-value="reveal" data-key="fog" data-unique-with="fog"> 
+				data-shape='arc' data-function="reveal" data-unique-with="fog"> 
 					Circle 
 				</div> 
 			</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-value="reveal" data-key="fog" data-unique-with="fog">
+				data-shape='polygon' data-function="reveal" data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
@@ -1624,21 +1600,21 @@ function init_fog_menu(buttons){
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='rect' data-value="hide" data-key="fog" data-unique-with="fog">
+				data-shape='rect' data-function="hide" data-unique-with="fog">
 					Square
 			</div>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-value="hide" data-key="fog" data-unique-with="fog">
+				data-shape='arc' data-function="hide" data-unique-with="fog">
 					Circle
 			</div>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='polygon' data-value="hide" data-key="fog" data-unique-with="fog">
+				data-shape='polygon' data-function="hide" data-unique-with="fog">
 					Polygon
 			</div>
 		</div>`);
@@ -1671,99 +1647,47 @@ function init_draw_menu(buttons){
 	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_square' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape="rect" data-value='draw' data-unique-with="draw">
+			<div id='draw_rect' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-shape="rect" data-function="draw" data-unique-with="draw">
 					Rectangle
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='arc' data-shape="arc" data-value='draw' data-unique-with="draw">
+				data-shape='arc' data-function="draw" data-unique-with="draw">
 					Circle
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='cone' data-key="cone" data-value='draw' data-unique-with="draw">
+				data-shape='cone' data-function="draw" data-unique-with="draw">
 					Cone
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='line' data-key="line" data-value='draw' data-unique-with="draw">
+				data-shape='line' data-function="draw" data-unique-with="draw">
 					Line
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='brush' data-key="brush" data-value='draw' data-unique-with="draw">
+				data-shape='brush' data-function="draw" data-unique-with="draw">
 					Brush
 			</div>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<div id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='polygon' data-key="polygon" data-value='draw' data-unique-with="draw">
+				data-shape='polygon' data-function="draw" data-unique-with="draw">
 				 	Polygon
 			</div>
 		</div>`);
-	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-				data-shape='rect' data-key="rect" data-value='eraser' data-unique-with="draw">
-				 	Erase
-			</div>
-		</div>`);
-	draw_menu.append(`
-		<div class='ddbc-tab-options--layout-pill'>
-			<div class='ddbc-tab-options__header-heading' id='draw_undo'>
-				UNDO
-			</div>
-		</div>`);
-	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'>
-			<div class='ddbc-tab-options__header-heading' id='delete_drawing'>
-				CLEAR
-			</div>
-		</div>`);
-
-	draw_menu.find("#delete_drawing").click(function() {
-		r = confirm("DELETE ALL DRAWINGS AND TEXT? (cannot be undone!)");
-		if (r === true) {
-			window.DRAWINGS = [];
-			redraw_drawings();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
-
-	draw_menu.find("#draw_undo").click(function() {
-		window.DRAWINGS.pop();
-		redraw_drawings();
-		if(window.CLOUD){
-			sync_drawings();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
-
-	draw_menu.find("#draw_undo").click(function() {
-		window.DRAWINGS.pop();
-		redraw_drawings();
-		if(window.CLOUD){
-			sync_drawings();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
+	
 
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
@@ -1812,6 +1736,58 @@ function init_draw_menu(buttons){
 		</div>`
 	);
 
+
+	draw_menu.append(`<div class='menu-subtitle'>Controls</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="eraser" data-unique-with="draw">
+				 	Erase
+			</div>
+		</div>`);
+	draw_menu.append(`
+		<div class='ddbc-tab-options--layout-pill'>
+			<div class='ddbc-tab-options__header-heading' id='draw_undo'>
+				UNDO
+			</div>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<div class='ddbc-tab-options__header-heading' id='delete_drawing'>
+				CLEAR
+			</div>
+		</div>`);
+
+	draw_menu.find("#delete_drawing").click(function() {
+		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
+		if (r === true) {
+			// keep only text
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
+			redraw_drawings();
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
+	});
+
+	draw_menu.find("#draw_undo").click(function() {
+        let lastElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's text
+        while (lastElement--) {
+            if (!window.DRAWINGS[lastElement][0].includes("text")){
+                window.DRAWINGS.splice(lastElement, 1)
+                redraw_drawings();
+                if(window.CLOUD){
+                    sync_drawings();
+                }
+                else{
+                    window.ScenesHandler.persist();
+                    window.ScenesHandler.sync();
+                }
+                break
+            }
+        }
+	});
+
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "25px");
 	draw_menu.css("width", "75px");
@@ -1823,7 +1799,4 @@ function init_draw_menu(buttons){
 
 	buttons.append(draw_button);
 	draw_menu.css("left",draw_button.position().left);	
-
-	draw_menu.find(".drawType").first().click();
-	draw_menu.find(".coloroption").first().click();
 }
