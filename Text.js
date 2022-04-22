@@ -1,13 +1,12 @@
 function createMoveableTextWrapper(x, y, width, height) {
     wrapper = $("<div id='draw_text_wrapper'/>");
     wrapper.css({
-        "position": "fixed",
-        "left": `${x}px`,
-        "top": `${y - 25}px`,
+        position: "fixed",
+        left: `${x}px`,
+        top: `${y - 25}px`,
         "z-index": 1000,
-        "width": width,
-        "height": height,
-
+        width: width,
+        height: height,
     });
 
     $(wrapper).addClass("moveableWindow");
@@ -17,12 +16,12 @@ function createMoveableTextWrapper(x, y, width, height) {
         scroll: false,
         containment: "#fog_overlay",
         distance: 10,
-        drag: function( event, ui ) {
-            mousex = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
-            mousey = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+        drag: function (event, ui) {
+            mousex = Math.round((event.pageX - 200) * (1.0 / window.ZOOM));
+            mousey = Math.round((event.pageY - 200) * (1.0 / window.ZOOM));
             ui.position.left = mousex;
             ui.position.top = mousey;
-          }
+        },
     });
 
     const titleBar = $(
@@ -47,16 +46,16 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
     const wrapper = createMoveableTextWrapper(x, y, width, height);
 
     const input = $(
-        `<textarea id='drawing_text' type="text" autocomplete="off"/>`
+        `<textarea id='drawing_text' title="Input your text, this is an approximation of your final text. Press Enter to submit" type="text" autocomplete="off"/>`
     );
     wrapper.append(input);
     // do more style here
     input.css({
-        "position": "relative",
-        "width": "100%",
-        "height": "100%",
+        position: "relative",
+        width: "100%",
+        height: "100%",
         "text-align": window.DRAWDATA.alignment,
-        "color": window.DRAWDATA.font_color,
+        color: window.DRAWDATA.font_color,
         "background-color": color,
         "font-family": window.DRAWDATA.text_font,
         "font-size": `${window.DRAWDATA.text_size}px`,
@@ -87,61 +86,107 @@ function addInput([shape, drawType, color, x, y, width, height, linewidth]) {
 //Key handler for input box:
 function handleKeyPress(e) {
     if (e.key === "Enter" && !e.shiftKey) {
-        // do more stuff here so make drawText generic enough I can call it from 
+        // do more stuff here so make drawText generic enough I can call it from
         // redraw_drawings
-        drawText(
-            this,
+
+        const canvas = document.getElementById("fog_overlay");
+        const context = canvas.getContext("2d");
+
+        const rectColor = $(this).css("background-color");
+        const height = parseInt($(this).parent().css("height"));
+        const width = parseInt($(this).parent().css("width"));
+
+        const text = this.value
+        const fontColor = $(this).css("color")
+        const fontSize = parseInt($(this).css("font-size"));
+        const strokeColor = $(this).css("-webkit-text-stroke-color");
+        const strokeSize = parseInt(
+            $(this).css("-webkit-text-stroke-width")
+        );
+        const underlined = $(this).css("text-decoration")?.includes("underline")
+
+        // calc drawline, that being where we will draw the text
+        // 25 being the height of the title bar, 5 being the text padding inside the box..maybe?
+        const verticalStartPos =
+            parseInt($(this).parent().css("top")) + 25 + 5 + fontSize;
+        let horizontalStartPos = parseInt($(this).parent().css("left"))
+        // do some fuckery to try figure out where to draw if centered/right aligned
+        if ($(this).css("text-align") === "center") {
+            // get the centre point of the box then minus off approx the length of text /2 as
+            // it appears partially left and right of centre point
+            horizontalStartPos =
+                x +
+                parseInt($(this).css("width")) / 2 -
+                ((this.value.length / 2) * fontSize) / 2;
+        }
+        if ($(this).css("text-align") === "right") {
+            // get the right edge and minus off the approx length of text
+            horizontalStartPos =
+                x +
+                parseInt($(this).css("width")) -
+                (this.value.length * fontSize) / 2;
+        }
+
+        const font = $(this).css("font-family");
+        let fontStyle = "normal";
+        // build the font styles that will look like "bold italic" if they're not normal
+        if ($(this).css("font-weight") !== "normal") {
+            fontStyle = $(this).css("font-weight");
+        }
+        if ($(this).css("font-style") !== "normal") {
+            fontStyle = fontStyle.concat(" ", $(this).css("font-style"));
+        }
+        const finalFont = `${fontStyle} ${fontSize}px ${font}`;
+        // parent css left/top+25 will be the top left corner of the input box
+        drawRect(
+            context,
             parseInt($(this).parent().css("left")),
-            parseInt($(this).parent().css("top")) + 25
+            parseInt($(this).parent().css("top")) + 25,
+            width,
+            height,
+            rectColor
+        );
+        drawText(
+            context,
+            horizontalStartPos,
+            verticalStartPos,
+            text,
+            finalFont,
+            fontColor,
+            strokeSize,
+            strokeColor,
+            underlined
         );
         $(this).parent().remove();
     } else if (e.key == "Escape") $(this).parent().remove();
 }
 
 //Draw the text onto canvas:
-function drawText(textInput, x, y) {
-    const canvas = document.getElementById("fog_overlay");
-    const fontSize = $(textInput).css("font-size")
-    const fontSizeAsNum = parseInt($(textInput).css("font-size"))
-
-    // calc drawline, that being where we will draw the text
-    const verticalStartPos = y + 10 + fontSizeAsNum;
-    let horizontalStartPos = x
-    // do some fuckery to try figure out where to draw if centered/right aligned
-    if ($(textInput).css("text-align") === "center") {
-        // get the centre point of the box then minus off approx the length of text /2 as 
-        // it appears partially left and right of centre point
-        horizontalStartPos = (x + parseInt($(textInput).css("width")) / 2) - (textInput.value.length / 2 * fontSizeAsNum / 2)
-    }
-    if ($(textInput).css("text-align") === "right") {
-        // get the right edge and minus off the approx length of text
-        horizontalStartPos = (x + parseInt($(textInput).css("width"))) - (textInput.value.length * fontSizeAsNum / 2)
-    }
-
-    const font = $(textInput).css("font-family");
-    let fontStyle = "normal";
-    // build the font styles that will look like "bold italic" if they're not normal
-    if ($(textInput).css("font-weight") !== "normal") {
-        fontStyle = $(textInput).css("font-weight");
-    }
-    if ($(textInput).css("font-style") !== "normal") {
-        fontStyle = fontStyle.concat(" ", $(textInput).css("font-style"));
-    }
-    const context = canvas.getContext("2d");
+function drawText(
+    context,
+    horizontalStartPos,
+    verticalStartPos,
+    text,
+    font,
+    fontColor,
+    strokeSize,
+    strokeColor,
+    underlined = false
+) {
+    // ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
     // draw the background rectangle
     // will look like "bold italic 24px Arial"
-    context.font = `${fontStyle} ${fontSize} ${font}`;
-    console.log("drawing font", context.font);
+    context.font = font
+    context.strokeStyle = strokeColor
+    context.lineWidth = strokeSize
 
-    context.strokeStyle = $(textInput).css("-webkit-text-stroke-color");
-    context.lineWidth = parseInt($(textInput).css("-webkit-text-stroke-width"));
+    context.fillStyle = fontColor
+    context.strokeText(text, horizontalStartPos, verticalStartPos);
+    context.fillText(text, horizontalStartPos, verticalStartPos);
 
-    context.fillStyle = $(textInput).css("color");
-    context.fillText(textInput.value, horizontalStartPos, verticalStartPos);
-    context.strokeText(textInput.value, horizontalStartPos, verticalStartPos);
-    if ($(textInput).css("text-decoration")?.includes("underline")) {
+    if (underlined) {
         // canvas doesn't have an underline feature so draw underscores for each string char
-        var underscored = textInput.value
+        var underscored = text
             .split("")
             .map(function (char) {
                 return (char = "_");
@@ -160,9 +205,6 @@ function drawText(textInput, x, y) {
     // 	else
     // 		window.MB.sendMessage('custom/myVTT/drawing', data);
 }
-
-
-
 
 function init_text_button(buttons) {
     availableFonts = [
@@ -183,8 +225,8 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Font</div>");
     textMenu.append(`<select id='text_font' data-required="text_font" name='font' style='width:inherit; margin:0px; text-align:center'>
         ${availableFonts.map((font) => {
-        return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
-    })}
+            return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
+        })}
     </select>`);
     textMenu.append(
         `<input title='Text size' data-required="text_size" id='text_size' min='1' value='20' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'>`
