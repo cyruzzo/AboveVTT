@@ -474,6 +474,9 @@ function load_monster_stat(monsterid, token_id=false) {
 		$("#resizeDragMon").removeClass("hideMon");
 		container = $("#resizeDragMon");
 	}
+	container.resize(function(e) {
+        	e.stopPropagation();
+   	});
 	//container.css("width","900px");
 	let iframe = $("<iframe>");
     // UGUALE A COMBAT TRACKER INSIDE
