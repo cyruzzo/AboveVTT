@@ -395,6 +395,9 @@ function reset_canvas() {
 	$('#draw_overlay').width($("#scene_map").width());
 	$('#draw_overlay').height($("#scene_map").height());
 
+	$('#text_overlay').width($("#scene_map").width());
+	$('#text_overlay').height($("#scene_map").height());
+
 	$('#draw_overlay').get(0).width = $("#scene_map").width();
 	$('#draw_overlay').get(0).height = $("#scene_map").height();
 	var canvas = document.getElementById("fog_overlay");
@@ -512,7 +515,7 @@ function reset_canvas() {
 	}
 }
 
-function redraw_canvas() {
+function redraw_fog() {
 	if (!window.FOG_OF_WAR)
 		return;
 	var canvas = document.getElementById("fog_overlay");
@@ -568,9 +571,33 @@ function redraw_canvas() {
 	}
 }
 
+function redraw_text() {
+	// return
+	const canvas = document.getElementById("text_overlay");
+	const context = canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
+	const textDrawings = window.DRAWINGS.filter(d => d[0].includes("text"))
+
+	textDrawings.forEach(drawing => {
+		
+		if (drawing[0] === "text") {
+			draw_text(context, ...drawing);
+		}
+		else if (drawing[0] === "text-rect"){
+			drawRect(context,...drawing);
+		}
+		else if (drawing[0] === "text-erase"){
+			// spread and cherry pick what is required for clearRect
+			const [shape, fill, color, x, y, width, height, linewidth] = drawing
+			context.clearRect(x, y, width, height);
+		}
+	})
+}
+
 function redraw_drawings() {
-	var canvas = document.getElementById("draw_overlay");
-	var ctx = canvas.getContext("2d");
+	let canvas = document.getElementById("draw_overlay");
+	let ctx = canvas.getContext("2d");
 	var lineWidth = 6;
 	var style = "#FF0000";
 
@@ -578,11 +605,13 @@ function redraw_drawings() {
 
 	for (var i = 0; i < window.DRAWINGS.length; i++) {
 		data = window.DRAWINGS[i];
-
+		// if (data[0] === "text") {
+		// 	draw_text(ctx, ...data);
+		// }
 		if (data[0] == "eraser") {
 			ctx.clearRect(data[3], data[4], data[5], data[6]);
 		}
-		if ((data[0] == "rect" || data[0] === "rect-text") && data[1] == "filled") {
+		if (data[0] == "rect"  && data[1] == "filled") {
 			drawRect(ctx,data[3], data[4], data[5], data[6], data[2], true);
 		}
 		if (data[0] == "rect" && data[1] == "border") {
@@ -611,9 +640,6 @@ function redraw_drawings() {
 			style = data[2];
 			lineWidth = data.length > 7 ? data[7] : "6";
 			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
-		}
-		if (data[0] == "text") {
-			draw_text(ctx, ...data);
 		}
 
 		if (data[0] == "polygon" && data[1] == "filled") {
@@ -644,7 +670,7 @@ function stop_drawing() {
 }
 
 
-function isRGBATransparent(rgba){
+function isRGBAFullyTransparent(rgba){
 	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
 }
 
@@ -687,7 +713,7 @@ function drawing_mousedown(e) {
 
 	if (window.DRAWSHAPE === "polygon") {
 
-		redraw_canvas();
+		redraw_fog();
 		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -775,7 +801,7 @@ function drawing_mousemove(e) {
 
 		if(window.DRAWSHAPE !== "brush")
 		{
-			redraw_canvas();
+			redraw_fog();
 		}
 
 		if (window.DRAWSHAPE == "rect") {
@@ -786,7 +812,7 @@ function drawing_mousemove(e) {
 			// draw a rect that will be removed and replaced with an input box
 			// when mouseup
 			ctx.save();
-			if (isRGBATransparent(style)) {
+			if (isRGBAFullyTransparent(style)) {
 				// fully transparent, do a dash line
 				ctx.strokeStyle = "grey";
 				ctx.setLineDash([2,2]);
@@ -849,7 +875,7 @@ function drawing_mousemove(e) {
 		if (window.DRAWSHAPE === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 
-			redraw_canvas();
+			redraw_fog();
 
 			drawPolygon( ctx,
 				joinPointsArray(
@@ -955,8 +981,10 @@ function drawing_mouseup(e) {
 				break;
 		}
 		window.DRAWINGS.push(data);
-		redraw_canvas();
+		// BAIN TODO why do we redraw fog when drawing drawings?
+		redraw_fog();
 		redraw_drawings();
+		redraw_text();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
@@ -967,8 +995,9 @@ function drawing_mouseup(e) {
 		console.log('disegno');
 		data[0] = "eraser"
 		window.DRAWINGS.push(data);
-		redraw_canvas();
+		redraw_fog();
 		redraw_drawings();
+		redraw_text();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
@@ -1010,7 +1039,7 @@ function drawing_mouseup(e) {
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 
-		redraw_canvas();
+		redraw_fog();
 		draw_selected_token_bounding_box();
 		console.log("READY");
 	}
@@ -1020,7 +1049,7 @@ function drawing_mouseup(e) {
 			// We do not clear if we are still measuring, added this as it somehow appeared multiple
 			// timers could be set, may be a race condition or something still here...
 			if (!WaypointManager.isMeasuring()) {
-				redraw_canvas();
+				redraw_fog();
 			}
 		}, 2000);
 		WaypointManager.clearWaypoints();
@@ -1045,7 +1074,7 @@ function drawing_contextmenu(e) {
 			if (isNaN(window.DRAWFUNCTION)) {
 				redraw_drawings();
 			} else {
-				redraw_canvas();
+				redraw_fog();
 			}
 			drawPolygon(
 				ctx,
@@ -1064,14 +1093,14 @@ function drawing_contextmenu(e) {
 		else
 		{
 			// cancel polygon if on last point
-			redraw_canvas();
+			redraw_fog();
 		}
 	}
 	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
 		// cancel shape
 		window.MOUSEDOWN = false;
-		redraw_canvas();
+		redraw_fog();
 	}
 }
 
@@ -1095,7 +1124,7 @@ function finalise_drawing_fog(width, height) {
 		else
 			window.MB.sendMessage('custom/myVTT/reveal', data);
 		window.ScenesHandler.persist();
-		redraw_canvas();
+		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
 		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
 		window.REVEALED.push(data);
@@ -1104,7 +1133,7 @@ function finalise_drawing_fog(width, height) {
 		else
 			window.MB.sendMessage('custom/myVTT/reveal', data);
 		window.ScenesHandler.persist();
-		redraw_canvas();
+		redraw_fog();
 	}
 }
 
@@ -1461,8 +1490,9 @@ function savePolygon(e) {
 		];
 		window.DRAWINGS.push(data);
 	}
-	redraw_canvas();
+	redraw_fog();
 	redraw_drawings();
+	redraw_text();
 	window.ScenesHandler.persist();
 
 	if(window.CLOUD){
@@ -1543,7 +1573,7 @@ function init_fog_menu(buttons){
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
 			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
-			redraw_canvas();
+			redraw_fog();
 			if(window.CLOUD){
 				sync_fog();
 			}
@@ -1559,7 +1589,7 @@ function init_fog_menu(buttons){
 		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
 			window.REVEALED = [];
-			redraw_canvas();
+			redraw_fog();
 			if(window.CLOUD){
 				sync_fog();
 			}
@@ -1627,7 +1657,7 @@ function init_fog_menu(buttons){
 	$("body").append(fog_menu);
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
-		redraw_canvas();
+		redraw_fog();
 		if(window.CLOUD){
 			sync_fog();
 		}

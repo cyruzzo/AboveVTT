@@ -488,7 +488,7 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA.offsetx = offsetx;
 				window.CURRENT_SCENE_DATA.offsety = offsety;
 				reset_canvas();
-				redraw_canvas();
+				redraw_fog();
 			};
 
 			let click2 = {
@@ -499,7 +499,7 @@ function edit_scene_dialog(scene_id) {
 				stop: regrid,
 				start: function(event) {
 					window.CURRENT_SCENE_DATA.grid = 0;
-					reset_canvas(); redraw_canvas();
+					reset_canvas(); redraw_fog();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
 					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
@@ -557,7 +557,7 @@ function edit_scene_dialog(scene_id) {
 				stop: regrid,
 				start: function(event) {
 					window.CURRENT_SCENE_DATA.grid = 0;
-					reset_canvas(); redraw_canvas();
+					reset_canvas(); redraw_fog();
 					click1.x = event.clientX;
 					click1.y = event.clientY;
 					$("#aligner1").attr('original-top', parseInt($(event.target).css("top")));
@@ -724,7 +724,7 @@ function edit_scene_dialog(scene_id) {
 			scene.reveals = [];
 			if (scene_id == window.ScenesHandler.current_scene_id) {
 				window.REVEALED = [];
-				redraw_canvas();
+				redraw_fog();
 			}
 			window.ScenesHandler.persist();
 			window.ScenesHandler.sync();

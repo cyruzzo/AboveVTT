@@ -147,9 +147,9 @@ function handle_draw_text_submit(event) {
     };
     // only draw a rect if it's not fully transparent
     let data = [];
-    if (!isRGBATransparent(window.DRAWCOLOR)) {
+    if (!isRGBAFullyTransparent(window.DRAWCOLOR)) {
         data = [
-            "rect-text",
+            "text-rect",
             "filled",
             window.DRAWCOLOR,
             rectX,
@@ -162,11 +162,18 @@ function handle_draw_text_submit(event) {
     }
     // data should match params in draw_text
     // push the starting position of y south based on the font size
-    data = ["text", rectX, rectY + font.size, text, font, stroke, width];
+    data = ["text",
+            rectX,
+            rectY + font.size,
+            text,
+            font,
+            stroke,
+            width];
     // make a function for the following like 6 lines as it's all over the place
     window.DRAWINGS.push(data);
-    redraw_canvas();
+    redraw_fog();
     redraw_drawings();
+    redraw_text()
     window.ScenesHandler.persist();
     if (window.CLOUD) sync_drawings();
     else window.MB.sendMessage("custom/myVTT/drawing", data);
@@ -243,7 +250,6 @@ function draw_text(
             stroke
         );
         context.strokeText(line, textX, y);
-        // TODO BAIN this underline is shit make it better
         if (font.underline) {
             drawLine(
                 context,
@@ -372,7 +378,7 @@ function init_text_button(buttons) {
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
                 <div id='text_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-                    data-shape='rect' data-key="rect" data-value='eraser'>
+                    data-shape='text_erase' data-function="eraser">
                         Erase
                 </div>
             </div>`
@@ -391,42 +397,46 @@ function init_text_button(buttons) {
             </div>`
     );
 
-    textMenu.find("#text_clear").click(function() {
-		r = confirm("DELETE ALL TEXT? (cannot be undone!)");
-		if (r === true) {
-            // keep anything that isn't text 
-			window.DRAWINGS = window.DRAWINGS.filter(d => !d[0].includes("text"));
-			redraw_drawings();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
+    textMenu.find("#text_clear").click(function () {
+        r = confirm("DELETE ALL TEXT? (cannot be undone!)");
+        if (r === true) {
+            // keep anything that isn't text
+            window.DRAWINGS = window.DRAWINGS.filter(
+                (d) => !d[0].includes("text")
+            );
+            redraw_text();
+            window.ScenesHandler.persist();
+            window.ScenesHandler.sync();
+        }
+    });
 
-	textMenu.find("#text_undo").click(function() {
-        let lastElement = window.DRAWINGS.length
+    textMenu.find("#text_undo").click(function () {
+        let lastElement = window.DRAWINGS.length;
         // loop from the last element and remove if it's text
         while (lastElement--) {
-            if (window.DRAWINGS[lastElement][0].includes("text")){
+            if (window.DRAWINGS[lastElement][0].includes("text")) {
                 // text may or may not have a box behind it
                 // be safe by using math.max
-                if (window.DRAWINGS[Math.max(lastElement-1,0)][0] === "rect-text"){
+                if (
+                    window.DRAWINGS[Math.max(lastElement - 1, 0)][0] ===
+                    "text-rect"
+                ) {
                     // remove 2 elements
-                    window.DRAWINGS.splice(Math.max(lastElement-1,0), 2)
-                }else{
-                    window.DRAWINGS.splice(lastElement, 1)
+                    window.DRAWINGS.splice(Math.max(lastElement - 1, 0), 2);
+                } else {
+                    window.DRAWINGS.splice(lastElement, 1);
                 }
-                redraw_drawings();
-                if(window.CLOUD){
+                redraw_text();
+                if (window.CLOUD) {
                     sync_drawings();
-                }
-                else{
+                } else {
                     window.ScenesHandler.persist();
                     window.ScenesHandler.sync();
                 }
-                break
+                break;
             }
         }
-	});
+    });
 
     $("body").append(textMenu);
 

@@ -2155,6 +2155,12 @@ function init_ui() {
 	draw_overlay.css("left", "0");
 	draw_overlay.css("z-index", "18");
 
+	text_overlay = $("<canvas id='text_overlay'></canvas>");
+	text_overlay.css("position", "absolute");
+	text_overlay.css("top", "0");
+	text_overlay.css("left", "0");
+	text_overlay.css("z-index", "18");
+
 	grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
 	grid.css("top", "0");
@@ -2221,6 +2227,7 @@ function init_ui() {
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(draw_overlay);
+	VTT.append(text_overlay);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
