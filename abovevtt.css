@@ -2584,8 +2584,7 @@ button.avtt-roll-button {
     height: 80px;
     width: 10px;
     fill: #ddd;
-    x: 45;
-    y: 10;
+    transform: translate(45px, 10px);
 }
 
 #combat_tracker_title_bar_exit,
@@ -2730,6 +2729,7 @@ button.avtt-roll-button {
 }
 #round_number_label input{
     font-weight: 600;
+    -moz-appearance: textfield !important;
 }
 
 #combat_area td button{
