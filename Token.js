@@ -1232,12 +1232,6 @@ class Token {
 				draw_selected_token_bounding_box(); // update rotation bounding box
 			});
 
-			tok.mouseup(function (e) {
-				if (e.which === 3 && (e.ctrlKey || e.metaKey)) {
-				    token_context_menu_expanded([tok.attr("data-id")]);			    
-				}
-			});
-			
 			console.groupEnd()
 		}
 		// HEALTH AURA / DEAD CROSS
@@ -1857,6 +1851,10 @@ function token_menu() {
 		selector: '.VTTToken',
 
 		build: function(element, e) {
+
+			if (e.which === 3 && (e.ctrlKey || e.metaKey) && window.DM) {
+				token_context_menu_expanded([element.attr("data-id")]);			    
+			}
 
 			if ($(element).hasClass("tokenselected") && window.MULTIPLE_TOKEN_SELECTED) {
 				if (!window.DM) {
