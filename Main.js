@@ -497,18 +497,21 @@ function load_monster_stat(monsterid, token_id=false) {
 	iframe.css("height", "450px"); // UGUALE A COMBAT TRACKER INSIDE
 	//iframe.css("transform","scale(0.75)");
 
-
+	iframe.css("display", "none");
+	
 	window.StatHandler.getStat(monsterid, function(stats) {
 
 		iframe.on("load", function(event) {
 			console.log('carico mostro');
+			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
 			$(event.target).contents().find("#mega-menu-target").remove();
 			$(event.target).contents().find(".site-bar").remove();
 			$(event.target).contents().find(".page-header").remove();
 			$(event.target).contents().find(".homebrew-comments").remove();
 			$(event.target).contents().find("header").hide();
 			$(event.target).contents().find("#site-main").css("padding", "0px");
-
+			$(event.target).contents().find("#footer").remove();
+			iframe.css("display", "block");
 			let img = $(event.target).contents().find(".detail-content").find(".image");
 			let statblock = $(event.target).contents().find(".mon-stat-block");
 			if (img.length == 1) {
