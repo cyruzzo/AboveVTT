@@ -125,6 +125,8 @@ class Token {
 		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
 		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 		this.place_sync_persist()
+		this.update_and_sync()
+		ct_persist();
 	}
 	show() {
 		this.update_from_page();
@@ -133,6 +135,8 @@ class Token {
 		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'block');
 		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
 		this.place_sync_persist()
+		this.update_and_sync()
+		ct_persist();
 	}
 	delete(persist=true,sync=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
