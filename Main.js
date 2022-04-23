@@ -471,6 +471,7 @@ function load_monster_stat(monsterid, token_id=false) {
 
 	if(!window.DM && $("#site #resizeDragMon").length>0){
 		$("#resizeDragMon iframe").remove();
+		$("#resizeDragMon").removeClass("hideMon");
 		container = $("#resizeDragMon");
 	}
 	//container.css("width","900px");
