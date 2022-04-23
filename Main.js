@@ -468,8 +468,11 @@ function load_monster_stat(monsterid, token_id=false) {
 	}
 
 	let container = $("<div id='resizeDragMon'/>");
-		
-	
+
+	if(!window.DM && $("#site #resizeDragMon").length>0){
+		$("#resizeDragMon iframe").remove();
+		container = $("#resizeDragMon");
+	}
 	//container.css("width","900px");
 	let iframe = $("<iframe>");
     // UGUALE A COMBAT TRACKER INSIDE
@@ -515,9 +518,13 @@ function load_monster_stat(monsterid, token_id=false) {
 		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
 	})
 	container.append(iframe);
-	$("#site").append(container);
+	if(!$("#site #resizeDragMon").length>0){
+		$("#site").prepend(container);
+	}
+
    if(!window.DM) {
-	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+   		
+   		/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 		$("#resizeDragMon").append(monster_close_title_button);
 		monster_close_title_button.click(function() {
@@ -526,6 +533,9 @@ function load_monster_stat(monsterid, token_id=false) {
 		$("#resizeDragMon").addClass("moveableWindow");
 		if(!$("#resizeDragMon").hasClass("minimized")){
 			$("#resizeDragMon").addClass("restored"); 
+		}
+		else{
+			$("#resizeDragMon").dblclick();
 		}
 		$("#resizeDragMon").resizable({
 			addClasses: false,
