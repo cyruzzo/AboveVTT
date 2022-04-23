@@ -67,6 +67,9 @@ function add_text_drawing_input([
     );
     wrapper.append(input);
     // do more style here
+    if (drawType !== "filled"){
+        color = "rgba(0, 0, 0, 0.0)"
+    }
     input.css({
         position: "relative",
         width: "100%",
@@ -126,10 +129,12 @@ function handle_draw_text_submit(event) {
     // with 25 being the bar height
     const rectX = parseInt($(textBox).parent().css("left"));
     const rectY = parseInt($(textBox).parent().css("top")) + 25;
+    const rectColor =$(textBox).css("background-color")
 
     const text = textBox.val();
     let fontWeight = $(textBox).css("font-weight") || "normal";
     let fontStyle = $(textBox).css("font-style") || "normal";
+    
 
     const font = {
         font: $(textBox).css("font-family"),
@@ -147,7 +152,7 @@ function handle_draw_text_submit(event) {
     };
     // only draw a rect if it's not fully transparent
     let data = [];
-    if (!isRGBAFullyTransparent(window.DRAWCOLOR)) {
+    if (!is_rgba_fully_transparent(rectColor)) {
         data = [
             "text-rect",
             "filled",
@@ -171,13 +176,14 @@ function handle_draw_text_submit(event) {
             width];
     // make a function for the following like 6 lines as it's all over the place
     window.DRAWINGS.push(data);
+    $("#draw_text_title_bar_exit").click();
     redraw_fog();
     redraw_drawings();
     redraw_text()
     window.ScenesHandler.persist();
     if (window.CLOUD) sync_drawings();
     else window.MB.sendMessage("custom/myVTT/drawing", data);
-    $("#draw_text_title_bar_exit").click();
+    
 }
 
 //Key handler for input box:
@@ -404,6 +410,7 @@ function init_text_button(buttons) {
             window.DRAWINGS = window.DRAWINGS.filter(
                 (d) => !d[0].includes("text")
             );
+            redraw_drawings()
             redraw_text();
             window.ScenesHandler.persist();
             window.ScenesHandler.sync();
@@ -426,6 +433,7 @@ function init_text_button(buttons) {
                 } else {
                     window.DRAWINGS.splice(lastElement, 1);
                 }
+                redraw_drawings()
                 redraw_text();
                 if (window.CLOUD) {
                     sync_drawings();

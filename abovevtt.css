@@ -3060,3 +3060,8 @@ button.avtt-roll-button {
     height:20px;
     float:left;
 }
+
+#draw_menu .sp-replacer,
+#text_menu .sp-replacer{
+    width: 100%
+}
