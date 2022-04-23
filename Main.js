@@ -467,34 +467,12 @@ function load_monster_stat(monsterid, token_id=false) {
 		return;
 	}
 
-	let container = $("<div class='monster_frame'/>");
-	container.attr('id', iframe_id);
-	container.css("position", "fixed");
-	container.css("left", "-500px"); // 190-1030
-	container.css("top", "80px");
-	container.css("z-index", "1000");
-	container.css("background", "white");
-	container.css("width", "850px");
-	container.css("height", "450px");
-	close_button = $("<button>X</button>");
-	close_button.css("position", "absolute");
-	close_button.css("left", "0");
-	close_button.css("top", "0");
-	close_button.css("z-index", "1001");
-	close_button.click(function() {
-		container.animate({
-			left: "-500px"
-		}, 500);
-		container.hide();
-	});
-	container.append(close_button);
+	let container = $("<div id='resizeDragMon'/>");
+		
+	
 	//container.css("width","900px");
 	let iframe = $("<iframe>");
-	iframe.css("position", "absoute");
-	iframe.css("left", 0);
-	iframe.css("top", 0);
-	iframe.css("width", "900px");
-	iframe.css("height", "450px"); // UGUALE A COMBAT TRACKER INSIDE
+    // UGUALE A COMBAT TRACKER INSIDE
 	//iframe.css("transform","scale(0.75)");
 
 
@@ -538,9 +516,86 @@ function load_monster_stat(monsterid, token_id=false) {
 	})
 	container.append(iframe);
 	$("#site").append(container);
-	container.animate({
-		left: '220px'
-	}, 500);
+   if(!window.DM) {
+	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+		$("#resizeDragMon").append(monster_close_title_button);
+		monster_close_title_button.click(function() {
+			close_player_monster_stat_block()
+		});
+		$("#resizeDragMon").addClass("moveableWindow");
+		if(!$("#resizeDragMon").hasClass("minimized")){
+			$("#resizeDragMon").addClass("restored"); 
+		}
+		$("#resizeDragMon").resizable({
+			addClasses: false,
+			handles: "all",
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			},
+			minWidth: 200,
+			minHeight: 200
+		});
+
+		$("#resizeDragMon").mousedown(function(){
+			frame_z_index_when_click($(this));
+		});
+		$("#resizeDragMon").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		minimize_player_monster_window_double_click($("#resizeDragMon"));
+	}
+}
+function close_player_monster_stat_block() {
+	$("#resizeDragMon.minimized").dblclick();
+	console.debug("close_monster_stat_block is closing the stat block")
+	$("#resizeDragMon").addClass("hideMon");
+	// hide and update all monster blocks that we find. Even if we're currently loading one.
+	console.group("close_monster_stat_block");
+}
+
+function minimize_player_monster_window_double_click(titleBar){
+	titleBar.off('dblclick').on('dblclick', function() {
+		if (titleBar.hasClass("restored")) {
+			titleBar.data("prev-height", titleBar.height());
+			titleBar.data("prev-width", titleBar.width() - 3);
+			titleBar.data("prev-top", titleBar.css("top"));
+			titleBar.data("prev-left", titleBar.css("left"));
+			titleBar.css("top", titleBar.data("prev-minimized-top"));
+			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.height(23);
+			titleBar.width(200);
+			titleBar.addClass("minimized");
+			titleBar.removeClass("restored");
+			titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
+			
+		} else if(titleBar.hasClass("minimized")) {
+			titleBar.data("prev-minimized-top", titleBar.css("top"));
+			titleBar.data("prev-minimized-left", titleBar.css("left"));
+			titleBar.height(titleBar.data("prev-height"));
+			titleBar.width(titleBar.data("prev-width"));
+			titleBar.css("top", titleBar.data("prev-top"));
+			titleBar.css("left", titleBar.data("prev-left"));
+			titleBar.addClass("restored");
+			titleBar.removeClass("minimized");
+			$(".monster_title").remove();
+			
+		}
+	});
 }
 
 function init_controls() {
