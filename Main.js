@@ -1884,15 +1884,14 @@ function inject_chat_buttons() {
 	// AGGIUNGI CHAT
 	// the text has to be up against the left for it to style correctly
 	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Chat &#xa;\
-'/roll 1d20' or '/r 1d4' see /help for more &#10;\
-'/roll 1d20 &quot;punch:to hit&quot;'&#xa;\
-'/hit 1d20' or '/hit 1d4 &quot;punch&quot'&#xa;\
-'/dmg 1d20' or '/dmg 1d4 &quot;punch&quot'&#xa;\
-'/save 1d20' or '/save 1d4 &quot;Dex&quot'&#xa;\
-'/skill 1d20' or '/save 1d4 &quot;Acrobatics&quot'&#xa;\
-'/help' &#xa;\
+'/roll 1d20' or '/r 1d4'&#xa;\
+'/roll 1d20 punch:to hit'&#xa;\
+'/hit 1d20' or '/hit 1d4 punch'&#xa;\
+'/dmg 1d20' or '/dmg 1d4 punch'&#xa;\
+'/save 1d20' or '/save 1d4 Dex'&#xa;\
+'/skill 1d20' or '/save 1d4 Acrobatics'&#xa;\
 '/w [playername] a whisper'"> \
-		<input id='chat-text' autocomplete="off" class= placeholder='Chat, /roll 1d20+4, /help ..'></div>`));
+		<input id='chat-text' autocomplete="off" class= placeholder='Chat, /roll 1d20+4..'></div>`));
 
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
@@ -2064,7 +2063,7 @@ function inject_chat_buttons() {
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
-			const commandRegex = /(?:"|')(.*?)(?:"|')/
+			const commandRegex = /([^\d]+$)/;
 
 			if(text.startsWith("/r")) {
 				// remove the roll and extract the roll/actiontype which leaves the expression
@@ -2117,13 +2116,6 @@ function inject_chat_buttons() {
 				console.groupEnd()
 				return
 			}
-
-			if(text.startsWith("/help")) {
-				window.open("https://dice-roller.github.io/documentation/guide/notation/dice.html#standard-d-n")
-				console.groupEnd()
-				return
-			}
-
 			if(text.startsWith("/w")) {
 				let matches = text.match(/\[(.*?)\] (.*)/);
 				whisper=matches[1]
@@ -3154,7 +3146,7 @@ function init_my_dice_details(){
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
 // send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
-function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="custom", damageType, actionType="custom", sendTo="everyone") {
+function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", damageType, actionType="custom", sendTo="everyone") {
 	console.group("send_rpg_dice_to_ddb")
 	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
 	
