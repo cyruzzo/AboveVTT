@@ -170,15 +170,14 @@ function handle_draw_text_submit(event) {
     data = ["text",
             rectX,
             rectY + font.size,
+            width,
+            height,
             text,
             font,
-            stroke,
-            width];
+            stroke];
     // make a function for the following like 6 lines as it's all over the place
     window.DRAWINGS.push(data);
     $("#draw_text_title_bar_exit").click();
-    redraw_fog();
-    redraw_drawings();
     redraw_text()
     window.ScenesHandler.persist();
     if (window.CLOUD) sync_drawings();
@@ -226,10 +225,11 @@ function draw_text(
     type,
     startingX,
     startingY,
+    width,
+    height,
     text,
     font,
     stroke,
-    width
 ) {
     // TODO BAIN change font and stroke to objects for easier accessing,
     // only compile into the drawn font style once we're drawing
@@ -410,7 +410,6 @@ function init_text_button(buttons) {
             window.DRAWINGS = window.DRAWINGS.filter(
                 (d) => !d[0].includes("text")
             );
-            redraw_drawings()
             redraw_text();
             window.ScenesHandler.persist();
             window.ScenesHandler.sync();
@@ -433,7 +432,6 @@ function init_text_button(buttons) {
                 } else {
                     window.DRAWINGS.splice(lastElement, 1);
                 }
-                redraw_drawings()
                 redraw_text();
                 if (window.CLOUD) {
                     sync_drawings();

@@ -386,17 +386,14 @@ function midPointBtw(p1, p2) {
 }
 
 function reset_canvas() {
-	$('#fog_overlay').width($("#scene_map").width());
-	$('#fog_overlay').height($("#scene_map").height());
+	$('#fog_overlay').get(0).width =($("#scene_map").width());
+	$('#fog_overlay').get(0).height =($("#scene_map").height());
 
-	$('#grid_overlay').width($("#scene_map").width());
-	$('#grid_overlay').height($("#scene_map").height());
+	$('#grid_overlay').get(0).width =($("#scene_map").width());
+	$('#grid_overlay').get(0).height =($("#scene_map").height());
 
-	$('#draw_overlay').width($("#scene_map").width());
-	$('#draw_overlay').height($("#scene_map").height());
-
-	$('#text_overlay').width($("#scene_map").width());
-	$('#text_overlay').height($("#scene_map").height());
+	$('#text_overlay').get(0).width= ($("#scene_map").width());
+	$('#text_overlay').get(0).height = ($("#scene_map").height());
 
 	$('#draw_overlay').get(0).width = $("#scene_map").width();
 	$('#draw_overlay').get(0).height = $("#scene_map").height();
@@ -572,7 +569,6 @@ function redraw_fog() {
 }
 
 function redraw_text() {
-	return
 	const canvas = document.getElementById("text_overlay");
 	const context = canvas.getContext("2d");
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -580,16 +576,19 @@ function redraw_text() {
 	const textDrawings = window.DRAWINGS.filter(d => d[0].includes("text"))
 
 	textDrawings.forEach(drawing => {
-		
-		if (drawing[0] === "text") {
-			draw_text(context, ...drawing);
-		}
-		else if (drawing[0] === "text-rect"){
-			drawRect(context,...drawing);
-		}
-		else if (drawing[0] === "text-erase"){
-			// spread and cherry pick what is required for clearRect
-			
+		const [shape, fill, color, x, y, width, height, text, font, stroke] = drawing
+		switch (shape) {
+			case "text":
+				draw_text(context, ...drawing);
+				break;
+			case "text-rect":
+				drawRect(context,x,y,width,height,color);
+				break;
+			case "text-eraser":
+				context.clearRect(x, y, width, height);
+				break;
+			default:
+				break;
 		}
 	})
 }
@@ -597,36 +596,14 @@ function redraw_text() {
 function redraw_drawings() {
 	let canvas = document.getElementById("draw_overlay");
 	let ctx = canvas.getContext("2d");
-	var lineWidth = 6;
-	var style = "#FF0000";
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text"))
 
-	for (var i = 0; i < window.DRAWINGS.length; i++) {
-		data = window.DRAWINGS[i];
-		const [shape, fill, color, x, y, width, height, lineWidth] = data
+	for (var i = 0; i < drawings.length; i++) {
+		const [shape, fill, color, x, y, width, height, lineWidth] = drawings[i];
 		const filled = fill === "filled"
-		if (shape.includes("text")) {
-			// canvas = document.getElementById("text_overlay");
-			// ctx = canvas.getContext("2d");
-			
-			switch (shape) {
-				case "text":
-					draw_text(ctx, ...data);
-					break;
-				case "text-rect":
-					drawRect(ctx,x,y,width,height,color);
-					break;
-				case "text-eraser":
-					ctx.clearRect(x, y, width, height);
-					break;
-				default:
-					break;
-			}
-			// canvas = document.getElementById("draw_overlay");
-			// ctx = canvas.getContext("2d");
-			
-		}
+
 		if (shape == "eraser") {
 			ctx.clearRect(x, y, width, height);
 		}
@@ -674,6 +651,9 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function drawing_mousedown(e) {
+	canvas = document.getElementById("draw_overlay");
+	context = canvas.getContext("2d");
+	context.save()
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
 	
 		window.LINEWIDTH = data.draw_line_width
@@ -690,7 +670,7 @@ function drawing_mousedown(e) {
 		window.DRAWDATA = {...data}
 
 	// some functions don't have selectable features
-	// such as colour / filltype
+	// such as colour / filltype so set them here
 	if(window.DRAWFUNCTION === "reveal" || window.DRAWFUNCTION === "eraser"){
 		// semi transparent red
 		window.DRAWCOLOR = "rgba(255, 0, 0, 0.5)"
@@ -707,6 +687,7 @@ function drawing_mousedown(e) {
 			window.DRAWCOLOR = "rgba(255, 255, 255, 0.5)"
 		}
 	}
+	// do select here...
 
 	console.log(e)
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -753,9 +734,9 @@ function drawing_mousedown(e) {
 			window.BEGIN_MOUSEY = [pointY];
 		}
 		var canvas = document.getElementById("fog_overlay");
-		var ctx = canvas.getContext("2d");
+		var context = canvas.getContext("2d");
 		var lineWidth = getDrawingLineWidth();
-		drawPolygon(ctx,
+		drawPolygon(context,
 			joinPointsArray(
 				window.BEGIN_MOUSEX,
 				window.BEGIN_MOUSEY
@@ -765,7 +746,7 @@ function drawing_mousedown(e) {
 			false,
 			lineWidth
 		);
-		drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
+		drawClosingArea(context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 	} else {
 		window.BEGIN_MOUSEX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 		window.BEGIN_MOUSEY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
@@ -778,11 +759,11 @@ function drawing_mousedown(e) {
 			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
 			// draw a dot
 			var canvas = document.getElementById("fog_overlay");
-			var ctx = canvas.getContext("2d");
+			var context = canvas.getContext("2d");
 			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
 			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-			drawBrushstroke(ctx, window.BRUSHPOINTS,getDrawingStyle(),getDrawingLineWidth());
+			drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
 		}
 	}
 
@@ -814,6 +795,7 @@ function drawing_mousemove(e) {
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
 
+		// bain todo why is this here?
 		if(window.DRAWSHAPE !== "brush")
 		{
 			redraw_fog();
@@ -841,7 +823,6 @@ function drawing_mousemove(e) {
 					 color,
 					 isFilled,
 					 lineWidth);
-			ctx.restore();
 		}
 		else if (window.DRAWSHAPE == "arc") {
 			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
@@ -942,9 +923,15 @@ function drawing_mousemove(e) {
 }
 
 function drawing_mouseup(e) {
+	// restore to what it looked like when first clicked
+	
+	const canvas = document.getElementById("fog_overlay");
+	const context = canvas.getContext("2d");
+	context.restore()
 
 	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+
 
 	if (window.DRAWSHAPE === 'select') {
 		toggle_lifting_fog()
@@ -1029,22 +1016,25 @@ function drawing_mouseup(e) {
 		}
 		window.DRAWINGS.push(data);
 		// BAIN TODO why do we redraw fog when drawing drawings?
-		redraw_fog();
 		redraw_drawings();
-		redraw_text();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	else if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
-		console.log('disegno');
-		data[0] = "eraser"
-		window.DRAWINGS.push(data);
-		redraw_fog();
-		redraw_drawings();
-		redraw_text();
+	else if (window.DRAWFUNCTION === "eraser"){
+		if (window.DRAWSHAPE === "rect"){
+			data[0] = "eraser"
+			window.DRAWINGS.push(data);
+			redraw_drawings();
+		}
+		else if (window.DRAWSHAPE === "text-eraser"){
+			data[0] = "text-eraser"
+			window.DRAWINGS.push(data);
+			redraw_text();
+		}
+		context.restore()
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
@@ -1052,9 +1042,6 @@ function drawing_mouseup(e) {
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
-		const canvas = document.getElementById("fog_overlay");
-		const context = canvas.getContext("2d");
-		context.restore();
 		data[0] = "text"
 		add_text_drawing_input(data)
 	}
@@ -1101,6 +1088,7 @@ function drawing_mouseup(e) {
 		}, 2000);
 		WaypointManager.clearWaypoints();
 	}
+	
 }
 
 function drawing_contextmenu(e) {
