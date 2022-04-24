@@ -15,7 +15,7 @@ function create_moveable_text_wrapper(x, y, width, height) {
         handle: "#draw_text_title_bar",
         addClasses: false,
         scroll: false,
-        containment: "#fog_overlay",
+        containment: "#temp_overlay",
         distance: 10,
         drag: function (event, ui) {
             mousex = Math.round((event.pageX - 200) * (1.0 / window.ZOOM));

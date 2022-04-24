@@ -2175,6 +2175,15 @@ function init_ui() {
 	fog.css("position", "absolute");
 	fog.css("z-index", "20");
 
+	// this overlay sits above all other canvases
+	// we draw to this and then bake the image into the corresponding
+	// canvas, based on the drawing function
+	temp_overlay = $("<canvas id='temp_overlay'></canvas>");
+	temp_overlay.css("position", "absolute");
+	temp_overlay.css("top", "0");
+	temp_overlay.css("left", "0");
+	temp_overlay.css("z-index", "25");
+
 
 	fog.dblclick(function(e) {
 		e.preventDefault();
@@ -2228,6 +2237,7 @@ function init_ui() {
 	VTT.append(grid);
 	VTT.append(draw_overlay);
 	VTT.append(text_overlay);
+	VTT.append(temp_overlay);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
@@ -2239,9 +2249,6 @@ function init_ui() {
 	wrapper.css("left", "0px");
 	wrapper.width(window.width);
 	wrapper.height(window.height);
-
-
-
 
 
 	wrapper.append(VTT);
@@ -2392,7 +2399,7 @@ function init_ui() {
 	$(window).mousedown(mousedown);
 	$(window).mouseup(mouseup);
 
-	$("#fog_overlay").bind("contextmenu", function (e) {
+	$("#temp_overlay").bind("contextmenu", function (e) {
 		return false;
 	});
 
@@ -2425,17 +2432,12 @@ function init_buttons() {
 	if ($("#fog_menu").length > 0) {
 		return; // only need to do this once
 	}
-
-	
-
-
 	buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
+	buttons.append($("<div style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</div>"));
 	
-	buttons.append($("<div style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='select'><u>S</u>ELECT</div>"));
-	
-	buttons.append($("<div style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='measure'><u>R</u>ULER</div>"));
+	buttons.append($("<div style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</div>"));
 	
 	if (window.DM) {
 		init_fog_menu(buttons)

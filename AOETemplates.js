@@ -89,13 +89,6 @@ function setup_aoe_button() {
     buttons.append(aoe_button);
     aoe_menu.css("left", aoe_button.position().left);
 
-
-    // $("#aoe_feet").keydown(function(e) {
-    //     if (e.key === "Escape") {
-    //         $('#select-button').click();
-    //     }
-    // });
-
     $(".aoeshape").click(function (e) {
         const thisMenu = $(this).closest("[id*='menu']")
         const color = thisMenu.find(
