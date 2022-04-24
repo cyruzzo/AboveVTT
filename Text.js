@@ -384,7 +384,7 @@ function init_text_button(buttons) {
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
                 <div id='text_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-                    data-shape='text_erase' data-function="eraser">
+                    data-shape='text_erase' data-toggle="true" data-function="eraser">
                         Erase
                 </div>
             </div>`

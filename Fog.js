@@ -625,7 +625,7 @@ function redraw_drawings() {
 		}
 		if (shape == "polygon") {
 			drawPolygon(ctx,x, color, isFilled, lineWidth);
-			ctx.stroke();
+			// ctx.stroke();
 		}
 		if (shape == "brush") {
 			drawBrushstroke(ctx, x, color, lineWidth, false);
@@ -698,20 +698,6 @@ function drawing_mousedown(e) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 		}		
 	}
-	else if (window.DRAWFUNCTION === "measure" && e.button === 2){
-		
-		var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-		var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
-
-		WaypointManager.storeWaypoint(
-			WaypointManager.currentWaypointIndex, 
-			window.BEGIN_MOUSEX, 
-			window.BEGIN_MOUSEY, 
-			mousex,
-			mousey);
-	}
-
-	// do select here...
 
 	console.log(e)
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -730,7 +716,6 @@ function drawing_mousedown(e) {
 
 	if (window.DRAWSHAPE === "polygon") {
 
-		redraw_fog();
 		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -750,6 +735,7 @@ function drawing_mousedown(e) {
 			window.BEGIN_MOUSEX = [pointX];
 			window.BEGIN_MOUSEY = [pointY];
 		}
+		clear_temp_canvas()
 		drawPolygon(context,
 			joinPointsArray(
 				window.BEGIN_MOUSEX,
@@ -825,7 +811,7 @@ function drawing_mousemove(e) {
 					 isFilled,
 					 lineWidth);
 		}
-		if (window.DRAWFUNCTION === "draw_text") {
+		if (window.DRAWSHAPE === "text_erase") {
 			// draw a rect that will be removed and replaced with an input box
 			// when mouseup
 			drawRect(context,
@@ -915,19 +901,6 @@ function drawing_mousemove(e) {
 }
 
 function drawing_mouseup(e) {
-	// restore to what it looked like when first clicked
-	if (window.DRAWSHAPE !== "polygon"){
-		clear_temp_canvas()
-	}
-	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
-
-
-	if (window.DRAWFUNCTION === 'select') {
-		toggle_lifting_fog()
-		$("#temp_overlay").css('cursor', '');
-	}
-
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (window.FUNCTION == "measure" && e.button == 2) {
 		if(window.MOUSEDOWN) {
@@ -936,7 +909,6 @@ function drawing_mouseup(e) {
 		//console.log("Measure right click");
 		return;
 	}
-
 	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
 	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "reveal" || window.DRAWFUNCTION == "hide") && e.which !== 1)
 	{
@@ -952,7 +924,21 @@ function drawing_mouseup(e) {
 	if (!window.MOUSEDOWN) {
 		return;
 	}
+	// restore to what it looked like when first clicked
+	// but not polygons as they have a close box to clear and then save
+	if (window.DRAWSHAPE !== "polygon"){
+		clear_temp_canvas()
+	}
+	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
+
+	if (window.DRAWFUNCTION === 'select') {
+		toggle_lifting_fog()
+		$("#temp_overlay").css('cursor', '');
+	}
+
+	
 	window.MOUSEDOWN = false;
 	const width = mousex - window.BEGIN_MOUSEX;
 	const height = mousey - window.BEGIN_MOUSEY;
@@ -1019,7 +1005,7 @@ function drawing_mouseup(e) {
 			window.DRAWINGS.push(data);
 			redraw_drawings();
 		}
-		else if (window.DRAWSHAPE === "text-eraser"){
+		else if (window.DRAWSHAPE === "text_erase"){
 			data[0] = "text-eraser"
 			window.DRAWINGS.push(data);
 			redraw_text();
@@ -1206,10 +1192,11 @@ function get_draw_data(button, menu){
 		const options = Object.assign({}, ...requiredOptions, ...selectedOptions);
 
 		if (menu.attr("id") === "text_menu"){
+			// selected shape & function only exist when erase selected
 			console.groupEnd()
 			return {
-				shape: "text",
-				function:"draw_text",
+				shape: selectedShape || "text",
+				function: selectedFunction || "draw_text",
 				from:menu.attr("id"),
 				...options
 			}
