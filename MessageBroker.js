@@ -1270,7 +1270,7 @@ class MessageBroker {
  */
 function observe_messages(connect=true) {
 	console.group("observe_messages")
-	const mutation_target = $(".tss-jmihpx-GameLogEntries").get(0)
+	let mutation_target =  document.querySelector(".glc-game-log")
 	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 	
 	const message_observer = new MutationObserver(function() {
@@ -1302,7 +1302,7 @@ function observe_messages(connect=true) {
 				});
 
 				if (!$(message).find(".gamelog-to-everyone-button").length) {
-					$(message).find("time").append(sendToEveryone)
+					$(message).find("time").prepend(sendToEveryone)
 				}else{
 					$(message).find(".gamelog-to-everyone-button").show()
 				}
@@ -1310,9 +1310,21 @@ function observe_messages(connect=true) {
 		}
 	});
 	if (connect){
-		message_observer.observe(mutation_target,mutation_config);
+		function observe_GL_once_available() {
+			mutation_target = document.querySelector(".glc-game-log")
+			if(!mutation_target) {
+				//The node we need does not exist yet.
+				//Wait 500ms and try again
+				window.setTimeout(observe_GL_once_available,500);
+				return;
+			}
+			message_observer.observe(mutation_target,mutation_config);
+		}
+		observe_GL_once_available()
 	}else{
 		message_observer.disconnect()
 	}
 	console.groupEnd()
 }
+
+
