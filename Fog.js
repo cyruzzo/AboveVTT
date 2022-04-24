@@ -698,6 +698,18 @@ function drawing_mousedown(e) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 		}		
 	}
+	else if (window.DRAWFUNCTION === "measure" && e.button === 2){
+		
+		var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
+		var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+
+		WaypointManager.storeWaypoint(
+			WaypointManager.currentWaypointIndex, 
+			window.BEGIN_MOUSEX, 
+			window.BEGIN_MOUSEY, 
+			mousex,
+			mousey);
+	}
 
 	// do select here...
 
