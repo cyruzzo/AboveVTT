@@ -1274,8 +1274,9 @@ function observe_messages(connect=true) {
 	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 	
 	const message_observer = new MutationObserver(function() {
-		const openMessage = $(mutation_target).find(".tss-1qn6fu1-Message-Other-Flex");
-		$(mutation_target).find(".tss-11w0h4e-Message-Collapsed-Other-Flex .gamelog-to-everyone-button").hide();
+		
+		const openMessage = $(mutation_target).find(".tss-17y30t1-GameLogEntry-Other-Flex");
+		// $(mutation_target).find(".tss-11w0h4e-Message-Collapsed-Other-Flex .gamelog-to-everyone-button").hide();
 		if (openMessage.length > 0){
 			openMessage.each(function(index, message) {
 				const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
@@ -1300,8 +1301,8 @@ function observe_messages(connect=true) {
 					sendToEveryone.html("Send Again")
 				});
 
-				if (!$(message).find(".gamelog-to-everyone-button").length && $(message).find(".tss-d12ile-Target-Other").length) {
-					$(message).find(">:first-child").append(sendToEveryone)
+				if (!$(message).find(".gamelog-to-everyone-button").length) {
+					$(message).find("time").append(sendToEveryone)
 				}else{
 					$(message).find(".gamelog-to-everyone-button").show()
 				}

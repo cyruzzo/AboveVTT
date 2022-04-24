@@ -428,11 +428,11 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 	}
-	if (clickedTab.attr("data-target") === ".glc-game-log") {
-		observe_messages();
-	} else{
-		observe_messages(false);
-	}
+	// if (clickedTab.attr("data-target") === ".glc-game-log") {
+	// 	observe_messages();
+	// } else{
+	// 	observe_messages(false);
+	// }
 
 
 	// switch back to gamelog if they change tabs
@@ -1585,6 +1585,7 @@ function init_above(){
 		}
 	}
 	)
+
 }
 
 function init_things() {
@@ -1675,7 +1676,12 @@ function init_things() {
 		init_ui();
 		init_splash();
 	}
+
 	$("#site").append("<div id='windowContainment'></div>");
+
+	elementReady(".tss-19wy6y0-GameLogContainer-Flex").then(
+		observe_messages()
+	)
 		
 }
 
@@ -2408,7 +2414,6 @@ function init_ui() {
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
 	}
-	observe_messages()
 
 }
 
@@ -3575,3 +3580,34 @@ function adjust_site_bar() {
 		});
 	}
 }
+
+
+
+/**
+ * Waits for an element satisfying selector to exist, then resolves promise with the element.
+ * Useful for resolving race conditions.
+ * https://gist.github.com/jwilson8767/db379026efcbd932f64382db4b02853e
+ * @param selector
+ * @returns {Promise}
+ */
+ function elementReady(selector) {
+	return new Promise((resolve, reject) => {
+	  let el = document.querySelector(selector);
+	  if (el) {
+		resolve(el); 
+		return
+	  }
+	  new MutationObserver((mutationRecords, observer) => {
+		// Query for elements matching the specified selector
+		Array.from(document.querySelectorAll(selector)).forEach((element) => {
+		  resolve(element);
+		  //Once we have resolved we don't need the observer anymore.
+		  observer.disconnect();
+		});
+	  })
+		.observe(document.documentElement, {
+		  childList: true,
+		  subtree: true
+		});
+	});
+  }
