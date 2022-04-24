@@ -1016,7 +1016,7 @@ function drawing_mouseup(e) {
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				if($("#tokens>div[data-id='" + curr.options.id + "']").css("pointer-events")!="none") {
+				if($("#tokens>div[data-id='" + curr.options.id + "']").css("pointer-events")!="none" && $("#tokens>div[data-id='" + curr.options.id + "']").css("display")!="none") {
 					curr.selected = true;
 				}
 			}

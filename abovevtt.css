@@ -2584,8 +2584,7 @@ button.avtt-roll-button {
     height: 80px;
     width: 10px;
     fill: #ddd;
-    x: 45;
-    y: 10;
+    transform: translate(45px, 10px);
 }
 
 #combat_tracker_title_bar_exit,
@@ -2730,6 +2729,7 @@ button.avtt-roll-button {
 }
 #round_number_label input{
     font-weight: 600;
+    -moz-appearance: textfield !important;
 }
 
 #combat_area td button{
@@ -2882,17 +2882,17 @@ button.avtt-roll-button {
     pointer-events: none;
 }
 
-.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(1) {
+.encounter-builder-app #combat_area td button:first-child:nth-last-child(1) {
     margin-right:60px;
 }
 
 /* two buttons */
-.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(2) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-child:nth-last-child(2) ~ button:last-of-type {
     margin-right:30px;
 }
 
 /* three buttons */
-.encounter-builder-app #combat_tracker td button:first-child:nth-last-child(3) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-child:nth-last-child(3) ~ button:last-of-type {
     margin-right:0px;
 }
 .tracker-list{
@@ -2983,6 +2983,21 @@ button.avtt-roll-button {
 .scene .dm_scenes_button,
 .scene .player_scenes_button {
     transition: none;
+}
+
+.context-menu-icon-concentration-reminder:before,
+.context-menu-icon-inspiration:before,
+.context-menu-icon-flying:before,
+.context-menu-icon-flamed:before,
+.context-menu-icon-rage:before,
+.context-menu-icon-blessed:before,
+.context-menu-icon-baned:before,
+.context-menu-icon-bloodied:before,
+.context-menu-icon-advantage:before,
+.context-menu-icon-disadvantage:before,
+.context-menu-icon-bardic-inspiration:before,
+.context-menu-icon-hasted:before {
+    background-position: center;
 }
 
 .button-loading::after {
