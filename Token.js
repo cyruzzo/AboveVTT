@@ -347,13 +347,22 @@ class Token {
 			);	
 		}
 		token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
+
+
+		let tokenWidth = this.options.size;
+		let tokenHeight = this.options.size;
 			
 		if(tokenData.disableaura) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
 		} 
 		else {
+			tokenWidth = tokenWidth - 10;
+			tokenHeight = tokenHeight - 10;
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
+			token.children('img').css({	
+				
+			});
 			if(tokenData.temp_hp) {
 				token.css('--token-temp-hp', "#4444ffbd");
 			}
@@ -364,14 +373,37 @@ class Token {
 		if(tokenData.disableborder) {
 			token.css('--token-border-color', 'transparent');
 			$("token:before").css('--token-border-color', 'transparent');
-
 		} 
 		else {
+			tokenWidth = tokenWidth - 4;
+			tokenHeight = tokenHeight - 4;
 			token.css('--token-border-color', this.options.color);
 			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
 		}
-		
+	
+		token.children('img').css({			
+			'position': 'absolute',
+		    'top': '50%',
+		    'left': '50%',
+		    'max-width': tokenWidth + 'px',
+			'max-height': tokenHeight + 'px',
+			'margin-top': -1 * (tokenHeight / 2) +'px',
+			'margin-left': -1 * (tokenWidth / 2) + 'px'
+		});
+		if(this.options.imageSize <= 1 || this.options.imageSize === undefined) {
+			token.children('img').css({
+				"min-height": tokenWidth + 'px',
+				"min-width": tokenHeight + 'px',
+			})
+		}
+		else {
+			token.children('img').css({
+				"min-height": "",
+				"min-width": ""
+			});
+		}
+
 		console.groupEnd()
 	}
 
