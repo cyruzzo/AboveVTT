@@ -650,13 +650,7 @@ function redraw_drawings() {
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
-	var target = $("#fog_overlay");
-	target.css('cursor', '');
-	target.off('mousedown', drawing_mousedown);
-	target.off('mouseup', drawing_mouseup);
-	target.off('mousemove', drawing_mousemove);
-	target.off('contextmenu', drawing_contextmenu);
-	var target = $("#VTT");
+	var target = $("#fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
@@ -672,18 +666,22 @@ function drawing_mousedown(e) {
 	window.DRAWSHAPE = e.data.shape;
 	window.DRAWFUNCTION = e.data.type;
 
+	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
+		return;
+	}
+
 	if (window.DRAWSHAPE === 'select') {
 		$("#fog_overlay").css("z-index", "50");
 		if (e.which == 1) {
 			$("#fog_overlay").css('cursor', 'crosshair');
-		}
+		}		
 	}
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
 	if (e.button != 0)
 		return;
-	deselect_all_tokens();
+
 	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
 		deselect_all_tokens();
 	}
@@ -1018,8 +1016,9 @@ function drawing_mouseup(e) {
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				// DM can always select tokens, but players can only select non-hidden tokens
-				curr.selected = true;
+				if($("#tokens>div[data-id='" + curr.options.id + "']").css("pointer-events")!="none" && $("#tokens>div[data-id='" + curr.options.id + "']").css("display")!="none") {
+					curr.selected = true;
+				}
 			}
 			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
 			curr.place();
@@ -1233,7 +1232,7 @@ function setup_draw_buttons() {
 			target.on('contextmenu', data, drawing_contextmenu);
 
 			
-			close_monster_stat_block();
+			//close_monster_stat_block(); don't close moster window on menu clicks
 		}
 	})
 	$('#select-button').click();

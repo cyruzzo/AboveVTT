@@ -34,3 +34,6 @@ https://code.jquery.com/jquery-3.6.0.min.js
 https://jqueryui.com/resources/download/jquery-ui-1.13.1.zip
 cp jquery-ui.min.js [root]
 cp jquery-ui.min.css [root]
+
+# Spectrum Color Picker 2.0.8 (https://seballot.github.io/spectrum/)
+# Download, unzip, and rename to include version number from here https://github.com/seballot/spectrum/tags

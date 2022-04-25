@@ -296,11 +296,9 @@ class MessageBroker {
 		this.gameid = find_game_id();
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 		this.diceMessageSelector = "DiceMessage_RollType__wlBsW";
-		if (is_encounters_page()) {
+		if (is_encounters_page() || is_characters_page()) {
 			this.diceMessageSelector = "tss-r93asv-RollType";
-		} else if (is_characters_page()) {
-			this.diceMessageSelector = "e5tW4dyfiZqZEWgkVugvEQ==";
-		}
+		} 
 
 		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
@@ -392,6 +390,7 @@ class MessageBroker {
 			if(msg.eventType=="custom/myVTT/delete_token"){
 				let tokenid=msg.data.id;
 				if(tokenid in window.TOKEN_OBJECTS)
+					window.TOKEN_OBJECTS[tokenid].options.deleteableByPlayers = true;
 					window.TOKEN_OBJECTS[tokenid].delete(false,false);
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
@@ -605,14 +604,6 @@ class MessageBroker {
 				self.handlePlayerData(msg.data);
 			}
 			if (msg.eventType == "dice/roll/pending"){
-				// Hook requestAnimationFrame so DDB's animated dice rolls keep rolling when focus is lost
-				// We hook only if the roll originated from self
-				if (this.origRequestAnimFrame == null &&
-				    ((window.DM && msg.data.context.entityType === "user") || window.PLAYER_ID == msg.data.context.entityId)) {
-					console.log("Hooking requestAnimationFrame for dice roll");
-					this.origRequestAnimFrame = window.requestAnimationFrame;
-					window.requestAnimationFrame = function(cb) { setTimeout(cb, 33); }
-				}
 				// check for injected_data!
 				if(msg.data.injected_data){
 					notify_gamelog();
@@ -731,12 +722,6 @@ class MessageBroker {
 			}
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
-				if (this.origRequestAnimFrame != null) {
-					console.log("Stop hooking requestAnimationFrame for dice roll");
-					window.requestAnimationFrame = this.origRequestAnimFrame;
-					this.origRequestAnimFrame = null;
-				}
-
 				notify_gamelog();
 				if (!window.DM)
 					return;
@@ -829,7 +814,7 @@ class MessageBroker {
 						text: "<b>Check for concentration!!</b>",
 					};
 
-					window.MB.inject_chat(msgdata);
+					// window.MB.inject_chat(msgdata);
 				}
 				cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
 
@@ -882,8 +867,13 @@ class MessageBroker {
 		if(data.whisper && (data.whisper!=window.PLAYER_NAME) && (!local))
 			return $("<div/>");
 		//notify_gamelog();
+
+		var d = new Date();
+		var datetime = d.toISOString();
+		var timestamp = d.toLocaleTimeString();
+		var datestamp = d.toLocaleDateString();
 		
-		if (is_encounters_page()) {
+		if (is_encounters_page() || is_characters_page()) {
 			return $(`
 				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">
 					<p role="img" class="tss-wyeh8h-Avatar-Flex">
@@ -894,11 +884,11 @@ class MessageBroker {
 							<span class="tss-1tj70tb-Sender">${data.player}</span>
 						</div>
 						<div class="tss-8-Collapsed-ref tss-8-Other-ref tss-11w0h4e-Message-Collapsed-Other-Flex">${data.text}</div>
-						<time datetime="2022-03-15T17:34:18-05:00" title="3/15/2022 5:34 PM" class="tss-1yxh2yy-TimeAgo-TimeAgo">14 mins ago</time>
+						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="tss-1yxh2yy-TimeAgo-TimeAgo">${timestamp}</time>
 					</div>
 				</li>
 			`);
-		} else if (is_characters_page()) {
+		} /*else if (is_characters_page()) {
 			return $(`
 				<li class="cwBGi-s80YSXZFf9zFTAGg== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA== _42x6X+dUmW-21eOxSO1c7Q== _9ORHCNDFVTb1uWMCEaGDYg==">
 					<p role="img" class="TILdlgSwOYvXr2yBdjxU7A== QXDbdjnpeXLRB22KlOxDsA==">
@@ -909,11 +899,11 @@ class MessageBroker {
 							<span class="_22SVeI3ayk2KgS4V+GqCCA==">${data.player}</span>
 						</div>
 						<div class="oDA6c7IdLEVJ7uSe5103CQ== iQqUeZkD8989e4pBhSqIrQ== wtVS4Bjey6LwdMo1GyKvpQ== QXDbdjnpeXLRB22KlOxDsA==">${data.text}</div>
-						<time datetime="2022-01-06T07:46:19-06:00" title="1/6/2022 7:46 AM" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">24 mins ago</time>
+						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="VL1LOQfDhMHRvAGyWG2vGg== _1-XSkDcxqHW18wFo5qzQzA==">${timestamp}</time>
 					</div>
 				</li>
 			`);
-		}
+		}*/
 
 		var newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
@@ -923,9 +913,6 @@ class MessageBroker {
 		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
 		container.append(entry);
 
-
-		var d = new Date();
-		var datetime = d.toISOString();
 		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
@@ -1087,7 +1074,6 @@ class MessageBroker {
 		}
 
 		if(window.CLOUD && window.DM){
-			refresh_scenes();
 			$("#combat_area").empty();
 			ct_load();
 		}

@@ -2012,6 +2012,214 @@ function build_hide_show_item(tokenIds) {
 	};
 }
 
+function is_player_id(id) {
+	// player tokens have ids with a structure like "/profile/username/characters/someId"
+	// monster tokens have a uuid for their id
+	if (id === undefined) {
+		return false;
+	}
+	return id.includes("/");
+}
+
+function determine_condition_item_classname(tokenIds, condition) {
+	// loop through all the tokens to see if they all have the given condition active, and return the appropriate class name for that condition
+	if (tokenIds === undefined || tokenIds.length === 0 || condition === undefined) {
+		// we got nothing so return nothing
+		return "none-active";
+	}
+	let conditionsAreActive = tokenIds
+		.map(id => window.TOKEN_OBJECTS[id].hasCondition(condition))
+		.filter(t => t !== undefined);
+	let uniqueActivations = [...new Set(conditionsAreActive)];
+	if (uniqueActivations.length === 0 || (uniqueActivations.length === 1 && uniqueActivations[0] === false)) {
+		// nothing has this condition active
+		return "none-active";
+	} else if (uniqueActivations.length === 1 && uniqueActivations[0] === true) {
+		// everything we were given has this condition active. If we were given a single thing, return single, else return all
+		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";
+		return "single-active active-condition";
+	} else {
+		// some, but not all of the things have this condition active
+		return "some-active active-condition";
+	}
+}
+
+function build_conditions_submenu(tokenIdList) {
+
+	let tokenIds = tokenIdList.filter(id => !is_player_id(id))
+	if (tokenIds.length === 0) {
+		return {
+			noplayers: {
+				name: 'Player conditions must be set in the character sheet.',
+				className: 'context-menu-helptext',
+				disabled: true
+			}
+		};
+	}
+
+	let cond_items = {};
+	cond_items.cond_clear = {
+		name: "Remove All",
+		className: "material-icon",
+		icon: "close-red",
+		callback: function(itemKey, opt) {
+			for (let i = 0; i < tokenIds.length; i++) {
+				let tokenId = tokenIds[i];
+				let token = window.TOKEN_OBJECTS[tokenId];
+				if (!token.isPlayer()) { // unfortunately, we can't set conditions on player tokens
+					token.options.conditions = [];
+					token.place_sync_persist();
+				}
+			}
+			$(".active-condition.context-menu-icon-condition").removeClass("single-active all-active some-active active-condition");
+			return false;
+		}
+	};
+	if (tokenIds.length !== tokenIdList.length) {
+		cond_items.noplayers = {
+			name: 'You have a player token selected! Player conditions must be set in the character sheet. All selected player tokens have been ignored in this submenu.',
+			className: 'context-menu-helptext',
+			disabled: true
+		};
+	}
+	cond_items.sep = "---";
+
+	for (let i = 0; i < STANDARD_CONDITIONS.length; i++) {
+		let conditionName = STANDARD_CONDITIONS[i];
+		let command = `cond_${conditionName}`;
+
+		cond_items[command] = {
+			name: conditionName,
+			className: `context-menu-icon-condition ${determine_condition_item_classname(tokenIds, conditionName)}`,
+			icon: conditionName.toLowerCase(),
+			callback: function(itemKey, opt) {
+				let condition = itemKey.slice(5);
+				console.log(condition, opt);
+				let deactivateAll = opt.$selected.hasClass("some-active")
+				for (let j = 0; j < tokenIds.length; j++) {
+					let tokenId = tokenIds[j];
+					let token = window.TOKEN_OBJECTS[tokenId];
+					if (!token.isPlayer()) { // unfortunately, we can't set conditions on player tokens
+						if (deactivateAll || token.hasCondition(condition)) {
+							token.removeCondition(condition)
+						} else {
+							token.addCondition(condition)
+						}
+						token.place_sync_persist();
+					}
+				}
+				opt.$selected.removeClass("single-active all-active some-active active-condition");
+				opt.$selected.addClass(determine_condition_item_classname(tokenIds, condition));
+				return false;
+			}
+		}
+	}
+
+	return cond_items;
+}
+
+function build_markers_submenu(tokenIds) {
+
+	let custom_cond_items = {};
+	custom_cond_items.cond_clear = {
+		name: "Remove All",
+		className: "material-icon",
+		icon: "close-red",
+		callback: function(itemKey, opt) {
+			for (let i = 0; i < tokenIds.length; i++) {
+				let tokenId = tokenIds[i];
+				let token = window.TOKEN_OBJECTS[tokenId];
+				token.options.custom_conditions = [];
+				token.place_sync_persist();
+			}
+			$(".active-condition.context-menu-icon-condition").removeClass("single-active all-active some-active active-condition");
+			return false;
+		}
+	};
+	custom_cond_items.sep = "---";
+
+	for (let i = 0; i < CUSTOM_CONDITIONS.length; i++) {
+		let conditionName = CUSTOM_CONDITIONS[i];
+		let command = `custom_${conditionName}`;
+		let item = {
+			className: `context-menu-icon-condition ${determine_condition_item_classname(tokenIds, conditionName)}`,
+			callback: function(itemKey, opt) {
+				let condition = itemKey.slice(7);
+				console.log(condition, opt, opt.$selected);
+				let deactivateAll = opt.$selected.hasClass("some-active")
+				for (let j = 0; j < tokenIds.length; j++) {
+					let tokenId = tokenIds[j];
+					let token = window.TOKEN_OBJECTS[tokenId];
+					if (deactivateAll || token.hasCondition(condition)) {
+						token.removeCondition(condition)
+					} else {
+						token.addCondition(condition)
+					}
+					token.place_sync_persist();
+				}
+				opt.$selected.removeClass("single-active all-active some-active active-condition");
+				opt.$selected.addClass(determine_condition_item_classname(tokenIds, condition));
+				return false;
+			}
+		};
+		if (conditionName.startsWith("#")) {
+			item.name = `<div class="color-reminder" style="background:${conditionName}">&nbsp;</div>`;
+			item.isHtmlName = true;
+		} else {
+			item.name = conditionName;
+			item.icon = conditionName.toLowerCase().replaceAll(" ", "-").replaceAll("(", "-").replaceAll(")", "");
+			item.className += " context-menu-markers-icon";
+		}
+		custom_cond_items[command] = item;
+	}
+
+	return custom_cond_items;
+}
+
+function determine_hidden_classname(tokenIds) {
+	let allHiddenStates = tokenIds
+		.map(id => window.TOKEN_OBJECTS[id].options.hidden === true)
+		.filter(t => t !== undefined);
+	let uniqueHiddenStates = [...new Set(allHiddenStates)];
+
+	let className = "";
+	if (uniqueHiddenStates.length === 0 || (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === false)) {
+		// none of these tokens are hidden
+		className = "none-active";
+	} else if (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === true) {
+		// everything we were given is hidden. If we were given a single thing, return single, else return all
+		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";
+		return "single-active active-condition";
+	} else {
+		// some, but not all of the things are hidden
+		return "some-active active-condition";
+	}
+}
+
+function build_hide_show_item(tokenIds) {
+	return {
+		name: "Hidden",
+		icon: "invisible",
+		className: determine_hidden_classname(tokenIds) + " context-menu-icon-condition",
+		callback: function(itemKey, opt) {
+			console.log(itemKey, opt);
+			let hideAll = opt.$selected.hasClass("some-active")
+			for (let j = 0; j < tokenIds.length; j++) {
+				let tokenId = tokenIds[j];
+				let token = window.TOKEN_OBJECTS[tokenId];
+				if (hideAll || token.options.hidden !== true) {
+					token.hide();
+				} else {
+					token.show();
+				}
+			}
+			opt.$selected.removeClass("single-active all-active some-active active-condition");
+			opt.$selected.addClass(determine_hidden_classname(tokenIds));
+			return false;
+		}
+	};
+}
+
 function token_menu() {
 	$.contextMenu({
 		selector: '.VTTToken',
