@@ -107,58 +107,12 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open
-Mousetrap.bind('1', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(0)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(0)").click()
-    }
-});
-
-Mousetrap.bind('2', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(1)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(1)").click()
-    }
-});
-
-Mousetrap.bind('3', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(2)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(2)").click()
-    }
-});
-
-Mousetrap.bind('4', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(3)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(3)").click()
-    }
-});
-
-Mousetrap.bind('5', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(4)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(4)").click()
-    }
-});
-
-Mousetrap.bind('6', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(5)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(5)").click()
-    }
+function handle_menu_number_press(e) {
+    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
+    $(`${visibleMenuId} .menu-option:eq(${parseInt(e.key) -1})`).click()
+}
+Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
+    handle_menu_number_press(e)
 });
 
 Mousetrap.bind('up', function () {
@@ -215,27 +169,27 @@ Mousetrap.bind('down', function () {
     }
 });
 
-Mousetrap.bind('tab', function () {
-    if ($("#aoe_menu").hasClass('visible')) {
-        if ($(".aoeshape").is(":focus")) {
-            $("#aoe_feet").focus();
-        } else {
-            $(".aoeshape").first().focus();
-        }
-        return false;
-    }
-});
+// Mousetrap.bind('tab', function () {
+//     if ($("#aoe_menu").hasClass('visible')) {
+//         if ($(".aoeshape").is(":focus")) {
+//             $("#aoe_feet").focus();
+//         } else {
+//             $(".aoeshape").first().focus();
+//         }
+//         return false;
+//     }
+// });
 
-Mousetrap.bind('shift+tab', function () {
-    if ($("#aoe_menu").hasClass('visible')) {
-        if ($(".aoeshape").is(":focus")) {
-            $(".aoeshape").blur();
-        } else {
-            $("#aoe_feet").focus();
-        }
-        return false;
-    }
-});
+// Mousetrap.bind('shift+tab', function () {
+//     if ($("#aoe_menu").hasClass('visible')) {
+//         if ($(".aoeshape").is(":focus")) {
+//             $(".aoeshape").blur();
+//         } else {
+//             $("#aoe_feet").focus();
+//         }
+//         return false;
+//     }
+// });
 
 Mousetrap.bind('left', function () {
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
