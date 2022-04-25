@@ -706,7 +706,7 @@ function drawing_mousedown(e) {
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
-	if (e.button != 0 && window.FUNCTION != "measure")
+	if (e.button != 0 && window.DRAWFUNCTION != "measure")
 		return;
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
@@ -902,7 +902,7 @@ function drawing_mousemove(e) {
 
 function drawing_mouseup(e) {
 	// Return early from this function if we are measuring and have hit the right mouse button
-	if (window.FUNCTION == "measure" && e.button == 2) {
+	if (window.DRAWFUNCTION == "measure" && e.button == 2) {
 		if(window.MOUSEDOWN) {
 			WaypointManager.checkNewWaypoint(mousex, mousey);
 		}
@@ -1052,7 +1052,7 @@ function drawing_mouseup(e) {
 		draw_selected_token_bounding_box();
 		console.log("READY");
 	}
-	else if (window.FUNCTION == "measure") {
+	else if (window.DRAWFUNCTION == "measure") {
 
 		setTimeout(function () {
 			// We do not clear if we are still measuring, added this as it somehow appeared multiple
