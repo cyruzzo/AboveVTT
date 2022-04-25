@@ -1,4 +1,4 @@
-const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Exhaustion"];
+const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Exhaustion", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious"];
 
 const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Inspiration", "Flying", "Flamed", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
@@ -66,7 +66,7 @@ class Token {
 	isPlayer() {
 		// player tokens have ids with a structure like "/profile/username/characters/someId"
 		// monster tokens have a uuid for their id
-		return this.options.id.includes("/");
+		return is_player_id(this.options.id);
 	}
 
 	isMonster() {
@@ -81,30 +81,52 @@ class Token {
 		}
 	}
 
+	gridSize() {
+		let size = parseFloat(this.options.size);
+		if (isNaN(size)) {
+			return 1; // default to small
+		}
+		let gridSize = parseFloat(window.CURRENT_SCENE_DATA.hpps); // one grid square
+		return Math.round(size / gridSize);
+	}
+
+	hasCondition(conditionName) {
+		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.includes(conditionName);
+	}
+	addCondition(conditionName) {
+		if (this.hasCondition(conditionName)) {
+			// already did
+			return;
+		}
+		if (STANDARD_CONDITIONS.includes(conditionName)) {
+			this.options.conditions.push(conditionName);
+		} else {
+			this.options.custom_conditions.push(conditionName);
+		}
+	}
+	removeCondition(conditionName) {
+		if (STANDARD_CONDITIONS.includes(conditionName)) {
+			array_remove_index_by_value(this.options.conditions, conditionName);
+		} else {
+			array_remove_index_by_value(this.options.custom_conditions, conditionName);
+		}
+	}
+
 	size(newsize) {
 		this.update_from_page();
 		this.options.size = newsize;
-		this.place();
-		this.sync();
-		if (this.persist != null)
-			this.persist();
+		this.place_sync_persist()
 	}
 
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
-		this.place();
-		this.sync();
-		if (this.persist != null)
-			this.persist();
+		this.place_sync_persist()
 	}
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
-		this.place();
-		this.sync();
-		if (this.persist != null)
-			this.persist();
+		this.place_sync_persist()
 	}
 	delete(persist=true,sync=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
@@ -269,7 +291,7 @@ class Token {
 	/**
 	 * adds a hidden dead cross to tokens
 	 * makes dead cross visible if token has 0 hp
-	 * @param token jquery selected div with the class token
+	 * @param token jquery selected div with the class "token"
 	 */
 	update_dead_cross(token){
 		console.group("update_dead_cross")
@@ -304,7 +326,7 @@ class Token {
 
 	/**
 	 * updates the colour of the health aura if enabled
-	 * @param token jquery selected div with the class token
+	 * @param token jquery selected div with the class "token"
 	 */
 	update_health_aura(token){
 		console.group("update_health_aura")
@@ -349,22 +371,27 @@ class Token {
 			this.options.hidden = true;
 		else
 			delete this.options.hidden;
-
-		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.hidestat)) && !this.options.disablestat && old.find(".hp").length > 0) {
+		
+		// one of either
+		// is a monster?
+		// is the DM
+		// not the DM and player controlled
+		// AND stats aren't disabled and has hp bar
+		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && !this.options.disablestat && old.has(".hp").length > 0) {
 			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
 				old.find(".hp").val(Math.max(0, parseInt(this.options.hp) + parseInt(old.find(".hp").val())));
 			}
-			if (old.find(".max_hp").val().startsWith("+") || old.find(".max_hp").val().startsWith("-")) {
+			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
 				old.find(".max_hp").val(Math.max(0, parseInt(this.options.max_hp) + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-
 			this.options.hp = old.find(".hp").val();
 			this.options.max_hp = old.find(".max_hp").val();
 			
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
 		}
+		toggle_player_selectable(this, old)
 		console.groupEnd()
 	}
 
@@ -425,7 +452,7 @@ class Token {
 		hpbar.append(hp_input);
 		hpbar.append(divider);
 		hpbar.append(maxhp_input);
-		if (this.options.monster > 0) {
+		if (!this.isPlayer()) {
 			hp_input.change(function(e) {
 				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
@@ -446,7 +473,7 @@ class Token {
 			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
 
-		return (hpbar);
+		return hpbar;
 	}
 
 	build_ac() {
@@ -507,6 +534,58 @@ class Token {
 		);}
 		return elev;
 	}
+
+	/**
+	 * hides or shows stats based on this.options
+	 * @param token jquery selected div with the class "token"
+	 */
+	toggle_stats(token){
+		let showthem=false;
+
+		if(this.options.disablestat){ // if disable-stat.. noone should see HP/AC.. this is for non character tokens
+			showthem=false;
+		}
+		else if(window.DM){ // in all the other cases.. the DM should always see HP/AC
+			showthem=true;
+		}
+		else if(this.options.player_owned){ // if it's player_owned.. always showthem
+			showthem=true;
+		}
+		else if(this.isPlayer() && (!this.options.hidestat)){
+			showthem=true;
+		}
+
+		if(showthem){
+			token.find(".hpbar").show();
+			token.find(".ac").show();
+			token.find(".elev").show();
+		}
+		else{
+			token.find(".hpbar").hide();
+			token.find(".ac").hide();
+			token.find(".elev").hide();
+		}
+	}
+
+	/**
+	 * Adds stats hp/ac/elev when token doesn't have them, or rebuilds them if it does
+	 * @param token jquery selected div with the class "token"
+	 */
+	build_stats(token){
+		console.group("build_stats")
+		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
+			token.append(this.build_hp());
+			token.append(this.build_ac());
+			token.append(this.build_elev());
+		}
+		else{
+			token.find(".hpbar").replaceWith(this.build_hp());
+			token.find(".ac").replaceWith(this.build_ac());
+			token.find(".elev").replaceWith(this.build_elev());
+		}
+		console.groupEnd()
+	}
+
 
 	build_conditions(parent) {
 		let self=this;
@@ -641,7 +720,6 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
 		var self = this;
-
 		/* UPDATE COMBAT TRACKER */
 		if (window.DM) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
@@ -672,20 +750,6 @@ class Token {
 
 			// CONCENTRATION REMINDER
 
-
-			if ((!(this.options.monster > 0)) || window.DM) {
-				old.find(".hpbar").replaceWith(this.build_hp());
-				old.find(".ac").replaceWith(this.build_ac());
-				old.find(".elev").replaceWith(this.build_elev());
-			}
-			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
-				old.find(".hpbar").hide();
-				old.find(".ac").hide();
-			}
-			else{
-				old.find(".hpbar").show();
-				old.find(".ac").show();
-			}
 			let scale = this.get_token_scale()
 			var rotation = 0;
 			if (this.options.rotation != undefined) {
@@ -751,13 +815,14 @@ class Token {
 
 			if (this.selected) {
 				old.addClass("tokenselected");
+				toggle_player_selectable(this, old)
 			}
 			else {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
 			
-			if(old.find("img").attr("src")!=this.options.imgsrc && !this.options.hidden){
+			if(old.find("img").attr("src")!=this.options.imgsrc){
 				old.find("img").attr("src",this.options.imgsrc);
 			}
 		
@@ -847,27 +912,6 @@ class Token {
 
 			tok.append(tokimg);
 
-			if ((!(this.options.monster > 0)) || window.DM) {
-				if(!this.options.disablestat || (!window.DM && this.options.hidestat)){
-					tok.append(this.build_hp());
-					tok.append(this.build_ac());
-					tok.append(this.build_elev());
-				}
-			}
-			
-			if(this.options.disablestat || (!window.DM && this.options.hidestat)){
-				tok.find(".hpbar").hide();
-				tok.find(".ac").hide();
-				tok.find(".elev").hide();
-			}
-			else{
-				tok.find(".hpbar").show();
-				tok.find(".ac").show();
-				tok.find(".elev").show();
-			}
-
-			
-
 			tok.attr("data-id", this.options.id);
 			tokimg.attr("src", this.options.imgsrc);
 			tokimg.width(this.options.size);
@@ -932,6 +976,9 @@ class Token {
 			tok.draggable({
 				stop:
 					function (event) {
+						//remove cover for smooth drag
+						$('.iframeResizeCover').remove();
+			
 						// this should be a XOR... (A AND !B) OR (!A AND B)
 						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 						console.log("shallwesnap",shallwesnap);
@@ -1030,6 +1077,10 @@ class Token {
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
+					
+					// for dragging behind iframes so tokens don't "jump" when you move past it
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 
 					console.log("Click x: " + click.x + " y: " + click.y);
 
@@ -1141,7 +1192,7 @@ class Token {
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
-			// 
+
 			tok.find(".token-image").dblclick(function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
@@ -1163,6 +1214,7 @@ class Token {
 				}
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
+					toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
 				} else {
 					parentToken.removeClass('tokenselected');
 				}				
@@ -1185,8 +1237,12 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
+		this.build_stats(token)
+		this.toggle_stats(token)
 		this.update_health_aura(token)
 		this.update_dead_cross(token)
+		// this.toggle_player_owned(token)
+		toggle_player_selectable(this, token)
 		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
 	}
@@ -1218,6 +1274,22 @@ class Token {
 		return storedValue;
 	}
 	
+}
+
+/**
+ * disables player selection of a token when token is locked & restricted
+ * @param tokenInstance token instance ofc
+ * @param token jquery selected div with the class token
+ */
+function toggle_player_selectable(tokenInstance, token){
+	if (tokenInstance.options.locked && !window.DM){
+		token?.css("cursor","default");
+		token?.css("pointer-events","none");
+	}
+	else{
+		token?.css("cursor","move");
+		token?.css("pointer-events","auto");
+	}
 }
 
 // Stop the right click mouse down from cancelling our drag
@@ -1534,38 +1606,6 @@ function menu_callback(key, options, event) {
 		id = $(this).attr('data-id');
 		window.TOKEN_OBJECTS[id].delete();
 	}
-	if (key == "token_medium") {
-		id = $(this).attr('data-id'); window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps));
-	}
-	if (key == "token_tiny") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
-	}
-	if (key == "token_large") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 2);
-	}
-	if (key == "token_huge") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 3);
-	}
-	if (key == "token_gargantuan") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 4);
-	}
-	if (key == "token_colossal") {
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 5);
-	}
-	if (key == "token_hidden") {
-		id = $(this).attr('data-id');
-		if (window.TOKEN_OBJECTS[id].hidden) {
-			window.TOKEN_OBJECTS[id].hide();
-		}
-		else {
-			window.TOKEN_OBJECTS[id].show();
-		}	
-	}
 
 	if ( key =="note_edit") {
 		if (!(id in window.JOURNAL.notes)) {
@@ -1597,13 +1637,17 @@ function menu_callback(key, options, event) {
 
 	if (key == "token_combat") {
 		id = $(this).attr('data-id');
-		ct_add_token(window.TOKEN_OBJECTS[id]);
+		if (window.TOKEN_OBJECTS[id].options.combat === true) {
+			ct_remove_token(window.TOKEN_OBJECTS[id]);
+		} else {
+			ct_add_token(window.TOKEN_OBJECTS[id]);
+		}
 	}
 	if (key.startsWith("cond_")) {
 		condition = key.substr(5);
 		id = $(this).attr('data-id');
 		if (window.TOKEN_OBJECTS[id].options.conditions.includes(condition)) {
-			array_remove_index_by_value(window.TOKEN_OBJECTS[id], condition);
+			array_remove_index_by_value(window.TOKEN_OBJECTS[id].options.conditions, condition);
 		}
 		else {
 			window.TOKEN_OBJECTS[id].options.conditions.push(condition);
@@ -1611,38 +1655,6 @@ function menu_callback(key, options, event) {
 		window.TOKEN_OBJECTS[id].place();
 		window.ScenesHandler.persist();
 		// should persist ?	
-	}
-	if (['candle', 'torch', 'lamp', 'lantern'].indexOf(key) >= 0) {
-	
-		id = $(this).attr('data-id');
-		window.TOKEN_OBJECTS[id].options.aura1.color = "rgba(255, 129, 0, 0.3)";
-		window.TOKEN_OBJECTS[id].options.aura2.color = "rgba(255, 255, 0, 0.1)";
-
-		if (key === "candle") {
-			window.TOKEN_OBJECTS[id].options.aura1.feet = "5";
-			window.TOKEN_OBJECTS[id].options.aura2.feet = "5";
-			
-		}
-		if (key === "torch") {
-			window.TOKEN_OBJECTS[id].options.aura1.feet = "20";
-			window.TOKEN_OBJECTS[id].options.aura2.feet = "20";
-			
-		}
-		if (key === "lamp") {
-			window.TOKEN_OBJECTS[id].options.aura1.feet = "15";
-			window.TOKEN_OBJECTS[id].options.aura2.feet = "30";
-			
-		}
-		if (key === "lantern") {
-			window.TOKEN_OBJECTS[id].options.aura1.feet = "30";
-			window.TOKEN_OBJECTS[id].options.aura2.feet = "30";
-			
-		}
-	
-		window.TOKEN_OBJECTS[id].place();
-		window.TOKEN_OBJECTS[id].sync();
-		if(window.DM)
-			window.TOKEN_OBJECTS[id].persist();
 	}
 
 	if (key === "imgsrcSelect") {
@@ -1662,6 +1674,10 @@ function menu_callback(key, options, event) {
 		} else {
 			display_placed_token_customization_modal(tok);
 		}
+	}
+
+	if (key == "configure") {
+		token_context_menu_expanded([$(this).attr("data-id")]);
 	}
 	
 }
@@ -1685,149 +1701,50 @@ function token_inputs(opt) {
 		return;
 
 	data = $.contextMenu.getInputValues(opt, $(this).data());
-
 	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
-	tok = window.TOKEN_OBJECTS[id];
-	if(is_monster)
-		tok.options.conditions = [];
-	tok.options.custom_conditions = [];
+	token = window.TOKEN_OBJECTS[id];
 
-	for (k in data) {
-		if (k.startsWith("cond_") && data[k]) { // if checkbox is true...
-			tok.options.conditions.push(k.substr(5));
-		}
-		if (k.startsWith("custom_") && data[k]) { // if checkbox is true...
-			tok.options.custom_conditions.push(k.substr(7));
-		}
-	}
-
-	if(data.token_custom_size && (!isNaN(data.token_custom_size))){
-		tok.options.size=Math.round(window.CURRENT_SCENE_DATA.hpps * (data.token_custom_size/5));
-	}
-
-
-	if (data.aura1 && data.aura1.length > 0) {
-		tok.options.aura1.feet = data.aura1;
-	} else { tok.options.aura1.feet = 0 }
-	if (data.aura2 && data.aura2.length > 0) {
-		tok.options.aura2.feet = data.aura2;
-	} else { tok.options.aura2.feet = 0 }
-	if (data.aura1Color && data.aura1Color.length > 0) {
-		tok.options.aura1.color = data.aura1Color;
-	}
-	if (data.aura2Color && data.aura2Color.length > 0) {
-		tok.options.aura2.color = data.aura2Color;
-	}
-	tok.options.auraVisible = data.auraVisible;
-	
 	if (data.imgsrc != undefined) {
-		tok.options.imgsrc = parse_img(data.imgsrc);
+		token.options.imgsrc = parse_img(data.imgsrc);
 	}
 
 
 	if (window.DM) {
-		if (is_monster) {
-			if (data.hp.startsWith("+") || data.hp.startsWith("-"))
-				data.hp = parseInt(tok.options.hp) + parseInt(data.hp);
+		if (!is_player_id(id)) {
+			if (data.hp?.startsWith("+") || data.hp?.startsWith("-"))
+				data.hp = parseInt(token.options.hp) + parseInt(data.hp);
 
-			tok.options.hp = data.hp;
+			token.options.hp = data.hp;
 
 			if (data.max_hp.startsWith("+") || data.max_hp.startsWith("-"))
-				data.max_hp = parseInt(tok.options.max_hp) + parseInt(data.max_hp);
+				data.max_hp = parseInt(token.options.max_hp) + parseInt(data.max_hp);
 
-			tok.options.max_hp = data.max_hp;
+			token.options.max_hp = data.max_hp;
 
 			if (!isNaN(data.ac)) {
-				tok.options.ac = data.ac;
+				token.options.ac = data.ac;
 			}
 			if (!isNaN(data.elev)) {
-				tok.options.elev = data.elev;
+				token.options.elev = data.elev;
 			}
 		}
 
 		
-		tok.options.name = data.name;
-		tok.options.elev = data.elev;
+		token.options.name = data.name;
+		token.options.elev = data.elev;
 
 		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
-			tok.options.imgsrc = parse_img(opt.imgsrcSelection);
+			token.options.imgsrc = parse_img(opt.imgsrcSelection);
 		} else if (data.imgsrc != undefined) {
-			tok.options.imgsrc = parse_img(data.imgsrc);
-		}
-
-		if (data.token_square) {
-			tok.options.square = true;
-		}
-		else {
-			tok.options.square = false;
-		}
-
-		if (data.token_disablestat) {
-			tok.options.disablestat = 1;
-		}
-		else {
-			tok.options.disablestat = false;
-		}
-
-		if (data.token_hidestat) {
-			tok.options.hidestat = 1;
-		}
-		else {
-			tok.options.hidestat = false;
-		}
-
-		if (data.token_locked) {
-			tok.options.locked = 1;
-		}
-		else {
-			tok.options.locked = false;
-		}
-
-		if (data.token_restrictPlayerMove) {
-			tok.options.restrictPlayerMove = 1;
-		}
-		else {
-			tok.options.restrictPlayerMove = false;
-		}
-
-		if (data.token_disableborder) {
-			tok.options.disableborder = true;
-		}
-		else {
-			tok.options.disableborder = false;
-		}
-
-		if (data.token_disableaura) {
-			tok.options.disableaura = true;
-		}
-		else {
-			tok.options.disableaura = false;
-		}
-		if (data.token_hidden) {
-			tok.options.hidden = true;
-		}
-		else {
-			tok.options.hidden = false;
-		}
-		if (data.token_revealname) {
-			tok.options.revealname = true;
-		}
-		else {
-			tok.options.revealname = false;
-		}
-		if (data.token_legacyaspectratio) {
-			tok.options.legacyaspectratio = true;
-		}
-		else {
-			tok.options.legacyaspectratio = false;
+			token.options.imgsrc = parse_img(data.imgsrc);
 		}
 	}
 	
-	tok.place();
-	tok.sync();
+	token.place();
+	token.sync();
 	if(window.DM)
-		tok.persist();
+		token.persist();
 }
 
 function multiple_callback(key, options, event) {
@@ -1849,6 +1766,13 @@ function multiple_callback(key, options, event) {
 			id = $(this).attr('data-id');
 			window.TOKEN_OBJECTS[id].show();
 		});
+	}
+	if (key == "configure") {
+		let tokenIds = [];
+		$("#tokens .tokenselected").each(function() {
+			tokenIds.push($(this).attr('data-id'));
+		});
+		token_context_menu_expanded(tokenIds);
 	}
 	if (key == "delete") {
 		$("#tokens .tokenselected").each(function() {
@@ -1878,20 +1802,214 @@ function multiple_callback(key, options, event) {
 			add_to_roll_menu(window.TOKEN_OBJECTS[id])
 		});							
 	}
-	if (key == 'remove_conditions'){
-		if (confirm("Remove all conditions from the selected tokens?")){
-			$("#tokens .tokenselected").each(function() {
-				id = $(this).attr('data-id');
-				window.TOKEN_OBJECTS[id].options.conditions = [];
-				window.TOKEN_OBJECTS[id].options.custom_conditions = [];
-				window.TOKEN_OBJECTS[id].place()
-				console.log("Removing all conditions from "+window.TOKEN_OBJECTS[id].name)
-			});	
+}
+
+function is_player_id(id) {
+	// player tokens have ids with a structure like "/profile/username/characters/someId"
+	// monster tokens have a uuid for their id
+	if (id === undefined) {
+		return false;
+	}
+	return id.includes("/");
+}
+
+function determine_condition_item_classname(tokenIds, condition) {
+	// loop through all the tokens to see if they all have the given condition active, and return the appropriate class name for that condition
+	if (tokenIds === undefined || tokenIds.length === 0 || condition === undefined) {
+		// we got nothing so return nothing
+		return "none-active";
+	}
+	let conditionsAreActive = tokenIds
+		.map(id => window.TOKEN_OBJECTS[id].hasCondition(condition))
+		.filter(t => t !== undefined);
+	let uniqueActivations = [...new Set(conditionsAreActive)];
+	if (uniqueActivations.length === 0 || (uniqueActivations.length === 1 && uniqueActivations[0] === false)) {
+		// nothing has this condition active
+		return "none-active";
+	} else if (uniqueActivations.length === 1 && uniqueActivations[0] === true) {
+		// everything we were given has this condition active. If we were given a single thing, return single, else return all
+		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";
+		return "single-active active-condition";
+	} else {
+		// some, but not all of the things have this condition active
+		return "some-active active-condition";
+	}
+}
+
+function build_conditions_submenu(tokenIdList) {
+
+	let tokenIds = tokenIdList.filter(id => !is_player_id(id))
+	if (tokenIds.length === 0) {
+		return {
+			noplayers: {
+				name: 'Player conditions must be set in the character sheet.',
+				className: 'context-menu-helptext',
+				disabled: true
+			}
+		};
+	}
+
+	let cond_items = {};
+	cond_items.cond_clear = {
+		name: "Remove All",
+		className: "material-icon",
+		icon: "close-red",
+		callback: function(itemKey, opt) {
+			for (let i = 0; i < tokenIds.length; i++) {
+				let tokenId = tokenIds[i];
+				let token = window.TOKEN_OBJECTS[tokenId];
+				if (!token.isPlayer()) { // unfortunately, we can't set conditions on player tokens
+					token.options.conditions = [];
+					token.place_sync_persist();
+				}
+			}
+			$(".active-condition.context-menu-icon-condition").removeClass("single-active all-active some-active active-condition");
+			return false;
 		}
-		else {
-			console.log("Not removing Conditions from selected tokens. ")
+	};
+	if (tokenIds.length !== tokenIdList.length) {
+		cond_items.noplayers = {
+			name: 'You have a player token selected! Player conditions must be set in the character sheet. All selected player tokens have been ignored in this submenu.',
+			className: 'context-menu-helptext',
+			disabled: true
+		};
+	}
+	cond_items.sep = "---";
+
+	for (let i = 0; i < STANDARD_CONDITIONS.length; i++) {
+		let conditionName = STANDARD_CONDITIONS[i];
+		let command = `cond_${conditionName}`;
+
+		cond_items[command] = {
+			name: conditionName,
+			className: `context-menu-icon-condition ${determine_condition_item_classname(tokenIds, conditionName)}`,
+			icon: conditionName.toLowerCase(),
+			callback: function(itemKey, opt) {
+				let condition = itemKey.slice(5);
+				console.log(condition, opt);
+				let deactivateAll = opt.$selected.hasClass("some-active")
+				for (let j = 0; j < tokenIds.length; j++) {
+					let tokenId = tokenIds[j];
+					let token = window.TOKEN_OBJECTS[tokenId];
+					if (!token.isPlayer()) { // unfortunately, we can't set conditions on player tokens
+						if (deactivateAll || token.hasCondition(condition)) {
+							token.removeCondition(condition)
+						} else {
+							token.addCondition(condition)
+						}
+						token.place_sync_persist();
+					}
+				}
+				opt.$selected.removeClass("single-active all-active some-active active-condition");
+				opt.$selected.addClass(determine_condition_item_classname(tokenIds, condition));
+				return false;
+			}
 		}
 	}
+
+	return cond_items;
+}
+
+function build_markers_submenu(tokenIds) {
+
+	let custom_cond_items = {};
+	custom_cond_items.cond_clear = {
+		name: "Remove All",
+		className: "material-icon",
+		icon: "close-red",
+		callback: function(itemKey, opt) {
+			for (let i = 0; i < tokenIds.length; i++) {
+				let tokenId = tokenIds[i];
+				let token = window.TOKEN_OBJECTS[tokenId];
+				token.options.custom_conditions = [];
+				token.place_sync_persist();
+			}
+			$(".active-condition.context-menu-icon-condition").removeClass("single-active all-active some-active active-condition");
+			return false;
+		}
+	};
+	custom_cond_items.sep = "---";
+
+	for (let i = 0; i < CUSTOM_CONDITIONS.length; i++) {
+		let conditionName = CUSTOM_CONDITIONS[i];
+		let command = `custom_${conditionName}`;
+		let item = {
+			className: `context-menu-icon-condition ${determine_condition_item_classname(tokenIds, conditionName)}`,
+			callback: function(itemKey, opt) {
+				let condition = itemKey.slice(7);
+				console.log(condition, opt, opt.$selected);
+				let deactivateAll = opt.$selected.hasClass("some-active")
+				for (let j = 0; j < tokenIds.length; j++) {
+					let tokenId = tokenIds[j];
+					let token = window.TOKEN_OBJECTS[tokenId];
+					if (deactivateAll || token.hasCondition(condition)) {
+						token.removeCondition(condition)
+					} else {
+						token.addCondition(condition)
+					}
+					token.place_sync_persist();
+				}
+				opt.$selected.removeClass("single-active all-active some-active active-condition");
+				opt.$selected.addClass(determine_condition_item_classname(tokenIds, condition));
+				return false;
+			}
+		};
+		if (conditionName.startsWith("#")) {
+			item.name = `<div class="color-reminder" style="background:${conditionName}">&nbsp;</div>`;
+			item.isHtmlName = true;
+		} else {
+			item.name = conditionName;
+			item.icon = conditionName.toLowerCase().replaceAll(" ", "-").replaceAll("(", "-").replaceAll(")", "");
+			item.className += " context-menu-markers-icon";
+		}
+		custom_cond_items[command] = item;
+	}
+
+	return custom_cond_items;
+}
+
+function determine_hidden_classname(tokenIds) {
+	let allHiddenStates = tokenIds
+		.map(id => window.TOKEN_OBJECTS[id].options.hidden === true)
+		.filter(t => t !== undefined);
+	let uniqueHiddenStates = [...new Set(allHiddenStates)];
+
+	let className = "";
+	if (uniqueHiddenStates.length === 0 || (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === false)) {
+		// none of these tokens are hidden
+		className = "none-active";
+	} else if (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === true) {
+		// everything we were given is hidden. If we were given a single thing, return single, else return all
+		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";
+		return "single-active active-condition";
+	} else {
+		// some, but not all of the things are hidden
+		return "some-active active-condition";
+	}
+}
+
+function build_hide_show_item(tokenIds) {
+	return {
+		name: "Hidden",
+		icon: "invisible",
+		className: determine_hidden_classname(tokenIds) + " context-menu-icon-condition",
+		callback: function(itemKey, opt) {
+			console.log(itemKey, opt);
+			let hideAll = opt.$selected.hasClass("some-active")
+			for (let j = 0; j < tokenIds.length; j++) {
+				let tokenId = tokenIds[j];
+				let token = window.TOKEN_OBJECTS[tokenId];
+				if (hideAll || token.options.hidden !== true) {
+					token.hide();
+				} else {
+					token.show();
+				}
+			}
+			opt.$selected.removeClass("single-active all-active some-active active-condition");
+			opt.$selected.addClass(determine_hidden_classname(tokenIds));
+			return false;
+		}
+	};
 }
 
 function token_menu() {
@@ -1916,49 +2034,45 @@ function token_menu() {
 				ret = {
 					callback: multiple_callback,
 					items: {
-						token_combat: { name: 'Add to Combat Tracker' },
-						group_roll: { name: 'Quick Group Roll' },
-						remove_conditions: {name: 'Remove ALL Conditions'},
-						hide: { name: 'Hide From Players' },
-						show: { name: 'Show To Players' },
-						delete: { name: 'Delete Token' },
-						token_locked: {
-							type: 'checkbox',
-							name: 'Lock Tokens in Position',
-							events: {
-								click: function(e) {
-									if (e.target == undefined || e.target.checked == undefined) return;
-									$("#tokens .tokenselected").each(function() {
-										id = $(this).attr('data-id');
-										window.TOKEN_OBJECTS[id].options.locked = e.target.checked;
-										window.TOKEN_OBJECTS[id].place_sync_persist();
-									});							
-								}
-							}
+						token_combat: {
+							name: 'Add to Combat Tracker',
+							icon: 'person-add',
+							className: "material-icon"
 						},
-						token_restrictPlayerMove: {
-							type: 'checkbox',
-							name: 'Restrict Player Movement',
-							events: {
-								click: function(e) {
-									if (e.target == undefined || e.target.checked == undefined) return;
-									$("#tokens .tokenselected").each(function() {
-										id = $(this).attr('data-id');
-										window.TOKEN_OBJECTS[id].options.restrictPlayerMove = e.target.checked;
-										window.TOKEN_OBJECTS[id].place_sync_persist();
-									});							
-								}
-							}
+						group_roll: { name: 'Quick Group Roll' },
+						token_hidden: build_hide_show_item(window.CURRENTLY_SELECTED_TOKENS),
+						conditions: {
+							name: 'Conditions',
+							items: build_conditions_submenu(window.CURRENTLY_SELECTED_TOKENS),
+							icon: 'add-circle',
+							className: "material-icon"
+						},
+						markers: {
+							name: 'Markers',
+							items: build_markers_submenu(window.CURRENTLY_SELECTED_TOKENS),
+							icon: 'add-circle',
+							className: "material-icon"
+						},
+						configure: {
+							name: 'Configure',
+							icon: 'edit',
+							className: "material-icon"
+						},
+						sep: "---",
+						delete: {
+							name: 'Delete',
+							icon: 'close-red',
+							className: "material-icon"
 						}
 					}
 				};
 				return ret;
 			}
 			else { // STANDARD SINGLE TOKEN MENU
-				cond_items = {};
-				custom_cond_items = {};
-				custom_reminders = {}
 				id = $(element).attr('data-id');
+				cond_items = build_conditions_submenu([id]);
+				custom_cond_items = build_markers_submenu([id]);
+				custom_reminders = {}
 				is_monster = window.TOKEN_OBJECTS[id].isMonster();
 				is_player = window.TOKEN_OBJECTS[id].isPlayer();
 				has_note=id in window.JOURNAL.notes;
@@ -1978,207 +2092,41 @@ function token_menu() {
 					}
 				}
 
-				for (var i = 0; i < STANDARD_CONDITIONS.length; i++) {
-					command = "cond_" + STANDARD_CONDITIONS[i];
-					cond_items[command] = { name: STANDARD_CONDITIONS[i], type: "checkbox" }
-					//cond_items[command].events={change:condition_change};
-					if (!is_monster) {
-						cond_items[command].disabled = true;
-					}
-					if (window.TOKEN_OBJECTS[id].options.conditions.includes(STANDARD_CONDITIONS[i])) {
-						cond_items[command].selected = true;
-					}
-				}
-				// cond_items.sep1 = "-----";
-				for (var i = 0; i < CUSTOM_CONDITIONS.length; i++) {
-					command = "custom_" + CUSTOM_CONDITIONS[i];
-					if (CUSTOM_CONDITIONS[i].startsWith("#")) {
-						custom_cond_items[command] = {
-							name: `<div class="color-reminder" style="background:${CUSTOM_CONDITIONS[i]}">&nbsp;</div>`,
-							isHtmlName: true,
-							type: "checkbox"
-						};
-					} else {
-						custom_cond_items[command] = { name: CUSTOM_CONDITIONS[i], type: "checkbox" };
-					}
-					if (window.TOKEN_OBJECTS[id].options.custom_conditions.includes(CUSTOM_CONDITIONS[i])) {
-						custom_cond_items[command].selected = true;
-					}
-				}
-				
 				ret = {
 					callback: menu_callback,
 					events: {
 						hide: token_inputs
 					},
 					items: {
-						view: { name: 'Character Sheet' },
-						token_combat: { name: 'Add to Combat Tracker' },
-						token_hidden: {
-							type: 'checkbox',
-							name: 'Hide',
-							selected: window.TOKEN_OBJECTS[id].options.hidden,
+						view: {
+							name: window.TOKEN_OBJECTS[id].isMonster() ? 'Monster Stat Block' : 'Character Sheet',
+							icon: 'view',
+							className: "material-icon"
 						},
+						token_combat: {
+							name: window.TOKEN_OBJECTS[id].options.combat === true ? 'Remove from Combat Tracker' : 'Add to Combat Tracker',
+							icon: window.TOKEN_OBJECTS[id].options.combat === true ? 'person-remove' : 'person-add',
+							className: "material-icon"
+						},
+						token_hidden: build_hide_show_item([id]),
 						sep0: "--------",
-						token_size: {
-							name: "Size",
-							items: {
-								token_tiny: { name: 'Tiny' },
-								token_medium: { name: 'Small or Medium' },
-								token_large: { name: 'Large' },
-								token_huge: { name: 'Huge' },
-								token_gargantuan: { name: 'Gargantuan' },
-								token_colossal: { name: 'Colossal' },
-								token_custom_size: {name: 'Custom Size (enter edge feet)', type:'text'}
-							}
-						},
 
 						token_cond: {
 							name: "Conditions",
 							items: cond_items,
+							icon: 'add-circle',
+							className: "material-icon"
 						},
 						token_custom_cond: {
 							name: "Markers",
 							items: custom_cond_items,
-						},
-						tokenAuras: {
-							name: "Auras",
-							items: {
-								auraVisible: {
-									type: 'checkbox',
-									name: 'Token Auras',
-									className: 'on-off-title',
-									selected: window.TOKEN_OBJECTS[id].options.auraVisible
-								},
-								sep2Auras: '---------',
-								aura1Label: {
-									type: "title",
-									name: "Inner Aura"
-								},
-								aura1: {
-									type: 'text',
-									name: 'Ft.',
-									value: window.TOKEN_OBJECTS[id].options.aura1.feet,
-									className: "aura-feet",
-									events: {
-										click: function(e) {
-											$(e.target).select();
-										}
-									}
-								},
-								aura1Color: {
-									type: 'colorPicker',
-									name: 'Color',
-									prop: 'aura1Color',
-									value: window.TOKEN_OBJECTS[id].options.aura1.color,
-									events: {
-										click: function(e) {
-											$(e.target).select();
-										}
-									}
-								},
-								sepAuras: '---------',
-								aura21Label: {
-									type: "title",
-									name: "Outer Aura"
-								},
-								aura2: {
-									type: 'text',
-									name: 'Ft.',
-									value: window.TOKEN_OBJECTS[id].options.aura2.feet,
-									className: "aura-feet",
-									events: {
-										click: function(e) {
-											$(e.target).select();
-										}
-									}
-								},
-								aura2Color: {
-									type: 'colorPicker',
-									name: 'Color',
-									value: window.TOKEN_OBJECTS[id].options.aura2.color,
-									prop: 'aura2Color',
-									events: {
-										click: function(e) {
-											$(e.target).select();
-										}
-									}
-								},
-								sep3Auras: '---------',
-								presets: {
-									type: "title",
-									name: "Presets"
-								},
-								candle: {
-									name: "Candle (5/5)",
-									className: "aura-preset"
-								},
-								torch: {
-									name: "Torch / Light (20/20)",
-									className: "aura-preset"
-								},
-								lamp: {
-									name: "Lamp (15/30)",
-									className: "aura-preset"
-								},
-								lantern: {
-									name: "Lantern (30/30)",
-									className: "aura-preset"
-								}
-							}
-						},
-						options: {
-							name: "Options",
-							items: {
-								token_square: {
-									type: 'checkbox',
-									name: 'Square Token',
-									selected: window.TOKEN_OBJECTS[id].options.square
-								},
-								token_locked: {
-									type: 'checkbox',
-									name: 'Lock Tokens in Position',
-									selected: window.TOKEN_OBJECTS[id].options.locked
-								},
-								token_restrictPlayerMove: {
-									type: 'checkbox',
-									name: 'Restrict Player Movement',
-									selected: window.TOKEN_OBJECTS[id].options.restrictPlayerMove
-								},
-								token_disablestat: {
-									type: 'checkbox',
-									name: 'Disable HP/AC',
-									selected: window.TOKEN_OBJECTS[id].options.disablestat
-								},
-								token_hidestat: {
-									type: 'checkbox',
-									name: 'Hide HP/AC from players',
-									selected: window.TOKEN_OBJECTS[id].options.hidestat,
-								},
-								token_disableborder: {
-									type: 'checkbox',
-									name: 'Disable Border',
-									selected: window.TOKEN_OBJECTS[id].options.disableborder
-								},
-								token_disableaura: {
-									type: 'checkbox',
-									name: 'Disable Aura',
-									selected: window.TOKEN_OBJECTS[id].options.disableaura
-								},
-								token_revealname: {
-									type: 'checkbox',
-									name: 'Show name to players',
-									selected: window.TOKEN_OBJECTS[id].options.revealname,
-								},
-								token_legacyaspectratio: {
-									type: 'checkbox',
-									name: 'Stretch non-square token images',
-									selected: window.TOKEN_OBJECTS[id].options.legacyaspectratio == true || window.TOKEN_OBJECTS[id].options.legacyaspectratio == undefined
-								}
-							}
+							icon: 'add-circle',
+							className: "material-icon"
 						},
 						note_menu:{
 							name: "Notes",
+							icon: "note",
+							className: "material-icon",
 							items:{
 								note_view: {name: 'View Note', disable: !has_note},
 								note_edit: {name: 'Create/Edit Note'},
@@ -2189,45 +2137,33 @@ function token_menu() {
 							name: 'Quick Roll Menu' 
 						},
 						sep1: "-------",
-						name: {
-							type: 'text',
-							name: 'Name',
-							value: window.TOKEN_OBJECTS[id].options.name,
-							events: {
-								click: function(e) {
-									$(e.target).select();
-								}
-							}
-						},
 						hp: {
 							type: 'text',
 							name: 'Current HP',
-							className: 'hp-context-input',
+							className: 'split-column-context-input split-column-context-input-text',
 							value: window.TOKEN_OBJECTS[id].options.hp,
-							disabled: !is_monster,
 							events: {
 								click: function(e) {
 									$(e.target).select();
 								}
 							},
 						},
-						max_hp: {
+						ac: {
 							type: 'text',
-							name: 'Max Hp',
-							className: 'hp-context-input',
-							value: window.TOKEN_OBJECTS[id].options.max_hp,
-							disabled: !is_monster,
+							name: 'AC',
+							className: 'split-column-context-input split-column-context-input-text',
+							value: window.TOKEN_OBJECTS[id].options.ac,
 							events: {
 								click: function(e) {
 									$(e.target).select();
 								}
 							}
 						},
-						ac: {
+						max_hp: {
 							type: 'text',
-							name: 'AC',
-							className: 'ac-context-input',
-							value: window.TOKEN_OBJECTS[id].options.ac,
+							name: 'Max Hp',
+							className: 'split-column-context-input split-column-context-input-text',
+							value: window.TOKEN_OBJECTS[id].options.max_hp,
 							events: {
 								click: function(e) {
 									$(e.target).select();
@@ -2237,7 +2173,7 @@ function token_menu() {
 						elev: {
 							type: 'text',
 							name: 'Elevation',
-							className: 'ac-context-input',
+							className: !is_player ? 'split-column-context-input split-column-context-input-text' : "",
 							value: window.TOKEN_OBJECTS[id].options.elev,
 							events: {
 								click: function(e) {
@@ -2248,7 +2184,13 @@ function token_menu() {
 						sep3: '----------',
 						imgsrcSelect: {
 							name: "Change Image",
-							className: "imgsrcSelect"
+							className: "imgsrcSelect material-icon",
+							icon: "person"
+						},
+						configure: {
+							name: 'Configure',
+							icon: 'edit',
+							className: "material-icon"
 						},
 						sep4: '----------',
 						helptext: {
@@ -2256,7 +2198,11 @@ function token_menu() {
 							className: 'context-menu-helptext',
 							disabled: true
 						},
-						delete: { name: 'Delete' }
+						delete: {
+							name: 'Delete',
+							icon: 'close-red',
+							className: "material-icon"
+						}
 					}
 				};
 
@@ -2266,26 +2212,26 @@ function token_menu() {
 				}
 
 				if (is_monster) {
-					delete ret.items.options.items.token_hidestat;
+					// delete ret.items.options.items.token_hidestat;
 					delete ret.items.helptext;
 				}
-				else {
-					delete ret.items.sep1;
-					delete ret.items.hp;
-					delete ret.items.max_hp;
-					delete ret.items.token_cond;
-					delete ret.items.options.items.token_revealname;
-					delete ret.items.ac;
+				if (is_player){
+					delete ret.items.hp
+					delete ret.items.max_hp
+					delete ret.items.ac
 				}
 				
 				if(!has_note){
 					delete ret.items.note_menu.items.note_view;
 					delete ret.items.note_menu.items.note_delete;
 				}
+				// token isn't owned by a player, only the DM should see "character sheet" option in context menu
+				if(!window.DM && (!window.TOKEN_OBJECTS[id].options.player_owned)){
+					delete ret.items.view;
+				}
 				
 				if(!window.DM){
 					delete ret.items.sep0;
-					delete ret.items.view;
 					delete ret.items.token_combat;
 					delete ret.items.token_hidden;
 					//delete ret.items.token_size;
@@ -2298,6 +2244,7 @@ function token_menu() {
 					delete ret.items.sep2;
 					delete ret.items.ac;
 					delete ret.items.elev;
+					delete ret.items.configure;
 					if (!id.endsWith(window.PLAYER_ID)) {
 						delete ret.items.sep3;
 						delete ret.items.imgsrcSelect;
@@ -2391,6 +2338,16 @@ function setTokenAuras (token, options) {
 			auraElement.contextmenu(function(){return false;});
 			$("#tokens").prepend(auraElement);
 		}
+		if(window.DM){
+			options.hidden ? token.parent().find("#aura_" + tokenId).css("opacity", 0.5)
+			: token.parent().find("#aura_" + tokenId).css("opacity", 1)
+		}
+		else{
+			options.hidden ? token.parent().find("#aura_" + tokenId).hide()
+			: token.parent().find("#aura_" + tokenId).show()
+		}
+
+		
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().find("#aura_" + tokenId).remove();
@@ -2496,6 +2453,9 @@ function draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
+		console.log(id)
+		let selector = "div[data-id='" + id + "']";
+		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {
 			window.CURRENTLY_SELECTED_TOKENS.push(id);
 		}
@@ -2766,28 +2726,30 @@ function open_roll_menu(e) {
 	roll_dialog = $("<div id='group_roll_dialog'></div>");
 	roll_dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 	roll_dialog.css('overflow', 'auto');
-	roll_dialog.css('width', '380px');
-	var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
-	var mousey = Math.round((e.pageY - 200) * (1.0 / window.ZOOM));
-	roll_dialog.css('top', mousey+'px');
-	roll_dialog.css('left', mousex+'px');
+	roll_dialog.css('width', '400px');
+	roll_dialog.css('top', e.clientY+'px');
+	roll_dialog.css('left', e.clientX+'px');
 	roll_dialog.css('height', '250px');
 	roll_dialog.css('z-index', 100);
-	roll_dialog.css('border', 'solid 2px red');
+	roll_dialog.css('border', 'solid 2px #ddd');
 	roll_dialog.css('display', 'flex');
 	roll_dialog.css('margin', '1px 1px')
 	roll_dialog.css('flex-direction', 'column');
+	roll_dialog.addClass("moveableWindow");
 	$(roll_dialog).draggable();
+	$(roll_dialog).resizable();
 
 	$("#tokens").append(roll_dialog);
 
 	roll_dialog.empty();
 
 	roll_menu_header = $("<div id='roll_menu_header' class=roll_menu_header ></div>");
-	roll_menu_dc_input = $('<input type="roll_menu" id="save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
-	//roll_menu_dc_input.tooltip();
+	roll_menu_dc_input = $('<input id="save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
+	roll_menu_dc_input.tooltip();
 
-	roll_menu_header.append(roll_menu_dc_input)
+	const roll_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	roll_title_bar_exit.click(function(){roll_dialog.remove()});
+	roll_menu_header.append(roll_title_bar_exit);
 
 	save_type_dropdown = $('<select id="save_dropdown" onchange="save_type_change(this)" title="Select the type of saving throw to be made. ">Save Type</select>')
 	save_type_dropdown.append($('<option value="2">Dexterity</option>')) 
@@ -2796,11 +2758,11 @@ function open_roll_menu(e) {
 	save_type_dropdown.append($('<option value="1">Strength</option>'))
 	save_type_dropdown.append($('<option value="5">Intelligence</option>'))
 	save_type_dropdown.append($('<option value="6">Charisma</option>'))
-	//save_type_dropdown.tooltip()
-	damage_input  = $('<input type="roll_menu" id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
-	//damage_input.tooltip()
-	half_damage_input = $('<input type="roll_menu" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
-	//half_damage_input.tooltip()
+	save_type_dropdown.tooltip()
+	damage_input  = $('<input id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
+	damage_input.tooltip()
+	half_damage_input = $('<input id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
+	half_damage_input.tooltip()
 
 	damage_input.change(function(){
 		//console.log(this.value)
@@ -2820,9 +2782,11 @@ function open_roll_menu(e) {
 		$("#half_damage_save").val(Math.floor(_dmg/2));
 	});
 
-	roll_menu_header.append(damage_input)
-	roll_menu_header.append(half_damage_input)
-	roll_menu_header.append(save_type_dropdown)
+	roll_menu_footer = $("<div id='roll_menu_footer' class=roll_menu_footer/>");
+	roll_menu_footer.append(roll_menu_dc_input)
+	roll_menu_footer.append(damage_input)
+	roll_menu_footer.append(half_damage_input)
+	roll_menu_footer.append(save_type_dropdown)
 
 	let roll_form = $("<form />");
 	roll_menu_body = $("<div id='roll_menu_body' class='roll_menu_body'></div>");
@@ -2830,12 +2794,8 @@ function open_roll_menu(e) {
 	//roll_menu_body.append($('<span> Use +- for custom bonus, add a "A" or "D" for Adv/Disadv </span>'))
 	roll_menu_body.append(roll_form)
 
-	roll_cancel = $("<button class='avtt-roll-button' style='margin: 1px 1px; float: right; font-size:14px;'>Cancel</button>");
-	roll_cancel.click(function() {
-		$("#group_roll_dialog").remove();
-	});
-
-	roll_button = $("<button class='avtt-roll-button' style='margin: 1px 1px; font-size:14px;'>Roll!</button>");
+	roll_button=$('<button class="rollSavesButton" title="Roll saves with current settings."><svg class="rollSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 339.09 383.21"><path d="M192.91,3q79.74,45.59,159.52,91.1c4.9,2.79,7.05,6,7,11.86q-.29,87.76,0,175.52c0,5.14-1.79,8.28-6.19,10.85q-78.35,45.75-156.53,91.78c-4.75,2.8-8.81,2.8-13.57,0q-77.7-45.75-155.59-91.18c-5.17-3-7.2-6.52-7.18-12.56q.31-87.39,0-174.78c0-5.5,2.06-8.64,6.7-11.28q80-45.53,159.84-91.3ZM115.66,136h3.67c12.1,0,24.19-.05,36.29,0,5.24,0,8.38,3.15,8.34,8s-3.56,8-9.73,8c-11.85.08-23.69,0-35.54,0-4.14,0-4.21.16-2.11,3.8q35.54,61.53,71.09,123.06c.59,1,.82,2.7,2.32,2.62s1.66-1.7,2.25-2.74q35.47-61.35,70.9-122.74c2.3-4,2.31-4-2.5-4-11.72,0-23.45.06-35.17,0-6.18-.05-9.6-3.08-9.59-8.1,0-5.18,3.27-7.9,9.58-7.91,11.47,0,22.94,0,34.42,0,1.27,0,2.71.54,3.93-.63a11.49,11.49,0,0,0-.69-1.36q-35.49-53-71-106c-2.15-3.22-3.2-1.77-4.7.46q-35.06,52.36-70.19,104.71C116.82,133.87,116.44,134.63,115.66,136Zm89,153.29c1.51,0,2.25.06,3,0,12.51-1.17,25-2.39,37.53-3.54,14.75-1.35,29.5-2.61,44.25-4,15.11-1.39,30.22-2.89,45.34-4.25,4.39-.39,4.47-.32,2.46-4.21q-10.79-20.94-21.61-41.87-17.31-33.56-34.64-67.11c-.49-1-.69-2.45-1.9-2.57s-1.48,1.46-2.14,2.31a9.38,9.38,0,0,0-.56,1q-27.49,47.6-55,95.2C215.87,269.75,210.42,279.24,204.62,289.31Zm-29.49.12c-1-1.84-1.57-3.05-2.24-4.22Q154,252.49,135.13,219.79,119.05,191.94,103,164.1c-.53-.91-.8-2.38-2.13-2.32-1.1.05-1.29,1.39-1.73,2.24Q70.69,219,42.3,274c-1.35,2.6-.88,3.39,2.09,3.56,6.71.38,13.4,1.06,20.09,1.68q23,2.11,46.08,4.27c12.26,1.15,24.53,2.34,36.79,3.47C156.37,287.81,165.4,288.57,175.13,289.43ZM44.49,102.78c1.34.83,2.16,1.37,3,1.86C63,113.46,78.55,122.19,94,131.17c3.21,1.88,4.7,1.46,6.75-1.63Q131,83.87,161.64,38.39c.66-1,1.64-1.84,1.8-3.6Zm172.2-67.85-.38.49c.31.53.58,1.08.93,1.59q30.94,46.15,61.84,92.33c2.12,3.18,3.67,3.68,7,1.72,15.4-9,31-17.7,46.45-26.54.8-.45,1.95-.58,2.22-2.08ZM36,250l.72.09C37.84,248,39,246,40.05,243.86Q64.23,197,88.47,150.12c1.35-2.6.68-3.58-1.6-4.86C71.21,136.48,55.62,127.56,40,118.7c-4-2.25-4-2.22-4,2.29V250Zm307.45.82a12.72,12.72,0,0,0,.35-1.55q0-64.51.06-129c0-3.33-1.17-3.17-3.5-1.85Q316.51,132,292.56,145.51c-2.11,1.18-2.42,2.21-1.29,4.38q18.11,34.83,36,69.76C332.56,229.83,337.84,240,343.46,250.84ZM64.23,295.22l-.14.56,47.09,27.59q33.88,19.86,67.78,39.7c1.11.64,3.21,3.18,3.21-.87,0-17.71,0-35.42,0-53.13,0-2.21-1-3.17-3.09-3.36q-17.29-1.51-34.59-3.07-18.22-1.63-36.45-3.29Q86.15,297.33,64.23,295.22Zm252.49,0c-11.13,1-21.24,2-31.37,2.92-12.15,1.1-24.31,2.1-36.46,3.21-15.62,1.41-31.23,3-46.86,4.26-3.38.27-4.46,1.44-4.43,4.8.14,16.84.06,33.68.07,50.52,0,4.1,0,4.1,3.73,1.93L286,313.28C296,307.43,305.91,301.56,316.72,295.2Z" transform="translate(-20.37 -3.01)"/><path d="M197.64,143.89a7.9,7.9,0,0,1-7.72,8,7.81,7.81,0,0,1-7.73-7.93,7.73,7.73,0,1,1,15.45,0Z" transform="translate(-20.37 -3.01)"/></svg></button>');
+	roll_button.tooltip()
 	roll_button.click(function() {
 
 		$('#roll_menu_footer').children('#apply_damage').show()
@@ -2843,7 +2803,7 @@ function open_roll_menu(e) {
 			let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
 			let y = $(this).children('input');
 
-			save_drop = $("#roll_menu_header").children('select')
+			save_drop = $("#roll_menu_footer").children('select')
 			
 			if(x.options.monster > 0){
 				score_bonus = Math.floor((x.options.ability_scores[save_drop.val()] - 10) /2 )
@@ -2884,9 +2844,9 @@ function open_roll_menu(e) {
 			//reassign to the input 
 			y.val(roll.total);
 			//display a Save success or failure.
-			save_dc = $("#roll_menu_header").children('#save_dc').val()
-			console.log($("#roll_menu_header"))
-			console.log($("#roll_menu_header").children('#save_dc'))
+			save_dc = $("#roll_menu_footer").children('#save_dc').val()
+			console.log($("#roll_menu_footer"))
+			console.log($("#roll_menu_footer").children('#save_dc'))
 			console.log(save_dc)
 			pass_fail_label = $(this).children('#save_fail_label')[0]
 			$(pass_fail_label).show()
@@ -2909,103 +2869,56 @@ function open_roll_menu(e) {
 		});
 	});
 	
-	apply_condition_dropdown = $('<select id="apply_condition" title="Does failing this save apply a condition ">Condition</select>')
-	apply_condition_dropdown.append('<option selected value=0> -- Select an Condition -- </option>')
-
-	
-	// CONDITIONS
-	STANDARD_CONDITIONS.forEach(
-		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
-	)
-	CUSTOM_CONDITIONS.forEach(function(val, index, arr){
-		if (!val.startsWith("#")) {
-			apply_condition_dropdown.append(`<option value='${val}'>${val}</option>`)
-		}
-		// this is where any custom color condition stuff would go.
-	})
-	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
-	
-	update_hp = $("<button class='avtt-roll-button' id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage/Conditions </button>");
+	update_hp = $("<button id=apply_damage style='margin: 1px 1px; font-size:14px;'> Apply Damage </button>");
 	update_hp.click(function() {
 		$("#roll_menu_body").children('tr').each(function (){
+			update_hp=$(this).children("#hp");
 			let rolled_value = $(this).children('input').val();
-			if (!rolled_value.includes('+') && !rolled_value.includes('-')) {
-				let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
-				damage_failed_save = $("#roll_menu_header").children('#damage_failed_save').val()
-				half_damage_save_success = $("#roll_menu_header").children('#half_damage_save').val()
+			//if (!rolled_value.includes('+') && !rolled_value.includes('-')) {}
+			let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+			damage_failed_save = $("#roll_menu_footer").children('#damage_failed_save').val()
+			half_damage_save_success = $("#roll_menu_footer").children('#half_damage_save').val()
 
-				damage_failed_save = damage_failed_save.replace(/[^\d.-]/g, '');
-				half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
+			damage_failed_save = damage_failed_save.replace(/[^\d.-]/g, '');
+			half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
 
-				save_dc = $("#roll_menu_header").children('#save_dc').val()
+			save_dc = $("#roll_menu_footer").children('#save_dc').val()
 
-				if (save_dc != "undefined"){
-					if (parseInt(rolled_value) >= parseInt(save_dc)){
-						x.options.hp -= half_damage_save_success
-						damage = half_damage_save_success
-						save_success = true
-					}
-					else {
-						x.options.hp -= damage_failed_save
-						damage = damage_failed_save
-						save_success = false
-					}
+			if (save_dc != "undefined"){
+				if (parseInt(rolled_value) >= parseInt(save_dc)){
+					x.options.hp -= half_damage_save_success
+					damage = half_damage_save_success
 				}
-				//if not defined apply full damage.
 				else {
 					x.options.hp -= damage_failed_save
 					damage = damage_failed_save
-					save_success = false
 				}
-
-				if(x.options.monster > 0){
-					if (apply_condition_dropdown.val() != 0 && save_success == false) {
-						if (CUSTOM_CONDITIONS.includes(apply_condition_dropdown.val())){
-							x.options.custom_conditions.push(apply_condition_dropdown.val())
-						}
-						else {
-							x.options.conditions.push(apply_condition_dropdown.val())
-						}
-						console.log(apply_condition_dropdown.val() + 'Applied to' + x.options.name)
-					}
-					if (apply_condition_dropdown.val() == 1 && save_success == false) {
-						x.options.conditions = [];
-						x.options.custom_conditions = [];
-						console.log('All Conditions removed from ' + x.options.name)
-					}
-					$(this).children()[2].textContent = x.options.hp
-					x.place()
-				}
-				else {
-					// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
-					var msgdata = {
-						player: window.PLAYER_NAME,
-						img: window.PLAYER_IMG,
-						text: x.options.name + " takes " + damage +" damage (adjust manually)",	
-					};
-					window.MB.inject_chat(msgdata);
-					if (apply_condition_dropdown.val() != 0 && save_success == false){
-						console.log(apply_condition_dropdown.val())
-						var msgdata = {
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: x.options.name + " becomes " + apply_condition_dropdown.val() +" (adjust manually)",	
-						};
-						window.MB.inject_chat(msgdata);
-					}
-					x.place()
-				}
+			}
+			//if not defined apply full damage.
+			else {
+				x.options.hp -= damage_failed_save
+				damage = damage_failed_save
+			}
+			if(x.options.monster > 0){
+				x.place()
+				update_hp.text(x.options.hp);
+			}
+			else {
+				// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
+				var msgdata = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: x.options.name + " takes " + damage +" damage (adjust manually)",	
+				};
+				window.MB.inject_chat(msgdata);
+				x.place()
 			}
 		});
 	});
 
 
-	roll_menu_footer = $("<div id='roll_menu_footer' class=roll_menu_footer/>");
 	roll_menu_footer.append(roll_button);
 	roll_menu_footer.append(update_hp);
-	roll_menu_footer.append(apply_condition_dropdown);
-	roll_menu_footer.append(roll_cancel);
-	update_hp.hide()
 
 	roll_dialog.append(roll_menu_header);
 	roll_dialog.append(roll_menu_body);
@@ -3033,7 +2946,7 @@ function add_to_roll_menu(token) {
 
 	//if its a monster it needs to be calulated.
 	if(token.options.monster > 0){
-		console.log(token.options)
+		console.log(token.options.ability_scores)
 		score_bonus = Math.floor((token.options.ability_scores[2] - 10) /2 )
 		if (token.options.saving_throws[2]){
 			score_bonus += token.options.prof_bonus
@@ -3070,10 +2983,9 @@ function add_to_roll_menu(token) {
 
 	roll_menu_entry.append($("<td/>").append(max_hp));
 
-	find=$("<button class='avtt-roll-button' style='font-size:12px; margin: 1px 1px;' title='Find the token on the map.'>Find</button>");
-	//find.tooltip()
+	find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
 	find.click(function(){
-		var target=$(this).parent().attr('data-target');
+		var target=$(this).parent().parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
 			window.TOKEN_OBJECTS[target].highlight();
 		}
@@ -3081,7 +2993,7 @@ function add_to_roll_menu(token) {
 	roll_menu_entry.append(bonus_input)
 	roll_menu_entry.append(find);
 
-	remove_from_list=$("<button class='avtt-roll-button' style='font-size:12px;margin: 1px 1px;' title='Remove this entry from this roll menu.'>Remove</button>");
+	remove_from_list=$('<button class="removeTokenCombatButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
 	//remove_from_list.tooltip()
 	remove_from_list.click(
 		function() {
@@ -3089,10 +3001,11 @@ function add_to_roll_menu(token) {
 			$(this).parent().remove();
 		}
 	);
+	
 	roll_menu_entry.append(remove_from_list);
 
 	if(token.isMonster()){
-		stat=$("<button class='avtt-roll-button' style='font-size:12px;margin: 1px 1px;' title='Open this monster`s stat block'>Stats</button>");
+		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat.click(function(){
 			if (encounter_builder_dice_supported()) {
@@ -3113,7 +3026,7 @@ function add_to_roll_menu(token) {
 		
 	}	
 	else if (token.isPlayer()) {
-		stat=$("<button class='avtt-roll-button' style='font-size:12px;margin: 1px 1px;' title='Open this character`s stat block'>Stats</button>");
+		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		stat.click(function(){
 			open_player_sheet(token.options.id);
 		});
@@ -3130,7 +3043,7 @@ function add_to_roll_menu(token) {
 function save_type_change(dropdown) {
 	var ability_names = {0: 'null', 1: 'strength', 2: 'dexterity', 3:'constitution', 4:'wisdom', 5:'intelligence', 6:'charisma'}
 	console.log("Save type is: "+ dropdown.value );
-	$('#roll_menu_footer').children('#apply_damage').hide()
+	//$('#roll_menu_footer').children('#apply_damage').hide()
 	//$('#group_roll_dialog').children('tr').each(function () {
 	$('#roll_menu_body').children('tr').each(function () {
 		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
