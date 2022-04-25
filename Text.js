@@ -1,12 +1,20 @@
+/**
+ * Creates a moveable and resizable text area with a close and submit button
+ * @param {Number} x starting left side position
+ * @param {Number} y starting top side position
+ * @param {Number} width width text area
+ * @param {Number} height height of text area
+ * @returns a div which has the title bar with submit/close buttons and a text area
+ */
 function create_moveable_text_wrapper(x, y, width, height) {
     wrapper = $("<div id='draw_text_wrapper'/>");
     wrapper.css({
-        position: "fixed",
-        left: `${x}px`,
-        top: `${y - 25}px`,
+        "position": "fixed",
+        "left": `${x}px`,
+        "top": `${y - 25}px`,
         "z-index": 1000,
-        width: width,
-        height: height,
+        "width": width,
+        "height": height,
         "min-width": "55px",
     });
 
@@ -27,11 +35,22 @@ function create_moveable_text_wrapper(x, y, width, height) {
 
     const titleBar = $("<div id='draw_text_title_bar' class='restored'></div>");
     const closeCross = $(
-        '<div id="draw_text_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>'
+        `<div id="draw_text_title_bar_exit">
+            <svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <g transform="rotate(-45 50 50)">
+                    <rect></rect>
+                </g>
+                <g transform="rotate(45 50 50)">
+                    <rect></rect>
+                </g>
+            </svg>
+        </div>`
     );
     const submitButton = $(
         `<div id="draw_text_title_bar_enter">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
         </div>
         `
     );
@@ -46,7 +65,11 @@ function create_moveable_text_wrapper(x, y, width, height) {
     return wrapper;
 }
 
-//Function to dynamically add an input box:
+/**
+ * Creates a text area input styled in the same way as specified
+ * by the font menu data
+ * @param {Array} data the rectangle data
+ */
 function add_text_drawing_input([
     shape,
     drawType,
@@ -56,18 +79,17 @@ function add_text_drawing_input([
     width,
     height,
     linewidth,
-    align,
 ]) {
-    // do something to figure out if the rect was drawn from the any corner that isn't top left
-
     const wrapper = create_moveable_text_wrapper(x, y, width, height);
 
     const input = $(
-        `<textarea id='drawing_text' title="Input your text, this is an approximation of your final text. Press Enter to submit" type="text" autocomplete="off"/>`
+        `<textarea id='drawing_text' 
+        title="Input your text, this is an approximation of your final text.
+        Press Enter to submit" type="text" autocomplete="off"/>`
     );
     wrapper.append(input);
-    // do more style here
-    if (drawType !== "filled"){
+    // TODO BAIN why did i add this
+    if (drawType !== "filled") {
         color = "rgba(0, 0, 0, 0.0)"
     }
     input.css({
@@ -82,7 +104,6 @@ function add_text_drawing_input([
         "font-weight": window.DRAWDATA.bold || "normal",
         "font-style": window.DRAWDATA.italic || "normal",
         "text-decoration": window.DRAWDATA.underline || "normal",
-        // this text shadow is shit
         "-webkit-text-stroke-color": window.DRAWDATA.stroke_color,
         "-webkit-text-stroke-width": `${window.DRAWDATA.stroke_size}px`,
         "min-height": "30px",
@@ -92,9 +113,9 @@ function add_text_drawing_input([
     $(input).on("keyup", handle_key_press);
     $(input).focus();
 
+    // observe resizing the text area and match the title bar to it
     const myObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
-            // get the title bar and resize it to match the box
             const bar = $(entry.target).parent().find("#draw_text_title_bar");
             // no idea why but the textArea is 6 pixels larger than the bar
             // scroll bar is approx 18px
@@ -110,9 +131,13 @@ function add_text_drawing_input([
     myObserver.observe(inputEle);
 }
 
+
+/**
+ * Bakes the text and rectangle into the text_overlay canvas layer
+ * @param {Event} event 
+ * @returns 
+ */
 function handle_draw_text_submit(event) {
-    // do more stuff here so make drawText generic enough I can call it from
-    // redraw_drawings
     textBox = $(this).parent().parent().find("textarea");
     // no text in box, return early
     if (!textBox.val()) return;
@@ -129,12 +154,11 @@ function handle_draw_text_submit(event) {
     // with 25 being the bar height
     const rectX = parseInt($(textBox).parent().css("left"));
     const rectY = parseInt($(textBox).parent().css("top")) + 25;
-    const rectColor =$(textBox).css("background-color")
+    const rectColor = $(textBox).css("background-color")
 
     const text = textBox.val();
     let fontWeight = $(textBox).css("font-weight") || "normal";
     let fontStyle = $(textBox).css("font-style") || "normal";
-    
 
     const font = {
         font: $(textBox).css("font-family"),
@@ -168,28 +192,41 @@ function handle_draw_text_submit(event) {
     // data should match params in draw_text
     // push the starting position of y south based on the font size
     data = ["text",
-            rectX,
-            rectY + font.size,
-            width,
-            height,
-            text,
-            font,
-            stroke];
-    // make a function for the following like 6 lines as it's all over the place
+        rectX,
+        rectY + font.size,
+        width,
+        height,
+        text,
+        font,
+        stroke];
+    // bake this data and redraw all text
     window.DRAWINGS.push(data);
     $("#draw_text_title_bar_exit").click();
     redraw_text()
     window.ScenesHandler.persist();
     if (window.CLOUD) sync_drawings();
     else window.MB.sendMessage("custom/myVTT/drawing", data);
-    
+
 }
 
-//Key handler for input box:
+/**
+ * Closes the text box if you press escape while focusing it
+ * @param {Event} e 
+ */
 function handle_key_press(e) {
     if (e.key == "Escape") $(this).parent().remove();
 }
 
+/**
+ * Gets the starting position of text based off it's true width, style, alignment
+ * Creates a span with the style of font/stroke with the text input and gets it's width
+ * @param {Number} x 
+ * @param {Number} width 
+ * @param {String} text 
+ * @param {Object} font 
+ * @param {Object} stroke 
+ * @returns {Array} [x, width] x being where to start drawing text, width being the true width of text
+ */
 function get_x_start_and_width_of_text(x, width, text, font, stroke) {
     // do a thing to get the client width of the text via a span
     //https://stackoverflow.com/questions/14852925/get-string-length-in-pixels-using-javascript
@@ -219,7 +256,18 @@ function get_x_start_and_width_of_text(x, width, text, font, stroke) {
     }
 }
 
-//Draw the text onto canvas:
+/**
+ * Draw the text to the text overlay using the data in window.DRAWINGS
+ * @param {*} context html canvas context for text_overlay
+ * @param {String} type aka shape, not used
+ * @param {Number} startingX starting position text background
+ * @param {Number} startingY starting positon text background
+ * @param {Number} width width of text background
+ * @param {Number} height height of text background
+ * @param {String} text the value to be drawn
+ * @param {Object} font font styling object
+ * @param {Object} stroke stroke styling object
+ */
 function draw_text(
     context,
     type,
@@ -231,23 +279,18 @@ function draw_text(
     font,
     stroke,
 ) {
-    // TODO BAIN change font and stroke to objects for easier accessing,
-    // only compile into the drawn font style once we're drawing
-    // ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
-    // draw the background rectangle
-    // will look like "bold italic 24px Arial"
     context.font = `${font.weight} ${font.style} ${font.size}px ${font.font}`;
     context.strokeStyle = stroke.color;
     context.lineWidth = stroke.size;
     context.fillStyle = font.color;
 
     const lines = text.split(/\r?\n/);
-
+    // these values are modified per line depending on the line width
+    // and the alignment used
     let x = startingX;
     let y = startingY;
 
     lines.forEach((line) => {
-        // do some fuckery per line to try get right starting x position
         const [textX, textWidth] = get_x_start_and_width_of_text(
             x,
             width,
@@ -273,9 +316,10 @@ function draw_text(
     // reset any modifications to these as we are going to go around the loop again
     x = startingX;
     y = startingY;
+    // loop the lines again as large stroke size will overlap the fill text
+    // so add fill text in last
     lines.forEach((line) => {
-        // loop the lines again as large stroke size will overlap the fill text
-        // so add fill text in last
+        
         const [textX, textWidth] = get_x_start_and_width_of_text(
             x,
             width,
@@ -288,6 +332,13 @@ function draw_text(
     });
 }
 
+
+/**
+ * Creates the elements and events for some buttons within the draw text menu
+ * Those events include "undo" & "clear" as these function differently from all
+ * other selections that can be made
+ * @param {$} buttons the buttons in which this text button is appended to
+ */
 function init_text_button(buttons) {
     availableFonts = [
         "Arial",
@@ -310,8 +361,8 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Font</div>");
     textMenu.append(`<select id='text_font' data-required="text_font" name='font' style='width:inherit; margin:0px; text-align:center'>
         ${availableFonts.map((font) => {
-            return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
-        })}
+        return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
+    })}
     </select>`);
     textMenu.append(
         `<input title='Text size' data-required="text_size" id='text_size' min='1' value='20' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'>`

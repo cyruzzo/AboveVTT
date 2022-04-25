@@ -2446,7 +2446,7 @@ function init_buttons() {
 
 	setup_aoe_button();
 	init_text_button(buttons)
-	setup_button_controller();
+	handle_drawing_button_click();
 
 	buttons.append("<div style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</div>");
 

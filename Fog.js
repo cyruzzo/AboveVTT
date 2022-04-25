@@ -571,6 +571,10 @@ function redraw_fog() {
 	}
 }
 
+
+/**
+ * Redraws all text drawing types from window.DRAWINGS
+ */
 function redraw_text() {
 	const canvas = document.getElementById("text_overlay");
 	const context = canvas.getContext("2d");
@@ -644,19 +648,33 @@ function stop_drawing() {
 	target.off('contextmenu', drawing_contextmenu);
 }
 
-
+/**
+ * Checks if an RGBA value is fully transparent
+ * @param {String} rgba String that represents a RGBA value
+ * @returns {Boolean}
+ */
 function is_rgba_fully_transparent(rgba){
 	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
 }
 
+/**
+ * Pulls information from menu's or buttons without menu's to set values used by 
+ * drawing mousemove, mousedown, mousecontext events
+ * @param {Event} e 
+ * @returns 
+ */
 function drawing_mousedown(e) {
 	console.log("mouse down with event", e)
+	// always draw unbaked drawings to the temp overlay
 	canvas = document.getElementById("temp_overlay");
 	context = canvas.getContext("2d");
-	// reset line dash as it's only used in selecting
+	// select modifies this line but never resets it, so reset it here
+	// otherwise all drawings are dashed
 	context.setLineDash([])
+	// get teh data from the menu's/buttons
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
 	
+		// these are generic values used by most drawing functionality
 		window.LINEWIDTH = data.draw_line_width
 		window.DRAWTYPE = data.fill
 		window.DRAWCOLOR = data.background_color
@@ -668,6 +686,8 @@ function drawing_mousedown(e) {
 		delete data.background_color
 		delete data.shape;
 		delete data.function;
+		// dump everything else into drawdata for anything that might be specific
+		// such as text
 		window.DRAWDATA = {...data}
 
 	// some functions don't have selectable features
@@ -768,6 +788,12 @@ function drawing_mousedown(e) {
 }
 
 
+/**
+ * Draws the respective shape from window.DRAWSHAPE onto the screen
+ * 
+ * @param {Event} e 
+ * @returns 
+ */
 function drawing_mousemove(e) {
 
 	if (window.MOUSEMOVEWAIT) {
@@ -900,6 +926,12 @@ function drawing_mousemove(e) {
 	}
 }
 
+/**
+ * Drawing finished (most of the time) set the final shape into window.DRAWING/windo.REVEAL
+ * then call redraw functions and sync functions
+ * @param {Event} e 
+ * @returns 
+ */
 function drawing_mouseup(e) {
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (window.DRAWFUNCTION == "measure" && e.button == 2) {
@@ -942,7 +974,7 @@ function drawing_mouseup(e) {
 	window.MOUSEDOWN = false;
 	const width = mousex - window.BEGIN_MOUSEX;
 	const height = mousey - window.BEGIN_MOUSEY;
-
+	// data is modified by each shape/function but as a starting point fill it up
 	let data = ['',
 		 window.DRAWTYPE,
 		 window.DRAWCOLOR,
@@ -954,7 +986,6 @@ function drawing_mouseup(e) {
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw")){
-		// line is missing as we already have teh data for it
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
@@ -991,7 +1022,6 @@ function drawing_mouseup(e) {
 				break;
 		}
 		window.DRAWINGS.push(data);
-		// BAIN TODO why do we redraw fog when drawing drawings?
 		redraw_drawings();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
@@ -1006,6 +1036,7 @@ function drawing_mouseup(e) {
 			redraw_drawings();
 		}
 		else if (window.DRAWSHAPE === "text_erase"){
+			// text eraser lives on a different overlay and thus can't just be eraser
 			data[0] = "text-eraser"
 			window.DRAWINGS.push(data);
 			redraw_text();
@@ -1114,6 +1145,11 @@ function drawing_contextmenu(e) {
 	return window.DRAWFUNCTION === "hide" ? 1 : 0
 }
 
+/**
+ * sets window.REVEALED with arcs/rects for fog before redrawing them and syncing
+ * @param {Number} width width of fog
+ * @param {Number} height height of fog
+ */
 function finalise_drawing_fog(width, height) {
 	if (window.DRAWSHAPE == "arc") {
 		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
@@ -1151,9 +1187,12 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
 }
 
 /**
+ * Gets the relevant draw information from the button and menu provided
  * 
- * @param {$} button 
- * @param {$} menuSelector 
+ * @param {$} button the selected button when the user clicks on the canvas
+ * @param {$} menuSelector the open menu if it exists
+ * @returns {Object} draw data, containing at least "shape" and "function", optionally "frommenu"
+ * as well as any other selected buttons/required options, such as color/line width, or font family/fontsize
  */
 function get_draw_data(button, menu){
 	console.group("get_draw_data")
@@ -1225,29 +1264,39 @@ function toggle_lifting_fog(){
 	}
 }
 
-function setup_button_controller() {
+/**
+ * The main event handler for all drawing buttons (select/measure/fog/draw/text)
+ * Allows unified controller for selecting buttons/menus/menu options
+ * Uses data attr's on the menu's to select correct information such as
+ * data-toggle - a button can be toggled on or off
+ * data-required - the data of this element is always extracted in get_draw_data
+ * data-unique-with - only one of these can be selected at a time, mostly used with the draw shape
+ * data-shape - the shape of the drawing
+ * data-function - the drawing function, draw/erase/text-erase/measure/select/hide/reveal
+ */
+function handle_drawing_button_click() {
 	$(".drawbutton").click(function(e) {
 		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
 		const clicked = this;
 		let menu
 		// FIND THE MENU
+		// button has a menu
 		if ($(clicked).hasClass("menu-button")){
 			menu = clicked.id.replace("button", "menu" )
 			menu = "#" + menu
 		}
+		// button is in a menu
 		else if($(clicked).hasClass("menu-option")){
-			menu = $(clicked).closest("[id*='menu']")
-		}
-		else{
 			menu = $(clicked).closest("[id*='menu']")
 		}
 
 		// HANDLE SELECTING OF BUTTONS
+		// button is a selected button, hide it's menu
 		if ($(clicked).hasClass(buttonSelectedClasses)){
 			if(!$(clicked).attr("data-toggle")){
 				$(menu).toggleClass("visible")
 			}
-			// menu options can be toggled on or off
+			// toggle the button off...
 			if($(clicked).hasClass("menu-option")){
 				// but only toggled on or off if they're not a unique-with which must always have 
 				// 1 option selected
@@ -1256,6 +1305,7 @@ function setup_button_controller() {
 				}			
 			}
 		}else{
+			// unselect any matching unique-with buttons
 			if($(clicked).hasClass("menu-option")){
 				const uniqueWith = $(clicked).attr("data-unique-with")
 				menu.find(`[data-unique-with=${uniqueWith}]`).removeClass(`${buttonSelectedClasses}` )
@@ -1264,13 +1314,12 @@ function setup_button_controller() {
 				// select/ruler/fog/draw/aoe/text
 				deselect_all_top_buttons(buttonSelectedClasses)
 			}
-			// button isn't selected
+			// button isn't selected, so select it and open
 			$(clicked).addClass(buttonSelectedClasses)
 			$(menu).addClass("visible")
 		}
 
 		stop_drawing();
-		// HANDLE GETTING THE RIGHT DATA TO PASS TO EVENT HANDLERS
 		target =  $("#temp_overlay, #black_layer")
 		data = {
 			clicked:$(clicked),
@@ -1283,18 +1332,8 @@ function setup_button_controller() {
 		target.on('contextmenu', data, drawing_contextmenu);
 		
 	})
+	// during initialisation of VTT default to the select button
 	$('#select-button').click();
-}
-
-function getDrawingStyle(){
-	let style = window.DRAWCOLOR;
-	if (window.DRAWFUNCTION === "hide"){
-		style = "rgba(0,0,0,0.5)";
-	}
-	else if(window.DRAWFUNCTION === "reveal"){
-		style = "rgba(255,0,0,0.5)";
-	}
-	return style
 }
 
 function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth = 6)
