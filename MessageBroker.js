@@ -1270,42 +1270,54 @@ class MessageBroker {
  */
 function observe_messages(connect=true) {
 	console.group("observe_messages")
-	let mutation_target =  document.querySelector(".glc-game-log")
 	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 	
 	const message_observer = new MutationObserver(function() {
 		
-		const openMessage = $(mutation_target).find(".tss-17y30t1-GameLogEntry-Other-Flex");
-		// $(mutation_target).find(".tss-11w0h4e-Message-Collapsed-Other-Flex .gamelog-to-everyone-button").hide();
-		if (openMessage.length > 0){
-			openMessage.each(function(index, message) {
-				const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-				
+		const openRolls = $(mutation_target).find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex:not(.tss-8-Collapsed-ref)");
+		const closedRolls = $(mutation_target).find(".tss-8-Collapsed-ref")
+		const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+		if (openRolls.length > 0){
+			openRolls.each(function(index, roll) {
+				// some details are stored outside of the roll, like time, image, name
+				const entry = $(roll).parent().parent()
+
 				sendToEveryone.click(function(clickEvent) {
-					// we want to send the expanded version so we have the click handler here and stopPropogation so that the on("click") below doesn't also fire. 
-					// The other handler will send the current html which could be the collapsed version. Since the collapse mechanism won't work in this situation, let's always send the expanded version
-					const rollDetails = $(this).parent().parent().clone()
+					const thisEntry = $(this).parent().parent().parent()
+					let rollDetails = thisEntry.find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex").clone() 
 	
-					rollDetails.find(".gamelog-to-everyone-button").remove()
 					rollDetails.find(".tss-d12ile-Target-Other").remove()
+					$(rollDetails).addClass("injected")
 					
-					clickEvent.stopPropagation();
-					// the name and image live within the grandparent of this message
 					data = {
-						player: $(message).parent().parent().find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
-						img: $(message).parent().parent().find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
+						player: $(thisEntry).find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
+						img: $(thisEntry).find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
 						text: $(rollDetails).html(),
 						dmonly: false,
 					};
 					window.MB.inject_chat(data);
 					sendToEveryone.html("Send Again")
 				});
-
-				if (!$(message).find(".gamelog-to-everyone-button").length) {
-					$(message).find("time").prepend(sendToEveryone)
-				}else{
-					$(message).find(".gamelog-to-everyone-button").show()
+				// only add buttons to open message, without buttons that include self
+				if (!$(entry).find(".gamelog-to-everyone-button").length &&
+					$(entry).find(".tss-3-Target-ref").text().includes("Self")) {
+					time = $(entry).find("time")
+					$(time).prepend(sendToEveryone)
+					$(time).css({
+						"width":"100%",
+						"text-align": "right"
+					})
 				}
+				else{
+					$(entry).find(".gamelog-to-everyone-button").show()
+				}
+			})
+		}
+
+		if (closedRolls.length > 0){
+			closedRolls.each(function(index, roll) {
+				const entry = $(roll).parent().parent()
+				$(entry).find(".gamelog-to-everyone-button").hide()
 			})
 		}
 	});

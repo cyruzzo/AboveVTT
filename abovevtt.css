@@ -87,6 +87,7 @@ button.gamelog-to-everyone-button {
     letter-spacing: 0.4px;
     color: #5c7080;
     cursor: pointer;
+    float:left;
 }
 button.gamelog-to-everyone-button:hover {
     border: 1px solid rgb(152, 160, 164);
