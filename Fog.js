@@ -1195,7 +1195,7 @@ function get_draw_data(button, menu){
 			// selected shape & function only exist when erase selected
 			console.groupEnd()
 			return {
-				shape: selectedShape || "text",
+				shape: selectedShape || "rect",
 				function: selectedFunction || "draw_text",
 				from:menu.attr("id"),
 				...options
