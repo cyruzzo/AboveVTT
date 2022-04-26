@@ -137,6 +137,10 @@ button.gamelog-to-everyone-button {
     color: #fff;
     background-color: #c53131;
 }
+.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active {
+    color: #fff;
+    background-color: #c53131;
+}
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading:hover {
     background-color: #5d5d5d;
     color: #f2f2f2;
