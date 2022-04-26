@@ -31,6 +31,25 @@ body > button,
     font-size: 12px;
 }
 
+.re_sent_roll{
+    pointer-events: none;
+    color: rgb(92, 112, 128);
+}
+
+/* this can be removed once /roll/fulfilled todo has been completed */
+.re_sent_roll.tss-3-Other-ref.tss-3-Target-ref.tss-11yjuwm-Total-Other-Target-Flex{
+        position: relative;
+        align-self: stretch;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+}
+
 #cpick{
     display: block;
     margin-left: 27px;

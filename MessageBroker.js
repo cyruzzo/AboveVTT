@@ -760,6 +760,7 @@ class MessageBroker {
 						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
 						sendToEveryone.click(function (clickEvent) {
 							//TODO once PR #408 goes in use this block and make any required tweaks
+							// also remove the related css for re_sent_roll
 							// let resendMessage = msg;
 							// resendMessage.id = uuid();
 							// resendMessage.data.rollId = uuid();
@@ -775,8 +776,7 @@ class MessageBroker {
 							if (!rollDetails.length) {
 								rollDetails = $(thisGameLogItem).find(".tss-8-Collapsed-ref.tss-8-Other-ref.tss-11w0h4e-Message-Collapsed-Other-Flex").clone()
 							}
-							$(rollDetails).addClass("injected")
-							$(rollDetails).removeClass()
+							$(rollDetails).find(".tss-iqf1z5-Container-Flex").addClass("re_sent_roll")
 							$(rollDetails).find(".tss-d12ile-Target-Other").remove()
 							data = {
 								player: $(gamelogItem).find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
