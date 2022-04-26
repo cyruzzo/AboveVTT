@@ -872,6 +872,9 @@ function init_splash() {
 	setTimeout(function() {
 		init_loading_overlay_beholder();
 	}, 0)
+	window.addEventListener("scroll", function(event) {
+	   event.stopImmediatePropagation();
+	}, true);
 }
 
 // UNIFIED TOKEN HANDLING
