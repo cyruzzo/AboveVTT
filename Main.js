@@ -2442,10 +2442,11 @@ function init_buttons() {
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_draw_menu(buttons)
+		init_text_button(buttons)
+
 	}
 
 	setup_aoe_button();
-	init_text_button(buttons)
 	handle_drawing_button_click();
 
 	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");

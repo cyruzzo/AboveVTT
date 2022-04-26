@@ -117,14 +117,7 @@ button.gamelog-to-everyone-button {
     color: #fff;
 }
 
-.ddbc-tab-options--layout-pill button{
-    background-image: unset;
-    width: 60px;
-}
-.ddbc-tab-options--layout-pill .menu-option{
-    width: 69px;
-}
-/* 
+
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading {
     display: flex;
     flex-wrap: wrap;
@@ -155,7 +148,7 @@ button .ddbc-tab-options__header-heading .menu-option{
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading:hover {
     background-color: #5d5d5d;
     color: #f2f2f2;
-} */
+}
 .menu-subtitle {
     font-size: 11px;
     font-weight: 700;
@@ -3079,4 +3072,20 @@ button.avtt-roll-button {
 #draw_menu .sp-replacer,
 #text_menu .sp-replacer{
     width: 100%
+}
+
+div.ddbc-tab-options--layout-pill button{
+    background-image: none;
+    height: auto;
+    box-shadow: none;
+    transition: none;
+    border: 0px;
+}
+div.ddbc-tab-options--layout-pill>button{
+    width: calc(100% - 4px);
+}
+
+#VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button,
+#combat_tracker div.ddbc-tab-options--layout-pill>button{
+    width: fit-content !important;
 }
