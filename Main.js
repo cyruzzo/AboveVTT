@@ -467,34 +467,19 @@ function load_monster_stat(monsterid, token_id=false) {
 		return;
 	}
 
-	let container = $("<div class='monster_frame'/>");
-	container.attr('id', iframe_id);
-	container.css("position", "fixed");
-	container.css("left", "-500px"); // 190-1030
-	container.css("top", "80px");
-	container.css("z-index", "1000");
-	container.css("background", "white");
-	container.css("width", "850px");
-	container.css("height", "450px");
-	close_button = $("<button>X</button>");
-	close_button.css("position", "absolute");
-	close_button.css("left", "0");
-	close_button.css("top", "0");
-	close_button.css("z-index", "1001");
-	close_button.click(function() {
-		container.animate({
-			left: "-500px"
-		}, 500);
-		container.hide();
-	});
-	container.append(close_button);
+	let container = $("<div id='resizeDragMon'/>");
+
+	if(!window.DM && $("#site #resizeDragMon").length>0){
+		$("#resizeDragMon iframe").remove();
+		$("#resizeDragMon").removeClass("hideMon");
+		container = $("#resizeDragMon");
+	}
+	container.resize(function(e) {
+        	e.stopPropagation();
+   	});
 	//container.css("width","900px");
 	let iframe = $("<iframe>");
-	iframe.css("position", "absoute");
-	iframe.css("left", 0);
-	iframe.css("top", 0);
-	iframe.css("width", "900px");
-	iframe.css("height", "450px"); // UGUALE A COMBAT TRACKER INSIDE
+    // UGUALE A COMBAT TRACKER INSIDE
 	//iframe.css("transform","scale(0.75)");
 
 	iframe.css("display", "none");
@@ -540,10 +525,94 @@ function load_monster_stat(monsterid, token_id=false) {
 		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
 	})
 	container.append(iframe);
-	$("#site").append(container);
-	container.animate({
-		left: '220px'
-	}, 500);
+	if(!$("#site #resizeDragMon").length>0){
+		$("#site").prepend(container);
+	}
+
+   if(!window.DM) {
+   		
+   		/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+		$("#resizeDragMon").append(monster_close_title_button);
+		monster_close_title_button.click(function() {
+			close_player_monster_stat_block()
+		});
+		$("#resizeDragMon").addClass("moveableWindow");
+		if(!$("#resizeDragMon").hasClass("minimized")){
+			$("#resizeDragMon").addClass("restored"); 
+		}
+		else{
+			$("#resizeDragMon").dblclick();
+		}
+		$("#resizeDragMon").resizable({
+			addClasses: false,
+			handles: "all",
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			},
+			minWidth: 200,
+			minHeight: 200
+		});
+
+		$("#resizeDragMon").mousedown(function(){
+			frame_z_index_when_click($(this));
+		});
+		$("#resizeDragMon").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		minimize_player_monster_window_double_click($("#resizeDragMon"));
+	}
+}
+function close_player_monster_stat_block() {
+	$("#resizeDragMon.minimized").dblclick();
+	console.debug("close_monster_stat_block is closing the stat block")
+	$("#resizeDragMon").addClass("hideMon");
+	// hide and update all monster blocks that we find. Even if we're currently loading one.
+	console.group("close_monster_stat_block");
+}
+
+function minimize_player_monster_window_double_click(titleBar){
+	titleBar.off('dblclick').on('dblclick', function() {
+		if (titleBar.hasClass("restored")) {
+			titleBar.data("prev-height", titleBar.height());
+			titleBar.data("prev-width", titleBar.width() - 3);
+			titleBar.data("prev-top", titleBar.css("top"));
+			titleBar.data("prev-left", titleBar.css("left"));
+			titleBar.css("top", titleBar.data("prev-minimized-top"));
+			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.height(23);
+			titleBar.width(200);
+			titleBar.addClass("minimized");
+			titleBar.removeClass("restored");
+			titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
+			
+		} else if(titleBar.hasClass("minimized")) {
+			titleBar.data("prev-minimized-top", titleBar.css("top"));
+			titleBar.data("prev-minimized-left", titleBar.css("left"));
+			titleBar.height(titleBar.data("prev-height"));
+			titleBar.width(titleBar.data("prev-width"));
+			titleBar.css("top", titleBar.data("prev-top"));
+			titleBar.css("left", titleBar.data("prev-left"));
+			titleBar.addClass("restored");
+			titleBar.removeClass("minimized");
+			$(".monster_title").remove();
+			
+		}
+	});
 }
 
 function init_controls() {
@@ -714,7 +783,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.75 RC2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.75</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -763,8 +832,8 @@ function init_splash() {
 	patreons = $("<div id='patreons'/>");
 
 	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey","Mike Miller"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Carl Cedarstaff II","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Avilar","Don Clemson","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
-	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Joseph Bendickson","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France","Fabrizio Tronci","Michael Whittington","Simon Haldon","Thiago Neves","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Staz","Michael Bonnett","Skrinch","Eric Weberg","Xiax","BridgeWatch"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Avilar","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France","Fabrizio Tronci","Michael Whittington","Simon Haldon","Thiago Neves","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Staz","Michael Bonnett","Skrinch","Eric Weberg","Xiax","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Arpad"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -803,6 +872,9 @@ function init_splash() {
 	setTimeout(function() {
 		init_loading_overlay_beholder();
 	}, 0)
+	window.addEventListener("scroll", function(event) {
+	   event.stopImmediatePropagation();
+	}, true);
 }
 
 // UNIFIED TOKEN HANDLING
