@@ -117,6 +117,14 @@ button.gamelog-to-everyone-button {
     color: #fff;
 }
 
+.ddbc-tab-options--layout-pill button{
+    background-image: unset;
+    width: 60px;
+}
+.ddbc-tab-options--layout-pill .menu-option{
+    width: 69px;
+}
+/* 
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading {
     display: flex;
     flex-wrap: wrap;
@@ -133,9 +141,12 @@ button.gamelog-to-everyone-button {
     padding: 5px 7px;
     white-space: nowrap;
 }
-.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active {
-    color: #fff;
-    background-color: #c53131;
+
+button .ddbc-tab-options__header-heading{
+    background-image: unset;
+}
+button .ddbc-tab-options__header-heading .menu-option{
+    width: 69px;
 }
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active {
     color: #fff;
@@ -144,7 +155,7 @@ button.gamelog-to-everyone-button {
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading:hover {
     background-color: #5d5d5d;
     color: #f2f2f2;
-}
+} */
 .menu-subtitle {
     font-size: 11px;
     font-weight: 700;
@@ -155,7 +166,7 @@ button.gamelog-to-everyone-button {
 
 .top_menu {
     margin: 0 8px;
-    top: 28px !important;
+    top: 30px !important;
     border-radius: 5px;
     max-height: 0;
     overflow: hidden;

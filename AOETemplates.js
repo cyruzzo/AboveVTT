@@ -61,19 +61,19 @@ function setup_aoe_button() {
     aoe_menu.append("<div class='menu-subtitle' data-skip='true'>Shape</div>");
     aoe_menu.append(
         `<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-            <button id='aoe_cone' class='aoeshape ddbc-tab-options__header-heading'>
+            <button id='aoe_cone' class='aoeshape ddbc-tab-options__header-heading menu-option'>
                 Cone
             </button>
         </div>`);
     aoe_menu.append(
         `<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-            <button id='aoe_square' class='aoeshape ddbc-tab-options__header-heading'>
+            <button id='aoe_square' class='aoeshape ddbc-tab-options__header-heading menu-option'>
                 Square
             </button>
         </div>`);
     aoe_menu.append(`
         <div class='ddbc-tab-options--layout-pill' data-skip='true'>
-            <button id='aoe_circle' class='aoeshape ddbc-tab-options__header-heading'>
+            <button id='aoe_circle' class='aoeshape ddbc-tab-options__header-heading menu-option'>
                 Circle
             </button>
         </div>`);

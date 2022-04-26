@@ -109,7 +109,9 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
 //menu specific shortcuts, select the nth element of menu when it's open
 function handle_menu_number_press(e) {
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
-    $(`${visibleMenuId} .menu-option:eq(${parseInt(e.key) -1})`).click()
+    const button = $(`${visibleMenuId} .menu-option:eq(${parseInt(e.key) -1})`)
+    $(button).click()
+    $(button).children().first().focus()
 }
 Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
     handle_menu_number_press(e)

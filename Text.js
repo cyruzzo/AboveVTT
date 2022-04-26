@@ -353,7 +353,7 @@ function init_text_button(buttons) {
         "Brush Script MT",
     ];
     textButton = $(
-        "<button style='display:inline' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</button>"
+        "<button style='display:inline;width:75px' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</button>"
     );
     textMenu = $(
         "<div id='text_menu' class='top_menu' style='position:fixed; top:25px; width:75px'></div>"
@@ -371,21 +371,13 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Font Style</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <button tabindex='1' id='text_bold' data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
+            <button id='text_bold' style="width:20px;height:20px" data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
                 <span class='material-icons' style='font-size: 12px'>format_bold</span>
             </button>
-        </div>`
-    );
-    textMenu.append(
-        `<div class='ddbc-tab-options--layout-pill'>
-            <button tabindex='2' id='text_italic' data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <button id='text_italic' style="width:20px;height:20px" data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_italic</span>
             </button>
-        </div>`
-    );
-    textMenu.append(
-        `<div class='ddbc-tab-options--layout-pill'>
-            <button tabindex='3' id='text_underline' data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <button id='text_underline' style="width:20px;height:20px" data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_underlined</span>
             </button> 
         </div>`
@@ -394,21 +386,13 @@ function init_text_button(buttons) {
     textMenu.append("<div class='menu-subtitle'>Alignment</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <button tabindex='1' id='text_left' data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
+            <button id='text_left' style="width:20px;height:20px" data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
                 <span class='material-icons' style='font-size: 12px'>format_align_left</span>
             </button>
-        </div>`
-    );
-    textMenu.append(
-        `<div class='ddbc-tab-options--layout-pill'>
-            <button tabindex='2' id='text_center' data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <button id='text_center' style="width:20px;height:20px" data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_center</span>
             </button>
-        </div>`
-    );
-    textMenu.append(
-        `<div class='ddbc-tab-options--layout-pill'>
-            <button tabindex='3' id='text_right' data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <button id='text_right' style="width:20px;height:20px" data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_right</span>
             </button>
         </div>`
@@ -442,13 +426,13 @@ function init_text_button(buttons) {
     );
     textMenu.append(`
             <div class='ddbc-tab-options--layout-pill'>
-                <button class='ddbc-tab-options__header-heading' id='text_undo'>
+                <button class='ddbc-tab-options__header-heading menu-option' id='text_undo'>
                     UNDO
                 </button>
             </div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-                <button class='ddbc-tab-options__header-heading' id='text_clear'>
+                <button class='ddbc-tab-options__header-heading menu-option' id='text_clear'>
                     CLEAR
                 </button>
             </div>`

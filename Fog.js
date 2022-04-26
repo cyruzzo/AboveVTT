@@ -1284,6 +1284,7 @@ function handle_drawing_button_click() {
 		if ($(clicked).hasClass("menu-button")){
 			menu = clicked.id.replace("button", "menu" )
 			menu = "#" + menu
+			$(`${menu} :input:enabled:visible:not([readonly]):first`).focus();
 		}
 		// button is in a menu
 		else if($(clicked).hasClass("menu-option")){
@@ -1610,7 +1611,7 @@ function init_fog_menu(buttons){
 			</button>
 		</div>`);
 
-	var clear_button = $("<button class='ddbc-tab-options__header-heading' data-skip='true' >ALL</button>");
+	var clear_button = $("<button class='ddbc-tab-options__header-heading menu-option' data-skip='true' >ALL</button>");
 	clear_button.click(function() {
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
@@ -1653,7 +1654,7 @@ function init_fog_menu(buttons){
 
 
 
-	var hide_all_button = $("<button class='ddbc-tab-options__header-heading'>ALL</button>");
+	var hide_all_button = $("<button class='ddbc-tab-options__header-heading menu-option'>ALL</button>");
 	hide_all_button.click(function() {
 		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
@@ -1672,7 +1673,7 @@ function init_fog_menu(buttons){
 	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' data-skip='true'/>").append(hide_all_button));
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading' id='fog_undo'>
+			<button class='ddbc-tab-options__header-heading menu-option' id='fog_undo'>
 				UNDO
 			</button>
 		</div>`)
@@ -1703,42 +1704,42 @@ function init_draw_menu(buttons){
 	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_rect' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
 				data-shape="rect" data-function="draw" data-unique-with="draw">
 					Rectangle
 			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_circle' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='arc' data-function="draw" data-unique-with="draw">
 					Circle
 			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_cone' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='cone' data-function="draw" data-unique-with="draw">
 					Cone
 			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='line' data-function="draw" data-unique-with="draw">
 					Line
 			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='brush' data-function="draw" data-unique-with="draw">
 					Brush
 			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_polygon' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='polygon' data-function="draw" data-unique-with="draw">
 				 	Polygon
 			</button>
@@ -1796,21 +1797,21 @@ function init_draw_menu(buttons){
 
 	draw_menu.append(`<div class='menu-subtitle'>Controls</div>`);
 	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill data-skip='true''>
-			<button id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="eraser" data-unique-with="draw">
 				 	Erase
 			</button>
 		</div>`);
 	draw_menu.append(`
-		<div class='ddbc-tab-options--layout-pill data-skip='true''>
-			<button class='ddbc-tab-options__header-heading' id='draw_undo'>
+		<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
 				UNDO
 			</button>
 		</div>`);
 	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill data-skip='true''>
-			<button class='ddbc-tab-options__header-heading' id='delete_drawing'>
+		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
 				CLEAR
 			</button>
 		</div>`);
@@ -1846,7 +1847,7 @@ function init_draw_menu(buttons){
 	});
 
 	draw_menu.css("position", "fixed");
-	draw_menu.css("top", "25px");
+	draw_menu.css("top", "50px");
 	draw_menu.css("width", "75px");
 	draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 
