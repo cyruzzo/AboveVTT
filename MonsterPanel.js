@@ -532,7 +532,7 @@ function make_element_draggable_token(element, randomImage = false) {
 				let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
 				let helperWidth = width / (1.0 / window.ZOOM);
 				$(ui.helper).css('width', `${helperWidth}px`);
-				$(this).draggable('instance').offset.click = {
+				$(element).draggable('instance').offset.click = {
 					left: Math.floor(ui.helper.width() / 2),
 					top: Math.floor(ui.helper.height() / 2)
 				};	
