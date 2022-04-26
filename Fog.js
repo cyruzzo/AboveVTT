@@ -1590,27 +1590,27 @@ function init_fog_menu(buttons){
 	fog_menu.append("<div class='menu-subtitle' data-skip='true'>Reveal</div>");
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
-			<div id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
+			<button id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
 				data-shape='rect' data-function="reveal" data-unique-with="fog" > 
 					Square 
-			</div> 
+			</button> 
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'> 
-			<div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+			<button id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='arc' data-function="reveal" data-unique-with="fog" > 
 					Circle 
-				</div> 
+				</button> 
 			</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+			<button id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='polygon' data-function="reveal" data-unique-with="fog">
 					Polygon
-			</div>
+			</button>
 		</div>`);
 
-	var clear_button = $("<div class='ddbc-tab-options__header-heading' data-skip='true' >ALL</div>");
+	var clear_button = $("<button class='ddbc-tab-options__header-heading' data-skip='true' >ALL</button>");
 	clear_button.click(function() {
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
@@ -1631,29 +1631,29 @@ function init_fog_menu(buttons){
 	fog_menu.append("<div class='menu-subtitle' data-skip='true'>Hide</div>");
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+			<button id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='rect' data-function="hide" data-unique-with="fog" >
 					Square
-			</div>
+			</button>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+			<button id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='arc' data-function="hide" data-unique-with="fog" >
 					Circle
-			</div>
+			</button>
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+			<button id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='polygon' data-function="hide" data-unique-with="fog">
 					Polygon
-			</div>
+			</button>
 		</div>`);
 
 
 
-	var hide_all_button = $("<div class='ddbc-tab-options__header-heading'>ALL</div>");
+	var hide_all_button = $("<button class='ddbc-tab-options__header-heading'>ALL</button>");
 	hide_all_button.click(function() {
 		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
@@ -1672,9 +1672,9 @@ function init_fog_menu(buttons){
 	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' data-skip='true'/>").append(hide_all_button));
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<div class='ddbc-tab-options__header-heading' id='fog_undo'>
+			<button class='ddbc-tab-options__header-heading' id='fog_undo'>
 				UNDO
-			</div>
+			</button>
 		</div>`)
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
@@ -1693,7 +1693,7 @@ function init_fog_menu(buttons){
 		}
 	});
 
-	fog_button = $("<div style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</div>");
+	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
 
 	buttons.append(fog_button);
 	fog_menu.css("left", fog_button.position().left);
@@ -1703,45 +1703,45 @@ function init_draw_menu(buttons){
 	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_rect' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+			<button id='draw_rect' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
 				data-shape="rect" data-function="draw" data-unique-with="draw">
 					Rectangle
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
 				data-shape='arc' data-function="draw" data-unique-with="draw">
 					Circle
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
 				data-shape='cone' data-function="draw" data-unique-with="draw">
 					Cone
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
 				data-shape='line' data-function="draw" data-unique-with="draw">
 					Line
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
 				data-shape='brush' data-function="draw" data-unique-with="draw">
 					Brush
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
 				data-shape='polygon' data-function="draw" data-unique-with="draw">
 				 	Polygon
-			</div>
+			</button>
 		</div>`);
 	
 
@@ -1772,17 +1772,17 @@ function init_draw_menu(buttons){
 	draw_menu.append("<div class='menu-subtitle' data-skip='true'>Type</div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
 				data-key="fill" data-value='border' data-unique-with="fill">
 				BORDER
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<div class='drawbutton menu-option ddbc-tab-options__header-heading'
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
 				data-key="fill" data-value='filled' data-unique-with="fill">
 				FILLED
-			</div>
+			</button>
 		</div>`);
 
 	draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
@@ -1797,22 +1797,22 @@ function init_draw_menu(buttons){
 	draw_menu.append(`<div class='menu-subtitle'>Controls</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill data-skip='true''>
-			<div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
+			<button id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="eraser" data-unique-with="draw">
 				 	Erase
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(`
 		<div class='ddbc-tab-options--layout-pill data-skip='true''>
-			<div class='ddbc-tab-options__header-heading' id='draw_undo'>
+			<button class='ddbc-tab-options__header-heading' id='draw_undo'>
 				UNDO
-			</div>
+			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill data-skip='true''>
-			<div class='ddbc-tab-options__header-heading' id='delete_drawing'>
+			<button class='ddbc-tab-options__header-heading' id='delete_drawing'>
 				CLEAR
-			</div>
+			</button>
 		</div>`);
 
 	draw_menu.find("#delete_drawing").click(function() {
@@ -1852,7 +1852,7 @@ function init_draw_menu(buttons){
 
 	$("body").append(draw_menu);
 
-	draw_button = $("<div style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</div>");
+	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</button>");
 
 	buttons.append(draw_button);
 	draw_menu.css("left",draw_button.position().left);	

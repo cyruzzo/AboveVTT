@@ -5,7 +5,7 @@ function init_combat_tracker(){
 	ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
 	
-	toggle=$("<div id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</div>");
+	toggle=$("<button id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside #combat_tracker_title_bar.minimized").length>0) {
 			$("#combat_tracker_title_bar").dblclick();

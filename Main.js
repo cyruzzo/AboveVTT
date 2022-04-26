@@ -1615,7 +1615,7 @@ function init_things() {
 			}
 			init_ui();
 			if (is_encounters_page()) {
-
+			
 				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
 				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
 
@@ -2435,9 +2435,9 @@ function init_buttons() {
 	buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
-	buttons.append($("<div style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</div>"));
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
 	
-	buttons.append($("<div style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</div>"));
+	buttons.append($("<button style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</button>"));
 	
 	if (window.DM) {
 		init_fog_menu(buttons)
@@ -2448,7 +2448,7 @@ function init_buttons() {
 	init_text_button(buttons)
 	handle_drawing_button_click();
 
-	buttons.append("<div style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</div>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
