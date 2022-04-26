@@ -753,6 +753,43 @@ class MessageBroker {
 					});
 					ct_persist();
 				}
+				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
+				if (msg.messageScope === "userId") {
+					let gamelogItem = $("ol.tss-jmihpx-GameLogEntries li").first();
+					if (gamelogItem.find(".gamelog-to-everyone-button").length === 0) {
+						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+						sendToEveryone.click(function (clickEvent) {
+							//TODO once PR #408 goes in use this block and make any required tweaks
+							// let resendMessage = msg;
+							// resendMessage.id = uuid();
+							// resendMessage.data.rollId = uuid();
+							// resendMessage.messageScope = "gameId";
+							// resendMessage.messageTarget = find_game_id();
+							// resendMessage.dateTime = Date.now();
+							// window.diceRoller.ddbDispatch(resendMessage);
+								
+							const thisGameLogItem = $(this).parent().parent()
+							
+							let rollDetails = $(thisGameLogItem).find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex").clone()
+							// it's collapsed
+							if (!rollDetails.length) {
+								rollDetails = $(thisGameLogItem).find(".tss-8-Collapsed-ref.tss-8-Other-ref.tss-11w0h4e-Message-Collapsed-Other-Flex").clone()
+							}
+							$(rollDetails).addClass("injected")
+							$(rollDetails).removeClass()
+							$(rollDetails).find(".tss-d12ile-Target-Other").remove()
+							data = {
+								player: $(gamelogItem).find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
+								img: $(gamelogItem).find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
+								text: $(rollDetails).html(),
+								dmonly: false,
+							};
+							window.MB.inject_chat(data);
+							sendToEveryone.html("Send Again")
+						});
+						gamelogItem.find("time").before(sendToEveryone);
+					 }
+				}
 			}
 		};
 
@@ -1260,83 +1297,3 @@ class MessageBroker {
 		}
 	}
 }
-
-/**
- * Observes the combat log for any expanded rolls and adds a sent to everyone button
- * Works with previous rolls as once they become expanded the button is added
- * once clicked the button text will change to and then hidden
- * if a roll already has a send button, it will show it
- * @param {bool} connect whether to connect or disconnect, 
- */
-function observe_messages(connect=true) {
-	console.group("observe_messages")
-	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-	
-	const message_observer = new MutationObserver(function() {
-		
-		const openRolls = $(mutation_target).find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex:not(.tss-8-Collapsed-ref)");
-		const closedRolls = $(mutation_target).find(".tss-8-Collapsed-ref")
-		const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-		if (openRolls.length > 0){
-			openRolls.each(function(index, roll) {
-				// some details are stored outside of the roll, like time, image, name
-				const entry = $(roll).parent().parent()
-
-				sendToEveryone.click(function(clickEvent) {
-					const thisEntry = $(this).parent().parent().parent()
-					let rollDetails = thisEntry.find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex").clone() 
-	
-					rollDetails.find(".tss-d12ile-Target-Other").remove()
-					$(rollDetails).addClass("injected")
-					
-					data = {
-						player: $(thisEntry).find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
-						img: $(thisEntry).find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
-						text: $(rollDetails).html(),
-						dmonly: false,
-					};
-					window.MB.inject_chat(data);
-					sendToEveryone.html("Send Again")
-				});
-				// only add buttons to open message, without buttons that include self
-				if (!$(entry).find(".gamelog-to-everyone-button").length &&
-					$(entry).find(".tss-3-Target-ref").text().includes("Self")) {
-					time = $(entry).find("time")
-					$(time).prepend(sendToEveryone)
-					$(time).css({
-						"width":"100%",
-						"text-align": "right"
-					})
-				}
-				else{
-					$(entry).find(".gamelog-to-everyone-button").show()
-				}
-			})
-		}
-
-		if (closedRolls.length > 0){
-			closedRolls.each(function(index, roll) {
-				const entry = $(roll).parent().parent()
-				$(entry).find(".gamelog-to-everyone-button").hide()
-			})
-		}
-	});
-	if (connect){
-		function observe_GL_once_available() {
-			mutation_target = document.querySelector(".glc-game-log")
-			if(!mutation_target) {
-				//The node we need does not exist yet.
-				//Wait 500ms and try again
-				window.setTimeout(observe_GL_once_available,500);
-				return;
-			}
-			message_observer.observe(mutation_target,mutation_config);
-		}
-		observe_GL_once_available()
-	}else{
-		message_observer.disconnect()
-	}
-	console.groupEnd()
-}
-
-

@@ -428,11 +428,7 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 	}
-	if (clickedTab.attr("data-target") === ".glc-game-log") {
-		observe_messages();
-	} else{
-		observe_messages(false);
-	}
+
 
 
 	// switch back to gamelog if they change tabs
@@ -1678,7 +1674,6 @@ function init_things() {
 	}
 
 	$("#site").append("<div id='windowContainment'></div>");
-	observe_messages()
 }
 
 /// this is used when initializing on the character page. DDB loads the page in an async modular fashion. We use this to determine if we need to call other initialization functions during this process
