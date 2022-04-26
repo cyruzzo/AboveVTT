@@ -2678,7 +2678,7 @@ button.avtt-roll-button {
 }
 
 #combat_tracker_inside{
-    width: 267px;
+    width: 295px;
 }
 /*End changes for UI*/
 
@@ -2814,6 +2814,9 @@ button.avtt-roll-button {
     padding-top: 13px;
 }
 
+.openEye path:not([fill*="none"]),
+.closedEye path:not([fill*="none"]),
+.hideSVG path:not([fill*="none"]),
 .rollSVG path:not([fill*="none"]),
 .findSVG path:not([fill*="none"]),
 .delSVG path:not([fill*="none"]),
@@ -2825,6 +2828,9 @@ button.avtt-roll-button {
     fill: transparent;
 }
 
+.openEye,
+.closedEye,
+.hideSVG,
 .findSVG,
 .delSVG,
 .statSVG {
@@ -2837,6 +2843,9 @@ button.avtt-roll-button {
     bottom: 2px;
 }
 
+.hideFromPlayerCombatButton:after{
+    content: 'Hide/Reveal in Combat Tracker for Players';
+}
 .rollInitiativeCombatButton:after{
     content:'Roll Initiative';         
 }
@@ -2850,6 +2859,11 @@ button.avtt-roll-button {
     content:'Open Sheet';   
 }
 
+.combatHideFromPlayerInput{
+    display: none;
+}
+
+.hideFromPlayerCombatButton:after,
 .rollInitiativeCombatButton:after,
 .findTokenCombatButton:after,
 .removeTokenCombatButton:after,
@@ -2875,6 +2889,7 @@ button.avtt-roll-button {
     line-height: 100%;
 }
 
+.hideFromPlayerCombatButton:hover:after,
 .rollInitiativeCombatButton:hover:after,
 .findTokenCombatButton:hover:after,
 .removeTokenCombatButton:hover:after,
@@ -2885,23 +2900,30 @@ button.avtt-roll-button {
     pointer-events: none;
 }
 
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(1) {
+/*one button*/
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(1) {
     margin-right:60px;
 }
 
 /* two buttons */
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(2) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
     margin-right:30px;
 }
 
 /* three buttons */
-.encounter-builder-app #combat_area td button:first-child:nth-last-child(3) ~ button:last-of-type {
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
+    margin-right:0px;
+}
+/* four buttons */
+.encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
+
     margin-right:0px;
 }
 .tracker-list{
     overflow: visible;
 }
-
+.openEye,
+.closedEye,
 .delSVG,
 .findSVG,
 .statSVG {
