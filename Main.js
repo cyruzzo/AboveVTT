@@ -579,10 +579,8 @@ function load_monster_stat(monsterid, token_id=false) {
 }
 function close_player_monster_stat_block() {
 	$("#resizeDragMon.minimized").dblclick();
-	console.debug("close_monster_stat_block is closing the stat block")
+	console.debug("close_player_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
-	// hide and update all monster blocks that we find. Even if we're currently loading one.
-	console.group("close_monster_stat_block");
 }
 
 function minimize_player_monster_window_double_click(titleBar){
@@ -1698,30 +1696,7 @@ function init_things() {
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
 				$("div.dice-toolbar").css({"bottom": "35px"});
-				// for some reason the gamelog "send to (default)" breaks. The following sequence fixes it
-				$(".sidebar button.MuiButtonBase-root").click();
-				$(".MuiPopover-root").css({"display": "block", "visibility": "visible"});
-				$(".MuiPopover-root .MuiPaper-root").css({"display": "block", "visibility": "visible"});
-				let list = $(".MuiPopover-root .MuiPaper-root .MuiMenu-list");
-				let selected = list.attr("tabindex");
-				list.find(`li[tabindex=${selected}]`).click();
-				list.find(`li`).click(function (clickEvent) {
-					let selectedOption = $(clickEvent.currentTarget).attr("tabindex");
-					let optionList = window.EncounterHandler.combat_body.find(`.MuiPopover-root .MuiPaper-root .MuiMenu-list`);
-					let optionToSelect = optionList.find(`li[tabindex=${selectedOption}]`);
-					optionToSelect.click();
-				});
-
 				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-				init_enounter_combat_tracker_iframe();
-
-				// if the user changes `Send To (Default)` for dice rolls, make sure we synchronize the monster stat blocks as well
-				$(".sidebar .MuiButtonBase-root.MuiButton-root").on("DOMSubtreeModified", ".MuiButton-label", function(event) {
-					let text = event.target.textContent;
-					if (text == "Self" || text == "Everyone") {
-						sync_send_to_default();
-					}
-				});
 			}
 			
 			init_scene_selector();

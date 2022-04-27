@@ -1481,11 +1481,10 @@ function array_remove_index_by_value(arr, item) {
 function menu_callback(key, options, event) {
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
-			if (encounter_builder_dice_supported()) {
-				console.log(`attempting to open monster stat block with monsterId ${$(this).attr('data-monster')} and tokenId ${$(this).attr('data-id')}`);
-				open_monster_stat_block_with_id($(this).attr('data-monster'), $(this).attr('data-id'));
+			if (encounter_builder_dice_supported()) { // TODO: delete this once PR #399 has been merged. This was left here to avoid merge conflicts
+				console.error(`We don't do this any more!!! Why did encounter_builder_dice_supported return anything other than false?`);
 			} else {
-				load_monster_stat($(this).attr('data-monster'), token_id=$(this).attr('data-id'));	
+				load_monster_stat($(this).attr('data-monster'), token_id=$(this).attr('data-id'));
 			}
 		}
 		else {
