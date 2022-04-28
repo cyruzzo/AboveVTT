@@ -371,7 +371,7 @@ div#combat_button {
     width: 0px;
 }
 ul.context-menu-list.context-menu-root{
-    z-index: 58000 !important;
+    z-index: 100000 !important;
 }
 #windowContainment{
     height:  100vh;
