@@ -450,7 +450,7 @@ function register_player_token_customization_context_menu() {
 }
 
 function place_player_token(playerId, hidden, specificImage, eventPageX, eventPageY) {
-
+	console.group("place_player_token")
 	if (window.TOKEN_OBJECTS[playerId] !== undefined) {
 		window.TOKEN_OBJECTS[playerId].highlight();
 		return;
@@ -471,13 +471,14 @@ function place_player_token(playerId, hidden, specificImage, eventPageX, eventPa
 		hp: playerData ? playerData.hp : '',
 		ac: playerData ? playerData.ac : '',
 		max_hp: playerData ? playerData.max_hp : '',
+		temp_hp: playerData ? playerData.temp_hp : '',
+		inspiration: playerData ? playerData.inspiration : false,
 		square: window.TOKEN_SETTINGS["square"],
 		disableborder: window.TOKEN_SETTINGS['disableborder'],
 		legacyaspectratio: window.TOKEN_SETTINGS['legacyaspectratio'],
 		disablestat: window.TOKEN_SETTINGS['disablestat'],
 		color: "#" + get_player_token_border_color(pc.sheet)
 	};
-
 	if (specificImage !== undefined) {
 		options.imgsrc = parse_img(specificImage);
 	} else {
@@ -494,7 +495,7 @@ function place_player_token(playerId, hidden, specificImage, eventPageX, eventPa
 	} else {
 		place_token_under_cursor(options, eventPageX, eventPageY);
 	}
-
+	console.groupEnd()
 }
 
 function display_player_token_customization_modal(playerId, placedToken) {
