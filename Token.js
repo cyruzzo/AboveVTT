@@ -510,6 +510,13 @@ class Token {
 			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
 
+		if(this.options.hidehpbar) {
+			hpbar.toggleClass("hponhover", true);
+		}
+		else {
+			hpbar.toggleClass("hponhover", false)
+		}
+
 		return hpbar;
 	}
 

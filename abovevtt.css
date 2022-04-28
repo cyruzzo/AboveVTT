@@ -1083,6 +1083,17 @@ div#combat_button{
 .hpbar {
     z-index: 3;
 }
+
+.hponhover {
+    visibility:  hidden;
+    transition:  0.2s ease-in-out 0.5s;
+}
+.token:hover .hponhover,
+.token:focus-within .hponhover,
+.tokenselected .hponhover {
+    visibility:  visible;
+    transition:  0.05s ease-in-out 0.3s
+}
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
     display: inline-block;
