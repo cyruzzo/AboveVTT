@@ -168,12 +168,34 @@ function edit_scene_dialog(scene_id) {
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Show Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid'></div></div>"));
+	manual.append($(
+		`<div>
+			<div style='display:inline-block; width:30%'>
+				Show Grid(1 to enable)
+			</div>
+		<div style='display:inline-block; width:70'%'>
+			<input name='grid'>
+		</div>
+			<input class="spectrum" name="gridColor" value="rgba(0, 0, 0, 0.5)" >
+		</div>`));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
 	manual.hide();
+
+	let colorPickers = manual.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		containerClassName: '#edit_dialog',
+		clickoutFiresChange: false
+	});
+	// redraw the grid here
+	// colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	// colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	// colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
 	manual.find("input").each(function() {
 		$(this).css("width", "60px");
