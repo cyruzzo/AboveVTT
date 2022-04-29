@@ -836,6 +836,7 @@ class Token {
 				
 				var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 				old.css("z-index", 32+zindexdiff);
+				old.css("--z-index-diff", zindexdiff);
 
 				var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -952,6 +953,7 @@ class Token {
 			console.log("Diff: "+zindexdiff);
 			
 			tok.css("z-index", 32+zindexdiff);
+			tok.css("--z-index-diff", zindexdiff);
 			tok.width(this.options.size);
 			tok.height(this.options.size);
 			tok.addClass('token');

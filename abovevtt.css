@@ -1059,7 +1059,7 @@ div#combat_button{
 }
 
 .tokenselected{
-    z-index: 100 !important;
+    z-index: calc(100 + var(--z-index-diff)) !important;
 }
 
 .ac {
