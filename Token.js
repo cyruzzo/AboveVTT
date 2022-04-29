@@ -314,7 +314,7 @@ class Token {
 			const deadCross = token.find('.dead')
 			deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(tokenData.size) / 10}px;`)
 			// check token death
-			if (tokenData.max_hp > 0 && parseInt(tokenData.hp) === 0) {
+			if (tokenData.max_hp > 0 && parseInt(tokenData.hp) <= 0) {
 				deadCross.show()
 			} else {
 				deadCross.hide()
@@ -3149,7 +3149,10 @@ function open_roll_menu(e) {
 				damage = damage_failed_save
 			}
 			if(x.options.monster > 0){
-				x.place()
+				if (x.options.hp < 0){
+					x.options.hp = 0
+				}
+				x.place_sync_persist()
 				update_hp.text(x.options.hp);
 			}
 			else {
@@ -3160,7 +3163,7 @@ function open_roll_menu(e) {
 					text: x.options.name + " takes " + damage +" damage (adjust manually)",	
 				};
 				window.MB.inject_chat(msgdata);
-				x.place()
+				x.place_sync_persist()
 			}
 		});
 	});
@@ -3264,7 +3267,7 @@ function add_to_roll_menu(token) {
 
 	find=$('<button class="findTokenCombatButton" style="vertical-align: middle;""><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
 	find.click(function(){
-		var target=$(this).parent().parent().attr('data-target');
+		var target=$(this).parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
 			window.TOKEN_OBJECTS[target].highlight();
 		}
@@ -3325,7 +3328,7 @@ function save_type_change(dropdown) {
 	console.log("Save type is: "+ dropdown.value );
 	//$('#roll_menu_footer').children('#apply_damage').hide()
 	//$('#group_roll_dialog').children('tr').each(function () {
-	$('#roll_menu_body').children('tr').each(function () {
+	$('#group_roll_area').children('tr').each(function () {
 		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
 		if(x.options.monster > 0){
 			score_bonus = Math.floor((x.options.ability_scores[dropdown.value] - 10) /2 )
