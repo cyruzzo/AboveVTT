@@ -1059,7 +1059,8 @@ div#combat_button{
 }
 
 .tokenselected,
-.token:focus-within{
+.token:focus-within,
+.token:active{
     z-index: calc(100 + var(--z-index-diff)) !important;
 }
 
