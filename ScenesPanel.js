@@ -56,6 +56,44 @@ function preset_importer(target, key) {
 	target.append(import_button);
 }
 
+
+function form_row(name, title, currentValue, inputOverride=null) {
+	const row = $("<div style='width:100%;'/>");
+	const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+	rowLabel.css("font-weight", "bold");
+	const rowInputWrapper = $("<div style='display:inline-block; width:60%' />");
+	let rowInput
+	if(!inputOverride){
+		 rowInput = $(`<input type="text" name=${name} style='width:100%' value=${currentValue} />`);
+	}
+	else{
+		rowInput = inputOverride
+	}
+	
+	rowInputWrapper.append(rowInput);
+	row.append(rowLabel);
+	row.append(rowInputWrapper);
+	return row
+};
+
+function form_toggle(name, hoverText, callback){
+	// do something here for current value
+	const toggle = $(`<button id="${name}_toggle" name=${name} type="button" role="switch" class="rc-switch"><span class="rc-switch-inner" /></button>`)
+	toggle.on("click", callback)
+	return toggle
+}
+
+function handle_basic_form_toggle_click(event){
+	if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+		// it was checked. now it is no longer checked
+		$(event.currentTarget).removeClass("rc-switch-checked");
+	  } else {
+		// it was not checked. now it is checked
+		$(event.currentTarget).removeClass("rc-switch-unknown");
+		$(event.currentTarget).addClass("rc-switch-checked");
+	  }
+}
+
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
@@ -101,88 +139,91 @@ function edit_scene_dialog(scene_id) {
 
 	container.empty();
 
-	let f = $("<form />");
-	f.on('submit', function(e) { e.preventDefault(); });
+	const form = $("<form />");
+	form.on('submit', function(e) { e.preventDefault(); });
 
-	let addrow = function(name, title, type = 'text') {
-		var row = $("<div style='width:100%;'/>");
-		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		c1.css("font-weight", "bold");
-		var c2 = $("<div style='display:inline-block; width:70%'/>");
-		var i = $("<input />");
-		i.attr('type', type);
-		i.attr('name', name);
-		i.val(scene[name]);
-		i.css("width", "70%");
-		c2.append(i);
-		row.append(c1);
-		row.append(c2);
-		f.append(row);
-	};
 
-	let addrow_with_checkbox = function(name, title, checkbox_name, checkbox_title, type = 'text') {
-		var row = $("<div style='width:100%;'/>");
-		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		c1.css("font-weight", "bold");
-		var c2 = $("<div style='display:inline-block; width:50%'/>");
-		var i = $("<input />");
-		i.attr('type', type);
-		i.attr('name', name);
-		i.val(scene[name]);
-		i.css("width", "100%");
-
-		var c3 = $("<div style='display: inline-block;'>&nbsp;&nbsp;" + checkbox_title + "&nbsp;&nbsp;</div>");
-		c3.css("font-weight", "bold");
-		var c4 = $("<div style='display:inline-block;'/>");
-		var t = $("<input />");
-		t.attr('type', "checkbox");
-		t.attr('name', checkbox_name);
-		t.prop('checked', scene[checkbox_name] === "1");
-		c2.append(i);
-		c4.append(t);
-		row.append(c1);
-		row.append(c2);
-		row.append(c3);
-		row.append(c4);
-		f.append(row);
-	};
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
-	f.append(uuid_hidden);
+	form.append(uuid_hidden);
 
-	addrow('title', 'Scene Title');
-	addrow_with_checkbox('player_map', 'Player Map', 'player_map_is_video', "Is Video?");
-	addrow_with_checkbox('dm_map', 'Dm Map', 'dm_map_is_video', "Is Video?");
-	addrow('dm_map_usable', 'Use DM Map (1 to enable)');
+	form.append(form_row('title', 'Scene Title', scene["title"]))
+	const playerMapRow = form_row('player_map', 'Player Map', scene["player_map"])
+	const dmMapRow = form_row('dm_map', 'Dm Map', scene["dm_map"])
+	// add in toggles for these 2 rows
+	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", handle_basic_form_toggle_click))
+	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", handle_basic_form_toggle_click))
+	form.append(playerMapRow)
+	form.append(dmMapRow)
+	// add a row but override the normal input with a toggle
+	form.append(form_row(null, 'Use DM Map', null, form_toggle("dm_map_usable",null, handle_basic_form_toggle_click)))
+
 	wizard = $("<button><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button>Manual Grid Data</button>");
 
 	grid_buttons = $("<div style='display:inline-block; width:70%'/>");
 	grid_buttons.append(wizard);
 	grid_buttons.append(manual_button);
-	f.append($("<div><div style='display:inline-block;width:30%'><b>Grid and Scale</b></div></div>").append(grid_buttons));
+	form.append($("<div><div style='display:inline-block;width:30%'><b>Grid and Scale</b></div></div>").append(grid_buttons));
 
 
 	var manual = $("<div/>");
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
-	manual.append($(
-		`<div>
+
+	const sceneToggleSnap = $(`<button id="snap_grid_toggle" name="show_grid" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner" /></button>`)
+	sceneToggleSnap.on("click", function(event) {
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+		  // it was checked. now it is no longer checked
+		  $(event.currentTarget).removeClass("rc-switch-checked");
+		} else {
+		  // it was not checked. now it is checked
+		  $(event.currentTarget).removeClass("rc-switch-unknown");
+		  $(event.currentTarget).addClass("rc-switch-checked");
+		}
+	  });
+
+	manual.append(
+		$(`<div>
 			<div style='display:inline-block; width:30%'>
-				Show Grid(1 to enable)
+				Snap to Grid
 			</div>
-		<div style='display:inline-block; width:70'%'>
-			<input name='grid'>
-		</div>
-			<input class="spectrum" name="gridColor" value="rgba(0, 0, 0, 0.5)" >
 		</div>`));
+	sceneToggleSnap.insertAfter($(manual).find('div:contains("Snap to Grid")').last())
+
+	const sceneToggleGrid = $(`<button id="snap_grid_toggle" name="show_grid" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner" /></button>`)
+	sceneToggleGrid.on("click", function(event) {
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+		  // it was checked. now it is no longer checked
+		  $(event.currentTarget).removeClass("rc-switch-checked");
+		  $("#grid_line_width").hide()
+		  manual.find(".sp-replacer").hide()
+		} else {
+		  // it was not checked. now it is checked
+		  $(event.currentTarget).removeClass("rc-switch-unknown");
+		  $(event.currentTarget).addClass("rc-switch-checked");
+		  $("#grid_line_width").show()
+		  manual.find(".sp-replacer").show()
+		}
+	  });
+	const sceneGridColor = $(`<input class="spectrum" name="grid_color" value="rgba(0, 0, 0, 0.5)" ></input>`)
+	const sceneGridStroke =$(`<input name="grid_line_width" style="display:none;" type="range" min="1" max="60" value="6">`)
+
+	manual.append(
+		$(`<div>
+			<div style='display:inline-block; width:30%'>
+				Show Grid
+			</div>			
+		</div>`));
+	sceneToggleGrid.insertAfter($(manual).find('div:contains("Show Grid")').last())
+	sceneGridColor.insertAfter($(manual).find(sceneToggleGrid))
+	sceneGridStroke.insertAfter($(manual).find(sceneToggleGrid))
+
 	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
-	manual.hide();
 
 	let colorPickers = manual.find('input.spectrum');
 	colorPickers.spectrum({
@@ -192,6 +233,7 @@ function edit_scene_dialog(scene_id) {
 		containerClassName: '#edit_dialog',
 		clickoutFiresChange: false
 	});
+	manual.find(".sp-replacer").hide()
 	// redraw the grid here
 	// colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
 	// colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
@@ -201,12 +243,14 @@ function edit_scene_dialog(scene_id) {
 		$(this).css("width", "60px");
 		$(this).val(scene[$(this).attr('name')]);
 	})
-	f.append(manual);
+	manual.hide();
+	form.append(manual);
 	manual_button.click(function() {
 		if (manual.is(":visible"))
 			manual.hide();
 		else
 			manual.show();
+		
 	});
 
 
@@ -214,29 +258,29 @@ function edit_scene_dialog(scene_id) {
 		scene.fog_of_war = "1";
 
 
-	var sub = $("<button>Save And Switch</button>");
+	const submitButton = $("<button>Save And Switch</button>");
 
 	if(window.CLOUD)
-		sub.html("Save");
+		submitButton.html("Save");
 
-	sub.click(function() {
-		f.find("input").each(function() {
-			var n = $(this).attr('name');
-			var t = $(this).attr('type');
-			let nValue = null;
-			if (t == "checkbox") {
-				nValue = $(this).prop("checked") ? "1" : "0";
+	submitButton.click(function() {
+		console.group("Saving scene changes")
+		form.find("input, button.rc-switch").each(function() {
+			const inputName = $(this).attr('name');
+			let inputValue
+
+			if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
+				inputValue = parse_img(inputValue);
 			}
-			else {
-				nValue = $(this).val();
+			else if ($(this).is("button")){
+				inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
+			}
+			else{
+				inputValue = $(this).val();
 			}
 
-			if ( ((n === 'player_map') || (n==='dm_map')) ) {
-				nValue = parse_img(nValue);
-			}
-
-			scene[n] = nValue;
-			console.log('setto ' + n + ' a ' + $(this).val());
+			scene[inputName] = inputValue;
+			console.log(`${inputName}: ${inputValue}`)
 		});
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
@@ -662,7 +706,7 @@ function edit_scene_dialog(scene_id) {
 	wizard.click(
 		function() {
 
-			f.find("input").each(function() {
+			form.find("input").each(function() {
 				var n = $(this).attr('name');
 				var t = $(this).attr('type');
 				let nValue = null;
@@ -759,12 +803,12 @@ function edit_scene_dialog(scene_id) {
 
 
 
-	f.append(sub);
-	f.append(cancel);
-	f.append(hide_all_button);
+	form.append(submitButton);
+	form.append(cancel);
+	form.append(hide_all_button);
 	//		f.append(export_grid);
 	container.css('opacity', '0.0');
-	container.append(f);
+	container.append(form);
 	container.animate({
 		opacity: '1.0'
 	}, 1000);

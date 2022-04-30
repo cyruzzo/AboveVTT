@@ -462,9 +462,9 @@ function reset_canvas() {
 			ctx_grid.setLineDash([30, 5]);
 		}
 		else {
-			ctx_grid.strokeStyle = "rgba(0,0,0,0.5)";
+			ctx_grid.strokeStyle = window.CURRENT_SCENE_DATA.grid_color;
 			//ctx_grid.strokeStyle = "green";
-			ctx_grid.lineWidth = 3;
+			ctx_grid.lineWidth = window.CURRENT_SCENE_DATA.grid_line_width;
 		}
 
 		//alert('inizio 1');
