@@ -1455,6 +1455,15 @@ div#combat_button{
 .context-menu-icon-add-circle:before {
     content: "\e148" !important;
 }
+.context-menu-icon-to-top:before {
+    content: "\e25a" !important;
+}
+.context-menu-icon-to-bottom:before {
+    content: "\e258" !important;
+}
+
+
+e258
 
 .context-menu-icon-condition {
     margin: 4px;

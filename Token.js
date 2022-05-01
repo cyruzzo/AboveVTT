@@ -833,9 +833,12 @@ class Token {
 					width: this.options.size,
 					height: this.options.size
 				}, { duration: 1000, queue: false });
-				
-				var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
-				old.css("z-index", 32+zindexdiff);
+
+
+				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				this.options.zindexdiff = Math.max(zindexdiff, 0);
+				old.css("z-index", "calc(32 + var(--z-index-diff))");
+				old.css("--z-index-diff", zindexdiff);
 
 				var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -948,10 +951,11 @@ class Token {
 			}
 
 
-			var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			this.options.zindexdiff = Math.max(zindexdiff, 0);
 			console.log("Diff: "+zindexdiff);
 			
-			tok.css("z-index", 32+zindexdiff);
+			tok.css("z-index", "calc(32 + var(--z-index-diff))");
 			tok.width(this.options.size);
 			tok.height(this.options.size);
 			tok.addClass('token');
@@ -973,6 +977,7 @@ class Token {
 				tokimg.css("border-width","0");
 				
 			tok.css("position", "absolute");
+			tok.css("--z-index-diff", zindexdiff);
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
 			tok.css("opacity", "0.0");
@@ -1479,6 +1484,33 @@ function array_remove_index_by_value(arr, item) {
 }
 
 function menu_callback(key, options, event) {
+	if (key == "to_top") {
+		id = $(this).attr('data-id');
+		$(".token").each(function(){
+			let tokenId = $(this).attr('data-id');	
+			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+			if (tokenzindexdiff >= window.TOKEN_OBJECTS[id].options.zindexdiff) {
+				window.TOKEN_OBJECTS[id].options.zindexdiff = tokenzindexdiff + 1;
+			}
+		});
+		window.TOKEN_OBJECTS[id].place_sync_persist();
+
+	}
+	if (key == "to_bottom") {
+		id = $(this).attr('data-id');
+		$(".token").each(function(){	
+			let tokenId = $(this).attr('data-id');	
+			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+			if (tokenId != id) {
+				window.TOKEN_OBJECTS[tokenId].options.zindexdiff = tokenzindexdiff + 1;
+				window.TOKEN_OBJECTS[tokenId].place_sync_persist();
+			}
+			if (tokenzindexdiff <= window.TOKEN_OBJECTS[id].options.zindexdiff) {
+				window.TOKEN_OBJECTS[id].options.zindexdiff = Math.max(tokenzindexdiff - 1, 0);
+			}		
+		});
+		window.TOKEN_OBJECTS[id].place_sync_persist();
+	}
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
 			if (encounter_builder_dice_supported()) {
@@ -1977,6 +2009,16 @@ function token_menu() {
 						hide: token_inputs
 					},
 					items: {
+						to_top: {
+							name: 'Move to top',
+							icon: 'to-top',
+							className: "material-icon"
+						},
+						to_bottom: {
+							name: 'Move to bottom',
+							icon: 'to-bottom',
+							className: "material-icon"
+						},
 						view: {
 							name: window.TOKEN_OBJECTS[id].isMonster() ? 'Monster Stat Block' : 'Character Sheet',
 							icon: 'view',
@@ -2107,6 +2149,8 @@ function token_menu() {
 				}
 				
 				if(!window.DM){
+					delete ret.items.to_top
+					delete ret.items.to_bottom
 					delete ret.items.sep0;
 					delete ret.items.token_combat;
 					delete ret.items.token_hidden;
