@@ -320,7 +320,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			entry.append($("<td/>").append(hp));
 		else
 			entry.append($("<td/>"))
-		max_hp=$("<div/>");
+		max_hp=$("<div class='max_hp'/>");
 		max_hp.text("/"+token.options.max_hp);
 		max_hp.css('font-size','11px');
 		//max_hp.css('width','20px');

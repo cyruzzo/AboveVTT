@@ -434,6 +434,16 @@ class Token {
 		/* UPDATE COMBAT TRACKER */
 		if (window.DM) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
+		} 
+		else {
+			if(this.options.hidestat == true) {
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
+			}	
+			else {
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
+				$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
+			}
 		}
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
 			console.log("Setting combat tracker opacity to 1.0")
@@ -602,6 +612,8 @@ class Token {
 			token.find(".ac").hide();
 			token.find(".elev").hide();
 		}
+
+		this.update_combat_tracker();
 	}
 
 	/**
