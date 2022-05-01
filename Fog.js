@@ -391,10 +391,14 @@ function clear_grid(){
 	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 }
 
-function redraw_grid(hpps=null, vpps=null, color=null, lineWidth=null, subdivide=null){
+function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null){
 	const gridCanvas = document.getElementById("grid_overlay");
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid()
+	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
+	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
+	startX = Math.round(startX)
+	startY = Math.round(startY)
 	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
 	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps; 
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;

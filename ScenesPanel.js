@@ -91,17 +91,13 @@ function get_edit_form_data(scene=null){
 }
 
 function handle_form_grid_on_change(){
-	const {hpps, vpps, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+	const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
 	// redraw grid with new information
 	if(grid === "1"){
-		redraw_grid(hpps, vpps, grid_color, grid_line_width, grid_subdivided )
+		redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
 	}
 	// redraw grid using current scene data
-	else if(grid === "0" && window.CURRENT_SCENE_DATA.grid === "1"){
-		redraw_grid()
-	}
-	// there's no grid
-	else if (window.CURRENT_SCENE_DATA.grid === "0"){
+	else if(grid === "0"){
 		clear_grid()
 	}
 }
@@ -216,8 +212,8 @@ function edit_scene_dialog(scene_id) {
 
 	const showGridControls = $("<div id='show_grid_controls'/>");
 	const gridColor = $(`<input class="spectrum" name="grid_color" value="${scene["grid_color"] || "rgba(0, 0, 0, 0.5)"}" ></input>`)
-	const gridStroke =$(`<input id="grid_line_width" name="grid_line_width" style="display:inline-block;" type="range" min="1" max="10" step="1" value="${scene["grid_line_width"] || 1}">`)
-	gridStroke.on("change", handle_form_grid_on_change)
+	const gridStroke =$(`<input id="grid_line_width" name="grid_line_width" style="display:inline-block;" type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
+	gridStroke.on("change input", handle_form_grid_on_change)
 	showGridControls.append(
 		form_toggle("grid",null, function(event) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
