@@ -836,7 +836,7 @@ class Token {
 
 
 				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
-				this.options.zindexdiff = Math.max(zindexdiff, 0);
+				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				old.css("z-index", "calc(5000 + var(--z-index-diff))");
 				old.css("--z-index-diff", zindexdiff);
 
@@ -952,7 +952,7 @@ class Token {
 
 
 			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
-			this.options.zindexdiff = Math.max(zindexdiff, 0);
+			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
 			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
@@ -1489,7 +1489,7 @@ function menu_callback(key, options, event) {
 		$(".token").each(function(){
 			let tokenId = $(this).attr('data-id');	
 			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-			if (tokenzindexdiff >= window.TOKEN_OBJECTS[id].options.zindexdiff) {
+			if (tokenzindexdiff >= window.TOKEN_OBJECTS[id].options.zindexdiff && tokenId != id) {
 				window.TOKEN_OBJECTS[id].options.zindexdiff = tokenzindexdiff + 1;
 			}
 		});
@@ -1501,7 +1501,7 @@ function menu_callback(key, options, event) {
 		$(".token").each(function(){	
 			let tokenId = $(this).attr('data-id');	
 			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-			if (tokenzindexdiff <= window.TOKEN_OBJECTS[id].options.zindexdiff) {
+			if (tokenzindexdiff <= window.TOKEN_OBJECTS[id].options.zindexdiff && tokenId != id) {
 				window.TOKEN_OBJECTS[id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
 			}		
 		});
