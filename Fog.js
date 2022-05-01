@@ -385,44 +385,51 @@ function midPointBtw(p1, p2) {
   };
 }
 
-function draw_grid(){
-	const canvas_grid = document.getElementById("grid_overlay");
-	const ctx_grid = canvas_grid.getContext("2d");
-	const incrementX = window.CURRENT_SCENE_DATA.hpps;
-	ctx_grid.lineWidth = window.CURRENT_SCENE_DATA.grid_line_width;
-	ctx_grid.strokeStyle = window.CURRENT_SCENE_DATA.grid_color;
+function clear_grid(){
+	const gridCanvas = document.getElementById("grid_overlay");
+	const gridContext = gridCanvas.getContext("2d");
+	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+}
+
+function redraw_grid(hpps=null, vpps=null, color=null, lineWidth=null, subdivide=null){
+	const gridCanvas = document.getElementById("grid_overlay");
+	const gridContext = gridCanvas.getContext("2d");
+	clear_grid()
+	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
+	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps; 
+	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
+	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
+	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
 	let skip = true;
 
-	ctx_grid.beginPath();
+	gridContext.beginPath();
 	for (var i = startX; i < $("#scene_map").width(); i = i + incrementX) {
-		if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
+		if (isSubdivided && skip) {
 			skip = false;
 			continue;
 		}
 		else {
 			skip = true;
 		}
-		ctx_grid.moveTo(i, 0);
-		ctx_grid.lineTo(i, $("#scene_map").height());
+		gridContext.moveTo(i, 0);
+		gridContext.lineTo(i, $("#scene_map").height());
 	}
-	ctx_grid.stroke();
-
-	const incrementY = window.CURRENT_SCENE_DATA.vpps;
+	gridContext.stroke();
 	skip = true;
 
-	ctx_grid.beginPath();
+	gridContext.beginPath();
 	for (var i = startY; i < $("#scene_map").height(); i = i + incrementY) {
-		if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
+		if (isSubdivided && skip) {
 			skip = false;
 			continue;
 		}
 		else {
 			skip = true;
 		}
-		ctx_grid.moveTo(0, i);
-		ctx_grid.lineTo($("#scene_map").width(), i);
+		gridContext.moveTo(0, i);
+		gridContext.lineTo($("#scene_map").width(), i);
 	}
-	ctx_grid.stroke();
+	gridContext.stroke();
 }
 
 function reset_canvas() {
@@ -510,7 +517,7 @@ function reset_canvas() {
 		//alert('inizio 1');
 
 		if (window.CURRENT_SCENE_DATA.grid == "1") {
-			draw_grid()
+			redraw_grid()
 		}
 		//alert('sopravvissuto');
 	}

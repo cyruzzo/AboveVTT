@@ -58,8 +58,53 @@ function preset_importer(target, key) {
 
 
 
+function handle_basic_form_toggle_click(event){
+	if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+		// it was checked. now it is no longer checked
+		$(event.currentTarget).removeClass("rc-switch-checked");
+	  } else {
+		// it was not checked. now it is checked
+		$(event.currentTarget).removeClass("rc-switch-unknown");
+		$(event.currentTarget).addClass("rc-switch-checked");
+	  }
+}
 
+function get_edit_form_data(scene=null){
+	let data = {}
+	$("#edit_scene_form").find("input, button.rc-switch").each(function() {
+		const inputName = $(this).attr('name');
+		let inputValue = $(this).val();
 
+		if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
+			inputValue = parse_img(inputValue);
+		}
+		else if ($(this).is("button")){
+			inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
+		}
+		
+		if (scene){
+			scene[inputName] = inputValue
+		}
+		data[inputName] = inputValue
+	})
+	return data
+}
+
+function handle_form_grid_on_change(){
+	const {hpps, vpps, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+	// redraw grid with new information
+	if(grid === "1"){
+		redraw_grid(hpps, vpps, grid_color, grid_line_width, grid_subdivided )
+	}
+	// redraw grid using current scene data
+	else if(grid === "0" && window.CURRENT_SCENE_DATA.grid === "1"){
+		redraw_grid()
+	}
+	// there's no grid
+	else if (window.CURRENT_SCENE_DATA.grid === "0"){
+		clear_grid()
+	}
+}
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
@@ -91,18 +136,6 @@ function edit_scene_dialog(scene_id) {
 		}
 		return toggle
 	}
-	
-	function handle_basic_form_toggle_click(event){
-		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
-			// it was checked. now it is no longer checked
-			$(event.currentTarget).removeClass("rc-switch-checked");
-		  } else {
-			// it was not checked. now it is checked
-			$(event.currentTarget).removeClass("rc-switch-unknown");
-			$(event.currentTarget).addClass("rc-switch-checked");
-		  }
-	}
-
 
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
@@ -147,7 +180,7 @@ function edit_scene_dialog(scene_id) {
 
 	container.empty();
 
-	const form = $("<form />");
+	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
@@ -181,22 +214,26 @@ function edit_scene_dialog(scene_id) {
 
 	manual.append(form_row(null, 'Snap to Grid',form_toggle("snap",null, handle_basic_form_toggle_click)))
 
-	const showGridControls = $("<div/>");
+	const showGridControls = $("<div id='show_grid_controls'/>");
 	const gridColor = $(`<input class="spectrum" name="grid_color" value="${scene["grid_color"] || "rgba(0, 0, 0, 0.5)"}" ></input>`)
-	const gridStroke =$(`<input id="grid_line_width" name="grid_line_width" style="display:none;" type="range" min="1" max="5" step="1" value="${scene["grid_line_width"] || 1}">`)
+	const gridStroke =$(`<input id="grid_line_width" name="grid_line_width" style="display:inline-block;" type="range" min="1" max="10" step="1" value="${scene["grid_line_width"] || 1}">`)
+	gridStroke.on("change", handle_form_grid_on_change)
 	showGridControls.append(
 		form_toggle("grid",null, function(event) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
-			// it was checked. now it is no longer checked
-			$(event.currentTarget).removeClass("rc-switch-checked");
-			$("#grid_line_width").hide()
-			manual.find(".sp-replacer").hide()
+				// it was checked. now it is no longer checked
+				$(event.currentTarget).removeClass("rc-switch-checked");
+				gridStroke.hide()	
+				manual.find(".sp-replacer").hide()
+				handle_form_grid_on_change()
 			} else {
-			// it was not checked. now it is checked
-			$(event.currentTarget).removeClass("rc-switch-unknown");
-			$(event.currentTarget).addClass("rc-switch-checked");
-			$("#grid_line_width").show()
-			manual.find(".sp-replacer").show()
+				// it was not checked. now it is checked
+				$(event.currentTarget).removeClass("rc-switch-unknown");
+				$(event.currentTarget).addClass("rc-switch-checked");
+				gridStroke.show()	
+				manual.find(".sp-replacer").show()
+				// hpps=null, vpps=null, color=null, lineWidth=null, subdivide=null
+				handle_form_grid_on_change()
 			}
 		})
 	)
@@ -209,7 +246,7 @@ function edit_scene_dialog(scene_id) {
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
 
-	let colorPickers = manual.find('input.spectrum');
+	const colorPickers = manual.find('input.spectrum');
 	colorPickers.spectrum({
 		type: "color",
 		showInput: true,
@@ -217,11 +254,10 @@ function edit_scene_dialog(scene_id) {
 		containerClassName: '#edit_dialog',
 		clickoutFiresChange: false
 	});
-	manual.find(".sp-replacer").hide()
 	// redraw the grid here
-	// colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
-	// colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
-	// colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+	colorPickers.on('move.spectrum', handle_form_grid_on_change);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
 	manual.find("input").each(function() {
 		$(this).css("width", "60px");
@@ -249,20 +285,8 @@ function edit_scene_dialog(scene_id) {
 
 	submitButton.click(function() {
 		console.group("Saving scene changes")
-		form.find("input, button.rc-switch").each(function() {
-			const inputName = $(this).attr('name');
-			let inputValue = $(this).val();
-
-			if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
-				inputValue = parse_img(inputValue);
-			}
-			else if ($(this).is("button")){
-				inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
-			}
-
-			scene[inputName] = inputValue;
-			console.log(`${inputName}: ${inputValue}`)
-		});
+		// TODO Bain this is wrong?
+		get_edit_form_data(scene)
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
 		}
@@ -274,10 +298,6 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 	});
-	
-
-	
-
 
 	let grid_5 = function(enable_grid = false, enable_snap = true) {
 
@@ -754,10 +774,19 @@ function edit_scene_dialog(scene_id) {
 	);
 
 
-	cancel = $("<button>Cancel</button>");
+	cancel = $("<button type='button' >Cancel</button>");
 	cancel.click(function() {
+		// redraw or clear grid based on scene data
+		// discarding any changes that have been made to live modification of grid
+		if(window.CURRENT_SCENE_DATA.grid === "1"){
+			redraw_grid()
+		}
+		else{
+			clear_grid()
+		}
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
+		
 	})
 
 
