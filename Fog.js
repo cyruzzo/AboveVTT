@@ -385,6 +385,46 @@ function midPointBtw(p1, p2) {
   };
 }
 
+function draw_grid(){
+	const canvas_grid = document.getElementById("grid_overlay");
+	const ctx_grid = canvas_grid.getContext("2d");
+	const incrementX = window.CURRENT_SCENE_DATA.hpps;
+	ctx_grid.lineWidth = window.CURRENT_SCENE_DATA.grid_line_width;
+	ctx_grid.strokeStyle = window.CURRENT_SCENE_DATA.grid_color;
+	let skip = true;
+
+	ctx_grid.beginPath();
+	for (var i = startX; i < $("#scene_map").width(); i = i + incrementX) {
+		if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
+			skip = false;
+			continue;
+		}
+		else {
+			skip = true;
+		}
+		ctx_grid.moveTo(i, 0);
+		ctx_grid.lineTo(i, $("#scene_map").height());
+	}
+	ctx_grid.stroke();
+
+	const incrementY = window.CURRENT_SCENE_DATA.vpps;
+	skip = true;
+
+	ctx_grid.beginPath();
+	for (var i = startY; i < $("#scene_map").height(); i = i + incrementY) {
+		if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
+			skip = false;
+			continue;
+		}
+		else {
+			skip = true;
+		}
+		ctx_grid.moveTo(0, i);
+		ctx_grid.lineTo($("#scene_map").width(), i);
+	}
+	ctx_grid.stroke();
+}
+
 function reset_canvas() {
 	$('#fog_overlay').width($("#scene_map").width());
 	$('#fog_overlay').height($("#scene_map").height());
@@ -462,48 +502,15 @@ function reset_canvas() {
 			ctx_grid.setLineDash([30, 5]);
 		}
 		else {
-			ctx_grid.strokeStyle = window.CURRENT_SCENE_DATA.grid_color;
+			ctx_grid.strokeStyle = "rgba(0,0,0,0.5)";
 			//ctx_grid.strokeStyle = "green";
-			ctx_grid.lineWidth = window.CURRENT_SCENE_DATA.grid_line_width;
+			ctx_grid.lineWidth = 3;
 		}
 
 		//alert('inizio 1');
 
 		if (window.CURRENT_SCENE_DATA.grid == "1") {
-			var increment = window.CURRENT_SCENE_DATA.hpps;
-			ctx_grid.lineWidth = 1;
-			var skip = true;
-
-			ctx_grid.beginPath();
-			for (var i = startX; i < $("#scene_map").width(); i = i + increment) {
-				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
-					skip = false;
-					continue;
-				}
-				else {
-					skip = true;
-				}
-				ctx_grid.moveTo(i, 0);
-				ctx_grid.lineTo(i, $("#scene_map").height());
-			}
-			ctx_grid.stroke();
-
-			var increment = window.CURRENT_SCENE_DATA.vpps;
-			skip = true;
-
-			ctx_grid.beginPath();
-			for (var i = startY; i < $("#scene_map").height(); i = i + increment) {
-				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
-					skip = false;
-					continue;
-				}
-				else {
-					skip = true;
-				}
-				ctx_grid.moveTo(0, i);
-				ctx_grid.lineTo($("#scene_map").width(), i);
-			}
-			ctx_grid.stroke();
+			draw_grid()
 		}
 		//alert('sopravvissuto');
 	}
