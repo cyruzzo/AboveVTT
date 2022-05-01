@@ -324,6 +324,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		max_hp.text("/"+token.options.max_hp);
 		max_hp.css('font-size','11px');
 		//max_hp.css('width','20px');
+		if(token.options.hidestat == true && !window.DM) {
+			hp.css('visibility', 'hidden');
+			max_hp.css('visibility', 'hidden');
+		}	
 		if(window.DM || !(token.options.monster > 0) )
 			entry.append($("<td/>").append(max_hp));
 		else
