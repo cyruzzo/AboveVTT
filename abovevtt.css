@@ -3013,6 +3013,10 @@ button.avtt-roll-button {
     transition: none;
 }
 
+#tokens {
+    z-index: 40;
+}
+
 .context-menu-icon-concentration-reminder:before,
 .context-menu-icon-inspiration:before,
 .context-menu-icon-flying:before,

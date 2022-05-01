@@ -837,7 +837,7 @@ class Token {
 
 				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
 				this.options.zindexdiff = Math.max(zindexdiff, 0);
-				old.css("z-index", "calc(32 + var(--z-index-diff))");
+				old.css("z-index", "calc(5000 + var(--z-index-diff))");
 				old.css("--z-index-diff", zindexdiff);
 
 				var bar_height = Math.floor(this.options.size * 0.2);
@@ -955,7 +955,7 @@ class Token {
 			this.options.zindexdiff = Math.max(zindexdiff, 0);
 			console.log("Diff: "+zindexdiff);
 			
-			tok.css("z-index", "calc(32 + var(--z-index-diff))");
+			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
 			tok.width(this.options.size);
 			tok.height(this.options.size);
 			tok.addClass('token');
@@ -1501,12 +1501,8 @@ function menu_callback(key, options, event) {
 		$(".token").each(function(){	
 			let tokenId = $(this).attr('data-id');	
 			let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-			if (tokenId != id) {
-				window.TOKEN_OBJECTS[tokenId].options.zindexdiff = tokenzindexdiff + 1;
-				window.TOKEN_OBJECTS[tokenId].place_sync_persist();
-			}
 			if (tokenzindexdiff <= window.TOKEN_OBJECTS[id].options.zindexdiff) {
-				window.TOKEN_OBJECTS[id].options.zindexdiff = Math.max(tokenzindexdiff - 1, 0);
+				window.TOKEN_OBJECTS[id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
 			}		
 		});
 		window.TOKEN_OBJECTS[id].place_sync_persist();
