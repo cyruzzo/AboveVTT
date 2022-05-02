@@ -99,7 +99,7 @@ function edit_scene_dialog(scene_id) {
 		const row = $("<div style='width:100%;'/>");
 		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
 		rowLabel.css("font-weight", "bold");
-		const rowInputWrapper = $("<div style='display:inline-block; width:60%' />");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
 		let rowInput
 		if(!inputOverride){
 			 rowInput = $(`<input type="text" name=${name} style='width:100%' value="${scene[name] || ""}" />`);
@@ -114,10 +114,13 @@ function edit_scene_dialog(scene_id) {
 		return row
 	};
 
-	function form_toggle(name, hoverText, callback){
-		const toggle = $(`<button id="${name}_toggle" name=${name} type="button" role="switch" class="rc-switch"><span class="rc-switch-inner" /></button>`)
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
 		toggle.on("click", callback)
-		if (scene[name] === "1"){
+		if (scene[name] === "1" || defaultOn){
 			toggle.click()
 		}
 		return toggle
@@ -194,62 +197,48 @@ function edit_scene_dialog(scene_id) {
 	const playerMapRow = form_row('player_map', 'Player Map')
 	const dmMapRow = form_row('dm_map', 'Dm Map')
 	// add in toggles for these 2 rows
-	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", handle_basic_form_toggle_click))
-	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", handle_basic_form_toggle_click))
+	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
+	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
 	form.append(playerMapRow)
 	form.append(dmMapRow)
 	// add a row but override the normal input with a toggle
 	form.append(form_row(null,
 						'Use DM Map',
-						form_toggle("dm_map_usable",null, handle_basic_form_toggle_click)
+						form_toggle("dm_map_usable",null, false, handle_basic_form_toggle_click)
 						)
 				);
-	wizard = $("<button><b>Super Mega Wizard</b></button>");
-	manual_button = $("<button>Manual Grid Data</button>");
+	form.append(form_row(null, 'Snap to Grid',form_toggle("snap",null, true, handle_basic_form_toggle_click)))
 
-	grid_buttons = $("<div/>");
-	grid_buttons.append(wizard);
-	grid_buttons.append(manual_button);
-	form.append(form_row(null, 'Grid and Scale', grid_buttons))
-
-	var manual = $("<div id='manual_grid_data'/>");
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
-
-	manual.append(form_row(null, 'Snap to Grid',form_toggle("snap",null, handle_basic_form_toggle_click)))
 
 	const showGridControls = $("<div id='show_grid_controls'/>");
 	const gridColor = $(`<input class="spectrum" name="grid_color" value="${scene["grid_color"] || "rgba(0, 0, 0, 0.5)"}" ></input>`)
-	const gridStroke =$(`<input id="grid_line_width" name="grid_line_width" style="display:inline-block;" type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
+	const gridStroke =$(
+		`<input id="grid_line_width" name="grid_line_width" style="display:inline-block; position:relative; top:2px; margin:0px; height:12px;"
+		type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
 	gridStroke.on("change input", handle_form_grid_on_change)
 	showGridControls.append(
-		form_toggle("grid",null, function(event) {
+		form_toggle("grid", null, true, function(event) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 				// it was checked. now it is no longer checked
 				$(event.currentTarget).removeClass("rc-switch-checked");
 				gridStroke.hide()	
-				manual.find(".sp-replacer").hide()
+				form.find(".sp-replacer").hide()
 				
 			} else {
 				// it was not checked. now it is checked
 				$(event.currentTarget).removeClass("rc-switch-unknown");
 				$(event.currentTarget).addClass("rc-switch-checked");
 				gridStroke.show()	
-				manual.find(".sp-replacer").show()
+				form.find(".sp-replacer").show()
 			}
 				handle_form_grid_on_change()
 		})
 	)
 	showGridControls.append(gridColor)
 	showGridControls.append(gridStroke)
-	manual.append(form_row(null, 'Show Grid', showGridControls))
-	
-	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
+	form.append(form_row(null, 'Show Grid', showGridControls))
 
-	const colorPickers = manual.find('input.spectrum');
+	const colorPickers = form.find('input.spectrum');
 	colorPickers.spectrum({
 		type: "color",
 		showInput: true,
@@ -257,11 +246,30 @@ function edit_scene_dialog(scene_id) {
 		containerClassName: '#edit_dialog',
 		clickoutFiresChange: false
 	});
+	form.find(".sp-replacer").css("height","22px")
 	// redraw the grid here
 	colorPickers.on('move.spectrum', handle_form_grid_on_change);   // update the token as the player messes around with colors
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
+	
+	wizard = $("<button><b>Super Mega Wizard</b></button>");
+	manual_button = $("<button>Manual Grid Data</button>");
+
+	grid_buttons = $("<div/>");
+	grid_buttons.append(wizard);
+	grid_buttons.append(manual_button);
+	form.append(form_row(null, 'Grid Scale', grid_buttons))
+
+	var manual = $("<div id='manual_grid_data'/>");
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
+
+	
 	manual.find("input").each(function() {
 		$(this).css("width", "60px");
 		$(this).val(scene[$(this).attr('name')]);

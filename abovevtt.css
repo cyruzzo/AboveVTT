@@ -6,7 +6,7 @@ body > button,
 #addscene,
 .scene button,
 #combat_tracker_inside button,
-#edit_dialog button,
+#edit_dialog button:not(.rc-switch),
 #mega_importer button,
 #prewiz td button,
 #wizard_popup button,
@@ -49,7 +49,7 @@ body > button:hover,
 #addscene:hover,
 .scene button:hover,
 #combat_tracker_inside button:hover,
-#edit_dialog button:hover,
+#edit_dialog button:not(.rc-switch):hover,
 #mega_importer button:hover,
 #prewiz td button:hover,
 #wizard_popup button:hover,
@@ -2278,10 +2278,12 @@ h5.token-image-modal-footer-title:after {
     background-color: #ccc;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+    background-image: none !important;
 }
 .rc-switch-checked {
     border: 1px solid #1b9af0;
     background-color: #1b9af0;
+    background-image: none !important;
 }
 .rc-switch-checked:after {
     left: 22px;
@@ -2300,6 +2302,7 @@ h5.token-image-modal-footer-title:after {
     top: 1px;
     border-radius: 50% 50%;
     background-color: #fff;
+    background-image: none !important;
     content: " ";
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.26);
@@ -2335,6 +2338,7 @@ h5.token-image-modal-footer-title:after {
     transform: scale(1.1);
     -webkit-animation-name: rcSwitchOn;
     animation-name: rcSwitchOn;
+    background-image: none !important;
 }
 
 .sidebar-hovertext:before {
@@ -2359,9 +2363,16 @@ h5.token-image-modal-footer-title:after {
     width: 90%;
 }
 
+#edit_scene_form .sidebar-hovertext:before{
+    width: 100%;
+}
+
 .sidebar-hovertext:hover:before {
     opacity: 1;
     visibility: visible;
+}
+#edit_scene_form .sidebar-hovertext:hover:before{
+    width: 100%;
 }
 .sidebar-panel-content .sidebar-panel-footer .footer-input-wrapper:empty {
     padding: 0px;
