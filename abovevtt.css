@@ -238,14 +238,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet.thin {
     width: 420px;
 }
-#sheet.sidebar_hidden.open {
-    transform: translateX(-1030px);
-    transition: 0.5s ease-in-out;
-}
-#sheet.open {
-    transform: translateX(-1370px);
-    z-index: 99999999;
-}
+
 
 /*for resizable and moveable monsters and sheets in DM view*/
 
@@ -371,7 +364,7 @@ div#combat_button {
     width: 0px;
 }
 ul.context-menu-list.context-menu-root{
-    z-index: 58000 !important;
+    z-index: 100000 !important;
 }
 #windowContainment{
     height:  100vh;
@@ -1148,7 +1141,7 @@ div#combat_button{
 }*/
 
 /* .ct-sidebar__pane-content, */
-.sidebar__pane-content {
+body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     position: absolute;
     right: 0;
     top: 28px;
