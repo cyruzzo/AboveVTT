@@ -238,14 +238,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet.thin {
     width: 420px;
 }
-#sheet.sidebar_hidden.open {
-    transform: translateX(-1030px);
-    transition: 0.5s ease-in-out;
-}
-#sheet.open {
-    transform: translateX(-1370px);
-    z-index: 99999999;
-}
+
 
 /*for resizable and moveable monsters and sheets in DM view*/
 
