@@ -246,7 +246,7 @@ function edit_scene_dialog(scene_id) {
 		containerClassName: '#edit_dialog',
 		clickoutFiresChange: false
 	});
-	form.find(".sp-replacer").css("height","22px")
+	form.find(".sp-replacer").css({"height":"22px", "margin-left":"8px", "margin-right":"8px"})
 	// redraw the grid here
 	colorPickers.on('move.spectrum', handle_form_grid_on_change);   // update the token as the player messes around with colors
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button

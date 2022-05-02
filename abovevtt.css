@@ -2363,16 +2363,15 @@ h5.token-image-modal-footer-title:after {
     width: 90%;
 }
 
-#edit_scene_form .sidebar-hovertext:before{
-    width: 100%;
+#edit_scene_form .sidebar-hovertext:before,
+#edit_scene_form .sidebar-hovertext:hover:before{
+    width: fit-content;
+    white-space: nowrap;
 }
 
 .sidebar-hovertext:hover:before {
     opacity: 1;
     visibility: visible;
-}
-#edit_scene_form .sidebar-hovertext:hover:before{
-    width: 100%;
 }
 .sidebar-panel-content .sidebar-panel-footer .footer-input-wrapper:empty {
     padding: 0px;
