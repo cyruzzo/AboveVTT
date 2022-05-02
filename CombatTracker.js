@@ -122,7 +122,9 @@ function init_combat_tracker(){
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
-		$("#combat_area").empty();
+		$("#combat_area button.removeTokenCombatButton").each(function() {
+			this.click();
+		});
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 		ct_persist();
