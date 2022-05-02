@@ -1130,7 +1130,7 @@ div#combat_button{
 }*/
 
 /* .ct-sidebar__pane-content, */
-.sidebar__pane-content {
+body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     position: absolute;
     right: 0;
     top: 28px;
