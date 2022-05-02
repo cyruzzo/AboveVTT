@@ -90,17 +90,7 @@ function get_edit_form_data(scene=null){
 	return data
 }
 
-function handle_form_grid_on_change(){
-	const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
-	// redraw grid with new information
-	if(grid === "1"){
-		redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
-	}
-	// redraw grid using current scene data
-	else if(grid === "0"){
-		clear_grid()
-	}
-}
+
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
@@ -131,6 +121,23 @@ function edit_scene_dialog(scene_id) {
 			toggle.click()
 		}
 		return toggle
+	}
+
+	function handle_form_grid_on_change(){
+		// not editting this scene, don't show live updates to grid
+		if (scene.id !== window.CURRENT_SCENE_DATA.id){
+			return
+		}
+	
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		// redraw grid with new information
+		if(grid === "1"){
+			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
+		}
+		// redraw grid using current scene data
+		else if(grid === "0"){
+			clear_grid()
+		}
 	}
 
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
@@ -194,8 +201,9 @@ function edit_scene_dialog(scene_id) {
 	// add a row but override the normal input with a toggle
 	form.append(form_row(null,
 						'Use DM Map',
-						form_toggle("dm_map_usable",null, handle_basic_form_toggle_click)))
-
+						form_toggle("dm_map_usable",null, handle_basic_form_toggle_click)
+						)
+				);
 	wizard = $("<button><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button>Manual Grid Data</button>");
 
@@ -221,16 +229,15 @@ function edit_scene_dialog(scene_id) {
 				$(event.currentTarget).removeClass("rc-switch-checked");
 				gridStroke.hide()	
 				manual.find(".sp-replacer").hide()
-				handle_form_grid_on_change()
+				
 			} else {
 				// it was not checked. now it is checked
 				$(event.currentTarget).removeClass("rc-switch-unknown");
 				$(event.currentTarget).addClass("rc-switch-checked");
 				gridStroke.show()	
 				manual.find(".sp-replacer").show()
-				// hpps=null, vpps=null, color=null, lineWidth=null, subdivide=null
-				handle_form_grid_on_change()
 			}
+				handle_form_grid_on_change()
 		})
 	)
 	showGridControls.append(gridColor)
@@ -295,24 +302,12 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector_toggle").click();
 	});
 
-	let grid_5 = function(enable_grid = false, enable_snap = true) {
+	let grid_5 = function() {
 
-		console.log("enable_grid " + enable_grid + " enable_snap" + enable_snap);
 
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		window.WIZARDING = false;
-
-		if (enable_snap)
-			window.ScenesHandler.scene.snap = "1";
-		else
-			window.ScenesHandler.scene.snap = "0";
-
-		if (enable_grid)
-			window.ScenesHandler.scene.grid = "1";
-		else
-			window.ScenesHandler.scene.grid = "0";
-
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.grid_subdivided = "0";
@@ -338,8 +333,6 @@ function edit_scene_dialog(scene_id) {
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
 			window.ScenesHandler.scene.grid_subdivided = "1";
-			window.ScenesHandler.scene.snap = "1";
-			window.ScenesHandler.scene.grid = "1";
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.upsq = "ft";
 			window.ScenesHandler.scene.hpps /= 2;
@@ -383,10 +376,8 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
 		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "0";
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 3;
@@ -407,10 +398,8 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled.");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
 		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "1";
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 4;
@@ -432,12 +421,6 @@ function edit_scene_dialog(scene_id) {
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
-
-			if (!just_rescaling)
-				window.CURRENT_SCENE_DATA.grid = "1";
-			else
-				window.CURRENT_SCENE_DATA.grid = "0";
-
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
 			window.CURRENT_SCENE_DATA.scale_factor=1;
 			var aligner1 = $("<canvas id='aligner1'/>");
@@ -517,11 +500,6 @@ function edit_scene_dialog(scene_id) {
 
 			let regrid = function(e) {
 
-				window.WIZARDING = true;
-				if (!just_rescaling)
-					window.CURRENT_SCENE_DATA.grid = 1;
-				else
-					window.CURRENT_SCENE_DATA.grid = 0;
 				let al1 = {
 					x: parseInt(aligner1.css("left")) + 29,
 					y: parseInt(aligner1.css("top")) + 29,
@@ -550,7 +528,15 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA.vpps = ppsy;
 				window.CURRENT_SCENE_DATA.offsetx = offsetx;
 				window.CURRENT_SCENE_DATA.offsety = offsety;
-				reset_canvas();
+				let width
+				if (window.ScenesHandler.scene.upscaled == "1")
+					width = 2;
+				else
+					width = 1;
+				const dash = [30, 5]
+				const color = "rgba(255, 0, 0,0.5)";
+				// nulls will take the window.current_scene_data from above
+				redraw_grid(null,null,null,null,color,width,null,dash)
 				redraw_canvas();
 			};
 
@@ -561,7 +547,6 @@ function edit_scene_dialog(scene_id) {
 			aligner2.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas(); redraw_canvas();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
@@ -569,6 +554,8 @@ function edit_scene_dialog(scene_id) {
 					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
 				},
 				drag: function(event, ui) {
+					clear_grid()
+					draw_wizarding_box()
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -619,7 +606,6 @@ function edit_scene_dialog(scene_id) {
 			aligner1.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas(); redraw_canvas();
 					click1.x = event.clientX;
 					click1.y = event.clientY;
@@ -629,7 +615,8 @@ function edit_scene_dialog(scene_id) {
 					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
 				},
 				drag: function(event, ui) {
-
+					clear_grid()
+					draw_wizarding_box()
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -680,20 +667,13 @@ function edit_scene_dialog(scene_id) {
 					aligner1.remove();
 					aligner2.remove();
 
-					if (just_rescaling) {
-						grid_5(false, false);
-					}
-					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
-						$("#grid_5").click(function() { grid_5(); });
-						$("#grid_10").click(function() { grid_10(); });
-						$("#grid_15").click(function() { grid_15(); });
-						$("#grid_20").click(function() { grid_20(); });
-						$("#grid_100").click(function() { grid_100(); });
-					}
-					else { // just creating a 5 foot grid
-						grid_5(true);
-					}
+					$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
+					$("#grid_5").click(function() { grid_5(); });
+					$("#grid_10").click(function() { grid_10(); });
+					$("#grid_15").click(function() { grid_15(); });
+					$("#grid_20").click(function() { grid_20(); });
+					$("#grid_100").click(function() { grid_100(); });
+				
 
 				}
 			);
@@ -774,11 +754,13 @@ function edit_scene_dialog(scene_id) {
 	cancel.click(function() {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
-		if(window.CURRENT_SCENE_DATA.grid === "1"){
-			redraw_grid()
-		}
-		else{
-			clear_grid()
+		if (scene.id === window.CURRENT_SCENE_DATA.id){
+			if(window.CURRENT_SCENE_DATA.grid === "1"){
+				redraw_grid()
+			}
+			else{
+				clear_grid()
+			}
 		}
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");

@@ -238,7 +238,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 		data.grid = window.CURRENT_SCENE_DATA.grid;
 		data.snap = window.CURRENT_SCENE_DATA.snap;
-		data.grid = window.CURRENT_SCENE_DATA.grid;
 		//data.scale=window.CURRENT_SCENE_DATA.scaleX;
 		data.hpps = window.CURRENT_SCENE_DATA.hpps;
 		data.vpps = window.CURRENT_SCENE_DATA.vpps;
