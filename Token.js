@@ -3115,7 +3115,7 @@ function open_roll_menu(e) {
 	update_hp.tooltip()
 	update_hp.click(function() {
 		$("#group_roll_area").children('tr').each(function (){
-			update_hp=$(this).children("#hp");
+			update_hp=$(this).children().children(".hp");
 			let rolled_value = $(this).children('input').val();
 			//if (!rolled_value.includes('+') && !rolled_value.includes('-')) {}
 			let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
@@ -3227,9 +3227,12 @@ function add_to_roll_menu(token) {
 	img.css('border','3px solid '+token.options.color);
 	img.css('margin', '2px 2px');
 	roll_menu_entry.append($("<td/>").append(img));
-
+	//just assign 0 if this token is a custom token or unknown. 
+	if (typeof(token.options.ability_scores) == 'undefined'){
+		score_bonus = '+0'
+	}
 	//if its a monster it needs to be calulated.
-	if(token.options.monster > 0){
+	else if(token.options.monster > 0){
 		console.log(token.options.ability_scores)
 		score_bonus = Math.floor((token.options.ability_scores[2] - 10) /2 )
 		if (token.options.saving_throws[2]){
@@ -3330,7 +3333,11 @@ function save_type_change(dropdown) {
 	//$('#group_roll_dialog').children('tr').each(function () {
 	$('#group_roll_area').children('tr').each(function () {
 		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
-		if(x.options.monster > 0){
+
+		if (typeof(token.options.ability_scores) == 'undefined'){
+			score_bonus = '+0'
+		}
+		else if(x.options.monster > 0){
 			score_bonus = Math.floor((x.options.ability_scores[dropdown.value] - 10) /2 )
 			if (x.options.saving_throws[dropdown.value]){
 				score_bonus += x.options.prof_bonus
