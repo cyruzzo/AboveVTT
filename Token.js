@@ -1588,14 +1588,8 @@ function token_inputs(opt) {
 		return;
 
 	data = $.contextMenu.getInputValues(opt, $(this).data());
-	is_monster = window.TOKEN_OBJECTS[id].options.monster > 0;
 
 	token = window.TOKEN_OBJECTS[id];
-
-	if (data.imgsrc != undefined) {
-		token.options.imgsrc = parse_img(data.imgsrc);
-	}
-
 
 	if (window.DM) {
 		if (!is_player_id(id)) {
@@ -1612,20 +1606,8 @@ function token_inputs(opt) {
 			if (!isNaN(data.ac)) {
 				token.options.ac = data.ac;
 			}
-			if (!isNaN(data.elev)) {
-				token.options.elev = data.elev;
-			}
 		}
-
-		
-		token.options.name = data.name;
 		token.options.elev = data.elev;
-
-		if (opt.imgsrcSelection != undefined && opt.imgsrcSelection.length > 0) {
-			token.options.imgsrc = parse_img(opt.imgsrcSelection);
-		} else if (data.imgsrc != undefined) {
-			token.options.imgsrc = parse_img(data.imgsrc);
-		}
 	}
 	
 	token.place();
