@@ -392,6 +392,7 @@ class Token {
 			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
 		}
+		token.attr("data-border-color", this.options.color);
 	
 		token.children('img').css({			
 			'position': 'absolute',
