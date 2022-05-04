@@ -765,33 +765,13 @@ class MessageBroker {
 					if (gamelogItem.find(".gamelog-to-everyone-button").length === 0) {
 						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
 						sendToEveryone.click(function (clickEvent) {
-							//TODO once PR #408 goes in use this block and make any required tweaks
-							// also remove the related css for re_sent_roll
-							// let resendMessage = msg;
-							// resendMessage.id = uuid();
-							// resendMessage.data.rollId = uuid();
-							// resendMessage.messageScope = "gameId";
-							// resendMessage.messageTarget = find_game_id();
-							// resendMessage.dateTime = Date.now();
-							// window.diceRoller.ddbDispatch(resendMessage);
-								
-							const thisGameLogItem = $(this).parent().parent()
-							
-							let rollDetails = $(thisGameLogItem).find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex").clone()
-							// it's collapsed
-							if (!rollDetails.length) {
-								rollDetails = $(thisGameLogItem).find(".tss-8-Collapsed-ref.tss-8-Other-ref.tss-11w0h4e-Message-Collapsed-Other-Flex").clone()
-							}
-							$(rollDetails).find(".tss-iqf1z5-Container-Flex").addClass("re_sent_roll")
-							$(rollDetails).find(".tss-d12ile-Target-Other").remove()
-							data = {
-								player: $(gamelogItem).find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
-								img: $(gamelogItem).find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
-								text: $(rollDetails).html(),
-								dmonly: false,
-							};
-							window.MB.inject_chat(data);
-							sendToEveryone.html("Send Again")
+							let resendMessage = msg;
+							resendMessage.id = uuid();
+							resendMessage.data.rollId = uuid();
+							resendMessage.messageScope = "gameId";
+							resendMessage.messageTarget = find_game_id();
+							resendMessage.dateTime = Date.now();
+							window.diceRoller.ddbDispatch(resendMessage);
 						});
 						gamelogItem.find("time").before(sendToEveryone);
 					 }
