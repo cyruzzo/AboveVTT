@@ -1485,7 +1485,7 @@ function menu_callback(key, options, event) {
 				console.log(`attempting to open monster stat block with monsterId ${$(this).attr('data-monster')} and tokenId ${$(this).attr('data-id')}`);
 				open_monster_stat_block_with_id($(this).attr('data-monster'), $(this).attr('data-id'));
 			} else {
-				load_monster_stat($(this).attr('data-monster'), token_id=$(this).attr('data-id'));	
+				load_monster_stat($(this).attr('data-monster'), $(this).attr('data-id'));	
 			}
 		}
 		else {

@@ -449,22 +449,17 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function load_monster_stat(monsterid, token_id=false) {
-	token_id=false; // DISABLE HAVING AN IFRAME FOR EACH TOKEN NPC. WE GO BACK TO USING A SINGLE IFRAME FOR EACH MONSTER TYPE
-	$(".monster_frame").hide();
+function load_monster_stat(monsterid, token_id) {
 	
-	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
-	console.log(iframe_id)
-	console.log(token_id)
-
-	if ($("#" + iframe_id).length > 0) {
-		// RENDI VISIBILE
-		oldframe = $("#" + iframe_id);
-		oldframe.show();
-		oldframe.animate({
-			left: '220px'
-		}, 500);
-		return;
+	console.group("load_monster_stat")
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+	// const loadingSpinner = create_monster_loading_spinner()
+	monFrame = $("#resizeDragMon iframe")
+	// check if the monster pane is not open open
+	if (! $("#resizeDragMon").length) {
+		$("body").append(draggable_resizable_div)
+		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
+		draggable_resizable_div.show("slow")
 	}
 
 	let container = $("<div id='resizeDragMon'/>");
@@ -485,7 +480,6 @@ function load_monster_stat(monsterid, token_id=false) {
 	iframe.css("display", "none");
 	
 	window.StatHandler.getStat(monsterid, function(stats) {
-
 		iframe.on("load", function(event) {
 			console.log('carico mostro');
 			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
@@ -518,8 +512,11 @@ function load_monster_stat(monsterid, token_id=false) {
 			}
 
 
-			scan_monster($(event.target).contents(), stats, token_id=token_id);
+			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
+			$(".sidebar-panel-loading-indicator").hide()
+			iframe.fadeIn("slow")
+			console.groupEnd()
 		});
 
 		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
@@ -1940,7 +1937,17 @@ function inject_chat_buttons() {
 		return;
 	}
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
+	// the text has to be up against the left for it to style correctly
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Chat &#xa;\
+'/roll 1d20' or '/r 1d4'&#xa;\
+'/roll 1d20 punch:to hit'&#xa;\
+'/hit 1d20' or '/hit 1d4 punch'&#xa;\
+'/dmg 1d20' or '/dmg 1d4 punch'&#xa;\
+'/save 1d20' or '/save 1d4 Dex'&#xa;\
+'/skill 1d20' or '/save 1d4 Acrobatics'&#xa;\
+'/w [playername] a whisper'"> \
+		<input id='chat-text' autocomplete="off" class= placeholder='Chat, /roll 1d20+4..'></div>`));
+
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
 			<div>
@@ -2105,45 +2112,67 @@ function inject_chat_buttons() {
 
 	$("#chat-text").on('keypress', function(e) {
 		if (e.keyCode == 13) {
-			var dmonly=false;
-			var whisper=null;
+			console.group("chat_entered")
+			let dmonly=false;
+			let whisper=null;
 			e.preventDefault();
 			text = $("#chat-text").val();
 			$("#chat-text").val("");
+			const commandRegex = /([^\d]+$)/;
 
-			if(text.startsWith("/roll")) {
-				dmonly = window.DM;
-				expression = text.substring(6);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
+			if(text.startsWith("/r")) {
+				// remove the roll and extract the roll/actiontype which leaves the expression
+				const rollRegex = /(\/r|\/roll)\s/g
+				const command = text.match(commandRegex);
+				const [actionType, rollType] = command?.[1].split(":") || [undefined, undefined]
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace(rollRegex, "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
 			}
 
-			if(text.startsWith("/r ")) {
-				dmonly = window.DM;
-				expression = text.substring(3);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
+			if(text.startsWith("/hit")) {
+				const rollType = "to hit"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/hit", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
 			}
 
-			if(text.startsWith("/dmroll")) {
-				expression = text.substring(8);
-				// TODO: send_rpg_dice_to_ddb doesn't currently handle rolls to self or to dm
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-				dmonly=true;
+			if(text.startsWith("/dmg")) {
+				const rollType = "damage"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/dmg", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
 			}
 
-			if(text.startsWith("/whisper")) {
+			if(text.startsWith("/skill")) {
+				const rollType = "check"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/skill", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
+			}
+
+			if(text.startsWith("/save")) {
+				const rollType = "save"
+				const actionType = text.match(commandRegex)?.[1] || undefined;
+				let expression = text.replace(commandRegex, "");
+				expression = expression.replace("/save", "");
+				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
+				console.groupEnd()
+				return
+			}
+			if(text.startsWith("/w")) {
 				let matches = text.match(/\[(.*?)\] (.*)/);
-				console.log(matches);
 				whisper=matches[1]
 				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
 			}
@@ -2170,8 +2199,8 @@ function inject_chat_buttons() {
 			}
 			if(whisper)
 				data.whisper=whisper;
-
 			window.MB.inject_chat(data);
+			console.groupEnd()
 		}
 
 	});
@@ -2342,6 +2371,7 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
+	init_my_dice_details()
 	if(window.DM)
 	{
 		init_player_sheets();
@@ -3136,6 +3166,25 @@ function init_help_menu() {
 	});
 }
 
+function init_my_dice_details(){
+	get_cobalt_token(function (token) {
+		window.ajaxQueue.addRequest({	
+			type: 'GET',
+			url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json', // added data type
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function(res) {
+				window.mydice = res
+			}
+    	});
+	});
+}
 /**
  * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
  * If the conversion is successful, it will be sent over the websocket, and this will return true.
@@ -3144,8 +3193,12 @@ function init_help_menu() {
  * @param {Boolean} toSelf    whether this is sent to self or everyone
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
-function send_rpg_dice_to_ddb(expression, toSelf = true) {
-	return false;
+// send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
+function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", damageType, actionType="custom", sendTo="everyone") {
+	console.group("send_rpg_dice_to_ddb")
+	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
+	
+	
 	try {
 		expression = expression.replace(/\s+/g, ''); // remove all whitespace
 
@@ -3166,10 +3219,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				choppedExpression = choppedExpression.slice(idx + currentRoll.length);
 			}
 		}
+		console.log("chopped expression", choppedExpression)
 		notationList.push(choppedExpression); // our last notation will still be here so add it to the list
 
 		if (roll.rolls.length != notationList.length) {
 			console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
+			console.groupEnd()
 			return false;
 		}
 
@@ -3184,6 +3239,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
 				if (!supportedDieTypes.includes(currentDieType)) {
 					console.warn(`found an unsupported dieType ${currentNotation}`);
+					console.groupEnd()
 					return false;
 				}
 				if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
@@ -3198,6 +3254,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 				let dice = currentRoll.rolls.map(d => {
 					allValues.push(d.value);
+					console.groupEnd()
 					return { dieType: currentDieType, dieValue: d.value };
 				});
 
@@ -3218,6 +3275,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 						constantsTotal += currentRoll;
 					} else {
 						console.warn(`found an unexpected symbol ${convertedExpression[i-1]}`);
+						console.groupEnd()
 						return false;
 					}
 				} else {
@@ -3225,7 +3283,6 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 			}
 		}
-
 		let ddbJson = {
 			id: uuid(),
 			dateTime: `${Date.now()}`,
@@ -3233,18 +3290,21 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 			userId: window.MB.userid,
 			source: "web",
 			persist: true,
-			messageScope: toSelf ? "userId" : "gameId",
-			messageTarget: toSelf ? window.MB.userid : window.MB.gameid,
+			messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+			messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
 			entityId: window.MB.userid,
 			entityType: "user",
 			eventType: "dice/roll/fulfilled",
 			data: {
-				action: "custom",
+				action: actionType,
+				setId: window.mydice.data.setId,
 				context: {
 					entityId: window.MB.userid,
 					entityType: "user",
-					messageScope: "userId",
-					messageTarget: window.MB.userid
+					messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+					messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
+					name: displayName,
+					avatarUrl: imgUrl
 				},
 				rollId: uuid(),
 				rolls: [
@@ -3254,7 +3314,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 							constant: constantsTotal
 						},
 						diceNotationStr: expression,
-						rollType: "roll",
+						rollType: rollType,
 						rollKind: expression.includes("kh") ? "advantage" : expression.includes("kl") ? "disadvantage" : "",
 						result: {
 							constant: constantsTotal,
@@ -3266,9 +3326,9 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				]
 			}
 		};
-
 		if (window.MB.ws.readyState == window.MB.ws.OPEN) {
 			window.MB.ws.send(JSON.stringify(ddbJson));
+			console.groupEnd()
 			return true;
 		} else { // TRY TO RECOVER
 			get_cobalt_token(function(token) {
@@ -3277,10 +3337,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 					window.MB.ws.send(JSON.stringify(ddbJson));
 				});
 			});
+			console.groupEnd()
 			return true; // we can't guarantee that this actually worked, unfortunately
 		}
 	} catch (error) {
 		console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
+		console.groupEnd()
 		return false;
 	}
 }
