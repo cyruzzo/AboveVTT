@@ -371,9 +371,6 @@ class Token {
 			tokenWidth = tokenWidth - 10;
 			tokenHeight = tokenHeight - 10;
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
-			token.children('img').css({	
-				
-			});
 			if(tokenData.temp_hp) {
 				token.css('--token-temp-hp', "#4444ffbd");
 			}
@@ -394,27 +391,10 @@ class Token {
 		}
 		token.attr("data-border-color", this.options.color);
 	
-		token.children('img').css({			
-			'position': 'absolute',
-		    'top': '50%',
-		    'left': '50%',
+		token.children('img').css({		
 		    'max-width': tokenWidth + 'px',
 			'max-height': tokenHeight + 'px',
-			'margin-top': -1 * (tokenHeight / 2) +'px',
-			'margin-left': -1 * (tokenWidth / 2) + 'px'
 		});
-		if(this.options.imageSize <= 1 || this.options.imageSize === undefined) {
-			token.children('img').css({
-				"min-height": tokenWidth + 'px',
-				"min-width": tokenHeight + 'px',
-			})
-		}
-		else {
-			token.children('img').css({
-				"min-height": "",
-				"min-width": ""
-			});
-		}
 
 
 		console.groupEnd()
@@ -860,18 +840,7 @@ class Token {
 			}
 			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
-			if(this.options.imageSize <= 1 || this.options.imageSize === undefined) {
-				old.find("img").css({
-					"min-height": this.options.size,
-					"min-width": this.options.size
-				})
-			}
-			else {
-				old.find("img").css({
-					"min-height": "",
-					"min-width": ""
-				})
-			}
+	
 			setTimeout(function() {old.find("img").css("transition", "")}, 200);
 			
 			if (old.attr('name') != this.options.name) {
@@ -1017,18 +986,7 @@ class Token {
 			if(!(this.options.square)){
 				tokimg.addClass("token-round");
 			}
-			if(this.options.imageSize <= 1 || this.options.imageSize === undefined) {
-				tokimg.css({
-					"min-height": this.options.size,
-					"min-width": this.options.size
-				})
-			}
-			else {
-				tokimg.css({
-					"min-height": "",
-					"min-width": ""
-				})
-			}
+
 
 
 			var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
@@ -1041,10 +999,9 @@ class Token {
 
 			tok.append(tokimg);
 
+
 			tok.attr("data-id", this.options.id);
 			tokimg.attr("src", this.options.imgsrc);
-			tokimg.width("fit-content");
-			tokimg.height("fit-content");
 			tokimg.css("max-height", this.options.size);
 			tokimg.css("max-width", this.options.size);
 		
@@ -1060,6 +1017,9 @@ class Token {
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
 			tok.css("opacity", "0.0");
+			tok.css("display", "flex");
+			tok.css("justify-content", "center");
+			tok.css("align-items", "center");
 
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
