@@ -2123,55 +2123,70 @@ function inject_chat_buttons() {
 			const commandRegex = /([^\d]+$)/;
 
 			if(text.startsWith("/r")) {
-				// remove the roll and extract the roll/actiontype which leaves the expression
+				// remove the roll and extract the /actiontype which leaves the expression
 				const rollRegex = /(\/r|\/roll)\s/g
 				const command = text.match(commandRegex);
-				const [actionType, rollType] = command?.[1].split(":") || [undefined, undefined]
+				const [action, rollType] = command?.[1].split(":") || [undefined, undefined]
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace(rollRegex, "");
-				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
-				console.groupEnd()
-				return
+				let diceRoll = new DiceRoll(expression, action, rollType);
+				if (!window.diceRoller.roll(diceRoll)) {
+					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+				}
+				console.groupEnd();
+				return;
 			}
 
 			if(text.startsWith("/hit")) {
 				const rollType = "to hit"
-				const actionType = text.match(commandRegex)?.[1] || undefined;
+				const action = text.match(commandRegex)?.[1] || undefined;
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace("/hit", "");
-				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
-				console.groupEnd()
-				return
+				let diceRoll = new DiceRoll(expression, action, rollType);
+				if (!window.diceRoller.roll(diceRoll)) {
+					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+				}
+				console.groupEnd();
+				return;
 			}
 
 			if(text.startsWith("/dmg")) {
 				const rollType = "damage"
-				const actionType = text.match(commandRegex)?.[1] || undefined;
+				const action = text.match(commandRegex)?.[1] || undefined;
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace("/dmg", "");
-				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
-				console.groupEnd()
-				return
+				let diceRoll = new DiceRoll(expression, action, rollType);
+				if (!window.diceRoller.roll(diceRoll)) {
+					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+				}
+				console.groupEnd();
+				return;
 			}
 
 			if(text.startsWith("/skill")) {
 				const rollType = "check"
-				const actionType = text.match(commandRegex)?.[1] || undefined;
+				const action = text.match(commandRegex)?.[1] || undefined;
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace("/skill", "");
-				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
-				console.groupEnd()
-				return
+				let diceRoll = new DiceRoll(expression, action, rollType);
+				if (!window.diceRoller.roll(diceRoll)) {
+					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+				}
+				console.groupEnd();
+				return;
 			}
 
 			if(text.startsWith("/save")) {
 				const rollType = "save"
-				const actionType = text.match(commandRegex)?.[1] || undefined;
+				const action = text.match(commandRegex)?.[1] || undefined;
 				let expression = text.replace(commandRegex, "");
 				expression = expression.replace("/save", "");
-				send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, actionType);
-				console.groupEnd()
-				return
+				let diceRoll = new DiceRoll(expression, action, rollType);
+				if (!window.diceRoller.roll(diceRoll)) {
+					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+				}
+				console.groupEnd();
+				return;
 			}
 			if(text.startsWith("/w")) {
 				let matches = text.match(/\[(.*?)\] (.*)/);
@@ -3202,6 +3217,20 @@ function init_my_dice_details(){
  */
 // send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
 function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", damageType, actionType="custom", sendTo="everyone") {
+
+	let diceRoll = new DiceRoll(expression);
+	diceRoll.action = actionType;
+	diceRoll.rollType = rollType;
+	diceRoll.name = displayName;
+	diceRoll.avatarUrl = imgUrl;
+	// diceRoll.entityId = monster.id;
+	// diceRoll.entityType = monsterData.id;
+
+	if (window.diceRoller.roll(diceRoll)) {
+		console.log("send_rpg_dice_to_ddb rolled via diceRoller");
+		return true;
+	}
+
 	console.group("send_rpg_dice_to_ddb")
 	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
 	
