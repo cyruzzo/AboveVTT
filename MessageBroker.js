@@ -759,6 +759,43 @@ class MessageBroker {
 					});
 					ct_persist();
 				}
+				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
+				if (msg.messageScope === "userId") {
+					let gamelogItem = $("ol.tss-jmihpx-GameLogEntries li").first();
+					if (gamelogItem.find(".gamelog-to-everyone-button").length === 0) {
+						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+						sendToEveryone.click(function (clickEvent) {
+							//TODO once PR #408 goes in use this block and make any required tweaks
+							// also remove the related css for re_sent_roll
+							// let resendMessage = msg;
+							// resendMessage.id = uuid();
+							// resendMessage.data.rollId = uuid();
+							// resendMessage.messageScope = "gameId";
+							// resendMessage.messageTarget = find_game_id();
+							// resendMessage.dateTime = Date.now();
+							// window.diceRoller.ddbDispatch(resendMessage);
+								
+							const thisGameLogItem = $(this).parent().parent()
+							
+							let rollDetails = $(thisGameLogItem).find(".tss-8-Other-ref.tss-1qn6fu1-Message-Other-Flex").clone()
+							// it's collapsed
+							if (!rollDetails.length) {
+								rollDetails = $(thisGameLogItem).find(".tss-8-Collapsed-ref.tss-8-Other-ref.tss-11w0h4e-Message-Collapsed-Other-Flex").clone()
+							}
+							$(rollDetails).find(".tss-iqf1z5-Container-Flex").addClass("re_sent_roll")
+							$(rollDetails).find(".tss-d12ile-Target-Other").remove()
+							data = {
+								player: $(gamelogItem).find(".tss-1tj70tb-Sender")?.text() ||  window.PLAYER_NAME,
+								img: $(gamelogItem).find(".tss-1e4a2a1-AvatarPortrait")?.attr("src") || window.PLAYER_IMG,
+								text: $(rollDetails).html(),
+								dmonly: false,
+							};
+							window.MB.inject_chat(data);
+							sendToEveryone.html("Send Again")
+						});
+						gamelogItem.find("time").before(sendToEveryone);
+					 }
+				}
 			}
 		};
 
@@ -1265,46 +1302,4 @@ class MessageBroker {
 			self.loadAboveWS(null);
 		}
 	}
-}
-
-function monitor_messages() {
-	$(".GameLog_GameLogEntries__3oNPD").on("DOMNodeInserted", function(addedEvent) {
-		// currentTarget is the <ol> that contains every message
-		// target is the <li> that represents the current message
-		let currentMessage = $(addedEvent.target);
-		if (currentMessage.find(".DiceMessage_Target__18rOt").text().includes("Self")) {
-			let timeWrapper = $(`<div style="width:100%;"></div>`); // move time into a wrapper object so we can flex it horizontally with our new button
-			currentMessage.find(".GameLogEntry_MessageContainer__RhcYB").append(timeWrapper);
-			let sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-			timeWrapper.append(sendToEveryone)
-			var time = currentMessage.find(".GameLogEntry_MessageContainer__RhcYB > time");
-			if (time.length > 0) {
-				timeWrapper.append(time);
-				time.css("float", "right")
-			}
-			let toEveryoneHtml = currentMessage.find(".DiceMessage_Container__1rmut")[0].outerHTML;
-			sendToEveryone.click(function(clickEvent) {
-				// we want to send the expanded version so we have the click handler here and stopPropogation so that the on("click") below doesn't also fire. 
-				// The other handler will send the current html which could be the collapsed version. Since the collapse mechanism won't work in this situation, let's always send the expanded version
-				clickEvent.stopPropagation();
-				data = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: toEveryoneHtml,
-					dmonly: false,
-				};
-				window.MB.inject_chat(data);	
-			});
-		}
-	});
-	$(".GameLog_GameLogEntries__3oNPD").on("click", ".gamelog-to-everyone-button", function(clickEvent) {
-		let toEveryoneHtml = $(clickEvent.currentTarget).closest(".GameLogEntry_MessageContainer__RhcYB").find(".GameLogEntry_Message__1J8lC").html();
-		data = {
-			player: window.PLAYER_NAME,
-			img: window.PLAYER_IMG,
-			text: toEveryoneHtml,
-			dmonly: false,
-		};
-		window.MB.inject_chat(data);
-	});
 }

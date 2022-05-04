@@ -31,6 +31,25 @@ body > button,
     font-size: 12px;
 }
 
+.re_sent_roll{
+    pointer-events: none;
+    color: rgb(92, 112, 128);
+}
+
+/* this can be removed once /roll/fulfilled todo has been completed */
+.re_sent_roll.tss-3-Other-ref.tss-3-Target-ref.tss-11yjuwm-Total-Other-Target-Flex{
+        position: relative;
+        align-self: stretch;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+}
+
 #cpick{
     display: block;
     margin-left: 27px;
@@ -74,10 +93,7 @@ body > button:hover,
 }
 button.gamelog-to-everyone-button {
     background-color: rgb(255, 255, 255);
-    border-top: none;
-    border-right: 1px solid rgb(206, 217, 224);
-    border-bottom: 1px solid rgb(206, 217, 224);
-    border-left: 1px solid rgb(206, 217, 224);
+    border: 1px solid rgb(206, 217, 224);
     border-image: initial;
     border-radius: 0px 0px 4px 4px;
     padding: 4px 10px;
@@ -89,6 +105,13 @@ button.gamelog-to-everyone-button {
     line-height: 16px;
     letter-spacing: 0.4px;
     color: #5c7080;
+    cursor: pointer;
+    float:left;
+}
+button.gamelog-to-everyone-button:hover {
+    border: 1px solid rgb(152, 160, 164);
+    background-color: rgb(220, 219, 219);
+    color: #33404b;
 }
 
 .material-icons.md-10 { font-size: 10px; }

@@ -417,7 +417,6 @@ function deselect_all_sidebar_tabs() {
 }
 
 function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
-
 	deselect_all_sidebar_tabs();
 	clickedTab.addClass("selected-tab").removeClass("notification");
 	clickedTab.find(".sidebar-tab-image").addClass("ct-primary-box__tab--extras ddbc-tab-list__nav-item ddbc-tab-list__nav-item--is-active");
@@ -429,6 +428,8 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		console.log('in teoria fatto show');
 		init_monster_panel();
 	}
+
+
 
 	// switch back to gamelog if they change tabs
 	if (!isCharacterSheetInfo) {
@@ -1652,6 +1653,7 @@ function init_above(){
 		}
 	}
 	)
+
 }
 
 function init_things() {
@@ -1742,8 +1744,8 @@ function init_things() {
 		init_ui();
 		init_splash();
 	}
+
 	$("#site").append("<div id='windowContainment'></div>");
-		
 }
 
 /// this is used when initializing on the character page. DDB loads the page in an async modular fashion. We use this to determine if we need to call other initialization functions during this process
@@ -2337,10 +2339,6 @@ function init_ui() {
 	wrapper.width(window.width);
 	wrapper.height(window.height);
 
-
-
-
-
 	wrapper.append(VTT);
 	$("body").append(wrapper);
 
@@ -2520,6 +2518,7 @@ function init_ui() {
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
 	}
+
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
