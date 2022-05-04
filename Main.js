@@ -2498,6 +2498,14 @@ function init_ui() {
 
 	init_help_menu();
 
+	$("ol.tss-jmihpx-GameLogEntries").on("DOMNodeInserted", function(addedEvent) {
+		let injectedElement = $(addedEvent.target);
+		if (injectedElement.hasClass("tss-1wcf5kt-Line-Notation") || injectedElement.hasClass("tss-16k6xf2-Line-Breakdown")) {
+			let gamelogItem = injectedElement.closest("li");
+			replace_gamelog_message_expressions(gamelogItem);
+		}
+	});
+
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
 		let old=$("[src*=mega-menu]:nth-of-type(2)");

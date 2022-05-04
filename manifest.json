@@ -80,6 +80,7 @@
 		"ScenesPanel.js",
 		"mousetrap.1.6.5.min.js",
 		"KeypressHandler.js",
+		"DiceRoller.js",
 		"Main.js"
 	]
 }
