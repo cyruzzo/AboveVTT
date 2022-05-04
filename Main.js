@@ -2252,7 +2252,7 @@ function init_ui() {
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
-		let borderColor = $(".token[data-name='"+window.PLAYER_NAME+"']").attr("data-border-color")
+		let borderColor = $(`.token[data-name="`+window.PLAYER_NAME+`"]`).attr(`data-border-color`)
 		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
 
 		data = {
