@@ -645,7 +645,9 @@ class Token {
 			}
 		}
 		else{
-			this.options.custom_conditions.pop("Inspiration")
+			if (this.options.custom_conditions.includes("Inspiration")){
+				this.options.custom_conditions.pop("Inspiration")
+			}
 		}
 		
 		
