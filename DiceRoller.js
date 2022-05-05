@@ -1,6 +1,25 @@
 
 $(function() {
     window.diceRoller = new DiceRoller();
+
+    // TODO: remove this once PR #394 is merged
+    if (!window.ajaxQueue.addDDBRequest) {
+        window.ajaxQueue.addDDBRequest = function(options) {
+            get_cobalt_token(function (token) {
+                let previousBeforeSend = options.beforeSend;
+                options.beforeSend = function (xhr) {
+                    if (previousBeforeSend) {
+                        previousBeforeSend(xhr);
+                    }
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                };
+                options.xhrFields = {
+                    withCredentials: true
+                };
+                $.ajax(options);
+            });
+        }
+    }
 });
 
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]

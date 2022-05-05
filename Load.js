@@ -70,8 +70,8 @@ let scripts = [
 	{ src: "Token.js" },
 	{ src: "TokenMenu.js" },
 	// Files that execute when loaded
-	{ src: "DiceRoller.js" },
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
+	{ src: "DiceRoller.js" },
 	{ src: "Main.js" }
 ]
 

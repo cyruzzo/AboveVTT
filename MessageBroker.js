@@ -986,7 +986,7 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
-		console.group("handlescene")
+		// console.group("handlescene")
 		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
@@ -1056,8 +1056,7 @@ class MessageBroker {
 			}
 
 			if (window.EncounterHandler !== undefined) {
-				console.log("Updating avtt encounter");
-				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+				// this will call fetch_and_cache_scene_monster_items(true); once PR 394 is merged
 			}
 			console.groupEnd()
 		});

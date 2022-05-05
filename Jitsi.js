@@ -13,7 +13,6 @@ function create_jitsi_button() {
 	b.click(function () {
 		$(this).remove();
 		init_jitsi_box();
-		reposition_enounter_combat_tracker_iframe();
 		reposition_player_sheet();
 	});
 }
@@ -123,7 +122,6 @@ function init_jitsi_box() {
 		function () {
 			$("#meet").remove();
 			create_jitsi_button();
-			reposition_enounter_combat_tracker_iframe();
 			reposition_player_sheet();
 		}
 	);

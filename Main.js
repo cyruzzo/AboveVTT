@@ -456,7 +456,7 @@ function load_monster_stat(monsterid, token_id) {
 	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
 	// const loadingSpinner = create_monster_loading_spinner()
 	monFrame = $("#resizeDragMon iframe")
-	// check if the monster pane is not open open
+	// check if the monster pane is not open
 	if (! $("#resizeDragMon").length) {
 		$("body").append(draggable_resizable_div)
 		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
@@ -465,7 +465,7 @@ function load_monster_stat(monsterid, token_id) {
 
 	let container = $("<div id='resizeDragMon'/>");
 
-	if(!window.DM && $("#site #resizeDragMon").length>0){
+	if($("#site #resizeDragMon").length>0){
 		$("#resizeDragMon iframe").remove();
 		$("#resizeDragMon").removeClass("hideMon");
 		container = $("#resizeDragMon");
@@ -473,10 +473,7 @@ function load_monster_stat(monsterid, token_id) {
 	container.resize(function(e) {
         	e.stopPropagation();
    	});
-	//container.css("width","900px");
 	let iframe = $("<iframe>");
-    // UGUALE A COMBAT TRACKER INSIDE
-	//iframe.css("transform","scale(0.75)");
 
 	iframe.css("display", "none");
 	
@@ -491,7 +488,6 @@ function load_monster_stat(monsterid, token_id) {
 			$(event.target).contents().find("header").hide();
 			$(event.target).contents().find("#site-main").css("padding", "0px");
 			$(event.target).contents().find("#footer").remove();
-			iframe.css("display", "block");
 			let img = $(event.target).contents().find(".detail-content").find(".image");
 			let statblock = $(event.target).contents().find(".mon-stat-block");
 			if (img.length == 1) {
@@ -520,67 +516,63 @@ function load_monster_stat(monsterid, token_id) {
 			console.groupEnd()
 		});
 
-		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
+		iframe.attr('src', stats.data.url)
 	})
 	container.append(iframe);
 	if(!$("#site #resizeDragMon").length>0){
 		$("#site").prepend(container);
 	}
 
-   if(!window.DM) {
-   		
-   		/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
-		$("#resizeDragMon").append(monster_close_title_button);
-		monster_close_title_button.click(function() {
-			close_player_monster_stat_block()
-		});
-		$("#resizeDragMon").addClass("moveableWindow");
-		if(!$("#resizeDragMon").hasClass("minimized")){
-			$("#resizeDragMon").addClass("restored"); 
-		}
-		else{
-			$("#resizeDragMon").dblclick();
-		}
-		$("#resizeDragMon").resizable({
-			addClasses: false,
-			handles: "all",
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			},
-			minWidth: 200,
-			minHeight: 200
-		});
-
-		$("#resizeDragMon").mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
-		$("#resizeDragMon").draggable({
-			addClasses: false,
-			scroll: false,
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			}
-		});
-		minimize_player_monster_window_double_click($("#resizeDragMon"));
+	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	$("#resizeDragMon").append(monster_close_title_button);
+	monster_close_title_button.click(function() {
+		close_player_monster_stat_block()
+	});
+	$("#resizeDragMon").addClass("moveableWindow");
+	if(!$("#resizeDragMon").hasClass("minimized")){
+		$("#resizeDragMon").addClass("restored");
 	}
+	else{
+		$("#resizeDragMon").dblclick();
+	}
+	$("#resizeDragMon").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 200,
+		minHeight: 200
+	});
+
+	$("#resizeDragMon").mousedown(function(){
+		frame_z_index_when_click($(this));
+	});
+	$("#resizeDragMon").draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	minimize_player_monster_window_double_click($("#resizeDragMon"));
 }
+
 function close_player_monster_stat_block() {
 	$("#resizeDragMon.minimized").dblclick();
-	console.debug("close_monster_stat_block is closing the stat block")
+	console.debug("close_player_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
-	// hide and update all monster blocks that we find. Even if we're currently loading one.
-	console.group("close_monster_stat_block");
 }
 
 function minimize_player_monster_window_double_click(titleBar){
@@ -1697,30 +1689,7 @@ function init_things() {
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
 				$("div.dice-toolbar").css({"bottom": "35px"});
-				// for some reason the gamelog "send to (default)" breaks. The following sequence fixes it
-				$(".sidebar button.MuiButtonBase-root").click();
-				$(".MuiPopover-root").css({"display": "block", "visibility": "visible"});
-				$(".MuiPopover-root .MuiPaper-root").css({"display": "block", "visibility": "visible"});
-				let list = $(".MuiPopover-root .MuiPaper-root .MuiMenu-list");
-				let selected = list.attr("tabindex");
-				list.find(`li[tabindex=${selected}]`).click();
-				list.find(`li`).click(function (clickEvent) {
-					let selectedOption = $(clickEvent.currentTarget).attr("tabindex");
-					let optionList = window.EncounterHandler.combat_body.find(`.MuiPopover-root .MuiPaper-root .MuiMenu-list`);
-					let optionToSelect = optionList.find(`li[tabindex=${selectedOption}]`);
-					optionToSelect.click();
-				});
-
 				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-				init_enounter_combat_tracker_iframe();
-
-				// if the user changes `Send To (Default)` for dice rolls, make sure we synchronize the monster stat blocks as well
-				$(".sidebar .MuiButtonBase-root.MuiButton-root").on("DOMSubtreeModified", ".MuiButton-label", function(event) {
-					let text = event.target.textContent;
-					if (text == "Self" || text == "Everyone") {
-						sync_send_to_default();
-					}
-				});
 			}
 			
 			init_scene_selector();
