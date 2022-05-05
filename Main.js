@@ -1909,15 +1909,16 @@ function inject_chat_buttons() {
 	}
 	// AGGIUNGI CHAT
 	// the text has to be up against the left for it to style correctly
-	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Chat &#xa;\
-'/roll 1d20' or '/r 1d4'&#xa;\
-'/roll 1d20 punch:to hit'&#xa;\
-'/hit 1d20' or '/hit 1d4 punch'&#xa;\
-'/dmg 1d20' or '/dmg 1d4 punch'&#xa;\
-'/save 1d20' or '/save 1d4 Dex'&#xa;\
-'/skill 1d20' or '/save 1d4 Acrobatics'&#xa;\
-'/w [playername] a whisper'"> \
-		<input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;\
+'/r 1d20'&#xa;\
+'/roll 1d4 punch:damage'&#xa;\
+'/hit 2d20kh1+2 longsword ADV'&#xa;\
+'/dmg 1d8-2 longsword'&#xa;\
+'/save 2d20kl1 DEX DISADV'&#xa;\
+'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;\
+Advantage: 2d20kh1 (keep highest)&#xa;\
+Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;\
+'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
 
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
