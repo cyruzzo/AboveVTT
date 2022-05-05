@@ -1,5 +1,5 @@
 const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|w)\s/;
-const slashCommandSuffixRegex = /(\D+$)/;
+const allowedExpressionCharactersRegex = /[dkhl\s\d+\-]*/; // this is explicitly different from validExpressionRegex. This matches an expression anywhere in a string while validExpressionRegex requires the entire string to match.
 
 class ChatObserver {
 
@@ -64,13 +64,12 @@ class ChatObserver {
 
     #parseSlashCommand(text) {
         let slashCommand = text.match(slashCommandRegex)?.[0];
-        let rollDescription = text.match(slashCommandSuffixRegex);
-        let expression = text.replace(slashCommandRegex, "").replace(slashCommandSuffixRegex, "");
-        let action = rollDescription?.[0];
+        let expression = text.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+        let action = text.replace(slashCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
         let rollType = undefined;
         if (slashCommand.startsWith("/r")) {
             // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
-            [action, rollType] = rollDescription?.[1].split(":") || [undefined, undefined];
+            [action, rollType] = action.split(":") || [undefined, undefined];
         } else if (slashCommand.startsWith("/hit")) {
             rollType = "to hit";
         } else if (slashCommand.startsWith("/dmg")) {

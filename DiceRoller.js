@@ -23,7 +23,7 @@ $(function() {
 });
 
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const allowedCharactersRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const validExpressionRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -118,7 +118,7 @@ class DiceRoll {
     constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
 
         let parsedExpression = expression.replaceAll(/\s+/g, ""); // remove all spaces
-        if (!parsedExpression.match(allowedCharactersRegex)) {
+        if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);
             throw "Invalid Expression";
         }
