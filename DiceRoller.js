@@ -43,13 +43,22 @@ class DiceRoll {
 
     // these can be changed after the object is constructed.
 
-    action;        // "Rapier", "Fire Bolt", etc. defaults to "custom"
+    #diceAction;        // "Rapier", "Fire Bolt", etc. defaults to "custom"
+    get action() { return this.#diceAction }
+    set action(newAction) {
+        if (typeof newAction !== "string" || (/^\s*$/).test(newAction)) { // any empty strings or strings with only whitespace should be set to undefined
+            this.#diceAction = undefined;
+        } else {
+            this.#diceAction = newAction.trim();
+        }
+    }
     #diceRollType; // "To Hit", "Damage", etc. defaults to "roll"
     get rollType() { return this.#diceRollType }
     set rollType(newRollType) {
+        let alteredRollType = newRollType.trim().toLowerCase();
         const validRollTypes = ["to hit", "damage", "save", undefined]; // undefined is in the list to allow clearing it
-        if (validRollTypes.includes(newRollType)) {
-            this.#diceRollType = newRollType;
+        if (validRollTypes.includes(alteredRollType)) {
+            this.#diceRollType = alteredRollType;
         } else {
             console.warn(`not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
         }

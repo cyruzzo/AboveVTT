@@ -2214,10 +2214,7 @@ function init_ui() {
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
-	if (!is_characters_page()) {
-		$("#site").children().hide();
-		$("#loading_overlay").show();
-	} else {
+	if (is_characters_page()) {
 		reposition_player_sheet();
 	}
 	$(".sidebar__controls").width(340);
