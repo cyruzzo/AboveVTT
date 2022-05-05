@@ -1917,7 +1917,7 @@ function inject_chat_buttons() {
 '/save 1d20' or '/save 1d4 Dex'&#xa;\
 '/skill 1d20' or '/save 1d4 Acrobatics'&#xa;\
 '/w [playername] a whisper'"> \
-		<input id='chat-text' autocomplete="off" class= placeholder='Chat, /roll 1d20+4..'></div>`));
+		<input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
 
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
@@ -2081,115 +2081,10 @@ function inject_chat_buttons() {
 		});
 	}
 
-	$("#chat-text").on('keypress', function(e) {
-		if (e.keyCode == 13) {
-			console.group("chat_entered")
-			let dmonly=false;
-			let whisper=null;
-			e.preventDefault();
-			text = $("#chat-text").val();
-			$("#chat-text").val("");
-			const commandRegex = /([^\d]+$)/;
-
-			if(text.startsWith("/r")) {
-				// remove the roll and extract the /actiontype which leaves the expression
-				const rollRegex = /(\/r|\/roll)\s/g
-				const command = text.match(commandRegex);
-				const [action, rollType] = command?.[1].split(":") || [undefined, undefined]
-				let expression = text.replace(commandRegex, "");
-				expression = expression.replace(rollRegex, "");
-				let diceRoll = new DiceRoll(expression, action, rollType);
-				if (!window.diceRoller.roll(diceRoll)) {
-					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
-				}
-				console.groupEnd();
-				return;
-			}
-
-			if(text.startsWith("/hit")) {
-				const rollType = "to hit"
-				const action = text.match(commandRegex)?.[1] || undefined;
-				let expression = text.replace(commandRegex, "");
-				expression = expression.replace("/hit", "");
-				let diceRoll = new DiceRoll(expression, action, rollType);
-				if (!window.diceRoller.roll(diceRoll)) {
-					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
-				}
-				console.groupEnd();
-				return;
-			}
-
-			if(text.startsWith("/dmg")) {
-				const rollType = "damage"
-				const action = text.match(commandRegex)?.[1] || undefined;
-				let expression = text.replace(commandRegex, "");
-				expression = expression.replace("/dmg", "");
-				let diceRoll = new DiceRoll(expression, action, rollType);
-				if (!window.diceRoller.roll(diceRoll)) {
-					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
-				}
-				console.groupEnd();
-				return;
-			}
-
-			if(text.startsWith("/skill")) {
-				const rollType = "check"
-				const action = text.match(commandRegex)?.[1] || undefined;
-				let expression = text.replace(commandRegex, "");
-				expression = expression.replace("/skill", "");
-				let diceRoll = new DiceRoll(expression, action, rollType);
-				if (!window.diceRoller.roll(diceRoll)) {
-					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
-				}
-				console.groupEnd();
-				return;
-			}
-
-			if(text.startsWith("/save")) {
-				const rollType = "save"
-				const action = text.match(commandRegex)?.[1] || undefined;
-				let expression = text.replace(commandRegex, "");
-				expression = expression.replace("/save", "");
-				let diceRoll = new DiceRoll(expression, action, rollType);
-				if (!window.diceRoller.roll(diceRoll)) {
-					send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
-				}
-				console.groupEnd();
-				return;
-			}
-			if(text.startsWith("/w")) {
-				let matches = text.match(/\[(.*?)\] (.*)/);
-				whisper=matches[1]
-				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
-			}
-
-			data = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: text,
-				dmonly: dmonly,
-			};
-			if(validateUrl(text)){
-
-				data.text = `
-					<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>
-					<img width=200 class='magnify' href='${parse_img(text)}' src='${parse_img(text)}' alt='Chat Image' style='display: none'/>
-				`
-			} else {
-				data = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<div class="custom-gamelog-message">${text}</div>`,
-					dmonly: dmonly,
-				};
-			}
-			if(whisper)
-				data.whisper=whisper;
-			window.MB.inject_chat(data);
-			console.groupEnd()
-		}
-
-	});
+	if (window.chatObserver === undefined) {
+		window.chatObserver = new ChatObserver();
+	}
+	window.chatObserver.observe($("#chat-text"));
 
 	$(".GameLog_GameLog__2z_HZ").scroll(function() {
 		if ($(this).scrollTop() >= 0) {

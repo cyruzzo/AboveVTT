@@ -69,6 +69,7 @@ let scripts = [
 	{ src: "StatHandler.js" },
 	{ src: "Token.js" },
 	{ src: "TokenMenu.js" },
+	{ src: "ChatObserver.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },

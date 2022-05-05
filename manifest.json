@@ -81,6 +81,7 @@
 		"mousetrap.1.6.5.min.js",
 		"KeypressHandler.js",
 		"DiceRoller.js",
+		"ChatObserver.js",
 		"Main.js"
 	]
 }
