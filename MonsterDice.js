@@ -493,6 +493,7 @@ function display_roll_button_contextmenu(contextmenuEvent, isDamageRoll, rollBut
  * @param {String} imgUrl      a url for the image to be displayed in the gamelog for the player/creature that is rolling
  */
 function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl) {
+	return; // need to rebuild this
 	contextmenuEvent.stopPropagation();
 	contextmenuEvent.preventDefault();
 
