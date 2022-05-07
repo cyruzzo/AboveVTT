@@ -1922,21 +1922,16 @@ function token_context_menu_expanded(tokenIds, e) {
 	}
 
 	
-	if(tokens[0].isPlayer()){ 
-		$(".maxHpMenuInput").prop('disabled', true);
-		$(".acMenuInput").prop('disabled', true);
-		$(".hpMenuInput").prop('disabled', true);
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || window.DM)){ 
+		$(".maxHpMenuInput").prop('disabled', false);
+		$(".acMenuInput").prop('disabled', false);
+		$(".hpMenuInput").prop('disabled', false);
 	}
 	if(!window.DM){ 
 		$(".maxHpMenuInput").prop('disabled', true);
 		$(".acMenuInput").prop('disabled', true);
 		$(".hpMenuInput").prop('disabled', true);
 	}	
-	if(tokens[0].options.player_owned && !tokens[0].isPlayer()){ 
-		$(".maxHpMenuInput").prop('disabled', false);
-		$(".acMenuInput").prop('disabled', false);
-		$(".hpMenuInput").prop('disabled', false);
-	}
 
 
 	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);
@@ -2254,7 +2249,7 @@ function build_menu_stat_inputs(tokenIds) {
 	let ac = '';
 	let elev = '';
 
-	if(tokens.length == 1 && (tokens[0].options.player_owned || (!tokens[0].options.hidestat && tokens[0].isPlayer()) || window.DM)){
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || window.DM)){
 		hp = (typeof tokens[0].options.hp !== 'undefined') ? tokens[0].options.hp : '';
 		max_hp = (typeof tokens[0].options.max_hp !==  'undefined') ? tokens[0].options.max_hp : '';
 		ac = (typeof tokens[0].options.ac !== 'undefined') ? tokens[0].options.ac : '';
