@@ -1070,6 +1070,11 @@ div#combat_button{
     border: 5px #f7bfbfd5 solid
 }
 
+.tokenselected,
+.token:focus-within,
+.token:active{
+    z-index: calc(15000 + var(--z-index-diff)) !important;
+}
 
 .ac {
     position: absolute;

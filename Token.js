@@ -472,9 +472,19 @@ class Token {
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
-		if (window.DM) {
-			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
+		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
+		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").text("/"+this.options.max_hp);
+
+
+		if((!window.DM && this.options.hidestat == true) || this.options.disablestat == true) {
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
+		}	
+		else {
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
 		}
+		
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
 			console.log("Setting combat tracker opacity to 1.0")
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','1.0');
