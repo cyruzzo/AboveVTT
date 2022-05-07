@@ -3370,7 +3370,7 @@ button.avtt-roll-button {
 .context-menu-flyout{
     visibility: hidden;
     transition: visibility 0s;
-    transition-delay: 500ms;
+    transition-delay: 1000ms;
 }
 
 .flyout-from-menu-item:hover ~ .context-menu-flyout,

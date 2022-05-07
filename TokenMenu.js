@@ -2168,7 +2168,8 @@ function build_token_auras_inputs(tokenIds) {
 		showInput: true,
 		showInitial: true,
 		containerClassName: 'prevent-sidebar-modal-close',
-		clickoutFiresChange: true
+		clickoutFiresChange: true,
+		appendTo: "parent"
 	});
 	const colorPickerChange = function(e, tinycolor) {
 		let auraName = e.target.name.replace("Color", "");
@@ -2675,7 +2676,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 		showInitial: true,
 		containerClassName: 'prevent-sidebar-modal-close',
 		clickoutFiresChange: true,
-		color: tokens[0].options.color
+		color: tokens[0].options.color,
+		appendTo: "parent"
 	});
 	const borderColorPickerChange = function(event, tinycolor) {
 		let borderColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
