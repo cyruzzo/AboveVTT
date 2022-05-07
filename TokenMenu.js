@@ -2183,6 +2183,8 @@ function build_token_auras_inputs(tokenIds) {
 		clickoutFiresChange: true,
 		appendTo: "parent"
 	});
+	wrapper.find("input[name='aura1Color']").spectrum("set", uniqueAura1Color);
+	wrapper.find("input[name='aura2Color']").spectrum("set", uniqueAura2Color);
 	const colorPickerChange = function(e, tinycolor) {
 		let auraName = e.target.name.replace("Color", "");
 		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
