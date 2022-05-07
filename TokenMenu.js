@@ -1919,6 +1919,18 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	if (tokens.length === 1) {
 		body.append(build_menu_stat_inputs(tokenIds));
+		$(".hpMenuInput").on('focus', function(event){
+			event.target.select();
+		});
+		$(".maxHpMenuInput").on('focus', function(event){
+			event.target.select();
+		});
+		$(".acMenuInput").on('focus', function(event){
+				event.target.select();
+		});
+		$(".elevMenuInput").on('focus', function(event){
+				event.target.select();
+		});
 	}
 
 	
