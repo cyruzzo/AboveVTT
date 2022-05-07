@@ -550,6 +550,13 @@ class Token {
 			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
 
+		if(this.options.hidehpbar) {
+			hpbar.toggleClass("hponhover", true);
+		}
+		else {
+			hpbar.toggleClass("hponhover", false)
+		}
+
 		return hpbar;
 	}
 
@@ -879,8 +886,10 @@ class Token {
 					height: this.options.size
 				}, { duration: 1000, queue: false });
 				
-				var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
-				old.css("z-index", 32+zindexdiff);
+				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				this.options.zindexdiff = Math.max(zindexdiff, -5000);
+				old.css("z-index", "calc(5000 + var(--z-index-diff))");
+				old.css("--z-index-diff", zindexdiff);
 
 				var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -993,10 +1002,11 @@ class Token {
 
 
 
-			var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
-			tok.css("z-index", 32+zindexdiff);
+			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
 			tok.width(this.options.size);
 			tok.height(this.options.size);
 			tok.addClass('token');
@@ -1018,6 +1028,7 @@ class Token {
 				tokimg.css("border-width","0");
 				
 			tok.css("position", "absolute");
+			tok.css("--z-index-diff", zindexdiff);
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
 			tok.css("opacity", "0.0");

@@ -1812,6 +1812,40 @@ function token_context_menu_expanded(tokenIds, e) {
 	$('body').append(tokenOptionsClickCloseDiv);
 
 	// stat block / character sheet
+	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
+	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
+
+	if(window.DM || (tokens.length == 1 && (tokens[0].isPlayer() || (tokens[0].options.player_owned && !tokens[0].isPlayer())))) {
+		body.append(toTopMenuButton);
+		body.append(toBottomMenuButton);
+
+		toTopMenuButton.off().on("click", function(tokenIds){
+			tokens.forEach(token => {
+				$(".token").each(function(){	
+					let tokenId = $(this).attr('data-id');	
+					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
+					}		
+				});
+				token.place_sync_persist();
+			});
+		});
+
+		toBottomMenuButton.off().on("click", function(tokenIds){
+			tokens.forEach(token => {			
+				$(".token").each(function(){	
+					let tokenId = $(this).attr('data-id');	
+					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+					}		
+				});
+				token.place_sync_persist();
+			});
+		});
+	}
+
 	if (tokens.length === 1) {
 		let token = tokens[0];
 		if (token.isPlayer() && window.DM) {
@@ -2714,6 +2748,7 @@ function build_options_flyout_menu(tokenIds) {
 		{ name: "restrictPlayerMove", label: "Restrict Player Movement", enabledDescription:"Token is not moveable by players", disabledDescription: "Token is moveable by any player" },
 		{ name: "disablestat", label: "Disable HP/AC", enabledDescription:"Token stats are not visible", disabledDescription: "Token stats are visible to at least the DM" },
 		{ name: "hidestat", label: "Hide Player HP/AC from players", enabledDescription:"Token stats are hidden from players", disabledDescription: "Token stats are visible to players" },
+		{ name: "hidehpbar", label: "Only show HP values on hover", enabledDescription:"HP values will only be shown when you hover or select a token", disabledDescription: "Enable this to hide HP values except when you hover or select a token." },
 		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
 		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
 		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },

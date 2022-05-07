@@ -137,6 +137,12 @@ function init_settings(){
 			disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
 		},
 		{
+			name: 'hidehpbar',
+			label: 'Only show HP values on hover',
+			enabledDescription: "HP values will only be shown when you hover or select a token",
+			disabledDescription: "Enable this to hide HP values except when you hover or select a token."
+		},	
+		{
 			name: 'disableborder',
 			label: 'Disable Border',
 			enabledDescription: 'New tokens will not have a border around them',

@@ -1496,6 +1496,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 }
 
+#tokenOptionsContainer .to-top:before {
+    content: "\e25a" !important;
+}
+#tokenOptionsContainer .to-bottom:before {
+    content: "\e258" !important;
+}
+
 .icon-edit:before,
 .context-menu-icon-edit:before {
     content: "\e3c9" !important;
@@ -3368,7 +3375,16 @@ button.avtt-roll-button {
 }
 
 
-
+.hponhover {
+    visibility:  hidden;
+    transition:  0.2s ease-in-out 0.5s;
+}
+.token:hover .hponhover,
+.token:focus-within .hponhover,
+.tokenselected .hponhover {
+    visibility:  visible;
+    transition:  0.05s ease-in-out 0.3s
+}
 
 
 #prewiz, 
@@ -3390,6 +3406,10 @@ button.avtt-roll-button {
 .scene .dm_scenes_button,
 .scene .player_scenes_button {
     transition: none;
+}
+
+#tokens {
+    z-index: 40;
 }
 
 .icon-concentration-reminder:before,
