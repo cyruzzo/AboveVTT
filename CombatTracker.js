@@ -495,8 +495,8 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
+	token.options.combat = false;
 	if (persist == true) {
-		token.options.combat = false;
 		token.sync();
 		if (token.persist != null) token.persist();
 	}

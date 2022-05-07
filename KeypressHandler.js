@@ -102,6 +102,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     $(".top_menu").removeClass('visible');
     $("#fog_overlay").css("z-index", "20");
     $('#select-button').click();
+    $("#tokenOptionsClickCloseDiv").click();
 });
 
 

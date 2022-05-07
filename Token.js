@@ -118,12 +118,20 @@ class Token {
 		this.place_sync_persist()
 	}
 
+	imageSize(imageScale) {
+		this.update_from_page();
+		this.options.imageSize = imageScale;
+		this.place_sync_persist()
+	}
+
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
 		this.options.ct_show = false;
-		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
-		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
+		if(this.options.monster) {
+			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
+			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
+		}
 		this.place_sync_persist()
 		this.update_and_sync()
 		ct_persist();
@@ -132,8 +140,10 @@ class Token {
 		this.update_from_page();
 		delete this.options.hidden;
 		this.options.ct_show = true;
-		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'block');
-		$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
+		if(this.options.monster) {
+			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'block');
+			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
+		}
 		this.place_sync_persist()
 		this.update_and_sync()
 		ct_persist();
@@ -170,13 +180,16 @@ class Token {
 		// this just rotates locally to help with performance.
 		// draggable.stop will call place_sync_persist to finalize the rotation. 
 		// If we ever want this to send to all players in real time, simply comment out the rest of this function and call place_sync_persist() instead.
-		let scale = this.get_token_scale()
-		
+		let scale = this.get_token_scale();
+		if(this.options.imageSize === undefined) {
+			this.imageSize(1) 
+		}
+		let imageScale = this.options.imageSize;
+
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		
-		tokenElement.find("img").css("transform", "scale(" + scale + ") rotate(" + newRotation + "deg)");
-		
+		tokenElement.find("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -342,25 +355,52 @@ class Token {
 		console.group("update_health_aura")
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		let tokenData = this.munge_token_data()
-		if (!tokenData.disableaura && tokenData.max_hp > 0) {
+		if (tokenData.max_hp > 0) {
+		 	var tokenHpAuraColor = token_health_aura(
+				Math.round((tokenData.hp / tokenData.max_hp) * 100)
+			);	
+		}
+		token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
 
-			token.find(".token-image").css('box-shadow',
-				`${token_health_aura(
-					Math.round((tokenData.hp / tokenData.max_hp) * 100)
-				)} 0px 0px 7px 7px`
-			);
-			// add another aura to show you have temp hp
-			console.log("updating hp aura", tokenData)
-			if (tokenData.temp_hp && tokenData.temp_hp > 0){
-				console.log("Adding extra dropshadow")
-				token.find(".token-image").css('box-shadow',
-				`${token_health_aura(
-					Math.round((tokenData.hp / tokenData.max_hp) * 100)
-					)} 0px 0px 6px 6px, #0015ff 0px 0px 8px 8px`
-				)
+
+
+		let tokenWidth = this.options.size;
+		let tokenHeight = this.options.size;
+			
+		if(tokenData.disableaura) {
+			token.css('--token-hp-aura-color', 'transparent');
+			token.css('--token-temp-hp', "transparent");
+		} 
+		else {
+			tokenWidth = tokenWidth - 10;
+			tokenHeight = tokenHeight - 10;
+			token.css('--token-hp-aura-color', tokenHpAuraColor);
+			if(tokenData.temp_hp) {
+				token.css('--token-temp-hp', "#4444ffbd");
+			}
+			else {
+				token.css('--token-temp-hp', "transparent");
 			}
 		}
-		
+		if(tokenData.disableborder) {
+			token.css('--token-border-color', 'transparent');
+			$("token:before").css('--token-border-color', 'transparent');
+		} 
+		else {
+			tokenWidth = tokenWidth - 4;
+			tokenHeight = tokenHeight - 4;
+			token.css('--token-border-color', this.options.color);
+			$("token:before").css('--token-border-color', this.options.color);
+			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
+		}
+		token.attr("data-border-color", this.options.color);
+	
+		token.children('img').css({		
+		    'max-width': tokenWidth + 'px',
+			'max-height': tokenHeight + 'px',
+		});
+
+
 		console.groupEnd()
 	}
 
@@ -643,9 +683,9 @@ class Token {
 			if (!this.options.custom_conditions.includes("Inspiration")){
 				this.options.custom_conditions.push("Inspiration")
 			}
-		}
-		else{
-			this.options.custom_conditions.pop("Inspiration")
+		} else{
+			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
+			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 		}
 		
 		
@@ -796,12 +836,16 @@ class Token {
 
 			// CONCENTRATION REMINDER
 
-			let scale = this.get_token_scale()
+			let scale = this.get_token_scale();
+			let imageScale = this.options.imageSize;
 			var rotation = 0;
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
 			}
-			old.find("img").css("transform", "scale(" + scale + ") rotate("+rotation+"deg)");
+			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
+			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
+	
+			setTimeout(function() {old.find("img").css("transition", "")}, 200);
 			
 			if (old.attr('name') != this.options.name) {
 				var selector = "tr[data-target='"+this.options.id+"']";
@@ -824,10 +868,11 @@ class Token {
 			if (old.attr('width') != this.options.size) {
 				// NEED RESIZING
 				old.find("img").css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
-				old.find("img").animate({
-					width: this.options.size,
-					height: this.options.size
-				}, { duration: 1000, queue: false });
+				old.find("img").css({
+					"max-height": this.options.size,
+					"max-width": this.options.size
+				});
+
 
 				old.animate({
 					width: this.options.size,
@@ -898,10 +943,8 @@ class Token {
 				old.draggable("enable");
 			}
 
-			if(this.options.disableaura){
-				old.find("img").css("box-shadow","");
-			}
-			
+			this.update_health_aura(old);
+
 			if(this.options.legacyaspectratio == false) {
 				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
 				old.find("img").addClass("preserve-aspect-ratio");
@@ -925,6 +968,7 @@ class Token {
 			var tok = $("<div/>");
 			var hpbar = $("<input class='hpbar'>");
 			let scale = this.get_token_scale()
+			let imageScale = this.options.imageSize;
 			
 			var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -942,10 +986,11 @@ class Token {
 			if(this.options.legacyaspectratio == false) {
 				imgClass = 'token-image preserve-aspect-ratio';
 			}
-			var tokimg = $("<img style='transform:scale(" + scale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+			var tokimg = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
 			if(!(this.options.square)){
 				tokimg.addClass("token-round");
 			}
+
 
 
 			var zindexdiff=Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
@@ -958,17 +1003,17 @@ class Token {
 
 			tok.append(tokimg);
 
+
 			tok.attr("data-id", this.options.id);
 			tokimg.attr("src", this.options.imgsrc);
-			tokimg.width(this.options.size);
-			tokimg.height(this.options.size);
-			tok.addClass("VTTToken");
-			//tokimg.css("border","4px solid "+this.options.color);
+			tokimg.css("max-height", this.options.size);
+			tokimg.css("max-width", this.options.size);
+		
 
-			tokimg.css("border-style", "solid");
-			tokimg.css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
-			tokimg.css("border-color", this.options.color);
-			
+			tok.addClass("VTTToken");
+
+			this.update_health_aura(tok);
+
 			if(this.options.disableborder)
 				tokimg.css("border-width","0");
 				
@@ -976,6 +1021,9 @@ class Token {
 			tok.css("top", this.options.top);
 			tok.css("left", this.options.left);
 			tok.css("opacity", "0.0");
+			tok.css("display", "flex");
+			tok.css("justify-content", "center");
+			tok.css("align-items", "center");
 
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
@@ -1893,249 +1941,18 @@ function build_hide_show_item(tokenIds) {
 }
 
 function token_menu() {
-	$.contextMenu({
-		selector: '.VTTToken',
 
-		build: function(element, e) {
-
-			if ($(element).hasClass("tokenselected") && window.MULTIPLE_TOKEN_SELECTED) {
-				if (!window.DM) {
-					// players can't do anything to multiple tokens, currently
-					return {
-						items: { 
-							helptext: {
-								name: 'You cannot apply changes to multiple tokens',
-								className: 'context-menu-helptext',
-								disabled: true
-							}
-						}
-					}
-				}
-				ret = {
-					callback: multiple_callback,
-					items: {
-						token_combat: {
-							name: 'Add to Combat Tracker',
-							icon: 'person-add',
-							className: "material-icon"
-						},
-						token_hidden: build_hide_show_item(window.CURRENTLY_SELECTED_TOKENS),
-						conditions: {
-							name: 'Conditions',
-							items: build_conditions_submenu(window.CURRENTLY_SELECTED_TOKENS),
-							icon: 'add-circle',
-							className: "material-icon"
-						},
-						markers: {
-							name: 'Markers',
-							items: build_markers_submenu(window.CURRENTLY_SELECTED_TOKENS),
-							icon: 'add-circle',
-							className: "material-icon"
-						},
-						configure: {
-							name: 'Configure',
-							icon: 'edit',
-							className: "material-icon"
-						},
-						sep: "---",
-						delete: {
-							name: 'Delete',
-							icon: 'close-red',
-							className: "material-icon"
-						}
-					}
-				};
-				return ret;
+		$("#tokens").on("contextmenu", ".VTTToken", function(event) {
+			console.log("context_menu_flyout contextmenu event", event);
+			event.preventDefault();
+			event.stopPropagation();
+			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
+			} else {
+				token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
 			}
-			else { // STANDARD SINGLE TOKEN MENU
-				id = $(element).attr('data-id');
-				cond_items = build_conditions_submenu([id]);
-				custom_cond_items = build_markers_submenu([id]);
-				custom_reminders = {}
-				is_monster = window.TOKEN_OBJECTS[id].isMonster();
-				is_player = window.TOKEN_OBJECTS[id].isPlayer();
-				has_note=id in window.JOURNAL.notes;
-
-				if (!window.TOKEN_OBJECTS[id].options.aura1) {
-					window.TOKEN_OBJECTS[id].options = {
-						...window.TOKEN_OBJECTS[id].options,
-						aura1: {
-							feet: "0",
-							color: "rgba(255, 129, 0, 0.3)"
-						},
-						aura2: {
-							feet: "0",
-							color: "rgba(255, 255, 0, 0.1)"
-						},
-						auraVisible: true
-					}
-				}
-
-				ret = {
-					callback: menu_callback,
-					events: {
-						hide: token_inputs
-					},
-					items: {
-						view: {
-							name: window.TOKEN_OBJECTS[id].isMonster() ? 'Monster Stat Block' : 'Character Sheet',
-							icon: 'view',
-							className: "material-icon"
-						},
-						token_combat: {
-							name: window.TOKEN_OBJECTS[id].options.combat === true ? 'Remove from Combat Tracker' : 'Add to Combat Tracker',
-							icon: window.TOKEN_OBJECTS[id].options.combat === true ? 'person-remove' : 'person-add',
-							className: "material-icon"
-						},
-						token_hidden: build_hide_show_item([id]),
-						sep0: "--------",
-
-						token_cond: {
-							name: "Conditions",
-							items: cond_items,
-							icon: 'add-circle',
-							className: "material-icon"
-						},
-						token_custom_cond: {
-							name: "Markers",
-							items: custom_cond_items,
-							icon: 'add-circle',
-							className: "material-icon"
-						},
-						note_menu:{
-							name: "Notes",
-							icon: "note",
-							className: "material-icon",
-							items:{
-								note_view: {name: 'View Note', disable: !has_note},
-								note_edit: {name: 'Create/Edit Note'},
-								note_delete: {name: 'Delete Note'},
-							}
-						},
-						sep1: "-------",
-						hp: {
-							type: 'text',
-							name: 'Current HP',
-							className: 'split-column-context-input split-column-context-input-text',
-							value: window.TOKEN_OBJECTS[id].options.hp,
-							events: {
-								click: function(e) {
-									$(e.target).select();
-								}
-							},
-						},
-						ac: {
-							type: 'text',
-							name: 'AC',
-							className: 'split-column-context-input split-column-context-input-text',
-							value: window.TOKEN_OBJECTS[id].options.ac,
-							events: {
-								click: function(e) {
-									$(e.target).select();
-								}
-							}
-						},
-						max_hp: {
-							type: 'text',
-							name: 'Max Hp',
-							className: 'split-column-context-input split-column-context-input-text',
-							value: window.TOKEN_OBJECTS[id].options.max_hp,
-							events: {
-								click: function(e) {
-									$(e.target).select();
-								}
-							}
-						},
-						elev: {
-							type: 'text',
-							name: 'Elevation',
-							className: !is_player ? 'split-column-context-input split-column-context-input-text' : "",
-							value: window.TOKEN_OBJECTS[id].options.elev,
-							events: {
-								click: function(e) {
-									$(e.target).select();
-								}
-							}
-						},
-						sep3: '----------',
-						imgsrcSelect: {
-							name: "Change Image",
-							className: "imgsrcSelect material-icon",
-							icon: "person"
-						},
-						configure: {
-							name: 'Configure',
-							icon: 'edit',
-							className: "material-icon"
-						},
-						sep4: '----------',
-						helptext: {
-							name: 'Player HP/conditions must be set in character sheet',
-							className: 'context-menu-helptext',
-							disabled: true
-						},
-						delete: {
-							name: 'Delete',
-							icon: 'close-red',
-							className: "material-icon"
-						}
-					}
-				};
-
-				if (!is_monster && !is_player) {
-					delete ret.items.view;
-					delete ret.items.helptext;
-				}
-
-				if (is_monster) {
-					// delete ret.items.options.items.token_hidestat;
-					delete ret.items.helptext;
-				}
-				if (is_player){
-					delete ret.items.hp
-					delete ret.items.max_hp
-					delete ret.items.ac
-				}
-				
-				if(!has_note){
-					delete ret.items.note_menu.items.note_view;
-					delete ret.items.note_menu.items.note_delete;
-				}
-				// token isn't owned by a player, only the DM should see "character sheet" option in context menu
-				if(!window.DM && (!window.TOKEN_OBJECTS[id].options.player_owned)){
-					delete ret.items.view;
-				}
-				
-				if(!window.DM){
-					delete ret.items.sep0;
-					delete ret.items.token_combat;
-					delete ret.items.token_hidden;
-					//delete ret.items.token_size;
-					delete ret.items.options;
-					delete ret.items.sep1;
-					delete ret.items.hp;
-					delete ret.items.max_hp;
-					delete ret.items.note_menu;
-					delete ret.items.name;
-					delete ret.items.sep2;
-					delete ret.items.ac;
-					delete ret.items.elev;
-					delete ret.items.configure;
-					if (!id.endsWith(window.PLAYER_ID)) {
-						delete ret.items.sep3;
-						delete ret.items.imgsrcSelect;
-					}
-				}
-
-				if (!window.DM && window.TOKEN_OBJECTS[id].options.deleteableByPlayers != true) {
-					delete ret.items.delete;
-					delete ret.items.sep4;
-				}
-
-				return ret;
-			}
-		}
-	});
+		});
+		return;
 }
 
 function deselect_all_tokens() {
@@ -2181,7 +1998,7 @@ function token_health_aura(hpPercentage) {
 		const pHex = (n) => parseInt(n, 16);
 
 		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 80%)` : null;
+		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
 	}
 	return hexToRGB(percentToHEX(hpPercentage));
 }

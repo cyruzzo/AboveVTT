@@ -364,8 +364,8 @@ function set_pointer(data,dontscroll=false) {
 		"border-radius": "50%",
 		"opacity": "1.0",
 		"border-width": "8px",
-		"border-style": "solid",
-		"border-color": "blue",
+		"border-style": "double",
+		"border-color": data.color,
 	});
 	$("#tokens").append(marker);
 
@@ -375,8 +375,7 @@ function set_pointer(data,dontscroll=false) {
 		height: "120px",
 		top: data.y - 60,
 		left: data.x - 60,
-		"border-width": 0,
-	}, 5000, function() { marker.remove() });
+	}, 1375, function() { marker.remove() });
 
 	// calculate pageX and pageY and scroll there!
 
@@ -2253,11 +2252,15 @@ function init_ui() {
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
+		let borderColor = $(`.token[data-name="`+window.PLAYER_NAME+`"]`).attr(`data-border-color`)
+		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
+
 		data = {
 			x: mousex,
 			y: mousey,
 			from: window.PLAYER_NAME,
-			dm: window.DM
+			dm: window.DM,
+			color: pingColor
 		}
 
 		set_pointer(data,true);
