@@ -1922,12 +1922,12 @@ function token_context_menu_expanded(tokenIds, e) {
 	}
 
 	
-	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || window.DM)){ 
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (!tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){ 
 		$(".maxHpMenuInput").prop('disabled', false);
 		$(".acMenuInput").prop('disabled', false);
 		$(".hpMenuInput").prop('disabled', false);
 	}
-	if(!window.DM){ 
+	else { 
 		$(".maxHpMenuInput").prop('disabled', true);
 		$(".acMenuInput").prop('disabled', true);
 		$(".hpMenuInput").prop('disabled', true);
