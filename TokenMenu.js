@@ -1934,7 +1934,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	}
 
 	
-	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (!tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){ 
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){ 
 		$(".maxHpMenuInput").prop('disabled', false);
 		$(".acMenuInput").prop('disabled', false);
 		$(".hpMenuInput").prop('disabled', false);
