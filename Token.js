@@ -189,7 +189,7 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		
-		tokenElement.find("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
+		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -2258,7 +2258,7 @@ function draw_selected_token_bounding_box() {
 	holder.css('left', `${centerHorizontal - Math.ceil(grabberSize / 2) + 1}px`); // not exactly sure why we need the + 1 here
 	holder.css('width', `${grabberSize}px`);
 	holder.css('height', `${grabberSize}px`);
-	holder.css('z-index', zIndex);
+	holder.css('z-index', 100000);
 	holder.css('border', '2px solid white');
 	holder.css('border-radius', `${Math.ceil(grabberSize / 2)}px`); // make it round
 	$("#tokens").append(holder);
@@ -2270,7 +2270,7 @@ function draw_selected_token_bounding_box() {
 	grabber.css('left', `${grabberLeft}px`);
 	grabber.css('width', `${grabberSize - 4}px`);
 	grabber.css('height', `${grabberSize - 4}px`);
-	grabber.css('z-index', 100); // make sure the grabber is above all the tokens
+	grabber.css('z-index', 100000); // make sure the grabber is above all the tokens
 	grabber.css('background', '#ced9e0')
 	grabber.css('border-radius', `${Math.ceil(grabberSize / 2)}px`); // make it round
 	grabber.css('padding', '1px');
