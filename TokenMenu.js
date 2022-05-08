@@ -2043,7 +2043,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		frame_z_index_when_click($(this));
 	});
 
-	moveableTokenOptions.css("left", e.clientX - 245 + 'px');
+	moveableTokenOptions.css("left", Math.max(e.clientX - 245, 0) + 'px');
 
 	if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
 		moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
