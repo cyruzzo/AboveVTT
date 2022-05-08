@@ -2752,7 +2752,7 @@ function build_options_flyout_menu(tokenIds) {
 		width: "320px",
 		padding: "5px"
 	})
-	const token_settings = [
+	let token_settings = [
 		{ name: "hidden", label: "Hide", enabledDescription:"Token is hidden to players", disabledDescription: "Token is visible to players" },
 		{ name: "square", label: "Square Token", enabledDescription:"Token is square", disabledDescription: "Token is round" },
 		{ name: "locked", label: "Lock Token in Position", enabledDescription:"Token is not moveable, Players can not select this token", disabledDescription: "Token is moveable by at least the DM, players can select it however" },
@@ -2766,6 +2766,12 @@ function build_options_flyout_menu(tokenIds) {
 		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
 		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
 	];
+	if (tokens.length == 1 && !tokens[0].isPlayer()){		
+		let removename = "hidestat";
+		token_settings = $.grep(token_settings, function(e){
+		     return e.name != removename;
+		});
+	}
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
