@@ -2024,20 +2024,6 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			}
 		});
-	$("#tokenOptionsPopup").resizable({
-		addClasses: false,
-		handles: "all",
-		containment: "#windowContainment",
-		start: function () {
-			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function () {
-			$('.iframeResizeCover').remove();
-		},
-		minWidth: 215,
-		minHeight: 200
-	});
 	
 	$("#tokenOptionsPopup").mousedown(function() {
 		frame_z_index_when_click($(this));
