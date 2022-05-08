@@ -2754,7 +2754,7 @@ button.avtt-roll-button {
 }
 
 #tokenOptionsPopup{
-    position: absolute;
+    position: fixed;
     z-index: 59000;
     background: #fff;
     border-radius: 10px;

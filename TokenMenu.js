@@ -1994,18 +1994,6 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(optionsRow);
 	}
-	moveableTokenOptions.css("left", e.pageX - 245 + 'px');
-
-	if($(moveableTokenOptions).height() > window.innerHeight - e.pageY - 20) {
-		moveableTokenOptions.css({
-	        "top": window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px',
-	    });
-	}
-	else {
-		moveableTokenOptions.css({
-        	"top": e.pageY + 'px',
-        });
-	}
 
 	if(window.DM) {
 		let deleteTokenMenuButton = $("<button class='deleteMenuButton icon-close-red material-icons'>Delete</button>")
@@ -2054,7 +2042,15 @@ function token_context_menu_expanded(tokenIds, e) {
 	$("#tokenOptionsPopup").mousedown(function() {
 		frame_z_index_when_click($(this));
 	});
-	
+
+	moveableTokenOptions.css("left", e.clientX - 245 + 'px');
+
+	if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
+		moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+	}
+	else {
+		moveableTokenOptions.css("top", e.clientY + 'px');
+	}	
 }
 
 /**
