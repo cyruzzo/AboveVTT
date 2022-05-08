@@ -94,15 +94,7 @@ function validate_image_input(element){
 	const self = element
 	const img = parse_img(self.value)
 	let hasValidationDisplayed = $(self).prev().is("span")
-	const validIcon = $(
-		`<span style="
-			position: absolute;
-			top: 0;
-			left: -20px;
-			font-size: 20px;
-			color: green;
-			font-weight: bold;"
-		class="material-icons">check_circle_outline</span>`)
+	const validIcon = $(`<span class="material-icons url-validator valid">check_circle_outline</span>`)
 
 	// optional values can be blank
 	const isOptional = $(self).attr("placeholder") === "Optional"
@@ -124,7 +116,8 @@ function validate_image_input(element){
 	const display_not_valid = () => {
 		if (hasValidationDisplayed){
 			$(self).prev().html("highlight_off")
-			$(self).prev().css("color", "red")
+			$(self).prev().removeClass("valid loading")
+			$(self).prev().addClass("invalid")
 			$(self).attr("data-valid", false)
 		}
 		
@@ -141,11 +134,16 @@ function validate_image_input(element){
 			tester.onload=imageFound;
 			tester.onerror=imageNotFound;
 			tester.src=URL;
+			$(self).prev().removeClass("valid invalid")
+			$(self).prev().addClass("loading")
+			$(self).prev().html("autorenew")
+
 		}
 		
 		function imageFound() {
+			$(self).prev().removeClass("loading invalid")
+			$(self).prev().addClass("valid")
 			$(self).prev().html("check_circle_outline")
-			$(self).prev().css("color","green")
 		}
 		
 		function imageNotFound() {

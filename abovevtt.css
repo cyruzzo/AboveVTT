@@ -3072,3 +3072,27 @@ button.avtt-roll-button {
     0% { left: -1px; }
     100% { right: -1px; }
 }
+
+.url-validator {
+    position: absolute;
+    top: -2px;
+    left: -24px;
+}
+
+.url-validator.invalid {
+    color: red;
+}
+
+.url-validator.valid {
+    color: green;
+}
+
+.url-validator.loading {
+    color:blue;
+    animation: spin 4s infinite linear;
+}
+
+@keyframes spin {
+    0%  {-webkit-transform: rotate(0deg);}
+    100% {-webkit-transform: rotate(360deg);}   
+}
