@@ -90,19 +90,90 @@ function get_edit_form_data(scene=null){
 	return data
 }
 
+function validate_image_input(element){
+	const self = element
+	const img = parse_img(self.value)
+	let hasValidationDisplayed = $(self).prev().is("span")
+	const validIcon = $(
+		`<span style="
+			position: absolute;
+			top: 0;
+			left: -20px;
+			font-size: 20px;
+			color: green;
+			font-weight: bold;"
+		class="material-icons">check_circle_outline</span>`)
 
+	// optional values can be blank
+	const isOptional = $(self).attr("placeholder") === "Optional"
+	if(img === "" && isOptional){
+		if (hasValidationDisplayed) {
+			$(self).prev().remove()
+		}
+		return
+	} 
+
+	// default as valid
+	$(self).parent().css("position","relative")
+	if (!hasValidationDisplayed){
+		$(self).before(validIcon)
+		$(self).attr("data-valid",true)
+		hasValidationDisplayed = true
+	}
+
+	const display_not_valid = () => {
+		if (hasValidationDisplayed){
+			$(self).prev().html("highlight_off")
+			$(self).prev().css("color", "red")
+			$(self).attr("data-valid", false)
+		}
+		
+		$(self).addClass("chat-error-shake");
+        setTimeout(function () {
+            $(self).removeClass("chat-error-shake");
+        }, 150);
+	}
+	try {
+		const url = new URL(img)
+
+		function testImage(URL) {
+			const tester=new Image();
+			tester.onload=imageFound;
+			tester.onerror=imageNotFound;
+			tester.src=URL;
+		}
+		
+		function imageFound() {
+			$(self).prev().html("check_circle_outline")
+			$(self).prev().css("color","green")
+		}
+		
+		function imageNotFound() {
+			display_not_valid()
+		}
+		
+		testImage(url);
+	} catch (_) {
+		display_not_valid()
+	}
+}
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 
-	function form_row(name, title, inputOverride=null) {
+	function form_row(name, title, inputOverride=null, imageValidation=false) {
 		const row = $("<div style='width:100%;'/>");
 		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
 		rowLabel.css("font-weight", "bold");
 		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
 		let rowInput
 		if(!inputOverride){
-			 rowInput = $(`<input type="text" name=${name} style='width:100%' value="${scene[name] || ""}" />`);
+			if (imageValidation){
+				rowInput = $(`<input type="text" name=${name} style='width:100%' onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+			}else{
+				rowInput = $(`<input type="text" name=${name} style='width:100%' value="${scene[name] || ""}" />`);
+			}
+			 
 		}
 		else{
 			rowInput = inputOverride
@@ -194,13 +265,15 @@ function edit_scene_dialog(scene_id) {
 	form.append(uuid_hidden);
 
 	form.append(form_row('title', 'Scene Title'))
-	const playerMapRow = form_row('player_map', 'Player Map')
-	const dmMapRow = form_row('dm_map', 'Dm Map')
+	const playerMapRow = form_row('player_map', 'Player Map', null, true)
+	const dmMapRow = form_row('dm_map', 'Dm Map', null, true)
+	
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
 	form.append(playerMapRow)
 	form.append(dmMapRow)
+
 	// add a row but override the normal input with a toggle
 	form.append(form_row(null,
 						'Use DM Map',
@@ -808,11 +881,7 @@ function edit_scene_dialog(scene_id) {
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
-
-
-
-
-
+	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Optional");
 }
 
 function refresh_scenes() {
