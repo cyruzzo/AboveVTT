@@ -953,7 +953,6 @@ class Token {
 			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
-				old.css("z-index", old.css("z-index")-2);
 			}
 			else if((window.DM && this.options.restrictPlayerMove) || !this.options.locked){
 				old.draggable("enable");
