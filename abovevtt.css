@@ -3403,9 +3403,9 @@ button.avtt-roll-button {
     visibility:  hidden !important;
     transition:  0.2s ease-in-out 0.5s;
 }
-.token:hover .hponhover,
-.token:focus-within .hponhover,
-.tokenselected .hponhover {
+.token:hover .hponhover:not([style*='visibility: hidden']),
+.token:focus-within .hponhover:not([style*='visibility: hidden']),
+.tokenselected .hponhover:not([style*='visibility: hidden']) {
     visibility:  visible !important;
     transition:  0.05s ease-in-out 0.3s
 }
