@@ -161,12 +161,6 @@ function init_settings(){
 			disabledDescription: 'Token does not have a traditional visual hp% bar indicator'
 		},
 		{
-			name: 'hidehpbar',
-			label: 'Only show HP values on hover',
-			enabledDescription: "HP values will only be shown when you hover or select a token",
-			disabledDescription: "Enable this to hide HP values except when you hover or select a token."
-		},	
-		{
 			name: 'hideaurafog',
 			label: 'Hide Aura when token in Fog',
 			enabledDescription: "Token's aura is hidden from players when in fog",
