@@ -1131,7 +1131,7 @@ class Token {
 
 							///GET
 							const token = $(event.target);
-							const el = token.parent().find("#aura_" + token.attr("data-id").replaceAll("/", ""));
+							const el = token.parent().parent().find("#aura_" + token.attr("data-id").replaceAll("/", ""));
 							if (el.length > 0) {
 								const auraSize = parseInt(el.css("width"));
 
@@ -1157,7 +1157,7 @@ class Token {
 										tok.css("top", newtop + "px");
 										tok.css("left", newleft + "px");
 
-										const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
+										const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
 										if (selEl.length > 0) {
 											const auraSize = parseInt(selEl.css("width"));
 
@@ -1264,7 +1264,7 @@ class Token {
 					$(event.target).css("top",ui.position.top);*/
 					// END OF HACK TEST
 
-					const el = ui.helper.parent().find("#aura_" + ui.helper.attr("data-id").replaceAll("/", ""));
+					const el = ui.helper.parent().parent().find("#aura_" + ui.helper.attr("data-id").replaceAll("/", ""));
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
@@ -1294,7 +1294,7 @@ class Token {
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
 
-								const selEl = tok.parent().find("#aura_" + id.replaceAll("/", ""));
+								const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
@@ -2056,26 +2056,26 @@ function setTokenAuras (token, options) {
 							top:${parseFloat(options.top.replace('px', '')) - ((totalSize - options.size) / 2)}px;
 							`;
 		const tokenId = token.attr("data-id").replaceAll("/", "");
-		if (token.parent().find("#aura_" + tokenId).length > 0) {
-			token.parent().find("#aura_" + tokenId).attr("style", auraStyles);	
+		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
+			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
 		} else {
 			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" style='${auraStyles}' />`);
 			auraElement.contextmenu(function(){return false;});
-			$("#tokens").prepend(auraElement);
+			$("#VTT").prepend(auraElement);
 		}
 		if(window.DM){
-			options.hidden ? token.parent().find("#aura_" + tokenId).css("opacity", 0.5)
-			: token.parent().find("#aura_" + tokenId).css("opacity", 1)
+			options.hidden ? token.parent().parent().find("#aura_" + tokenId).css("opacity", 0.5)
+			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			options.hidden ? token.parent().find("#aura_" + tokenId).hide()
-			: token.parent().find("#aura_" + tokenId).show()
+			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
+			: token.parent().parent().find("#aura_" + tokenId).show()
 		}
 
 		
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
-		token.parent().find("#aura_" + tokenId).remove();
+		token.parent().parent().find("#aura_" + tokenId).remove();
 	}
 }
 

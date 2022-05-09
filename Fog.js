@@ -298,6 +298,7 @@ function check_token_visibility() {
 
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + id + "']";
+		$(".aura-element[id='aura_" + id + "'] ~ .aura-element[id='aura_" + id + "']").remove();
 		if (pixeldata[3] == 255) {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
