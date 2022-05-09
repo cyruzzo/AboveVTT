@@ -300,13 +300,10 @@ function check_token_visibility() {
 		let auraSelector = ".aura-element[id='aura_" + id + "']";
 		if (pixeldata[3] == 255) {
 			$(selector).hide();
-			debugger;
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
 					$(auraSelector).hide();
-					debugger;
 			}			
-			debugger;
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).show();
