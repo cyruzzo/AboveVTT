@@ -2965,6 +2965,24 @@ button.avtt-roll-button {
     height: 30px;  
 }
 
+.VTTToken img ~ .hpbar:after {
+    display: var(--token-hpbar-display);
+    transition: none;
+    position: absolute;
+    width: 100%;
+    visibility: visible;
+    height: 6px;
+    width: 100%;
+    bottom: -6px;
+    left: 0px;
+    right: 0px;
+    content: '';
+    border: 1px solid #000;
+    background-color: #0b0b0ddd !important;
+    background-image: linear-gradient(to left, transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
+    box-shadow: inset 0px 0px 0px 1px var(--token-temp-hpbar), 0px 0px 3px 1px var(--token-temp-hpbar);
+}
+
 .encounter-builder-app #combat_area td [class*="AvatarPortrait"]{
     border-radius: 5px;
     top:2px;
@@ -3382,13 +3400,13 @@ button.avtt-roll-button {
 
 
 .hponhover {
-    visibility:  hidden;
+    visibility:  hidden !important;
     transition:  0.2s ease-in-out 0.5s;
 }
 .token:hover .hponhover,
 .token:focus-within .hponhover,
 .tokenselected .hponhover {
-    visibility:  visible;
+    visibility:  visible !important;
     transition:  0.05s ease-in-out 0.3s
 }
 

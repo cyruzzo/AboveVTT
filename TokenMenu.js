@@ -2753,6 +2753,7 @@ function build_options_flyout_menu(tokenIds) {
 		width: "320px",
 		padding: "5px"
 	})
+
 	let token_settings = [
 		{ name: "hidden", label: "Hide", enabledDescription:"Token is hidden to players", disabledDescription: "Token is visible to players" },
 		{ name: "square", label: "Square Token", enabledDescription:"Token is square", disabledDescription: "Token is round" },
@@ -2763,6 +2764,7 @@ function build_options_flyout_menu(tokenIds) {
 		{ name: "hidehpbar", label: "Only show HP values on hover", enabledDescription:"HP values will only be shown when you hover or select a token", disabledDescription: "Enable this to hide HP values except when you hover or select a token." },
 		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
 		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
+		{ name: "enablepercenthpbar", label: "Enable Token HP% Bar", enabledDescription:"Token has a traditional visual hp% bar indicator", disabledDescription: "Token does not have a traditional visual hp% bar indicator" },
 		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
 		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
 		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}

@@ -155,6 +155,18 @@ function init_settings(){
 			disabledDescription: 'New tokens will have an aura around them that represents their current health'
 		},
 		{
+			name: 'enablepercenthpbar', 
+			label: 'Enable Token HP% Bar', 
+			enabledDescription:'Token has a traditional visual hp% bar indicator', 
+			disabledDescription: 'Token does not have a traditional visual hp% bar indicator'
+		},
+		{
+			name: 'hidehpbar',
+			label: 'Only show HP values on hover',
+			enabledDescription: "HP values will only be shown when you hover or select a token",
+			disabledDescription: "Enable this to hide HP values except when you hover or select a token."
+		},	
+		{
 			name: 'hideaurafog',
 			label: 'Hide Aura when token in Fog',
 			enabledDescription: "Token's aura is hidden from players when in fog",

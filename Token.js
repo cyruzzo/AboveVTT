@@ -393,6 +393,19 @@ class Token {
 			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
 		}
+		if(!tokenData.enablepercenthpbar){
+			token.css('--token-hpbar-display', 'none');
+		}
+		else {
+			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
+			if(tokenData.temp_hp) {
+				token.css('--token-temp-hpbar', "#4444ffbd");
+			}
+			else {
+				token.css('--token-temp-hpbar', "transparent");
+			}
+			token.css('--token-hpbar-display', 'block');
+		}
 		token.attr("data-border-color", this.options.color);
 	
 		token.children('img').css({		
@@ -650,12 +663,12 @@ class Token {
 		}
 
 		if(showthem){
-			token.find(".hpbar").show();
+			token.find(".hpbar").css("visibility", "visible");
 			token.find(".ac").show();
 			token.find(".elev").show();
 		}
 		else{
-			token.find(".hpbar").hide();
+			token.find(".hpbar").css("visibility", "hidden");
 			token.find(".ac").hide();
 			token.find(".elev").hide();
 		}
