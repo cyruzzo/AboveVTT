@@ -156,7 +156,7 @@ function init_settings(){
 		},
 		{
 			name: 'hideaurafog',
-			label: 'Hide Aura when token in Fogr',
+			label: 'Hide Aura when token in Fog',
 			enabledDescription: "Token's aura is hidden from players when in fog",
 			disabledDescription: "Token's aura is visible to players when token is in fog"
 		},
