@@ -2706,11 +2706,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		}
 		else {
 			tokens.forEach(token => {
-				let selector = "div[data-id='" + token.options.id + "']";
-				let html = $("#tokens").find(selector);
-				let options = Object.assign({}, token.options);
-				token.options.color = borderColor;
-				
+				token.options.color = borderColor;		
 				token.place_sync_persist();	
 			});
 		}
