@@ -155,6 +155,12 @@ function init_settings(){
 			disabledDescription: 'New tokens will have an aura around them that represents their current health'
 		},
 		{
+			name: 'hideaurafog',
+			label: 'Hide Aura when token in Fogr',
+			enabledDescription: "Token's aura is hidden from players when in fog",
+			disabledDescription: "Token's aura is visible to players when token is in fog"
+		},
+		{
 			name: 'revealname',
 			label: 'Show name to players',
 			enabledDescription: 'New tokens will have their name visible to players',

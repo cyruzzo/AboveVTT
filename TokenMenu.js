@@ -2057,9 +2057,18 @@ function build_token_auras_inputs(tokenIds) {
 	let auraVisibleValues = tokens.map(t => t.options.auraVisible);
 	let uniqueAuraVisibleValues = [...new Set(auraVisibleValues)];
 
+	let hideAuraFromPlayers = tokens.map(t => t.options.auraFog);
+	let uniqueHideAuraFromPlayers = [...new Set(hideAuraFromPlayers)];
+
+
+
 	let auraIsEnabled = null;
 	if (uniqueAuraVisibleValues.length === 1) {
 		auraIsEnabled = uniqueAuraVisibleValues[0];
+	}
+	let hideAuraIsEnabled = null;
+	if (uniqueHideAuraFromPlayers.length === 1) {
+		hideAuraIsEnabled = uniqueHideAuraFromPlayers[0];
 	}
 	let aura1Feet = tokens.map(t => t.options.aura1.feet);
 	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
@@ -2127,6 +2136,16 @@ function build_token_auras_inputs(tokenIds) {
 		}
 	});
 	wrapper.prepend(enabledAurasInput);
+
+	let hideAuraInFog = build_toggle_input("auraFog", "Hide aura from players in when in fog", hideAuraIsEnabled, undefined, undefined, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
+	wrapper.prepend(enabledAurasInput);
+
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledAurasInput);
 	if (auraIsEnabled) {
 		wrapper.find(".token-config-aura-wrapper").show();
@@ -2744,6 +2763,7 @@ function build_options_flyout_menu(tokenIds) {
 		{ name: "hidehpbar", label: "Only show HP values on hover", enabledDescription:"HP values will only be shown when you hover or select a token", disabledDescription: "Enable this to hide HP values except when you hover or select a token." },
 		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
 		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
+		{ name: "hideaurafog", label: "Hide Aura when token in Fog", enabledDescription:"Token's aura is hidden from players when in fog", disabledDescription: "Token's aura is visible to players when token is in fog" },	
 		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
 		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
 		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
