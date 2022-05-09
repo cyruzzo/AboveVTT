@@ -2143,8 +2143,9 @@ function build_token_auras_inputs(tokenIds) {
 			token.place_sync_persist();
 		});
 	});
-	wrapper.prepend(enabledAurasInput);
-	wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInFog);
+	if(window.DM) {
+		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInFog);
+	}
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledAurasInput);
 	if (auraIsEnabled) {
