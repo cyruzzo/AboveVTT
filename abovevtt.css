@@ -3258,7 +3258,7 @@ button.avtt-roll-button {
 .flyout-from-menu-item,
 #tokenOptionsContainer>button,
 #notes-flyout button,
-#adjustments-flyout button {
+#adjustments-flyout>div>button {
     line-height: 24px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -3267,7 +3267,7 @@ button.avtt-roll-button {
 
 #tokenOptionsContainer>button,
 #notes-flyout button,
-#adjustments-flyout button  {
+#adjustments-flyout>div>button  {
     background: none;
     font-size: 10px;
     display: flex;
@@ -3327,7 +3327,7 @@ button.avtt-roll-button {
 }
 #tokenOptionsContainer>button:hover,
 #notes-flyout button:hover,
-#adjustments-flyout button:hover   {
+#adjustments-flyout>div>button:hover   {
     background-color: rgba(41, 128, 185);
     color: #ddd;
 }
