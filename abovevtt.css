@@ -1422,6 +1422,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     position: absolute;
     border-radius: 50%;
     z-index: 19;
+    pointer-events: none;
 }
 
 .aura-feet label, .aura-color label {
