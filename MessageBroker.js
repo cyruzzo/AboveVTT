@@ -1075,6 +1075,7 @@ class MessageBroker {
 			$("#combat_area").empty();
 			ct_load();
 		}
+		get_pclist_player_data();
 		console.groupEnd()
 	}
 
