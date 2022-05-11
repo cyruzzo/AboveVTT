@@ -398,9 +398,9 @@ class MessageBroker {
 					let left = parseInt(msg.data.left);
 					let top = parseInt(msg.data.top);
 					if (!isNaN(top) && !isNaN(left)) {
-						place_token_at_point(msg.data, left, top);
+						place_token_at_map_point(msg.data, left, top);
 					} else {
-						place_token_in_center_of_map(msg.data);
+						place_token_in_center_of_view(msg.data);
 					}
 				}
 			}
@@ -963,7 +963,7 @@ class MessageBroker {
 	}
 
 	handleScene(msg) {
-		console.group("handlescene")
+		// console.group("handlescene")
 		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
@@ -1035,6 +1035,7 @@ class MessageBroker {
 			if (window.EncounterHandler !== undefined) {
 				console.log("Updating avtt encounter");
 				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+				fetch_and_cache_scene_monster_items(true);
 			}
 			console.groupEnd()
 		});
@@ -1075,7 +1076,7 @@ class MessageBroker {
 			$("#combat_area").empty();
 			ct_load();
 		}
-		console.groupEnd()
+		// console.groupEnd()
 	}
 
 	handleSyncMeUp(msg) {
