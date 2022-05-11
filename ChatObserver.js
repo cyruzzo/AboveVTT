@@ -104,11 +104,11 @@ class ChatObserver {
                 data.whisper = matches[1]
                 data.text = `<div class="custom-gamelog-message"><b>&#8594;${matches[1]}</b>&nbsp;${matches[2]}</div>`;
             }
-        } if (validateUrl(text)) {
+        } else if (validateUrl(text)) {
             data.text = `
-                <a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>
-                <img width=200 class='magnify' src='${parse_img(text)}' alt='Chat Image' style='display: none'/>
-            `;
+                <a class='chat-link' href='${text}' target='_blank' rel='noopener noreferrer'>${text}</a>
+                <img width=200 class='magnify' src='${parse_img(text)}' href='${parse_img(text)}' alt='Chat Image' style='display: none'/>
+            `; // `href` is not valid on `img` tags, but magnific uses it so make sure it's there
         } else {
             data.text = `<div class="custom-gamelog-message">${text}</div>`
         }
