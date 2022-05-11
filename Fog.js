@@ -385,6 +385,94 @@ function midPointBtw(p1, p2) {
   };
 }
 
+function clear_grid(){
+	const gridCanvas = document.getElementById("grid_overlay");
+	const gridContext = gridCanvas.getContext("2d");
+	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+}
+
+function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
+	const gridCanvas = document.getElementById("grid_overlay");
+	const gridContext = gridCanvas.getContext("2d");
+	clear_grid()
+	gridContext.setLineDash(dash);
+	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
+	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
+	startX = Math.round(startX)
+	startY = Math.round(startY)
+	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
+	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps; 
+	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
+	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
+	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
+	let skip = true;
+
+	gridContext.beginPath();
+	for (var i = startX; i < $("#scene_map").width(); i = i + incrementX) {
+		if (isSubdivided && skip) {
+			skip = false;
+			continue;
+		}
+		else {
+			skip = true;
+		}
+		gridContext.moveTo(i, 0);
+		gridContext.lineTo(i, $("#scene_map").height());
+	}
+	gridContext.stroke();
+	skip = true;
+
+	gridContext.beginPath();
+	for (var i = startY; i < $("#scene_map").height(); i = i + incrementY) {
+		if (isSubdivided && skip) {
+			skip = false;
+			continue;
+		}
+		else {
+			skip = true;
+		}
+		gridContext.moveTo(0, i);
+		gridContext.lineTo($("#scene_map").width(), i);
+	}
+	gridContext.stroke();
+}
+
+function draw_wizarding_box() {
+	
+	var gridCanvas = document.getElementById("grid_overlay");
+	var gridContext = gridCanvas.getContext("2d");
+	gridCanvas.width = $("#scene_map").width();
+	gridCanvas.height = $("#scene_map").height();
+
+	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
+	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
+
+	let al1 = {
+		x: parseInt($("#aligner1").css("left")) + 29,
+		y: parseInt($("#aligner1").css("top")) + 29,
+	};
+
+	let al2 = {
+		x: parseInt($("#aligner2").css("left")) + 29,
+		y: parseInt($("#aligner2").css("top")) + 29,
+	};
+	gridContext.setLineDash([30, 5]);
+
+	gridContext.lineWidth = 2;
+	gridContext.strokeStyle = "green";
+	gridContext.beginPath();
+	gridContext.moveTo(al1.x, al1.y);
+	gridContext.lineTo(al2.x, al1.y);
+	gridContext.moveTo(al2.x, al1.y);
+	gridContext.lineTo(al2.x, al2.y);
+	gridContext.moveTo(al2.x, al2.y);
+	gridContext.lineTo(al1.x, al2.y);
+	gridContext.moveTo(al1.x, al2.y);
+	gridContext.lineTo(al1.x, al1.y);
+	gridContext.stroke();
+
+}
+
 function reset_canvas() {
 	$('#fog_overlay').width($("#scene_map").width());
 	$('#fog_overlay').height($("#scene_map").height());
@@ -430,80 +518,12 @@ function reset_canvas() {
 
 		//alert(startX+ " "+startY);
 		if (window.WIZARDING) {
-			let al1 = {
-				x: parseInt($("#aligner1").css("left")) + 29,
-				y: parseInt($("#aligner1").css("top")) + 29,
-			};
-
-			let al2 = {
-				x: parseInt($("#aligner2").css("left")) + 29,
-				y: parseInt($("#aligner2").css("top")) + 29,
-			};
-			ctx_grid.setLineDash([30, 5]);
-
-			ctx_grid.lineWidth = 2;
-			ctx_grid.strokeStyle = "green";
-			ctx_grid.beginPath();
-			ctx_grid.moveTo(al1.x, al1.y);
-			ctx_grid.lineTo(al2.x, al1.y);
-			ctx_grid.moveTo(al2.x, al1.y);
-			ctx_grid.lineTo(al2.x, al2.y);
-			ctx_grid.moveTo(al2.x, al2.y);
-			ctx_grid.lineTo(al1.x, al2.y);
-			ctx_grid.moveTo(al1.x, al2.y);
-			ctx_grid.lineTo(al1.x, al1.y);
-			ctx_grid.stroke();
-
-			ctx_grid.strokeStyle = "rgba(255,0,0,1)";
-			if (window.ScenesHandler.scene.upscaled == "1")
-				ctx_grid.lineWidth = 2;
-			else
-				ctx_grid.lineWidth = 1;
-			ctx_grid.setLineDash([30, 5]);
+			draw_wizarding_box()
 		}
-		else {
-			ctx_grid.strokeStyle = "rgba(0,0,0,0.5)";
-			//ctx_grid.strokeStyle = "green";
-			ctx_grid.lineWidth = 3;
-		}
-
 		//alert('inizio 1');
 
-		if (window.CURRENT_SCENE_DATA.grid == "1") {
-			var increment = window.CURRENT_SCENE_DATA.hpps;
-			ctx_grid.lineWidth = 1;
-			var skip = true;
-
-			ctx_grid.beginPath();
-			for (var i = startX; i < $("#scene_map").width(); i = i + increment) {
-				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
-					skip = false;
-					continue;
-				}
-				else {
-					skip = true;
-				}
-				ctx_grid.moveTo(i, 0);
-				ctx_grid.lineTo(i, $("#scene_map").height());
-			}
-			ctx_grid.stroke();
-
-			var increment = window.CURRENT_SCENE_DATA.vpps;
-			skip = true;
-
-			ctx_grid.beginPath();
-			for (var i = startY; i < $("#scene_map").height(); i = i + increment) {
-				if (window.CURRENT_SCENE_DATA.grid_subdivided == "1" && skip) {
-					skip = false;
-					continue;
-				}
-				else {
-					skip = true;
-				}
-				ctx_grid.moveTo(0, i);
-				ctx_grid.lineTo($("#scene_map").width(), i);
-			}
-			ctx_grid.stroke();
+		if (window.CURRENT_SCENE_DATA.grid == "1" && !window.WIZARDING) {
+			redraw_grid()
 		}
 		//alert('sopravvissuto');
 	}
