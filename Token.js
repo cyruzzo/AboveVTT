@@ -414,7 +414,15 @@ class Token {
 			'max-height': tokenHeight + 'px',
 		});
 
-
+		if(!this.options.legacyaspectratio) {
+			if(token.children('img').width() >= token.children('img').height()) {
+				token.children('img').css("min-width", tokenWidth + 'px');
+			}
+			else {
+				token.children('img').css("min-height", tokenHeight + 'px');
+			}
+		}
+		
 		console.groupEnd()
 	}
 
