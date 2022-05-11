@@ -1576,7 +1576,6 @@ function place_token_at_map_point(tokenObject, x, y) {
 	window.MB.sendMessage('custom/myVTT/token', options);
 
 	
-	window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 	fetch_and_cache_scene_monster_items();
 	update_pc_token_rows();
 }

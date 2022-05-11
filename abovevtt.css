@@ -74,10 +74,7 @@ body > button:hover,
 }
 button.gamelog-to-everyone-button {
     background-color: rgb(255, 255, 255);
-    border-top: none;
-    border-right: 1px solid rgb(206, 217, 224);
-    border-bottom: 1px solid rgb(206, 217, 224);
-    border-left: 1px solid rgb(206, 217, 224);
+    border: 1px solid rgb(206, 217, 224);
     border-image: initial;
     border-radius: 0px 0px 4px 4px;
     padding: 4px 10px;
@@ -89,6 +86,13 @@ button.gamelog-to-everyone-button {
     line-height: 16px;
     letter-spacing: 0.4px;
     color: #5c7080;
+    cursor: pointer;
+    float:left;
+}
+button.gamelog-to-everyone-button:hover {
+    border: 1px solid rgb(152, 160, 164);
+    background-color: rgb(220, 219, 219);
+    color: #33404b;
 }
 
 .material-icons.md-10 { font-size: 10px; }
@@ -2641,6 +2645,12 @@ h5.token-image-modal-footer-title:after {
     white-space: nowrap;
 }
 
+.chat-text-wrapper.sidebar-hovertext:before{
+ bottom: 100px;
+ text-align: left;
+ white-space: pre;
+}
+
 .sidebar-hovertext:hover:before {
     opacity: 1;
     visibility: visible;
@@ -3664,5 +3674,5 @@ button.avtt-roll-button {
 
 @keyframes spin {
     0%  {-webkit-transform: rotate(0deg);}
-    100% {-webkit-transform: rotate(360deg);}   
+    100% {-webkit-transform: rotate(360deg);}
 }

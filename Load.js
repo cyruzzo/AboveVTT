@@ -20,7 +20,8 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 	"jquery.contextMenu.css",
 	"color-picker.min.css",
 	"spectrum-2.0.8.min.css",
-	"magnific-popup.css"
+	"magnific-popup.css",
+	"DiceContextMenu/DiceContextMenu.css"
 ].forEach(function(value, index, array) {
 	let l = document.createElement('link');
 	l.href = chrome.runtime.getURL(value);
@@ -68,10 +69,13 @@ let scripts = [
 	{ src: "StatHandler.js" },
 	{ src: "Token.js" },
 	{ src: "TokenMenu.js" },
+	{ src: "ChatObserver.js" },
+	{ src: "DiceContextMenu/DiceContextMenu.js" },
 	{ src: "TokensPanel.js" },
 	{ src: "built-in-tokens.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
+	{ src: "DiceRoller.js" },
 	{ src: "Main.js" }
 ]
 

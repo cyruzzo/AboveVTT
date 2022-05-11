@@ -1258,8 +1258,6 @@ function setup_draw_buttons() {
 			target.on('mousemove', data, drawing_mousemove);
 			target.on('contextmenu', data, drawing_contextmenu);
 
-			
-			//close_monster_stat_block(); don't close moster window on menu clicks
 		}
 	})
 	$('#select-button').click();

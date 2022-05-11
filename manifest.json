@@ -81,6 +81,9 @@
 		"built-in-tokens.js",
 		"mousetrap.1.6.5.min.js",
 		"KeypressHandler.js",
+		"DiceContextMenu/*",
+		"DiceRoller.js",
+		"ChatObserver.js",
 		"Main.js"
 	]
 }
