@@ -201,10 +201,10 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(combatButton);
 
-	
-		let hiddenMenuButton = $(`<button class="`+determine_hidden_classname(tokenIds) + `context-menu-icon-condition icon-invisible material-icons">Hide/Reveal Token</button>`)
 
-		hiddenMenuButton.off().on("click", function(tokenIds){
+		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
+		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
+		hiddenMenuButton.off().on("click", function(clickEvent){
 			let clickedItem = $(this);
 			let hideAll = clickedItem.hasClass("some-active");
 			tokens.forEach(token => {
@@ -218,7 +218,6 @@ function token_context_menu_expanded(tokenIds, e) {
 			clickedItem.removeClass("single-active all-active some-active active-condition");
 			clickedItem.addClass(determine_hidden_classname(tokenIds));
 		});
-
 		body.append(hiddenMenuButton);
 	}
 	
