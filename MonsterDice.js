@@ -36,7 +36,7 @@ function scan_monster(target, stats, tokenId) {
 	$(target).find(".mon-stat-block p").each(function() {
 		let currentElement = $(this)
 		if (currentElement.find(".avtt-roll-button").length == 0) {
-			$(currentElement).find("span").each(function (){
+                        $(currentElement).find("span[data-dicenotation]").each(function (){
 				console.log("this",$(this))
 				const modMatch = $(this).attr("data-dicenotation")?.match(/(\+|-).*/gm)
 				const modifier = (modMatch ? modMatch.shift() : "").replaceAll("(", "").replaceAll(")", "");
