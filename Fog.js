@@ -1043,7 +1043,8 @@ function drawing_mouseup(e) {
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				if($("#tokens>div[data-id='" + curr.options.id + "']").css("pointer-events")!="none" && $("#tokens>div[data-id='" + curr.options.id + "']").css("display")!="none") {
+				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
+				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
 				}
 			}
