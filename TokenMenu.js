@@ -1023,7 +1023,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 	
 
 	let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-	if(tokens.length == 1 && window.DM){
+	if(tokens.length === 1 && window.DM){
 		body.append(changeImageMenuButton)
 	}
 
@@ -1033,17 +1033,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 			return;
 		}
 		let tok = window.TOKEN_OBJECTS[id];
-		let monsterId = tokens[0].options.monster;
-		let name = tokens[0].options.name;
-		if (tok.isPlayer()) {
-			display_player_token_customization_modal(id, tok);
-		} else if (monsterId !== undefined) {
-			window.StatHandler.getStat(monsterId, function(stat) {
-				display_monster_customization_modal(tok, monsterId, name, stat.data.avatarUrl);
-			});
-		} else {
-			display_placed_token_customization_modal(tok);
-		}
+		display_change_image_modal(tok);
 	});
 
 	return body;
