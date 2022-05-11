@@ -171,15 +171,12 @@ function drop_aoe_token(color, shape, feet) {
     };
 
     if(window.DM){
-        place_token_in_center_of_map(atts);
+        place_token_in_center_of_view(atts);
     }
     else{
-        let centerX = $(window).scrollLeft() + Math.round(+$(window).width() / 2) - 200;
-        let centerY = $(window).scrollTop() + Math.round($(window).height() / 2) - 200;
-        centerX = Math.round(centerX * (1.0 / window.ZOOM));
-        centerY = Math.round(centerY * (1.0 / window.ZOOM));
-        atts.left = centerX;
-        atts.top = centerY;
+        let center = center_of_view();
+        atts.left = center.x;
+        atts.top = center.y;
         window.MB.sendMessage("custom/myVTT/createtoken",atts);
     }
 }

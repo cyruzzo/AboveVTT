@@ -103,6 +103,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     $("#fog_overlay").css("z-index", "20");
     $('#select-button').click();
     $("#tokenOptionsClickCloseDiv").click();
+    $(".draggable-token-creation").addClass("drag-cancelled");
 });
 
 

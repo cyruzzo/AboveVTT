@@ -239,10 +239,7 @@ function roll_our_dice(displayName, imgUrl, expression, modifier, damageType, dm
 		dmonly: dmOnly,
 	};
 	window.MB.inject_chat(data);
-	if (is_characters_page()) {
-		// TODO: there's gotta be a better way
-		notify_gamelog();
-	}
+	notify_gamelog();
 }
 
 function find_currently_open_character_sheet() {
@@ -449,4 +446,80 @@ function roll_button_clicked(clickEvent, displayName, imgUrl) {
 	let modifier = pressedButton.attr('data-mod');
 	let damageType = pressedButton.attr('data-rolldamagetype');
 	roll_our_dice(displayName, imgUrl, expression, modifier, damageType, false);
+}
+
+/** finds all HTML elements on a monster details page that should be rollable and wraps them in buttons that roll rpgDiceRoller dice
+ * @param target {jQuery} the jQuery element to search within. Should be the entire monster details page. For example: https://www.dndbeyond.com/monsters/17100-aarakocra
+ * @param displayName {string} the name that should be displayed in the gamelog when the user rolls this modifier
+ * @param creatureAvatar {string} the url of the image that should be displayed in the gamelog when the user rolls this modifier */
+function scan_creature_pane(target, displayName, creatureAvatar) {
+	console.group("scan_creature_pane")
+
+	// replace ability scores modifiers
+	target.find(".mon-stat-block .mon-stat-block__stat-block .ability-block .ability-block__modifier").each(function() {
+		replace_modifiers($(this));
+	});
+
+	// replace saving throws, skills, etc
+	target.find(".mon-stat-block__tidbits .mon-stat-block__tidbit-data").each(function() {
+		replace_stat_block_tidbits($(this));
+	});
+
+	// replace all "to hit" and "damage" rolls
+	target.find(".mon-stat-block p").each(function() {
+		replace_stat_block_description($(this));
+	});
+
+	target.find(".avtt-roll-button").on("click", function(clickEvent) {
+		roll_button_clicked(clickEvent, displayName, creatureAvatar)
+	});
+
+	// temporarily disabled until a new context menu can be built that works on the monster details page
+	// target.find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+	// 	roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar);
+	// });
+
+	console.groupEnd()
+}
+
+/** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
+ * @param currentElement {jQuery} the jQuery element that contains modifiers HTML */
+function replace_modifiers(currentElement) {
+	if (currentElement.find(".avtt-roll-button").length === 0) {
+		let innerHtml = currentElement.html();
+		let foundModifiers = innerHtml.match(/([\+\-] ?[0-9][0-9]?)/g);
+		if (foundModifiers.length > 0) {
+			let mod = foundModifiers[0];
+			let button = $(`<button data-exp='1d20' data-mod='${mod}' data-rolltype='tohit' class='avtt-roll-button'>${innerHtml}</button>`);
+			currentElement.html(button);
+		}
+	}
+}
+
+/** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
+ * @param currentElement {jQuery} the jQuery element that contains modifiers HTML */
+function replace_stat_block_tidbits(currentElement) {
+	if (currentElement.find(".avtt-roll-button").length === 0) {
+		let updated = currentElement.html()
+			.replaceAll(/([\+\-] ?[0-9][0-9]?)/g, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>");
+		currentElement.html(updated);
+	}
+}
+
+/** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
+ * @param currentElement {jQuery} the jQuery element that contains modifiers HTML */
+function replace_stat_block_description(currentElement) {
+	if (currentElement.find(".avtt-roll-button").length === 0) {
+		// apply most specific regex first matching all possible ways to write a dice notation
+		// to account for all the nuances of DNDB dice notation.
+		// numbers can be swapped for any number in the following comment
+		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
+		const damageRollRegex = /([0-9]+d[0-9]+\s?([\+-]\s?[0-9]+)?)/g
+		// matches " +1 " or " + 1 "
+		const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
+		let updated = currentElement.html()
+			.replaceAll(damageRollRegex, "<button data-exp='$1' data-mod='' data-rolltype='damage' class='avtt-roll-button'>$1</button>")
+			.replaceAll(hitRollRegex, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>")
+		currentElement.html(updated);
+	}
 }
