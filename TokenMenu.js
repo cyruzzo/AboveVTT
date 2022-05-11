@@ -163,8 +163,8 @@ function token_context_menu_expanded(tokenIds, e) {
 		} else if (token.isMonster()) {
 			let button = $(`<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
-				open_monster_stat_block_with_id(token.options.monster, token.options.id);
 				load_monster_stat(token.options.monster, token.options.id);
+				$("#tokenOptionsClickCloseDiv").click();
 			});
 			if(token.options.player_owned || window.DM){
 				body.append(button);
