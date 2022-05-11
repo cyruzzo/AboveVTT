@@ -754,10 +754,10 @@ function build_sidebar_list_row(listItem) {
 
   if (!listItem.isTypeFolder()) {
     let addButton = $(`
-            <button class="token-row-button token-row-add" title="${listItem.name}">
-                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
-            </button>
-        `);
+        <button class="token-row-button token-row-add" title="Add Token to Scene">
+            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
+        </button>
+    `);
     rowItem.append(addButton);
     addButton.on("click", did_click_add_button);
   }
@@ -774,7 +774,7 @@ function build_sidebar_list_row(listItem) {
       }
       if (listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
         // add buttons for creating subfolders and tokens
-        let addFolder = $(`<button class="token-row-button"><span class="material-icons">create_new_folder</span></button>`);
+        let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
         rowItem.append(addFolder);
         addFolder.on("click", function(clickEvent) {
           clickEvent.stopPropagation();
@@ -782,7 +782,7 @@ function build_sidebar_list_row(listItem) {
           let clickedItem = find_sidebar_list_item(clickedRow);
           create_folder_inside(clickedItem);
         });
-        let addToken = $(`<button class="token-row-button"><span class="material-icons">person_add_alt_1</span></button>`);
+        let addToken = $(`<button class="token-row-button" title="Create New Token"><span class="material-icons">person_add_alt_1</span></button>`);
         rowItem.append(addToken);
         addToken.on("click", function(clickEvent) {
           let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
@@ -791,7 +791,7 @@ function build_sidebar_list_row(listItem) {
         });
       } else if (listItem.fullPath() === SidebarListItem.PathMonsters) {
         // add monster filter button on the root monsters folder
-        let filterMonsters = $(`<button class="token-row-button monster-filter-button"><span class="material-icons">filter_alt</span></button>`);
+        let filterMonsters = $(`<button class="token-row-button monster-filter-button" title="Filter Monsters"><span class="material-icons">filter_alt</span></button>`);
         if (Object.keys(monster_search_filters).length > 0) {
           filterMonsters.css("color", "#1b9af0");
         } else {
@@ -865,9 +865,9 @@ function build_sidebar_list_row(listItem) {
 
       subtitle.text("");
       subtitle.show();
-      subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">visibility</span><span class="pp-value">${playerData.pp}</span></div>`);
-      subtitle.append(`<div class="subtitle-attibute"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
-      subtitle.append(`<div class="subtitle-attibute inspiration"><img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration"  alt="inspiration"/></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="material-icons">visibility</span><span class="pp-value">${playerData.pp}</span></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Speed"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
+      subtitle.append(`<div class="subtitle-attibute inspiration" title="Player Has Inspiration"><img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration"  alt="inspiration"/></div>`);
       if (playerData.inspiration) {
         subtitle.find(".inspiration").show();
       } else {
@@ -877,10 +877,10 @@ function build_sidebar_list_row(listItem) {
       row.find(".token-row-add").append(`<span class="material-icons">place</span>`);
 
       let whisperButton = $(`
-                <button class="token-row-button token-row-whisper" title="${listItem.name}">
-                    <span class="material-icons">spatial_audio</span>
-                </button>
-            `);
+          <button class="token-row-button token-row-whisper" title="Whisper to this player">
+              <span class="material-icons">spatial_audio</span>
+          </button>
+      `);
       row.find(".token-row-add").before(whisperButton);
       whisperButton.on("click", function(clickEvent) {
         clickEvent.stopPropagation();
@@ -920,10 +920,10 @@ function build_sidebar_list_row(listItem) {
 
   if (listItem.canEdit() || listItem.isTypeBuiltinToken()) { // can't edit builtin, but need access to the list of images for drag and drop reasons.
     let settingsButton = $(`
-            <div class="token-row-gear">
-                <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
-            </div>
-    	`);
+        <div class="token-row-gear" title="configure">
+            <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
+        </div>
+    `);
     rowItem.append(settingsButton);
     settingsButton.on("click", did_click_row_gear);
   }
