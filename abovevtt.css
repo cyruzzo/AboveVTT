@@ -6,7 +6,7 @@ body > button,
 #addscene,
 .scene button,
 #combat_tracker_inside button,
-#edit_dialog button,
+#edit_dialog button:not(.rc-switch),
 #mega_importer button,
 #prewiz td button,
 #wizard_popup button,
@@ -49,7 +49,7 @@ body > button:hover,
 #addscene:hover,
 .scene button:hover,
 #combat_tracker_inside button:hover,
-#edit_dialog button:hover,
+#edit_dialog button:not(.rc-switch):hover,
 #mega_importer button:hover,
 #prewiz td button:hover,
 #wizard_popup button:hover,
@@ -2409,10 +2409,12 @@ h5.token-image-modal-footer-title:after {
     background-color: #ccc;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+    background-image: none !important;
 }
 .rc-switch-checked {
     border: 1px solid #1b9af0;
     background-color: #1b9af0;
+    background-image: none !important;
 }
 .rc-switch-checked:after {
     left: 22px;
@@ -2431,6 +2433,7 @@ h5.token-image-modal-footer-title:after {
     top: 1px;
     border-radius: 50% 50%;
     background-color: #fff;
+    background-image: none !important;
     content: " ";
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.26);
@@ -2466,6 +2469,7 @@ h5.token-image-modal-footer-title:after {
     transform: scale(1.1);
     -webkit-animation-name: rcSwitchOn;
     animation-name: rcSwitchOn;
+    background-image: none !important;
 }
 
 .sidebar-hovertext:before {
@@ -2488,6 +2492,12 @@ h5.token-image-modal-footer-title:after {
     left: 5%;
     margin-top: 30px;
     width: 90%;
+}
+
+#edit_scene_form .sidebar-hovertext:before,
+#edit_scene_form .sidebar-hovertext:hover:before{
+    width: fit-content;
+    white-space: nowrap;
 }
 
 .chat-text-wrapper.sidebar-hovertext:before{
@@ -3198,4 +3208,28 @@ button.avtt-roll-button {
 @keyframes shake {
     0% { left: -1px; }
     100% { right: -1px; }
+}
+
+.url-validator {
+    position: absolute;
+    top: -2px;
+    left: -24px;
+}
+
+.url-validator.invalid {
+    color: red;
+}
+
+.url-validator.valid {
+    color: green;
+}
+
+.url-validator.loading {
+    color:blue;
+    animation: spin 4s infinite linear;
+}
+
+@keyframes spin {
+    0%  {-webkit-transform: rotate(0deg);}
+    100% {-webkit-transform: rotate(360deg);}
 }
