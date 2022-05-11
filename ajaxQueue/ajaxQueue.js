@@ -8,15 +8,15 @@
 */
 
 import $ from "./jquery.module.js";
-var queue = [];
-var currentRequest = null;
-var stopped = false;
+let queue = [];
+let currentRequest = null;
+let stopped = false;
 
 class AjaxQueueTask {
   constructor(options, requestComplete) {
     this.options = options || {};
-    var oldComplete = options.complete || function () { };
-    var completeCallback = function (XMLHttpRequest, textStatus) {
+    let oldComplete = options.complete || function () { };
+    let completeCallback = function (XMLHttpRequest, textStatus) {
       (function () {
         oldComplete(XMLHttpRequest, textStatus);
       })();
@@ -27,7 +27,25 @@ class AjaxQueueTask {
   }
 
   perform() {
-    $.ajax(this.options);
+    if (this.options.getCobaltToken) {
+      delete this.options.getCobaltToken;
+      let self = this;
+      get_cobalt_token(function (token) {
+        let previousBeforeSend = self.options.beforeSend;
+        self.options.beforeSend = function (xhr) {
+          if (previousBeforeSend) {
+            previousBeforeSend(xhr);
+          }
+          xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        };
+        self.options.xhrFields = {
+          withCredentials: true
+        };
+        $.ajax(self.options);
+      })
+    } else {
+      $.ajax(this.options);
+    }
   }
 }
 
@@ -55,10 +73,13 @@ class AjaxQueue {
   addRequest(options) {
     //When the task is complete, it needs to tell the AjaxQueue so we can run the next task
     const requestComplete = () => { this.requestComplete() };
-    var request = new AjaxQueueTask(options, requestComplete);
-
-    queue.push(request);
+    queue.push(new AjaxQueueTask(options, requestComplete));
     this.startNextRequest();
+  }
+
+  addDDBRequest(options) {
+    options.getCobaltToken = true;
+    this.addRequest(options);
   }
 
   requestComplete() {
@@ -72,7 +93,7 @@ class AjaxQueue {
       return false;
     }
 
-    var request = queue.shift();
+    let request = queue.shift();
     if (request) {
       currentRequest = request;
       request.perform();

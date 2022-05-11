@@ -209,7 +209,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				callback();
 
 			if (window.EncounterHandler !== undefined) {
-				// this will call fetch_and_cache_scene_monster_items(true); once PR 394 is merged
+				fetch_and_cache_scene_monster_items(true);
 			} else {
 				console.log("Not updating avtt encounter");
 			}

@@ -398,9 +398,9 @@ class MessageBroker {
 					let left = parseInt(msg.data.left);
 					let top = parseInt(msg.data.top);
 					if (!isNaN(top) && !isNaN(left)) {
-						place_token_at_point(msg.data, left, top);
+						place_token_at_map_point(msg.data, left, top);
 					} else {
-						place_token_in_center_of_map(msg.data);
+						place_token_in_center_of_view(msg.data);
 					}
 				}
 			}
@@ -1056,7 +1056,7 @@ class MessageBroker {
 			}
 
 			if (window.EncounterHandler !== undefined) {
-				// this will call fetch_and_cache_scene_monster_items(true); once PR 394 is merged
+				fetch_and_cache_scene_monster_items(true);
 			}
 			console.groupEnd()
 		});
@@ -1097,7 +1097,7 @@ class MessageBroker {
 			$("#combat_area").empty();
 			ct_load();
 		}
-		console.groupEnd()
+		// console.groupEnd()
 	}
 
 	handleSyncMeUp(msg) {

@@ -59,7 +59,6 @@ let scripts = [
 	{ src: "KeypressHandler.js" },
 	{ src: "MessageBroker.js" },
 	{ src: "MonsterDice.js" },
-	{ src: "MonsterPanel.js" },
 	{ src: "PlayerPanel.js" },
 	{ src: "SceneData.js" },
 	{ src: "ScenesHandler.js" },
@@ -72,6 +71,8 @@ let scripts = [
 	{ src: "TokenMenu.js" },
 	{ src: "ChatObserver.js" },
 	{ src: "DiceContextMenu/DiceContextMenu.js" },
+	{ src: "TokensPanel.js" },
+	{ src: "built-in-tokens.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
@@ -91,9 +92,9 @@ function injectScript() {
 	if (nextScript.type !== undefined) {
 		s.setAttribute('type', nextScript.type);
 	}
-	console.log(`attempting to append ${nextScript}`);
+	console.log(`attempting to append ${nextScript.src}`);
 	s.onload = function() {
-		console.log(`finished injecting ${nextScript}`);
+		console.log(`finished injecting ${nextScript.src}`);
 		injectScript();
 	};
 	(document.head || document.documentElement).appendChild(s);
