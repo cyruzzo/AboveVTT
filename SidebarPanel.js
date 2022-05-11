@@ -624,7 +624,7 @@ function find_sidebar_list_item_from_path(fullPath) {
     foundItem = window.monsterListItems.find(item => item.fullPath() === fullPath);
   }
   if (foundItem === undefined) {
-    foundItem = cached_monster_items.find(item => item.fullPath() === fullPath);
+    foundItem = Object.values(cached_monster_items).find(item => item.fullPath() === fullPath);
   }
   if (foundItem === undefined) {
     console.warn(`find_sidebar_list_item found nothing at path: ${fullPath}`);
