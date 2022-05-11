@@ -1495,7 +1495,6 @@ function place_token_at_map_point(tokenObject, x, y) {
 	window.MB.sendMessage('custom/myVTT/token', options);
 
 	
-	window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
 	fetch_and_cache_scene_monster_items();
 	update_pc_token_rows();
 }
@@ -1509,12 +1508,7 @@ function array_remove_index_by_value(arr, item) {
 function menu_callback(key, options, event) {
 	if (key == "view") {
 		if (typeof $(this).attr('data-monster') !== "undefined") {
-			if (encounter_builder_dice_supported()) {
-				console.log(`attempting to open monster stat block with monsterId ${$(this).attr('data-monster')} and tokenId ${$(this).attr('data-id')}`);
-				open_monster_stat_block_with_id($(this).attr('data-monster'), $(this).attr('data-id'));
-			} else {
-				load_monster_stat($(this).attr('data-monster'), token_id=$(this).attr('data-id'));	
-			}
+			load_monster_stat($(this).attr('data-monster'), $(this).attr('data-id'));
 		}
 		else {
 			//load_frame($(this).attr('data-id'));

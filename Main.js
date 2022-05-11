@@ -443,27 +443,22 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function load_monster_stat(monsterid, token_id=false) {
-	token_id=false; // DISABLE HAVING AN IFRAME FOR EACH TOKEN NPC. WE GO BACK TO USING A SINGLE IFRAME FOR EACH MONSTER TYPE
-	$(".monster_frame").hide();
+function load_monster_stat(monsterid, token_id) {
 	
-	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
-	console.log(iframe_id)
-	console.log(token_id)
-
-	if ($("#" + iframe_id).length > 0) {
-		// RENDI VISIBILE
-		oldframe = $("#" + iframe_id);
-		oldframe.show();
-		oldframe.animate({
-			left: '220px'
-		}, 500);
-		return;
+	console.group("load_monster_stat")
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+	// const loadingSpinner = create_monster_loading_spinner()
+	monFrame = $("#resizeDragMon iframe")
+	// check if the monster pane is not open
+	if (! $("#resizeDragMon").length) {
+		$("body").append(draggable_resizable_div)
+		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
+		draggable_resizable_div.show("slow")
 	}
 
 	let container = $("<div id='resizeDragMon'/>");
 
-	if(!window.DM && $("#site #resizeDragMon").length>0){
+	if($("#site #resizeDragMon").length>0){
 		$("#resizeDragMon iframe").remove();
 		$("#resizeDragMon").removeClass("hideMon");
 		container = $("#resizeDragMon");
@@ -471,15 +466,11 @@ function load_monster_stat(monsterid, token_id=false) {
 	container.resize(function(e) {
         	e.stopPropagation();
    	});
-	//container.css("width","900px");
 	let iframe = $("<iframe>");
-    // UGUALE A COMBAT TRACKER INSIDE
-	//iframe.css("transform","scale(0.75)");
 
 	iframe.css("display", "none");
 	
 	window.StatHandler.getStat(monsterid, function(stats) {
-
 		iframe.on("load", function(event) {
 			console.log('carico mostro');
 			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
@@ -490,7 +481,6 @@ function load_monster_stat(monsterid, token_id=false) {
 			$(event.target).contents().find("header").hide();
 			$(event.target).contents().find("#site-main").css("padding", "0px");
 			$(event.target).contents().find("#footer").remove();
-			iframe.css("display", "block");
 			let img = $(event.target).contents().find(".detail-content").find(".image");
 			let statblock = $(event.target).contents().find(".mon-stat-block");
 			if (img.length == 1) {
@@ -512,71 +502,70 @@ function load_monster_stat(monsterid, token_id=false) {
 			}
 
 
-			scan_monster($(event.target).contents(), stats, token_id=token_id);
+			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
+			$(".sidebar-panel-loading-indicator").hide()
+			iframe.fadeIn("slow")
+			console.groupEnd()
 		});
 
-		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
+		iframe.attr('src', stats.data.url)
 	})
 	container.append(iframe);
 	if(!$("#site #resizeDragMon").length>0){
 		$("#site").prepend(container);
 	}
 
-   if(!window.DM) {
-   		
-   		/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
-		$("#resizeDragMon").append(monster_close_title_button);
-		monster_close_title_button.click(function() {
-			close_player_monster_stat_block()
-		});
-		$("#resizeDragMon").addClass("moveableWindow");
-		if(!$("#resizeDragMon").hasClass("minimized")){
-			$("#resizeDragMon").addClass("restored"); 
-		}
-		else{
-			$("#resizeDragMon").dblclick();
-		}
-		$("#resizeDragMon").resizable({
-			addClasses: false,
-			handles: "all",
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			},
-			minWidth: 200,
-			minHeight: 200
-		});
-
-		$("#resizeDragMon").mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
-		$("#resizeDragMon").draggable({
-			addClasses: false,
-			scroll: false,
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			}
-		});
-		minimize_player_monster_window_double_click($("#resizeDragMon"));
+	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	$("#resizeDragMon").append(monster_close_title_button);
+	monster_close_title_button.click(function() {
+		close_player_monster_stat_block()
+	});
+	$("#resizeDragMon").addClass("moveableWindow");
+	if(!$("#resizeDragMon").hasClass("minimized")){
+		$("#resizeDragMon").addClass("restored");
 	}
+	else{
+		$("#resizeDragMon").dblclick();
+	}
+	$("#resizeDragMon").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 200,
+		minHeight: 200
+	});
+
+	$("#resizeDragMon").mousedown(function(){
+		frame_z_index_when_click($(this));
+	});
+	$("#resizeDragMon").draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	minimize_player_monster_window_double_click($("#resizeDragMon"));
 }
+
 function close_player_monster_stat_block() {
 	$("#resizeDragMon.minimized").dblclick();
-	console.debug("close_monster_stat_block is closing the stat block")
+	console.debug("close_player_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
-	// hide and update all monster blocks that we find. Even if we're currently loading one.
-	console.group("close_monster_stat_block");
 }
 
 function minimize_player_monster_window_double_click(titleBar){
@@ -1636,6 +1625,7 @@ function init_above(){
 		}
 	}
 	)
+
 }
 
 function init_things() {
@@ -1678,30 +1668,7 @@ function init_things() {
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
 				$("div.dice-toolbar").css({"bottom": "35px"});
-				// for some reason the gamelog "send to (default)" breaks. The following sequence fixes it
-				$(".sidebar button.MuiButtonBase-root").click();
-				$(".MuiPopover-root").css({"display": "block", "visibility": "visible"});
-				$(".MuiPopover-root .MuiPaper-root").css({"display": "block", "visibility": "visible"});
-				let list = $(".MuiPopover-root .MuiPaper-root .MuiMenu-list");
-				let selected = list.attr("tabindex");
-				list.find(`li[tabindex=${selected}]`).click();
-				list.find(`li`).click(function (clickEvent) {
-					let selectedOption = $(clickEvent.currentTarget).attr("tabindex");
-					let optionList = window.EncounterHandler.combat_body.find(`.MuiPopover-root .MuiPaper-root .MuiMenu-list`);
-					let optionToSelect = optionList.find(`li[tabindex=${selectedOption}]`);
-					optionToSelect.click();
-				});
-
 				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-				init_enounter_combat_tracker_iframe();
-
-				// if the user changes `Send To (Default)` for dice rolls, make sure we synchronize the monster stat blocks as well
-				$(".sidebar .MuiButtonBase-root.MuiButton-root").on("DOMSubtreeModified", ".MuiButton-label", function(event) {
-					let text = event.target.textContent;
-					if (text == "Self" || text == "Everyone") {
-						sync_send_to_default();
-					}
-				});
 			}
 			
 			init_scene_selector();
@@ -1725,8 +1692,8 @@ function init_things() {
 		init_ui();
 		init_splash();
 	}
+
 	$("#site").append("<div id='windowContainment'></div>");
-		
 }
 
 /// this is used when initializing on the character page. DDB loads the page in an async modular fashion. We use this to determine if we need to call other initialization functions during this process
@@ -1920,7 +1887,18 @@ function inject_chat_buttons() {
 		return;
 	}
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
+	// the text has to be up against the left for it to style correctly
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;\
+'/r 1d20'&#xa;\
+'/roll 1d4 punch:damage'&#xa;\
+'/hit 2d20kh1+2 longsword ADV'&#xa;\
+'/dmg 1d8-2 longsword'&#xa;\
+'/save 2d20kl1 DEX DISADV'&#xa;\
+'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;\
+Advantage: 2d20kh1 (keep highest)&#xa;\
+Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;\
+'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
+
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
 			<div>
@@ -2083,78 +2061,10 @@ function inject_chat_buttons() {
 		});
 	}
 
-	$("#chat-text").on('keypress', function(e) {
-		if (e.keyCode == 13) {
-			var dmonly=false;
-			var whisper=null;
-			e.preventDefault();
-			text = $("#chat-text").val();
-			$("#chat-text").val("");
-
-			if(text.startsWith("/roll")) {
-				dmonly = window.DM;
-				expression = text.substring(6);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-			}
-
-			if(text.startsWith("/r ")) {
-				dmonly = window.DM;
-				expression = text.substring(3);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-			}
-
-			if(text.startsWith("/dmroll")) {
-				expression = text.substring(8);
-				// TODO: send_rpg_dice_to_ddb doesn't currently handle rolls to self or to dm
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-				dmonly=true;
-			}
-
-			if(text.startsWith("/whisper")) {
-				let matches = text.match(/\[(.*?)\] (.*)/);
-				console.log(matches);
-				whisper=matches[1]
-				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
-			}
-
-			data = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: text,
-				dmonly: dmonly,
-			};
-			if(validateUrl(text)){
-
-				data.text = `
-					<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>
-					<img width=200 class='magnify' href='${parse_img(text)}' src='${parse_img(text)}' alt='Chat Image' style='display: none'/>
-				`
-			} else {
-				data = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<div class="custom-gamelog-message">${text}</div>`,
-					dmonly: dmonly,
-				};
-			}
-			if(whisper)
-				data.whisper=whisper;
-
-			window.MB.inject_chat(data);
-		}
-
-	});
+	if (window.chatObserver === undefined) {
+		window.chatObserver = new ChatObserver();
+	}
+	window.chatObserver.observe($("#chat-text"));
 
 	$(".GameLog_GameLog__2z_HZ").scroll(function() {
 		if ($(this).scrollTop() >= 0) {
@@ -2179,10 +2089,7 @@ function init_ui() {
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
-	if (!is_characters_page()) {
-		$("#site").children().hide();
-		$("#loading_overlay").show();
-	} else {
+	if (is_characters_page()) {
 		reposition_player_sheet();
 	}
 	$(".sidebar__controls").width(340);
@@ -2288,10 +2195,6 @@ function init_ui() {
 	wrapper.width(window.width);
 	wrapper.height(window.height);
 
-
-
-
-
 	wrapper.append(VTT);
 	$("body").append(wrapper);
 
@@ -2322,6 +2225,7 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
+	init_my_dice_details()
 	if(window.DM)
 	{
 		init_player_sheets();
@@ -2456,6 +2360,14 @@ function init_ui() {
 
 	init_help_menu();
 
+	$("ol.tss-jmihpx-GameLogEntries").on("DOMNodeInserted", function(addedEvent) {
+		let injectedElement = $(addedEvent.target);
+		if (injectedElement.hasClass("tss-1wcf5kt-Line-Notation") || injectedElement.hasClass("tss-16k6xf2-Line-Breakdown")) {
+			let gamelogItem = injectedElement.closest("li");
+			replace_gamelog_message_expressions(gamelogItem);
+		}
+	});
+
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
 		let old=$("[src*=mega-menu]:nth-of-type(2)");
@@ -2470,6 +2382,7 @@ function init_ui() {
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
 	}
+
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
@@ -3130,6 +3043,25 @@ function init_help_menu() {
 	});
 }
 
+function init_my_dice_details(){
+	get_cobalt_token(function (token) {
+		window.ajaxQueue.addRequest({
+			type: 'GET',
+			url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json', // added data type
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function(res) {
+				window.mydice = res
+			}
+    	});
+	});
+}
 /**
  * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
  * If the conversion is successful, it will be sent over the websocket, and this will return true.
@@ -3138,8 +3070,26 @@ function init_help_menu() {
  * @param {Boolean} toSelf    whether this is sent to self or everyone
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
-function send_rpg_dice_to_ddb(expression, toSelf = true) {
-	return false;
+// send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
+function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", damageType, actionType="custom", sendTo="everyone") {
+
+	let diceRoll = new DiceRoll(expression);
+	diceRoll.action = actionType;
+	diceRoll.rollType = rollType;
+	diceRoll.name = displayName;
+	diceRoll.avatarUrl = imgUrl;
+	// diceRoll.entityId = monster.id;
+	// diceRoll.entityType = monsterData.id;
+
+	if (window.diceRoller.roll(diceRoll)) {
+		console.log("send_rpg_dice_to_ddb rolled via diceRoller");
+		return true;
+	}
+
+	console.group("send_rpg_dice_to_ddb")
+	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
+
+
 	try {
 		expression = expression.replace(/\s+/g, ''); // remove all whitespace
 
@@ -3160,10 +3110,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				choppedExpression = choppedExpression.slice(idx + currentRoll.length);
 			}
 		}
+		console.log("chopped expression", choppedExpression)
 		notationList.push(choppedExpression); // our last notation will still be here so add it to the list
 
 		if (roll.rolls.length != notationList.length) {
 			console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
+			console.groupEnd()
 			return false;
 		}
 
@@ -3178,6 +3130,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
 				if (!supportedDieTypes.includes(currentDieType)) {
 					console.warn(`found an unsupported dieType ${currentNotation}`);
+					console.groupEnd()
 					return false;
 				}
 				if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
@@ -3192,6 +3145,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 				let dice = currentRoll.rolls.map(d => {
 					allValues.push(d.value);
+					console.groupEnd()
 					return { dieType: currentDieType, dieValue: d.value };
 				});
 
@@ -3212,6 +3166,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 						constantsTotal += currentRoll;
 					} else {
 						console.warn(`found an unexpected symbol ${convertedExpression[i-1]}`);
+						console.groupEnd()
 						return false;
 					}
 				} else {
@@ -3219,7 +3174,6 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 			}
 		}
-
 		let ddbJson = {
 			id: uuid(),
 			dateTime: `${Date.now()}`,
@@ -3227,18 +3181,21 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 			userId: window.MB.userid,
 			source: "web",
 			persist: true,
-			messageScope: toSelf ? "userId" : "gameId",
-			messageTarget: toSelf ? window.MB.userid : window.MB.gameid,
+			messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+			messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
 			entityId: window.MB.userid,
 			entityType: "user",
 			eventType: "dice/roll/fulfilled",
 			data: {
-				action: "custom",
+				action: actionType,
+				setId: window.mydice.data.setId,
 				context: {
 					entityId: window.MB.userid,
 					entityType: "user",
-					messageScope: "userId",
-					messageTarget: window.MB.userid
+					messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+					messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
+					name: displayName,
+					avatarUrl: imgUrl
 				},
 				rollId: uuid(),
 				rolls: [
@@ -3248,7 +3205,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 							constant: constantsTotal
 						},
 						diceNotationStr: expression,
-						rollType: "roll",
+						rollType: rollType,
 						rollKind: expression.includes("kh") ? "advantage" : expression.includes("kl") ? "disadvantage" : "",
 						result: {
 							constant: constantsTotal,
@@ -3260,9 +3217,9 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				]
 			}
 		};
-
 		if (window.MB.ws.readyState == window.MB.ws.OPEN) {
 			window.MB.ws.send(JSON.stringify(ddbJson));
+			console.groupEnd()
 			return true;
 		} else { // TRY TO RECOVER
 			get_cobalt_token(function(token) {
@@ -3271,10 +3228,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 					window.MB.ws.send(JSON.stringify(ddbJson));
 				});
 			});
+			console.groupEnd()
 			return true; // we can't guarantee that this actually worked, unfortunately
 		}
 	} catch (error) {
 		console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
+		console.groupEnd()
 		return false;
 	}
 }
