@@ -542,8 +542,10 @@ function update_pc_token_rows() {
         let row = find_html_row(listItem, tokensPanel.body);
         if (listItem.sheet in window.TOKEN_OBJECTS) {
             row.addClass("on-scene");
+            row.find("button.token-row-add").attr("title", `Locate Token on Scene`);
         } else {
             row.removeClass("on-scene");
+            row.find("button.token-row-add").attr("title", `Add Token to Scene`);
         }
 
         let playerData = window.PLAYER_STATS[listItem.sheet];
