@@ -55,12 +55,21 @@ class DiceRoll {
     #diceRollType; // "To Hit", "Damage", etc. defaults to "roll"
     get rollType() { return this.#diceRollType }
     set rollType(newRollType) {
-        let alteredRollType = newRollType.trim().toLowerCase().replace("-", " ");
-        const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
-        if (validRollTypes.includes(alteredRollType)) {
-            this.#diceRollType = alteredRollType;
-        } else {
-            console.warn(`not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
+        if (typeof newRollType !== "string") {
+            this.#diceRollType = undefined;
+            return;
+        }
+        try {
+            let alteredRollType = newRollType.trim().toLowerCase().replace("-", " ");
+            const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
+            if (validRollTypes.includes(alteredRollType)) {
+                this.#diceRollType = alteredRollType;
+            } else {
+                console.warn(`not setting rollType. Expected one of ${JSON.stringify(validRollTypes)}, but received "${newRollType}"`);
+            }
+        } catch (error) {
+            console.warn("DiceRoll set rollType failed", error);
+            this.#diceRollType = undefined;
         }
     }
 
@@ -69,6 +78,17 @@ class DiceRoll {
 
     entityType; // "character", "monster", etc
     entityId;   // the id of the character, monster, etc
+
+    #sendTo;     // "Self", "Everyone", undefined.
+    get sendToOverride() { return this.#sendTo }
+    set sendToOverride(newValue) {
+        if (["Self", "Everyone", "DungeonMaster"].includes(newValue)) {
+            this.#sendTo = newValue;
+        } else {
+            this.#sendTo = undefined;
+        }
+    }
+
 
     // DDB parses the object after we give it back to them.
     // expressions that are more complex tend to have incorrect expressions displayed because DDB handles that.
@@ -114,8 +134,9 @@ class DiceRoll {
      * @param avatarUrl {string|undefined} the url for the image to be displayed in the gamelog. This is displayed to the left of the roll box in the gamelog. The character sheet defaults to the PC.avatar, the encounters page defaults to ""
      * @param entityType {string|undefined} the type of entity associated with this roll. EG: "character", "monster", "user" etc. Generic rolls from the character sheet defaults to "character", generic rolls from the encounters page defaults to "user"
      * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
+     * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
      */
-    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
+    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
 
         let parsedExpression = expression.replaceAll(/\s+/g, ""); // remove all spaces
         if (!parsedExpression.match(validExpressionRegex)) {
@@ -133,8 +154,9 @@ class DiceRoll {
         this.#fullExpression = parsedExpression;
         this.#individualDiceExpressions = separateDiceExpressions;
 
-        if (action) this.action = action;
-        if (rollType) this.rollType = rollType;
+        this.action = action;
+        this.rollType = rollType;
+        this.sendToOverride = sendToOverride;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
         if (entityType) this.entityType = entityType;
@@ -278,10 +300,22 @@ class DiceRoller {
         }
 
         if ($(".dice-toolbar").hasClass("rollable")) {
-            let theirRollButton = $(".dice-toolbar__target").children().first();
-            if (theirRollButton.length > 0) {
-                // we found a DDB dice roll button. Click it and move on
-                theirRollButton.click();
+            console.log("diceRoll.sendToOverride", diceRoll.sendToOverride)
+            if (diceRoll.sendToOverride === "Everyone") {
+                // expand the options and click the "Everyone" button
+                $(".dice-toolbar__target-menu-button").click();
+                $("#options-menu ul > li > ul > div").eq(0).click();
+            } else if (diceRoll.sendToOverride === "Self") {
+                // expand the options and click the "Self" button
+                $(".dice-toolbar__target-menu-button").click();
+                $("#options-menu ul > li > ul > div").eq(1).click();
+            } else if (diceRoll.sendToOverride === "DungeonMaster") {
+                // expand the options and click the "Self" button
+                $(".dice-toolbar__target-menu-button").click();
+                $("#options-menu ul > li > ul > div").eq(2).click();
+            } else {
+                // click the roll button which will use whatever the gamelog is set to roll to
+                $(".dice-toolbar__target").children().first().click();
             }
         }
     }
