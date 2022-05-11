@@ -295,15 +295,22 @@ function check_token_visibility() {
 		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
 		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-
+		auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
+		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 		if (pixeldata[3] == 255) {
 			$(selector).hide();
+			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
+			{
+					$(auraSelector).hide();
+			}			
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).show();
+			$(auraSelector).show();
 			//console.log('SHOW '+id);
 		}
+		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 	}
 }
 

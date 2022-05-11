@@ -1023,6 +1023,7 @@ class MessageBroker {
 		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
+		$(".aura-element[id^='aura_'").remove();
 
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);

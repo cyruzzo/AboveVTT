@@ -311,10 +311,14 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			entry.append($("<td/>").append(hp));
 		else
 			entry.append($("<td/>"))
-		max_hp=$("<div/>");
+		max_hp=$("<div class='max_hp'/>");
 		max_hp.text("/"+token.options.max_hp);
 		max_hp.css('font-size','11px');
 		//max_hp.css('width','20px');
+		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
+			hp.css('visibility', 'hidden');
+			max_hp.css('visibility', 'hidden');
+		}
 		if(window.DM || !(token.options.monster > 0) )
 			entry.append($("<td/>").append(max_hp));
 		else
@@ -473,8 +477,8 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
+	token.options.combat = false;
 	if (persist == true) {
-		token.options.combat = false;
 		token.sync();
 		if (token.persist != null) token.persist();
 	}
