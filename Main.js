@@ -515,7 +515,7 @@ function load_monster_stat(monsterid, token_id) {
 		$("#site").prepend(container);
 	}
 
-	$(iframe).on("load", function(){
+	$(iframe).on("load", function(event){
 		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
 		$("head", $("#resizeDragMon iframe").contents()).append(tooltipCSS);
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
@@ -523,6 +523,41 @@ function load_monster_stat(monsterid, token_id) {
 		});
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function(){
 			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", false);
+		});
+
+		// if the user right-clicks a tooltip, send it to the gamelog
+		$(event.target).contents().off("contextmenu").on("contextmenu", ".tooltip-hover", function(clickEvent) {
+			clickEvent.preventDefault();
+			clickEvent.stopPropagation();
+			
+			let toPost = $("#db-tooltip-container", $("#resizeDragMon iframe").contents()).clone();
+			debugger;
+			toPost.find(".waterdeep-tooltip").attr("style", "display:block!important");
+			toPost.find(".tooltip").attr("style", "display:block!important");
+			toPost.css({
+				"top": "0px",
+				"left": "0px",
+				"position": "relative"
+			});
+			toPost.find(".tooltip").css({
+				"max-height": "1000px",
+				"min-width": "0",
+				"max-width": "100%",
+				"width": "100%"
+			});
+			toPost.find(".tooltip-header").css({
+				"min-height": "70px",
+				"height": "auto"
+			});
+			toPost.find(".tooltip-body").css({
+				"max-height": "1000px"
+			});
+				debugger;
+			window.MB.inject_chat({
+				player: window.PLAYER_NAME,
+				img: window.PLAYER_IMG,
+				text: toPost.html()
+			});
 		});
 	});
 	
