@@ -306,7 +306,7 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 		damage_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	} else {
-		standard_dice_context_menu(modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
+		standard_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	}
 }

@@ -11,42 +11,47 @@ function gamelog_send_to_text() {
     return "Self"
 }
 
-function standard_dice_context_menu(modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
+function standard_dice_context_menu(expression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
     if (typeof modifierString !== "string") {
         modifierString = "";
     }
-    return new DiceContextMenu()
-        .sendToSection()
-        .section("ROLL WITH:", s => s
+    let menu = new DiceContextMenu();
+    menu.sendToSection();
+    if (expression === "1d20") {
+        // only add advantage/disadvantage options if rolling 1d20
+        menu.section("ROLL WITH:", s => s
             .row("Advantage", svg_advantage(), false)
             .row("Flat (One Die)", svg_flat(), true)
             .row("Disadvantage", svg_disadvantage(), false)
         )
-        .onRollClick(dcm => {
+    }
+    menu.onRollClick(dcm => {
 
-            let rollWithIndex = dcm.checkedRowIndex(1);
+        let rollWithIndex = dcm.checkedRowIndex(1);
 
-            let diceRoll;
-            if (rollWithIndex === 0) { // advantage
-                diceRoll = new DiceRoll(`2d20kh1${modifierString}`);
-            } else if (rollWithIndex === 1) {
-                diceRoll = new DiceRoll(`1d20${modifierString}`);
-            } else if (rollWithIndex === 2) { // disadvantage
-                diceRoll = new DiceRoll(`2d20kl1${modifierString}`);
-            } else { // not possible
-                console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollWithIndex: ", rollWithIndex, ", dcm: ", dcm);
-            }
+        let diceRoll;
+        if (rollWithIndex === 0) { // advantage
+            diceRoll = new DiceRoll(`2d20kh1${modifierString}`);
+        } else if (rollWithIndex === 1) {
+            diceRoll = new DiceRoll(`1d20${modifierString}`);
+        } else if (rollWithIndex === 2) { // disadvantage
+            diceRoll = new DiceRoll(`2d20kl1${modifierString}`);
+        } else { // advantage/disadvantage options were not displayed. This will happen any time the expression is not 1d20
+            diceRoll = new DiceRoll(`${expression}${modifierString}`);
+        }
 
-            diceRoll.action = action;
-            diceRoll.rollType = rollType;
-            diceRoll.name = name;
-            diceRoll.avatarUrl = avatarUrl;
-            diceRoll.entityType = entityType;
-            diceRoll.entityId = entityId;
-            diceRoll.sendToOverride = dcm.checkedRow(0).title.replace(/\s+/g, "");
+        diceRoll.action = action;
+        diceRoll.rollType = rollType;
+        diceRoll.name = name;
+        diceRoll.avatarUrl = avatarUrl;
+        diceRoll.entityType = entityType;
+        diceRoll.entityId = entityId;
+        diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
 
-            window.diceRoller.roll(diceRoll);
-        });
+        window.diceRoller.roll(diceRoll);
+    });
+
+    return menu;
 }
 
 function damage_dice_context_menu(diceExpression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
@@ -179,11 +184,11 @@ class DiceContextMenu {
     }
 
     checkedRowIndex(sectionIndex) {
-        return this.sections[sectionIndex].checkedIndex();
+        return this.sections[sectionIndex]?.checkedIndex();
     }
 
     checkedRow(sectionIndex) {
-        return this.sections[sectionIndex].checkedRow();
+        return this.sections[sectionIndex]?.checkedRow();
     }
 }
 
