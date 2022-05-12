@@ -44,7 +44,7 @@ function scan_monster(target, stats, tokenId) {
 				const rollType = $(this).attr("data-rolltype")?.replace(" ","-")
 				const actionType = $(this).attr("data-rollaction")?.replace(" ","-") || "custom"
 				const text = $(this)?.text()
-				$(this).replaceWith(`<button data-exp=${dice} data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
+				$(this).replaceWith(`<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
 			})
 		}
 	});
