@@ -518,6 +518,10 @@ function load_monster_stat(monsterid, token_id) {
 	$(iframe).on("load", function(event){
 		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
 		$("head", $("#resizeDragMon iframe").contents()).append(tooltipCSS);
+
+		$("body", $("#resizeDragMon iframe").contents()).css('width', 'calc(100% + 670px)');
+		$("#site", $("#resizeDragMon iframe").contents()).css('padding-right', '670px');
+
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
 			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);	
 		});
