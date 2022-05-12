@@ -3386,7 +3386,9 @@ button.avtt-roll-button {
 /*end combat tracker face lift*/
 
 .token>img {
-    transition: max-height 0.2s linear, max-width 0.2s linear;
+    transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
+    min-height: 0px;
+    min-width: 0px;
     filter:  drop-shadow(var(--token-border-color) -1px 0px 1px) drop-shadow(var(--token-border-color) 1px 0px 1px) drop-shadow(var(--token-border-color) 0px 1px 1px) drop-shadow(var(--token-border-color) 0px -1px 1px) drop-shadow(var(--token-hp-aura-color) 1px 0px 2px) drop-shadow(var(--token-hp-aura-color) 0px 1px 2px) drop-shadow(var(--token-hp-aura-color) 0px -1px 2px) drop-shadow(var(--token-hp-aura-color) -1px 0px 2px) drop-shadow(var(--token-temp-hp) 1px 0px 2px) drop-shadow(var(--token-temp-hp) -1px 0px 2px) drop-shadow(var(--token-temp-hp) 0px -1px 2px) drop-shadow(var(--token-temp-hp) 0px 1px 2px);
 }
 .token>img:not(.preserve-aspect-ratio) {
