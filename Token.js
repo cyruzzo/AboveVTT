@@ -2246,7 +2246,22 @@ function open_roll_menu(e) {
 
 		});
 	});
-	
+
+	//Is this wanted?
+	apply_condition_dropdown = $('<select id="apply_condition" title="Does failing this save apply a condition ">Condition</select>')
+	apply_condition_dropdown.append('<option selected value=0> -- Select an Condition -- </option>')
+	apply_condition_dropdown.append('<option  value=1> Remove ALL conditions </option>')
+	// CONDITIONS
+	STANDARD_CONDITIONS.forEach(
+		element => apply_condition_dropdown.append(`<option value='${element}'>${element}</option>`)
+	)
+	CUSTOM_CONDITIONS.forEach(function(val, index, arr){
+		if (!val.startsWith("#")) {
+			apply_condition_dropdown.append(`<option value='${val}'>${val}</option>`)
+		}
+		// this is where any custom color condition stuff would go. 
+	})
+
 	update_hp = $("<button id=apply_damage title='Apply the damage/healing to the selected tokens.' style='margin: 1px 1px; font-size:14px;'> Apply </button>");
 	update_hp.tooltip()
 	update_hp.click(function() {
@@ -2269,12 +2284,14 @@ function open_roll_menu(e) {
 						x.options.hp -= half_damage_save_success
 					}
 					damage = half_damage_save_success
+					save_success = true
 				}
 				else {
 					if(x.options.monster > 0){
 						x.options.hp -= damage_failed_save
 					}
 					damage = damage_failed_save
+					save_success = false
 				}
 			}
 			//if not defined apply full damage.
@@ -2283,8 +2300,24 @@ function open_roll_menu(e) {
 					x.options.hp -= damage_failed_save
 				}
 				damage = damage_failed_save
+				save_success = false
 			}
+
 			if(x.options.monster > 0){
+				if (save_success == false){
+					if (CUSTOM_CONDITIONS.includes(apply_condition_dropdown.val())){
+						x.options.custom_conditions.push(apply_condition_dropdown.val())
+					}
+					else {
+						x.options.conditions.push(apply_condition_dropdown.val())
+					}
+					console.log(apply_condition_dropdown.val() + 'Applied to' + x.options.name)
+					if (apply_condition_dropdown.val() == 1 && save_success == false) {
+						x.options.conditions = [];
+						x.options.custom_conditions = [];
+						console.log('All Conditions removed from ' + x.options.name)
+					}
+				}
 				if (x.options.hp < 0){
 					x.options.hp = 0
 				}
@@ -2299,6 +2332,15 @@ function open_roll_menu(e) {
 					text: x.options.name + " takes " + damage +" damage (adjust manually)",	
 				};
 				window.MB.inject_chat(msgdata);
+				if (apply_condition_dropdown.val() != 0 && save_success == false){
+					console.log(apply_condition_dropdown.val())
+					var msgdata = {
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: x.options.name + " becomes " + apply_condition_dropdown.val() +" (adjust manually)",	
+					};
+					window.MB.inject_chat(msgdata);
+				}
 				x.place_sync_persist()
 			}
 		});
@@ -2306,6 +2348,7 @@ function open_roll_menu(e) {
 
 
 	roll_menu_footer.append(roll_button);
+	roll_menu_footer.append(apply_condition_dropdown);
 	roll_menu_footer.append(update_hp);
 
 	roll_dialog.append(roll_menu_header);

@@ -1553,6 +1553,10 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .context-menu-icon-person-remove:before {
     content: "\ef66" !important;
 }
+.icon-d20:before,
+.context-menu-icon-d20:before {
+    content: "\ef50" !important;
+}
 .icon-view:before,
 .context-menu-icon-view:before {
     content: "\f22e" !important;
@@ -3818,7 +3822,7 @@ button.avtt-roll-button {
     border-width: 1px 1px 0px 1px;
     border-radius: 5px 5px 0 0;
     border-radius: 5px;
-    z-index: 49001;
+    z-index: 59001;
     padding-bottom:3px;
     background-image: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
 }

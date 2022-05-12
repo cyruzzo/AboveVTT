@@ -201,6 +201,17 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(combatButton);
 
+		let groupRollText = tokenIds.length > 1 ? "Quick Group Roll" : "Quick Token Roll"
+		let groupRollButton = $(`<button class="material-icons";></button>`)
+		groupRollButton.html(`${groupRollText}<span class="material-icons icon-d20"></span>`)
+		groupRollButton.on("click", function(clickEvent) {
+			open_roll_menu(clickEvent)
+			$("#tokens .tokenselected").each(function() {
+				id = $(this).attr('data-id');
+				add_to_roll_menu(window.TOKEN_OBJECTS[id])
+			});
+		});
+		body.append(groupRollButton)
 
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
 		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
