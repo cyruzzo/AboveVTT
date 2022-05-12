@@ -111,6 +111,9 @@ class Token {
 			array_remove_index_by_value(this.options.custom_conditions, conditionName);
 		}
 	}
+	isInCombatTracker() {
+		return ct_list_tokens().includes(this.options.id);
+	}
 
 	size(newsize) {
 		this.update_from_page();
@@ -2100,10 +2103,6 @@ function undo_delete_tokens() {
 	for (id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
 		let options = window.TOKEN_OBJECTS_RECENTLY_DELETED[id];
 		window.ScenesHandler.create_update_token(options);
-		if (options.combat) {
-			// the deleted token was removed from the combat tracker so add it back in
-			ct_add_token(window.TOKEN_OBJECTS[id]);
-		}
 	}
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 }
