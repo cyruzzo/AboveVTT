@@ -824,7 +824,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 	});
 	if(isPlayerTokensSelected)
 	{
-		conditionsList.append($("<div id='playerTokenSelectedWarning'>A player token is selected this column of conditions must be set on the character sheet. Selecting a condition here will message the selected player.</div>"));
+		conditionsList.append($("<div id='playerTokenSelectedWarning'>A player token is selected this column of conditions must be set on the character sheet. Selecting a condition here will whisper the selected player(s).</div>"));
 	}
 
 	let markersList = $(`<ul></ul>`);

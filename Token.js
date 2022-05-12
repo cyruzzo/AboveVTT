@@ -103,7 +103,7 @@ class Token {
 	            window.MB.inject_chat({
 	                player: window.PLAYER_NAME,
 	                img: window.PLAYER_IMG,
-	                text: `${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>. You can do that in the conditions panel.<br/><br/><button class="open-conditions-button">Open Conditions Panel</button>`,
+	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="set-conditions-button">Toggle ${conditionName} ON</button></div>`,
 	                whisper: this.options.name
 	            });
 	        } else {
@@ -116,7 +116,16 @@ class Token {
 	
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
+			if (this.isPlayer()) {
+	            window.MB.inject_chat({
+	                player: window.PLAYER_NAME,
+	                img: window.PLAYER_IMG,
+	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
+	                whisper: this.options.name
+	            });
+	        } else {
 			array_remove_index_by_value(this.options.conditions, conditionName);
+			}
 		} else {
 			array_remove_index_by_value(this.options.custom_conditions, conditionName);
 		}
