@@ -273,7 +273,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     left: 271px;
     top: 67px;
     right: auto;
-    width: 410px;
+    min-width:  670px;
     height: 85%;
     position: fixed !important;
     opacity: 1;

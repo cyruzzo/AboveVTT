@@ -515,6 +515,19 @@ function load_monster_stat(monsterid, token_id) {
 		$("#site").prepend(container);
 	}
 
+	$(iframe).on("load", function(){
+		let iframewindow = this.contentWindow? this.contentWindow : this.contentDocument.defaultView;
+		iframewindow.CurseTips['waterdeep-tooltip'].Options.AdvancedTooltips = true;
+		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
+		$("head", $("#resizeDragMon iframe").contents()).append(tooltipCSS);
+		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);	
+		});
+		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function(){
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", false);
+		});
+	});
+	
 	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 	const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	$("#resizeDragMon").append(monster_close_title_button);
