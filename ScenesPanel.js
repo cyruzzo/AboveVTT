@@ -56,8 +56,162 @@ function preset_importer(target, key) {
 	target.append(import_button);
 }
 
+
+
+function handle_basic_form_toggle_click(event){
+	if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+		// it was checked. now it is no longer checked
+		$(event.currentTarget).removeClass("rc-switch-checked");
+	  } else {
+		// it was not checked. now it is checked
+		$(event.currentTarget).removeClass("rc-switch-unknown");
+		$(event.currentTarget).addClass("rc-switch-checked");
+	  }
+}
+
+function get_edit_form_data(scene=null){
+	let data = {}
+	$("#edit_scene_form").find("input, button.rc-switch").each(function() {
+		const inputName = $(this).attr('name');
+		let inputValue = $(this).val();
+
+		if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
+			inputValue = parse_img(inputValue);
+		}
+		else if ($(this).is("button")){
+			inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
+		}
+		
+		if (scene){
+			scene[inputName] = inputValue
+		}
+		data[inputName] = inputValue
+	})
+	return data
+}
+
+function validate_image_input(element){
+	const self = element
+	const img = parse_img(self.value)
+	let hasValidationDisplayed = $(self).prev().is("span")
+	const validIcon = $(`<span class="material-icons url-validator valid">check_circle_outline</span>`)
+
+	// optional values can be blank
+	const isOptional = $(self).attr("placeholder") === "Optional"
+	if(img === "" && isOptional){
+		if (hasValidationDisplayed) {
+			$(self).prev().remove()
+		}
+		return
+	} 
+
+	// default as valid
+	$(self).parent().css("position","relative")
+	if (!hasValidationDisplayed){
+		$(self).before(validIcon)
+		$(self).attr("data-valid",true)
+		hasValidationDisplayed = true
+	}
+
+	const display_not_valid = () => {
+		if (hasValidationDisplayed){
+			$(self).prev().html("highlight_off")
+			$(self).prev().removeClass("valid loading")
+			$(self).prev().addClass("invalid")
+			$(self).attr("data-valid", false)
+		}
+		
+		$(self).addClass("chat-error-shake");
+        setTimeout(function () {
+            $(self).removeClass("chat-error-shake");
+        }, 150);
+	}
+	try {
+		const url = new URL(img)
+
+		function testImage(URL) {
+			const tester=new Image();
+			tester.onload=imageFound;
+			tester.onerror=imageNotFound;
+			tester.src=URL;
+			$(self).prev().removeClass("valid invalid")
+			$(self).prev().addClass("loading")
+			$(self).prev().html("autorenew")
+
+		}
+		
+		function imageFound() {
+			$(self).prev().removeClass("loading invalid")
+			$(self).prev().addClass("valid")
+			$(self).prev().html("check_circle_outline")
+		}
+		
+		function imageNotFound() {
+			display_not_valid()
+		}
+		
+		testImage(url);
+	} catch (_) {
+		display_not_valid()
+	}
+}
+
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
+
+	function form_row(name, title, inputOverride=null, imageValidation=false) {
+		const row = $("<div style='width:100%;'/>");
+		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+		let rowInput
+		if(!inputOverride){
+			if (imageValidation){
+				rowInput = $(`<input type="text" name=${name} style='width:100%' onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+			}else{
+				rowInput = $(`<input type="text" name=${name} style='width:100%' value="${scene[name] || ""}" />`);
+			}
+			 
+		}
+		else{
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
+
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
+		toggle.on("click", callback)
+		if (scene[name] === "1" || defaultOn){
+			toggle.click()
+		}
+		return toggle
+	}
+
+	function handle_form_grid_on_change(){
+		// not editting this scene, don't show live updates to grid
+		if (scene.id !== window.CURRENT_SCENE_DATA.id){
+			return
+		}
+	
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		// redraw grid with new information
+		if(grid === "1"){
+			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
+		}
+		// redraw grid using current scene data
+		else if(grid === "0"){
+			clear_grid()
+		}
+	}
+
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
@@ -101,90 +255,104 @@ function edit_scene_dialog(scene_id) {
 
 	container.empty();
 
-	let f = $("<form />");
-	f.on('submit', function(e) { e.preventDefault(); });
-
-	let addrow = function(name, title, type = 'text') {
-		var row = $("<div style='width:100%;'/>");
-		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		c1.css("font-weight", "bold");
-		var c2 = $("<div style='display:inline-block; width:70%'/>");
-		var i = $("<input />");
-		i.attr('type', type);
-		i.attr('name', name);
-		i.val(scene[name]);
-		i.css("width", "70%");
-		c2.append(i);
-		row.append(c1);
-		row.append(c2);
-		f.append(row);
-	};
-
-	let addrow_with_checkbox = function(name, title, checkbox_name, checkbox_title, type = 'text') {
-		var row = $("<div style='width:100%;'/>");
-		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		c1.css("font-weight", "bold");
-		var c2 = $("<div style='display:inline-block; width:50%'/>");
-		var i = $("<input />");
-		i.attr('type', type);
-		i.attr('name', name);
-		i.val(scene[name]);
-		i.css("width", "100%");
-
-		var c3 = $("<div style='display: inline-block;'>&nbsp;&nbsp;" + checkbox_title + "&nbsp;&nbsp;</div>");
-		c3.css("font-weight", "bold");
-		var c4 = $("<div style='display:inline-block;'/>");
-		var t = $("<input />");
-		t.attr('type', "checkbox");
-		t.attr('name', checkbox_name);
-		t.prop('checked', scene[checkbox_name] === "1");
-		c2.append(i);
-		c4.append(t);
-		row.append(c1);
-		row.append(c2);
-		row.append(c3);
-		row.append(c4);
-		f.append(row);
-	};
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
-	f.append(uuid_hidden);
+	form.append(uuid_hidden);
 
-	addrow('title', 'Scene Title');
-	addrow_with_checkbox('player_map', 'Player Map', 'player_map_is_video', "Is Video?");
-	addrow_with_checkbox('dm_map', 'Dm Map', 'dm_map_is_video', "Is Video?");
-	addrow('dm_map_usable', 'Use DM Map (1 to enable)');
+	form.append(form_row('title', 'Scene Title'))
+	const playerMapRow = form_row('player_map', 'Player Map', null, true)
+	const dmMapRow = form_row('dm_map', 'Dm Map', null, true)
+	
+	// add in toggles for these 2 rows
+	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
+	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
+	form.append(playerMapRow)
+	form.append(dmMapRow)
+
+	// add a row but override the normal input with a toggle
+	form.append(form_row(null,
+						'Use DM Map',
+						form_toggle("dm_map_usable",null, false, handle_basic_form_toggle_click)
+						)
+				);
+	form.append(form_row(null, 'Snap to Grid',form_toggle("snap",null, true, handle_basic_form_toggle_click)))
+
+
+	const showGridControls = $("<div id='show_grid_controls'/>");
+	const gridColor = $(`<input class="spectrum" name="grid_color" value="${scene["grid_color"] || "rgba(0, 0, 0, 0.5)"}" ></input>`)
+	const gridStroke =$(
+		`<input id="grid_line_width" name="grid_line_width" style="display:inline-block; position:relative; top:2px; margin:0px; height:12px;"
+		type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
+	gridStroke.on("change input", handle_form_grid_on_change)
+	showGridControls.append(
+		form_toggle("grid", null, true, function(event) {
+			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+				// it was checked. now it is no longer checked
+				$(event.currentTarget).removeClass("rc-switch-checked");
+				gridStroke.hide()	
+				form.find(".sp-replacer").hide()
+				
+			} else {
+				// it was not checked. now it is checked
+				$(event.currentTarget).removeClass("rc-switch-unknown");
+				$(event.currentTarget).addClass("rc-switch-checked");
+				gridStroke.show()	
+				form.find(".sp-replacer").show()
+			}
+				handle_form_grid_on_change()
+		})
+	)
+	showGridControls.append(gridColor)
+	showGridControls.append(gridStroke)
+	form.append(form_row(null, 'Show Grid', showGridControls))
+
+	const colorPickers = form.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		containerClassName: '#edit_dialog',
+		clickoutFiresChange: false
+	});
+	form.find(".sp-replacer").css({"height":"22px", "margin-left":"8px", "margin-right":"8px"})
+	// redraw the grid here
+	colorPickers.on('move.spectrum', handle_form_grid_on_change);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
+
+	
 	wizard = $("<button><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button>Manual Grid Data</button>");
 
-	grid_buttons = $("<div style='display:inline-block; width:70%'/>");
+	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
 	grid_buttons.append(manual_button);
-	f.append($("<div><div style='display:inline-block;width:30%'><b>Grid and Scale</b></div></div>").append(grid_buttons));
+	form.append(form_row(null, 'Grid Scale', grid_buttons))
 
-
-	var manual = $("<div/>");
+	var manual = $("<div id='manual_grid_data'/>");
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Show Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
-	manual.hide();
 
+	
 	manual.find("input").each(function() {
 		$(this).css("width", "60px");
 		$(this).val(scene[$(this).attr('name')]);
 	})
-	f.append(manual);
+	manual.hide();
+	form.append(manual);
 	manual_button.click(function() {
 		if (manual.is(":visible"))
 			manual.hide();
 		else
 			manual.show();
+		
 	});
 
 
@@ -192,30 +360,15 @@ function edit_scene_dialog(scene_id) {
 		scene.fog_of_war = "1";
 
 
-	var sub = $("<button>Save And Switch</button>");
+	const submitButton = $("<button type='button'>Save And Switch</button>");
 
 	if(window.CLOUD)
-		sub.html("Save");
+		submitButton.html("Save");
 
-	sub.click(function() {
-		f.find("input").each(function() {
-			var n = $(this).attr('name');
-			var t = $(this).attr('type');
-			let nValue = null;
-			if (t == "checkbox") {
-				nValue = $(this).prop("checked") ? "1" : "0";
-			}
-			else {
-				nValue = $(this).val();
-			}
-
-			if ( ((n === 'player_map') || (n==='dm_map')) ) {
-				nValue = parse_img(nValue);
-			}
-
-			scene[n] = nValue;
-			console.log('setto ' + n + ' a ' + $(this).val());
-		});
+	submitButton.click(function() {
+		console.group("Saving scene changes")
+		// TODO Bain this is wrong?
+		get_edit_form_data(scene)
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
 		}
@@ -227,29 +380,13 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 	});
-	
 
-	
+	let grid_5 = function() {
 
-
-	let grid_5 = function(enable_grid = false, enable_snap = true) {
-
-		console.log("enable_grid " + enable_grid + " enable_snap" + enable_snap);
 
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		window.WIZARDING = false;
-
-		if (enable_snap)
-			window.ScenesHandler.scene.snap = "1";
-		else
-			window.ScenesHandler.scene.snap = "0";
-
-		if (enable_grid)
-			window.ScenesHandler.scene.grid = "1";
-		else
-			window.ScenesHandler.scene.grid = "0";
-
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.grid_subdivided = "0";
@@ -275,8 +412,6 @@ function edit_scene_dialog(scene_id) {
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
 			window.ScenesHandler.scene.grid_subdivided = "1";
-			window.ScenesHandler.scene.snap = "1";
-			window.ScenesHandler.scene.grid = "1";
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.upsq = "ft";
 			window.ScenesHandler.scene.hpps /= 2;
@@ -320,10 +455,8 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
 		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "0";
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 3;
@@ -344,10 +477,8 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled.");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
 		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "1";
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 4;
@@ -369,12 +500,6 @@ function edit_scene_dialog(scene_id) {
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
-
-			if (!just_rescaling)
-				window.CURRENT_SCENE_DATA.grid = "1";
-			else
-				window.CURRENT_SCENE_DATA.grid = "0";
-
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
 			window.CURRENT_SCENE_DATA.scale_factor=1;
 			var aligner1 = $("<canvas id='aligner1'/>");
@@ -454,11 +579,6 @@ function edit_scene_dialog(scene_id) {
 
 			let regrid = function(e) {
 
-				window.WIZARDING = true;
-				if (!just_rescaling)
-					window.CURRENT_SCENE_DATA.grid = 1;
-				else
-					window.CURRENT_SCENE_DATA.grid = 0;
 				let al1 = {
 					x: parseInt(aligner1.css("left")) + 29,
 					y: parseInt(aligner1.css("top")) + 29,
@@ -487,7 +607,15 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA.vpps = ppsy;
 				window.CURRENT_SCENE_DATA.offsetx = offsetx;
 				window.CURRENT_SCENE_DATA.offsety = offsety;
-				reset_canvas();
+				let width
+				if (window.ScenesHandler.scene.upscaled == "1")
+					width = 2;
+				else
+					width = 1;
+				const dash = [30, 5]
+				const color = "rgba(255, 0, 0,0.5)";
+				// nulls will take the window.current_scene_data from above
+				redraw_grid(null,null,null,null,color,width,null,dash)
 				redraw_canvas();
 			};
 
@@ -498,7 +626,6 @@ function edit_scene_dialog(scene_id) {
 			aligner2.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas(); redraw_canvas();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
@@ -506,6 +633,8 @@ function edit_scene_dialog(scene_id) {
 					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
 				},
 				drag: function(event, ui) {
+					clear_grid()
+					draw_wizarding_box()
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -556,7 +685,6 @@ function edit_scene_dialog(scene_id) {
 			aligner1.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas(); redraw_canvas();
 					click1.x = event.clientX;
 					click1.y = event.clientY;
@@ -566,7 +694,8 @@ function edit_scene_dialog(scene_id) {
 					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
 				},
 				drag: function(event, ui) {
-
+					clear_grid()
+					draw_wizarding_box()
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -617,20 +746,13 @@ function edit_scene_dialog(scene_id) {
 					aligner1.remove();
 					aligner2.remove();
 
-					if (just_rescaling) {
-						grid_5(false, false);
-					}
-					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
-						$("#grid_5").click(function() { grid_5(); });
-						$("#grid_10").click(function() { grid_10(); });
-						$("#grid_15").click(function() { grid_15(); });
-						$("#grid_20").click(function() { grid_20(); });
-						$("#grid_100").click(function() { grid_100(); });
-					}
-					else { // just creating a 5 foot grid
-						grid_5(true);
-					}
+					$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
+					$("#grid_5").click(function() { grid_5(); });
+					$("#grid_10").click(function() { grid_10(); });
+					$("#grid_15").click(function() { grid_15(); });
+					$("#grid_20").click(function() { grid_20(); });
+					$("#grid_100").click(function() { grid_100(); });
+				
 
 				}
 			);
@@ -640,7 +762,7 @@ function edit_scene_dialog(scene_id) {
 	wizard.click(
 		function() {
 
-			f.find("input").each(function() {
+			form.find("input").each(function() {
 				var n = $(this).attr('name');
 				var t = $(this).attr('type');
 				let nValue = null;
@@ -707,10 +829,21 @@ function edit_scene_dialog(scene_id) {
 	);
 
 
-	cancel = $("<button>Cancel</button>");
+	cancel = $("<button type='button' >Cancel</button>");
 	cancel.click(function() {
+		// redraw or clear grid based on scene data
+		// discarding any changes that have been made to live modification of grid
+		if (scene.id === window.CURRENT_SCENE_DATA.id){
+			if(window.CURRENT_SCENE_DATA.grid === "1"){
+				redraw_grid()
+			}
+			else{
+				clear_grid()
+			}
+		}
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
+		
 	})
 
 
@@ -737,20 +870,16 @@ function edit_scene_dialog(scene_id) {
 
 
 
-	f.append(sub);
-	f.append(cancel);
-	f.append(hide_all_button);
+	form.append(submitButton);
+	form.append(cancel);
+	form.append(hide_all_button);
 	//		f.append(export_grid);
 	container.css('opacity', '0.0');
-	container.append(f);
+	container.append(form);
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
-
-
-
-
-
+	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Optional");
 }
 
 function refresh_scenes() {
@@ -799,7 +928,6 @@ function refresh_scenes() {
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 					switch_dm: true
 				};
-				close_monster_stat_block(); //moved here so only when dm view moves does the monster stat window close
 				$(this).addClass("selected");
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 				add_zoom_to_storage()

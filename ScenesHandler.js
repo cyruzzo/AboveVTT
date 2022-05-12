@@ -209,8 +209,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				callback();
 
 			if (window.EncounterHandler !== undefined) {
-				console.log("Updating avtt encounter");
-				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+				fetch_and_cache_scene_monster_items(true);
 			} else {
 				console.log("Not updating avtt encounter");
 			}
@@ -238,7 +237,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 		data.grid = window.CURRENT_SCENE_DATA.grid;
 		data.snap = window.CURRENT_SCENE_DATA.snap;
-		data.grid = window.CURRENT_SCENE_DATA.grid;
 		//data.scale=window.CURRENT_SCENE_DATA.scaleX;
 		data.hpps = window.CURRENT_SCENE_DATA.hpps;
 		data.vpps = window.CURRENT_SCENE_DATA.vpps;

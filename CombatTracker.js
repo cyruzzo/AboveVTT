@@ -20,7 +20,6 @@ function init_combat_tracker(){
 			$("#combat_tracker").css("height","450px"); // IMPORTANT
 			toggle.addClass("ddbc-tab-options__header-heading--is-active");
 		}
-		reposition_enounter_combat_tracker_iframe();
 		reposition_player_sheet(); // not sure if this needs to be here, but maybe for smaller screens?
 	});
 	let pill = $(`<div class="ddbc-tab-options--layout-pill" />`);
@@ -122,7 +121,9 @@ function init_combat_tracker(){
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
-		$("#combat_area").empty();
+		$("#combat_area button.removeTokenCombatButton").each(function() {
+			this.click();
+		});
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 		ct_persist();
@@ -225,16 +226,6 @@ function init_combat_tracker(){
 	});
 }
 
-function frame_z_index_when_click(moveableFrame){
-	//move frames behind each other in the order they were clicked
-	if(moveableFrame.css('z-index') != 50000) {
-		moveableFrame.css('z-index', 50000);
-		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
-			$(this).css('z-index',($(this).css('z-index')-1));
-		});
-	}
-}
-
 function ct_reorder(persist=true) {
 	var items = $("#combat_area").children().sort(
 		function(a, b) {
@@ -320,10 +311,14 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			entry.append($("<td/>").append(hp));
 		else
 			entry.append($("<td/>"))
-		max_hp=$("<div/>");
+		max_hp=$("<div class='max_hp'/>");
 		max_hp.text("/"+token.options.max_hp);
 		max_hp.css('font-size','11px');
 		//max_hp.css('width','20px');
+		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
+			hp.css('visibility', 'hidden');
+			max_hp.css('visibility', 'hidden');
+		}
 		if(window.DM || !(token.options.monster > 0) )
 			entry.append($("<td/>").append(max_hp));
 		else
@@ -358,18 +353,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 			
 			stat.click(function(){
-				if (encounter_builder_dice_supported()) {
-					console.log(`attempting to open monster with monsterId ${token.options.monster} and tokenId ${token.options.id}`);
-					open_monster_stat_block_with_id(token.options.monster, token.options.id);
-				} else {
-					iframe_id="#iframe-monster-"+token.options.monster;
-					if($(iframe_id).is(":visible")) {
-						$(iframe_id).hide();
-					} else {
-						$(".monster_frame").hide();
-						load_monster_stat(token.options.monster, token.options.id);
-					}
-				}
+				load_monster_stat(token.options.monster, token.options.id);
 			});
 			if(window.DM){
 				buttons.append(stat);
@@ -493,8 +477,8 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
+	token.options.combat = false;
 	if (persist == true) {
-		token.options.combat = false;
 		token.sync();
 		if (token.persist != null) token.persist();
 	}
