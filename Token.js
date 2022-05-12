@@ -120,7 +120,7 @@ class Token {
 	            window.MB.inject_chat({
 	                player: window.PLAYER_NAME,
 	                img: window.PLAYER_IMG,
-	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
+	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
 	                whisper: this.options.name
 	            });
 	        } else {
