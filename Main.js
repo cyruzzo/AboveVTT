@@ -531,7 +531,6 @@ function load_monster_stat(monsterid, token_id) {
 			clickEvent.stopPropagation();
 			
 			let toPost = $("#db-tooltip-container", $("#resizeDragMon iframe").contents()).clone();
-			debugger;
 			toPost.find(".waterdeep-tooltip").attr("style", "display:block!important");
 			toPost.find(".tooltip").attr("style", "display:block!important");
 			toPost.css({
@@ -552,7 +551,6 @@ function load_monster_stat(monsterid, token_id) {
 			toPost.find(".tooltip-body").css({
 				"max-height": "1000px"
 			});
-				debugger;
 			window.MB.inject_chat({
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
