@@ -72,7 +72,8 @@ body > button:hover,
     font-family: Roboto,Helvetica,sans-serif;
     font-weight: 400;
 }
-button.gamelog-to-everyone-button {
+button.gamelog-to-everyone-button,
+button.open-conditions-button {
     background-color: rgb(255, 255, 255);
     border: 1px solid rgb(206, 217, 224);
     border-image: initial;
@@ -1444,7 +1445,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     padding: 0.3em !important;
 }
 
-#conditions-flyout li {
+#conditions-flyout li,
+#playerTokenSelectedWarning {
     position: relative;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -1487,6 +1489,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 #conditions-flyout li:hover {
     background-color: rgba(41, 128, 185) !important;
+}
+
+#playerTokenSelectedWarning
+{
+    color: #738694;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .icon-condition.material-icons:before,
@@ -1559,10 +1568,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: "\e148" !important;
 }
 
+.context-menu-icon-hidden {
+    border: 1px solid white;
+    justify-content: space-between;
+}
+
 .icon-condition,
 .context-menu-icon-condition {
     margin: 4px;
     border: 1px solid white;
+}
+#tokenOptionsContainer button.context-menu-icon-hidden:before {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    left: 10px;
 }
 .icon-condition:before,
 .context-menu-icon-condition:before {
@@ -1571,6 +1591,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 .markers-icon:after,
 .icon-condition:after,
+.context-menu-icon-hidden:after,
 .context-menu-icon-condition:after {
     float: right;
     margin-right: 0px;
@@ -1579,19 +1600,25 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     margin-top: -5px;
     margin-bottom: -10px;
 }
+#tokenOptionsContainer button.context-menu-icon-hidden:after {
+    margin-top: -2px;
+}
 
 .markers-icon.single-active:after,
 .icon-condition.single-active:after,
+.context-menu-icon-hidden.single-active:after,
 .context-menu-icon-condition.single-active:after {
     content: "\e876";
 }
 .markers-icon.all-active:after,
 .icon-condition.all-active:after,
+.context-menu-icon-hidden.all-active:after,
 .context-menu-icon-condition.all-active:after {
     content: "\e6b1";
 }
 .markers-icon.some-active:after,
 .icon-condition.some-active:after,
+.context-menu-icon-hidden.some-active:after,
 .context-menu-icon-condition.some-active:after {
     content: "\f1c2";
 }

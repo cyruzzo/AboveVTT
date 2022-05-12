@@ -94,16 +94,26 @@ class Token {
 		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.includes(conditionName);
 	}
 	addCondition(conditionName) {
-		if (this.hasCondition(conditionName)) {
-			// already did
-			return;
-		}
-		if (STANDARD_CONDITIONS.includes(conditionName)) {
-			this.options.conditions.push(conditionName);
-		} else {
-			this.options.custom_conditions.push(conditionName);
-		}
+	    if (this.hasCondition(conditionName)) {
+	        // already did
+	        return;
+	    }
+	    if (STANDARD_CONDITIONS.includes(conditionName)) {
+	        if (this.isPlayer()) {
+	            window.MB.inject_chat({
+	                player: window.PLAYER_NAME,
+	                img: window.PLAYER_IMG,
+	                text: `${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>. You can do that in the conditions panel.<br/><br/><button class="open-conditions-button">Open Conditions Panel</button>`,
+	                whisper: this.options.name
+	            });
+	        } else {
+	            this.options.conditions.push(conditionName);
+	        }
+	    } else {
+	        this.options.custom_conditions.push(conditionName);
+	    }
 	}
+	
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			array_remove_index_by_value(this.options.conditions, conditionName);
@@ -1625,10 +1635,9 @@ function determine_hidden_classname(tokenIds) {
 		.filter(t => t !== undefined);
 	let uniqueHiddenStates = [...new Set(allHiddenStates)];
 
-	let className = "";
 	if (uniqueHiddenStates.length === 0 || (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === false)) {
 		// none of these tokens are hidden
-		className = "none-active";
+		return "none-active";
 	} else if (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === true) {
 		// everything we were given is hidden. If we were given a single thing, return single, else return all
 		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";
