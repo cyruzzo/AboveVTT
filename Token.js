@@ -1625,9 +1625,10 @@ function determine_hidden_classname(tokenIds) {
 		.filter(t => t !== undefined);
 	let uniqueHiddenStates = [...new Set(allHiddenStates)];
 
+	let className = "";
 	if (uniqueHiddenStates.length === 0 || (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === false)) {
 		// none of these tokens are hidden
-		return "none-active";
+		className = "none-active";
 	} else if (uniqueHiddenStates.length === 1 && uniqueHiddenStates[0] === true) {
 		// everything we were given is hidden. If we were given a single thing, return single, else return all
 		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";

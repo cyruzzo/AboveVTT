@@ -201,10 +201,10 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(combatButton);
 
+	
+		let hiddenMenuButton = $(`<button class="`+determine_hidden_classname(tokenIds) + `context-menu-icon-condition icon-invisible material-icons">Hide/Reveal Token</button>`)
 
-		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
-		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
-		hiddenMenuButton.off().on("click", function(clickEvent){
+		hiddenMenuButton.off().on("click", function(tokenIds){
 			let clickedItem = $(this);
 			let hideAll = clickedItem.hasClass("some-active");
 			tokens.forEach(token => {
@@ -218,6 +218,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			clickedItem.removeClass("single-active all-active some-active active-condition");
 			clickedItem.addClass(determine_hidden_classname(tokenIds));
 		});
+
 		body.append(hiddenMenuButton);
 	}
 	
@@ -249,14 +250,9 @@ function token_context_menu_expanded(tokenIds, e) {
 		$(".acMenuInput").prop('disabled', true);
 		$(".hpMenuInput").prop('disabled', true);
 	}	
+
+
 	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);
-	tokens.forEach(token => {
-		if(token.isPlayer())
-		{
-			conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Markers</div></div>`);
-		}
-	});	
-	
 	conditionsRow.hover(function (hoverEvent) {
 		context_menu_flyout("conditions-flyout", hoverEvent, function(flyout) {
 			flyout.append(build_conditions_and_markers_flyout_menu(tokenIds));
@@ -779,7 +775,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
 	body.css({
-		width: "fit-content", // once we add Markers, make this wide enough to contain them all
+		width: "380px", // once we add Markers, make this wide enough to contain them all
 		padding: "5px",
 		display: "flex",
 		"flex-direction": "row"
@@ -813,24 +809,14 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		return conditionItem;
 	};
 
-
-	let isPlayerTokensSelected = false;
-	tokens.forEach(token => {
-		if(token.isPlayer())
-		{
-			isPlayerTokensSelected = true;
-		}
-	});	
 	let conditionsList = $(`<ul></ul>`);
 	conditionsList.css("width", "180px");
-	if(!isPlayerTokensSelected){
-		body.append(conditionsList);
-		STANDARD_CONDITIONS.forEach(conditionName => {
-			let conditionItem = buildConditionItem(conditionName);
-			conditionItem.addClass("icon-condition");
-			conditionsList.append(conditionItem);
-		});
-	}
+	body.append(conditionsList);
+	STANDARD_CONDITIONS.forEach(conditionName => {
+		let conditionItem = buildConditionItem(conditionName);
+		conditionItem.addClass("icon-condition");
+		conditionsList.append(conditionItem);
+	});
 
 	let markersList = $(`<ul></ul>`);
 	markersList.css("width", "185px");
@@ -841,11 +827,6 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		markersList.append(conditionItem);
 
 	});
-
-	if(isPlayerTokensSelected)
-	{
-		markersList.append($("<div id='playerTokenSelectedWarning'>A player token is selected other conditions must be set on the character sheet</div>"));
-	}
 
 	let removeAllItem = $(`<li class="icon-condition icon-close-red"><span>Remove All</span></li>`);
 	removeAllItem.on("click", function () {
