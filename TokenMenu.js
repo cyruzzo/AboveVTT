@@ -249,8 +249,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		$(".acMenuInput").prop('disabled', true);
 		$(".hpMenuInput").prop('disabled', true);
 	}	
-	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);
-	
+	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);	
 	conditionsRow.hover(function (hoverEvent) {
 		context_menu_flyout("conditions-flyout", hoverEvent, function(flyout) {
 			flyout.append(build_conditions_and_markers_flyout_menu(tokenIds));
@@ -807,7 +806,6 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		});
 		return conditionItem;
 	};
-
 
 	let isPlayerTokensSelected = false;
 	tokens.forEach(token => {

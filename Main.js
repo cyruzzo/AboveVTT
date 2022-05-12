@@ -1692,10 +1692,10 @@ function init_things() {
 
 	} else {
 		init_ui();
-		init_splash();on
+		init_splash();
 	}
 
-	$("#site").append("<div id='windowContainment'></div>");	            
+	$("#site").append("<div id='windowContainment'></div>");
 }
 
 /// this is used when initializing on the character page. DDB loads the page in an async modular fashion. We use this to determine if we need to call other initialization functions during this process
@@ -1743,9 +1743,7 @@ function init_character_page_sidebar() {
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
 		$(".ct-sidebar__pane").on("click", ".open-conditions-button", function(clickEvent) {
-			debugger;
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-			debugger;
 			console.log(conditionName + "!!!!!!!!!!!!!!!!!!!!!!");
 		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label').click(); 
 		  	console.log($(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}')`));
