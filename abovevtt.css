@@ -1444,7 +1444,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     padding: 0.3em !important;
 }
 
-#conditions-flyout li {
+#conditions-flyout li,
+#playerTokenSelectedWarning {
     position: relative;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -1487,6 +1488,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 #conditions-flyout li:hover {
     background-color: rgba(41, 128, 185) !important;
+}
+
+#playerTokenSelectedWarning
+{
+    color: #738694;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .icon-condition.material-icons:before,
