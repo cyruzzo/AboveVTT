@@ -1741,15 +1741,16 @@ function init_character_page_sidebar() {
 
 		$(".ct-sidebar__pane").on("click", ".set-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label').click(); 
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	  	
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
 		  	$(`#switch_gamelog`).click();
 		});
 		$(".ct-sidebar__pane").on("click", ".remove-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label').click(); 
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
 		  	$(`#switch_gamelog`).click();
+
 		});
 		if (needs_ui) {
 			needs_ui = false;
