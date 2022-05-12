@@ -1744,9 +1744,7 @@ function init_character_page_sidebar() {
 
 		$(".ct-sidebar__pane").on("click", ".open-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-			console.log(conditionName + "!!!!!!!!!!!!!!!!!!!!!!");
 		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label').click(); 
-		  	console.log($(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}')`));
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
 		});
 		if (needs_ui) {
