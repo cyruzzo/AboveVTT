@@ -1684,9 +1684,6 @@ function init_things() {
 			setTimeout(function() {
 				init_character_page_sidebar();
 				hide_sidebar();
-				$(".ct-sidebar__pane").off().on("click", "open-conditions-button", function(clickEvent) {
-				  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label').click(); 
-				});
 			}, 500);
 		});
 
