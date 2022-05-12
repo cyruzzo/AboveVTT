@@ -516,8 +516,6 @@ function load_monster_stat(monsterid, token_id) {
 	}
 
 	$(iframe).on("load", function(){
-		let iframewindow = this.contentWindow? this.contentWindow : this.contentDocument.defaultView;
-		iframewindow.CurseTips['waterdeep-tooltip'].Options.AdvancedTooltips = true;
 		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
 		$("head", $("#resizeDragMon iframe").contents()).append(tooltipCSS);
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
