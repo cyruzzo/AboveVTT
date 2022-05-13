@@ -72,7 +72,9 @@ body > button:hover,
     font-family: Roboto,Helvetica,sans-serif;
     font-weight: 400;
 }
-button.gamelog-to-everyone-button {
+button.gamelog-to-everyone-button,
+button.set-conditions-button,
+button.remove-conditions-button {
     background-color: rgb(255, 255, 255);
     border: 1px solid rgb(206, 217, 224);
     border-image: initial;
@@ -88,6 +90,12 @@ button.gamelog-to-everyone-button {
     color: #5c7080;
     cursor: pointer;
     float:left;
+}
+
+span.flex-wrap-center-chat-message{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 button.gamelog-to-everyone-button:hover {
     border: 1px solid rgb(152, 160, 164);
@@ -1444,7 +1452,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     padding: 0.3em !important;
 }
 
-#conditions-flyout li {
+#conditions-flyout li,
+#playerTokenSelectedWarning {
     position: relative;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -1487,6 +1496,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 #conditions-flyout li:hover {
     background-color: rgba(41, 128, 185) !important;
+}
+
+#playerTokenSelectedWarning
+{
+    color: #738694;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .icon-condition.material-icons:before,

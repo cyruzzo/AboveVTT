@@ -249,14 +249,13 @@ function token_context_menu_expanded(tokenIds, e) {
 		$(".acMenuInput").prop('disabled', true);
 		$(".hpMenuInput").prop('disabled', true);
 	}	
-
-
-	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);
+	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);	
 	conditionsRow.hover(function (hoverEvent) {
 		context_menu_flyout("conditions-flyout", hoverEvent, function(flyout) {
 			flyout.append(build_conditions_and_markers_flyout_menu(tokenIds));
 		})
 	});
+
 	body.append(conditionsRow);
 	let adjustmentsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Adjustments</div></div>`);
 	adjustmentsRow.hover(function (hoverEvent) {
@@ -774,7 +773,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
 	body.css({
-		width: "380px", // once we add Markers, make this wide enough to contain them all
+		width: "fit-content", // once we add Markers, make this wide enough to contain them all
 		padding: "5px",
 		display: "flex",
 		"flex-direction": "row"
@@ -808,6 +807,13 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		return conditionItem;
 	};
 
+	let isPlayerTokensSelected = false;
+	tokens.forEach(token => {
+		if(token.isPlayer())
+		{
+			isPlayerTokensSelected = true;
+		}
+	});	
 	let conditionsList = $(`<ul></ul>`);
 	conditionsList.css("width", "180px");
 	body.append(conditionsList);
@@ -816,6 +822,10 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		conditionItem.addClass("icon-condition");
 		conditionsList.append(conditionItem);
 	});
+	if(isPlayerTokensSelected)
+	{
+		conditionsList.append($("<div id='playerTokenSelectedWarning'>A player token is selected this column of conditions must be set on the character sheet. Selecting a condition here will whisper the selected player(s).</div>"));
+	}
 
 	let markersList = $(`<ul></ul>`);
 	markersList.css("width", "185px");

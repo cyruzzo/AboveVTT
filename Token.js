@@ -94,19 +94,38 @@ class Token {
 		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.includes(conditionName);
 	}
 	addCondition(conditionName) {
-		if (this.hasCondition(conditionName)) {
-			// already did
-			return;
-		}
-		if (STANDARD_CONDITIONS.includes(conditionName)) {
-			this.options.conditions.push(conditionName);
-		} else {
-			this.options.custom_conditions.push(conditionName);
-		}
+	    if (this.hasCondition(conditionName)) {
+	        // already did
+	        return;
+	    }
+	    if (STANDARD_CONDITIONS.includes(conditionName)) {
+	        if (this.isPlayer()) {
+	            window.MB.inject_chat({
+	                player: window.PLAYER_NAME,
+	                img: window.PLAYER_IMG,
+	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="set-conditions-button">Toggle ${conditionName} ON</button></div>`,
+	                whisper: this.options.name
+	            });
+	        } else {
+	            this.options.conditions.push(conditionName);
+	        }
+	    } else {
+	        this.options.custom_conditions.push(conditionName);
+	    }
 	}
+	
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
+			if (this.isPlayer()) {
+	            window.MB.inject_chat({
+	                player: window.PLAYER_NAME,
+	                img: window.PLAYER_IMG,
+	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
+	                whisper: this.options.name
+	            });
+	        } else {
 			array_remove_index_by_value(this.options.conditions, conditionName);
+			}
 		} else {
 			array_remove_index_by_value(this.options.custom_conditions, conditionName);
 		}
