@@ -408,7 +408,23 @@ class Token {
 			token.css('--token-hpbar-display', 'block');
 		}
 		token.attr("data-border-color", this.options.color);
-	
+		if(!this.options.legacyaspectratio) {
+			if(token.children('img').width() == token.children('img').height()){
+				token.children('img').css("min-width", tokenWidth + 'px');
+				token.children('img').css("min-height", tokenHeight + 'px');
+			}
+			else if(token.children('img').width() > token.children('img').height()) {
+				token.children('img').css("min-width", tokenWidth + 'px');
+			}
+			else {
+				token.children('img').css("min-height", tokenHeight + 'px');
+			}
+		}
+		else {
+			token.children('img').css("min-width", "");
+			token.children('img').css("min-height", "");
+		}
+		
 		token.children('img').css({		
 		    'max-width': tokenWidth + 'px',
 			'max-height': tokenHeight + 'px',
