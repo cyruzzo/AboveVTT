@@ -603,10 +603,10 @@ function edit_scene_dialog(scene_id) {
 					offsety = al1.y % ppsy;
 				}
 				console.log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
-				window.CURRENT_SCENE_DATA.hpps = ppsx;
-				window.CURRENT_SCENE_DATA.vpps = ppsy;
-				window.CURRENT_SCENE_DATA.offsetx = offsetx;
-				window.CURRENT_SCENE_DATA.offsety = offsety;
+				window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
+				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
+				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
+				window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
 				let width
 				if (window.ScenesHandler.scene.upscaled == "1")
 					width = 2;

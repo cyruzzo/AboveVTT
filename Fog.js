@@ -415,7 +415,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	let skip = true;
 
 	gridContext.beginPath();
-	for (var i = Math.abs(startX); i < $("#scene_map").width(); i = i + Math.abs(incrementX)) {
+	for (var i = startX; i < $("#scene_map").width(); i = i + incrementX) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -430,7 +430,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	skip = true;
 
 	gridContext.beginPath();
-	for (var i = Math.abs(startY); i < $("#scene_map").height(); i = i + Math.abs(incrementY))  {
+	for (var i = startY; i < $("#scene_map").height(); i = i + incrementY) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
