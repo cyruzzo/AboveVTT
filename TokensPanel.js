@@ -519,9 +519,9 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 return;
             }
 
-            let droppedOn = document.elementFromPoint(event.pageX, event.pageY);
+            let droppedOn = document.elementFromPoint(event.clientX, event.clientY);
             console.log("droppedOn", droppedOn);
-            if (droppedOn.closest("#VTT")) {
+            if (droppedOn?.closest("#VTT")) {
                 // place a token where this was dropped
                 console.log("enable_draggable_token_creation stop");
                 let draggedRow = $(event.target).closest(".list-item-identifier");
