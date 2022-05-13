@@ -241,13 +241,7 @@ function ct_reorder(persist=true) {
 
 
 function ct_add_token(token,persist=true,disablerolling=false){
-	// TODO: check if the token is already in the tracker..
-	
-	
-	token.options.combat = true;
-	//token.sync();
-	if (token.persist != null) token.persist();
-	
+
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
@@ -415,6 +409,14 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	}
 }
 
+function ct_list_tokens() {
+	let tokenIds = [];
+	$('#combat_area tr').each(function () {
+		tokenIds.push($(this).attr("data-target"));
+	})
+	return tokenIds;
+}
+
 function ct_persist(){
 	var data= [];
 	$('#combat_area tr').each( function () {
@@ -477,7 +479,6 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
-	token.options.combat = false;
 	if (persist == true) {
 		token.sync();
 		if (token.persist != null) token.persist();

@@ -176,7 +176,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
 		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
 		let combatButton = $(`<button></button>`);
-		let inCombatStatuses = [...new Set(tokens.map(t => t.options.combat))];
+		let inCombatStatuses = [...new Set(tokens.map(t => t.isInCombatTracker()))];
 		if (inCombatStatuses.length === 1 && inCombatStatuses[0] === true) {
 			// they are all in the combat tracker. Make it a remove button
 			combatButton.addClass("remove-from-ct");
