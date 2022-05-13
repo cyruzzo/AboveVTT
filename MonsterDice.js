@@ -44,7 +44,7 @@ function scan_monster(target, stats, tokenId) {
 				const rollType = $(this).attr("data-rolltype")?.replace(" ","-")
 				const actionType = $(this).attr("data-rollaction")?.replace(" ","-") || "custom"
 				const text = $(this)?.text()
-				$(this).replaceWith(`<button data-exp=${dice} data-mod=${modifier} data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
+				$(this).replaceWith(`<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
 			})
 		}
 	});
@@ -306,7 +306,7 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 		damage_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	} else {
-		standard_dice_context_menu(modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
+		standard_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	}
 }
