@@ -691,6 +691,20 @@ function init_controls() {
 		b2ImageDivWrapper.append(b2ImageDiv);
 		b2.append(b2ImageDivWrapper);
 		sidebarControls.append(b2);
+
+		if (window.CLOUD) {
+			let b3 = $("<div id='switch_scenes' class='tab-btn hasTooltip button-icon blue-tab' data-name='Scenes' data-target='#scenes-panel'></div>").click(switch_control);
+			let b3ImageDiv = $('<div></div>');
+			let b3ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+			let b3Image = `${window.EXTENSION_PATH}assets/icons/photo.svg`;
+			b3ImageDiv.css({
+				"mask": `url(${b3Image}) no-repeat center / contain`,
+				"-webkit-mask": `url(${b3Image}) no-repeat center / contain`
+			});
+			b3ImageDivWrapper.append(b3ImageDiv);
+			b3.append(b3ImageDivWrapper);
+			sidebarControls.append(b3);
+		}
 	} else {
 		let b2 = $("<div id='switch_characters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Players' data-target='#players-panel'></div>").click(switch_control);
 		let b2ImageDiv = $('<div></div>');

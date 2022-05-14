@@ -8,13 +8,13 @@ tokendata={
 function convert_path(path){
 	var pieces=path.split("/");
 	var current=tokendata;
-	
+
 	for(var i=0;i<pieces.length;i++){
-		if(pieces[i]=="")
+		if(!current || pieces[i]=="")
 			continue;
 		current=current.folders[pieces[i]];
 	}
-	return current;
+	return current || {};
 }
 
 // deprecated, but still needed for migrate_to_my_tokens() to work
@@ -29,12 +29,6 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	if (contextMenu.length === 0) {
 		console.warn("context_menu_flyout, but #tokenOptionsPopup could not be found");
 		return;
-	}
-
-	try {
-		clearTimeout(window.context_menu_flyout_timer);
-	} catch (e) {
-		console.debug("failed to clear window.context_menu_flyout_timer", window.context_menu_flyout_timer);
 	}
 
 	if (hoverEvent.type === "mouseenter") {
