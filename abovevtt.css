@@ -3631,7 +3631,7 @@ body.encounter-builder-app .ddbc-tab-options--layout-pill .ddbc-tab-options__hea
     background: var(--theme-color, #c53131);
 }
 body.encounter-builder-app .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active:hover{
-    backdrop-filter: brightness(0.5);
+  box-shadow: inset 0 0 0 100px #0006;
 }
 
 .icon-concentration-reminder:before,
