@@ -154,6 +154,48 @@ function init_settings(){
 	`);
 
 	$("#input_file").change(import_readfile);
+
+	body.append(`
+		<br />
+		<h5 class="token-image-modal-footer-title">Cusomization Options</h5>
+		<div class="sidebar-panel-header-explanation"></div>
+	`);
+	let themeColorInput = $(`<input class="theme-color-input" type="color" value="#ddd"/>`);
+	let themeColor = $(".dice-toolbar").css("--dice-color");
+	themeColorInput.val(themeColor || "#e40712");	
+	$("body.encounter-builder-app").css("--theme-color", themeColor)
+	let themeColorWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper border-color-wrapper">
+			<div class="token-image-modal-footer-title border-color-title">Border Color</div>
+		</div>
+	`);
+
+
+	themeColorWrapper.append(themeColorInput); 
+	body.append(themeColorWrapper);
+	let colorPicker = $(themeColorInput);
+	colorPicker.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		containerClassName: 'prevent-sidebar-modal-close',
+		clickoutFiresChange: true,
+		color: themeColor,
+		appendTo: "parent"
+	});
+	const themeColorPickerChange = function(event, tinycolor) {
+		let themeChosenColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+		$(".dice-toolbar").css({
+			"--dice-color": themeChosenColor,
+			"--dice-color-hover": themeChosenColor
+		});
+		$("body.encounter-builder-app").css("--theme-color", themeChosenColor)
+	};
+	colorPicker.on('dragstop.spectrum', themeColorPickerChange);   // update the token as the player messes around with colors
+	colorPicker.on('change.spectrum', themeColorPickerChange); // commit the changes when the user clicks the submit button
+	colorPicker.on('hide.spectrum', themeColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+	
+
 	
 	body.append(`
 		<br />

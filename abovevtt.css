@@ -3625,6 +3625,15 @@ button.avtt-roll-button {
     z-index: 40;
 }
 
+body.encounter-builder-app .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active,
+body.encounter-builder-app .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active:hover
+{
+    background: var(--theme-color, #c53131);
+}
+body.encounter-builder-app .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active:hover{
+    backdrop-filter: brightness(0.5);
+}
+
 .icon-concentration-reminder:before,
 .icon-inspiration:before,
 .icon-flying:before,
