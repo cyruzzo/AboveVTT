@@ -166,7 +166,7 @@ function init_settings(){
 	$("body.encounter-builder-app").css("--theme-color", themeColor)
 	let themeColorWrapper = $(`
 		<div class="token-image-modal-url-label-wrapper border-color-wrapper">
-			<div class="token-image-modal-footer-title border-color-title">Border Color</div>
+			<div class="token-image-modal-footer-title border-color-title">Theme Color</div>
 		</div>
 	`);
 
