@@ -343,7 +343,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			function(){
 				token.options.ct_show = undefined;
 				ct_remove_token(token);
-				ct_persist();
 			}
 		);
 		if(window.DM)
@@ -429,7 +428,8 @@ function ct_persist(){
 	  data.push( {
 		'data-target': $(this).attr("data-target"),
 		'init': $(this).find(".init").val(),
-		'current': ($(this).attr("data-current")=="1")
+		'current': ($(this).attr("data-current")=="1"),
+		'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
 	   });
 	});
 	data.push({'data-target': 'round',
@@ -458,6 +458,8 @@ function ct_load(data=null){
 				let token;
 				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
 					token=window.TOKEN_OBJECTS[data[i]['data-target']];
+					token.options.ct_show = data[i]['data-ct-show'];
+					debugger;
 				}
 				else{
 					token={
@@ -486,7 +488,7 @@ function ct_load(data=null){
 function ct_remove_token(token,persist=true) {
 
 	if (persist == true) {
-		token.sync();
+		token.sync()
 		if (token.persist != null) token.persist();
 	}
 
