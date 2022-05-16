@@ -253,9 +253,14 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.attr("ishidden", token.options.hidden);
 	entry.addClass("CTToken");
 	
-	if (typeof(token.options.ct_show) == 'undefined'){
-		token.options.ct_show = true;
+
+	if(token.options.hidden) {
+		token.options.ct_show = false;
 	}
+	else {
+		token.options.ct_show = true;
+	}	
+
 
 	if (token.options.ct_show == true || window.DM){
 		if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
