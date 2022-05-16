@@ -459,7 +459,6 @@ function ct_load(data=null){
 				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
 					token=window.TOKEN_OBJECTS[data[i]['data-target']];
 					token.options.ct_show = data[i]['data-ct-show'];
-					debugger;
 				}
 				else{
 					token={
@@ -488,7 +487,7 @@ function ct_load(data=null){
 function ct_remove_token(token,persist=true) {
 
 	if (persist == true) {
-		token.sync()
+		token.sync();
 		if (token.persist != null) token.persist();
 	}
 
