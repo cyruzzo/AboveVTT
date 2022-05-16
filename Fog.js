@@ -50,6 +50,7 @@ class WaypointManagerClass {
 		this.currentWaypointIndex = 0;
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		this.timeout = undefined;
+		this.timerId = undefined;
 	}
 
 	// Set canvas and further set context
@@ -280,6 +281,40 @@ class WaypointManagerClass {
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+	}
+
+	/**
+	 * redraws the waypoints using various levels of opacity until completely clear
+	 * then removes all waypoints and resets canvas opacity
+	 * total duration of fade 150*0.05=3 seconds
+	 */
+	fadeoutMeasuring(){
+		let alpha = 1.0
+		const self = this
+		this.timerId = setInterval(function(){ fadeout() }, 150);
+
+		function fadeout(){
+			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
+			self.ctx.globalAlpha = alpha;
+			self.draw(false)
+			alpha = alpha - 0.05;
+			if (alpha < 0.0){
+				self.cancelFadeout()
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	cancelFadeout(){
+		if (this.timerId !== undefined){
+			clearInterval(this.timerId);
+			this.ctx.globalAlpha = 1.0
+			this.clearWaypoints();
+			this.timerId = undefined
+
+		}	
 	}
 };
 
@@ -746,7 +781,6 @@ function drawing_mousedown(e) {
 		}		
 	}
 
-	console.log(e)
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
 		return;
 	}
@@ -832,12 +866,14 @@ function drawing_mousemove(e) {
 
 	var canvas = document.getElementById("temp_overlay");
 	var context = canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	const lineWidth = window.LINEWIDTH
 	const color = window.DRAWCOLOR
 	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
+
+	WaypointManager.setCanvas(canvas);
+	WaypointManager.cancelFadeout()
 
 	window.MOUSEMOVEWAIT = true;
 	setTimeout(function() {
@@ -845,9 +881,10 @@ function drawing_mousemove(e) {
 	}, mouseMoveFps);
 
 	if (window.MOUSEDOWN) {
+		clear_temp_canvas()
+
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
-
 		// bain todo why is this here?
 		if(window.DRAWSHAPE !== "brush")
 		{
@@ -900,11 +937,13 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
-				WaypointManager.setCanvas(canvas);
-				WaypointManager.registerMouseMove(mousex, mousey);
-				WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
-				WaypointManager.draw(false);
-				context.fillStyle = '#f50';
+				if(e.which === 1){
+					
+					WaypointManager.registerMouseMove(mousex, mousey);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
+					WaypointManager.draw(false);
+					context.fillStyle = '#f50';
+				}
 			}else{
 				drawLine(context,
 					window.BEGIN_MOUSEX, 
@@ -937,6 +976,7 @@ function drawing_mousemove(e) {
 	else {
 		if (window.DRAWSHAPE === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
+			clear_temp_canvas()
 			drawPolygon( context,
 				joinPointsArray(
 					window.BEGIN_MOUSEX,
@@ -962,7 +1002,7 @@ function drawing_mousemove(e) {
 function drawing_mouseup(e) {
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (window.DRAWFUNCTION == "measure" && e.button == 2) {
-		if(window.MOUSEDOWN) {
+		if(window.MOUSEDOWN && WaypointManager.isMeasuring()) {
 			WaypointManager.checkNewWaypoint(mousex, mousey);
 		}
 		//console.log("Measure right click");
@@ -985,7 +1025,8 @@ function drawing_mouseup(e) {
 	}
 	// restore to what it looked like when first clicked
 	// but not polygons as they have a close box to clear and then save
-	if (window.DRAWSHAPE !== "polygon"){
+	// measure gets special treatment later on in this function
+	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure"){
 		clear_temp_canvas()
 	}
 	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
@@ -1112,15 +1153,11 @@ function drawing_mouseup(e) {
 		console.log("READY");
 	}
 	else if (window.DRAWFUNCTION == "measure") {
-
-		setTimeout(function () {
-			// We do not clear if we are still measuring, added this as it somehow appeared multiple
-			// timers could be set, may be a race condition or something still here...
-			if (!WaypointManager.isMeasuring()) {
-				redraw_fog();
-			}
-		}, 2000);
-		WaypointManager.clearWaypoints();
+		WaypointManager.fadeoutMeasuring()
+		// setTimeout(function() {
+		// 	clear_temp_canvas()
+		// 	WaypointManager.clearWaypoints()
+		// }, 2000);
 	}
 	
 }
@@ -1500,8 +1537,8 @@ function drawPolygon (
 }
 
 function clear_temp_canvas(){
-	let canvas = document.getElementById("temp_overlay");
-	let context = canvas.getContext("2d");
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 

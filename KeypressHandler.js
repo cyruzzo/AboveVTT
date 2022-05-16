@@ -192,7 +192,7 @@ Mousetrap.bind('alt', function () {
 
 Mousetrap.bind('alt', function () {
     if ($('#measure-button').hasClass('button-enabled')) {
-        $('#measure-button').click()
+        $('#select-button').click()
     }
     altHeld = false;
 }, 'keyup');
