@@ -286,18 +286,17 @@ class WaypointManagerClass {
 	/**
 	 * redraws the waypoints using various levels of opacity until completely clear
 	 * then removes all waypoints and resets canvas opacity
-	 * total duration of fade 150*0.05=3 seconds
 	 */
 	fadeoutMeasuring(){
 		let alpha = 1.0
 		const self = this
-		this.timerId = setInterval(function(){ fadeout() }, 150);
-
+		this.timerId = setInterval(function(){ fadeout() }, 100);
+		
 		function fadeout(){
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
 			self.draw(false)
-			alpha = alpha - 0.05;
+			alpha = alpha - 0.03;
 			if (alpha < 0.0){
 				self.cancelFadeout()
 			}
@@ -775,7 +774,6 @@ function drawing_mousedown(e) {
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
 		context.setLineDash([10, 5])
-		toggle_lifting_fog()
 		if (e.which == 1) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 		}		
@@ -1037,7 +1035,6 @@ function drawing_mouseup(e) {
 
 
 	if (window.DRAWFUNCTION === 'select') {
-		toggle_lifting_fog()
 		$("#temp_overlay").css('cursor', '');
 	}
 
@@ -1318,19 +1315,6 @@ function get_draw_data(button, menu){
 	}
 }
 
-/**
- * raises and lowers the z-index of the fog layer
- * so selecting elements can be done
- */
-function toggle_lifting_fog(){
-	const height = $("#fog_layer").css("z-index")
-	if (height === "50"){
-		$("#fog_layer").css("z-index", "31")
-	}
-	else if(height === "31"){
-		$("#fog_layer").css("z-index", "50")
-	}
-}
 
 /**
  * The main event handler for all drawing buttons (select/measure/fog/draw/text)
@@ -1394,7 +1378,13 @@ function handle_drawing_button_click() {
 			clicked:$(clicked),
 			menu:$(menu)
 		}
-
+		// allow all drawing to be done above the tokens
+		if ($(clicked).is("#select-button")){
+			$("#temp_overlay").css("z-index", "25")
+		}
+		else{
+			$("#temp_overlay").css("z-index", "50")
+		}
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup',  data, drawing_mouseup);
 		target.on('mousemove', data, drawing_mousemove);
