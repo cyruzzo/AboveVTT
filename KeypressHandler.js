@@ -181,13 +181,14 @@ Mousetrap.bind('right', function () {
 
 Mousetrap.bind('alt', function () {
     if (altHeld) {
-        return;
+        return false;
     } else {
         altHeld = true;
     }
     if (!($('#measure-button').hasClass('button-enabled'))) {
         $('#measure-button').click()
     }
+    return false
 }, 'keydown');
 
 Mousetrap.bind('alt', function () {
@@ -195,6 +196,7 @@ Mousetrap.bind('alt', function () {
         $('#select-button').click()
     }
     altHeld = false;
+    return false
 }, 'keyup');
 
 

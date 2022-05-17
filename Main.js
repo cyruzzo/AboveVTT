@@ -2207,7 +2207,7 @@ function init_ui() {
 	temp_overlay.css("z-index", "25");
 
 
-	fog.dblclick(function(e) {
+	temp_overlay.dblclick(function(e) {
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
