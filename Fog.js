@@ -872,9 +872,7 @@ function drawing_mousemove(e) {
 	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
 
-	WaypointManager.setCanvas(canvas);
-	WaypointManager.cancelFadeout()
-
+	
 	window.MOUSEMOVEWAIT = true;
 	setTimeout(function() {
 		window.MOUSEMOVEWAIT = false;
@@ -882,6 +880,9 @@ function drawing_mousemove(e) {
 
 	if (window.MOUSEDOWN) {
 		clear_temp_canvas()
+		WaypointManager.setCanvas(canvas);
+		WaypointManager.cancelFadeout()
+
 
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
@@ -977,6 +978,8 @@ function drawing_mousemove(e) {
 		if (window.DRAWSHAPE === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			clear_temp_canvas()
+			WaypointManager.setCanvas(canvas);
+			WaypointManager.cancelFadeout()
 			drawPolygon( context,
 				joinPointsArray(
 					window.BEGIN_MOUSEX,
