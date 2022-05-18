@@ -557,7 +557,7 @@ function update_pc_token_rows() {
 
             });
             row.find(".tokens-panel-row-details-subtitle .pp-value").text(playerData.pp);
-            row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.pp);
+            row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.walking);
             if (playerData.inspiration) {
                 row.find(".tokens-panel-row-details-subtitle .inspiration").show();
             } else {
