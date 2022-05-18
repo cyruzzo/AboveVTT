@@ -1193,7 +1193,7 @@ class MessageBroker {
 		if(window.CURRENT_SCENE_DATA)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
 		if(window.PLAYER_SCENE_ID)
-			message.playerSceneId = window.PLAYER_SCENE_ID;
+			message.playersSceneId = window.PLAYER_SCENE_ID;
 
 		const jsmessage=JSON.stringify(message);
 		if(jsmessage.length > (128000)){
