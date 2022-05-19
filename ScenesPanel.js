@@ -796,7 +796,7 @@ function edit_scene_dialog(scene_id) {
 			scene.scale_factor=1;
 
 			if(window.CLOUD)
-				window.ScenesHandler.persist_current_scene();
+				window.ScenesHandler.persist_current_scene(true);
 			else
 				window.ScenesHandler.persist();
 			window.ScenesHandler.switch_scene(scene_id);
