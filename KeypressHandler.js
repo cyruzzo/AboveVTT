@@ -186,13 +186,17 @@ Mousetrap.bind('alt', function () {
         altHeld = true;
     }
     if (!($('#measure-button').hasClass('button-enabled'))) {
-        $('#measure-button').click()
+        const e = jQuery.Event("click");
+        e.altKey = true;
+        $('#measure-button').trigger(e);
     }
     return false
 }, 'keydown');
 
 Mousetrap.bind('alt', function () {
     if ($('#measure-button').hasClass('button-enabled')) {
+        const e = jQuery.Event("mouseup");
+        $('#temp_overlay, #black_layer').trigger(e);
         $('#select-button').click()
     }
     altHeld = false;

@@ -290,6 +290,12 @@ class WaypointManagerClass {
 	fadeoutMeasuring(){
 		let alpha = 1.0
 		const self = this
+		// only ever allow a single fadeout to occur
+		// this stops weird flashing behaviour with interacting
+		// interval function calls
+		if (this.timerId){
+			return
+		}
 		this.timerId = setInterval(function(){ fadeout() }, 100);
 		
 		function fadeout(){
@@ -941,6 +947,7 @@ function drawing_mousemove(e) {
 					WaypointManager.registerMouseMove(mousex, mousey);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
 					WaypointManager.draw(false);
+					console.log(WaypointManager)
 					context.fillStyle = '#f50';
 				}
 			}else{
@@ -971,6 +978,19 @@ function drawing_mousemove(e) {
 				}
 			}
 		}
+	}
+	// allows measuring while having a token selected
+	else if (e.altKey && $(["data-dragging"])){
+		clear_temp_canvas()
+		WaypointManager.setCanvas(canvas);
+		WaypointManager.cancelFadeout()
+
+		WaypointManager.registerMouseMove(mousex, mousey);
+		WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
+		WaypointManager.draw(false);
+		console.log(WaypointManager)
+		context.fillStyle = '#f50';
+
 	}
 	else {
 		if (window.DRAWSHAPE === "polygon" &&
@@ -1018,10 +1038,6 @@ function drawing_mouseup(e) {
 	// ignore middle-mouse clicks
 	if(e.which == 2)
 	{
-		return;
-	}
-
-	if (!window.MOUSEDOWN) {
 		return;
 	}
 	// restore to what it looked like when first clicked
@@ -1390,6 +1406,14 @@ function handle_drawing_button_click() {
 		target.on('mousemove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
 		
+		if ($(["data-dragging"]) && $(clicked).is("#measure-button") && e.altKey){
+			const token = $(["data-dragging"]).first()
+			const event = jQuery.Event("mousedown");
+			event.pageX = $(token).attr("data-drag-x")
+			event.pageY = $(token).attr("data-drag-y")
+			// this event needs pagex and pagey values
+			target.trigger(event)
+		}
 	})
 	// during initialisation of VTT default to the select button
 	$('#select-button').click();

@@ -1144,6 +1144,10 @@ class Token {
 					function (event) {
 						//remove cover for smooth drag
 						$('.iframeResizeCover').remove();
+
+						tok.removeAttr("data-dragging")
+						tok.removeAttr("data-drag-x")
+						tok.removeAttr("data-drag-y")
 			
 						// this should be a XOR... (A AND !B) OR (!A AND B)
 						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
@@ -1240,6 +1244,10 @@ class Token {
 					window.DRAGGING = true;
 					click.x = event.clientX;
 					click.y = event.clientY;
+					// these data attrs are used in fog to measure while dragging
+					tok.attr("data-dragging", "true")
+					tok.attr("data-drag-x", click.x)
+					tok.attr("data-drag-y", click.y)
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
