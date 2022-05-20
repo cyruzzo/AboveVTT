@@ -512,6 +512,7 @@ div.top_menu.visible,
 }
 
 div#scene_selector,
+#text_controller_inside,
 #combat_tracker_inside,
 #edit_dialog,
 #mega_importer,
@@ -2839,6 +2840,14 @@ button.avtt-roll-button {
 #combat_area td:last-of-type {
         padding: 0px 5px 0px 0px;
 }
+
+#text_controller_inside:first-child {
+    min-width:75px;
+}
+
+
+
+#text_controller_title_bar,
 #draw_text_title_bar,
 #combat_tracker_title_bar {
     width: 100%;
@@ -2866,6 +2875,39 @@ button.avtt-roll-button {
     cursor: move;
     z-index: 1;
 }
+
+#text_controller_inside .ddbc-tab-options--layout-pill{
+    min-width: 25px;
+    max-width: 75px;
+    width: 75px;
+    padding:1px
+}
+#text_controller_inside .sp-replacer,
+#text_controller_inside select,
+#text_controller_inside input{
+    width:inherit;
+    display:flex;
+    flex-wrap: wrap;
+    height: 25px;
+    width:100%
+}
+
+
+#text_controller_inside {
+    position: absolute;
+    left: 50%;
+    z-index: 1000;
+    width: 240px;
+    height: 145px;
+}
+
+#text_controller_inside .material-icons{
+    font-size: 12px;
+    left: calc(50% - 6px);
+    position: relative;
+}
+
+#text_controller_title_bar:after,
 #draw_text_title_bar:after,
 #combat_tracker_title_bar:after {
     content: '';
@@ -2886,6 +2928,8 @@ button.avtt-roll-button {
     width: 100%;
     color: #fff;
 }
+
+#text_controller_title_bar_exit,
 #draw_text_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
@@ -2905,6 +2949,7 @@ button.avtt-roll-button {
 #player_close_title_button:hover,
 #reload_player_frame_button:hover,
 #draw_text_title_bar_exit:hover,
+#text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
 #token_options_title_bar_exit:hover {
     background: #ddd3;
@@ -2918,6 +2963,7 @@ button.avtt-roll-button {
 }
  
 #draw_text_title_bar_exit svg,
+#text_controller_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
 #player_close_title_button svg,
@@ -2928,6 +2974,7 @@ button.avtt-roll-button {
 }
 
 #draw_text_title_bar_exit svg g rect,
+#text_controller_title_bar_exit svg g rect,
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
 #player_close_title_button svg g rect,
@@ -2948,6 +2995,7 @@ button.avtt-roll-button {
 }
 
 #draw_text_title_bar_exit,
+#text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
 #player_close_title_button,
@@ -2968,6 +3016,7 @@ button.avtt-roll-button {
 #player_close_title_button,
 #reload_player_frame_button,
 #draw_text_title_bar_exit,
+#text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #token_options_title_bar_exit {
     top: 2px;
@@ -3389,12 +3438,13 @@ button.avtt-roll-button {
 }
 /*minimize windows*/
 
-.minimized > *:not(#ct_text_title, .player_title, .monster_title), 
+.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title), 
 #combat_tracker_title_bar.minimized:after,
 #combat_tracker_title_bar.minimized ~ *{
     display: none !important;
 }
 
+#text_controller_title_bar.minimized,
 #combat_tracker_title_bar.minimized,
 #resizeDragMon.minimized,
 #sheet.minimized,
@@ -3419,6 +3469,7 @@ button.avtt-roll-button {
 #combat_tracker_inside{
     margin: 0px;
 }
+.minimized #text_controller_title,
 .minimized .monster_title,
 .minimized .player_title,
 .minimized #ct_text_title{

@@ -1,3 +1,174 @@
+function create_text_controller() {
+    if ($("#text_controller_inside").length > 0) {
+        $("#text_controller_inside").show()
+        return
+    }
+    const textControllerInside = $("<div id='text_controller_inside'/>");
+    $('#site').append(textControllerInside);
+    const textControllerTitleBar = $("<div id='text_controller_title_bar' class='restored'></div>")
+    const textControllerTitleBarExit = $('<div id="text_controller_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+    textControllerTitleBarExit.click(function () {
+        $(this).parent().parent().hide()
+        $("select-button").click();
+    });
+    textControllerTitleBar.append(textControllerTitleBarExit);
+    textControllerInside.append(textControllerTitleBar);
+
+    $(textControllerTitleBar).dblclick(function () {
+        if ($(textControllerTitleBar).hasClass("restored")) {
+            $(textControllerTitleBar).data("prev-height", $("#text_controller_inside").height());
+            $(textControllerTitleBar).data("prev-width", $("#text_controller_inside").width());
+            $(textControllerTitleBar).data("prev-top", $("#text_controller_inside").css("top"));
+            $(textControllerTitleBar).data("prev-left", $("#text_controller_inside").css("left"));
+            $("#text_controller_inside").css("top", $(textControllerTitleBar).data("prev-minimized-top"));
+            $("#text_controller_inside").css("left", $(textControllerTitleBar).data("prev-minimized-left"));
+            $("#text_controller_inside").height(25);
+            $("#text_controller_inside").width(200);
+            $("#text_controller_inside").css("visibility", "hidden");
+            $(textControllerTitleBar).css("visibility", "visible");
+            $(textControllerTitleBar).addClass("minimized");
+            $(textControllerTitleBar).removeClass("restored");
+            $(textControllerTitleBar).prepend("<div id='text_controller_title'>Text Settings</div>")
+        }
+        else if ($(textControllerTitleBar).hasClass("minimized")) {
+            $(textControllerTitleBar).data("prev-minimized-top", $("#text_controller_inside").css("top"));
+            $(textControllerTitleBar).data("prev-minimized-left", $("#text_controller_inside").css("left"));
+            $("#text_controller_inside").height($(textControllerTitleBar).data("prev-height"));
+            $("#text_controller_inside").width($(textControllerTitleBar).data("prev-width"));
+            $("#text_controller_inside").css("top", $(textControllerTitleBar).data("prev-top"));
+            $("#text_controller_inside").css("left", $(textControllerTitleBar).data("prev-left"));
+            $(textControllerTitleBar).addClass("restored");
+            $(textControllerTitleBar).removeClass("minimized");
+            $("#text_controller_inside").css("visibility", "visible");
+            $("#text_controller_title").remove();
+        }
+    });
+    const flexDiv = $(`<div style="display: flex; flex-direction: row; flex-wrap: wrap;"/>`);
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <select id='text_font' data-required="text_font" name='font' style='text-align:center'>
+                ${availableFonts.map((font) => {
+            return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
+        })}
+            </select>
+        </div>
+            `)
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <input title='Text size' data-required="text_size" id='text_size'
+            min='1' value='20' style='text-align:center' maxlength='3' type='number' step='1'/>
+         </div>   
+        `)
+
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <input title='Text color' data-required="text_color" 
+            class='spectrum'id='font_color' name='Font' value='black' />
+        </div>`)
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+           <button id='text_bold' style="height:20px" data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
+                <span class='material-icons' style='font-size: 12px'>format_bold</span>
+            </button>
+        </div>
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='text_italic' style="height:20px" data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+                <span class='material-icons' style='font-size: 12px'>format_italic</span>
+            </button>
+        </div>
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='text_underline' style="height:20px" data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+                <span class='material-icons' style='font-size: 12px'>format_underlined</span>
+            </button>
+        </div> `
+    );
+
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <button id='text_left' style="height:20px" data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
+                <span class='material-icons' style='font-size: 12px'>format_align_left</span>
+            </button>
+        </div>
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='text_center' style="height:20px" data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+                <span class='material-icons' style='font-size: 12px'>format_align_center</span>
+            </button>
+        </div>
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='text_right' style="height:20px" data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+                <span class='material-icons' style='font-size: 12px'>format_align_right</span>
+            </button>
+        </div>`
+    );
+    flexDiv.append(`
+    <div class='ddbc-tab-options--layout-pill'>
+        <input title='Stroke size' id='stroke_size' data-required="stroke_size" min='0'
+            value='1' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'/>
+    </div>
+    <div class='ddbc-tab-options--layout-pill'>
+        <input title='Stroke color' data-required="stroke_color" class='spectrum'
+            id='stroke_color' name='strokeColor' value='white' />
+    </div>
+    `);
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <input title='Background color' data-required="background_color" class='spectrum'
+            id='background_color' name='backgroundColor' value='rgba(17, 17, 17, 0.505)' />
+        </div>
+    `);
+
+    let colorPickers = flexDiv.find("input.spectrum");
+    colorPickers.spectrum({
+        type: "color",
+        showInput: true,
+        showInitial: true,
+        clickoutFiresChange: false,
+    });
+
+    const colorPickerChange = function (e, tinycolor) {
+        let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        $(e.target).val(color);
+    };
+    colorPickers.on("move.spectrum", colorPickerChange); // update the token as the player messes around with colors
+    colorPickers.on("change.spectrum", colorPickerChange); // commit the changes when the user clicks the submit button
+    colorPickers.on("hide.spectrum", colorPickerChange); // the hide event includes the original color so let's change it back when we get it
+    textControllerInside.append(flexDiv)
+
+
+    $("#text_controller_inside").addClass("moveableWindow");
+	$("#text_controller_inside").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+
+			}
+		});
+	$("#text_controller_inside").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 215,
+		minHeight: 200
+	});
+	
+	$("#text_controller_inside").mousedown(function() {
+		frame_z_index_when_click($(this));
+	});
+}
+
 /**
  * Creates a moveable and resizable text area with a close and submit button
  * @param {Number} x starting left side position
@@ -57,7 +228,10 @@ function create_moveable_text_wrapper(x, y, width, height) {
     $(closeCross).on("click", function () {
         $(this).parent().parent().remove();
     });
+
     $(submitButton).on("click", handle_draw_text_submit);
+
+
     titleBar.append(closeCross);
     titleBar.append(submitButton);
     wrapper.append(titleBar);
@@ -80,6 +254,7 @@ function add_text_drawing_input([
     height,
     linewidth,
 ]) {
+    create_text_controller()
     const wrapper = create_moveable_text_wrapper(x, y, width, height);
 
     const input = $(
@@ -116,7 +291,7 @@ function add_text_drawing_input([
     // observe resizing the text area and match the title bar to it
     const myObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
-            const bar = $(entry.target).parent().find("#draw_text_title_bar");
+            const bar = $(entry.target).parent().find("#draw_text_title_bar, #draw_text_control_bar");
             // no idea why but the textArea is 6 pixels larger than the bar
             // scroll bar is approx 18px
             if (entry.target.clientHeight < entry.target.scrollHeight) {
@@ -319,7 +494,7 @@ function draw_text(
     // loop the lines again as large stroke size will overlap the fill text
     // so add fill text in last
     lines.forEach((line) => {
-        
+
         const [textX, textWidth] = get_x_start_and_width_of_text(
             x,
             width,
@@ -355,71 +530,24 @@ function init_text_button(buttons) {
     textButton = $(
         "<button style='display:inline;width:75px' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</button>"
     );
+
     textMenu = $(
         "<div id='text_menu' class='top_menu' style='position:fixed; top:25px; width:75px'></div>"
     );
-    textMenu.append("<div class='menu-subtitle'>Font</div>");
-    textMenu.append(`<select id='text_font' data-required="text_font" name='font' style='width:inherit; margin:0px; text-align:center'>
-        ${availableFonts.map((font) => {
-        return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
-    })}
-    </select>`);
-    textMenu.append(
-        `<input title='Text size' data-required="text_size" id='text_size' min='1' value='20' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'>`
-    );
 
-    textMenu.append("<div class='menu-subtitle'>Font Style</div>");
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <button id='text_bold' style="width:20px;height:20px" data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
-                <span class='material-icons' style='font-size: 12px'>format_bold</span>
-            </button>
-            <button id='text_italic' style="width:20px;height:20px" data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
-                <span class='material-icons' style='font-size: 12px'>format_italic</span>
-            </button>
-            <button id='text_underline' style="width:20px;height:20px" data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
-                <span class='material-icons' style='font-size: 12px'>format_underlined</span>
-            </button> 
-        </div>`
+                <button id='text_draw' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active'
+                    data-shape='rect' data-unique-with="control" data-function="draw_text">
+                        Draw
+                </button>
+            </div>`
     );
 
-    textMenu.append("<div class='menu-subtitle'>Alignment</div>");
-    textMenu.append(
-        `<div class='ddbc-tab-options--layout-pill'>
-            <button id='text_left' style="width:20px;height:20px" data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
-                <span class='material-icons' style='font-size: 12px'>format_align_left</span>
-            </button>
-            <button id='text_center' style="width:20px;height:20px" data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
-                <span class='material-icons' style='font-size: 12px'>format_align_center</span>
-            </button>
-            <button id='text_right' style="width:20px;height:20px" data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
-                <span class='material-icons' style='font-size: 12px'>format_align_right</span>
-            </button>
-        </div>`
-    );
-
-    textMenu.append(`<div class='menu-subtitle'>Font</div>
-        <input title='Text color' data-required="text_color" class='spectrum'
-            id='font_color' name='Font' value='black' />
-        `);
-
-    textMenu.append(`<div class='menu-subtitle'>Background</div> 
-        <input title='Background color' data-required="background_color" class='spectrum'
-            id='background_color' name='backgroundColor' value='rgba(17, 17, 17, 0.505)' />
-        `);
-
-    textMenu.append(`<div class='menu-subtitle'>Stroke</div> 
-        <input title='Stroke size' id='stroke_size' data-required="stroke_size" min='0'
-            value='1' style='width:inherit; margin:0px; text-align:center' maxlength='3' type='number' step='1'/>
-        <input title='Stroke color' data-required="stroke_color" class='spectrum'
-            id='stroke_color' name='strokeColor' value='white' />
-        `);
-
-    textMenu.append(`<div class='menu-subtitle'>Controls</div>`);
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
                 <button id='text_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
-                    data-shape='text_erase' data-toggle="true" data-function="eraser">
+                    data-shape='text_erase' data-unique-with="control" data-function="eraser">
                         Erase
                 </button>
             </div>`
@@ -480,23 +608,6 @@ function init_text_button(buttons) {
     });
 
     $("body").append(textMenu);
-
-    let colorPickers = textMenu.find("input.spectrum");
-    colorPickers.spectrum({
-        type: "color",
-        showInput: true,
-        showInitial: true,
-        clickoutFiresChange: false,
-    });
-
-    const colorPickerChange = function (e, tinycolor) {
-        let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-        $(e.target).val(color);
-    };
-    colorPickers.on("move.spectrum", colorPickerChange); // update the token as the player messes around with colors
-    colorPickers.on("change.spectrum", colorPickerChange); // commit the changes when the user clicks the submit button
-    colorPickers.on("hide.spectrum", colorPickerChange); // the hide event includes the original color so let's change it back when we get it
-
     buttons.append(textButton);
     textMenu.css("left", textButton.position().left);
 }

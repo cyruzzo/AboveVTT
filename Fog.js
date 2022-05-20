@@ -774,10 +774,8 @@ function drawing_mousedown(e) {
 	else if (window.DRAWFUNCTION === "draw_text"){
 		window.DRAWTYPE = "filled"
 		// fully transparent box, set fill to border
-		if(is_rgba_fully_transparent(window.DRAWCOLOR)){
-			window.DRAWTYPE = "border"
-			window.DRAWCOLOR = "rgba(255, 255, 255, 0.5)"
-		}
+		window.DRAWTYPE = "border"
+		window.DRAWCOLOR = "rgba(255, 255, 255, 0.5)"
 	}
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
@@ -1303,23 +1301,12 @@ function get_draw_data(button, menu){
 		const selectedOptions = $(selectedInMenu).map(function() {
 			const key = $(this).attr("data-key")
 			const value = $(this).attr("data-value")
-
 			return details = {
 				[key]: value
 			}
 		})
 		const options = Object.assign({}, ...requiredOptions, ...selectedOptions);
 
-		if (menu.attr("id") === "text_menu"){
-			// selected shape & function only exist when erase selected
-			console.groupEnd()
-			return {
-				shape: selectedShape || "rect",
-				function: selectedFunction || "draw_text",
-				from:menu.attr("id"),
-				...options
-			}
-		}
 		console.groupEnd()
 		return{
 			shape:selectedShape,
