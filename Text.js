@@ -124,7 +124,7 @@ function create_text_controller() {
         showInitial: true,
         clickoutFiresChange: false,
     });
-
+    
     const colorPickerChange = function (e, tinycolor) {
         let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
         $(e.target).val(color);
@@ -133,7 +133,11 @@ function create_text_controller() {
     colorPickers.on("change.spectrum", colorPickerChange); // commit the changes when the user clicks the submit button
     colorPickers.on("hide.spectrum", colorPickerChange); // the hide event includes the original color so let's change it back when we get it
     textControllerInside.append(flexDiv)
-
+    $(".sp-replacer.sp-light").each(function () { 
+        console.log(this)
+        console.log($(this).prev().title)
+        $(this).attr("title", $(this).prev().attr("title")) 
+    });
 
     $("#text_controller_inside").addClass("moveableWindow");
 	$("#text_controller_inside").draggable({
