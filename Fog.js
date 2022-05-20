@@ -731,6 +731,8 @@ function is_rgba_fully_transparent(rgba){
  * @returns 
  */
 function drawing_mousedown(e) {
+	clear_temp_canvas()
+	WaypointManager.cancelFadeout()
 	console.log("mouse down with event", e)
 	// always draw unbaked drawings to the temp overlay
 	canvas = document.getElementById("temp_overlay");
@@ -884,10 +886,6 @@ function drawing_mousemove(e) {
 
 	if (window.MOUSEDOWN) {
 		clear_temp_canvas()
-		WaypointManager.setCanvas(canvas);
-		WaypointManager.cancelFadeout()
-
-
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
 		// bain todo why is this here?
@@ -943,7 +941,8 @@ function drawing_mousemove(e) {
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
 				if(e.which === 1){
-					
+					WaypointManager.setCanvas(canvas);
+					WaypointManager.cancelFadeout()
 					WaypointManager.registerMouseMove(mousex, mousey);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
 					WaypointManager.draw(false);
