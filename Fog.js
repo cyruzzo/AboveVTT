@@ -302,9 +302,10 @@ class WaypointManagerClass {
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
 			self.draw(false)
-			alpha = alpha - 0.03;
-			if (alpha < 0.0){
+			alpha = alpha - 0.2;
+			if (alpha <= 0.0){
 				self.cancelFadeout()
+				self.clearWaypoints();
 			}
 		}
 	}
@@ -316,7 +317,6 @@ class WaypointManagerClass {
 		if (this.timerId !== undefined){
 			clearInterval(this.timerId);
 			this.ctx.globalAlpha = 1.0
-			this.clearWaypoints();
 			this.timerId = undefined
 
 		}	
