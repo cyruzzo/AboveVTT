@@ -21,8 +21,7 @@ const delayedClear = mydebounce(() => clearFrame());
 function addVideo(stream,streamerid) {
 	let video = document.createElement("video");
 	video.setAttribute("class", "dicestream");
-	video.width = 1024;
-	video.height = 600;
+	video.setAttribute("id","streamer-video-"+streamerid);
 	video.autoplay = true;
 	$(video).hide();
 	video.srcObject = stream;
@@ -30,15 +29,14 @@ function addVideo(stream,streamerid) {
 	video.play();
 	
 	
-	var dicecanvas=$("<canvas width=1024 height=600 class='streamer-canvas' />");
+	var dicecanvas=$(`<canvas width='${window.innerWidth}' height='${window.innerHeight}' class='streamer-canvas' />`);
 	dicecanvas.attr("id","streamer-canvas-"+streamerid);
-	dicecanvas.css("width","1024");
-	dicecanvas.css("height","600");
 	//dicecanvas.css("opacity",0.5);
 	dicecanvas.css("position","fixed");
-	dicecanvas.css("bottom","5px");
-	dicecanvas.css("right","340px");
-	dicecanvas.css("z-index",9000);
+	dicecanvas.css("top","50%");
+	dicecanvas.css("left","50%");
+	dicecanvas.css("transform","translate(-50%, -50%)");
+	dicecanvas.css("z-index",60000);
 	dicecanvas.css("touch-action","none");
 	dicecanvas.css("pointer-events","none");
 	$("#site").append(dicecanvas);
@@ -51,27 +49,33 @@ function addVideo(stream,streamerid) {
 		delayedClear();
 		
 		let tmpcanvas = document.createElement("canvas");
-		tmpcanvas.width = 1024;
-		tmpcanvas.height = 600;
+		tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
+		tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);
 		let tmpctx = tmpcanvas.getContext("2d");
-		tmpctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, 1024, 600);
-		const frame = tmpctx.getImageData(0, 0, 1024, 600);
+		dicecanvas.attr("width", tmpcanvas.width + "px");
+		dicecanvas.attr("height", tmpcanvas.height  + "px");
+		dicecanvas.css("height",tmpcanvas.height);
+		dicecanvas.css("width",tmpcanvas.width );
+		window.requestAnimationFrame(updateCanvas);
+		tmpctx.drawImage(video, 0, 0);
+		if(tmpcanvas.width>0)
+		{
+			const frame = tmpctx.getImageData(0, 0, tmpcanvas.width, tmpcanvas.height);
 
-		for (let i = 0; i < frame.data.length; i += 4) {
-			const red = frame.data[i + 0];
-			const green = frame.data[i + 1];
-			const blue = frame.data[i + 2];
-			/*if ((red < 24) && (green < 24) && (blue < 24))
-				frame.data[i + 3] = 128;*/
-			if ((red < 14) && (green < 14) && (blue < 14))
-				frame.data[i + 3] = 0;
-			
+			for (let i = 0; i < frame.data.length; i += 4) {
+				const red = frame.data[i + 0];
+				const green = frame.data[i + 1];
+				const blue = frame.data[i + 2];
+				/*if ((red < 24) && (green < 24) && (blue < 24))
+					frame.data[i + 3] = 128;*/
+				if ((red < 14) && (green < 14) && (blue < 14))
+					frame.data[i + 3] = 0;
+				
+			}
+			ctx.putImageData(frame,0,0);	
 		}
-		ctx.putImageData(frame,0,0);
-		video.requestVideoFrameCallback(updateCanvas);
 	};
-	
-	video.requestVideoFrameCallback(updateCanvas);
+	updateCanvas();
 }
 
 class MessageBroker {
@@ -622,17 +626,36 @@ class MessageBroker {
 				peer.addIceCandidate(msg.data.ice);
 				 },500); // ritardalo un po'
 			}
+
+			if(msg.eventType == "custom/myVTT/updatedicestreamingfeature"){
+							// DICE STREAMING ?!?!
+
+				let diceRollPanel = $(".dice-rolling-panel__container");
+				if (diceRollPanel.length > 0) {
+					window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
+				}
+
+				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
+			}
+
+
 			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
 				if( (!window.MYSTREAMID))
 					return;
+					// we should tear down and reconnect
+				for (let i in window.STREAMPEERS) {
+					console.log("replacing the track")
+					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+				}
 				const configuration = {
     				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
 					console.log("aggiungo video!!!!");
+					debugger;
 				     addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
@@ -643,6 +666,7 @@ class MessageBroker {
 					})
 				};
 
+	
 				
 				window.STREAMPEERS[msg.data.from]=peer;
 				peer.onconnectionstatechange=() => {
@@ -652,6 +676,7 @@ class MessageBroker {
 						$("#streamer-canvas-"+msg.data.from).remove();
 					}
 				};
+
 				if(window.MYMEDIASTREAM){
 					var stream=window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
@@ -676,6 +701,7 @@ class MessageBroker {
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
+						debugger;
 					addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
@@ -710,6 +736,10 @@ class MessageBroker {
 						answer: desc
 					});
 				})
+				for (let i in window.STREAMPEERS) {
+					console.log("replacing the track")
+					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+				}
 			}
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
@@ -1184,20 +1214,20 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data,skipSceneId=false) {
+	sendMessage(eventType, data) {
 		var self = this;
 
 		//this.sendDDBMB(eventType,data); 
 
 		if(eventType.startsWith("custom")){
-			this.sendAboveMB(eventType,data,skipSceneId);
+			this.sendAboveMB(eventType,data);
 		}
 		else{
 			this.sendDDBMB(eventType,data);
 		}
 	}
 
-	sendAboveMB(eventType,data,skipSceneId=false){
+	sendAboveMB(eventType,data){
 		var self=this;
 		var message = {
 			action: "sendmessage",
@@ -1210,19 +1240,18 @@ class MessageBroker {
 		if(window.CLOUD)
 			message.cloud=1;
 
-		if(!["custom/myVTT/switch_scene","custom/myVTT/update_scene"].includes(eventType))
+		if(!["custom/myVTT/switch_scene"].includes(eventType))
 			message.sequence=this.above_sequence++;
 
-		if(window.CURRENT_SCENE_DATA && !skipSceneId)
+		if(window.CURRENT_SCENE_DATA)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
-		if(window.PLAYER_SCENE_ID)
-			message.playersSceneId = window.PLAYER_SCENE_ID;
-
+		
 		const jsmessage=JSON.stringify(message);
 		if(jsmessage.length > (128000)){
 			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
 			return;
 		}
+
 
 		if (this.abovews.readyState == this.ws.OPEN) {
 			this.abovews.send(JSON.stringify(message));
