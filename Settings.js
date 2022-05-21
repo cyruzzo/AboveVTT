@@ -475,16 +475,18 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 				}		
 			}, 1500)
 				
-		} else {
-			window.JOINTHEDICESTREAM = false;
-			for (let i in window.STREAMPEERS) {
-				window.STREAMPEERS[i].close();
-				delete window.STREAMPEERS[i];
-			}
-		$(".streamer-canvas").remove();
 		}
-	}
 
+	}
+	else {
+		window.JOINTHEDICESTREAM = false;
+		for (let i in window.STREAMPEERS) {
+			window.STREAMPEERS[i].close();
+			delete window.STREAMPEERS[i];
+		}
+	$(".streamer-canvas").remove();
+	window.MB.sendMessage("custom/myVTT/turnoffdicestream")
+	}
 }
 
 function persist_token_settings(settings){

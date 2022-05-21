@@ -638,6 +638,16 @@ class MessageBroker {
 				peer.addIceCandidate(msg.data.ice);
 				 },500); // ritardalo un po'
 			}
+			if(msg.eventType == "custom/myVTT/turnoffdicestream"){
+				consloe.log("custom/myVTT/turnoffdicestream")
+					window.JOINTHEDICESTREAM = false;
+					for (let i in window.STREAMPEERS) {
+						window.STREAMPEERS[i].close();
+						delete window.STREAMPEERS[i];
+					}
+					$(".streamer-canvas").remove();
+			}
+
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
 					console.log("custom/myVTT/hidemydicestream");
 					hideVideo(msg.data.streamid);
