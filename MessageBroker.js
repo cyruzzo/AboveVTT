@@ -69,7 +69,7 @@ function addVideo(stream,streamerid) {
 		dicecanvas.css("height",tmpcanvas.height);
 		dicecanvas.css("width",tmpcanvas.width );
 		window.requestAnimationFrame(updateCanvas);
-		tmpctx.drawImage(video, 0, 0);
+		tmpctx.drawImage(video, 0, 0, tmpcanvas.width, tmpcanvas.height);
 		if(tmpcanvas.width>0)
 		{
 			const frame = tmpctx.getImageData(0, 0, tmpcanvas.width, tmpcanvas.height);
@@ -639,13 +639,7 @@ class MessageBroker {
 				 },500); // ritardalo un po'
 			}
 			if(msg.eventType == "custom/myVTT/turnoffdicestream"){
-				consloe.log("custom/myVTT/turnoffdicestream")
-					window.JOINTHEDICESTREAM = false;
-					for (let i in window.STREAMPEERS) {
-						window.STREAMPEERS[i].close();
-						delete window.STREAMPEERS[i];
-					}
-					$(".streamer-canvas").remove();
+				$("[id^='streamer-']").remove();
 			}
 
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
