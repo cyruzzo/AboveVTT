@@ -51,6 +51,8 @@ function addVideo(stream,streamerid) {
 		let tmpcanvas = document.createElement("canvas");
 		tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
 		tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);
+		video.setAttribute("width", tmpcanvas.width)
+		video.setAttribute("height", tmpcanvas.height)
 		let tmpctx = tmpcanvas.getContext("2d");
 		dicecanvas.attr("width", tmpcanvas.width + "px");
 		dicecanvas.attr("height", tmpcanvas.height  + "px");
@@ -626,7 +628,6 @@ class MessageBroker {
 				peer.addIceCandidate(msg.data.ice);
 				 },500); // ritardalo un po'
 			}
-
 			if(msg.eventType == "custom/myVTT/updatedicestreamingfeature"){
 							// DICE STREAMING ?!?!
 
@@ -637,8 +638,6 @@ class MessageBroker {
 
 				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
 			}
-
-
 			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
@@ -655,7 +654,6 @@ class MessageBroker {
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
 					console.log("aggiungo video!!!!");
-					debugger;
 				     addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
@@ -666,7 +664,6 @@ class MessageBroker {
 					})
 				};
 
-	
 				
 				window.STREAMPEERS[msg.data.from]=peer;
 				peer.onconnectionstatechange=() => {
@@ -676,7 +673,6 @@ class MessageBroker {
 						$("#streamer-canvas-"+msg.data.from).remove();
 					}
 				};
-
 				if(window.MYMEDIASTREAM){
 					var stream=window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
@@ -701,7 +697,6 @@ class MessageBroker {
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
-						debugger;
 					addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
@@ -1214,20 +1209,20 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data) {
+	sendMessage(eventType, data,skipSceneId=false) {
 		var self = this;
 
 		//this.sendDDBMB(eventType,data); 
 
 		if(eventType.startsWith("custom")){
-			this.sendAboveMB(eventType,data);
+			this.sendAboveMB(eventType,data,skipSceneId);
 		}
 		else{
 			this.sendDDBMB(eventType,data);
 		}
 	}
 
-	sendAboveMB(eventType,data){
+	sendAboveMB(eventType,data,skipSceneId=false){
 		var self=this;
 		var message = {
 			action: "sendmessage",
@@ -1240,12 +1235,13 @@ class MessageBroker {
 		if(window.CLOUD)
 			message.cloud=1;
 
-		if(!["custom/myVTT/switch_scene"].includes(eventType))
+		if(!["custom/myVTT/switch_scene","custom/myVTT/update_scene"].includes(eventType))
 			message.sequence=this.above_sequence++;
 
-		if(window.CURRENT_SCENE_DATA)
+		if(window.CURRENT_SCENE_DATA && !skipSceneId)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
-		
+		if(window.PLAYER_SCENE_ID)
+			message.playersSceneId = window.PLAYER_SCENE_ID;
 		const jsmessage=JSON.stringify(message);
 		if(jsmessage.length > (128000)){
 			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
