@@ -430,12 +430,27 @@ function redraw_settings_panel_token_examples() {
 	}
 }
 
-function update_dice_streaming_feature(enabled) {
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
 	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
 	if (enabled == true) {
 		// STREAMING STUFF
 		window.JOINTHEDICESTREAM = true;
-		window.MB.sendMessage("custom/myVTT/updatedicestreamingfeature");
+		$("[role='presentation'] [role='menuitem']").each(function(){
+			$(this).off().on("click", function(){
+				if($(this).text() != "Everyone") {
+					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+				else{
+					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+			});
+		});
+
+		window.MB.sendMessage("custom/myVTT/updatedicestreamingfeature")
 				// DICE STREAMING ?!?!
 		let diceRollPanel = $(".dice-rolling-panel__container");
 		if (diceRollPanel.length > 0) {
@@ -447,14 +462,27 @@ function update_dice_streaming_feature(enabled) {
 				console.log("replacing the track")
 				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
 			}
-		}
-	} else {
-		window.JOINTHEDICESTREAM = false;
-		for (let i in window.STREAMPEERS) {
-			window.STREAMPEERS[i].close();
-			delete window.STREAMPEERS[i];
-		}
+			setTimeout(function(){
+				if(sendToText != "Everyone") {
+					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+				else{
+					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}		
+			}, 1500)
+				
+		} else {
+			window.JOINTHEDICESTREAM = false;
+			for (let i in window.STREAMPEERS) {
+				window.STREAMPEERS[i].close();
+				delete window.STREAMPEERS[i];
+			}
 		$(".streamer-canvas").remove();
+		}
 	}
 
 }

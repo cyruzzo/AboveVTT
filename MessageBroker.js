@@ -18,7 +18,16 @@ function clearFrame(){
 
 const delayedClear = mydebounce(() => clearFrame());
 
+function hideVideo(streamerid) {
+		$("#streamer-video-"+streamerid+", #streamer-canvas-"+streamerid).toggleClass("hidden", true);
+}
+
+function revealVideo(streamerid) {
+		$("#streamer-video-"+streamerid+", #streamer-canvas-"+streamerid).toggleClass("hidden", false);
+}
+
 function addVideo(stream,streamerid) {
+	$("#streamer-video-"+streamerid+" , #streamer-canvas-"+streamerid).remove();
 	let video = document.createElement("video");
 	video.setAttribute("class", "dicestream");
 	video.setAttribute("id","streamer-video-"+streamerid);
@@ -39,6 +48,7 @@ function addVideo(stream,streamerid) {
 	dicecanvas.css("z-index",60000);
 	dicecanvas.css("touch-action","none");
 	dicecanvas.css("pointer-events","none");
+	dicecanvas.css("filter", "drop-shadow(-16px 18px 15px black)")
 	$("#site").append(dicecanvas);
 	
 	
@@ -628,22 +638,65 @@ class MessageBroker {
 				peer.addIceCandidate(msg.data.ice);
 				 },500); // ritardalo un po'
 			}
+			if(msg.eventType == "custom/myVTT/hidemydicestream"){
+					console.log("custom/myVTT/hidemydicestream");
+					hideVideo(msg.data.streamid);
+			}
+			if(msg.eventType == "custom/myVTT/revealmydicestream"){
+					console.log("custom/myVTT/revealmydicestream");
+					revealVideo(msg.data.streamid);
+			}
 			if(msg.eventType == "custom/myVTT/updatedicestreamingfeature"){
-							// DICE STREAMING ?!?!
-
+				$("[role='presentation'] [role='menuitem']").each(function(){
+					$(this).off().on("click", function(){
+						if($(this).text() != "Everyone") {
+							window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+								streamid: window.MYSTREAMID
+							});
+						}
+						else{
+							window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+								streamid: window.MYSTREAMID
+							});
+						}
+					});
+				});
 				let diceRollPanel = $(".dice-rolling-panel__container");
 				if (diceRollPanel.length > 0) {
 					window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
 				}
-
-				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
+				if (window.JOINTHEDICESTREAM) {
+					// we should tear down and reconnect
+					for (let i in window.STREAMPEERS) {
+						console.log("replacing the track")
+						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+					}
+				}
+				if(gamelog_send_to_text() != "Everyone") {
+					setTimeout(function(){
+						if(sendToText != "Everyone") {
+							window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+								streamid: window.MYSTREAMID
+							});
+						}	
+						else{
+							window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+								streamid: window.MYSTREAMID
+							});
+						}	
+					}, 1500)
+							
+				}
+				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
+					from: MYSTREAMID
+				})
 			}
+
 			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
 				if( (!window.MYSTREAMID))
 					return;
-					// we should tear down and reconnect
 				for (let i in window.STREAMPEERS) {
 					console.log("replacing the track")
 					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
