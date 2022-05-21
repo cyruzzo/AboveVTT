@@ -2191,6 +2191,12 @@ function init_ui() {
 	fog.css("position", "absolute");
 	fog.css("z-index", "20");
 
+	temp_overlay = $("<canvas id='temp_overlay'></canvas>");
+	temp_overlay.css("position", "absolute");
+	temp_overlay.css("top", "0");
+	temp_overlay.css("left", "0");
+	temp_overlay.css("z-index", "25");
+
 
 	fog.dblclick(function(e) {
 		e.preventDefault();
@@ -2247,6 +2253,7 @@ function init_ui() {
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(draw_overlay);
+	VTT.append(temp_overlay);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");

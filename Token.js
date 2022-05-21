@@ -1234,6 +1234,14 @@ class Token {
 
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
+
+						// finish measuring
+						// drop the temp overlay back down so selection works correctly
+						$("#temp_overlay").css("z-index", "25")
+						const canvas = document.getElementById("temp_overlay");
+						const context = canvas.getContext("2d");
+						WaypointManager.setCanvas(canvas);
+						WaypointManager.fadeoutMeasuring()
 					},
 
 				start: function (event) {
@@ -1281,10 +1289,15 @@ class Token {
 					}
 
 					// Setup waypoint manager
+					const mousex = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
+					const mousey = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
 
-
-					window.BEGIN_MOUSEX = (event.pageX - 200) * (1.0 / window.ZOOM);
-					window.BEGIN_MOUSEY = (event.pageY - 200) * (1.0 / window.ZOOM);
+					WaypointManager.cancelFadeout()
+					if(WaypointManager.numWaypoints > 0){
+						WaypointManager.checkNewWaypoint(mousex, mousey)
+					}
+					window.BEGIN_MOUSEX = mousex
+					window.BEGIN_MOUSEY = mousey
 
 					remove_selected_token_bounding_box();
 				},
@@ -1297,6 +1310,24 @@ class Token {
 						left: Math.round((event.clientX - click.x + original.left) / zoom),
 						top: Math.round((event.clientY - click.y + original.top) / zoom)
 					};
+
+
+					const mousex = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
+					const mousey = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+
+					const canvas = document.getElementById("temp_overlay");
+					const context = canvas.getContext("2d");
+					// incase we click while on select, remove any line dashes
+					context.setLineDash([])
+					// list the temp overlay so we can see the ruler
+					$("#temp_overlay").css("z-index", "50")
+					clear_temp_canvas()
+					WaypointManager.setCanvas(canvas);
+					WaypointManager.registerMouseMove(mousex, mousey);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
+					WaypointManager.draw(false);
+					console.log(WaypointManager)
+					context.fillStyle = '#f50';
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
 					/*$(event.target).css("left",ui.position.left);

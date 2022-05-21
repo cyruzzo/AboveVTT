@@ -281,6 +281,45 @@ class WaypointManagerClass {
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 	}
+
+	/**
+	 * redraws the waypoints using various levels of opacity until completely clear
+	 * then removes all waypoints and resets canvas opacity
+	 */
+	 fadeoutMeasuring(){
+		let alpha = 1.0
+		const self = this
+		// only ever allow a single fadeout to occur
+		// this stops weird flashing behaviour with interacting
+		// interval function calls
+		if (this.timerId){
+			return
+		}
+		this.timerId = setInterval(function(){ fadeout() }, 100);
+
+		function fadeout(){
+			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
+			self.ctx.globalAlpha = alpha;
+			self.draw(false)
+			alpha = alpha - 0.2;
+			if (alpha <= 0.0){
+				self.cancelFadeout()
+				self.clearWaypoints();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	cancelFadeout(){
+		if (this.timerId !== undefined){
+			clearInterval(this.timerId);
+			this.ctx.globalAlpha = 1.0
+			this.timerId = undefined
+
+		}	
+	}
 };
 
 
@@ -481,6 +520,9 @@ function draw_wizarding_box() {
 }
 
 function reset_canvas() {
+	$('#temp_overlay').get(0).width =($("#scene_map").width());
+	$('#temp_overlay').get(0).height =($("#scene_map").width());
+
 	$('#fog_overlay').width($("#scene_map").width());
 	$('#fog_overlay').height($("#scene_map").height());
 
@@ -686,7 +728,8 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
-
+	clear_temp_canvas()
+	WaypointManager.cancelFadeout()
 	window.LINEWIDTH = $("#draw_line_width").val();
 	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
 	window.DRAWCOLOR = $(".colorselected").css('background-color');
@@ -1457,6 +1500,12 @@ function drawPolygon (
 	{
 		ctx.fill();
 	}
+}
+
+function clear_temp_canvas(){
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function savePolygon(e) {
