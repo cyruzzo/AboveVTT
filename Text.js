@@ -1,6 +1,70 @@
+function apply_settings_from_storage(){
+    const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+    const settings = JSON.parse(localStorage.getItem('textSettings'));
+    window.TEXTDATA = settings
+    $(`#text_font option[value="${settings.text_font}"]`).attr("selected", "selected");
+    $("#text_size").val(settings.text_size)
+    $("#text_color").val(settings.text_color)
+    $("#text_color").next().find(".sp-preview-inner").css("background-color", settings.text_color)
+    if (settings.text_bold){
+        $("#text_bold").addClass(buttonSelectedClasses)
+    } 
+    if (settings.text_italic){
+        $("#text_italic").addClass(buttonSelectedClasses)
+    } 
+    if (settings.text_underline){
+        $("#text_underline").addClass(buttonSelectedClasses)
+    } 
+    $(`#text_${settings.text_alignment}`).addClass(buttonSelectedClasses)
+    $("#stroke_size").val(settings.stroke_size)
+    $("#stroke_color").val(settings.stroke_color),
+    $("#stroke_color").next().find(".sp-preview-inner").css("background-color", settings.stroke_color)
+    $("#text_background_color").val(settings.text_background_color)
+    $("#text_background_color").next().find(".sp-preview-inner").css("background-color", settings.text_background_color)
+    if (settings.text_shadow){
+        $("#text_shadow").addClass(buttonSelectedClasses)
+    } 
+}
+
+function store_text_settings(){
+    const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+    const storageObject = {
+        "text_font": $("#text_font").find(":selected").text(),
+        "text_size": $("#text_size").val(),
+        "text_color": $("#text_color").val(),
+        "text_bold": $("#text_bold").hasClass(buttonSelectedClasses),
+        "text_italic": $("#text_italic").hasClass(buttonSelectedClasses),
+        "text_underline": $("#text_underline").hasClass(buttonSelectedClasses),
+        "text_alignment": $("#text_controller_inside").find(`.${buttonSelectedClasses.replace(" ",".")}[data-key="alignment"]`).attr("data-value"),
+        "stroke_size": $("#stroke_size").val(),
+        "stroke_color": $("#stroke_color").val(),
+        "text_background_color":  $("#text_background_color").val(),
+        "text_shadow": $("#text_shadow").hasClass(buttonSelectedClasses)
+    }
+    window.TEXTDATA = storageObject
+    localStorage.setItem('textSettings', JSON.stringify(storageObject));
+}
+
+function apply_settings_to_boxes(){
+    $(".drawing-text-box").css({
+        "text-align": window.TEXTDATA.text_alignment,
+        "color": window.TEXTDATA.text_color,
+        "background-color": window.TEXTDATA.text_background_color,
+        "font-family": window.TEXTDATA.text_font,
+        "font-size": `${window.TEXTDATA.text_size}px`,
+        "font-weight": window.TEXTDATA.text_bold ? "bold" : "normal",
+        "font-style": window.TEXTDATA.text_italic ? "italic" : "normal",
+        "text-decoration": window.TEXTDATA.text_underline ? "underline" : "none",
+        "-webkit-text-stroke-color": window.TEXTDATA.stroke_color,
+        "-webkit-text-stroke-width": `${window.TEXTDATA.stroke_size}px`,
+    })
+    
+}
+
 function create_text_controller() {
     if ($("#text_controller_inside").length > 0) {
         $("#text_controller_inside").show()
+        apply_settings_from_storage()
         return
     }
     const textControllerInside = $("<div id='text_controller_inside'/>");
@@ -44,11 +108,24 @@ function create_text_controller() {
         }
     });
     const flexDiv = $(`<div style="display: flex; flex-direction: row; flex-wrap: wrap;"/>`);
+    const availableFonts = [
+        "Arial",
+        "Verdana",
+        "Helvetica",
+        "Tahoma",
+        "Trebuchet MS",
+        "Times New Roman",
+        "Georgia",
+        "Garamond",
+        "Courier New",
+        "Brush Script MT",
+    ];
+
     flexDiv.append(
         `<div class='ddbc-tab-options--layout-pill'>
             <select id='text_font' data-required="text_font" name='font' style='text-align:center'>
                 ${availableFonts.map((font) => {
-            return `<option  style='font-family:${font}'value=${font}>${font}</option>`;
+            return `<option  style='font-family:"${font}";' value="${font}">${font}</option>`;
         })}
             </select>
         </div>
@@ -63,21 +140,21 @@ function create_text_controller() {
     flexDiv.append(
         `<div class='ddbc-tab-options--layout-pill'>
             <input title='Text color' data-required="text_color" 
-            class='spectrum'id='font_color' name='Font' value='black' />
+            class='spectrum'id='text_color' name='Font' value='black' />
         </div>`)
     flexDiv.append(
         `<div class='ddbc-tab-options--layout-pill'>
-           <button id='text_bold' style="height:20px" data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
+           <button id='text_bold' title="Text bold" style="height:20px" data-toggle="true" data-key="bold" data-value="bold" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '>
                 <span class='material-icons' style='font-size: 12px'>format_bold</span>
             </button>
         </div>
         <div class='ddbc-tab-options--layout-pill'>
-            <button id='text_italic' style="height:20px" data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <button id='text_italic' title="Text italic" style="height:20px" data-toggle="true" data-key="italic" data-value="italic" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_italic</span>
             </button>
         </div>
         <div class='ddbc-tab-options--layout-pill'>
-            <button id='text_underline' style="height:20px" data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
+            <button id='text_underline' title="Text underline" style="height:20px" data-toggle="true" data-key="underline" data-value="underline" class='drawbutton text-option ddbc-tab-options__header-heading menu-option '> 
                 <span class='material-icons' style='font-size: 12px'>format_underlined</span>
             </button>
         </div> `
@@ -85,17 +162,17 @@ function create_text_controller() {
 
     flexDiv.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <button id='text_left' style="height:20px" data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
+            <button id='text_left' title="Align left" style="height:20px" data-key="alignment" data-value="left" class='drawbutton text-option ddbc-tab-options__header-heading menu-option button-enabled ddbc-tab-options__header-heading--is-active' data-unique-with='text_alignment'> 
                 <span class='material-icons' style='font-size: 12px'>format_align_left</span>
             </button>
         </div>
         <div class='ddbc-tab-options--layout-pill'>
-            <button id='text_center' style="height:20px" data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <button id='text_center' title="Align center" style="height:20px" data-key="alignment" data-value="center" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_center</span>
             </button>
         </div>
         <div class='ddbc-tab-options--layout-pill'>
-            <button id='text_right' style="height:20px" data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
+            <button id='text_right' title="Align right" style="height:20px" data-key="alignment" data-value="right" class='drawbutton text-option ddbc-tab-options__header-heading menu-option' data-unique-with='text_alignment'>
                 <span class='material-icons' style='font-size: 12px'>format_align_right</span>
             </button>
         </div>`
@@ -112,8 +189,15 @@ function create_text_controller() {
     `);
     flexDiv.append(
         `<div class='ddbc-tab-options--layout-pill'>
-            <input title='Background color' data-required="background_color" class='spectrum'
-            id='background_color' name='backgroundColor' value='rgba(17, 17, 17, 0.505)' />
+            <input title='Background color' data-required="text_background_color" class='spectrum'
+            id='text_background_color' name='backgroundColor' value='rgba(17, 17, 17, 0.505)' />
+        </div>
+    `);
+    flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <button id='text_shadow' title="drop shadow" style="height:20px" data-toggle="true" data-key="shadow" data-value="shadow" class='drawbutton text-option ddbc-tab-options__header-heading menu-option'>
+                <span class='material-icons' style='font-size: 12px'>gradient</span>
+            </button>
         </div>
     `);
 
@@ -124,53 +208,87 @@ function create_text_controller() {
         showInitial: true,
         clickoutFiresChange: false,
     });
-    
+
     const colorPickerChange = function (e, tinycolor) {
         let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
         $(e.target).val(color);
+        store_text_settings()
+        apply_settings_to_boxes()
     };
     colorPickers.on("move.spectrum", colorPickerChange); // update the token as the player messes around with colors
     colorPickers.on("change.spectrum", colorPickerChange); // commit the changes when the user clicks the submit button
     colorPickers.on("hide.spectrum", colorPickerChange); // the hide event includes the original color so let's change it back when we get it
+
     textControllerInside.append(flexDiv)
-    $(".sp-replacer.sp-light").each(function () { 
+
+    $("#text_font, #text_size, #stroke_size").on("change", function (event) {
+        store_text_settings()
+        apply_settings_to_boxes()
+    });
+
+    flexDiv.find("button").on("click", function (event){
+        // handle toggle buttons
+        const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+        if ($(this).attr(("data-toggle"))){
+            $(this).toggleClass(buttonSelectedClasses);
+        }
+        // handle unique selection buttons
+        if($(this).attr("data-unique-with")){
+            const uniqueWith = $(this).attr("data-unique-with")
+            flexDiv.find(`[data-unique-with=${uniqueWith}]`).removeClass(`${buttonSelectedClasses}` )
+            $(this).addClass(buttonSelectedClasses)            
+        }
+        store_text_settings()
+        apply_settings_to_boxes()
+    })
+
+    $(".sp-replacer.sp-light").each(function () {
         console.log(this)
         console.log($(this).prev().title)
-        $(this).attr("title", $(this).prev().attr("title")) 
+        $(this).attr("title", $(this).prev().attr("title"))
     });
 
     $("#text_controller_inside").addClass("moveableWindow");
-	$("#text_controller_inside").draggable({
-			addClasses: false,
-			scroll: false,
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
+    $("#text_controller_inside").draggable({
+        addClasses: false,
+        scroll: false,
+        containment: "#windowContainment",
+        start: function () {
+            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+        },
+        stop: function () {
+            $('.iframeResizeCover').remove();
 
-			}
-		});
-	$("#text_controller_inside").resizable({
-		addClasses: false,
-		handles: "all",
-		containment: "#windowContainment",
-		start: function () {
-			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function () {
-			$('.iframeResizeCover').remove();
-		},
-		minWidth: 215,
-		minHeight: 200
-	});
-	
-	$("#text_controller_inside").mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
+        }
+    });
+    $("#text_controller_inside").resizable({
+        addClasses: false,
+        handles: "all",
+        containment: "#windowContainment",
+        start: function () {
+            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+        },
+        stop: function () {
+            $('.iframeResizeCover').remove();
+        },
+        minWidth: 80,
+        minHeight: 175
+    });
+
+    $("#text_controller_inside").mousedown(function () {
+        frame_z_index_when_click($(this));
+    });
+    // on first render check if settings in storage
+    if (localStorage.getItem("textSettings") === null) {
+        store_text_settings()
+    }
+    else{
+        apply_settings_from_storage()
+    }
+    
+    
 }
 
 /**
@@ -181,36 +299,22 @@ function create_text_controller() {
  * @param {Number} height height of text area
  * @returns a div which has the title bar with submit/close buttons and a text area
  */
-function create_moveable_text_wrapper(x, y, width, height) {
-    wrapper = $("<div id='draw_text_wrapper'/>");
-    wrapper.css({
-        "position": "fixed",
+function create_moveable_text_box(x, y, width, height) {
+    const textInputInside = $(`<div class="text-input-inside"/>`);
+    textInputInside.css({
+        "position": "absolute",
+        "z-index": 1000,
         "left": `${x}px`,
         "top": `${y - 25}px`,
-        "z-index": 1000,
         "width": width,
         "height": height,
-        "min-width": "55px",
+        "min-height": "55px",
+        "min-width": "55px"
     });
-
-    $(wrapper).addClass("moveableWindow");
-    $(wrapper).draggable({
-        handle: "#draw_text_title_bar",
-        addClasses: false,
-        scroll: false,
-        containment: "#temp_overlay",
-        distance: 10,
-        drag: function (event, ui) {
-            mousex = Math.round((event.pageX - 200) * (1.0 / window.ZOOM));
-            mousey = Math.round((event.pageY - 200) * (1.0 / window.ZOOM));
-            ui.position.left = mousex;
-            ui.position.top = mousey;
-        },
-    });
-
-    const titleBar = $("<div id='draw_text_title_bar' class='restored'></div>");
+    $('#site').append(textInputInside);
+    const titleBar = $("<div class='text-input-title-bar'></div>");
     const closeCross = $(
-        `<div id="draw_text_title_bar_exit">
+        `<div class='text-input-title-bar-exit'>
             <svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <g transform="rotate(-45 50 50)">
                     <rect></rect>
@@ -222,7 +326,7 @@ function create_moveable_text_wrapper(x, y, width, height) {
         </div>`
     );
     const submitButton = $(
-        `<div id="draw_text_title_bar_enter">
+        `<div class='text-input-title-bar-enter'>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
             </svg>
@@ -235,12 +339,51 @@ function create_moveable_text_wrapper(x, y, width, height) {
 
     $(submitButton).on("click", handle_draw_text_submit);
 
-
     titleBar.append(closeCross);
     titleBar.append(submitButton);
-    wrapper.append(titleBar);
+    textInputInside.append(titleBar);
 
-    return wrapper;
+    $(textInputInside).addClass("moveableWindow");
+    $(textInputInside).draggable({
+        addClasses: false,
+        scroll: false,
+        containment: "#windowContainment",
+        start: function () {
+            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+        },
+        stop: function () {
+            $('.iframeResizeCover').remove();
+
+        }
+    });
+    $(textInputInside).resizable({
+        addClasses: false,
+        handles: "all",
+        containment: "#windowContainment",
+        start: function () {
+            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+        },
+        stop: function () {
+            $('.iframeResizeCover').remove();
+        },
+        minWidth: 55,
+        minHeight: 55
+    });
+
+    $(textInputInside).mousedown(function () {
+        frame_z_index_when_click($(this));
+    });
+    const input = $(
+        `<textarea class="drawing-text-box" 
+        title="Input your text, this is an approximation of your final text"
+        type="text" autocomplete="off"/>`
+    );
+    textInputInside.append(input)
+    apply_settings_to_boxes()
+    $(input).on("keyup", handle_key_press);
+    $(input).focus();
 }
 
 /**
@@ -259,55 +402,7 @@ function add_text_drawing_input([
     linewidth,
 ]) {
     create_text_controller()
-    const wrapper = create_moveable_text_wrapper(x, y, width, height);
-
-    const input = $(
-        `<textarea id='drawing_text' 
-        title="Input your text, this is an approximation of your final text.
-        Press Enter to submit" type="text" autocomplete="off"/>`
-    );
-    wrapper.append(input);
-    // TODO BAIN why did i add this
-    if (drawType !== "filled") {
-        color = "rgba(0, 0, 0, 0.0)"
-    }
-    input.css({
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        "text-align": window.DRAWDATA.alignment,
-        color: window.DRAWDATA.font_color,
-        "background-color": color,
-        "font-family": window.DRAWDATA.text_font,
-        "font-size": `${window.DRAWDATA.text_size}px`,
-        "font-weight": window.DRAWDATA.bold || "normal",
-        "font-style": window.DRAWDATA.italic || "normal",
-        "text-decoration": window.DRAWDATA.underline || "normal",
-        "-webkit-text-stroke-color": window.DRAWDATA.stroke_color,
-        "-webkit-text-stroke-width": `${window.DRAWDATA.stroke_size}px`,
-        "min-height": "30px",
-        "min-width": "55px",
-    });
-    $("#VTT").append(wrapper);
-    $(input).on("keyup", handle_key_press);
-    $(input).focus();
-
-    // observe resizing the text area and match the title bar to it
-    const myObserver = new ResizeObserver((entries) => {
-        entries.forEach((entry) => {
-            const bar = $(entry.target).parent().find("#draw_text_title_bar, #draw_text_control_bar");
-            // no idea why but the textArea is 6 pixels larger than the bar
-            // scroll bar is approx 18px
-            if (entry.target.clientHeight < entry.target.scrollHeight) {
-                $(bar).css("width", entry.contentRect.width + 25);
-            } else {
-                $(bar).css("width", entry.contentRect.width + 7);
-            }
-        });
-    });
-
-    const inputEle = document.querySelector("#drawing_text");
-    myObserver.observe(inputEle);
+    create_moveable_text_box(x, y, width, height);
 }
 
 
@@ -359,7 +454,7 @@ function handle_draw_text_submit(event) {
         data = [
             "text-rect",
             "filled",
-            window.DRAWCOLOR,
+            rectColor,
             rectX,
             rectY,
             width,
@@ -380,7 +475,7 @@ function handle_draw_text_submit(event) {
         stroke];
     // bake this data and redraw all text
     window.DRAWINGS.push(data);
-    $("#draw_text_title_bar_exit").click();
+    $(".text-input-title-bar-exit").click();
     redraw_text()
     window.ScenesHandler.persist();
     if (window.CLOUD) sync_drawings();
@@ -519,18 +614,7 @@ function draw_text(
  * @param {$} buttons the buttons in which this text button is appended to
  */
 function init_text_button(buttons) {
-    availableFonts = [
-        "Arial",
-        "Verdana",
-        "Helvetica",
-        "Tahoma",
-        "Trebuchet MS",
-        "Times New Roman",
-        "Georgia",
-        "Garamond",
-        "Courier New",
-        "Brush Script MT",
-    ];
+    
     textButton = $(
         "<button style='display:inline;width:75px' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</button>"
     );
