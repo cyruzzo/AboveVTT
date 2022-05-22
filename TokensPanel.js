@@ -1828,6 +1828,7 @@ function convert_challenge_rating_id(crId) {
         case 1: return "0";
         case 2: return "1/8";
         case 3: return "1/4";
+        case 4: return "1/2";
         default: return `${crId - 4}`;
     }
 }
