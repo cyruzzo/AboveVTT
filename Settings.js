@@ -323,7 +323,10 @@ function init_settings(){
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`experimental setting ${name} is now ${newValue}`);
 			if (name === "streamDiceRolls") {
-				update_dice_streaming_feature(newValue)
+				update_dice_streaming_feature(newValue);
+				if(newValue == true) {
+					window.MB.sendMessage("custom/myVTT/updatedicestreamingfeature");
+				}
 			} else {
 				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
 				persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
@@ -450,8 +453,8 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			});
 		});
 
-		window.MB.sendMessage("custom/myVTT/updatedicestreamingfeature")
-				// DICE STREAMING ?!?!
+
+		// DICE STREAMING ?!?!
 		let diceRollPanel = $(".dice-rolling-panel__container");
 		if (diceRollPanel.length > 0) {
 			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
@@ -469,7 +472,9 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 					});
 				}		
 			}, 1500)
-				
+			window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
+				from: window.MYSTREAMID
+			})	
 		} 
 	}
 	else {

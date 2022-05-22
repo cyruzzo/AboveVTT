@@ -628,14 +628,11 @@ class MessageBroker {
 			}
 			
 			if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-					
-				setTimeout( () => {
+				if( msg.data.to != window.MYSTREAMID )
+					return;		
+				setTimeout( async () => {
 				var peer=window.STREAMPEERS[msg.data.from];
-				peer.addIceCandidate(msg.data.ice);
+				await peer.addIceCandidate(msg.data.ice);
 				 },500); // ritardalo un po'
 			}
 			if(msg.eventType == "custom/myVTT/turnoffdicestream"){
@@ -651,62 +648,18 @@ class MessageBroker {
 					revealVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/updatedicestreamingfeature"){
-				$("[role='presentation'] [role='menuitem']").each(function(){
-					$(this).off().on("click", function(){
-						if($(this).text() != "Everyone") {
-							window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-								streamid: window.MYSTREAMID
-							});
-						}
-						else{
-							window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-								streamid: window.MYSTREAMID
-							});
-						}
-					});
-				});
-				let diceRollPanel = $(".dice-rolling-panel__container");
-				if (diceRollPanel.length > 0) {
-					window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
-				}
-				if (window.JOINTHEDICESTREAM) {
-					// we should tear down and reconnect
-					for (let i in window.STREAMPEERS) {
-						console.log("replacing the track")
-						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-					}
-				}
-				if(gamelog_send_to_text() != "Everyone") {
-					setTimeout(function(){
-						if(sendToText != "Everyone") {
-							window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-								streamid: window.MYSTREAMID
-							});
-						}	
-						else{
-							window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-								streamid: window.MYSTREAMID
-							});
-						}	
-					}, 1500)
-							
-				}
-				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
-					from: MYSTREAMID
-				})
+				update_dice_streaming_feature(true);				
 			}
+					
 
 			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
-				if( (!window.MYSTREAMID))
+				if(!window.MYSTREAMID)
 					return;
-				for (let i in window.STREAMPEERS) {
-					console.log("replacing the track")
-					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-				}
+
 				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+    				iceServers: [{urls: "turn:openrelay.metered.ca:443",username:"openrelayproject",credential:"openrelayproject"}]
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
@@ -714,11 +667,13 @@ class MessageBroker {
 				     addVideo(event.streams[0],msg.data.from);
 				});
 				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
+					if (e.candidate) {
+						window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
+							to: msg.data.from,
+							from: window.MYSTREAMID,
+							ice: e.candidate
+						});
+					}
 				};
 
 				
@@ -745,12 +700,13 @@ class MessageBroker {
 				});
 			}
 			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
-				if( !window.JOINTHEDICESTREAM)
+				if( !window.JOINTHEDICESTREAM )
 					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID))
 					return;
+
 				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+    				iceServers: [{urls: "turn:openrelay.metered.ca:443",username:"openrelayproject",credential:"openrelayproject"}]
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
@@ -776,7 +732,7 @@ class MessageBroker {
 					var stream=window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
 				}
-				peer.setRemoteDescription(msg.data.offer);
+				peer.setRemoteDescription(new RTCSessionDescription(msg.data.offer));
 				console.log("fatto setRemoteDescription");
 				peer.createAnswer().then( (desc) => {
 					peer.setLocalDescription(desc);
@@ -799,7 +755,7 @@ class MessageBroker {
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
 				var peer=window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(msg.data.answer);
+				peer.setRemoteDescription(new RTCSessionDescription(msg.data.answer));
 				console.log("fatto setRemoteDescription");
 			}
 			
