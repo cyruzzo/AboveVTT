@@ -294,21 +294,19 @@ function create_text_controller() {
 
 /**
  * Creates a moveable and resizable text area with a close and submit button
- * @param {Number} x starting left side position
- * @param {Number} y starting top side position
  * @param {Number} width width text area
  * @param {Number} height height of text area
  * @returns a div which has the title bar with submit/close buttons and a text area
  */
-function create_moveable_text_box(x, y, width, height) {
+function create_moveable_text_box(width, height) {
     const textInputInside = $(`<div class="text-input-inside"/>`);
     textInputInside.css({
         "position": "fixed",
         "z-index": 1000,
-        "left": `${x}px`,
-        "top": `${y - 25}px`,
+        "left": `${window.BEGIN_MOUSEX}px`,
+        "top": `${window.BEGIN_MOUSEY - 25}px`,
         "width": width,
-        "height": height,
+        "height": height + 25,
         "min-height": "55px",
         "min-width": "55px"
     });
@@ -345,10 +343,18 @@ function create_moveable_text_box(x, y, width, height) {
     textInputInside.append(titleBar);
 
     $(textInputInside).addClass("moveableWindow");
-    $(textInputInside).draggable({
+    $(textInputInside).draggable(
+        {
         addClasses: false,
         scroll: false,
-        containment: "#windowContainment",
+        containment: "#scene_map_container",
+        drag: function (event, ui) {
+            mousex = Math.round((event.pageX - 200) * (1.0 / window.ZOOM));
+            mousey = Math.round((event.pageY - 200) * (1.0 / window.ZOOM));
+            ui.position.left = mousex;
+            ui.position.top = mousey;
+            
+        },
         start: function () {
             $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
             $("#sheet").append($('<div class="iframeResizeCover"></div>'));
@@ -357,11 +363,12 @@ function create_moveable_text_box(x, y, width, height) {
             $('.iframeResizeCover').remove();
 
         }
-    });
+    }
+    );
     $(textInputInside).resizable({
         addClasses: false,
-        handles: "all",
-        containment: "#windowContainment",
+        handles: "se",
+        containment: "#scene_map",
         start: function () {
             $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
             $("#sheet").append($('<div class="iframeResizeCover"></div>'));
@@ -392,18 +399,12 @@ function create_moveable_text_box(x, y, width, height) {
  * by the font menu data
  * @param {Array} data the rectangle data
  */
-function add_text_drawing_input([
-    shape,
-    drawType,
-    color,
-    x,
-    y,
+function add_text_drawing_input(
     width,
     height,
-    linewidth,
-]) {
+) {
     create_text_controller()
-    create_moveable_text_box(x, y, width, height);
+    create_moveable_text_box(width, height);
 }
 
 
@@ -418,7 +419,7 @@ function handle_draw_text_submit(event) {
     if (!textBox.val()) return;
 
     const height = Math.max(
-        parseInt($(textBox).css("height")) + 25,
+        parseInt($(textBox).css("height")),
         parseInt($(textBox).css("min-height"))
     );
     const width = Math.max(

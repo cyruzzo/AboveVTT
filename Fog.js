@@ -1107,10 +1107,7 @@ function drawing_mouseup(e) {
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
-		data[0] = "text"
-		data[3] = e.clientX
-		data[4] = e.clientY
-		add_text_drawing_input(data)
+		add_text_drawing_input(width, height)
 	}
 	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
 		finalise_drawing_fog(mouseX, mouseY, width, height)

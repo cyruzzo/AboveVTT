@@ -321,8 +321,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
-
 		$("#VTT").append(newmap);
+		$("#scene_map_container").css("width", $("#scene_map").width())
+		$("#scene_map_container").css("height", $("#scene_map").height())
+
 	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
@@ -343,9 +345,9 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				$('#scene_map').height(this.videoHeight);
 			});
 		}
-
 		$("#VTT").append(newmap);
 	}
+
 }
 
 
@@ -2164,34 +2166,39 @@ function init_ui() {
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);
 
-	background = $("<img id='scene_map'>");
+	const background = $("<img id='scene_map'>");
 	background.css("top", "0");
 	background.css("left", "0");
 	background.css("position", "absolute");
 	background.css("z-index", "10");
 
+	const mapContainer = $("<div id='scene_map_container' />");
+	mapContainer.css("top", "0");
+	mapContainer.css("left", "0");
+	mapContainer.css("position", "absolute");
+	mapContainer.css("z-index", "10");
 
-	draw_overlay = $("<canvas id='draw_overlay'></canvas>");
-	draw_overlay.css("position", "absolute");
-	draw_overlay.css("top", "0");
-	draw_overlay.css("left", "0");
-	draw_overlay.css("z-index", "18");
 
-	text_overlay = $("<canvas id='text_overlay'></canvas>");
-	text_overlay.css("position", "absolute");
-	text_overlay.css("top", "0");
-	text_overlay.css("left", "0");
-	text_overlay.css("z-index", "18");
+	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
+	drawOverlay.css("position", "absolute");
+	drawOverlay.css("top", "0");
+	drawOverlay.css("left", "0");
+	drawOverlay.css("z-index", "18");
 
-	grid = $("<canvas id='grid_overlay'></canvas>");
+	const textOverlay = $("<canvas id='text_overlay'></canvas>");
+	textOverlay.css("position", "absolute");
+	textOverlay.css("top", "0");
+	textOverlay.css("left", "0");
+	textOverlay.css("z-index", "18");
+
+	const grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
 	grid.css("top", "0");
 	grid.css("left", "0");
-
 	grid.css("z-index", "19");
 
 
-	fog = $("<canvas id='fog_overlay'></canvas>");
+	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
 	fog.css("left", "0");
 	fog.css("position", "absolute");
@@ -2200,14 +2207,14 @@ function init_ui() {
 	// this overlay sits above all other canvases
 	// we draw to this and then bake the image into the corresponding
 	// canvas, based on the drawing function
-	temp_overlay = $("<canvas id='temp_overlay'></canvas>");
-	temp_overlay.css("position", "absolute");
-	temp_overlay.css("top", "0");
-	temp_overlay.css("left", "0");
-	temp_overlay.css("z-index", "25");
+	const tempOverlay = $("<canvas id='temp_overlay'></canvas>");
+	tempOverlay.css("position", "absolute");
+	tempOverlay.css("top", "0");
+	tempOverlay.css("left", "0");
+	tempOverlay.css("z-index", "25");
 
 
-	temp_overlay.dblclick(function(e) {
+	tempOverlay.dblclick(function(e) {
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
@@ -2259,11 +2266,12 @@ function init_ui() {
 
 	VTT.append(tokens);
 	VTT.append(background);
+	VTT.append(mapContainer);
 	VTT.append(fog);
 	VTT.append(grid);
-	VTT.append(draw_overlay);
-	VTT.append(text_overlay);
-	VTT.append(temp_overlay);
+	VTT.append(drawOverlay);
+	VTT.append(textOverlay);
+	VTT.append(tempOverlay);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
