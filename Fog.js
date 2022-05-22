@@ -839,6 +839,12 @@ function drawing_mousedown(e) {
 		drawClosingArea(context, window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0]);
 		
 	}
+	if (window.DRAWFUNCTION === "draw_text"){
+		window.BEGIN_MOUSEX = e.pageX;
+		window.BEGIN_MOUSEY = e.pageY;
+		window.MOUSEDOWN = true;
+		window.MOUSEMOVEWAIT = false;
+	}
 	else{
 		window.BEGIN_MOUSEX = pointX
 		window.BEGIN_MOUSEY = pointY
@@ -887,14 +893,27 @@ function drawing_mousemove(e) {
 		}
 
 		if (window.DRAWSHAPE == "rect") {
-			drawRect(context,
-					 window.BEGIN_MOUSEX,
-				 	 window.BEGIN_MOUSEY,
-				  	 width,
-				   	 height,
-					 window.DRAWCOLOR,
-					 isFilled,
-					 window.LINEWIDTH);
+			if(window.DRAWFUNCTION == "draw_text")
+			{
+				drawRect(context,
+					Math.round(((window.BEGIN_MOUSEX - 200) * (1.0 / window.ZOOM))),
+					Math.round(((window.BEGIN_MOUSEY - 200) * (1.0 / window.ZOOM))),
+					mouseX - Math.round(((window.BEGIN_MOUSEX - 200) * (1.0 / window.ZOOM))),
+					mouseY - Math.round(((window.BEGIN_MOUSEY - 200) * (1.0 / window.ZOOM))),
+					window.DRAWCOLOR,
+					isFilled,
+					window.LINEWIDTH);
+			}
+			else{
+				drawRect(context,
+						window.BEGIN_MOUSEX,
+						window.BEGIN_MOUSEY,
+						width,
+						height,
+						window.DRAWCOLOR,
+						isFilled,
+						window.LINEWIDTH);
+			}
 		}
 		if (window.DRAWSHAPE === "text_erase") {
 			// draw a rect that will be removed and replaced with an input box
@@ -1107,7 +1126,10 @@ function drawing_mouseup(e) {
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
-		add_text_drawing_input(width, height)
+		data[0] = "text";
+		data[5] = e.pageX - data[3];
+		data[6] =  e.pageY - data[4];
+		add_text_drawing_input(data);
 	}
 	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
 		finalise_drawing_fog(mouseX, mouseY, width, height)
