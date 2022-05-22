@@ -275,7 +275,7 @@ function create_text_controller() {
             $('.iframeResizeCover').remove();
         },
         minWidth: 80,
-        minHeight: 175
+        minHeight: 55
     });
 
     $("#text_controller_inside").mousedown(function () {
@@ -303,7 +303,7 @@ function create_text_controller() {
 function create_moveable_text_box(x, y, width, height) {
     const textInputInside = $(`<div class="text-input-inside"/>`);
     textInputInside.css({
-        "position": "absolute",
+        "position": "fixed",
         "z-index": 1000,
         "left": `${x}px`,
         "top": `${y - 25}px`,
@@ -312,7 +312,7 @@ function create_moveable_text_box(x, y, width, height) {
         "min-height": "55px",
         "min-width": "55px"
     });
-    $('#site').append(textInputInside);
+    $('#VTT').append(textInputInside);
     const titleBar = $("<div class='text-input-title-bar'></div>");
     const closeCross = $(
         `<div class='text-input-title-bar-exit'>
@@ -603,7 +603,7 @@ function draw_text(
     x = startingX;
     y = startingY;
   
-    context.filter = undefined
+    context.filter = "none"
     lines.forEach((line) => {
 
         const [textX, textWidth] = get_x_start_and_width_of_text(
@@ -674,34 +674,28 @@ function init_text_button(buttons) {
                 (d) => !d[0].includes("text")
             );
             redraw_text();
-            window.ScenesHandler.persist();
-            window.ScenesHandler.sync();
+            sync_drawings()
         }
     });
 
     textMenu.find("#text_undo").click(function () {
-        let lastElement = window.DRAWINGS.length;
+        let currentElement = window.DRAWINGS.length;
         // loop from the last element and remove if it's text
-        while (lastElement--) {
-            if (window.DRAWINGS[lastElement][0].includes("text")) {
+        while (currentElement--) {
+            if (window.DRAWINGS[currentElement][0].includes("text")) {
                 // text may or may not have a box behind it
                 // be safe by using math.max
                 if (
-                    window.DRAWINGS[Math.max(lastElement - 1, 0)][0] ===
+                    window.DRAWINGS[Math.max(currentElement - 1, 0)][0] ===
                     "text-rect"
                 ) {
                     // remove 2 elements
-                    window.DRAWINGS.splice(Math.max(lastElement - 1, 0), 2);
+                    window.DRAWINGS.splice(Math.max(currentElement - 1, 0), 2);
                 } else {
-                    window.DRAWINGS.splice(lastElement, 1);
+                    window.DRAWINGS.splice(currentElement, 1);
                 }
                 redraw_text();
-                if (window.CLOUD) {
-                    sync_drawings();
-                } else {
-                    window.ScenesHandler.persist();
-                    window.ScenesHandler.sync();
-                }
+                sync_drawings()
                 break;
             }
         }

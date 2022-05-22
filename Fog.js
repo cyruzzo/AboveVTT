@@ -657,7 +657,7 @@ function redraw_text() {
 				break;
 			case "text-rect":
 				// incase we have a drop-shadow filter applied still
-				context.filter = undefined
+				context.filter = "none"
 				drawRect(context,x,y,width,height,color);
 				break;
 			case "text-eraser":
@@ -1108,8 +1108,8 @@ function drawing_mouseup(e) {
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text"
-		data[3] = window.BEGIN_MOUSEX
-		data[4] = window.BEGIN_MOUSEY
+		data[3] = e.clientX
+		data[4] = e.clientY
 		add_text_drawing_input(data)
 	}
 	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
@@ -1860,25 +1860,19 @@ function init_draw_menu(buttons){
 			// keep only text
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
 			redraw_drawings();
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
+			sync_drawings
 		}
 	});
 
 	draw_menu.find("#draw_undo").click(function() {
-        let lastElement = window.DRAWINGS.length
-        // loop from the last element and remove if it's text
-        while (lastElement--) {
-            if (!window.DRAWINGS[lastElement][0].includes("text")){
-                window.DRAWINGS.splice(lastElement, 1)
+		// start at the end
+        let currentElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's not text
+        while (currentElement--) {
+            if (!window.DRAWINGS[currentElement][0].includes("text")){
+                window.DRAWINGS.splice(currentElement, 1)
                 redraw_drawings();
-                if(window.CLOUD){
-                    sync_drawings();
-                }
-                else{
-                    window.ScenesHandler.persist();
-                    window.ScenesHandler.sync();
-                }
+				sync_drawings()
                 break
             }
         }
