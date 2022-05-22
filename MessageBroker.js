@@ -659,7 +659,7 @@ class MessageBroker {
 					return;
 
 				const configuration = {
-    				iceServers: [{urls: "turn:openrelay.metered.ca:443",username:"openrelayproject",credential:"openrelayproject"}]
+    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
@@ -706,7 +706,7 @@ class MessageBroker {
 					return;
 
 				const configuration = {
-    				iceServers: [{urls: "turn:openrelay.metered.ca:443",username:"openrelayproject",credential:"openrelayproject"}]
+    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
   				};
 				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
