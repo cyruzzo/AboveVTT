@@ -656,6 +656,8 @@ function redraw_text() {
 				draw_text(context, ...drawing);
 				break;
 			case "text-rect":
+				// incase we have a drop-shadow filter applied still
+				context.filter = undefined
 				drawRect(context,x,y,width,height,color);
 				break;
 			case "text-eraser":
@@ -724,6 +726,12 @@ function is_rgba_fully_transparent(rgba){
 	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
 }
 
+function get_event_cursor_position(event){
+	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
+	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+	return [pointX, pointY]
+}
+
 /**
  * Pulls information from menu's or buttons without menu's to set values used by 
  * drawing mousemove, mousedown, mousecontext events
@@ -731,9 +739,13 @@ function is_rgba_fully_transparent(rgba){
  * @returns 
  */
 function drawing_mousedown(e) {
+	// perform some cleanup of the canvas/objects
 	clear_temp_canvas()
 	WaypointManager.cancelFadeout()
-	console.log("mouse down with event", e)
+	if(e.button !== 2){
+		WaypointManager.clearWaypoints()
+	}
+
 	// always draw unbaked drawings to the temp overlay
 	canvas = document.getElementById("temp_overlay");
 	context = canvas.getContext("2d");
@@ -743,21 +755,12 @@ function drawing_mousedown(e) {
 	// get teh data from the menu's/buttons
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
 	
-		// these are generic values used by most drawing functionality
-		window.LINEWIDTH = data.draw_line_width
-		window.DRAWTYPE = data.fill
-		window.DRAWCOLOR = data.background_color
-		window.DRAWSHAPE = data.shape;
-		window.DRAWFUNCTION = data.function;
-		console.log("DRAW DATA", data)
-		delete data.draw_line_width
-		delete data.fill
-		delete data.background_color
-		delete data.shape;
-		delete data.function;
-		// dump everything else into drawdata for anything that might be specific
-		// such as text
-		window.DRAWDATA = {...data}
+	// these are generic values used by most drawing functionality
+	window.LINEWIDTH = data.draw_line_width
+	window.DRAWTYPE = data.fill
+	window.DRAWCOLOR = data.background_color
+	window.DRAWSHAPE = data.shape;
+	window.DRAWFUNCTION = data.function;
 
 	// some functions don't have selectable features
 	// such as colour / filltype so set them here
@@ -766,16 +769,10 @@ function drawing_mousedown(e) {
 		window.DRAWCOLOR = "rgba(255, 0, 0, 0.5)"
 		window.DRAWTYPE = "filled"
 	}
-	else if (window.DRAWFUNCTION === "hide"){
+	else if (window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "draw_text"){
 		// semi transparent black
 		window.DRAWCOLOR = "rgba(0, 0, 0, 0.5)"
 		window.DRAWTYPE = "filled"
-	}
-	else if (window.DRAWFUNCTION === "draw_text"){
-		window.DRAWTYPE = "filled"
-		// fully transparent box, set fill to border
-		window.DRAWTYPE = "border"
-		window.DRAWCOLOR = "rgba(255, 255, 255, 0.5)"
 	}
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
@@ -784,7 +781,7 @@ function drawing_mousedown(e) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 		}		
 	}
-
+// figure out what these 3 returns are supposed to be for.
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
 		return;
 	}
@@ -797,12 +794,20 @@ function drawing_mousedown(e) {
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
 		deselect_all_tokens();
 	}
-
-
-	if (window.DRAWSHAPE === "polygon") {
-
-		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+	// end of wtf is this return block doing?
+	const [pointX, pointY] = get_event_cursor_position(e)
+	
+	if(window.DRAWSHAPE === "brush"){
+		window.BRUSHWAIT = false;
+		window.BRUSHPOINTS = [];
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+		// draw a dot
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
+	}
+	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
 				isPointWithinDistance(
@@ -832,23 +837,15 @@ function drawing_mousedown(e) {
 			window.DRAWTYPE === "filled" ? 1 : window.LINEWIDTH,
 		);
 		drawClosingArea(context, window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0]);
-	} else {
-		window.BEGIN_MOUSEX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-		window.BEGIN_MOUSEY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+		
+	}
+	else{
+		window.BEGIN_MOUSEX = pointX
+		window.BEGIN_MOUSEY = pointY
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
-		if(window.DRAWSHAPE === "brush")
-		{
-			window.BRUSHWAIT = false;
-			window.BRUSHPOINTS = [];
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-			// draw a dot
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-			drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
-		}
 	}
+
 
 }
 
@@ -864,14 +861,11 @@ function drawing_mousemove(e) {
 	if (window.MOUSEMOVEWAIT) {
 		return;
 	}
-
-	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+	const [mouseX, mouseY] = get_event_cursor_position(e)
 
 	var canvas = document.getElementById("temp_overlay");
 	var context = canvas.getContext("2d");
 
-	const lineWidth = window.LINEWIDTH
 	const color = window.DRAWCOLOR
 	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
@@ -884,8 +878,8 @@ function drawing_mousemove(e) {
 
 	if (window.MOUSEDOWN) {
 		clear_temp_canvas()
-		var width = mousex - window.BEGIN_MOUSEX;
-		var height = mousey - window.BEGIN_MOUSEY;
+		var width = mouseX - window.BEGIN_MOUSEX;
+		var height = mouseY - window.BEGIN_MOUSEY;
 		// bain todo why is this here?
 		if(window.DRAWSHAPE !== "brush")
 		{
@@ -898,9 +892,9 @@ function drawing_mousemove(e) {
 				 	 window.BEGIN_MOUSEY,
 				  	 width,
 				   	 height,
-					 color,
+					 window.DRAWCOLOR,
 					 isFilled,
-					 lineWidth);
+					 window.LINEWIDTH);
 		}
 		if (window.DRAWSHAPE === "text_erase") {
 			// draw a rect that will be removed and replaced with an input box
@@ -910,39 +904,39 @@ function drawing_mousemove(e) {
 					 window.BEGIN_MOUSEY,
 					 width,
 					 height,
-					 color,
+					 window.DRAWCOLOR,
 					 isFilled,
-					 lineWidth);
+					 window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "arc") {
-			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-			centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-			radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
+			centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+			centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+			radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 			drawCircle(context,
 				       centerX,
 					   centerY,
 					   radius,
-					   color,
+					   window.DRAWCOLOR,
 					   isFilled,
-					   lineWidth);
+					   window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "cone") {
 			drawCone(context,
 				     window.BEGIN_MOUSEX, 
 					 window.BEGIN_MOUSEY, 
-					 mousex, 
-					 mousey, 
-					 color, 
+					 mouseX, 
+					 mouseY, 
+					 window.DRAWCOLOR, 
 					 isFilled, 
-					 lineWidth);
+					 window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
 				if(e.which === 1){
 					WaypointManager.setCanvas(canvas);
 					WaypointManager.cancelFadeout()
-					WaypointManager.registerMouseMove(mousex, mousey);
-					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
+					WaypointManager.registerMouseMove(mouseX, mouseY);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mouseX, mouseY);
 					WaypointManager.draw(false);
 					console.log(WaypointManager)
 					context.fillStyle = '#f50';
@@ -951,10 +945,10 @@ function drawing_mousemove(e) {
 				drawLine(context,
 					window.BEGIN_MOUSEX, 
 					window.BEGIN_MOUSEY, 
-					mousex, 
-					mousey, 
-					color, 
-					lineWidth);
+					mouseX, 
+					mouseY, 
+					window.DRAWCOLOR, 
+					window.LINEWIDTH);
 			}
 			
 		}
@@ -963,9 +957,9 @@ function drawing_mousemove(e) {
 			// Subtract mouseMoveFps from 75ms to avoid waiting too much
 			if(!window.BRUSHWAIT)
 			{
-				window.BRUSHPOINTS.push({x:mousex, y:mousey});
+				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 
-				drawBrushstroke(context, window.BRUSHPOINTS, color, lineWidth);
+				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, lineWidth);
 
 				window.BRUSHWAIT = true;
 				if (mouseMoveFps < 75) {
@@ -975,19 +969,6 @@ function drawing_mousemove(e) {
 				}
 			}
 		}
-	}
-	// allows measuring while having a token selected
-	else if (e.altKey && $(["data-dragging"])){
-		clear_temp_canvas()
-		WaypointManager.setCanvas(canvas);
-		WaypointManager.cancelFadeout()
-
-		WaypointManager.registerMouseMove(mousex, mousey);
-		WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
-		WaypointManager.draw(false);
-		console.log(WaypointManager)
-		context.fillStyle = '#f50';
-
 	}
 	else {
 		if (window.DRAWSHAPE === "polygon" &&
@@ -1000,11 +981,11 @@ function drawing_mousemove(e) {
 					window.BEGIN_MOUSEX,
 					window.BEGIN_MOUSEY
 				),
-				color,
+				window.DRAWCOLOR,
 				isFilled,
-				isFilled ? 1 : lineWidth,
-				mousex,
-				mousey
+				isFilled ? 1 : window.LINEWIDTH,
+				mouseX,
+				mouseY
 			);
 			drawClosingArea(context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 		}
@@ -1018,10 +999,11 @@ function drawing_mousemove(e) {
  * @returns 
  */
 function drawing_mouseup(e) {
+	const [mouseX, mouseY] = get_event_cursor_position(e)
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (window.DRAWFUNCTION == "measure" && e.button == 2) {
 		if(window.MOUSEDOWN && WaypointManager.isMeasuring()) {
-			WaypointManager.checkNewWaypoint(mousex, mousey);
+			WaypointManager.checkNewWaypoint(mouseX, mouseY);
 		}
 		//console.log("Measure right click");
 		return;
@@ -1043,18 +1025,14 @@ function drawing_mouseup(e) {
 	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure"){
 		clear_temp_canvas()
 	}
-	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
-
 
 	if (window.DRAWFUNCTION === 'select') {
 		$("#temp_overlay").css('cursor', '');
 	}
-
 	
 	window.MOUSEDOWN = false;
-	const width = mousex - window.BEGIN_MOUSEX;
-	const height = mousey - window.BEGIN_MOUSEY;
+	const width = mouseX - window.BEGIN_MOUSEX;
+	const height = mouseY - window.BEGIN_MOUSEY;
 	// data is modified by each shape/function but as a starting point fill it up
 	let data = ['',
 		 window.DRAWTYPE,
@@ -1070,8 +1048,8 @@ function drawing_mouseup(e) {
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
-				data[5] = mousex
-				data[6] = mousey
+				data[5] = mouseX
+				data[6] = mouseY
 				break
 			case "rect":
 				data[0] = "rect"
@@ -1085,14 +1063,14 @@ function drawing_mouseup(e) {
 				break;
 			case "cone":
 				data[0] = "cone"
-				data[5] = mousex
-				data[6] = mousey
+				data[5] = mouseX
+				data[6] = mouseY
 				break;
 			case "brush":
-				window.BRUSHPOINTS.push({x:mousex, y:mousey});
+				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 				// cap with a dot
-				window.BRUSHPOINTS.push({x:window.mousex+1, y:window.mousey+1});
-				window.BRUSHPOINTS.push({x:window.mousex-1, y:window.mousey-1});
+				window.BRUSHPOINTS.push({x:window.mouseX+1, y:window.mouseY+1});
+				window.BRUSHPOINTS.push({x:window.mouseX-1, y:window.mouseY-1});
 				data[0] = "brush"
 				data[3] = window.BRUSHPOINTS
 				data[4] = null
@@ -1130,10 +1108,12 @@ function drawing_mouseup(e) {
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text"
+		data[3] = window.BEGIN_MOUSEX
+		data[4] = window.BEGIN_MOUSEY
 		add_text_drawing_input(data)
 	}
 	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
-		finalise_drawing_fog(width, height)
+		finalise_drawing_fog(mouseX, mouseY, width, height)
 	}
 	
 	else if (window.DRAWFUNCTION == "select") {
@@ -1142,10 +1122,10 @@ function drawing_mouseup(e) {
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 			var toktop = parseInt(curr.options.top);
-			if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
+			if ((Math.min(window.BEGIN_MOUSEY, mouseY, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
 				continue;
 			var tokleft = parseInt(curr.options.left);
-			if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
+			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
 				continue;
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
@@ -1167,10 +1147,6 @@ function drawing_mouseup(e) {
 	}
 	else if (window.DRAWFUNCTION == "measure") {
 		WaypointManager.fadeoutMeasuring()
-		// setTimeout(function() {
-		// 	clear_temp_canvas()
-		// 	WaypointManager.clearWaypoints()
-		// }, 2000);
 	}
 	
 }
@@ -1225,14 +1201,16 @@ function drawing_contextmenu(e) {
 
 /**
  * sets window.REVEALED with arcs/rects for fog before redrawing them and syncing
+ * @param {Number} mouseX end position of mouse
+ * @param {Number} mouseY end position of mouse
  * @param {Number} width width of fog
  * @param {Number} height height of fog
  */
-function finalise_drawing_fog(width, height) {
+function finalise_drawing_fog(mouseX, mouseY, width, height) {
 	if (window.DRAWSHAPE == "arc") {
-		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
+		centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+		centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+		radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
@@ -1392,14 +1370,6 @@ function handle_drawing_button_click() {
 		target.on('mousemove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
 		
-		if ($(["data-dragging"]) && $(clicked).is("#measure-button") && e.altKey){
-			const token = $(["data-dragging"]).first()
-			const event = jQuery.Event("mousedown");
-			event.pageX = $(token).attr("data-drag-x")
-			event.pageY = $(token).attr("data-drag-y")
-			// this event needs pagex and pagey values
-			target.trigger(event)
-		}
 	})
 	// during initialisation of VTT default to the select button
 	$('#select-button').click();

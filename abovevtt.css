@@ -2841,12 +2841,6 @@ button.avtt-roll-button {
         padding: 0px 5px 0px 0px;
 }
 
-#text_controller_inside:first-child {
-    min-width:75px;
-}
-
-
-
 #text_controller_title_bar,
 .text-input-title-bar,
 #combat_tracker_title_bar {
@@ -2894,7 +2888,7 @@ button.avtt-roll-button {
 
 
 #text_controller_inside {
-    position: absolute;
+    position: fixed;
     top: 555px;
     z-index: 1000;
     width: 240px;

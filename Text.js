@@ -57,6 +57,7 @@ function apply_settings_to_boxes(){
         "text-decoration": window.TEXTDATA.text_underline ? "underline" : "none",
         "-webkit-text-stroke-color": window.TEXTDATA.stroke_color,
         "-webkit-text-stroke-width": `${window.TEXTDATA.stroke_size}px`,
+        "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none"
     })
     
 }
@@ -417,7 +418,7 @@ function handle_draw_text_submit(event) {
     if (!textBox.val()) return;
 
     const height = Math.max(
-        parseInt($(textBox).css("height")),
+        parseInt($(textBox).css("height")) + 25,
         parseInt($(textBox).css("min-height"))
     );
     const width = Math.max(
@@ -442,6 +443,7 @@ function handle_draw_text_submit(event) {
         underline: $(textBox).css("text-decoration")?.includes("underline"),
         align: $(textBox).css("text-align"),
         color: $(textBox).css("color"),
+        shadow: $(textBox).css("text-shadow")
     };
 
     const stroke = {
@@ -467,12 +469,13 @@ function handle_draw_text_submit(event) {
     // push the starting position of y south based on the font size
     data = ["text",
         rectX,
-        rectY + font.size,
+        rectY + font.size - 25,
         width,
         height,
         text,
         font,
-        stroke];
+        stroke
+    ];
     // bake this data and redraw all text
     window.DRAWINGS.push(data);
     $(".text-input-title-bar-exit").click();
@@ -563,7 +566,13 @@ function draw_text(
     // and the alignment used
     let x = startingX;
     let y = startingY;
-
+    // draw stroke text first
+    if (font.shadow && font.shadow !== "none"){
+        const shadowRegex = /(rgb\(.*\))\s(\d+px)\s(\d+px)\s(\d+px)/
+        const [_, shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur ] = font.shadow.match(shadowRegex)
+        context.filter = `drop-shadow(${shadowOffsetX} ${shadowOffsetY} ${shadowBlur} ${shadowColor})`
+    }
+    
     lines.forEach((line) => {
         const [textX, textWidth] = get_x_start_and_width_of_text(
             x,
@@ -572,7 +581,9 @@ function draw_text(
             font,
             stroke
         );
+        
         context.strokeText(line, textX, y);
+        // underlining isn't perfect
         if (font.underline) {
             drawLine(
                 context,
@@ -587,11 +598,12 @@ function draw_text(
 
         y += font.size;
     });
-    // reset any modifications to these as we are going to go around the loop again
-    x = startingX;
-    y = startingY;
     // loop the lines again as large stroke size will overlap the fill text
     // so add fill text in last
+    x = startingX;
+    y = startingY;
+  
+    context.filter = undefined
     lines.forEach((line) => {
 
         const [textX, textWidth] = get_x_start_and_width_of_text(
