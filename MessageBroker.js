@@ -320,7 +320,7 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
 
-		this.onmessage = function(event,tries=0) {
+		this.onmessage = async function(event,tries=0) {
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -628,12 +628,15 @@ class MessageBroker {
 			}
 			
 			if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
-				if( msg.data.to != window.MYSTREAMID )
-					return;		
-				setTimeout( async () => {
-				var peer=window.STREAMPEERS[msg.data.from];
-				await peer.addIceCandidate(msg.data.ice);
-				 },500); // ritardalo un po'
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+					return;
+	
+					setTimeout( async () => {
+					var peer= window.STREAMPEERS[msg.data.from];
+					await peer.addIceCandidate(msg.data.ice);
+					 },500); // ritardalo un po'
 			}
 			if(msg.eventType == "custom/myVTT/turnoffdicestream"){
 				$("[id^='streamer-']").remove();
@@ -648,70 +651,59 @@ class MessageBroker {
 					revealVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/updatedicestreamingfeature"){
-				update_dice_streaming_feature(true);				
+					update_dice_streaming_feature(true);				
 			}
 					
 
 			if(msg.eventType == "custom/myVTT/wannaseemydicecollection"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
-				if(!window.MYSTREAMID)
+				if( (!window.MYSTREAMID))
 					return;
-
 				const configuration = {
     				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
   				};
-				var peer=new RTCPeerConnection(configuration);
-				peer.addEventListener('track', async (event) => {
-					console.log("aggiungo video!!!!");
-				     addVideo(event.streams[0],msg.data.from);
-				});
-				peer.onicecandidate = e => {
-					if (e.candidate) {
-						window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-							to: msg.data.from,
-							from: window.MYSTREAMID,
-							ice: e.candidate
-						});
-					}
-				};
+				var peer=await new RTCPeerConnection(configuration);
 
-				
-				window.STREAMPEERS[msg.data.from]=peer;
-				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-					}
-				};
 				if(window.MYMEDIASTREAM){
-					var stream=window.MYMEDIASTREAM;
+					var stream= await window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
 				}
-				peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-					console.log("fatto setLocalDescription");
-					peer.setLocalDescription(desc);
-					self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						offer: desc
-					})
-				});
-			}
-			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
-				if( !window.JOINTHEDICESTREAM )
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID))
-					return;
 
-				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
-  				};
-				var peer=new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
-					addVideo(event.streams[0],msg.data.from);
+					console.log("aggiungo video!!!!");
+					    if ($("#streamer-video-"+msg.data.from).srcObject) {
+      					return;
+   						}
+				     addVideo(event.streams[0],msg.data.from);
 				});
+
+				window.makingOffer = false;
+
+		
+			  try {
+			    window.makingOffer = true;
+		   		peer.createOffer({offerToReceiveVideo: 1}).then( async (desc) => {
+						console.log("fatto setLocalDescription");
+						await peer.setLocalDescription(desc);
+						self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+							to: msg.data.from,
+							from: window.MYSTREAMID,
+							offer: desc
+						})
+					});
+
+			  } catch(err) {
+			    console.error(err);
+			  } finally {
+			    window.makingOffer = false;
+			  }
+
+				peer.oniceconnectionstatechange = () => {
+				  if (peer.iceConnectionState === "failed") {
+				    peer.restartIce();
+				  }
+				}
 				peer.onicecandidate = e => {
 					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
 						to: msg.data.from,
@@ -719,43 +711,97 @@ class MessageBroker {
 						ice: e.candidate
 					})
 				};
+
 				
 				window.STREAMPEERS[msg.data.from]=peer;
 				peer.onconnectionstatechange=() => {
 					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
+
 					}
 				};
+
+					
+			}
+			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+					return;
+				let ignoreOffer = false;
+				if(msg.data.offer){
+					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer === undefined || window.makingOffer || window.STREAMPEERS[msg.data.from].signalingState == "stable");
+				  ignoreOffer = offerCollision;
+				  if (ignoreOffer) {
+				    return;
+				  }
+				}
+
+				const configuration = {
+    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+  				};
+				var peer= await new RTCPeerConnection(configuration);
+				peer.addEventListener('track', async (event) => {
+					if ($("#streamer-video-"+msg.data.from).srcObject) {
+      			return;
+   				}
+					addVideo(event.streams[0],msg.data.from);
+				});
+				pc.oniceconnectionstatechange = () => {
+				  if (peer.iceConnectionState === "failed") {
+				    peer.restartIce();
+				  }
+				}
+				peer.onicecandidate = e => {
+					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
+						to: msg.data.from,
+						from: window.MYSTREAMID,
+						ice: e.candidate
+					})
+				};
+
+				
+				window.STREAMPEERS[msg.data.from]=peer;
+				peer.onconnectionstatechange=() => {
+					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
+
+					}
+				};
+				
+				window.STREAMPEERS[msg.data.from]= await peer;
+
 				if(window.MYMEDIASTREAM){
 					var stream=window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
 				}
-				peer.setRemoteDescription(new RTCSessionDescription(msg.data.offer));
+				await peer.setRemoteDescription(msg.data.offer);
 				console.log("fatto setRemoteDescription");
-				peer.createAnswer().then( (desc) => {
-					peer.setLocalDescription(desc);
-					console.log("fatto setLocalDescription");
+				peer.createAnswer().then( async (desc) => {
+				await peer.setLocalDescription(desc);
+				console.log("fatto setLocalDescription");
 					
-					window.MB.sendMessage("custom/myVTT/okseethem",{
+				window.MB.sendMessage("custom/myVTT/okseethem",{
 						from: window.MYSTREAMID,
 						to: msg.data.from,
 						answer: desc
 					});
-				})
-				for (let i in window.STREAMPEERS) {
-					console.log("replacing the track")
-					window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-				}
+				})			
 			}
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
+
+				let ignoreOffer = false;
+				if(msg.data.offer){
+					const offerCollision = (msg.data.offer.type == "offer") && (makingOffer || window.STREAMPEERS[msg.data.from].signalingState != "stable");
+				  ignoreOffer = offerCollision;
+				  if (ignoreOffer) {
+				    return;
+				  }
+				}
 				var peer=window.STREAMPEERS[msg.data.from];
-				peer.setRemoteDescription(new RTCSessionDescription(msg.data.answer));
+				peer.setRemoteDescription(msg.data.answer);
 				console.log("fatto setRemoteDescription");
 			}
 			
