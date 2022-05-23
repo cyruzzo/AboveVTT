@@ -130,6 +130,11 @@ class WaypointManagerClass {
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
 	getSnapPointCoords(x, y) {
+		if (!$('#measure-button').hasClass('button-enabled')) {
+			// only snap if the ruler tool is selected.
+			// The select tool manages the snapping based on ctrl key, scene settings, etc. so let it do it's thing
+			return { x: x, y: y };
+		}
 
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;

@@ -1289,8 +1289,9 @@ class Token {
 					}
 
 					// Setup waypoint manager
-					const mousex = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
-					const mousey = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+					const mapPosition = convert_point_from_view_to_map(event.pageX, event.pageY); // this snaps to the top left corner. So we want to move it to the center
+					const mousex = mapPosition.x + (window.CURRENT_SCENE_DATA.hpps / 2);
+					const mousey = mapPosition.y + (window.CURRENT_SCENE_DATA.vpps / 2);
 
 					WaypointManager.cancelFadeout()
 					if(WaypointManager.numWaypoints > 0){
@@ -1311,9 +1312,13 @@ class Token {
 						top: Math.round((event.clientY - click.y + original.top) / zoom)
 					};
 
-
-					const mousex = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
-					const mousey = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+					const mapPosition = convert_point_from_view_to_map(event.pageX, event.pageY);
+					const mousex = mapPosition.x + (window.CURRENT_SCENE_DATA.hpps / 2);
+					const mousey = mapPosition.y + (window.CURRENT_SCENE_DATA.vpps / 2);
+					ui.position = {
+						left: mousex - (window.CURRENT_SCENE_DATA.hpps / 2),
+						top: mousey - (window.CURRENT_SCENE_DATA.vpps / 2)
+					}
 
 					const canvas = document.getElementById("temp_overlay");
 					const context = canvas.getContext("2d");
@@ -1542,8 +1547,10 @@ function center_of_view() {
 
 function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
 	// adjust for map offset and zoom
-	let mapX = (pageX - 200) * (1.0 / window.ZOOM);
-	let mapY = (pageY - 200) * (1.0 / window.ZOOM);
+	const startX = window.CURRENT_SCENE_DATA.offsetx;
+	const startY = window.CURRENT_SCENE_DATA.offsety;
+	let mapX = ((pageX - 200) * (1.0 / window.ZOOM)) - startX;
+	let mapY = ((pageY - 200) * (1.0 / window.ZOOM)) - startY;
 	if (forceNoSnap === true) {
 		return { x: mapX, y: mapY };
 	}
@@ -1551,10 +1558,12 @@ function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
 	let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 	if (shallwesnap) {
 		// adjust to the nearest square coordinate
-		const startX = window.CURRENT_SCENE_DATA.offsetx;
-		const startY = window.CURRENT_SCENE_DATA.offsety;
-		mapX = Math.round((mapX - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-		mapY = Math.round((mapY - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
+		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
+		const currentGridX = Math.floor(mapX / gridWidth);
+		const currentGridY = Math.floor(mapY / gridHeight);
+		mapX = (currentGridX * gridWidth) + startX;// + (gridWidth / 2);
+		mapY = (currentGridY * gridHeight) + startY;// + (gridHeight / 2);
 	}
 	return { x: mapX, y: mapY };
 }
