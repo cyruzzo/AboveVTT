@@ -677,15 +677,15 @@ class MessageBroker {
    						}
 				     addVideo(event.streams[0],msg.data.from);
 				});
-
-				window.makingOffer = false;
+				window.makingOfferTo = [];
+				window.makingOfferTo[msg.data.from] = false;
 
 		
 			  try {
-			    window.makingOffer = true;
 		   		peer.createOffer({offerToReceiveVideo: 1}).then( async (desc) => {
 						console.log("fatto setLocalDescription");
 						await peer.setLocalDescription(desc);
+						window.makingOfferTo[msg.data.from] = true;
 						self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 							to: msg.data.from,
 							from: window.MYSTREAMID,
@@ -696,7 +696,7 @@ class MessageBroker {
 			  } catch(err) {
 			    console.error(err);
 			  } finally {
-			    window.makingOffer = false;
+			    window.makingOfferTo[msg.data.from] = false;
 			  }
 
 				peer.oniceconnectionstatechange = () => {
@@ -718,14 +718,8 @@ class MessageBroker {
 					return;
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
-				let ignoreOffer = false;
-				if(msg.data.offer){
-					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer === undefined || window.makingOffer || window.STREAMPEERS[msg.data.from].signalingState == "stable");
-				  ignoreOffer = offerCollision;
-				  if (ignoreOffer) {
-				    return;
-				  }
-				}
+				if(window.makingOfferTo[msg.data.from] )
+					return;
 
 				const configuration = {
     				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
@@ -737,7 +731,7 @@ class MessageBroker {
    				}
 					addVideo(event.streams[0],msg.data.from);
 				});
-				pc.oniceconnectionstatechange = () => {
+				peer.oniceconnectionstatechange = () => {
 				  if (peer.iceConnectionState === "failed") {
 				    peer.restartIce();
 				  }
@@ -775,14 +769,6 @@ class MessageBroker {
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
 
-				let ignoreOffer = false;
-				if(msg.data.offer){
-					const offerCollision = (msg.data.offer.type == "offer") && (makingOffer || window.STREAMPEERS[msg.data.from].signalingState != "stable");
-				  ignoreOffer = offerCollision;
-				  if (ignoreOffer) {
-				    return;
-				  }
-				}
 				var peer=window.STREAMPEERS[msg.data.from];
 				peer.setRemoteDescription(msg.data.answer);
 				console.log("fatto setRemoteDescription");
