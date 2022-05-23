@@ -252,16 +252,28 @@ Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
-    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
-    if (Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0) {
-        undo_delete_tokens();
-    }
+    handle_undo()
 });
 Mousetrap.bind('command+z', function(e) {
-    if (Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0) {
+    handle_undo()
+});
+
+function handle_undo(){
+    const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+    if ($("#select_button").hasClass(buttonSelectedClasses) && 
+        Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0){
         undo_delete_tokens();
     }
-});
+    else if(($("#fog_button").hasClass(buttonSelectedClasses))){
+        $("#fog_undo").click()
+    }
+    else if(($("#draw_button").hasClass(buttonSelectedClasses))){
+        $("#draw_undo").click()
+    }
+    else if(($("#text_button").hasClass(buttonSelectedClasses))){
+        $("#text_undo").click()
+    }
+}
 
 var rotationKeyPresses = [];
 window.addEventListener("keydown", async (event) => {

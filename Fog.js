@@ -840,8 +840,8 @@ function drawing_mousedown(e) {
 		
 	}
 	if (window.DRAWFUNCTION === "draw_text"){
-		window.BEGIN_MOUSEX = e.pageX;
-		window.BEGIN_MOUSEY = e.pageY;
+		window.BEGIN_MOUSEX = event.clientX;
+		window.BEGIN_MOUSEY = event.clientY;
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
 	}
@@ -896,10 +896,10 @@ function drawing_mousemove(e) {
 			if(window.DRAWFUNCTION == "draw_text")
 			{
 				drawRect(context,
-					Math.round(((window.BEGIN_MOUSEX - 200) * (1.0 / window.ZOOM))),
-					Math.round(((window.BEGIN_MOUSEY - 200) * (1.0 / window.ZOOM))),
-					mouseX - Math.round(((window.BEGIN_MOUSEX - 200) * (1.0 / window.ZOOM))),
-					mouseY - Math.round(((window.BEGIN_MOUSEY - 200) * (1.0 / window.ZOOM))),
+					Math.round(((window.BEGIN_MOUSEX - 200 + window.scrollX))) * (1.0 / window.ZOOM),
+					Math.round(((window.BEGIN_MOUSEY - 200 + window.scrollY))) * (1.0 / window.ZOOM),
+					((e.clientX - 200 + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - 200 + window.scrollX) * (1.0 / window.ZOOM)),
+					((e.clientY - 200 + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - 200 + window.scrollY) * (1.0 / window.ZOOM)),
 					window.DRAWCOLOR,
 					isFilled,
 					window.LINEWIDTH);
@@ -1127,8 +1127,10 @@ function drawing_mouseup(e) {
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text";
-		data[5] = e.pageX - data[3];
-		data[6] =  e.pageY - data[4];
+		const textWidth = e.clientX - window.BEGIN_MOUSEX
+		const textHeight = e.clientY - window.BEGIN_MOUSEY
+		data[5] = textWidth
+		data[6] = textHeight
 		add_text_drawing_input(data);
 	}
 	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){

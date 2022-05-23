@@ -92,6 +92,7 @@ function change_zoom(newZoom, x, y) {
 	set_default_vttwrapper_size()
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
+	$("body").css("--window-zoom", window.ZOOM)
 	console.groupEnd()
 }
 /** 

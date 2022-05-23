@@ -51,12 +51,12 @@ function apply_settings_to_boxes(){
         "color": window.TEXTDATA.text_color,
         "background-color": window.TEXTDATA.text_background_color,
         "font-family": window.TEXTDATA.text_font,
-        "font-size": `${window.TEXTDATA.text_size}px`,
+        "font-size": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
         "font-weight": window.TEXTDATA.text_bold ? "bold" : "normal",
         "font-style": window.TEXTDATA.text_italic ? "italic" : "normal",
         "text-decoration": window.TEXTDATA.text_underline ? "underline" : "none",
         "-webkit-text-stroke-color": window.TEXTDATA.stroke_color,
-        "-webkit-text-stroke-width": `${window.TEXTDATA.stroke_size}px`,
+        "-webkit-text-stroke-width": `calc(${window.TEXTDATA.stroke_size}px * var(--window-zoom))`,
         "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none"
     })
     
@@ -274,6 +274,27 @@ function create_text_controller() {
         stop: function () {
             $('.iframeResizeCover').remove();
         },
+        resize: function (event) {
+            let controllerWidth = parseInt($(this).css("width"));
+            if(controllerWidth<100) {
+                $(this).css("min-height", "165px")
+            }
+            if(controllerWidth<301) {
+                $(this).css("min-height", "165px")
+            }
+            else if(controllerWidth<378){
+                $(this).css("min-height", "140px")
+            }
+            else if(controllerWidth<527){
+                $(this).css("min-height", "113px")
+            }
+            else if(controllerWidth<975){
+                $(this).css("min-height", "81px")
+            }
+            else{
+                $(this).css("min-height", "55px")
+            }
+        },
         minWidth: 80,
         minHeight: 55
     });
@@ -301,10 +322,10 @@ function create_text_controller() {
 function create_moveable_text_box(x,y,width, height) {
     const textInputInside = $(`<div class="text-input-inside"/>`);
     textInputInside.css({
-        "position": "absolute",
+        "position": "fixed",
         "z-index": 1000,
-        "left": `${x - 200}px`,
-        "top": `${y - 200}px`,
+        "left": `${x}px`,
+        "top": `${y}px`,
         "width": width,
         "height": height,
         "min-height": "55px",
@@ -380,9 +401,20 @@ function create_moveable_text_box(x,y,width, height) {
         type="text" autocomplete="off"/>`
     );
     textInputInside.append(input)
+    $(input).css({
+        "white-space": "nowrap",
+        "overflow": "hidden"
+    });
+    
     apply_settings_to_boxes()
     $(input).on("keyup", handle_key_press);
+    $(input).on("input onchange", handle_auto_resize);
     $(input).focus();
+}
+
+function handle_auto_resize(e){
+    $(this).parent().css("height", this.scrollHeight +25 +2 + "px")
+    $(this).parent().css("width", this.scrollWidth + 2 +"px")
 }
 
 /**
@@ -425,8 +457,8 @@ function handle_draw_text_submit(event) {
     );
     // textbox doesn't have left or top so use the wrapper
     // with 25 being the bar height
-    const rectX = Math.round(((parseInt($(textBox).parent().css("left")))  * (1.0 / window.ZOOM)));
-    const rectY = Math.round(((parseInt($(textBox).parent().css("top")) + 25)  * (1.0 / window.ZOOM)));
+    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-200+window.scrollX))) * (1.0 / window.ZOOM);
+    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-200+window.scrollY)) + 25) * (1.0 / window.ZOOM);
     const rectColor = $(textBox).css("background-color")
 
     const text = textBox.val();
@@ -435,7 +467,7 @@ function handle_draw_text_submit(event) {
 
     const font = {
         font: $(textBox).css("font-family"),
-        size: parseInt($(textBox).css("font-size")) * (1.0 / window.ZOOM),
+        size: parseInt($(textBox).css("font-size")) / window.ZOOM,
         weight: fontWeight,
         style: fontStyle,
         underline: $(textBox).css("text-decoration")?.includes("underline"),
@@ -445,7 +477,7 @@ function handle_draw_text_submit(event) {
     };
 
     const stroke = {
-        size: parseInt($(textBox).css("-webkit-text-stroke-width")),
+        size: parseInt($(textBox).css("-webkit-text-stroke-width")) / window.ZOOM,
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
     // only draw a rect if it's not fully transparent
@@ -582,7 +614,7 @@ function draw_text(
         );
 
         // const textMetrics = context.measureText(line)
-        
+
         context.strokeText(line, textX, y);
         // underlining isn't perfect
         if (font.underline) {
