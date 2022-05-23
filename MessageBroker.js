@@ -677,15 +677,15 @@ class MessageBroker {
    						}
 				     addVideo(event.streams[0],msg.data.from);
 				});
-				window.makingOfferTo = [];
-				window.makingOfferTo[msg.data.from] = false;
+				window.makingOffer = [];
+				window.makingOffer[msg.data.from] = false;
 
 		
 			  try {
+			    	window.makingOffer[msg.data.from] = true;
 		   		peer.createOffer({offerToReceiveVideo: 1}).then( async (desc) => {
 						console.log("fatto setLocalDescription");
 						await peer.setLocalDescription(desc);
-						window.makingOfferTo[msg.data.from] = true;
 						self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 							to: msg.data.from,
 							from: window.MYSTREAMID,
@@ -696,7 +696,10 @@ class MessageBroker {
 			  } catch(err) {
 			    console.error(err);
 			  } finally {
-			    window.makingOfferTo[msg.data.from] = false;
+			  	setTimeout(function(){
+			  			window.makingOffer[msg.data.from] = false;
+			  	}, 2000)
+			    
 			  }
 
 				peer.oniceconnectionstatechange = () => {
@@ -718,8 +721,14 @@ class MessageBroker {
 					return;
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
-				if(window.makingOfferTo[msg.data.from] )
-					return;
+				let ignoreOffer = false;
+				if(msg.data.offer){
+					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState == "stable");
+				  ignoreOffer = offerCollision;
+				  if (ignoreOffer) {
+				    return;
+				  }
+				}
 
 				const configuration = {
     				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
