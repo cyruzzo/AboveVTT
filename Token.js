@@ -1242,6 +1242,7 @@ class Token {
 						const context = canvas.getContext("2d");
 						WaypointManager.setCanvas(canvas);
 						WaypointManager.fadeoutMeasuring()
+						
 					},
 
 				start: function (event) {
@@ -1299,6 +1300,26 @@ class Token {
 					}
 					window.BEGIN_MOUSEX = mousex
 					window.BEGIN_MOUSEY = mousey
+					if (!self.options.disableborder){
+						// strip out alpha and cap dark desaturated colours
+						let color = $(tok).css("--token-border-color")
+						const valueRegex = /(\d+\.\d+|\d+)/g
+						const match = color.match(valueRegex)
+						let [r,g,b] = match
+						if (r < 50 && g < 50 && b < 50 && !color.includes("#")){
+							r = 50
+							g = 50
+							b = 50
+							color = `rgb(${r}, ${g}, ${b})`
+						}else if (match && !color.includes("#")){
+							color = `rgb(${r}, ${g}, ${b})`
+						}
+						
+						WaypointManager.drawStyle.color = color
+					}else{
+						WaypointManager.resetDrawStyle()
+					}
+					
 
 					remove_selected_token_bounding_box();
 				},
