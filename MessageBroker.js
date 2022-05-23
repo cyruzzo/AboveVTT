@@ -716,7 +716,9 @@ class MessageBroker {
 				window.STREAMPEERS[msg.data.from]=peer;
 				peer.onconnectionstatechange=() => {
 					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-
+						console.log("DELETING PEER "+msg.data.from);
+						delete window.STREAMPEERS[msg.data.from];
+						$("#streamer-canvas-"+msg.data.from).remove();
 					}
 				};
 
@@ -763,7 +765,9 @@ class MessageBroker {
 				window.STREAMPEERS[msg.data.from]=peer;
 				peer.onconnectionstatechange=() => {
 					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-
+						console.log("DELETING PEER "+msg.data.from);
+						delete window.STREAMPEERS[msg.data.from];
+						$("#streamer-canvas-"+msg.data.from).remove();
 					}
 				};
 				
