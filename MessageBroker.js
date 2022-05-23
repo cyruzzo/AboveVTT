@@ -710,19 +710,8 @@ class MessageBroker {
 						from: window.MYSTREAMID,
 						ice: e.candidate
 					})
-				};
-
-				
-				window.STREAMPEERS[msg.data.from]=peer;
-				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-					}
-				};
-
-					
+				};				
+				window.STREAMPEERS[msg.data.from]=peer;				
 			}
 			if(msg.eventType == "custom/myVTT/okletmeseeyourdice"){
 				if( !window.JOINTHEDICESTREAM)
@@ -761,16 +750,6 @@ class MessageBroker {
 					})
 				};
 
-				
-				window.STREAMPEERS[msg.data.from]=peer;
-				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-					}
-				};
-				
 				window.STREAMPEERS[msg.data.from]= await peer;
 
 				if(window.MYMEDIASTREAM){
