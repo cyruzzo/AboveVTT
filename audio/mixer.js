@@ -443,4 +443,4 @@ function gameID() {
 
 const mixer = new Mixer(gameID());
 
-export { Channel, mixerEvents, mixer };
+export { Channel, mixer };
