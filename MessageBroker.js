@@ -669,16 +669,6 @@ class MessageBroker {
 					      urls: "turn:openrelay.metered.ca:80",
 					      username: "openrelayproject",
 					      credential: "openrelayproject",
-					    },
-					    {
-					      urls: "turn:openrelay.metered.ca:443",
-					      username: "openrelayproject",
-					      credential: "openrelayproject",
-					    },
-					    {
-					      urls: "turn:openrelay.metered.ca:443?transport=tcp",
-					      username: "openrelayproject",
-					      credential: "openrelayproject",
 					    }]
   				};
 				var peer= new RTCPeerConnection(configuration);
@@ -690,9 +680,6 @@ class MessageBroker {
 
 				peer.addEventListener('track', (event) => {
 					console.log("aggiungo video!!!!");
-					    if ($("#streamer-video-"+msg.data.from).srcObject) {
-      					return;
-   						}
 				     addVideo(event.streams[0],msg.data.from);
 				});
 				window.makingOffer = [];
@@ -712,6 +699,31 @@ class MessageBroker {
 								offer: desc
 							})}, staggerRandom
 						)
+
+						peer.oniceconnectionstatechange = () => {
+						  if (peer.iceConnectionState === "failed" || peer.iceConnectionState === "disconnected" ) {
+						  	console.log("Dice Stream Connection failed Retrying");
+						    self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+										to: msg.data.from,
+										from: window.MYSTREAMID,
+										offer: desc
+									})
+						    peer.restartIce();
+						  }
+					    else if (peer.iceConnectionState === "checking"  ) {
+						   	console.log("Dice Stream Connection failed Retrying")
+						  	setTimeout(function(){
+						  		if(peer.connectionState == "connecting"  || peer.connectionState == "failed" || peer.iceConnectionState === "disconnected") {
+							  		self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+											to: msg.data.from,
+											from: window.MYSTREAMID,
+											offer: desc
+										})
+										peer.restartIce();
+									}
+						  	}, 20000);		    
+						  }	  
+						}
 					});
 
 			  } catch(err) {
@@ -723,28 +735,7 @@ class MessageBroker {
 			    
 			  }
 
-				peer.oniceconnectionstatechange = () => {
-				  if (peer.iceConnectionState === "failed" || peer.iceConnectionState === "disconnected" ) {
-				  	console.log("Dice Stream Connection failed Retrying");
-				    self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: msg.data.offer
-							})
-				  }
-			    if (peer.iceConnectionState === "checking"  ) {
-				   	console.log("Dice Stream Connection failed Retrying")
-				  	setTimeout(function(){
-				  		if(peer.connectionState == "connecting") {
-					  		self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-									to: msg.data.from,
-									from: window.MYSTREAMID,
-									offer: msg.data.offer
-								})
-							}
-				  	}, 20000);		    
-				  }	  
-				}
+				
 				peer.onicecandidate = e => {
 					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
 						to: msg.data.from,
@@ -776,47 +767,13 @@ class MessageBroker {
 					      urls: "turn:openrelay.metered.ca:80",
 					      username: "openrelayproject",
 					      credential: "openrelayproject",
-					    },
-					    {
-					      urls: "turn:openrelay.metered.ca:443",
-					      username: "openrelayproject",
-					      credential: "openrelayproject",
-					    },
-					    {
-					      urls: "turn:openrelay.metered.ca:443?transport=tcp",
-					      username: "openrelayproject",
-					      credential: "openrelayproject",
 					    }]
   				};
 				var peer= new RTCPeerConnection(configuration);
 				peer.addEventListener('track', (event) => {
-					if ($("#streamer-video-"+msg.data.from).srcObject) {
-      			return;
-   				}
 					addVideo(event.streams[0],msg.data.from);
 				});
-				peer.oniceconnectionstatechange = () => {
-				  if (peer.iceConnectionState === "failed" || peer.iceConnectionState === "disconnected" ){
-				  	console.log("Dice Stream Connection failed Retrying")
-				    self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: msg.data.offer
-							})
-				  }
-				  if (peer.iceConnectionState === "checking"  ) {
-				   	console.log("Dice Stream Connection failed Retrying")
-				  	setTimeout(function(){
-				  		if(peer.connectionState == "connecting") {
-					  			self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-									to: msg.data.from,
-									from: window.MYSTREAMID,
-									offer: msg.data.offer
-								})
-							}
-				  	}, 10000);
-					}
-				}
+				
 				peer.onicecandidate = e => {
 					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
 						to: msg.data.from,
@@ -842,6 +799,30 @@ class MessageBroker {
 						to: msg.data.from,
 						answer: desc
 					});
+					peer.oniceconnectionstatechange = () => {
+					  if (peer.iceConnectionState === "failed" || peer.iceConnectionState === "disconnected" ){
+					  	console.log("Dice Stream Connection failed Retrying")
+					    self.sendMessage("custom/myVTT/okseethem",{
+								from: window.MYSTREAMID,
+								to: msg.data.from,
+								answer: desc
+							})
+							peer.restartIce();
+					  }
+					  else if(peer.connectionState == "connecting") {
+					   	console.log("Dice Stream Connection failed Retrying")
+					  	setTimeout(function(){
+					  		if(peer.connectionState == "connecting" || peer.connectionState == "failed" || peer.iceConnectionState === "disconnected") {
+						  			self.sendMessage("custom/myVTT/okseethem",{
+										from: window.MYSTREAMID,
+										to: msg.data.from,
+										answer: desc
+									})
+						  		peer.restartIce();
+								}
+					  	}, 20000);
+						}
+					}
 				})			
 			}
 			if(msg.eventType == "custom/myVTT/okseethem"){
