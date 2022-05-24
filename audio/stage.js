@@ -52,7 +52,12 @@ class StagedTrack {
      * @returns {Channel}
      */
     toChannel() {
-        return new Channel(this.getTrack(), this)
+        const track = this.getTrack();
+        const channel = new Channel(track.name, track.src);
+        channel.loop = this.loop;
+        channel.paused = !this.autoplay;
+        channel.volume = this.volume;
+        return channel;
     }
 
     /**
