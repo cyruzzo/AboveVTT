@@ -1,8 +1,10 @@
+import Library from "./library.js";
+
 /**
  * A StagedTrack is a reference to a Track with playtime information such as
  * volume, repeat, autoplay
  */
-export class StagedTrack {
+class StagedTrack {
     /**
      * The uid of the track as it exists in the track library
      * @type {string}
@@ -49,7 +51,7 @@ export class StagedTrack {
  * you set the tracks, their volumes, loop control, and autoplay so that you
  * can save them and load them into a mixer.
  */
-export class Stage {
+class Stage {
     /**
      * The name of the stage
      * @type {string}
@@ -103,4 +105,20 @@ export class Stage {
         stage.stagedTracks = stagedTracks;
         return Object.assign(stage, obj);
     }
+}
+
+/**
+ * The stage library singleton
+ * @extends {Library<Stage>}
+ */
+class StageLibrary extends Library {
+    constructor() {
+        super(new Stage);
+    }
+}
+
+const library = new StageLibrary();
+
+export default {
+    library
 }
