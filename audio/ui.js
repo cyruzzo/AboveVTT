@@ -76,14 +76,17 @@ function init_mixer() {
 
     mixer.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
 
+    const clear = document.createElement("button");
+    clear.textContent = 'Clear';
+    clear.onclick = () => mixer.clear();
+
     const playPause = document.createElement("button");
     playPause.onclick = () => mixer.togglePaused();
     mixer.onPlayPause((e) => {
        playPause.textContent = e.target.paused ? "Play" : "Pause";
     });
     mixer.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
-
-    $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeDiv, mixerChannels, playPause);
+    $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeDiv, mixerChannels, clear, playPause);
 }
 
 function init_trackLibrary() {
