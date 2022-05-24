@@ -4,7 +4,7 @@
  * into it self.
  * @template T
  */
-class Library {
+class Library extends EventTarget {
     /**
      * This holds on to the local storage key
      * @private
@@ -23,6 +23,7 @@ class Library {
      * @param {T} egObj - An example of the object you wish to have a library of
      */
     constructor(egObj) {
+        super();
         this._localStorageKey = 'audio.library.' + egObj.constructor.name.toLowerCase();
         this._egObj = egObj;
     }
@@ -34,6 +35,7 @@ class Library {
      */
     _write(library) {
         localStorage.setItem(this._localStorageKey, JSON.stringify([...library]));
+        this.dispatchEvent(new Event("onchange"));
     }
 
     /**
@@ -91,6 +93,14 @@ class Library {
         const r = library.delete(id);
         this._write(library);
         return r;
+    }
+
+    /**
+     * Register an onChange event
+     * @param {EventListenerOrEventListenerObject} callback
+     */
+    onchange(callback) {
+        this.addEventListener("onchange", callback);
     }
 }
 
