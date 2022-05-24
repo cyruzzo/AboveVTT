@@ -686,11 +686,13 @@ class MessageBroker {
 		   		peer.createOffer({offerToReceiveVideo: 1}).then( async (desc) => {
 						console.log("fatto setLocalDescription");
 						await peer.setLocalDescription(desc);
-						setTimeout(function(){self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-							to: msg.data.from,
-							from: window.MYSTREAMID,
-							offer: desc
-						})}, Math.floor(Math.random() * 10000))		
+						setTimeout(function(){
+							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+								to: msg.data.from,
+								from: window.MYSTREAMID,
+								offer: desc
+							})}, Math.floor(Math.random() * (6000 - 3000) + 3000)
+						)
 					});
 
 			  } catch(err) {
