@@ -323,9 +323,9 @@ function init_settings(){
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`experimental setting ${name} is now ${newValue}`);
 			if (name === "streamDiceRolls") {
-				update_dice_streaming_feature(newValue);
+				enable_dice_streaming_feature(newValue);
 				if(newValue == true) {
-					window.MB.sendMessage("custom/myVTT/updatedicestreamingfeature");
+					window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature");
 				}
 			} else {
 				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
@@ -433,25 +433,30 @@ function redraw_settings_panel_token_examples() {
 	}
 }
 
-function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
-	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
-	if (enabled == true) {
+function enable_dice_streaming_feature(){
 		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
 		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
 		$(".stream-dice-button").remove();
-		$(".dice-toolbar__dropdown-top").prepend($(`<div class='dice-die-button stream-dice-button' style='color:#ddd;font-weight:700;'>Leave Dice Stream</div>`));
+		$(".dice-toolbar__dropdown-top").prepend($(`<div class='dice-die-button stream-dice-button' style='color:#ddd;font-weight:700;'>Join Dice Stream</div>`));
 		$(".stream-dice-button").off().on("click", function(){
 			if(window.JOINTHEDICESTREAM){
 				update_dice_streaming_feature(false);
-				$('.stream-dice-button').html("Join Dice Stream");
 			}
 			else {
 				update_dice_streaming_feature(true);
-				$('.stream-dice-button').html("Leave Dice Stream");
 			}
 		})
+}
+
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
+	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
+		
+
+	if (enabled == true) {
+	
 		// STREAMING STUFF
 		window.JOINTHEDICESTREAM = true;
+		$('.stream-dice-button').html("Leave Dice Stream");
 		$("[role='presentation'] [role='menuitem']").each(function(){
 			$(this).off().on("click", function(){
 				if($(this).text() != "Everyone") {
@@ -485,12 +490,12 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 						streamid: window.MYSTREAMID
 					});
 				}		
-			}, 12000)
+			}, 1000)
 			setTimeout(function(){
 				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
 					from: window.MYSTREAMID
 				})
-			}, 7000);
+			}, 500);
 		} 
 	}
 	else {

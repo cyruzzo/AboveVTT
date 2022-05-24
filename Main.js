@@ -2698,7 +2698,7 @@ function init_buttons() {
 
 	window.STREAMPEERS={};
 	window.MYSTREAMID=uuid();
-	window.JOINTHEDICESTREAM=true;
+	window.JOINTHEDICESTREAM=false;
 
 
 

@@ -653,8 +653,8 @@ class MessageBroker {
 					console.log("custom/myVTT/revealmydicestream");
 					revealVideo(msg.data.streamid);
 			}
-			if(msg.eventType == "custom/myVTT/updatedicestreamingfeature"){
-					update_dice_streaming_feature(true);				
+			if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
+					enable_dice_streaming_feature(true);				
 			}
 					
 
