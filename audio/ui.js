@@ -1,9 +1,9 @@
 import { mixer } from './mixer.js';
-import { trackLibrary } from './library.js';
+import Library from './library.js';
 import { Track } from './track.js';
 
 const trackList = document.createElement("ul");
-trackLibrary.onchange((e) => {
+Library.track.onchange((e) => {
     trackList.innerHTML = "";
     e.target.map().forEach((track, id) => {
         const item = document.createElement("li");
@@ -47,7 +47,7 @@ function init_trackLibrary() {
                 track.tags = t.tags.split("|");
                 tracks.push(track);
             });
-            trackLibrary.create(...tracks)
+            Library.track.create(...tracks)
         };
 
         reader.onerror = () => {
@@ -57,7 +57,7 @@ function init_trackLibrary() {
         e.target.value = '';
     };
 
-    trackLibrary.dispatchEvent(new Event('onchange'));
+    Library.track.dispatchEvent(new Event('onchange'));
     $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
