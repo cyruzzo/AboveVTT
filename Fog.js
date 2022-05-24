@@ -51,6 +51,23 @@ class WaypointManagerClass {
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		this.timeout = undefined;
 		this.timerId = undefined;
+		this.drawStyle = {
+			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
+			color: "#f2f2f2",
+			outlineColor: "black",
+			textColor: "black",
+			backgroundColor: "rgba(255, 255, 255, 0.7)"
+		}
+	}
+	
+	resetDefaultDrawStyle(){
+		this.drawStyle = {
+			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
+			color: "#f2f2f2",
+			outlineColor: "black",
+			textColor: "black",
+			backgroundColor: "rgba(255, 255, 255, 0.7)"
+		}
 	}
 
 	// Set canvas and further set context
@@ -94,10 +111,10 @@ class WaypointManagerClass {
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = Math.max(25 * Math.max((1 - window.ZOOM), 0), 5);
-		this.ctx.strokeStyle = "black";
+		this.ctx.lineWidth = this.drawStyle.lineWidth
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
-		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
 	}
 
@@ -127,10 +144,16 @@ class WaypointManagerClass {
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		clearTimeout(this.timeout);
 		this.timeout = undefined;
+		this.cancelFadeout()
 	}
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
 	getSnapPointCoords(x, y) {
+		if (!$('#measure-button').hasClass('button-enabled')) {
+			// only snap if the ruler tool is selected.
+			// The select tool manages the snapping based on ctrl key, scene settings, etc. so let it do it's thing
+			return { x: x, y: y };
+		}
 
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;
@@ -258,29 +281,71 @@ class WaypointManagerClass {
 		}
 
 		// Draw our 'contrast line'
-		this.ctx.strokeStyle = "black";
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
-		this.ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+		this.ctx.strokeStyle = this.drawStyle.color
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
+		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
-		this.ctx.strokeStyle = "black";
-		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
+		// draw the outline of the text box
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
 
 		// Finally draw our text
-		this.ctx.fillStyle = "black";
+		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);
-
+		
 		this.drawBobble(snapPointXStart, snapPointYStart);
-		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+		this.drawBobble(snapPointXEnd, snapPointYEnd);
+	}
+
+	/**
+	 * redraws the waypoints using various levels of opacity until completely clear
+	 * then removes all waypoints and resets canvas opacity
+	 */
+	 fadeoutMeasuring(){
+		let alpha = 1.0
+		const self = this
+		// only ever allow a single fadeout to occur
+		// this stops weird flashing behaviour with interacting
+		// interval function calls
+		if (this.timerId){
+			return
+		}
+		this.timerId = setInterval(function(){ fadeout() }, 100);
+
+		function fadeout(){
+			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
+			self.ctx.globalAlpha = alpha;
+			self.draw(false)
+			alpha = alpha - 0.2;
+			if (alpha <= 0.0){
+				self.cancelFadeout()
+				self.clearWaypoints();
+				clear_temp_canvas()
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	cancelFadeout(){
+		if (this.timerId !== undefined){
+			clearInterval(this.timerId);
+			this.ctx.globalAlpha = 1.0
+			this.timerId = undefined
+
+		}	
 	}
 
 	/**
@@ -863,14 +928,14 @@ function drawing_mousedown(e) {
  * @returns 
  */
 function drawing_mousemove(e) {
-
+	
 	if (window.MOUSEMOVEWAIT) {
 		return;
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 
-	var canvas = document.getElementById("temp_overlay");
-	var context = canvas.getContext("2d");
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
 
 	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
@@ -883,8 +948,8 @@ function drawing_mousemove(e) {
 
 	if (window.MOUSEDOWN) {
 		clear_temp_canvas()
-		var width = mouseX - window.BEGIN_MOUSEX;
-		var height = mouseY - window.BEGIN_MOUSEY;
+		const width = mouseX - window.BEGIN_MOUSEX;
+		const height = mouseY - window.BEGIN_MOUSEY;
 		// bain todo why is this here?
 		if(window.DRAWSHAPE !== "brush")
 		{
@@ -1527,6 +1592,12 @@ function drawPolygon (
 		ctx.stroke();
 	}
 	
+}
+
+function clear_temp_canvas(){
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function clear_temp_canvas(){

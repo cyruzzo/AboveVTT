@@ -588,12 +588,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
 
-	persist_current_scene(){
+	persist_current_scene(dontswitch=false){
 		let sceneData=Object.assign({},this.scene);
 		sceneData.reveals=[];
 		sceneData.drawings=[];
 		sceneData.tokens={};
-		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
+		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}
 
 	persist() {
