@@ -1,9 +1,7 @@
-import { mixer } from './mixer.js';
-import Library from './library.js';
-import { Track } from './track.js';
+import Track from './track.js';
 
 const trackList = document.createElement("ul");
-Library.track.onchange((e) => {
+Track.library.onchange((e) => {
     trackList.innerHTML = "";
     e.target.map().forEach((track, id) => {
         const item = document.createElement("li");
@@ -47,7 +45,7 @@ function init_trackLibrary() {
                 track.tags = t.tags.split("|");
                 tracks.push(track);
             });
-            Library.track.create(...tracks)
+            Track.library.create(...tracks)
         };
 
         reader.onerror = () => {
@@ -57,11 +55,11 @@ function init_trackLibrary() {
         e.target.value = '';
     };
 
-    Library.track.dispatchEvent(new Event('onchange'));
+    Track.library.dispatchEvent(new Event('onchange'));
     $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
 
-export function init_audio_ui() {
+export default function init_ui() {
     init_trackLibrary();
 }

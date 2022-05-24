@@ -1,7 +1,9 @@
+import Library from './library.js'
+
 /**
  * A track is a representation of an audio file on the internet
  */
-export class Track {
+class Track {
     /**
      * The name of the track
      * @type {string}
@@ -36,4 +38,30 @@ export class Track {
     static assign(obj) {
         return Object.assign(new Track(), obj);
     }
+}
+
+/**
+ * The track library singleton
+ * @extends {Library<Track>}
+ */
+class TrackLibrary extends Library {
+    constructor() {
+        super(new Track());
+    }
+
+    /**
+     *
+     * @param {string} name
+     * @param {string} src
+     * @returns {[string, Track]}
+     */
+    find(name, src) {
+        return [...this.map()].find(([_, track]) => track.name === name || track.src === src);
+    }
+}
+
+const library = new TrackLibrary();
+
+export default {
+    library
 }
