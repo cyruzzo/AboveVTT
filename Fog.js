@@ -55,7 +55,7 @@ class WaypointManagerClass {
 			color: "#f2f2f2",
 			outlineColor: "black",
 			textColor: "black",
-			backgroundColor: "#f2f2f2"
+			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
 	}
 	/**
@@ -70,7 +70,7 @@ class WaypointManagerClass {
 			color: "#f2f2f2",
 			outlineColor: "black",
 			textColor: "black",
-			backgroundColor: "#f2f2f2"
+			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
 	}
 
@@ -299,9 +299,7 @@ class WaypointManagerClass {
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
-		this.ctx.globalAlpha = 0.6
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
-		this.ctx.globalAlpha = 1
 		// draw the outline of the text box
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
 
@@ -335,6 +333,7 @@ class WaypointManagerClass {
 			self.draw(false)
 			alpha = alpha - 0.2;
 			if (alpha <= 0.0){
+				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
 			}
@@ -342,7 +341,7 @@ class WaypointManagerClass {
 	}
 
 	/**
-	 * clears the interval if available and sets opacity back to 100%
+	 * 
 	 */
 	cancelFadeout(){
 		if (this.timerId !== undefined){
@@ -760,10 +759,13 @@ function stop_drawing() {
 }
 
 function drawing_mousedown(e) {
+	// perform some cleanup of the canvas/objects
 	clear_temp_canvas()
-	if (!e.buttons === 2){
+	WaypointManager.cancelFadeout()
+	if(e.button !== 2){
 		WaypointManager.clearWaypoints()
 	}
+
 	WaypointManager.resetDefaultDrawStyle()
 	window.LINEWIDTH = $("#draw_line_width").val();
 	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
