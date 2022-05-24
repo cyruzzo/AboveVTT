@@ -3,10 +3,17 @@ import Track from './track.js';
 const trackList = document.createElement("ul");
 Track.library.onchange((e) => {
     trackList.innerHTML = "";
+    trackList.id = 'track-list';
     e.target.map().forEach((track, id) => {
         const item = document.createElement("li");
         item.textContent = track.name;
         item.setAttribute("data-id", id);
+        const play = document.createElement('button');
+        play.textContent = 'Play';
+        play.onclick = () => {
+            console.log('play track')
+        };
+        item.appendChild(play);
         trackList.append(item);
     });
 });
