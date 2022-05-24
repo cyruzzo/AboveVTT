@@ -3652,6 +3652,9 @@ button.avtt-roll-button {
     color: #9c2727;
     opacity: 0.8;
 }
+.glc-game-log>div>div[class*="-Title"] {
+    margin-bottom: 7px;
+}
 .stream-dice-button:hover {
     cursor: pointer;
     background: rgb(245, 248, 250);
