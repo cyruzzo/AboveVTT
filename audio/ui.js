@@ -28,7 +28,7 @@ function masterVolumeSlider() {
     div.className = "audio-row";
 
     const slider = volumeSlider(mixer.volume);
-    slider.onchange = (e) => mixer.volume = e.target.value;
+    slider.oninput = (e) => mixer.volume = e.target.value;
     div.append(slider);
 
     return div;
@@ -53,12 +53,12 @@ function init_mixer() {
             item.setAttribute("data-id", id);
 
             const slider = volumeSlider(channel.volume);
-            slider.onchange = (e) => {
+            slider.oninput = (e) => {
                 channel.volume = e.target.value;
-                mixer.updateChannel(channel);
+                mixer.updateChannel(id, channel);
             }
 
-            item.appendChild();
+            item.appendChild(slider);
             mixerChannels.append(item);
         });
     });
@@ -72,9 +72,7 @@ function init_mixer() {
     // play/pause button
     const playPause = document.createElement("button");
     playPause.onclick = () => mixer.togglePaused();
-    mixer.onPlayPause((e) => {
-       playPause.textContent = e.target.paused ? "Play" : "Pause";
-    });
+    mixer.onPlayPause((e) => playPause.textContent = e.target.paused ? "Play" : "Pause");
     mixer.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
     $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeSlider(), mixerChannels, clear, playPause);
 }
@@ -94,12 +92,8 @@ function init_trackLibrary() {
         fileInput.onchange = (e) => {
             const reader = new FileReader();
             reader.readAsText(e.target.files[0]);
-            reader.onload = () => {
-                trackLibrary.importCSV(reader.result);
-            };
-            reader.onerror = () => {
-                throw reader.error
-            };
+            reader.onload = () => trackLibrary.importCSV(reader.result);
+            reader.onerror = () => {throw reader.error};
         };
         fileInput.click();
     };
@@ -134,7 +128,7 @@ function init_trackLibrary() {
 }
 
 function init() {
-    if(!window.DM){
+    if(window.DM){
         init_trackLibrary();
         init_mixer();
     } else {
