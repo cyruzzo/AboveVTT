@@ -839,9 +839,9 @@ function drawing_mousedown(e) {
 		drawClosingArea(context, window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0]);
 		
 	}
-	if (window.DRAWFUNCTION === "draw_text"){
-		window.BEGIN_MOUSEX = event.clientX;
-		window.BEGIN_MOUSEY = event.clientY;
+	else if (window.DRAWFUNCTION === "draw_text"){
+		window.BEGIN_MOUSEX = e.clientX;
+		window.BEGIN_MOUSEY = e.clientY;
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
 	}
@@ -872,7 +872,6 @@ function drawing_mousemove(e) {
 	var canvas = document.getElementById("temp_overlay");
 	var context = canvas.getContext("2d");
 
-	const color = window.DRAWCOLOR
 	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
 
