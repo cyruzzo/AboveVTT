@@ -233,7 +233,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: auto;
     background: #242527;
     z-index: 0;
-    
+
     transition: -webkit-transform ease-in-out 0.5s;
     transform-origin: top;
     transition-delay: 0.1s; /* Needed to calculate the vertical area to shift with translateX */
@@ -2245,7 +2245,7 @@ h5.token-image-modal-footer-title:after {
     width: auto;
 }
 .custom-token-image-item {
-    float: left; 
+    float: left;
     width: 33%;
     position: relative;
 }
@@ -2529,8 +2529,8 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-panel-content .sidebar-panel-body {
     background-color: rgb(235, 241, 245);
-    position: relative; 
-    width:100%; 
+    position: relative;
+    width:100%;
     overflow-y: auto;
     flex: auto;
 }
@@ -2689,6 +2689,7 @@ h5.token-image-modal-footer-title:after {
     opacity: 1;
     visibility: visible;
 }
+
 .sidebar-panel-content .sidebar-panel-footer .footer-input-wrapper:empty {
     padding: 0px;
     border-top: 0px solid #d8e1e8;
@@ -2725,7 +2726,7 @@ h5.token-image-modal-footer-title:after {
 @keyframes beholder-float {
     0% { transform: translate(0,  0px); }
     50%  { transform: translate(0, -20px); }
-    100%   { transform: translate(0, -0px); }   
+    100%   { transform: translate(0, -0px); }
 }
 
 div.sidebar__pane-content div.tooltip::after {
@@ -2745,7 +2746,7 @@ button.avtt-roll-button {
     line-height: 18px;
     letter-spacing: 1px;
     padding: 1px 4px 0;
-}			
+}
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
@@ -2759,6 +2760,11 @@ button.avtt-roll-button {
 }
 .MuiButtonBase-root {
     width: 100%;
+}
+
+#sounds-panel .volume-control {
+    width: 50%;
+    float: right;
 }
 
 .MuiModal-root{
