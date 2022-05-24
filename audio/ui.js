@@ -3,22 +3,6 @@ import { mixer, mixerEvents, Channel } from './mixer.js';
 import { StagedTrack } from './stage.js';
 
 /**
- * Creates a generic volume slider element
- * @param {number} initialVolume
- * @returns {HTMLInputElement}
- */
-function volumeSlider(initialVolume) {
-    const slider = document.createElement("input");
-    slider.type = "range";
-    slider.min = 0;
-    slider.max = 1;
-    slider.step = .01;
-    slider.className = "volume-control";
-    slider.value = initialVolume;
-    return slider
-}
-
-/**
  *
  * @returns {HTMLDivElement}
  */
@@ -27,9 +11,7 @@ function masterVolumeSlider() {
     div.textContent = "Master Volume";
     div.className = "audio-row";
 
-    const slider = volumeSlider(mixer.volume);
-    slider.oninput = (e) => mixer.volume = e.target.value;
-    div.append(slider);
+    div.append(mixer.masterVolumeSlider());
 
     return div;
 }
@@ -52,13 +34,8 @@ function init_mixer() {
             item.textContent = channel.name;
             item.setAttribute("data-id", id);
 
-            const slider = volumeSlider(channel.volume);
-            slider.oninput = (e) => {
-                channel.volume = e.target.value;
-                mixer.updateChannel(id, channel);
-            }
+            item.appendChild(mixer.channelVolumeSlider(id));
 
-            item.appendChild(slider);
             mixerChannels.append(item);
         });
     });
