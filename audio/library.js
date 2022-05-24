@@ -1,3 +1,6 @@
+import { Track } from './track.js';
+import { Stage } from './stage.js';
+
 /**
  * Library creates a generic local storage backed library for arbitrary
  * objects. The object must have an assign function describes how deserialize
@@ -125,8 +128,40 @@ class Library extends EventTarget {
     }
 }
 
-import { Track } from './track.js';
-export const trackLibrary = new Library(new Track());
+/**
+ * The track library singleton
+ * @extends {Library<Track>}
+ */
+class TrackLibrary extends Library {
+    constructor() {
+        super(new Track());
+    }
 
-import { Stage } from './stage.js';
-export const stageLibrary = new Library(new Stage());
+    /**
+     *
+     * @param {string} name
+     * @param {string} src
+     * @returns {[string, Track]}
+     */
+    find(name, src) {
+        return [...this.map()].find(([_, track]) => track.name === name || track.src === src);
+    }
+}
+
+/**
+ * The stage library singleton
+ * @extends {Library<Stage>}
+ */
+class StageLibrary extends Library {
+    constructor() {
+        super(new Stage);
+    }
+}
+
+const track = new TrackLibrary();
+const stage = new StageLibrary();
+
+export default {
+    track,
+    stage
+}
