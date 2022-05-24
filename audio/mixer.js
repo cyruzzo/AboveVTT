@@ -113,98 +113,47 @@ class MixerState {
 class Mixer {
     /**
      * A map of the current Audio players
+     * @private
      * @type {Object.<string, HTMLAudioElement}
      */
-    players = {};
+    _players = {};
 
     /**
      * The the local storage key used for persisting MixerState to local storage
+     * @private
      * @type {string}
      */
-    localStorageKey;
+    _localStorageKey;
 
     /**
      * The gameID is required for persisting mixer state
      * @param {string} gameID
      */
     constructor(gameID) {
-        this.localStorageKey = `audio.mixer.${gameID}`;
+        this._localStorageKey = `audio.mixer.${gameID}`;
     }
 
     /**
-     * Returns the mixer state from local storage
-     * @returns {MixerState}
-     */
-    getState() {
-        return MixerState.assign(JSON.parse(localStorage.getItem(this.localStorageKey) ?? "{}"));
-    }
-
-    /**
-     * Save mixer state to local storage and sync
-     * @param {MixerState} state
-     */
-    setState(state) {
-        localStorage.setItem(this.localStorageKey, JSON.stringify(state));
-        this.syncPlayers;
-    }
-
-    /**
-     * Set the master volume
-     * @type {number}
-     */
-    set volume(v) {
-        const state = this.getState();
-        state.volume = v;
-        this.setState(state);
-    }
-
-    /**
-     * Gets teh current master volume
-     * @type {number}
-     */
-    get volume() {
-        const state = this.getState();
-        return state.volume;
-    }
-
-    /**
-     * Plays the mixer. Only channels that are set to playing will play.
-     */
-    play() {
-        const state = this.getState();
-        state.paused = false;
-        this.setState(state);
-    }
-
-    /**
-     * Pauses the mixer
-     */
-    pause() {
-        const state = this.getState();
-        state.paused = true;
-        this.setState(state);
-    }
-
-    /**
+     * @private
      * Syncs the mixer state from local storage into native Audio object
      */
-    syncPlayers() {
-        const state = this.getState();
+    _syncPlayers() {
+        const state = this.state();
 
         // create and update players
         Object.entries(state.channels).forEach(([id, channel]) => {
-            let player = this.players[id]
+            let player = this._players[id]
 
             // create new player if needed
             if (!(player)) {
                 player = new Audio();
                 player.preload = "auto";
-                this.players[id] = player;
+                this._players[id] = player;
             }
 
             // sync player
             player.src = channel.src;
-            player.volume = state.volume = channel.volume;
+            player.volume = state.volume * channel.volume;
             player.loop = channel.loop;
             if (state.paused || channel.paused) {
                 player.pause();
@@ -214,12 +163,66 @@ class Mixer {
         });
 
         // delete players that no longer have a channel associated with them
-        Object.entries(this.players).forEach(([id, player]) => {
+        Object.entries(this._players).forEach(([id, player]) => {
             if (!(id in state.channels)) {
                 player.pause();
-                delete this.players[id];
+                delete this._players[id];
             }
         });
+    }
+
+    /**
+     * Save mixer state to local storage and sync
+     * @private
+     * @param {MixerState} state
+     */
+    _write(state) {
+        localStorage.setItem(this._localStorageKey, JSON.stringify(state));
+        this._syncPlayers;
+    }
+
+    /**
+     * Returns the mixer state from local storage
+     * @returns {MixerState}
+     */
+    state() {
+        return MixerState.assign(JSON.parse(localStorage.getItem(this._localStorageKey) ?? "{}"));
+    }
+
+    /**
+     * Set the master volume
+     * @type {number}
+     */
+    set volume(v) {
+        const state = this.state();
+        state.volume = v;
+        this._write(state);
+    }
+
+    /**
+     * Gets teh current master volume
+     * @type {number}
+     */
+    get volume() {
+        return this.state().volume;
+    }
+
+    /**
+     * Plays the mixer. Only channels that are set to playing will play.
+     */
+    play() {
+        const state = this.state();
+        state.paused = false;
+        this._write(state);
+    }
+
+    /**
+     * Pauses the mixer
+     */
+    pause() {
+        const state = this.state();
+        state.paused = true;
+        this._write(state);
     }
 }
 
