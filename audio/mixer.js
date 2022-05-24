@@ -88,8 +88,9 @@ class MixerState {
     static assign(obj) {
         // rehydrate channels
         const channels = {}
-        Object.entries(obj.channels ?? {}).forEach(([id, channel]) => {
-            channels[id] = Channel.assign(channel)});
+        Object.entries(obj.channels ?? {}).forEach(([id, channel]) =>
+            channels[id] = Channel.assign(channel)
+        );
         delete obj.channels;
 
         // deserialize the rest
@@ -108,6 +109,20 @@ const mixerEvents = Object.freeze(
         ON_PLAY_PAUSE: 'onPlayPause',
     }
 );
+
+/**
+ * Creates a generic volume slider
+ * @return {HTMLInputElement}
+ */
+function volumeSlider() {
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = 0;
+    slider.max = 1;
+    slider.step = .01;
+    slider.className = "volume-control";
+    return slider;
+}
 
 /**
  * The Mixers is responsible for mixing together and controlling the play/pause
@@ -280,7 +295,11 @@ class Mixer extends EventTarget {
      * @returns {Channel}
      */
     readChannel(id) {
-        return this.state().channels[id];
+        const state = this.state();
+        if (!(state.channels[id])) {
+            throw `Channel ${id} does not exist in mixer`;
+        }
+        return state.channels[id];
     }
 
     /**
@@ -317,6 +336,81 @@ class Mixer extends EventTarget {
         this.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
+
+
+    // UI components
+
+    /**
+     * Creates a the master volume slider element
+     * @returns {HTMLInputElement}
+     */
+    masterVolumeSlider() {
+        const slider = volumeSlider();
+        slider.value = this.volume;
+        slider.oninput = this._masterSliderOnInput;
+        slider.onchange = this._masterSliderOnChange;
+
+        return slider
+    }
+
+    /**
+     * On input master slider callback
+     * @private
+     * @param {InputEvent} e
+     */
+    _masterSliderOnInput = (e) => {
+        Object.entries(this.channels()).forEach(([id, channel]) =>
+            this._players[id].volume = e.target.value * channel.volume
+        );
+    }
+
+    /**
+     * On change master slider callback
+     * @private
+     * @param {InputEvent} e
+     */
+    _masterSliderOnChange = (e) => {
+        this.volume = e.target.value;
+    }
+
+    /**
+     * Creates a channel volume slider element
+     * @param {number} id
+     * @returns {HTMLInputElement}
+     */
+    channelVolumeSlider(id) {
+        const slider = volumeSlider();
+        slider.setAttribute('data-id', id);
+
+        const channel = this.readChannel(id);
+        slider.value = channel.volume;
+        slider.oninput = this._channelSliderOnInput;
+        slider.onchange = this._channelSliderOnChange;
+
+        return slider
+    }
+
+    /**
+     * On input channel slider callback
+     * @private
+     * @param {InputEvent} e
+     */
+    _channelSliderOnInput = (e) => {
+        this._players[e.target.getAttribute('data-id')].volume = this.volume * e.target.value;
+    }
+
+    /**
+     * On change channel slider callback
+     * @private
+     * @param {InputEvent} e
+     */
+    _channelSliderOnChange = (e) => {
+        const id = e.target.getAttribute('data-id');
+        const channel = this.readChannel(id);
+        channel.volume = e.target.value;
+        this.updateChannel(id, channel);
+    }
+
 
     // handlers
 
