@@ -37,6 +37,7 @@
 	"web_accessible_resources": [
 		"jquery-3.6.0.min.js",
 		"assets/*",
+		"audio/*",
 		"images/*",
 		"ajaxQueue/*",
 		"jquery-ui.min.css",
@@ -61,7 +62,6 @@
 		"SidebarPanel.js",
 		"Journal.js",
 		"Settings.js",
-		"SoundPad.js",
 		"color-picker.js",
 		"Text.js",
 		"AOETemplates.js",

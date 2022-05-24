@@ -36,6 +36,7 @@ let scripts = [
 	// External Dependencies
 	{ src: "jquery-3.6.0.min.js" },
 	{ src: "jquery-ui.min.js" },
+	{ src: "jquery.csv.js" },
 	//{ src: "jquery.ui.widget.min.js" },
 	//{ src: "jquery.ui.mouse.min.js" },
 	{ src: "jquery.ui.touch-punch.js" },
@@ -49,6 +50,7 @@ let scripts = [
 	{ src: "color-picker.js" },
 	{ src: "mousetrap.1.6.5.min.js" },
 	// AboveVTT Files
+	{ src: "audio/index.js", type: "module" },
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
@@ -66,7 +68,6 @@ let scripts = [
 	{ src: "ScenesPanel.js" },
 	{ src: "Settings.js" },
 	{ src: "SidebarPanel.js" },
-	{ src: "SoundPad.js" },
 	{ src: "StatHandler.js" },
 	{ src: "Token.js" },
 	{ src: "TokenMenu.js" },
@@ -80,7 +81,7 @@ let scripts = [
 	{ src: "Main.js" }
 ]
 
-// Too many of our scripts depend on each other. 
+// Too many of our scripts depend on each other.
 // This ensures that they are loaded sequentially to avoid any race conditions.
 
 function injectScript() {
