@@ -4,7 +4,7 @@ import { StagedTrack } from './stage.js';
 
 /**
  * Creates a generic volume slider element
- * @param {*} volumeObj
+ * @param {number} initialVolume
  * @returns {HTMLInputElement}
  */
 function volumeSlider(initialVolume) {
@@ -18,18 +18,26 @@ function volumeSlider(initialVolume) {
     return slider
 }
 
+/**
+ *
+ * @returns {HTMLDivElement}
+ */
+function masterVolumeSlider() {
+    const div = document.createElement("div");
+    div.textContent = "Master Volume";
+    div.className = "audio-row";
+
+    const slider = volumeSlider(mixer.volume);
+    slider.onchange = (e) => mixer.volume = e.target.value;
+    div.append(slider);
+
+    return div;
+}
+
 function init_mixer() {
     // header
     const header = document.createElement("h3");
     header.textContent = "Mixer";
-
-    // master volume bar
-    const masterVolumeDiv = document.createElement("div");
-    masterVolumeDiv.textContent = "Master Volume";
-    masterVolumeDiv.className = "audio-row";
-    const masterVolumeSlider = volumeSlider(mixer.volume);
-    masterVolumeSlider.onchange = (e) => mixer.volume = e.target.value;
-    masterVolumeDiv.append(masterVolumeSlider);
 
     // mixer channels
     const mixerChannels = document.createElement("ul");
@@ -68,7 +76,7 @@ function init_mixer() {
        playPause.textContent = e.target.paused ? "Play" : "Pause";
     });
     mixer.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
-    $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeDiv, mixerChannels, clear, playPause);
+    $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeSlider(), mixerChannels, clear, playPause);
 }
 
 function init_trackLibrary() {
@@ -126,8 +134,12 @@ function init_trackLibrary() {
 }
 
 function init() {
-    init_trackLibrary();
-    init_mixer();
+    if(!window.DM){
+        init_trackLibrary();
+        init_mixer();
+    } else {
+        $("#sounds-panel .sidebar-panel-header").append(masterVolumeSlider());
+    }
 }
 
 export { init };
