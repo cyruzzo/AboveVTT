@@ -1087,6 +1087,10 @@ function drawing_mousemove(e) {
  * @returns 
  */
 function drawing_mouseup(e) {
+	// ignore this if we're dragging a token
+	if ($(".ui-draggable-dragging").length > 0){
+		return
+	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 	// Return early from this function if we are measuring and have hit the right mouse button
 	if (window.DRAWFUNCTION == "measure" && e.button == 2) {
