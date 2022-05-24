@@ -308,6 +308,17 @@ class Mixer extends EventTarget {
         const state = this.state();
         delete state.channels[id];
         this._write(state);
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+    }
+
+    // extras
+    clear() {
+        const state = this.state();
+        state.paused = true;
+        state.channels = {};
+        this._write(state);
+        this.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
 
     // handlers
