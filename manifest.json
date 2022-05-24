@@ -42,6 +42,7 @@
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
 		"jquery.contextMenu.css",
+		"jquery.csv.js",
 		"abovevtt.css",
 		"color-picker.min.css",
 		"magnific-popup.css",

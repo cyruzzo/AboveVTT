@@ -14,6 +14,7 @@ const externalDependencies = [
     "rpg-dice-roller.bundle.min.js",
     'jquery-ui.min.js',
     'jquery-3.6.0.min.js',
+    'jquery.csv.js'
 ]
 
 let out = "# This file was generated, to update it run `node lock.js`"
