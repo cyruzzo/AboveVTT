@@ -1026,7 +1026,6 @@ function drawing_mousemove(e) {
 					WaypointManager.registerMouseMove(mouseX, mouseY);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mouseX, mouseY);
 					WaypointManager.draw(false);
-					console.log(WaypointManager)
 					context.fillStyle = '#f50';
 				}
 			}else{

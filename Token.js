@@ -1340,7 +1340,6 @@ class Token {
 					WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
 					WaypointManager.draw(false);
-					console.log(WaypointManager)
 					context.fillStyle = '#f50';
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
