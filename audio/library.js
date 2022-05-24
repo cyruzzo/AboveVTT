@@ -125,4 +125,4 @@ class Library extends EventTarget {
     }
 }
 
-export default Library
+export { Library };

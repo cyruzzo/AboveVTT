@@ -222,4 +222,6 @@ class Mixer {
 }
 
 
-export const mixer = new Mixer($("#message-broker-client").attr("data-gameId"));
+const mixer = new Mixer($("#message-broker-client").attr("data-gameId"));
+
+export { mixer };
