@@ -1,5 +1,5 @@
 import { trackLibrary } from './track.js';
-import { mixer, mixerEvents, Channel } from './mixer.js';
+import { mixer, Channel } from './mixer.js';
 import { StagedTrack } from './stage.js';
 
 /**
@@ -23,11 +23,12 @@ function init_mixer() {
     // mixer channels
     const mixerChannels = document.createElement("ul");
     mixerChannels.id = 'mixer-channels';
-    mixer.onChannelListChange((e) => {
+
+    /** @param {Object.<string, Channel>} */
+    const drawChannelList = (channels) => {
         mixerChannels.innerHTML = "";
         /** @type {Object.<string, Channel>} */
-        const mcs = e.target.channels();
-        Object.entries(mcs).forEach(([id, channel]) => {
+        Object.entries(channels).forEach(([id, channel]) => {
             const item = document.createElement("li");
             item.className = "audio-row";
             item.textContent = channel.name;
@@ -37,8 +38,9 @@ function init_mixer() {
 
             mixerChannels.append(item);
         });
-    });
-    mixer.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+    }
+    drawChannelList(mixer.channels())
+    mixer.onChannelListChange((e) => drawChannelList(e.target.channels()));
 
     // clear button
     const clear = document.createElement("button");
@@ -48,8 +50,13 @@ function init_mixer() {
     // play/pause button
     const playPause = document.createElement("button");
     playPause.onclick = () => mixer.togglePaused();
-    mixer.onPlayPause((e) => playPause.textContent = e.target.paused ? "Play" : "Pause");
-    mixer.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
+
+    /** @param {bool} */
+    const drawPlayPause = (paused) => playPause.textContent = paused ? "Play" : "Pause";
+    drawPlayPause(mixer.paused);
+    mixer.onPlayPause((e) => drawPlayPause(e.target.paused));
+
+
     $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeSlider(), mixerChannels, clear, playPause);
 }
 
