@@ -1,6 +1,3 @@
-import { Track } from './track.js';
-import { StagedTrack } from './stage.js';
-
 /**
  * An Channel is like a stateful StagedTrack. The key difference
  * between the two is the StagedTrack holds a reference to the track in the

@@ -4,17 +4,18 @@ import { StagedTrack } from './stage.js';
 
 /**
  * Creates a generic volume slider element
+ * @param {*} volumeObj
  * @returns {HTMLInputElement}
  */
-function volumeSlider() {
-    const volumeSlider = document.createElement("input");
-    volumeSlider.type = "range";
-    volumeSlider.min = 0;
-    volumeSlider.max = 1;
-    volumeSlider.step = .01;
-    volumeSlider.className = "volume-control";
-
-    return volumeSlider
+function volumeSlider(initialVolume) {
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = 0;
+    slider.max = 1;
+    slider.step = .01;
+    slider.className = "volume-control";
+    slider.value = initialVolume;
+    return slider
 }
 
 function init_mixer() {
@@ -26,7 +27,8 @@ function init_mixer() {
     const masterVolumeDiv = document.createElement("div");
     masterVolumeDiv.textContent = "Master Volume";
     masterVolumeDiv.className = "audio-row";
-    const masterVolumeSlider = volumeSlider();
+    const masterVolumeSlider = volumeSlider(mixer.volume);
+    masterVolumeSlider.onchange = (e) => mixer.volume = e.target.value;
     masterVolumeDiv.append(masterVolumeSlider);
 
     // mixer channels
@@ -42,10 +44,13 @@ function init_mixer() {
             item.textContent = channel.name;
             item.setAttribute("data-id", id);
 
-            const slider = volumeSlider();
-            slider.value = channel.volume;
+            const slider = volumeSlider(channel.volume);
+            slider.onchange = (e) => {
+                channel.volume = e.target.value;
+                mixer.updateChannel(channel);
+            }
 
-            item.appendChild(slider);
+            item.appendChild();
             mixerChannels.append(item);
         });
     });
