@@ -1246,13 +1246,11 @@ class Token {
 					},
 
 				start: function (event) {
+					event.stopPropagation()
+					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.clientX;
 					click.y = event.clientY;
-					// these data attrs are used in fog to measure while dragging
-					tok.attr("data-dragging", "true")
-					tok.attr("data-drag-x", click.x)
-					tok.attr("data-drag-y", click.y)
 
 					if(tok.is(":animated")){
 						self.stopAnimation();
@@ -1314,6 +1312,7 @@ class Token {
 				},
 
 				drag: function(event, ui) {
+					event.stopPropagation()
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;

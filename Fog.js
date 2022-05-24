@@ -806,6 +806,7 @@ function get_event_cursor_position(event){
 function drawing_mousedown(e) {
 	// perform some cleanup of the canvas/objects
 	clear_temp_canvas()
+	WaypointManager.resetDefaultDrawStyle()
 	WaypointManager.cancelFadeout()
 	if(e.button !== 2){
 		WaypointManager.clearWaypoints()
@@ -846,7 +847,7 @@ function drawing_mousedown(e) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 		}		
 	}
-// figure out what these 3 returns are supposed to be for.
+	// figure out what these 3 returns are supposed to be for.
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
 		return;
 	}
@@ -931,6 +932,10 @@ function drawing_mousemove(e) {
 	
 	if (window.MOUSEMOVEWAIT) {
 		return;
+	}
+	// don't perform any drawing when dragging a token
+	if ($(".ui-draggable-dragging").length > 0){
+		return
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 
