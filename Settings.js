@@ -438,10 +438,9 @@ function redraw_settings_panel_token_examples() {
 function enable_dice_streaming_feature(enabled){
 	if(enabled)
 	{
-		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
-		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
+
 		$(".stream-dice-button").remove();
-		$(".dice-toolbar__dropdown-top").prepend($(`<div class='dice-die-button stream-dice-button' style='color:#ddd;font-weight:700;'>Join Dice Stream</div>`));
+		$(".glc-game-log>[class*='Container-Flex']").append($(`<div  id="stream_dice"><div class='stream-dice-button'>Dice Stream Disabled</div></div>`));
 		$(".stream-dice-button").off().on("click", function(){
 			if(window.JOINTHEDICESTREAM){
 				update_dice_streaming_feature(false);
@@ -467,10 +466,10 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		
 
 	if (enabled == true) {
-		$(`.stream-dice-button`).html("Leave Dice Stream");
 		// STREAMING STUFF
 		window.JOINTHEDICESTREAM = true;
-		$('.stream-dice-button').html("Leave Dice Stream");
+		$('.stream-dice-button').html("Dice Stream Enabled");
+		$('.stream-dice-button').toggleClass("enabled", true);
 		$("[role='presentation'] [role='menuitem']").each(function(){
 			$(this).off().on("click", function(){
 				if($(this).text() == "Everyone") {
@@ -518,8 +517,9 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		} 
 	}
 	else {
-		$(`.stream-dice-button`).html("Join Dice Stream");
+		$(`.stream-dice-button`).html("Dice Stream Disabled");
 		window.JOINTHEDICESTREAM = false;
+		$('.stream-dice-button').toggleClass("enabled", false);
 		$("[id^='streamer-']").remove();
 		window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
 			from: window.MYSTREAMID
