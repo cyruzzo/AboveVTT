@@ -78,9 +78,10 @@ class Stage {
 
     /**
      * A dictionary of staged tracks
+     * @private
      * @type {Object.<string, StagedTrack>}
      */
-    stagedTracks = {};
+    _stagedTracks = {};
 
     /**
      * @param {string} name
@@ -89,38 +90,61 @@ class Stage {
         this.name = name;
     }
 
+    // CRUD
+
     /**
-     * Add a StagedTrack to the Stage
+     * Add a staged track to the Stage
      * @param {StagedTrack} stagedTrack
      */
     add(stagedTrack) {
-        const id = uuid();
-        this.stagedTracks[id] = stagedTrack;
+        this._stagedTracks[uuid()] = stagedTrack;
     }
 
     /**
-     * Remove a StagedTrack from the stage
+     * Return a specific staged track from the stage
+     * @param {string} id
+     * @returns {stagedTrack}
+     */
+    read(id) {
+        return this._stagedTracks[id];
+    }
+
+    /**
+     * Update an existing staged track in the stage
+     * @param {string} id
+     * @param {StagedTrack} stagedTrack
+     */
+    update(id, stagedTrack) {
+        if (!(this._stagedTracks[id])) {
+            throw `Id ${id} does not exist in stage`;
+        }
+        this._stagedTracks[id] = stagedTrack;
+    }
+
+    /**
+     * Remove a staged track from the stage
      * @param {string} id
      */
-    remove(id) {
+    delete(id) {
         delete this.stagedTracks[id];
     }
 
     /**
+     * Create a new stage from an object
      * @param {*} obj
      * @returns {Stage}
      */
     static assign(obj) {
         // rehydrate staged tracks
         const stagedTracks = {};
-        Object.entries(obj.stagedTracks ?? {}).forEach(([k, v]) =>
+        Object.entries(obj._stagedTracks ?? {}).forEach(([k, v]) =>
             stagedTracks[k] = StagedTrack.assign(v)
         );
         delete obj.stagedTracks;
 
         // deserialize the rest of the stage
         const stage = new Stage();
-        stage.stagedTracks = stagedTracks;
+        stage._stagedTracks = stagedTracks;
         return Object.assign(stage, obj);
     }
 }
