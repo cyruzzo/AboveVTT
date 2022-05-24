@@ -413,6 +413,31 @@ class Mixer extends EventTarget {
     }
 
 
+    // remote
+
+    /**
+     * Update the mixer from a remote source
+     * @param {any} remoteObj
+     */
+    remoteUpdate(remoteObj) {
+        const state = MixerState.assign(remoteObj);
+        // never take master volume from remote sources
+        state.volume = this.volume;
+        this._write(state);
+    }
+
+    /**
+     * Returns mixer state intended for a remote source
+     * @returns {MixerState}
+     */
+    remoteState() {
+        const state = this.state();
+        // never send master volume to remote sources
+        state.volume = undefined;
+        return state;
+    }
+
+
     // handlers
 
     /**
@@ -453,4 +478,4 @@ function gameID() {
 
 const mixer = new Mixer(gameID());
 
-export { Channel, mixer };
+export { Channel, mixer, MixerState };
