@@ -154,10 +154,9 @@ class Mixer extends EventTarget {
     }
 
     /**
-     * @private
      * Syncs the mixer state from local storage into native Audio object
      */
-    _syncPlayers() {
+    syncPlayers() {
         const state = this.state();
 
         // create and update players
@@ -198,7 +197,7 @@ class Mixer extends EventTarget {
      */
     _write(state) {
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
-        this._syncPlayers();
+        this.syncPlayers();
     }
 
     /**

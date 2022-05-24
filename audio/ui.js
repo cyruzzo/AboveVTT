@@ -10,7 +10,6 @@ function masterVolumeSlider() {
     const div = document.createElement("div");
     div.textContent = "Master Volume";
     div.className = "audio-row";
-
     div.append(mixer.masterVolumeSlider());
 
     return div;
@@ -70,7 +69,7 @@ function init_trackLibrary() {
             const reader = new FileReader();
             reader.readAsText(e.target.files[0]);
             reader.onload = () => trackLibrary.importCSV(reader.result);
-            reader.onerror = () => {throw reader.error};
+            reader.onerror = () => { throw reader.error };
         };
         fileInput.click();
     };
@@ -104,13 +103,27 @@ function init_trackLibrary() {
     $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
+/**
+ * initially sync the mixer players on first mouse down event, you must wait for
+ * the user to interact with the DOM before attempting to play audio
+ */
+function sync_players() {
+    const handler = () => {
+        console.log("initializing audio mixer");
+        mixer.syncPlayers();
+        window.removeEventListener('mousedown', handler)
+    }
+    window.addEventListener('mousedown', handler);
+}
+
 function init() {
-    if(window.DM){
+    if (window.DM) {
         init_trackLibrary();
         init_mixer();
     } else {
         $("#sounds-panel .sidebar-panel-header").append(masterVolumeSlider());
     }
+    sync_players();
 }
 
 export { init };
