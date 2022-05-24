@@ -3,7 +3,7 @@ function init_sidebar_tabs() {
   console.log("init_sidebar_tabs");
 
   let sidebarContent = is_characters_page() ? $(".ct-sidebar__pane-content") : $(".sidebar__pane-content");
-  
+
   // gamelog doesn't use it yet, maybe never
 
   if (window.DM) {
@@ -29,7 +29,7 @@ function init_sidebar_tabs() {
   $("#sounds-panel").remove();
   soundsPanel = new SidebarPanel("sounds-panel", false);
   sidebarContent.append(soundsPanel.build());
-	init_audio();
+	init_audio_ui();
 
   $("#journal-panel").remove();
   journalPanel = new SidebarPanel("journal-panel", false);
@@ -72,7 +72,7 @@ class SidebarPanel {
   constructor(id, is_modal) {
     this.id = id.startsWith("#") ? id.substring(1) : id;
     if (is_modal == false) {
-      // this.is_modal defaults to true. If anything other than false is passed in (such as undefined), just leave it as the default. 
+      // this.is_modal defaults to true. If anything other than false is passed in (such as undefined), just leave it as the default.
       this.is_modal = is_modal;
     }
   }
@@ -127,7 +127,7 @@ class SidebarPanel {
     this.container.find(".sidebar-panel-loading-indicator").remove(); // just in case there was already one shown we don't want to add a second one
     this.container.append(loadingIndicator);
   }
-  
+
   remove_sidebar_loading_indicator() {
     $(`#${this.id} .sidebar-panel-loading-indicator`).animate({
       "left": "400px"
@@ -135,8 +135,8 @@ class SidebarPanel {
       $(".sidebar-panel-loading-indicator").remove();
     });
   }
-  
-  
+
+
 
   //#endregion Class functions
   //#region UI Construction
@@ -152,7 +152,7 @@ class SidebarPanel {
         <div class="sidebar-panel-body"></div>
         <div class="sidebar-panel-footer">
           <div class="footer-input-wrapper"></div>
-        </div>      
+        </div>
       </div>
     `);
 
