@@ -52,7 +52,10 @@ class WaypointManagerClass {
 		this.timeout = undefined;
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
-			color: "rgba(255, 255, 255, 1)"
+			color: "#f2f2f2",
+			outlineColor: "black",
+			textColor: "#838383",
+			backgroundColor: "#f2f2f2"
 		}
 	}
 	/**
@@ -61,21 +64,13 @@ class WaypointManagerClass {
 	 * @param {String} outlineColor 
 	 * @param {String} innerColor 
 	 */
-	resetDrawStyle(){
+	resetDefaultDrawStyle(){
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
-			color: "rgba(255, 255, 255, 1)"
-		}
-		this.resetFilter()
-	}
-
-	applyFilters(){
-		this.ctx.filter = `brightness(0.4) contrast(2)`
-	}
-
-	resetFilter(){
-		if (this.ctx){
-			this.ctx.filter = "none"
+			color: "#f2f2f2",
+			outlineColor: "black",
+			textColor: "black",
+			backgroundColor: "#f2f2f2"
 		}
 	}
 
@@ -121,11 +116,9 @@ class WaypointManagerClass {
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
 		this.ctx.lineWidth = this.lineWidth
-		this.applyFilters()
-		this.ctx.strokeStyle = this.drawStyle.innerColor
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
-		this.resetFilter()
-		this.ctx.fillStyle =  this.drawStyle.innerColor
+		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
 	}
 
@@ -155,6 +148,7 @@ class WaypointManagerClass {
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		clearTimeout(this.timeout);
 		this.timeout = undefined;
+		this.cancelFadeout()
 	}
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
@@ -186,7 +180,6 @@ class WaypointManagerClass {
 	draw(midlineLabels) {
 
 		var cumulativeDistance = 0
-		this.applyFilters()
 		for (var i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
@@ -194,7 +187,6 @@ class WaypointManagerClass {
 			this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
 			cumulativeDistance += this.coords[i].distance;
 		}
-		this.resetFilter()
 	}
 
 	// Draw a waypoint segment with all the lines and labels etc.
@@ -293,32 +285,31 @@ class WaypointManagerClass {
 		}
 
 		// Draw our 'contrast line'
-		this.ctx.strokeStyle = this.drawStyle.color
-		this.ctx.fillStyle = this.drawStyle.color
-
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
-		this.applyFilters()
 		this.ctx.stroke();
 
 		// Draw our centre line
+		this.ctx.strokeStyle = this.drawStyle.color
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
-		this.resetFilter()
 		this.ctx.stroke();
 
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
+		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 		this.ctx.globalAlpha = 0.6
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
 		this.ctx.globalAlpha = 1
-		this.applyFilters()
+		// draw the outline of the text box
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
 
 		// Finally draw our text
+		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);
-		this.resetFilter()
-
+		
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 	}
@@ -344,8 +335,8 @@ class WaypointManagerClass {
 			self.draw(false)
 			alpha = alpha - 0.2;
 			if (alpha <= 0.0){
-				self.cancelFadeout()
 				self.clearWaypoints();
+				clear_temp_canvas()
 			}
 		}
 	}
@@ -770,8 +761,10 @@ function stop_drawing() {
 
 function drawing_mousedown(e) {
 	clear_temp_canvas()
-	WaypointManager.cancelFadeout()
-	WaypointManager.resetDrawStyle()
+	if (!e.buttons === 2){
+		WaypointManager.clearWaypoints()
+	}
+	WaypointManager.resetDefaultDrawStyle()
 	window.LINEWIDTH = $("#draw_line_width").val();
 	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
 	window.DRAWCOLOR = $(".colorselected").css('background-color');
@@ -861,11 +854,11 @@ function drawing_mousedown(e) {
 }
 
 function drawing_mousemove(e) {
-
+	
 	if (window.MOUSEMOVEWAIT) {
 		return;
 	}
-
+	clear_temp_canvas()
 	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
@@ -916,8 +909,8 @@ function drawing_mousemove(e) {
 		else if (window.DRAWSHAPE == "measure") {
 			ctx.save();
 			// ctx.beginPath();
-
-			WaypointManager.setCanvas(canvas);
+			const tempCanvas = document.getElementById("temp_overlay");
+			WaypointManager.setCanvas(tempCanvas);
 			WaypointManager.registerMouseMove(mousex, mousey);
 			WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
 			WaypointManager.draw(false);

@@ -1301,23 +1301,9 @@ class Token {
 					window.BEGIN_MOUSEX = mousex
 					window.BEGIN_MOUSEY = mousey
 					if (!self.options.disableborder){
-						// strip out alpha and cap dark desaturated colours
-						let color = $(tok).css("--token-border-color")
-						const valueRegex = /(\d+\.\d+|\d+)/g
-						const match = color.match(valueRegex)
-						let [r,g,b] = match
-						if (r < 50 && g < 50 && b < 50 && !color.includes("#")){
-							r = 50
-							g = 50
-							b = 50
-							color = `rgb(${r}, ${g}, ${b})`
-						}else if (match && !color.includes("#")){
-							color = `rgb(${r}, ${g}, ${b})`
-						}
-						
-						WaypointManager.drawStyle.color = color
+						WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
 					}else{
-						WaypointManager.resetDrawStyle()
+						WaypointManager.resetDefaultDrawStyle()
 					}
 					
 
@@ -1346,8 +1332,8 @@ class Token {
 					// incase we click while on select, remove any line dashes
 					context.setLineDash([])
 					// list the temp overlay so we can see the ruler
-					$("#temp_overlay").css("z-index", "50")
 					clear_temp_canvas()
+					$("#temp_overlay").css("z-index", "50")
 					WaypointManager.setCanvas(canvas);
 					WaypointManager.registerMouseMove(mousex, mousey);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
