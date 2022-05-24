@@ -686,11 +686,11 @@ class MessageBroker {
 		   		peer.createOffer({offerToReceiveVideo: 1}).then( async (desc) => {
 						console.log("fatto setLocalDescription");
 						await peer.setLocalDescription(desc);
-						self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+						setTimeout(function(){self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 							to: msg.data.from,
 							from: window.MYSTREAMID,
 							offer: desc
-						})
+						})}, Math.floor(Math.random() * 10000))		
 					});
 
 			  } catch(err) {
@@ -723,7 +723,7 @@ class MessageBroker {
 					return;
 				let ignoreOffer = false;
 				if(msg.data.offer){
-					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState == "stable");
+					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState == "stable")
 				  ignoreOffer = offerCollision;
 				  if (ignoreOffer) {
 				    return;
