@@ -50,6 +50,8 @@ class Library extends EventTarget {
         return r;
     }
 
+    // CRUD functions
+
     /**
      * Adds a items to the library
      * @param  {...T} objs
@@ -77,11 +79,7 @@ class Library extends EventTarget {
      * @param {T} obj
      */
     update(id, obj) {
-        const library = this.map();
-        if (!(library.has(id))) {
-            throw `Id ${id} does not exist in library`
-        }
-        this._write(library.map().set(id, obj));
+        this.batchUpdate(new Map().set(id, obj))
     }
 
     /**
@@ -95,6 +93,28 @@ class Library extends EventTarget {
         this._write(library);
         return r;
     }
+
+    // extras
+
+    /**
+     * Updates many objects in the library
+     * @param {Map<string, T>} objMap
+     */
+    batchUpdate(objMap) {
+        const library = this.map();
+
+        // confirm all objects are already in the library
+        [...objMap.keys()].forEach(id => {
+            if (!(library.has(id))) {
+                throw `Id ${id} does not exist in library`
+            }
+        });
+
+        // merge the maps together and write
+        this._write(new Map([...library, ...objMap]));
+    }
+
+    // handlers
 
     /**
      * Register an onChange event
