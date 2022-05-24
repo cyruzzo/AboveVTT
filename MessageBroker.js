@@ -577,7 +577,14 @@ class MessageBroker {
 					}
 
 					window.JOURNAL.sync();
-				}	
+				}
+			}
+
+			if(msg.eventType=="custom/myVTT/mixer"){
+				console.log("remote mixer update", msg.data);
+				if (!window.DM) {
+					MIXER.remoteUpdate(msg.data);
+				}
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad);

@@ -50,7 +50,6 @@ let scripts = [
 	{ src: "color-picker.js" },
 	{ src: "mousetrap.1.6.5.min.js" },
 	// AboveVTT Files
-	{ src: "audio/index.js", type: "module" },
 	{ src: "AOETemplates.js" },
 	{ src: "CombatTracker.js" },
 	{ src: "DnDBeyond/DDBCharacterData.js" },
@@ -60,6 +59,7 @@ let scripts = [
 	{ src: "Journal.js" },
 	{ src: "KeypressHandler.js" },
 	{ src: "MessageBroker.js" },
+	{ src: "audio/index.js", type: "module" },
 	{ src: "MonsterDice.js" },
 	{ src: "PlayerPanel.js" },
 	{ src: "SceneData.js" },
