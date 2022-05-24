@@ -1,15 +1,18 @@
 import { Library } from "./library.js";
+import { Track, trackLibrary } from "./track.js";
+import { Channel } from "./mixer.js";
 
 /**
  * A StagedTrack is a reference to a Track with playtime information such as
- * volume, repeat, autoplay
+ * volume, loop, autoplay
  */
 class StagedTrack {
     /**
      * The uid of the track as it exists in the track library
+     * @private
      * @type {string}
      */
-    trackID;
+    _trackID;
 
     /**
      * Track volume
@@ -18,10 +21,10 @@ class StagedTrack {
     volume = 1;
 
     /**
-     * Repeat the track when it is complete
+     * Loop the track when it is complete
      * @type {boolean}
      */
-    repeat = false;
+    loop  = false;
 
     /**
      * Play the track as soon as the mixer loads it
@@ -34,7 +37,22 @@ class StagedTrack {
      * @param {string} trackID
      */
     constructor(trackID) {
-        this.trackID = trackID;
+        this._trackID = trackID;
+    }
+    /**
+     * Return the associated track
+     * @returns {Track}
+     */
+    getTrack() {
+        return trackLibrary.read(this._trackID);
+    }
+
+    /**
+     * Convert this into a channel
+     * @returns {Channel}
+     */
+    toChannel() {
+        return new Channel(this.getTrack(), this)
     }
 
     /**
@@ -113,10 +131,10 @@ class Stage {
  */
 class StageLibrary extends Library {
     constructor() {
-        super(new Stage);
+        super(new Stage());
     }
 }
 
 const stageLibrary = new StageLibrary();
 
-export { stageLibrary };
+export { StagedTrack, stageLibrary };

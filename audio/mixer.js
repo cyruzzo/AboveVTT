@@ -1,4 +1,5 @@
-import { StagedTrack } from "./stage.js";
+import { Track } from './track.js';
+import { StagedTrack } from './stage.js';
 
 /**
  * An Channel is like a stateful StagedTrack. The key difference
@@ -39,13 +40,14 @@ class Channel {
     paused = false;
 
     /**
+     * @param {Track} track
      * @param {StagedTrack} stagedTrack
      */
-    constructor(stagedTrack) {
-        const track = stagedTrack.track;
+    constructor(track, stagedTrack) {
         this.name = track.name;
         this.src = track.src;
         this.volume = stagedTrack.volume;
+        this.loop = stagedTrack.loop;
         this.paused = !stagedTrack.autoplay;
     }
 
@@ -224,4 +226,4 @@ class Mixer {
 
 const mixer = new Mixer($("#message-broker-client").attr("data-gameId"));
 
-export { mixer };
+export { Channel, mixer };
