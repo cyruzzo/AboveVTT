@@ -1238,11 +1238,7 @@ class Token {
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
 						$("#temp_overlay").css("z-index", "25")
-						const canvas = document.getElementById("temp_overlay");
-						const context = canvas.getContext("2d");
-						WaypointManager.setCanvas(canvas);
 						WaypointManager.fadeoutMeasuring()
-						
 					},
 
 				start: function (event) {

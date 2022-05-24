@@ -54,7 +54,7 @@ class WaypointManagerClass {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
 			color: "#f2f2f2",
 			outlineColor: "black",
-			textColor: "#838383",
+			textColor: "black",
 			backgroundColor: "#f2f2f2"
 		}
 	}
@@ -115,7 +115,7 @@ class WaypointManagerClass {
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = this.lineWidth
+		this.ctx.lineWidth = this.drawStyle.lineWidth
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
 		this.ctx.fillStyle =  this.drawStyle.color
@@ -311,7 +311,7 @@ class WaypointManagerClass {
 		this.ctx.fillText(text, textX, textY);
 		
 		this.drawBobble(snapPointXStart, snapPointYStart);
-		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+		this.drawBobble(snapPointXEnd, snapPointYEnd);
 	}
 
 	/**
@@ -858,7 +858,7 @@ function drawing_mousemove(e) {
 	if (window.MOUSEMOVEWAIT) {
 		return;
 	}
-	clear_temp_canvas()
+	
 	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
 	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
 
@@ -876,6 +876,7 @@ function drawing_mousemove(e) {
 	}, mouseMoveFps);
 
 	if (window.MOUSEDOWN) {
+		clear_temp_canvas()
 		var width = mousex - window.BEGIN_MOUSEX;
 		var height = mousey - window.BEGIN_MOUSEY;
 
@@ -1137,15 +1138,7 @@ function drawing_mouseup(e) {
 		console.log("READY");
 	}
 	if (window.DRAWSHAPE == "measure") {
-
-		setTimeout(function () {
-			// We do not clear if we are still measuring, added this as it somehow appeared multiple
-			// timers could be set, may be a race condition or something still here...
-			if (!WaypointManager.isMeasuring()) {
-				redraw_canvas();
-			}
-		}, 2000);
-		WaypointManager.clearWaypoints();
+		WaypointManager.fadeoutMeasuring()
 	}
 }
 
