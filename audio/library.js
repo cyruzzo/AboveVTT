@@ -117,7 +117,7 @@ class Library extends EventTarget {
     // handlers
 
     /**
-     * Register an onChange event
+     * Register a callback for onchange event
      * @param {EventListenerOrEventListenerObject} callback
      */
     onchange(callback) {
