@@ -430,7 +430,17 @@ class Mixer extends EventTarget {
     }
 }
 
+/**
+ * @returns {string} game id
+ */
+function gameID() {
+    const gameID = (new URLSearchParams(window.location.search)).get('cid');
+    if (gameID === null) {
+        throw 'Audio mixer can not be initialized: Failed to get game id'
+    }
+    return gameID;
+}
 
-const mixer = new Mixer($("#message-broker-client").attr("data-gameId"));
+const mixer = new Mixer(gameID());
 
 export { Channel, mixerEvents, mixer };
