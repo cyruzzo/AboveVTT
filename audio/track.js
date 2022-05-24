@@ -1,4 +1,4 @@
-import Library from './library.js'
+import { Library } from './library.js'
 
 /**
  * A track is a representation of an audio file on the internet
@@ -89,8 +89,6 @@ class TrackLibrary extends Library {
     }
 }
 
-const library = new TrackLibrary();
+const trackLibrary = new TrackLibrary();
 
-export default {
-    library
-}
+export { Track, trackLibrary };

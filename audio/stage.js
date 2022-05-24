@@ -1,4 +1,4 @@
-import Library from "./library.js";
+import { Library } from "./library.js";
 
 /**
  * A StagedTrack is a reference to a Track with playtime information such as
@@ -117,8 +117,6 @@ class StageLibrary extends Library {
     }
 }
 
-const library = new StageLibrary();
+const stageLibrary = new StageLibrary();
 
-export default {
-    library
-}
+export { stageLibrary };

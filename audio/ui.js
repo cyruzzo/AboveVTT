@@ -1,7 +1,7 @@
-import Track from './track.js';
+import { trackLibrary } from './track.js';
 
 const trackList = document.createElement("ul");
-Track.library.onchange((e) => {
+trackLibrary.onchange((e) => {
     trackList.innerHTML = "";
     trackList.id = 'track-list';
     e.target.map().forEach((track, id) => {
@@ -47,7 +47,7 @@ function init_trackLibrary() {
             const reader = new FileReader();
             reader.readAsText(e.target.files[0]);
             reader.onload = () => {
-                Track.library.importCSV(reader.result);
+                trackLibrary.importCSV(reader.result);
             };
             reader.onerror = () => {
                 throw reader.error
@@ -56,11 +56,12 @@ function init_trackLibrary() {
         fileInput.click();
     };
 
-    Track.library.dispatchEvent(new Event('onchange'));
+    trackLibrary.dispatchEvent(new Event('onchange'));
     $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
-
-export default function init_ui() {
+function init() {
     init_trackLibrary();
 }
+
+export { init };
