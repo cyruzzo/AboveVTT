@@ -471,10 +471,12 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 						streamid: window.MYSTREAMID
 					});
 				}		
-			}, 1500)
-			window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
-				from: window.MYSTREAMID
-			})	
+			}, 12000)
+			setTimeout(function(){
+				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
+					from: window.MYSTREAMID
+				})
+			}, 7000);
 		} 
 	}
 	else {

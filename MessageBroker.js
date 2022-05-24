@@ -662,11 +662,21 @@ class MessageBroker {
 				if( (!window.MYSTREAMID))
 					return;
 				const configuration = {
-    				iceServers: [ {
+    				iceServers:  [ {
 					     	urls: "stun:openrelay.metered.ca:80",
 					    },
 					    {
 					      urls: "turn:openrelay.metered.ca:80",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:443",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:443?transport=tcp",
 					      username: "openrelayproject",
 					      credential: "openrelayproject",
 					    }]
@@ -685,20 +695,21 @@ class MessageBroker {
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
 
-				let staggerRandom = Math.floor(Math.random() * (5000 - 500) + 500); //Looking for a better way to do this or cause only one of the clients to answer the offer
+			
 		
 			  try {
 			    	window.makingOffer[msg.data.from] = true;
 		   		peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
 						console.log("fatto setLocalDescription");
 						peer.setLocalDescription(desc);
-						setTimeout(function(){
-							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-								to: msg.data.from,
-								from: window.MYSTREAMID,
-								offer: desc
-							})}, staggerRandom
-						)
+						self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+							to: msg.data.from,
+							from: window.MYSTREAMID,
+							offer: desc,
+							dm: window.DM
+						})
+						
+
 
 						peer.oniceconnectionstatechange = () => {
 						  if (peer.iceConnectionState === "failed" || peer.iceConnectionState === "disconnected" ) {
@@ -706,7 +717,8 @@ class MessageBroker {
 						    self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 										to: msg.data.from,
 										from: window.MYSTREAMID,
-										offer: desc
+										offer: desc,
+										dm: window.DM
 									})
 						    peer.restartIce();
 						  }
@@ -717,7 +729,8 @@ class MessageBroker {
 							  		self.sendMessage("custom/myVTT/okletmeseeyourdice",{
 											to: msg.data.from,
 											from: window.MYSTREAMID,
-											offer: desc
+											offer: desc,
+											dm: window.DM
 										})
 										peer.restartIce();
 									}
@@ -731,7 +744,7 @@ class MessageBroker {
 			  } finally {
 			  	setTimeout(function(){
 			  			window.makingOffer[msg.data.from] = false;
-			  	}, staggerRandom)
+			  	}, 500)
 			    
 			  }
 
@@ -752,44 +765,20 @@ class MessageBroker {
 					return;
 				let ignoreOffer = false;
 				if(msg.data.offer){
-					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState == "stable")
-				  ignoreOffer = offerCollision;
+					const offerCollision = (msg.data.offer.type == "offer") && (window.makingOffer[msg.data.from] || window.STREAMPEERS[msg.data.from].signalingState != "stable")
+				  let myStreamParse = parseInt(window.MYSTREAMID) || 0;
+				  let fromStreamParse = parseInt(msg.data.from) || 0;
+				  ignoreOffer = (((myStreamParse > fromStreamParse) && !msg.data.dm) || window.DM) && offerCollision
 				  if (ignoreOffer) {
 				    return;
 				  }
-				}
-
-				const configuration = {
-    				iceServers: [ {
-					     	urls: "stun:openrelay.metered.ca:80",
-					    },
-					    {
-					      urls: "turn:openrelay.metered.ca:80",
-					      username: "openrelayproject",
-					      credential: "openrelayproject",
-					    }]
-  				};
-				var peer= new RTCPeerConnection(configuration);
-				peer.addEventListener('track', (event) => {
-					addVideo(event.streams[0],msg.data.from);
-				});
-				
-				peer.onicecandidate = e => {
-					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
-						to: msg.data.from,
-						from: window.MYSTREAMID,
-						ice: e.candidate
-					})
-				};
-
-				window.STREAMPEERS[msg.data.from]= peer;
-
-				if(window.MYMEDIASTREAM){
-					var stream=window.MYMEDIASTREAM;
-					stream.getTracks().forEach(track => peer.addTrack(track, stream));
-				}
+				}		
+				peer = window.STREAMPEERS[msg.data.from];
 				peer.setRemoteDescription(msg.data.offer);
 				console.log("fatto setRemoteDescription");
+				window.STREAMPEERS[msg.data.from] = peer;	
+	
+		
 				peer.createAnswer().then( (desc) => {
 				peer.setLocalDescription(desc);
 				console.log("fatto setLocalDescription");
@@ -799,31 +788,9 @@ class MessageBroker {
 						to: msg.data.from,
 						answer: desc
 					});
-					peer.oniceconnectionstatechange = () => {
-					  if (peer.iceConnectionState === "failed" || peer.iceConnectionState === "disconnected" ){
-					  	console.log("Dice Stream Connection failed Retrying")
-					    self.sendMessage("custom/myVTT/okseethem",{
-								from: window.MYSTREAMID,
-								to: msg.data.from,
-								answer: desc
-							})
-							peer.restartIce();
-					  }
-					  else if(peer.connectionState == "connecting") {
-					   	console.log("Dice Stream Connection failed Retrying")
-					  	setTimeout(function(){
-					  		if(peer.connectionState == "connecting" || peer.connectionState == "failed" || peer.iceConnectionState === "disconnected") {
-						  			self.sendMessage("custom/myVTT/okseethem",{
-										from: window.MYSTREAMID,
-										to: msg.data.from,
-										answer: desc
-									})
-						  		peer.restartIce();
-								}
-					  	}, 20000);
-						}
-					}
-				})			
+			});
+				
+				window.STREAMPEERS[msg.data.from] = peer;					
 			}
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
