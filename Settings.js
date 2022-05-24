@@ -436,6 +436,20 @@ function redraw_settings_panel_token_examples() {
 function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
 	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
 	if (enabled == true) {
+		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
+		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
+		$(".stream-dice-button").remove();
+		$(".dice-toolbar__dropdown-top").prepend($(`<div class='dice-die-button stream-dice-button' style='color:#ddd;font-weight:700;'>Leave Dice Stream</div>`));
+		$(".stream-dice-button").off().on("click", function(){
+			if(window.JOINTHEDICESTREAM){
+				update_dice_streaming_feature(false);
+				$('.stream-dice-button').html("Join Dice Stream");
+			}
+			else {
+				update_dice_streaming_feature(true);
+				$('.stream-dice-button').html("Leave Dice Stream");
+			}
+		})
 		// STREAMING STUFF
 		window.JOINTHEDICESTREAM = true;
 		$("[role='presentation'] [role='menuitem']").each(function(){
@@ -480,8 +494,15 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		} 
 	}
 	else {
+		window.JOINTHEDICESTREAM = false;
 		$("[id^='streamer-']").remove();
-		window.MB.sendMessage("custom/myVTT/turnoffdicestream")
+		window.MB.sendMessage("custom/myVTT/turnoffdicestream", {
+			from: window.MYSTREAMID
+		})
+		for (let peer in window.STREAMPEERS) {
+			window.STREAMPEERS[peer].close();
+			delete window.STREAMPEERS[peer]
+		}
 	}
 
 }
