@@ -635,6 +635,7 @@ class MessageBroker {
 	
 					setTimeout( async () => {
 					var peer= window.STREAMPEERS[msg.data.from];
+					if(peer.remoteDescription!= null)
 					await peer.addIceCandidate(msg.data.ice);
 					 },500); // ritardalo un po'
 			}
@@ -661,7 +662,24 @@ class MessageBroker {
 				if( (!window.MYSTREAMID))
 					return;
 				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+    				iceServers: [ {
+					     	urls: "stun:openrelay.metered.ca:80",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:80",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:443",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    }
   				};
 				var peer=await new RTCPeerConnection(configuration);
 
@@ -680,6 +698,7 @@ class MessageBroker {
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
 
+				let staggerRandom = Math.floor(Math.random() * (5000 - 500) + 500); //Looking for a better way to do this or cause only one of the clients to answer the offer
 		
 			  try {
 			    	window.makingOffer[msg.data.from] = true;
@@ -691,7 +710,7 @@ class MessageBroker {
 								to: msg.data.from,
 								from: window.MYSTREAMID,
 								offer: desc
-							})}, Math.floor(Math.random() * (6000 - 3000) + 3000)
+							})}, staggerRandom
 						)
 					});
 
@@ -700,7 +719,7 @@ class MessageBroker {
 			  } finally {
 			  	setTimeout(function(){
 			  			window.makingOffer[msg.data.from] = false;
-			  	}, 2000)
+			  	}, staggerRandom)
 			    
 			  }
 
@@ -733,7 +752,24 @@ class MessageBroker {
 				}
 
 				const configuration = {
-    				iceServers: [{urls: "turn:turn.abovevtt.net:3478",username:"abovevtt",credential:"pleasedontfuckitupthisisanopenproject"}]
+    				iceServers: [ {
+					     	urls: "stun:openrelay.metered.ca:80",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:80",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:443",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    },
+					    {
+					      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+					      username: "openrelayproject",
+					      credential: "openrelayproject",
+					    }
   				};
 				var peer= await new RTCPeerConnection(configuration);
 				peer.addEventListener('track', async (event) => {
