@@ -106,11 +106,21 @@ class MixerState {
 }
 
 /**
+ * Events enum
+ */
+const mixerEvents = Object.freeze(
+    {
+        ON_CHANNEL_LIST_CHANGE: 'onChannelListChange',
+        ON_PLAY_PAUSE: 'onPlayPause',
+    }
+);
+
+/**
  * The Mixers is responsible for mixing together and controlling the play/pause
  * state of the various Channels and controlling the master volume. Mixer state
  * is persisted to local storage, so browser refreshes are not disruptive.
  */
-class Mixer {
+class Mixer extends EventTarget {
     /**
      * A map of the current Audio players
      * @private
@@ -218,6 +228,7 @@ class Mixer {
         const state = this.state();
         state.paused = false;
         this._write(state);
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
 
     /**
@@ -227,6 +238,7 @@ class Mixer {
         const state = this.state();
         state.paused = true;
         this._write(state);
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
 
     // channels
@@ -249,6 +261,7 @@ class Mixer {
         const state = this.state();
         state.channels[uuid()] = channel;
         this._write(state);
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
 
     /**
@@ -282,6 +295,24 @@ class Mixer {
         const state = this.state();
         delete state.channels[id];
         this._write(state);
+    }
+
+    // handlers
+
+    /**
+     * Register a call back for onChannelListChange events
+     * @param {EventListenerOrEventListenerObject} callback
+     */
+    onChannelListChange(callback) {
+        this.addEventListener(mixerEvents.ON_CHANNEL_LIST_CHANGE, callback);
+    }
+
+    /**
+     * Register a call back for onPlayPause events
+     * @param {EventListenerOrEventListenerObject} callback
+     */
+    onPlayPause(callback) {
+        this.addEventListener(mixerEvents.ON_PLAY_PAUSE, callback);
     }
 }
 
