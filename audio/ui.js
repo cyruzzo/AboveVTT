@@ -37,15 +37,7 @@ function init_trackLibrary() {
         const reader = new FileReader();
         reader.readAsText(e.target.files[0]);
         reader.onload = () => {
-            const importList = $.csv.toObjects(reader.result);
-            console.table(importList);
-            const tracks = [];
-            importList.forEach(t => {
-                const track = new Track(t.name, t.src);
-                track.tags = t.tags.split("|");
-                tracks.push(track);
-            });
-            Track.library.create(...tracks)
+            Track.library.importCSV(reader.result);
         };
 
         reader.onerror = () => {

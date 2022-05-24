@@ -58,6 +58,35 @@ class TrackLibrary extends Library {
     find(name, src) {
         return [...this.map()].find(([_, track]) => track.name === name || track.src === src);
     }
+
+    /**
+     * Import a csv of tracks into the track library
+     * @param {string} csv
+     */
+    importCSV(csv) {
+        const importList = $.csv.toObjects(csv);
+        const newTracks = [];
+        const updateTacks = new Map();
+
+        importList.forEach(t => {
+            const track = new Track(t.name, t.src);
+            track.tags = t.tags.split("|");
+            const existingTrack = this.find(track.name, track.src);
+            if ( typeof existingTrack === 'undefined' ) {
+                newTracks.push(track);
+            } else {
+                updateTacks.set(existingTrack[0], track);
+            }
+        });
+
+        console.log('Importing new tracks')
+        console.table(newTracks)
+        this.create(...newTracks);
+
+        console.log('Importing exiting tracks')
+        console.table(Object.fromEntries(updateTacks))
+        this.batchUpdate(updateTacks);
+    }
 }
 
 const library = new TrackLibrary();
