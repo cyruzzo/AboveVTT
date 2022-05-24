@@ -30,21 +30,23 @@ function init_trackLibrary() {
     const header = document.createElement("h3");
     header.textContent = "Track Library";
 
-    const importCSV = document.createElement("input");
-    importCSV.type = "file";
-    importCSV.accept = ".csv";
-    importCSV.onchange = (e) => {
-        const reader = new FileReader();
-        reader.readAsText(e.target.files[0]);
-        reader.onload = () => {
-            Track.library.importCSV(reader.result);
+    const importCSV = document.createElement('button');
+    importCSV.textContent = "Import CSV";
+    importCSV.onclick = () => {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".csv";
+        fileInput.onchange = (e) => {
+            const reader = new FileReader();
+            reader.readAsText(e.target.files[0]);
+            reader.onload = () => {
+                Track.library.importCSV(reader.result);
+            };
+            reader.onerror = () => {
+                throw reader.error
+            };
         };
-
-        reader.onerror = () => {
-            console.log(reader.error)
-        };
-
-        e.target.value = '';
+        fileInput.click();
     };
 
     Track.library.dispatchEvent(new Event('onchange'));
