@@ -326,6 +326,8 @@ function init_settings(){
 				enable_dice_streaming_feature(newValue);
 				if(newValue == true) {
 					window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature");
+				} else {
+					window.MB.sendMessage("custom/myVTT/disabledicestream");
 				}
 			} else {
 				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
@@ -433,7 +435,9 @@ function redraw_settings_panel_token_examples() {
 	}
 }
 
-function enable_dice_streaming_feature(){
+function enable_dice_streaming_feature(enabled){
+	if(enabled)
+	{
 		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
 		$(".dice-rolling-panel>.dice-toolbar .dice-toolbar__dropdown-die").click();
 		$(".stream-dice-button").remove();
@@ -446,6 +450,16 @@ function enable_dice_streaming_feature(){
 				update_dice_streaming_feature(true);
 			}
 		})
+	}
+	else{
+		$(".stream-dice-button").remove();
+		window.JOINTHEDICESTREAM = false;
+		$("[id^='streamer-']").remove();
+		for (let peer in window.STREAMPEERS) {
+			window.STREAMPEERS[peer].close();
+			delete window.STREAMPEERS[peer]
+		}
+	}
 }
 
 function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
@@ -453,19 +467,24 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		
 
 	if (enabled == true) {
-	
+		$(`.stream-dice-button`).html("Leave Dice Stream");
 		// STREAMING STUFF
 		window.JOINTHEDICESTREAM = true;
 		$('.stream-dice-button').html("Leave Dice Stream");
 		$("[role='presentation'] [role='menuitem']").each(function(){
 			$(this).off().on("click", function(){
-				if($(this).text() != "Everyone") {
-					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+				if($(this).text() == "Everyone") {
+					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+						streamid: window.MYSTREAMID
+					});		
+				}
+				else if($(this).text() == "Dungeon Master"){
+					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
 						streamid: window.MYSTREAMID
 					});
 				}
 				else{
-					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
 						streamid: window.MYSTREAMID
 					});
 				}
@@ -499,9 +518,10 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		} 
 	}
 	else {
+		$(`.stream-dice-button`).html("Join Dice Stream");
 		window.JOINTHEDICESTREAM = false;
 		$("[id^='streamer-']").remove();
-		window.MB.sendMessage("custom/myVTT/turnoffdicestream", {
+		window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
 			from: window.MYSTREAMID
 		})
 		for (let peer in window.STREAMPEERS) {

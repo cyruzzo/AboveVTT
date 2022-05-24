@@ -639,12 +639,24 @@ class MessageBroker {
 						peer.addIceCandidate(msg.data.ice);
 					 },500); // ritardalo un po'
 			}
-			if(msg.eventType == "custom/myVTT/turnoffdicestream"){
+			if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
 				$("[id^='streamer-"+msg.data.from+"']").remove();
 				window.STREAMPEERS[msg.data.from].close();
 				delete window.STREAMPEERS[msg.data.from]
 			}
+			if(msg.eventType == "custom/myVTT/disabledicestream"){
+				enable_dice_streaming_feature(false);
+			}
 
+			if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
+					console.log("custom/myVTT/showonlytodmdicestream");
+				if(!window.DM){		
+					hideVideo(msg.data.streamid);
+				}		
+				else{
+					revealVideo(msg.data.streamid);
+				}
+			}
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
 					console.log("custom/myVTT/hidemydicestream");
 					hideVideo(msg.data.streamid);

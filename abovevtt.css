@@ -3625,6 +3625,14 @@ button.avtt-roll-button {
     z-index: 40;
 }
 
+.stream-dice-button {
+    text-shadow: 1px 0px #000, 0px 1px #000, -1px 0px #000, 0px -1px #000;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: #ddd;
+}
+
 .icon-concentration-reminder:before,
 .icon-inspiration:before,
 .icon-flying:before,
