@@ -1099,8 +1099,12 @@ function drawing_mouseup(e) {
 		//console.log("Measure right click");
 		return;
 	}
-	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
-	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "reveal" || window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "draw_text") && e.which !== 1)
+	// ignore if right mouse buttons for the following
+	if((window.DRAWFUNCTION == "draw" ||
+		window.DRAWFUNCTION == "reveal" || 
+		window.DRAWFUNCTION == "hide" || 
+		window.DRAWFUNCTION == "draw_text" || 
+		window.DRAWFUNCTION === "select") && e.which !== 1)
 	{
 		return;
 	}
@@ -1344,9 +1348,6 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
  * as well as any other selected buttons/required options, such as color/line width, or font family/fontsize
  */
 function get_draw_data(button, menu){
-	console.group("get_draw_data")
-	console.log(button)
-	console.log(menu)
 	if (!$(button).hasClass("menu-option") && !$(button).hasClass("menu-button")){
 		console.groupEnd()
 		return {
