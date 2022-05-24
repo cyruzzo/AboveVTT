@@ -2,6 +2,16 @@ import { mixer } from './mixer.js';
 import { trackLibrary } from './library.js';
 import { Track } from './track.js';
 
+const trackList = document.createElement("ul");
+trackLibrary.onchange((e) => {
+    trackList.innerHTML = "";
+    e.target.map().forEach((track, id) => {
+        const item = document.createElement("li");
+        item.textContent = track.name;
+        item.setAttribute("data-id", id);
+        trackList.append(item);
+    });
+});
 
 /**
  * Creates a generic volume slider element
@@ -47,15 +57,8 @@ function init_trackLibrary() {
         e.target.value = '';
     };
 
-    const list = document.createElement("ul");
-    trackLibrary.map().forEach((track, id) => {
-        const item = document.createElement("li");
-        item.textContent = track.name;
-        item.setAttribute("data-id", id);
-        list.append(item);
-    });
-
-    $("#sounds-panel .sidebar-panel-body").append(header, importCSV, list);
+    trackLibrary.dispatchEvent(new Event('onchange'));
+    $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
 
