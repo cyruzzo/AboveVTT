@@ -107,6 +107,7 @@ const mixerEvents = Object.freeze(
     {
         ON_CHANNEL_LIST_CHANGE: 'onChannelListChange',
         ON_PLAY_PAUSE: 'onPlayPause',
+        ON_CHANGE: 'onChange',
     }
 );
 
@@ -198,6 +199,7 @@ class Mixer extends EventTarget {
     _write(state) {
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
         this.syncPlayers();
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
     }
 
     /**
@@ -427,6 +429,14 @@ class Mixer extends EventTarget {
      */
     onPlayPause(callback) {
         this.addEventListener(mixerEvents.ON_PLAY_PAUSE, callback);
+    }
+
+    /**
+     * Register a call back for onChange events
+     * @param {EventListenerOrEventListenerObject} callback
+     */
+    onChange(callback) {
+        this.addEventListener(mixerEvents.ON_CHANGE, callback);
     }
 }
 
