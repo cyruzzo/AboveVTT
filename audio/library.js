@@ -106,7 +106,7 @@ class Library extends EventTarget {
         // confirm all objects are already in the library
         [...objMap.keys()].forEach(id => {
             if (!(library.has(id))) {
-                throw `Id ${id} does not exist in library`
+                throw `Id ${id} does not exist in library`;
             }
         });
 

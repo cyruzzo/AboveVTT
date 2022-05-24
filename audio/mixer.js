@@ -189,6 +189,8 @@ class Mixer {
         return MixerState.assign(JSON.parse(localStorage.getItem(this._localStorageKey) ?? "{}"));
     }
 
+    // volume
+
     /**
      * Set the master volume
      * @type {number}
@@ -207,6 +209,8 @@ class Mixer {
         return this.state().volume;
     }
 
+    // play / pause
+
     /**
      * Plays the mixer. Only channels that are set to playing will play.
      */
@@ -222,6 +226,61 @@ class Mixer {
     pause() {
         const state = this.state();
         state.paused = true;
+        this._write(state);
+    }
+
+    // channels
+
+    /**
+     * Returns the current channels in the mixer
+     * @returns {Object.<string, Channel>}
+     */
+    channels() {
+        return this.state().channels;
+    }
+
+    // CRUD
+
+    /**
+     * Add a channel in the mixer
+     * @param {Channel} channel
+     */
+    addChannel(channel) {
+        const state = this.state();
+        state.channels[uuid()] = channel;
+        this._write(state);
+    }
+
+    /**
+     * Return a specific channel from the mixer
+     * @param {string} id
+     * @returns {Channel}
+     */
+    readChannel(id) {
+        return this.state().channels[id];
+    }
+
+    /**
+     * Update an already existing channel in the mixer
+     * @param {string} id
+     * @param {Channel} channel
+     */
+    updateChannel(id, channel) {
+        const state = this.state();
+        if (!(state.channels[id])) {
+            throw `Channel ${id} does not exist in mixer`;
+        }
+        state.channels[id] = channel;
+        this._write(state);
+    }
+
+    /**
+     * Delete a channel from the mixer
+     * @param {string} id
+     */
+    deleteChannel(id) {
+        const state = this.state();
+        delete state.channels[id];
         this._write(state);
     }
 }
