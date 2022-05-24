@@ -40,15 +40,12 @@ class Channel {
     paused = false;
 
     /**
-     * @param {Track} track
-     * @param {StagedTrack} stagedTrack
+     * @param {string} name
+     * @param {string} src
      */
-    constructor(track, stagedTrack) {
-        this.name = track.name;
-        this.src = track.src;
-        this.volume = stagedTrack.volume;
-        this.loop = stagedTrack.loop;
-        this.paused = !stagedTrack.autoplay;
+    constructor(name, src) {
+        this.name = name;
+        this.src = src;
     }
 
     /**
@@ -94,8 +91,8 @@ class MixerState {
     static assign(obj) {
         // rehydrate channels
         const channels = {}
-        Object.entries(obj.channels ?? {}).forEach(([id, channel]) =>
-            channels[id] = Channel.assign(channel));
+        Object.entries(obj.channels ?? {}).forEach(([id, channel]) => {
+            channels[id] = Channel.assign(channel)});
         delete obj.channels;
 
         // deserialize the rest
@@ -140,6 +137,7 @@ class Mixer extends EventTarget {
      * @param {string} gameID
      */
     constructor(gameID) {
+        super();
         this._localStorageKey = `audio.mixer.${gameID}`;
     }
 
@@ -158,11 +156,11 @@ class Mixer extends EventTarget {
             if (!(player)) {
                 player = new Audio();
                 player.preload = "auto";
+                player.src = channel.src;
                 this._players[id] = player;
             }
 
             // sync player
-            player.src = channel.src;
             player.volume = state.volume * channel.volume;
             player.loop = channel.loop;
             if (state.paused || channel.paused) {
@@ -188,7 +186,7 @@ class Mixer extends EventTarget {
      */
     _write(state) {
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
-        this._syncPlayers;
+        this._syncPlayers();
     }
 
     /**
@@ -222,13 +220,21 @@ class Mixer extends EventTarget {
     // play / pause
 
     /**
+     * Get the play / pause state of the mixer
+     * @returns {boolean}
+     */
+    get paused() {
+        return this.state().paused;
+    }
+
+    /**
      * Plays the mixer. Only channels that are set to playing will play.
      */
     play() {
         const state = this.state();
         state.paused = false;
         this._write(state);
-        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+        this.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
     }
 
     /**
@@ -238,7 +244,14 @@ class Mixer extends EventTarget {
         const state = this.state();
         state.paused = true;
         this._write(state);
-        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+        this.dispatchEvent(new Event(mixerEvents.ON_PLAY_PAUSE));
+    }
+
+    /**
+     * Toggle the paused state of the mixer
+     */
+    togglePaused() {
+        this.paused ? this.play() : this.pause();
     }
 
     // channels
@@ -319,4 +332,4 @@ class Mixer extends EventTarget {
 
 const mixer = new Mixer($("#message-broker-client").attr("data-gameId"));
 
-export { Channel, mixer };
+export { Channel, mixerEvents, mixer };
