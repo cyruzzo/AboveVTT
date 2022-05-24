@@ -2,31 +2,6 @@ import { trackLibrary } from './track.js';
 import { mixer, mixerEvents, Channel } from './mixer.js';
 import { StagedTrack } from './stage.js';
 
-// track list
-const trackList = document.createElement("ul");
-trackList.id = 'track-list';
-trackLibrary.onchange((e) => {
-    trackList.innerHTML = "";
-    /** @type {typeof trackLibrary}  */
-    const tl = e.target;
-    tl.map().forEach((track, id) => {
-        const item = document.createElement("li");
-        item.textContent = track.name;
-        item.className = "audio-row";
-        item.setAttribute("data-id", id);
-        const play = document.createElement('button');
-        play.textContent = 'Play';
-        play.onclick = () => {
-            const adhocStagedTrack = new StagedTrack(id);
-            adhocStagedTrack.autoplay = true;
-            adhocStagedTrack.loop = true;
-            mixer.addChannel(adhocStagedTrack.toChannel());
-        };
-        item.appendChild(play);
-        trackList.append(item);
-    });
-});
-
 /**
  * Creates a generic volume slider element
  * @returns {HTMLInputElement}
@@ -42,44 +17,46 @@ function volumeSlider() {
     return volumeSlider
 }
 
-// mixer channels
-const mixerChannels = document.createElement("ul");
-mixerChannels.id = 'mixer-channels';
-mixer.onChannelListChange((e) => {
-    mixerChannels.innerHTML = "";
-    /** @type {Object.<string, Channel>} */
-    const mcs = e.target.channels();
-    Object.entries(mcs).forEach(([id, channel]) => {
-        const item = document.createElement("li");
-        item.className = "audio-row";
-        item.textContent = channel.name;
-        item.setAttribute("data-id", id);
-
-        const slider = volumeSlider();
-        slider.value = channel.volume;
-
-        item.appendChild(slider);
-        mixerChannels.append(item);
-    });
-});
-
-
 function init_mixer() {
+    // header
     const header = document.createElement("h3");
     header.textContent = "Mixer";
 
+    // master volume bar
     const masterVolumeDiv = document.createElement("div");
     masterVolumeDiv.textContent = "Master Volume";
     masterVolumeDiv.className = "audio-row";
     const masterVolumeSlider = volumeSlider();
     masterVolumeDiv.append(masterVolumeSlider);
 
+    // mixer channels
+    const mixerChannels = document.createElement("ul");
+    mixerChannels.id = 'mixer-channels';
+    mixer.onChannelListChange((e) => {
+        mixerChannels.innerHTML = "";
+        /** @type {Object.<string, Channel>} */
+        const mcs = e.target.channels();
+        Object.entries(mcs).forEach(([id, channel]) => {
+            const item = document.createElement("li");
+            item.className = "audio-row";
+            item.textContent = channel.name;
+            item.setAttribute("data-id", id);
+
+            const slider = volumeSlider();
+            slider.value = channel.volume;
+
+            item.appendChild(slider);
+            mixerChannels.append(item);
+        });
+    });
     mixer.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
 
+    // clear button
     const clear = document.createElement("button");
     clear.textContent = 'Clear';
     clear.onclick = () => mixer.clear();
 
+    // play/pause button
     const playPause = document.createElement("button");
     playPause.onclick = () => mixer.togglePaused();
     mixer.onPlayPause((e) => {
@@ -90,9 +67,11 @@ function init_mixer() {
 }
 
 function init_trackLibrary() {
+    // header
     const header = document.createElement("h3");
     header.textContent = "Track Library";
 
+    // import csv button
     const importCSV = document.createElement('button');
     importCSV.textContent = "Import CSV";
     importCSV.onclick = () => {
@@ -112,7 +91,32 @@ function init_trackLibrary() {
         fileInput.click();
     };
 
+    // track list
+    const trackList = document.createElement("ul");
+    trackList.id = 'track-list';
+    trackLibrary.onchange((e) => {
+        trackList.innerHTML = "";
+        /** @type {typeof trackLibrary}  */
+        const tl = e.target;
+        tl.map().forEach((track, id) => {
+            const item = document.createElement("li");
+            item.textContent = track.name;
+            item.className = "audio-row";
+            item.setAttribute("data-id", id);
+            const play = document.createElement('button');
+            play.textContent = 'Play';
+            play.onclick = () => {
+                const adhocStagedTrack = new StagedTrack(id);
+                adhocStagedTrack.autoplay = true;
+                adhocStagedTrack.loop = true;
+                mixer.addChannel(adhocStagedTrack.toChannel());
+            };
+            item.appendChild(play);
+            trackList.append(item);
+        });
+    });
     trackLibrary.dispatchEvent(new Event('onchange'));
+
     $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
