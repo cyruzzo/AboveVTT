@@ -3675,6 +3675,7 @@ button.avtt-roll-button {
 
 .stream-dice-button.enabled{
     color: rgb(111, 116, 120);
+    box-shadow: 1px 1px 1px -1px #0003, 1px 2px 0px -2px #0003;
 }
 .stream-dice-button:hover:after { 
     opacity:1;
