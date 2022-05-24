@@ -41,13 +41,13 @@ function init_trackLibrary() {
         reader.onload = () => {
             const importList = $.csv.toObjects(reader.result);
             console.table(importList);
+            const tracks = [];
             importList.forEach(t => {
-                const track = new Track();
-                track.name = t.name;
-                track.src = t.src;
+                const track = new Track(t.name, t.src);
                 track.tags = t.tags.split("|");
-                trackLibrary.create(track);
+                tracks.push(track);
             });
+            trackLibrary.create(...tracks)
         };
 
         reader.onerror = () => {

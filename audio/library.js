@@ -51,14 +51,15 @@ class Library extends EventTarget {
     }
 
     /**
-     * Adds a single item to the library
-     * @param {T} obj
-     * @returns {string} id
+     * Adds a items to the library
+     * @param  {...T} objs
      */
-    create(obj) {
-        const id = uuid();
-        this._write(this.map().set(id, obj));
-        return id;
+    create(...objs) {
+        const library = this.map();
+        objs.forEach(o => {
+            library.set(uuid(), o);
+        });
+        this._write(library);
     }
 
     /**
