@@ -591,7 +591,9 @@ class MessageBroker {
 							}
 						}
 					}
-
+					if($("[name='streamDiceRolls'].rc-switch-checked").length > 0) {
+						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
+					}
 					window.JOURNAL.sync();
 				}	
 			}
