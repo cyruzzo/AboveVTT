@@ -3626,7 +3626,7 @@ button.avtt-roll-button {
 }
 
 .stream-dice-button {
-        display: flex;
+    display: flex;
     border: 1px solid transparent;
     box-sizing: border-box;
     border-radius: 2px;
@@ -3658,7 +3658,7 @@ button.avtt-roll-button {
 }
 
 .stream-dice-button.enabled{
-    color: #138306;
+    color: rgb(111, 116, 120);
 }
 .icon-concentration-reminder:before,
 .icon-inspiration:before,
