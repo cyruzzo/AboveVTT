@@ -1,4 +1,4 @@
-import { gameID } from "./helpers.js";
+import { gameID, playerID } from "./helpers.js";
 
 /**
  * An Channel is like a stateful StagedTrack. The key difference
@@ -147,13 +147,9 @@ class Mixer extends EventTarget {
      */
     _localStorageKey;
 
-    /**
-     * The gameID is required for persisting mixer state
-     * @param {string} gameID
-     */
-    constructor(gameID) {
+    constructor() {
         super();
-        this._localStorageKey = `audio.mixer.${gameID}`;
+        this._localStorageKey = `audio.mixer.${gameID()}.${playerID()}`;
     }
 
     /**
@@ -467,6 +463,6 @@ class Mixer extends EventTarget {
     }
 }
 
-const mixer = new Mixer(gameID());
+const mixer = new Mixer();
 
 export { Channel, mixer, MixerState };
