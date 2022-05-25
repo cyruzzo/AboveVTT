@@ -1,15 +1,11 @@
-import { init } from './ui.js';
 import { stageLibrary } from './stage.js'
 import { trackLibrary } from './track.js'
 import { mixer } from './mixer.js'
+import { handle_mixer_event } from './mb.js';
+import init from './init.js';
 
-window.init_audio_ui = init;
 window.STAGE_LIBRARY = stageLibrary;
 window.TRACK_LIBRARY = trackLibrary;
 window.MIXER = mixer;
-
-if (window.DM) {
-    mixer.onChange((e) => {
-        window.MB.sendMessage('custom/myVTT/mixer', e.target.remoteState());
-    });
-}
+window.handle_mixer_event = handle_mixer_event;
+window.init_audio = init;

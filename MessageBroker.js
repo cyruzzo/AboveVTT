@@ -634,10 +634,7 @@ class MessageBroker {
 			}
 
 			if(msg.eventType=="custom/myVTT/mixer"){
-				console.log("remote mixer update", msg.data);
-				if (!window.DM) {
-					MIXER.remoteUpdate(msg.data);
-				}
+				handle_mixer_event(msg.data);
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad);

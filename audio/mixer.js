@@ -1,3 +1,5 @@
+import { gameID } from "./helpers.js";
+
 /**
  * An Channel is like a stateful StagedTrack. The key difference
  * between the two is the StagedTrack holds a reference to the track in the
@@ -463,17 +465,6 @@ class Mixer extends EventTarget {
     onChange(callback) {
         this.addEventListener(mixerEvents.ON_CHANGE, callback);
     }
-}
-
-/**
- * @returns {string} game id
- */
-function gameID() {
-    const gameID = (new URLSearchParams(window.location.search)).get('cid');
-    if (gameID === null) {
-        throw 'Audio mixer can not be initialized: Failed to get game id'
-    }
-    return gameID;
 }
 
 const mixer = new Mixer(gameID());

@@ -1,6 +1,7 @@
 import { trackLibrary } from './track.js';
 import { mixer, Channel } from './mixer.js';
 import { StagedTrack } from './stage.js';
+import { log } from './helpers.js';
 
 /**
  *
@@ -110,27 +111,14 @@ function init_trackLibrary() {
     $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
 }
 
-/**
- * initially sync the mixer players on first mouse down event, you must wait for
- * the user to interact with the DOM before attempting to play audio
- */
-function sync_players() {
-    const handler = () => {
-        console.log("initializing audio mixer");
-        mixer.syncPlayers();
-        window.removeEventListener('mousedown', handler)
-    }
-    window.addEventListener('mousedown', handler);
-}
-
 function init() {
+    log(`initializing audio ui for ${window.DM ? 'DM' : 'player'}`);
     if (window.DM) {
         init_trackLibrary();
         init_mixer();
     } else {
         $("#sounds-panel .sidebar-panel-header").append(masterVolumeSlider());
     }
-    sync_players();
 }
 
-export { init };
+export default init;
