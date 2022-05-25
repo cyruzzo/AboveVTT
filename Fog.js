@@ -173,20 +173,24 @@ class WaypointManagerClass {
 
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
-	draw(midlineLabels) {
+	draw(midlineLabels, labelX, labelY) {
 
 		var cumulativeDistance = 0
 		for (var i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
 			this.ctx.beginPath();
-			this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
+			if (i < this.coords.length - 1) {
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
+			} else {
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY);
+			}
 			cumulativeDistance += this.coords[i].distance;
 		}
 	}
 
 	// Draw a waypoint segment with all the lines and labels etc.
-	drawWaypointSegment(coord, cumulativeDistance, midlineLabels) {
+	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY) {
 
 		// Snap to centre of current grid square
 		var gridSize = window.CURRENT_SCENE_DATA.hpps;
@@ -248,8 +252,23 @@ class WaypointManagerClass {
 
 			// Knock the text down slightly
 			textY += (margin * 2);
-		}
-		else {
+		} else if (labelX !== undefined && labelY !== undefined) {
+
+			// Calculate our coords and dimensions
+			contrastRect.x = labelX - margin + slopeModifier;
+			contrastRect.y = labelY - margin + slopeModifier;
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
+
+			textRect.x = labelX + slopeModifier;
+			textRect.y = labelY + slopeModifier;
+			textRect.width = textMetrics.width + (margin * 3);
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
+
+			textRect.x -= (textRect.width / 2);
+			textX = labelX + margin + slopeModifier - (textRect.width / 2);
+			textY = labelY + (margin * 2) + slopeModifier;
+		} else {
 			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
 			if (snapPointYStart <= snapPointYEnd) {
 				// Push right and down
