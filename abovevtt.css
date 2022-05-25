@@ -2766,6 +2766,32 @@ button.avtt-roll-button {
     float: right;
 }
 
+#sounds-panel #mixer-channels {
+    padding-left: 10px;
+}
+
+#sounds-panel .channel-percentage-possible {
+    width: 100%;
+    position: relative;
+    height: 1px;
+    bottom: -1px;
+    left: 0px;
+    background: lightgray;
+}
+#sounds-panel .channel-percentage-complete {
+    width: 0%;
+    position: relative;
+    height: 1px;
+    bottom: 0px;
+    left: 0px;
+    background: #0075FF;
+}
+
+#sounds-panel .sidebar-panel-header {
+    padding: 4px;
+    border-bottom: 1px solid #2b2b2b;
+}
+
 #sounds-panel .audio-row  {
     height: 25px;
 }
