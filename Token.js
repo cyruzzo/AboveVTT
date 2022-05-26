@@ -90,6 +90,17 @@ class Token {
 		return Math.round(size / gridSize);
 	}
 
+	sizeWidth() {
+		let w = parseFloat(this.options.gridWidth);
+		if (isNaN(w)) return this.options.size;
+		return parseFloat(window.CURRENT_SCENE_DATA.hpps) * w;
+	}
+	sizeHeight() {
+		let h = parseFloat(this.options.gridHeight);
+		if (isNaN(h)) return this.options.size;
+		return parseFloat(window.CURRENT_SCENE_DATA.vpps) * h;
+	}
+
 	hasCondition(conditionName) {
 		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.includes(conditionName);
 	}
@@ -316,8 +327,8 @@ class Token {
 		var n = $("<div/>");
 		n.html(text);
 		n.css('position', 'absolute');
-		n.css('top', parseInt(this.options.top));
-		n.css('left', parseInt(this.options.left) + (this.options.size / 2) - 130);
+		n.css('top', parseInt(this.options.top)); // anything to do with sizeHeight() here?
+		n.css('left', parseInt(this.options.left) + (this.sizeWidth() / 2) - 130);
 		n.css("z-index", "60");
 		n.css("opacity", 0.9)
 
@@ -387,8 +398,8 @@ class Token {
 
 
 
-		let tokenWidth = this.options.size;
-		let tokenHeight = this.options.size;
+		let tokenWidth = this.sizeWidth();
+		let tokenHeight = this.sizeHeight();
 			
 		if(tokenData.disableaura) {
 			token.css('--token-hp-aura-color', 'transparent');
@@ -550,7 +561,7 @@ class Token {
 
 	build_hp() {
 		var self = this;
-		var bar_height = Math.floor(this.options.size * 0.2);
+		var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 		if (bar_height > 60)
 			bar_height = 60;
@@ -558,8 +569,8 @@ class Token {
 		var hpbar = $("<div class='hpbar'/>");
 		hpbar.css("position", 'absolute');
 		hpbar.css('height', bar_height);
-		hpbar.css('left', (Math.floor(this.options.size * 0.35) / 2));
-		hpbar.css('top', this.options.size - bar_height);
+		hpbar.css('left', (Math.floor(this.sizeWidth() * 0.35) / 2));
+		hpbar.css('top', this.sizeHeight() - bar_height);
 		hpbar.css('background', '#ff7777');
 		hpbar.width("max-width: 100%");
 
@@ -567,7 +578,7 @@ class Token {
 
 		$("<div class='token'/>").css("font-size",fs);
 
-		var input_width = Math.floor(this.options.size * 0.3);
+		var input_width = Math.floor(this.sizeWidth() * 0.3);
 		if (input_width > 90)
 			input_width = 90;
 
@@ -623,7 +634,7 @@ class Token {
 	}
 
 	build_ac() {
-		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
+		var bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		var ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");
 		ac.css('right', "-1px");
@@ -646,9 +657,9 @@ class Token {
 	}
 
 	build_elev() {
-		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
+		var bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		var elev = $("<div class='elev'/>");
-		let bar_width = Math.floor(this.options.size * 0.2);
+		let bar_width = Math.floor(this.sizeWidth() * 0.2);
 		elev.css("position", "absolute");
 		elev.css('right', bar_width * 4.35 + "px");
 		elev.css('width', bar_height + "px");
@@ -736,17 +747,17 @@ class Token {
 	build_conditions(parent) {
 		console.group("build_conditions")
 		let self=this;
-		let bar_width = Math.floor(this.options.size * 0.2);
+		let bar_width = Math.floor(this.sizeWidth() * 0.2);
 		const cond = $("<div class='conditions' style='padding:0;margin:0'/>");
 		const moreCond = $(`<div class='conditions' style='left:${bar_width}px;'/>`);
 		cond.css('left', "0");
 
-		const symbolSize = Math.min(bar_width >= 22 ? bar_width : (this.options.size / 4), 45);
+		const symbolSize = Math.min(bar_width >= 22 ? bar_width : (this.sizeWidth() / 4), 45);
 
-		moreCond.css('left', this.options.size - symbolSize);
+		moreCond.css('left', this.sizeWidth() - symbolSize);
 		[cond, moreCond].forEach(cond_bar => {
 			cond_bar.width(symbolSize);
-			cond_bar.height(this.options.size - bar_width);
+			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
 		})
 		if (this.options.inspiration){
 			if (!this.options.custom_conditions.includes("Inspiration")){
@@ -934,26 +945,30 @@ class Token {
 			}
 
 
-			if (old.attr('width') != this.options.size) {
+
+
+
+
+			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
 				// NEED RESIZING
-				old.find("img").css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
+				old.find("img").css("border-width", Math.min(4, Math.round((this.sizeWidth() / 60.0) * 4)));
 				old.find("img").css({
-					"max-height": this.options.size,
-					"max-width": this.options.size
+					"max-height": this.sizeWidth(),
+					"max-width": this.sizeHeight()
 				});
 
 
 				old.animate({
-					width: this.options.size,
-					height: this.options.size
+					width: this.sizeWidth(),
+					height: this.sizeHeight()
 				}, { duration: 1000, queue: false });
 				
-				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps)); // width vs height here?
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				old.css("z-index", "calc(5000 + var(--z-index-diff))");
 				old.css("--z-index-diff", zindexdiff);
 
-				var bar_height = Math.floor(this.options.size * 0.2);
+				var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 				if (bar_height > 60)
 					bar_height = 60;
@@ -1040,7 +1055,7 @@ class Token {
 			let scale = this.get_token_scale()
 			let imageScale = this.options.imageSize;
 			
-			var bar_height = Math.floor(this.options.size * 0.2);
+			var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 			if (bar_height > 60)
 				bar_height = 60;
@@ -1063,13 +1078,13 @@ class Token {
 
 
 
-			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps)); // sizeHeight() or sizeWidth() here?
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
 			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
-			tok.width(this.options.size);
-			tok.height(this.options.size);
+			tok.width(this.sizeWidth());
+			tok.height(this.sizeHeight());
 			tok.addClass('token');
 
 			tok.append(tokimg);
@@ -1077,8 +1092,8 @@ class Token {
 
 			tok.attr("data-id", this.options.id);
 			tokimg.attr("src", this.options.imgsrc);
-			tokimg.css("max-height", this.options.size);
-			tokimg.css("max-width", this.options.size);
+			tokimg.css("max-height", this.sizeHeight());
+			tokimg.css("max-width", this.sizeWidth());
 		
 
 			tok.addClass("VTTToken");
@@ -1174,8 +1189,8 @@ class Token {
 							if (el.length > 0) {
 								const auraSize = parseInt(el.css("width"));
 
-								el.css("top", `${selectedNewtop - ((auraSize - self.options.size) / 2)}px`);
-								el.css("left", `${selectedNewleft - ((auraSize - self.options.size) / 2)}px`);
+								el.css("top", `${selectedNewtop - ((auraSize - self.sizeHeight()) / 2)}px`);
+								el.css("left", `${selectedNewleft - ((auraSize - self.sizeWidth()) / 2)}px`);
 							}
 
 							for (var id in window.TOKEN_OBJECTS) {
@@ -1200,8 +1215,8 @@ class Token {
 										if (selEl.length > 0) {
 											const auraSize = parseInt(selEl.css("width"));
 
-											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
-											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
+											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
 										}
 									}
 								}
@@ -1745,6 +1760,7 @@ function setTokenAuras (token, options) {
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
+		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
@@ -1851,9 +1867,8 @@ const radToDeg = 180 / Math.PI;
 
 /// Returns result in degrees
 function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
-	const halfSize = token.options.size / 2;
-	const tokenCenterX = parseFloat(token.options.left) + halfSize;
-	const tokenCenterY = parseFloat(token.options.top) + halfSize;
+	const tokenCenterX = parseFloat(token.options.left) + (token.sizeWidth() / 2);
+	const tokenCenterY = parseFloat(token.options.top) + (token.sizeHeight() / 2);
 	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
 	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
@@ -1902,9 +1917,9 @@ function draw_selected_token_bounding_box() {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
 		let tokenTop = parseFloat(token.options.top);
-		let tokenBottom = tokenTop + parseFloat(token.options.size);
+		let tokenBottom = tokenTop + token.sizeHeight();
 		let tokenLeft = parseFloat(token.options.left);
-		let tokenRight = tokenLeft + parseFloat(token.options.size);
+		let tokenRight = tokenLeft + token.sizeWidth();
 		if (top == undefined) {
 			top = tokenTop;
 		} else {
@@ -2083,8 +2098,8 @@ function paste_selected_tokens() {
 		let newId = uuid();
 		options.id = newId;
 		// TODO: figure out the location under the cursor and paste there instead of doing an offset
-		options.top = `${parseFloat(options.top) + Math.round(options.size / 2)}px`;
-		options.left = `${parseFloat(options.left) + Math.round(options.size / 2)}px`;
+		options.top = `${parseFloat(options.top) + Math.round(token.sizeHeight() / 2)}px`;
+		options.left = `${parseFloat(options.left) + Math.round(token.sizeWidth() / 2)}px`;
 		options.selected = true;
 		window.ScenesHandler.create_update_token(options);
 		// deselect the old and select the new so the user can easily move the new tokens around after pasting them
