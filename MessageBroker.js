@@ -1184,20 +1184,20 @@ class MessageBroker {
 	}
 
 
-	sendMessage(eventType, data) {
+	sendMessage(eventType, data,skipSceneId=false) {
 		var self = this;
 
 		//this.sendDDBMB(eventType,data); 
 
 		if(eventType.startsWith("custom")){
-			this.sendAboveMB(eventType,data);
+			this.sendAboveMB(eventType,data,skipSceneId);
 		}
 		else{
 			this.sendDDBMB(eventType,data);
 		}
 	}
 
-	sendAboveMB(eventType,data){
+	sendAboveMB(eventType,data,skipSceneId=false){
 		var self=this;
 		var message = {
 			action: "sendmessage",
@@ -1210,10 +1210,10 @@ class MessageBroker {
 		if(window.CLOUD)
 			message.cloud=1;
 
-		if(!["custom/myVTT/switch_scene"].includes(eventType))
+		if(!["custom/myVTT/switch_scene","custom/myVTT/update_scene"].includes(eventType))
 			message.sequence=this.above_sequence++;
 
-		if(window.CURRENT_SCENE_DATA)
+		if(window.CURRENT_SCENE_DATA && !skipSceneId)
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
 		if(window.PLAYER_SCENE_ID)
 			message.playersSceneId = window.PLAYER_SCENE_ID;
@@ -1223,7 +1223,6 @@ class MessageBroker {
 			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
 			return;
 		}
-
 
 		if (this.abovews.readyState == this.ws.OPEN) {
 			this.abovews.send(JSON.stringify(message));
