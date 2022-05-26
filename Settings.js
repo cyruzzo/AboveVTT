@@ -320,7 +320,6 @@ function init_settings(){
 		if (currentValue === undefined && setting.defaultValue !== undefined) {
 			currentValue = setting.defaultValue;
 		}
-
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`experimental setting ${name} is now ${newValue}`);
 			if (name === "streamDiceRolls") {
@@ -462,9 +461,7 @@ function enable_dice_streaming_feature(enabled){
 	}
 }
 
-function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
-	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
-		
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {		
 
 	if (enabled == true) {
 		// STREAMING STUFF
@@ -498,7 +495,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
 		}
 		if (window.JOINTHEDICESTREAM) {
-			// we should tear down and reconnect
+			
 			for (let i in window.STREAMPEERS) {
 				console.log("replacing the track")
 				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);

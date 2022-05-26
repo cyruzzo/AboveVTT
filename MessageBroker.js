@@ -334,7 +334,7 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = abovevtt_version;
 
-		this.onmessage =  function(event,tries=0) {
+		this.onmessage = function(event,tries=0) {
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -648,12 +648,11 @@ class MessageBroker {
 					return;
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
-	
-					setTimeout( () => {
-					var peer= window.STREAMPEERS[msg.data.from];
-					if(peer.remoteDescription!= null)
-						peer.addIceCandidate(msg.data.ice);
-					 },500); // ritardalo un po'
+				setTimeout( () => {
+				var peer= window.STREAMPEERS[msg.data.from];
+				if(peer.remoteDescription!= null)
+					peer.addIceCandidate(msg.data.ice);
+				},500); // ritardalo un po'
 			}
 			if(msg.eventType == "custom/myVTT/whatsyourdicerolldefault"){
 				if( !window.JOINTHEDICESTREAM)
@@ -716,12 +715,12 @@ class MessageBroker {
 				if( (!window.MYSTREAMID))
 					return;
 				const configuration = {
-    				iceServers:  [ {urls: "stun:stun.l.google.com:19302"}]
+    				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
   				};
 				var peer= new RTCPeerConnection(configuration);
 
 				if(window.MYMEDIASTREAM){
-					var stream=  window.MYMEDIASTREAM;
+					var stream = window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
 				}
 
@@ -779,7 +778,7 @@ class MessageBroker {
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
 				const configuration = {
-    				iceServers:  [ {urls: "stun:stun.l.google.com:19302"}]
+    				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
   				};
 				var peer= new RTCPeerConnection(configuration);
 
@@ -790,7 +789,7 @@ class MessageBroker {
 
 				peer.addEventListener('track', (event) => {
 					console.log("aggiungo video!!!!");
-				     addVideo(event.streams[0],msg.data.from);
+				  addVideo(event.streams[0],msg.data.from);
 				});
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
@@ -856,8 +855,6 @@ class MessageBroker {
 				peer.setRemoteDescription(msg.data.answer);
 				console.log("fatto setRemoteDescription");
 			}
-
-
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
@@ -1355,12 +1352,12 @@ class MessageBroker {
 			message.sceneId=window.CURRENT_SCENE_DATA.id;
 		if(window.PLAYER_SCENE_ID)
 			message.playersSceneId = window.PLAYER_SCENE_ID;
+
 		const jsmessage=JSON.stringify(message);
 		if(jsmessage.length > (128000)){
 			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
 			return;
 		}
-
 
 		if (this.abovews.readyState == this.ws.OPEN) {
 			this.abovews.send(JSON.stringify(message));
