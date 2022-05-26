@@ -150,12 +150,14 @@ class Mixer extends EventTarget {
     constructor() {
         super();
         this._localStorageKey = `audio.mixer.${gameID()}.${playerID()}`;
+        this.syncPlayers(false);
     }
 
     /**
      * Syncs the mixer state from local storage into native Audio object
+     * @param {boolean} play start playing unpaused channels
      */
-    syncPlayers() {
+    syncPlayers(play = true) {
         const state = this.state();
 
         // create and update players
@@ -164,9 +166,8 @@ class Mixer extends EventTarget {
 
             // create new player if needed
             if (!(player)) {
-                player = new Audio();
+                player = new Audio(channel.src);
                 player.preload = "auto";
-                player.src = channel.src;
                 this._players[id] = player;
             }
 
@@ -175,7 +176,7 @@ class Mixer extends EventTarget {
             player.loop = channel.loop;
             if (state.paused || channel.paused) {
                 player.pause();
-            } else {
+            } else if (play) {
                 player.play();
             }
         });
@@ -408,6 +409,29 @@ class Mixer extends EventTarget {
         const channel = this.readChannel(id);
         channel.volume = e.target.value;
         this.updateChannel(id, channel);
+    }
+
+    /**
+     * Creates a channel progress bar element
+     * @param {string} id
+     * @returns {HTMLDivElement}
+     */
+    channelProgressBar(id) {
+        const progress = document.createElement("div");
+        progress.className = "channel-progress-bar-progress";
+
+        const total = document.createElement("div");
+        total.setAttribute('data-id', id);
+        total.className = "channel-progress-bar-total";
+        total.append(progress);
+
+        const player = this._players[id];
+        if (!player) {
+            throw `failed to player for channel ${id}`
+        }
+        player.ontimeupdate = (e) => progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
+
+        return total
     }
 
 

@@ -34,16 +34,7 @@ function init_mixer() {
             item.className = "audio-row";
             item.textContent = channel.name;
             item.setAttribute("data-id", id);
-
-            item.appendChild(mixer.channelVolumeSlider(id));
-
-            const bottomBorderPossible = document.createElement("div");
-            bottomBorderPossible.className = "channel-percentage-possible";
-            item.appendChild(bottomBorderPossible);
-            const bottomBorderComplete = document.createElement("div");
-            bottomBorderComplete.className = "channel-percentage-complete";
-            item.appendChild(bottomBorderComplete);
-
+            item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
             mixerChannels.append(item);
         });
     }
@@ -64,20 +55,7 @@ function init_mixer() {
     drawPlayPause(mixer.paused);
     mixer.onPlayPause((e) => drawPlayPause(e.target.paused));
 
-
     $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeSlider(), mixerChannels, clear, playPause);
-
-    mixer.trackUpdateInterval = setInterval(function() {
-        let channels = mixer.channels();
-        for (let cId in channels) {
-            let player = window.MIXER._players[cId];
-            if (player) {
-                let durationPercentage = parseInt(parseFloat(player.currentTime / player.duration) * 100);
-                let row = $(`.audio-row[data-id='${cId}']`);
-                row.find(`.channel-percentage-complete`).css("width", `${durationPercentage}%`);
-            }
-        }
-    }, 1000);
 }
 
 function init_trackLibrary() {
