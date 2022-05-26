@@ -1699,7 +1699,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 .aoe-shape-cone{
-    /* Do something for this */
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }
 
 .aoe-color-water{
@@ -1707,11 +1707,52 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     box-shadow: inset -20px -20px 2px 1000px rgba(10, 220, 235, 0.49);
 }
 
+.aoe-color-lava{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2022/01/216-comp-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(235, 85, 10, 0.49);
+}
+
+.aoe-color-radiant2 {
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/leopard-fur-texture-900x900.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(224, 217, 159, 0.49);
+}
+
+.aoe-color-radiant {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/06/0097-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(224, 217, 159, 0.49);
+    background-size: 200px
+}
+
+
+.aoe-color-chaos {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/05/0092-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(85, 23, 88, 0.49);
+}
+
+.aoe-color-poison {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(14, 129, 46, 0.49);
+}
+
+.aoe-color-ice {
+    background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(178, 238, 252, 0.52);   
+}
+.aoe-color-necrotic {
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(104, 1, 1, 0.52);
+    
+}
+
+/* other nice repeatables */
+/* https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg */
+
 .aoe-token-tileable {
     height: 100%;
     width: 100%;
     opacity: 50%;
     background-repeat: repeat;
+    background-size: 300px;
 }
 
 .markers-icon:before,

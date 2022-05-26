@@ -213,6 +213,7 @@ class Token {
 		var tokenElement = $("#tokens").find(selector);
 		
 		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
+		tokenElement.children(["data-img"]).css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -879,7 +880,15 @@ class Token {
 		var self = this;
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
+		// used by aoe tokens
+		const aoeBorderWith = parseInt(this.options.size * 0.025)
 
+		let scale = this.get_token_scale();
+		let imageScale = this.options.imageSize;
+		let rotation = 0;
+		if (this.options.rotation != undefined) {
+			rotation = this.options.rotation;
+		}
 
 		if (old.length > 0) {
 			console.group("old token")
@@ -905,12 +914,7 @@ class Token {
 
 			// CONCENTRATION REMINDER
 
-			let scale = this.get_token_scale();
-			let imageScale = this.options.imageSize;
-			var rotation = 0;
-			if (this.options.rotation != undefined) {
-				rotation = this.options.rotation;
-			}
+			
 			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 	
@@ -983,6 +987,7 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
+			// token uses an image for it's image
 			if (!this.options.imgsrc.startsWith("class=")){
 				if(old.find("img").attr("src")!=this.options.imgsrc){
 					old.find("img").attr("src",this.options.imgsrc);
@@ -1011,7 +1016,7 @@ class Token {
 				// token is an aoe div that uses styles instead of an image
 				// do something with it maybe?
 				// re-calc the border width incase the token has changed size
-				old.find(['data-img']).css(`transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${borderWidth}px solid black;`)
+				old.find(['data-img']).css(`transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${aoeBorderWith}px solid black;`)
 			}
 			
 			setTokenAuras(old, this.options);
@@ -1041,7 +1046,6 @@ class Token {
 		else { // adding a new token
 			// console.group("new token")
 			var tok = $("<div/>");
-			let imageScale = this.options.imageSize;
 			
 			var bar_height = Math.floor(this.options.size * 0.2);
 
@@ -1051,10 +1055,6 @@ class Token {
 			var fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
 
-			var rotation = 0;
-			if (this.options.rotation != undefined) {
-				rotation = this.options.rotation;
-			}
 			let tokenImage
 			// token doesn't use classes as an image
 			if (!this.options.imgsrc.startsWith("class=")){
@@ -1077,15 +1077,13 @@ class Token {
 
 			} else {
 				// token is using classes instead of an image
-				const borderWidth = parseInt(this.options.size * 0.025)
+				const aoeBorderWidth = parseInt(this.options.size * 0.025)
 				tokenImage = $(
-					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${borderWidth}px solid black;'
+					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${aoeBorderWidth}px solid black;'
 					 class='${this.options.imgsrc.replace("class=","")}'
 					 </div>
 					`)
 					// will need to do something when aoe isn't aligned.
-				
-				tokenImage.css("border", `${borderWidth}px solid black`)
 			}
 			tok.append(tokenImage);
 			tok.attr("data-id", this.options.id);
@@ -1377,7 +1375,7 @@ class Token {
 				tok.removeClass("ui-state-disabled");
 			}
 
-			tok.find(".token-image").dblclick(function(e) {
+			tok.find(".token-image,[data-img]").dblclick(function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
 					id: self.options.id
@@ -1385,7 +1383,7 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
-			tok.find(".token-image").click(function() {
+			tok.find(".token-image,[data-img]").click(function() {
 				let parentToken = $(this).parent(".VTTToken");
 				if (parentToken.hasClass("pause_click")) {
 					return;
@@ -1580,10 +1578,8 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...tokenObject
 	};
-	if (options.imgsrc.startsWith("class")){
-		// token is a div aoe token
-	}
-	else{
+	// aoe tokens have classes instead of images
+	if (!options.imgsrc.startsWith("class")){
 		options.imgsrc = parse_img(options.imgsrc);
 	}
 
