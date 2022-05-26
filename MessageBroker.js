@@ -63,8 +63,17 @@ function addVideo(stream,streamerid) {
 		delayedClear();
 		
 		let tmpcanvas = document.createElement("canvas");
-		tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
-		tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);
+		let videoAspectRatio = video.videoWidth / video.videoHeight
+		if (video.videoWidth > video.videoHeight)
+		{
+			tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
+			tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
+		}
+		else {
+			tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
+			tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
+		}
+		
 		video.setAttribute("width", tmpcanvas.width)
 		video.setAttribute("height", tmpcanvas.height)
 		let tmpctx = tmpcanvas.getContext("2d");
