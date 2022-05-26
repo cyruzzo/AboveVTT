@@ -564,11 +564,13 @@ function load_monster_stat(monsterid, token_id) {
 	});
 	
 	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-	const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
-	$("#resizeDragMon").append(monster_close_title_button);
-	monster_close_title_button.click(function() {
-		close_player_monster_stat_block()
-	});
+	if($("#monster_close_title_button").length==0){
+		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+		$("#resizeDragMon").append(monster_close_title_button);
+		monster_close_title_button.click(function() {
+			close_player_monster_stat_block()
+		});
+	}
 	$("#resizeDragMon").addClass("moveableWindow");
 	if(!$("#resizeDragMon").hasClass("minimized")){
 		$("#resizeDragMon").addClass("restored");
