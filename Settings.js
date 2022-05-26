@@ -320,6 +320,7 @@ function init_settings(){
 		if (currentValue === undefined && setting.defaultValue !== undefined) {
 			currentValue = setting.defaultValue;
 		}
+
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`experimental setting ${name} is now ${newValue}`);
 			if (name === "streamDiceRolls") {
@@ -438,8 +439,8 @@ function redraw_settings_panel_token_examples() {
 function enable_dice_streaming_feature(enabled){
 	if(enabled)
 	{
-
-		$(".stream-dice-button").remove();
+		if($(".stream-dice-button").length>0)
+			return;
 		$(".glc-game-log>[class*='Container-Flex']").append($(`<div  id="stream_dice"><div class='stream-dice-button'>Dice Stream Disabled</div></div>`));
 		$(".stream-dice-button").off().on("click", function(){
 			if(window.JOINTHEDICESTREAM){
@@ -503,7 +504,12 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
 			}
 			setTimeout(function(){
-				if(sendToText != "Everyone") {
+				if(sendToText == "Dungeon Master"){
+					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
 						streamid: window.MYSTREAMID
 					});
@@ -522,6 +528,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		$('.stream-dice-button').toggleClass("enabled", false);
 		$("[id^='streamer-']").remove();
 		window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
+			to: "everyone",
 			from: window.MYSTREAMID
 		})
 		for (let peer in window.STREAMPEERS) {

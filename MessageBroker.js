@@ -52,6 +52,10 @@ function addVideo(stream,streamerid) {
 	$("#site").append(dicecanvas);
 	
 	
+	window.MB.sendMessage("custom/myVTT/whatsyourdicerolldefault", {
+		to: streamerid,
+		from: window.MYSTREAMID
+	});
 	
 	let canvas=dicecanvas.get(0);
 	let ctx=canvas.getContext('2d');
@@ -641,17 +645,42 @@ class MessageBroker {
 						peer.addIceCandidate(msg.data.ice);
 					 },500); // ritardalo un po'
 			}
+			if(msg.eventType == "custom/myVTT/whatsyourdicerolldefault"){
+				if( !window.JOINTHEDICESTREAM)
+					return;
+				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+					return;
+				let sendToText = gamelog_send_to_text()	
+				if(sendToText == "Everyone") {
+					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+						streamid: window.MYSTREAMID
+					});		
+				}
+				else if(sendToText == "Dungeon Master"){
+					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+				else{
+					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+			}
+
 			if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
-				$("[id^='streamer-"+msg.data.from+"']").remove();
-				window.STREAMPEERS[msg.data.from].close();
-				delete window.STREAMPEERS[msg.data.from]
+				if(window.STREAMPEERS[msg.data.from] === undefined || (msg.data.to != "everyone" && msg.data.to != window.MYSTREAMID)){
+				 return;
+				}	
+					$("[id^='streamer-"+msg.data.from+"']").remove();
+					window.STREAMPEERS[msg.data.from].close();
+					delete window.STREAMPEERS[msg.data.from]
 			}
 			if(msg.eventType == "custom/myVTT/disabledicestream"){
 				enable_dice_streaming_feature(false);
 			}
 
 			if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
-					console.log("custom/myVTT/showonlytodmdicestream");
 				if(!window.DM){		
 					hideVideo(msg.data.streamid);
 				}		
@@ -660,11 +689,9 @@ class MessageBroker {
 				}
 			}
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
-					console.log("custom/myVTT/hidemydicestream");
 					hideVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/revealmydicestream"){
-					console.log("custom/myVTT/revealmydicestream");
 					revealVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
@@ -699,6 +726,10 @@ class MessageBroker {
 						console.log("DELETING PEER "+msg.data.from);
 						delete window.STREAMPEERS[msg.data.from];
 						$("#streamer-canvas-"+msg.data.from).remove();
+						window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
+							to: msg.data.from,
+							from: window.MYSTREAMID
+						})
 					}
 				};
 			  try {
@@ -758,6 +789,10 @@ class MessageBroker {
 						console.log("DELETING PEER "+msg.data.from);
 						delete window.STREAMPEERS[msg.data.from];
 						$("#streamer-canvas-"+msg.data.from).remove();
+						window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
+							to: msg.data.from,
+							from: window.MYSTREAMID
+						})
 					}
 				};
 		
