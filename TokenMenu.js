@@ -158,6 +158,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
 				open_player_sheet(token.options.id);
+				$("#tokenOptionsClickCloseDiv").click();
 			});
 			body.append(button);
 		} else if (token.isMonster()) {
@@ -329,10 +330,6 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			}
 		});
-	
-	$("#tokenOptionsPopup").mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
 
 	moveableTokenOptions.css("left", Math.max(e.clientX - 245, 0) + 'px');
 
