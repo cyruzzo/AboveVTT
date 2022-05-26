@@ -48,7 +48,8 @@ function addVideo(stream,streamerid) {
 	dicecanvas.css("z-index",60000);
 	dicecanvas.css("touch-action","none");
 	dicecanvas.css("pointer-events","none");
-	dicecanvas.css("filter", "drop-shadow(-16px 18px 15px black)")
+	dicecanvas.css("filter", "drop-shadow(-16px 18px 15px black)");
+	dicecanvas.css("clip-path", "inset(2px 2px 2px 2px)");
 	$("#site").append(dicecanvas);
 	
 	
