@@ -118,39 +118,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	$('body').append(tokenOptionsClickCloseDiv);
 
 	// stat block / character sheet
-	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
-	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
 
-	if(window.DM || (tokens.length == 1 && (tokens[0].isPlayer() || (tokens[0].options.player_owned && !tokens[0].isPlayer())))) {
-		body.append(toTopMenuButton);
-		body.append(toBottomMenuButton);
-
-		toTopMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-					}		
-				});
-				token.place_sync_persist();
-			});
-		});
-
-		toBottomMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {			
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-					}		
-				});
-				token.place_sync_persist();
-			});
-		});
-	}
 
 	if (tokens.length === 1) {
 		let token = tokens[0];
@@ -158,7 +126,6 @@ function token_context_menu_expanded(tokenIds, e) {
 			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
 				open_player_sheet(token.options.id);
-				$("#tokenOptionsClickCloseDiv").click();
 			});
 			body.append(button);
 		} else if (token.isMonster()) {
@@ -221,7 +188,40 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(hiddenMenuButton);
 	}
-	
+
+	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
+	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
+
+	if(window.DM || (tokens.length == 1 && (tokens[0].isPlayer() || (tokens[0].options.player_owned && !tokens[0].isPlayer())))) {
+		body.append(toTopMenuButton);
+		body.append(toBottomMenuButton);
+
+		toTopMenuButton.off().on("click", function(tokenIds){
+			tokens.forEach(token => {
+				$(".token").each(function(){	
+					let tokenId = $(this).attr('data-id');	
+					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
+					}		
+				});
+				token.place_sync_persist();
+			});
+		});
+
+		toBottomMenuButton.off().on("click", function(tokenIds){
+			tokens.forEach(token => {			
+				$(".token").each(function(){	
+					let tokenId = $(this).attr('data-id');	
+					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+					}		
+				});
+				token.place_sync_persist();
+			});
+		});
+	}
 
 	if (tokens.length === 1) {
 		body.append(build_menu_stat_inputs(tokenIds));
@@ -330,14 +330,18 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			}
 		});
+	
+	$("#tokenOptionsPopup").mousedown(function() {
+		frame_z_index_when_click($(this));
+	});
 
-	moveableTokenOptions.css("left", Math.max(e.clientX - 245, 0) + 'px');
+	moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
 
 	if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
 		moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
 	}
 	else {
-		moveableTokenOptions.css("top", e.clientY + 'px');
+		moveableTokenOptions.css("top", e.clientY - 10 + 'px');
 	}	
 }
 
