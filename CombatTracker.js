@@ -149,7 +149,7 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			if($(".iframe-encounter-combat-tracker").css("z-index")>9999) {
+			if($("#resizeDragMon:not(.hideMon)").length>0) {
 				$("[data-current][data-monster] button.openSheetCombatButton").click();
 			}
 		}
