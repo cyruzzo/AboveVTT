@@ -1694,6 +1694,26 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
 }
 
+.aoe-shape-circle {
+    border-radius: 50%;
+}
+
+.aoe-shape-cone{
+    /* Do something for this */
+}
+
+.aoe-color-water{
+    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    box-shadow: inset -20px -20px 2px 1000px rgba(10, 220, 235, 0.49);
+}
+
+.aoe-token-tileable {
+    height: 100%;
+    width: 100%;
+    opacity: 50%;
+    background-repeat: repeat;
+}
+
 .markers-icon:before,
 .context-menu-markers-icon:before {
     display: inline-block;
@@ -3004,7 +3024,7 @@ button.avtt-roll-button {
 .menu-outer-aura h3,
 .menu-inner-aura h3{
     min-width: 50px;
-    margin-top: 0px;menu-inner-aura
+    margin-top: 0px;
 }
 
 #round_number_label{

@@ -983,24 +983,38 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
-			
-			if(old.find("img").attr("src")!=this.options.imgsrc){
-				old.find("img").attr("src",this.options.imgsrc);
-			}
-		
-			if(this.options.disableborder){
-				old.find("img").css("border-width","0");
+			if (!this.options.imgsrc.startsWith("class=")){
+				if(old.find("img").attr("src")!=this.options.imgsrc){
+					old.find("img").attr("src",this.options.imgsrc);
+				}
+				if(this.options.disableborder){
+					old.find("img").css("border-width","0");
+				}
+				if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
+					old.find("img").addClass("token-round");
+				}
+				
+				if(old.find("img").hasClass('token-round') && (this.options.square) ){
+					old.find("img").removeClass("token-round");
+				}
+				if(this.options.legacyaspectratio == false) {
+					// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
+					old.find("img").addClass("preserve-aspect-ratio");
+				} else {
+					// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
+					// if the option is true, the user actively enabled the option
+					old.find("img").removeClass("preserve-aspect-ratio");
+				}
+
+
+			} else{
+				// token is an aoe div that uses styles instead of an image
+				// do something with it maybe?
+				// re-calc the border width incase the token has changed size
+				old.find(['data-img']).css(`transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${borderWidth}px solid black;`)
 			}
 			
 			setTokenAuras(old, this.options);
-
-			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
-				old.find("img").addClass("token-round");
-			}
-			
-			if(old.find("img").hasClass('token-round') && (this.options.square) ){
-				old.find("img").removeClass("token-round");
-			}
 
 			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
 				old.draggable("disable");
@@ -1015,15 +1029,6 @@ class Token {
 
 			this.update_health_aura(old);
 
-			if(this.options.legacyaspectratio == false) {
-				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
-				old.find("img").addClass("preserve-aspect-ratio");
-			} else {
-				// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
-				// if the option is true, the user actively enabled the option
-				old.find("img").removeClass("preserve-aspect-ratio");
-			}
-
 			// store custom token info if available
 			if (typeof this.options.tokendatapath !== "undefined" && this.options.tokendatapath != "") {
 				old.attr("data-tokendatapath", this.options.tokendatapath);
@@ -1031,13 +1036,11 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			// console.groupEnd()
+			console.groupEnd()
 		}
 		else { // adding a new token
 			// console.group("new token")
 			var tok = $("<div/>");
-			var hpbar = $("<input class='hpbar'>");
-			let scale = this.get_token_scale()
 			let imageScale = this.options.imageSize;
 			
 			var bar_height = Math.floor(this.options.size * 0.2);
@@ -1052,14 +1055,40 @@ class Token {
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
 			}
-			let imgClass = 'token-image';
-			if(this.options.legacyaspectratio == false) {
-				imgClass = 'token-image preserve-aspect-ratio';
+			let tokenImage
+			// token doesn't use classes as an image
+			if (!this.options.imgsrc.startsWith("class=")){
+				let imgClass = 'token-image';
+				if(this.options.legacyaspectratio == false) {
+					imgClass = 'token-image preserve-aspect-ratio';
+				}
+				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+				if(!(this.options.square)){
+					tokenImage.addClass("token-round");
+				}
+				
+				tokenImage.attr("src", this.options.imgsrc);
+
+				if(this.options.disableborder)
+					tokenImage.css("border-width","0");
+				
+				tokenImage.css("max-height", this.options.size);
+				tokenImage.css("max-width", this.options.size);
+
+			} else {
+				// token is using classes instead of an image
+				const borderWidth = parseInt(this.options.size * 0.025)
+				tokenImage = $(
+					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${borderWidth}px solid black;'
+					 class='${this.options.imgsrc.replace("class=","")}'
+					 </div>
+					`)
+					// will need to do something when aoe isn't aligned.
+				
+				tokenImage.css("border", `${borderWidth}px solid black`)
 			}
-			var tokimg = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
-			if(!(this.options.square)){
-				tokimg.addClass("token-round");
-			}
+			tok.append(tokenImage);
+			tok.attr("data-id", this.options.id);
 
 
 
@@ -1071,22 +1100,11 @@ class Token {
 			tok.width(this.options.size);
 			tok.height(this.options.size);
 			tok.addClass('token');
-
-			tok.append(tokimg);
-
-
-			tok.attr("data-id", this.options.id);
-			tokimg.attr("src", this.options.imgsrc);
-			tokimg.css("max-height", this.options.size);
-			tokimg.css("max-width", this.options.size);
-		
-
 			tok.addClass("VTTToken");
 
 			this.update_health_aura(tok);
 
-			if(this.options.disableborder)
-				tokimg.css("border-width","0");
+			
 				
 			tok.css("position", "absolute");
 			tok.css("--z-index-diff", zindexdiff);
@@ -1562,7 +1580,12 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...tokenObject
 	};
-	options.imgsrc = parse_img(options.imgsrc);
+	if (options.imgsrc.startsWith("class")){
+		// token is a div aoe token
+	}
+	else{
+		options.imgsrc = parse_img(options.imgsrc);
+	}
 
 	options.left = `${x}px`;
 	options.top = `${y}px`;
