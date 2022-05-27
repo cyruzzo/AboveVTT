@@ -3788,7 +3788,7 @@ button.avtt-roll-button {
     width: calc(40% + 3px)
 }
 #mixer-channels .audio-row input{
-    top: 13px;
+    top: 8px;
 }
 #mixer-channels .audio-row{
     margin-left: 5px;
