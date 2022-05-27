@@ -3753,3 +3753,109 @@ button.avtt-roll-button {
     0%  {-webkit-transform: rotate(0deg);}
     100% {-webkit-transform: rotate(360deg);}
 }
+
+/*Audio Mixer Start*/
+.channel-progress-bar-total:hover .channel-progress-bar-progress,
+.channel-progress-bar-total:hover
+{
+    height:5px !important;
+    transition: 100ms height 100ms;
+}
+#sounds-panel .channel-progress-bar-progress{
+    background: #1b9af0 !important;
+}
+
+
+#sounds-panel .channel-progress-bar-total{
+    width: 35%;
+}
+#sounds-panel .volume-control{
+    width: 40%;
+}
+.audio-row input{
+    top: 4px;
+    position:relative;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 7px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+
+}
+#mixer-channels .volume-control{
+    left: 0;
+    width: calc(40% + 3px)
+}
+#mixer-channels .audio-row input{
+    top: 13px;
+}
+#mixer-channels .audio-row{
+    margin-left: 5px;
+}
+.audio-row input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 14px;
+    background: #1b9af0;
+    border-radius:5px;
+    cursor: pointer;
+}
+.mixer-play-pause-button,
+.track-play-pause-button,
+.mixer-clear-button,
+.channel-play-pause-button,
+.channel-loop-button {
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    color: rgb(111, 116, 120);
+    padding: 0px 0px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #000000;
+    opacity: 0.8;
+    outline: none;
+    background: rgb(235, 241, 245);
+    transform: scale(0.8);
+}
+.mixer-play-pause-button:focus,
+.track-play-pause-button:focus,
+.mixer-clear-button:focus,
+.channel-play-pause-button:focus,
+.channel-loop-button:focus {
+    outline: none;
+}
+
+.mixer-play-pause-button:hover,
+.track-play-pause-button:hover,
+.mixer-clear-button:hover,
+.channel-play-pause-button:hover,
+.channel-loop-button:hover  {
+    cursor: pointer;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+}
+
+.mixer-play-pause-button:active,
+.mixer-clear-button:active,
+.track-play-pause-button:active,
+.channel-play-pause-button:active,
+.channel-loop-button:active {
+  background-color: rgb(245, 248, 250);
+  box-shadow: none;
+  transform: translate(1px, 2px) scale(0.8);
+}
+.channel-play-pause-button,
+.channel-loop-button{
+    float:  right;
+    margin-right: 5px;
+}
+.mixer-play-pause-button.playing{
+
+}
+
+/*Audio Mixer End*/
