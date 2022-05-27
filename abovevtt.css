@@ -3802,6 +3802,27 @@ button.avtt-roll-button {
     border-radius:5px;
     cursor: pointer;
 }
+#sounds-panel .sidebar-panel-header{
+    background: #454d5a;
+    color: #ddd;
+}
+#sounds-panel .sidebar-panel-header svg,
+#sounds-panel .sidebar-panel-header button{
+border-radius: 50%;
+    background: #454d5a;
+    box-shadow: 2px 1px 1px 2px #fff6, 1px 2px 0px -2px #fff6;
+    filter: drop-shadow(1px 1px 1px #000d);
+    border: 1px solid #fff6;
+    border-width: 0px 0px 0px 1px;
+}
+#sounds-panel .sidebar-panel-header svg path{
+    fill: #ddd;
+}
+div#sounds-panel {
+    overflow-y: visible;
+}
+
+
 .mixer-play-pause-button,
 .track-play-pause-button,
 .mixer-clear-button,
@@ -3854,6 +3875,18 @@ button.avtt-roll-button {
     float:  right;
     margin-right: 5px;
 }
+.mixer-clear-button{
+    position: absolute;
+    top: 17px;
+    right: 6px;
+}
+
+.mixer-play-pause-button{
+    position: absolute;
+    top: 17px;
+    left: 51px;
+}
+
 .mixer-play-pause-button.playing{
 
 }
