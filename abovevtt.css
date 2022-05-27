@@ -3793,14 +3793,20 @@ button.avtt-roll-button {
 #mixer-channels .audio-row{
     margin-left: 5px;
 }
-.audio-row input::-webkit-slider-thumb {
+.audio-row input::-webkit-slider-thumb,
+.audio-row input::-moz-range-thumb {
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     width: 4px;
-    height: 14px;
-    background: #1b9af0;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
     border-radius:5px;
     cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
 }
 #sounds-panel .sidebar-panel-header{
     background: #454d5a;
@@ -3808,20 +3814,24 @@ button.avtt-roll-button {
 }
 #sounds-panel .sidebar-panel-header svg,
 #sounds-panel .sidebar-panel-header button{
-border-radius: 50%;
+    border-radius: 50%;
     background: #454d5a;
-    box-shadow: 2px 1px 1px 2px #fff6, 1px 2px 0px -2px #fff6;
-    filter: drop-shadow(1px 1px 1px #000d);
-    border: 1px solid #fff6;
-    border-width: 0px 0px 0px 1px;
 }
+#sounds-panel .sidebar-panel-header button{
+    box-shadow: 2px 1px 1px 2px #0009, 1px 2px 0px -2px #0003;
+    border: 1px solid #fff6;
+}
+#sounds-panel .sidebar-panel-header button:active{
+    box-shadow: 2px 1px 1px 2px #0000, 1px 2px 0px -2px #0000;
+    border: 1px solid tranparent;
+}
+
 #sounds-panel .sidebar-panel-header svg path{
     fill: #ddd;
 }
 div#sounds-panel {
     overflow-y: visible;
 }
-
 
 .mixer-play-pause-button,
 .track-play-pause-button,
