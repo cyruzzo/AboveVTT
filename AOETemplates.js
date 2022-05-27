@@ -25,7 +25,7 @@ function setup_aoe_button() {
     aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
 
     aoe_menu.append("<div class='menu-subtitle'>Size</div>");
-    aoe_menu.append("<div><input tabindex='2' id='aoe_feet' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>");
+    aoe_menu.append("<div><input min'1' tabindex='2' id='aoe_feet' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>");
 
     aoe_menu.append("<div class='menu-subtitle'>Color</div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_default' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor remembered-selection ddbc-tab-options__header-heading--is-active'>Default</div></div>");
@@ -33,10 +33,23 @@ function setup_aoe_button() {
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_dark' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Dark</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_green' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Green</div></div>");
 
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newwater' data-type='water' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Water</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newlava' data-type='lava' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Lava</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newradiant' data-type='radiant' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newradiant' data-type='radiant2' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant2</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newchaos' data-type='chaos' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Chaos</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newpoison' data-type='poison' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Poison</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newnecrotic' data-type='necrotic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Necrotic</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newice' data-type='ice' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Ice</div></div>");
+
     aoe_menu.append("<div class='menu-subtitle'>Shape</div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_cone' class='aoeshape ddbc-tab-options__header-heading'>Cone</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_square' class='aoeshape ddbc-tab-options__header-heading'>Square</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_circle'class='aoeshape ddbc-tab-options__header-heading'>Circle</div></div>");
+
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_newsquare' data-shape='square' class='aoeshape ddbc-tab-options__header-heading'>New Sq</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_newcircle' data-shape='circle' class='aoeshape ddbc-tab-options__header-heading'>New Circle</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_newcone' data-shape='cone' class='aoeshape ddbc-tab-options__header-heading'>New Cone</div></div>");
 
     aoe_menu.css("position", "fixed");
     aoe_menu.css("top", "25px");
@@ -57,8 +70,8 @@ function setup_aoe_button() {
     });
 
     $(".aoeshape").click(function (e) {
-        const color = $(".aoe-option.remembered-selection").attr('id').split('_')[1];
-        const shape = this.id.split("_")[1];
+        let color = $(".aoe-option.remembered-selection").attr('id').split('_')[1];
+        let shape = this.id.split("_")[1];
         let feet = document.getElementById("aoe_feet").value
 
         // refocus size box if size is 0
@@ -66,8 +79,14 @@ function setup_aoe_button() {
             $("#aoe_feet").focus();
             return;
         }
-
-        drop_aoe_token(color, shape, feet);
+        if(this.id.includes("new")){
+            shape = $(this).attr("data-shape") 
+            color = $(".aoe-option.remembered-selection").attr("data-type")
+            drop_aoe_token(color, shape, feet, true);
+    
+        }else{
+            drop_aoe_token(color, shape, feet);
+        }
 
         if(window.DM){
             $('#select-button').click();
@@ -82,64 +101,64 @@ function is_feet_valid(feet) {
     return parseInt(feet) > 0;
 }
 
-function drop_aoe_token(color, shape, feet) {
+function drop_aoe_token(color, shape, feet, isNew=false) {
+    if (!isNew){
+        // support 13 damage types, for now most things will be default,
+        // but this should make it easier to add more template colors as they come in
+        switch(color) {
+            case "slashing":
+                color = "default";
+                break;
+            case "piercing":
+                color = "default";
+                break;
+            case "bludgeoning":
+                color = "default";
+                break;
+            case "poison":
+                color = "green";
+                break;
+            case "acid":
+                color = "green";
+                break;
+            case "fire":
+                color = "fire";
+                break;
+            case "cold":
+                color = "default";
+                break;
+            case "radiant":
+                color = "fire";
+                break;
+            case "necrotic":
+                color = "dark";
+                break;
+            case "lightning":
+                color = "default";
+                break;
+            case "thunder":
+                color = "default";
+                break;
+            case "force":
+                color = "default";
+                break;
+            case "psychic":
+                color = "default";
+                break;
+        }
 
-    // support 13 damage types, for now most things will be default,
-    // but this should make it easier to add more template colors as they come in
-    switch(color) {
-        case "slashing":
-            color = "default";
-            break;
-        case "piercing":
-            color = "default";
-            break;
-        case "bludgeoning":
-            color = "default";
-            break;
-        case "poison":
-            color = "green";
-            break;
-        case "acid":
-            color = "green";
-            break;
-        case "fire":
-            color = "fire";
-            break;
-        case "cold":
-            color = "default";
-            break;
-        case "radiant":
-            color = "fire";
-            break;
-        case "necrotic":
-            color = "dark";
-            break;
-        case "lightning":
-            color = "default";
-            break;
-        case "thunder":
-            color = "default";
-            break;
-        case "force":
-            color = "default";
-            break;
-        case "psychic":
-            color = "default";
-            break;
+        // normalize shape
+        switch(shape) {
+            case "cube":
+                shape = "square";
+                break;
+            case "sphere":
+                shape = "circle";
+                break;
+            case "cylinder":
+                shape = "circle";
+        }
     }
-
-    // normalize shape
-    switch(shape) {
-        case "cube":
-            shape = "square";
-            break;
-        case "sphere":
-            shape = "circle";
-            break;
-        case "cylinder":
-            shape = "circle";
-    }
-
     // don't create a token if the size isn't valid
     if (!is_feet_valid(feet)) {
         throw "failed to create aoe token, feet is invalid: " + feet;
@@ -154,13 +173,20 @@ function drop_aoe_token(color, shape, feet) {
     }
 
     console.log(`dropping aoe token: color ${color}, shape ${shape}, feet ${feet}`);
+    let image
+    if (!isNew){
+        image = AOE_TEMPLATES[`${color}-${shape}`]
+    }
+    else{
+        image = [`class=aoe-token-tileable aoe-color-${color} aoe-shape-${shape}`, `class=aoe-border-${color}`]
+    }
 
     let atts = {
         disablestat: true,
         hidestat: true,
         disableborder: true,
         square: true,
-        imgsrc: AOE_TEMPLATES[`${color}-${shape}`],
+        imgsrc: image,
         size: Math.round(size),
         restrictPlayerMove: false,
         hidden: false,

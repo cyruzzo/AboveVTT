@@ -224,6 +224,7 @@ class Token {
 		var tokenElement = $("#tokens").find(selector);
 		
 		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
+		tokenElement.children(["data-img"]).css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -890,7 +891,15 @@ class Token {
 		var self = this;
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
+		// used by aoe tokens
+		const aoeBorderWith = parseInt(this.options.size * 0.025)
 
+		let scale = this.get_token_scale();
+		let imageScale = this.options.imageSize;
+		let rotation = 0;
+		if (this.options.rotation != undefined) {
+			rotation = this.options.rotation;
+		}
 
 		if (old.length > 0) {
 			console.group("old token")
@@ -916,12 +925,7 @@ class Token {
 
 			// CONCENTRATION REMINDER
 
-			let scale = this.get_token_scale();
-			let imageScale = this.options.imageSize;
-			var rotation = 0;
-			if (this.options.rotation != undefined) {
-				rotation = this.options.rotation;
-			}
+			
 			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 	
@@ -998,24 +1002,39 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
-			
-			if(old.find("img").attr("src")!=this.options.imgsrc){
-				old.find("img").attr("src",this.options.imgsrc);
-			}
-		
-			if(this.options.disableborder){
-				old.find("img").css("border-width","0");
+			// token uses an image for it's image
+			if (!Array.isArray(this.options.imgsrc)){
+				if(old.find("img").attr("src")!=this.options.imgsrc){
+					old.find("img").attr("src",this.options.imgsrc);
+				}
+				if(this.options.disableborder){
+					old.find("img").css("border-width","0");
+				}
+				if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
+					old.find("img").addClass("token-round");
+				}
+				
+				if(old.find("img").hasClass('token-round') && (this.options.square) ){
+					old.find("img").removeClass("token-round");
+				}
+				if(this.options.legacyaspectratio == false) {
+					// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
+					old.find("img").addClass("preserve-aspect-ratio");
+				} else {
+					// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
+					// if the option is true, the user actively enabled the option
+					old.find("img").removeClass("preserve-aspect-ratio");
+				}
+
+
+			} else{
+				// token is an aoe div that uses styles instead of an image
+				// do something with it maybe?
+				// re-calc the border width incase the token has changed size
+				old.find(['data-img']).css(`transform:scale("${imageScale}") rotate("${rotation}deg");`) // border: ${aoeBorderWith}px solid black;`)
 			}
 			
 			setTokenAuras(old, this.options);
-
-			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
-				old.find("img").addClass("token-round");
-			}
-			
-			if(old.find("img").hasClass('token-round') && (this.options.square) ){
-				old.find("img").removeClass("token-round");
-			}
 
 			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
 				old.draggable("disable");
@@ -1030,15 +1049,6 @@ class Token {
 
 			this.update_health_aura(old);
 
-			if(this.options.legacyaspectratio == false) {
-				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
-				old.find("img").addClass("preserve-aspect-ratio");
-			} else {
-				// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
-				// if the option is true, the user actively enabled the option
-				old.find("img").removeClass("preserve-aspect-ratio");
-			}
-
 			// store custom token info if available
 			if (typeof this.options.tokendatapath !== "undefined" && this.options.tokendatapath != "") {
 				old.attr("data-tokendatapath", this.options.tokendatapath);
@@ -1046,14 +1056,11 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			// console.groupEnd()
+			console.groupEnd()
 		}
 		else { // adding a new token
 			// console.group("new token")
 			var tok = $("<div/>");
-			var hpbar = $("<input class='hpbar'>");
-			let scale = this.get_token_scale()
-			let imageScale = this.options.imageSize;
 			
 			var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
@@ -1063,18 +1070,59 @@ class Token {
 			var fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
 
-			var rotation = 0;
-			if (this.options.rotation != undefined) {
-				rotation = this.options.rotation;
+			let tokenImage
+			// new aoe tokens use arrays as imsrc
+			if (!Array.isArray(this.options.imgsrc)){
+				let imgClass = 'token-image';
+				if(this.options.legacyaspectratio == false) {
+					imgClass = 'token-image preserve-aspect-ratio';
+				}
+				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+				if(!(this.options.square)){
+					tokenImage.addClass("token-round");
+				}
+				
+				tokenImage.attr("src", this.options.imgsrc);
+
+				if(this.options.disableborder)
+					tokenImage.css("border-width","0");
+				
+				tokenImage.css("max-height", this.options.size);
+				tokenImage.css("max-width", this.options.size);
+
+			} else {
+				// token is using classes instead of an image
+				// border: ${aoeBorderWidth}px solid black;'
+				const aoeBorderWidth = parseInt(this.options.size * 0.025)
+				tokenImage = $(
+					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg")'; 
+					 class='${this.options.imgsrc[0].replace("class=","").trim()}'
+					 </div>
+					`)
+					// will need to do something when aoe isn't aligned.
 			}
-			let imgClass = 'token-image';
-			if(this.options.legacyaspectratio == false) {
-				imgClass = 'token-image preserve-aspect-ratio';
+			tok.append(tokenImage);
+			const borders = []
+			if (this.options.imgsrc[0].includes("cone")){
+				const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const leftBorder = $(`<div class='aoe-border aoe-border-left-cone ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const rightBorder = $(`<div class='aoe-border aoe-border-right-cone ${this.options.imgsrc[1].replace("class=","")}'></div>`)	
+				borders.push(bottomBorder, leftBorder, rightBorder)
 			}
-			var tokimg = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
-			if(!(this.options.square)){
-				tokimg.addClass("token-round");
+			else{
+				const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const topBorder = $(`<div class='aoe-border aoe-border-top ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const leftBorder = $(`<div class='aoe-border aoe-border-left ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const rightBorder = $(`<div class='aoe-border aoe-border-right ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				borders.push(bottomBorder, leftBorder, rightBorder, topBorder)
 			}
+			
+			tokenImage.append([...borders])
+			// tokenImage.append(topBorder)
+			// tokenImage.append(leftBorder)
+			// tokenImage.append(rightBorder)
+
+			tok.attr("data-id", this.options.id);
 
 
 
@@ -1086,7 +1134,6 @@ class Token {
 			tok.width(this.sizeWidth());
 			tok.height(this.sizeHeight());
 			tok.addClass('token');
-
 			tok.append(tokimg);
 
 
@@ -1095,13 +1142,11 @@ class Token {
 			tokimg.css("max-height", this.sizeHeight());
 			tokimg.css("max-width", this.sizeWidth());
 		
-
 			tok.addClass("VTTToken");
 
 			this.update_health_aura(tok);
 
-			if(this.options.disableborder)
-				tokimg.css("border-width","0");
+			
 				
 			tok.css("position", "absolute");
 			tok.css("--z-index-diff", zindexdiff);
@@ -1374,7 +1419,7 @@ class Token {
 				tok.removeClass("ui-state-disabled");
 			}
 
-			tok.find(".token-image").dblclick(function(e) {
+			tok.find(".token-image,[data-img]").dblclick(function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
 					id: self.options.id
@@ -1382,7 +1427,7 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
-			tok.find(".token-image").click(function() {
+			tok.find(".token-image,[data-img]").click(function() {
 				let parentToken = $(this).parent(".VTTToken");
 				if (parentToken.hasClass("pause_click")) {
 					return;
@@ -1577,7 +1622,10 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...tokenObject
 	};
-	options.imgsrc = parse_img(options.imgsrc);
+	// aoe tokens have classes instead of images
+	if (!Array.isArray(options.imgsrc)){
+		options.imgsrc = parse_img(options.imgsrc);
+	}
 
 	options.left = `${x}px`;
 	options.top = `${y}px`;
