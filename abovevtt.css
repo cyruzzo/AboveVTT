@@ -3793,10 +3793,23 @@ button.avtt-roll-button {
 #mixer-channels .audio-row{
     margin-left: 5px;
 }
-.audio-row input::-webkit-slider-thumb,
-.audio-row input::-moz-range-thumb {
+.audio-row input::-webkit-slider-thumb{
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+
+.audio-row input::-moz-range-thumb {
+-moz-appearance: none;
     appearance: none;
     width: 4px;
     height: 13px;
