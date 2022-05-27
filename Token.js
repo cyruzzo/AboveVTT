@@ -988,7 +988,7 @@ class Token {
 				old.removeClass("tokenselected");
 			}
 			// token uses an image for it's image
-			if (!this.options.imgsrc.startsWith("class=")){
+			if (!Array.isArray(this.options.imgsrc)){
 				if(old.find("img").attr("src")!=this.options.imgsrc){
 					old.find("img").attr("src",this.options.imgsrc);
 				}
@@ -1016,7 +1016,7 @@ class Token {
 				// token is an aoe div that uses styles instead of an image
 				// do something with it maybe?
 				// re-calc the border width incase the token has changed size
-				old.find(['data-img']).css(`transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${aoeBorderWith}px solid black;`)
+				old.find(['data-img']).css(`transform:scale("${imageScale}") rotate("${rotation}deg");`) // border: ${aoeBorderWith}px solid black;`)
 			}
 			
 			setTokenAuras(old, this.options);
@@ -1056,8 +1056,8 @@ class Token {
 			tok.css("font-size",fs);
 
 			let tokenImage
-			// token doesn't use classes as an image
-			if (!this.options.imgsrc.startsWith("class=")){
+			// new aoe tokens use arrays as imsrc
+			if (!Array.isArray(this.options.imgsrc)){
 				let imgClass = 'token-image';
 				if(this.options.legacyaspectratio == false) {
 					imgClass = 'token-image preserve-aspect-ratio';
@@ -1077,15 +1077,36 @@ class Token {
 
 			} else {
 				// token is using classes instead of an image
+				// border: ${aoeBorderWidth}px solid black;'
 				const aoeBorderWidth = parseInt(this.options.size * 0.025)
 				tokenImage = $(
-					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg"); border: ${aoeBorderWidth}px solid black;'
-					 class='${this.options.imgsrc.replace("class=","")}'
+					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg")'; 
+					 class='${this.options.imgsrc[0].replace("class=","").trim()}'
 					 </div>
 					`)
 					// will need to do something when aoe isn't aligned.
 			}
 			tok.append(tokenImage);
+			const borders = []
+			if (this.options.imgsrc[0].includes("cone")){
+				const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const leftBorder = $(`<div class='aoe-border aoe-border-left-cone ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const rightBorder = $(`<div class='aoe-border aoe-border-right-cone ${this.options.imgsrc[1].replace("class=","")}'></div>`)	
+				borders.push(bottomBorder, leftBorder, rightBorder)
+			}
+			else{
+				const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const topBorder = $(`<div class='aoe-border aoe-border-top ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const leftBorder = $(`<div class='aoe-border aoe-border-left ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				const rightBorder = $(`<div class='aoe-border aoe-border-right ${this.options.imgsrc[1].replace("class=","")}'></div>`)
+				borders.push(bottomBorder, leftBorder, rightBorder, topBorder)
+			}
+			
+			tokenImage.append([...borders])
+			// tokenImage.append(topBorder)
+			// tokenImage.append(leftBorder)
+			// tokenImage.append(rightBorder)
+
 			tok.attr("data-id", this.options.id);
 
 
@@ -1579,7 +1600,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...tokenObject
 	};
 	// aoe tokens have classes instead of images
-	if (!options.imgsrc.startsWith("class")){
+	if (!Array.isArray(options.imgsrc)){
 		options.imgsrc = parse_img(options.imgsrc);
 	}
 

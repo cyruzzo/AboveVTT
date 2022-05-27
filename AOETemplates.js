@@ -33,14 +33,14 @@ function setup_aoe_button() {
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_dark' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Dark</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_green' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Green</div></div>");
 
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newwater' data-color='water' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Water</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newlava' data-color='lava' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Lava</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newradiant' data-color='radiant' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newradiant' data-color='radiant2' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant2</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newchaos' data-color='chaos' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Chaos</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newpoison' data-color='poison' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Poison</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newnecrotic' data-color='necrotic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Necrotic</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newice' data-color='ice' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Ice</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newwater' data-type='water' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Water</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newlava' data-type='lava' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Lava</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newradiant' data-type='radiant' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newradiant' data-type='radiant2' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant2</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newchaos' data-type='chaos' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Chaos</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newpoison' data-type='poison' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Poison</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newnecrotic' data-type='necrotic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Necrotic</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='3' id='aoe_newice' data-type='ice' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Ice</div></div>");
 
     aoe_menu.append("<div class='menu-subtitle'>Shape</div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div tabindex='1' id='aoe_cone' class='aoeshape ddbc-tab-options__header-heading'>Cone</div></div>");
@@ -81,7 +81,7 @@ function setup_aoe_button() {
         }
         if(this.id.includes("new")){
             shape = $(this).attr("data-shape") 
-            color = $(".aoe-option.remembered-selection").attr("data-color")
+            color = $(".aoe-option.remembered-selection").attr("data-type")
             drop_aoe_token(color, shape, feet, true);
     
         }else{
@@ -178,7 +178,7 @@ function drop_aoe_token(color, shape, feet, isNew=false) {
         image = AOE_TEMPLATES[`${color}-${shape}`]
     }
     else{
-        image = `class=aoe-token-tileable aoe-color-${color} aoe-shape-${shape}`
+        image = [`class=aoe-token-tileable aoe-color-${color} aoe-shape-${shape}`, `class=aoe-border-${color}`]
     }
 
     let atts = {

@@ -1694,6 +1694,46 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
 }
 
+.aoe-border {
+    width: 100%;
+    background-position-y: bottom;
+    height: 100%;
+    background-repeat: repeat-x;
+    position:absolute
+}
+
+.aoe-border-left-cone {
+    left: 15.5%;
+    top: 21%;
+    width: 110%;
+    transform: rotate(116.5deg);
+
+}
+
+.aoe-border-right-cone {
+    right: 15.5%;
+    top: 21%;
+    width: 110%;
+    transform: rotate(243.5deg);
+
+}
+
+.aoe-border-top {
+    transform: rotate(180deg);
+}
+.aoe-border-left {
+    transform: rotate(90deg);
+}
+.aoe-border-right {
+    transform: rotate(-90deg);
+}
+
+.aoe-border-water{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/979652128069021746/wave-border.png);
+    background-size: 100%;
+    filter: brightness(2.5);
+}
+
 .aoe-shape-circle {
     border-radius: 50%;
 }
