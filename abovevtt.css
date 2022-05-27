@@ -2761,6 +2761,47 @@ button.avtt-roll-button {
     width: 100%;
 }
 
+#sounds-panel .volume-control {
+    width: 50%;
+    float: right;
+}
+
+#sounds-panel .channel-progress-bar-total {
+    width: 100%;
+    position: relative;
+    height: 1px;
+    bottom: -1px;
+    left: 0px;
+    background: lightgray;
+}
+
+#sounds-panel .channel-progress-bar-progress {
+    width: 0%;
+    position: relative;
+    height: 1px;
+    bottom: 0px;
+    left: 0px;
+    background: #0075FF;
+}
+
+#sounds-panel .sidebar-panel-header {
+    padding: 4px;
+    border-bottom: 1px solid #2b2b2b;
+}
+
+#sounds-panel .audio-row  {
+    height: 25px;
+}
+
+#track-list li:hover {
+    background-color:lightskyblue;
+}
+
+#track-list button {
+    float: right;
+    height: 100%;
+}
+
 .MuiModal-root{
     pointer-events: none;
 }
