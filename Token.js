@@ -452,7 +452,16 @@ class Token {
 			'max-height': tokenHeight + 'px',
 		});
 
-
+		if(typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.options.custom_conditions.includes("Concentration(Reminder)")){
+			// CONCENTRATION REMINDER
+			var msgdata = {
+				player: this.options.name,
+				img: this.options.imgsrc,
+				text: "<b>Check for concentration!!</b>",
+			};
+			window.MB.inject_chat(msgdata);
+		}
+		
 		console.groupEnd()
 	}
 
@@ -903,7 +912,6 @@ class Token {
 				
 
 
-			// CONCENTRATION REMINDER
 
 			let scale = this.get_token_scale();
 			let imageScale = this.options.imageSize;
