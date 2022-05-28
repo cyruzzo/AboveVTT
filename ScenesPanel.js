@@ -278,16 +278,36 @@ function edit_scene_dialog(scene_id) {
 						form_toggle("dm_map_usable",null, false, handle_basic_form_toggle_click)
 						)
 				);
+	let darknessValue = scene.darkness_filter || 0;
+	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
+	
+	darknessFilterRange.on(' input change', function(){
+   	 	let darknessPercent = 100 - darknessFilterRange.val();
+   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%")
+	});
+	darknessFilterRange.on(' mouseup', function(){
+   	 	let darknessPercent = 100 - darknessFilterRange.val();
+   	 	scene.darkness_filter = darknessPercent;
+	});
+
+	form.append(form_row(null,
+						'Darkness filter',
+						darknessFilterRange)
+	);
 	form.append(form_row(null, 'Snap to Grid',form_toggle("snap", null, false, function(event) {
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 			// it was checked. now it is no longer checked
 			$(event.currentTarget).removeClass("rc-switch-checked");
-			window.CURRENT_SCENE_DATA.snap = "0";		
+			if(window.ScenesHandler.current_scene_id == scene_id){
+				window.CURRENT_SCENE_DATA.snap = "0";	
+			}	
 		} else {
 			// it was not checked. now it is checked
 			$(event.currentTarget).removeClass("rc-switch-unknown");
 			$(event.currentTarget).addClass("rc-switch-checked");
-			window.CURRENT_SCENE_DATA.snap = "1";
+			if(window.ScenesHandler.current_scene_id == scene_id){
+				window.CURRENT_SCENE_DATA.snap = "1";
+			}	
 		}
 	})));
 
