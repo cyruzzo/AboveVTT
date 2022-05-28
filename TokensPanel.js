@@ -1273,7 +1273,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
         // token size
         let tokenSizeInput = build_token_size_input(tokenSize, function (newSize) {
-            console.log("do something with new token size", newSize)
+            myToken.tokenSize = newSize;
+            persist_my_tokens();
         });
         inputWrapper.append(tokenSizeInput);
         inputWrapper.append(`<div class="sidebar-panel-header-explanation" style="padding-bottom:6px;">The following will override global settings for this token. Global settings can be changed in the settings tab.</div>`)
