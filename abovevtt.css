@@ -1694,6 +1694,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
 }
 
+/* AOE BORDERS */
 .aoe-border {
     width: 100%;
     background-position-y: bottom;
@@ -1728,11 +1729,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     transform: rotate(-90deg);
 }
 
+.aoe-border-basic{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979787641631416411/backborder5.png);
+    background-size: 100px;
+    z-index: calc(5000 + var(--z-index-diff));
+}
+
+/* 
 .aoe-border-water{
     background-image: url(https://media.discordapp.net/attachments/954822823636009041/979652128069021746/wave-border.png);
-    background-size: 100%;
+    background-size: 272px;
     filter: brightness(2.5);
-}
+} */
+
+
+/* AOE SHAPES */
 
 .aoe-shape-circle {
     border-radius: 50%;
@@ -1742,46 +1753,56 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }
 
-.aoe-color-water{
+/* AOE STYLES */
+.aoe-style-acid{
     background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
-    box-shadow: inset -20px -20px 2px 1000px rgba(10, 220, 235, 0.49);
+    box-shadow: inset -20px -20px 2px 1000px rgba(10, 194, 235, 0.49);
 }
-
-.aoe-color-lava{
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2022/01/216-comp-512x512.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(235, 85, 10, 0.49);
+.aoe-style-bludgeoning{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
 }
-
-.aoe-color-radiant2 {
-    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/leopard-fur-texture-900x900.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(224, 217, 159, 0.49);
+.aoe-style-fire{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/979765607484506122/fire_background.png);
 }
-
-.aoe-color-radiant {
+.aoe-style-force{
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg);
+}
+.aoe-style-ice {
+    background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
+}
+.aoe-style-lightning{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979769717529137162/lightninig.png);
+}
+.aoe-style-nature{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/04/0527-1-512x512.jpg);
+}
+.aoe-style-necrotic {
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
+}
+.aoe-style-piercing{
+    background-image: url(https://previews.123rf.com/images/sylverarts/sylverarts1801/sylverarts180100741/92992928-horror-style-horrible-seamless-pattern-vector-background-blackthorn-branches-with-thorns-stylish-end.jpg);
+}
+.aoe-style-poison {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(54, 188, 1, 0.52);
+}
+.aoe-style-psychic {
+    background-image: url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(115, 10, 235, 0.49);
+}
+.aoe-style-radiant {
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/06/0097-512x512.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(224, 217, 159, 0.49);
     background-size: 200px
 }
-
-
-.aoe-color-chaos {
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/05/0092-512x512.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(85, 23, 88, 0.49);
+.aoe-style-slashing{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/980017219813654559/slashing.png);
 }
-
-.aoe-color-poison {
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(14, 129, 46, 0.49);
+.aoe-style-thunder{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/10/204-comp-512x512.jpg);
 }
-
-.aoe-color-ice {
-    background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(178, 238, 252, 0.52);   
-}
-.aoe-color-necrotic {
-    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(104, 1, 1, 0.52);
-    
+.aoe-style-water{
+    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    box-shadow: inset -20px -20px 2px 1000px rgba(109, 240, 105, 0.49);
 }
 
 /* other nice repeatables */
@@ -1793,6 +1814,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     opacity: 50%;
     background-repeat: repeat;
     background-size: 300px;
+    filter: blur(1.5px);
 }
 
 .markers-icon:before,
