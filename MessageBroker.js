@@ -1041,6 +1041,9 @@ class MessageBroker {
 			redraw_drawings();
 			apply_zoom_from_storage();
 
+   	 	let darknessPercent = 100 - window.CURRENT_SCENE_DATA.darkness_filter;
+   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%")
+
 			set_default_vttwrapper_size()
 			if(!window.DM)
 				check_token_visibility();

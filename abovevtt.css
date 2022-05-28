@@ -3712,3 +3712,12 @@ button.avtt-roll-button {
     0%  {-webkit-transform: rotate(0deg);}
     100% {-webkit-transform: rotate(360deg);}
 }
+
+#scene_map{
+    filter: brightness(var(--darkness-filter));
+}
+.aura-element{
+    mix-blend-mode: overlay;
+}
+
+
