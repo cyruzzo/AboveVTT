@@ -390,7 +390,7 @@ class Token {
 		let tokenWidth = this.options.size;
 		let tokenHeight = this.options.size;
 			
-		if(tokenData.disableaura) {
+		if(tokenData.disableaura || !tokenData.hp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
 		} 
