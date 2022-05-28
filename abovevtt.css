@@ -3717,7 +3717,7 @@ button.avtt-roll-button {
     filter: brightness(var(--darkness-filter));
 }
 .aura-element{
-    mix-blend-mode: overlay;
+    mix-blend-mode: soft-light;
 }
 
 
