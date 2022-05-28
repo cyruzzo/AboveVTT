@@ -145,9 +145,16 @@ class Token {
 		return ct_list_tokens().includes(this.options.id);
 	}
 
-	size(newsize) {
+	size(newSize) {
 		this.update_from_page();
-		this.options.size = newsize;
+
+		if(this.options.size === "" && this.options.gridHeight > 0 && this.options.gridWidth > 0){
+			// token is not proportional such as a line aoe token
+			this.options.gridWidth = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps)); 
+		}
+		else{
+			this.options.size = newSize;
+		}
 		this.place_sync_persist()
 	}
 
@@ -222,9 +229,25 @@ class Token {
 
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
-		
+		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
-		tokenElement.children(["data-img"]).css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");
+		// keep the initial rotation of the aoe borders but add the new rotaton to it
+		// first get the current rotation
+		// https://css-tricks.com/get-value-of-css-rotation-through-javascript/
+		tokenElement.find(".aoe-border-top, .aoe-border-left, .aoe-border-right").each(function() {
+			const currentElement = $(this)
+			const currentTransform = $(currentElement).css("transform")
+			var v = currentTransform.split('(')[1],
+			v = v.split(')')[0],
+			v = v.split(',');
+			const currentAngle = Math.round(Math.asin(v[1]) * (180/Math.PI));
+			const newRotationFromPreviousRotation = Math.round((currentAngle + newRotation)/360)*360
+			
+			$(currentElement).css("transform", `scale(${imageScale}) rotate(${newRotationFromPreviousRotation}deg)`);
+		})
+		// aoe tokens img and bottom border can just follow the normal rotation method
+		tokenElement.find("[data-img], .aoe-border-bottom").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
+		
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
