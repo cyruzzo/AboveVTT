@@ -3716,8 +3716,51 @@ button.avtt-roll-button {
 #scene_map{
     filter: brightness(var(--darkness-filter));
 }
+.aura-element.haslightchild{
+    backdrop-filter: brightness(var(--light-filter));
+    /*animation: aurafx-flicker-no-blur 4s infinite alternate ease-in-out*/
+}
+.lightAura{
+    backdrop-filter: blur(var(--light-blur)) !important;
+    background-image: none !important;
+    top: 0px !important;
+    left: 0px !important;
+    mix-blend-mode: plus-lighter !important;
+    /*animation: aurafx-flicker 4s infinite alternate ease-in-out*/
+}
 .aura-element{
-    mix-blend-mode: soft-light;
+     mix-blend-mode:  soft-light;
 }
 
+@keyframes aurafx-flicker{
+    0%  {filter: blur(10px);transform:scale(1);}
+    10% {filter: blur(15px);transform:scale(1.01);}
+    20% {filter: blur(10px);transform:scale(0.99);}
+    30% {filter: blur(10px);transform:scale(1);}
+    40% {filter: blur(15px);transform:scale(0.99);}
+    50% {filter: blur(20px);transform:scale(1.01);}
+    60% {filter: blur(15px);transform:scale(0.99);}
+    70% {filter: blur(12px);transform:scale(1);}
+    80% {filter: blur(15px);transform:scale(0.99);}
+    90% {filter: blur(10px);transform:scale(1.01);}
+    100%{filter: blur(15px);transform:scale(1);}
+}
+@keyframes aurafx-flicker-no-blur{
+    0%  {transform:scale(1);}
+    10% {transform:scale(1.01);}
+    20% {transform:scale(0.99);}
+    30% {transform:scale(1);}
+    40% {transform:scale(0.99);}
+    50% {transform:scale(1.01);}
+    60% {transform:scale(0.99);}
+    70% {transform:scale(1);}
+    80% {transform:scale(0.99);}
+    90% {transform:scale(1.01);}
+    100%{transform:scale(1);}
+}
+
+.aurafx-flicker{
+    mix-blend-mode: plus-lighter;
+    animation: aurafx-flicker 4s infinite alternate ease-in-out
+}
 

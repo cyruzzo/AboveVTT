@@ -365,6 +365,9 @@ function build_token_auras_inputs(tokenIds) {
 	let hideAuraFromPlayers = tokens.map(t => t.options.hideaurafog);
 	let uniqueHideAuraFromPlayers = [...new Set(hideAuraFromPlayers)];
 
+	let auraLightValues = tokens.map(t => t.options.auraislight);
+	let uniqueAuraLightValues = [...new Set(auraLightValues)];
+
 
 
 	let auraIsEnabled = null;
@@ -374,6 +377,10 @@ function build_token_auras_inputs(tokenIds) {
 	let hideAuraIsEnabled = null;
 	if (uniqueHideAuraFromPlayers.length === 1) {
 		hideAuraIsEnabled = uniqueHideAuraFromPlayers[0];
+	}
+	let auraIsLightEnabled = null;
+	if (uniqueAuraLightValues.length === 1) {
+		auraIsLightEnabled = uniqueAuraLightValues[0];
 	}
 	let aura1Feet = tokens.map(t => t.options.aura1.feet);
 	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
@@ -440,7 +447,15 @@ function build_token_auras_inputs(tokenIds) {
 			wrapper.find(".token-config-aura-wrapper").hide();
 		}
 	});
-	wrapper.prepend(enabledAurasInput);	
+	wrapper.prepend(enabledAurasInput);
+	let auraIsLightInput = build_toggle_input("auraislight", "Change aura appearance to light", auraIsLightEnabled, "Token's aura is visually changed to look like light", "Default aura visual", function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});	
+	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
 	let hideAuraInFog = build_toggle_input("hideaurafog", "Hide aura when hidden in fog", hideAuraIsEnabled, "Token's aura is hidden from players when in fog", "Token's aura is visible to players when token is in fog", function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
@@ -451,6 +466,7 @@ function build_token_auras_inputs(tokenIds) {
 	if(window.DM) {
 		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInFog);
 	}
+	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledAurasInput);
 	if (auraIsEnabled) {

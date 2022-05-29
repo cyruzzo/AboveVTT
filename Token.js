@@ -1126,7 +1126,7 @@ class Token {
 				tok.append(cond_bar);
 			});
 
-			setTokenAuras(tok, this.options);
+			
 
 
 			$("#tokens").append(tok);
@@ -1134,6 +1134,8 @@ class Token {
 				opacity: newopacity
 			}, { duration: 3000, queue: false });
 
+			
+			setTokenAuras(tok, this.options);
 
 			let click = {
 				x: 0,
@@ -1772,7 +1774,21 @@ function setTokenAuras (token, options) {
 		}
 		else{
 			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
-			: token.parent().parent().find("#aura_" + tokenId).show()
+						: token.parent().parent().find("#aura_" + tokenId).show()
+		}
+		if(options.auraislight){
+			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
+			let auraClone = $("[id='aura_" + tokenId + "']").clone();
+			auraClone.addClass("lightAura");
+			$("[id='aura_" + tokenId + "']").append(auraClone);		
+			$("[id='aura_" + tokenId + "']").attr("style", auraStyles);				
+			let lightblur = totalSize/50 + "px";
+			$("[id='aura_" + tokenId + "']").css('--light-blur', lightblur);
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", true);
+		}
+		else{
+			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", false);
 		}
 
 		
