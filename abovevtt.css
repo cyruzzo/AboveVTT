@@ -3718,7 +3718,7 @@ button.avtt-roll-button {
 }
 .aura-element.haslightchild{
     backdrop-filter: brightness(var(--light-filter));
-    animation: aurafx-flicker-no-blur 10s infinite alternate ease-in-out
+    /*animation: aurafx-flicker-no-blur 10s infinite alternate ease-in-out*/
 }
 .lightAura{
     backdrop-filter: blur(var(--light-blur)) !important;
@@ -3726,7 +3726,7 @@ button.avtt-roll-button {
     top: 0px !important;
     left: 0px !important;
     mix-blend-mode: plus-lighter !important;
-    animation: aurafx-flicker 10s infinite alternate ease-in-out
+    /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
 }
 .aura-element{
      mix-blend-mode:  soft-light;
