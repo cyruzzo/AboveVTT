@@ -1042,7 +1042,7 @@ class MessageBroker {
 			apply_zoom_from_storage();
 
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
-   	 	let lightnessPercent = 100 + (parseInt(window.CURRENT_SCENE_DATA.darkness_filter)/2);
+   	 	let lightnessPercent = 100 + (parseInt(window.CURRENT_SCENE_DATA.darkness_filter)/5);
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
 
