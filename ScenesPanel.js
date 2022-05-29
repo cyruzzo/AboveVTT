@@ -284,14 +284,14 @@ function edit_scene_dialog(scene_id) {
 	darknessFilterRange.on(' input change', function(){
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = Math.min((100 + darknessFilterRangeValue), 130);
+   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
 	});
 	darknessFilterRange.on(' mouseup', function(){
    	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = Math.min((100 + darknessFilterRangeValue), 130);
+   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
 
