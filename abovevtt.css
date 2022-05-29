@@ -3729,7 +3729,6 @@ button.avtt-roll-button {
     /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
 }
 .aura-element{
-     mix-blend-mode:  soft-light;
 }
 
 @keyframes aurafx-flicker{
