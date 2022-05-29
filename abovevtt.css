@@ -1700,15 +1700,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-position-y: bottom;
     height: 100%;
     background-repeat: repeat-x;
-    position:absolute
+    position:absolute;
 }
-
+.aoe-border-cone {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/08/203-comp-512x512.png);
+    clip-path: polygon(0% 100%, 5% 100%, 50% 10%, 92% 95%, 5% 95%, 0% 100%, 100% 100%, 50% 0%);
+    fill-rule: evenodd;
+    background-repeat: repeat;
+    background-size: 100px;
+}
+/* 
 .aoe-border-left-cone {
     left: 15.5%;
     top: 21%;
     width: 110%;
     transform: rotate(116.5deg);
-
 }
 
 .aoe-border-right-cone {
@@ -1717,7 +1723,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     width: 110%;
     transform: rotate(243.5deg);
 
-}
+} */
 
 .aoe-border-top {
     transform: rotate(180deg);
@@ -1741,7 +1747,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     border-radius: 50%;
 }
 
-.aoe-shape-cone{
+.aoe-shape-cone {
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }
 /* END AOE SHAPES */
@@ -1749,7 +1755,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 /* AOE STYLES */
 .aoe-style-acid{
     background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
-    box-shadow: inset -20px -20px 2px 1000px rgba(10, 194, 235, 0.49);
+    box-shadow: inset -20px -20px 2px 1000px rgba(13, 253, 0, 0.49);
 }
 .aoe-style-bludgeoning{
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
@@ -1777,7 +1783,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 .aoe-style-poison {
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(54, 188, 1, 0.52);
+    box-shadow: inset -20px -20px 2px 1000px rgba(119, 247, 0, 0.52);
 }
 .aoe-style-psychic {
     background-image: url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
@@ -1805,7 +1811,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     opacity: 50%;
     background-repeat: repeat;
     background-size: 300px;
-    filter: blur(1.5px);
+    filter: blur(0.5px);
+    position: absolute;
 }
 
 

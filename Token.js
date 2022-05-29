@@ -63,6 +63,11 @@ class Token {
 		}
 	}
 
+	isLineAoe() {
+		// 1 being a single square which is usually 5ft
+		return this.options.size === "" && this.options.gridHeight === 1 && this.options.gridWidth > 0
+	}
+
 	isPlayer() {
 		// player tokens have ids with a structure like "/profile/username/characters/someId"
 		// monster tokens have a uuid for their id
@@ -84,10 +89,14 @@ class Token {
 	gridSize() {
 		let size = parseFloat(this.options.size);
 		if (isNaN(size)) {
+			// assume this token uses gridHeight/gridWidth instead.
+			if (this.options.gridHeight === 1 && this.options.gridWidth > 0){
+				return this.options.gridWidth
+			}
 			return 1; // default to small
 		}
 		let gridSize = parseFloat(window.CURRENT_SCENE_DATA.hpps); // one grid square
-		return Math.round(size / gridSize);
+		return size / gridSize;
 	}
 
 	sizeWidth() {
@@ -148,7 +157,7 @@ class Token {
 	size(newSize) {
 		this.update_from_page();
 
-		if(this.options.size === "" && this.options.gridHeight > 0 && this.options.gridWidth > 0){
+		if(this.isLineAoe()){
 			// token is not proportional such as a line aoe token
 			this.options.gridWidth = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps)); 
 		}
@@ -231,22 +240,14 @@ class Token {
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
-		// keep the initial rotation of the aoe borders but add the new rotaton to it
-		// first get the current rotation
-		// https://css-tricks.com/get-value-of-css-rotation-through-javascript/
-		tokenElement.find(".aoe-border-top, .aoe-border-left, .aoe-border-right").each(function() {
-			const currentElement = $(this)
-			const currentTransform = $(currentElement).css("transform")
-			var v = currentTransform.split('(')[1],
-			v = v.split(')')[0],
-			v = v.split(',');
-			const currentAngle = Math.round(Math.asin(v[1]) * (180/Math.PI));
-			const newRotationFromPreviousRotation = Math.round((currentAngle + newRotation)/360)*360
-			
-			$(currentElement).css("transform", `scale(${imageScale}) rotate(${newRotationFromPreviousRotation}deg)`);
-		})
-		// aoe tokens img and bottom border can just follow the normal rotation method
-		tokenElement.find("[data-img], .aoe-border-bottom").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
+		// aoe token rotation behaves slightly differently due to multiple elements for borders
+		tokenElement.find(".aoe-border-top").css("transform", `scale(${imageScale}) rotate(${180 + newRotation}deg)`);
+		tokenElement.find(".aoe-border-left").css("transform", `scale(${imageScale}) rotate(${90 + newRotation}deg)`);
+		tokenElement.find(".aoe-border-right").css("transform", `scale(${imageScale}) rotate(${-90 + newRotation}deg)`);
+		// cones are hard to align borders.
+		// tokenElement.find(".aoe-border-left-cone").css("transform", `scale(${imageScale}) rotate(${116.5 + newRotation}deg)`);
+		// tokenElement.find(".aoe-border-right-cone").css("transform", `scale(${imageScale}) rotate(${243.5 + newRotation}deg)`);
+		tokenElement.find("[data-img], .aoe-border-bottom, .aoe-border-cone").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);	
 		
 	}
 	moveUp() {
@@ -1113,48 +1114,13 @@ class Token {
 				
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
+				tokenImage.attr("src", this.options.imgsrc);
 
 			} else {
-				// token is using classes instead of an image
-				tokenImage = $(
-					`<div data-img="true" style='transform:scale("${imageScale}") rotate("${rotation}deg")'; 
-					 class='${this.options.imgsrc[0].replace("class=","").trim()}'
-					 </div>
-					`)
-					// will need to do something when aoe isn't aligned.
+				tokenImage = build_aoe_token_image(this)
 			}
 			tok.append(tokenImage);
-			const borders = []
-			// cone aoe tokens
-			if (this.options.imgsrc[0].includes("cone")){
-				const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}'></div>`)
-				const leftBorder = $(`<div class='aoe-border aoe-border-left-cone ${this.options.imgsrc[1].replace("class=","")}'></div>`)
-				const rightBorder = $(`<div class='aoe-border aoe-border-right-cone ${this.options.imgsrc[1].replace("class=","")}'></div>`)	
-				borders.push(bottomBorder, leftBorder, rightBorder)
-			}
-			else{
-				if(this.options.size !== "" && this.options.gridWidth === "" && this.options.gridHeight === ""){
-					// square / round
-					const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}' ></div>`)
-					const topBorder = $(`<div class='aoe-border aoe-border-top ${this.options.imgsrc[1].replace("class=","")}' ></div>`)
-					const leftBorder = $(`<div class='aoe-border aoe-border-left ${this.options.imgsrc[1].replace("class=","")}' ></div>`)
-					const rightBorder = $(`<div class='aoe-border aoe-border-right ${this.options.imgsrc[1].replace("class=","")}' ></div>`)
-					borders.push(bottomBorder, leftBorder, rightBorder, topBorder)
-				}else{
-					// line aoe tokens
-					if(this.options.gridWidth < this.options.gridHeight){
-						// swap them around for styling of a line token
-						let tempWidth = this.options.gridWidth
-						this.options.gridWidth = this.options.gridHeight
-						this.options.gridHeight = tempWidth
-					}
-					const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${this.options.imgsrc[1].replace("class=","")}' ></div>`)
-					const topBorder = $(`<div class='aoe-border aoe-border-top ${this.options.imgsrc[1].replace("class=","")}' ></div>`)
-					borders.push(bottomBorder, topBorder)
-				}
-			}
 			
-			tok.append([...borders])
 			
 			tokenImage.css("max-height", this.sizeHeight());
 			tokenImage.css("max-width", this.sizeWidth());
@@ -1175,7 +1141,6 @@ class Token {
 
 
 			tok.attr("data-id", this.options.id);
-			tokenImage.attr("src", this.options.imgsrc);
 		
 			tok.addClass("VTTToken");
 
@@ -1454,7 +1419,7 @@ class Token {
 				tok.removeClass("ui-state-disabled");
 			}
 
-			tok.find(".token-image,[data-img]").dblclick(function(e) {
+			tok.find(".token-image").dblclick(function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
 					id: self.options.id
@@ -1462,7 +1427,7 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
-			tok.find(".token-image,[data-img]").click(function() {
+			tok.find(".token-image").click(function() {
 				let parentToken = $(this).parent(".VTTToken");
 				if (parentToken.hasClass("pause_click")) {
 					return;

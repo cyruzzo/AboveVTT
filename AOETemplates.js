@@ -29,8 +29,7 @@ function setup_aoe_button() {
     aoe_menu.append(`<div><input min='5' tabindex='2' id='aoe_feet_height' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
 
     aoe_menu.append("<div class='menu-subtitle'>Style</div>");
-    // ddbc-tab-options__header-heading--is-active remembered-selection
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_acid' data-type='acid' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Acid</div></div>");
+    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_acid' data-type='acid' class='ddbc-tab-options__header-heading--is-active remembered-selection ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Acid</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_bludgeoning' data-type='bludgeoning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Bludgeoning</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_fire' data-type='fire' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Fire</div></div>");
     aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_force' data-type='force' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Force</div></div>");
@@ -75,7 +74,7 @@ function setup_aoe_button() {
        
         const feet = aoe_menu.find("#aoe_feet_height").val()
 
-        const shape = $(this).attr("data-shape") 
+        const shape = $(e.currentTarget).attr("data-shape") 
         const style = $(".aoe-option.remembered-selection").attr("data-type")
         drop_aoe_token(style, shape, feet);
 
@@ -137,4 +136,44 @@ function drop_aoe_token(style, shape, feet) {
         atts.top = center.y;
         window.MB.sendMessage("custom/myVTT/createtoken",atts);
     }
+}
+
+function build_aoe_token_image(token){
+    tokenImageContainer = $(`<div class=token-image>`)
+    tokenImage = $(
+        `<div data-img="true" style='transform:scale(1) rotate(0)'; 
+         class='${token.options.imgsrc[0].replace("class=","").trim()}'
+         </div>
+        `)
+
+    const borders = []
+        // cone aoe tokens
+        if (token.options.imgsrc[0].includes("cone")){
+            const fullBorder = $(`<div class='aoe-border aoe-border-cone'></div>`)
+            borders.push(fullBorder)
+        }
+        else{
+            if(token.options.size !== "" && token.options.gridWidth === "" && token.options.gridHeight === ""){
+                // square / round
+                const bottomBorder = $(`<div class='aoe-border aoe-border-bottom aoe-border-basic' ></div>`)
+                const topBorder = $(`<div class='aoe-border aoe-border-top aoe-border-basic' ></div>`)
+                const leftBorder = $(`<div class='aoe-border aoe-border-left aoe-border-basic' ></div>`)
+                const rightBorder = $(`<div class='aoe-border aoe-border-right aoe-border-basic' ></div>`)
+                borders.push(bottomBorder, leftBorder, rightBorder, topBorder)
+            }else{
+                // line aoe tokens
+                if(token.options.gridWidth < token.options.gridHeight){
+                    // swap them around for styling of a line token
+                    let tempWidth = token.options.gridWidth
+                    token.options.gridWidth = token.options.gridHeight
+                    token.options.gridHeight = tempWidth
+                }
+                const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${token.options.imgsrc[1].replace("class=","")}' ></div>`)
+                const topBorder = $(`<div class='aoe-border aoe-border-top ${token.options.imgsrc[1].replace("class=","")}' ></div>`)
+                borders.push(bottomBorder, topBorder)
+            }
+        }
+        tokenImageContainer.append(tokenImage)
+        tokenImageContainer.append([...borders])
+    return tokenImageContainer
 }
