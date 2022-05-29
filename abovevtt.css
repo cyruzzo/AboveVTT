@@ -3718,6 +3718,7 @@ button.avtt-roll-button {
 }
 .aura-element.haslightchild{
     backdrop-filter: brightness(var(--light-filter));
+    mix-blend-mode: soft-light;
     /*animation: aurafx-flicker-no-blur 10s infinite alternate ease-in-out*/
 }
 .lightAura{
