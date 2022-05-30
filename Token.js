@@ -1901,10 +1901,14 @@ function draw_selected_token_bounding_box() {
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
-		let tokenTop = parseFloat(token.options.top);
-		let tokenBottom = tokenTop + parseFloat(token.options.size);
-		let tokenLeft = parseFloat(token.options.left);
-		let tokenRight = tokenLeft + parseFloat(token.options.size);
+		let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
+		let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
+		let tokenImageWidth = tokenImageClientPosition.right - tokenImageClientPosition.left;
+		let tokenImageHeight = tokenImageClientPosition.bottom - tokenImageClientPosition.top;
+		let tokenTop = parseFloat(token.options.top) + tokenImagePosition.top;
+		let tokenBottom = tokenTop + tokenImageHeight;
+		let tokenLeft = parseFloat(token.options.left)  + tokenImagePosition.left;
+		let tokenRight = tokenLeft + tokenImageWidth;
 		if (top == undefined) {
 			top = tokenTop;
 		} else {
