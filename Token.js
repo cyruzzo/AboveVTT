@@ -431,15 +431,19 @@ class Token {
 		}
 		token.attr("data-border-color", this.options.color);
 		if(!this.options.legacyaspectratio) {
+			debugger;
 			if(token.children('img').width() == token.children('img').height()){
 				token.children('img').css("min-width", tokenWidth + 'px');
 				token.children('img').css("min-height", tokenHeight + 'px');
+				debugger;
 			}
 			else if(token.children('img').width() > token.children('img').height()) {
 				token.children('img').css("min-width", tokenWidth + 'px');
+				token.children('img').css("min-height", '');
 			}
 			else {
 				token.children('img').css("min-height", tokenHeight + 'px');
+				token.children('img').css("min-width", '');
 			}
 		}
 		else {
