@@ -239,15 +239,7 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.css("--token-rotation", newRotation + "deg");
-		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
-		// aoe token rotation behaves slightly differently due to multiple elements for borders
-		tokenElement.find(".aoe-border-top").css("transform", `scale(${imageScale}) rotate(${180 + newRotation}deg)`);
-		tokenElement.find(".aoe-border-left").css("transform", `scale(${imageScale}) rotate(${90 + newRotation}deg)`);
-		tokenElement.find(".aoe-border-right").css("transform", `scale(${imageScale}) rotate(${-90 + newRotation}deg)`);
-		// cones are hard to align borders.
-		// tokenElement.find(".aoe-border-left-cone").css("transform", `scale(${imageScale}) rotate(${116.5 + newRotation}deg)`);
-		// tokenElement.find(".aoe-border-right-cone").css("transform", `scale(${imageScale}) rotate(${243.5 + newRotation}deg)`);
-		tokenElement.find("[data-img], .aoe-border-bottom, .aoe-border-cone").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);	
+		tokenElement.find(".token-image, .aoe-border-cone").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);	
 		
 	}
 	moveUp() {
@@ -1944,7 +1936,6 @@ function draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
-		console.log(id)
 		let selector = "div[data-id='" + id + "']";
 		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {

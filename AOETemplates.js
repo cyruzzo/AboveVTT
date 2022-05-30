@@ -158,37 +158,12 @@ function build_aoe_token_image(token){
          </div>
         `)
 
-    const borders = []
-        // cone aoe tokens
-        if (token.options.imgsrc.includes("cone")){
-            const fullBorder = $(`<div class='aoe-border aoe-border-cone'></div>`)
-            borders.push(fullBorder)
-        }
-        else if (token.options.imgsrc.includes("circle")){
-            $(tokenImage).addClass("aoe-border-circle")
-        }
-        else{
-            if(token.options.size !== "" && token.options.gridWidth === "" && token.options.gridHeight === ""){
-                // square
-                const bottomBorder = $(`<div class='aoe-border aoe-border-bottom aoe-border-basic' ></div>`)
-                const topBorder = $(`<div class='aoe-border aoe-border-top aoe-border-basic' ></div>`)
-                const leftBorder = $(`<div class='aoe-border aoe-border-left aoe-border-basic' ></div>`)
-                const rightBorder = $(`<div class='aoe-border aoe-border-right aoe-border-basic' ></div>`)
-                borders.push(bottomBorder, leftBorder, rightBorder, topBorder)
-            }else{
-                // line aoe tokens
-                if(token.options.gridWidth < token.options.gridHeight){
-                    // swap them around for styling of a line token
-                    // let tempWidth = token.options.gridWidth
-                    // token.options.gridWidth = token.options.gridHeight
-                    // token.options.gridHeight = tempWidth
-                }
-                const leftBorder = $(`<div class='aoe-border aoe-border-top aoe-border-basic' ></div>`)
-                const rightBorder = $(`<div class='aoe-border aoe-border-bottom aoe-border-basic' ></div>`)
-                borders.push(leftBorder, rightBorder)
-            }
-        }
-        tokenImageContainer.append(tokenImage)
-        tokenImageContainer.append([...borders])
+    if (token.options.imgsrc.includes("cone")){
+        tokenImageContainer.append(`<div class='aoe-border aoe-border-cone'></div>`)
+    }
+    else {
+        $(tokenImage).addClass("aoe-border-basic")
+    }
+    tokenImageContainer.append(tokenImage)
     return tokenImageContainer
 }

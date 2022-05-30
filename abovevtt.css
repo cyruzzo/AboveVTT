@@ -1702,33 +1702,16 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-repeat: repeat-x;
     position:absolute;
 }
-.aoe-border-circle {
-    border: 10px solid white;
-}
+
 .aoe-border-cone {
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/08/203-comp-512x512.png);
     clip-path: polygon(0% 100%, 5% 100%, 50% 10%, 92% 95%, 5% 95%, 0% 100%, 100% 100%, 50% 0%);
-    fill-rule: evenodd;
-    background-repeat: repeat;
-    background-size: 100px;
-    filter: invert(1);
+    background-color: white;
+    animation: mymove 5s infinite alternate ease-in-out ;
 }
-
-.aoe-border-top {
-    transform: rotate(180deg);
-}
-.aoe-border-left {
-    transform: rotate(90deg);
-}
-.aoe-border-right {
-    transform: rotate(-90deg);
-}
-
 .aoe-border-basic{
-    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979787641631416411/backborder5.png);
-    background-size: 100px;
-    z-index: calc(5000 + var(--z-index-diff));
+    border: white 10px solid;
 }
+
 /* END AOE BORDERS */
 
 /* AOE SHAPES */
@@ -1737,7 +1720,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 .aoe-shape-cone {
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    clip-path: polygon(50% 10%, 7% 95%, 92% 95%);
 }
 /* END AOE SHAPES */
 
