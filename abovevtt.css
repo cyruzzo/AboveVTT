@@ -1702,28 +1702,17 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-repeat: repeat-x;
     position:absolute;
 }
+.aoe-border-circle {
+    border: 10px solid white;
+}
 .aoe-border-cone {
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/08/203-comp-512x512.png);
     clip-path: polygon(0% 100%, 5% 100%, 50% 10%, 92% 95%, 5% 95%, 0% 100%, 100% 100%, 50% 0%);
     fill-rule: evenodd;
     background-repeat: repeat;
     background-size: 100px;
+    filter: invert(1);
 }
-/* 
-.aoe-border-left-cone {
-    left: 15.5%;
-    top: 21%;
-    width: 110%;
-    transform: rotate(116.5deg);
-}
-
-.aoe-border-right-cone {
-    right: 15.5%;
-    top: 21%;
-    width: 110%;
-    transform: rotate(243.5deg);
-
-} */
 
 .aoe-border-top {
     transform: rotate(180deg);
@@ -1813,6 +1802,37 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-size: 300px;
     filter: blur(0.5px);
     position: absolute;
+    animation: mymove 3s infinite alternate ease-in-out ;
+}
+@keyframes mymove {
+    0% {
+        opacity: 0.4
+        /* transform: scale(0.98); */
+    }
+    25% {
+        opacity: 0.45
+        /* transform: scale(0.99); */
+    }
+    50% {
+        opacity: 0.5
+        /* transform: scale(1); */
+    }
+    75% {
+        opacity: 0.55
+        /* transform: scale(0.99); */
+    }
+    100% {
+        opacity: 0.6
+
+        /* transform: scale(0.98); */
+    }
+  }
+
+
+
+div.token-image {
+    width: 100%;
+    height: 100%;
 }
 
 

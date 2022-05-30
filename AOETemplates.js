@@ -20,48 +20,78 @@ const AOE_TEMPLATES = {
 }
 
 
+
+
 function setup_aoe_button() {
-    aoe_button = $("<div style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
-    aoe_menu = $("<div id='aoe_menu' class='top_menu'></div>");
+    const availabllStyle = [
+        "Acid",
+        "Bludgeoning",
+        "Fire",
+        "Force",
+        "Ice",
+        "Lightning",
+        "Nature",
+        "Necrotic",
+        "Piercing",
+        "Poison",
+        "Psychic",
+        "Radiant",
+        "Slashing",
+        "Thunder",
+        "Water"
+    ]
+    const aoeButton = $("<div style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
+    const aoeMenu = $("<div id='aoe_menu' class='top_menu'></div>");
 
-    aoe_menu.append("<div class='menu-subtitle'>Size</div>");
+    aoeMenu.append("<div class='menu-subtitle'>Size</div>");
     
-    aoe_menu.append(`<div><input min='5' tabindex='2' id='aoe_feet_height' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
+    aoeMenu.append(`<div><input min='5' tabindex='2' id='aoe_feet_height' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
 
-    aoe_menu.append("<div class='menu-subtitle'>Style</div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_acid' data-type='acid' class='ddbc-tab-options__header-heading--is-active remembered-selection ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Acid</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_bludgeoning' data-type='bludgeoning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Bludgeoning</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_fire' data-type='fire' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Fire</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_force' data-type='force' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Force</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_ice' data-type='ice' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Ice</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_lightning' data-type='lightning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Lightning</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_nature' data-type='nature' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Nature</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_necrotic' data-type='necrotic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Necrotic</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_piercing' data-type='piercing' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Piercing</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_poison' data-type='poison' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Poison</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_psychic' data-type='psychic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Psychic</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_radiant' data-type='radiant' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_slashing' data-type='slashing' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Slashing</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_thunder' data-type='thunder' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Thunder</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_water' data-type='water' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Water</div></div>");
-
-    aoe_menu.append("<div class='menu-subtitle'>Shape</div>");
-
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_square' data-shape='square' class='aoeshape ddbc-tab-options__header-heading'>Square</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_line' data-shape='line' class='aoeshape ddbc-tab-options__header-heading'>Line</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_circle' data-shape='circle' class='aoeshape ddbc-tab-options__header-heading'>Circle</div></div>");
-    aoe_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_cone' data-shape='cone' class='aoeshape ddbc-tab-options__header-heading'>Cone</div></div>");
-
-    aoe_menu.css("position", "fixed");
-    aoe_menu.css("top", "25px");
-    aoe_menu.css("width", "75px");
-    aoe_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
-
-    $("body").append(aoe_menu);
+    aoeMenu.append("<div class='menu-subtitle'>Style</div>");
+    aoeMenu.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <select id='aoe_styles' class="ddbc-select ddbc-tab-options__header-heading" >
+                ${availabllStyle.map((aoeStyle) => {
+                    return `<option class="ddbc-tab-options__header-heading" value="${aoeStyle}">${aoeStyle}</option>`;
+                })}
+            </select>
+        </div>
+            `)
 
 
-    buttons.append(aoe_button);
-    aoe_menu.css("left", aoe_button.position().left);
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_acid' data-type='acid' class='ddbc-tab-options__header-heading--is-active remembered-selection ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Acid</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_bludgeoning' data-type='bludgeoning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Bludgeoning</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_fire' data-type='fire' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Fire</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_force' data-type='force' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Force</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_ice' data-type='ice' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Ice</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_lightning' data-type='lightning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Lightning</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_nature' data-type='nature' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Nature</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_necrotic' data-type='necrotic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Necrotic</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_piercing' data-type='piercing' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Piercing</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_poison' data-type='poison' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Poison</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_psychic' data-type='psychic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Psychic</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_radiant' data-type='radiant' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_slashing' data-type='slashing' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Slashing</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_thunder' data-type='thunder' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Thunder</div></div>");
+    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_water' data-type='water' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Water</div></div>");
+
+    aoeMenu.append("<div class='menu-subtitle'>Shape</div>");
+
+    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_square' data-shape='square' class='ddbc-tab-options__header-heading'>Square</button></div>");
+    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_line' data-shape='line' class='ddbc-tab-options__header-heading'>Line</button></div>");
+    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_circle' data-shape='circle' class='ddbc-tab-options__header-heading'>Circle</button></div>");
+    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_cone' data-shape='cone' class='ddbc-tab-options__header-heading'>Cone</button></div>");
+    aoeMenu.find("button, select").css("width", "69px")
+    aoeMenu.css("position", "fixed");
+    aoeMenu.css("top", "25px");
+    aoeMenu.css("width", "75px");
+    aoeMenu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+
+    $("body").append(aoeMenu);
+
+
+    buttons.append(aoeButton);
+    aoeMenu.css("left", aoeButton.position().left);
 
 
     $("#aoe_feet").keydown(function(e) {
@@ -70,12 +100,12 @@ function setup_aoe_button() {
         }
     });
 
-    $(".aoeshape").click(function (e) {
+    $("#aoe_menu button").click(function (e) {
        
-        const feet = aoe_menu.find("#aoe_feet_height").val()
+        const feet = aoeMenu.find("#aoe_feet_height").val()
 
         const shape = $(e.currentTarget).attr("data-shape") 
-        const style = $(".aoe-option.remembered-selection").attr("data-type")
+        const style = $("#aoe_styles").val().toLowerCase()
         drop_aoe_token(style, shape, feet);
 
         if(window.DM){
@@ -152,9 +182,12 @@ function build_aoe_token_image(token){
             const fullBorder = $(`<div class='aoe-border aoe-border-cone'></div>`)
             borders.push(fullBorder)
         }
+        else if (token.options.imgsrc[0].includes("circle")){
+            $(tokenImage).addClass("aoe-border-circle")
+        }
         else{
             if(token.options.size !== "" && token.options.gridWidth === "" && token.options.gridHeight === ""){
-                // square / round
+                // square
                 const bottomBorder = $(`<div class='aoe-border aoe-border-bottom aoe-border-basic' ></div>`)
                 const topBorder = $(`<div class='aoe-border aoe-border-top aoe-border-basic' ></div>`)
                 const leftBorder = $(`<div class='aoe-border aoe-border-left aoe-border-basic' ></div>`)
