@@ -65,7 +65,7 @@ class Token {
 
 	isLineAoe() {
 		// 1 being a single square which is usually 5ft
-		return this.options.size === "" && this.options.gridHeight === 1 && this.options.gridWidth > 0
+		return this.options.size === "" && this.options.gridWidth === 1 && this.options.gridHeight > 0
 	}
 
 	isPlayer() {
@@ -90,10 +90,10 @@ class Token {
 		let size = parseFloat(this.options.size);
 		if (isNaN(size)) {
 			// assume this token uses gridHeight/gridWidth instead.
-			if (this.options.gridHeight === 1 && this.options.gridWidth > 0){
-				return this.options.gridWidth
+			if (this.options.gridWidth === 1 && this.options.gridHeight > 0){
+				return this.options.gridHeight
 			}
-			return 1; // default to small
+			return 1; // default to medium
 		}
 		let gridSize = parseFloat(window.CURRENT_SCENE_DATA.hpps); // one grid square
 		return size / gridSize;
@@ -159,7 +159,7 @@ class Token {
 
 		if(this.isLineAoe()){
 			// token is not proportional such as a line aoe token
-			this.options.gridWidth = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps)); 
+			this.options.gridHeight = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps)); 
 		}
 		else{
 			this.options.size = newSize;
@@ -1025,7 +1025,7 @@ class Token {
 			}
 			const oldImage = old.find(".token-image,[data-img]")
 			// token uses an image for it's image
-			if (!Array.isArray(this.options.imgsrc)){
+			if (!this.options.imgsrc.startsWith("class")){
 				if(oldImage.attr("src")!=this.options.imgsrc){
 					oldImage.attr("src",this.options.imgsrc);
 				}
@@ -1053,7 +1053,7 @@ class Token {
 				// token is an aoe div that uses styles instead of an image
 				// do something with it maybe?
 				// re-calc the border width incase the token has changed size
-				oldImage.css(`transform:scale("${imageScale}") rotate("${rotation}deg");`) // border: ${aoeBorderWith}px solid black;`)
+				oldImage.css(`transform:scale("${imageScale}") rotate("${rotation}deg");`)
 			}
 
 			oldImage.css("max-height", this.sizeHeight());
@@ -1097,7 +1097,7 @@ class Token {
 
 			let tokenImage
 			// new aoe tokens use arrays as imsrc
-			if (!Array.isArray(this.options.imgsrc)){
+			if (!this.options.imgsrc.startsWith("class")){
 				let imgClass = 'token-image';
 				if(this.options.legacyaspectratio == false) {
 					imgClass = 'token-image preserve-aspect-ratio';

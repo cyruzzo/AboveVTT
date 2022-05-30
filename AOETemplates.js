@@ -57,24 +57,6 @@ function setup_aoe_button() {
             </select>
         </div>
             `)
-
-
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_acid' data-type='acid' class='ddbc-tab-options__header-heading--is-active remembered-selection ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Acid</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_bludgeoning' data-type='bludgeoning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Bludgeoning</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_fire' data-type='fire' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Fire</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_force' data-type='force' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Force</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_ice' data-type='ice' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Ice</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_lightning' data-type='lightning' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Lightning</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_nature' data-type='nature' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Nature</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_necrotic' data-type='necrotic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Necrotic</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_piercing' data-type='piercing' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Piercing</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_poison' data-type='poison' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Poison</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_psychic' data-type='psychic' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Psychic</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_radiant' data-type='radiant' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Radiant</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_slashing' data-type='slashing' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Slashing</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_thunder' data-type='thunder' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Thunder</div></div>");
-    // aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><div id='aoe_water' data-type='water' class='ddbc-tab-options__header-heading drawbutton menu-option aoe-option aoecolor'>Water</div></div>");
-
     aoeMenu.append("<div class='menu-subtitle'>Shape</div>");
 
     aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_square' data-shape='square' class='ddbc-tab-options__header-heading'>Square</button></div>");
@@ -138,7 +120,7 @@ function drop_aoe_token(style, shape, feet) {
         size = size * 2;
     }
 
-    const image = [`class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape}`, `class=aoe-border-basic`]
+    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape}`
 
     let atts = {
         disablestat: true,
@@ -172,17 +154,17 @@ function build_aoe_token_image(token){
     tokenImageContainer = $(`<div class=token-image>`)
     tokenImage = $(
         `<div data-img="true" style='transform:scale(1) rotate(0)'; 
-         class='${token.options.imgsrc[0].replace("class=","").trim()}'
+         class='${token.options.imgsrc.replace("class=","").trim()}'
          </div>
         `)
 
     const borders = []
         // cone aoe tokens
-        if (token.options.imgsrc[0].includes("cone")){
+        if (token.options.imgsrc.includes("cone")){
             const fullBorder = $(`<div class='aoe-border aoe-border-cone'></div>`)
             borders.push(fullBorder)
         }
-        else if (token.options.imgsrc[0].includes("circle")){
+        else if (token.options.imgsrc.includes("circle")){
             $(tokenImage).addClass("aoe-border-circle")
         }
         else{
@@ -197,13 +179,13 @@ function build_aoe_token_image(token){
                 // line aoe tokens
                 if(token.options.gridWidth < token.options.gridHeight){
                     // swap them around for styling of a line token
-                    let tempWidth = token.options.gridWidth
-                    token.options.gridWidth = token.options.gridHeight
-                    token.options.gridHeight = tempWidth
+                    // let tempWidth = token.options.gridWidth
+                    // token.options.gridWidth = token.options.gridHeight
+                    // token.options.gridHeight = tempWidth
                 }
-                const bottomBorder = $(`<div class='aoe-border aoe-border-bottom ${token.options.imgsrc[1].replace("class=","")}' ></div>`)
-                const topBorder = $(`<div class='aoe-border aoe-border-top ${token.options.imgsrc[1].replace("class=","")}' ></div>`)
-                borders.push(bottomBorder, topBorder)
+                const leftBorder = $(`<div class='aoe-border aoe-border-top aoe-border-basic' ></div>`)
+                const rightBorder = $(`<div class='aoe-border aoe-border-bottom aoe-border-basic' ></div>`)
+                borders.push(leftBorder, rightBorder)
             }
         }
         tokenImageContainer.append(tokenImage)

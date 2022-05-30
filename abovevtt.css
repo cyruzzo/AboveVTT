@@ -1763,6 +1763,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 .aoe-style-nature{
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/04/0527-1-512x512.jpg);
+    filter: brightness(1.2) contrast(1.2);
 }
 .aoe-style-necrotic {
     background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
@@ -1802,29 +1803,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-size: 300px;
     filter: blur(0.5px);
     position: absolute;
-    animation: mymove 3s infinite alternate ease-in-out ;
+    animation: mymove 5s infinite alternate ease-in-out ;
 }
 @keyframes mymove {
-    0% {
-        opacity: 0.4
-        /* transform: scale(0.98); */
+    from{
+        opacity: 0.3
     }
-    25% {
-        opacity: 0.45
-        /* transform: scale(0.99); */
-    }
-    50% {
-        opacity: 0.5
-        /* transform: scale(1); */
-    }
-    75% {
-        opacity: 0.55
-        /* transform: scale(0.99); */
-    }
-    100% {
-        opacity: 0.6
-
-        /* transform: scale(0.98); */
+    to {
+        opacity: 0.7
     }
   }
 
