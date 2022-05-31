@@ -1974,9 +1974,9 @@ function rotate_selected_tokens(newRotation, persist = false) {
 	}
 }
 
-// if it was not executed in the last 3 second, execute it immediately
+// if it was not executed in the last second, execute it immediately
 // if it's already scheduled to be executed, return
-// otherwise, schedule it to execute in 3 seconds
+// otherwise, schedule it to execute in 300ms
 function draw_selected_token_bounding_box(){
 	if(window.NEXT_DRAWBOX  && (window.NEXT_DRAWBOX -Date.now() > 0)){
 		return;
