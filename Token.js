@@ -1587,11 +1587,11 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false) {
 
 		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
 		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
-		const currentGridX = Math.floor((mapX) / gridWidth);  // (mapX - startX)
-		const currentGridY = Math.floor((mapY) / gridHeight); // (mapY - startY)
+		const currentGridX = Math.floor((mapX - startX) / gridWidth);
+		const currentGridY = Math.floor((mapY - startY) / gridHeight);
 		return {
-			x: (currentGridX * gridWidth),// + startX, // + (gridWidth / 2);
-			y: (currentGridY * gridHeight)// + startY // + (gridHeight / 2);
+			x: (currentGridX * gridWidth) + startX,
+			y: (currentGridY * gridHeight) + startY
 		}
 	} else {
 		return { x: mapX, y: mapY };
