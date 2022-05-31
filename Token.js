@@ -431,23 +431,33 @@ class Token {
 		}
 		token.attr("data-border-color", this.options.color);
 		if(!this.options.legacyaspectratio) {
-			if(token.children('img').width() == token.children('img').height()){
-				token.children('img').css("min-width", tokenWidth + 'px');
-				token.children('img').css("min-height", tokenHeight + 'px');
-			}
-			else if(token.children('img').width() > token.children('img').height()) {
-				token.children('img').css("min-width", tokenWidth + 'px');
-			}
-			else {
-				token.children('img').css("min-height", tokenHeight + 'px');
+			if($(`div.token[data-id='${this.options.id}'] .token-image`)[0] !== undefined){
+				let imageWidth = $(`div.token[data-id='${this.options.id}'] .token-image`)[0].naturalWidth;
+				let imageHeight = $(`div.token[data-id='${this.options.id}'] .token-image`)[0].naturalHeight;
+				if(imageWidth != 0 && imageHeight != 0){
+
+					if( imageWidth == imageHeight ){
+						token.children('.token-image').css("min-width", tokenWidth + 'px');
+						token.children('.token-image').css("min-height", tokenHeight + 'px');
+					}
+					else if(imageWidth > imageHeight) {
+						token.children('.token-image').css("min-width", tokenWidth + 'px');
+						token.children('img').css("min-height", '');
+					}
+					else {
+						token.children('.token-image').css("min-height", tokenHeight + 'px');
+						token.children('.token-image').css("min-width", '');
+					}
+									
+				}
 			}
 		}
 		else {
-			token.children('img').css("min-width", "");
-			token.children('img').css("min-height", "");
+			token.children('.token-image').css("min-width", "");
+			token.children('.token-image').css("min-height", "");
 		}
 		
-		token.children('img').css({		
+		token.children('.token-image').css({		
 		    'max-width': tokenWidth + 'px',
 			'max-height': tokenHeight + 'px',
 		});
