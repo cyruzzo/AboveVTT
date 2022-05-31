@@ -8,13 +8,13 @@ tokendata={
 function convert_path(path){
 	var pieces=path.split("/");
 	var current=tokendata;
-	
+
 	for(var i=0;i<pieces.length;i++){
-		if(pieces[i]=="")
+		if(!current || pieces[i]=="")
 			continue;
 		current=current.folders[pieces[i]];
 	}
-	return current;
+	return current || {};
 }
 
 // deprecated, but still needed for migrate_to_my_tokens() to work
@@ -29,12 +29,6 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	if (contextMenu.length === 0) {
 		console.warn("context_menu_flyout, but #tokenOptionsPopup could not be found");
 		return;
-	}
-
-	try {
-		clearTimeout(window.context_menu_flyout_timer);
-	} catch (e) {
-		console.debug("failed to clear window.context_menu_flyout_timer", window.context_menu_flyout_timer);
 	}
 
 	if (hoverEvent.type === "mouseenter") {
@@ -160,7 +154,10 @@ function token_context_menu_expanded(tokenIds, e) {
 			if (clickedButton.hasClass("remove-from-ct")) {
 				clickedButton.removeClass("remove-from-ct").addClass("add-to-ct");
 				clickedButton.html(addButtonInternals);
-				tokens.forEach(t => ct_remove_token(t, false));
+				tokens.forEach(t =>{
+					t.options.ct_show = undefined;
+					ct_remove_token(t, false)
+				});
 			} else {
 				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
 				clickedButton.html(removeButtonInternals);

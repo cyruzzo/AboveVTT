@@ -240,8 +240,21 @@ function getPlayerIDFromSheet(sheet_url)
 
 window.YTTIMEOUT = null;
 
-function map_load_error_cb() {
-	alert("Map could not be loaded - if you're using Drive or similar, ensure sharing is enabled");
+function map_load_error_cb(e) {
+	console.log(e);
+	let src = e.currentTarget.getAttribute("src");
+	console.error("map_load_error_cb src", src, e);
+	if (typeof src === "string") {
+		let specificMessage = `Please make sure the image is accessible to anyone on the internet.`;
+		if (src.includes("drive.google")) {
+			specificMessage = `It looks like you're using a Google Drive image. Please make sure the "Get link" modal says "Anyone on the internet with this link can view".`;
+		}
+		if (confirm(`Map could not be loaded!\n${specificMessage}\nYou may also need to disable ad blockers.\nWould you like to try loading the image in a separate tab to verify that it's accessible? If you are currently logged in to google, you will need to log out or open the image in a different browser or an incognito window to truly test it.`)) {
+			if (window.DM || confirm(`SPOILER ALERT!!!\nIf you click OK, you might see the entire map without fog of war. However, the map isn't loading at all so you will probably see a broken link. Are you sure you want to test this image?`)) {
+				window.open(src, '_blank');
+			}
+		}
+	}
 }
 
 /// the first time we load, an overlay is shown to mask all the window modifications we do. This removes it. See `Load.js` for the injection of the overlay.
@@ -693,6 +706,20 @@ function init_controls() {
 		b2ImageDivWrapper.append(b2ImageDiv);
 		b2.append(b2ImageDivWrapper);
 		sidebarControls.append(b2);
+
+		if (window.CLOUD) {
+			let b3 = $("<div id='switch_scenes' class='tab-btn hasTooltip button-icon blue-tab' data-name='Scenes' data-target='#scenes-panel'></div>").click(switch_control);
+			let b3ImageDiv = $('<div></div>');
+			let b3ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+			let b3Image = `${window.EXTENSION_PATH}assets/icons/photo.svg`;
+			b3ImageDiv.css({
+				"mask": `url(${b3Image}) no-repeat center / contain`,
+				"-webkit-mask": `url(${b3Image}) no-repeat center / contain`
+			});
+			b3ImageDivWrapper.append(b3ImageDiv);
+			b3.append(b3ImageDivWrapper);
+			sidebarControls.append(b3);
+		}
 	} else {
 		let b2 = $("<div id='switch_characters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Players' data-target='#players-panel'></div>").click(switch_control);
 		let b2ImageDiv = $('<div></div>');
