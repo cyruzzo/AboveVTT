@@ -1694,6 +1694,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
 }
 
+.aoe-button-moveable {
+    font-size: 20px !important;
+    /* align-items: flex-end; */
+}
+
 /* AOE BORDERS */
 .aoe-border {
     width: 100%;

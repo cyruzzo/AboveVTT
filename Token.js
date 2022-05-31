@@ -239,7 +239,7 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.css("--token-rotation", newRotation + "deg");
-		tokenElement.find(".token-image, .aoe-border-cone").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);	
+		tokenElement.find(".token-image").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);	
 		
 	}
 	moveUp() {
@@ -1192,7 +1192,8 @@ class Token {
 				y: 0
 			};
 			tok.draggable({
-				stop:
+				handle: "img, [data-img]",
+				stop: 
 					function (event) {
 						//remove cover for smooth drag
 						$('.iframeResizeCover').remove();
@@ -1500,13 +1501,14 @@ class Token {
  * @param token jquery selected div with the class token
  */
 function toggle_player_selectable(tokenInstance, token){
+	const tokenImage = token?.find("img, [data-img]")
 	if (tokenInstance.options.locked && !window.DM){
-		token?.css("cursor","default");
-		token?.css("pointer-events","none");
+		tokenImage?.css("cursor","default");
+		tokenImage?.css("pointer-events","none");
 	}
 	else{
-		token?.css("cursor","move");
-		token?.css("pointer-events","auto");
+		tokenImage?.css("cursor","move");
+		tokenImage?.css("pointer-events","auto");
 	}
 }
 

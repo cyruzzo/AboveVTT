@@ -59,10 +59,34 @@ function setup_aoe_button() {
             `)
     aoeMenu.append("<div class='menu-subtitle'>Shape</div>");
 
-    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_square' data-shape='square' class='ddbc-tab-options__header-heading'>Square</button></div>");
-    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_line' data-shape='line' class='ddbc-tab-options__header-heading'>Line</button></div>");
-    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_circle' data-shape='circle' class='ddbc-tab-options__header-heading'>Circle</button></div>");
-    aoeMenu.append("<div class='ddbc-tab-options--layout-pill'><button id='aoe_cone' data-shape='cone' class='ddbc-tab-options__header-heading'>Cone</button></div>");
+    aoeMenu.append(`
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='aoe_square' data-shape='square' class='ddbc-tab-options__header-heading'>
+                Square
+                <span class="material-icons aoe-button-moveable">open_with</span>
+            </button>
+        </div>`);
+    aoeMenu.append(`
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='aoe_line' data-shape='line' class='ddbc-tab-options__header-heading'>
+                Line
+                <span class="material-icons aoe-button-moveable">open_with</span>
+            </button>
+        </div>`);
+    aoeMenu.append(`
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='aoe_circle' data-shape='circle' class='ddbc-tab-options__header-heading'>
+                Circle
+                <span class="material-icons aoe-button-moveable">open_with</span>
+            </button>
+        </div>`);
+    aoeMenu.append(`
+        <div class='ddbc-tab-options--layout-pill'>
+            <button id='aoe_cone' data-shape='cone' class='ddbc-tab-options__header-heading'>
+                Cone 
+                <span class="material-icons aoe-button-moveable">open_with</span>
+            </button>
+        </div>`);
     aoeMenu.find("button, select").css("width", "69px")
     aoeMenu.css("position", "fixed");
     aoeMenu.css("top", "25px");
@@ -84,7 +108,7 @@ function setup_aoe_button() {
 
     $("#aoe_menu button").click(function (e) {
        
-        const feet = aoeMenu.find("#aoe_feet_height").val()
+        const feet = $("#aoe_feet_height").val()
 
         const shape = $(e.currentTarget).attr("data-shape") 
         const style = $("#aoe_styles").val().toLowerCase()
@@ -97,6 +121,74 @@ function setup_aoe_button() {
             $('#aoe_button').click();
         }
     });
+    $("#aoe_menu button").draggable({
+        appendTo: "#VTTWRAPPER",
+        zIndex: 100000,
+        cursorAt: {top: 0, left: 0},
+        // cancel:false is required when dragging buttons
+        cancel:false,
+        helper: function(event) {
+            console.log("enable_draggable_token_creation helper");
+            // let draggedRow = $(event.target).closest(".list-item-identifier");
+            // let draggedItem = find_sidebar_list_item(draggedRow);
+            // let helper = draggedRow.find("img.token-image").clone();
+            // if (specificImage !== undefined) {
+            //     helper.attr("src", specificImage);
+            // } else {
+            //     let randomImage = random_image_for_item(draggedItem);
+            //     helper.attr("src", randomImage);
+            // }
+            // let helper = $(`
+            // <div class="token-image" style="max-width:50px; max-height:50px" >
+            //     <div data-image="true" class=aoe-token-tileable aoe-style-acid aoe-shape-cone />
+            // </div>`)
+            let helper = $(`<div style=background-color:white; width:50px; height:50px>`)
+            helper.addClass("draggable-token-creation");
+
+            return helper;
+        },
+        start: function (event, ui) {
+            console.log("enable_draggable_token_creation start");
+            $(ui.helper).css('width', `50px`);
+            $(this).draggable('instance').offset.click = {
+                left: Math.floor(ui.helper.width() / 2),
+                top: Math.floor(ui.helper.height() / 2)
+            };
+        },
+        drag: function (event, ui) {
+            if (event.shiftKey) {
+                $(ui.helper).css("opacity", 0.5);
+            } else {
+                $(ui.helper).css("opacity", 1);
+            }
+        },
+        stop: function (event, ui) {
+            event.stopPropagation(); // prevent the mouseup event from closing the modal
+            // if ($(ui.helper).hasClass("drag-cancelled")) {
+            //     console.log("enable_draggable_token_creation cancelled");
+            //     return;
+            // }
+
+            let droppedOn = document.elementFromPoint(event.clientX, event.clientY);
+            console.log("droppedOn", droppedOn);
+            // if (droppedOn?.closest("#VTT")) {
+            //     // place a token where this was dropped
+            //     console.log("enable_draggable_token_creation stop");
+            //     let draggedRow = $(event.target).closest(".list-item-identifier");
+            //     let draggedItem = find_sidebar_list_item(draggedRow);
+            //     let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
+            //     let src = $(ui.helper).attr("src");
+            //     create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
+            // } else {
+            //     console.log("Not dropping over element", droppedOn);
+            // }
+            drop_aoe_token( 
+                $("#aoe_styles").val().toLowerCase(),
+                $(event.target).attr("data-shape"),
+                $("#aoe_feet_height").val())
+        }
+    })
+
 }
 
 function drop_aoe_token(style, shape, feet) {
@@ -154,7 +246,7 @@ function build_aoe_token_image(token){
     tokenImageContainer = $(`<div class=token-image>`)
     tokenImage = $(
         `<div data-img="true" style='transform:scale(1) rotate(0)'; 
-         class='${token.options.imgsrc.replace("class=","").trim()}'
+         class='${token.options.imgsrc.replace("class=","").trim()}'>
          </div>
         `)
 
