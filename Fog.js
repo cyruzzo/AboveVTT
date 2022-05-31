@@ -587,7 +587,7 @@ function draw_wizarding_box() {
 
 function reset_canvas() {
 	$('#temp_overlay').get(0).width =($("#scene_map").width());
-	$('#temp_overlay').get(0).height =($("#scene_map").width());
+	$('#temp_overlay').get(0).height =($("#scene_map").height());
 
 	$('#fog_overlay').get(0).width =($("#scene_map").width());
 	$('#fog_overlay').get(0).height =($("#scene_map").height());
