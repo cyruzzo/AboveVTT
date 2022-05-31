@@ -3892,8 +3892,59 @@ button.avtt-roll-button {
 }
 
 
+
 [id^="streamer-"].hidden {
     display: none;
+
+#scene_map{
+    filter: brightness(var(--darkness-filter));
+}
+.aura-element.haslightchild{
+    backdrop-filter: brightness(var(--light-filter));
+    mix-blend-mode: soft-light;
+    /*animation: aurafx-flicker-no-blur 10s infinite alternate ease-in-out*/
+}
+.lightAura{
+    backdrop-filter: blur(var(--light-blur)) !important;
+    background-image: none !important;
+    top: 0px !important;
+    left: 0px !important;
+    mix-blend-mode: plus-lighter !important;
+    /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
+}
+.aura-element{
+}
+
+@keyframes aurafx-flicker{
+    0%  {filter: blur(10px);transform:scale(1);}
+    10% {filter: blur(15px);transform:scale(1.005);}
+    20% {filter: blur(10px);transform:scale(0.995);}
+    30% {filter: blur(10px);transform:scale(1);}
+    40% {filter: blur(15px);transform:scale(0.995);}
+    50% {filter: blur(20px);transform:scale(1.005);}
+    60% {filter: blur(15px);transform:scale(0.995);}
+    70% {filter: blur(12px);transform:scale(1);}
+    80% {filter: blur(15px);transform:scale(0.995);}
+    90% {filter: blur(10px);transform:scale(1.005);}
+    100%{filter: blur(15px);transform:scale(1);}
+}
+@keyframes aurafx-flicker-no-blur{
+    0%  {transform:scale(1);}
+    10% {transform:scale(1.005);}
+    20% {transform:scale(0.995);}
+    30% {transform:scale(1);}
+    40% {transform:scale(0.995);}
+    50% {transform:scale(1.005);}
+    60% {transform:scale(0.995);}
+    70% {transform:scale(1);}
+    80% {transform:scale(0.995);}
+    90% {transform:scale(1.005);}
+    100%{transform:scale(1);}
+}
+
+.aurafx-flicker{
+    mix-blend-mode: plus-lighter;
+    animation: aurafx-flicker 4s infinite alternate ease-in-out
 }
 
 div.note[id^="ui-id"] {

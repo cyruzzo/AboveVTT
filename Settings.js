@@ -230,6 +230,12 @@ function init_settings(){
 			disabledDescription: "Token's aura is visible to players when token is in fog"
 		},
 		{
+			name: 'auraislight',
+			label: 'auraislight',
+			enabledDescription: "",
+			disabledDescription: ""
+		},
+		{
 			name: 'revealname',
 			label: 'Show name to players',
 			enabledDescription: 'New tokens will have their name visible to players',
@@ -252,6 +258,9 @@ function init_settings(){
 			persist_token_settings(window.TOKEN_SETTINGS);
 			redraw_settings_panel_token_examples();
 		});
+		if (setting.name == ('auraislight' || 'hideaurafog')){
+			continue
+		}
 		body.append(inputWrapper);
 	}
 
