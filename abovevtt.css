@@ -3800,6 +3800,93 @@ button.avtt-roll-button {
     z-index: 40;
 }
 
+.stream-dice-button {
+    display: flex;
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 2px;
+    text-align: right;
+    position: absolute;
+    width: 88px;
+    top: 11px;
+    left: 250px;
+    height: fit-content;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 11px;
+    line-height: 13px;
+    -webkit-box-align: center;
+    align-items: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgb(111, 116, 120);
+    padding: 0px 2px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #9c2727;
+    opacity: 0.8;
+}
+.glc-game-log>div>div[class*="-Title"] {
+    margin-bottom: 7px;
+}
+.stream-dice-button:hover {
+    cursor: pointer;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+}
+
+.stream-dice-button:hover:after {
+    width: fit-content;
+    height: fit-content;
+    cursor: pointer;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+    visibility: visible;
+}
+
+.stream-dice-button:active {
+  background-color: rgb(245, 248, 250);
+  box-shadow: none;
+  transform: translate(1px, 2px);
+}
+
+.stream-dice-button.enabled{
+    color: rgb(111, 116, 120);
+    box-shadow: 1px 1px 1px -1px #0003, 1px 2px 0px -2px #0003;
+}
+.stream-dice-button:hover:after { 
+    opacity:1;
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 500ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;  
+}
+
+.stream-dice-button:after{
+    content: 'Click to join the dice stream';
+    position:fixed;
+    width: fit-content;
+    height: fit-content;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+    top:80px;
+    right:0px;
+    z-index:80000;
+    opacity:0;
+    color: rgb(0 0 0);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.stream-dice-button.enabled:hover:after {
+    opacity:1;
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 500ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;   
+}
+
+.stream-dice-button.enabled:after {
+    content: 'Click to leave the dice stream';
+}
+.stream-dice-button:active:after{
+    display:none;
+}
 .icon-concentration-reminder:before,
 .icon-inspiration:before,
 .icon-flying:before,
@@ -3915,6 +4002,10 @@ div.ddbc-tab-options--layout-pill>button{
     100% {-webkit-transform: rotate(360deg);}
 }
 
+
+
+[id^="streamer-"].hidden {
+    display: none;
 
 #scene_map{
     filter: brightness(var(--darkness-filter));
