@@ -1272,6 +1272,7 @@ function drawing_mouseup(e) {
 				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
+					curr.place();
 				}
 			}
 			
