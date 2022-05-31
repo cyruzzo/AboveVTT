@@ -5,6 +5,10 @@ tokens_rootfolders = [];
 monster_search_filters = {};
 encounter_monster_items = {}; // encounterId: SidebarTokenItem[]
 cached_monster_items = {}; // monsterId: SidebarTokenItem
+aoe_items = [ // TODO: build this out
+    SidebarListItem.Aoe("square", 1, "default"),
+    SidebarListItem.Aoe("circle", 1, "default")
+];
 
 /** Reads in tokendata, and writes to mytokens and mytokensfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function migrate_to_my_tokens() {
@@ -481,20 +485,33 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
-            let draggedItem = find_sidebar_list_item(draggedRow);
-            let helper = draggedRow.find("img.token-image").clone();
-            if (specificImage !== undefined) {
-                helper.attr("src", specificImage);
-            } else {
-                let randomImage = random_image_for_item(draggedItem);
-                helper.attr("src", randomImage);
+            if ($(event.target).hasClass("list-item-identifier")) {
+                draggedRow = $(event.target);
             }
-            helper.addClass("draggable-token-creation");
-            return helper;
+            let draggedItem = find_sidebar_list_item(draggedRow);
+            if (draggedItem.isTypeAoe()) {
+                // TODO: build this out
+                let helper = draggedRow.find(".token-image").clone();
+                helper.addClass("draggable-token-creation");
+                return helper;
+            } else {
+                let helper = draggedRow.find("img.token-image").clone();
+                if (specificImage !== undefined) {
+                    helper.attr("src", specificImage);
+                } else {
+                    let randomImage = random_image_for_item(draggedItem);
+                    helper.attr("src", randomImage);
+                }
+                helper.addClass("draggable-token-creation");
+                return helper;
+            }
         },
         start: function (event, ui) {
             console.log("enable_draggable_token_creation start");
             let draggedRow = $(event.target).closest(".list-item-identifier");
+            if ($(event.target).hasClass("list-item-identifier")) {
+                draggedRow = $(event.target);
+            }
             let draggedItem = find_sidebar_list_item(draggedRow);
             let tokenSize = token_size_for_item(draggedItem);
             let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
@@ -504,6 +521,10 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 left: Math.floor(ui.helper.width() / 2),
                 top: Math.floor(ui.helper.height() / 2)
             };
+            if (draggedItem.isTypeAoe()) {
+                hide_player_sheet();
+                close_player_sheet();
+            }
         },
         drag: function (event, ui) {
             if (event.shiftKey) {
@@ -525,6 +546,9 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 // place a token where this was dropped
                 console.log("enable_draggable_token_creation stop");
                 let draggedRow = $(event.target).closest(".list-item-identifier");
+                if ($(event.target).hasClass("list-item-identifier")) {
+                    draggedRow = $(event.target);
+                }
                 let draggedItem = find_sidebar_list_item(draggedRow);
                 let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
                 let src = $(ui.helper).attr("src");
@@ -701,6 +725,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options = {...options, ...builtinToken}
             options.disablestat = true;
             break;
+        case SidebarListItem.TypeAoe:
+            // TODO: anything to alter here?
+            break;
     }
 
     console.log("create_and_place_token about to place token with options", options);
@@ -741,6 +768,8 @@ function token_size_for_item(listItem) {
             }
         case SidebarListItem.TypeBuiltinToken:
             return 1;
+        case SidebarListItem.TypeAoe:
+            return listItem.size;
     }
 }
 
