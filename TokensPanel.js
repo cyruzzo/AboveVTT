@@ -213,12 +213,36 @@ function find_builtin_token(fullPath) {
     return found;
 }
 
+function backfill_mytoken_folders() {
+    mytokens.forEach(myToken => {
+        if (myToken.folderPath !== SidebarListItem.PathRoot) {
+            // we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
+            let parts = myToken.folderPath.split("/");
+            let backfillPath = "";
+            parts.forEach(part => {
+                let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
+                if (fullBackfillPath !== SidebarListItem.PathRoot && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
+                    // we don't have this folder yet so add it
+                    let newFolder = { folderPath: sanitize_folder_path(backfillPath), name: part, collapsed: true };
+                    console.log("adding folder", newFolder);
+                    mytokensfolders.push(newFolder);
+                } else {
+                    console.log("not adding folder", fullBackfillPath);
+                }
+                backfillPath = fullBackfillPath;
+            });
+        }
+    });
+}
+
 /**
  * iterates over all the token sources and replaces window.tokenListItems with new objects.
  * token sources are window.pcs, mytokens, mytokensfolders, and builtInTokens
  */
 function rebuild_token_items_list() {
     console.groupCollapsed("rebuild_token_items_list");
+
+    backfill_mytoken_folders(); // just in case we're missing any folders
 
     // Players
     let tokenItems = window.pcs
@@ -290,7 +314,7 @@ function filter_token_list(searchTerm) {
                 // we always want the monsters folder to be open when searching
                 continue;
             }
-            let nonFolderDescendents = currentFolder.find(".tokens-panel-row:not(.folder)");
+            let nonFolderDescendents = currentFolder.find(".sidebar-list-item-row:not(.folder)");
             if (nonFolderDescendents.length === 0) {
                 // hide folders without results in them
                 currentFolder.hide();
@@ -336,7 +360,7 @@ function inject_monster_tokens(searchTerm, skip) {
                 let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
                 inject_monster_tokens(searchTerm, previousSkip + 10);
             });
-            monsterFolder.find(`> .folder-token-list`).append(loadMoreButton);
+            monsterFolder.find(`> .folder-item-list`).append(loadMoreButton);
         }
     });
 }
@@ -347,7 +371,7 @@ function inject_monster_list_items(listItems) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
         return;
     }
-    let list = monsterFolder.find(`> .folder-token-list`);
+    let list = monsterFolder.find(`> .folder-item-list`);
     for (let i = 0; i < listItems.length; i++) {
         let item = listItems[i];
         let row = build_sidebar_list_row(item);
@@ -385,6 +409,7 @@ function init_tokens_panel() {
 
     let header = tokensPanel.header;
     // TODO: remove this warning once tokens are saved in the cloud
+    tokensPanel.updateHeader("Tokens");
     header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
@@ -411,7 +436,7 @@ function init_tokens_panel() {
  * clears and redraws the list of tokens in the sidebar
  * @param searchTerm {string} the search term used to filter the list of tokens
  */
-function redraw_token_list(searchTerm) {
+function redraw_token_list(searchTerm, enableDraggable = true) {
     if (!window.tokenListItems) {
         // don't do anything on startup
         return;
@@ -423,7 +448,7 @@ function redraw_token_list(searchTerm) {
 
     let nameFilter = "";
     if (searchTerm !== undefined && typeof searchTerm === "string") {
-        nameFilter = searchTerm;
+        nameFilter = searchTerm.toLowerCase();
     }
 
     // first let's add our root folders
@@ -439,26 +464,23 @@ function redraw_token_list(searchTerm) {
         .forEach(item => {
             let row = build_sidebar_list_row(item);
             console.debug("appending item", item);
-            find_html_row_from_path(item.folderPath, list).find(` > .folder-token-list`).append(row);
+            find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
     // now let's add all the other items
     window.tokenListItems
         .filter(item =>
             !item.isTypeFolder() // we already added all folders so don't include them in this loop
-            && (
-                item.name.toLowerCase().includes(nameFilter.toLowerCase()) // any item with a partially matching name
-                || item.containingFolderName().toLowerCase().includes(nameFilter.toLowerCase()) // all items within a folder with a partially matching name
-            )
+            && item.nameOrContainingFolderMatches(nameFilter)
         )
         .sort(SidebarListItem.sortComparator)
         .forEach(item => {
             let row = build_sidebar_list_row(item);
-            if (!item.isTypeEncounter()) {
+            if (enableDraggable === true && !item.isTypeEncounter()) {
                 enable_draggable_token_creation(row);
             }
             console.debug("appending item", item);
-            find_html_row_from_path(item.folderPath, list).find(` > .folder-token-list`).append(row);
+            find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
     update_pc_token_rows();
@@ -477,7 +499,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         appendTo: "#VTTWRAPPER",
         zIndex: 100000,
         cursorAt: {top: 0, left: 0},
-        cancel: '.token-row-gear',
+        cancel: '.token-row-gear ',
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
@@ -559,9 +581,9 @@ function update_pc_token_rows() {
             row.find(".tokens-panel-row-details-subtitle .pp-value").text(playerData.pp);
             row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.walking);
             if (playerData.inspiration) {
-                row.find(".tokens-panel-row-details-subtitle .inspiration").show();
+                row.find(".sidebar-list-item-row-details-subtitle .inspiration").show();
             } else {
-                row.find(".tokens-panel-row-details-subtitle .inspiration").hide();
+                row.find(".sidebar-list-item-row-details-subtitle .inspiration").hide();
             }
         }
     });
@@ -598,9 +620,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             let encounterMonsterItems = encounter_monster_items[encounterId];
             if (encounterMonsterItems === undefined || encounterMonsterItems.length === 0) {
                 let encounterRow = tokensPanel.body.find(`[data-encounter-id='${encounterId}']`);
-                encounterRow.find(".tokens-panel-row-item").addClass("button-loading");
+                encounterRow.find(".sidebar-list-item-row-item").addClass("button-loading");
                 refresh_encounter(encounterRow, listItem, function (response) {
-                    encounterRow.find(".tokens-panel-row-item").removeClass("button-loading");
+                    encounterRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
                     if (response === true) {
                         create_and_place_token(listItem, hidden, specificImage, eventPageX, eventPageY);
                     }
@@ -834,7 +856,7 @@ function search_monsters(searchTerm, skip, callback) {
 function register_token_row_context_menu() {
 
     // don't allow the context menu when right clicking on the add button since that adds a hidden token
-    tokensPanel.body.find(".tokens-panel-row").on("contextmenu", ".token-row-add", function(event) {
+    tokensPanel.body.find(".sidebar-list-item-row").on("contextmenu", ".token-row-add", function(event) {
         event.preventDefault();
         event.stopPropagation();
         let clickedRow = $(event.target).closest(".list-item-identifier");
@@ -843,7 +865,7 @@ function register_token_row_context_menu() {
     });
 
     $.contextMenu({
-        selector: ".tokens-panel-row",
+        selector: "#tokens-panel .sidebar-list-item-row",
         build: function(element, e) {
 
             let menuItems = {};
@@ -891,7 +913,7 @@ function register_token_row_context_menu() {
                     name: "Edit",
                     callback: function(itemKey, opt, originalEvent) {
                         let itemToEdit = find_sidebar_list_item(opt.$trigger);
-                        display_token_item_configuration_modal(itemToEdit);
+                        display_sidebar_list_item_configuration_modal(itemToEdit);
                     }
                 };
             }
@@ -905,7 +927,7 @@ function register_token_row_context_menu() {
                 };
             }
 
-            if (rowItem.canDelete() ) {
+            if (rowItem.canDelete()) {
 
                 menuItems["border"] = "---";
 
@@ -932,38 +954,6 @@ function register_token_row_context_menu() {
 }
 
 /**
- * Displays a SidebarPanel as a modal that allows the user to configure the given listItem
- * @param listItem {SidebarListItem} the item to configure
- */
-function display_token_item_configuration_modal(listItem) {
-    switch (listItem.type) {
-        case SidebarListItem.TypeEncounter:
-            // TODO: support editing in an iframe on the page?
-            window.open(`https://www.dndbeyond.com/encounters/${listItem.encounterId}/edit`, '_blank');
-            break;
-        case SidebarListItem.TypeFolder:
-            if (listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-                display_folder_configure_modal(listItem);
-            } else {
-                console.warn("Only allowed to folders within the My Tokens folder");
-                return;
-            }
-            break;
-        case SidebarListItem.TypeBuiltinToken:
-            display_builtin_token_details_modal(listItem);
-            break;
-        case SidebarListItem.TypeMyToken:
-        case SidebarListItem.TypePC:
-        case SidebarListItem.TypeMonster:
-            display_token_configuration_modal(listItem);
-            break;
-        default:
-            console.warn("display_token_item_configuration_modal not supported for listItem", listItem);
-    }
-}
-
-
-/**
  * determines if the given path exists or not.
  * @param folderPath {string} the path you are looking for
  * @returns {boolean} whether or not the path exists
@@ -976,9 +966,9 @@ function my_token_path_exists(folderPath) {
  * Creates a "My Tokens" folder within another "My Tokens" folder
  * @param listItem {SidebarListItem} The folder to create a new folder within
  */
-function create_folder_inside(listItem) {
+function create_mytoken_folder_inside(listItem) {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
-        console.warn("create_folder_inside called with an incorrect item type", listItem);
+        console.warn("create_mytoken_folder_inside called with an incorrect item type", listItem);
         return;
     }
 
@@ -993,7 +983,7 @@ function create_folder_inside(listItem) {
     mytokensfolders.push(newFolder);
     let newFolderFullPath = sanitize_folder_path(`${SidebarListItem.PathMyTokens}${newFolder.folderPath}/${newFolder.name}`);
     did_change_mytokens_items();
-    expand_all_folders_up_to(newFolderFullPath);
+    expand_all_folders_up_to(newFolderFullPath, tokensPanel.body);
     let newListItem = window.tokenListItems.find(i => i.fullPath() === newFolderFullPath);
     display_folder_configure_modal(newListItem);
 }
@@ -1005,7 +995,7 @@ function create_folder_inside(listItem) {
  * @param alertUser {boolean} whether or not to alert the user if an error occurs. The most common error is naming conflicts
  * @returns {string|undefined} the path of the newly created folder; undefined if the folder could not be created.
  */
-function rename_folder(item, newName, alertUser = true) {
+function rename_mytoken_folder(item, newName, alertUser = true) {
     if (!item.isTypeFolder() || !item.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
         console.warn("rename_folder called with an incorrect item type", item);
         if (alertUser !== false) {
@@ -1036,13 +1026,11 @@ function rename_folder(item, newName, alertUser = true) {
     }
 
     console.log(`updating tokens from ${fromFullPath} to ${toFullPath}`);
-    let didUpdateTokens = false;
     mytokens.forEach(token => {
         if (token.folderPath.startsWith(fromFullPath)) {
             let newFolderPath = sanitize_folder_path(token.folderPath.replace(fromFullPath, toFullPath));
             console.debug(`changing token ${token.name} folderpath from ${token.folderPath} to ${newFolderPath}`);
             token.folderPath = newFolderPath;
-            didUpdateTokens = true;
         } else {
             console.debug("not moving token", token);
         }
@@ -1069,60 +1057,28 @@ function rename_folder(item, newName, alertUser = true) {
     return toFullPath;
 }
 
-/**
- * deletes a folder and all tokens/folders within it
- * @param listItem {SidebarListItem} the item representing the folder you want to delete
- */
-function delete_folder_and_delete_children(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-        console.warn("delete_folder_and_delete_children called with an incorrect item type", listItem);
-        return;
-    }
-    if (!confirm(`Are you sure you want to delete "${listItem.name}"?\nAll items within it will also be deleted`)) {
-        console.debug("delete_folder_and_delete_children was canceled by user", listItem);
-        return;
-    }
+function delete_mytokens_within_folder(listItem) {
+    console.groupCollapsed(`delete_mytokens_within_folder`);
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
 
-    console.groupCollapsed("delete_folder_and_delete_children");
-
-    let adjustedPath = listItem.fullPath().replace(SidebarListItem.PathMyTokens, "");
-    console.log("about to delete folder and everything in", adjustedPath);
-
+    console.log("about to delete all tokens within", adjustedPath);
     console.debug("before deleting from mytokens", mytokens);
     mytokens = mytokens.filter(token => !token.folderPath.startsWith(adjustedPath));
     console.debug("after deleting from mytokens", mytokens);
 
+    console.log("about to delete all folders within", adjustedPath);
     console.debug("before deleting from mytokensfolders", mytokensfolders);
-    mytokensfolders = mytokensfolders
-        .filter(folder => !folder.folderPath.startsWith(adjustedPath)) // remove everything under the folder
-        .filter(folder => sanitize_folder_path(`${folder.folderPath}/${folder.name}`) !== adjustedPath); // remove the folder itself
+    mytokensfolders = mytokensfolders.filter(folder => !folder.folderPath.startsWith(adjustedPath))
     console.debug("after deleting from mytokensfolders", mytokensfolders);
-
-    did_change_mytokens_items();
-    let oneLevelUp = sanitize_folder_path(listItem.folderPath);
-    expand_all_folders_up_to(oneLevelUp);
 
     console.groupEnd();
 }
 
-/**
- * deletes a folder and moves all tokens/folders within it to the given folder's parent
- * @param listItem {SidebarListItem} the item representing the folder you want to delete
- */
-function delete_folder_and_move_children_up_one_level(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-        console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
-        return;
-    }
-    if (!confirm(`Are you sure you want to delete "${listItem.name}"?\nAll items within it will be moved up one level.`)) {
-        console.debug("delete_folder_and_move_children_up_one_level was canceled by user", listItem);
-        return;
-    }
-    console.groupCollapsed("delete_folder_and_move_children_up_one_level");
-
+function move_mytokens_to_parent_folder(listItem) {
+    // this is different from move_mytokens_folder in that it moved everything out of listItem
+    console.groupCollapsed(`move_mytokens_to_parent_folder`);
     let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
     let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(SidebarListItem.PathMyTokens, ""));
-    console.log(`about to delete folder ${adjustedPath} and move its children up one level to ${oneLevelUp}`);
 
     console.debug("before moving mytokens", mytokens);
     mytokens.forEach(token => {
@@ -1149,10 +1105,15 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     });
     console.debug("after moving mytokensfolders", mytokensfolders);
 
-    did_change_mytokens_items();
-    expand_all_folders_up_to(oneLevelUp);
-
     console.groupEnd();
+}
+
+function delete_mytokens_folder(listItem) {
+    console.log("delete_mytokens_folder", listItem);
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+    console.debug("before deleting from mytokensfolders", mytokensfolders);
+    mytokensfolders = mytokensfolders.filter(folder => sanitize_folder_path(`${folder.folderPath}/${folder.name}`) !== adjustedPath);
+    console.debug("after deleting from mytokensfolders", mytokensfolders);
 }
 
 /**
@@ -1312,7 +1273,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
         // token size
         let tokenSizeInput = build_token_size_input(tokenSize, function (newSize) {
-            console.log("do something with new token size", newSize)
+            myToken.tokenSize = newSize;
+            persist_my_tokens();
         });
         inputWrapper.append(tokenSizeInput);
         inputWrapper.append(`<div class="sidebar-panel-header-explanation" style="padding-bottom:6px;">The following will override global settings for this token. Global settings can be changed in the settings tab.</div>`)
@@ -1615,7 +1577,7 @@ function update_token_folders_remembered_state() {
 }
 
 function fetch_encounter_monsters_if_necessary(clickedRow, clickedItem) {
-    if (clickedItem.isTypeEncounter() && clickedRow.find(".folder-token-list").is(":empty") && !clickedItem.activelyFetchingMonsters && clickedItem.encounterId !== undefined) {
+    if (clickedItem.isTypeEncounter() && clickedRow.find(".folder-item-list").is(":empty") && !clickedItem.activelyFetchingMonsters && clickedItem.encounterId !== undefined) {
         fetch_and_inject_encounter_monsters(clickedRow, clickedItem);
     }
 }
@@ -1632,8 +1594,8 @@ function refresh_encounter(clickedRow, clickedItem, callback) {
             fetch_and_inject_encounter_monsters(clickedRow, clickedItem);
             clickedItem.name = response.name;
             clickedItem.description = response.flavorText;
-            clickedRow.find(".tokens-panel-row-details-title").text(response.name);
-            clickedRow.find(".tokens-panel-row-details-subtitle").text(response.flavorText);
+            clickedRow.find(".sidebar-list-item-row-details-title").text(response.name);
+            clickedRow.find(".sidebar-list-item-row-details-subtitle").text(response.flavorText);
             callback(true);
         }
     });
@@ -1641,10 +1603,10 @@ function refresh_encounter(clickedRow, clickedItem, callback) {
 
 function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
     clickedItem.activelyFetchingMonsters = true;
-    clickedRow.find(".tokens-panel-row-item").addClass("button-loading");
+    clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
         clickedItem.activelyFetchingMonsters = true;
-        clickedRow.find(".tokens-panel-row-item").removeClass("button-loading");
+        clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
         } else {
@@ -1663,7 +1625,7 @@ function inject_encounter_monsters() {
         let monsterItems = encounter_monster_items[encounterId];
         let encounter = window.EncounterHandler.encounters[encounterId];
         let encounterRow = tokensPanel.body.find(`[data-encounter-id='${encounterId}']`);
-        let encounterMonsterList = encounterRow.find(`> .folder-token-list`);
+        let encounterMonsterList = encounterRow.find(`> .folder-item-list`);
         if (encounter?.groups === undefined || encounter.groups === null || encounterMonsterList.length === 0 || encounterRow.length === 0 || monsterItems === undefined) {
             continue;
         }
@@ -2226,4 +2188,63 @@ const fetch_and_cache_scene_monster_items = mydebounce( (clearCache = false) => 
 
 function update_monster_item_cache(newItems) {
     newItems.forEach(item => cached_monster_items[item.monsterData.id] = item);
+}
+
+function move_mytoken_to_folder(listItem, folderPath) {
+    if (!listItem.isTypeMyToken()) {
+        console.warn("move_mytoken_to_folder was called with the wrong item type", listItem);
+        return;
+    }
+    let myToken = find_my_token(listItem.fullPath());
+    if (!myToken) {
+        console.warn("move_mytoken_to_folder could not find myToken for listItem", listItem);
+        return;
+    }
+    myToken.folderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathMyTokens, ""));
+}
+
+function move_mytokens_folder(listItem, folderPath) {
+    // this is different from move_mytokens_to_parent_folder in that it moves the listItem keeping everything within the folder intact
+    if (listItem.isTypeFolder() && listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
+        console.groupCollapsed("move_mytokens_folder");
+
+        let fromPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+
+        let folderObject = find_my_token_folder(listItem.fullPath());
+        let newFolderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathMyTokens, ""));
+        if (folderObject) {
+            folderObject.folderPath = newFolderPath;
+        }
+        listItem.folderPath = newFolderPath;
+
+        let toPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+
+        console.debug("before moving mytokens", mytokens);
+        mytokens.forEach(token => {
+            if (token.folderPath.startsWith(fromPath)) {
+                let newFolderPath = sanitize_folder_path(token.folderPath.replace(fromPath, toPath));
+                console.log(`moving ${token.name} up one level to ${newFolderPath}`, token);
+                token.folderPath = newFolderPath;
+            } else {
+                console.debug(`not moving token up one level`, token);
+            }
+        });
+        console.debug("after moving mytokens", mytokens);
+
+        console.debug("before moving mytokensfolders", mytokensfolders);
+        mytokensfolders.forEach(f => {
+            if (f.folderPath.startsWith(fromPath)) {
+                let newFolderPath = sanitize_folder_path(f.folderPath.replace(fromPath, toPath));
+                console.log("moving folder up to", newFolderPath, f);
+                f.folderPath = newFolderPath;
+            } else {
+                console.debug("not moving folder up", f);
+            }
+        });
+        console.debug("after moving mytokensfolders", mytokensfolders);
+
+        console.groupEnd();
+    } else {
+        console.warn("move_mytoken_to_folder was called with the wrong item type", listItem);
+    }
 }
