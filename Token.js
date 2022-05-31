@@ -901,6 +901,7 @@ class Token {
 
 
 		if (old.length > 0) {
+			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
 
@@ -1237,7 +1238,7 @@ class Token {
 								if (window.TOKEN_OBJECTS[id].selected) {
 									setTimeout(function(tempID) {
 										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										console.log($("[data-id='"+id+"']"));
+										//console.log($("[data-id='"+id+"']"));
 									}, 200, id);
 								}
 							}
@@ -1782,7 +1783,6 @@ function deselect_all_tokens() {
 		var curr = window.TOKEN_OBJECTS[id];
 		if (curr.selected) {
 			curr.selected = false;
-			curr.place();
 		}
 	}
 	remove_selected_token_bounding_box();
@@ -1974,13 +1974,34 @@ function rotate_selected_tokens(newRotation, persist = false) {
 	}
 }
 
+// if it was not executed in the last 3 second, execute it immediately
+// if it's already scheduled to be executed, return
+// otherwise, schedule it to execute in 3 seconds
+function draw_selected_token_bounding_box(){
+	if(window.NEXT_DRAWBOX  && (window.NEXT_DRAWBOX -Date.now() > 0)){
+		return;
+	}
+	else if(!window.NEXT_DRAWBOX  || (window.NEXT_DRAWBOX -Date.now() <  -1000)){
+		window.NEXT_DRAWBOX=Date.now();
+		do_draw_selected_token_bounding_box();
+		return;
+	}
+	else {
+		window.NEXT_DRAWBOX=Date.now()+300;
+		setTimeout(do_draw_selected_token_bounding_box,300);
+		return;
+	}
+}
+
+
 /// draws a rectangle around every selected token, and adds a rotation grabber
-function draw_selected_token_bounding_box() {
+function do_draw_selected_token_bounding_box() {
+	console.log("do_draw_selected_token_bounding_box");
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
-		console.log(id)
+		//console.log(id)
 		let selector = "div[data-id='" + id + "']";
 		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {

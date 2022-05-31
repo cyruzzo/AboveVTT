@@ -408,23 +408,23 @@ class WaypointManagerClass {
 };
 
 
-// if it was not executed in the last 3 second, execute it immediately
+// if it was not executed in the last second, execute it immediately
 // if it's already scheduled to be executed, return
-// otherwise, schedule it to execute in 3 seconds
+// otherwise, schedule it to execute in 1 second
 function check_token_visibility(){
 	if(window.DM)
 		return;
 	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() > 0)){
 		return;
 	}
-	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -3000)){
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
 		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
 		do_check_token_visibility();
 		return;
 	}
 	else {
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+3000;
-		setTimeout(do_check_token_visibility,3000);
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
+		setTimeout(do_check_token_visibility,1000);
 		return;
 	}
 }
@@ -1274,8 +1274,7 @@ function drawing_mouseup(e) {
 					curr.selected = true;
 				}
 			}
-			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
-			curr.place();
+			
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);

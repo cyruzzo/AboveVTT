@@ -1254,9 +1254,9 @@ class MessageBroker {
 			this.handleToken({
 				data: data.tokens[i]
 			});
-			if(!window.DM)
-				check_token_visibility();
 		}
+		if(!window.DM)
+				check_token_visibility();
 
 		if(window.CLOUD && window.DM){
 			$("#combat_area").empty();
