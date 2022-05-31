@@ -408,7 +408,29 @@ class WaypointManagerClass {
 };
 
 
-function check_token_visibility() {
+// if it was not executed in the last 3 second, execute it immediately
+// if it's already scheduled to be executed, return
+// otherwise, schedule it to execute in 3 seconds
+function check_token_visibility(){
+	if(window.DM)
+		return;
+	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() > 0)){
+		return;
+	}
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -3000)){
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
+		do_check_token_visibility();
+		return;
+	}
+	else {
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+3000;
+		setTimeout(do_check_token_visibility,3000);
+		return;
+	}
+}
+
+function do_check_token_visibility() {
+	console.log("do_check_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
 	var canvas = document.getElementById("fog_overlay");
@@ -436,6 +458,7 @@ function check_token_visibility() {
 		}
 		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 	}
+	console.log("finished");
 }
 
 function circle2(a, b) {
