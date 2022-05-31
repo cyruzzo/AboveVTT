@@ -291,6 +291,10 @@ function rebuild_token_items_list() {
         // encounter_monster_items[encounterId]?.forEach(monsterItem => tokenItems.push(monsterItem));
     }
 
+    for (const shape in ["square", "cone", "circle", "line"]){
+        tokenItems.push(SidebarListItem.Aoe(shape, 4, "acid"));
+    }
+
     window.tokenListItems = tokenItems;
     console.groupEnd();
 }
