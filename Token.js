@@ -1132,7 +1132,7 @@ class Token {
 			$("#tokens").append(tok);
 			tok.animate({
 				opacity: newopacity
-			}, { duration: 3000, queue: false });
+			}, { duration: 500, queue: false });
 
 
 			let click = {
