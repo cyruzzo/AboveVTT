@@ -424,6 +424,24 @@ class MessageBroker {
 				}
 			}
 
+			if(msg.eventType=="custom/myVTT/fetchscene"){
+				let sceneId=msg.data.sceneid;
+
+				let http_api_gw="https://services.abovevtt.net"; // uff.. we SHOULD REALLY PLACE THIS CHECK SOMEWHERE ELSE AND DO IT JUST ONE TIME...
+				let searchParams = new URLSearchParams(window.location.search);
+				if(searchParams.has("dev")){
+					http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+				}
+
+				$.ajax({
+					url: http_api_gw+"/services?action=getScene&campaign="+window.CAMPAIGN_SECRET+"&scene="+sceneId,
+					success: (response)=>{
+						self.handleScene(response);
+					}
+				});
+
+			}
+
 			if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
 			}
