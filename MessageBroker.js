@@ -420,7 +420,26 @@ class MessageBroker {
 					window.ScenesHandler.scenes=msg.data;
 					window.PLAYER_SCENE_ID=msg.playersSceneId;
 					refresh_scenes();
+					did_update_scenes();
 				}
+			}
+
+			if(msg.eventType=="custom/myVTT/fetchscene"){
+				let sceneId=msg.data.sceneid;
+
+				let http_api_gw="https://services.abovevtt.net"; // uff.. we SHOULD REALLY PLACE THIS CHECK SOMEWHERE ELSE AND DO IT JUST ONE TIME...
+				let searchParams = new URLSearchParams(window.location.search);
+				if(searchParams.has("dev")){
+					http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+				}
+
+				$.ajax({
+					url: http_api_gw+"/services?action=getScene&campaign="+window.CAMPAIGN_SECRET+"&scene="+sceneId,
+					success: (response)=>{
+						self.handleScene(response);
+					}
+				});
+
 			}
 
 			if (msg.eventType == "custom/myVTT/scene") {
@@ -855,7 +874,7 @@ class MessageBroker {
 			// This is used when the "Send to Gamelog" button sends HTML over the websocket.
 			// If there are special characters, then the _dndbeyond_message_broker_client fails to parse the JSON
 			// To work around this, we base64 encode the html here, and then decode it in MessageBroker.convertChat
-			return "base64" + window.btoa(unescape(encodeURIComponent(text)));
+			return "base64" + b64EncodeUnicode(text);
 		} else {
 			console.warn("There's at least one connection below version 0.66; not encoding message text to prevent that user from seeing base64 encoded text in the gamelog");
 			return text;
@@ -868,7 +887,7 @@ class MessageBroker {
 			// This is used when the "Send to Gamelog" button sends HTML over the websocket.
 			// If there are special characters, then the _dndbeyond_message_broker_client fails to parse the JSON
 			// To work around this, we base64 encode the html in encode_message_text, and then decode it here after the message has been received
-			text = decodeURIComponent(escape(window.atob(text.replace("base64", ""))));
+			text = b64DecodeUnicode(text.replace("base64", ""));
 		}
 		return text;
 	}
@@ -1059,6 +1078,7 @@ class MessageBroker {
 			if (window.EncounterHandler !== undefined) {
 				fetch_and_cache_scene_monster_items(true);
 			}
+			did_update_scenes();
 			console.groupEnd()
 		});
 
