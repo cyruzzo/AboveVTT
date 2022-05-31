@@ -1783,6 +1783,7 @@ function deselect_all_tokens() {
 		var curr = window.TOKEN_OBJECTS[id];
 		if (curr.selected) {
 			curr.selected = false;
+			curr.place();
 		}
 	}
 	remove_selected_token_bounding_box();
