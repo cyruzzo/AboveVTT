@@ -163,7 +163,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			var oheight = $("#scene_map").height();
 			var max_length = get_canvas_max_length();
 			var max_area = get_canvas_max_area();
-
 			console.log("Map size is " + owidth + "x" + oheight + " (with scale factor of " + scene.scale_factor + ") and browser supports max length of " + max_length + "px and max area of " + max_area + "px");
 
 			// Check if the map size is too large
@@ -184,8 +183,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			$("#scene_map").off("load");
 			reset_canvas();
-			redraw_canvas();
+			redraw_fog();
 			redraw_drawings();
+			redraw_text()
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()

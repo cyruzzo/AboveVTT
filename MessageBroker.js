@@ -455,24 +455,26 @@ class MessageBroker {
 
 			if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
-				redraw_canvas();
+				redraw_fog();
 				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 			}
 
 			if(msg.eventType== "custom/myVTT/fogdata"){ // WE RESEND ALL THE FOG EVERYTIME NOW
 				window.REVEALED=msg.data;
-				redraw_canvas();
+				redraw_fog();
 				check_token_visibility();
 			}
 
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
 				redraw_drawings();
+				redraw_text();
 			}
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
 				redraw_drawings();
+				redraw_text();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){
@@ -1056,8 +1058,9 @@ class MessageBroker {
 				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			reset_canvas();
-			redraw_canvas();
+			redraw_fog();
 			redraw_drawings();
+			redraw_text();
 			apply_zoom_from_storage();
 
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
@@ -1092,7 +1095,7 @@ class MessageBroker {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
-			redraw_canvas();
+			redraw_fog();
 			//$("#fog_overlay").show();
 		}
 		else {
@@ -1108,6 +1111,7 @@ class MessageBroker {
 			window.DRAWINGS = [];
 		}
 		redraw_drawings();
+		redraw_text();
 
 
 		
