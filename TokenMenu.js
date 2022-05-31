@@ -185,7 +185,10 @@ function token_context_menu_expanded(tokenIds, e) {
 			if (clickedButton.hasClass("remove-from-ct")) {
 				clickedButton.removeClass("remove-from-ct").addClass("add-to-ct");
 				clickedButton.html(addButtonInternals);
-				tokens.forEach(t => ct_remove_token(t, false));
+				tokens.forEach(t =>{
+					t.options.ct_show = undefined;
+					ct_remove_token(t, false)
+				});
 			} else {
 				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
 				clickedButton.html(removeButtonInternals);
