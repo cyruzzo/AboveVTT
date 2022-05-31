@@ -1068,6 +1068,11 @@ function observe_character_sheet_companion(documentToObserve){
 				button.css("border-width","1px");
 				button.css("min-height","34px");
 				button.click((e) => handle_observe_character_sheet_companion(e))
+				button.attr("data-shape", "set-me");
+				button.attr("data-style", "set-me");
+				button.attr("data-size", "set-me");
+				set_full_path(button, SidebarListItem.Aoe(shape, style, size).fullPath());
+				enable_draggable_token_creation(button);
 				return button;
 			})
 			console.log(`${extras.length} companions discovered`);
@@ -1231,6 +1236,11 @@ function observe_character_sheet_aoe(documentToObserve) {
 			icons.wrap(function(){
 				$(this).addClass("above-vtt-visited");
 				let button = $("<button class='above-aoe integrated-dice__container'></button>");
+				button.attr("data-shape", "set-me");
+				button.attr("data-style", "set-me");
+				button.attr("data-size", "set-me");
+				set_full_path(button)
+				enable_draggable_token_creation(button);
 				button.css("border-width","1px");
 				button.click(function(e){
 					e.stopPropagation();
