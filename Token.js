@@ -1287,10 +1287,10 @@ class Token {
 
 
 					if (self.selected && $(".token.tokenselected").length>1) {
-						$(".token.tokenselected").each(function(){
-							let id = $(this).attr("data-id");
-							$(this).addClass("pause_click");
-							if($(this).is(":animated")){
+						for (let tok of $(".token.tokenselected"){
+							let id = $(tok).attr("data-id");
+							$(tok).addClass("pause_click");
+							if($(tok).is(":animated")){
 								window.TOKEN_OBJECTS[id].stopAnimation();
 							}
 							if (id != self.options.id) {
@@ -1305,7 +1305,7 @@ class Token {
 								}
 							}
 
-						});													
+						}												
 					}
 					
 
@@ -1389,12 +1389,11 @@ class Token {
 						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						$(".token.tokenselected").each(function(){
-							let id = $(this).attr("data-id");
+						for (let tok of $(".token.tokenselected"){
+							let id = $(token).attr("data-id");
 							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
-								var tok = $(this);
 								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
 								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
@@ -1410,7 +1409,7 @@ class Token {
 									selEl.css('top', (currTop + offsetTop) + "px");
 								}
 							}
-						});													
+						}													
 					}
 
 				}
