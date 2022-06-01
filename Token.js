@@ -1898,16 +1898,17 @@ function draw_selected_token_bounding_box() {
 	var bottom = undefined;
 	var right = undefined;
 	var left = undefined;
+
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
 		let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 		let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
-		let tokenImageWidth = tokenImageClientPosition.right - tokenImageClientPosition.left;
-		let tokenImageHeight = tokenImageClientPosition.bottom - tokenImageClientPosition.top;
-		let tokenTop = parseFloat(token.options.top) + tokenImagePosition.top;
+		let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+		let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+		let tokenTop = ($(`div.token[data-id='${id}']`).position().top + tokenImagePosition.top) / (window.ZOOM);
 		let tokenBottom = tokenTop + tokenImageHeight;
-		let tokenLeft = parseFloat(token.options.left)  + tokenImagePosition.left;
+		let tokenLeft = ($(`div.token[data-id='${id}']`).position().left  + tokenImagePosition.left) / (window.ZOOM);
 		let tokenRight = tokenLeft + tokenImageWidth;
 		if (top == undefined) {
 			top = tokenTop;
@@ -1933,10 +1934,10 @@ function draw_selected_token_bounding_box() {
 
 	// add 10px to each side of out bounding box to give the tokens a little space
 	let borderOffset = 10;
-	top = top - borderOffset;
-	left = left - borderOffset;
-	right = right + borderOffset;
-	bottom = bottom + borderOffset;
+	top = (top - borderOffset);
+	left = (left - borderOffset);
+	bottom = (bottom + borderOffset);
+	right = (right + borderOffset);
 	let width = right - left;
 	let height = bottom - top;
 	let centerHorizontal = left + Math.ceil(width / 2);
