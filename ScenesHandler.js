@@ -163,7 +163,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			var oheight = $("#scene_map").height();
 			var max_length = get_canvas_max_length();
 			var max_area = get_canvas_max_area();
-
 			console.log("Map size is " + owidth + "x" + oheight + " (with scale factor of " + scene.scale_factor + ") and browser supports max length of " + max_length + "px and max area of " + max_area + "px");
 
 			// Check if the map size is too large
@@ -184,8 +183,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			$("#scene_map").off("load");
 			reset_canvas();
-			redraw_canvas();
+			redraw_fog();
 			redraw_drawings();
+			redraw_text()
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()
@@ -209,8 +209,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				callback();
 
 			if (window.EncounterHandler !== undefined) {
-				console.log("Updating avtt encounter");
-				window.EncounterHandler.update_avtt_encounter_with_players_and_monsters();
+				fetch_and_cache_scene_monster_items(true);
 			} else {
 				console.log("Not updating avtt encounter");
 			}
@@ -238,7 +237,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 		data.grid = window.CURRENT_SCENE_DATA.grid;
 		data.snap = window.CURRENT_SCENE_DATA.snap;
-		data.grid = window.CURRENT_SCENE_DATA.grid;
 		//data.scale=window.CURRENT_SCENE_DATA.scaleX;
 		data.hpps = window.CURRENT_SCENE_DATA.hpps;
 		data.vpps = window.CURRENT_SCENE_DATA.vpps;
@@ -590,12 +588,19 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
 
-	persist_current_scene(){
+	persist_current_scene(dontswitch=false){
 		let sceneData=Object.assign({},this.scene);
 		sceneData.reveals=[];
 		sceneData.drawings=[];
 		sceneData.tokens={};
-		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
+		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
+	}
+
+	delete_scene(sceneId) { // not the index, but the actual id
+		if(!window.CLOUD) return;
+		window.MB.sendMessage("custom/myVTT/delete_scene",{ id: sceneId });
+		let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === sceneId);
+		window.ScenesHandler.scenes.splice(sceneIndex, 1);
 	}
 
 	persist() {

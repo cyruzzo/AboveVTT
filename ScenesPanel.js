@@ -56,8 +56,164 @@ function preset_importer(target, key) {
 	target.append(import_button);
 }
 
+
+
+function handle_basic_form_toggle_click(event){
+	if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+		// it was checked. now it is no longer checked
+		$(event.currentTarget).removeClass("rc-switch-checked");
+	  } else {
+		// it was not checked. now it is checked
+		$(event.currentTarget).removeClass("rc-switch-unknown");
+		$(event.currentTarget).addClass("rc-switch-checked");
+	  }
+}
+
+function get_edit_form_data(scene=null){
+	let data = {}
+	$("#edit_scene_form").find("input, button.rc-switch").each(function() {
+		const inputName = $(this).attr('name');
+		let inputValue = $(this).val();
+
+		if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
+			inputValue = parse_img(inputValue);
+		}
+		else if ($(this).is("button")){
+			inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
+		}
+		
+		if (scene){
+			scene[inputName] = inputValue
+		}
+		data[inputName] = inputValue
+	})
+	return data
+}
+
+function validate_image_input(element){
+	const self = element
+	const img = parse_img(self.value)
+	let hasValidationDisplayed = $(self).prev().is("span")
+	const validIcon = $(`<span class="material-icons url-validator valid">check_circle_outline</span>`)
+
+	// optional values can be blank
+	const isOptional = $(self).attr("placeholder") === "Optional"
+	if(img === "" && isOptional){
+		if (hasValidationDisplayed) {
+			$(self).prev().remove()
+		}
+		return
+	} 
+
+	// default as valid
+	$(self).parent().css("position","relative")
+	if (!hasValidationDisplayed){
+		$(self).before(validIcon)
+		$(self).attr("data-valid",true)
+		hasValidationDisplayed = true
+	}
+
+	const display_not_valid = () => {
+		if (hasValidationDisplayed){
+			$(self).prev().html("highlight_off")
+			$(self).prev().removeClass("valid loading")
+			$(self).prev().addClass("invalid")
+			$(self).attr("data-valid", false)
+		}
+		
+		$(self).addClass("chat-error-shake");
+        setTimeout(function () {
+            $(self).removeClass("chat-error-shake");
+        }, 150);
+	}
+	try {
+		const url = new URL(img)
+
+		function testImage(URL) {
+			const tester=new Image();
+			tester.onload=imageFound;
+			tester.onerror=imageNotFound;
+			tester.src=URL;
+			$(self).prev().removeClass("valid invalid")
+			$(self).prev().addClass("loading")
+			$(self).prev().html("autorenew")
+
+		}
+		
+		function imageFound() {
+			$(self).prev().removeClass("loading invalid")
+			$(self).prev().addClass("valid")
+			$(self).prev().html("check_circle_outline")
+		}
+		
+		function imageNotFound() {
+			display_not_valid()
+		}
+		
+		testImage(url);
+	} catch (_) {
+		display_not_valid()
+	}
+}
+
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
+
+	function form_row(name, title, inputOverride=null, imageValidation=false) {
+		const row = $("<div style='width:100%;'/>");
+		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+		let rowInput
+		if(!inputOverride){
+			if (imageValidation){
+				rowInput = $(`<input type="text" name=${name} style='width:100%' onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+			}else{
+				rowInput = $(`<input type="text" name=${name} style='width:100%' value="${scene[name] || ""}" />`);
+			}
+			 
+		}
+		else{
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
+
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
+		toggle.on("click", callback)
+		if (scene[name] === "1" || defaultOn){
+			toggle.click()
+		}
+		return toggle
+	}
+
+	function handle_form_grid_on_change(){
+		// not editting this scene, don't show live updates to grid
+		if (scene.id !== window.CURRENT_SCENE_DATA.id){
+			return
+		}
+	
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		// redraw grid with new information
+		if(grid === "1"){
+			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
+		}
+		// redraw grid using current scene data
+		else if(grid === "0"){
+			clear_grid()
+		}
+	}
+
+	$("#edit_dialog").remove();
+
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
@@ -101,90 +257,142 @@ function edit_scene_dialog(scene_id) {
 
 	container.empty();
 
-	let f = $("<form />");
-	f.on('submit', function(e) { e.preventDefault(); });
-
-	let addrow = function(name, title, type = 'text') {
-		var row = $("<div style='width:100%;'/>");
-		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		c1.css("font-weight", "bold");
-		var c2 = $("<div style='display:inline-block; width:70%'/>");
-		var i = $("<input />");
-		i.attr('type', type);
-		i.attr('name', name);
-		i.val(scene[name]);
-		i.css("width", "70%");
-		c2.append(i);
-		row.append(c1);
-		row.append(c2);
-		f.append(row);
-	};
-
-	let addrow_with_checkbox = function(name, title, checkbox_name, checkbox_title, type = 'text') {
-		var row = $("<div style='width:100%;'/>");
-		var c1 = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		c1.css("font-weight", "bold");
-		var c2 = $("<div style='display:inline-block; width:50%'/>");
-		var i = $("<input />");
-		i.attr('type', type);
-		i.attr('name', name);
-		i.val(scene[name]);
-		i.css("width", "100%");
-
-		var c3 = $("<div style='display: inline-block;'>&nbsp;&nbsp;" + checkbox_title + "&nbsp;&nbsp;</div>");
-		c3.css("font-weight", "bold");
-		var c4 = $("<div style='display:inline-block;'/>");
-		var t = $("<input />");
-		t.attr('type', "checkbox");
-		t.attr('name', checkbox_name);
-		t.prop('checked', scene[checkbox_name] === "1");
-		c2.append(i);
-		c4.append(t);
-		row.append(c1);
-		row.append(c2);
-		row.append(c3);
-		row.append(c4);
-		f.append(row);
-	};
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
-	f.append(uuid_hidden);
+	form.append(uuid_hidden);
 
-	addrow('title', 'Scene Title');
-	addrow_with_checkbox('player_map', 'Player Map', 'player_map_is_video', "Is Video?");
-	addrow_with_checkbox('dm_map', 'Dm Map', 'dm_map_is_video', "Is Video?");
-	addrow('dm_map_usable', 'Use DM Map (1 to enable)');
+	form.append(form_row('title', 'Scene Title'))
+	const playerMapRow = form_row('player_map', 'Player Map', null, true)
+	const dmMapRow = form_row('dm_map', 'Dm Map', null, true)
+	
+	// add in toggles for these 2 rows
+	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
+	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
+	form.append(playerMapRow)
+	form.append(dmMapRow)
+
+	// add a row but override the normal input with a toggle
+	form.append(form_row(null,
+						'Use DM Map',
+						form_toggle("dm_map_usable",null, false, handle_basic_form_toggle_click)
+						)
+				);
+	let darknessValue = scene.darkness_filter || 0;
+	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="95" step="5"/>`);
+	
+	darknessFilterRange.on(' input change', function(){
+		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+   	 	let darknessPercent = 100 - darknessFilterRangeValue;
+   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
+   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+	   	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
+   		}
+	});
+	darknessFilterRange.on(' mouseup', function(){
+   	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+   	 	let darknessPercent = 100 - darknessFilterRangeValue;
+   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
+   	 	scene.darkness_filter = darknessFilterRangeValue;
+	});
+
+	form.append(form_row(null,
+						'Darkness filter',
+						darknessFilterRange)
+	);
+	form.append(form_row(null, 'Snap to Grid',form_toggle("snap", null, false, function(event) {
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+			// it was checked. now it is no longer checked
+			$(event.currentTarget).removeClass("rc-switch-checked");
+			if(window.ScenesHandler.current_scene_id == scene_id){
+				window.CURRENT_SCENE_DATA.snap = "0";	
+			}	
+		} else {
+			// it was not checked. now it is checked
+			$(event.currentTarget).removeClass("rc-switch-unknown");
+			$(event.currentTarget).addClass("rc-switch-checked");
+			if(window.ScenesHandler.current_scene_id == scene_id){
+				window.CURRENT_SCENE_DATA.snap = "1";
+			}	
+		}
+	})));
+
+
+	const showGridControls = $("<div id='show_grid_controls'/>");
+	const gridColor = $(`<input class="spectrum" name="grid_color" value="${scene["grid_color"] || "rgba(0, 0, 0, 0.5)"}" ></input>`)
+	const gridStroke =$(
+		`<input id="grid_line_width" name="grid_line_width" style="display:inline-block; position:relative; top:2px; margin:0px; height:12px;"
+		type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
+	gridStroke.on("change input", handle_form_grid_on_change)
+	showGridControls.append(
+		form_toggle("grid", null, false, function(event) {
+			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+				// it was checked. now it is no longer checked
+				$(event.currentTarget).removeClass("rc-switch-checked");
+				gridStroke.hide()	
+				form.find(".sp-replacer").hide()
+				
+			} else {
+				// it was not checked. now it is checked
+				$(event.currentTarget).removeClass("rc-switch-unknown");
+				$(event.currentTarget).addClass("rc-switch-checked");
+				gridStroke.show()	
+				form.find(".sp-replacer").show()
+			}
+				handle_form_grid_on_change()
+		})
+	)
+	showGridControls.append(gridColor)
+	showGridControls.append(gridStroke)
+	form.append(form_row(null, 'Show Grid', showGridControls))
+
+	const colorPickers = form.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		containerClassName: '#edit_dialog',
+		clickoutFiresChange: false
+	});
+	form.find(".sp-replacer").css({"height":"22px", "margin-left":"8px", "margin-right":"8px"})
+	// redraw the grid here
+	colorPickers.on('move.spectrum', handle_form_grid_on_change);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
+
+	
 	wizard = $("<button><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button>Manual Grid Data</button>");
 
-	grid_buttons = $("<div style='display:inline-block; width:70%'/>");
+	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
 	grid_buttons.append(manual_button);
-	f.append($("<div><div style='display:inline-block;width:30%'><b>Grid and Scale</b></div></div>").append(grid_buttons));
+	form.append(form_row(null, 'Grid Scale', grid_buttons))
 
-
-	var manual = $("<div/>");
+	var manual = $("<div id='manual_grid_data'/>");
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Snap to Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='snap'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Show Grid(1 to enable)</div><div style='display:inline-block; width:70'%'><input name='grid'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
-	manual.hide();
 
+	
 	manual.find("input").each(function() {
 		$(this).css("width", "60px");
 		$(this).val(scene[$(this).attr('name')]);
 	})
-	f.append(manual);
+	manual.hide();
+	form.append(manual);
 	manual_button.click(function() {
 		if (manual.is(":visible"))
 			manual.hide();
 		else
 			manual.show();
+		
 	});
 
 
@@ -192,30 +400,15 @@ function edit_scene_dialog(scene_id) {
 		scene.fog_of_war = "1";
 
 
-	var sub = $("<button>Save And Switch</button>");
+	const submitButton = $("<button type='button'>Save And Switch</button>");
 
 	if(window.CLOUD)
-		sub.html("Save");
+		submitButton.html("Save");
 
-	sub.click(function() {
-		f.find("input").each(function() {
-			var n = $(this).attr('name');
-			var t = $(this).attr('type');
-			let nValue = null;
-			if (t == "checkbox") {
-				nValue = $(this).prop("checked") ? "1" : "0";
-			}
-			else {
-				nValue = $(this).val();
-			}
-
-			if ( ((n === 'player_map') || (n==='dm_map')) ) {
-				nValue = parse_img(nValue);
-			}
-
-			scene[n] = nValue;
-			console.log('setto ' + n + ' a ' + $(this).val());
-		});
+	submitButton.click(function() {
+		console.group("Saving scene changes")
+		// TODO Bain this is wrong?
+		get_edit_form_data(scene)
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
 		}
@@ -226,30 +419,15 @@ function edit_scene_dialog(scene_id) {
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
+		did_update_scenes();
 	});
-	
 
-	
+	let grid_5 = function() {
 
-
-	let grid_5 = function(enable_grid = false, enable_snap = true) {
-
-		console.log("enable_grid " + enable_grid + " enable_snap" + enable_snap);
 
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		window.WIZARDING = false;
-
-		if (enable_snap)
-			window.ScenesHandler.scene.snap = "1";
-		else
-			window.ScenesHandler.scene.snap = "0";
-
-		if (enable_grid)
-			window.ScenesHandler.scene.grid = "1";
-		else
-			window.ScenesHandler.scene.grid = "0";
-
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.grid_subdivided = "0";
@@ -275,8 +453,6 @@ function edit_scene_dialog(scene_id) {
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
 			window.ScenesHandler.scene.grid_subdivided = "1";
-			window.ScenesHandler.scene.snap = "1";
-			window.ScenesHandler.scene.grid = "1";
 			window.ScenesHandler.scene.fpsq = "5";
 			window.ScenesHandler.scene.upsq = "ft";
 			window.ScenesHandler.scene.hpps /= 2;
@@ -320,10 +496,8 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled. We don't currently support overimposing a grid in this scale..'");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
 		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "0";
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 3;
@@ -344,10 +518,8 @@ function edit_scene_dialog(scene_id) {
 		window.WIZARDING = false;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale and snapping is enabled.");
+		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
 		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.snap = "1";
-		window.ScenesHandler.scene.grid = "1";
 		window.ScenesHandler.scene.fpsq = "5";
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.hpps /= 4;
@@ -369,12 +541,6 @@ function edit_scene_dialog(scene_id) {
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
-
-			if (!just_rescaling)
-				window.CURRENT_SCENE_DATA.grid = "1";
-			else
-				window.CURRENT_SCENE_DATA.grid = "0";
-
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
 			window.CURRENT_SCENE_DATA.scale_factor=1;
 			var aligner1 = $("<canvas id='aligner1'/>");
@@ -454,11 +620,6 @@ function edit_scene_dialog(scene_id) {
 
 			let regrid = function(e) {
 
-				window.WIZARDING = true;
-				if (!just_rescaling)
-					window.CURRENT_SCENE_DATA.grid = 1;
-				else
-					window.CURRENT_SCENE_DATA.grid = 0;
 				let al1 = {
 					x: parseInt(aligner1.css("left")) + 29,
 					y: parseInt(aligner1.css("top")) + 29,
@@ -483,12 +644,19 @@ function edit_scene_dialog(scene_id) {
 					offsety = al1.y % ppsy;
 				}
 				console.log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
-				window.CURRENT_SCENE_DATA.hpps = ppsx;
-				window.CURRENT_SCENE_DATA.vpps = ppsy;
-				window.CURRENT_SCENE_DATA.offsetx = offsetx;
-				window.CURRENT_SCENE_DATA.offsety = offsety;
-				reset_canvas();
-				redraw_canvas();
+				window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
+				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
+				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
+				window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
+				let width
+				if (window.ScenesHandler.scene.upscaled == "1")
+					width = 2;
+				else
+					width = 1;
+				const dash = [30, 5]
+				const color = "rgba(255, 0, 0,0.5)";
+				// nulls will take the window.current_scene_data from above
+				redraw_grid(null,null,null,null,color,width,null,dash)
 			};
 
 			let click2 = {
@@ -499,13 +667,15 @@ function edit_scene_dialog(scene_id) {
 				stop: regrid,
 				start: function(event) {
 					window.CURRENT_SCENE_DATA.grid = 0;
-					reset_canvas(); redraw_canvas();
+					reset_canvas(); redraw_fog();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
 					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
 					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
 				},
 				drag: function(event, ui) {
+					clear_grid()
+					draw_wizarding_box()
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -557,7 +727,8 @@ function edit_scene_dialog(scene_id) {
 				stop: regrid,
 				start: function(event) {
 					window.CURRENT_SCENE_DATA.grid = 0;
-					reset_canvas(); redraw_canvas();
+					reset_canvas();
+					redraw_fog();
 					click1.x = event.clientX;
 					click1.y = event.clientY;
 					$("#aligner1").attr('original-top', parseInt($(event.target).css("top")));
@@ -566,7 +737,8 @@ function edit_scene_dialog(scene_id) {
 					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
 				},
 				drag: function(event, ui) {
-
+					clear_grid()
+					draw_wizarding_box()
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -617,20 +789,13 @@ function edit_scene_dialog(scene_id) {
 					aligner1.remove();
 					aligner2.remove();
 
-					if (just_rescaling) {
-						grid_5(false, false);
-					}
-					else if (!square) {
-						$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
-						$("#grid_5").click(function() { grid_5(); });
-						$("#grid_10").click(function() { grid_10(); });
-						$("#grid_15").click(function() { grid_15(); });
-						$("#grid_20").click(function() { grid_20(); });
-						$("#grid_100").click(function() { grid_100(); });
-					}
-					else { // just creating a 5 foot grid
-						grid_5(true);
-					}
+					$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
+					$("#grid_5").click(function() { grid_5(); });
+					$("#grid_10").click(function() { grid_10(); });
+					$("#grid_15").click(function() { grid_15(); });
+					$("#grid_20").click(function() { grid_20(); });
+					$("#grid_100").click(function() { grid_100(); });
+				
 
 				}
 			);
@@ -640,7 +805,7 @@ function edit_scene_dialog(scene_id) {
 	wizard.click(
 		function() {
 
-			f.find("input").each(function() {
+			form.find("input").each(function() {
 				var n = $(this).attr('name');
 				var t = $(this).attr('type');
 				let nValue = null;
@@ -663,7 +828,7 @@ function edit_scene_dialog(scene_id) {
 			scene.scale_factor=1;
 
 			if(window.CLOUD)
-				window.ScenesHandler.persist_current_scene();
+				window.ScenesHandler.persist_current_scene(true);
 			else
 				window.ScenesHandler.persist();
 			window.ScenesHandler.switch_scene(scene_id);
@@ -707,10 +872,21 @@ function edit_scene_dialog(scene_id) {
 	);
 
 
-	cancel = $("<button>Cancel</button>");
+	cancel = $("<button type='button' >Cancel</button>");
 	cancel.click(function() {
+		// redraw or clear grid based on scene data
+		// discarding any changes that have been made to live modification of grid
+		if (scene.id === window.CURRENT_SCENE_DATA.id){
+			if(window.CURRENT_SCENE_DATA.grid === "1"){
+				redraw_grid()
+			}
+			else{
+				clear_grid()
+			}
+		}
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
+		
 	})
 
 
@@ -724,7 +900,7 @@ function edit_scene_dialog(scene_id) {
 			scene.reveals = [];
 			if (scene_id == window.ScenesHandler.current_scene_id) {
 				window.REVEALED = [];
-				redraw_canvas();
+				redraw_fog();
 			}
 			window.ScenesHandler.persist();
 			window.ScenesHandler.sync();
@@ -737,20 +913,16 @@ function edit_scene_dialog(scene_id) {
 
 
 
-	f.append(sub);
-	f.append(cancel);
-	f.append(hide_all_button);
+	form.append(submitButton);
+	form.append(cancel);
+	form.append(hide_all_button);
 	//		f.append(export_grid);
 	container.css('opacity', '0.0');
-	container.append(f);
+	container.append(form);
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
-
-
-
-
-
+	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Optional");
 }
 
 function refresh_scenes() {
@@ -799,7 +971,6 @@ function refresh_scenes() {
 					sceneId:window.ScenesHandler.scenes[scene_id].id,
 					switch_dm: true
 				};
-				close_monster_stat_block(); //moved here so only when dm view moves does the monster stat window close
 				$(this).addClass("selected");
 				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
 				add_zoom_to_storage()
@@ -907,6 +1078,7 @@ function refresh_scenes() {
 }
 
 function init_scene_selector() {
+	if (window.CLOUD) return;
 	ss = $("<div  id='scene_selector' />");
 	ss.hide();
 
@@ -1269,3 +1441,441 @@ function mega_importer(DDB = false) {
 
 
 
+
+function default_scene_data() {
+	return {
+		id: uuid(),
+		title: "New Scene",
+		dm_map: "",
+		player_map: "",
+		scale: "100",
+		dm_map_usable: "0",
+		player_map_is_video: "0",
+		dm_map_is_video: "0",
+		fog_of_war: "1",
+		tokens: {},
+		fpsq: 5,
+		upsq: 'ft',
+		hpps: 60,
+		vpps: 60,
+		offsetx: 0,
+		offsety: 0,
+		grid: 0,
+		snap: 0,
+		reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+		order: Date.now()
+	};
+}
+
+function init_scenes_panel() {
+	console.log("init_scenes_panel");
+
+	scenesPanel.updateHeader("Scenes");
+
+	let searchInput = $(`<input name="scene-search" type="text" style="width:96%;margin:2%" placeholder="search scenes">`);
+	searchInput.off("input").on("input", mydebounce(() => {
+		let textValue = scenesPanel.header.find("input[name='scene-search']").val();
+		redraw_scene_list(textValue);
+	}, 500));
+
+	let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Scenes"><span class="material-icons">reorder</span></button>`);
+	reorderButton.on("click", function (clickEvent) {
+		if ($(clickEvent.currentTarget).hasClass("active")) {
+			disable_draggable_change_folder(SidebarListItem.TypeScene);
+		} else {
+			enable_draggable_change_folder(SidebarListItem.TypeScene);
+		}
+	});
+
+	let addSceneButton = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
+	addSceneButton.on("click", function (clickEvent) {
+		create_scene_inside(SidebarListItem.PathScenes);
+	});
+
+	let addFolderButton = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
+	addFolderButton.on("click", function (clickEvent) {
+		let numberOfNewFolders = window.sceneListFolders.filter(i => i.fullPath().startsWith("/New Folder") && i.isRootFolder()).length
+		let newFolderName = "New Folder";
+		if (numberOfNewFolders > 0) {
+			newFolderName = `${newFolderName} ${numberOfNewFolders}`
+		}
+		let newFolderItem = SidebarListItem.Folder(SidebarListItem.PathScenes, newFolderName, true);
+		window.sceneListFolders.push(newFolderItem);
+		display_folder_configure_modal(newFolderItem);
+		did_update_scenes();
+		expand_all_folders_up_to(newFolderItem.fullPath(), scenesPanel.body);
+	});
+
+	let headerWrapper = $(`<div class="scenes-panel-add-buttons-wrapper"></div>`);
+	headerWrapper.append(`<span class='reorder-explanation'>Drag items to move them between folders</span>`);
+	headerWrapper.append(searchInput);
+	headerWrapper.append(addFolderButton);
+	headerWrapper.append(addSceneButton);
+	headerWrapper.append(reorderButton);
+	scenesPanel.header.append(headerWrapper);
+	headerWrapper.find(".reorder-explanation").hide();
+
+	register_scene_row_context_menu(); // context menu for each row
+	did_update_scenes();
+	setTimeout(function () {
+		expand_folders_to_active_scenes();
+	}, 5000); // do better than this... or don't, it probably doesn't matter
+}
+
+function did_update_scenes() {
+	rebuild_scene_items_list();
+	redraw_scene_list("");
+}
+
+function rebuild_scene_items_list() {
+	console.group("rebuild_scene_items_list");
+	window.sceneListItems = window.ScenesHandler.scenes.map(s => SidebarListItem.Scene(s)).sort(SidebarListItem.sortComparator);
+	// TODO: read scene folders from localStorage?
+	if (window.sceneListFolders === undefined) {
+		window.sceneListFolders = [];
+	}
+	window.sceneListItems
+		.sort(SidebarListItem.folderDepthComparator)
+		.forEach(item => {
+		if (item.folderPath !== SidebarListItem.PathRoot) {
+			// we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
+			let parts = item.folderPath.split("/");
+			let backfillPath = "";
+			parts.forEach(part => {
+				let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
+				if (!window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
+					// we don't have this folder yet so add it
+					let backfillItem = SidebarListItem.Folder(backfillPath, part, true);
+					console.log("adding folder", backfillItem);
+					window.sceneListFolders.push(backfillItem);
+				} else {
+					console.log("not adding folder", fullBackfillPath);
+				}
+				backfillPath = fullBackfillPath;
+			});
+		}
+	});
+	console.groupEnd();
+}
+
+/**
+ * clears and redraws the list of scenes in the sidebar
+ * @param searchTerm {string} the search term used to filter the list of scenes
+ */
+function redraw_scene_list(searchTerm) {
+	console.group("redraw_scene_list");
+
+	let nameFilter = "";
+	if (typeof searchTerm === "string") {
+		nameFilter = searchTerm.toLowerCase();
+	}
+
+	// this is similar to the structure of a SidebarListItem.Folder row.
+	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
+	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
+	let list = $(`<div class="folder"><div class="folder-item-list" style="padding: 0;"></div></div>`);
+	scenesPanel.body.empty();
+	scenesPanel.body.append(list);
+	set_full_path(list, SidebarListItem.PathScenes);
+
+	// first let's add all folders because we need the folder to exist in order to add items into it
+	// don't filter folders by the searchTerm because we need the folder to exist in order to add items into it
+	window.sceneListFolders
+		.sort(SidebarListItem.folderDepthComparator)
+		.forEach(item => {
+			let row = build_sidebar_list_row(item);
+			let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			if (folder.length > 0) {
+				console.debug("appending folder item", item, folder);
+				folder.append(row);
+			} else {
+				console.warn("Could not find a folder to append folder item to", item);
+			}
+		});
+
+	// now let's add all the other items
+	window.sceneListItems
+		.sort(SidebarListItem.sortComparator)
+		.filter(item => item.nameOrContainingFolderMatches(nameFilter))
+		.forEach(item => {
+			let row = build_sidebar_list_row(item);
+			let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			if (folder.length > 0) {
+				console.debug("appending scene item", item, folder);
+				folder.append(row);
+			} else {
+				console.warn("Could not find a folder to append scene item to", item);
+			}
+		});
+
+	if (nameFilter.length > 0) {
+		// auto expand all folders so we see all the search results
+		let allFolders = scenesPanel.body.find(".folder");
+		allFolders.removeClass("collapsed");
+		for (let i = 0; i < allFolders.length; i++) {
+			let currentFolder = $(allFolders[i]);
+			let nonFolderDescendents = currentFolder.find(".sidebar-list-item-row:not(.folder)");
+			if (nonFolderDescendents.length === 0) {
+				// hide folders without results in them
+				currentFolder.hide();
+			}
+		}
+
+	}
+
+	console.groupEnd();
+}
+
+function create_scene_inside(fullPath) {
+
+	let newSceneName = "New Scene";
+	let newSceneCount = window.sceneListItems.filter(item => item.folderPath === fullPath && item.name.startsWith(newSceneName)).length;
+	if (newSceneCount > 0) {
+		newSceneName = `${newSceneName} ${newSceneCount}`;
+	}
+
+	let sceneData = default_scene_data();
+	sceneData.title = newSceneName;
+	sceneData.folderPath = fullPath.replace(SidebarListItem.PathScenes, "");
+
+	window.ScenesHandler.scenes.push(sceneData);
+	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
+	edit_scene_dialog(window.ScenesHandler.scenes.length - 1);
+	did_update_scenes();
+}
+
+function create_scene_folder_inside(fullPath) {
+	let newFolderName = "New Folder";
+	let adjustedPath = sanitize_folder_path(fullPath.replace(SidebarListItem.PathScenes, ""));
+	let numberOfNewFolders = window.sceneListFolders.filter(i => i.folderPath === adjustedPath && i.name.startsWith(newFolderName)).length;
+	if (numberOfNewFolders > 0) {
+		newFolderName = `${newFolderName} ${numberOfNewFolders}`
+	}
+	let newFolderFullPath = sanitize_folder_path(`${SidebarListItem.PathScenes}/${adjustedPath}`);
+	let newFolderItem = SidebarListItem.Folder(newFolderFullPath, newFolderName, true);
+	window.sceneListFolders.push(newFolderItem);
+	did_update_scenes();
+	display_folder_configure_modal(newFolderItem);
+}
+
+function rename_scene_folder(item, newName, alertUser) {
+	console.groupCollapsed("rename_folder");
+	if (!item.isTypeFolder() || !item.folderPath.startsWith(SidebarListItem.PathScenes)) {
+		console.warn("rename_folder called with an incorrect item type", item);
+		console.groupEnd();
+		if (alertUser !== false) {
+			alert("An unexpected error occurred");
+		}
+		return;
+	}
+	if (!item.canEdit()) {
+		console.warn("Not allowed to rename folder", item);
+		console.groupEnd();
+		if (alertUser !== false) {
+			alert("An unexpected error occurred");
+		}
+		return;
+	}
+
+	let fromFullPath = sanitize_folder_path(item.fullPath().replace(SidebarListItem.PathScenes, ""));
+	let fromFolderPath = sanitize_folder_path(item.folderPath.replace(SidebarListItem.PathScenes, ""));
+	let toFullPath = sanitize_folder_path(`${fromFolderPath}/${newName}`);
+	if (scene_path_exists(toFullPath)) {
+		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
+		console.groupEnd();
+		if (alertUser !== false) {
+			alert(`A Folder with the name "${newName}" already exists at "${toFullPath}"`);
+		}
+		return;
+	}
+
+	console.log(`updating scenes from ${fromFullPath} to ${toFullPath}`);
+	window.ScenesHandler.scenes.forEach((scene, index) => {
+		if (scene.folderPath?.startsWith(fromFullPath)) {
+			let newFolderPath = sanitize_folder_path(scene.folderPath.replace(fromFullPath, toFullPath));
+			console.debug(`changing scene ${scene.title} folderpath from ${scene.folderPath} to ${newFolderPath}`);
+			scene.folderPath = newFolderPath;
+			window.ScenesHandler.persist_scene(index);
+		} else {
+			console.debug("not moving scene", scene);
+		}
+	});
+
+	console.debug("before renaming folder", window.sceneListFolders);
+	window.sceneListFolders.forEach(folder => {
+		if (folder.fullPath() === item.fullPath()) {
+			console.debug(`changing folder from ${folder.name} to ${newName}`);
+			folder.name = newName;
+		} else if (folder.folderPath.startsWith(fromFullPath)) {
+			let newFolderPath = sanitize_folder_path(folder.folderPath.replace(fromFullPath, toFullPath));
+			console.debug(`changing folder ${folder.name} folderPath from ${folder.folderPath} to ${newFolderPath}`);
+			folder.folderPath = newFolderPath;
+		} else {
+			console.debug("not moving folder", folder);
+		}
+	});
+	console.debug("after renaming folder", window.sceneListFolders);
+
+	did_update_scenes();
+
+	console.groupEnd();
+	return toFullPath;
+}
+
+/**
+ * determines if the given path exists or not.
+ * @param folderPath {string} the path you are looking for
+ * @returns {boolean} whether or not the path exists
+ */
+function scene_path_exists(folderPath) {
+	return window.sceneListItems.find(s => s.folderPath === folderPath) !== undefined
+		|| window.sceneListItems.find(f => f.folderPath === folderPath || sanitize_folder_path(`${f.folderPath}/${f.name}`) === folderPath) !== undefined
+}
+
+function register_scene_row_context_menu() {
+	$.contextMenu({
+		selector: "#scenes-panel .sidebar-list-item-row",
+		build: function(element, e) {
+
+			let menuItems = {};
+
+			let rowHtml = $(element);
+			let rowItem = find_sidebar_list_item(rowHtml);
+			if (rowItem === undefined) {
+				console.warn("register_scene_row_context_menu failed to find row item", element, e)
+				menuItems["unexpected-error"] = {
+					name: "An unexpected error occurred",
+					disabled: true
+				};
+				return { items: menuItems };
+			}
+
+			if (rowItem.canEdit() ) {
+				menuItems["edit"] = {
+					name: "Edit",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						display_sidebar_list_item_configuration_modal(itemToEdit);
+					}
+				};
+			}
+			if (rowItem.canDelete()) {
+
+				menuItems["border"] = "---";
+
+				// not a built in folder or token, add an option to delete
+				menuItems["delete"] = {
+					name: "Delete",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToDelete = find_sidebar_list_item(opt.$trigger);
+						delete_item(itemToDelete);
+					}
+				};
+			}
+
+			if (Object.keys(menuItems).length === 0) {
+				menuItems["not-allowed"] = {
+					name: "You are not allowed to configure this item",
+					disabled: true
+				};
+			}
+			return { items: menuItems };
+		}
+	});
+}
+
+function expand_folders_to_active_scenes() {
+	let dmSceneItem = window.sceneListItems.find(i => i.sceneId === window.CURRENT_SCENE_DATA.id);
+	if (dmSceneItem) {
+		expand_all_folders_up_to(dmSceneItem.fullPath(), scenesPanel.body);
+	}
+	let pcSceneItem = window.sceneListItems.find(i => i.sceneId === window.PLAYER_SCENE_ID);
+	if (pcSceneItem) {
+		expand_all_folders_up_to(pcSceneItem.fullPath(), scenesPanel.body);
+	}
+}
+
+function delete_scenes_within_folder(listItem) {
+	console.groupCollapsed(`delete_mytokens_within_folder`);
+	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+
+	console.log("about to delete all scenes within", adjustedPath);
+	console.debug("before deleting from scenes", window.ScenesHandler.scenes);
+	window.ScenesHandler.scenes
+		.filter(scene => scene.folderPath?.startsWith(adjustedPath))
+		.forEach(scene => window.ScenesHandler.delete_scene(scene.id));
+	console.debug("after deleting from scenes", window.ScenesHandler.scenes);
+
+	console.log("about to delete all folders within", adjustedPath);
+	console.debug("before deleting from window.sceneListFolders", window.sceneListFolders);
+	window.sceneListFolders = window.sceneListFolders.filter(folder => !folder.folderPath.startsWith(adjustedPath))
+	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
+
+	console.groupEnd();
+}
+
+function move_scenes_to_parent_folder(listItem) {
+	console.groupCollapsed(`move_mytokens_to_parent_folder`);
+	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(SidebarListItem.PathScenes, ""));
+
+	console.debug("before moving scenes", window.ScenesHandler.scenes);
+	window.ScenesHandler.scenes
+		.filter(scene => scene.folderPath?.startsWith(adjustedPath))
+		.forEach(scene => {
+			scene.folderPath = oneLevelUp;
+			let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === scene.id);
+			window.ScenesHandler.persist_scene(sceneIndex);
+		});
+	console.debug("after moving scenes", window.ScenesHandler.scenes);
+
+	console.log("about to move all folders within", adjustedPath);
+	console.debug("before moving window.sceneListFolders", window.sceneListFolders);
+	window.sceneListFolders
+		.filter(folder => folder.folderPath.startsWith(adjustedPath) && folder.fullPath() !== listItem.fullPath()) // all subfolders, but don't move the folder we're moving out of
+		.forEach(folder => folder.folderPath = sanitize_folder_path(folder.folderPath.replace(adjustedPath, oneLevelUp)))
+	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
+
+	console.groupEnd();
+}
+
+function delete_scenes_folder(listItem) {
+	console.debug("before moving window.sceneListFolders", window.sceneListFolders);
+	window.sceneListFolders = window.sceneListFolders.filter(folder => folder.fullPath() !== listItem.fullPath())
+	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
+}
+
+function move_scene_to_folder(listItem, folderPath) {
+	let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.sceneId);
+	let scene = window.ScenesHandler.scenes[sceneIndex];
+	scene.folderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathScenes, ""));
+	window.ScenesHandler.persist_scene(sceneIndex);
+}
+
+function move_scenes_folder(listItem, folderPath) {
+	console.groupCollapsed(`move_scenes_folder`);
+	let fromPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+
+	// move the actual item
+	listItem.folderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathScenes, ""));
+	let toPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+
+	// move subfolders. This isn't exactly necessary since we'll just rebuild the list anyway, but any empty folders need to be updated
+	window.sceneListFolders.forEach(f => {
+		if (f.folderPath.startsWith(fromPath)) {
+			f.folderPath = f.folderPath.replace(fromPath, toPath);
+		}
+	});
+
+	// move all scenes within the folder
+	window.ScenesHandler.scenes.forEach((scene, sceneIndex) => {
+		if (scene.folderPath?.startsWith(fromPath)) {
+			console.debug("before moving scene", scene);
+			scene.folderPath = scene.folderPath.replace(fromPath, toPath);
+			console.debug("after moving scene", scene);
+			window.ScenesHandler.persist_scene(sceneIndex);
+		}
+	});
+
+	console.groupEnd();
+}

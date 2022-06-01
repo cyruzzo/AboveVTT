@@ -11,8 +11,7 @@ window.onbeforeunload = function(event)
 };
 
 function parse_img(url){
-	if (url === undefined) {
-		console.warn("parse_img was called without a url");
+	if (typeof url !== "string") {
 		return "";
 	}
 	retval = url;
@@ -93,6 +92,7 @@ function change_zoom(newZoom, x, y) {
 	set_default_vttwrapper_size()
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
+	$("body").css("--window-zoom", window.ZOOM)
 	console.groupEnd()
 }
 /** 
@@ -241,8 +241,21 @@ function getPlayerIDFromSheet(sheet_url)
 
 window.YTTIMEOUT = null;
 
-function map_load_error_cb() {
-	alert("Map could not be loaded - if you're using Drive or similar, ensure sharing is enabled");
+function map_load_error_cb(e) {
+	console.log(e);
+	let src = e.currentTarget.getAttribute("src");
+	console.error("map_load_error_cb src", src, e);
+	if (typeof src === "string") {
+		let specificMessage = `Please make sure the image is accessible to anyone on the internet.`;
+		if (src.includes("drive.google")) {
+			specificMessage = `It looks like you're using a Google Drive image. Please make sure the "Get link" modal says "Anyone on the internet with this link can view".`;
+		}
+		if (confirm(`Map could not be loaded!\n${specificMessage}\nYou may also need to disable ad blockers.\nWould you like to try loading the image in a separate tab to verify that it's accessible? If you are currently logged in to google, you will need to log out or open the image in a different browser or an incognito window to truly test it.`)) {
+			if (window.DM || confirm(`SPOILER ALERT!!!\nIf you click OK, you might see the entire map without fog of war. However, the map isn't loading at all so you will probably see a broken link. Are you sure you want to test this image?`)) {
+				window.open(src, '_blank');
+			}
+		}
+	}
 }
 
 /// the first time we load, an overlay is shown to mask all the window modifications we do. This removes it. See `Load.js` for the injection of the overlay.
@@ -322,8 +335,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
-
 		$("#VTT").append(newmap);
+		$("#scene_map_container").css("width", $("#scene_map").width())
+		$("#scene_map_container").css("height", $("#scene_map").height())
+
 	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
@@ -344,9 +359,9 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				$('#scene_map').height(this.videoHeight);
 			});
 		}
-
 		$("#VTT").append(newmap);
 	}
+
 }
 
 
@@ -364,8 +379,8 @@ function set_pointer(data,dontscroll=false) {
 		"border-radius": "50%",
 		"opacity": "1.0",
 		"border-width": "8px",
-		"border-style": "solid",
-		"border-color": "blue",
+		"border-style": "double",
+		"border-color": data.color,
 	});
 	$("#tokens").append(marker);
 
@@ -375,8 +390,7 @@ function set_pointer(data,dontscroll=false) {
 		height: "120px",
 		top: data.y - 60,
 		left: data.x - 60,
-		"border-width": 0,
-	}, 5000, function() { marker.remove() });
+	}, 1375, function() { marker.remove() });
 
 	// calculate pageX and pageY and scroll there!
 
@@ -425,11 +439,6 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 	close_sidebar_modal();
 	$(clickedTab.attr("data-target")).addClass('selected-tab');
 
-	if (clickedTab.attr("data-target") == "#monsters-panel" && !window.MONSTERPANEL_LOADED) {
-		console.log('in teoria fatto show');
-		init_monster_panel();
-	}
-
 	// switch back to gamelog if they change tabs
 	if (!isCharacterSheetInfo) {
 		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab. 
@@ -449,27 +458,22 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function load_monster_stat(monsterid, token_id=false) {
-	token_id=false; // DISABLE HAVING AN IFRAME FOR EACH TOKEN NPC. WE GO BACK TO USING A SINGLE IFRAME FOR EACH MONSTER TYPE
-	$(".monster_frame").hide();
+function load_monster_stat(monsterid, token_id) {
 	
-	iframe_id = "iframe-monster-" + monsterid + "_" + token_id;
-	console.log(iframe_id)
-	console.log(token_id)
-
-	if ($("#" + iframe_id).length > 0) {
-		// RENDI VISIBILE
-		oldframe = $("#" + iframe_id);
-		oldframe.show();
-		oldframe.animate({
-			left: '220px'
-		}, 500);
-		return;
+	console.group("load_monster_stat")
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+	// const loadingSpinner = create_monster_loading_spinner()
+	monFrame = $("#resizeDragMon iframe")
+	// check if the monster pane is not open
+	if (! $("#resizeDragMon").length) {
+		$("body").append(draggable_resizable_div)
+		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
+		draggable_resizable_div.show("slow")
 	}
 
 	let container = $("<div id='resizeDragMon'/>");
 
-	if(!window.DM && $("#site #resizeDragMon").length>0){
+	if($("#site #resizeDragMon").length>0){
 		$("#resizeDragMon iframe").remove();
 		$("#resizeDragMon").removeClass("hideMon");
 		container = $("#resizeDragMon");
@@ -477,15 +481,11 @@ function load_monster_stat(monsterid, token_id=false) {
 	container.resize(function(e) {
         	e.stopPropagation();
    	});
-	//container.css("width","900px");
 	let iframe = $("<iframe>");
-    // UGUALE A COMBAT TRACKER INSIDE
-	//iframe.css("transform","scale(0.75)");
 
 	iframe.css("display", "none");
 	
 	window.StatHandler.getStat(monsterid, function(stats) {
-
 		iframe.on("load", function(event) {
 			console.log('carico mostro');
 			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
@@ -496,7 +496,6 @@ function load_monster_stat(monsterid, token_id=false) {
 			$(event.target).contents().find("header").hide();
 			$(event.target).contents().find("#site-main").css("padding", "0px");
 			$(event.target).contents().find("#footer").remove();
-			iframe.css("display", "block");
 			let img = $(event.target).contents().find(".detail-content").find(".image");
 			let statblock = $(event.target).contents().find(".mon-stat-block");
 			if (img.length == 1) {
@@ -518,71 +517,120 @@ function load_monster_stat(monsterid, token_id=false) {
 			}
 
 
-			scan_monster($(event.target).contents(), stats, token_id=token_id);
+			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
+			$(".sidebar-panel-loading-indicator").hide()
+			iframe.fadeIn("slow")
+			console.groupEnd()
 		});
 
-		iframe.attr('src', stats.data.url.replace("https://www.dndbeyond.com", ""))
+		iframe.attr('src', stats.data.url)
 	})
 	container.append(iframe);
 	if(!$("#site #resizeDragMon").length>0){
 		$("#site").prepend(container);
 	}
 
-   if(!window.DM) {
-   		
-   		/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	$(iframe).on("load", function(event){
+		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
+		$("head", $("#resizeDragMon iframe").contents()).append(tooltipCSS);
+
+		$("body", $("#resizeDragMon iframe").contents()).css('width', 'calc(100% + 670px)');
+		$("#site", $("#resizeDragMon iframe").contents()).css('padding-right', '670px');
+
+		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);	
+		});
+		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function(){
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", false);
+		});
+
+		// if the user right-clicks a tooltip, send it to the gamelog
+		$(event.target).contents().off("contextmenu").on("contextmenu", ".tooltip-hover", function(clickEvent) {
+			clickEvent.preventDefault();
+			clickEvent.stopPropagation();
+			
+			let toPost = $("#db-tooltip-container", $("#resizeDragMon iframe").contents()).clone();
+			toPost.find(".waterdeep-tooltip").attr("style", "display:block!important");
+			toPost.find(".tooltip").attr("style", "display:block!important");
+			toPost.css({
+				"top": "0px",
+				"left": "0px",
+				"position": "relative"
+			});
+			toPost.find(".tooltip").css({
+				"max-height": "1000px",
+				"min-width": "0",
+				"max-width": "100%",
+				"width": "100%"
+			});
+			toPost.find(".tooltip-header").css({
+				"min-height": "70px",
+				"height": "auto"
+			});
+			toPost.find(".tooltip-body").css({
+				"max-height": "1000px"
+			});
+			window.MB.inject_chat({
+				player: window.PLAYER_NAME,
+				img: window.PLAYER_IMG,
+				text: toPost.html()
+			});
+		});
+	});
+	
+	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	if($("#monster_close_title_button").length==0){
 		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 		$("#resizeDragMon").append(monster_close_title_button);
 		monster_close_title_button.click(function() {
 			close_player_monster_stat_block()
 		});
-		$("#resizeDragMon").addClass("moveableWindow");
-		if(!$("#resizeDragMon").hasClass("minimized")){
-			$("#resizeDragMon").addClass("restored"); 
-		}
-		else{
-			$("#resizeDragMon").dblclick();
-		}
-		$("#resizeDragMon").resizable({
-			addClasses: false,
-			handles: "all",
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			},
-			minWidth: 200,
-			minHeight: 200
-		});
-
-		$("#resizeDragMon").mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
-		$("#resizeDragMon").draggable({
-			addClasses: false,
-			scroll: false,
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			}
-		});
-		minimize_player_monster_window_double_click($("#resizeDragMon"));
 	}
+	$("#resizeDragMon").addClass("moveableWindow");
+	if(!$("#resizeDragMon").hasClass("minimized")){
+		$("#resizeDragMon").addClass("restored");
+	}
+	else{
+		$("#resizeDragMon").dblclick();
+	}
+	$("#resizeDragMon").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 200,
+		minHeight: 200
+	});
+
+	$("#resizeDragMon").mousedown(function(){
+		frame_z_index_when_click($(this));
+	});
+	$("#resizeDragMon").draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	minimize_player_monster_window_double_click($("#resizeDragMon"));
 }
+
 function close_player_monster_stat_block() {
 	$("#resizeDragMon.minimized").dblclick();
-	console.debug("close_monster_stat_block is closing the stat block")
+	console.debug("close_player_monster_stat_block is closing the stat block")
 	$("#resizeDragMon").addClass("hideMon");
-	// hide and update all monster blocks that we find. Even if we're currently loading one.
-	console.group("close_monster_stat_block");
 }
 
 function minimize_player_monster_window_double_click(titleBar){
@@ -652,37 +700,38 @@ function init_controls() {
 	b1.append('<div class="sidebar-tab-image ct-primary-box__tab--extras ddbc-tab-list__nav-item ddbc-tab-list__nav-item--is-active" style="width:100%;height:100%;"><svg class="gamelog-button__icon" width="18" height="18" viewBox="0 0 18 18"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 10C15 10.551 14.551 11 14 11H9C8.735 11 8.48 11.105 8.293 11.293L6 13.586V12C6 11.447 5.552 11 5 11H4C3.449 11 3 10.551 3 10V4C3 3.449 3.449 3 4 3H14C14.551 3 15 3.449 15 4V10ZM14 1H4C2.346 1 1 2.346 1 4V10C1 11.654 2.346 13 4 13V16C4 16.404 4.244 16.77 4.617 16.924C4.741 16.975 4.871 17 5 17C5.26 17 5.516 16.898 5.707 16.707L9.414 13H14C15.654 13 17 11.654 17 10V4C17 2.346 15.654 1 14 1ZM12 6H6C5.448 6 5 6.447 5 7C5 7.553 5.448 8 6 8H12C12.552 8 13 7.553 13 7C13 6.447 12.552 6 12 6Z" fill="currentColor"></path></svg></div>');
 	sidebarControls.append(b1);
 
-	b2 = $("<div id='switch_characters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Players' data-target='#players-panel'></div>").click(switch_control);
-	let b2ImageDiv = $('<div></div>');
-	let b2ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-	let b2Image = `${window.EXTENSION_PATH}assets/icons/character.svg`;
-	b2ImageDiv.css({ "mask": `url(${b2Image}) no-repeat center / contain`, "-webkit-mask": `url(${b2Image}) no-repeat center / contain` });
-	b2ImageDivWrapper.append(b2ImageDiv);
-	b2.append(b2ImageDivWrapper);
-	sidebarControls.append(b2);
 	if (DM) {
+		let b2 = $("<div id='switch_tokens' class='tab-btn hasTooltip button-icon blue-tab' data-name='Tokens' data-target='#tokens-panel'></div>").click(switch_control);
+		let b2ImageDiv = $('<div></div>');
+		let b2ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+		let b2Image = `${window.EXTENSION_PATH}assets/icons/character.svg`;
+		b2ImageDiv.css({ "mask": `url(${b2Image}) no-repeat center / contain`, "-webkit-mask": `url(${b2Image}) no-repeat center / contain` });
+		b2ImageDivWrapper.append(b2ImageDiv);
+		b2.append(b2ImageDivWrapper);
+		sidebarControls.append(b2);
 
-		b3 = $("<div id='switch_monsters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Monsters' data-target='#monsters-panel'></div>").click(switch_control);
-
-
-		let b3ImageDiv = $('<div></div>');
-		let b3ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b3Image = `${window.EXTENSION_PATH}assets/icons/mimic-chest.svg`;
-		b3ImageDiv.css({ "mask": `url(${b3Image}) no-repeat center / contain`, "-webkit-mask": `url(${b3Image}) no-repeat center / contain` });
-		b3ImageDivWrapper.append(b3ImageDiv);
-		b3.append(b3ImageDivWrapper);
-		sidebarControls.append(b3);
-		b5=$("<div id='switch_tokens' class='tab-btn hasTooltip button-icon blue-tab' data-name='Tokens' data-target='#tokens-panel'></div>");
-
-		let b5ImageDiv = $('<div></div>');
-		let b5ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b5Image = `${window.EXTENSION_PATH}assets/icons/photo.svg`;
-		b5ImageDiv.css({ "mask": `url(${b5Image}) no-repeat center / contain`, "-webkit-mask": `url(${b5Image}) no-repeat center / contain` });
-		b5ImageDivWrapper.append(b5ImageDiv);
-		b5.append(b5ImageDivWrapper);
-		b5.click(switch_control);
-		sidebarControls.append(b5);
-
+		if (window.CLOUD) {
+			let b3 = $("<div id='switch_scenes' class='tab-btn hasTooltip button-icon blue-tab' data-name='Scenes' data-target='#scenes-panel'></div>").click(switch_control);
+			let b3ImageDiv = $('<div></div>');
+			let b3ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+			let b3Image = `${window.EXTENSION_PATH}assets/icons/photo.svg`;
+			b3ImageDiv.css({
+				"mask": `url(${b3Image}) no-repeat center / contain`,
+				"-webkit-mask": `url(${b3Image}) no-repeat center / contain`
+			});
+			b3ImageDivWrapper.append(b3ImageDiv);
+			b3.append(b3ImageDivWrapper);
+			sidebarControls.append(b3);
+		}
+	} else {
+		let b2 = $("<div id='switch_characters' class='tab-btn hasTooltip button-icon blue-tab' data-name='Players' data-target='#players-panel'></div>").click(switch_control);
+		let b2ImageDiv = $('<div></div>');
+		let b2ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+		let b2Image = `${window.EXTENSION_PATH}assets/icons/character.svg`;
+		b2ImageDiv.css({ "mask": `url(${b2Image}) no-repeat center / contain`, "-webkit-mask": `url(${b2Image}) no-repeat center / contain` });
+		b2ImageDivWrapper.append(b2ImageDiv);
+		b2.append(b2ImageDivWrapper);
+		sidebarControls.append(b2);
 	}
 
 	b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
@@ -783,7 +832,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.75</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.77RC1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -825,15 +874,15 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("<br>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria</b>");
+	cont.append("<br>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife</b>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
 	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey","Mike Miller"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","adam williams","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Avilar","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
-	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Dave Franklyn","Rick Anderson","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Matt Nantais","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Jacob Moore","Titus France","Fabrizio Tronci","Michael Whittington","Simon Haldon","Thiago Neves","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Staz","Michael Bonnett","Skrinch","Eric Weberg","Xiax","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Arpad"];
+	l1 = ["Max Puplett","Jordan Cohen","Michael Saint Gregory","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Dennis Andree","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","Pete Posey","Mike Miller","D Martinez"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","Pucas McDookie","Elmer Senson","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Joe King","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Avilar","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb"];
+	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Julia Hoffmann","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Christian Johansson","Kat Wells","DH Ford","Dirk Wynkoop","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","ajay","Michael Boughey","Mischa","AnyxKrypt","Keith Richard-Thompson","Torben Schwank","Unix Wizard","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Adam Caldicott","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Christian Fish","Cinghiale Frollo","The Pseudo Nerd","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Jeffrey Weist","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Titus France","Fabrizio Tronci","Michael Whittington","Simon Haldon","Thiago Neves","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","Xiax","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Arpad","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jim Mapes"];
 
 	l1div = $("<div class='patreons-title'>Masters of the Realms</div>");
 	l1ul = $("<ul/>");
@@ -1655,6 +1704,7 @@ function init_above(){
 		}
 	}
 	)
+
 }
 
 function init_things() {
@@ -1664,7 +1714,6 @@ function init_things() {
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
 	window.DRAWINGS = [];
-	window.MONSTERPANEL_LOADED = false;
 	window.PLAYER_STATS = {};
 	window.CONNECTED_PLAYERS = {};
 	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameId)) || {};
@@ -1689,7 +1738,7 @@ function init_things() {
 			}
 			init_ui();
 			if (is_encounters_page()) {
-
+			
 				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
 				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
 
@@ -1697,30 +1746,7 @@ function init_things() {
 				$(".dice-rolling-panel").css({"visibility": "visible"});
 				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
 				$("div.dice-toolbar").css({"bottom": "35px"});
-				// for some reason the gamelog "send to (default)" breaks. The following sequence fixes it
-				$(".sidebar button.MuiButtonBase-root").click();
-				$(".MuiPopover-root").css({"display": "block", "visibility": "visible"});
-				$(".MuiPopover-root .MuiPaper-root").css({"display": "block", "visibility": "visible"});
-				let list = $(".MuiPopover-root .MuiPaper-root .MuiMenu-list");
-				let selected = list.attr("tabindex");
-				list.find(`li[tabindex=${selected}]`).click();
-				list.find(`li`).click(function (clickEvent) {
-					let selectedOption = $(clickEvent.currentTarget).attr("tabindex");
-					let optionList = window.EncounterHandler.combat_body.find(`.MuiPopover-root .MuiPaper-root .MuiMenu-list`);
-					let optionToSelect = optionList.find(`li[tabindex=${selectedOption}]`);
-					optionToSelect.click();
-				});
-
 				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-				init_enounter_combat_tracker_iframe();
-
-				// if the user changes `Send To (Default)` for dice rolls, make sure we synchronize the monster stat blocks as well
-				$(".sidebar .MuiButtonBase-root.MuiButton-root").on("DOMSubtreeModified", ".MuiButton-label", function(event) {
-					let text = event.target.textContent;
-					if (text == "Self" || text == "Everyone") {
-						sync_send_to_default();
-					}
-				});
 			}
 			
 			init_scene_selector();
@@ -1744,8 +1770,8 @@ function init_things() {
 		init_ui();
 		init_splash();
 	}
+
 	$("#site").append("<div id='windowContainment'></div>");
-		
 }
 
 /// this is used when initializing on the character page. DDB loads the page in an async modular fashion. We use this to determine if we need to call other initialization functions during this process
@@ -1792,6 +1818,19 @@ function init_character_page_sidebar() {
 		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
+		$(".ct-sidebar__pane").on("click", ".set-conditions-button", function(clickEvent) {
+			let conditionName = $(clickEvent.target).parent().find("span").text();
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	  	
+		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+		  	$(`#switch_gamelog`).click();
+		});
+		$(".ct-sidebar__pane").on("click", ".remove-conditions-button", function(clickEvent) {
+			let conditionName = $(clickEvent.target).parent().find("span").text();
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	
+		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+		  	$(`#switch_gamelog`).click();
+
+		});
 		if (needs_ui) {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddbc-character-name").text();
@@ -1939,7 +1978,18 @@ function inject_chat_buttons() {
 		return;
 	}
 	// AGGIUNGI CHAT
-	$(".glc-game-log").append($("<div class='chat-text-wrapper'><input id='chat-text' placeholder='Chat, /roll 1d20+4 , /dmroll 1d6 ..'></div>"));
+	// the text has to be up against the left for it to style correctly
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;\
+'/r 1d20'&#xa;\
+'/roll 1d4 punch:damage'&#xa;\
+'/hit 2d20kh1+2 longsword ADV'&#xa;\
+'/dmg 1d8-2 longsword'&#xa;\
+'/save 2d20kl1 DEX DISADV'&#xa;\
+'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;\
+Advantage: 2d20kh1 (keep highest)&#xa;\
+Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;\
+'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
+
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">
 			<div>
@@ -2102,78 +2152,10 @@ function inject_chat_buttons() {
 		});
 	}
 
-	$("#chat-text").on('keypress', function(e) {
-		if (e.keyCode == 13) {
-			var dmonly=false;
-			var whisper=null;
-			e.preventDefault();
-			text = $("#chat-text").val();
-			$("#chat-text").val("");
-
-			if(text.startsWith("/roll")) {
-				dmonly = window.DM;
-				expression = text.substring(6);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-			}
-
-			if(text.startsWith("/r ")) {
-				dmonly = window.DM;
-				expression = text.substring(3);
-				let sentAsDDB = send_rpg_dice_to_ddb(expression, dmonly);
-				if (sentAsDDB) {
-					return;
-				}
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-			}
-
-			if(text.startsWith("/dmroll")) {
-				expression = text.substring(8);
-				// TODO: send_rpg_dice_to_ddb doesn't currently handle rolls to self or to dm
-				roll = new rpgDiceRoller.DiceRoll(expression);
-				text = roll.output;
-				dmonly=true;
-			}
-
-			if(text.startsWith("/whisper")) {
-				let matches = text.match(/\[(.*?)\] (.*)/);
-				console.log(matches);
-				whisper=matches[1]
-				text="<b> &#8594;"+whisper+"</b>&nbsp;" +matches[2];
-			}
-
-			data = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: text,
-				dmonly: dmonly,
-			};
-			if(validateUrl(text)){
-
-				data.text = `
-					<a class='chat-link' href=${text} target='_blank' rel='noopener noreferrer'>${text}</a>
-					<img width=200 class='magnify' href='${parse_img(text)}' src='${parse_img(text)}' alt='Chat Image' style='display: none'/>
-				`
-			} else {
-				data = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<div class="custom-gamelog-message">${text}</div>`,
-					dmonly: dmonly,
-				};
-			}
-			if(whisper)
-				data.whisper=whisper;
-
-			window.MB.inject_chat(data);
-		}
-
-	});
+	if (window.chatObserver === undefined) {
+		window.chatObserver = new ChatObserver();
+	}
+	window.chatObserver.observe($("#chat-text"));
 
 	$(".GameLog_GameLog__2z_HZ").scroll(function() {
 		if ($(this).scrollTop() >= 0) {
@@ -2198,10 +2180,7 @@ function init_ui() {
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
-	if (!is_characters_page()) {
-		$("#site").children().hide();
-		$("#loading_overlay").show();
-	} else {
+	if (is_characters_page()) {
 		reposition_player_sheet();
 	}
 	$(".sidebar__controls").width(340);
@@ -2216,35 +2195,55 @@ function init_ui() {
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);
 
-	background = $("<img id='scene_map'>");
+	const background = $("<img id='scene_map'>");
 	background.css("top", "0");
 	background.css("left", "0");
 	background.css("position", "absolute");
 	background.css("z-index", "10");
 
+	const mapContainer = $("<div id='scene_map_container' />");
+	mapContainer.css("top", "0");
+	mapContainer.css("left", "0");
+	mapContainer.css("position", "absolute");
+	mapContainer.css("z-index", "10");
 
-	draw_overlay = $("<canvas id='draw_overlay'></canvas>");
-	draw_overlay.css("position", "absolute");
-	draw_overlay.css("top", "0");
-	draw_overlay.css("left", "0");
-	draw_overlay.css("z-index", "18");
 
-	grid = $("<canvas id='grid_overlay'></canvas>");
+	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
+	drawOverlay.css("position", "absolute");
+	drawOverlay.css("top", "0");
+	drawOverlay.css("left", "0");
+	drawOverlay.css("z-index", "18");
+
+	const textOverlay = $("<canvas id='text_overlay'></canvas>");
+	textOverlay.css("position", "absolute");
+	textOverlay.css("top", "0");
+	textOverlay.css("left", "0");
+	textOverlay.css("z-index", "18");
+
+	const grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
 	grid.css("top", "0");
 	grid.css("left", "0");
-
 	grid.css("z-index", "19");
 
 
-	fog = $("<canvas id='fog_overlay'></canvas>");
+	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
 	fog.css("left", "0");
 	fog.css("position", "absolute");
 	fog.css("z-index", "20");
 
+	// this overlay sits above all other canvases
+	// we draw to this and then bake the image into the corresponding
+	// canvas, based on the drawing function
+	const tempOverlay = $("<canvas id='temp_overlay'></canvas>");
+	tempOverlay.css("position", "absolute");
+	tempOverlay.css("top", "0");
+	tempOverlay.css("left", "0");
+	tempOverlay.css("z-index", "25");
 
-	fog.dblclick(function(e) {
+
+	tempOverlay.dblclick(function(e) {
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
@@ -2252,11 +2251,15 @@ function init_ui() {
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
+		let borderColor = $(`.token[data-name="`+window.PLAYER_NAME+`"]`).attr(`data-border-color`)
+		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
+
 		data = {
 			x: mousex,
 			y: mousey,
 			from: window.PLAYER_NAME,
-			dm: window.DM
+			dm: window.DM,
+			color: pingColor
 		}
 
 		set_pointer(data,true);
@@ -2292,9 +2295,12 @@ function init_ui() {
 
 	VTT.append(tokens);
 	VTT.append(background);
+	VTT.append(mapContainer);
 	VTT.append(fog);
 	VTT.append(grid);
-	VTT.append(draw_overlay);
+	VTT.append(drawOverlay);
+	VTT.append(textOverlay);
+	VTT.append(tempOverlay);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
@@ -2306,10 +2312,6 @@ function init_ui() {
 	wrapper.css("left", "0px");
 	wrapper.width(window.width);
 	wrapper.height(window.height);
-
-
-
-
 
 	wrapper.append(VTT);
 	$("body").append(wrapper);
@@ -2341,6 +2343,7 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
+	init_my_dice_details()
 	if(window.DM)
 	{
 		init_player_sheets();
@@ -2365,7 +2368,6 @@ function init_ui() {
 
 	token_menu();
 	load_custom_monster_image_mapping();
-	register_player_token_customization_context_menu();
 
 
 	window.WaypointManager=new WaypointManagerClass();
@@ -2426,7 +2428,7 @@ function init_ui() {
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
-		if (sidebar_modal_is_open() && event.which == 1) {
+		if (sidebar_modal_is_open() && event.which === 1) {
 			// check if the click was within the modal or within an element that we specifically don't want to close the modal
 			let modal = event.target.closest(".sidebar-modal");
 			let preventSidebarModalClose = event.target.closest(".prevent-sidebar-modal-close");
@@ -2434,6 +2436,15 @@ function init_ui() {
 				close_sidebar_modal();
 			}
 		}
+		let sidebarMonsterStatBlock = $("#monster-details-page-iframe");
+		if (sidebarMonsterStatBlock.length > 0 && !event.target.closest("#monster-details-page-iframe")) {
+			sidebarMonsterStatBlock.remove();
+		}
+		let sidebarMonsterFilter = $("#monster-filter-iframe");
+		if (sidebarMonsterFilter.length > 0 && !event.target.closest("#monster-filter-iframe")) {
+			close_monster_filter_iframe();
+		}
+
 	}
 
 	// Helper function to disable window mouse handlers, required when we
@@ -2459,13 +2470,21 @@ function init_ui() {
 	$(window).mousedown(mousedown);
 	$(window).mouseup(mouseup);
 
-	$("#fog_overlay").bind("contextmenu", function (e) {
+	$("#temp_overlay").bind("contextmenu", function (e) {
 		return false;
 	});
 
 	init_mouse_zoom()
 
 	init_help_menu();
+
+	$("ol.tss-jmihpx-GameLogEntries").on("DOMNodeInserted", function(addedEvent) {
+		let injectedElement = $(addedEvent.target);
+		if (injectedElement.hasClass("tss-1wcf5kt-Line-Notation") || injectedElement.hasClass("tss-16k6xf2-Line-Breakdown")) {
+			let gamelogItem = injectedElement.closest("li");
+			replace_gamelog_message_expressions(gamelogItem);
+		}
+	});
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
@@ -2481,6 +2500,7 @@ function init_ui() {
 		},10000);
 		setTimeout(get_pclist_player_data,25000);
 	}
+
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
@@ -2492,237 +2512,29 @@ function init_buttons() {
 	if ($("#fog_menu").length > 0) {
 		return; // only need to do this once
 	}
-
-	var clear_button = $("<div class='ddbc-tab-options__header-heading'>ALL</div>");
-	clear_button.click(function() {
-
-		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
-		if (r == true) {
-			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
-			redraw_canvas();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
-		}
-	});
-
-	var hide_all_button = $("<div class='ddbc-tab-options__header-heading'>ALL</div>");
-	hide_all_button.click(function() {
-		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
-		if (r == true) {
-			window.REVEALED = [];
-			redraw_canvas();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
-		}
-	});
-
-
-	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
-	fog_menu.append("<div class='menu-subtitle'>Reveal</div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_square-r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option remembered-selection' data-shape='rect' data-type=0>Square</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='arc'  data-type=0>Circle</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='polygon' data-type=0>Polygon</div></div>");
-	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' />").append(clear_button));
-	fog_menu.append("<div class='menu-subtitle'>Hide</div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='rect' data-type=1>Square</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</div></div>");
-	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' />").append(hide_all_button));
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='fog_undo'>UNDO</div></div>")
-	fog_menu.css("position", "fixed");
-	fog_menu.css("top", "25px");
-	fog_menu.css("width", "75px");
-	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
-	$("body").append(fog_menu);
-	fog_menu.find("#fog_undo").click(function(){
-		window.REVEALED.pop();
-		redraw_canvas();
-		if(window.CLOUD){
-			sync_fog();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
-
-
 	buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
 	
-	buttons.append($("<div style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='select'><u>S</u>ELECT</div>"));
-
-	buttons.append($("<div style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='measure'><u>R</u>ULER</div>"));
+	buttons.append($("<button style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</button>"));
 	
 	if (window.DM) {
-		fog_button = $("<div style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</div>");
-
-		buttons.append(fog_button);
-		if (!window.DM) {
-			fog_button.hide();
-		}
-		fog_menu.css("left",fog_button.position().left);
-
-		draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_square' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading remembered-selection' data-shape='rect' data-type='draw'>Square</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='arc' data-type='draw'>Circle</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='cone' data-type='draw'>Cone</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='line' data-type='draw'>Line</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='brush' data-type='draw'>Brush</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='polygon' data-type='draw'>Polygon</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='rect' data-type='eraser'>Erase</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='draw_undo'>UNDO</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='delete_drawing'>CLEAR</div></div>");
-
-		draw_menu.find("#delete_drawing").click(function() {
-			r = confirm("DELETE ALL DRAWINGS? (cannot be undone!)");
-			if (r === true) {
-				window.DRAWINGS = [];
-				redraw_drawings();
-				if(window.CLOUD){
-					sync_drawings();
-				} else {
-					window.ScenesHandler.persist();
-					window.ScenesHandler.sync();
-				}
-			}
-		});
-
-		draw_menu.find("#draw_undo").click(function() {
-			console.log("undo once")
-			window.DRAWINGS.pop();
-			redraw_drawings();
-			if(window.CLOUD){
-				sync_drawings();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
-		}
-	);
-
-		colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
-			
-		colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
-
-		colors.find("#cpick").click(function(e)	{ //open the color picker
-			$('body').append("<div id='cpicker_overlay'></div>");
-			$('#cpicker_overlay').click(function(e){
-				$('#cpicker_overlay').remove();
-			});
-			$("#cpick").change(function () { // run when color changed
-				cPick = $("#cpick").val();
-				console.log("cPicked! " + cPick);
-				cc.remove(); //remove previous picked color
-				cc = $("<div class='coloroption'/>");
-				cc.width(27);
-				cc.height(27);
-				cc.css("background", cPick); //set color from cPick
-				cc.css("float", "left");
-				colors.prepend(cc); //Place new color selector
-				$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
-				cc.css('border', '2px solid black'); //highlight new color
-				cc.addClass('colorselected'); //select new color
-				$('#cpicker_overlay').remove();
-
-				cc.click(function(e) {
-					$(".coloroption").css('border', '').removeClass('colorselected');
-					$(e.currentTarget).css('border', '2px solid black');
-					$(e.currentTarget).addClass('colorselected');
-				});
-			});
-		});
-
-		for (i = 0; i < 20; i++){
-			var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
-			c = colorOp;
-			c.width(15);
-			c.height(15);
-			c.css("background", DRAW_COLORS[i]);
-			c.css("float", "left");
-			colors.append(c);
-
-			c.click(function(e) {
-				$(".coloroption").css('border', '').removeClass('colorselected');
-				$(e.currentTarget).css('border', '2px solid black');
-				$(e.currentTarget).addClass('colorselected');
-			});
-		}
-
-		//create default cPick coloroption
-		cPick = "#E29393";
-		cc = $("<div class='coloroption'/>");
-		cc.width(27);
-		cc.height(27);
-		cc.css("background", cPick); //set color from cPick
-		cc.css("float", "left");
-		colors.prepend(cc); //Place new color selector in front of colorpicker
-		cc.css('border', '2px solid black'); //highlight new color
-		cc.addClass('colorselected'); //select new color
-		cc.click(function(e) {
-			$(".coloroption").css('border', '').removeClass('colorselected');
-			$(e.currentTarget).css('border', '2px solid black');
-			$(e.currentTarget).addClass('colorselected');
-		});
-
-		draw_menu.append(colors);
-		draw_menu.append("<div class='menu-subtitle'>Type</div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='transparent'>TRANSP</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='border'>BORDER</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='filled'>FILLED</div></div>");
-
-		draw_menu.find(".drawType").click(function(e) {
-			$(".drawType").removeClass('drawTypeSelected');
-			$(".drawType").removeClass('ddbc-tab-options__header-heading--is-active');
-			$(".drawType").css('background', '');
-			$(e.currentTarget).addClass('drawTypeSelected');
-			$(e.currentTarget).addClass('ddbc-tab-options__header-heading--is-active');
-			// $(e.currentTarget).css('background', '-webkit-linear-gradient(270deg, #e29393, #f37a7a)');
-		});
-
-		draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
-		draw_menu.append("<div><input id='draw_line_width' type='range' style='width:90%' min='1' max='60' value='6' class='drawWidthSlider'></div>");
-
-		draw_menu.css("position", "fixed");
-		draw_menu.css("top", "25px");
-		draw_menu.css("width", "75px");
-		draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
-
-		$("body").append(draw_menu);
-
-		draw_button = $("<div style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</div>");
-
-		buttons.append(draw_button);
-		draw_menu.css("left",draw_button.position().left);	
-
-		draw_menu.find(".drawType").first().click();
-		draw_menu.find(".coloroption").first().click();
+		init_fog_menu(buttons)
+		init_draw_menu(buttons)
+		init_text_button(buttons)
 
 	}
 
 	setup_aoe_button();
-	setup_draw_buttons();
+	handle_drawing_button_click();
 
-	buttons.append("<div style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</div>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
 	buttons.css("z-index", '57000');
-
-
 
 	// HIDE default SEND TO functiontality in the campaign page:
 
@@ -2733,8 +2545,6 @@ function init_buttons() {
 	window.STREAMPEERS={};
 	window.MYSTREAMID=uuid();
 	window.JOINTHEDICESTREAM=false;
-
-
 
 	init_keypress_handler();
 
@@ -2954,9 +2764,15 @@ $(function() {
 		$(".joindm").addClass("button-loading");
 		store_campaign_info();
 		gather_pcs();
-		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+		window.EncounterHandler = new EncounterHandler(function(didSucceed, errorType) {
 			if (didSucceed === false) {
-				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+				if (errorType === "EncounterLimitException") {
+					alert("Failed to create a backing Encounter! AboveVTT requires 1 available Encounter, but it looks like you already have more than your subscription level allows. Try deleting some encounters (or renaming one of them to \"AboveVTT\") and try again");
+				} else {
+					alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+				}
+				$(".joindm").removeClass("button-loading");
+				return;
 			}
 			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
 				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?abovevtt=true`, '_blank');
@@ -3156,6 +2972,25 @@ function init_help_menu() {
 	});
 }
 
+function init_my_dice_details(){
+	get_cobalt_token(function (token) {
+		window.ajaxQueue.addRequest({
+			type: 'GET',
+			url: "https://dice-service.dndbeyond.com/diceuserconfig/v1/get",
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json', // added data type
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function(res) {
+				window.mydice = res
+			}
+    	});
+	});
+}
 /**
  * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
  * If the conversion is successful, it will be sent over the websocket, and this will return true.
@@ -3164,8 +2999,26 @@ function init_help_menu() {
  * @param {Boolean} toSelf    whether this is sent to self or everyone
  * @returns {Boolean}         true if we were able to convert and send; else false
  */
-function send_rpg_dice_to_ddb(expression, toSelf = true) {
-	return false;
+// send_rpg_dice_to_ddb(expression, displayName, imgUrl, modifier, damageType, dmOnly)
+function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", damageType, actionType="custom", sendTo="everyone") {
+
+	let diceRoll = new DiceRoll(expression);
+	diceRoll.action = actionType;
+	diceRoll.rollType = rollType;
+	diceRoll.name = displayName;
+	diceRoll.avatarUrl = imgUrl;
+	// diceRoll.entityId = monster.id;
+	// diceRoll.entityType = monsterData.id;
+
+	if (window.diceRoller.roll(diceRoll)) {
+		console.log("send_rpg_dice_to_ddb rolled via diceRoller");
+		return true;
+	}
+
+	console.group("send_rpg_dice_to_ddb")
+	console.log("with values", expression, displayName, imgUrl, rollType, damageType, actionType, sendTo)
+
+
 	try {
 		expression = expression.replace(/\s+/g, ''); // remove all whitespace
 
@@ -3186,10 +3039,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				choppedExpression = choppedExpression.slice(idx + currentRoll.length);
 			}
 		}
+		console.log("chopped expression", choppedExpression)
 		notationList.push(choppedExpression); // our last notation will still be here so add it to the list
 
 		if (roll.rolls.length != notationList.length) {
 			console.warn(`Failed to convert expression to DDB roll; expression ${expression}`);
+			console.groupEnd()
 			return false;
 		}
 
@@ -3204,6 +3059,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				let currentDieType = supportedDieTypes.find(dt => currentNotation.includes(dt)); // we do it this way instead of splitting the string so we can easily clean up things like d20kh1, etc. It's less clever, but it avoids any parsing errors
 				if (!supportedDieTypes.includes(currentDieType)) {
 					console.warn(`found an unsupported dieType ${currentNotation}`);
+					console.groupEnd()
 					return false;
 				}
 				if (currentNotation.includes("kh") || currentNotation.includes("kl")) {
@@ -3218,6 +3074,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 				let dice = currentRoll.rolls.map(d => {
 					allValues.push(d.value);
+					console.groupEnd()
 					return { dieType: currentDieType, dieValue: d.value };
 				});
 
@@ -3238,6 +3095,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 						constantsTotal += currentRoll;
 					} else {
 						console.warn(`found an unexpected symbol ${convertedExpression[i-1]}`);
+						console.groupEnd()
 						return false;
 					}
 				} else {
@@ -3245,7 +3103,6 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				}
 			}
 		}
-
 		let ddbJson = {
 			id: uuid(),
 			dateTime: `${Date.now()}`,
@@ -3253,18 +3110,21 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 			userId: window.MB.userid,
 			source: "web",
 			persist: true,
-			messageScope: toSelf ? "userId" : "gameId",
-			messageTarget: toSelf ? window.MB.userid : window.MB.gameid,
+			messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+			messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
 			entityId: window.MB.userid,
 			entityType: "user",
 			eventType: "dice/roll/fulfilled",
 			data: {
-				action: "custom",
+				action: actionType,
+				setId: window.mydice.data.setId,
 				context: {
 					entityId: window.MB.userid,
 					entityType: "user",
-					messageScope: "userId",
-					messageTarget: window.MB.userid
+					messageScope: sendTo === "everyone" ?  "gameId" : "userId",
+					messageTarget: sendTo === "everyone" ?  window.MB.gameid : window.MB.userid,
+					name: displayName,
+					avatarUrl: imgUrl
 				},
 				rollId: uuid(),
 				rolls: [
@@ -3274,7 +3134,7 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 							constant: constantsTotal
 						},
 						diceNotationStr: expression,
-						rollType: "roll",
+						rollType: rollType,
 						rollKind: expression.includes("kh") ? "advantage" : expression.includes("kl") ? "disadvantage" : "",
 						result: {
 							constant: constantsTotal,
@@ -3286,9 +3146,9 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 				]
 			}
 		};
-
 		if (window.MB.ws.readyState == window.MB.ws.OPEN) {
 			window.MB.ws.send(JSON.stringify(ddbJson));
+			console.groupEnd()
 			return true;
 		} else { // TRY TO RECOVER
 			get_cobalt_token(function(token) {
@@ -3297,10 +3157,12 @@ function send_rpg_dice_to_ddb(expression, toSelf = true) {
 					window.MB.ws.send(JSON.stringify(ddbJson));
 				});
 			});
+			console.groupEnd()
 			return true; // we can't guarantee that this actually worked, unfortunately
 		}
 	} catch (error) {
 		console.warn(`failed to send expression as DDB roll; expression = ${expression}`, error);
+		console.groupEnd()
 		return false;
 	}
 }

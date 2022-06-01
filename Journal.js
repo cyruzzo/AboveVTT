@@ -355,9 +355,7 @@ class JournalManager{
 			selector: '#' + tmp,
 			menubar: false,
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize',
-			toolbar1: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,alignleft,|,aligncenter,|,alignright,|,outdent,|,indent,|,bullist,|,numlist',
-			toolbar2: 'forecolor,|,backcolor,|,fontselect,|,fontsizeselect,|,formatselect,|,removeformat,|,hr',
-			toolbar3: 'link,|,unlink,|,image,|,media',
+			toolbar1: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,alignleft,|,aligncenter,|,alignright,|,outdent,|,indent,|,bullist,|,numlist,|,forecolor,|,backcolor,|,fontselect,|,fontsizeselect,|,formatselect,|,removeformat,|,hr,link,|,unlink,|,image,|,media',
 			image_class_list: [
 				{title: 'None', value: ''},
 				{title: 'Magnify', value: 'magnify'},
@@ -392,17 +390,6 @@ class JournalManager{
 				
 	}
 }
-
-function frame_z_index_when_click(moveableFrame){
-	//move frames behind each other in the order they were clicked
-	if(moveableFrame.css('z-index') != 50000) {
-		moveableFrame.css('z-index', 50000);
-		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
-			$(this).css('z-index',($(this).css('z-index')-1));
-		});
-	}
-}
-
 
 
 function init_journal(gameid){
