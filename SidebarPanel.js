@@ -365,6 +365,7 @@ class SidebarListItem {
   static NameMyTokens = "My Tokens";
   static NameAboveVTT = "AboveVTT Tokens";
   static NameEncounters = "Encounters";
+  static NameAoe = "Area of Effects";
 
   /** Do not call this directly! It is a generic constructor for a SidebarListItem. Use one of the static functions instead.
    * @param name {string} the name displayed to the user
@@ -578,6 +579,7 @@ class SidebarListItem {
       case SidebarListItem.TypeMonster:
       case SidebarListItem.TypeEncounter:
       case SidebarListItem.TypeScene:
+      case SidebarListItem.TypeAoe:
         return true;
       case SidebarListItem.TypeBuiltinToken:
       default:
@@ -598,6 +600,7 @@ class SidebarListItem {
       case SidebarListItem.TypeMonster:
       case SidebarListItem.TypeBuiltinToken:
       case SidebarListItem.TypeEncounter: // we technically could support this, but I don't think we should
+      case SidebarListItem.TypeAoe:
       default:
         return false;
     }
@@ -1094,6 +1097,11 @@ function build_sidebar_list_row(listItem) {
       });
       rowItem.append(switch_dm);
       rowItem.append(switch_players);
+      break;
+    case SidebarListItem.TypeAoe:
+      row.attr("data-shape", listItem.shape);
+      subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">Style:</span>${listItem.style}</div>`);
+     
       break;
   }
 

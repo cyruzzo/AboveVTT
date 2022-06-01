@@ -6,8 +6,10 @@ monster_search_filters = {};
 encounter_monster_items = {}; // encounterId: SidebarTokenItem[]
 cached_monster_items = {}; // monsterId: SidebarTokenItem
 aoe_items = [ // TODO: build this out
-    SidebarListItem.Aoe("square", 1, "default"),
-    SidebarListItem.Aoe("circle", 1, "default")
+    SidebarListItem.Aoe("square", 1, "acid"),
+    SidebarListItem.Aoe("circle", 1, "acid"),
+    SidebarListItem.Aoe("cone", 1, "acid"),
+    SidebarListItem.Aoe("line", 1, "acid")
 ];
 
 /** Reads in tokendata, and writes to mytokens and mytokensfolders; marks tokendata objects with didMigrateToMyToken = false; */
@@ -388,6 +390,21 @@ function inject_monster_list_items(listItems) {
     }
 }
 
+function inject_aoe_list_items(listItems){
+    let aoeFolder = find_html_row_from_path(SidebarListItem.PathAoe, tokensPanel.body);
+    if (aoeFolder === undefined || aoeFolder.length === 0) {
+        console.warn("inject_monster_list_items failed to find the monsters folder");
+        return;
+    }
+    let list = aoeFolder.find(`> .folder-item-list`);
+    for (let i = 0; i < listItems.length; i++) {
+        let item = listItems[i];
+        let row = build_sidebar_list_row(item);
+        enable_draggable_token_creation(row);
+        list.append(row);
+    }
+}
+
 /** Called on startup. It reads from localStorage, and initializes all the things needed for the TokensPanel to function properly */
 function init_tokens_panel() {
 
@@ -398,7 +415,8 @@ function init_tokens_panel() {
         SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameMonsters, false),
         SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameMyTokens, false),
         SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameAboveVTT, false),
-        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameEncounters, false)
+        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameEncounters, false),
+        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameAoe, false)
     ];
 
     if(localStorage.getItem('MyTokens') != null){
