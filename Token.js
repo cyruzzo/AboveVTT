@@ -1898,7 +1898,6 @@ function draw_selected_token_bounding_box() {
 	var bottom = undefined;
 	var right = undefined;
 	var left = undefined;
-
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
@@ -1936,8 +1935,8 @@ function draw_selected_token_bounding_box() {
 	let borderOffset = 10;
 	top = (top - borderOffset);
 	left = (left - borderOffset);
-	bottom = (bottom + borderOffset);
-	right = (right + borderOffset);
+	right = right + borderOffset;
+	bottom = bottom + borderOffset;
 	let width = right - left;
 	let height = bottom - top;
 	let centerHorizontal = left + Math.ceil(width / 2);
