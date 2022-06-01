@@ -1161,6 +1161,7 @@ class Token {
 				y: 0
 			};
 			tok.draggable({
+				scroll: false,
 				stop:
 					function (event) {
 						//remove cover for smooth drag
