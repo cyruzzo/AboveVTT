@@ -1267,7 +1267,6 @@ class Token {
 					},
 
 				start: function (event) {
-					event.stopPropagation()
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.clientX;
@@ -1285,27 +1284,30 @@ class Token {
 
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
-					if (self.selected) {
-						for (let id in window.TOKEN_OBJECTS) {
-							if (window.TOKEN_OBJECTS[id].selected) {
-								$("[data-id='"+id+"']").addClass("pause_click");
-								if($("[data-id='"+id+"']").is(":animated")){
-									window.TOKEN_OBJECTS[id].stopAnimation();
-								}
-								if (id != self.options.id) {
-									var curr = window.TOKEN_OBJECTS[id];
-									curr.orig_top = curr.options.top;
-									curr.orig_left = curr.options.left;
 
-									const el = $("#aura_" + id.replaceAll("/", ""));
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
+
+					if (self.selected && $(".token.tokenselected").length>1) {
+						$(".token.tokenselected").each(function(){
+							let id = $(this).attr("data-id");
+							$(this).addClass("pause_click");
+							if($(this).is(":animated")){
+								window.TOKEN_OBJECTS[id].stopAnimation();
+							}
+							if (id != self.options.id) {
+								var curr = window.TOKEN_OBJECTS[id];
+								curr.orig_top = curr.options.top;
+								curr.orig_left = curr.options.left;
+
+								const el = $("#aura_" + id.replaceAll("/", ""));
+								if (el.length > 0) {
+									el.attr("data-left", el.css("left").replace("px", ""));
+									el.attr("data-top", el.css("top").replace("px", ""));
 								}
 							}
-						}
+
+						});													
 					}
+					
 
 					const el = $("#aura_" + self.options.id.replaceAll("/", ""));
 					if (el.length > 0) {
@@ -1316,8 +1318,9 @@ class Token {
 					// Setup waypoint manager
 					const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
 					const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
-					WaypointManager.cancelFadeout()
+					
 					if(WaypointManager.numWaypoints > 0){
+						WaypointManager.cancelFadeout();
 						WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
 					}
 					window.BEGIN_MOUSEX = tokenMidX;
@@ -1325,7 +1328,7 @@ class Token {
 					if (!self.options.disableborder){
 						WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
 					}else{
-						WaypointManager.resetDefaultDrawStyle()
+						WaypointManager.resetDefaultDrawStyle();
 					}
 					
 
@@ -1333,7 +1336,6 @@ class Token {
 				},
 
 				drag: function(event, ui) {
-					event.stopPropagation()
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
@@ -1379,20 +1381,20 @@ class Token {
 					}
 
 
-					if (self.selected) { // if dragging on a selected token, we should move also the other selected tokens
+
+
+					if (self.selected && $(".token.tokenselected").length>1) {
+						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						//var offsetLeft=parseInt($(event.target).css("left"))-parseInt(orig_options.left);
-						//var offsetTop=parseInt($(event.target).css("top"))-parseInt(orig_options.top);
 						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						//console.log("OFFSETLEFT "+offsetLeft+ " OFFSETTOP " + offsetTop);
-
-						for (let id in window.TOKEN_OBJECTS) {
+						$(".token.tokenselected").each(function(){
+							let id = $(this).attr("data-id");
 							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
-								var tok = $("#tokens div[data-id='" + id + "']");
+								var tok = $(this);
 								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
 								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
@@ -1408,8 +1410,7 @@ class Token {
 									selEl.css('top', (currTop + offsetTop) + "px");
 								}
 							}
-						}
-
+						});													
 					}
 
 				}
