@@ -50,6 +50,24 @@ class WaypointManagerClass {
 		this.currentWaypointIndex = 0;
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		this.timeout = undefined;
+		this.timerId = undefined;
+		this.drawStyle = {
+			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
+			color: "#f2f2f2",
+			outlineColor: "black",
+			textColor: "black",
+			backgroundColor: "rgba(255, 255, 255, 0.7)"
+		}
+	}
+	
+	resetDefaultDrawStyle(){
+		this.drawStyle = {
+			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
+			color: "#f2f2f2",
+			outlineColor: "black",
+			textColor: "black",
+			backgroundColor: "rgba(255, 255, 255, 0.7)"
+		}
 	}
 
 	// Set canvas and further set context
@@ -93,10 +111,10 @@ class WaypointManagerClass {
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = Math.max(25 * Math.max((1 - window.ZOOM), 0), 5);
-		this.ctx.strokeStyle = "black";
+		this.ctx.lineWidth = this.drawStyle.lineWidth
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
-		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
 	}
 
@@ -126,10 +144,16 @@ class WaypointManagerClass {
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		clearTimeout(this.timeout);
 		this.timeout = undefined;
+		this.cancelFadeout()
 	}
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
 	getSnapPointCoords(x, y) {
+		if (!$('#measure-button').hasClass('button-enabled')) {
+			// only snap if the ruler tool is selected.
+			// The select tool manages the snapping based on ctrl key, scene settings, etc. so let it do it's thing
+			return { x: x, y: y };
+		}
 
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;
@@ -149,20 +173,24 @@ class WaypointManagerClass {
 
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
-	draw(midlineLabels) {
+	draw(midlineLabels, labelX, labelY) {
 
 		var cumulativeDistance = 0
 		for (var i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
 			this.ctx.beginPath();
-			this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
+			if (i < this.coords.length - 1) {
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
+			} else {
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY);
+			}
 			cumulativeDistance += this.coords[i].distance;
 		}
 	}
 
 	// Draw a waypoint segment with all the lines and labels etc.
-	drawWaypointSegment(coord, cumulativeDistance, midlineLabels) {
+	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY) {
 
 		// Snap to centre of current grid square
 		var gridSize = window.CURRENT_SCENE_DATA.hpps;
@@ -224,8 +252,23 @@ class WaypointManagerClass {
 
 			// Knock the text down slightly
 			textY += (margin * 2);
-		}
-		else {
+		} else if (labelX !== undefined && labelY !== undefined) {
+
+			// Calculate our coords and dimensions
+			contrastRect.x = labelX - margin + slopeModifier;
+			contrastRect.y = labelY - margin + slopeModifier;
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
+
+			textRect.x = labelX + slopeModifier;
+			textRect.y = labelY + slopeModifier;
+			textRect.width = textMetrics.width + (margin * 3);
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
+
+			textRect.x -= (textRect.width / 2);
+			textX = labelX + margin + slopeModifier - (textRect.width / 2);
+			textY = labelY + (margin * 2) + slopeModifier;
+		} else {
 			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
 			if (snapPointYStart <= snapPointYEnd) {
 				// Push right and down
@@ -257,34 +300,137 @@ class WaypointManagerClass {
 		}
 
 		// Draw our 'contrast line'
-		this.ctx.strokeStyle = "black";
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
-		this.ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+		this.ctx.strokeStyle = this.drawStyle.color
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
+		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
-		this.ctx.strokeStyle = "black";
-		this.ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
+		// draw the outline of the text box
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
 
 		// Finally draw our text
-		this.ctx.fillStyle = "black";
+		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);
-
+		
 		this.drawBobble(snapPointXStart, snapPointYStart);
-		this.drawBobble(snapPointXEnd, snapPointYEnd, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+		this.drawBobble(snapPointXEnd, snapPointYEnd);
+	}
+
+	/**
+	 * redraws the waypoints using various levels of opacity until completely clear
+	 * then removes all waypoints and resets canvas opacity
+	 */
+	 fadeoutMeasuring(){
+		let alpha = 1.0
+		const self = this
+		// only ever allow a single fadeout to occur
+		// this stops weird flashing behaviour with interacting
+		// interval function calls
+		if (this.timerId){
+			return
+		}
+		this.timerId = setInterval(function(){ fadeout() }, 100);
+
+		function fadeout(){
+			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
+			self.ctx.globalAlpha = alpha;
+			self.draw(false)
+			alpha = alpha - 0.2;
+			if (alpha <= 0.0){
+				self.cancelFadeout()
+				self.clearWaypoints();
+				clear_temp_canvas()
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	cancelFadeout(){
+		if (this.timerId !== undefined){
+			clearInterval(this.timerId);
+			this.ctx.globalAlpha = 1.0
+			this.timerId = undefined
+
+		}	
+	}
+
+	/**
+	 * redraws the waypoints using various levels of opacity until completely clear
+	 * then removes all waypoints and resets canvas opacity
+	 */
+	fadeoutMeasuring(){
+		let alpha = 1.0
+		const self = this
+		// only ever allow a single fadeout to occur
+		// this stops weird flashing behaviour with interacting
+		// interval function calls
+		if (this.timerId){
+			return
+		}
+		this.timerId = setInterval(function(){ fadeout() }, 100);
+		
+		function fadeout(){
+			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
+			self.ctx.globalAlpha = alpha;
+			self.draw(false)
+			alpha = alpha - 0.2;
+			if (alpha <= 0.0){
+				self.cancelFadeout()
+				self.clearWaypoints();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	cancelFadeout(){
+		if (this.timerId !== undefined){
+			clearInterval(this.timerId);
+			this.ctx.globalAlpha = 1.0
+			this.timerId = undefined
+
+		}	
 	}
 };
 
 
-function check_token_visibility() {
+// if it was not executed in the last second, execute it immediately
+// if it's already scheduled to be executed, return
+// otherwise, schedule it to execute in 1 second
+function check_token_visibility(){
+	if(window.DM)
+		return;
+	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() > 0)){
+		return;
+	}
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
+		do_check_token_visibility();
+		return;
+	}
+	else {
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
+		setTimeout(do_check_token_visibility,1000);
+		return;
+	}
+}
+
+function do_check_token_visibility() {
+	console.log("do_check_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
 	var canvas = document.getElementById("fog_overlay");
@@ -312,6 +458,7 @@ function check_token_visibility() {
 		}
 		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 	}
+	console.log("finished");
 }
 
 function circle2(a, b) {
@@ -481,14 +628,17 @@ function draw_wizarding_box() {
 }
 
 function reset_canvas() {
-	$('#fog_overlay').width($("#scene_map").width());
-	$('#fog_overlay').height($("#scene_map").height());
+	$('#temp_overlay').get(0).width =($("#scene_map").width());
+	$('#temp_overlay').get(0).height =($("#scene_map").height());
 
-	$('#grid_overlay').width($("#scene_map").width());
-	$('#grid_overlay').height($("#scene_map").height());
+	$('#fog_overlay').get(0).width =($("#scene_map").width());
+	$('#fog_overlay').get(0).height =($("#scene_map").height());
 
-	$('#draw_overlay').width($("#scene_map").width());
-	$('#draw_overlay').height($("#scene_map").height());
+	$('#grid_overlay').get(0).width =($("#scene_map").width());
+	$('#grid_overlay').get(0).height =($("#scene_map").height());
+
+	$('#text_overlay').get(0).width= ($("#scene_map").width());
+	$('#text_overlay').get(0).height = ($("#scene_map").height());
 
 	$('#draw_overlay').get(0).width = $("#scene_map").width();
 	$('#draw_overlay').get(0).height = $("#scene_map").height();
@@ -539,7 +689,7 @@ function reset_canvas() {
 	}
 }
 
-function redraw_canvas() {
+function redraw_fog() {
 	if (!window.FOG_OF_WAR)
 		return;
 	var canvas = document.getElementById("fog_overlay");
@@ -595,81 +745,70 @@ function redraw_canvas() {
 	}
 }
 
+
+/**
+ * Redraws all text drawing types from window.DRAWINGS
+ */
+function redraw_text() {
+	const canvas = document.getElementById("text_overlay");
+	const context = canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
+	const textDrawings = window.DRAWINGS.filter(d => d[0].includes("text"))
+
+	textDrawings.forEach(drawing => {
+		const [shape, fill, color, x, y, width, height, text, font, stroke] = drawing
+		switch (shape) {
+			case "text":
+				draw_text(context, ...drawing);
+				break;
+			case "text-rect":
+				// incase we have a drop-shadow filter applied still
+				context.filter = "none"
+				drawRect(context,x,y,width,height,color);
+				break;
+			case "text-eraser":
+				context.clearRect(x, y, width, height);
+				break;
+			default:
+				break;
+		}
+	})
+}
+
 function redraw_drawings() {
-	var canvas = document.getElementById("draw_overlay");
-	var ctx = canvas.getContext("2d");
-	var lineWidth = 6;
-	var style = "#FF0000";
+	let canvas = document.getElementById("draw_overlay");
+	let ctx = canvas.getContext("2d");
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text"))
 
-	for (var i = 0; i < window.DRAWINGS.length; i++) {
-		data = window.DRAWINGS[i];
+	for (var i = 0; i < drawings.length; i++) {
+		const [shape, fill, color, x, y, width, height, lineWidth] = drawings[i];
+		const isFilled = fill === "filled"
 
-		if (data[0] == "eraser") {
-			ctx.clearRect(data[3], data[4], data[5], data[6]);
+		if (shape == "eraser") {
+			ctx.clearRect(x, y, width, height);
 		}
-		if (data[0] == "rect" && data[1] == "filled") {
-			style = data[2];
-			drawRect(ctx,data[3], data[4], data[5], data[6], style, true);
+		if (shape == "rect") {
+			drawRect(ctx,x, y, width, height, color, isFilled, lineWidth);
 		}
-		if (data[0] == "rect" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawRect(ctx,data[3], data[4], data[5], data[6], style, true);
+		if (shape == "arc") {
+			const radius = width
+			drawCircle(ctx,x, y, radius, color, isFilled, lineWidth);
 		}
-		if (data[0] == "rect" && data[1] == "border") {
-			lineWidth = data.length > 7 ? data[7] : "6";
-			style = data[2];
-			drawRect(ctx,data[3], data[4], data[5], data[6], style, false, true,lineWidth );
+		if (shape == "cone") {
+			drawCone(ctx, x, y, width, height, color, isFilled, lineWidth);
 		}
-		if (data[0] == "arc" && data[1] == "filled") {
-			style = data[2];
-			drawCircle(ctx,data[3], data[4], data[5], style);
+		if (shape == "line") {
+			drawLine(ctx,x, y, width, height, color, lineWidth);
 		}
-		if (data[0] == "arc" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawCircle(ctx,data[3], data[4], data[5], style);
+		if (shape == "polygon") {
+			drawPolygon(ctx,x, color, isFilled, lineWidth);
+			// ctx.stroke();
 		}
-		if (data[0] == "arc" && data[1] == "border") {
-			style = data[2];
-			lineWidth = data.length > 7 ? data[7] : "6";
-			drawCircle(ctx,data[3], data[4], data[5], style, false, true, lineWidth);
-		}
-		if (data[0] == "cone" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawCone(ctx,data[3], data[4], data[5],data[6], style);
-		}
-		if (data[0] == "cone" && data[1] == "filled") {
-			style = data[2];
-			drawCone(ctx,data[3], data[4], data[5],data[6], style);
-		}
-		if (data[0] == "cone" && data[1] == "border") {
-			style = data[2];
-			lineWidth = data.length > 7 ? data[7] : "6";
-			drawCone(ctx,data[3], data[4], data[5],data[6], style, false, true, lineWidth);
-		}
-		if (data[0] == "line") {
-			style = data[2];
-			lineWidth = data.length > 7 ? data[7] : "6";
-			drawLine(ctx,data[3], data[4], data[5], data[6], style, lineWidth);
-		}
-
-		if (data[0] == "polygon" && data[1] == "filled") {
-			style = data[2];
-			drawPolygon(ctx,data[3], style, true);
-		}
-		if (data[0] == "polygon" && data[1] == "transparent") {
-			style = data[2].replace(')', ', 0.5)').replace('rgb', 'rgba');
-			drawPolygon(ctx,data[3], style, true);
-		}
-		if (data[0] == "polygon" && data[1] == "border") {
-			style = data[2];
-			lineWidth = data.length > 7 ? data[7] : "6";
-			drawPolygon(ctx,data[3], style, false, true, lineWidth);
-			ctx.stroke();
-		}
-		if (data[0] == "brush") {
-			drawBrushstroke(ctx, data[3],data[2], (data.length > 7 ? data[7] : "6"), false);
+		if (shape == "brush") {
+			drawBrushstroke(ctx, x, color, lineWidth, false);
 		}
 	}
 }
@@ -677,7 +816,7 @@ function redraw_drawings() {
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
-	var target = $("#fog_overlay, #VTT, #black_layer");
+	var target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
 	target.off('mouseup', drawing_mouseup);
@@ -685,40 +824,98 @@ function stop_drawing() {
 	target.off('contextmenu', drawing_contextmenu);
 }
 
+/**
+ * Checks if an RGBA value is fully transparent
+ * @param {String} rgba String that represents a RGBA value
+ * @returns {Boolean}
+ */
+function is_rgba_fully_transparent(rgba){
+	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
+}
+
+function get_event_cursor_position(event){
+	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
+	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+	return [pointX, pointY]
+}
+
+/**
+ * Pulls information from menu's or buttons without menu's to set values used by 
+ * drawing mousemove, mousedown, mousecontext events
+ * @param {Event} e 
+ * @returns 
+ */
 function drawing_mousedown(e) {
+	// perform some cleanup of the canvas/objects
+	clear_temp_canvas()
+	WaypointManager.resetDefaultDrawStyle()
+	WaypointManager.cancelFadeout()
+	if(e.button !== 2){
+		WaypointManager.clearWaypoints()
+	}
 
-	window.LINEWIDTH = $("#draw_line_width").val();
-	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
-	window.DRAWCOLOR = $(".colorselected").css('background-color');
-	window.DRAWSHAPE = e.data.shape;
-	window.DRAWFUNCTION = e.data.type;
+	// always draw unbaked drawings to the temp overlay
+	canvas = document.getElementById("temp_overlay");
+	context = canvas.getContext("2d");
+	// select modifies this line but never resets it, so reset it here
+	// otherwise all drawings are dashed
+	context.setLineDash([])
+	// get teh data from the menu's/buttons
+	const data = get_draw_data(e.data.clicked,  e.data.menu)
+	
+	// these are generic values used by most drawing functionality
+	window.LINEWIDTH = data.draw_line_width
+	window.DRAWTYPE = data.fill
+	window.DRAWCOLOR = data.background_color
+	window.DRAWSHAPE = data.shape;
+	window.DRAWFUNCTION = data.function;
 
+	// some functions don't have selectable features
+	// such as colour / filltype so set them here
+	if(window.DRAWFUNCTION === "reveal" || window.DRAWFUNCTION === "eraser"){
+		// semi transparent red
+		window.DRAWCOLOR = "rgba(255, 0, 0, 0.5)"
+		window.DRAWTYPE = "filled"
+	}
+	else if (window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "draw_text"){
+		// semi transparent black
+		window.DRAWCOLOR = "rgba(0, 0, 0, 0.5)"
+		window.DRAWTYPE = "filled"
+	}
+	else if (window.DRAWFUNCTION === "select"){
+		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
+		context.setLineDash([10, 5])
+		if (e.which == 1) {
+			$("#temp_overlay").css('cursor', 'crosshair');
+		}		
+	}
+	// figure out what these 3 returns are supposed to be for.
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
 		return;
 	}
 
-	if (window.DRAWSHAPE === 'select') {
-		$("#fog_overlay").css("z-index", "50");
-		if (e.which == 1) {
-			$("#fog_overlay").css('cursor', 'crosshair');
-		}		
-	}
-
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
-	if (e.button != 0)
+	if (e.button != 0 && window.DRAWFUNCTION != "measure")
 		return;
 
-	if (shiftHeld == false || window.DRAWSHAPE != 'select') {
+	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
 		deselect_all_tokens();
 	}
-
-
-	if (window.DRAWSHAPE === "polygon") {
-
-		redraw_canvas();
-		const pointX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-		const pointY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+	// end of wtf is this return block doing?
+	const [pointX, pointY] = get_event_cursor_position(e)
+	
+	if(window.DRAWSHAPE === "brush"){
+		window.BRUSHWAIT = false;
+		window.BRUSHPOINTS = [];
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+		// draw a dot
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
+	}
+	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
 				isPointWithinDistance(
@@ -736,119 +933,162 @@ function drawing_mousedown(e) {
 			window.BEGIN_MOUSEX = [pointX];
 			window.BEGIN_MOUSEY = [pointY];
 		}
-		var canvas = document.getElementById("fog_overlay");
-		var ctx = canvas.getContext("2d");
-		var drawStroke = getDrawingStroke();
-		var fill = getDrawingFill();
-		var style = getDrawingStyle();
-		var lineWidth = getDrawingLineWidth();
-		drawPolygon(ctx,
+		clear_temp_canvas()
+		drawPolygon(context,
 			joinPointsArray(
 				window.BEGIN_MOUSEX,
 				window.BEGIN_MOUSEY
 			),
-			style,
-			fill,
-			drawStroke,
-			lineWidth
+			window.DRAWCOLOR,
+			window.DRAWTYPE === "filled",
+			false,
+			window.DRAWTYPE === "filled" ? 1 : window.LINEWIDTH,
 		);
-		drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
-	} else {
-		window.BEGIN_MOUSEX = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-		window.BEGIN_MOUSEY = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+		drawClosingArea(context, window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0]);
+		
+	}
+	else if (window.DRAWFUNCTION === "draw_text"){
+		window.BEGIN_MOUSEX = e.clientX;
+		window.BEGIN_MOUSEY = e.clientY;
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
-		if(window.DRAWSHAPE === "brush")
-		{
-			window.BRUSHWAIT = false;
-			window.BRUSHPOINTS = [];
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-			// draw a dot
-			var canvas = document.getElementById("fog_overlay");
-			var ctx = canvas.getContext("2d");
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
-			window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-			drawBrushstroke(ctx, window.BRUSHPOINTS,getDrawingStyle(),getDrawingLineWidth());
-		}
 	}
+	else{
+		window.BEGIN_MOUSEX = pointX
+		window.BEGIN_MOUSEY = pointY
+		window.MOUSEDOWN = true;
+		window.MOUSEMOVEWAIT = false;
+	}
+
 
 }
 
-function drawing_mousemove(e) {
 
+/**
+ * Draws the respective shape from window.DRAWSHAPE onto the screen
+ * 
+ * @param {Event} e 
+ * @returns 
+ */
+function drawing_mousemove(e) {
+	
 	if (window.MOUSEMOVEWAIT) {
 		return;
 	}
+	// don't perform any drawing when dragging a token
+	if ($(".ui-draggable-dragging").length > 0){
+		return
+	}
+	const [mouseX, mouseY] = get_event_cursor_position(e)
 
-	var mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-	var mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
 
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
-	var drawStroke = getDrawingStroke();
-	var fill = getDrawingFill();
-	var style = getDrawingStyle();
-	var lineWidth = getDrawingLineWidth();
+	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
 
+	
 	window.MOUSEMOVEWAIT = true;
 	setTimeout(function() {
 		window.MOUSEMOVEWAIT = false;
 	}, mouseMoveFps);
 
 	if (window.MOUSEDOWN) {
-		var width = mousex - window.BEGIN_MOUSEX;
-		var height = mousey - window.BEGIN_MOUSEY;
-
+		clear_temp_canvas()
+		const width = mouseX - window.BEGIN_MOUSEX;
+		const height = mouseY - window.BEGIN_MOUSEY;
+		// bain todo why is this here?
 		if(window.DRAWSHAPE !== "brush")
 		{
-			redraw_canvas();
+			redraw_fog();
 		}
 
 		if (window.DRAWSHAPE == "rect") {
-			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, style, fill, drawStroke,lineWidth);
+			if(window.DRAWFUNCTION == "draw_text")
+			{
+				drawRect(context,
+					Math.round(((window.BEGIN_MOUSEX - 200 + window.scrollX))) * (1.0 / window.ZOOM),
+					Math.round(((window.BEGIN_MOUSEY - 200 + window.scrollY))) * (1.0 / window.ZOOM),
+					((e.clientX - 200 + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - 200 + window.scrollX) * (1.0 / window.ZOOM)),
+					((e.clientY - 200 + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - 200 + window.scrollY) * (1.0 / window.ZOOM)),
+					window.DRAWCOLOR,
+					isFilled,
+					window.LINEWIDTH);
+			}
+			else{
+				drawRect(context,
+						window.BEGIN_MOUSEX,
+						window.BEGIN_MOUSEY,
+						width,
+						height,
+						window.DRAWCOLOR,
+						isFilled,
+						window.LINEWIDTH);
+			}
+		}
+		if (window.DRAWSHAPE === "text_erase") {
+			// draw a rect that will be removed and replaced with an input box
+			// when mouseup
+			drawRect(context,
+					 window.BEGIN_MOUSEX,
+					 window.BEGIN_MOUSEY,
+					 width,
+					 height,
+					 window.DRAWCOLOR,
+					 isFilled,
+					 window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "arc") {
-			centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-			centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-			radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-			drawCircle(ctx,centerX, centerY, radius, style, fill, drawStroke, lineWidth);
+			centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+			centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+			radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
+			drawCircle(context,
+				       centerX,
+					   centerY,
+					   radius,
+					   window.DRAWCOLOR,
+					   isFilled,
+					   window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "cone") {
-			drawCone(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, style, fill, drawStroke, lineWidth);
+			drawCone(context,
+				     window.BEGIN_MOUSEX, 
+					 window.BEGIN_MOUSEY, 
+					 mouseX, 
+					 mouseY, 
+					 window.DRAWCOLOR, 
+					 isFilled, 
+					 window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "line") {
-			drawLine(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, style, lineWidth);
-		}
-		else if (window.DRAWSHAPE == "select") {
-			ctx.save();
-			ctx.strokeStyle = "white";
-			ctx.setLineDash([10,5]);
-			drawRect(ctx,window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,"white",false,true);
-			ctx.restore();
-		}
-		else if (window.DRAWSHAPE == "measure") {
-			ctx.save();
-			// ctx.beginPath();
-
-			WaypointManager.setCanvas(canvas);
-			WaypointManager.registerMouseMove(mousex, mousey);
-			WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey);
-			WaypointManager.draw(false);
-
-			ctx.fillStyle = '#f50';
-
-			ctx.restore();
+			if(window.DRAWFUNCTION === "measure"){
+				if(e.which === 1){
+					WaypointManager.setCanvas(canvas);
+					WaypointManager.cancelFadeout()
+					WaypointManager.registerMouseMove(mouseX, mouseY);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mouseX, mouseY);
+					WaypointManager.draw(false);
+					context.fillStyle = '#f50';
+				}
+			}else{
+				drawLine(context,
+					window.BEGIN_MOUSEX, 
+					window.BEGIN_MOUSEY, 
+					mouseX, 
+					mouseY, 
+					window.DRAWCOLOR, 
+					window.LINEWIDTH);
+			}
+			
 		}
 		else if (window.DRAWSHAPE == "brush"){
 			// Only add a new point every 75ms to keep the drawing size low
 			// Subtract mouseMoveFps from 75ms to avoid waiting too much
 			if(!window.BRUSHWAIT)
 			{
-				window.BRUSHPOINTS.push({x:mousex, y:mousey});
+				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 
-				drawBrushstroke(ctx, window.BRUSHPOINTS,style,lineWidth);
+				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, lineWidth);
 
 				window.BRUSHWAIT = true;
 				if (mouseMoveFps < 75) {
@@ -862,47 +1102,51 @@ function drawing_mousemove(e) {
 	else {
 		if (window.DRAWSHAPE === "polygon" &&
 			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
-
-			redraw_canvas();
-
-			drawPolygon( ctx,
+			clear_temp_canvas()
+			WaypointManager.setCanvas(canvas);
+			WaypointManager.cancelFadeout()
+			drawPolygon( context,
 				joinPointsArray(
 					window.BEGIN_MOUSEX,
 					window.BEGIN_MOUSEY
 				),
-				style,
-				fill,
-				drawStroke,
-				lineWidth,
-				mousex,
-				mousey
+				window.DRAWCOLOR,
+				isFilled,
+				isFilled ? 1 : window.LINEWIDTH,
+				mouseX,
+				mouseY
 			);
-			drawClosingArea(ctx,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
+			drawClosingArea(context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 		}
 	}
 }
 
+/**
+ * Drawing finished (most of the time) set the final shape into window.DRAWING/windo.REVEAL
+ * then call redraw functions and sync functions
+ * @param {Event} e 
+ * @returns 
+ */
 function drawing_mouseup(e) {
-
-	mousex = Math.round(((e.pageX - 200) * (1.0 / window.ZOOM)));
-	mousey = Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)));
-
-	if (window.DRAWSHAPE === 'select') {
-		$("#fog_overlay").css("z-index", "31");
-		$("#fog_overlay").css('cursor', '');
+	// ignore this if we're dragging a token
+	if ($(".ui-draggable-dragging").length > 0){
+		return
 	}
-
+	const [mouseX, mouseY] = get_event_cursor_position(e)
 	// Return early from this function if we are measuring and have hit the right mouse button
-	if (window.DRAWSHAPE == "measure" && e.button == 2) {
-		if(window.MOUSEDOWN) {
-			WaypointManager.checkNewWaypoint(mousex, mousey);
+	if (window.DRAWFUNCTION == "measure" && e.button == 2) {
+		if(window.MOUSEDOWN && WaypointManager.isMeasuring()) {
+			WaypointManager.checkNewWaypoint(mouseX, mouseY);
 		}
 		//console.log("Measure right click");
 		return;
 	}
-
-	// ignore if right mouse button for drawing or fog, cancel is done in drawing_contextmenu
-	if((window.DRAWFUNCTION == "draw" || window.DRAWFUNCTION == "1" || window.DRAWFUNCTION == "0") && e.which !== 1)
+	// ignore if right mouse buttons for the following
+	if((window.DRAWFUNCTION == "draw" ||
+		window.DRAWFUNCTION == "reveal" || 
+		window.DRAWFUNCTION == "hide" || 
+		window.DRAWFUNCTION == "draw_text" || 
+		window.DRAWFUNCTION === "select") && e.which !== 1)
 	{
 		return;
 	}
@@ -912,22 +1156,68 @@ function drawing_mouseup(e) {
 	{
 		return;
 	}
-
-	if (!window.MOUSEDOWN) {
-		return;
+	// restore to what it looked like when first clicked
+	// but not polygons as they have a close box to clear and then save
+	// measure gets special treatment later on in this function
+	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure"){
+		clear_temp_canvas()
 	}
 
+	if (window.DRAWFUNCTION === 'select') {
+		$("#temp_overlay").css('cursor', '');
+	}
+	
 	window.MOUSEDOWN = false;
-	var width = mousex - window.BEGIN_MOUSEX;
-	var height = mousey - window.BEGIN_MOUSEY;
+	const width = mouseX - window.BEGIN_MOUSEX;
+	const height = mouseY - window.BEGIN_MOUSEY;
+	// data is modified by each shape/function but as a starting point fill it up
+	let data = ['',
+		 window.DRAWTYPE,
+		 window.DRAWCOLOR,
+		 window.BEGIN_MOUSEX,
+		 window.BEGIN_MOUSEY,
+		 width,
+		 height,
+		 window.LINEWIDTH];
 
-
-	// [0-3] is always shape data [4] is shape and [5] is type
-
-	if (window.DRAWSHAPE == "line" && window.DRAWFUNCTION === "draw") {
-		data = ['line', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey, window.LINEWIDTH];
+	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
+		(window.DRAWFUNCTION === "draw")){
+		switch (window.DRAWSHAPE) {
+			case "line":
+				data[0] = "line"
+				data[5] = mouseX
+				data[6] = mouseY
+				break
+			case "rect":
+				data[0] = "rect"
+				break;
+			case "arc":
+				data[0] = "arc"
+				data[3] = centerX
+				data[4] = centerY
+				data[5] = radius
+				data[6] = null
+				break;
+			case "cone":
+				data[0] = "cone"
+				data[5] = mouseX
+				data[6] = mouseY
+				break;
+			case "brush":
+				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
+				// cap with a dot
+				window.BRUSHPOINTS.push({x:window.mouseX+1, y:window.mouseY+1});
+				window.BRUSHPOINTS.push({x:window.mouseX-1, y:window.mouseY-1});
+				data[0] = "brush"
+				data[3] = window.BRUSHPOINTS
+				data[4] = null
+				data[5] = null
+				data[6] = null
+				break;
+			default:
+				break;
+		}
 		window.DRAWINGS.push(data);
-		redraw_canvas();
 		redraw_drawings();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
@@ -935,110 +1225,46 @@ function drawing_mouseup(e) {
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-
-	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "draw") {
-		console.log('disegno');
-		data = ['rect', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
+	else if (window.DRAWFUNCTION === "eraser"){
+		if (window.DRAWSHAPE === "rect"){
+			data[0] = "eraser"
+			window.DRAWINGS.push(data);
+			redraw_drawings();
+		}
+		else if (window.DRAWSHAPE === "text_erase"){
+			// text eraser lives on a different overlay and thus can't just be eraser
+			data[0] = "text-eraser"
+			window.DRAWINGS.push(data);
+			redraw_text();
+		}
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	if (window.DRAWSHAPE == "rect" && window.DRAWFUNCTION === "eraser") {
-		console.log('disegno');
-		data = ['eraser', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
+	else if (window.DRAWFUNCTION === "draw_text"){
+		data[0] = "text";
+		const textWidth = e.clientX - window.BEGIN_MOUSEX
+		const textHeight = e.clientY - window.BEGIN_MOUSEY
+		data[5] = textWidth
+		data[6] = textHeight
+		add_text_drawing_input(data);
 	}
-	if (window.DRAWSHAPE == "arc" && window.DRAWFUNCTION === "draw") {
-		console.log('son qua');
-		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = ['arc', window.DRAWTYPE, window.DRAWCOLOR, centerX, centerY, radius,null,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
+	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
+		finalise_drawing_fog(mouseX, mouseY, width, height)
 	}
-	if (window.DRAWSHAPE == "cone" && window.DRAWFUNCTION === "draw") {
-		data = ['cone', window.DRAWTYPE, window.DRAWCOLOR, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mousex, mousey,window.LINEWIDTH];
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-	if (window.DRAWSHAPE == "rect" && (window.DRAWFUNCTION === "0" || window.DRAWFUNCTION === "1")) {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0];
-		data[5] = parseInt(window.DRAWFUNCTION);
-		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
-		redraw_canvas();
-	}
-	if(window.DRAWSHAPE == "brush" && window.DRAWFUNCTION === "draw") {
-		window.BRUSHPOINTS.push({x:mousex, y:mousey});
-		// cap with a dot
-		window.BRUSHPOINTS.push({x:window.mousex+1, y:window.mousey+1});
-		window.BRUSHPOINTS.push({x:window.mousex-1, y:window.mousey-1});
-		data = ['brush', window.DRAWTYPE,window.DRAWCOLOR, window.BRUSHPOINTS,null,null,null,window.LINEWIDTH];
-		//console.log("save brush");
-		//console.log(data);
-		window.DRAWINGS.push(data);
-		redraw_canvas();
-		redraw_drawings();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}
-
-	if (window.DRAWSHAPE == "arc" && (window.DRAWFUNCTION == 0 || window.DRAWFUNCTION == 1)) {
-		centerX = (window.BEGIN_MOUSEX + mousex) / 2;
-		centerY = (window.BEGIN_MOUSEY + mousey) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mousex, 2) + Math.pow(centerY - mousey, 2)));
-		data = [centerX, centerY, radius, 0, 1];
-		data[5] = parseInt(window.DRAWFUNCTION);
-		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
-		redraw_canvas();
-	}
-	if (window.DRAWSHAPE == "select") {
+	
+	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 			var toktop = parseInt(curr.options.top);
-			if ((Math.min(window.BEGIN_MOUSEY, mousey, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mousey, toktop) == toktop))
+			if ((Math.min(window.BEGIN_MOUSEY, mouseY, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
 				continue;
 			var tokleft = parseInt(curr.options.left);
-			if ((Math.min(window.BEGIN_MOUSEX, mousex, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mousex, tokleft) == tokleft))
+			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
 				continue;
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
@@ -1046,55 +1272,37 @@ function drawing_mouseup(e) {
 				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
+					curr.place();
 				}
 			}
-			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
-			curr.place();
+			
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 
-		redraw_canvas();
+		redraw_fog();
 		draw_selected_token_bounding_box();
 		console.log("READY");
 	}
-	if (window.DRAWSHAPE == "measure") {
-
-		setTimeout(function () {
-			// We do not clear if we are still measuring, added this as it somehow appeared multiple
-			// timers could be set, may be a race condition or something still here...
-			if (!WaypointManager.isMeasuring()) {
-				redraw_canvas();
-			}
-		}, 2000);
-		WaypointManager.clearWaypoints();
+	else if (window.DRAWFUNCTION == "measure") {
+		WaypointManager.fadeoutMeasuring()
 	}
+	
 }
 
 function drawing_contextmenu(e) {
-	window.LINEWIDTH = $("#draw_line_width").val();
-	window.DRAWTYPE = $(".drawTypeSelected ").attr('data-value');
-	window.DRAWCOLOR = $(".colorselected").css('background-color');
-	window.DRAWSHAPE = e.data.shape;
-	window.DRAWFUNCTION = e.data.type;
 
 	if (window.DRAWSHAPE === "polygon") {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
-		if(window.BEGIN_MOUSEX.length > 0)
-		{
-			var canvas = document.getElementById("fog_overlay");
+		if(window.BEGIN_MOUSEX.length > 0){
+			var canvas = document.getElementById("temp_overlay");
 			var ctx = canvas.getContext("2d");
 
-			var drawStroke = getDrawingStroke();
-			var fill = getDrawingFill();
-			var style = getDrawingStyle();
-			var lineWidth = getDrawingLineWidth();
-
-			if (isNaN(window.DRAWFUNCTION)) {
+			if (window.DRAWFUNCTION === "draw") {
 				redraw_drawings();
 			} else {
-				redraw_canvas();
+				redraw_fog();
 			}
 			drawPolygon(
 				ctx,
@@ -1102,244 +1310,232 @@ function drawing_contextmenu(e) {
 					window.BEGIN_MOUSEX,
 					window.BEGIN_MOUSEY
 				),
-				style,
-				fill,
-				drawStroke,
-				lineWidth,
+				window.DRAWCOLOR,
+				window.DRAWTYPE === "fill",
+				window.LINEWIDTH,
 				Math.round(((e.pageX - 200) * (1.0 / window.ZOOM))),
 				Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)))
 			);
 		}
-		else
-		{
+		else{
 			// cancel polygon if on last point
-			redraw_canvas();
+			clear_temp_canvas();
 		}
 	}
-	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "1") || (window.DRAWFUNCTION == "0"))
+	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
 		// cancel shape
 		window.MOUSEDOWN = false;
-		redraw_canvas();
+		redraw_fog();
 	}
 }
 
-function setup_draw_buttons() {
+/**
+ * maps "hide" or "reveal" to a bool to be stored in window.REVEALED
+ * @returns 1 | 0
+ */
+ function fog_type_to_int(){
+	return window.DRAWFUNCTION === "hide" ? 1 : 0
+}
 
-	var canvas = document.getElementById('fog_overlay');
-	var ctx = canvas.getContext('2d');
+/**
+ * sets window.REVEALED with arcs/rects for fog before redrawing them and syncing
+ * @param {Number} mouseX end position of mouse
+ * @param {Number} mouseY end position of mouse
+ * @param {Number} width width of fog
+ * @param {Number} height height of fog
+ */
+function finalise_drawing_fog(mouseX, mouseY, width, height) {
+	if (window.DRAWSHAPE == "arc") {
+		centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+		centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+		radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_fog();
+	} else if (window.DRAWSHAPE == "rect") {
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_fog();
+	}
+}
 
-	$(".drawbutton").click(function(e) {
-		var clicked = this;
-		if (!($(clicked).hasClass('menu-option'))) {						//handle menu open/close toggling
-			$(".menu-button").not(clicked).removeClass('button-selected');
-		}
-
-		if ($(clicked).hasClass('menu-button')) {
-			if($(clicked).is("#aoe_button") && $(clicked).hasClass('button-selected')) {
-				$('#select-button').click();
-				return;
-			}
-			$(clicked).toggleClass('button-selected');
-		}
-
-		$(".top_menu").removeClass('visible');
-		$("#aoe_feet").blur();
-		if ($("#fog_button").hasClass('button-selected')) {
-			$("#fog_menu").addClass('visible');
-			if ($(clicked).is("#fog_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".fog-option.remembered-selection");
-			}
-		}
-
-		if ($("#draw_button").hasClass('button-selected')) {
-			$("#draw_menu").addClass('visible');
-			if ($(clicked).is("#draw_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".draw-option.remembered-selection");
-			}
-		}
-
-		if ($("#aoe_button").hasClass('button-selected')) {
-			$("#aoe_menu").addClass('visible');
-			if ($(clicked).is("#aoe_button") && !($(clicked).hasClass('button-enabled'))) {
-				clicked = $(".aoe-option.remembered-selection");
-				$("#aoe_feet").focus();
-				$("#fog_overlay").css("z-index", "20");
-			}
-		}
-
-		if (!($(clicked).hasClass('menu-button'))) {
-			if ($(clicked).hasClass('button-enabled')  && !($(clicked).is('#select-button'))) {
-				stop_drawing();
-				$(".drawbutton").removeClass('button-enabled');
-				$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-				$("#fog_overlay").css("z-index", "20");
-
-				if (window.ALIGNING == true) {
-					window.ALIGNING = false;
-					window.ScenesHandler.reload();
-				}
-
-				$('#select-button').click();
-				return;
-			}
-
-			stop_drawing();
-			$(".drawbutton").removeClass('button-enabled');
-			$(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-			$(clicked).addClass('button-enabled');
-			$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-			if ($(clicked).hasClass('fog-option')) {
-				$(".fog-option").removeClass('remembered-selection');
-				$(clicked).addClass('remembered-selection');
-				$("#fog_button").addClass('button-enabled');
-				$("#fog_button").addClass('ddbc-tab-options__header-heading--is-active');
-			}
-			if ($(clicked).hasClass('draw-option')) {
-				$(".draw-option").removeClass('remembered-selection');
-				$(clicked).addClass('remembered-selection');
-				$("#draw_button").addClass('button-enabled');
-				$("#draw_button").addClass('ddbc-tab-options__header-heading--is-active');
-			}
-			if ($(clicked).hasClass('aoe-option')) {
-				$(".aoe-option").removeClass('remembered-selection');
-				$(clicked).addClass('remembered-selection');
-				$("#aoe_button").addClass('button-enabled');
-				$("#aoe_button").addClass('ddbc-tab-options__header-heading--is-active');
-			}
-
-			var target = $("#fog_overlay");
-
-			if (!e.currentTarget.id || (e.currentTarget.id !== "select-button" && e.currentTarget.id!='aoe_button')) {
-				console.log("setto a 50 per via di " + e.currentTarget.id);
-				target.css("z-index", "50");
-			} else {
-				target.css("z-index", "31");
-			}
-			target = $("#fog_overlay, #black_layer");
-
-			if ($(e.target).attr('id') == "measure-button") {
-				target = $("#VTT, #black_layer");
-			}
-
-
-			target.css('cursor', 'crosshair');
-			if (e.currentTarget.id != "select-button") {
-				target.css('cursor', 'crosshair');
-			}
-
-			$(clicked).addClass('button-enabled');
-			$(clicked).addClass('ddbc-tab-options__header-heading--is-active');
-
-			var data = {
-				shape: $(clicked).attr('data-shape'),
-				type: $(clicked).attr('data-type'),
-			}
-
-			if ($(clicked).attr('id') == "align-button") {
-				window.ALIGNING = true;
-
-				// ALIGNING REQURES SPECIAL SETTINGS
-				$("#scene_map").css("width", "auto");
-				$("#scene_map").css("height", "auto");
-				reset_canvas();
-				redraw_canvas();
-				$("#tokens").hide();
-				$("#grid_overlay").hide();
-
-			}
-			else if (window.ALIGNING == true) {
-				window.ALIGNING = false;
-				window.ScenesHandler.reload();
-			}
-
-
-			target.on('mousedown', data, drawing_mousedown);
-			target.on('mouseup', data, drawing_mouseup);
-			target.on('mousemove', data, drawing_mousemove);
-			target.on('contextmenu', data, drawing_contextmenu);
-
-		}
+/**
+ * Hides all open menus from the top buttons and deselects all the buttons
+ */
+function deselect_all_top_buttons(buttonSelectedClasses) {
+	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button"]
+	$(".top_menu").removeClass("visible")
+	topButtonIDs.forEach(function(id) {
+		$(`#${id}`).removeClass(buttonSelectedClasses)
 	})
+}
+
+/**
+ * Gets the relevant draw information from the button and menu provided
+ * 
+ * @param {$} button the selected button when the user clicks on the canvas
+ * @param {$} menuSelector the open menu if it exists
+ * @returns {Object} draw data, containing at least "shape" and "function", optionally "frommenu"
+ * as well as any other selected buttons/required options, such as color/line width, or font family/fontsize
+ */
+function get_draw_data(button, menu){
+	if (!$(button).hasClass("menu-option") && !$(button).hasClass("menu-button")){
+		console.groupEnd()
+		return {
+			shape:$(button).attr("data-shape"),
+			function:$(button).attr("data-function")
+		}
+	}
+	// find all active buttons within this menu
+	// and any required value
+	else{
+		const requiredValuesInMenu = $(menu).find('[data-required]')
+		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
+		const selectedShape = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-shape]").attr("data-shape")
+		const selectedFunction = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-function]").attr("data-function")
+
+		const requiredOptions = $(requiredValuesInMenu).map(function() {
+			const key = $(this).attr("id")
+			const value = $(this).val()
+			return details = {
+				[key]: value
+			}
+		})
+		const selectedOptions = $(selectedInMenu).map(function() {
+			const key = $(this).attr("data-key")
+			const value = $(this).attr("data-value")
+			return details = {
+				[key]: value
+			}
+		})
+		const options = Object.assign({}, ...requiredOptions, ...selectedOptions);
+
+		console.groupEnd()
+		return{
+			shape:selectedShape,
+			function:selectedFunction,
+			from:menu.attr("id"),
+			...options
+		}
+	}
+}
+
+
+/**
+ * The main event handler for all drawing buttons (select/measure/fog/draw/text)
+ * Allows unified controller for selecting buttons/menus/menu options
+ * Uses data attr's on the menu's to select correct information such as
+ * data-toggle - a button can be toggled on or off
+ * data-required - the data of this element is always extracted in get_draw_data
+ * data-unique-with - only one of these can be selected at a time, mostly used with the draw shape
+ * data-shape - the shape of the drawing
+ * data-function - the drawing function, draw/erase/text-erase/measure/select/hide/reveal
+ */
+function handle_drawing_button_click() {
+	$(".drawbutton").click(function(e) {
+		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+		const clicked = this;
+		let menu
+		// FIND THE MENU
+		// button has a menu
+		if ($(clicked).hasClass("menu-button")){
+			menu = clicked.id.replace("button", "menu" )
+			menu = "#" + menu
+			$(`${menu} :input:enabled:visible:not([readonly]):first`).focus();
+		}
+		// button is in a menu
+		else if($(clicked).hasClass("menu-option")){
+			menu = $(clicked).closest("[id*='menu']")
+		}
+
+		// HANDLE SELECTING OF BUTTONS
+		// button is a selected button, hide it's menu
+		if ($(clicked).hasClass(buttonSelectedClasses)){
+			if(!$(clicked).attr("data-toggle")){
+				$(menu).toggleClass("visible")
+			}
+			// toggle the button off...
+			if($(clicked).hasClass("menu-option")){
+				// but only toggled on or off if they're not a unique-with which must always have 
+				// 1 option selected
+				if(!$(clicked).attr("data-unique-with")){
+					$(clicked).removeClass(`${buttonSelectedClasses}`)
+				}			
+			}
+		}else{
+			// unselect any matching unique-with buttons
+			if($(clicked).hasClass("menu-option")){
+				const uniqueWith = $(clicked).attr("data-unique-with")
+				menu.find(`[data-unique-with=${uniqueWith}]`).removeClass(`${buttonSelectedClasses}` )
+			}else{
+				// clicked on an unselected non menu-option so must be either
+				// select/ruler/fog/draw/aoe/text
+				deselect_all_top_buttons(buttonSelectedClasses)
+			}
+			// button isn't selected, so select it and open
+			$(clicked).addClass(buttonSelectedClasses)
+			$(menu).addClass("visible")
+		}
+
+		stop_drawing();
+		target =  $("#temp_overlay, #black_layer")
+		data = {
+			clicked:$(clicked),
+			menu:$(menu)
+		}
+		// allow all drawing to be done above the tokens
+		if ($(clicked).is("#select-button")){
+			$("#temp_overlay").css("z-index", "25")
+		}
+		else{
+			$("#temp_overlay").css("z-index", "50")
+		}
+		target.on('mousedown', data, drawing_mousedown);
+		target.on('mouseup',  data, drawing_mouseup);
+		target.on('mousemove', data, drawing_mousemove);
+		target.on('contextmenu', data, drawing_contextmenu);
+		
+	})
+	// during initialisation of VTT default to the select button
 	$('#select-button').click();
 }
 
-function getDrawingStyle()
-{
-	var style = window.DRAWCOLOR;
-	if(window.DRAWFUNCTION === "draw")
-	{
-		if(window.DRAWTYPE == "transparent")
-		{
-			style = style.replace(')', ', 0.5)').replace('rgb', 'rgba');
-		}
-		else
-		{
-			style =style.replace(')', ', 0.9)').replace('rgb', 'rgba');
-		}
-	}
-	else if (window.DRAWFUNCTION === "1")
-	{
-		style = "rgba(0,0,0,0.5)";
-	}
-	else
-	{
-		style = "rgba(255,0,0,0.5)";
-	}
-	return style;
-}
-
-function getDrawingLineWidth()
-{
-	var lineWidth = window.LINEWIDTH;
-	if(window.DRAWFUNCTION !== "draw")
-	{
-		lineWidth = 0;
-	}
-	return lineWidth;
-}
-
-function getDrawingFill()
-{
-	var fill = true;
-	if((window.DRAWFUNCTION === "draw") && (window.DRAWTYPE == "border"))
-	{
-		fill = false;
-	}
-	return fill;
-}
-
-function getDrawingStroke()
-{
-	var drawStroke = false;
-	if((window.DRAWFUNCTION === "draw") && (window.DRAWTYPE == "border"))
-	{
-		drawStroke = true;
-	}
-	return drawStroke;
-}
-
-function drawCircle(ctx, centerX, centerY, radius, style, fill=true, drawStroke = false, lineWidth = 6)
+function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth = 6)
 {
 	ctx.beginPath();
 	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-	if(drawStroke)
-	{
+	if(fill){
+		ctx.fillStyle = style;
+		ctx.fill();
+	}
+	else{
 		ctx.strokeStyle = style;
 		ctx.lineWidth = lineWidth;
 		ctx.stroke();
 	}
+	
+}
+
+function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6)
+{
+	ctx.beginPath();
 	if(fill)
 	{
 		ctx.fillStyle = style;
-		ctx.fill();
+		ctx.fillRect(startx, starty, width, height);
 	}
-}
-
-function drawRect(ctx, startx, starty, width, height, style, fill=true, drawStroke = false, lineWidth = 6)
-{
-	ctx.beginPath();
-	if(drawStroke)
+	else
 	{
 		ctx.lineWidth = lineWidth;
 		ctx.strokeStyle = style;
@@ -1347,14 +1543,10 @@ function drawRect(ctx, startx, starty, width, height, style, fill=true, drawStro
 		ctx.rect(startx, starty, width, height);
 		ctx.stroke();
 	}
-	if(fill)
-	{
-		ctx.fillStyle = style;
-		ctx.fillRect(startx, starty, width, height);
-	}
+	
 }
 
-function drawCone(ctx, startx, starty, endx, endy, style, fill=true, drawStroke = false, lineWidth = 6)
+function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth = 6)
 {
 	var L = Math.sqrt(Math.pow(endx - startx, 2) + Math.pow(endy - starty, 2));
 	var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
@@ -1364,17 +1556,16 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, drawStroke 
 	ctx.lineTo(res[0], res[2]);
 	ctx.lineTo(res[1], res[3]);
 	ctx.closePath();
-	if(drawStroke)
-	{
+	if(fill){
+		ctx.fillStyle = style;
+		ctx.fill();
+	}
+	else{
 		ctx.lineWidth = lineWidth;
 		ctx.strokeStyle = style;
 		ctx.stroke();
 	}
-	if(fill)
-	{
-		ctx.fillStyle = style;
-		ctx.fill();
-	}
+	
 }
 
 function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
@@ -1418,18 +1609,14 @@ function drawPolygon (
 	points,
 	style = 'rgba(255,0,0,0.6)',
 	fill = true,
-	drawStroke = false,
-	lineWidth = 1,
+	lineWidth,
 	mouseX = null,
 	mouseY = null
 ) {
-
-	ctx.fillStyle = style;
 	ctx.save();
 	ctx.beginPath();
-
-
 	ctx.moveTo(points[0].x, points[0].y);
+	ctx.lineWidth = lineWidth;
 
 	points.forEach((vertice) => {
 		ctx.lineTo(vertice.x, vertice.y);
@@ -1440,29 +1627,52 @@ function drawPolygon (
 	}
 
 	ctx.closePath();
-	if(drawStroke)
-	{
-		ctx.lineWidth = lineWidth;
-	}
-	else
-	{
-		ctx.lineWidth = 1;
-	}
 
-	if ((drawStroke) || (points.length < 2)) {
+	// draw a line between first 2 points
+	if (points.length < 2){
 		ctx.strokeStyle = style;
 		ctx.stroke();
 	}
-	if(fill)
-	{
+	// any more we use the filltype to decide how the polygon is drawn
+	else if(fill){
+		ctx.fillStyle = style;
 		ctx.fill();
 	}
+	else{
+		ctx.strokeStyle = style;
+		ctx.stroke();
+	}
+	
+}
+
+function clear_temp_canvas(){
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function clear_temp_canvas(){
+	const canvas = document.getElementById("temp_overlay");
+	const context = canvas.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
 	let data;
-	if (isNaN(window.DRAWFUNCTION)) {
+	if (window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "reveal"){
+		data = [
+			polygonPoints,
+			null,
+			null,
+			null,
+			3,
+			fog_type_to_int()
+		];
+		window.REVEALED.push(data);
+		redraw_fog();
+	}
+	else{
 		data = [
 			'polygon',
 			window.DRAWTYPE,
@@ -1474,31 +1684,24 @@ function savePolygon(e) {
 			window.LINEWIDTH
 		];
 		window.DRAWINGS.push(data);
-	} else {
-		data = [
-			polygonPoints,
-			null,
-			null,
-			null,
-			3,
-			window.DRAWFUNCTION
-		];
-		window.REVEALED.push(data);
+		redraw_drawings();
 	}
-	redraw_canvas();
-	redraw_drawings();
+	clear_temp_canvas()
+	
 	window.ScenesHandler.persist();
 
 	if(window.CLOUD){
-		if(isNaN(window.DRAWFUNCTION))
+		if(window.DRAWFUNCTION === "draw"){
 			sync_drawings();
-		else
+		}
+		else{
 			sync_fog();
+		}			
 	}
 	else{
 		window.MB.sendMessage(
-			isNaN(window.DRAWFUNCTION) ?
-				'custom/myVTT/drawing' : 'custom/myVTT/reveal',
+			window.DRAWFUNCTION === "draw" ?
+				 'custom/myVTT/reveal' : 'custom/myVTT/drawing',
 			data
 		);
 	}
@@ -1548,7 +1751,7 @@ function clearCircle(ctx, centerX, centerY, radius)
 	ctx.restore();
 }
 
-function drawClosingArea(ctx, pointX, pointY, fog = true) {
+function drawClosingArea(ctx, pointX, pointY) {
 	ctx.strokeStyle = "#00FFFF";
 	ctx.lineWidth = "2";
 	ctx.beginPath();
@@ -1558,4 +1761,274 @@ function drawClosingArea(ctx, pointX, pointY, fog = true) {
 		POLYGON_CLOSE_DISTANCE * 2,
 		POLYGON_CLOSE_DISTANCE * 2);
 	ctx.stroke();
+}
+
+function init_fog_menu(buttons){
+	
+
+
+	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
+	fog_menu.append("<div class='menu-subtitle' data-skip='true'>Reveal</div>");
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'> 
+			<button id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
+				data-shape='rect' data-function="reveal" data-unique-with="fog" > 
+					Square 
+			</button> 
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'> 
+			<button id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='arc' data-function="reveal" data-unique-with="fog" > 
+					Circle 
+				</button> 
+			</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='polygon' data-function="reveal" data-unique-with="fog">
+					Polygon
+			</button>
+		</div>`);
+
+	var clear_button = $("<button class='ddbc-tab-options__header-heading menu-option' data-skip='true' >ALL</button>");
+	clear_button.click(function() {
+
+		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
+		if (r == true) {
+			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
+			redraw_fog();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
+		}
+	});
+
+	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' data-skip='true' />").append(clear_button));
+	fog_menu.append("<div class='menu-subtitle' data-skip='true'>Hide</div>");
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='rect' data-function="hide" data-unique-with="fog" >
+					Square
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='arc' data-function="hide" data-unique-with="fog" >
+					Circle
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='polygon' data-function="hide" data-unique-with="fog">
+					Polygon
+			</button>
+		</div>`);
+
+
+
+	var hide_all_button = $("<button class='ddbc-tab-options__header-heading menu-option'>ALL</button>");
+	hide_all_button.click(function() {
+		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
+		if (r == true) {
+			window.REVEALED = [];
+			redraw_fog();
+			if(window.CLOUD){
+				sync_fog();
+			}
+			else{
+				window.ScenesHandler.persist();
+				window.ScenesHandler.sync();
+			}
+		}
+	});
+
+	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' data-skip='true'/>").append(hide_all_button));
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading menu-option' id='fog_undo'>
+				UNDO
+			</button>
+		</div>`)
+	fog_menu.css("position", "fixed");
+	fog_menu.css("top", "25px");
+	fog_menu.css("width", "75px");
+	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+	$("body").append(fog_menu);
+	fog_menu.find("#fog_undo").click(function(){
+		window.REVEALED.pop();
+		redraw_fog();
+		if(window.CLOUD){
+			sync_fog();
+		}
+		else{
+			window.ScenesHandler.persist();
+			window.ScenesHandler.sync();
+		}
+	});
+
+	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
+
+	buttons.append(fog_button);
+	fog_menu.css("left", fog_button.position().left);
+}
+
+function init_draw_menu(buttons){
+	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-shape="rect" data-function="draw" data-unique-with="draw">
+					Rectangle
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_circle' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='arc' data-function="draw" data-unique-with="draw">
+					Circle
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_cone' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='cone' data-function="draw" data-unique-with="draw">
+					Cone
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='line' data-function="draw" data-unique-with="draw">
+					Line
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='brush' data-function="draw" data-unique-with="draw">
+					Brush
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_polygon' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='polygon' data-function="draw" data-unique-with="draw">
+				 	Polygon
+			</button>
+		</div>`);
+	
+
+	draw_menu.append(`
+        <input title='Background color' data-required="background_color" class='spectrum'
+            id='background_color' name='background color' value='#e66465'/>
+        `)
+
+    let colorPickers = draw_menu.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		clickoutFiresChange: false
+	});
+
+    const colorPickerChange = function(e, tinycolor) {
+		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        $(e.target).val(color)
+
+	};
+	draw_menu.find(".sp-replacer").attr("data-skip",'true')
+	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+	
+	draw_menu.append("<div class='menu-subtitle' data-skip='true'>Type</div>");
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-key="fill" data-value='border' data-unique-with="fill">
+				BORDER
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
+				data-key="fill" data-value='filled' data-unique-with="fill">
+				FILLED
+			</button>
+		</div>`);
+
+	draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
+	draw_menu.append(`
+		<div>
+			<input id='draw_line_width' data-required="draw_line_width" type='range' style='width:90%' min='1'
+			max='60' value='6' class='drawWidthSlider'>
+		</div>`
+	);
+
+
+	draw_menu.append(`<div class='menu-subtitle'>Controls</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="eraser" data-unique-with="draw">
+				 	Erase
+			</button>
+		</div>`);
+	draw_menu.append(`
+		<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+				UNDO
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
+				CLEAR
+			</button>
+		</div>`);
+
+	draw_menu.find("#delete_drawing").click(function() {
+		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
+		if (r === true) {
+			// keep only text
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
+			redraw_drawings();
+			sync_drawings
+		}
+	});
+
+	draw_menu.find("#draw_undo").click(function() {
+		// start at the end
+        let currentElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's not text
+        while (currentElement--) {
+            if (!window.DRAWINGS[currentElement][0].includes("text")){
+                window.DRAWINGS.splice(currentElement, 1)
+                redraw_drawings();
+				sync_drawings()
+                break
+            }
+        }
+	});
+
+	draw_menu.css("position", "fixed");
+	draw_menu.css("top", "50px");
+	draw_menu.css("width", "75px");
+	draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+
+	$("body").append(draw_menu);
+
+	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</button>");
+
+	buttons.append(draw_button);
+	draw_menu.css("left",draw_button.position().left);	
 }
