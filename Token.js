@@ -1288,7 +1288,7 @@ class Token {
 
 
 					if (self.selected && $(".token.tokenselected").length>1) {
-						for (let tok of $(".token.tokenselected"){
+						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
 							$(tok).addClass("pause_click");
 							if($(tok).is(":animated")){
@@ -1391,17 +1391,17 @@ class Token {
 						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						for (let tok of $(".token.tokenselected"){
-							let id = $(token).attr("data-id");
+						for (let tok of $(".token.tokenselected")){
+							let id = $(tok).attr("data-id");
 							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
-								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
+								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
+								$(tok).css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
 
-								const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
+								const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
