@@ -178,6 +178,7 @@ class SidebarPanel {
     `);
   }
 
+
   // imageUrlEntered is a function that takes a string in the form of a url
   build_image_url_input(titleText, imageUrlEntered) {
 

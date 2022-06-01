@@ -104,7 +104,7 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
     $('#select-button').click();
-    $("#tokenOptionsClickCloseDiv").click();
+    close_token_context_menu();
     $(".draggable-token-creation").addClass("drag-cancelled");
     $(".draggable-sidebar-item-reorder").addClass("drag-cancelled");
     try {
