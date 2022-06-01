@@ -399,7 +399,7 @@ class Token {
 	}
 
 	/**
-	 * updates the colour of the health aura if enabled
+	 * updates the color of the health aura if enabled
 	 * @param token jquery selected div with the class "token"
 	 */
 	update_health_aura(token){
@@ -934,6 +934,7 @@ class Token {
 		}
 
 		if (old.length > 0) {
+			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
 
@@ -1202,14 +1203,16 @@ class Token {
 				tok.append(cond_bar);
 			});
 
-			setTokenAuras(tok, this.options);
+			
 
 
 			$("#tokens").append(tok);
 			tok.animate({
 				opacity: newopacity
-			}, { duration: 3000, queue: false });
+			}, { duration: 500, queue: false });
 
+			
+			setTokenAuras(tok, this.options);
 
 			let click = {
 				x: 0,
@@ -1221,6 +1224,10 @@ class Token {
 					function (event) {
 						//remove cover for smooth drag
 						$('.iframeResizeCover').remove();
+
+						tok.removeAttr("data-dragging")
+						tok.removeAttr("data-drag-x")
+						tok.removeAttr("data-drag-y")
 			
 						// this should be a XOR... (A AND !B) OR (!A AND B)
 						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
@@ -1290,7 +1297,7 @@ class Token {
 								if (window.TOKEN_OBJECTS[id].selected) {
 									setTimeout(function(tempID) {
 										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										console.log($("[data-id='"+id+"']"));
+										//console.log($("[data-id='"+id+"']"));
 									}, 200, id);
 								}
 							}
@@ -1311,12 +1318,22 @@ class Token {
 
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
+
+						// finish measuring
+						// drop the temp overlay back down so selection works correctly
+						$("#temp_overlay").css("z-index", "25")
+						if (window.ALLOWTOKENMEASURING){
+							WaypointManager.fadeoutMeasuring()
+						}
 					},
 
 				start: function (event) {
+					event.stopPropagation()
+					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.clientX;
 					click.y = event.clientY;
+
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
@@ -1357,23 +1374,65 @@ class Token {
 						el.attr("data-top", el.css("top").replace("px", ""));
 					}
 
-					// Setup waypoint manager
-
-
-					window.BEGIN_MOUSEX = (event.pageX - 200) * (1.0 / window.ZOOM);
-					window.BEGIN_MOUSEY = (event.pageY - 200) * (1.0 / window.ZOOM);
+					if (window.ALLOWTOKENMEASURING){
+						// Setup waypoint manager
+						// reset measuring when a new token is picked up
+						if(window.previous_measured_token != self.options.id){
+							window.previous_measured_token = self.options.id
+							WaypointManager.cancelFadeout()
+							WaypointManager.clearWaypoints()
+						}
+						const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
+						const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
+						
+						if(WaypointManager.numWaypoints > 0){
+							WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
+							WaypointManager.cancelFadeout()
+						}
+						window.BEGIN_MOUSEX = tokenMidX;
+						window.BEGIN_MOUSEY = tokenMidY;
+						if (!self.options.disableborder){
+							WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
+						}else{
+							WaypointManager.resetDefaultDrawStyle()
+						}
+					}
 
 					remove_selected_token_bounding_box();
 				},
 
 				drag: function(event, ui) {
+					event.stopPropagation()
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
+					let tokenX = Math.round((event.clientX - click.x + original.left) / zoom);
+					let tokenY = Math.round((event.clientY - click.y + original.top) / zoom);
+
+					// this was copied the place function in this file. We should make this a single function to be used in other places
+					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
 					ui.position = {
-						left: Math.round((event.clientX - click.x + original.left) / zoom),
-						top: Math.round((event.clientY - click.y + original.top) / zoom)
+						left: tokenPosition.x,
+						top: tokenPosition.y
 					};
+
+					const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
+					const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+
+					if (window.ALLOWTOKENMEASURING){
+						const canvas = document.getElementById("temp_overlay");
+						const context = canvas.getContext("2d");
+						// incase we click while on select, remove any line dashes
+						context.setLineDash([])
+						// list the temp overlay so we can see the ruler
+						clear_temp_canvas()
+						$("#temp_overlay").css("z-index", "50")
+						WaypointManager.setCanvas(canvas);
+						WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
+						context.fillStyle = '#f50';
+					}
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
 					/*$(event.target).css("left",ui.position.left);
@@ -1587,23 +1646,44 @@ function center_of_view() {
 	return { x: centerX, y: centerY };
 }
 
-function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
-	// adjust for map offset and zoom
-	let mapX = (pageX - 200) * (1.0 / window.ZOOM);
-	let mapY = (pageY - 200) * (1.0 / window.ZOOM);
-	if (forceNoSnap === true) {
-		return { x: mapX, y: mapY };
-	}
-	// this was copied the place function in this file. We should make this a single function to be used in other places
-	let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
-	if (shallwesnap) {
+function should_snap_to_grid() {
+	return (window.CURRENT_SCENE_DATA.snap == "1" && !(window.toggleSnap))
+		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
+}
+
+function snap_point_to_grid(mapX, mapY, forceSnap = false) {
+	if (forceSnap || should_snap_to_grid()) {
 		// adjust to the nearest square coordinate
 		const startX = window.CURRENT_SCENE_DATA.offsetx;
 		const startY = window.CURRENT_SCENE_DATA.offsety;
-		mapX = Math.round((mapX - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-		mapY = Math.round((mapY - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
+		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
+		const currentGridX = Math.floor((mapX - startX) / gridWidth);
+		const currentGridY = Math.floor((mapY - startY) / gridHeight);
+		return {
+			x: (currentGridX * gridWidth) + startX,
+			y: (currentGridY * gridHeight) + startY
+		}
+	} else {
+		return { x: mapX, y: mapY };
 	}
-	return { x: mapX, y: mapY };
+}
+
+function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
+	// adjust for map offset and zoom
+	const startX = window.CURRENT_SCENE_DATA.offsetx;
+	const startY = window.CURRENT_SCENE_DATA.offsety;
+	let mapX = ((pageX - 200) * (1.0 / window.ZOOM)) - startX;
+	let mapY = ((pageY - 200) * (1.0 / window.ZOOM)) - startY;
+	if (forceNoSnap === true) {
+		return { x: mapX, y: mapY };
+	}
+	let snapped = snap_point_to_grid(mapX, mapY, forceNoSnap);
+	return {
+		x: snapped.x + startX,
+		y: snapped.y + startY
+	};
 }
 
 function convert_point_from_map_to_view(mapX, mapY) {
@@ -1854,7 +1934,21 @@ function setTokenAuras (token, options) {
 		}
 		else{
 			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
-			: token.parent().parent().find("#aura_" + tokenId).show()
+						: token.parent().parent().find("#aura_" + tokenId).show()
+		}
+		if(options.auraislight){
+			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
+			let auraClone = $("[id='aura_" + tokenId + "']").clone();
+			auraClone.addClass("lightAura");
+			$("[id='aura_" + tokenId + "']").append(auraClone);		
+			$("[id='aura_" + tokenId + "']").attr("style", auraStyles);				
+			let lightblur = totalSize/50 + "px";
+			$("[id='aura_" + tokenId + "']").css('--light-blur', lightblur);
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", true);
+		}
+		else{
+			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", false);
 		}
 
 		
@@ -1956,8 +2050,29 @@ function rotate_selected_tokens(newRotation, persist = false) {
 	}
 }
 
+// if it was not executed in the last second, execute it immediately
+// if it's already scheduled to be executed, return
+// otherwise, schedule it to execute in 300ms
+function draw_selected_token_bounding_box(){
+	if(window.NEXT_DRAWBOX  && (window.NEXT_DRAWBOX -Date.now() > 0)){
+		return;
+	}
+	else if(!window.NEXT_DRAWBOX  || (window.NEXT_DRAWBOX -Date.now() <  -1000)){
+		window.NEXT_DRAWBOX=Date.now();
+		do_draw_selected_token_bounding_box();
+		return;
+	}
+	else {
+		window.NEXT_DRAWBOX=Date.now()+300;
+		setTimeout(do_draw_selected_token_bounding_box,300);
+		return;
+	}
+}
+
+
 /// draws a rectangle around every selected token, and adds a rotation grabber
-function draw_selected_token_bounding_box() {
+function do_draw_selected_token_bounding_box() {
+	console.log("do_draw_selected_token_bounding_box");
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
@@ -1981,10 +2096,14 @@ function draw_selected_token_bounding_box() {
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
-		let tokenTop = parseFloat(token.options.top);
-		let tokenBottom = tokenTop + token.sizeHeight();
-		let tokenLeft = parseFloat(token.options.left);
-		let tokenRight = tokenLeft + token.sizeWidth();
+		let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
+		let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
+		let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+		let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+		let tokenTop = ($(`div.token[data-id='${id}']`).position().top + tokenImagePosition.top) / (window.ZOOM);
+		let tokenBottom = tokenTop + tokenImageHeight;
+		let tokenLeft = ($(`div.token[data-id='${id}']`).position().left  + tokenImagePosition.left) / (window.ZOOM);
+		let tokenRight = tokenLeft + tokenImageWidth;
 		if (top == undefined) {
 			top = tokenTop;
 		} else {
@@ -2009,8 +2128,8 @@ function draw_selected_token_bounding_box() {
 
 	// add 10px to each side of out bounding box to give the tokens a little space
 	let borderOffset = 10;
-	top = top - borderOffset;
-	left = left - borderOffset;
+	top = (top - borderOffset);
+	left = (left - borderOffset);
 	right = right + borderOffset;
 	bottom = bottom + borderOffset;
 	let width = right - left;

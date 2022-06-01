@@ -92,6 +92,7 @@ function change_zoom(newZoom, x, y) {
 	set_default_vttwrapper_size()
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
+	$("body").css("--window-zoom", window.ZOOM)
 	console.groupEnd()
 }
 /** 
@@ -334,8 +335,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
-
 		$("#VTT").append(newmap);
+		$("#scene_map_container").css("width", $("#scene_map").width())
+		$("#scene_map_container").css("height", $("#scene_map").height())
+
 	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
@@ -356,9 +359,9 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				$('#scene_map').height(this.videoHeight);
 			});
 		}
-
 		$("#VTT").append(newmap);
 	}
+
 }
 
 
@@ -829,7 +832,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.76.2</div></h1>");
+	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.77RC1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s=$("<div/>");
@@ -1746,7 +1749,7 @@ function init_things() {
 			}
 			init_ui();
 			if (is_encounters_page()) {
-
+			
 				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
 				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
 
@@ -2203,35 +2206,55 @@ function init_ui() {
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);
 
-	background = $("<img id='scene_map'>");
+	const background = $("<img id='scene_map'>");
 	background.css("top", "0");
 	background.css("left", "0");
 	background.css("position", "absolute");
 	background.css("z-index", "10");
 
+	const mapContainer = $("<div id='scene_map_container' />");
+	mapContainer.css("top", "0");
+	mapContainer.css("left", "0");
+	mapContainer.css("position", "absolute");
+	mapContainer.css("z-index", "10");
 
-	draw_overlay = $("<canvas id='draw_overlay'></canvas>");
-	draw_overlay.css("position", "absolute");
-	draw_overlay.css("top", "0");
-	draw_overlay.css("left", "0");
-	draw_overlay.css("z-index", "18");
 
-	grid = $("<canvas id='grid_overlay'></canvas>");
+	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
+	drawOverlay.css("position", "absolute");
+	drawOverlay.css("top", "0");
+	drawOverlay.css("left", "0");
+	drawOverlay.css("z-index", "18");
+
+	const textOverlay = $("<canvas id='text_overlay'></canvas>");
+	textOverlay.css("position", "absolute");
+	textOverlay.css("top", "0");
+	textOverlay.css("left", "0");
+	textOverlay.css("z-index", "18");
+
+	const grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
 	grid.css("top", "0");
 	grid.css("left", "0");
-
 	grid.css("z-index", "19");
 
 
-	fog = $("<canvas id='fog_overlay'></canvas>");
+	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
 	fog.css("left", "0");
 	fog.css("position", "absolute");
 	fog.css("z-index", "20");
 
+	// this overlay sits above all other canvases
+	// we draw to this and then bake the image into the corresponding
+	// canvas, based on the drawing function
+	const tempOverlay = $("<canvas id='temp_overlay'></canvas>");
+	tempOverlay.css("position", "absolute");
+	tempOverlay.css("top", "0");
+	tempOverlay.css("left", "0");
+	tempOverlay.css("z-index", "25");
 
-	fog.dblclick(function(e) {
+
+	tempOverlay.dblclick(function(e) {
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
@@ -2283,9 +2306,12 @@ function init_ui() {
 
 	VTT.append(tokens);
 	VTT.append(background);
+	VTT.append(mapContainer);
 	VTT.append(fog);
 	VTT.append(grid);
-	VTT.append(draw_overlay);
+	VTT.append(drawOverlay);
+	VTT.append(textOverlay);
+	VTT.append(tempOverlay);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
@@ -2455,7 +2481,7 @@ function init_ui() {
 	$(window).mousedown(mousedown);
 	$(window).mouseup(mouseup);
 
-	$("#fog_overlay").bind("contextmenu", function (e) {
+	$("#temp_overlay").bind("contextmenu", function (e) {
 		return false;
 	});
 
@@ -2497,237 +2523,29 @@ function init_buttons() {
 	if ($("#fog_menu").length > 0) {
 		return; // only need to do this once
 	}
-
-	var clear_button = $("<div class='ddbc-tab-options__header-heading'>ALL</div>");
-	clear_button.click(function() {
-
-		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
-		if (r == true) {
-			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
-			redraw_canvas();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
-		}
-	});
-
-	var hide_all_button = $("<div class='ddbc-tab-options__header-heading'>ALL</div>");
-	hide_all_button.click(function() {
-		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
-		if (r == true) {
-			window.REVEALED = [];
-			redraw_canvas();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
-		}
-	});
-
-
-	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
-	fog_menu.append("<div class='menu-subtitle'>Reveal</div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_square-r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option remembered-selection' data-shape='rect' data-type=0>Square</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='arc'  data-type=0>Circle</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='polygon' data-type=0>Polygon</div></div>");
-	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' />").append(clear_button));
-	fog_menu.append("<div class='menu-subtitle'>Hide</div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='rect' data-type=1>Square</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_circle_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='arc' data-type=1>Circle</div></div>");
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option' data-shape='polygon' data-type=1>Polygon</div></div>");
-	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' />").append(hide_all_button));
-	fog_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='fog_undo'>UNDO</div></div>")
-	fog_menu.css("position", "fixed");
-	fog_menu.css("top", "25px");
-	fog_menu.css("width", "75px");
-	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
-	$("body").append(fog_menu);
-	fog_menu.find("#fog_undo").click(function(){
-		window.REVEALED.pop();
-		redraw_canvas();
-		if(window.CLOUD){
-			sync_fog();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
-
-
 	buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
+	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
 	
-	buttons.append($("<div style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='select'><u>S</u>ELECT</div>"));
-
-	buttons.append($("<div style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='measure'><u>R</u>ULER</div>"));
+	buttons.append($("<button style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</button>"));
 	
 	if (window.DM) {
-		fog_button = $("<div style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</div>");
-
-		buttons.append(fog_button);
-		if (!window.DM) {
-			fog_button.hide();
-		}
-		fog_menu.css("left",fog_button.position().left);
-
-		draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_square' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading remembered-selection' data-shape='rect' data-type='draw'>Square</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_circle' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='arc' data-type='draw'>Circle</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_cone' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='cone' data-type='draw'>Cone</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_line' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='line' data-type='draw'>Line</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_brush' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='brush' data-type='draw'>Brush</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_polygon' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='polygon' data-type='draw'>Polygon</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div id='draw_erase' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading' data-shape='rect' data-type='eraser'>Erase</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='draw_undo'>UNDO</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading' id='delete_drawing'>CLEAR</div></div>");
-
-		draw_menu.find("#delete_drawing").click(function() {
-			r = confirm("DELETE ALL DRAWINGS? (cannot be undone!)");
-			if (r === true) {
-				window.DRAWINGS = [];
-				redraw_drawings();
-				if(window.CLOUD){
-					sync_drawings();
-				} else {
-					window.ScenesHandler.persist();
-					window.ScenesHandler.sync();
-				}
-			}
-		});
-
-		draw_menu.find("#draw_undo").click(function() {
-			console.log("undo once")
-			window.DRAWINGS.pop();
-			redraw_drawings();
-			if(window.CLOUD){
-				sync_drawings();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
-		}
-	);
-
-		colors = $("<div class='ccpicker' style='background: #D32F2F;' />");
-			
-		colors.prepend("<div><input type='color' id='cpick' name='cpick' value='#E29393' style='width: 48px;'></div>");
-
-		colors.find("#cpick").click(function(e)	{ //open the color picker
-			$('body').append("<div id='cpicker_overlay'></div>");
-			$('#cpicker_overlay').click(function(e){
-				$('#cpicker_overlay').remove();
-			});
-			$("#cpick").change(function () { // run when color changed
-				cPick = $("#cpick").val();
-				console.log("cPicked! " + cPick);
-				cc.remove(); //remove previous picked color
-				cc = $("<div class='coloroption'/>");
-				cc.width(27);
-				cc.height(27);
-				cc.css("background", cPick); //set color from cPick
-				cc.css("float", "left");
-				colors.prepend(cc); //Place new color selector
-				$(".coloroption").css('border', '').removeClass('colorselected'); //deselect previous
-				cc.css('border', '2px solid black'); //highlight new color
-				cc.addClass('colorselected'); //select new color
-				$('#cpicker_overlay').remove();
-
-				cc.click(function(e) {
-					$(".coloroption").css('border', '').removeClass('colorselected');
-					$(e.currentTarget).css('border', '2px solid black');
-					$(e.currentTarget).addClass('colorselected');
-				});
-			});
-		});
-
-		for (i = 0; i < 20; i++){
-			var colorOp = $("<div class='coloroption'/>");//create Class for coloroption
-			c = colorOp;
-			c.width(15);
-			c.height(15);
-			c.css("background", DRAW_COLORS[i]);
-			c.css("float", "left");
-			colors.append(c);
-
-			c.click(function(e) {
-				$(".coloroption").css('border', '').removeClass('colorselected');
-				$(e.currentTarget).css('border', '2px solid black');
-				$(e.currentTarget).addClass('colorselected');
-			});
-		}
-
-		//create default cPick coloroption
-		cPick = "#E29393";
-		cc = $("<div class='coloroption'/>");
-		cc.width(27);
-		cc.height(27);
-		cc.css("background", cPick); //set color from cPick
-		cc.css("float", "left");
-		colors.prepend(cc); //Place new color selector in front of colorpicker
-		cc.css('border', '2px solid black'); //highlight new color
-		cc.addClass('colorselected'); //select new color
-		cc.click(function(e) {
-			$(".coloroption").css('border', '').removeClass('colorselected');
-			$(e.currentTarget).css('border', '2px solid black');
-			$(e.currentTarget).addClass('colorselected');
-		});
-
-		draw_menu.append(colors);
-		draw_menu.append("<div class='menu-subtitle'>Type</div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='transparent'>TRANSP</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='border'>BORDER</div></div>");
-		draw_menu.append("<div class='ddbc-tab-options--layout-pill'><div class='drawType ddbc-tab-options__header-heading' data-value='filled'>FILLED</div></div>");
-
-		draw_menu.find(".drawType").click(function(e) {
-			$(".drawType").removeClass('drawTypeSelected');
-			$(".drawType").removeClass('ddbc-tab-options__header-heading--is-active');
-			$(".drawType").css('background', '');
-			$(e.currentTarget).addClass('drawTypeSelected');
-			$(e.currentTarget).addClass('ddbc-tab-options__header-heading--is-active');
-			// $(e.currentTarget).css('background', '-webkit-linear-gradient(270deg, #e29393, #f37a7a)');
-		});
-
-		draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
-		draw_menu.append("<div><input id='draw_line_width' type='range' style='width:90%' min='1' max='60' value='6' class='drawWidthSlider'></div>");
-
-		draw_menu.css("position", "fixed");
-		draw_menu.css("top", "25px");
-		draw_menu.css("width", "75px");
-		draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
-
-		$("body").append(draw_menu);
-
-		draw_button = $("<div style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</div>");
-
-		buttons.append(draw_button);
-		draw_menu.css("left",draw_button.position().left);	
-
-		draw_menu.find(".drawType").first().click();
-		draw_menu.find(".coloroption").first().click();
+		init_fog_menu(buttons)
+		init_draw_menu(buttons)
+		init_text_button(buttons)
 
 	}
 
 	setup_aoe_button();
-	setup_draw_buttons();
+	handle_drawing_button_click();
 
-	buttons.append("<div style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</div>");
+	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");
 
 	buttons.css("position", "fixed");
 	buttons.css("top", '5px');
 	buttons.css("left", '5px');
 	buttons.css("z-index", '57000');
-
-
 
 	// HIDE default SEND TO functiontality in the campaign page:
 
@@ -2738,8 +2556,6 @@ function init_buttons() {
 	window.STREAMPEERS={};
 	window.MYSTREAMID=uuid();
 	window.JOINTHEDICESTREAM=false;
-
-
 
 	init_keypress_handler();
 

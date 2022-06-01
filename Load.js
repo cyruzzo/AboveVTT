@@ -50,6 +50,7 @@ let scripts = [
 	{ src: "mousetrap.1.6.5.min.js" },
 	// AboveVTT Files
 	{ src: "AOETemplates.js" },
+	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
 	{ src: "DnDBeyond/DDBCharacterData.js" },
 	{ src: "EncounterHandler.js" },

@@ -230,6 +230,12 @@ function init_settings(){
 			disabledDescription: "Token's aura is visible to players when token is in fog"
 		},
 		{
+			name: 'auraislight',
+			label: 'auraislight',
+			enabledDescription: "",
+			disabledDescription: ""
+		},
+		{
 			name: 'revealname',
 			label: 'Show name to players',
 			enabledDescription: 'New tokens will have their name visible to players',
@@ -252,6 +258,9 @@ function init_settings(){
 			persist_token_settings(window.TOKEN_SETTINGS);
 			redraw_settings_panel_token_examples();
 		});
+		if (setting.name == ('auraislight' || 'hideaurafog')){
+			continue
+		}
 		body.append(inputWrapper);
 	}
 
@@ -302,8 +311,8 @@ function init_settings(){
 		experimental_features.push({
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
-			enabledDescription: `You can currently see player's DDB dice rolling visuals. Disclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.`,
-			disabledDescription: `SHARE/SEE player's DDB dice rolling visuals. Disclaimer: currently shows dice in low resolution in the first few rolls, then it gets better.`
+			enabledDescription: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`,
+			disabledDescription: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`
 		});
 	}
 	body.append(`
@@ -323,7 +332,12 @@ function init_settings(){
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`experimental setting ${name} is now ${newValue}`);
 			if (name === "streamDiceRolls") {
-				update_dice_streaming_feature(newValue)
+				enable_dice_streaming_feature(newValue);
+				if(newValue == true) {
+					window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature");
+				} else {
+					window.MB.sendMessage("custom/myVTT/disabledicestream");
+				}
 			} else {
 				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
 				persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
@@ -430,25 +444,105 @@ function redraw_settings_panel_token_examples() {
 	}
 }
 
-function update_dice_streaming_feature(enabled) {
-	// this essentially does what the button used to do, but I could never get it to work before and I still can't. Hopefully someone that understands it will fix it.
-	if (enabled == true) {
-		window.JOINTHEDICESTREAM = true;
-	} else {
+function enable_dice_streaming_feature(enabled){
+	if(enabled)
+	{
+		if($(".stream-dice-button").length>0)
+			return;
+		$(".glc-game-log>[class*='Container-Flex']").append($(`<div  id="stream_dice"><div class='stream-dice-button'>Dice Stream Disabled</div></div>`));
+		$(".stream-dice-button").off().on("click", function(){
+			if(window.JOINTHEDICESTREAM){
+				update_dice_streaming_feature(false);
+			}
+			else {
+				update_dice_streaming_feature(true);
+			}
+		})
+	}
+	else{
+		$(".stream-dice-button").remove();
 		window.JOINTHEDICESTREAM = false;
+		$("[id^='streamer-']").remove();
+		for (let peer in window.STREAMPEERS) {
+			window.STREAMPEERS[peer].close();
+			delete window.STREAMPEERS[peer]
+		}
+	}
+}
+
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {		
+
+	if (enabled == true) {
+		// STREAMING STUFF
+		window.JOINTHEDICESTREAM = true;
+		$('.stream-dice-button').html("Dice Stream Enabled");
+		$('.stream-dice-button').toggleClass("enabled", true);
+		$("[role='presentation'] [role='menuitem']").each(function(){
+			$(this).off().on("click", function(){
+				if($(this).text() == "Everyone") {
+					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
+						streamid: window.MYSTREAMID
+					});		
+				}
+				else if($(this).text() == "Dungeon Master"){
+					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+				else{
+					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+			});
+		});
+
+
+		// DICE STREAMING ?!?!
+		let diceRollPanel = $(".dice-rolling-panel__container");
+		if (diceRollPanel.length > 0) {
+			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
+		}
+		if (window.JOINTHEDICESTREAM) {
+			
+			for (let i in window.STREAMPEERS) {
+				console.log("replacing the track")
+				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
+			}
+			setTimeout(function(){
+				if(sendToText == "Dungeon Master"){
+					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}
+				else{
+					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
+						streamid: window.MYSTREAMID
+					});
+				}		
+			}, 1000)
+			setTimeout(function(){
+				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
+					from: window.MYSTREAMID
+				})
+			}, 500);
+		} 
+	}
+	else {
+		$(`.stream-dice-button`).html("Dice Stream Disabled");
+		window.JOINTHEDICESTREAM = false;
+		$('.stream-dice-button').toggleClass("enabled", false);
+		$("[id^='streamer-']").remove();
+		window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
+			to: "everyone",
+			from: window.MYSTREAMID
+		})
+		for (let peer in window.STREAMPEERS) {
+			window.STREAMPEERS[peer].close();
+			delete window.STREAMPEERS[peer]
+		}
 	}
 
-	if (window.JOINTHEDICESTREAM) {
-		window.JOINTHEDICESTREAM = false;
-		for (let i in window.STREAMPEERS) {
-			window.STREAMPEERS[i].close();
-			delete window.STREAMPEERS[i];
-		}
-		$(".streamer-canvas").remove();
-	} else {
-		window.JOINTHEDICESTREAM = true;
-		window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", { from: window.MYSTREAMID });
-	}
 }
 
 function persist_token_settings(settings){
