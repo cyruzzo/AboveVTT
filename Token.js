@@ -1267,6 +1267,7 @@ class Token {
 					},
 
 				start: function (event) {
+					event.stopPropagation()
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.clientX;
@@ -1336,6 +1337,7 @@ class Token {
 				},
 
 				drag: function(event, ui) {
+					event.stopPropagation()
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
