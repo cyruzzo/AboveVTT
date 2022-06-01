@@ -390,7 +390,7 @@ class Token {
 		let tokenWidth = this.options.size;
 		let tokenHeight = this.options.size;
 			
-		if(tokenData.disableaura) {
+		if(tokenData.disableaura || !tokenData.hp || !tokenData.max_hp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
 		} 
@@ -431,28 +431,47 @@ class Token {
 		}
 		token.attr("data-border-color", this.options.color);
 		if(!this.options.legacyaspectratio) {
-			if(token.children('img').width() == token.children('img').height()){
-				token.children('img').css("min-width", tokenWidth + 'px');
-				token.children('img').css("min-height", tokenHeight + 'px');
-			}
-			else if(token.children('img').width() > token.children('img').height()) {
-				token.children('img').css("min-width", tokenWidth + 'px');
-			}
-			else {
-				token.children('img').css("min-height", tokenHeight + 'px');
+			if($(`div.token[data-id='${this.options.id}'] .token-image`)[0] !== undefined){
+				let imageWidth = $(`div.token[data-id='${this.options.id}'] .token-image`)[0].naturalWidth;
+				let imageHeight = $(`div.token[data-id='${this.options.id}'] .token-image`)[0].naturalHeight;
+				if(imageWidth != 0 && imageHeight != 0){
+
+					if( imageWidth == imageHeight ){
+						token.children('.token-image').css("min-width", tokenWidth + 'px');
+						token.children('.token-image').css("min-height", tokenHeight + 'px');
+					}
+					else if(imageWidth > imageHeight) {
+						token.children('.token-image').css("min-width", tokenWidth + 'px');
+						token.children('img').css("min-height", '');
+					}
+					else {
+						token.children('.token-image').css("min-height", tokenHeight + 'px');
+						token.children('.token-image').css("min-width", '');
+					}
+									
+				}
 			}
 		}
 		else {
-			token.children('img').css("min-width", "");
-			token.children('img').css("min-height", "");
+			token.children('.token-image').css("min-width", "");
+			token.children('.token-image').css("min-height", "");
 		}
 		
-		token.children('img').css({		
+		token.children('.token-image').css({		
 		    'max-width': tokenWidth + 'px',
 			'max-height': tokenHeight + 'px',
 		});
 
-
+		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.options.custom_conditions.includes("Concentration(Reminder)")){
+			// CONCENTRATION REMINDER
+			var msgdata = {
+				player: this.options.name,
+				img: this.options.imgsrc,
+				text: "<b>Check for concentration!!</b>",
+			};
+			window.MB.inject_chat(msgdata);
+		}
+		
 		console.groupEnd()
 	}
 
@@ -882,6 +901,7 @@ class Token {
 
 
 		if (old.length > 0) {
+			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
 
@@ -903,7 +923,6 @@ class Token {
 				
 
 
-			// CONCENTRATION REMINDER
 
 			let scale = this.get_token_scale();
 			let imageScale = this.options.imageSize;
@@ -1126,14 +1145,16 @@ class Token {
 				tok.append(cond_bar);
 			});
 
-			setTokenAuras(tok, this.options);
+			
 
 
 			$("#tokens").append(tok);
 			tok.animate({
 				opacity: newopacity
-			}, { duration: 3000, queue: false });
+			}, { duration: 500, queue: false });
 
+			
+			setTokenAuras(tok, this.options);
 
 			let click = {
 				x: 0,
@@ -1217,7 +1238,7 @@ class Token {
 								if (window.TOKEN_OBJECTS[id].selected) {
 									setTimeout(function(tempID) {
 										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										console.log($("[data-id='"+id+"']"));
+										//console.log($("[data-id='"+id+"']"));
 									}, 200, id);
 								}
 							}
@@ -1578,11 +1599,11 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false) {
 
 		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
 		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
-		const currentGridX = Math.floor((mapX) / gridWidth);  // (mapX - startX)
-		const currentGridY = Math.floor((mapY) / gridHeight); // (mapY - startY)
+		const currentGridX = Math.floor((mapX - startX) / gridWidth);
+		const currentGridY = Math.floor((mapY - startY) / gridHeight);
 		return {
-			x: (currentGridX * gridWidth),// + startX, // + (gridWidth / 2);
-			y: (currentGridY * gridHeight)// + startY // + (gridHeight / 2);
+			x: (currentGridX * gridWidth) + startX,
+			y: (currentGridY * gridHeight) + startY
 		}
 	} else {
 		return { x: mapX, y: mapY };
@@ -1849,7 +1870,21 @@ function setTokenAuras (token, options) {
 		}
 		else{
 			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
-			: token.parent().parent().find("#aura_" + tokenId).show()
+						: token.parent().parent().find("#aura_" + tokenId).show()
+		}
+		if(options.auraislight){
+			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
+			let auraClone = $("[id='aura_" + tokenId + "']").clone();
+			auraClone.addClass("lightAura");
+			$("[id='aura_" + tokenId + "']").append(auraClone);		
+			$("[id='aura_" + tokenId + "']").attr("style", auraStyles);				
+			let lightblur = totalSize/50 + "px";
+			$("[id='aura_" + tokenId + "']").css('--light-blur', lightblur);
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", true);
+		}
+		else{
+			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", false);
 		}
 
 		
@@ -1952,13 +1987,34 @@ function rotate_selected_tokens(newRotation, persist = false) {
 	}
 }
 
+// if it was not executed in the last second, execute it immediately
+// if it's already scheduled to be executed, return
+// otherwise, schedule it to execute in 300ms
+function draw_selected_token_bounding_box(){
+	if(window.NEXT_DRAWBOX  && (window.NEXT_DRAWBOX -Date.now() > 0)){
+		return;
+	}
+	else if(!window.NEXT_DRAWBOX  || (window.NEXT_DRAWBOX -Date.now() <  -1000)){
+		window.NEXT_DRAWBOX=Date.now();
+		do_draw_selected_token_bounding_box();
+		return;
+	}
+	else {
+		window.NEXT_DRAWBOX=Date.now()+300;
+		setTimeout(do_draw_selected_token_bounding_box,300);
+		return;
+	}
+}
+
+
 /// draws a rectangle around every selected token, and adds a rotation grabber
-function draw_selected_token_bounding_box() {
+function do_draw_selected_token_bounding_box() {
+	console.log("do_draw_selected_token_bounding_box");
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
-		console.log(id)
+		//console.log(id)
 		let selector = "div[data-id='" + id + "']";
 		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {

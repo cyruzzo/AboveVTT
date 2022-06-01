@@ -596,6 +596,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}
 
+	delete_scene(sceneId) { // not the index, but the actual id
+		if(!window.CLOUD) return;
+		window.MB.sendMessage("custom/myVTT/delete_scene",{ id: sceneId });
+		let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === sceneId);
+		window.ScenesHandler.scenes.splice(sceneIndex, 1);
+	}
+
 	persist() {
 		if(window.CLOUD)
 			return;

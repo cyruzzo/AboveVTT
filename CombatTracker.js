@@ -149,7 +149,7 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			if($(".iframe-encounter-combat-tracker").css("z-index")>9999) {
+			if($("#resizeDragMon:not(.hideMon)").length>0) {
 				$("[data-current][data-monster] button.openSheetCombatButton").click();
 			}
 		}
@@ -254,7 +254,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.addClass("CTToken");
 	
 	if (typeof(token.options.ct_show) == 'undefined'){
-		token.options.ct_show = true;
+		if(token.options.hidden) {
+			token.options.ct_show = false;
+		}
+		else {
+			token.options.ct_show = true;
+		}	
 	}
 
 	if (token.options.ct_show == true || window.DM){
@@ -336,8 +341,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		del=$('<button class="removeTokenCombatButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
 		del.click(
 			function(){
+				token.options.ct_show = undefined;
 				ct_remove_token(token);
-				ct_persist();
 			}
 		);
 		if(window.DM)
@@ -423,7 +428,8 @@ function ct_persist(){
 	  data.push( {
 		'data-target': $(this).attr("data-target"),
 		'init': $(this).find(".init").val(),
-		'current': ($(this).attr("data-current")=="1")
+		'current': ($(this).attr("data-current")=="1"),
+		'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
 	   });
 	});
 	data.push({'data-target': 'round',
@@ -452,6 +458,7 @@ function ct_load(data=null){
 				let token;
 				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
 					token=window.TOKEN_OBJECTS[data[i]['data-target']];
+					token.options.ct_show = data[i]['data-ct-show'];
 				}
 				else{
 					token={

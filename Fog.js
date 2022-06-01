@@ -408,7 +408,29 @@ class WaypointManagerClass {
 };
 
 
-function check_token_visibility() {
+// if it was not executed in the last second, execute it immediately
+// if it's already scheduled to be executed, return
+// otherwise, schedule it to execute in 1 second
+function check_token_visibility(){
+	if(window.DM)
+		return;
+	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() > 0)){
+		return;
+	}
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
+		do_check_token_visibility();
+		return;
+	}
+	else {
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
+		setTimeout(do_check_token_visibility,1000);
+		return;
+	}
+}
+
+function do_check_token_visibility() {
+	console.log("do_check_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
 	var canvas = document.getElementById("fog_overlay");
@@ -436,6 +458,7 @@ function check_token_visibility() {
 		}
 		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 	}
+	console.log("finished");
 }
 
 function circle2(a, b) {
@@ -1249,10 +1272,10 @@ function drawing_mouseup(e) {
 				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
+					curr.place();
 				}
 			}
-			//$("#tokens div[data-id='"+id+"']").addClass("tokenselected").css("border","2px solid white");
-			curr.place();
+			
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);

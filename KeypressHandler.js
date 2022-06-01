@@ -106,6 +106,10 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     $('#select-button').click();
     $("#tokenOptionsClickCloseDiv").click();
     $(".draggable-token-creation").addClass("drag-cancelled");
+    $(".draggable-sidebar-item-reorder").addClass("drag-cancelled");
+    try {
+        $( '.ui-draggable-dragging' ).draggable("option", { revert: true }).trigger( 'mouseup' ).draggable("option", {revert: false })
+    } catch (whoCares) { }
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open

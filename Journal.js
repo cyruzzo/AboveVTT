@@ -355,9 +355,7 @@ class JournalManager{
 			selector: '#' + tmp,
 			menubar: false,
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize',
-			toolbar1: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,alignleft,|,aligncenter,|,alignright,|,outdent,|,indent,|,bullist,|,numlist',
-			toolbar2: 'forecolor,|,backcolor,|,fontselect,|,fontsizeselect,|,formatselect,|,removeformat,|,hr',
-			toolbar3: 'link,|,unlink,|,image,|,media',
+			toolbar1: 'undo,|,paste,|,bold,|,italic,|,underline,|,strikethrough,|,blockquote,|,alignleft,|,aligncenter,|,alignright,|,outdent,|,indent,|,bullist,|,numlist,|,forecolor,|,backcolor,|,fontselect,|,fontsizeselect,|,formatselect,|,removeformat,|,hr,link,|,unlink,|,image,|,media',
 			image_class_list: [
 				{title: 'None', value: ''},
 				{title: 'Magnify', value: 'magnify'},
