@@ -458,17 +458,22 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
-function load_monster_stat(monsterid, token_id) {
+function load_monster_stat(monsterId, tokenId) {
 
 	console.group("load_monster_stat")
-	if($("#site #resizeDragMon").length > 0){
-		// TODO change any spell tracker stuff to that of the token
-		// no need to reload the iframe again if it's the same monster, but we do need ot update spell slot trackers
-		// if ($("#monster_block").attr("data-monid") == monsterid){
-		// 	// this monster block is already loaded, show it and return
-		// 	$("#resizeDragMon").removeClass("hideMon");
-		// 	return
-		// }
+	// monster block exists
+	if($("#monster_block").length > 0){
+		// same monster, update trackers and return early
+		if ($("#monster_block").attr("data-monid") == monsterId){
+			const token = window.TOKEN_OBJECTS[tokenId];
+			// rebuild any ability trackers specific to this token
+			rebuild_ability_trackers($("#monster_block").contents(), tokenId)
+			
+			$("#resizeDragMon").removeClass("hideMon");
+			console.groupEnd()
+			return
+		}
+		// clean up old monster block before removing
 		$("#monster_block").attr("id","old_monster_block")
 		$("#old_monster_block").hide()
 		$(".sidebar-panel-loading-indicator").show()
@@ -478,28 +483,26 @@ function load_monster_stat(monsterid, token_id) {
 		$("#resizeDragMon").removeClass("hideMon");
 	}
 	
-	const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
-	// check if the monster pane doesnt exist
+	// create a monster block wrapper element
 	if (! $("#resizeDragMon").length) {
+		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
 		$("body").append(monStatBlockContainer)
 		monStatBlockContainer.append(build_combat_tracker_loading_indicator())
 		const loadingIndicator = monStatBlockContainer.find(".sidebar-panel-loading-indicator")
 		loadingIndicator.css("top", "25px")
 		loadingIndicator.css("height", "calc(100% - 25px)")
 		monStatBlockContainer.show("slow")
-	}
-
-	monStatBlockContainer.resize(function(e) {
+		monStatBlockContainer.resize(function(e) {
         	e.stopPropagation();
    	});
-	const iframe = $(`<iframe id=monster_block data-monid=${monsterid}>`);
+	}
 
-	// iframe.css("display", "none");
-
+	const iframe = $(`<iframe id=monster_block data-monid=${monsterId}>`);
+	iframe.css("display", "none");
 	
 	$("#resizeDragMon").append(iframe);
 	
-	window.StatHandler.getStat(monsterid, function(stats) {
+	window.StatHandler.getStat(monsterId, function(stats) {
 		iframe.on("load", function(event) {
 			console.log('carico mostro');
 			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
@@ -530,8 +533,8 @@ function load_monster_stat(monsterid, token_id) {
 				});
 			}
 
-			// scan_monster($(event.target).contents().find('.mon-stat-block').clone(true, true)[0], stats, token_id);
-			scan_monster($(event.target).contents(), stats, token_id);
+		
+			scan_monster($(event.target).contents(), stats, tokenId);
 			$(event.target).contents().find("a").attr("target", "_blank");
 			$(".sidebar-panel-loading-indicator").hide()
 			$("#monster_block").fadeIn("slow")

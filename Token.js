@@ -1496,7 +1496,7 @@ class Token {
 		if (this.options.abilityTracker === undefined) {
 			this.options.abilityTracker = {};
 		}
-		let asNumber = parseInt(numberRemaining);
+		const asNumber = parseInt(numberRemaining);
 		if (isNaN(asNumber)) {
 			console.warn(`track_ability was given an invalid value to track. key: ${key}, numberRemaining: ${numberRemaining}`);
 			return;
@@ -1505,19 +1505,7 @@ class Token {
 		if (this.persist !== undefined && this.persist != null) {
 			this.persist();
 		}
-	}
-	// returns the stored value as a number or returns defaultValue
-	get_tracked_ability(key, defaultValue) {
-		if (this.options.abilityTracker === undefined) {
-			return defaultValue;
-		}
-		let storedValue = parseInt(this.options.abilityTracker[key]);
-		if (storedValue === undefined || isNaN(storedValue)) {
-			return defaultValue;
-		}
-		return storedValue;
-	}
-	
+	}	
 }
 
 /**

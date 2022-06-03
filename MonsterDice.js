@@ -82,16 +82,28 @@ function scan_monster(target, stats, tokenId) {
 function add_ability_tracker_inputs_on_each(target, tokenId){
 	const token = window.TOKEN_OBJECTS[tokenId];
 	target.find(".mon-stat-block__description-block-content > p").each(function() {
-		const element = $(this);
-		if (element.find(".injected-input").length == 0) {
-			const matchForEachSlot = element.text().match(/([0-9])\/Day each:/i)
+		const currentElement = $(this).clone();
+		if (currentElement.find(".injected-input").length == 0) {
+			const matchForEachSlot = currentElement.text().match(/([0-9])\/Day each:/i)
 			if (matchForEachSlot){
-				const numberFound = parseInt(matchForEachSlot[1]);
-				element.children().each(function (indexInArray, valueOfElement) { 
-					const key  = $(valueOfElement).text()
-					const remaining = token.get_tracked_ability(key, numberFound);
-
-					$(valueOfElement).after(createCountTracker(token, key.replace(/\s/g, ""), remaining, "", ""))
+				let numberFound = parseInt(matchForEachSlot[1]);
+				$(this).children().each(function (indexInArray, valueOfElement) { 
+					const spellName = $(valueOfElement).clone().text()
+					// token already has this ability tracked
+					if (token.options.abilityTracker?.[spellName]){
+						numberFound = token.options.abilityTracker[spellName]
+					}else{
+						token.track_ability(spellName, numberFound)
+					}
+					$(valueOfElement).after(
+						createCountTracker(
+							token,
+							$(valueOfElement).text().replace(/\s/g, ""), 
+							numberFound,
+							 "",
+							 ""
+						)
+					)
 				});			
 			}
 			
@@ -99,9 +111,13 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 	});	
 }
 
+function rebuild_ability_trackers(target, tokenId){
+	target.find(".injected-input").remove()
+	add_ability_tracker_inputs(target, tokenId)
+}
+
 /**
- * Creates the input tracker used for spell/legendaries and then calls token.track_ability
- * @param {object} token 
+ * Creates the input tracker used for spell/legendaries with a change handler that calls token.track_ability
  * @param {string} key 
  * @param {string} remaining 
  * @param {string} foundDescription 
@@ -135,14 +151,19 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// However, it seems to work just fine if we append the input at the end instead of inline.
 
 	const processInput = function(element, regex, descriptionPostfix, includeMatchingDescription = true) {
-		const foundMatches = element.text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
+		const foundMatches = element.clone().text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
 		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
-			const numberFound = parseInt(foundMatches[1]);
+			let numberFound = parseInt(foundMatches[1]);
 			if (!isNaN(numberFound)) {
 				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
 				const key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
-				const remaining = token.get_tracked_ability(key, numberFound);
-				const input = createCountTracker(token, key, remaining, foundDescription, descriptionPostfix)
+				// token already has this ability tracked, update the input
+				if (token.options.abilityTracker?.[key]){
+					numberFound = token.options.abilityTracker[key]
+				} else{
+					token.track_ability(key, numberFound)
+				}
+				const input = createCountTracker(token, key, numberFound, foundDescription, descriptionPostfix)
 				element.append(`<br>`);
 				element.append(input);
 			}
