@@ -156,7 +156,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// However, it seems to work just fine if we append the input at the end instead of inline.
 
 	const processInput = function(element, regex, descriptionPostfix, includeMatchingDescription = true) {
-		const foundMatches = element.text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
+		const foundMatches = element.clone().text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
 		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
 			let numberFound = parseInt(foundMatches[1]);
 			if (!isNaN(numberFound)) {
@@ -169,18 +169,19 @@ function add_ability_tracker_inputs(target, tokenId) {
 					token.track_ability(key, numberFound)
 				}
 				const input = createCountTracker(token, key, numberFound, foundDescription, descriptionPostfix)
-				return `<br> ${input}`
+				element.append(`<br>`);
+				element.append(input);
 			}
 		}
 	}
 
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
 	target.find(".mon-stat-block__description-block-content > p").each(function() {
-		let element = $(this).clone();
-		if (element.find(".injected-input").length === 0) {
-			$(this).append(processInput(element, /\(([0-9]) slots?\)/, "slots remaining"))
-			$(this).append(processInput(element, /\(([0-9])\/Day\)/i, "remaining"))
-			$(this).append(processInput(element, /can take ([0-9]) legendary actions/i, "Legendary Actions remaining", false))
+		let element = $(this);
+		if ($(this).find(".injected-input").length === 0) {
+			processInput(element, /\(([0-9]) slots?\)/, "slots remaining")
+			processInput(element, /\(([0-9])\/Day\)/i, "remaining")
+			processInput(element, /can take ([0-9]) legendary actions/i, "Legendary Actions remaining", false)
 		}
 		element = null
 	});	
