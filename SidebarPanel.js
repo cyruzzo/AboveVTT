@@ -1021,16 +1021,9 @@ function build_sidebar_list_row(listItem) {
     case SidebarListItem.TypeScene:
       row.attr("data-scene-id", listItem.sceneId);
       row.addClass("scene-item");
-      if (listItem.isVideo) {
-        imgHolder.html(`<span class="material-icons scene-list-item-is-video">play_circle_outline</span>`);
-      } else {
-        imgHolder.hover(function (hoverEvent) {
-          sidebar_flyout(hoverEvent, function(flyout) {
-            let imgsrc = $(hoverEvent.currentTarget).find("img").attr("src")
-            flyout.append(`<img class='list-item-image-flyout' src="${imgsrc}" alt="scene map preview" />`);
-          });
-        });
-      }
+      imgHolder.remove(); // we don't want the overhead of full images loading in. Clicking the row displays a preview of the image
+      row.css("cursor", "pointer");
+      row.attr("title", `${listItem.name}\nclick to preview`);
       let switch_dm = $(`<button class='dm_scenes_button token-row-button' title="Move DM To This Scene"></button>`);
       switch_dm.append(svg_dm());
       if(window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id === listItem.sceneId){
@@ -1130,7 +1123,26 @@ function did_click_row(clickEvent) {
       // display_builtin_token_details_modal(clickedItem);
       break;
     case SidebarListItem.TypeScene:
-      // nothing to do here.
+      // show the preview
+      $(`.sidebar-flyout`).remove(); // never duplicate
+      let flyout = $(`<div class='sidebar-flyout'></div>`);
+      $("body").append(flyout);
+      flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
+      let height = flyout.height();
+      let halfHeight = (height / 2);
+      let top = clickEvent.clientY - halfHeight;
+      if (top < 30) { // make sure it's always below the main UI buttons
+        top = 30;
+      } else if (clickEvent.clientY + halfHeight > window.innerHeight - 30) {
+        top = window.innerHeight - height - 30;
+      }
+      flyout.css({
+        "top": top
+      });
+      clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
+        $(mouseleaveEvent.currentTarget).off("mouseleave");
+        $(`.sidebar-flyout`).remove();
+      });
       break;
   }
 }
