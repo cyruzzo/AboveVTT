@@ -92,7 +92,7 @@ function add_ability_tracker_inputs_on_each(target, tokenId){
 				$(this).children().each(function (indexInArray, valueOfElement) { 
 					let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
 					// token already has this ability tracked
-					if (token.options.abilityTracker?.[spellName]){
+					if (token.options.abilityTracker?.[spellName] >= 0){
 						numberFound = token.options.abilityTracker[spellName]
 					}else{
 						token.track_ability(spellName, numberFound)
@@ -163,7 +163,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
 				const key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
 				// token already has this ability tracked, update the input
-				if (token.options.abilityTracker?.[key]){
+				if (token.options.abilityTracker?.[key] >= 0){
 					numberFound = token.options.abilityTracker[key]
 				} else{
 					token.track_ability(key, numberFound)
