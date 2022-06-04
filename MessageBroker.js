@@ -704,7 +704,13 @@ class MessageBroker {
 				}	
 					$("[id^='streamer-"+msg.data.from+"']").remove();
 					window.STREAMPEERS[msg.data.from].close();
-					delete window.STREAMPEERS[msg.data.from]
+					delete window.STREAMPEERS[msg.data.from];
+					window.MB.inject_chat({
+              player: window.PLAYER_NAME,
+              img: window.PLAYER_IMG,
+              text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
+              whisper: window.PLAYER_NAME
+          });
 			}
 			if(msg.eventType == "custom/myVTT/disabledicestream"){
 				enable_dice_streaming_feature(false);
@@ -752,7 +758,7 @@ class MessageBroker {
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
 				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
+					if(peer.connectionState=="closed" || peer.connectionState=="failed" || peer.connectionState == "disconnected"){
 						console.log("DELETING PEER "+msg.data.from);
 						delete window.STREAMPEERS[msg.data.from];
 						$("#streamer-canvas-"+msg.data.from).remove();
@@ -760,6 +766,12 @@ class MessageBroker {
 							to: msg.data.from,
 							from: window.MYSTREAMID
 						})
+						window.MB.inject_chat({
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try disconnecting and reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
+                whisper: window.PLAYER_NAME
+	          });
 					}
 				};
 			  try {
@@ -822,7 +834,13 @@ class MessageBroker {
 						window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
 							to: msg.data.from,
 							from: window.MYSTREAMID
-						})
+						});
+						window.MB.inject_chat({
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try disconnecting and reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
+                whisper: window.PLAYER_NAME
+	          });
 					}
 				};
 		
