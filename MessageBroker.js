@@ -771,7 +771,7 @@ class MessageBroker {
 					}
 
 					if(peer.connectionState=="closed" || peer.connectionState=="failed" || peer.connectionState == "disconnected"){
-						restartIce();
+						peer.restartIce();
 						window.MB.inject_chat({
                 player: window.PLAYER_NAME,
                 img: window.PLAYER_IMG,
@@ -865,7 +865,7 @@ class MessageBroker {
 	          });
 					}
 					if((peer.connectionState=="closed") || (peer.connectionState=="failed" || peer.connectionState == "disconnected")){
-						restartIce();
+						peer.restartIce();
 						window.MB.inject_chat({
                 player: window.PLAYER_NAME,
                 img: window.PLAYER_IMG,
