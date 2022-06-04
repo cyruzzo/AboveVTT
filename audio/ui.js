@@ -1,6 +1,5 @@
 import { trackLibrary } from './track.js';
 import { mixer, Channel } from './mixer.js';
-import { StagedTrack } from './stage.js';
 import { log } from './helpers.js';
 
 /**
@@ -94,10 +93,10 @@ function init_trackLibrary() {
             const play = document.createElement('button');
             play.textContent = 'Play';
             play.onclick = () => {
-                const adhocStagedTrack = new StagedTrack(id);
-                adhocStagedTrack.autoplay = true;
-                adhocStagedTrack.loop = true;
-                mixer.addChannel(adhocStagedTrack.toChannel());
+                const channel = new Channel(track.name, track.src);
+                channel.paused = false;
+                channel.loop = true;
+                mixer.addChannel(channel);
             };
             item.appendChild(play);
             trackList.append(item);
