@@ -761,7 +761,7 @@ class MessageBroker {
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
 				peer.onconnectionstatechange=() => {
-					if(peer.connectionState=="connected"{
+					if(peer.connectionState=="connected"){
 						window.MB.inject_chat({
                 player: window.PLAYER_NAME,
                 img: window.PLAYER_IMG,
@@ -769,6 +769,7 @@ class MessageBroker {
                 whisper: window.PLAYER_NAME,
 	          });
 					}
+
 					if(peer.connectionState=="closed" || peer.connectionState=="failed" || peer.connectionState == "disconnected"){
 						restartIce();
 						window.MB.inject_chat({
@@ -855,7 +856,7 @@ class MessageBroker {
 					}	
 				};
 				peer.onconnectionstatechange=() => {
-					if(peer.connectionState=="connected"{
+					if(peer.connectionState=="connected"){
 						window.MB.inject_chat({
                 player: window.PLAYER_NAME,
                 img: window.PLAYER_IMG,
