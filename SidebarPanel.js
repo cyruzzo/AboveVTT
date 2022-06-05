@@ -1477,9 +1477,10 @@ function disable_draggable_change_folder(listItemType) {
       tokensPanel.body.find(".token-row-button.reorder-button").show();
       tokensPanel.body.find(".reorder-button").removeClass("active");
       tokensPanel.body.find(" > .custom-token-list > .folder").show();
+      tokensPanel.body.removeClass("folder");
       tokensPanel.header.find("input[name='token-search']").show();
       tokensPanel.updateHeader("Tokens");
-      tokensPanel.body.removeClass("folder");
+      add_expand_collapse_buttons_to_header(tokensPanel);
       try {
         tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
       } catch (e) {} // don't care if it fails, just try
@@ -1506,6 +1507,22 @@ function disable_draggable_change_folder(listItemType) {
       } catch (e) {} // don't care if it fails, just try
       break;
   }
+}
+
+function add_expand_collapse_buttons_to_header(sidebarPanel) {
+  let expandAll = $(`<button class="token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
+  expandAll.on("click", function (clickEvent) {
+    console.log("ugh")
+    $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").removeClass("collapsed");
+  });
+  let collapseAll = $(`<button class="token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
+  collapseAll.on("click", function (clickEvent) {
+    $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").addClass("collapsed");
+  });
+  let buttonWrapper = $("<div class='expand-collapse-wrapper'></div>");
+  sidebarPanel.header.find(".sidebar-panel-header-title").append(buttonWrapper);
+  buttonWrapper.append(expandAll);
+  buttonWrapper.append(collapseAll);
 }
 
 /**
@@ -1554,6 +1571,7 @@ function enable_draggable_change_folder(listItemType) {
       tokensPanel.body.find(".reorder-button").addClass("active");
       tokensPanel.header.find("input[name='token-search']").hide();
       tokensPanel.updateHeader("Tokens", "", "Drag items to move them between folders");
+      add_expand_collapse_buttons_to_header(tokensPanel);
 
       let myTokensRootItem = tokens_rootfolders.find(i => i.name === SidebarListItem.NameMyTokens);
       let myTokensRootFolder = find_html_row(myTokensRootItem, tokensPanel.body);
@@ -1592,7 +1610,7 @@ function enable_draggable_change_folder(listItemType) {
 
       myTokensRootFolder.droppable(droppableOptions); // allow dropping on root MyTokens folder
       myTokensRootFolder.find(".folder").droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
-      tokensPanel.body.addClass("folder");  // allow dropping on folders within MyTokens folder
+      tokensPanel.body.addClass("folder").addClass("not-collapsible");  // allow dropping on folders within MyTokens folder
       tokensPanel.body.droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
 
       break;
@@ -1604,7 +1622,7 @@ function enable_draggable_change_folder(listItemType) {
       scenesPanel.header.find(".reorder-button").addClass("active");
       scenesPanel.body.find(".token-row-gear").hide();
       scenesPanel.body.find(".token-row-button").hide();
-      scenesPanel.body.addClass("folder");
+      scenesPanel.body.addClass("folder").addClass("not-collapsible"); // we want the root to act like a folder, but we don't want to allow it to collapse
 
       scenesPanel.body.find(".sidebar-list-item-row").draggable({
         container: scenesPanel.body,

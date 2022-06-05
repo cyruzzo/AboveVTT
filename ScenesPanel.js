@@ -1471,6 +1471,7 @@ function init_scenes_panel() {
 	console.log("init_scenes_panel");
 
 	scenesPanel.updateHeader("Scenes");
+	add_expand_collapse_buttons_to_header(scenesPanel);
 
 	let searchInput = $(`<input name="scene-search" type="text" style="width:96%;margin:2%" placeholder="search scenes">`);
 	searchInput.off("input").on("input", mydebounce(() => {
@@ -1573,7 +1574,7 @@ function redraw_scene_list(searchTerm) {
 	// this is similar to the structure of a SidebarListItem.Folder row.
 	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
 	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
-	let list = $(`<div class="folder"><div class="folder-item-list" style="padding: 0;"></div></div>`);
+	let list = $(`<div class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
 	scenesPanel.body.empty();
 	scenesPanel.body.append(list);
 	set_full_path(list, SidebarListItem.PathScenes);

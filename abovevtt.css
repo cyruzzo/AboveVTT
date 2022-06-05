@@ -2144,9 +2144,15 @@ div.ct-sidebar__pane-content > div.selected-tab {
     font-style: normal;
     font-weight: bold;
     font-size: 18px;
+    justify-content: space-between;
 }
 .sidebar-panel-header-title:empty{
     margin: 0px;
+}
+.sidebar-panel-header-title .expand-collapse-wrapper {
+    display: flex;
+    flex-direction: row;
+    margin-right: 6px;
 }
 .sidebar-panel-header-subtitle {
     font-size: 12px;
