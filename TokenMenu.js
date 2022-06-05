@@ -37,6 +37,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 
 		buildFunction(flyout);
 		$("#tokenOptionsContainer").append(flyout);
+		observe_hover_text(flyout);
 
 		let contextMenuCenter = (contextMenu.height() / 2);
 		let flyoutHeight = flyout.height();

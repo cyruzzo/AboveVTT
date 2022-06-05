@@ -29,7 +29,7 @@ function init_sidebar_tabs() {
   $("#sounds-panel").remove();
   soundsPanel = new SidebarPanel("sounds-panel", false);
   sidebarContent.append(soundsPanel.build());
-	init_audio();
+  init_audio();
 
   $("#journal-panel").remove();
   journalPanel = new SidebarPanel("journal-panel", false);
@@ -46,6 +46,8 @@ function init_sidebar_tabs() {
     sidebarContent.append(settingsPanel.build());
     init_settings();
   }
+
+  observe_hover_text($(".sidebar__inner"));
 }
 
 function sidebar_modal_is_open() {
@@ -60,6 +62,19 @@ function close_sidebar_modal() {
 function display_sidebar_modal(sidebarPanel) {
   $("#VTTWRAPPER").append(sidebarPanel.build());
   window.current_sidebar_modal = sidebarPanel;
+  observe_hover_text(sidebarPanel.container);
+}
+
+function observe_hover_text(sidebarPanelContent) {
+  sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text", function(hoverEvent) {
+    const displayText = $(hoverEvent.currentTarget).attr("data-hover");
+    if (typeof displayText === "string" && displayText.length > 0) {
+      sidebar_flyout(hoverEvent, function (flyout) {
+        flyout.append(`<div class="sidebar-hover-text-flyout">${displayText}</div>`);
+        flyout.css("left", sidebarPanelContent[0].getBoundingClientRect().left - flyout.width());
+      });
+    }
+  });
 }
 
 class SidebarPanel {
@@ -293,10 +308,11 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
   let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
   const updateHoverText = function(hoverElement, hoverText) {
     if (hoverText !== undefined && hoverText.length > 0) {
-      hoverElement.addClass("sidebar-hovertext");
+      hoverElement.addClass("sidebar-hover-text");
       hoverElement.attr("data-hover", hoverText);
+      $(".sidebar-flyout .sidebar-hover-text-flyout").text(hoverText);
     } else {
-      hoverElement.removeClass("sidebar-hovertext");
+      hoverElement.removeClass("sidebar-hover-text");
       hoverElement.removeAttr("data-hover");
     }
   }
