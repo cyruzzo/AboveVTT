@@ -1512,7 +1512,6 @@ function disable_draggable_change_folder(listItemType) {
 function add_expand_collapse_buttons_to_header(sidebarPanel) {
   let expandAll = $(`<button class="token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
   expandAll.on("click", function (clickEvent) {
-    console.log("ugh")
     $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").removeClass("collapsed");
   });
   let collapseAll = $(`<button class="token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
