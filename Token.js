@@ -1721,7 +1721,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...tokenObject
 	};
 	// aoe tokens have classes instead of images
-	if (!Array.isArray(options.imgsrc)){
+	if (!options.imgsrc.startsWith("class")){
 		options.imgsrc = parse_img(options.imgsrc);
 	}
 

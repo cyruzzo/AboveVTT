@@ -357,7 +357,7 @@ class SidebarListItem {
   static PathAboveVTT = "/AboveVTT Tokens";
   static PathEncounters = "/Encounters";
   static PathScenes = "/Scenes";
-  static PathAoe = "/Aoe";
+  static PathAoe = "/Area of Effects";
 
   // folder names within the tokens panel
   static NamePlayers = "Players";
@@ -657,10 +657,10 @@ function sanitize_folder_path(dirtyPath) {
  */
 function build_aoe_from_identifier_html(html) {
   let shape = html.attr("data-shape");
-  let style = html.attr("data-shape");
-  let size = html.attr("data-shape");
+  let style = html.attr("data-style");
+  let size = html.attr("data-size");
   if (shape && style && size) { // TODO: be more thorough with data validation here
-    return SidebarListItem.Aoe(shape, style, size);
+    return SidebarListItem.Aoe(shape, size, style);
   }
   return undefined
 }
@@ -674,7 +674,8 @@ function find_sidebar_list_item(html) {
 
   let foundItem;
 
-  let aoe = build_aoe_from_identifier_html(html);
+  const aoe = build_aoe_from_identifier_html(html);
+  if (aoe) return aoe
 
   let encounterId = html.attr("data-encounter-id");
   if (encounterId !== undefined && encounterId !== null && encounterId !== "") {
@@ -850,8 +851,19 @@ function build_sidebar_list_row(listItem) {
 
   let imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
   rowItem.append(imgHolder);
-  let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
-  imgHolder.append(img);
+  if (listItem.type !== "aoe"){
+    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
+    imgHolder.append(img);
+  }
+  else{
+    // possibly change the background-image-size so it looks nicer as a small image
+    let img = $(
+      `<div data-img="true" style='transform:scale(1) rotate(0)'; 
+      class="aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}">
+       </div>
+      `)
+    imgHolder.append(img);
+  }
 
   let details = $(`<div class="sidebar-list-item-row-details"></div>`);
   rowItem.append(details);
@@ -1100,7 +1112,10 @@ function build_sidebar_list_row(listItem) {
       break;
     case SidebarListItem.TypeAoe:
       row.attr("data-shape", listItem.shape);
-      subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">Style:</span>${listItem.style}</div>`);
+      row.attr("data-size", listItem.size);
+      row.attr("data-style", listItem.style);
+      subtitle.append(`<div class="subtitle-attibute">${listItem.style}</div>`);
+      subtitle.append(`<div class="subtitle-attibute">${listItem.size}</div>`);
      
       break;
   }
@@ -1176,6 +1191,9 @@ function did_click_row(clickEvent) {
     case SidebarListItem.TypeScene:
       // nothing to do here.
       break;
+    case SidebarListItem.TypeAoe:
+      // bain todo open context menu to choose style / size
+    break;
   }
 }
 
@@ -1243,6 +1261,10 @@ function display_sidebar_list_item_configuration_modal(listItem) {
         console.error("Failed to find scene index for scene with id", listItem.sceneId);
         alert("An unexpected error occurred");
       }
+      break;
+    case SidebarListItem.TypeAoe:
+      // bain todo this display_aoe_configuration_model(listItem)
+      display_aoe_token_configuration_modal(listItem);
       break;
     default:
       console.warn("display_sidebar_list_item_configuration_modal not supported for listItem", listItem);

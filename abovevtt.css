@@ -2539,6 +2539,12 @@ h5.token-image-modal-footer-title:after {
     border-radius: 3px;
     object-fit: cover;
 }
+.sidebar-list-item-row-img [data-img]{
+    background-size: 50px;
+    animation: none;
+    opacity: 100%;
+}
+.sidebar-list-item-row-img [data-img],
 .sidebar-list-item-row-img img {
     object-fit: contain;
     width: 38px;

@@ -293,9 +293,7 @@ function rebuild_token_items_list() {
         // encounter_monster_items[encounterId]?.forEach(monsterItem => tokenItems.push(monsterItem));
     }
 
-    for (const shape in ["square", "cone", "circle", "line"]){
-        tokenItems.push(SidebarListItem.Aoe(shape, 4, "acid"));
-    }
+    tokenItems = tokenItems.concat(aoe_items)
 
     window.tokenListItems = tokenItems;
     console.groupEnd();
@@ -393,7 +391,7 @@ function inject_monster_list_items(listItems) {
 function inject_aoe_list_items(listItems){
     let aoeFolder = find_html_row_from_path(SidebarListItem.PathAoe, tokensPanel.body);
     if (aoeFolder === undefined || aoeFolder.length === 0) {
-        console.warn("inject_monster_list_items failed to find the monsters folder");
+        console.warn("inject_aoe_list_items failed to find the aoe folder");
         return;
     }
     let list = aoeFolder.find(`> .folder-item-list`);
@@ -428,6 +426,7 @@ function init_tokens_panel() {
     if(localStorage.getItem('CustomTokens') != null){
         tokendata=$.parseJSON(localStorage.getItem('CustomTokens'));
     }
+    $("#switch_tokens").click()
 
     migrate_to_my_tokens();
     rebuild_token_items_list();
@@ -511,6 +510,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
 
     update_pc_token_rows();
     inject_encounter_monsters();
+    inject_aoe_list_items(window.tokenListItems.filter(tli => tli.type === "aoe"))
     console.groupEnd()
 }
 
@@ -770,6 +770,28 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.disablestat = true;
             break;
         case SidebarListItem.TypeAoe:
+            const image = `class=aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}`
+            let size = window.CURRENT_SCENE_DATA.hpps * listItem.size
+            // circles are always by radius
+            if (listItem.shape == 'circle') {
+                size = size * 2;
+            }
+            options = {
+                disablestat: true,
+                hidestat: true,
+                disableborder: true,
+                square: true,
+                imgsrc: image,
+                size: listItem.shape !== "line" ? size : "",
+                gridHeight: listItem.shape === "line" ? Math.round(listItem.size) : "",
+                gridWidth: listItem.shape === "line" ? 1 : "",
+                restrictPlayerMove: false,
+                hidden: false,
+                locked: false,
+                disableaura: true,
+                legacyaspectratio: false,
+                deleteableByPlayers: true
+            };
             // TODO: anything to alter here?
             break;
     }
@@ -1209,6 +1231,40 @@ function create_token_inside(listItem) {
  * @param listItem {SidebarListItem} the item to configure
  * @param placedToken {undefined|Token} the token object that is on the scene
  */
+ function display_aoe_token_configuration_modal(listItem, placedToken = undefined) {
+    switch (listItem?.type) {
+        case SidebarListItem.TypeAoe:
+            break;
+        default:
+            console.warn("display_token_configuration_modal was called with incorrect item type", listItem);
+            return;
+    }
+
+    // close any that are already open just to be safe
+    close_sidebar_modal();
+    let sidebarPanel = new SidebarPanel("token-configuration-modal");
+    display_sidebar_modal(sidebarPanel);
+
+    let name = listItem.name;
+    let tokenSize = token_size_for_item(listItem) * window.CURRENT_SCENE_DATA.fpsq;
+    sidebarPanel.updateHeader(name, `Current size: ${tokenSize}ft`, );
+
+    sidebarPanel.inputWrapper.append("<div class='menu-subtitle'>Size</div>");
+    
+    sidebarPanel.inputWrapper.append(`<div><input min='5' id='aoe_feet_height' value='${tokenSize}' style='width:100%;margin-top:8px;margin-bottom:25px;text-align:center' maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}'></div>`);
+    
+    $("#aoe_feet_height").keydown(function(e) {
+        close_sidebar_modal()
+    });
+    
+    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+}
+
+/**
+ * presents a SidebarPanel modal for configuring the given item
+ * @param listItem {SidebarListItem} the item to configure
+ * @param placedToken {undefined|Token} the token object that is on the scene
+ */
 function display_token_configuration_modal(listItem, placedToken = undefined) {
     switch (listItem?.type) {
         case SidebarListItem.TypeMyToken:
@@ -1440,14 +1496,23 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     let modalBody = sidebarPanel.body
 
     const buildTokenDiv = function(imageUrl) {
-        let parsedImage = parse_img(imageUrl);
-        let tokenDiv = build_alternative_image_for_modal(parsedImage, placedToken);
+        let parsedImage
+        let tokenDiv
+        if(listItem.type !== SidebarListItem.TypeAoe){
+            parsedImage = parse_img(imageUrl);
+            tokenDiv = build_alternative_image_for_modal(parsedImage, placedToken);
+        }
+        else{
+            parsedImage = parse_img(imageUrl);
+            tokenDiv = build_alternative_image_for_modal(parsedImage, placedToken, true);
+        }
+        
         if (placedToken?.isMonster()) {
             tokenDiv.attr("data-monster", placedToken.options.monster);
         }
         set_full_path(tokenDiv, listItem.fullPath());
         enable_draggable_token_creation(tokenDiv, parsedImage);
-        return tokenDiv;
+        return tokenDiv;        
     }
 
     // clone our images array instead of using a reference so we don't accidentally change the current images for all tokens
@@ -1467,6 +1532,29 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
         let tokenDiv = buildTokenDiv(listItem.image);
         modalBody.append(tokenDiv);
     }
+    if (listItem.type === SidebarListItem.TypeAoe ) {
+        // if we don't have any alternative images, show the default image
+        const availableStyle = [
+            "Acid",
+            "Bludgeoning",
+            "Fire",
+            "Force",
+            "Ice",
+            "Lightning",
+            "Nature",
+            "Necrotic",
+            "Piercing",
+            "Poison",
+            "Psychic",
+            "Radiant",
+            "Slashing",
+            "Thunder",
+            "Water"
+        ]
+        alternativeImages = availableStyle.map(aoeStyle => {
+          return `class=aoe-token-tileable aoe-style-${aoeStyle.toLowerCase()} aoe-shape-${listItem.shape}`
+        })
+    }
 
     for (let i = 0; i < alternativeImages.length; i++) {
         let tokenDiv = buildTokenDiv(alternativeImages[i]);
@@ -1482,11 +1570,21 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
  * @param placedToken {Token} the Token object that as been placed on the scene; else undefined
  * @returns {*|jQuery|HTMLElement} the HTML that you can add to a sidebarPanel modal
  */
-function build_alternative_image_for_modal(image, placedToken) {
-    let tokenDiv = $(`
+function build_alternative_image_for_modal(image, placedToken, isAOE=false) {
+
+    let tokenDiv 
+    if (!isAOE)
+        tokenDiv= $(`
 		    <div class="custom-token-image-item">
 			    <div class="token-image-sizing-dummy"></div>
 			    <img alt="token-img" class="token-image token-round" src="${image}" />
+	    	</div>
+    	`);
+    else
+        tokenDiv = $(`
+		    <div class="custom-token-image-item">
+			    <div class="token-image-sizing-dummy"></div>
+			    <div class="token-image token-round ${image.replace("class=","")}" />
 	    	</div>
     	`);
     if (placedToken !== undefined) {
@@ -1494,7 +1592,10 @@ function build_alternative_image_for_modal(image, placedToken) {
         // we don't want to allow drag and drop from this modal
         tokenDiv.attr("data-token-id", placedToken.options.id);
         tokenDiv.on("click", function() {
-            placedToken.options.imgsrc = parse_img(image);
+            if (!isAOE)
+                placedToken.options.imgsrc = parse_img(image);
+            else
+                placedToken.options.imgsrc = image;
             close_sidebar_modal();
             placedToken.place_sync_persist();
         });
