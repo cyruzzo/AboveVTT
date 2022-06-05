@@ -2001,8 +2001,8 @@ function init_draw_menu(buttons){
 		if (r === true) {
 			// keep only text
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
-			redraw_drawings();
-			sync_drawings
+			redraw_drawings()
+			sync_drawings()
 		}
 	});
 
@@ -2013,7 +2013,7 @@ function init_draw_menu(buttons){
         while (currentElement--) {
             if (!window.DRAWINGS[currentElement][0].includes("text")){
                 window.DRAWINGS.splice(currentElement, 1)
-                redraw_drawings();
+                redraw_drawings()
 				sync_drawings()
                 break
             }
