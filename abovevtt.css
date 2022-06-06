@@ -2768,6 +2768,9 @@ h5.token-image-modal-footer-title:after {
     animation-name: rcSwitchOn;
     background-image: none !important;
 }
+.rc-switch:focus{
+    outline: 2px solid #000;
+}
 
 .sidebar-hovertext:before {
     content: attr(data-hover);
