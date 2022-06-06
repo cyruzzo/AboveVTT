@@ -1160,6 +1160,10 @@ class Token {
 				x: 0,
 				y: 0
 			};
+			let currentTokenPosition = {
+				x: 0,
+				y: 0
+			};
 			tok.draggable({
 				scroll: false,
 				stop:
@@ -1320,27 +1324,29 @@ class Token {
 					}
 
 					if (window.ALLOWTOKENMEASURING){
-						// Setup waypoint manager
-						// reset measuring when a new token is picked up
-						if(window.previous_measured_token != self.options.id){
-							window.previous_measured_token = self.options.id
-							WaypointManager.cancelFadeout()
-							WaypointManager.clearWaypoints()
-						}
-						const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
-						const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
-						
-						if(WaypointManager.numWaypoints > 0){
-							WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
-							WaypointManager.cancelFadeout()
-						}
-						window.BEGIN_MOUSEX = tokenMidX;
-						window.BEGIN_MOUSEY = tokenMidY;
-						if (!self.options.disableborder){
-							WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
-						}else{
-							WaypointManager.resetDefaultDrawStyle()
-						}
+						setTimeout(function() {
+							// Setup waypoint manager
+							// reset measuring when a new token is picked up
+							if(window.previous_measured_token != self.options.id){
+								window.previous_measured_token = self.options.id
+								WaypointManager.cancelFadeout()
+								WaypointManager.clearWaypoints()
+							}
+							const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
+							const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
+
+							if(WaypointManager.numWaypoints > 0){
+								WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
+								WaypointManager.cancelFadeout()
+							}
+							window.BEGIN_MOUSEX = tokenMidX;
+							window.BEGIN_MOUSEY = tokenMidY;
+							if (!self.options.disableborder){
+								WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
+							}else{
+								WaypointManager.resetDefaultDrawStyle()
+							}
+						});
 					}
 
 					remove_selected_token_bounding_box();
@@ -1361,23 +1367,33 @@ class Token {
 						top: tokenPosition.y
 					};
 
-					const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-					const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+					if (window.ALLOWTOKENMEASURING) {
+						if (WaypointManager.numWaypoints === 0 || tokenPosition.x !== currentTokenPosition.x || tokenPosition.y !== currentTokenPosition.y) {
+							setTimeout(function() {
 
-					if (window.ALLOWTOKENMEASURING){
-						const canvas = document.getElementById("temp_overlay");
-						const context = canvas.getContext("2d");
-						// incase we click while on select, remove any line dashes
-						context.setLineDash([])
-						// list the temp overlay so we can see the ruler
-						clear_temp_canvas()
-						$("#temp_overlay").css("z-index", "50")
-						WaypointManager.setCanvas(canvas);
-						WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
-						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
-						context.fillStyle = '#f50';
+								const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
+								const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+
+								const canvas = document.getElementById("temp_overlay");
+								const context = canvas.getContext("2d");
+								// incase we click while on select, remove any line dashes
+								context.setLineDash([])
+								// list the temp overlay so we can see the ruler
+								clear_temp_canvas()
+								$("#temp_overlay").css("z-index", "50")
+								WaypointManager.setCanvas(canvas);
+								WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
+								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
+								WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
+								context.fillStyle = '#f50';
+
+							});
+						}
 					}
+
+					currentTokenPosition.x = tokenPosition.x;
+					currentTokenPosition.y = tokenPosition.y;
+
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
 					/*$(event.target).css("left",ui.position.left);
