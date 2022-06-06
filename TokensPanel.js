@@ -535,8 +535,10 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
             let draggedItem = find_sidebar_list_item(draggedRow);
             if (draggedItem.isTypeAoe()) {
                 // TODO: build this out
-                let helper = draggedRow.find(".token-image").clone();
+                let helper = draggedRow.find("[data-img]").clone();
                 helper.addClass("draggable-token-creation");
+                helper.css("width", "50px")
+                helper.css("height", "50px")
                 return helper;
             } else {
                 let helper = draggedRow.find("img.token-image").clone();
@@ -1586,7 +1588,7 @@ function build_alternative_image_for_modal(image, placedToken, isAOE=false) {
         tokenDiv = $(`
 		    <div class="custom-token-image-item">
 			    <div class="token-image-sizing-dummy"></div>
-			    <div class="token-image ${image.replace("class=","")}"/>
+			    <div data-img="true" class="token-image ${image.replace("class=","")}"/>
 	    	</div>
     	`);
     if (placedToken !== undefined) {
