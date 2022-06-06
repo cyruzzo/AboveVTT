@@ -906,13 +906,15 @@ function drawing_mousedown(e) {
 	const [pointX, pointY] = get_event_cursor_position(e)
 	
 	if(window.DRAWSHAPE === "brush"){
+		window.BEGIN_MOUSEX = pointX
+		window.BEGIN_MOUSEY = pointY
+		window.MOUSEDOWN = true;
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
 		// draw a dot
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
-		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
 		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
 	}
 	else if (window.DRAWSHAPE === "polygon") {
@@ -998,10 +1000,10 @@ function drawing_mousemove(e) {
 		const width = mouseX - window.BEGIN_MOUSEX;
 		const height = mouseY - window.BEGIN_MOUSEY;
 		// bain todo why is this here?
-		if(window.DRAWSHAPE !== "brush")
-		{
-			redraw_fog();
-		}
+		// if(window.DRAWSHAPE !== "brush")
+		// {
+		// 	redraw_fog();
+		// }
 
 		if (window.DRAWSHAPE == "rect") {
 			if(window.DRAWFUNCTION == "draw_text")
@@ -1088,7 +1090,7 @@ function drawing_mousemove(e) {
 			{
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 
-				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, lineWidth);
+				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, window.LINEWIDTH);
 
 				window.BRUSHWAIT = true;
 				if (mouseMoveFps < 75) {
@@ -1192,6 +1194,9 @@ function drawing_mouseup(e) {
 				data[0] = "rect"
 				break;
 			case "arc":
+				const centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+				const centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+				const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 				data[0] = "arc"
 				data[3] = centerX
 				data[4] = centerY
@@ -1206,8 +1211,8 @@ function drawing_mouseup(e) {
 			case "brush":
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 				// cap with a dot
-				window.BRUSHPOINTS.push({x:window.mouseX+1, y:window.mouseY+1});
-				window.BRUSHPOINTS.push({x:window.mouseX-1, y:window.mouseY-1});
+				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
+				window.BRUSHPOINTS.push({x:mouseX-1, y:mouseY-1});
 				data[0] = "brush"
 				data[3] = window.BRUSHPOINTS
 				data[4] = null
@@ -1347,9 +1352,9 @@ function drawing_contextmenu(e) {
  */
 function finalise_drawing_fog(mouseX, mouseY, width, height) {
 	if (window.DRAWSHAPE == "arc") {
-		centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
-		centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
+		const centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+		const centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
@@ -2001,8 +2006,8 @@ function init_draw_menu(buttons){
 		if (r === true) {
 			// keep only text
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
-			redraw_drawings();
-			sync_drawings
+			redraw_drawings()
+			sync_drawings()
 		}
 	});
 
@@ -2013,7 +2018,7 @@ function init_draw_menu(buttons){
         while (currentElement--) {
             if (!window.DRAWINGS[currentElement][0].includes("text")){
                 window.DRAWINGS.splice(currentElement, 1)
-                redraw_drawings();
+                redraw_drawings()
 				sync_drawings()
                 break
             }
