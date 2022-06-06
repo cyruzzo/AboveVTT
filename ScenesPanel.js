@@ -69,7 +69,16 @@ function handle_basic_form_toggle_click(event){
 	  }
 }
 
+function handle_map_toggle_click(event){
+	handle_basic_form_toggle_click(event)
+	// validate image input expects the target to be the input not the t oggle
+
+	validate_image_input($(event.currentTarget).prev().find("input")[0])
+}
+
+
 function get_edit_form_data(scene=null){
+	// bain todo, call image validation here and stop if it's not valid
 	let data = {}
 	$("#edit_scene_form").find("input, button.rc-switch").each(function() {
 		const inputName = $(this).attr('name');
@@ -87,48 +96,55 @@ function get_edit_form_data(scene=null){
 		}
 		data[inputName] = inputValue
 	})
-	return data
 }
 
 function validate_image_input(element){
 	const self = element
-	const img = parse_img(self.value)
-	let hasValidationDisplayed = $(self).prev().is("span")
-	const validIcon = $(`<span class="material-icons url-validator valid">check_circle_outline</span>`)
 
-	// optional values can be blank
-	const isOptional = $(self).attr("placeholder") === "Optional"
-	if(img === "" && isOptional){
-		if (hasValidationDisplayed) {
-			$(self).prev().remove()
-		}
-		return
-	} 
+	$(`#${self.name}_validator`).remove()
+	// no value so can't validate, return early
+	if (self.value?.length === 0) return
+	const img = parse_img(self.value)
+	const validIcon = $(`<span id="${self.name}_validator" data-hover="Map image valid" class="sidebar-hovertext material-icons url-validator valid">check_circle_outline</span>`)
 
 	// default as valid
 	$(self).parent().css("position","relative")
-	if (!hasValidationDisplayed){
-		$(self).before(validIcon)
-		$(self).attr("data-valid",true)
-		hasValidationDisplayed = true
-	}
+	$(self).before(validIcon)
+	$(self).attr("data-valid",true)
 
-	const display_not_valid = () => {
-		if (hasValidationDisplayed){
-			$(self).prev().html("highlight_off")
-			$(self).prev().removeClass("valid loading")
-			$(self).prev().addClass("invalid")
-			$(self).attr("data-valid", false)
-		}
-		
+	const display_not_valid = (hoverText) => {
+		$(self).prev().html("highlight_off")
+		$(self).prev().removeClass("valid loading")
+		$(self).prev().addClass("invalid")
+		$(self).prev().attr("data-hover", hoverText)
+		$(self).attr("data-valid", false)
+	
 		$(self).addClass("chat-error-shake");
         setTimeout(function () {
             $(self).removeClass("chat-error-shake");
         }, 150);
 	}
-	try {
-		const url = new URL(img)
 
+	const display_unsure = () => {
+		$(self).prev().html("question_mark")
+		$(self).prev().attr("title")
+		$(self).prev().removeClass("valid loading")
+		$(self).prev().addClass("unsure")
+		$(self).prev().attr("data-hover", "URL is ok. video validation coming soon")
+		$(self).attr("data-valid", false)
+	}
+	let url
+	try {
+		url = new URL(img)
+	} catch (_) {
+		display_not_valid("URL is invalid")
+		return
+	}
+	if ($("#player_map_is_video_toggle").hasClass("rc-switch-checked") || $("#dm_map_is_video_toggle").hasClass("rc-switch-checked")){
+		display_unsure()
+		return
+	}
+	try{
 		function testImage(URL) {
 			const tester=new Image();
 			tester.onload=imageFound;
@@ -147,13 +163,14 @@ function validate_image_input(element){
 		}
 		
 		function imageNotFound() {
-			display_not_valid()
+			display_not_valid("Image not found")
 		}
 		
 		testImage(url);
 	} catch (_) {
-		display_not_valid()
+		display_not_valid("Image not found")
 	}
+	
 }
 
 function edit_scene_dialog(scene_id) {
@@ -167,9 +184,9 @@ function edit_scene_dialog(scene_id) {
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" name=${name} style='width:100%' onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
 			}else{
-				rowInput = $(`<input type="text" name=${name} style='width:100%' value="${scene[name] || ""}" />`);
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
 			 
 		}
@@ -266,11 +283,12 @@ function edit_scene_dialog(scene_id) {
 
 	form.append(form_row('title', 'Scene Title'))
 	const playerMapRow = form_row('player_map', 'Player Map', null, true)
+	
 	const dmMapRow = form_row('dm_map', 'Dm Map', null, true)
 	
 	// add in toggles for these 2 rows
-	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
-	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_basic_form_toggle_click))
+	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
+	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	form.append(playerMapRow)
 	form.append(dmMapRow)
 
@@ -407,7 +425,6 @@ function edit_scene_dialog(scene_id) {
 
 	submitButton.click(function() {
 		console.group("Saving scene changes")
-		// TODO Bain this is wrong?
 		get_edit_form_data(scene)
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
@@ -919,10 +936,14 @@ function edit_scene_dialog(scene_id) {
 	//		f.append(export_grid);
 	container.css('opacity', '0.0');
 	container.append(form);
+
+	
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
 	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Optional");
+	validate_image_input($(playerMapRow).find("input")[0])
+	validate_image_input($(dmMapRow).find("input")[0])
 }
 
 function refresh_scenes() {
@@ -1329,10 +1350,15 @@ function fill_importer(scene_set, start) {
 			$("#scene_properties input[name='title']").val(scene.title);
 			$("#scene_properties input[name='scale']").val(scene.scale);
 
-			if (typeof scene.player_map_is_video !== "undefined")
-				$("#scene_properties input[name='player_map_is_video']").prop('checked', scene.player_map_is_video === "1");
-			if (typeof scene.dm_map_is_video !== "undefined")
-				$("#scene_properties input[name='dm_map_is_video']").prop('checked', scene.dm_map_is_video === "1");
+			
+			scene.player_map_is_video === "1" || scene.player_map.includes("youtube") ?
+				$("#player_map_is_video_toggle").addClass('rc-switch-checked') : 
+				$("#player_map_is_video_toggle").removeClass('rc-switch-checked')
+			
+		
+			scene.dm_map_is_video === "1" ?
+				$("dm_map_is_video_toggle").addClass('rc-switch-checked') : 
+				$("dm_map_is_video_toggle").removeClass('rc-switch-checked')
 
 
 			if (typeof scene.uuid !== "undefined")
@@ -1363,6 +1389,8 @@ function fill_importer(scene_set, start) {
 				$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
 
 			$("#mega_importer").remove();
+			validate_image_input($("input[name=player_map]")[0])
+			validate_image_input($("input[name=dm_map]")[0])
 		});
 
 		entry.append($("<div>").append(b));

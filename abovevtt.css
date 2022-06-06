@@ -4005,6 +4005,10 @@ div.ddbc-tab-options--layout-pill>button{
     color: red;
 }
 
+.url-validator.unsure {
+    color: rgb(255 82 0);
+}
+
 .url-validator.valid {
     color: green;
 }
