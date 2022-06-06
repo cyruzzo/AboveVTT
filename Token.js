@@ -981,7 +981,7 @@ class Token {
 				old.css("font-size",fs);
 			}
 
-			if (this.options.hidden) {
+			if (this.options.hidden || is_token_under_fog(this.options.id)) {
 				if (window.DM)
 					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 				else
@@ -1133,7 +1133,7 @@ class Token {
 			}
 
 			var newopacity = 1.0;
-			if (this.options.hidden) {
+			if (this.options.hidden || is_token_under_fog(this.options.id)) {
 				if (window.DM)
 					newopacity = 0.5; // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 				else
