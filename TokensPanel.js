@@ -1609,17 +1609,19 @@ function refresh_encounter(clickedRow, clickedItem, callback) {
             console.warn("Failed to refresh encounter", response);
             callback(false);
         } else {
-            fetch_and_inject_encounter_monsters(clickedRow, clickedItem);
             clickedItem.name = response.name;
             clickedItem.description = response.flavorText;
             clickedRow.find(".sidebar-list-item-row-details-title").text(response.name);
             clickedRow.find(".sidebar-list-item-row-details-subtitle").text(response.flavorText);
-            callback(true);
+            fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback);
         }
     });
 }
 
-function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
+function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
@@ -1627,6 +1629,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
+            callback(false);
         } else {
             let monsterItems = response
                 .map(monsterData => SidebarListItem.Monster(monsterData))
@@ -1634,6 +1637,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
             encounter_monster_items[clickedItem.encounterId] = monsterItems;
             update_monster_item_cache(monsterItems); // let's cache these so we won't have to fetch them again if the user places them on the scene
             inject_encounter_monsters();
+            callback(true);
         }
     });
 }
