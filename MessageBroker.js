@@ -1155,6 +1155,7 @@ class MessageBroker {
 
 		window.TOKEN_OBJECTS = {};
 		let data = msg.data;
+		let self=this;
 
 		if(window.CLOUD){
 			if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
@@ -1204,9 +1205,7 @@ class MessageBroker {
    	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
 
 			set_default_vttwrapper_size()
-			if(!window.DM)
-				check_token_visibility();
-
+			
 			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 			if(window.CLOUD && !window.DM && data.dm_map_usable=="1"){
 				$("#scene_map").stop();
@@ -1217,12 +1216,32 @@ class MessageBroker {
 				$("#scene_map").attr("src",data.player_map);
 				
 			}
+			console.log("LOADING TOKENS!");
+
+			for (var i = 0; i < data.tokens.length; i++) {
+				self.handleToken({
+					data: data.tokens[i]
+				});
+			}
+			if(!window.DM)
+					check_token_visibility();
+	
+			if(window.CLOUD && window.DM){
+				$("#combat_area").empty();
+				ct_load();
+			}
+
+			if(window.DM)
+				get_pclist_player_data();
+
+
 
 			if (window.EncounterHandler !== undefined) {
 				fetch_and_cache_scene_monster_items(true);
 			}
 			did_update_scenes();
 			console.groupEnd()
+			
 		});
 
 
@@ -1250,20 +1269,7 @@ class MessageBroker {
 
 
 		
-		for (var i = 0; i < data.tokens.length; i++) { // QUICK HACK
-			this.handleToken({
-				data: data.tokens[i]
-			});
-		}
-		if(!window.DM)
-				check_token_visibility();
-
-		if(window.CLOUD && window.DM){
-			$("#combat_area").empty();
-			ct_load();
-		}
-
-		get_pclist_player_data();
+		
 		// console.groupEnd()
 	}
 

@@ -1488,7 +1488,7 @@ class Token {
 		this.update_dead_cross(token)
 		// this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
-		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
 	}
 
