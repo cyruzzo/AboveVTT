@@ -408,9 +408,24 @@ class WaypointManagerClass {
 };
 
 
-// if it was not executed in the last second, execute it immediately
+function is_token_under_fog(tokenid){
+	if(window.DM)
+		return false;
+	var canvas = document.getElementById("fog_overlay");
+	var ctx = canvas.getContext("2d");
+	var left = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	var top = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
+	if (pixeldata[3] == 255)
+		return true;
+	else
+		return false;
+}
+
+
+// if it was not executed in the last 1 second, execute it immediately and asynchronously
 // if it's already scheduled to be executed, return
-// otherwise, schedule it to execute in 1 second
+// otherwise, schedule it to execute in 5 seconds
 function check_token_visibility(){
 	if(window.DM)
 		return;
@@ -419,12 +434,12 @@ function check_token_visibility(){
 	}
 	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
 		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
-		do_check_token_visibility();
+		setTimeout(do_check_token_visibility(),1);
 		return;
 	}
 	else {
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
-		setTimeout(do_check_token_visibility,1000);
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+5000;
+		setTimeout(do_check_token_visibility,5000);
 		return;
 	}
 }
@@ -441,10 +456,11 @@ function do_check_token_visibility() {
 		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
 		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-		auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 		if (pixeldata[3] == 255) {
+			
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
