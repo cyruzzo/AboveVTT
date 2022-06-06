@@ -2539,8 +2539,16 @@ h5.token-image-modal-footer-title:after {
     border-radius: 3px;
     object-fit: cover;
 }
+.sidebar-list-item-row-img .aoe-shape-line{
+    transform: scaleX(0.5);
+}
+.custom-token-image-item .aoe-shape-line{
+    width: 50%;
+    left: 25%
+}
+.custom-token-image-item .aoe-token-tileable,
 .sidebar-list-item-row-img [data-img]{
-    background-size: 50px;
+    background-size: 100px;
     animation: none;
     opacity: 100%;
 }

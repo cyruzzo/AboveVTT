@@ -1252,7 +1252,9 @@ function create_token_inside(listItem) {
     sidebarPanel.inputWrapper.append("<div class='menu-subtitle'>Size</div>");
     
     sidebarPanel.inputWrapper.append(`<div><input min='5' id='aoe_feet_height' value='${tokenSize}' style='width:100%;margin-top:8px;margin-bottom:25px;text-align:center' maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}'></div>`);
-    
+    $("#aoe_feet_height").on("change", function (e) {
+        listItem.size = parseInt(e.target.value)
+    });
     $("#aoe_feet_height").keydown(function(e) {
         close_sidebar_modal()
     });
@@ -1584,7 +1586,7 @@ function build_alternative_image_for_modal(image, placedToken, isAOE=false) {
         tokenDiv = $(`
 		    <div class="custom-token-image-item">
 			    <div class="token-image-sizing-dummy"></div>
-			    <div class="token-image token-round ${image.replace("class=","")}" />
+			    <div class="token-image ${image.replace("class=","")}"/>
 	    	</div>
     	`);
     if (placedToken !== undefined) {

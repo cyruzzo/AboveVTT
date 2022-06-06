@@ -858,7 +858,7 @@ function build_sidebar_list_row(listItem) {
   else{
     // possibly change the background-image-size so it looks nicer as a small image
     let img = $(
-      `<div data-img="true" style='transform:scale(1) rotate(0)'; 
+      `<div data-img="true"; 
       class="aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}">
        </div>
       `)
