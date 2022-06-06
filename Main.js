@@ -2330,13 +2330,6 @@ function init_ui() {
 	black_layer.animate({ opacity: "1" }, 5000);
 	black_layer.css("z-index", "1");
 
-
-	if (!DM) {
-		setTimeout(function() {
-			window.MB.sendMessage("custom/myVTT/syncmeup");
-			notify_player_join();
-		}, 5000);
-	}
 	if(DM && window.CLOUD){
 		setTimeout(function(){
 			window.MB.sendMessage("custom/myVTT/dmjoin"); // join and ask for the scene list
