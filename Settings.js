@@ -307,14 +307,13 @@ function init_settings(){
 			dmOnly: true
 		}
 	];
-	if (get_browser().chrome) {
-		experimental_features.push({
-			name: 'streamDiceRolls',
-			label: 'Stream Dice Rolls',
-			enabledDescription: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`,
-			disabledDescription: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`
-		});
-	}
+	
+	experimental_features.push({
+		name: 'streamDiceRolls',
+		label: 'Stream Dice Rolls',
+		enabledDescription: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`,
+		disabledDescription: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`
+	});
 	body.append(`
 		<br />
 		<h5 class="token-image-modal-footer-title">Experimental Features</h5>
