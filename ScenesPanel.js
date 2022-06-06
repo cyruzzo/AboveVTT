@@ -96,6 +96,7 @@ function get_edit_form_data(scene=null){
 		}
 		data[inputName] = inputValue
 	})
+	return data
 }
 
 function validate_image_input(element){
