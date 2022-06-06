@@ -1275,6 +1275,8 @@ class Token {
 
 				start: function (event) {
 					event.stopPropagation()
+					if(window.ALLOWTOKENMEASURING)
+						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.clientX;
@@ -1380,7 +1382,7 @@ class Token {
 								context.setLineDash([])
 								// list the temp overlay so we can see the ruler
 								clear_temp_canvas()
-								$("#temp_overlay").css("z-index", "50")
+								
 								WaypointManager.setCanvas(canvas);
 								WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
 								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
