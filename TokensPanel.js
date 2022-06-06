@@ -579,12 +579,12 @@ function update_pc_token_rows() {
                 abilityValue.find(".ability_score").text(a.score);
 
             });
-            row.find(".tokens-panel-row-details-subtitle .pp-value").text(playerData.pp);
-            row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.walking);
+            row.find(".pp-value").text(playerData.pp);
+            row.find(".walking-value").text(playerData.walking);
             if (playerData.inspiration) {
-                row.find(".sidebar-list-item-row-details-subtitle .inspiration").show();
+                row.find(".inspiration").show();
             } else {
-                row.find(".sidebar-list-item-row-details-subtitle .inspiration").hide();
+                row.find(".inspiration").hide();
             }
         }
     });
