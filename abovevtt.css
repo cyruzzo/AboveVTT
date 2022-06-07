@@ -2395,6 +2395,7 @@ h5.token-image-modal-footer-title:after {
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
 }
+.custom-token-image-item [data-img],
 .custom-token-image-item img {
     position: absolute;
     top: 0;
@@ -2406,6 +2407,14 @@ h5.token-image-modal-footer-title:after {
     width: 100%;
     height: 100%;
 }
+
+.custom-token-image-item [data-img]:hover {
+    border: lightgrey solid 2px;
+}
+.custom-token-image-item.selected{
+    border: #c53131 solid 5px; 
+}
+
 .token-image-sizing-dummy {
     /* this allows us to size the img using a 1:1 aspect ratio without having to use js to calculate the height after the felx width has been determined */
     margin-top: 100%;

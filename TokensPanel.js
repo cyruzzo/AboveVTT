@@ -292,10 +292,7 @@ function rebuild_token_items_list() {
         tokenItems.push(SidebarListItem.Encounter(encounter));
         // encounter_monster_items[encounterId]?.forEach(monsterItem => tokenItems.push(monsterItem));
     }
-
-    tokenItems = tokenItems.concat(aoe_items)
-
-    window.tokenListItems = tokenItems;
+    window.tokenListItems = tokenItems.concat(aoe_items)
     console.groupEnd();
 }
 
@@ -380,21 +377,6 @@ function inject_monster_list_items(listItems) {
         return;
     }
     let list = monsterFolder.find(`> .folder-item-list`);
-    for (let i = 0; i < listItems.length; i++) {
-        let item = listItems[i];
-        let row = build_sidebar_list_row(item);
-        enable_draggable_token_creation(row);
-        list.append(row);
-    }
-}
-
-function inject_aoe_list_items(listItems){
-    let aoeFolder = find_html_row_from_path(SidebarListItem.PathAoe, tokensPanel.body);
-    if (aoeFolder === undefined || aoeFolder.length === 0) {
-        console.warn("inject_aoe_list_items failed to find the aoe folder");
-        return;
-    }
-    let list = aoeFolder.find(`> .folder-item-list`);
     for (let i = 0; i < listItems.length; i++) {
         let item = listItems[i];
         let row = build_sidebar_list_row(item);
@@ -510,7 +492,6 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
 
     update_pc_token_rows();
     inject_encounter_monsters();
-    inject_aoe_list_items(window.tokenListItems.filter(tli => tli.type === "aoe"))
     console.groupEnd()
 }
 
@@ -537,8 +518,12 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 // TODO: build this out
                 let helper = draggedRow.find("[data-img]").clone();
                 helper.addClass("draggable-token-creation");
-                helper.css("width", "50px")
-                helper.css("height", "50px")
+                // do something specific for lines
+                const width = `${Math.round(draggedItem.size / window.CURRENT_SCENE_DATA.fpsq * window.CURRENT_SCENE_DATA.hpps)}px`
+                const height = `${Math.round(draggedItem.size / window.CURRENT_SCENE_DATA.fpsq * window.CURRENT_SCENE_DATA.hpps)}px`
+                helper.css("width", width)
+                helper.css("height", height)
+                
                 return helper;
             } else {
                 let helper = draggedRow.find("img.token-image").clone();
@@ -568,6 +553,9 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 top: Math.floor(ui.helper.height() / 2)
             };
             if (draggedItem.isTypeAoe()) {
+                const thisItemIndex = tokenListItems.findIndex(tli => matches_full_path(draggedRow,tli.fullPath()))
+                tokenListItems[thisItemIndex].style = draggedRow.attr("data-style")
+                rebuild_token_items_list()
                 hide_player_sheet();
                 close_player_sheet();
             }
@@ -1249,18 +1237,35 @@ function create_token_inside(listItem) {
 
     let name = listItem.name;
     let tokenSize = token_size_for_item(listItem) * window.CURRENT_SCENE_DATA.fpsq;
-    sidebarPanel.updateHeader(name, `Current size: ${tokenSize}ft`, );
+    sidebarPanel.updateHeader(
+        name,
+        `Current Size: ${tokenSize}ft Current Style: ${listItem.style}`,
+        "Select token configuration and either save, or drag out a token");
+    
 
     sidebarPanel.inputWrapper.append("<div class='menu-subtitle'>Size</div>");
     
-    sidebarPanel.inputWrapper.append(`<div><input min='5' id='aoe_feet_height' value='${tokenSize}' style='width:100%;margin-top:8px;margin-bottom:25px;text-align:center' maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}'></div>`);
-    $("#aoe_feet_height").on("change", function (e) {
-        listItem.size = parseInt(e.target.value)
-    });
+    sidebarPanel.inputWrapper.append(
+        `<div><input min='5' id='aoe_feet_height' value='${tokenSize}'
+            style='width:100%;text-align:center'
+            maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}'>
+         </div>`);
     $("#aoe_feet_height").keydown(function(e) {
         close_sidebar_modal()
     });
-    
+    let saveButton = $(
+        `<button class="sidebar-panel-footer-button" 
+            style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">
+            Save Token
+        </button>`);
+        saveButton.on("click", function (event) {
+            const thisItemIndex = tokenListItems.findIndex(tli => tli.fullPath() === listItem.fullPath())
+            tokenListItems[thisItemIndex].size = parseInt($("#aoe_feet_height").val()) / window.CURRENT_SCENE_DATA.fpsq
+            tokenListItems[thisItemIndex].style = $(".sidebar-panel-body").find(".selected [data-style]").attr("data-style")
+            did_change_mytokens_items();
+            close_sidebar_modal();
+        });
+    sidebarPanel.inputWrapper.append(saveButton);
     redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 }
 
@@ -1520,7 +1525,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
         }
         else{
             parsedImage = parse_img(imageUrl);
-            tokenDiv = build_alternative_image_for_modal(parsedImage, placedToken, true);
+            tokenDiv = build_alternative_image_for_modal(parsedImage, placedToken, listItem);
         }
         
         if (placedToken?.isMonster()) {
@@ -1591,23 +1596,31 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
  * @param placedToken {Token} the Token object that as been placed on the scene; else undefined
  * @returns {*|jQuery|HTMLElement} the HTML that you can add to a sidebarPanel modal
  */
-function build_alternative_image_for_modal(image, placedToken, isAOE=false) {
+function build_alternative_image_for_modal(image, placedToken, listItem) {
 
     let tokenDiv 
-    if (!isAOE)
+    if (!listItem.isTypeAoe())
         tokenDiv= $(`
 		    <div class="custom-token-image-item">
 			    <div class="token-image-sizing-dummy"></div>
 			    <img alt="token-img" class="token-image token-round" src="${image}" />
 	    	</div>
     	`);
-    else
+    else{
+        const isSelected = image.includes(listItem.style)
         tokenDiv = $(`
-		    <div class="custom-token-image-item">
+		    <div class="custom-token-image-item ${isSelected ? "selected" : ""}">
 			    <div class="token-image-sizing-dummy"></div>
-			    <div data-img="true" class="token-image ${image.replace("class=","")}"/>
+			    <div data-img="true" 
+                    data-style="${image.match(/aoe-style-\w+/gm)[0].replace("aoe-style-","")}"
+                    class="token-image ${image.replace("class=","")}"/>
 	    	</div>
     	`);
+        tokenDiv.on("click", function (e) {
+            $(".sidebar-panel-body").find(".custom-token-image-item").removeClass("selected")
+            $(e.currentTarget).addClass("selected")
+        });
+    }
     if (placedToken !== undefined) {
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal

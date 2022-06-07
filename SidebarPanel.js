@@ -1106,10 +1106,14 @@ function build_sidebar_list_row(listItem) {
       break;
     case SidebarListItem.TypeAoe:
       row.attr("data-shape", listItem.shape);
+      let size = listItem.size
+      if (window.CURRENT_SCENE_DATA?.fpsq > 0){
+          size =  size * window.CURRENT_SCENE_DATA.fpsq
+      }
       row.attr("data-size", listItem.size);
       row.attr("data-style", listItem.style);
       subtitle.append(`<div class="subtitle-attibute">${listItem.style}</div>`);
-      subtitle.append(`<div class="subtitle-attibute">${listItem.size}</div>`);
+      subtitle.append(`<div class="subtitle-attibute">${size}</div>`);
      
       break;
   }
