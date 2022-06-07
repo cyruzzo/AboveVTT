@@ -2411,9 +2411,6 @@ h5.token-image-modal-footer-title:after {
 .custom-token-image-item [data-img]:hover {
     border: lightgrey solid 2px;
 }
-.custom-token-image-item.selected{
-    border: #c53131 solid 5px; 
-}
 
 .token-image-sizing-dummy {
     /* this allows us to size the img using a 1:1 aspect ratio without having to use js to calculate the height after the felx width has been determined */

@@ -656,7 +656,7 @@ function sanitize_folder_path(dirtyPath) {
  * @param html {*|jQuery|HTMLElement} the html representation of the item
  * @returns {SidebarListItem|undefined} SidebarListItem.Aoe if found, else undefined
  */
-function build_aoe_from_identifier_html(html) {
+function is_html_aoe(html) {
   let shape = html.attr("data-shape");
   let style = html.attr("data-style");
   let size = html.attr("data-size");
@@ -674,10 +674,7 @@ function find_sidebar_list_item(html) {
   if (html === undefined) return undefined;
 
   let foundItem;
-
-  const aoe = build_aoe_from_identifier_html(html);
-  if (aoe) return aoe
-
+  
   let encounterId = html.attr("data-encounter-id");
   if (encounterId !== undefined && encounterId !== null && encounterId !== "") {
     foundItem = window.tokenListItems.find(item => item.isTypeEncounter() && item.encounterId === encounterId);

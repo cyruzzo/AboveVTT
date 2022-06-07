@@ -439,6 +439,14 @@ function init_tokens_panel() {
     }, 2000);
 }
 
+
+function redraw_token_list_item(item){
+    const row = build_sidebar_list_row(item);
+    const oldRow = find_html_row_from_path(item.fullPath(), tokensPanel.body)
+    $(oldRow).replaceWith(row);
+    enable_draggable_token_creation(row);
+}
+
 /**
  * clears and redraws the list of tokens in the sidebar
  * @param searchTerm {string} the search term used to filter the list of tokens
@@ -495,6 +503,14 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
     console.groupEnd()
 }
 
+function get_helper_size(draggedItem){
+    const tokenSize = token_size_for_item(draggedItem);
+    const width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
+    const height = Math.round(window.CURRENT_SCENE_DATA.vpps) * tokenSize;
+    const helperWidth = width / (1.0 / window.ZOOM);
+    const helperHeight = height / (1.0 / window.ZOOM);
+    return [helperWidth, helperHeight]
+}
 /**
  * Enables dragging the given html and dropping it on a scene to create a token.
  * The given html MUST be a decendent of an item marked with the class .list-item-identifier which is set by calling {set_full_path}
@@ -510,54 +526,68 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
+            let helper
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
             }
-            let draggedItem = find_sidebar_list_item(draggedRow);
+            const draggedItem = find_sidebar_list_item(draggedRow);
+          
+            let [helperWidth, helperHeight] = get_helper_size(draggedItem)
+
             if (draggedItem.isTypeAoe()) {
-                // TODO: build this out
-                let helper = draggedRow.find("[data-img]").clone();
-                helper.addClass("draggable-token-creation");
-                // do something specific for lines
-                const width = `${Math.round(draggedItem.size / window.CURRENT_SCENE_DATA.fpsq * window.CURRENT_SCENE_DATA.hpps)}px`
-                const height = `${Math.round(draggedItem.size / window.CURRENT_SCENE_DATA.fpsq * window.CURRENT_SCENE_DATA.hpps)}px`
-                helper.css("width", width)
-                helper.css("height", height)
+
+                const thisItemIndex = tokenListItems.findIndex(tli => matches_full_path(draggedRow,tli.fullPath()))
+                // update the token menu with the dragged out of the modal
+                if (!draggedRow.attr("data-style")){
+                    // this occurs when dragging from the modal instead, 
+                    tokenListItems[thisItemIndex].style = draggedRow.find("[data-style]").attr("data-style")
+                    tokenListItems[thisItemIndex].size = parseInt($("#aoe_feet_height").val()) / window.CURRENT_SCENE_DATA.fpsq
+                    redraw_token_list_item(tokenListItems[thisItemIndex])
+                }
+                hide_player_sheet();
+                close_player_sheet();
+                // get the new height of the helper
+                [helperWidth, helperHeight] = get_helper_size(draggedItem)
+                helper = draggedRow.find("[data-img]").clone();
+                // perform specific resizing based on shape
+                if (draggedItem.shape === "circle"){
+                    helperWidth = helperWidth * 2 
+                    helperHeight = helperHeight * 2
+                }
+                else if (draggedItem.shape === "line"){
+                    helperWidth = Math.round(window.CURRENT_SCENE_DATA.hpps)  / (1.0 / window.ZOOM)
+                }
                 
-                return helper;
             } else {
-                let helper = draggedRow.find("img.token-image").clone();
+                
+                helper = draggedRow.find("img.token-image").clone();
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
                 } else {
-                    let randomImage = random_image_for_item(draggedItem);
+                    const randomImage = random_image_for_item(draggedItem);
                     helper.attr("src", randomImage);
                 }
-                helper.addClass("draggable-token-creation");
-                return helper;
             }
+
+            $(helper).css('width', `${helperWidth}px`);
+            $(helper).css('height', `${helperHeight}px`);
+           
+            helper.addClass("draggable-token-creation");
+            return helper;
+
         },
         start: function (event, ui) {
-            console.log("enable_draggable_token_creation start");
             let draggedRow = $(event.target).closest(".list-item-identifier");
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
             }
-            let draggedItem = find_sidebar_list_item(draggedRow);
-            let tokenSize = token_size_for_item(draggedItem);
-            let width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
-            let helperWidth = width / (1.0 / window.ZOOM);
-            $(ui.helper).css('width', `${helperWidth}px`);
+            const draggedItem = find_sidebar_list_item(draggedRow);
             $(this).draggable('instance').offset.click = {
                 left: Math.floor(ui.helper.width() / 2),
                 top: Math.floor(ui.helper.height() / 2)
             };
             if (draggedItem.isTypeAoe()) {
-                const thisItemIndex = tokenListItems.findIndex(tli => matches_full_path(draggedRow,tli.fullPath()))
-                tokenListItems[thisItemIndex].style = draggedRow.attr("data-style")
-                rebuild_token_items_list()
-                hide_player_sheet();
-                close_player_sheet();
+               
             }
         },
         drag: function (event, ui) {
@@ -586,7 +616,8 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 let draggedItem = find_sidebar_list_item(draggedRow);
                 let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
                 let src = $(ui.helper).attr("src");
-                create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
+                create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2);
+                close_sidebar_modal()
             } else {
                 console.log("Not dropping over element", droppedOn);
             }
@@ -776,7 +807,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 gridHeight: listItem.shape === "line" ? Math.round(listItem.size) : "",
                 gridWidth: listItem.shape === "line" ? 1 : "",
                 restrictPlayerMove: false,
-                hidden: false,
+                hidden: hidden,
                 locked: false,
                 disableaura: true,
                 legacyaspectratio: false,
@@ -1247,25 +1278,12 @@ function create_token_inside(listItem) {
     
     sidebarPanel.inputWrapper.append(
         `<div><input min='5' id='aoe_feet_height' value='${tokenSize}'
-            style='width:100%;text-align:center'
+            style='width:100%;text-align:center;margin-bottom:20px'
             maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}'>
          </div>`);
     $("#aoe_feet_height").keydown(function(e) {
         close_sidebar_modal()
     });
-    let saveButton = $(
-        `<button class="sidebar-panel-footer-button" 
-            style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">
-            Save Token
-        </button>`);
-        saveButton.on("click", function (event) {
-            const thisItemIndex = tokenListItems.findIndex(tli => tli.fullPath() === listItem.fullPath())
-            tokenListItems[thisItemIndex].size = parseInt($("#aoe_feet_height").val()) / window.CURRENT_SCENE_DATA.fpsq
-            tokenListItems[thisItemIndex].style = $(".sidebar-panel-body").find(".selected [data-style]").attr("data-style")
-            did_change_mytokens_items();
-            close_sidebar_modal();
-        });
-    sidebarPanel.inputWrapper.append(saveButton);
     redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 }
 
@@ -1607,19 +1625,16 @@ function build_alternative_image_for_modal(image, placedToken, listItem) {
 	    	</div>
     	`);
     else{
-        const isSelected = image.includes(listItem.style)
         tokenDiv = $(`
-		    <div class="custom-token-image-item ${isSelected ? "selected" : ""}">
+		    <div class="custom-token-image-item ">
 			    <div class="token-image-sizing-dummy"></div>
 			    <div data-img="true" 
                     data-style="${image.match(/aoe-style-\w+/gm)[0].replace("aoe-style-","")}"
+                    data-size="${listItem.size}
+                    data-shape="${listItem.shape}
                     class="token-image ${image.replace("class=","")}"/>
 	    	</div>
     	`);
-        tokenDiv.on("click", function (e) {
-            $(".sidebar-panel-body").find(".custom-token-image-item").removeClass("selected")
-            $(e.currentTarget).addClass("selected")
-        });
     }
     if (placedToken !== undefined) {
         // the user is changing their token image, allow them to simply click an image
