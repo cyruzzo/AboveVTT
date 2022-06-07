@@ -1300,6 +1300,16 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     let inputWrapper = sidebarPanel.inputWrapper;
 
+
+    // we want this as a function so we can easily update the label as the user adds/removes images
+    const determineLabelText = function() {
+        if (alternative_images_for_item(listItem).length === 0) {
+            return "Replace The Default Image";
+        } else {
+            return "Add More Custom Images";
+        }
+    }
+
     // images
     let addImageUrl = function (newImageUrl) {
         if (listItem.isTypeMonster()) {
@@ -1321,8 +1331,10 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         }
         redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
         removeAllButton.show();
+        inputWrapper.find(".token-image-modal-footer-title").text(determineLabelText())
     };
-    let imageUrlInput = sidebarPanel.build_image_url_input("Add More Images", addImageUrl);
+
+    let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
     inputWrapper.append(imageUrlInput);
 
     if (listItem.isTypeMyToken()) {
@@ -1566,6 +1578,11 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     }
 
     decorate_modal_images(sidebarPanel, listItem, placedToken);
+    if (alternative_images_for_item(listItem).length === 0) {
+        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title").text("Replace The Default Image");
+    } else {
+        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title").text("Add More Custom Images");
+    }
 }
 
 /**

@@ -74,11 +74,14 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	} 
 }
 
+function close_token_context_menu() {
+	$("#tokenOptionsClickCloseDiv").click();
+}
+
 /**
  * Opens a sidebar modal with token configuration options
  * @param tokenIds {Array<String>} an array of ids for the tokens being configured
  */
-
 function token_context_menu_expanded(tokenIds, e) {
 	if (tokenIds === undefined || tokenIds.length === 0) {
 		console.warn(`token_context_menu_expanded was called without any token ids`);
@@ -105,7 +108,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
 
 	
-	let body = $("<div id='tokenOptionsContainer')></div>");
+	let body = $("<div id='tokenOptionsContainer'></div>");
 	moveableTokenOptions.append(body);
 
 	$('body').append(moveableTokenOptions);
@@ -120,14 +123,14 @@ function token_context_menu_expanded(tokenIds, e) {
 			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
 				open_player_sheet(token.options.id);
-				$("#tokenOptionsClickCloseDiv").click();
+				close_token_context_menu();
 			});
 			body.append(button);
 		} else if (token.isMonster()) {
 			let button = $(`<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
 				load_monster_stat(token.options.monster, token.options.id);
-				$("#tokenOptionsClickCloseDiv").click();
+				close_token_context_menu();
 			});
 			if(token.options.player_owned || window.DM){
 				body.append(button);
@@ -309,7 +312,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	 			token.selected = true;
 	 		});
 			delete_selected_tokens();
-			$("#tokenOptionsClickCloseDiv").click();
+			close_token_context_menu();
 	 	});
 	 }
 
@@ -1042,7 +1045,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 		body.append(changeImageMenuButton)
 	}
 
-	changeImageMenuButton.off().on("click", function(){	
+	changeImageMenuButton.off().on("click", function(){
+		close_token_context_menu();
 		id = tokens[0].options.id;
 		if (!(id in window.TOKEN_OBJECTS)) {
 			return;

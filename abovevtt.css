@@ -2300,6 +2300,7 @@ div.ct-sidebar__pane-content > div.selected-tab {
 }
 div.token-image-modal-footer-title {
     font-size: 13px;
+    /*width: 100%;*/
 }
 h1.token-image-modal-footer-title:after,
 h2.token-image-modal-footer-title:after,
@@ -2337,6 +2338,10 @@ h5.token-image-modal-footer-title:after {
     padding: 4px;
     border-top: 1px solid #d8e1e8;
 }
+.footer-input-wrapper .sidebar-panel-header-explanation {
+    font-size: 12px;
+    padding: 0;
+}
 .token-image-modal-url-label-wrapper {
     display: flex;
     flex-grow: 1;
@@ -2344,6 +2349,12 @@ h5.token-image-modal-footer-title:after {
 .token-image-modal-url-label-add-wrapper {
     display: flex;
     flex-direction: row;
+}
+.token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper {
+    flex-direction: column;
+}
+.token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title {
+    width: 100%;
 }
 .token-image-modal-remove-all-button {
     appearance: none;
