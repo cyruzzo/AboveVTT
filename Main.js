@@ -1368,6 +1368,13 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
+		$(event.target).contents().find(".mega-menu__fallback").remove();
+    // adding styles to elements not initially available
+    window.onresize = () => {
+      $(event.target).contents().find(".ct-character-sheet-mobile__header").css("top", "0px");
+      // DDB uses !important in their style, need to overwrite with attr() instead of css()
+      $(event.target).contents().find("#site-main").attr("style", "padding-top: 0px !important");
+    }
 
 		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
 			let addedElement = $(addedEvent.target);
