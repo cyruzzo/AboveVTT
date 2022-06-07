@@ -110,6 +110,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     try {
         $( '.ui-draggable-dragging' ).draggable("option", { revert: true }).trigger( 'mouseup' ).draggable("option", {revert: false })
     } catch (whoCares) { }
+    remove_tooltip();
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open

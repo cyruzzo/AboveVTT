@@ -1691,8 +1691,30 @@ function did_change_mytokens_items() {
  * @param listItem {SidebarListItem} the list item representing the monster that you want to display a stat block for
  */
 function open_monster_item(listItem) {
+    if (should_use_iframes_for_monsters()) {
+        // in case we need a way to fallback quickly
+        open_monster_item_iframe(listItem);
+        return;
+    }
     if (!listItem.isTypeMonster()) {
         console.warn("open_monster_item was called with the wrong item type", listItem);
+        return;
+    }
+    let sidebarModal = new SidebarPanel("monster-stat-block", true);
+    display_sidebar_modal(sidebarModal);
+    try {
+        build_and_display_stat_block_with_data(listItem.monsterData, sidebarModal.body, undefined);
+    } catch (error) {
+        console.error("open_monster_item failed to build a stat block locally. Attempting to open an iFrame instead", error);
+        close_sidebar_modal();
+        open_monster_item_iframe(listItem);
+    }
+}
+
+function open_monster_item_iframe(listItem) {
+
+    if (!listItem.isTypeMonster()) {
+        console.warn("open_monster_item_iframe was called with the wrong item type", listItem);
         return;
     }
 
@@ -2202,9 +2224,22 @@ const fetch_and_cache_scene_monster_items = mydebounce( (clearCache = false) => 
         return;
     }
     console.log("fetch_and_cache_scene_monster_items calling fetch_monsters with ids: ", monsterIds);
-    window.EncounterHandler.fetch_monsters(monsterIds, function (response) {
+    fetch_monsters(monsterIds, function (response) {
         if (response !== false) {
             update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
+        }
+    });
+});
+
+const fetch_and_cache_monsters = mydebounce( (monsterIds, callback) => {
+    const cachedIds = Object.keys(cached_monster_items);
+    const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
+    fetch_monsters(monstersToFetch, function (response) {
+        if (response !== false) {
+            update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
+        }
+        if (callback) {
+            callback();
         }
     });
 });

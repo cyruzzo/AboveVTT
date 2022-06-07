@@ -322,6 +322,21 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     border-radius: 0px 0px 3px 3px;
 }
 
+#resizeDragMon .avtt-stat-block-container {
+    margin: 10px 0px 0px 0px;
+    overflow: auto;
+}
+#resizeDragMon .avtt-stat-block-container .detail-content {
+    background: #fff;
+    width: 100%;
+}
+#site.body-rpgcharacter #resizeDragMon .avtt-stat-block-container .detail-content > .mon-stat-block {
+    padding-top: 0;
+    margin-top: 0;
+}
+#site.body-rpgcharacter #resizeDragMon .avtt-stat-block-container {
+    margin: 25px 0px 0px 0px;
+}
 
 #resizeDragMon iframe {
     z-index: -10000;

@@ -77,7 +77,8 @@ let scripts = [
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
-	{ src: "Main.js" }
+	{ src: "Main.js" },
+	{ src: "MonsterStatBlock.js" }
 ]
 
 // Too many of our scripts depend on each other. 

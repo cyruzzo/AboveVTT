@@ -458,33 +458,43 @@ function report_connection(){
 	window.MB.inject_chat(msgdata);
 }
 
+function use_iframes_for_monsters() { // this is just in case we find a bug and need to give users an easy way to fall back to iframes
+	close_sidebar_modal();
+	$("#resizeDragMon").remove();
+	window.fetchMonsterStatBlocks = true;
+	localStorage.setItem("use_iframes_for_monsters", "true");
+}
+function stop_using_iframes_for_monsters() { // this is just in case we find a bug and need to give users an easy way to fall back to iframes
+	close_sidebar_modal();
+	$("#resizeDragMon").remove();
+	window.fetchMonsterStatBlocks = false;
+	localStorage.setItem("use_iframes_for_monsters", "false");
+}
+function should_use_iframes_for_monsters() {
+	if (window.fetchMonsterStatBlocks === undefined) {
+		window.fetchMonsterStatBlocks = localStorage.getItem("use_iframes_for_monsters") === "true";
+	}
+	return window.fetchMonsterStatBlocks;
+}
 function load_monster_stat(monsterid, token_id) {
-	
-	console.group("load_monster_stat")
-	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
-	// const loadingSpinner = create_monster_loading_spinner()
-	monFrame = $("#resizeDragMon iframe")
-	// check if the monster pane is not open
-	if (! $("#resizeDragMon").length) {
-		$("body").append(draggable_resizable_div)
-		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
-		draggable_resizable_div.show("slow")
+	if (should_use_iframes_for_monsters()) {
+		load_monster_stat_iframe(monsterid, token_id);
+		return;
 	}
+	let container = build_draggable_monster_window();
+	build_and_display_stat_block_with_id(monsterid, container, token_id, function () {
+		$(".sidebar-panel-loading-indicator").hide();
+	});
+}
 
-	let container = $("<div id='resizeDragMon'/>");
+function load_monster_stat_iframe(monsterid, token_id) {
 
-	if($("#site #resizeDragMon").length>0){
-		$("#resizeDragMon iframe").remove();
-		$("#resizeDragMon").removeClass("hideMon");
-		container = $("#resizeDragMon");
-	}
-	container.resize(function(e) {
-        	e.stopPropagation();
-   	});
+	let container = build_draggable_monster_window();
+
 	let iframe = $("<iframe>");
 
 	iframe.css("display", "none");
-	
+
 	window.StatHandler.getStat(monsterid, function(stats) {
 		iframe.on("load", function(event) {
 			console.log('carico mostro');
@@ -516,7 +526,6 @@ function load_monster_stat(monsterid, token_id) {
 				});
 			}
 
-
 			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
 			$(".sidebar-panel-loading-indicator").hide()
@@ -526,10 +535,8 @@ function load_monster_stat(monsterid, token_id) {
 
 		iframe.attr('src', stats.data.url)
 	})
+
 	container.append(iframe);
-	if(!$("#site #resizeDragMon").length>0){
-		$("#site").prepend(container);
-	}
 
 	$(iframe).on("load", function(event){
 		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
@@ -539,7 +546,7 @@ function load_monster_stat(monsterid, token_id) {
 		$("#site", $("#resizeDragMon iframe").contents()).css('padding-right', '670px');
 
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
-			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);	
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);
 		});
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function(){
 			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", false);
@@ -549,7 +556,7 @@ function load_monster_stat(monsterid, token_id) {
 		$(event.target).contents().off("contextmenu").on("contextmenu", ".tooltip-hover", function(clickEvent) {
 			clickEvent.preventDefault();
 			clickEvent.stopPropagation();
-			
+
 			let toPost = $("#db-tooltip-container", $("#resizeDragMon iframe").contents()).clone();
 			toPost.find(".waterdeep-tooltip").attr("style", "display:block!important");
 			toPost.find(".tooltip").attr("style", "display:block!important");
@@ -578,7 +585,36 @@ function load_monster_stat(monsterid, token_id) {
 			});
 		});
 	});
-	
+
+
+}
+
+function build_draggable_monster_window() {
+
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+
+	// check if the monster pane is not open
+	if (! $("#resizeDragMon").length) {
+		$("body").append(draggable_resizable_div)
+		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
+		draggable_resizable_div.show("slow")
+	}
+
+	let container = $("<div id='resizeDragMon'/>");
+
+	if($("#site #resizeDragMon").length>0){
+		$("#resizeDragMon iframe").remove();
+		$("#resizeDragMon").removeClass("hideMon");
+		container = $("#resizeDragMon");
+	}
+	container.resize(function(e) {
+        	e.stopPropagation();
+   	});
+
+	if(!$("#site #resizeDragMon").length>0){
+		$("#site").prepend(container);
+	}
+
 	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 	if($("#monster_close_title_button").length==0){
 		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
@@ -625,6 +661,8 @@ function load_monster_stat(monsterid, token_id) {
 		}
 	});
 	minimize_player_monster_window_double_click($("#resizeDragMon"));
+
+	return $("#resizeDragMon");
 }
 
 function close_player_monster_stat_block() {
@@ -2203,6 +2241,11 @@ function init_ui() {
 	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
 	$("#site").append(s);
 
+	$("#site").append(`
+		<script type="text/javascript" src="/content/1-0-2027-0/js/libs/lightbox2/dist/js/lightbox.min.js"></script>
+        <link rel="stylesheet" href="/content/1-0-2027-0/js/libs/lightbox2/dist/css/lightbox.min.css">
+	`);
+
 	const background = $("<img id='scene_map'>");
 	background.css("top", "0");
 	background.css("left", "0");
@@ -2445,7 +2488,7 @@ function init_ui() {
 		if (sidebarMonsterFilter.length > 0 && !event.target.closest("#monster-filter-iframe")) {
 			close_monster_filter_iframe();
 		}
-
+		remove_tooltip(); // maybe too heavy-handed?
 	}
 
 	// Helper function to disable window mouse handlers, required when we

@@ -85,6 +85,7 @@
 		"DiceContextMenu/*",
 		"DiceRoller.js",
 		"ChatObserver.js",
-		"Main.js"
+		"Main.js",
+		"MonsterStatBlock.js"
 	]
 }
