@@ -871,7 +871,7 @@ div#combat_button{
 }
 
 #patreons {
-	padding-top:10px;
+	padding-top:0px;
     font-size: 8px;
 
    -webkit-column-count: 8;
