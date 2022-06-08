@@ -77,7 +77,7 @@ function handle_map_toggle_click(event){
 }
 
 
-function get_edit_form_data(scene=null){
+function get_edit_form_data(){
 	// bain todo, call image validation here and stop if it's not valid
 	let data = {}
 	$("#edit_scene_form").find("input, button.rc-switch").each(function() {
@@ -91,9 +91,6 @@ function get_edit_form_data(scene=null){
 			inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
 		}
 		
-		if (scene){
-			scene[inputName] = inputValue
-		}
 		data[inputName] = inputValue
 	})
 	return data
@@ -425,8 +422,19 @@ function edit_scene_dialog(scene_id) {
 		submitButton.html("Save");
 
 	submitButton.click(function() {
-		console.group("Saving scene changes")
-		get_edit_form_data(scene)
+		console.log("Saving scene changes")
+
+		const formData = get_edit_form_data();
+		const newName = $("#edit_scene_form").find("input[name=title]").val();
+		const toFullPath = `${scene.folderPath}/${newName}`;
+		if (scene_path_exists(sanitize_folder_path(`${scene.folderPath}/${newName}`))) {
+			alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
+			return;
+		}
+		for (key in formData) {
+			scene[key] = formData[key];
+		}
+
 		if(window.CLOUD){
 			window.ScenesHandler.persist_scene(scene_id,true,true);
 		}
@@ -822,6 +830,13 @@ function edit_scene_dialog(scene_id) {
 
 	wizard.click(
 		function() {
+
+			const newName = $("#edit_scene_form").find("input[name=title]").val();
+			const toFullPath = `${scene.folderPath}/${newName}`;
+			if (scene_path_exists(sanitize_folder_path(`${scene.folderPath}/${newName}`))) {
+				alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
+				return;
+			}
 
 			form.find("input").each(function() {
 				var n = $(this).attr('name');
@@ -1677,7 +1692,7 @@ function create_scene_inside(fullPath) {
 function create_scene_folder_inside(fullPath) {
 	let newFolderName = "New Folder";
 	let adjustedPath = sanitize_folder_path(fullPath.replace(SidebarListItem.PathScenes, ""));
-	let numberOfNewFolders = window.sceneListFolders.filter(i => i.folderPath === adjustedPath && i.name.startsWith(newFolderName)).length;
+	let numberOfNewFolders = window.sceneListFolders.filter(i => sanitize_folder_path(i.folderPath.replace(SidebarListItem.PathScenes, "")) === adjustedPath && i.name.startsWith(newFolderName)).length;
 	if (numberOfNewFolders > 0) {
 		newFolderName = `${newFolderName} ${numberOfNewFolders}`
 	}
@@ -1714,7 +1729,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
 		console.groupEnd();
 		if (alertUser !== false) {
-			alert(`A Folder with the name "${newName}" already exists at "${toFullPath}"`);
+			alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
 		}
 		return;
 	}
@@ -1758,8 +1773,11 @@ function rename_scene_folder(item, newName, alertUser) {
  * @returns {boolean} whether or not the path exists
  */
 function scene_path_exists(folderPath) {
-	return window.sceneListItems.find(s => s.folderPath === folderPath) !== undefined
-		|| window.sceneListItems.find(f => f.folderPath === folderPath || sanitize_folder_path(`${f.folderPath}/${f.name}`) === folderPath) !== undefined
+	const comparison = folderPath.startsWith(SidebarListItem.PathScenes) ? folderPath : sanitize_folder_path(`${SidebarListItem.PathScenes}/${folderPath}`);
+	const existingScene = window.sceneListItems.find(s => s.fullPath() === comparison) !== undefined;
+	const existingFolder = window.sceneListFolders.find(f => f.fullPath() === comparison) !== undefined;
+	console.debug("scene_path_exists", comparison, existingScene, existingFolder);
+	return (existingScene || existingFolder);
 }
 
 function register_scene_row_context_menu() {

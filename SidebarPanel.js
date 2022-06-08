@@ -1267,6 +1267,11 @@ function display_folder_configure_modal(listItem) {
       folderNameInput,
       `<button>Save</button>`,
       function(newFolderName, input, event) {
+        let oldPath = harvest_full_path($(input));
+        if (oldPath.endsWith(`/${newFolderName}`)) {
+          close_sidebar_modal();
+          return;
+        }
         let foundItem = find_sidebar_list_item($(input));
         let updateFullPath = rename_folder(foundItem, newFolderName);
         if (updateFullPath === undefined) {
