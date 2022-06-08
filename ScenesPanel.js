@@ -208,7 +208,7 @@ function edit_scene_dialog(scene_id) {
 		if (!hoverText) toggle.removeClass("sidebar-hovertext")
 		toggle.on("click", callback)
 		if (scene[name] === "1" || defaultOn){
-			toggle.click()
+			toggle.addClass("rc-switch-checked")
 		}
 		return toggle
 	}
