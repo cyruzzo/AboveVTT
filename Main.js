@@ -1255,45 +1255,46 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 /// documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
 function observe_character_sheet_aoe(documentToObserve) {
 
-	let mutation_target = documentToObserve.get(0);
-	let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-	let container = $("#sheet");
+	const mutation_target = documentToObserve.get(0);
+	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+	const container = $("#sheet");
 	if (is_characters_page()) {
 		container = $(".ct-character-sheet__inner");
 	}
 
-	let aoe_observer = new MutationObserver(function() {
-		let icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
+	const aoe_observer = new MutationObserver(function() {
+		const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
 		if (icons.length > 0){
 			icons.wrap(function(){
 				$(this).addClass("above-vtt-visited");
-				let button = $("<button class='above-aoe integrated-dice__container'></button>");
-				button.attr("data-shape", "set-me");
-				button.attr("data-style", "set-me");
-				button.attr("data-size", "set-me");
-				set_full_path(button)
+				const button = $("<button class='above-aoe integrated-dice__container'></button>");
+
+				const spellContainer = $(this).closest('.ct-spells-spell')
+				const name = spellContainer.find(".ddbc-spell-name").first().text()
+				let color = "default"
+				const feet = $(this).prev().find(".ddbc-distance-number__number").first().text()
+				const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
+				if (dmgIcon.length == 1){
+					color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
+				}
+				let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
+				shape = sanitize_aoe_shape(shape)
+
+				button.attr("data-shape", shape);
+				button.attr("data-style", color);
+				button.attr("data-size", feet);
+				button.attr("data-name", name);
+
+				set_full_path(button, name)
 				enable_draggable_token_creation(button);
 				button.css("border-width","1px");
 				button.click(function(e){
 					e.stopPropagation();
-
-					// figure out color
-					color = 'default';
-					dmg_icon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
-					if (dmg_icon.length == 1){
-						color = dmg_icon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
-					}
-
-					// grab shape (this should always exist)
-					shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
-
-					// grab feet (this should always exist)
-					feet = $(this).prev().children().first().children().first().text();
-
 					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
 					hide_player_sheet();
 					close_player_sheet();
-					drop_aoe_token(color, shape, feet);
+					const options = build_aoe_token_options(color, shape, feet, name)
+					place_token_in_center_of_view(options)
 				});
 				return button;
 			});

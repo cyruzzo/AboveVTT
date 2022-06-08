@@ -87,27 +87,27 @@ class Token {
 	}
 
 	gridSize() {
-		let size = parseFloat(this.options.size);
+		let size = parseInt(this.options.size);
 		if (isNaN(size)) {
 			// assume this token uses gridHeight/gridWidth instead.
 			if (this.options.gridWidth === 1 && this.options.gridHeight > 0){
-				return this.options.gridHeight
+				return Math.round(this.options.gridHeight)
 			}
 			return 1; // default to medium
 		}
-		let gridSize = parseFloat(window.CURRENT_SCENE_DATA.hpps); // one grid square
-		return size / gridSize;
+		let gridSize = parseInt(window.CURRENT_SCENE_DATA.hpps); // one grid square
+		return Math.round(size / gridSize);
 	}
 
 	sizeWidth() {
-		let w = parseFloat(this.options.gridWidth);
+		let w = parseInt(this.options.gridWidth);
 		if (isNaN(w)) return this.options.size;
-		return parseFloat(window.CURRENT_SCENE_DATA.hpps) * w;
+		return parseInt(window.CURRENT_SCENE_DATA.hpps) * w;
 	}
 	sizeHeight() {
-		let h = parseFloat(this.options.gridHeight);
+		let h = parseInt(this.options.gridHeight);
 		if (isNaN(h)) return this.options.size;
-		return parseFloat(window.CURRENT_SCENE_DATA.vpps) * h;
+		return parseInt(window.CURRENT_SCENE_DATA.vpps) * h;
 	}
 
 	hasCondition(conditionName) {

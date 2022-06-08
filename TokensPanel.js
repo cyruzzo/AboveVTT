@@ -531,6 +531,8 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 draggedRow = $(event.target);
             }
             const draggedItem = find_sidebar_list_item(draggedRow);
+            // unable to find a corresponding item
+            if (!draggedItem) return
           
             let [helperWidth, helperHeight] = get_helper_size(draggedItem)
 
@@ -557,6 +559,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 else if (draggedItem.shape === "line"){
                     helperWidth = Math.round(window.CURRENT_SCENE_DATA.hpps)  / (1.0 / window.ZOOM)
                 }
+                helper.attr("data-name-override", draggedRow.attr("data-name"))
                 
             } else {
                 
@@ -598,6 +601,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
             }
         },
         stop: function (event, ui) {
+            $( event.originalEvent.target ).one('click', function(e){ e.stopImmediatePropagation(); } );
             event.stopPropagation(); // prevent the mouseup event from closing the modal
             if ($(ui.helper).hasClass("drag-cancelled")) {
                 console.log("enable_draggable_token_creation cancelled");
@@ -616,7 +620,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 let draggedItem = find_sidebar_list_item(draggedRow);
                 let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
                 let src = $(ui.helper).attr("src");
-                create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2);
+                create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2, false, ui.helper.attr("data-name-override"));
                 close_sidebar_modal()
             } else {
                 console.log("Not dropping over element", droppedOn);
@@ -664,8 +668,9 @@ function update_pc_token_rows() {
  * @param eventPageX {number} MouseEvent.pageX if supplied, the token will be placed at this x coordinate, else centered in the view
  * @param eventPageY {number} MouseEvent.pageY if supplied, the token will be placed at this y coordinate, else centered in the view
  * @param disableSnap {boolean} if true, tokens will not snap to the grid. This is false by default and only used when placing multiple tokens
+ * @param nameOverride {string} if present will override the list items name with this name. This is for dragging out player aoe tokens from sheets
  */
-function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false) {
+function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "") {
 
     if (listItem === undefined) {
         console.warn("create_and_place_token was called without a listItem");
@@ -791,30 +796,8 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.disablestat = true;
             break;
         case SidebarListItem.TypeAoe:
-            const image = `class=aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}`
-            let size = window.CURRENT_SCENE_DATA.hpps * listItem.size
-            // circles are always by radius
-            if (listItem.shape == 'circle') {
-                size = size * 2;
-            }
-            options = {
-                disablestat: true,
-                hidestat: true,
-                disableborder: true,
-                square: true,
-                imgsrc: image,
-                size: listItem.shape !== "line" ? size : "",
-                gridHeight: listItem.shape === "line" ? Math.round(listItem.size) : "",
-                gridWidth: listItem.shape === "line" ? 1 : "",
-                restrictPlayerMove: false,
-                hidden: hidden,
-                locked: false,
-                disableaura: true,
-                legacyaspectratio: false,
-                deleteableByPlayers: true
-            };
-            // TODO: anything to alter here?
-            break;
+            options = build_aoe_token_options(listItem.style, listItem.shape, listItem.size, nameOverride)
+            break
     }
 
     console.log("create_and_place_token about to place token with options", options);
@@ -1270,8 +1253,8 @@ function create_token_inside(listItem) {
     let tokenSize = token_size_for_item(listItem) * window.CURRENT_SCENE_DATA.fpsq;
     sidebarPanel.updateHeader(
         name,
-        `Current Size: ${tokenSize}ft Current Style: ${listItem.style}`,
-        "Select token configuration and either save, or drag out a token");
+        "Select size and drag out style"
+        );
     
 
     sidebarPanel.inputWrapper.append("<div class='menu-subtitle'>Size</div>");

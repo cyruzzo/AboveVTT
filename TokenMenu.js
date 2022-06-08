@@ -906,9 +906,6 @@ function build_adjustments_flyout_menu(tokenIds) {
 	nameWrapper.append(nameInput); // input below label
 	body.append(nameWrapper);
 
-
-	// size
-	// bain todo gridsize needs to handle gridWith for line tokens
 	let tokenSizes = tokens.map(t => t.gridSize());
 	let uniqueSizes = [...new Set(tokenSizes)];
 	console.log("uniqueSizes", uniqueSizes);

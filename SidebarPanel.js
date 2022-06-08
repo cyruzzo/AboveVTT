@@ -484,8 +484,13 @@ class SidebarListItem {
   }
 
   // size is number of squares, not feet
-  static Aoe(shape, size, style) {
-    let item = new SidebarListItem(`${shape} AoE`, undefined, SidebarListItem.TypeAoe, SidebarListItem.PathAoe);
+  static Aoe(shape, size, style, name=undefined) {
+    let item
+    if (!name){
+      item = new SidebarListItem(`${shape} AoE`, undefined, SidebarListItem.TypeAoe, SidebarListItem.PathAoe);
+    }else{
+      item = new SidebarListItem(`${name}`, undefined, SidebarListItem.TypeAoe, SidebarListItem.PathAoe);
+    }
     console.debug(`SidebarListItem.Aoe ${item.fullPath()}`);
     item.shape = shape;
     let parsedSize = parseInt(size);
@@ -1110,7 +1115,7 @@ function build_sidebar_list_row(listItem) {
       row.attr("data-size", listItem.size);
       row.attr("data-style", listItem.style);
       subtitle.append(`<div class="subtitle-attibute">${listItem.style}</div>`);
-      subtitle.append(`<div class="subtitle-attibute">${size}</div>`);
+      subtitle.append(`<div class="subtitle-attibute">${size}ft</div>`);
      
       break;
   }

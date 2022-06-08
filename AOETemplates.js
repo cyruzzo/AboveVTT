@@ -48,7 +48,7 @@ function setup_aoe_button() {
 
     aoeMenu.append("<div class='menu-subtitle'>Size</div>");
     
-    aoeMenu.append(`<div><input min='5' tabindex='2' id='aoe_feet_height' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
+    aoeMenu.append(`<div><input min='5' tabindex='2' id='aoe_feet_in_menu' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
 
     aoeMenu.append("<div class='menu-subtitle'>Style</div>");
     aoeMenu.append(
@@ -107,12 +107,12 @@ function setup_aoe_button() {
 
     $("#aoe_menu button").click(function (e) {
        
-        const feet = $("#aoe_feet_height").val()
+        const size = $("#aoe_feet_in_menu").val() / window.CURRENT_SCENE_DATA.fpsq
 
         const shape = $(e.currentTarget).attr("data-shape") 
         const style = $("#aoe_styles").val().toLowerCase()
-        drop_aoe_token(style, shape, feet);
-
+        const options = build_aoe_token_options(style, shape, size)
+        place_token_in_center_of_view(options)
         if(window.DM){
             $('#select-button').click();
         }
@@ -122,10 +122,9 @@ function setup_aoe_button() {
     });
 }
 
-function drop_aoe_token(style, shape, feet) {
-   
-    // normalize shape
-    switch(shape) {
+function sanitize_aoe_shape(shape){
+     // normalize shape
+     switch(shape) {
         case "cube":
             shape = "square";
             break;
@@ -135,25 +134,20 @@ function drop_aoe_token(style, shape, feet) {
         case "cylinder":
             shape = "circle";
     }
-    let size = window.CURRENT_SCENE_DATA.hpps * (feet / window.CURRENT_SCENE_DATA.fpsq);
+    return shape
+}
 
-    const height =  parseInt(feet / window.CURRENT_SCENE_DATA.fpsq);
-    // circles are always by radius
-    if (shape == 'circle') {
-        size = size * 2;
-    }
-
-    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape}`
-
-    let atts = {
+function get_aoe_default_options(){
+    let options = {
+        // name: name,
         disablestat: true,
         hidestat: true,
         disableborder: true,
         square: true,
-        imgsrc: image,
-        size: shape !== "line" ? size : "",
-        gridHeight: shape === "line" ? Math.round(height) : "",
-        gridWidth: shape === "line" ? 1 : "",
+        // imgsrc: image,
+        // size: shape !== "line" ? size : "",
+        // gridHeight: shape === "line" ? Math.round(height) : "",
+        // gridWidth: shape === "line" ? 1 : "",
         restrictPlayerMove: false,
         hidden: false,
         locked: false,
@@ -161,16 +155,27 @@ function drop_aoe_token(style, shape, feet) {
         legacyaspectratio: false,
         deleteableByPlayers: true
     };
+    return options
+}
 
-    if(window.DM){
-        place_token_in_center_of_view(atts);
+function build_aoe_token_options(style, shape, countGridSquares, name = "") {
+    shape = sanitize_aoe_shape(shape)
+    let size = Math.round(window.CURRENT_SCENE_DATA.hpps * countGridSquares)
+
+    // circles are always by radius
+    if (shape == 'circle') {
+        size = size * 2;
     }
-    else{
-        let center = center_of_view();
-        atts.left = center.x;
-        atts.top = center.y;
-        window.MB.sendMessage("custom/myVTT/createtoken",atts);
-    }
+
+    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape}`
+    const options = get_aoe_default_options()
+    options.name = name
+    options.imgsrc= image
+    options.size = shape !== "line" ? size : ""
+    options.gridHeight = shape === "line" ? size : ""
+    options.gridWidth = shape === "line" ? 1 : ""
+
+    return options
 }
 
 function build_aoe_token_image(token){
