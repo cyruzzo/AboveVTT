@@ -1302,7 +1302,9 @@ function observe_character_sheet_aoe(documentToObserve) {
 					hide_player_sheet();
 					close_player_sheet();
 					const options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
-					place_token_in_center_of_view(options)
+					place_aoe_token_in_centre(options)
+					// place_token_in_center_of_view only works for the DM
+					// place_token_in_center_of_view(options)
 				});
 				return button;
 			});

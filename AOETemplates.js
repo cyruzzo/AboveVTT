@@ -113,18 +113,22 @@ function setup_aoe_button() {
         const shape = $(e.currentTarget).attr("data-shape") 
         const style = $("#aoe_styles").val().toLowerCase()
         const options = build_aoe_token_options(style, shape, size)
-        if(window.DM){
-            place_token_in_center_of_view(options)
-        }
-        else{
-            let center = center_of_view();
-            options.left = center.x;
-            options.top = center.y;
-            window.MB.sendMessage("custom/myVTT/createtoken",options);
-        }
+        place_aoe_token_in_centre(options)
         $('#select-button').click();
 
     });
+}
+
+function place_aoe_token_in_centre(options){
+    if(window.DM){
+        place_token_in_center_of_view(options)
+    }
+    else{
+        const center = center_of_view();
+        options.left = center.x;
+        options.top = center.y;
+        window.MB.sendMessage("custom/myVTT/createtoken",options);
+    }
 }
 
 function restyle_aoe_class(cls, style){
