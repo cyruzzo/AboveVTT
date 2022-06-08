@@ -1571,7 +1571,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
         modalBody.append(tokenDiv);
     }
     if (listItem.type === SidebarListItem.TypeAoe ) {
-        alternativeImages = get_available_styles().filter(aoeStyle => aoeStyle !== "default").map(aoeStyle => {
+        const withoutDefault = get_available_styles().filter(aoeStyle => aoeStyle !== "Default")
+        alternativeImages = withoutDefault.map(aoeStyle => {
           return `class=aoe-token-tileable aoe-style-${aoeStyle.toLowerCase()} aoe-shape-${listItem.shape}`
         })
     }

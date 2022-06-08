@@ -1279,7 +1279,7 @@ function observe_character_sheet_aoe(documentToObserve) {
 				}
 				let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
 				shape = sanitize_aoe_shape(shape)
-
+				button.attr("title", "Place area of effect token")
 				button.attr("data-shape", shape);
 				button.attr("data-style", color);
 				button.attr("data-size", Math.round(feet / window.CURRENT_SCENE_DATA.fpsq));
@@ -1294,7 +1294,7 @@ function observe_character_sheet_aoe(documentToObserve) {
 					e.stopPropagation();
 					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
 					hide_player_sheet();
-					// close_player_sheet();
+					close_player_sheet();
 					const options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
 					place_token_in_center_of_view(options)
 				});

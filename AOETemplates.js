@@ -113,13 +113,17 @@ function setup_aoe_button() {
         const shape = $(e.currentTarget).attr("data-shape") 
         const style = $("#aoe_styles").val().toLowerCase()
         const options = build_aoe_token_options(style, shape, size)
-        place_token_in_center_of_view(options)
         if(window.DM){
-            $('#select-button').click();
+            place_token_in_center_of_view(options)
         }
         else{
-            $('#aoe_button').click();
+            let center = center_of_view();
+            options.left = center.x;
+            options.top = center.y;
+            window.MB.sendMessage("custom/myVTT/createtoken",options);
         }
+        $('#select-button').click();
+
     });
 }
 
@@ -243,7 +247,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
     options.name = name
     options.imgsrc= image
     options.size = shape !== "line" ? size : ""
-    options.gridHeight = shape === "line" ? size : ""
+    options.gridHeight = shape === "line" ? countGridSquares : ""
     options.gridWidth = shape === "line" ? 1 : ""
 
     return options
