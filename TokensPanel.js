@@ -519,20 +519,27 @@ function get_helper_size(draggedItem){
  */
 function enable_draggable_token_creation(html, specificImage = undefined) {
     html.draggable({
-        appendTo: "#VTTWRAPPER",
+        appendTo: "body",
         zIndex: 100000,
         cursorAt: {top: 0, left: 0},
         cancel: '.token-row-gear ',
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
+            let isPlayerSheetAoe = false
+            let playerAoe = undefined
+            if (draggedRow.hasClass("above-aoe")){
+                // this dragged item is a player sheet aoe button. look up teh shape in the sidepanel
+                isPlayerSheetAoe = true
+                // copy the dragged row before replacing it with the sidepanel row
+                playerAoe = draggedRow.clone()
+                draggedRow = find_html_row_from_path(draggedRow.attr("data-full-path"), tokensPanel.body)
+            }
             let helper
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
             }
             const draggedItem = find_sidebar_list_item(draggedRow);
-            // unable to find a corresponding item
-            if (!draggedItem) return helper
           
             let [helperWidth, helperHeight] = get_helper_size(draggedItem)
 
@@ -546,21 +553,29 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                     tokenListItems[thisItemIndex].size = parseInt($("#aoe_feet_height").val()) / window.CURRENT_SCENE_DATA.fpsq
                     redraw_token_list_item(tokenListItems[thisItemIndex])
                 }
-                hide_player_sheet();
-                close_player_sheet();
-                // get the new height of the helper
-                [helperWidth, helperHeight] = get_helper_size(draggedItem)
+               
                 helper = draggedRow.find("[data-img]").clone();
-                // perform specific resizing based on shape
-                if (draggedItem.shape === "circle"){
+                [helperWidth, helperHeight] = get_helper_size(draggedItem)
+
+                if (isPlayerSheetAoe){
+                    aoeItem = SidebarListItem.Aoe($(playerAoe).attr("data-shape"), 
+                        $(playerAoe).attr("data-size"), 
+                        $(playerAoe).attr("data-stylesize"))
+                   $(helper).attr("data-style", aoeItem.style)
+                   $(helper).attr("data-size", aoeItem.size)
+                   $(helper).attr("class", `aoe-token-tileable aoe-style-${aoeItem.style} aoe-shape-${aoeItem.shape}`)
+                    [helperWidth, helperHeight] = get_helper_size(aoeItem)
+                    $(helper).attr("data-name-override", $(playerAoe).attr("data-name"))
+                }
+
+                 // perform specific resizing based on shape
+                 if (draggedItem.shape === "circle"){
                     helperWidth = helperWidth * 2 
                     helperHeight = helperHeight * 2
                 }
                 else if (draggedItem.shape === "line"){
                     helperWidth = Math.round(window.CURRENT_SCENE_DATA.hpps)  / (1.0 / window.ZOOM)
                 }
-                helper.attr("data-name-override", draggedRow.attr("data-name"))
-                
             } else {
                 
                 helper = draggedRow.find("img.token-image").clone();
@@ -580,6 +595,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
 
         },
         start: function (event, ui) {
+            event.stopPropagation();
             let draggedRow = $(event.target).closest(".list-item-identifier");
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
@@ -601,7 +617,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
             }
         },
         stop: function (event, ui) {
-            $( event.originalEvent.target ).one('click', function(e){ e.stopImmediatePropagation(); } );
+            // $( event.originalEvent.target ).one('click', function(e){ e.stopImmediatePropagation(); } );
             event.stopPropagation(); // prevent the mouseup event from closing the modal
             if ($(ui.helper).hasClass("drag-cancelled")) {
                 console.log("enable_draggable_token_creation cancelled");
@@ -1555,25 +1571,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
         modalBody.append(tokenDiv);
     }
     if (listItem.type === SidebarListItem.TypeAoe ) {
-        // if we don't have any alternative images, show the default image
-        const availableStyle = [
-            "Acid",
-            "Bludgeoning",
-            "Fire",
-            "Force",
-            "Ice",
-            "Lightning",
-            "Nature",
-            "Necrotic",
-            "Piercing",
-            "Poison",
-            "Psychic",
-            "Radiant",
-            "Slashing",
-            "Thunder",
-            "Water"
-        ]
-        alternativeImages = availableStyle.map(aoeStyle => {
+        alternativeImages = get_available_styles().filter(aoeStyle => aoeStyle !== "default").map(aoeStyle => {
           return `class=aoe-token-tileable aoe-style-${aoeStyle.toLowerCase()} aoe-shape-${listItem.shape}`
         })
     }

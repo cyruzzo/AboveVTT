@@ -19,25 +19,26 @@ const AOE_TEMPLATES = {
     'green-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenSquare.png',
 }
 
-const availabllStyle = [
-    "Acid",
-    "Bludgeoning",
-    "Default",
-    "Fire",
-    "Force",
-    "Ice",
-    "Lightning",
-    "Nature",
-    "Necrotic",
-    "Piercing",
-    "Poison",
-    "Psychic",
-    "Radiant",
-    "Slashing",
-    "Thunder",
-    "Water"
-]
-
+function get_available_styles(){
+    return [
+        "Acid",
+        "Bludgeoning",
+        "Default",
+        "Fire",
+        "Force",
+        "Ice",
+        "Lightning",
+        "Nature",
+        "Necrotic",
+        "Piercing",
+        "Poison",
+        "Psychic",
+        "Radiant",
+        "Slashing",
+        "Thunder",
+        "Water"
+    ]
+}
 
 
 
@@ -54,7 +55,7 @@ function setup_aoe_button() {
     aoeMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
             <select id='aoe_styles' class="ddbc-select ddbc-tab-options__header-heading" >
-                ${availabllStyle.map((aoeStyle) => {
+                ${get_available_styles().map((aoeStyle) => {
                     return `<option class="ddbc-tab-options__header-heading" value="${aoeStyle}">${aoeStyle}</option>`;
                 })}
             </select>
@@ -122,6 +123,9 @@ function setup_aoe_button() {
     });
 }
 
+function restyle_aoe_class(cls, style){
+    return cls.replace(/aoe-style-\w+ /gm, style)
+}
 function sanitize_aoe_shape(shape){
      // normalize shape
      switch(shape) {
@@ -137,17 +141,84 @@ function sanitize_aoe_shape(shape){
     return shape
 }
 
+// This is a list of spells that probably have a default style. We may want to create specific aoe styles for some of these
+// or more generic styles, such as a wind style for a bunch of things in here.
+
+// https://www.dndbeyond.com/spells/antilife-shell
+// https://www.dndbeyond.com/spells/antimagic-field
+// https://www.dndbeyond.com/spells/antipathy-sympathy
+// https://www.dndbeyond.com/spells/aura-of-life
+// https://www.dndbeyond.com/spells/aura-of-purity
+// https://www.dndbeyond.com/spells/aura-of-vitality
+// https://www.dndbeyond.com/spells/calm-emotions
+// https://www.dndbeyond.com/spells/circle-of-power
+// https://www.dndbeyond.com/spells/color-spray
+// https://www.dndbeyond.com/spells/confusion
+// https://www.dndbeyond.com/spells/conjure-barrage
+// https://www.dndbeyond.com/spells/conjure-volley
+// https://www.dndbeyond.com/spells/control-flames
+// https://www.dndbeyond.com/spells/control-weather
+// https://www.dndbeyond.com/spells/control-winds
+// https://www.dndbeyond.com/spells/create-or-destroy-water
+// https://www.dndbeyond.com/spells/creation
+// https://www.dndbeyond.com/spells/darkness
+// https://www.dndbeyond.com/spells/daylight
+// https://www.dndbeyond.com/spells/detect-evil-and-good
+// https://www.dndbeyond.com/spells/detect-magic
+// https://www.dndbeyond.com/spells/detect-poison-and-disease
+// https://www.dndbeyond.com/spells/distort-value
+// https://www.dndbeyond.com/spells/druid-grove
+// https://www.dndbeyond.com/spells/entangle
+// https://www.dndbeyond.com/spells/fabricate
+// https://www.dndbeyond.com/spells/faerie-fire
+// https://www.dndbeyond.com/spells/fear
+// https://www.dndbeyond.com/spells/fog-cloud
+// https://www.dndbeyond.com/spells/forcecage
+// https://www.dndbeyond.com/spells/globe-of-invulnerability
+// https://www.dndbeyond.com/spells/grease
+// https://www.dndbeyond.com/spells/guards-and-wards
+// https://www.dndbeyond.com/spells/hallow
+// https://www.dndbeyond.com/spells/hallucinatory-terrain
+// https://www.dndbeyond.com/spells/healing-spirit
+// https://www.dndbeyond.com/spells/holy-aura
+// https://www.dndbeyond.com/spells/hypnotic-pattern
+// https://www.dndbeyond.com/spells/leomunds-tiny-hut
+// https://www.dndbeyond.com/spells/light
+// https://www.dndbeyond.com/spells/magic-circle
+// https://www.dndbeyond.com/spells/magnificent-mansion
+// https://www.dndbeyond.com/spells/major-image
+// https://www.dndbeyond.com/spells/mass-cure-wounds
+// https://www.dndbeyond.com/spells/minor-illusion
+// https://www.dndbeyond.com/spells/mirage-arcane
+// https://www.dndbeyond.com/spells/mold-earth
+// https://www.dndbeyond.com/spells/mordenkainens-private-sanctum
+// https://www.dndbeyond.com/spells/nathairs-mischief
+// https://www.dndbeyond.com/spells/private-sanctum
+// https://www.dndbeyond.com/spells/programmed-illusion
+// https://www.dndbeyond.com/spells/purify-food-and-drink
+// https://www.dndbeyond.com/spells/pyrotechnics
+// https://www.dndbeyond.com/spells/resilient-sphere
+// https://www.dndbeyond.com/spells/reverse-gravity
+// https://www.dndbeyond.com/spells/shape-water
+// https://www.dndbeyond.com/spells/silence
+// https://www.dndbeyond.com/spells/silent-image
+// https://www.dndbeyond.com/spells/sleep
+// https://www.dndbeyond.com/spells/sleet-storm
+// https://www.dndbeyond.com/spells/slow
+// https://www.dndbeyond.com/spells/spike-growth
+// https://www.dndbeyond.com/spells/stinking-cloud
+// https://www.dndbeyond.com/spells/tiny-hut
+// https://www.dndbeyond.com/spells/warding-wind
+// https://www.dndbeyond.com/spells/watery-sphere
+// https://www.dndbeyond.com/spells/web
+// https://www.dndbeyond.com/spells/zone-of-truth
+
 function get_aoe_default_options(){
     let options = {
-        // name: name,
         disablestat: true,
         hidestat: true,
         disableborder: true,
         square: true,
-        // imgsrc: image,
-        // size: shape !== "line" ? size : "",
-        // gridHeight: shape === "line" ? Math.round(height) : "",
-        // gridWidth: shape === "line" ? 1 : "",
         restrictPlayerMove: false,
         hidden: false,
         locked: false,

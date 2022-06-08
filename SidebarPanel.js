@@ -1117,6 +1117,9 @@ function build_sidebar_list_row(listItem) {
       let size = listItem.size
       if (window.CURRENT_SCENE_DATA?.fpsq > 0){
           size =  size * window.CURRENT_SCENE_DATA.fpsq
+      }else{
+        // when this is initialised current scene data won't exist.
+        size = 5
       }
       row.attr("data-size", listItem.size);
       row.attr("data-style", listItem.style);

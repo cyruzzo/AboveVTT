@@ -1257,7 +1257,7 @@ function observe_character_sheet_aoe(documentToObserve) {
 
 	const mutation_target = documentToObserve.get(0);
 	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-	const container = $("#sheet");
+	let container = $("#sheet");
 	if (is_characters_page()) {
 		container = $(".ct-character-sheet__inner");
 	}
@@ -1282,17 +1282,19 @@ function observe_character_sheet_aoe(documentToObserve) {
 
 				button.attr("data-shape", shape);
 				button.attr("data-style", color);
-				button.attr("data-size", feet);
+				button.attr("data-size", Math.round(feet / window.CURRENT_SCENE_DATA.fpsq));
 				button.attr("data-name", name);
 
-				set_full_path(button, shape)
-				enable_draggable_token_creation(button);
+				// Players need the token side panel for this to work for them.
+				// adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
+				// set_full_path(button, `${SidebarListItem.PathAoe}/${shape} AoE`)
+				// enable_draggable_token_creation(button);
 				button.css("border-width","1px");
 				button.click(function(e){
 					e.stopPropagation();
 					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
 					hide_player_sheet();
-					close_player_sheet();
+					// close_player_sheet();
 					const options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
 					place_token_in_center_of_view(options)
 				});
