@@ -1747,6 +1747,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .aoe-style-bludgeoning{
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
 }
+.aoe-style-default{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979769717529137162/lightninig.png);
+}
 .aoe-style-fire{
     background-image: url(https://media.discordapp.net/attachments/954822823636009041/979765607484506122/fire_background.png);
 }

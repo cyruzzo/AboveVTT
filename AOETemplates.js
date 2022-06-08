@@ -19,27 +19,30 @@ const AOE_TEMPLATES = {
     'green-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenSquare.png',
 }
 
+const availabllStyle = [
+    "Acid",
+    "Bludgeoning",
+    "Default",
+    "Fire",
+    "Force",
+    "Ice",
+    "Lightning",
+    "Nature",
+    "Necrotic",
+    "Piercing",
+    "Poison",
+    "Psychic",
+    "Radiant",
+    "Slashing",
+    "Thunder",
+    "Water"
+]
+
 
 
 
 function setup_aoe_button() {
-    const availabllStyle = [
-        "Acid",
-        "Bludgeoning",
-        "Fire",
-        "Force",
-        "Ice",
-        "Lightning",
-        "Nature",
-        "Necrotic",
-        "Piercing",
-        "Poison",
-        "Psychic",
-        "Radiant",
-        "Slashing",
-        "Thunder",
-        "Water"
-    ]
+    
     const aoeButton = $("<div style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
     const aoeMenu = $("<div id='aoe_menu' class='top_menu'></div>");
 
