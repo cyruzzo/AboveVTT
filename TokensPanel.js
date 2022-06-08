@@ -417,6 +417,7 @@ function init_tokens_panel() {
     let header = tokensPanel.header;
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
+    add_expand_collapse_buttons_to_header(tokensPanel);
     header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
@@ -665,12 +666,12 @@ function update_pc_token_rows() {
                 abilityValue.find(".ability_score").text(a.score);
 
             });
-            row.find(".tokens-panel-row-details-subtitle .pp-value").text(playerData.pp);
-            row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.walking);
+            row.find(".pp-value").text(playerData.pp);
+            row.find(".walking-value").text(playerData.walking);
             if (playerData.inspiration) {
-                row.find(".sidebar-list-item-row-details-subtitle .inspiration").show();
+                row.find(".inspiration").show();
             } else {
-                row.find(".sidebar-list-item-row-details-subtitle .inspiration").hide();
+                row.find(".inspiration").hide();
             }
         }
     });
@@ -1774,17 +1775,19 @@ function refresh_encounter(clickedRow, clickedItem, callback) {
             console.warn("Failed to refresh encounter", response);
             callback(false);
         } else {
-            fetch_and_inject_encounter_monsters(clickedRow, clickedItem);
             clickedItem.name = response.name;
             clickedItem.description = response.flavorText;
             clickedRow.find(".sidebar-list-item-row-details-title").text(response.name);
             clickedRow.find(".sidebar-list-item-row-details-subtitle").text(response.flavorText);
-            callback(true);
+            fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback);
         }
     });
 }
 
-function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
+function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
@@ -1792,6 +1795,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
+            callback(false);
         } else {
             let monsterItems = response
                 .map(monsterData => SidebarListItem.Monster(monsterData))
@@ -1799,6 +1803,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
             encounter_monster_items[clickedItem.encounterId] = monsterItems;
             update_monster_item_cache(monsterItems); // let's cache these so we won't have to fetch them again if the user places them on the scene
             inject_encounter_monsters();
+            callback(true);
         }
     });
 }

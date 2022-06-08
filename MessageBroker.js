@@ -704,8 +704,17 @@ class MessageBroker {
 				}	
 					$("[id^='streamer-"+msg.data.from+"']").remove();
 					window.STREAMPEERS[msg.data.from].close();
-					delete window.STREAMPEERS[msg.data.from]
+					delete window.STREAMPEERS[msg.data.from];
+					if(msg.data.to != "everyone"){
+						window.MB.inject_chat({
+	              player: window.PLAYER_NAME,
+	              img: window.PLAYER_IMG,
+	              text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
+	              whisper: window.PLAYER_NAME
+	          });
+					}
 			}
+
 			if(msg.eventType == "custom/myVTT/disabledicestream"){
 				enable_dice_streaming_feature(false);
 			}
@@ -752,36 +761,47 @@ class MessageBroker {
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
 				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-						window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
-							to: msg.data.from,
-							from: window.MYSTREAMID
-						})
+					if(peer.connectionState=="connected"){
+						window.MB.inject_chat({
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<span class="flex-wrap-center-chat-message"><p>A dice stream peer has ${peer.connectionState}. <br/><br/></div>`,
+                whisper: window.PLAYER_NAME,
+	          });
+					}
+
+					if(peer.connectionState=="closed" || peer.connectionState=="failed" || peer.connectionState == "disconnected"){
+						peer.restartIce();
+						window.MB.inject_chat({
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<span class="flex-wrap-center-chat-message"><p>A dice stream connection has ${peer.connectionState}.</p><p> An automatic reconnect is being attempted. </p><p>If you are still unable to see one or more of your groups dice you may have to manually disable then reenable your dice stream in the chat above.</p><br/><br/></div>`,
+                whisper: window.PLAYER_NAME,
+	          });	          
 					}
 				};
-			  try {
-			    	window.makingOffer[msg.data.from] = true;
-		   		peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
-						console.log("fatto setLocalDescription");
-						peer.setLocalDescription(desc);
-						self.sendMessage("custom/myVTT/okletmeseeyourdice",{
-							to: msg.data.from,
-							from: window.MYSTREAMID,
-							offer: desc,
-							dm: window.DM
-						})
-					});
-
-			  } catch(err) {
-			    console.error(err);
-			  } finally {
-			  	setTimeout(function(){
-			  			window.makingOffer[msg.data.from] = false;
-			  	}, 500)		    
-			  }			
+				peer.onnegotiationneeded = () => {
+					try {
+						window.makingOffer[msg.data.from] = true;
+						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
+							console.log("fatto setLocalDescription");
+							peer.setLocalDescription(desc);
+							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+								to: msg.data.from,
+								from: window.MYSTREAMID,
+								offer: desc,
+								dm: window.DM
+							})
+						});
+					} catch(err) {
+						console.error(err);
+					} finally {
+						setTimeout(function(){
+							window.makingOffer[msg.data.from] = false;
+						}, 500)		    
+					}	
+				};
+			 		
 				peer.onicecandidate = e => {
 					window.MB.sendMessage("custom/myVTT/iceforyourgintonic",{
 						to: msg.data.from,
@@ -814,15 +834,44 @@ class MessageBroker {
 				});
 				window.makingOffer = [];
 				window.makingOffer[msg.data.from] = false;
+				peer.onnegotiationneeded = () => {
+					try {
+						window.makingOffer[msg.data.from] = true;
+						peer.createOffer({offerToReceiveVideo: 1}).then( (desc) => {
+							console.log("fatto setLocalDescription");
+							peer.setLocalDescription(desc);
+							self.sendMessage("custom/myVTT/okletmeseeyourdice",{
+								to: msg.data.from,
+								from: window.MYSTREAMID,
+								offer: desc,
+								dm: window.DM
+							})
+						});
+					} catch(err) {
+						console.error(err);
+					} finally {
+						setTimeout(function(){
+							window.makingOffer[msg.data.from] = false;
+						}, 500)		    
+					}	
+				};
 				peer.onconnectionstatechange=() => {
-					if((peer.connectionState=="closed") || (peer.connectionState=="failed")){
-						console.log("DELETING PEER "+msg.data.from);
-						delete window.STREAMPEERS[msg.data.from];
-						$("#streamer-canvas-"+msg.data.from).remove();
-						window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
-							to: msg.data.from,
-							from: window.MYSTREAMID
-						})
+					if(peer.connectionState=="connected"){
+						window.MB.inject_chat({
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<span class="flex-wrap-center-chat-message"><p>A dice stream peer has ${peer.connectionState}. <br/><br/></div>`,
+                whisper: window.PLAYER_NAME,
+	          });
+					}
+					if((peer.connectionState=="closed") || (peer.connectionState=="failed" || peer.connectionState == "disconnected")){
+						peer.restartIce();
+						window.MB.inject_chat({
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<span class="flex-wrap-center-chat-message"><p>A dice stream connection has ${peer.connectionState}.</p><p> An automatic reconnect is being attempted. </p><p>If you are still unable to see one or more of your groups dice you may have to manually disable then reenable your dice stream in the chat above.</p><br/><br/></div>`,
+                whisper: window.PLAYER_NAME,
+	          });
 					}
 				};
 		
@@ -1155,6 +1204,7 @@ class MessageBroker {
 
 		window.TOKEN_OBJECTS = {};
 		let data = msg.data;
+		let self=this;
 
 		if(window.CLOUD){
 			if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
@@ -1204,9 +1254,7 @@ class MessageBroker {
    	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
 
 			set_default_vttwrapper_size()
-			if(!window.DM)
-				check_token_visibility();
-
+			
 			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 			if(window.CLOUD && !window.DM && data.dm_map_usable=="1"){
 				$("#scene_map").stop();
@@ -1217,12 +1265,32 @@ class MessageBroker {
 				$("#scene_map").attr("src",data.player_map);
 				
 			}
+			console.log("LOADING TOKENS!");
+
+			for (var i = 0; i < data.tokens.length; i++) {
+				self.handleToken({
+					data: data.tokens[i]
+				});
+			}
+			if(!window.DM)
+					check_token_visibility();
+	
+			if(window.CLOUD && window.DM){
+				$("#combat_area").empty();
+				ct_load();
+			}
+
+			if(window.DM)
+				get_pclist_player_data();
+
+
 
 			if (window.EncounterHandler !== undefined) {
 				fetch_and_cache_scene_monster_items(true);
 			}
 			did_update_scenes();
 			console.groupEnd()
+			
 		});
 
 
@@ -1250,20 +1318,7 @@ class MessageBroker {
 
 
 		
-		for (var i = 0; i < data.tokens.length; i++) { // QUICK HACK
-			this.handleToken({
-				data: data.tokens[i]
-			});
-		}
-		if(!window.DM)
-				check_token_visibility();
-
-		if(window.CLOUD && window.DM){
-			$("#combat_area").empty();
-			ct_load();
-		}
-
-		get_pclist_player_data();
+		
 		// console.groupEnd()
 	}
 
