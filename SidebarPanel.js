@@ -679,6 +679,10 @@ function find_sidebar_list_item(html) {
   if (html === undefined) return undefined;
 
   let foundItem;
+
+  // if(html.attr("data-"))
+
+
   
   let encounterId = html.attr("data-encounter-id");
   if (encounterId !== undefined && encounterId !== null && encounterId !== "") {
@@ -704,7 +708,9 @@ function find_sidebar_list_item(html) {
       return foundItem;
     }
   }
-
+  if (fullPath === "square"){
+    console.log("stop here ya git")
+  }
   return find_sidebar_list_item_from_path(fullPath);
 }
 

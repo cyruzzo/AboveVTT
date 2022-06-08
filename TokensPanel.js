@@ -532,7 +532,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
             }
             const draggedItem = find_sidebar_list_item(draggedRow);
             // unable to find a corresponding item
-            if (!draggedItem) return
+            if (!draggedItem) return helper
           
             let [helperWidth, helperHeight] = get_helper_size(draggedItem)
 

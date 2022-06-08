@@ -1285,7 +1285,7 @@ function observe_character_sheet_aoe(documentToObserve) {
 				button.attr("data-size", feet);
 				button.attr("data-name", name);
 
-				set_full_path(button, name)
+				set_full_path(button, shape)
 				enable_draggable_token_creation(button);
 				button.css("border-width","1px");
 				button.click(function(e){
@@ -1293,7 +1293,7 @@ function observe_character_sheet_aoe(documentToObserve) {
 					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
 					hide_player_sheet();
 					close_player_sheet();
-					const options = build_aoe_token_options(color, shape, feet, name)
+					const options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
 					place_token_in_center_of_view(options)
 				});
 				return button;
@@ -1932,14 +1932,46 @@ function monitor_character_sidebar_changes() {
 // when the user clicks on an item in a character sheet, the details are shown in a sidebar. This will inject a "send to gamelog" button and properly send the pertinent sidebar content to the gamelog.
 function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 	// we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-	let button = $("<button id='castbutton'>SEND TO GAMELOG</button>");
+	console.log("inject_sidebar_send_to_gamelog_button")
+	let button = $(`<button id='castbutton'">SEND TO GAMELOG</button>`);
+	// button.css({
+	// 	"margin": "10px 0px",
+	// 	"border": "1px solid #bfccd6",
+	// 	"border-radius": "4px",
+	// 	"background-color": "transparent",
+	// 	"color": "#394b59"
+	// });
 	button.css({
-		"margin": "10px 0px",
-		"border": "1px solid #bfccd6",
-		"border-radius": "4px",
-		"background-color": "transparent",
-		"color": "#394b59"
-	});
+		"display": "flex",
+		"flex-wrap": "wrap",
+		"font-family": "Roboto Condensed,Roboto,Helvetica,sans-serif",
+		"cursor": "pointer",
+		"color": "#838383",
+		"line-height": "1",
+		"font-weight":" 700",
+		"font-size": "12px",
+		"text-transform": "uppercase",
+		"background-color": "#f2f2f2",
+		"margin": "3px 2px",
+		"border-radius": "3px",
+		"padding": "5px 7px",
+		"white-space": "nowrap"
+		})
+	$(button).hover(
+		function () {
+			button.css({
+					"background-color": "#5d5d5d",
+					"color": "#f2f2f2"
+			})
+		},
+		function () {
+			button.css({
+					"background-color": "#f2f2f2",
+					"color": "#5d5d5d"
+			})
+		}
+	);
+
 	sidebarPaneContent.prepend(button);
 	button.click(function() {
 		// make sure the button grabs dynamically. Don't hold HTML in the button click block because clicking on items back to back will fuck that up
