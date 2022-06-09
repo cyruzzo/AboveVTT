@@ -149,6 +149,16 @@ function sanitize_aoe_shape(shape){
     return shape
 }
 
+function set_spell_override_style(spellName){
+    const spells = ["hypnotic pattern", "web", "fog cloud", "stinking cloud"]
+
+    if(spellName === "") return
+    else if (spells.includes(spellName.toLowerCase())){
+        return `aoe-style-${spellName.toLowerCase().replace(" ","-")}`
+    }
+    return ""
+}
+
 // This is a list of spells that probably have a default style. We may want to create specific aoe styles for some of these
 // or more generic styles, such as a wind style for a bunch of things in here.
 
@@ -246,7 +256,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
         size = size * 2;
     }
 
-    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape}`
+    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${set_spell_override_style(name)}`
     const options = get_aoe_default_options()
     options.name = name
     options.imgsrc= image

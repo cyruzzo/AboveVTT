@@ -814,6 +814,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             break;
         case SidebarListItem.TypeAoe:
             options = build_aoe_token_options(listItem.style, listItem.shape, listItem.size, nameOverride)
+            options.hidden = hidden
             break
     }
 

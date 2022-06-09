@@ -1748,7 +1748,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
 }
 .aoe-style-default{
-    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979769717529137162/lightninig.png);
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/06/188-comp-512x512.jpg);
 }
 .aoe-style-fire{
     background-image: url(https://media.discordapp.net/attachments/954822823636009041/979765607484506122/fire_background.png);
@@ -1794,6 +1794,24 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
     box-shadow: inset -20px -20px 2px 1000px rgba(49, 177, 246, 0.49);
 }
+
+/* SPECIFIC SPELL STYLES */
+.aoe-style-fog-cloud{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
+}
+.aoe-style-hypnotic-pattern{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984334770618109992/hypnotic-pattern.png?width=676&height=676) !important;
+}
+.aoe-style-stinking-cloud{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
+    box-shadow: inset -20px -20px 2px 1000px rgba(49, 246, 85, 0.49) !important;
+}
+.aoe-style-web{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984332168111222784/tileable3pxsquareweb.png) !important;
+}
+
+
+
 /* END AOE STYLES */
 
 .aoe-token-tileable {
