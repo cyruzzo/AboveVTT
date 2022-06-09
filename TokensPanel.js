@@ -1256,6 +1256,15 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         });
         inputWrapper.append(tokenSizeInput);
 
+        // image scale
+        let imageScaleWrapper = build_token_image_scale_input(myToken.imageSize, function (imageSize) {
+            myToken.imageSize = imageSize;
+            persist_my_tokens();
+            decorate_modal_images(sidebarPanel, listItem, placedToken);
+        });
+        inputWrapper.append(imageScaleWrapper);
+
+        // override options
         let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, myToken, function(name, value) {
             if (value === true || value === false) {
                 myToken[name] = value;
@@ -1300,7 +1309,25 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         });
         inputWrapper.append(saveButton);
     } else if (listItem.isTypePC()) {
+
         let playerOptions = get_player_token_customizations(listItem.sheet);
+
+        // token size
+        let tokenSizeInput = build_token_size_input(tokenSize, function (newSize) {
+            playerOptions.tokenSize = newSize;
+            set_player_token_customizations(listItem.sheet, playerOptions);
+            decorate_modal_images(sidebarPanel, listItem, placedToken);
+        });
+        inputWrapper.append(tokenSizeInput);
+
+        // image scale
+        let imageScaleWrapper = build_token_image_scale_input(playerOptions.imageSize, function (imageSize) {
+            playerOptions.imageSize = imageSize;
+            set_player_token_customizations(listItem.sheet, playerOptions);
+            decorate_modal_images(sidebarPanel, listItem, placedToken);
+        });
+        inputWrapper.append(imageScaleWrapper);
+
         let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, playerOptions, function(name, value) {
             if (value === true || value === false) {
                 playerOptions[name] = value;

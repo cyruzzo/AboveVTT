@@ -293,6 +293,7 @@ function redraw_settings_panel_token_examples(settings) {
 	if (settings !== undefined) {
 		mergedSettings = {...mergedSettings, ...settings};
 	}
+	delete mergedSettings.imageSize;
 	let items = $(".example-tokens-wrapper .example-token");
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);

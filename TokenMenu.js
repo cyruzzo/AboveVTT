@@ -932,76 +932,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 	body.append(sizeInputs);
 
 	//image scaling size
-	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
-	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
 	let tokenImageScales = tokens.map(t => t.options.imageSize);
-	if(tokenImageScales.length === 1) {
-		imageSizeInput.val(tokenImageScales[0] || 1);	
-		imageSizeInputRange.val(tokenImageScales[0] || 1);
-	}
-	imageSizeInput.on('keyup', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-		}
-		if (event.key == "Enter") {
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-			tokens.forEach(token => {
-				token.options.imageSize = imageSize;
-				token.place_sync_persist();
-			});
-		}
-		imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInput.on('focusout', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-		}	
-		tokens.forEach(token => {
-			token.options.imageSize = imageSize;
-			token.place_sync_persist();
-		});
-
-		imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInput.on(' input change', function(){
-   	 	imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInputRange.on(' input change', function(){
-   	 	imageSizeInput.val(imageSizeInputRange.val());
-	});
-	imageSizeInputRange.on('mouseup', function(){
-   	 	let imageSize = imageSizeInputRange.val();
+	let uniqueScales = [...new Set(tokenImageScales)];
+	let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
+	let imageSizeWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
 		tokens.forEach(token => {
 			token.options.imageSize = imageSize;
 			token.place_sync_persist();
 		});
 	});
-	let imageSizeWrapper = $(`
-		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
-			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
-		</div>
-	`);
-	imageSizeWrapper.append(imageSizeInput); // Beside Label
-	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	body.append(imageSizeWrapper);
 
 	//border color selections
@@ -1064,6 +1003,71 @@ function build_adjustments_flyout_menu(tokenIds) {
 	});
 
 	return body;
+}
+
+function build_token_image_scale_input(startingScale, didUpdate) {
+	if (isNaN(startingScale)) {
+		startingScale = 1;
+	}
+	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
+	imageSizeInput.val(startingScale || 1);
+	imageSizeInputRange.val(startingScale || 1);
+	imageSizeInput.on('keyup', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+		}
+		if (event.key == "Enter") {
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+			didUpdate(imageSize);
+		}
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on('focusout', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+		}
+		didUpdate(imageSize);
+
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on(' input change', function(){
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInputRange.on(' input change', function(){
+		imageSizeInput.val(imageSizeInputRange.val());
+	});
+	imageSizeInputRange.on('mouseup', function(){
+		let imageSize = imageSizeInputRange.val();
+		didUpdate(imageSize);
+	});
+	let imageSizeWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
+			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
+		</div>
+	`);
+	imageSizeWrapper.append(imageSizeInput); // Beside Label
+	imageSizeWrapper.append(imageSizeInputRange); // input below label
+	return imageSizeWrapper;
 }
 
 function build_options_flyout_menu(tokenIds) {
