@@ -2224,7 +2224,8 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 30%;
+    min-width: 35%;
+    max-width: 35%;
 }
 .footer-input-wrapper {
     width: 100%;
@@ -2370,7 +2371,7 @@ h5.token-image-modal-footer-title:after {
     display: block;
 }
 .sidebar-token-options-flyout-container {
-    width: 320px;
+    width: 400px;
     padding: 5px;
     background-color: rgb(235, 241, 245);
 }

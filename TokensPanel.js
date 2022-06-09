@@ -1229,39 +1229,6 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         // MyToken footer form
         let myToken = find_my_token(listItem.fullPath());
 
-        const buildOptionSelect = function (name, disabledLabel, enabledLabel) {
-            let inputElement = $(`
-            <select name="${name}">
-                <option value="default">Default</option>
-                <option value="disabled">${disabledLabel}</option>
-                <option value="enabled">${enabledLabel}</option>
-            </select>
-        `);
-
-            // explicitly look for true/false because the default value is undefined
-            let configuredValue = myToken[name];
-            if (configuredValue === true) {
-                inputElement.val("enabled");
-            } else if (configuredValue === false) {
-                inputElement.val("disabled");
-            } else {
-                inputElement.val("default");
-            }
-            inputElement.change(function (event) {
-                console.log("update", event.target.name, "to", event.target.value);
-                if (event.target.value === "enabled") {
-                    myToken[name] = true;
-                } else if (event.target.value === "disabled") {
-                    myToken[name] = false;
-                } else {
-                    delete myToken[name];
-                }
-                persist_my_tokens();
-                decorate_modal_images(sidebarPanel, listItem, placedToken);
-            });
-            return inputElement;
-        };
-
         // token name
         inputWrapper.append($(`<div class="token-image-modal-footer-title" style="width:100%;padding-left:0px">Token Name</div>`));
         let nameInput = $(`<input data-previous-name="${name}" title="token name" placeholder="my token name" name="addCustomName" type="text" style="width:100%" value="${name === undefined ? '' : name}" />`);
@@ -1304,8 +1271,9 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                 });
                 optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place this token on the scene, these settings will be used. Setting the value to "Default" will use the global settings which are found in the settings tab.</div>`);
                 flyout.append(optionsContainer);
-                flyout.css("left", sidebarPanel.container[0].getBoundingClientRect().left - flyout.width());
+                position_flyout_left_of(sidebarPanel.container, flyout);
                 redraw_settings_panel_token_examples(myToken);
+                decorate_modal_images(sidebarPanel, listItem, placedToken);
             });
         });
         inputWrapper.append(tokenOptionsButton);

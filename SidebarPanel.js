@@ -69,10 +69,15 @@ function observe_hover_text(sidebarPanelContent) {
   sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text", function(hoverEvent) {
     const displayText = $(hoverEvent.currentTarget).attr("data-hover");
     if (typeof displayText === "string" && displayText.length > 0) {
-      sidebar_flyout(hoverEvent, function (flyout) {
-        flyout.append(`<div class="sidebar-hover-text-flyout">${displayText}</div>`);
-        flyout.css("left", sidebarPanelContent[0].getBoundingClientRect().left - flyout.width());
-      });
+      if (hoverEvent.type === "mouseenter") {
+        build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
+          flyout.append(`<div class="sidebar-hover-text-flyout">${displayText}</div>`);
+          position_flyout_left_of(sidebarPanelContent, flyout);
+        });
+      } else {
+        // only remove hover text flyouts. Don't remove other types of flyouts that may or may not be up
+        $(".sidebar-hover-text-flyout").closest(".sidebar-flyout").remove();
+      }
     }
   });
 }
@@ -296,41 +301,78 @@ function build_select_input(labelText, input) {
   return wrapper;
 }
 
+function update_hover_text(hoverElement, hoverText) {
+  if (hoverText !== undefined && hoverText.length > 0) {
+    hoverElement.addClass("sidebar-hover-text");
+    hoverElement.attr("data-hover", hoverText);
+    let hoverFlyout = $(".sidebar-flyout .sidebar-hover-text-flyout");
+    if (hoverFlyout.length > 0) {
+      // update the flyout text and reposition it
+      let flyout = hoverFlyout.closest(".sidebar-flyout");
+      let previousWidth = flyout.width();
+      hoverFlyout.text(hoverText);
+      let newWidth = flyout.width();
+      let oldPosition = flyout.position().left;
+      flyout.css("left", oldPosition + (previousWidth - newWidth));
+    }
+  } else {
+    hoverElement.removeClass("sidebar-hover-text");
+    hoverElement.removeAttr("data-hover");
+  }
+}
+
 /// changeHandler: function(name, newValue) // newValue will be one of [true, false, undefined], where `undefined` means "default"
-function build_token_option_select_input(name, labelText, disabledLabel, enabledLabel, currentValue, changeHandler) {
+function build_token_option_select_input(option, currentValue, changeHandler) {
+  if (typeof changeHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  let wrapper = $(`
+    <div class="token-image-modal-footer-select-wrapper">
+      <div class="token-image-modal-footer-title">${option.label}</div>
+    </div>
+  `);
   let inputElement = $(`
-      <select name="${name}">
+      <select name="${option.name}">
           <option value="default">Default</option>
-          <option value="disabled">${disabledLabel}</option>
-          <option value="enabled">${enabledLabel}</option>
+          <option value="disabled">${option.disabledValue}</option>
+          <option value="enabled">${option.enabledValue}</option>
       </select>
   `);
+  wrapper.append(inputElement);
 
   // explicitly look for true/false because the default value is undefined
   if (currentValue === true) {
     inputElement.val("enabled");
+    update_hover_text(wrapper, option.enabledDescription);
   } else if (currentValue === false) {
     inputElement.val("disabled");
+    update_hover_text(wrapper, option.disabledDescription);
   } else {
     inputElement.val("default");
+    if (window.TOKEN_SETTINGS[option.name] === true) {
+      update_hover_text(wrapper, option.enabledDescription);
+    } else {
+      update_hover_text(wrapper, option.disabledDescription);
+    }
   }
   inputElement.change(function (event) {
     console.log("update", event.target.name, "to", event.target.value);
     if (event.target.value === "enabled") {
-      changeHandler(event.target.name, true);
+      changeHandler(option.name, true);
+      update_hover_text(wrapper, option.enabledDescription);
     } else if (event.target.value === "disabled") {
-      changeHandler(event.target.name, false);
+      changeHandler(option.name, false);
+      update_hover_text(wrapper, option.disabledDescription);
     } else {
-      changeHandler(event.target.name, undefined);
+      changeHandler(option.name, undefined);
+      if (window.TOKEN_SETTINGS[option.name] === true) {
+        update_hover_text(wrapper, option.enabledDescription);
+      } else {
+        update_hover_text(wrapper, option.disabledDescription);
+      }
     }
   });
 
-  let wrapper = $(`
-    <div class="token-image-modal-footer-select-wrapper">
-      <div class="token-image-modal-footer-title">${labelText}</div>
-    </div>
-  `);
-  wrapper.append(inputElement);
   return wrapper;
 }
 
@@ -344,37 +386,27 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
     </div>
   `);
   let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
-  const updateHoverText = function(hoverElement, hoverText) {
-    if (hoverText !== undefined && hoverText.length > 0) {
-      hoverElement.addClass("sidebar-hover-text");
-      hoverElement.attr("data-hover", hoverText);
-      $(".sidebar-flyout .sidebar-hover-text-flyout").text(hoverText);
-    } else {
-      hoverElement.removeClass("sidebar-hover-text");
-      hoverElement.removeAttr("data-hover");
-    }
-  }
   if (enabled === null) {
     input.addClass("rc-switch-unknown");
-    updateHoverText(wrapper, "This has multiple values. Clicking this will enable it for all.");
+    update_hover_text(wrapper, "This has multiple values. Clicking this will enable it for all.");
   } else if (enabled === true) {
     input.addClass("rc-switch-checked");
-    updateHoverText(wrapper, enabledHoverText);
+    update_hover_text(wrapper, enabledHoverText);
   } else {
-    updateHoverText(wrapper, disabledHoverText);
+    update_hover_text(wrapper, disabledHoverText);
   }
   wrapper.append(input);
   input.click(function(clickEvent) {
     if ($(clickEvent.currentTarget).hasClass("rc-switch-checked")) {
       // it was checked. now it is no longer checked
       $(clickEvent.currentTarget).removeClass("rc-switch-checked");
-      updateHoverText(wrapper, disabledHoverText);
+      update_hover_text(wrapper, disabledHoverText);
       changeHandler(name, false);
     } else {
       // it was not checked. now it is checked
       $(clickEvent.currentTarget).removeClass("rc-switch-unknown");
       $(clickEvent.currentTarget).addClass("rc-switch-checked");
-      updateHoverText(wrapper, enabledHoverText);
+      update_hover_text(wrapper, enabledHoverText);
       changeHandler(name, true);
     }
   });
@@ -1179,7 +1211,7 @@ function did_click_row(clickEvent) {
       break;
     case SidebarListItem.TypeScene:
       // show the preview
-      $(`.sidebar-flyout`).remove(); // never duplicate
+      remove_sidebar_flyout();
       let flyout = $(`<div class='sidebar-flyout'></div>`);
       $("body").append(flyout);
       if (clickedItem.isVideo) {
@@ -1200,7 +1232,7 @@ function did_click_row(clickEvent) {
       });
       clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
         $(mouseleaveEvent.currentTarget).off("mouseleave");
-        $(`.sidebar-flyout`).remove();
+        remove_sidebar_flyout();
       });
       break;
   }
@@ -1494,7 +1526,6 @@ function delete_folder_and_move_children_up_one_level(listItem) {
 }
 
 function build_and_display_sidebar_flyout(clientY, buildFunction) {
-  remove_sidebar_flyout(); // never duplicate
   let flyout = $(`<div class='sidebar-flyout'></div>`);
   $("body").append(flyout);
 
@@ -1514,16 +1545,16 @@ function build_and_display_sidebar_flyout(clientY, buildFunction) {
   });
 }
 
-function remove_sidebar_flyout() {
-  $(`.sidebar-flyout`).remove();
+function position_flyout_left_of(container, flyout) {
+  flyout.css("left", container[0].getBoundingClientRect().left - flyout.width());
 }
 
-function sidebar_flyout(hoverEvent, buildFunction) {
-  if (hoverEvent.type === "mouseenter") {
-    build_and_display_sidebar_flyout(hoverEvent.clientY, buildFunction);
-  } else {
-    remove_sidebar_flyout();
-  }
+function position_flyout_right_of(container, flyout) {
+  flyout.css("left", container[0].getBoundingClientRect().left + container.width());
+}
+
+function remove_sidebar_flyout() {
+  $(`.sidebar-flyout`).remove();
 }
 
 function list_item_image_flyout(hoverEvent) {

@@ -2,99 +2,108 @@ const token_setting_options = [
 	{
 		name: 'hidden',
 		label: 'Hide',
-		enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-		disabledDescription: 'New tokens will be visible to players when placed on the scene',
+		enabledDescription: 'The token is hidden to players.',
+		disabledDescription: 'The token is visible to players.',
 		enabledValue: 'Hidden',
 		disabledValue: 'Visible'
 	},
 	{
 		name: 'square',
 		label: 'Square Token',
-		enabledDescription: 'New tokens will be square',
-		disabledDescription: 'New tokens will be round',
+		enabledDescription: 'The token is square.',
+		disabledDescription: 'The token is clipped to fit within a circle.',
 		enabledValue: 'Square',
 		disabledValue: 'Round'
 	},
 	{
 		name: 'locked',
-		label: 'Lock Token in Position',
-		enabledDescription: 'New tokens will not be movable',
-		disabledDescription: 'New tokens will be movable',
-		enabledValue: 'Locked',
-		disabledValue: 'Movable'
+		label: 'Disable All Interaction',
+		enabledDescription: "The token can not be interacted with in any way. Not movable, not selectable by players, no hp/ac displayed, no border displayed, no nothing. Players shouldn't even know it's a token.",
+		disabledDescription: 'The token can be interacted with.',
+		enabledValue: 'Interaction Disabled',
+		disabledValue: 'Interaction Allowed'
 	},
 	{
 		name: 'restrictPlayerMove',
 		label: 'Restrict Player Movement',
-		enabledDescription: 'Player will not be able to move new tokens',
-		disabledDescription: 'Player will be able to move new tokens',
+		enabledDescription: 'Players can not move the token.',
+		disabledDescription: 'Players can move the token.',
 		enabledValue: 'Restricted',
 		disabledValue: 'Unrestricted'
 	},
 	{
 		name: 'disablestat',
-		label: 'Disable HP/AC',
-		enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-		disabledDescription: 'New tokens will have HP/AC shown to only the DM.',
-		enabledValue: 'Disabled',
-		disabledValue: 'Enabled'
+		label: 'Remove HP/AC',
+		enabledDescription: 'The token does not have HP/AC shown to either the DM or the players.',
+		disabledDescription: 'The token has HP/AC shown to only the DM.',
+		enabledValue: 'Removed',
+		disabledValue: 'Visible to DM'
 	},
 	{
 		name: 'hidestat',
-		label: 'Hide HP/AC from players',
-		enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players.",
+		label: 'Hide Player HP/AC',
+		enabledDescription: "Each player can see their own HP/AC, but can't see the HP/AC of other players.",
+		disabledDescription: "Each player can see their own HP/AC as well as the HP/AC of other players.",
 		enabledValue: 'Hidden',
 		disabledValue: 'Visible'
 	},
 	{
 		name: 'hidehpbar',
 		label: 'Only show HP values on hover',
-		enabledDescription: "HP values will only be shown when you hover or select a token",
-		disabledDescription: "Enable this to hide HP values except when you hover or select a token.",
+		enabledDescription: "HP values are only shown when you hover or select the token. The 'Disable HP/AC' option overrides this one.",
+		disabledDescription: "HP values are always displayed on the token. The 'Disable HP/AC' option overrides this one.",
 		enabledValue: 'On Hover',
 		disabledValue: 'Always'
 	},
 	{
 		name: 'disableborder',
 		label: 'Disable Border',
-		enabledDescription: 'New tokens will not have a border around them',
-		disabledDescription: 'New tokens will have a border around them',
+		enabledDescription: 'The token has a border drawn around the image.',
+		disabledDescription: 'The token does not have a border drawn around the image.',
 		enabledValue: 'No Border',
 		disabledValue: 'Border'
 	},
 	{
 		name: 'disableaura',
 		label: 'Disable Health Aura',
-		enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-		disabledDescription: 'New tokens will have an aura around them that represents their current health',
+		enabledDescription: "An aura is drawn around the token's image that represents current health.",
+		disabledDescription: "Enable this to have an aura drawn around the token's image that represents current health.",
 		enabledValue: 'No Aura',
 		disabledValue: 'Health Aura'
 	},
 	{
 		name: 'enablepercenthpbar',
 		label: 'Enable Token HP% Bar',
-		enabledDescription:'Token has a traditional visual hp% bar indicator',
-		disabledDescription: 'Token does not have a traditional visual hp% bar indicator',
+		enabledDescription: 'The token has a traditional visual hp% bar below it',
+		disabledDescription: 'The token does not have a traditional visual hp% bar below it',
 		enabledValue: 'Health Bar',
 		disabledValue: 'No Bar'
 	},
 	{
 		name: 'revealname',
 		label: 'Show name to players',
-		enabledDescription: 'New tokens will have their name visible to players',
-		disabledDescription: 'New tokens will have their name hidden from players',
+		enabledDescription: "The token's name is visible to players",
+		disabledDescription: "The token's name is hidden from players",
 		enabledValue: 'Visible',
 		disabledValue: 'Hidden'
 	},
 	{
 		name: 'legacyaspectratio',
 		label: 'Ignore Image Aspect Ratio',
-		enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-		disabledDescription: 'New tokens will respect the aspect ratio of the image provided',
+		enabledDescription: "The token's image will stretch to fill the token space",
+		disabledDescription: "New token's image will respect the aspect ratio of the image provided",
 		enabledValue: 'Stretch',
 		disabledValue: 'Maintain'
+	},
+	{
+		name: "player_owned",
+		label: "Player Accessible Stats",
+		enabledDescription: "The token's stat block is accessible to players via the token context menu. Players can also alter the HP/AC of this token.",
+		disabledDescription: "The token's stat block is not accessible to players via the token context menu. Players can not alter the HP/AC of this token.",
+		enabledValue: 'Player & DM',
+		disabledValue: 'DM only'
 	}
+
 ];
 
 function b64EncodeUnicode(str) {
@@ -208,7 +217,7 @@ function init_settings(){
 			});
 			optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
 			flyout.append(optionsContainer);
-			flyout.css("left", body[0].getBoundingClientRect().left - flyout.width());
+			position_flyout_left_of(body, flyout);
 		});
 	});
 	body.append(tokenOptionsButton);
@@ -278,6 +287,8 @@ function init_settings(){
 function redraw_settings_panel_token_examples(settings) {
 	if (settings === undefined) {
 		settings = {...window.TOKEN_SETTINGS};
+	} else {
+		settings = {...settings, ...window.TOKEN_SETTINGS};
 	}
 	let items = $(".example-tokens-wrapper .example-token");
 	for (let i = 0; i < items.length; i++) {
@@ -336,7 +347,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, inputTy
 			});
 			container.append(inputWrapper)
 		} else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_SELECT) {
-			let inputWrapper = build_token_option_select_input(option.name, option.label, option.disabledValue, option.enabledValue, currentValue, function (n, v) {
+			let inputWrapper = build_token_option_select_input(option, currentValue, function (n, v) {
 				updateValue(n, v);
 				if (didChange) {
 					didChange();
@@ -378,6 +389,8 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, inputTy
 		}
 	});
 	container.append(resetToDefaults);
+
+	observe_hover_text(container);
 
 	return container;
 }
