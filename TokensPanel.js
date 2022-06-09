@@ -1601,7 +1601,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
 function build_alternative_image_for_modal(image, placedToken, listItem) {
 
     let tokenDiv 
-    if (!listItem.isTypeAoe())
+    if (!listItem?.isTypeAoe())
         tokenDiv= $(`
 		    <div class="custom-token-image-item">
 			    <div class="token-image-sizing-dummy"></div>
