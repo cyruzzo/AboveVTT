@@ -689,6 +689,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
             options.disablestat = window.TOKEN_SETTINGS['disablestat'];
             options.color = "#" + get_player_token_border_color(pc.sheet);
+            options = {...options, ...get_player_token_customizations(pc.sheet)};
             break;
         case SidebarListItem.TypeMonster:
             options.monster = listItem.monsterData.id;
@@ -1255,26 +1256,16 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         });
         inputWrapper.append(tokenSizeInput);
 
-        let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
-        tokenOptionsButton.on("click", function (clickEvent) {
-            build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-                let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, myToken, TOKEN_OPTIONS_INPUT_TYPE_SELECT, function(name, newValue) {
-                    if (newValue === true || newValue === false) {
-                        myToken[name] = newValue;
-                    } else {
-                        delete myToken[name];
-                    }
-                }, function () {
-                    persist_my_tokens();
-                    redraw_settings_panel_token_examples(myToken);
-                    decorate_modal_images(sidebarPanel, listItem, placedToken);
-                });
-                optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place this token on the scene, these settings will be used. Setting the value to "Default" will use the global settings which are found in the settings tab.</div>`);
-                flyout.append(optionsContainer);
-                position_flyout_left_of(sidebarPanel.container, flyout);
-                redraw_settings_panel_token_examples(myToken);
-                decorate_modal_images(sidebarPanel, listItem, placedToken);
-            });
+        let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, myToken, function(name, value) {
+            if (value === true || value === false) {
+                myToken[name] = value;
+            } else {
+                delete myToken[name];
+            }
+        }, function () {
+            persist_my_tokens();
+            redraw_settings_panel_token_examples(myToken);
+            decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(tokenOptionsButton);
         inputWrapper.append(`<br />`);
@@ -1308,7 +1299,39 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             close_sidebar_modal();
         });
         inputWrapper.append(saveButton);
+    } else if (listItem.isTypePC()) {
+        let playerOptions = get_player_token_customizations(listItem.sheet);
+        let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, playerOptions, function(name, value) {
+            if (value === true || value === false) {
+                playerOptions[name] = value;
+            } else {
+                delete playerOptions[name];
+            }
+        }, function () {
+            set_player_token_customizations(listItem.sheet, playerOptions);
+            redraw_settings_panel_token_examples(playerOptions);
+            decorate_modal_images(sidebarPanel, listItem, placedToken);
+        });
+        inputWrapper.append(tokenOptionsButton);
+        inputWrapper.append(`<br />`);
     }
+}
+
+function build_override_token_options_button(sidebarPanel, listItem, placedToken, options, updateValue, didChange) {
+    let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
+    tokenOptionsButton.on("click", function (clickEvent) {
+        build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+            let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, options, TOKEN_OPTIONS_INPUT_TYPE_SELECT, function(name, value) {
+                updateValue(name, value);
+            }, didChange);
+            optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place this token on the scene, these settings will be used. Setting the value to "Default" will use the global settings which are found in the settings tab.</div>`);
+            flyout.append(optionsContainer);
+            position_flyout_left_of(sidebarPanel.container, flyout);
+            redraw_settings_panel_token_examples(options);
+            decorate_modal_images(sidebarPanel, listItem, placedToken);
+        });
+    });
+    return tokenOptionsButton;
 }
 
 /**
@@ -1455,18 +1478,15 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
         console.warn("decorate_modal_images was called without a listItem or a placedToken");
         return;
     }
-
-    let myToken = undefined;
-    if (listItem?.isTypeMyToken()) {
-        // use myToken overrides if they exist, else fall back to global setting
-        myToken = find_my_token(listItem.fullPath());
-    }
-
+    let options = find_token_options_for_list_item(listItem);
     let items = sidebarPanel.body.find(".example-token");
     for (let i = 0; i < items.length; i++) {
         let item = $(items[i]);
         let imgsrc = item.find("img.token-image").attr("src");
-        item.replaceWith(build_alternative_image_for_modal(imgsrc, myToken, placedToken));
+        let tokenDiv = build_alternative_image_for_modal(imgsrc, options, placedToken);
+        item.replaceWith(tokenDiv);
+        set_full_path(tokenDiv, listItem.fullPath());
+        enable_draggable_token_creation(tokenDiv, imgsrc);
     }
 }
 

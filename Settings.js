@@ -209,9 +209,13 @@ function init_settings(){
 	let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
 	tokenOptionsButton.on("click", function (clickEvent) {
 		build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, window.TOKEN_SETTINGS, TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, function(name, newValue) {
-				window.TOKEN_SETTINGS[name] = newValue;
-			}, function () {
+			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, window.TOKEN_SETTINGS, TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, function (name, value) {
+				if (value === true || value === false) {
+					window.TOKEN_SETTINGS[name] = value;
+				} else {
+					delete window.TOKEN_SETTINGS[name];
+				}
+			}, function() {
 				persist_token_settings(window.TOKEN_SETTINGS);
 				redraw_settings_panel_token_examples();
 			});
@@ -285,16 +289,15 @@ function init_settings(){
 }
 
 function redraw_settings_panel_token_examples(settings) {
-	if (settings === undefined) {
-		settings = {...window.TOKEN_SETTINGS};
-	} else {
-		settings = {...settings, ...window.TOKEN_SETTINGS};
+	let mergedSettings = {...window.TOKEN_SETTINGS};
+	if (settings !== undefined) {
+		mergedSettings = {...mergedSettings, ...settings};
 	}
 	let items = $(".example-tokens-wrapper .example-token");
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);
-		settings.imgsrc = item.find("img.token-image").attr("src");
-		item.replaceWith(build_example_token(settings));
+		mergedSettings.imgsrc = item.find("img.token-image").attr("src");
+		item.replaceWith(build_example_token(mergedSettings));
 	}
 }
 
