@@ -68,6 +68,10 @@ class Token {
 		return this.options.size === "" && this.options.gridWidth === 1 && this.options.gridHeight > 0
 	}
 
+	isAoe() {
+		return this.options.imgsrc.startsWith("class")
+	}
+
 	isPlayer() {
 		// player tokens have ids with a structure like "/profile/username/characters/someId"
 		// monster tokens have a uuid for their id
@@ -1111,7 +1115,7 @@ class Token {
 
 			let tokenImage
 			// new aoe tokens use arrays as imsrc
-			if (!this.options.imgsrc.startsWith("class")){
+			if (!this.isAoe()){
 				let imgClass = 'token-image';
 				if(this.options.legacyaspectratio == false) {
 					imgClass = 'token-image preserve-aspect-ratio';

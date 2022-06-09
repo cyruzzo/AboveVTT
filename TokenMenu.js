@@ -46,13 +46,13 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 
 		if (diff > 0) {
 			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
-			// align to the top of the row
-			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y
+			// align to the top of the row. 14 is half the height of the button
+			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
 			if(buttonPosition < contextMenuCenter) {
 				flyoutTop =  buttonPosition - (flyoutHeight / 5)
 			}
 			else{
-				flyoutTop =  buttonPosition - (flyoutHeight / 1.2)
+				flyoutTop =  buttonPosition - (flyoutHeight / 2)
 			}				
 		}	
 
@@ -168,6 +168,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			}
 			ct_persist();
 		});
+		
 		body.append(combatButton);
 
 
@@ -992,6 +993,13 @@ function build_adjustments_flyout_menu(tokenIds) {
 	imageSizeWrapper.append(imageSizeInput); // Beside Label
 	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	body.append(imageSizeWrapper);
+	if (tokens.some((t) => t.isAoe())){
+		imageSizeInputRange.attr("disabled", true)
+		imageSizeInputRange.attr("title", "Aoe tokens can't be adjusted this way")
+		imageSizeInput.attr("disabled",true)
+		imageSizeInput.attr("title", "Aoe tokens can't be adjusted this way")
+	}
+		
 
 	//border color selections
 	let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
@@ -1038,7 +1046,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 	
 
 	let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-	if(tokens.length === 1 && window.DM){
+	if(tokens.length === 1 && window.DM && !tokens[0].isAoe()){
 		body.append(changeImageMenuButton)
 	}
 

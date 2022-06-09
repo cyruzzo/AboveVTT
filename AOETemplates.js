@@ -256,7 +256,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
         size = size * 2;
     }
 
-    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${set_spell_override_style(name)}`
+    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}`
     const options = get_aoe_default_options()
     options.name = name
     options.imgsrc= image
