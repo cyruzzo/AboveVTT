@@ -3,61 +3,97 @@ const token_setting_options = [
 		name: 'hidden',
 		label: 'Hide',
 		enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-		disabledDescription: 'New tokens will be visible to players when placed on the scene'
+		disabledDescription: 'New tokens will be visible to players when placed on the scene',
+		enabledValue: 'Hidden',
+		disabledValue: 'Visible'
 	},
 	{
 		name: 'square',
 		label: 'Square Token',
 		enabledDescription: 'New tokens will be square',
-		disabledDescription: 'New tokens will be round'
+		disabledDescription: 'New tokens will be round',
+		enabledValue: 'Square',
+		disabledValue: 'Round'
 	},
 	{
 		name: 'locked',
 		label: 'Lock Token in Position',
 		enabledDescription: 'New tokens will not be movable',
-		disabledDescription: 'New tokens will be movable'
+		disabledDescription: 'New tokens will be movable',
+		enabledValue: 'Locked',
+		disabledValue: 'Movable'
 	},
 	{
 		name: 'restrictPlayerMove',
 		label: 'Restrict Player Movement',
 		enabledDescription: 'Player will not be able to move new tokens',
-		disabledDescription: 'Player will be able to move new tokens'
+		disabledDescription: 'Player will be able to move new tokens',
+		enabledValue: 'Restricted',
+		disabledValue: 'Unrestricted'
 	},
 	{
 		name: 'disablestat',
 		label: 'Disable HP/AC',
 		enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-		disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
+		disabledDescription: 'New tokens will have HP/AC shown to only the DM.',
+		enabledValue: 'Disabled',
+		disabledValue: 'Enabled'
 	},
 	{
 		name: 'hidestat',
 		label: 'Hide HP/AC from players',
 		enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
+		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players.",
+		enabledValue: 'Hidden',
+		disabledValue: 'Visible'
+	},
+	{
+		name: 'hidehpbar',
+		label: 'Only show HP values on hover',
+		enabledDescription: "HP values will only be shown when you hover or select a token",
+		disabledDescription: "Enable this to hide HP values except when you hover or select a token.",
+		enabledValue: 'On Hover',
+		disabledValue: 'Always'
 	},
 	{
 		name: 'disableborder',
 		label: 'Disable Border',
 		enabledDescription: 'New tokens will not have a border around them',
-		disabledDescription: 'New tokens will have a border around them'
+		disabledDescription: 'New tokens will have a border around them',
+		enabledValue: 'No Border',
+		disabledValue: 'Border'
 	},
 	{
 		name: 'disableaura',
-		label: 'Disable Health Meter',
+		label: 'Disable Health Aura',
 		enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-		disabledDescription: 'New tokens will have an aura around them that represents their current health'
+		disabledDescription: 'New tokens will have an aura around them that represents their current health',
+		enabledValue: 'No Aura',
+		disabledValue: 'Health Aura'
+	},
+	{
+		name: 'enablepercenthpbar',
+		label: 'Enable Token HP% Bar',
+		enabledDescription:'Token has a traditional visual hp% bar indicator',
+		disabledDescription: 'Token does not have a traditional visual hp% bar indicator',
+		enabledValue: 'Health Bar',
+		disabledValue: 'No Bar'
 	},
 	{
 		name: 'revealname',
 		label: 'Show name to players',
 		enabledDescription: 'New tokens will have their name visible to players',
-		disabledDescription: 'New tokens will have their name hidden from players'
+		disabledDescription: 'New tokens will have their name hidden from players',
+		enabledValue: 'Visible',
+		disabledValue: 'Hidden'
 	},
 	{
 		name: 'legacyaspectratio',
 		label: 'Ignore Image Aspect Ratio',
 		enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-		disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
+		disabledDescription: 'New tokens will respect the aspect ratio of the image provided',
+		enabledValue: 'Stretch',
+		disabledValue: 'Maintain'
 	}
 ];
 
@@ -154,149 +190,29 @@ function init_settings(){
 	`);
 
 	$("#input_file").change(import_readfile);
-	
+
 	body.append(`
 		<br />
 		<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
-		<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. Custom tokens allow you to override these settings on a per-token basis.</div>
+		<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>
 	`);
 
-
-	const token_settings = [
-		{
-			name: 'hidden',
-			label: 'Hide',
-			enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-			disabledDescription: 'New tokens will be visible to players when placed on the scene'
-		},
-		{
-			name: 'square',
-			label: 'Square Token',
-			enabledDescription: 'New tokens will be square',
-			disabledDescription: 'New tokens will be round'
-		},
-		{
-			name: 'locked',
-			label: 'Lock Token in Position',
-			enabledDescription: 'New tokens will not be movable',
-			disabledDescription: 'New tokens will be movable'
-		},
-		{
-			name: 'restrictPlayerMove',
-			label: 'Restrict Player Movement',
-			enabledDescription: 'Player will not be able to move new tokens',
-			disabledDescription: 'Player will be able to move new tokens'
-		},
-		{
-			name: 'disablestat',
-			label: 'Disable HP/AC',
-			enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-			disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
-		},
-		{
-			name: 'hidestat',
-			label: 'Hide HP/AC from players',
-			enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-			disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
-		},
-		{
-			name: 'hidehpbar',
-			label: 'Only show HP values on hover',
-			enabledDescription: "HP values will only be shown when you hover or select a token",
-			disabledDescription: "Enable this to hide HP values except when you hover or select a token."
-		},	
-		{
-			name: 'disableborder',
-			label: 'Disable Border',
-			enabledDescription: 'New tokens will not have a border around them',
-			disabledDescription: 'New tokens will have a border around them'
-		},
-		{
-			name: 'disableaura',
-			label: 'Disable Health Meter',
-			enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-			disabledDescription: 'New tokens will have an aura around them that represents their current health'
-		},
-		{
-			name: 'enablepercenthpbar', 
-			label: 'Enable Token HP% Bar', 
-			enabledDescription:'Token has a traditional visual hp% bar indicator', 
-			disabledDescription: 'Token does not have a traditional visual hp% bar indicator'
-		},
-		{
-			name: 'hideaurafog',
-			label: 'Hide Aura when token in Fog',
-			enabledDescription: "Token's aura is hidden from players when in fog",
-			disabledDescription: "Token's aura is visible to players when token is in fog"
-		},
-		{
-			name: 'auraislight',
-			label: 'auraislight',
-			enabledDescription: "",
-			disabledDescription: ""
-		},
-		{
-			name: 'revealname',
-			label: 'Show name to players',
-			enabledDescription: 'New tokens will have their name visible to players',
-			disabledDescription: 'New tokens will have their name hidden from players'
-		},
-		{
-			name: 'legacyaspectratio',
-			label: 'Ignore Image Aspect Ratio',
-			enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-			disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
-		}
-	];
-
-	for(let i = 0; i < token_settings.length; i++) {
-		let setting = token_settings[i];
-		let currentValue = window.TOKEN_SETTINGS[setting.name];
-		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-			console.log(`${name} setting is now ${newValue}`);
-			window.TOKEN_SETTINGS[name] = newValue;
-			persist_token_settings(window.TOKEN_SETTINGS);
-			redraw_settings_panel_token_examples();
+	let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
+	tokenOptionsButton.on("click", function (clickEvent) {
+		build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, window.TOKEN_SETTINGS, TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, function(name, newValue) {
+				window.TOKEN_SETTINGS[name] = newValue;
+			}, function () {
+				persist_token_settings(window.TOKEN_SETTINGS);
+				redraw_settings_panel_token_examples();
+			});
+			optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
+			flyout.append(optionsContainer);
+			flyout.css("left", body[0].getBoundingClientRect().left - flyout.width());
 		});
-		if (setting.name == ('auraislight' || 'hideaurafog')){
-			continue
-		}
-		body.append(inputWrapper);
-	}
-
-	const build_example_token = function(imageUrl) {
-		return $(`
-			<div class="custom-token-image-item">
-				<div class="token-image-sizing-dummy"></div>
-				<img alt="example-token-img" class="token-image token-round" src="${imageUrl}" />
-			</div>
-		`);
-	}
-
-	// Build example tokens to show the settings changes
-	body.append(`<div class="token-image-modal-footer-title">Example Tokens</div>`);
-	let tokenExamplesWrapper = $(`<div class="example-tokens-wrapper"></div>`);
-	body.append(tokenExamplesWrapper);
-	// not square image to show aspect ratio
-	tokenExamplesWrapper.append(build_example_token("https://www.dndbeyond.com/avatars/thumbnails/6/359/420/618/636272697874197438.png"));
-	// perfectly square image
-	tokenExamplesWrapper.append(build_example_token("https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg"));
-	// idk, something else I guess
-	tokenExamplesWrapper.append(build_example_token("https://i.imgur.com/2Lglcip.png"));
-
-	let resetToDefaults = $(`<button class="token-image-modal-remove-all-button" title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
-	resetToDefaults.on("click", function () {
-		for (let i = 0; i < token_setting_options.length; i++) {
-			let setting = token_setting_options[i];
-			let toggle = body.find(`button[name=${setting.name}]`);
-			if (toggle.hasClass("rc-switch-checked")) {
-				toggle.click();
-			}
-		}
-		persist_token_settings(window.TOKEN_SETTINGS);
-		redraw_settings_panel_token_examples();
 	});
-	body.append(resetToDefaults);
+	body.append(tokenOptionsButton);
+	body.append(`<br />`);
 
 	const experimental_features = [
 		{
@@ -359,88 +275,111 @@ function init_settings(){
 	redraw_settings_panel_token_examples();
 }
 
-function redraw_settings_panel_token_examples() {
-	
-	let items = settingsPanel.body.find(".example-tokens-wrapper .custom-token-image-item");
-	items.css("margin", "auto");
-	items.css("width", "30%");
-
-	if (window.TOKEN_SETTINGS['hidden']) {
-		items.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
-	} else {
-		items.css("opacity", 1);
+function redraw_settings_panel_token_examples(settings) {
+	if (settings === undefined) {
+		settings = {...window.TOKEN_SETTINGS};
 	}
-
-	if (window.TOKEN_SETTINGS['square']) {
-		items.find("img").removeClass("token-round");
-	} else {
-		items.find("img").addClass("token-round");
+	let items = $(".example-tokens-wrapper .example-token");
+	for (let i = 0; i < items.length; i++) {
+		let item = $(items[i]);
+		settings.imgsrc = item.find("img.token-image").attr("src");
+		item.replaceWith(build_example_token(settings));
 	}
+}
 
-	if (window.TOKEN_SETTINGS['locked']) {
-		// nothing to show here?
-	} else {
-		// nothing to show here?
+function build_example_token(options) {
+	let mergedOptions = {...default_options(), ...window.TOKEN_SETTINGS, ...options};
+	mergedOptions.hp = 10;
+	mergedOptions.max_hp = 10;
+	mergedOptions.id = `exampleToken-${uuid()}`;
+	mergedOptions.size = 100;
+	mergedOptions.ac = 10;
+
+	// TODO: this is horribly inneficient. Clean up token.place and then update this
+	let token = new Token(mergedOptions);
+	token.place(0);
+	let html = $(`#tokens div[data-id='${mergedOptions.id}']`).clone();
+	token.delete();
+
+	html.addClass("example-token");
+	html.css({
+		float: "left",
+		width: "33%",
+		position: "relative",
+		opacity: 1,
+		top: 0,
+		left: 0
+	});
+	return html;
+}
+
+const TOKEN_OPTIONS_INPUT_TYPE_TOGGLE = "toggle";
+const TOKEN_OPTIONS_INPUT_TYPE_SELECT = "select";
+// used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
+// updateValue: function(name, newValue) {} // only update the data here
+// didChange: function() {} // do ui things here
+function build_sidebar_token_options_flyout(availableOptions, setValues, inputType, updateValue, didChange) {
+	const validInputTypes = [TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, TOKEN_OPTIONS_INPUT_TYPE_SELECT];
+	if (!validInputTypes.includes(inputType)) {
+		console.error("build_sidebar_token_options_flyout received the wrong inputType. Expected one of", validInputTypes, "but received", inputType);
+		return;
 	}
+	let container = $(`<div class="sidebar-token-options-flyout-container prevent-sidebar-modal-close"></div>`);
+	availableOptions.forEach(option => {
+		const currentValue = setValues[option.name];
+		if (inputType === TOKEN_OPTIONS_INPUT_TYPE_TOGGLE) {
+			let inputWrapper = build_toggle_input(option.name, option.label, currentValue, option.enabledDescription, option.disabledDescription, function (n, v) {
+				updateValue(n, v);
+				if (didChange) {
+					didChange();
+				}
+			});
+			container.append(inputWrapper)
+		} else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_SELECT) {
+			let inputWrapper = build_token_option_select_input(option.name, option.label, option.disabledValue, option.enabledValue, currentValue, function (n, v) {
+				updateValue(n, v);
+				if (didChange) {
+					didChange();
+				}
+			});
+			container.append(inputWrapper)
+		}
+	});
 
-	if (window.TOKEN_SETTINGS['disablestat']) {
-		items.find(".hpbar").remove();
-		items.find(".ac").remove();
-	} else if (window.CURRENT_SCENE_DATA !== undefined && window.CURRENT_SCENE_DATA.hpps !== undefined) {
-		items.find(".hpbar").remove();
-		items.find(".ac").remove();
 
-		// only do this if we've loaded scene data. Otherwise this breaks because it tries to do math on undefined
-		let tok = new Token(default_options());
-		tok.options.size = items.width();
-		tok.options.max_hp = 10;
-		tok.options.hp = 10;
-		tok.options.ac = 10;
-		let hp = tok.build_hp();
-		items.append(hp);
-		let ac = tok.build_ac();
-		items.append(ac);
-	}
+	// Build example tokens to show the settings changes
+	container.append(`<h5 class="token-image-modal-footer-title" style="margin-top:15px;">Example Tokens</h5>`);
+	let tokenExamplesWrapper = $(`<div class="example-tokens-wrapper"></div>`);
+	container.append(tokenExamplesWrapper);
+	// not square image to show aspect ratio
+	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/thumbnails/6/359/420/618/636272697874197438.png"}));
+	// perfectly square image
+	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg"}));
+	// idk, something else I guess
+	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://i.imgur.com/2Lglcip.png"}));
 
-	if (window.TOKEN_SETTINGS['hidestat']) {
-		// anything to show here? This only affects players
-	} else {
-		// anything to show here? This only affects players
-	}
+	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
+	resetToDefaults.on("click", function (clickEvent) {
+		if (inputType === TOKEN_OPTIONS_INPUT_TYPE_TOGGLE) {
+			$(clickEvent.currentTarget)
+				.closest(".sidebar-token-options-flyout-container")
+				.find(".rc-switch")
+				.removeClass("rc-switch-checked")
+				.removeClass("rc-switch-unknown");
+		} else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_SELECT) {
+			$(clickEvent.currentTarget)
+				.closest(".sidebar-token-options-flyout-container")
+				.find("select")
+				.val("default");
+		}
+		availableOptions.forEach(option => updateValue(option.name, undefined));
+		if (didChange) {
+			didChange();
+		}
+	});
+	container.append(resetToDefaults);
 
-	if (window.TOKEN_SETTINGS['restrictPlayerMove']) {
-		// anything to show here? This only affects players
-	} else {
-		// anything to show here? This only affects players
-	}
-
-	if (window.TOKEN_SETTINGS['disableborder']) {
-		items.find("img").css("border", "0px solid #000")
-	} else {
-		items.find("img").css("border", "4px solid #000")
-	}
-
-	if (window.TOKEN_SETTINGS['disableaura']) {
-		items.find("img").css("box-shadow", "");
-		items.find("img").css("transform", `scale(1)`);
-	} else {
-		items.find("img").css("box-shadow", "rgb(5 255 0 / 80%) 0px 0px 7px 7px");
-		items.find("img").css("transform", `scale(0.88)`); // close enough
-	}
-
-	if (window.TOKEN_SETTINGS['revealname']) {
-		// this messes with the size of the example tokens, and we can't use the `VTTToken` class because otherwise the scene will think it's a real token
-		// so for now, do nothing, and revisit this in the future
-		// items.addClass('hasTooltip');
-	} else {
-		// items.removeClass('hasTooltip');
-	}
-
-	if (window.TOKEN_SETTINGS['legacyaspectratio']) {
-		items.find("img").removeClass("preserve-aspect-ratio");
-	} else {
-		items.find("img").addClass("preserve-aspect-ratio");
-	}
+	return container;
 }
 
 function enable_dice_streaming_feature(enabled){

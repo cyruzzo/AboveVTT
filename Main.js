@@ -2445,6 +2445,15 @@ function init_ui() {
 		if (sidebarMonsterFilter.length > 0 && !event.target.closest("#monster-filter-iframe")) {
 			close_monster_filter_iframe();
 		}
+		if (event.which === 1 && $(".sidebar-flyout").length > 0) {
+			// check if the click was within the flyout
+			let flyout = event.target.closest(".sidebar-flyout");
+			let preventSidebarModalClose = event.target.closest(".prevent-sidebar-modal-close");
+			if (!flyout && !preventSidebarModalClose) {
+				remove_sidebar_flyout();
+			}
+		}
+
 
 	}
 

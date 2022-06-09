@@ -296,6 +296,44 @@ function build_select_input(labelText, input) {
   return wrapper;
 }
 
+/// changeHandler: function(name, newValue) // newValue will be one of [true, false, undefined], where `undefined` means "default"
+function build_token_option_select_input(name, labelText, disabledLabel, enabledLabel, currentValue, changeHandler) {
+  let inputElement = $(`
+      <select name="${name}">
+          <option value="default">Default</option>
+          <option value="disabled">${disabledLabel}</option>
+          <option value="enabled">${enabledLabel}</option>
+      </select>
+  `);
+
+  // explicitly look for true/false because the default value is undefined
+  if (currentValue === true) {
+    inputElement.val("enabled");
+  } else if (currentValue === false) {
+    inputElement.val("disabled");
+  } else {
+    inputElement.val("default");
+  }
+  inputElement.change(function (event) {
+    console.log("update", event.target.name, "to", event.target.value);
+    if (event.target.value === "enabled") {
+      changeHandler(event.target.name, true);
+    } else if (event.target.value === "disabled") {
+      changeHandler(event.target.name, false);
+    } else {
+      changeHandler(event.target.name, undefined);
+    }
+  });
+
+  let wrapper = $(`
+    <div class="token-image-modal-footer-select-wrapper">
+      <div class="token-image-modal-footer-title">${labelText}</div>
+    </div>
+  `);
+  wrapper.append(inputElement);
+  return wrapper;
+}
+
 function build_toggle_input(name, labelText, enabled, enabledHoverText, disabledHoverText, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
@@ -1455,25 +1493,36 @@ function delete_folder_and_move_children_up_one_level(listItem) {
   }
 }
 
+function build_and_display_sidebar_flyout(clientY, buildFunction) {
+  remove_sidebar_flyout(); // never duplicate
+  let flyout = $(`<div class='sidebar-flyout'></div>`);
+  $("body").append(flyout);
+
+  buildFunction(flyout); // we want this built here so we can position the flyout based on the height of it
+
+  let height = flyout.height();
+  let halfHeight = (height / 2);
+  let top = clientY - halfHeight;
+  if (top < 30) { // make sure it's always below the main UI buttons
+    top = 30;
+  } else if (clientY + halfHeight > window.innerHeight - 30) {
+    top = window.innerHeight - height - 30;
+  }
+
+  flyout.css({
+    "top": top
+  });
+}
+
+function remove_sidebar_flyout() {
+  $(`.sidebar-flyout`).remove();
+}
+
 function sidebar_flyout(hoverEvent, buildFunction) {
   if (hoverEvent.type === "mouseenter") {
-    $(`.sidebar-flyout`).remove(); // never duplicate
-    let flyout = $(`<div class='sidebar-flyout'></div>`);
-    $("body").append(flyout);
-    buildFunction(flyout);
-    let height = flyout.height();
-    let halfHeight = (height / 2);
-    let top = hoverEvent.clientY - halfHeight;
-    if (top < 30) { // make sure it's always below the main UI buttons
-      top = 30;
-    } else if (hoverEvent.clientY + halfHeight > window.innerHeight - 30) {
-      top = window.innerHeight - height - 30;
-    }
-    flyout.css({
-      "top": top
-    });
+    build_and_display_sidebar_flyout(hoverEvent.clientY, buildFunction);
   } else {
-    $(`.sidebar-flyout`).remove(); // never duplicate
+    remove_sidebar_flyout();
   }
 }
 

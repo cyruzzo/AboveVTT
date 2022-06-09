@@ -2280,10 +2280,12 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
     width: auto;
 }
+.example-token,
 .custom-token-image-item {
     float: left; 
     width: 33%;
     position: relative;
+    opacity: 1;
 }
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
@@ -2366,6 +2368,11 @@ h5.token-image-modal-footer-title:after {
     height: 400px;
     object-fit: cover;
     display: block;
+}
+.sidebar-token-options-flyout-container {
+    width: 320px;
+    padding: 5px;
+    background-color: rgb(235, 241, 245);
 }
 #scenes-panel .sidebar-list-item-row.scene-item .scene-item-footer {
     display: flex;
@@ -3203,11 +3210,6 @@ button.avtt-roll-button {
 }
 .context-menu-list li{
     background: none;
-}
-
-.token-image-modal-footer-title,
-.token-image-modal-footer-select-wrapper{
-    min-width: fit-content;
 }
 
 .menu-outer-aura h3,
