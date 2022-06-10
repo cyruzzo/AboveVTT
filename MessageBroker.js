@@ -1280,15 +1280,15 @@ class MessageBroker {
 				ct_load();
 			}
 
-			if(window.DM)
+			if(window.DM) {
 				get_pclist_player_data();
-
-
+				did_update_scenes();
+			}
 
 			if (window.EncounterHandler !== undefined) {
 				fetch_and_cache_scene_monster_items(true);
 			}
-			did_update_scenes();
+
 			console.groupEnd()
 			
 		});

@@ -1568,6 +1568,7 @@ function init_scenes_panel() {
 }
 
 function did_update_scenes() {
+	if (!window.DM) return;
 	rebuild_scene_items_list();
 	redraw_scene_list("");
 }
