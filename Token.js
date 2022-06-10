@@ -1361,9 +1361,11 @@ class Token {
 					var original = ui.originalPosition;
 					let tokenX = Math.round((event.clientX - click.x + original.left) / zoom);
 					let tokenY = Math.round((event.clientY - click.y + original.top) / zoom);
-
-					// this was copied the place function in this file. We should make this a single function to be used in other places
-					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
+					if (should_snap_to_grid()) {
+						tokenX += (window.CURRENT_SCENE_DATA.hpps / 2);
+						tokenY += (window.CURRENT_SCENE_DATA.vpps / 2);
+					}
+					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 					ui.position = {
 						left: tokenPosition.x,
 						top: tokenPosition.y
