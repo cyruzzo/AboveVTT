@@ -1091,9 +1091,7 @@ function build_options_flyout_menu(tokenIds) {
 		     return e.name != removename;
 		});
 	}
-
 	for(let i = 0; i < token_settings.length; i++) {
-
 		let setting = token_settings[i];
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
 		let uniqueSettings = [...new Set(tokenSettings)];

@@ -1018,7 +1018,7 @@ class Token {
 			setTokenAuras(old, this.options);
 
 			setTokenBase(old, this.options);
-
+			
 			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
 				old.find("img").addClass("token-round");
 			}
@@ -1163,7 +1163,6 @@ class Token {
 			setTokenAuras(tok, this.options);
 
 			setTokenBase(tok, this.options);
-
 
 			let click = {
 				x: 0,
