@@ -1927,7 +1927,14 @@ function setTokenBase(token, options) {
 		$(`.token[data-id='${options.id}']>.base`).remove();
 	}
 	$(`.token[data-id='${options.id}']>.base`).remove();
-	let base = $(`<div class='base'></div>`);	
+	let base = $(`<div class='base'></div>`);
+	if(options.size < 150){
+		$(base).toggleClass("large-or-smaller-base", true);
+	}
+	else{
+		$(base).toggleClass("large-or-smaller-base", false);
+	}
+
 	if(options.tokenStyleSelect == 4){
 		base.toggleClass('square', false);
 		base.toggleClass('circle', true);		
