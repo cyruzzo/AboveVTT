@@ -3942,6 +3942,14 @@ button.avtt-roll-button {
     }
 }
 
+
+.body-rpgcampaign .ddb-campaigns-invite-primary {
+    filter: blur(6px);
+}
+.body-rpgcampaign .ddb-campaigns-invite-primary:hover {
+    filter: none;
+}
+
 .sp-container {
     position: fixed !important;
 }
