@@ -3612,7 +3612,7 @@ button.avtt-roll-button {
     box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
 }
 .token>.base.noborder{
-    border: solid 5px var(--token-hp-aura-color);
+    border: 5px solid var(--token-hp-aura-color);
 }
 .token>.base.noborder.nohpaura{
     border: inset 5px #ffffff44;
@@ -3652,7 +3652,8 @@ button.avtt-roll-button {
     right: 0;
     bottom: 0;
     background-size: 30%;
-    opacity: 0.8;
+    opacity: 1;
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
 }
 
 .base.grass-base:after{
