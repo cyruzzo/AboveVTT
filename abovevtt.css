@@ -3626,7 +3626,8 @@ button.avtt-roll-button {
     border: 0px;
     box-shadow: none;
 }
-.base.circle{
+.base.circle,
+.base.circle:after{
     border-radius: 50%;
 }
 .token>img.freeform {
@@ -3643,10 +3644,43 @@ button.avtt-roll-button {
     height: 100%;
 } 
 
-#tokenWrapper__tokenStyleSelect{
+.base:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: 30%;
+    opacity: 0.8;
+}
+
+.base.grass-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/ground_grass_gen_07.png);
+}
+.base.tile-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/textureStone_0.png);
+}
+.base.sand-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/dirt4.png);
+}
+.base.rock-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/Rockface%20red_0.png);
+}
+.base.water-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/Untitled-3_1.jpg);
+}
+
+#tokenWrapper__tokenStyleSelect,
+#tokenWrapper__tokenBaseStyleSelect{
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+#tokenWrapper__tokenBaseStyleSelect{
+    transition: height 1500ms linear 0s;
+    overflow: hidden;
 }
 
 .image-size-wrapper,

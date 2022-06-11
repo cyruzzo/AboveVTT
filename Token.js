@@ -1995,6 +1995,28 @@ function setTokenBase(token, options) {
 			token.children(".base").toggleClass("nohpaura", false);
 		}
 	}
+
+	
+	token.children(".base").toggleClass("grass-base", false);
+	token.children(".base").toggleClass("rock-base", false);
+	token.children(".base").toggleClass("tile-base", false);
+	token.children(".base").toggleClass("sand-base", false);
+	token.children(".base").toggleClass("water-base", false);
+	if(options.tokenBaseStyleSelect == 2){
+		token.children(".base").toggleClass("grass-base", true);
+	}
+	else if(options.tokenBaseStyleSelect == 3){
+		token.children(".base").toggleClass("tile-base", true);
+	}
+	else if(options.tokenBaseStyleSelect == 4){
+		token.children(".base").toggleClass("sand-base", true);
+	}
+	else if(options.tokenBaseStyleSelect == 5){
+		token.children(".base").toggleClass("rock-base", true);
+	}
+	else if(options.tokenBaseStyleSelect == 6){
+		token.children(".base").toggleClass("water-base", true);
+	}
 			
 }
 

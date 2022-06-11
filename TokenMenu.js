@@ -297,7 +297,13 @@ function token_context_menu_expanded(tokenIds, e) {
 		optionsRow.hover(function (hoverEvent) {
 			context_menu_flyout("options-flyout", hoverEvent, function(flyout) {
 				flyout.append(build_options_flyout_menu(tokenIds));
-			})
+			})		
+			if($(`#tokenSelect__tokenStyleSelect option:selected`).val() == 4 || $(`#tokenSelect__tokenStyleSelect option:selected`).val() == 5){
+				$(`#tokenWrapper__tokenBaseStyleSelect`).show();
+			}
+			else{
+			 	$(`#tokenWrapper__tokenBaseStyleSelect`).hide();
+			}	
 		});
 		body.append(optionsRow);
 	}
@@ -1097,17 +1103,21 @@ function build_options_flyout_menu(tokenIds) {
 		}
 		if(setting.name == 'square' || setting.name == 'legacyaspectratio')
 			continue;
-
+		if(setting.name =='tokenBaseStyleSelect'){
+			
+		}
 		if(setting.type == "dropdown"){
 			let inputWrapper = build_dropdown_input(setting.name, setting.label, currentValue, setting.options, function(name, newValue) {
 				console.log(`${name} setting is now ${newValue}`);
+
 				tokens.forEach(token => {
 					token.options[name] = newValue;
 					token.place_sync_persist();
 				});
 			});
-
+			
 			body.append(inputWrapper);
+		
 		}
 		else{
 			let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
@@ -1119,10 +1129,7 @@ function build_options_flyout_menu(tokenIds) {
 			});
 			body.append(inputWrapper);
 		}
-	
 	}
-
-
 
 	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {

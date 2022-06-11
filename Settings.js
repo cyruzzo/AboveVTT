@@ -12,6 +12,19 @@ const token_setting_options = [
  		]
 	},
 	{
+		name: 'tokenBaseStyleSelect',
+		type: 'dropdown',
+		label: 'Token Base Style',
+		options: [
+			$(`<option value='1'>Default</option>`), 
+			$(`<option value='2'>Grass</option>`), 
+			$(`<option value='3'>Tile</option>`), 
+			$(`<option value='4'>Sand</option>`), 
+			$(`<option value='5'>Rock</option>`),
+			$(`<option value='6'>Water</option>`)
+ 		]
+	},
+	{
 		name: 'hidden',
 		label: 'Hide',
 		enabledDescription: 'The token is hidden to players.',

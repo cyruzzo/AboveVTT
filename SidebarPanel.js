@@ -425,12 +425,23 @@ function build_dropdown_input(name, labelText, currentValue, options, changeHand
     tokenSelect.append(options[i]);
   }
   tokenSelect.val(currentValue);
+
+   
+
+
+ 
   tokenSelect.change(function(clickEvent) {
     changeHandler(name, $(`#tokenSelect__${name} option:selected`).val());
+    if(name == "tokenStyleSelect"){
+      $(`#tokenWrapper__tokenBaseStyleSelect`).hide();
+      if($(`#tokenSelect__${name} option:selected`).val() == 4 || $(`#tokenSelect__${name} option:selected`).val() == 5){
+         $(`#tokenWrapper__tokenBaseStyleSelect`).show();
+      }
+    }
   });
   
   wrapper.append(tokenSelect);
- 
+
   return wrapper;
 }
 
