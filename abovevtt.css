@@ -3599,8 +3599,39 @@ button.avtt-roll-button {
 }
 
 /*end combat tracker face lift*/
-
-.token>img {
+.token>.base{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #0000001c;
+    backdrop-filter: blur(3px) brightness(0.2);
+    z-index: -1;
+    border: inset 5px var(--token-border-color, #ffffff44);
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
+}
+.token>.base.noborder{
+    border: solid 5px var(--token-hp-aura-color);
+}
+.token>.base.noborder.nohpaura{
+    border: inset 5px #ffffff44;
+}
+.token>img{
+    border: 2px solid var(--token-border-color, #ffffff44);
+    box-shadow: 0 0 2px 3px var(--token-hp-aura-color);
+}
+.token>.base~img{
+    filter: none;
+    border: 0px;
+    box-shadow: none;
+}
+.base.circle{
+    border-radius: 50%;
+}
+.token>img.freeform {
+    border: 0px;
+    box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
@@ -3611,6 +3642,12 @@ button.avtt-roll-button {
     width: 100%;
     height: 100%;
 } 
+
+#tokenWrapper__tokenStyleSelect{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .image-size-wrapper,
 .border-color-wrapper {

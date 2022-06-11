@@ -395,8 +395,10 @@ class Token {
 			token.css('--token-temp-hp', "transparent");
 		} 
 		else {
-			tokenWidth = tokenWidth - 10;
-			tokenHeight = tokenHeight - 10;
+			if(this.options.tokenStyleSelect == 1 || this.options.tokenStyleSelect == 2){
+				tokenWidth = tokenWidth - 6;
+				tokenHeight = tokenHeight - 6;
+			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(tokenData.temp_hp) {
 				token.css('--token-temp-hp', "#4444ffbd");
@@ -410,8 +412,10 @@ class Token {
 			$("token:before").css('--token-border-color', 'transparent');
 		} 
 		else {
-			tokenWidth = tokenWidth - 4;
-			tokenHeight = tokenHeight - 4;
+			if(this.options.tokenStyleSelect == 1 || this.options.tokenStyleSelect == 2){
+				tokenWidth = tokenWidth - 1;
+				tokenHeight = tokenHeight - 1;
+			}
 			token.css('--token-border-color', this.options.color);
 			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
@@ -1013,6 +1017,8 @@ class Token {
 			
 			setTokenAuras(old, this.options);
 
+			setTokenBase(old, this.options);
+
 			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
 				old.find("img").addClass("token-round");
 			}
@@ -1155,6 +1161,9 @@ class Token {
 
 			
 			setTokenAuras(tok, this.options);
+
+			setTokenBase(tok, this.options);
+
 
 			let click = {
 				x: 0,
@@ -1912,6 +1921,81 @@ function setTokenAuras (token, options) {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
 	}
+}
+
+function setTokenBase(token, options) {
+	if(options.tokenStyleSelect == 1 || options.tokenStyleSelect == 2 || options.tokenStyleSelect == 3){
+		$(`.token[data-id='${options.id}']>.base`).remove();
+	}
+	$(`.token[data-id='${options.id}']>.base`).remove();
+	let base = $(`<div class='base'></div>`);	
+	if(options.tokenStyleSelect == 4){
+		base.toggleClass('square', false);
+		base.toggleClass('circle', true);		
+	}
+	if (options.tokenStyleSelect == 5){
+		base.toggleClass('square', true);
+		base.toggleClass('circle', false);
+	}
+	if(options.tokenStyleSelect !== 3){
+		token.children("img").toggleClass("freeform", false);
+	}
+	
+	if(options.tokenStyleSelect == 1){
+		//Circle
+		options.square = false;
+		options.legacyaspectratio = true;
+		token.children("img").css("border-radius", "50%")
+		token.children("img").removeClass("preserve-aspect-ratio");
+	}
+	else if(options.tokenStyleSelect == 2){
+		//Square
+		options.square = true;
+		options.legacyaspectratio = true;
+		token.children("img").css("border-radius", "0");
+		token.children("img").removeClass("preserve-aspect-ratio");
+	}
+	else if(options.tokenStyleSelect == 3){
+		//Freeform
+		options.square = true;
+		options.legacyaspectratio = false;
+		token.children("img").css("border-radius", "0");
+		token.children("img").addClass("preserve-aspect-ratio");
+		token.children("img").toggleClass("freeform", true);
+	}
+	else if(options.tokenStyleSelect == 4){
+		$(`.token[data-id='${options.id}']`).prepend(base);
+		//Virtual Mini Circle
+		options.square = true;
+		options.legacyaspectratio = false;
+		token.children("img").css("border-radius", "0");
+		token.children("img").addClass("preserve-aspect-ratio");
+	}
+	else if(options.tokenStyleSelect == 5){
+		$(`.token[data-id='${options.id}']`).prepend(base);
+		//Virtual Mini Square
+		options.square = true;
+		options.legacyaspectratio = false;
+		token.children("img").css("border-radius", "0");
+		token.children("img").addClass("preserve-aspect-ratio");
+	}
+
+	if(options.tokenStyleSelect == 5 || options.tokenStyleSelect == 4){
+		if(options.disableborder == true){
+			token.children(".base").toggleClass("noborder", true);
+		}
+		else{
+			token.children(".base").toggleClass("noborder", false);
+		}
+
+		if(options.disableaura == true){
+			token.children(".base").toggleClass("nohpaura", true);
+		}
+		else{
+			token.children(".base").toggleClass("nohpaura", false);
+		}
+	}
+			
 }
 
 function get_custom_monster_images(monsterId) {

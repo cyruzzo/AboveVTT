@@ -1,12 +1,24 @@
 const token_setting_options = [
 	{
+		name: 'tokenStyleSelect',
+		type: 'dropdown',
+		label: 'Token Style',
+		options: [
+			$(`<option value='1'>Circle</option>`), 
+			$(`<option value='2'>Square</option>`), 
+			$(`<option value='3'>No Constraint</option>`), 
+			$(`<option value='4'>Virtual Mini Circle</option>`), 
+			$(`<option value='5'>Virtual Mini Square</option>`)
+ 		]
+	},
+	{
 		name: 'hidden',
 		label: 'Hide',
 		enabledDescription: 'The token is hidden to players.',
 		disabledDescription: 'The token is visible to players.',
 		enabledValue: 'Hidden',
 		disabledValue: 'Visible'
-	},
+	},     
 	{
 		name: 'square',
 		label: 'Square Token',
