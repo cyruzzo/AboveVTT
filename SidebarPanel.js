@@ -261,7 +261,9 @@ function build_text_input_wrapper(titleText, input, sideButton, inputSubmitCallb
     textInput.on('keyup', function(event) {
       let inputValue = event.target.value;
       if (event.key === "Enter" && inputValue !== undefined && inputValue.length > 0) {
-        inputSubmitCallback(inputValue, event.target, event);
+        inputSubmitCallback(inputValue, $(event.target), event);
+      } else if (event.key === "Escape") {
+        $(event.target).blur();
       }
     });
 
@@ -1347,27 +1349,54 @@ function display_folder_configure_modal(listItem) {
 
   sidebarModal.updateHeader(listItem.name, listItem.fullPath(), "Edit or delete this folder.");
 
+  const renameFolder = function(newFolderName, input, event) {
+    let oldPath = harvest_full_path(input);
+    if (oldPath.endsWith(`/${newFolderName}`)) {
+      // It did not change. Nothing to do here.
+      return undefined;
+    }
+    let foundItem = find_sidebar_list_item(input);
+    let updatedFullPath = rename_folder(foundItem, newFolderName, true);
+    if (updatedFullPath) {
+      // the name has been changed. Update the input so we know it has been changed later
+      set_full_path(input, updatedFullPath);
+      return updatedFullPath;
+    } else {
+      // there was a naming conflict, and the user has been alerted. select the entire text so they can easily change it
+      input.select();
+      return false;
+    }
+  }
+
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
   set_full_path(folderNameInput, listItemFullPath);
-  sidebarModal.body.append(build_text_input_wrapper("Folder Name",
-      folderNameInput,
-      `<button>Save</button>`,
-      function(newFolderName, input, event) {
-        let oldPath = harvest_full_path($(input));
-        if (oldPath.endsWith(`/${newFolderName}`)) {
-          close_sidebar_modal();
-          return;
-        }
-        let foundItem = find_sidebar_list_item($(input));
-        let updateFullPath = rename_folder(foundItem, newFolderName);
-        if (updateFullPath === undefined) {
-          $(input).select();
-        } else {
-          close_sidebar_modal();
-          expand_all_folders_up_to(updateFullPath, container);
-        }
+  sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder));
+
+  // Coming Soon...
+  // let folderOptions = {};
+  // let folderOptionsButton = build_override_token_options_button(sidebarModal, listItem, undefined, folderOptions, function () {
+  //   if (value === true || value === false) {
+  //     folderOptions[name] = value;
+  //   } else {
+  //     delete folderOptions[name];
+  //   }
+  // }, function () {
+  //
+  // });
+  // sidebarModal.body.append(folderOptionsButton);
+
+  let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
+  saveButton.on("click", function (clickEvent) {
+    let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
+    let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
+    if (renameResult !== false) {
+      close_sidebar_modal();
+      if (typeof renameResult === "string") {
+        expand_all_folders_up_to(renameResult, container);
       }
-  ));
+    }
+  });
+  sidebarModal.body.append(saveButton);
 
   let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
   set_full_path(deleteFolderAndMoveChildrenButton, listItemFullPath);
@@ -1399,7 +1428,7 @@ function rename_folder(item, newName, alertUser = true) {
     if (alertUser !== false) {
       alert("An unexpected error occurred");
     }
-    return;
+    return undefined;
   }
 
   if (item.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
@@ -1409,7 +1438,7 @@ function rename_folder(item, newName, alertUser = true) {
   } else if (alertUser !== false) {
     alert("An unexpected error occurred");
   }
-
+  return undefined;
 }
 
 /**

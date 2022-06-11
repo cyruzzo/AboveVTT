@@ -1245,6 +1245,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                 } else {
                     $(event.target).select();
                 }
+            } else if (event.key === "Escape") {
+                $(event.target).blur();
             }
         });
         inputWrapper.append(nameInput);
@@ -2265,3 +2267,58 @@ function move_mytokens_folder(listItem, folderPath) {
         console.warn("move_mytoken_to_folder was called with the wrong item type", listItem);
     }
 }
+
+// these are potentially what the cloud data will look like
+// const tokenCustomizationExamples = [
+//     {
+//         id: "/userid/characterId",
+//         type: "pc",
+//         alternativeImages: [],
+//         tokenOptions: {}
+//     },
+//     {
+//         id: "17001",
+//         type: "monster",
+//         alternativeImages: [],
+//         tokenOptions: {}
+//     },
+//     // probably don't need to do any of the below, but we could
+//     {
+//         id: "playersFolder",
+//         type: "folder",
+//         alternativeImages: [], // will always be empty because folders don't have images
+//         tokenOptions: {}
+//     },
+//     {
+//         id: "monstersFolder",
+//         type: "folder",
+//         alternativeImages: [], // will always be empty because folders don't have images
+//         tokenOptions: {}
+//     },
+//     {
+//         id: "myTokensFolder",
+//         type: "folder",
+//         alternativeImages: [], // will always be empty because folders don't have images
+//         tokenOptions: {}
+//     }
+// ];
+//
+// const myTokenExamples = [
+//     {
+//         id: uuid(),
+//         name: "Wagon",
+//         type: "myToken",
+//         folderPath: "/Vehicles",
+//         alternativeImages: [],
+//         tokenOptions: {}
+//     },
+//     {
+//         id: uuid(),
+//         name: "Vehicles",
+//         type: "Folder",
+//         folderPath: "/",
+//         alternativeImages: [],
+//         tokenOptions: {}
+//     }
+// ];
+
