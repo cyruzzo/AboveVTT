@@ -203,6 +203,18 @@ function get_player_token_customizations(playerId) {
 	return customMappingData[playerId];
 }
 
+function set_player_token_customizations(playerId, customizations) {
+	if (playerId === undefined) {
+		return;
+	}
+	let customMappingData = read_player_token_customizations();
+	customMappingData[playerId] = {...customizations};
+	if (customMappingData[playerId].images === undefined) {
+		customMappingData[playerId].images = [];
+	}
+	write_player_token_customizations(customMappingData);
+}
+
 function get_player_image_mappings(playerId) {
 	let customizations = get_player_token_customizations(playerId);
 	if (customizations.images !== undefined) {

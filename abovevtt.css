@@ -2188,6 +2188,13 @@ div.token-image-modal-footer-title {
     font-size: 13px;
     /*width: 100%;*/
 }
+h1.token-image-modal-footer-title,
+h2.token-image-modal-footer-title,
+h3.token-image-modal-footer-title,
+h4.token-image-modal-footer-title,
+h5.token-image-modal-footer-title {
+    display: block;
+}
 h1.token-image-modal-footer-title:after,
 h2.token-image-modal-footer-title:after,
 h3.token-image-modal-footer-title:after,
@@ -2217,7 +2224,8 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 30%;
+    min-width: 35%;
+    max-width: 35%;
 }
 .footer-input-wrapper {
     width: 100%;
@@ -2273,10 +2281,12 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
     width: auto;
 }
+.example-token,
 .custom-token-image-item {
     float: left; 
     width: 33%;
     position: relative;
+    opacity: 1;
 }
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
@@ -2349,11 +2359,9 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-flyout {
     position: fixed;
-    right: 350px;
-    z-index: 1000;
-    border: 1px solid #d8e1e8;
+    z-index: 100000;
     box-shadow: 1px 1px 10px black, -1px -1px 10px black;
-    border-radius: 15px;
+    border-radius: 5px;
     overflow: hidden;
 }
 .list-item-image-flyout {
@@ -2361,6 +2369,11 @@ h5.token-image-modal-footer-title:after {
     height: 400px;
     object-fit: cover;
     display: block;
+}
+.sidebar-token-options-flyout-container {
+    width: 400px;
+    padding: 5px;
+    background-color: rgb(235, 241, 245);
 }
 #scenes-panel .sidebar-list-item-row.scene-item .scene-item-footer {
     display: flex;
@@ -2772,6 +2785,17 @@ h5.token-image-modal-footer-title:after {
     outline: 2px solid #000;
 }
 
+.sidebar-hover-text-flyout {
+    display: block;
+    max-width: 400px;
+    padding: 0px 10px;
+    background-color: rgba(28,29,30,0.8);
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    text-transform: none;
+}
 .sidebar-hovertext:before {
     content: attr(data-hover);
     font-family: 'Roboto', sans-serif;
@@ -3187,11 +3211,6 @@ button.avtt-roll-button {
 }
 .context-menu-list li{
     background: none;
-}
-
-.token-image-modal-footer-title,
-.token-image-modal-footer-select-wrapper{
-    min-width: fit-content;
 }
 
 .menu-outer-aura h3,

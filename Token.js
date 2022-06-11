@@ -1960,7 +1960,7 @@ function remove_all_custom_monster_images(monsterId) {
 function load_custom_monster_image_mapping() {
 	window.CUSTOM_TOKEN_IMAGE_MAP = {};
 	let customMappingData = localStorage.getItem('CustomDefaultTokenMapping');
-	if(customMappingData != null){
+	if(customMappingData != null) {
 		window.CUSTOM_TOKEN_IMAGE_MAP = $.parseJSON(customMappingData);
 	}
 }
@@ -1977,7 +1977,7 @@ function copy_to_clipboard(text) {
 	$temp.val(text).select();
 	document.execCommand("copy");
 	$temp.remove();
-};
+}
 
 const radToDeg = 180 / Math.PI;
 

@@ -37,6 +37,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 
 		buildFunction(flyout);
 		$("#tokenOptionsContainer").append(flyout);
+		observe_hover_text(flyout);
 
 		let contextMenuCenter = (contextMenu.height() / 2);
 		let flyoutHeight = flyout.height();
@@ -931,76 +932,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 	body.append(sizeInputs);
 
 	//image scaling size
-	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
-	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
 	let tokenImageScales = tokens.map(t => t.options.imageSize);
-	if(tokenImageScales.length === 1) {
-		imageSizeInput.val(tokenImageScales[0] || 1);	
-		imageSizeInputRange.val(tokenImageScales[0] || 1);
-	}
-	imageSizeInput.on('keyup', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-		}
-		if (event.key == "Enter") {
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-			tokens.forEach(token => {
-				token.options.imageSize = imageSize;
-				token.place_sync_persist();
-			});
-		}
-		imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInput.on('focusout', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-		}	
-		tokens.forEach(token => {
-			token.options.imageSize = imageSize;
-			token.place_sync_persist();
-		});
-
-		imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInput.on(' input change', function(){
-   	 	imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInputRange.on(' input change', function(){
-   	 	imageSizeInput.val(imageSizeInputRange.val());
-	});
-	imageSizeInputRange.on('mouseup', function(){
-   	 	let imageSize = imageSizeInputRange.val();
+	let uniqueScales = [...new Set(tokenImageScales)];
+	let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
+	let imageSizeWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
 		tokens.forEach(token => {
 			token.options.imageSize = imageSize;
 			token.place_sync_persist();
 		});
 	});
-	let imageSizeWrapper = $(`
-		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
-			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
-		</div>
-	`);
-	imageSizeWrapper.append(imageSizeInput); // Beside Label
-	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	body.append(imageSizeWrapper);
 
 	//border color selections
@@ -1065,6 +1005,71 @@ function build_adjustments_flyout_menu(tokenIds) {
 	return body;
 }
 
+function build_token_image_scale_input(startingScale, didUpdate) {
+	if (isNaN(startingScale)) {
+		startingScale = 1;
+	}
+	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
+	imageSizeInput.val(startingScale || 1);
+	imageSizeInputRange.val(startingScale || 1);
+	imageSizeInput.on('keyup', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+		}
+		if (event.key == "Enter") {
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+			didUpdate(imageSize);
+		}
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on('focusout', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+		}
+		didUpdate(imageSize);
+
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on(' input change', function(){
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInputRange.on(' input change', function(){
+		imageSizeInput.val(imageSizeInputRange.val());
+	});
+	imageSizeInputRange.on('mouseup', function(){
+		let imageSize = imageSizeInputRange.val();
+		didUpdate(imageSize);
+	});
+	let imageSizeWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
+			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
+		</div>
+	`);
+	imageSizeWrapper.append(imageSizeInput); // Beside Label
+	imageSizeWrapper.append(imageSizeInputRange); // input below label
+	return imageSizeWrapper;
+}
+
 function build_options_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
@@ -1073,21 +1078,7 @@ function build_options_flyout_menu(tokenIds) {
 		padding: "5px"
 	})
 
-	let token_settings = [
-		{ name: "hidden", label: "Hide", enabledDescription:"Token is hidden to players", disabledDescription: "Token is visible to players" },
-		{ name: "square", label: "Square Token", enabledDescription:"Token is square", disabledDescription: "Token is round" },
-		{ name: "locked", label: "Lock Token in Position", enabledDescription:"Token is not moveable, Players can not select this token", disabledDescription: "Token is moveable by at least the DM, players can select it however" },
-		{ name: "restrictPlayerMove", label: "Restrict Player Movement", enabledDescription:"Token is not moveable by players", disabledDescription: "Token is moveable by any player" },
-		{ name: "disablestat", label: "Disable HP/AC", enabledDescription:"Token stats are not visible", disabledDescription: "Token stats are visible to at least the DM" },
-		{ name: "hidestat", label: "Hide Player HP/AC from players", enabledDescription:"Token stats are hidden from players", disabledDescription: "Token stats are visible to players" },
-		{ name: "hidehpbar", label: "Only show HP values on hover", enabledDescription:"HP values will only be shown when you hover or select a token", disabledDescription: "Enable this to hide HP values except when you hover or select a token." },
-		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
-		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
-		{ name: "enablepercenthpbar", label: "Enable Token HP% Bar", enabledDescription:"Token has a traditional visual hp% bar indicator", disabledDescription: "Token does not have a traditional visual hp% bar indicator" },
-		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
-		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
-		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
-	];
+	let token_settings = [...token_setting_options];
 	if (tokens.length == 1 && !tokens[0].isPlayer()){		
 		let removename = "hidestat";
 		token_settings = $.grep(token_settings, function(e){
