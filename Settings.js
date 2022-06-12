@@ -77,7 +77,7 @@ function b64DecodeUnicode(str) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     }
-    
+
 
 
 function download(data, filename, type) {
@@ -93,8 +93,8 @@ function download(data, filename, type) {
         a.click();
         setTimeout(function() {
             document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
+            window.URL.revokeObjectURL(url);
+        }, 0);
     }
 }
 
@@ -123,10 +123,10 @@ function cloud_migration(scenedata=null){
 }
 
 function init_settings(){
-	
+
 	let body = settingsPanel.body;
 
-	
+
 	if((!window.CLOUD) && (!window.FORCED_DM)){
 		body.append(`
 		<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
@@ -144,7 +144,7 @@ function init_settings(){
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
 			<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
-			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads. 
+			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
 			Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
 			<div class="sidebar-panel-footer-horizontal-wrapper">
 			<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
@@ -154,103 +154,15 @@ function init_settings(){
 	`);
 
 	$("#input_file").change(import_readfile);
-	
+
 	body.append(`
 		<br />
 		<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
 		<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. Custom tokens allow you to override these settings on a per-token basis.</div>
 	`);
 
-
-	const token_settings = [
-		{
-			name: 'hidden',
-			label: 'Hide',
-			enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-			disabledDescription: 'New tokens will be visible to players when placed on the scene'
-		},
-		{
-			name: 'square',
-			label: 'Square Token',
-			enabledDescription: 'New tokens will be square',
-			disabledDescription: 'New tokens will be round'
-		},
-		{
-			name: 'locked',
-			label: 'Lock Token in Position',
-			enabledDescription: 'New tokens will not be movable',
-			disabledDescription: 'New tokens will be movable'
-		},
-		{
-			name: 'restrictPlayerMove',
-			label: 'Restrict Player Movement',
-			enabledDescription: 'Player will not be able to move new tokens',
-			disabledDescription: 'Player will be able to move new tokens'
-		},
-		{
-			name: 'disablestat',
-			label: 'Disable HP/AC',
-			enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-			disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
-		},
-		{
-			name: 'hidestat',
-			label: 'Hide HP/AC from players',
-			enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-			disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
-		},
-		{
-			name: 'hidehpbar',
-			label: 'Only show HP values on hover',
-			enabledDescription: "HP values will only be shown when you hover or select a token",
-			disabledDescription: "Enable this to hide HP values except when you hover or select a token."
-		},	
-		{
-			name: 'disableborder',
-			label: 'Disable Border',
-			enabledDescription: 'New tokens will not have a border around them',
-			disabledDescription: 'New tokens will have a border around them'
-		},
-		{
-			name: 'disableaura',
-			label: 'Disable Health Meter',
-			enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-			disabledDescription: 'New tokens will have an aura around them that represents their current health'
-		},
-		{
-			name: 'enablepercenthpbar', 
-			label: 'Enable Token HP% Bar', 
-			enabledDescription:'Token has a traditional visual hp% bar indicator', 
-			disabledDescription: 'Token does not have a traditional visual hp% bar indicator'
-		},
-		{
-			name: 'hideaurafog',
-			label: 'Hide Aura when token in Fog',
-			enabledDescription: "Token's aura is hidden from players when in fog",
-			disabledDescription: "Token's aura is visible to players when token is in fog"
-		},
-		{
-			name: 'auraislight',
-			label: 'auraislight',
-			enabledDescription: "",
-			disabledDescription: ""
-		},
-		{
-			name: 'revealname',
-			label: 'Show name to players',
-			enabledDescription: 'New tokens will have their name visible to players',
-			disabledDescription: 'New tokens will have their name hidden from players'
-		},
-		{
-			name: 'legacyaspectratio',
-			label: 'Ignore Image Aspect Ratio',
-			enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-			disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
-		}
-	];
-
-	for(let i = 0; i < token_settings.length; i++) {
-		let setting = token_settings[i];
+	for(let i = 0; i < token_setting_options.length; i++) {
+		let setting = token_setting_options[i];
 		let currentValue = window.TOKEN_SETTINGS[setting.name];
 		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
 			console.log(`${name} setting is now ${newValue}`);
@@ -307,7 +219,7 @@ function init_settings(){
 			dmOnly: true
 		}
 	];
-	
+
 	experimental_features.push({
 		name: 'streamDiceRolls',
 		label: 'Stream Dice Rolls',
@@ -360,7 +272,7 @@ function init_settings(){
 }
 
 function redraw_settings_panel_token_examples() {
-	
+
 	let items = settingsPanel.body.find(".example-tokens-wrapper .custom-token-image-item");
 	items.css("margin", "auto");
 	items.css("width", "30%");
@@ -469,7 +381,7 @@ function enable_dice_streaming_feature(enabled){
 	}
 }
 
-function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {		
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
 
 	if (enabled == true) {
 		// STREAMING STUFF
@@ -481,7 +393,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 				if($(this).text() == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
 						streamid: window.MYSTREAMID
-					});		
+					});
 				}
 				else if($(this).text() == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
@@ -503,7 +415,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
 		}
 		if (window.JOINTHEDICESTREAM) {
-			
+
 			for (let i in window.STREAMPEERS) {
 				console.log("replacing the track")
 				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
@@ -518,14 +430,14 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
 						streamid: window.MYSTREAMID
 					});
-				}		
+				}
 			}, 1000)
 			setTimeout(function(){
 				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
 					from: window.MYSTREAMID
 				})
 			}, 500);
-		} 
+		}
 	}
 	else {
 		$(`.stream-dice-button`).html("Dice Stream Disabled");
@@ -589,7 +501,7 @@ function export_file(){
 		notes:{},
 		journalchapters:[],
 		};
-	
+
 	export_scenes(
 		(scenes)=>{
 			DataFile.scenes=scenes;
@@ -601,7 +513,7 @@ function export_file(){
 			DataFile.mytokens=mytokens;
 			DataFile.mytokensfolders=mytokensfolders;
 			DataFile.notes=window.JOURNAL.notes;
-			DataFile.journalchapters=window.JOURNAL.chapters;	
+			DataFile.journalchapters=window.JOURNAL.chapters;
 			DataFile.soundpads=window.SOUNDPADS;
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		}
@@ -622,15 +534,15 @@ function import_readfile() {
 			var DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
 		}
 		catch{
-			
+
 		}
 		if(!DataFile){ // pre version 2
 			var DataFile=$.parseJSON(atob(reader.result));
 		}
-		
+
 		console.log(DataFile);
-		
-		
+
+
 		for(k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
@@ -657,7 +569,7 @@ function import_readfile() {
 		persist_customtokens();
 
 		alert('Loading completed. Data merged');
-		
+
 		if(DataFile.notes){
 			window.JOURNAL.notes=DataFile.notes;
 			window.JOURNAL.chapters=DataFile.journalchapters;
