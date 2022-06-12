@@ -192,7 +192,7 @@ function remove_all_player_image_mappings(playerId) {
 }
 
 function get_player_image_mappings(playerId) {
-	return get_player_token_customizations(playerId).tokenOptions.alternativeImages || [];
+	return get_player_token_customization(playerId).tokenOptions.alternativeImages || [];
 }
 
 function random_image_for_player_token(playerId) {

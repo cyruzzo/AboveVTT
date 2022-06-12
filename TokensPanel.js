@@ -690,7 +690,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
             options.disablestat = window.TOKEN_SETTINGS['disablestat'];
             options.color = "#" + get_player_token_border_color(pc.sheet);
-            options = {...options, ...get_player_token_customizations(pc.sheet)};
+            options = {...options, ...get_player_token_customization(pc.sheet).tokenOptions};
             break;
         case SidebarListItem.TypeMonster:
             options.monster = listItem.monsterData.id;
@@ -1311,36 +1311,47 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             close_sidebar_modal();
         });
         inputWrapper.append(saveButton);
-    } else if (listItem.isTypePC()) {
+    } else if (listItem.isTypePC() || listItem.isTypeMonster()) {
 
-        let playerCustomization = get_player_token_customizations(listItem.sheet);
+
+        let customization;
+        if (listItem.isTypePC()) {
+            customization = get_player_token_customization(listItem.sheet);
+        } else if (listItem.isTypeMonster()) {
+            customization = get_monster_token_customization(listItem.monsterData.id);
+        }
+
+        if (typeof customization !== "object") {
+            console.error("Ummm... we somehow don't have a TokenCustomization object?", customization, listItem);
+            return;
+        }
 
         // token size
         let tokenSizeInput = build_token_size_input(tokenSize, function (newSize) {
-            playerCustomization.setTokenOption("tokenSize", newSize);
-            persist_token_customization(playerCustomization);
+            customization.setTokenOption("tokenSize", newSize);
+            persist_token_customization(customization);
             decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(tokenSizeInput);
 
         // image scale
-        let startingScale = playerCustomization.tokenOptions.imageSize || 1;
+        let startingScale = customization.tokenOptions.imageSize || 1;
         let imageScaleWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
-            playerCustomization.setTokenOption("imageSize", imageSize);
-            persist_token_customization(playerCustomization);
+            customization.setTokenOption("imageSize", imageSize);
+            persist_token_customization(customization);
             decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(imageScaleWrapper);
 
-        let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, playerCustomization.tokenOptions, function(name, value) {
+        let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
             if (value === true || value === false) {
-                playerCustomization.setTokenOption(name, value);
+                customization.setTokenOption(name, value);
             } else {
-                playerCustomization.removeTokenOption(name);
+                customization.removeTokenOption(name);
             }
         }, function () {
-            persist_token_customization(playerCustomization);
-            redraw_settings_panel_token_examples(playerCustomization.tokenOptions);
+            persist_token_customization(customization);
+            redraw_settings_panel_token_examples(customization.tokenOptions);
             decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(tokenOptionsButton);
@@ -2055,8 +2066,8 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 function find_token_options_for_list_item(listItem) {
     switch (listItem.type) {
         case SidebarListItem.TypeMyToken: return find_my_token(listItem.fullPath());
-        case SidebarListItem.TypePC: return get_player_token_customizations(listItem.sheet).tokenOptions;
-        case SidebarListItem.TypeMonster: return {}; // TODO: allow overriding monster token options
+        case SidebarListItem.TypePC: return get_player_token_customization(listItem.sheet).tokenOptions;
+        case SidebarListItem.TypeMonster: return get_monster_token_customization(listItem.monsterData.id).tokenOptions;
         default: return {};
     }
 }
@@ -2609,7 +2620,7 @@ function find_player_token_customization(playerSheet) {
  * @param playerSheet {string} the id of the DDB character
  * @returns {TokenCustomization} a token customization for the player. If it doesn't already exist, a new one will be created and returned
  */
-function get_player_token_customizations(playerSheet) {
+function get_player_token_customization(playerSheet) {
     return find_player_token_customization(playerSheet) || TokenCustomization.PC(playerSheet, {});
 }
 
