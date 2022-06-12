@@ -428,10 +428,6 @@ function build_dropdown_input(name, labelText, currentValue, options, changeHand
   }
   tokenSelect.val(currentValue);
 
-   
-
-
- 
   tokenSelect.change(function(clickEvent) {
     changeHandler(name, $(`#tokenSelect__${name} option:selected`).val());
     if(name == "tokenStyleSelect"){
