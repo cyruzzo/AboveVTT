@@ -1733,6 +1733,8 @@ function init_things() {
 		window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	}
 
+	fetch_token_customizations();
+
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 

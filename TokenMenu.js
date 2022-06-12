@@ -1030,10 +1030,12 @@ function build_token_image_scale_input(startingScale, didUpdate) {
 		else if(event.target.value < 0.2){
 			imageSize = 0.2;
 		}
-		if (event.key == "Enter") {
+		if (event.key === "Enter") {
 			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 			didUpdate(imageSize);
+		} else if (event.key === "Escape") {
+			$(event.target).blur();
 		}
 		imageSizeInputRange.val(imageSizeInput.val());
 	});

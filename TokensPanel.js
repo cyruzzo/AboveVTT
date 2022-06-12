@@ -404,6 +404,7 @@ function init_tokens_panel() {
     }
 
     migrate_to_my_tokens();
+    migrate_token_customizations();
     rebuild_token_items_list();
     update_token_folders_remembered_state();
 
@@ -689,7 +690,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
             options.disablestat = window.TOKEN_SETTINGS['disablestat'];
             options.color = "#" + get_player_token_border_color(pc.sheet);
-            options = {...options, ...get_player_token_customizations(pc.sheet)};
+            options = {...options, ...get_player_token_customization(pc.sheet).tokenOptions};
             break;
         case SidebarListItem.TypeMonster:
             options.monster = listItem.monsterData.id;
@@ -1245,6 +1246,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                 } else {
                     $(event.target).select();
                 }
+            } else if (event.key === "Escape") {
+                $(event.target).blur();
             }
         });
         inputWrapper.append(nameInput);
@@ -1308,35 +1311,47 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             close_sidebar_modal();
         });
         inputWrapper.append(saveButton);
-    } else if (listItem.isTypePC()) {
+    } else if (listItem.isTypePC() || listItem.isTypeMonster()) {
 
-        let playerOptions = get_player_token_customizations(listItem.sheet);
+
+        let customization;
+        if (listItem.isTypePC()) {
+            customization = get_player_token_customization(listItem.sheet);
+        } else if (listItem.isTypeMonster()) {
+            customization = get_monster_token_customization(listItem.monsterData.id);
+        }
+
+        if (typeof customization !== "object") {
+            console.error("Ummm... we somehow don't have a TokenCustomization object?", customization, listItem);
+            return;
+        }
 
         // token size
         let tokenSizeInput = build_token_size_input(tokenSize, function (newSize) {
-            playerOptions.tokenSize = newSize;
-            set_player_token_customizations(listItem.sheet, playerOptions);
+            customization.setTokenOption("tokenSize", newSize);
+            persist_token_customization(customization);
             decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(tokenSizeInput);
 
         // image scale
-        let imageScaleWrapper = build_token_image_scale_input(playerOptions.imageSize, function (imageSize) {
-            playerOptions.imageSize = imageSize;
-            set_player_token_customizations(listItem.sheet, playerOptions);
+        let startingScale = customization.tokenOptions.imageSize || 1;
+        let imageScaleWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
+            customization.setTokenOption("imageSize", imageSize);
+            persist_token_customization(customization);
             decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(imageScaleWrapper);
 
-        let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, playerOptions, function(name, value) {
+        let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
             if (value === true || value === false) {
-                playerOptions[name] = value;
+                customization.setTokenOption(name, value);
             } else {
-                delete playerOptions[name];
+                customization.removeTokenOption(name);
             }
         }, function () {
-            set_player_token_customizations(listItem.sheet, playerOptions);
-            redraw_settings_panel_token_examples(playerOptions);
+            persist_token_customization(customization);
+            redraw_settings_panel_token_examples(customization.tokenOptions);
             decorate_modal_images(sidebarPanel, listItem, placedToken);
         });
         inputWrapper.append(tokenOptionsButton);
@@ -1989,23 +2004,13 @@ function register_custom_token_image_context_menu() {
                         did_change_mytokens_items();
                     } else if (listItem?.isTypeMonster()) {
                         let monsterId = listItem.monsterData.id;
-                        let customImages = get_custom_monster_images(monsterId);
-                        let imageIndex = customImages.findIndex(image => image === imgSrc);
-                        if (imageIndex >= 0) {
-                            remove_custom_monster_image(monsterId, imageIndex);
-                            if (get_custom_monster_images(monsterId).length === 0) {
-                                redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
-                            }
-                        }
+                        remove_custom_monster_image(monsterId, imgSrc);
+                        redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                     } else if (listItem?.isTypePC()) {
                         let playerId = listItem.sheet;
-                        let customImages = get_player_image_mappings(playerId);
-                        let imageIndex = customImages.findIndex(image => image === imgSrc);
-                        if (imageIndex >= 0) {
-                            remove_player_image_mapping(playerId, imageIndex);
-                            if (get_player_image_mappings(playerId).length === 0) {
-                                redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
-                            }
+                        remove_player_image_mapping(playerId, imgSrc);
+                        if (get_player_image_mappings(playerId).length === 0) {
+                            redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                         }
                     } else {
                         alert("An unexpected error occurred");
@@ -2061,8 +2066,8 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 function find_token_options_for_list_item(listItem) {
     switch (listItem.type) {
         case SidebarListItem.TypeMyToken: return find_my_token(listItem.fullPath());
-        case SidebarListItem.TypePC: return get_player_token_customizations(listItem.sheet);
-        case SidebarListItem.TypeMonster: return {}; // TODO: allow overriding monster token options
+        case SidebarListItem.TypePC: return get_player_token_customization(listItem.sheet).tokenOptions;
+        case SidebarListItem.TypeMonster: return get_monster_token_customization(listItem.monsterData.id).tokenOptions;
         default: return {};
     }
 }
@@ -2265,3 +2270,357 @@ function move_mytokens_folder(listItem, folderPath) {
         console.warn("move_mytoken_to_folder was called with the wrong item type", listItem);
     }
 }
+
+function migrate_token_customizations() {
+    load_custom_monster_image_mapping();
+    if (window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate === true) {
+        console.log("migrate_token_customizations has already completed");
+        return;
+    }
+    try {
+        let newCustomizations = [];
+
+        console.log("migrate_token_customizations starting to migrate player customizations");
+        // converting from a map with the id as the key to a list of objects with the id inside the object
+        let oldCustomizations = read_player_token_customizations();
+        for (let playerId in oldCustomizations) {
+            if (typeof playerId === "string" && playerId.length > 0) {
+                const newCustomization = TokenCustomization.PC(playerId, oldCustomizations[playerId]);
+                newCustomizations.push(newCustomization);
+                oldCustomizations[playerId].didMigrate = true;
+                console.debug("migrate_token_customizations migrated", oldCustomizations[playerId], "to", newCustomization);
+            } else {
+                console.debug("migrate_token_customizations did not migrate", oldCustomizations[playerId]);
+            }
+        }
+        console.log("migrate_token_customizations finished migrating player customizations");
+
+        if (window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate !== true) {
+            console.log("migrate_token_customizations starting to migrate monster customizations");
+            for(let monsterIdNumber in window.CUSTOM_TOKEN_IMAGE_MAP) {
+                const images = window.CUSTOM_TOKEN_IMAGE_MAP[monsterIdNumber];
+                const monsterId = `${monsterIdNumber}`; // monster ids are numbers, but we want it to be a string to be consistent with other ids
+                const newCustomization = TokenCustomization.Monster(monsterId, { alternativeImages: images });
+                newCustomizations.push(newCustomization);
+                console.debug("migrate_token_customizations migrated", monsterIdNumber, images, "to", newCustomization);
+            }
+            console.log("migrate_token_customizations finished migrating monster customizations");
+        }
+
+        persist_all_token_customizations(newCustomizations, function (success, errorType) {
+            if (success === true) {
+                // TODO: remove them entirely at some point
+                write_player_token_customizations(oldCustomizations);
+                window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = true;
+                save_custom_monster_image_mapping();
+                console.log("migrate_token_customizations successfully persisted migrated customizations", newCustomizations);
+            } else {
+                console.error("migrate_token_customizations failed to persist new customizations", newCustomizations, errorType);
+            }
+        });
+
+    } catch (error) {
+        console.error("migrate_token_customizations failed", error);
+    }
+}
+
+function rollback_token_customizations_migration() {
+    localStorage.setItem("TokenCustomizations", JSON.stringify([]));
+    let playerCustomizations = read_player_token_customizations();
+    for (let playerId in playerCustomizations) {
+        playerCustomizations[playerId].didMigrate = false;
+    }
+    write_player_token_customizations(playerCustomizations);
+    window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = false;
+    save_custom_monster_image_mapping();
+}
+
+function persist_all_token_customizations(customizations, callback) {
+    console.log("persist_all_token_customizations starting");
+    // TODO: send to cloud instead of storing locally
+    localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
+    callback(true);
+
+    return; // TODO: remove everything above, and just do this instead
+
+    let http_api_gw="https://services.abovevtt.net";
+    let searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.has("dev")){
+        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+    }
+
+    window.ajaxQueue.addRequest({
+        url: `${http_api_gw}/services?action=setTokenCustomizations&userId=todo`, // TODO: figure this out
+        success: function (response) {
+            console.warn(`persist_all_token_customizations succeeded`, response);
+            callback(true);
+        },
+        error: function (errorMessage) {
+            console.warn(`persist_all_token_customizations failed`, errorMessage);
+            callback(false, errorMessage?.responseJSON?.type);
+        }
+    })
+}
+
+function persist_token_customization(customization, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
+    try {
+        if (
+            customization === undefined
+            || typeof customization.id !== "string" || customization.id.length === 0
+            || !TokenCustomization.validTypes.includes(customization.tokenType)
+            || !customization.tokenOptions
+        ) {
+            console.warn("Not persisting invalid customization", customization);
+            callback(false, "Invalid Customization");
+            return;
+        }
+
+        let existingIndex = window.TOKEN_CUSTOMIZATIONS.findIndex(c => c.tokenType === customization.tokenType && c.id === customization.id);
+        if (existingIndex) {
+            window.TOKEN_CUSTOMIZATIONS[existingIndex] = customization;
+        } else {
+            window.TOKEN_CUSTOMIZATIONS.push(customization);
+        }
+
+        window.persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+
+
+    } catch (error) {
+        console.error("failed to persist customization", customization);
+        callback(false);
+    }
+}
+
+function fetch_token_customizations(callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
+    try {
+        console.log("persist_token_customizations starting");
+        // TODO: fetch from the cloud instead of storing locally
+        let customMappingData = localStorage.getItem('TokenCustomizations');
+        let parsedCustomizations = [];
+        if (customMappingData !== undefined && customMappingData != null) {
+            $.parseJSON(customMappingData).forEach(obj => {
+                try {
+                    parsedCustomizations.push(TokenCustomization.fromJson(obj));
+                } catch (error) {
+                    // this one failed, but keep trying to parse the others
+                    console.error("persist_token_customizations failed to parse customization object", obj);
+                }
+            });
+        }
+        window.TOKEN_CUSTOMIZATIONS = parsedCustomizations;
+        callback(window.TOKEN_CUSTOMIZATIONS);
+    } catch (error) {
+        console.error("persist_token_customizations failed");
+        callback(false);
+    }
+
+    return; // TODO: remove everything above, and just do this instead
+
+    let http_api_gw="https://services.abovevtt.net";
+    let searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.has("dev")){
+        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+    }
+
+    window.ajaxQueue.addRequest({
+        url: `${http_api_gw}/services?action=getTokenCustomizations&userId=todo`, // TODO: figure this out
+        success: function (response) {
+            console.warn(`persist_token_customizations succeeded`, response);
+            callback(response); // TODO: grabe the actual list of objects from the response
+        },
+        error: function (errorMessage) {
+            console.warn(`persist_token_customizations failed`, errorMessage);
+            callback(false, errorMessage?.responseJSON?.type);
+        }
+    });
+}
+
+
+// these are what the cloud data will look like
+// const tokenCustomizationExamples = [
+//     {
+//         id: "/userid/characterId",
+//         type: "pc",
+//         tokenOptions: {
+//           alternativeImages: [],
+//           square: true,
+//           ...
+//         }
+//     },
+//     {
+//         id: "17001",
+//         type: "monster",
+//         tokenOptions: { ... }
+//     },
+//     // probably don't need to do any of the below, but we could
+//     {
+//         id: "playersFolder",
+//         type: "folder",
+//         alternativeImages: [], // will always be empty because folders don't have images
+//         tokenOptions: {}
+//     },
+//     {
+//         id: "monstersFolder",
+//         type: "folder",
+//         alternativeImages: [], // will always be empty because folders don't have images
+//         tokenOptions: {}
+//     },
+//     {
+//         id: "myTokensFolder",
+//         type: "folder",
+//         alternativeImages: [], // will always be empty because folders don't have images
+//         tokenOptions: {}
+//     }
+// ];
+//
+// const myTokenExamples = [
+//     {
+//         id: uuid(),
+//         name: "Wagon",
+//         type: "myToken",
+//         folderPath: "/Vehicles",
+//         alternativeImages: [],
+//         tokenOptions: {}
+//     },
+//     {
+//         id: uuid(),
+//         name: "Vehicles",
+//         type: "Folder",
+//         folderPath: "/",
+//         alternativeImages: [],
+//         tokenOptions: {}
+//     }
+// ];
+
+class TokenCustomization {
+
+    /**
+     * @param playerSheet {string} the id of the DDB character
+     * @param tokenOptions {object} the overrides for token.options
+     * @returns {TokenCustomization} the token customization for the player
+     * @constructor
+     */
+    static PC(playerSheet, tokenOptions) {
+        return new TokenCustomization(playerSheet, SidebarListItem.TypePC, tokenOptions);
+    }
+
+    /**
+     * @param monsterId {number|string} the id of the DDB monster
+     * @param tokenOptions {object} the overrides for token.options
+     * @returns {TokenCustomization} the token customization for the monster
+     * @constructor
+     */
+    static Monster(monsterId, tokenOptions) {
+        return new TokenCustomization(`${monsterId}`, SidebarListItem.TypeMonster, tokenOptions);
+    }
+
+    /**
+     * @param obj {object} the raw JSON object with the same structure as a TokenCustomization object
+     * @returns {TokenCustomization} a typed object instead of the raw JSON object that was given
+     */
+    static fromJson(obj) {
+        return new TokenCustomization(obj.id, obj.tokenType, obj.tokenOptions);
+    }
+
+    static validTypes = [SidebarListItem.TypePC, SidebarListItem.TypeMonster];
+    // never call this directly! use the static functions above
+    constructor(id, tokenType, tokenOptions) {
+        if (!TokenCustomization.validTypes.includes(tokenType)) {
+            throw `Invalid Type ${tokenType}`;
+        }
+        if (typeof id !== "string" || id.length === 0) {
+            throw `Invalid id ${id}`;
+        }
+        this.id = id;
+        this.tokenType = tokenType;
+        if (typeof tokenOptions === "object") {
+            this.tokenOptions = tokenOptions;
+        } else {
+            this.tokenOptions = {};
+        }
+    }
+
+    setTokenOption(key, value) {
+        this.tokenOptions[key] = value;
+    }
+    removeTokenOption(key) {
+        delete this.tokenOptions[key];
+    }
+
+    addAlternativeImage(imageUrl) {
+        if (imageUrl.startsWith("data:")) {
+            return;
+        }
+        if (this.tokenOptions.alternativeImages === undefined) {
+            this.tokenOptions.alternativeImages = [];
+        }
+        const parsed = parse_img(imageUrl);
+        if (!this.tokenOptions.includes(parsed)) {
+            this.tokenOptions.push(parsed);
+        }
+    }
+    removeAlternativeImage(imageUrl) {
+        if (this.tokenOptions.alternativeImages === undefined) {
+            return;
+        }
+        let index = this.tokenOptions.alternativeImages.findIndex(i => i === imageUrl);
+        if (typeof index === "number" && index >= 0) {
+            this.tokenOptions.alternativeImages.splice(index, 1);
+        }
+        const parsed = parse_img(imageUrl);
+        let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => i === parsed);
+        if (typeof parsedIndex === "number" && parsedIndex >= 0) {
+            this.tokenOptions.alternativeImages.splice(parsedIndex, 1);
+        }
+    }
+    removeAllAlternativeImages() {
+        this.tokenOptions.alternativeImages = [];
+    }
+    randomImage() {
+        if (this.tokenOptions.alternativeImages && this.tokenOptions.alternativeImages.length > 0) {
+            let randomIndex = getRandomInt(0, this.tokenOptions.alternativeImages.length);
+            return this.tokenOptions.alternativeImages[randomIndex];
+        }
+        return undefined;
+    }
+}
+
+/**
+ * @param monsterId {number|string} the id of the DDB monster
+ * @returns {TokenCustomization|undefined} a token customization for the monster or undefined if not found
+ */
+function find_monster_token_customization(monsterId) {
+    return window.TOKEN_CUSTOMIZATIONS.find(c => c.tokenType === SidebarListItem.TypeMonster && c.id === `${monsterId}`);
+}
+
+/**
+ * @param monsterId {number|string} the id of the DDB monster
+ * @returns {TokenCustomization} a token customization for the monster. If it doesn't already exist, a new one will be created and returned
+ */
+function get_monster_token_customization(monsterId) {
+    return find_monster_token_customization(monsterId) || TokenCustomization.Monster(monsterId, {});
+}
+
+
+/**
+ * @param playerSheet {string} the id of the DDB character
+ * @returns {TokenCustomization|undefined} a token customization for the monster or undefined if not found
+ */
+function find_player_token_customization(playerSheet) {
+    return window.TOKEN_CUSTOMIZATIONS.find(c => c.tokenType === SidebarListItem.TypePC && c.id === playerSheet);
+}
+
+/**
+ * @param playerSheet {string} the id of the DDB character
+ * @returns {TokenCustomization} a token customization for the player. If it doesn't already exist, a new one will be created and returned
+ */
+function get_player_token_customization(playerSheet) {
+    return find_player_token_customization(playerSheet) || TokenCustomization.PC(playerSheet, {});
+}
+

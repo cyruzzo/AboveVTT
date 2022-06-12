@@ -1922,6 +1922,7 @@ function setTokenAuras (token, options) {
 	}
 }
 
+
 function setTokenBase(token, options) {
 	if(options.tokenStyleSelect == 1 || options.tokenStyleSelect == 2 || options.tokenStyleSelect == 3){
 		$(`.token[data-id='${options.id}']>.base`).remove();
@@ -2040,35 +2041,30 @@ function get_custom_monster_images(monsterId) {
 	return customImages;
 }
 
-function get_random_custom_monster_image(monsterId) {
-	let customImgs = get_custom_monster_images(monsterId);
-	let randomIndex = getRandomInt(0, customImgs.length);
-	return customImgs[randomIndex];
+
+function get_custom_monster_images(monsterId) {
+	return find_monster_token_customization(monsterId)?.tokenOptions?.alternativeImages || [];
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {
-	if (monsterId == undefined) {
-		return;
-	}
-	var customImages = get_custom_monster_images(monsterId);
-	customImages.push(parse_img(imgsrc));
-	window.CUSTOM_TOKEN_IMAGE_MAP[monsterId] = customImages;
-	save_custom_monster_image_mapping();
+	let customization = get_monster_token_customization(monsterId);
+	customization.addAlternativeImage(imgsrc);
+	persist_token_customization(customization);
 }
 
-function remove_custom_monster_image(monsterId, index) {
-	var customImages = get_custom_monster_images(monsterId);;
-	if (customImages.length > index) {
-		window.CUSTOM_TOKEN_IMAGE_MAP[monsterId].splice(index, 1);
-	}
-	save_custom_monster_image_mapping();
+function remove_custom_monster_image(monsterId, imgsrc) {
+	let customization = get_monster_token_customization(monsterId);
+	customization.removeAlternativeImage(imgsrc);
+	persist_token_customization(customization);
 }
 
 function remove_all_custom_monster_images(monsterId) {
-	delete window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
-	save_custom_monster_image_mapping();
+	let customization = get_monster_token_customization(monsterId);
+	customization.removeAllAlternativeImages();
+	persist_token_customization(customization);
 }
 
+// deprecated, but still required for migrations
 function load_custom_monster_image_mapping() {
 	window.CUSTOM_TOKEN_IMAGE_MAP = {};
 	let customMappingData = localStorage.getItem('CustomDefaultTokenMapping');
@@ -2077,6 +2073,7 @@ function load_custom_monster_image_mapping() {
 	}
 }
 
+// deprecated, but still required for migrations
 function save_custom_monster_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
