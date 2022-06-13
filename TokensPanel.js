@@ -702,8 +702,22 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
             options.sizeId = listItem.monsterData.sizeId;
-            options.hp = listItem.monsterData.averageHitPoints;
-            options.max_hp = listItem.monsterData.averageHitPoints;
+            switch (window.TOKEN_SETTINGS['defaultmaxhptype']) {
+              case 'Max':
+                const hitDiceData = listItem.monsterData.hitPointDice;
+                options.hp = hitDiceData.diceCount * hitDiceData.diceValue + hitDiceData.fixedValue;
+                options.max_hp = hitDiceData.diceCount * hitDiceData.diceValue + hitDiceData.fixedValue;
+                break;
+              case 'Roll':
+                const rolledValue = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
+                options.hp = rolledValue;
+                options.max_hp = rolledValue;
+                break;
+              case 'Average':
+                options.hp = listItem.monsterData.averageHitPoints;
+                options.max_hp = listItem.monsterData.averageHitPoints;
+                break;
+            }
             options.ac = listItem.monsterData.armorClass;
             let placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {

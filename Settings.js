@@ -339,7 +339,6 @@ function redraw_settings_panel_token_examples() {
 		} else {
 			hpnum = 10;
 		}
-		console.log(`HP Num is ${hpnum}`);
 		let tok = new Token(default_options());
 		tok.options.size = items.width();
 		tok.options.max_hp = hpnum;
