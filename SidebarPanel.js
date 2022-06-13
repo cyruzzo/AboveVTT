@@ -415,6 +415,34 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
   return wrapper;
 }
 
+function build_dropdown_input(name, labelText, currentValue, options, changeHandler) {
+   if (typeof changeHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  
+  let wrapper = $(`<div id='tokenWrapper__${name}' class="token-image-modal-footer-title">${labelText}</div>`);
+  let tokenSelect = $(`<select id="tokenSelect__${name}" class='token-select-dropdown'></select>`)
+
+  for(let i=0; i<options.length; i++){
+    tokenSelect.append(options[i]);
+  }
+  tokenSelect.val(currentValue);
+
+  tokenSelect.change(function(clickEvent) {
+    changeHandler(name, $(`#tokenSelect__${name} option:selected`).val());
+    if(name == "tokenStyleSelect"){
+      $(`#tokenWrapper__tokenBaseStyleSelect`).hide();
+      if($(`#tokenSelect__${name} option:selected`).val() == 4 || $(`#tokenSelect__${name} option:selected`).val() == 5){
+         $(`#tokenWrapper__tokenBaseStyleSelect`).show();
+      }
+    }
+  });
+  
+  wrapper.append(tokenSelect);
+
+  return wrapper;
+}
+
 //#endregion UI Construction
 
 

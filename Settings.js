@@ -1,12 +1,37 @@
 const token_setting_options = [
 	{
+		name: 'tokenStyleSelect',
+		type: 'dropdown',
+		label: 'Token Style',
+		options: [
+			$(`<option value='1'>Circle</option>`), 
+			$(`<option value='2'>Square</option>`), 
+			$(`<option value='3'>No Constraint</option>`), 
+			$(`<option value='4'>Virtual Mini Circle</option>`), 
+			$(`<option value='5'>Virtual Mini Square</option>`)
+ 		]
+	},
+	{
+		name: 'tokenBaseStyleSelect',
+		type: 'dropdown',
+		label: 'Token Base Style',
+		options: [
+			$(`<option value='1'>Default</option>`), 
+			$(`<option value='2'>Grass</option>`), 
+			$(`<option value='3'>Tile</option>`), 
+			$(`<option value='4'>Sand</option>`), 
+			$(`<option value='5'>Rock</option>`),
+			$(`<option value='6'>Water</option>`)
+ 		]
+	},
+	{
 		name: 'hidden',
 		label: 'Hide',
 		enabledDescription: 'The token is hidden to players.',
 		disabledDescription: 'The token is visible to players.',
 		enabledValue: 'Hidden',
 		disabledValue: 'Visible'
-	},
+	},     
 	{
 		name: 'square',
 		label: 'Square Token',
@@ -210,7 +235,7 @@ function init_settings(){
 	tokenOptionsButton.on("click", function (clickEvent) {
 		build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
 			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, window.TOKEN_SETTINGS, TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, function (name, value) {
-				if (value === true || value === false) {
+				if (value === true || value === false || typeof value === 'string') {
 					window.TOKEN_SETTINGS[name] = value;
 				} else {
 					delete window.TOKEN_SETTINGS[name];
@@ -330,6 +355,7 @@ function build_example_token(options) {
 
 const TOKEN_OPTIONS_INPUT_TYPE_TOGGLE = "toggle";
 const TOKEN_OPTIONS_INPUT_TYPE_SELECT = "select";
+const TOKEN_OPTIONS_INPUT_TYPE_DROPDOWN = "dropdown";
 // used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
 // updateValue: function(name, newValue) {} // only update the data here
 // didChange: function() {} // do ui things here
@@ -342,7 +368,18 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, inputTy
 	let container = $(`<div class="sidebar-token-options-flyout-container prevent-sidebar-modal-close"></div>`);
 	availableOptions.forEach(option => {
 		const currentValue = setValues[option.name];
-		if (inputType === TOKEN_OPTIONS_INPUT_TYPE_TOGGLE) {
+		if(option.type == "dropdown"){
+			let inputWrapper = build_dropdown_input(option.name, option.label, currentValue, option.options, function(name, newValue) {
+				updateValue(name, newValue);
+				if (didChange) {
+					didChange();
+				}
+			});
+			
+			container.append(inputWrapper);
+		
+		}
+		else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_TOGGLE) {
 			let inputWrapper = build_toggle_input(option.name, option.label, currentValue, option.enabledDescription, option.disabledDescription, function (n, v) {
 				updateValue(n, v);
 				if (didChange) {

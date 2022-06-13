@@ -1269,7 +1269,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
         // override options
         let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, myToken, function(name, value) {
-            if (value === true || value === false) {
+            if (value === true || value === false || typeof value === 'string') {
                 myToken[name] = value;
             } else {
                 delete myToken[name];
@@ -1344,7 +1344,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         inputWrapper.append(imageScaleWrapper);
 
         let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
-            if (value === true || value === false) {
+            if (value === true || value === false || typeof value === 'string') {
                 customization.setTokenOption(name, value);
             } else {
                 customization.removeTokenOption(name);
