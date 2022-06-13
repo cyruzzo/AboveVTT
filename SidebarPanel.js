@@ -3,7 +3,7 @@ function init_sidebar_tabs() {
   console.log("init_sidebar_tabs");
 
   let sidebarContent = is_characters_page() ? $(".ct-sidebar__pane-content") : $(".sidebar__pane-content");
-  
+
   // gamelog doesn't use it yet, maybe never
 
   if (window.DM) {
@@ -72,7 +72,7 @@ class SidebarPanel {
   constructor(id, is_modal) {
     this.id = id.startsWith("#") ? id.substring(1) : id;
     if (is_modal == false) {
-      // this.is_modal defaults to true. If anything other than false is passed in (such as undefined), just leave it as the default. 
+      // this.is_modal defaults to true. If anything other than false is passed in (such as undefined), just leave it as the default.
       this.is_modal = is_modal;
     }
   }
@@ -127,7 +127,7 @@ class SidebarPanel {
     this.container.find(".sidebar-panel-loading-indicator").remove(); // just in case there was already one shown we don't want to add a second one
     this.container.append(loadingIndicator);
   }
-  
+
   remove_sidebar_loading_indicator() {
     $(`#${this.id} .sidebar-panel-loading-indicator`).animate({
       "left": "400px"
@@ -135,8 +135,8 @@ class SidebarPanel {
       $(".sidebar-panel-loading-indicator").remove();
     });
   }
-  
-  
+
+
 
   //#endregion Class functions
   //#region UI Construction
@@ -152,7 +152,7 @@ class SidebarPanel {
         <div class="sidebar-panel-body"></div>
         <div class="sidebar-panel-footer">
           <div class="footer-input-wrapper"></div>
-        </div>      
+        </div>
       </div>
     `);
 
@@ -322,6 +322,49 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
       $(clickEvent.currentTarget).addClass("rc-switch-checked");
       updateHoverText(wrapper, enabledHoverText);
       changeHandler(name, true);
+    }
+  });
+  return wrapper;
+}
+
+function build_dropdown_input(name, labelText, currentValue, dropdownOptions, dropdownDescriptions, changeHandler) {
+  if (typeof changeHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  let wrapper = $(`
+    <div class="token-image-modal-footer-select-wrapper">
+      <div class="token-image-modal-footer-title">${labelText}</div>
+    </div>
+  `);
+  let inputString = `<select name="${name}">`;
+  for (const option of dropdownOptions){
+    inputString = inputString.concat(`<option value="${option}">${option}</option>`);
+  }
+  inputString = inputString.concat(`</select>`);
+  let input = $(inputString);
+  const updateHoverText = function(hoverElement, hoverText) {
+    if (hoverText !== undefined && hoverText.length > 0) {
+      hoverElement.addClass("sidebar-hovertext");
+      hoverElement.attr("data-hover", hoverText);
+    } else {
+      hoverElement.removeClass("sidebar-hovertext");
+      hoverElement.removeAttr("data-hover");
+    }
+  }
+  input.val(currentValue);
+  for (let i = 0; i < dropdownOptions.length; i++) {
+    if (currentValue == dropdownOptions[i]) {
+      updateHoverText(wrapper, dropdownDescriptions[i]);
+    }
+  }
+  wrapper.append(input);
+  input.change(function(event) {
+    let newValue = event.target.value;
+    for (let i = 0; i < dropdownOptions.length; i++) {
+      if (newValue == dropdownOptions[i]) {
+        updateHoverText(wrapper, dropdownDescriptions[i]);
+      }
+      changeHandler(name, newValue);
     }
   });
   return wrapper;

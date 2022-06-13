@@ -3,61 +3,78 @@ const token_setting_options = [
 		name: 'hidden',
 		label: 'Hide',
 		enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-		disabledDescription: 'New tokens will be visible to players when placed on the scene'
+		disabledDescription: 'New tokens will be visible to players when placed on the scene',
+		type: 'Toggle'
 	},
 	{
 		name: 'square',
 		label: 'Square Token',
 		enabledDescription: 'New tokens will be square',
-		disabledDescription: 'New tokens will be round'
+		disabledDescription: 'New tokens will be round',
+		type: 'Toggle'
 	},
 	{
 		name: 'locked',
 		label: 'Lock Token in Position',
 		enabledDescription: 'New tokens will not be movable',
-		disabledDescription: 'New tokens will be movable'
+		disabledDescription: 'New tokens will be movable',
+		type: 'Toggle'
 	},
 	{
 		name: 'restrictPlayerMove',
 		label: 'Restrict Player Movement',
 		enabledDescription: 'Player will not be able to move new tokens',
-		disabledDescription: 'Player will be able to move new tokens'
+		disabledDescription: 'Player will be able to move new tokens',
+		type: 'Toggle'
 	},
 	{
 		name: 'disablestat',
 		label: 'Disable HP/AC',
 		enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-		disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
+		disabledDescription: 'New tokens will have HP/AC shown to only the DM.',
+		type: 'Toggle'
 	},
 	{
 		name: 'hidestat',
 		label: 'Hide HP/AC from players',
 		enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
+		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players.",
+		type: 'Toggle'
 	},
 	{
 		name: 'disableborder',
 		label: 'Disable Border',
 		enabledDescription: 'New tokens will not have a border around them',
-		disabledDescription: 'New tokens will have a border around them'
+		disabledDescription: 'New tokens will have a border around them',
+		type: 'Toggle'
 	},
 	{
 		name: 'disableaura',
 		label: 'Disable Health Meter',
 		enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-		disabledDescription: 'New tokens will have an aura around them that represents their current health'
+		disabledDescription: 'New tokens will have an aura around them that represents their current health',
+		type: 'Toggle'
 	},
 	{
 		name: 'revealname',
 		label: 'Show name to players',
 		enabledDescription: 'New tokens will have their name visible to players',
-		disabledDescription: 'New tokens will have their name hidden from players'
+		disabledDescription: 'New tokens will have their name hidden from players',
+		type: 'Toggle'
 	},
 	{
 		name: 'legacyaspectratio',
 		label: 'Ignore Image Aspect Ratio',
 		enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-		disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
+		disabledDescription: 'New tokens will respect the aspect ratio of the image provided',
+		type: 'Toggle'
+	},
+	{
+		name: 'defaultmaxhptype',
+		label: 'Monster Max HP Calculation',
+		dropdownOptions: ['Average', 'Roll', 'Max'],
+		dropdownDescriptions: ['Monster Max HP will be set to average HP amount', 'Monster Max HP will be rolled individually', 'Monster Max HP will be set to maximum HP amount'],
+		type: 'Dropdown'
 	}
 ];
 
@@ -164,12 +181,18 @@ function init_settings(){
 	for(let i = 0; i < token_setting_options.length; i++) {
 		let setting = token_setting_options[i];
 		let currentValue = window.TOKEN_SETTINGS[setting.name];
-		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
+		let onClickFunction = function(name, newValue) {
 			console.log(`${name} setting is now ${newValue}`);
 			window.TOKEN_SETTINGS[name] = newValue;
 			persist_token_settings(window.TOKEN_SETTINGS);
 			redraw_settings_panel_token_examples();
-		});
+		};
+		let inputWrapper;
+		if (setting.type == 'Toggle') {
+			inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, onClickFunction);
+		} else if (setting.type == 'Dropdown') {
+			inputWrapper = build_dropdown_input(setting.name, setting.label, currentValue, setting.dropdownOptions, setting.dropdownDescriptions, onClickFunction);
+		}
 		if (setting.name == ('auraislight' || 'hideaurafog')){
 			continue
 		}
@@ -200,9 +223,16 @@ function init_settings(){
 	resetToDefaults.on("click", function () {
 		for (let i = 0; i < token_setting_options.length; i++) {
 			let setting = token_setting_options[i];
-			let toggle = body.find(`button[name=${setting.name}]`);
-			if (toggle.hasClass("rc-switch-checked")) {
-				toggle.click();
+			if (setting.type == "Toggle") {
+				let toggle = body.find(`button[name=${setting.name}]`);
+				if (toggle.hasClass("rc-switch-checked")) {
+					toggle.click();
+				}
+			}
+			else if (setting.type == "Dropdown") {
+				let menu = body.find(`select[name=${setting.name}]`)[0];
+				menu.value = setting.dropdownOptions[0];
+				menu.dispatchEvent(new Event('change'));
 			}
 		}
 		persist_token_settings(window.TOKEN_SETTINGS);
@@ -303,11 +333,18 @@ function redraw_settings_panel_token_examples() {
 		items.find(".ac").remove();
 
 		// only do this if we've loaded scene data. Otherwise this breaks because it tries to do math on undefined
+		let hpnum;
+		if (window.TOKEN_SETTINGS['defaultmaxhptype'] == 'Max') {
+			hpnum = 15;
+		} else {
+			hpnum = 10;
+		}
+		console.log(`HP Num is ${hpnum}`);
 		let tok = new Token(default_options());
 		tok.options.size = items.width();
-		tok.options.max_hp = 10;
-		tok.options.hp = 10;
-		tok.options.ac = 10;
+		tok.options.max_hp = hpnum;
+		tok.options.hp = hpnum;
+		tok.options.ac = hpnum;
 		let hp = tok.build_hp();
 		items.append(hp);
 		let ac = tok.build_ac();
