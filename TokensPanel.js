@@ -1339,11 +1339,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         inputWrapper.append(imageScaleWrapper);
 
         let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
-            if (value === true || value === false || typeof value === 'string') {
-                customization.setTokenOption(name, value);
-            } else {
-                customization.removeTokenOption(name);
-            }
+            customization.setTokenOption(name, value);
         }, function () {
             persist_token_customization(customization);
             redraw_settings_panel_token_examples(customization.tokenOptions);
@@ -1358,7 +1354,8 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
     let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
     tokenOptionsButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-            let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, options, TOKEN_OPTIONS_INPUT_TYPE_SELECT, function(name, value) {
+            const overrideOptions = token_setting_options().map(option => convert_option_to_override_dropdown(option));
+            let optionsContainer = build_sidebar_token_options_flyout(overrideOptions, options, function(name, value) {
                 updateValue(name, value);
             }, didChange);
             optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place this token on the scene, these settings will be used. Setting the value to "Default" will use the global settings which are found in the settings tab.</div>`);
@@ -2552,10 +2549,21 @@ class TokenCustomization {
     }
 
     setTokenOption(key, value) {
-        this.tokenOptions[key] = value;
-    }
-    removeTokenOption(key) {
-        delete this.tokenOptions[key];
+        if (value === undefined) {
+            delete this.tokenOptions[key];
+        } else if (value === true || value === "true") {
+            this.tokenOptions[key] = true;
+        } else if (value === false || value === "false") {
+            this.tokenOptions[key] = false;
+        } else if (!isNaN(value) && typeof value === "string") {
+            if (value.includes(".")) {
+                this.tokenOptions[key] = parseFloat(value);
+            } else {
+                this.tokenOptions[key] = parseInt(value);
+            }
+        } else {
+            this.tokenOptions[key] = value;
+        }
     }
 
     addAlternativeImage(imageUrl) {

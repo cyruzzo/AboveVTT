@@ -1725,10 +1725,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 			}
 		}
 	}
-	for (let i = 0; i < token_setting_options.length; i++) {
-		// all global token settings default to false
-		setReasonableDefault(token_setting_options[i].name, false);
-	}
+	token_setting_options().forEach(option => setReasonableDefault(option.name, option.defaultValue));
 	// unless otherwise specified, tokens should not be hidden when they are placed
 	setReasonableDefault("hidden", false);
 

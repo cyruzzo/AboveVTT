@@ -441,7 +441,17 @@ function build_token_auras_inputs(tokenIds) {
 		</div>
 	`);
 
-	let enabledAurasInput = build_toggle_input("auraVisible", "Enable Token Auras", auraIsEnabled, undefined, undefined, function(name, newValue) {
+	const auraOption = {
+		name: "auraVisible",
+		label: "Enable Token Auras",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Visible", description: "Token Auras are visible." },
+			{ value: false, label: "Hidden", description: "Token Auras are hidden." }
+		],
+		defaultValue: false
+	};
+	let enabledAurasInput = build_toggle_input( auraOption, auraIsEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -454,7 +464,18 @@ function build_token_auras_inputs(tokenIds) {
 		}
 	});
 	wrapper.prepend(enabledAurasInput);
-	let auraIsLightInput = build_toggle_input("auraislight", "Change aura appearance to light", auraIsLightEnabled, "Token's aura is visually changed to look like light", "Default aura visual", function(name, newValue) {
+
+	const auraIsLightOption = {
+		name: "auraislight",
+		label: "Change aura appearance to light",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light." },
+			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light." }
+		],
+		defaultValue: false
+	};
+	let auraIsLightInput = build_toggle_input(auraIsLightOption, auraIsLightEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -462,7 +483,18 @@ function build_token_auras_inputs(tokenIds) {
 		});
 	});	
 	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
-	let hideAuraInFog = build_toggle_input("hideaurafog", "Hide aura when hidden in fog", hideAuraIsEnabled, "Token's aura is hidden from players when in fog", "Token's aura is visible to players when token is in fog", function(name, newValue) {
+
+	const hideAuraInFogOption = {
+		name: "hideaurafog",
+		label: "Hide aura when hidden in fog",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Hidden", description: "The token's aura is hidden from players when the token is in fog." },
+			{ value: false, label: "Visible", description: "The token's aura is visible to players when the token is in fog." }
+		],
+		defaultValue: false
+	};
+	let hideAuraInFog = build_toggle_input(hideAuraInFogOption, hideAuraIsEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -1086,7 +1118,7 @@ function build_options_flyout_menu(tokenIds) {
 		padding: "5px"
 	})
 
-	let token_settings = [...token_setting_options];
+	let token_settings = token_setting_options();
 	if (tokens.length == 1 && !tokens[0].isPlayer()){		
 		let removename = "hidestat";
 		token_settings = $.grep(token_settings, function(e){
@@ -1101,33 +1133,27 @@ function build_options_flyout_menu(tokenIds) {
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
 		}
-		if(setting.name == 'square' || setting.name == 'legacyaspectratio')
+		if(setting.name === 'square' || setting.name === 'legacyaspectratio')
 			continue;
-		if(setting.name =='tokenBaseStyleSelect'){
-			
-		}
-		if(setting.type == "dropdown"){
-			let inputWrapper = build_dropdown_input(setting.name, setting.label, currentValue, setting.options, function(name, newValue) {
-				console.log(`${name} setting is now ${newValue}`);
 
-				tokens.forEach(token => {
-					token.options[name] = newValue;
-					token.place_sync_persist();
-				});
-			});
-			
-			body.append(inputWrapper);
-		
-		}
-		else{
-			let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-				console.log(`${name} setting is now ${newValue}`);
+		if (setting.type === "dropdown") {
+			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
 				tokens.forEach(token => {
 					token.options[name] = newValue;
 					token.place_sync_persist();
 				});
 			});
 			body.append(inputWrapper);
+		} else if (setting.type === "toggle") {
+			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
+				tokens.forEach(token => {
+					token.options[name] = newValue;
+					token.place_sync_persist();
+				});
+			});
+			body.append(inputWrapper);
+		} else {
+			console.warn("build_options_flyout_menu failed to handle token setting option with type", setting.type);
 		}
 	}
 

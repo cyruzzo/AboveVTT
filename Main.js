@@ -782,13 +782,6 @@ function init_controls() {
 		sidebarControls.addClass("player");
 	}
 
-	
-	if (window.EXPERIMENTAL_SETTINGS["DEBUGddbDiceMonsterPanel"] === true) {
-		change_sidbar_tab($("#switch_monsters"));
-		$("#loading_overlay").css({ "opacity": "0.25" })
-		$(".sidebar-panel-loading-indicator").css({ "opacity": "0.25" })
-	}
-
 }
 
 const MAX_ZOOM_STEP = 20

@@ -1,135 +1,183 @@
-const token_setting_options = [
-	{
-		name: 'tokenStyleSelect',
-		type: 'dropdown',
-		label: 'Token Style',
-		options: [
-			$(`<option value='1'>Circle</option>`), 
-			$(`<option value='2'>Square</option>`), 
-			$(`<option value='3'>No Constraint</option>`), 
-			$(`<option value='4'>Virtual Mini Circle</option>`), 
-			$(`<option value='5'>Virtual Mini Square</option>`)
- 		]
-	},
-	{
-		name: 'tokenBaseStyleSelect',
-		type: 'dropdown',
-		label: 'Token Base Style',
-		options: [
-			$(`<option value='1'>Default</option>`), 
-			$(`<option value='2'>Grass</option>`), 
-			$(`<option value='3'>Tile</option>`), 
-			$(`<option value='4'>Sand</option>`), 
-			$(`<option value='5'>Rock</option>`),
-			$(`<option value='6'>Water</option>`)
- 		]
-	},
-	{
-		name: 'hidden',
-		label: 'Hide',
-		enabledDescription: 'The token is hidden to players.',
-		disabledDescription: 'The token is visible to players.',
-		enabledValue: 'Hidden',
-		disabledValue: 'Visible'
-	},     
-	{
-		name: 'square',
-		label: 'Square Token',
-		enabledDescription: 'The token is square.',
-		disabledDescription: 'The token is clipped to fit within a circle.',
-		enabledValue: 'Square',
-		disabledValue: 'Round'
-	},
-	{
-		name: 'locked',
-		label: 'Disable All Interaction',
-		enabledDescription: "The token can not be interacted with in any way. Not movable, not selectable by players, no hp/ac displayed, no border displayed, no nothing. Players shouldn't even know it's a token.",
-		disabledDescription: 'The token can be interacted with.',
-		enabledValue: 'Interaction Disabled',
-		disabledValue: 'Interaction Allowed'
-	},
-	{
-		name: 'restrictPlayerMove',
-		label: 'Restrict Player Movement',
-		enabledDescription: 'Players can not move the token.',
-		disabledDescription: 'Players can move the token.',
-		enabledValue: 'Restricted',
-		disabledValue: 'Unrestricted'
-	},
-	{
-		name: 'disablestat',
-		label: 'Remove HP/AC',
-		enabledDescription: 'The token does not have HP/AC shown to either the DM or the players.',
-		disabledDescription: 'The token has HP/AC shown to only the DM.',
-		enabledValue: 'Removed',
-		disabledValue: 'Visible to DM'
-	},
-	{
-		name: 'hidestat',
-		label: 'Hide Player HP/AC',
-		enabledDescription: "Each player can see their own HP/AC, but can't see the HP/AC of other players.",
-		disabledDescription: "Each player can see their own HP/AC as well as the HP/AC of other players.",
-		enabledValue: 'Hidden',
-		disabledValue: 'Visible'
-	},
-	{
-		name: 'hidehpbar',
-		label: 'Only show HP values on hover',
-		enabledDescription: "HP values are only shown when you hover or select the token. The 'Disable HP/AC' option overrides this one.",
-		disabledDescription: "HP values are always displayed on the token. The 'Disable HP/AC' option overrides this one.",
-		enabledValue: 'On Hover',
-		disabledValue: 'Always'
-	},
-	{
-		name: 'disableborder',
-		label: 'Disable Border',
-		enabledDescription: 'The token has a border drawn around the image.',
-		disabledDescription: 'The token does not have a border drawn around the image.',
-		enabledValue: 'No Border',
-		disabledValue: 'Border'
-	},
-	{
-		name: 'disableaura',
-		label: 'Disable Health Aura',
-		enabledDescription: "An aura is drawn around the token's image that represents current health.",
-		disabledDescription: "Enable this to have an aura drawn around the token's image that represents current health.",
-		enabledValue: 'No Aura',
-		disabledValue: 'Health Aura'
-	},
-	{
-		name: 'enablepercenthpbar',
-		label: 'Enable Token HP% Bar',
-		enabledDescription: 'The token has a traditional visual hp% bar below it',
-		disabledDescription: 'The token does not have a traditional visual hp% bar below it',
-		enabledValue: 'Health Bar',
-		disabledValue: 'No Bar'
-	},
-	{
-		name: 'revealname',
-		label: 'Show name to players',
-		enabledDescription: "The token's name is visible to players",
-		disabledDescription: "The token's name is hidden from players",
-		enabledValue: 'Visible',
-		disabledValue: 'Hidden'
-	},
-	{
-		name: 'legacyaspectratio',
-		label: 'Ignore Image Aspect Ratio',
-		enabledDescription: "The token's image will stretch to fill the token space",
-		disabledDescription: "New token's image will respect the aspect ratio of the image provided",
-		enabledValue: 'Stretch',
-		disabledValue: 'Maintain'
-	},
-	{
-		name: "player_owned",
-		label: "Player Accessible Stats",
-		enabledDescription: "The token's stat block is accessible to players via the token context menu. Players can also alter the HP/AC of this token.",
-		disabledDescription: "The token's stat block is not accessible to players via the token context menu. Players can not alter the HP/AC of this token.",
-		enabledValue: 'Player & DM',
-		disabledValue: 'DM only'
-	}
 
-];
+function is_valid_token_option_value(tokenOptionName, value) {
+	return token_setting_options().find(o => o.name === tokenOptionName)?.options?.map(value).includes(value);
+}
+
+function convert_option_to_override_dropdown(tokenOption) {
+	// Note: Spread syntax effectively goes one level deep while copying an array. Therefore, it may be unsuitable for copying multidimensional arrays or objects
+	// we are explicitly not using the spread operator at this level because we need to deep copy the object
+	let converted = {
+		name: tokenOption.name,
+		label: tokenOption.label,
+		type: 'dropdown',
+		options: tokenOption.options.map(option => { return {...option} }),
+		defaultValue: undefined
+	};
+	converted.options.push({ value: undefined, label: "Not Overridden", description: "Changing this setting will override the default settings" });
+	return converted;
+}
+
+function token_setting_options() {
+	return [
+		{
+			name: 'tokenStyleSelect',
+			label: 'Token Style',
+			type: 'dropdown',
+			options: [
+				{ value: "circle", label: "Circle", description: "The token is a circle and is contained within the border. Great for portrait-style tokens!" },
+				{ value: "square", label: "Square", description: "The token is square and is contained within the border. Great for portrait-style tokens!" },
+				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: "The token looks like a physical mini with a round base. The art is not contained within the border allowing the token art to extend beyond the token base. Great for top-down-style tokens!" },
+				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: "The token looks like a physical mini with a round base. The art is not contained within the border allowing the token art to extend beyond the token base. Great for top-down-style tokens!" },
+				{ value: "noConstraint", label: "No Constraint", description: "The token does not conform to any provided structure. Choose between various settings to make the token look the way you want. We recommend using a different option." }
+			],
+			defaultValue: "circle"
+		},
+		{
+			name: 'tokenBaseStyleSelect',
+			label: 'Token Base Style',
+			type: 'dropdown',
+			options: [
+				{ value: "default", label: "Default", description: "The base of the token is a flat color instead of a texture." },
+				{ value: "grass", label: "Grass", description: "The base has a Grass texture on it." },
+				{ value: "tile", label: "Tile", description: "The base has a Tile texture on it." },
+				{ value: "sand", label: "Sand", description: "The base has a Sand texture on it." },
+				{ value: "rock", label: "Rock", description: "The base has a Rock texture on it." },
+				{ value: "water", label: "Water", description: "The base has a Water texture on it." }
+			],
+			defaultValue: "default"
+		},
+		{
+			name: 'hidden',
+			label: 'Hide',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Hidden", description: "The token is hidden to players." },
+				{ value: false, label: "Visible", description: "The token is visible to players." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'square',
+			label: 'Square Token',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Square", description: "The token is square." },
+				{ value: false, label: "Round", description: "The token is clipped to fit within a circle." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'locked',
+			label: 'Disable All Interaction',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Interaction Disabled", description: "The token can not be interacted with in any way. Not movable, not selectable by players, no hp/ac displayed, no border displayed, no nothing. Players shouldn't even know it's a token." },
+				{ value: false, label: "Interaction Allowed", description: "The token can be interacted with." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'restrictPlayerMove',
+			label: 'Restrict Player Movement',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Restricted", description: "Players can not move the token." },
+				{ value: false, label: "Unrestricted", description: "Players can move the token." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disablestat',
+			label: 'Remove HP/AC',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Removed", description: "The token does not have HP/AC shown to either the DM or the players." },
+				{ value: false, label: "Visible to DM", description: "The token has HP/AC shown to only the DM." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'hidestat',
+			label: 'Hide Player HP/AC',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Hidden", description: "Each player can see their own HP/AC, but can't see the HP/AC of other players." },
+				{ value: false, label: "Visible", description: "Each player can see their own HP/AC as well as the HP/AC of other players." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'hidehpbar',
+			label: 'Only show HP values on hover',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "On Hover", description: "HP values are only shown when you hover or select the token. The 'Disable HP/AC' option overrides this one." },
+				{ value: false, label: "Always", description: "HP values are always displayed on the token. The 'Disable HP/AC' option overrides this one." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disableborder',
+			label: 'Disable Border',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'No Border', description: "The token has a border drawn around the image." },
+				{ value: false, label: 'Border', description: "The token does not have a border drawn around the image." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disableaura',
+			label: 'Disable Health Aura',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'No Aura', description: "An aura is drawn around the token's image that represents current health." },
+				{ value: false, label: 'Health Aura', description: "Enable this to have an aura drawn around the token's image that represents current health." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'enablepercenthpbar',
+			label: 'Enable Token HP% Bar',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Health Bar', description: "The token has a traditional visual hp% bar below it" },
+				{ value: false, label: 'No Bar', description: "The token does not have a traditional visual hp% bar below it" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'revealname',
+			label: 'Show name to players',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Visible', description: "The token's name is visible to players" },
+				{ value: false, label: 'Hidden', description: "The token's name is hidden from players" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'legacyaspectratio',
+			label: 'Ignore Image Aspect Ratio',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Stretch', description: "The token's image will stretch to fill the token space" },
+				{ value: false, label: 'Maintain', description: "New token's image will respect the aspect ratio of the image provided" }
+			],
+			defaultValue: false
+		},
+		{
+			name: "player_owned",
+			label: "Player Accessible Stats",
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Player & DM', description: "The token's stat block is accessible to players via the token context menu. Players can also alter the HP/AC of this token." },
+				{ value: false, label: 'DM only', description: "The token's stat block is not accessible to players via the token context menu. Players can not alter the HP/AC of this token." }
+			],
+			defaultValue: false
+		}
+	];
+}
 
 function b64EncodeUnicode(str) {
         // first we use encodeURIComponent to get percent-encoded UTF-8,
@@ -234,7 +282,7 @@ function init_settings(){
 	let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
 	tokenOptionsButton.on("click", function (clickEvent) {
 		build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options, window.TOKEN_SETTINGS, TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, function (name, value) {
+			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
 				if (value === true || value === false || typeof value === 'string') {
 					window.TOKEN_SETTINGS[name] = value;
 				} else {
@@ -254,20 +302,17 @@ function init_settings(){
 
 	const experimental_features = [
 		{
-			name: 'DEBUGddbDiceMonsterPanel',
-			label: 'Debug Monsters Tab Loading',
-			enabledDescription: "All of the loading indicators will be transparent, and the monsters tab will be selected by default. This is to allow developers to visually see what is happening while debugging. (Changing this requires a page reload)",
-			disabledDescription: "If you are not a developer, please ignore this feature. It is to allow developers to visually see what is happening in the monsters panel while debugging. (Changing this requires a page reload)",
-			dmOnly: true
+			name: 'streamDiceRolls',
+			label: 'Stream Dice Rolls',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Streaming", description: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
+				{ value: false, label: "Not Streaming", description: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
+			],
+			defaultValue: false
 		}
 	];
-	
-	experimental_features.push({
-		name: 'streamDiceRolls',
-		label: 'Stream Dice Rolls',
-		enabledDescription: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`,
-		disabledDescription: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`
-	});
+
 	body.append(`
 		<br />
 		<h5 class="token-image-modal-footer-title">Experimental Features</h5>
@@ -278,11 +323,8 @@ function init_settings(){
 		if (setting.dmOnly === true && !window.DM) {
 			continue;
 		}
-		let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name];
-		if (currentValue === undefined && setting.defaultValue !== undefined) {
-			currentValue = setting.defaultValue;
-		}
-		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
+		let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name] || setting.defaultValue;
+		let inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
 			console.log(`experimental setting ${name} is now ${newValue}`);
 			if (name === "streamDiceRolls") {
 				enable_dice_streaming_feature(newValue);
@@ -314,6 +356,7 @@ function init_settings(){
 }
 
 function redraw_settings_panel_token_examples(settings) {
+	console.log("redraw_settings_panel_token_examples", settings);
 	let mergedSettings = {...window.TOKEN_SETTINGS};
 	if (settings !== undefined) {
 		mergedSettings = {...mergedSettings, ...settings};
@@ -353,48 +396,47 @@ function build_example_token(options) {
 	return html;
 }
 
-const TOKEN_OPTIONS_INPUT_TYPE_TOGGLE = "toggle";
-const TOKEN_OPTIONS_INPUT_TYPE_SELECT = "select";
-const TOKEN_OPTIONS_INPUT_TYPE_DROPDOWN = "dropdown";
 // used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
 // updateValue: function(name, newValue) {} // only update the data here
 // didChange: function() {} // do ui things here
-function build_sidebar_token_options_flyout(availableOptions, setValues, inputType, updateValue, didChange) {
-	const validInputTypes = [TOKEN_OPTIONS_INPUT_TYPE_TOGGLE, TOKEN_OPTIONS_INPUT_TYPE_SELECT];
-	if (!validInputTypes.includes(inputType)) {
-		console.error("build_sidebar_token_options_flyout received the wrong inputType. Expected one of", validInputTypes, "but received", inputType);
-		return;
+function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange) {
+	if (typeof updateValue !== 'function') {
+		updateValue = function(name, newValue){
+			console.warn("build_sidebar_token_options_flyout was not given an updateValue function so we can't set ", name, "to", value);
+		};
 	}
+	if (typeof didChange !== 'function') {
+		didChange = function(){
+			console.log("build_sidebar_token_options_flyout was not given adidChange function");
+		};
+	}
+
 	let container = $(`<div class="sidebar-token-options-flyout-container prevent-sidebar-modal-close"></div>`);
+
+	// const updateValue = function(name, newValue) {
+	// 	if (is_valid_token_option_value(name, newValue)) {
+	// 		setValues[name] = newValue;
+	// 	} else {
+	// 		delete setValues[name];
+	// 	}
+	// };
+
 	availableOptions.forEach(option => {
 		const currentValue = setValues[option.name];
-		if(option.type == "dropdown"){
-			let inputWrapper = build_dropdown_input(option.name, option.label, currentValue, option.options, function(name, newValue) {
+		if (option.type === "dropdown") {
+			let inputWrapper = build_dropdown_input(option, currentValue, function(name, newValue) {
 				updateValue(name, newValue);
-				if (didChange) {
-					didChange();
-				}
+				didChange();
 			});
-			
 			container.append(inputWrapper);
-		
-		}
-		else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_TOGGLE) {
-			let inputWrapper = build_toggle_input(option.name, option.label, currentValue, option.enabledDescription, option.disabledDescription, function (n, v) {
-				updateValue(n, v);
-				if (didChange) {
-					didChange();
-				}
+		} else if (option.type === "toggle") {
+			let inputWrapper = build_toggle_input(option, currentValue, function (name, newValue) {
+				updateValue(name, newValue);
+				didChange();
 			});
 			container.append(inputWrapper)
-		} else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_SELECT) {
-			let inputWrapper = build_token_option_select_input(option, currentValue, function (n, v) {
-				updateValue(n, v);
-				if (didChange) {
-					didChange();
-				}
-			});
-			container.append(inputWrapper)
+		} else {
+			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 	});
 
@@ -412,22 +454,31 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, inputTy
 
 	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
-		if (inputType === TOKEN_OPTIONS_INPUT_TYPE_TOGGLE) {
-			$(clickEvent.currentTarget)
-				.closest(".sidebar-token-options-flyout-container")
-				.find(".rc-switch")
-				.removeClass("rc-switch-checked")
-				.removeClass("rc-switch-unknown");
-		} else if (inputType === TOKEN_OPTIONS_INPUT_TYPE_SELECT) {
-			$(clickEvent.currentTarget)
-				.closest(".sidebar-token-options-flyout-container")
-				.find("select")
-				.val("default");
-		}
+
+		let tokenOptionsFlyoutContainer = $(clickEvent.currentTarget).closest(".sidebar-token-options-flyout-container");
+
+		// disable all toggle switches
+		tokenOptionsFlyoutContainer
+			.find(".rc-switch")
+			.removeClass("rc-switch-checked")
+			.removeClass("rc-switch-unknown");
+
+		// set all dropdowns to their default values
+		tokenOptionsFlyoutContainer
+			.find("select")
+			.each(function () {
+				let el = $(this);
+				let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
+				if (matchingOption?.defaultValue !== undefined) {
+					console.debug(`Resetting ${matchingOption.name} to`, matchingOption.defaultValue);
+					el.val(matchingOption.defaultValue);
+				}
+			});
+
+		// This is why we want multiple callback functions.
+		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
 		availableOptions.forEach(option => updateValue(option.name, undefined));
-		if (didChange) {
-			didChange();
-		}
+		didChange();
 	});
 	container.append(resetToDefaults);
 

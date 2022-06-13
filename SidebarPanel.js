@@ -378,68 +378,75 @@ function build_token_option_select_input(option, currentValue, changeHandler) {
   return wrapper;
 }
 
-function build_toggle_input(name, labelText, enabled, enabledHoverText, disabledHoverText, changeHandler) {
+function build_toggle_input(settingOption, currentValue, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
   let wrapper = $(`
     <div class="token-image-modal-footer-select-wrapper">
-      <div class="token-image-modal-footer-title">${labelText}</div>
+      <div class="token-image-modal-footer-title">${settingOption.label}</div>
     </div>
   `);
-  let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
-  if (enabled === null) {
+  let input = $(`<button name="${settingOption.name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
+  if (currentValue === null) {
     input.addClass("rc-switch-unknown");
     update_hover_text(wrapper, "This has multiple values. Clicking this will enable it for all.");
-  } else if (enabled === true) {
-    input.addClass("rc-switch-checked");
-    update_hover_text(wrapper, enabledHoverText);
   } else {
-    update_hover_text(wrapper, disabledHoverText);
+    if (currentValue === true) {
+      input.addClass("rc-switch-checked");
+    }
+    const currentlySetOption = settingOption.options.find(o => o.value === currentValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+    update_hover_text(wrapper, currentlySetOption?.description);
   }
   wrapper.append(input);
   input.click(function(clickEvent) {
     if ($(clickEvent.currentTarget).hasClass("rc-switch-checked")) {
       // it was checked. now it is no longer checked
       $(clickEvent.currentTarget).removeClass("rc-switch-checked");
-      update_hover_text(wrapper, disabledHoverText);
-      changeHandler(name, false);
+      changeHandler(settingOption.name, false);
+      const disabledOption = settingOption.options.find(o => o.value === false);
+      update_hover_text(wrapper, disabledOption?.description);
     } else {
       // it was not checked. now it is checked
       $(clickEvent.currentTarget).removeClass("rc-switch-unknown");
       $(clickEvent.currentTarget).addClass("rc-switch-checked");
-      update_hover_text(wrapper, enabledHoverText);
-      changeHandler(name, true);
+      changeHandler(settingOption.name, true);
+      const disabledOption = settingOption.options.find(o => o.value === true);
+      update_hover_text(wrapper, disabledOption?.description);
     }
   });
   return wrapper;
 }
 
-function build_dropdown_input(name, labelText, currentValue, options, changeHandler) {
-   if (typeof changeHandler !== 'function') {
+function build_dropdown_input(settingOption, currentValue, changeHandler) {
+  if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
-  
-  let wrapper = $(`<div id='tokenWrapper__${name}' class="token-image-modal-footer-title">${labelText}</div>`);
-  let tokenSelect = $(`<select id="tokenSelect__${name}" class='token-select-dropdown'></select>`)
+  let wrapper = $(`
+     <div class="token-image-modal-footer-select-wrapper">
+       <div class="token-image-modal-footer-title">${settingOption.label}</div>
+     </div>
+   `);
 
-  for(let i=0; i<options.length; i++){
-    tokenSelect.append(options[i]);
+  let input = $(`<select name="${settingOption.name}"></select>`);
+  wrapper.append(input);
+  for (const option of settingOption.options) {
+    input.append(`<option value="${option.value}">${option.label}</option>`);
   }
-  tokenSelect.val(currentValue);
+  if (currentValue !== undefined) {
+    input.find(`option[value=${currentValue}]`).attr('selected','selected');
+  } else {
+    input.find(`option[value=${settingOption.defaultValue}]`).attr('selected','selected');
+  }
 
-  tokenSelect.change(function(clickEvent) {
-    changeHandler(name, $(`#tokenSelect__${name} option:selected`).val());
-    if(name == "tokenStyleSelect"){
-      $(`#tokenWrapper__tokenBaseStyleSelect`).hide();
-      if($(`#tokenSelect__${name} option:selected`).val() == 4 || $(`#tokenSelect__${name} option:selected`).val() == 5){
-         $(`#tokenWrapper__tokenBaseStyleSelect`).show();
-      }
-    }
+  const currentlySetOption = settingOption.options.find(o => o.value === currentValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+  update_hover_text(wrapper, currentlySetOption?.description);
+  input.change(function(event) {
+    let newValue = event.target.value;
+    changeHandler(settingOption.name, newValue);
+    const updatedOption = settingOption.options.find(o => o.value === newValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+    update_hover_text(wrapper, updatedOption?.description);
   });
-  
-  wrapper.append(tokenSelect);
-
   return wrapper;
 }
 
