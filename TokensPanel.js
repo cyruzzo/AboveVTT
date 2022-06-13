@@ -657,14 +657,15 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
 
     // set up whatever you need to. We'll override a few things after
-    let options = {};
+    let options = {...window.TOKEN_SETTINGS};
+    options.name = listItem.name;
+
     switch (listItem.type) {
         case SidebarListItem.TypeFolder:
             console.log("TODO: place all tokens in folder?", listItem);
             break;
         case SidebarListItem.TypeMyToken:
-            let myToken = find_my_token(listItem.fullPath());
-            options = {...myToken};
+            options = {...options, ...find_token_options_for_list_item(listItem)};
             let tokenSizeSetting = myToken.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
@@ -685,20 +686,17 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
-            options.square = window.TOKEN_SETTINGS["square"];
-            options.disableborder = window.TOKEN_SETTINGS['disableborder'];
-            options.legacyaspectratio = window.TOKEN_SETTINGS['legacyaspectratio'];
-            options.disablestat = window.TOKEN_SETTINGS['disablestat'];
             options.color = "#" + get_player_token_border_color(pc.sheet);
-            options = {...options, ...get_player_token_customization(pc.sheet).tokenOptions};
+            options = {...options, ...find_token_options_for_list_item(listItem)};
             break;
         case SidebarListItem.TypeMonster:
-            options.monster = listItem.monsterData.id;
-            options.stat = listItem.monsterData.id;
             options.sizeId = listItem.monsterData.sizeId;
             options.hp = listItem.monsterData.averageHitPoints;
             options.max_hp = listItem.monsterData.averageHitPoints;
             options.ac = listItem.monsterData.armorClass;
+            options = {...options, ...find_token_options_for_list_item(listItem)};
+            options.monster = listItem.monsterData.id;
+            options.stat = listItem.monsterData.id;
             let placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id) {
@@ -713,14 +711,11 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             break;
         case SidebarListItem.TypeBuiltinToken:
-            let builtinToken = builtInTokens.find(t => t.name === listItem.name);
-            console.log("create_and_place_token SidebarListItem.TypeBuiltinToken options before", options, builtinToken);
-            options = {...builtinToken}
+            options = {...options, ...find_token_options_for_list_item(listItem)};
             options.disablestat = true;
             break;
     }
 
-    options.name = listItem.name;
     options.listItemPath = listItem.fullPath();
     options.hidden = hidden;
     options.imgsrc = random_image_for_item(listItem, specificImage);
@@ -1313,12 +1308,12 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         inputWrapper.append(saveButton);
     } else if (listItem.isTypePC() || listItem.isTypeMonster()) {
 
-
         let customization;
-        if (listItem.isTypePC()) {
-            customization = get_player_token_customization(listItem.sheet);
-        } else if (listItem.isTypeMonster()) {
-            customization = get_monster_token_customization(listItem.monsterData.id);
+        try {
+             customization = find_or_create_token_customization(listItem.type, listItem.backingId());
+        } catch (error) {
+            console.error("Failed to find_or_create TokenCustomization object from listItem", listItem);
+            return;
         }
 
         if (typeof customization !== "object") {
@@ -2064,11 +2059,13 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 }
 
 function find_token_options_for_list_item(listItem) {
-    switch (listItem.type) {
-        case SidebarListItem.TypeMyToken: return find_my_token(listItem.fullPath());
-        case SidebarListItem.TypePC: return get_player_token_customization(listItem.sheet).tokenOptions;
-        case SidebarListItem.TypeMonster: return get_monster_token_customization(listItem.monsterData.id).tokenOptions;
-        default: return {};
+    if (listItem.isTypeMyToken()) {
+        // TODO: soon to use find_token_customization as well
+        return find_my_token(listItem.fullPath());
+    } else if (listItem.isTypeBuiltinToken()) {
+        return find_builtin_token(listItem.fullPath());
+    } else {
+        return find_token_customization(listItem.type, listItem.sheet)?.tokenOptions || {};
     }
 }
 
@@ -2520,6 +2517,14 @@ class TokenCustomization {
         return new TokenCustomization(`${monsterId}`, SidebarListItem.TypeMonster, tokenOptions);
     }
 
+    static MyToken(id, tokenOptions) {
+        return new TokenCustomization(id, SidebarListItem.TypeMyToken, tokenOptions);
+    }
+
+    static Folder(id, tokenOptions) {
+        return new TokenCustomization(id, SidebarListItem.TypeFolder, tokenOptions);
+    }
+
     /**
      * @param obj {object} the raw JSON object with the same structure as a TokenCustomization object
      * @returns {TokenCustomization} a typed object instead of the raw JSON object that was given
@@ -2528,7 +2533,7 @@ class TokenCustomization {
         return new TokenCustomization(obj.id, obj.tokenType, obj.tokenOptions);
     }
 
-    static validTypes = [SidebarListItem.TypePC, SidebarListItem.TypeMonster];
+    static validTypes = [SidebarListItem.TypePC, SidebarListItem.TypeMonster, SidebarListItem.TypeMyToken, SidebarListItem.TypeFolder];
     // never call this directly! use the static functions above
     constructor(id, tokenType, tokenOptions) {
         if (!TokenCustomization.validTypes.includes(tokenType)) {
@@ -2592,20 +2597,24 @@ class TokenCustomization {
 }
 
 /**
- * @param monsterId {number|string} the id of the DDB monster
- * @returns {TokenCustomization|undefined} a token customization for the monster or undefined if not found
+ * @param type {string} the type of customization you're looking for. EX: SidebarListItem.TypeMonster
+ * @param id {string|number} the id of the customization you're looking for. EX: pc.sheet, monsterData.id, etc
+ * @returns {TokenCustomization|undefined} a token customization for the item if found, else undefined
  */
-function find_monster_token_customization(monsterId) {
-    return window.TOKEN_CUSTOMIZATIONS.find(c => c.tokenType === SidebarListItem.TypeMonster && c.id === `${monsterId}`);
+function find_token_customization(type, id) {
+    return window.TOKEN_CUSTOMIZATIONS.find(c => c.tokenType === type && c.id === `${id}`); // convert it to a string just to be safe. DDB monsters use numbers for ids, but we use strings for everything
 }
 
 /**
- * @param monsterId {number|string} the id of the DDB monster
- * @returns {TokenCustomization} a token customization for the monster. If it doesn't already exist, a new one will be created and returned
+ * @param type {string} the type of customization you're looking for. EX: SidebarListItem.TypeMonster
+ * @param id {string|number} the id of the customization you're looking for. EX: pc.sheet, monsterData.id, etc
+ * @returns {TokenCustomization|undefined} a token customization for the item if found. If not found, a new TokenCustomization object will be created and returned.
+ * @throws an error if a customization object cannot be created
  */
-function get_monster_token_customization(monsterId) {
-    return find_monster_token_customization(monsterId) || TokenCustomization.Monster(monsterId, {});
+function find_or_create_token_customization(type, id) {
+    return find_token_customization(type, id) || new TokenCustomization(id, type, {});
 }
+
 
 
 /**

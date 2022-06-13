@@ -2043,23 +2043,23 @@ function get_custom_monster_images(monsterId) {
 
 
 function get_custom_monster_images(monsterId) {
-	return find_monster_token_customization(monsterId)?.tokenOptions?.alternativeImages || [];
+	return find_token_customization(SidebarListItem.TypeMonster, monsterId)?.tokenOptions?.alternativeImages || [];
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {
-	let customization = get_monster_token_customization(monsterId);
+	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
 	customization.addAlternativeImage(imgsrc);
 	persist_token_customization(customization);
 }
 
 function remove_custom_monster_image(monsterId, imgsrc) {
-	let customization = get_monster_token_customization(monsterId);
+	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
 	customization.removeAlternativeImage(imgsrc);
 	persist_token_customization(customization);
 }
 
 function remove_all_custom_monster_images(monsterId) {
-	let customization = get_monster_token_customization(monsterId);
+	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
 	customization.removeAllAlternativeImages();
 	persist_token_customization(customization);
 }

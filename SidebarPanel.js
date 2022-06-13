@@ -724,6 +724,22 @@ class SidebarListItem {
     return this.name.toLowerCase().includes(searchTerm.toLowerCase()) // any item with a partially matching name
     || this.containingFolderName().toLowerCase().includes(searchTerm.toLowerCase()) // all items within a folder with a partially matching name
   }
+
+  backingId() {
+    switch (this.type) {
+      case SidebarListItem.TypePC:
+        return this.sheet;
+      case SidebarListItem.TypeMonster:
+        return this.monsterData.id;
+      case SidebarListItem.TypeFolder:
+      case SidebarListItem.TypeMyToken:
+      case SidebarListItem.TypeScene:
+      case SidebarListItem.TypeBuiltinToken:
+      case SidebarListItem.TypeEncounter:
+      default:
+        return this.id; // could be undefined
+    }
+  }
 }
 
 /**

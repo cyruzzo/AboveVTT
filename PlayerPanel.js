@@ -165,7 +165,7 @@ function add_player_image_mapping(playerId, imageUrl) {
 		return;
 	}
 
-	let customization = find_player_token_customization(playerId);
+	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
 	if (!customization) {
 		return;
 	}
@@ -174,7 +174,7 @@ function add_player_image_mapping(playerId, imageUrl) {
 }
 
 function remove_player_image_mapping(playerId, imageUrl) {
-	let customization = find_player_token_customization(playerId);
+	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
 	if (!customization) {
 		return;
 	}
@@ -183,7 +183,7 @@ function remove_player_image_mapping(playerId, imageUrl) {
 }
 
 function remove_all_player_image_mappings(playerId) {
-	let customization = find_player_token_customization(playerId);
+	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
 	if (!customization) {
 		return;
 	}
@@ -192,7 +192,12 @@ function remove_all_player_image_mappings(playerId) {
 }
 
 function get_player_image_mappings(playerId) {
-	return get_player_token_customization(playerId).tokenOptions.alternativeImages || [];
+	try {
+		return find_or_create_token_customization(SidebarListItem.TypePC, playerId).tokenOptions.alternativeImages || [];
+	} catch (error) {
+		console.error("get_player_image_mappings failed to find_or_create_token_customization", playerId, error)
+		return [];
+	}
 }
 
 function random_image_for_player_token(playerId) {
