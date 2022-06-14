@@ -2188,6 +2188,13 @@ div.token-image-modal-footer-title {
     font-size: 13px;
     /*width: 100%;*/
 }
+h1.token-image-modal-footer-title,
+h2.token-image-modal-footer-title,
+h3.token-image-modal-footer-title,
+h4.token-image-modal-footer-title,
+h5.token-image-modal-footer-title {
+    display: block;
+}
 h1.token-image-modal-footer-title:after,
 h2.token-image-modal-footer-title:after,
 h3.token-image-modal-footer-title:after,
@@ -2217,7 +2224,8 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 30%;
+    min-width: 35%;
+    max-width: 35%;
 }
 .footer-input-wrapper {
     width: 100%;
@@ -2273,10 +2281,12 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
     width: auto;
 }
+.example-token,
 .custom-token-image-item {
     float: left; 
     width: 33%;
     position: relative;
+    opacity: 1;
 }
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
@@ -2349,11 +2359,9 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-flyout {
     position: fixed;
-    right: 350px;
-    z-index: 1000;
-    border: 1px solid #d8e1e8;
+    z-index: 100000;
     box-shadow: 1px 1px 10px black, -1px -1px 10px black;
-    border-radius: 15px;
+    border-radius: 5px;
     overflow: hidden;
 }
 .list-item-image-flyout {
@@ -2361,6 +2369,11 @@ h5.token-image-modal-footer-title:after {
     height: 400px;
     object-fit: cover;
     display: block;
+}
+.sidebar-token-options-flyout-container {
+    width: 400px;
+    padding: 5px;
+    background-color: rgb(235, 241, 245);
 }
 #scenes-panel .sidebar-list-item-row.scene-item .scene-item-footer {
     display: flex;
@@ -2772,6 +2785,17 @@ h5.token-image-modal-footer-title:after {
     outline: 2px solid #000;
 }
 
+.sidebar-hover-text-flyout {
+    display: block;
+    max-width: 400px;
+    padding: 0px 10px;
+    background-color: rgba(28,29,30,0.8);
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    text-transform: none;
+}
 .sidebar-hovertext:before {
     content: attr(data-hover);
     font-family: 'Roboto', sans-serif;
@@ -3189,11 +3213,6 @@ button.avtt-roll-button {
     background: none;
 }
 
-.token-image-modal-footer-title,
-.token-image-modal-footer-select-wrapper{
-    min-width: fit-content;
-}
-
 .menu-outer-aura h3,
 .menu-inner-aura h3{
     min-width: 50px;
@@ -3580,8 +3599,55 @@ button.avtt-roll-button {
 }
 
 /*end combat tracker face lift*/
+.token>.base{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #0000001c;
+    backdrop-filter: blur(3px) brightness(0.2);
+    z-index: -1;
+    border: inset 5px var(--token-border-color, #ffffff44);
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
+}
+.token>.base.noborder{
+    border: solid 5px var(--token-hp-aura-color);
+}
 
-.token>img {
+
+.token>.base.noborder.nohpaura{
+    border: inset 5px #ffffff44;
+}
+
+.token>.base.large-or-smaller-base{
+    border: inset 2px var(--token-border-color, #ffffff44);
+    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
+}
+.token>.base.noborder.large-or-smaller-base{
+    border: solid 2px var(--token-hp-aura-color);
+}
+
+.token>.base.noborder.nohpaura.large-or-smaller-base{
+    border: inset 2px #ffffff44;
+}
+
+.token>img{
+    border: 2px solid var(--token-border-color, #ffffff44);
+    box-shadow: 0 0 2px 3px var(--token-hp-aura-color);
+}
+.token>.base~img{
+    filter: none;
+    border: 0px;
+    box-shadow: none;
+}
+.base.circle,
+.base.circle:after{
+    border-radius: 50%;
+}
+.token>img.freeform {
+    border: 0px;
+    box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
@@ -3592,6 +3658,49 @@ button.avtt-roll-button {
     width: 100%;
     height: 100%;
 } 
+
+.base:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: 30%;
+    opacity: 1;
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
+}
+.base.large-or-smaller-base:after{
+    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
+}
+
+.base.grass-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/ground_grass_gen_07.png);
+}
+.base.tile-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/textureStone_0.png);
+}
+.base.sand-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/dirt4.png);
+}
+.base.rock-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/Rockface%20red_0.png);
+}
+.base.water-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/Untitled-3_1.jpg);
+}
+
+#tokenWrapper__tokenStyleSelect,
+#tokenWrapper__tokenBaseStyleSelect{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#tokenWrapper__tokenBaseStyleSelect{
+    transition: height 1500ms linear 0s;
+    overflow: hidden;
+}
 
 .image-size-wrapper,
 .border-color-wrapper {
