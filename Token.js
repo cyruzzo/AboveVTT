@@ -1921,9 +1921,9 @@ function setTokenAuras (token, options) {
 
 
 function setTokenBase(token, options) {
-	if(options.tokenStyleSelect == 1 || options.tokenStyleSelect == 2 || options.tokenStyleSelect == 3){
-		$(`.token[data-id='${options.id}']>.base`).remove();
-	}
+	// if (["circle", "square", "noConstraint"].includes(options.tokenStyleSelect)) {
+	// 	$(`.token[data-id='${options.id}']>.base`).remove();
+	// }
 	$(`.token[data-id='${options.id}']>.base`).remove();
 	let base = $(`<div class='base'></div>`);
 	if(options.size < 150){
@@ -1933,33 +1933,33 @@ function setTokenBase(token, options) {
 		$(base).toggleClass("large-or-smaller-base", false);
 	}
 
-	if(options.tokenStyleSelect == 4){
+	if (options.tokenStyleSelect === "virtualMiniCircle") {
 		base.toggleClass('square', false);
 		base.toggleClass('circle', true);		
 	}
-	if (options.tokenStyleSelect == 5){
+	if (options.tokenStyleSelect === "virtualMiniSquare"){
 		base.toggleClass('square', true);
 		base.toggleClass('circle', false);
 	}
-	if(options.tokenStyleSelect !== 3){
+	if (options.tokenStyleSelect !== "noConstraint") {
 		token.children("img").toggleClass("freeform", false);
 	}
 	
-	if(options.tokenStyleSelect == 1){
+	if (options.tokenStyleSelect === "circle") {
 		//Circle
 		options.square = false;
 		options.legacyaspectratio = true;
 		token.children("img").css("border-radius", "50%")
 		token.children("img").removeClass("preserve-aspect-ratio");
 	}
-	else if(options.tokenStyleSelect == 2){
+	else if(options.tokenStyleSelect === "square"){
 		//Square
 		options.square = true;
 		options.legacyaspectratio = true;
 		token.children("img").css("border-radius", "0");
 		token.children("img").removeClass("preserve-aspect-ratio");
 	}
-	else if(options.tokenStyleSelect == 3){
+	else if(options.tokenStyleSelect === "noConstraint") {
 		//Freeform
 		options.square = true;
 		options.legacyaspectratio = false;
@@ -1967,7 +1967,7 @@ function setTokenBase(token, options) {
 		token.children("img").addClass("preserve-aspect-ratio");
 		token.children("img").toggleClass("freeform", true);
 	}
-	else if(options.tokenStyleSelect == 4){
+	else if(options.tokenStyleSelect === "virtualMiniCircle"){
 		$(`.token[data-id='${options.id}']`).prepend(base);
 		//Virtual Mini Circle
 		options.square = true;
@@ -1975,7 +1975,7 @@ function setTokenBase(token, options) {
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
 	}
-	else if(options.tokenStyleSelect == 5){
+	else if(options.tokenStyleSelect === "virtualMiniSquare"){
 		$(`.token[data-id='${options.id}']`).prepend(base);
 		//Virtual Mini Square
 		options.square = true;
@@ -1984,7 +1984,7 @@ function setTokenBase(token, options) {
 		token.children("img").addClass("preserve-aspect-ratio");
 	}
 
-	if(options.tokenStyleSelect == 5 || options.tokenStyleSelect == 4){
+	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){
 		if(options.disableborder == true){
 			token.children(".base").toggleClass("noborder", true);
 		}
@@ -2006,38 +2006,23 @@ function setTokenBase(token, options) {
 	token.children(".base").toggleClass("tile-base", false);
 	token.children(".base").toggleClass("sand-base", false);
 	token.children(".base").toggleClass("water-base", false);
-	if(options.tokenBaseStyleSelect == 2){
+	if(options.tokenBaseStyleSelect === "grass"){
 		token.children(".base").toggleClass("grass-base", true);
 	}
-	else if(options.tokenBaseStyleSelect == 3){
+	else if(options.tokenBaseStyleSelect === "tile"){
 		token.children(".base").toggleClass("tile-base", true);
 	}
-	else if(options.tokenBaseStyleSelect == 4){
+	else if(options.tokenBaseStyleSelect === "sand"){
 		token.children(".base").toggleClass("sand-base", true);
 	}
-	else if(options.tokenBaseStyleSelect == 5){
+	else if(options.tokenBaseStyleSelect === "rock"){
 		token.children(".base").toggleClass("rock-base", true);
 	}
-	else if(options.tokenBaseStyleSelect == 6){
+	else if(options.tokenBaseStyleSelect === "water"){
 		token.children(".base").toggleClass("water-base", true);
 	}
 			
 }
-
-function get_custom_monster_images(monsterId) {
-	if (monsterId == undefined) {
-		return [];
-	}
-	if (window.CUSTOM_TOKEN_IMAGE_MAP == undefined) {
-		load_custom_monster_image_mapping();
-	}
-	var customImages = window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
-	if (customImages == undefined) {
-		customImages = [];
-	}
-	return customImages;
-}
-
 
 function get_custom_monster_images(monsterId) {
 	return find_token_customization(SidebarListItem.TypeMonster, monsterId)?.tokenOptions?.alternativeImages || [];

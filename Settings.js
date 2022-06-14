@@ -24,11 +24,11 @@ function token_setting_options() {
 			label: 'Token Style',
 			type: 'dropdown',
 			options: [
-				{ value: "circle", label: "Circle", description: "The token is a circle and is contained within the border. Great for portrait-style tokens!" },
-				{ value: "square", label: "Square", description: "The token is square and is contained within the border. Great for portrait-style tokens!" },
-				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: "The token looks like a physical mini with a round base. The art is not contained within the border allowing the token art to extend beyond the token base. Great for top-down-style tokens!" },
-				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: "The token looks like a physical mini with a round base. The art is not contained within the border allowing the token art to extend beyond the token base. Great for top-down-style tokens!" },
-				{ value: "noConstraint", label: "No Constraint", description: "The token does not conform to any provided structure. Choose between various settings to make the token look the way you want. We recommend using a different option." }
+				{ value: "circle", label: "Circle", description: `The token is round and is contained within the border. We set "Ignore Aspect Ratio" to true and "Square" to false. Great for tokens with a portrait art style!` },
+				{ value: "square", label: "Square", description: `The token is square and is contained within the border. We set "Ignore Aspect Ratio" to true and "Square" to true. Great for tokens with a portrait art style!` },
+				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with the largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
+				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with The largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
+				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` }
 			],
 			defaultValue: "circle"
 		},
@@ -37,12 +37,12 @@ function token_setting_options() {
 			label: 'Token Base Style',
 			type: 'dropdown',
 			options: [
-				{ value: "default", label: "Default", description: "The base of the token is a flat color instead of a texture." },
-				{ value: "grass", label: "Grass", description: "The base has a Grass texture on it." },
-				{ value: "tile", label: "Tile", description: "The base has a Tile texture on it." },
-				{ value: "sand", label: "Sand", description: "The base has a Sand texture on it." },
-				{ value: "rock", label: "Rock", description: "The base has a Rock texture on it." },
-				{ value: "water", label: "Water", description: "The base has a Water texture on it." }
+				{ value: "default", label: "Default", description: "A default dark semi-opaque plastic base." },
+				{ value: "grass", label: "Grass", description: "A grass covered base.." },
+				{ value: "tile", label: "Tile", description: "A tile base." },
+				{ value: "sand", label: "Sand", description: "A sand covered base." },
+				{ value: "rock", label: "Rock", description: "A rock base." },
+				{ value: "water", label: "Water", description: "A water base." }
 			],
 			defaultValue: "default"
 		},
@@ -455,7 +455,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
 
-		let tokenOptionsFlyoutContainer = $(clickEvent.currentTarget).closest(".sidebar-token-options-flyout-container");
+		let tokenOptionsFlyoutContainer = $(clickEvent.currentTarget).parent();
 
 		// disable all toggle switches
 		tokenOptionsFlyoutContainer
@@ -469,10 +469,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			.each(function () {
 				let el = $(this);
 				let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
-				if (matchingOption?.defaultValue !== undefined) {
-					console.debug(`Resetting ${matchingOption.name} to`, matchingOption.defaultValue);
-					el.val(matchingOption.defaultValue);
-				}
+				el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
 			});
 
 		// This is why we want multiple callback functions.

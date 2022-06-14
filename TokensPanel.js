@@ -2062,7 +2062,7 @@ function find_token_options_for_list_item(listItem) {
     } else if (listItem.isTypeBuiltinToken()) {
         return find_builtin_token(listItem.fullPath());
     } else {
-        return find_token_customization(listItem.type, listItem.sheet)?.tokenOptions || {};
+        return find_token_customization(listItem.type, listItem.backingId())?.tokenOptions || {};
     }
 }
 
@@ -2330,6 +2330,9 @@ function rollback_token_customizations_migration() {
 }
 
 function persist_all_token_customizations(customizations, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
     console.log("persist_all_token_customizations starting");
     // TODO: send to cloud instead of storing locally
     localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
@@ -2381,9 +2384,8 @@ function persist_token_customization(customization, callback) {
 
         window.persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
 
-
     } catch (error) {
-        console.error("failed to persist customization", customization);
+        console.error("failed to persist customization", customization, error);
         callback(false);
     }
 }
@@ -2549,6 +2551,7 @@ class TokenCustomization {
     }
 
     setTokenOption(key, value) {
+        console.debug("setTokenOption", key, value);
         if (value === undefined) {
             delete this.tokenOptions[key];
         } else if (value === true || value === "true") {
@@ -2574,8 +2577,8 @@ class TokenCustomization {
             this.tokenOptions.alternativeImages = [];
         }
         const parsed = parse_img(imageUrl);
-        if (!this.tokenOptions.includes(parsed)) {
-            this.tokenOptions.push(parsed);
+        if (!this.tokenOptions.alternativeImages.includes(parsed)) {
+            this.tokenOptions.alternativeImages.push(parsed);
         }
     }
     removeAlternativeImage(imageUrl) {

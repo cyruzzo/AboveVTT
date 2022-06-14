@@ -1159,14 +1159,31 @@ function build_options_flyout_menu(tokenIds) {
 
 	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
-		for (let i = 0; i < token_settings.length; i++) {
-			let setting = token_settings[i];
-			let toggle = $(clickEvent.target).parent().find(`button[name=${setting.name}]`);
-			toggle.removeClass("rc-switch-checked");
-			toggle.removeClass("rc-switch-unknown");
-			tokens.forEach(token => token.options[setting.name] = false);
-		}
+		let formContainer = $(clickEvent.currentTarget).parent();
+
+		// disable all toggle switches
+		formContainer
+			.find(".rc-switch")
+			.removeClass("rc-switch-checked")
+			.removeClass("rc-switch-unknown");
+
+		// set all dropdowns to their default values
+		formContainer
+			.find("select")
+			.each(function () {
+				let el = $(this);
+				let matchingOption = token_settings.find(o => o.name === el.attr("name"));
+				el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
+			});
+
+		// This is why we want multiple callback functions.
+		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
+		token_settings.forEach(option => {
+			tokens.forEach(token => token.options[option.name] = option.defaultValue);
+		});
 		tokens.forEach(token => token.place_sync_persist());
+
+
 	});
 	body.append(resetToDefaults);
 	return body;
