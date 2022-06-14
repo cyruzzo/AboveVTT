@@ -102,6 +102,7 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 });
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
+    console.log("Mousetrap.bind('esc'");
     stop_drawing();
     $('#select-button').click();
     close_token_context_menu();
@@ -110,6 +111,17 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     try {
         $( '.ui-draggable-dragging' ).draggable("option", { revert: true }).trigger( 'mouseup' ).draggable("option", {revert: false })
     } catch (whoCares) { }
+    let elementPreventingSidebarClose = $(".prevent-sidebar-modal-close");
+    if (elementPreventingSidebarClose.length > 0) {
+        if (elementPreventingSidebarClose.hasClass("sidebar-flyout") || elementPreventingSidebarClose.closest(".sidebar-flyout").length > 0) {
+            // it's a flyout... close it
+            elementPreventingSidebarClose.remove();
+        }
+        // any others that we want to close on esc?
+    } else {
+        // only close the sidebar if there isn't something on the screen explicitly trying to keep it open
+        close_sidebar_modal();
+    }
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open

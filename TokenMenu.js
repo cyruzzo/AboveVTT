@@ -37,6 +37,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 
 		buildFunction(flyout);
 		$("#tokenOptionsContainer").append(flyout);
+		observe_hover_text(flyout);
 
 		let contextMenuCenter = (contextMenu.height() / 2);
 		let flyoutHeight = flyout.height();
@@ -296,7 +297,8 @@ function token_context_menu_expanded(tokenIds, e) {
 		optionsRow.hover(function (hoverEvent) {
 			context_menu_flyout("options-flyout", hoverEvent, function(flyout) {
 				flyout.append(build_options_flyout_menu(tokenIds));
-			})
+				update_token_base_visibility(flyout);
+			});
 		});
 		body.append(optionsRow);
 	}
@@ -434,7 +436,17 @@ function build_token_auras_inputs(tokenIds) {
 		</div>
 	`);
 
-	let enabledAurasInput = build_toggle_input("auraVisible", "Enable Token Auras", auraIsEnabled, undefined, undefined, function(name, newValue) {
+	const auraOption = {
+		name: "auraVisible",
+		label: "Enable Token Auras",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Visible", description: "Token Auras are visible." },
+			{ value: false, label: "Hidden", description: "Token Auras are hidden." }
+		],
+		defaultValue: false
+	};
+	let enabledAurasInput = build_toggle_input( auraOption, auraIsEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -447,7 +459,18 @@ function build_token_auras_inputs(tokenIds) {
 		}
 	});
 	wrapper.prepend(enabledAurasInput);
-	let auraIsLightInput = build_toggle_input("auraislight", "Change aura appearance to light", auraIsLightEnabled, "Token's aura is visually changed to look like light", "Default aura visual", function(name, newValue) {
+
+	const auraIsLightOption = {
+		name: "auraislight",
+		label: "Change aura appearance to light",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light." },
+			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light." }
+		],
+		defaultValue: false
+	};
+	let auraIsLightInput = build_toggle_input(auraIsLightOption, auraIsLightEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -455,7 +478,18 @@ function build_token_auras_inputs(tokenIds) {
 		});
 	});	
 	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
-	let hideAuraInFog = build_toggle_input("hideaurafog", "Hide aura when hidden in fog", hideAuraIsEnabled, "Token's aura is hidden from players when in fog", "Token's aura is visible to players when token is in fog", function(name, newValue) {
+
+	const hideAuraInFogOption = {
+		name: "hideaurafog",
+		label: "Hide aura when hidden in fog",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Hidden", description: "The token's aura is hidden from players when the token is in fog." },
+			{ value: false, label: "Visible", description: "The token's aura is visible to players when the token is in fog." }
+		],
+		defaultValue: false
+	};
+	let hideAuraInFog = build_toggle_input(hideAuraInFogOption, hideAuraIsEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -931,76 +965,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 	body.append(sizeInputs);
 
 	//image scaling size
-	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
-	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
 	let tokenImageScales = tokens.map(t => t.options.imageSize);
-	if(tokenImageScales.length === 1) {
-		imageSizeInput.val(tokenImageScales[0] || 1);	
-		imageSizeInputRange.val(tokenImageScales[0] || 1);
-	}
-	imageSizeInput.on('keyup', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-		}
-		if (event.key == "Enter") {
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-			tokens.forEach(token => {
-				token.options.imageSize = imageSize;
-				token.place_sync_persist();
-			});
-		}
-		imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInput.on('focusout', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-			imageSizeInput.val(imageSize);	
-			imageSizeInputRange.val(imageSize);
-		}	
-		tokens.forEach(token => {
-			token.options.imageSize = imageSize;
-			token.place_sync_persist();
-		});
-
-		imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInput.on(' input change', function(){
-   	 	imageSizeInputRange.val(imageSizeInput.val());
-	});
-	imageSizeInputRange.on(' input change', function(){
-   	 	imageSizeInput.val(imageSizeInputRange.val());
-	});
-	imageSizeInputRange.on('mouseup', function(){
-   	 	let imageSize = imageSizeInputRange.val();
+	let uniqueScales = [...new Set(tokenImageScales)];
+	let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
+	let imageSizeWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
 		tokens.forEach(token => {
 			token.options.imageSize = imageSize;
 			token.place_sync_persist();
 		});
 	});
-	let imageSizeWrapper = $(`
-		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
-			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
-		</div>
-	`);
-	imageSizeWrapper.append(imageSizeInput); // Beside Label
-	imageSizeWrapper.append(imageSizeInputRange); // input below label
 	body.append(imageSizeWrapper);
 
 	//border color selections
@@ -1065,6 +1038,73 @@ function build_adjustments_flyout_menu(tokenIds) {
 	return body;
 }
 
+function build_token_image_scale_input(startingScale, didUpdate) {
+	if (isNaN(startingScale)) {
+		startingScale = 1;
+	}
+	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
+	imageSizeInput.val(startingScale || 1);
+	imageSizeInputRange.val(startingScale || 1);
+	imageSizeInput.on('keyup', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+		}
+		if (event.key === "Enter") {
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+			didUpdate(imageSize);
+		} else if (event.key === "Escape") {
+			$(event.target).blur();
+		}
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on('focusout', function(event) {
+		var imageSize;
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
+			imageSize = event.target.value;
+		}
+		else if(event.target.value > 6){
+			imageSize = 6;
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+		}
+		else if(event.target.value < 0.2){
+			imageSize = 0.2;
+			imageSizeInput.val(imageSize);
+			imageSizeInputRange.val(imageSize);
+		}
+		didUpdate(imageSize);
+
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInput.on(' input change', function(){
+		imageSizeInputRange.val(imageSizeInput.val());
+	});
+	imageSizeInputRange.on(' input change', function(){
+		imageSizeInput.val(imageSizeInputRange.val());
+	});
+	imageSizeInputRange.on('mouseup', function(){
+		let imageSize = imageSizeInputRange.val();
+		didUpdate(imageSize);
+	});
+	let imageSizeWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
+			<div class="token-image-modal-footer-title image-size-title">Token Image Scale</div>
+		</div>
+	`);
+	imageSizeWrapper.append(imageSizeInput); // Beside Label
+	imageSizeWrapper.append(imageSizeInputRange); // input below label
+	return imageSizeWrapper;
+}
+
 function build_options_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
@@ -1073,22 +1113,8 @@ function build_options_flyout_menu(tokenIds) {
 		padding: "5px"
 	})
 
-	let token_settings = [
-		{ name: "hidden", label: "Hide", enabledDescription:"Token is hidden to players", disabledDescription: "Token is visible to players" },
-		{ name: "square", label: "Square Token", enabledDescription:"Token is square", disabledDescription: "Token is round" },
-		{ name: "locked", label: "Lock Token in Position", enabledDescription:"Token is not moveable, Players can not select this token", disabledDescription: "Token is moveable by at least the DM, players can select it however" },
-		{ name: "restrictPlayerMove", label: "Restrict Player Movement", enabledDescription:"Token is not moveable by players", disabledDescription: "Token is moveable by any player" },
-		{ name: "disablestat", label: "Disable HP/AC", enabledDescription:"Token stats are not visible", disabledDescription: "Token stats are visible to at least the DM" },
-		{ name: "hidestat", label: "Hide Player HP/AC from players", enabledDescription:"Token stats are hidden from players", disabledDescription: "Token stats are visible to players" },
-		{ name: "hidehpbar", label: "Only show HP values on hover", enabledDescription:"HP values will only be shown when you hover or select a token", disabledDescription: "Enable this to hide HP values except when you hover or select a token." },
-		{ name: "disableborder", label: "Disable Border", enabledDescription:"Token has no border", disabledDescription: "Token has a random coloured border"  },
-		{ name: "disableaura", label: "Disable Health Meter", enabledDescription:"Token has no health glow", disabledDescription: "Token has health glow corresponding with their current health" },
-		{ name: "enablepercenthpbar", label: "Enable Token HP% Bar", enabledDescription:"Token has a traditional visual hp% bar indicator", disabledDescription: "Token does not have a traditional visual hp% bar indicator" },
-		{ name: "revealname", label: "Show name to players", enabledDescription:"Token on hover name is visible to players", disabledDescription: "Token name is hidden to players" },
-		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
-		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
-	];
-	if (tokens.length == 1 && !tokens[0].isPlayer()){		
+	let token_settings = token_setting_options();
+	if (tokens.length === 1 && !tokens[0].isPlayer()){
 		let removename = "hidestat";
 		token_settings = $.grep(token_settings, function(e){
 		     return e.name != removename;
@@ -1102,26 +1128,57 @@ function build_options_flyout_menu(tokenIds) {
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
 		}
-		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-			console.log(`${name} setting is now ${newValue}`);
-			tokens.forEach(token => {
-				token.options[name] = newValue;
-				token.place_sync_persist();
+		if(setting.name === 'square' || setting.name === 'legacyaspectratio')
+			continue;
+
+		if (setting.type === "dropdown") {
+			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
+				tokens.forEach(token => {
+					token.options[name] = newValue;
+					token.place_sync_persist();
+				});
 			});
-		});
-		body.append(inputWrapper);
+			body.append(inputWrapper);
+		} else if (setting.type === "toggle") {
+			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
+				tokens.forEach(token => {
+					token.options[name] = newValue;
+					token.place_sync_persist();
+				});
+			});
+			body.append(inputWrapper);
+		} else {
+			console.warn("build_options_flyout_menu failed to handle token setting option with type", setting.type);
+		}
 	}
 
 	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
-		for (let i = 0; i < token_settings.length; i++) {
-			let setting = token_settings[i];
-			let toggle = $(clickEvent.target).parent().find(`button[name=${setting.name}]`);
-			toggle.removeClass("rc-switch-checked");
-			toggle.removeClass("rc-switch-unknown");
-			tokens.forEach(token => token.options[setting.name] = false);
-		}
+		let formContainer = $(clickEvent.currentTarget).parent();
+
+		// disable all toggle switches
+		formContainer
+			.find(".rc-switch")
+			.removeClass("rc-switch-checked")
+			.removeClass("rc-switch-unknown");
+
+		// set all dropdowns to their default values
+		formContainer
+			.find("select")
+			.each(function () {
+				let el = $(this);
+				let matchingOption = token_settings.find(o => o.name === el.attr("name"));
+				el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
+			});
+
+		// This is why we want multiple callback functions.
+		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
+		token_settings.forEach(option => {
+			tokens.forEach(token => token.options[option.name] = option.defaultValue);
+		});
 		tokens.forEach(token => token.place_sync_persist());
+
+
 	});
 	body.append(resetToDefaults);
 	return body;
