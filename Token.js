@@ -395,8 +395,10 @@ class Token {
 			token.css('--token-temp-hp', "transparent");
 		}
 		else {
-			tokenWidth = tokenWidth - 10;
-			tokenHeight = tokenHeight - 10;
+			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+				tokenWidth = tokenWidth - 6;
+				tokenHeight = tokenHeight - 6;
+			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(tokenData.temp_hp) {
 				token.css('--token-temp-hp', "#4444ffbd");
@@ -410,8 +412,10 @@ class Token {
 			$("token:before").css('--token-border-color', 'transparent');
 		}
 		else {
-			tokenWidth = tokenWidth - 4;
-			tokenHeight = tokenHeight - 4;
+			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+				tokenWidth = tokenWidth - 1;
+				tokenHeight = tokenHeight - 1;
+			}
 			token.css('--token-border-color', this.options.color);
 			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
@@ -1013,6 +1017,8 @@ class Token {
 
 			setTokenAuras(old, this.options);
 
+			setTokenBase(old, this.options);
+
 			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
 				old.find("img").addClass("token-round");
 			}
@@ -1155,6 +1161,8 @@ class Token {
 
 
 			setTokenAuras(tok, this.options);
+
+			setTokenBase(tok, this.options);
 
 			let click = {
 				x: 0,
@@ -1717,15 +1725,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 			}
 		}
 	}
-	for (const setting of token_setting_options) {
-		// all global token settings default to false or first menu item
-		if (setting.type == "Toggle") {
-			setReasonableDefault(setting.name, false);
-		}
-		else if (setting.type == "Dropdown") {
-			setReasonableDefault(setting.name, setting.dropdownOptions[0]);
-		}
-	}
+	token_setting_options().forEach(option => setReasonableDefault(option.name, option.defaultValue));
 	// unless otherwise specified, tokens should not be hidden when they are placed
 	setReasonableDefault("hidden", false);
 
@@ -1919,57 +1919,140 @@ function setTokenAuras (token, options) {
 	}
 }
 
-function get_custom_monster_images(monsterId) {
-	if (monsterId == undefined) {
-		return [];
+
+function setTokenBase(token, options) {
+	$(`.token[data-id='${options.id}']>.base`).remove();
+	let base = $(`<div class='base'></div>`);
+	if(options.size < 150){
+		$(base).toggleClass("large-or-smaller-base", true);
 	}
-	if (window.CUSTOM_TOKEN_IMAGE_MAP == undefined) {
-		load_custom_monster_image_mapping();
+	else{
+		$(base).toggleClass("large-or-smaller-base", false);
 	}
-	var customImages = window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
-	if (customImages == undefined) {
-		customImages = [];
+
+	if (options.tokenStyleSelect === "virtualMiniCircle") {
+		base.toggleClass('square', false);
+		base.toggleClass('circle', true);
 	}
-	return customImages;
+	if (options.tokenStyleSelect === "virtualMiniSquare"){
+		base.toggleClass('square', true);
+		base.toggleClass('circle', false);
+	}
+	if (options.tokenStyleSelect !== "noConstraint") {
+		token.children("img").toggleClass("freeform", false);
+	}
+
+	if (options.tokenStyleSelect === "circle") {
+		//Circle
+		options.square = false;
+		options.legacyaspectratio = true;
+		token.children("img").css("border-radius", "50%")
+		token.children("img").removeClass("preserve-aspect-ratio");
+	}
+	else if(options.tokenStyleSelect === "square"){
+		//Square
+		options.square = true;
+		options.legacyaspectratio = true;
+		token.children("img").css("border-radius", "0");
+		token.children("img").removeClass("preserve-aspect-ratio");
+	}
+	else if(options.tokenStyleSelect === "noConstraint") {
+		//Freeform
+		options.square = true;
+		options.legacyaspectratio = false;
+		token.children("img").css("border-radius", "0");
+		token.children("img").addClass("preserve-aspect-ratio");
+		token.children("img").toggleClass("freeform", true);
+	}
+	else if(options.tokenStyleSelect === "virtualMiniCircle"){
+		$(`.token[data-id='${options.id}']`).prepend(base);
+		//Virtual Mini Circle
+		options.square = true;
+		options.legacyaspectratio = false;
+		token.children("img").css("border-radius", "0");
+		token.children("img").addClass("preserve-aspect-ratio");
+	}
+	else if(options.tokenStyleSelect === "virtualMiniSquare"){
+		$(`.token[data-id='${options.id}']`).prepend(base);
+		//Virtual Mini Square
+		options.square = true;
+		options.legacyaspectratio = false;
+		token.children("img").css("border-radius", "0");
+		token.children("img").addClass("preserve-aspect-ratio");
+	}
+
+	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){
+		if(options.disableborder == true){
+			token.children(".base").toggleClass("noborder", true);
+		}
+		else{
+			token.children(".base").toggleClass("noborder", false);
+		}
+
+		if(options.disableaura == true){
+			token.children(".base").toggleClass("nohpaura", true);
+		}
+		else{
+			token.children(".base").toggleClass("nohpaura", false);
+		}
+	}
+
+
+	token.children(".base").toggleClass("grass-base", false);
+	token.children(".base").toggleClass("rock-base", false);
+	token.children(".base").toggleClass("tile-base", false);
+	token.children(".base").toggleClass("sand-base", false);
+	token.children(".base").toggleClass("water-base", false);
+	if(options.tokenBaseStyleSelect === "grass"){
+		token.children(".base").toggleClass("grass-base", true);
+	}
+	else if(options.tokenBaseStyleSelect === "tile"){
+		token.children(".base").toggleClass("tile-base", true);
+	}
+	else if(options.tokenBaseStyleSelect === "sand"){
+		token.children(".base").toggleClass("sand-base", true);
+	}
+	else if(options.tokenBaseStyleSelect === "rock"){
+		token.children(".base").toggleClass("rock-base", true);
+	}
+	else if(options.tokenBaseStyleSelect === "water"){
+		token.children(".base").toggleClass("water-base", true);
+	}
+
 }
 
-function get_random_custom_monster_image(monsterId) {
-	let customImgs = get_custom_monster_images(monsterId);
-	let randomIndex = getRandomInt(0, customImgs.length);
-	return customImgs[randomIndex];
+function get_custom_monster_images(monsterId) {
+	return find_token_customization(SidebarListItem.TypeMonster, monsterId)?.tokenOptions?.alternativeImages || [];
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {
-	if (monsterId == undefined) {
-		return;
-	}
-	var customImages = get_custom_monster_images(monsterId);
-	customImages.push(parse_img(imgsrc));
-	window.CUSTOM_TOKEN_IMAGE_MAP[monsterId] = customImages;
-	save_custom_monster_image_mapping();
+	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
+	customization.addAlternativeImage(imgsrc);
+	persist_token_customization(customization);
 }
 
-function remove_custom_monster_image(monsterId, index) {
-	var customImages = get_custom_monster_images(monsterId);;
-	if (customImages.length > index) {
-		window.CUSTOM_TOKEN_IMAGE_MAP[monsterId].splice(index, 1);
-	}
-	save_custom_monster_image_mapping();
+function remove_custom_monster_image(monsterId, imgsrc) {
+	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
+	customization.removeAlternativeImage(imgsrc);
+	persist_token_customization(customization);
 }
 
 function remove_all_custom_monster_images(monsterId) {
-	delete window.CUSTOM_TOKEN_IMAGE_MAP[monsterId];
-	save_custom_monster_image_mapping();
+	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
+	customization.removeAllAlternativeImages();
+	persist_token_customization(customization);
 }
 
+// deprecated, but still required for migrations
 function load_custom_monster_image_mapping() {
 	window.CUSTOM_TOKEN_IMAGE_MAP = {};
 	let customMappingData = localStorage.getItem('CustomDefaultTokenMapping');
-	if(customMappingData != null){
+	if(customMappingData != null) {
 		window.CUSTOM_TOKEN_IMAGE_MAP = $.parseJSON(customMappingData);
 	}
 }
 
+// deprecated, but still required for migrations
 function save_custom_monster_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
@@ -1982,7 +2065,7 @@ function copy_to_clipboard(text) {
 	$temp.val(text).select();
 	document.execCommand("copy");
 	$temp.remove();
-};
+}
 
 const radToDeg = 180 / Math.PI;
 
