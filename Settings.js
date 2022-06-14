@@ -38,6 +38,7 @@ function token_setting_options() {
 			type: 'dropdown',
 			options: [
 				{ value: "default", label: "Default", description: "A default dark semi-opaque plastic base." },
+				{ value: "border-color", label: "Match Border Color", description: "A base that matches the border color of the token." },
 				{ value: "grass", label: "Grass", description: "A grass covered base.." },
 				{ value: "tile", label: "Tile", description: "A tile base." },
 				{ value: "sand", label: "Sand", description: "A sand covered base." },

@@ -1998,12 +1998,18 @@ function setTokenBase(token, options) {
 	}
 
 	
+	token.children(".base").toggleClass("border-color-base", false);
 	token.children(".base").toggleClass("grass-base", false);
 	token.children(".base").toggleClass("rock-base", false);
 	token.children(".base").toggleClass("tile-base", false);
 	token.children(".base").toggleClass("sand-base", false);
 	token.children(".base").toggleClass("water-base", false);
-	if(options.tokenBaseStyleSelect === "grass"){
+
+	
+	if(options.tokenBaseStyleSelect === "border-color"){
+		token.children(".base").toggleClass("border-color-base", true);
+	}
+	else if(options.tokenBaseStyleSelect === "grass"){
 		token.children(".base").toggleClass("grass-base", true);
 	}
 	else if(options.tokenBaseStyleSelect === "tile"){
