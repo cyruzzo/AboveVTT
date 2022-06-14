@@ -434,9 +434,9 @@ function build_dropdown_input(settingOption, currentValue, changeHandler) {
     input.append(`<option value="${option.value}">${option.label}</option>`);
   }
   if (currentValue !== undefined) {
-    input.find(`option[value=${currentValue}]`).attr('selected','selected');
+    input.find(`option[value='${currentValue}']`).attr('selected','selected');
   } else {
-    input.find(`option[value=${settingOption.defaultValue}]`).attr('selected','selected');
+    input.find(`option[value='${settingOption.defaultValue}']`).attr('selected','selected');
   }
 
   const currentlySetOption = settingOption.options.find(o => o.value === currentValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
