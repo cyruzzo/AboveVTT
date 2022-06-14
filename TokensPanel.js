@@ -690,22 +690,22 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options = {...options, ...find_token_options_for_list_item(listItem)};
             break;
         case SidebarListItem.TypeMonster:
-            options.sizeId = listItem.monsterData.sizeId;
             let hpVal;
             switch (window.TOKEN_SETTINGS['defaultmaxhptype']) {
-              case 'max':
-                const hitDiceData = listItem.monsterData.hitPointDice;
-                hpVal = hitDiceData.diceCount * hitDiceData.diceValue + hitDiceData.fixedValue;
-                break;
-              case 'roll':
-                hpVal = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
-                break;
-              case 'average':
-                hpVal = listItem.monsterData.averageHitPoints;
-                break;
+                case 'max':
+                    const hitDiceData = listItem.monsterData.hitPointDice;
+                    hpVal = hitDiceData.diceCount * hitDiceData.diceValue + hitDiceData.fixedValue;
+                    break;
+                case 'roll':
+                    hpVal = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
+                    break;
+                case 'average':
+                    hpVal = listItem.monsterData.averageHitPoints;
+                    break;
             }
             options.hp = hpVal;
             options.max_hp = hpVal;
+            options.sizeId = listItem.monsterData.sizeId;
             options.ac = listItem.monsterData.armorClass;
             options = {...options, ...find_token_options_for_list_item(listItem)};
             options.monster = listItem.monsterData.id;
@@ -2656,3 +2656,4 @@ function find_player_token_customization(playerSheet) {
 function get_player_token_customization(playerSheet) {
     return find_player_token_customization(playerSheet) || TokenCustomization.PC(playerSheet, {});
 }
+

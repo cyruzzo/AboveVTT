@@ -143,6 +143,7 @@ function gather_pcs() {
 	localStorage.setItem(`CampaignCharacters${campaignId}`, JSON.stringify(window.pcs));
 }
 
+// deprecated, but still necessary for migrations
 function read_player_token_customizations() {
 	let customMappingData = localStorage.getItem('PlayerTokenCustomization');
 	if (customMappingData !== undefined && customMappingData != null) {
@@ -152,6 +153,7 @@ function read_player_token_customizations() {
 	}
 }
 
+// deprecated, but still necessary for migrations
 function write_player_token_customizations(customMappingData) {
 	if (customMappingData !== undefined && customMappingData != null) {
 		localStorage.setItem("PlayerTokenCustomization", JSON.stringify(customMappingData));
@@ -159,56 +161,43 @@ function write_player_token_customizations(customMappingData) {
 }
 
 function add_player_image_mapping(playerId, imageUrl) {
-	if (playerId === undefined || imageUrl === undefined) {
+	if (typeof playerId !== "string" || playerId.length === 0 || typeof imageUrl !== "string" || imageUrl.length === 0) {
 		return;
 	}
-	let customMappingData = read_player_token_customizations();
-	if (customMappingData[playerId] === undefined) {
-		customMappingData[playerId] = { images: [] };
+
+	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
+	if (!customization) {
+		return;
 	}
-	customMappingData[playerId].images.push(imageUrl);
-	write_player_token_customizations(customMappingData);
+	customization.addAlternativeImage(imageUrl);
+	persist_token_customization(customization);
 }
 
-function remove_player_image_mapping(playerId, index) {
-	if (playerId === undefined || index === undefined) {
+function remove_player_image_mapping(playerId, imageUrl) {
+	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
+	if (!customization) {
 		return;
 	}
-	let customMappingData = read_player_token_customizations();
-	if (customMappingData[playerId] === undefined || customMappingData[playerId].images === undefined) {
-		return;
-	}
-
-	if (customMappingData[playerId].images.length > index) {
-		customMappingData[playerId].images.splice(index, 1);
-	}
-
-	write_player_token_customizations(customMappingData);
+	customization.removeAlternativeImage(imageUrl);
+	persist_token_customization(customization);
 }
 
 function remove_all_player_image_mappings(playerId) {
-	if (playerId === undefined) {
+	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
+	if (!customization) {
 		return;
 	}
-	let customMappingData = read_player_token_customizations();
-	customMappingData[playerId].images = [];
-	write_player_token_customizations(customMappingData);
-}
-
-function get_player_token_customizations(playerId) {
-	let customMappingData = read_player_token_customizations();
-	if (customMappingData[playerId] === undefined) {
-		return { images: [] };
-	}
-	return customMappingData[playerId];
+	customization.removeAllAlternativeImages();
+	persist_token_customization(customization);
 }
 
 function get_player_image_mappings(playerId) {
-	let customizations = get_player_token_customizations(playerId);
-	if (customizations.images !== undefined) {
-		return customizations.images;
+	try {
+		return find_or_create_token_customization(SidebarListItem.TypePC, playerId).tokenOptions.alternativeImages || [];
+	} catch (error) {
+		console.error("get_player_image_mappings failed to find_or_create_token_customization", playerId, error)
+		return [];
 	}
-	return [];
 }
 
 function random_image_for_player_token(playerId) {

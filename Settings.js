@@ -181,9 +181,9 @@ function token_setting_options() {
 			label: "Max HP Calculation",
 			type: 'dropdown',
 			options: [
-				{ value: "average", label: "Average", description: "Monster Max HP will be set to the average value."},
-				{ value: "roll", label: "Roll", description: "Monster Max HP will be individually rolled."}.
-				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value."}
+				{ value: "average", label: "Average", description: "Monster Max HP will be set to the average value." },
+				{ value: "roll", label: "Roll", description: "Monster Max HP will be individually rolled." },
+				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value." }
 			],
 			defaultValue: "average"
 		}
@@ -206,7 +206,7 @@ function b64DecodeUnicode(str) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     }
-
+    
 
 
 function download(data, filename, type) {
@@ -222,8 +222,8 @@ function download(data, filename, type) {
         a.click();
         setTimeout(function() {
             document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
     }
 }
 
@@ -252,10 +252,10 @@ function cloud_migration(scenedata=null){
 }
 
 function init_settings(){
-
+	
 	let body = settingsPanel.body;
 
-
+	
 	if((!window.CLOUD) && (!window.FORCED_DM)){
 		body.append(`
 		<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
@@ -273,7 +273,7 @@ function init_settings(){
 		<h5 class="token-image-modal-footer-title">Import / Export</h5>
 		<div class="sidebar-panel-header-explanation">
 			<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
-			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
+			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads. 
 			Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
 			<div class="sidebar-panel-footer-horizontal-wrapper">
 			<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
@@ -393,6 +393,9 @@ function build_example_token(options) {
 			break;
 		case 'roll':
 			hpnum = 5 + Math.floor(Math.random() * 11); // Random 5-15
+			break;
+		default:
+			hpnum = 10;
 			break;
 	}
 	mergedOptions.hp = hpnum;
@@ -554,7 +557,7 @@ function enable_dice_streaming_feature(enabled){
 	}
 }
 
-function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {		
 
 	if (enabled == true) {
 		// STREAMING STUFF
@@ -566,7 +569,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 				if($(this).text() == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
 						streamid: window.MYSTREAMID
-					});
+					});		
 				}
 				else if($(this).text() == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
@@ -588,7 +591,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
 		}
 		if (window.JOINTHEDICESTREAM) {
-
+			
 			for (let i in window.STREAMPEERS) {
 				console.log("replacing the track")
 				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
@@ -603,14 +606,14 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
 						streamid: window.MYSTREAMID
 					});
-				}
+				}		
 			}, 1000)
 			setTimeout(function(){
 				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
 					from: window.MYSTREAMID
 				})
 			}, 500);
-		}
+		} 
 	}
 	else {
 		$(`.stream-dice-button`).html("Dice Stream Disabled");
@@ -674,7 +677,7 @@ function export_file(){
 		notes:{},
 		journalchapters:[],
 		};
-
+	
 	export_scenes(
 		(scenes)=>{
 			DataFile.scenes=scenes;
@@ -686,7 +689,7 @@ function export_file(){
 			DataFile.mytokens=mytokens;
 			DataFile.mytokensfolders=mytokensfolders;
 			DataFile.notes=window.JOURNAL.notes;
-			DataFile.journalchapters=window.JOURNAL.chapters;
+			DataFile.journalchapters=window.JOURNAL.chapters;	
 			DataFile.soundpads=window.SOUNDPADS;
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		}
@@ -707,15 +710,15 @@ function import_readfile() {
 			var DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
 		}
 		catch{
-
+			
 		}
 		if(!DataFile){ // pre version 2
 			var DataFile=$.parseJSON(atob(reader.result));
 		}
-
+		
 		console.log(DataFile);
-
-
+		
+		
 		for(k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
@@ -742,7 +745,7 @@ function import_readfile() {
 		persist_customtokens();
 
 		alert('Loading completed. Data merged');
-
+		
 		if(DataFile.notes){
 			window.JOURNAL.notes=DataFile.notes;
 			window.JOURNAL.chapters=DataFile.journalchapters;

@@ -782,13 +782,6 @@ function init_controls() {
 		sidebarControls.addClass("player");
 	}
 
-	
-	if (window.EXPERIMENTAL_SETTINGS["DEBUGddbDiceMonsterPanel"] === true) {
-		change_sidbar_tab($("#switch_monsters"));
-		$("#loading_overlay").css({ "opacity": "0.25" })
-		$(".sidebar-panel-loading-indicator").css({ "opacity": "0.25" })
-	}
-
 }
 
 const MAX_ZOOM_STEP = 20
@@ -1733,6 +1726,8 @@ function init_things() {
 		window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	}
 
+	fetch_token_customizations();
+
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
@@ -1986,15 +1981,15 @@ function inject_chat_buttons() {
 	}
 	// AGGIUNGI CHAT
 	// the text has to be up against the left for it to style correctly
-	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hovertext' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;\
-'/r 1d20'&#xa;\
-'/roll 1d4 punch:damage'&#xa;\
-'/hit 2d20kh1+2 longsword ADV'&#xa;\
-'/dmg 1d8-2 longsword'&#xa;\
-'/save 2d20kl1 DEX DISADV'&#xa;\
-'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;\
-Advantage: 2d20kh1 (keep highest)&#xa;\
-Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;\
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;<br/>
+'/r 1d20'&#xa;<br/>
+'/roll 1d4 punch:damage'&#xa;<br/>
+'/hit 2d20kh1+2 longsword ADV'&#xa;<br/>
+'/dmg 1d8-2 longsword'&#xa;<br/>
+'/save 2d20kl1 DEX DISADV'&#xa;<br/>
+'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;<br/>
+Advantage: 2d20kh1 (keep highest)&#xa;<br/>
+Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 '/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
 
 	$(".glc-game-log").append($(`
@@ -2445,6 +2440,15 @@ function init_ui() {
 		if (sidebarMonsterFilter.length > 0 && !event.target.closest("#monster-filter-iframe")) {
 			close_monster_filter_iframe();
 		}
+		if (event.which === 1 && $(".sidebar-flyout").length > 0) {
+			// check if the click was within the flyout
+			let flyout = event.target.closest(".sidebar-flyout");
+			let preventSidebarModalClose = event.target.closest(".prevent-sidebar-modal-close");
+			if (!flyout && !preventSidebarModalClose) {
+				remove_sidebar_flyout();
+			}
+		}
+
 
 	}
 
