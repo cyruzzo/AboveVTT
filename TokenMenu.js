@@ -297,13 +297,8 @@ function token_context_menu_expanded(tokenIds, e) {
 		optionsRow.hover(function (hoverEvent) {
 			context_menu_flyout("options-flyout", hoverEvent, function(flyout) {
 				flyout.append(build_options_flyout_menu(tokenIds));
-			})		
-			if($(`#tokenSelect__tokenStyleSelect option:selected`).val() == 4 || $(`#tokenSelect__tokenStyleSelect option:selected`).val() == 5){
-				$(`#tokenWrapper__tokenBaseStyleSelect`).show();
-			}
-			else{
-			 	$(`#tokenWrapper__tokenBaseStyleSelect`).hide();
-			}	
+				update_token_base_visibility(flyout);
+			});
 		});
 		body.append(optionsRow);
 	}
@@ -1119,7 +1114,7 @@ function build_options_flyout_menu(tokenIds) {
 	})
 
 	let token_settings = token_setting_options();
-	if (tokens.length == 1 && !tokens[0].isPlayer()){		
+	if (tokens.length === 1 && !tokens[0].isPlayer()){
 		let removename = "hidestat";
 		token_settings = $.grep(token_settings, function(e){
 		     return e.name != removename;

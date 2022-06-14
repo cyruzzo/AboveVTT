@@ -439,6 +439,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 	});
+	update_token_base_visibility(container);
 
 
 	// Build example tokens to show the settings changes
@@ -482,6 +483,16 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	observe_hover_text(container);
 
 	return container;
+}
+
+function update_token_base_visibility(container) {
+	const selectedStyle = container.find("select[name=tokenStyleSelect]").val();
+	let styleSubSelect = container.find(`.token-image-modal-footer-select-wrapper[data-option-name=tokenBaseStyleSelect]`);
+	if(selectedStyle === "virtualMiniCircle" || selectedStyle === "virtualMiniSquare"){
+		styleSubSelect.show();
+	} else{
+		styleSubSelect.hide();
+	}
 }
 
 function enable_dice_streaming_feature(enabled){

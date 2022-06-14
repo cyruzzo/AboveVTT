@@ -383,7 +383,7 @@ function build_toggle_input(settingOption, currentValue, changeHandler) {
     changeHandler = function(){};
   }
   let wrapper = $(`
-    <div class="token-image-modal-footer-select-wrapper">
+    <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
       <div class="token-image-modal-footer-title">${settingOption.label}</div>
     </div>
   `);
@@ -423,7 +423,7 @@ function build_dropdown_input(settingOption, currentValue, changeHandler) {
     changeHandler = function(){};
   }
   let wrapper = $(`
-     <div class="token-image-modal-footer-select-wrapper">
+     <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
        <div class="token-image-modal-footer-title">${settingOption.label}</div>
      </div>
    `);
@@ -446,6 +446,7 @@ function build_dropdown_input(settingOption, currentValue, changeHandler) {
     changeHandler(settingOption.name, newValue);
     const updatedOption = settingOption.options.find(o => o.value === newValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
     update_hover_text(wrapper, updatedOption?.description);
+    update_token_base_visibility(wrapper.parent());
   });
   return wrapper;
 }

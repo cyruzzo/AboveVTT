@@ -395,7 +395,7 @@ class Token {
 			token.css('--token-temp-hp', "transparent");
 		} 
 		else {
-			if(this.options.tokenStyleSelect == 1 || this.options.tokenStyleSelect == 2){
+			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
 				tokenWidth = tokenWidth - 6;
 				tokenHeight = tokenHeight - 6;
 			}
@@ -412,7 +412,7 @@ class Token {
 			$("token:before").css('--token-border-color', 'transparent');
 		} 
 		else {
-			if(this.options.tokenStyleSelect == 1 || this.options.tokenStyleSelect == 2){
+			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
 				tokenWidth = tokenWidth - 1;
 				tokenHeight = tokenHeight - 1;
 			}
@@ -1921,9 +1921,6 @@ function setTokenAuras (token, options) {
 
 
 function setTokenBase(token, options) {
-	// if (["circle", "square", "noConstraint"].includes(options.tokenStyleSelect)) {
-	// 	$(`.token[data-id='${options.id}']>.base`).remove();
-	// }
 	$(`.token[data-id='${options.id}']>.base`).remove();
 	let base = $(`<div class='base'></div>`);
 	if(options.size < 150){
