@@ -487,11 +487,21 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 
 function update_token_base_visibility(container) {
 	const selectedStyle = container.find("select[name=tokenStyleSelect]").val();
-	let styleSubSelect = container.find(`.token-image-modal-footer-select-wrapper[data-option-name=tokenBaseStyleSelect]`);
+	const findOtherOption = function(optionName) {
+		return container.find(`.token-image-modal-footer-select-wrapper[data-option-name=${optionName}]`);
+	}
+	let styleSubSelect = findOtherOption("tokenBaseStyleSelect");
 	if(selectedStyle === "virtualMiniCircle" || selectedStyle === "virtualMiniSquare"){
 		styleSubSelect.show();
 	} else{
 		styleSubSelect.hide();
+	}
+	if (selectedStyle === "noConstraint") {
+		findOtherOption("square").show();
+		findOtherOption("legacyaspectratio").show();
+	} else {
+		findOtherOption("square").hide();
+		findOtherOption("legacyaspectratio").hide();
 	}
 }
 
