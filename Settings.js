@@ -4,7 +4,7 @@ function is_valid_token_option_value(tokenOptionName, value) {
 }
 
 function convert_option_to_override_dropdown(tokenOption) {
-	// Note: Spread syntax effectively goes one level deep while copying an array. Therefore, it may be unsuitable for copying multidimensional arrays or objects
+	// Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays or objects
 	// we are explicitly not using the spread operator at this level because we need to deep copy the object
 	let converted = {
 		name: tokenOption.name,

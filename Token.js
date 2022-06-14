@@ -2028,23 +2028,23 @@ function setTokenBase(token, options) {
 }
 
 function get_custom_monster_images(monsterId) {
-	return find_token_customization(SidebarListItem.TypeMonster, monsterId)?.tokenOptions?.alternativeImages || [];
+	return find_token_customization(ItemType.Monster, monsterId)?.tokenOptions?.alternativeImages || [];
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {
-	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
+	let customization = find_or_create_token_customization(ItemType.Monster, monsterId);
 	customization.addAlternativeImage(imgsrc);
 	persist_token_customization(customization);
 }
 
 function remove_custom_monster_image(monsterId, imgsrc) {
-	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
+	let customization = find_or_create_token_customization(ItemType.Monster, monsterId);
 	customization.removeAlternativeImage(imgsrc);
 	persist_token_customization(customization);
 }
 
 function remove_all_custom_monster_images(monsterId) {
-	let customization = find_or_create_token_customization(SidebarListItem.TypeMonster, monsterId);
+	let customization = find_or_create_token_customization(ItemType.Monster, monsterId);
 	customization.removeAllAlternativeImages();
 	persist_token_customization(customization);
 }

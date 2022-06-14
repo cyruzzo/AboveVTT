@@ -73,6 +73,7 @@ let scripts = [
 	{ src: "ChatObserver.js" },
 	{ src: "DiceContextMenu/DiceContextMenu.js" },
 	{ src: "TokensPanel.js" },
+	{ src: "TokenCustomization.js" },
 	{ src: "built-in-tokens.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },

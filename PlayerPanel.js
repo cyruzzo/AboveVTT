@@ -165,7 +165,7 @@ function add_player_image_mapping(playerId, imageUrl) {
 		return;
 	}
 
-	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
+	let customization = find_token_customization(ItemType.PC, playerId);
 	if (!customization) {
 		return;
 	}
@@ -174,7 +174,7 @@ function add_player_image_mapping(playerId, imageUrl) {
 }
 
 function remove_player_image_mapping(playerId, imageUrl) {
-	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
+	let customization = find_token_customization(ItemType.PC, playerId);
 	if (!customization) {
 		return;
 	}
@@ -183,7 +183,7 @@ function remove_player_image_mapping(playerId, imageUrl) {
 }
 
 function remove_all_player_image_mappings(playerId) {
-	let customization = find_token_customization(SidebarListItem.TypePC, playerId);
+	let customization = find_token_customization(ItemType.PC, playerId);
 	if (!customization) {
 		return;
 	}
@@ -193,7 +193,7 @@ function remove_all_player_image_mappings(playerId) {
 
 function get_player_image_mappings(playerId) {
 	try {
-		return find_or_create_token_customization(SidebarListItem.TypePC, playerId).tokenOptions.alternativeImages || [];
+		return find_or_create_token_customization(ItemType.PC, playerId).tokenOptions.alternativeImages || [];
 	} catch (error) {
 		console.error("get_player_image_mappings failed to find_or_create_token_customization", playerId, error)
 		return [];

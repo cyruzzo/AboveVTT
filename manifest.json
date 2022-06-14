@@ -79,6 +79,7 @@
 		"ScenesHandler.js",
 		"ScenesPanel.js",
 		"TokensPanel.js",
+		"TokenCustomization.js",
 		"built-in-tokens.js",
 		"mousetrap.1.6.5.min.js",
 		"KeypressHandler.js",

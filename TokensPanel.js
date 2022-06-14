@@ -62,7 +62,7 @@ function migrate_to_my_tokens() {
         }
     }
 
-    migrateFolderAtPath(SidebarListItem.PathRoot);
+    migrateFolderAtPath(RootFolderPath.Root);
     tokendata.didMigrateToMyToken = true;
     persist_my_tokens();
     persist_customtokens();
@@ -92,7 +92,7 @@ function rollback_from_my_tokens() {
             rollbackFolderAtPath(nextFolderPath);
         }
     };
-    rollbackFolderAtPath(SidebarListItem.PathRoot);
+    rollbackFolderAtPath(RootFolderPath.Root);
     persist_customtokens();
     console.groupEnd();
 }
@@ -116,13 +116,13 @@ function list_item_from_monster_id(monsterId) {
 function list_item_from_player_id(playerId) {
     let pc = window.pcs.find(p => p.sheet = playerId);
     if (pc === undefined) return undefined;
-    let fullPath = sanitize_folder_path(`${SidebarListItem.PathPlayers}/${pc.name}`);
+    let fullPath = sanitize_folder_path(`${RootFolderPath.Players}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
 }
 
 function list_item_from_token(placedToken) {
     let listItemPath = placedToken.options.listItemPath;
-    if (listItemPath !== undefined && listItemPath.length > 0) {
+    if (listItemPath !== undefined && listRootFolderPath.length > 0) {
         // this token was placed after we unified tokens
         return find_sidebar_list_item_from_path(listItemPath);
     }
@@ -137,11 +137,11 @@ function list_item_from_token(placedToken) {
         let tokenDataPath = placedToken.options.tokendatapath !== undefined ? placedToken.options.tokendatapath : "";
         let tokenDataName = placedToken.options.tokendataname !== undefined ? placedToken.options.tokendataname : placedToken.options.name;
         if (tokenDataPath.startsWith("/AboveVTT BUILTIN")) {
-            let convertedPath = tokenDataPath.replace("/AboveVTT BUILTIN", SidebarListItem.PathAboveVTT);
+            let convertedPath = tokenDataPath.replace("/AboveVTT BUILTIN", RootFolderPath.AboveVTT);
             let fullPath = sanitize_folder_path(`${convertedPath}/${tokenDataName}`);
             return find_sidebar_list_item_from_path(fullPath);
         } else {
-            let fullPath = sanitize_folder_path(`${SidebarListItem.PathMyTokens}/${tokenDataPath}/${tokenDataName}`);
+            let fullPath = sanitize_folder_path(`${RootFolderPath.MyTokens}/${tokenDataPath}/${tokenDataName}`);
             return find_sidebar_list_item_from_path(fullPath);
         }
     }
@@ -153,13 +153,13 @@ function list_item_from_token(placedToken) {
  * @returns {undefined|*} the "My Token" object if found; else undefined
  */
 function find_my_token(fullPath) {
-    if (!fullPath.startsWith(SidebarListItem.PathMyTokens)) {
-        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", SidebarListItem.PathMyTokens);
+    if (!fullPath.startsWith(RootFolderPath.MyTokens)) {
+        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", RootFolderPath.MyTokens);
         return undefined;
     }
     console.groupCollapsed("find_my_token");
     let found = mytokens.find(t => {
-        let dirtyPath = `${SidebarListItem.PathMyTokens}${t.folderPath}/${t.name}`;
+        let dirtyPath = `${RootFolderPath.MyTokens}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -175,13 +175,13 @@ function find_my_token(fullPath) {
  * @returns {undefined|*} the Folder object if found; else undefined
  */
 function find_my_token_folder(fullPath) {
-    if (!fullPath.startsWith(SidebarListItem.PathMyTokens)) {
-        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", SidebarListItem.PathMyTokens);
+    if (!fullPath.startsWith(RootFolderPath.MyTokens)) {
+        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", RootFolderPath.MyTokens);
         return undefined;
     }
     console.groupCollapsed("find_my_token_folder");
     let found = mytokensfolders.find(f => {
-        let dirtyPath = `${SidebarListItem.PathMyTokens}${f.folderPath}/${f.name}`;
+        let dirtyPath = `${RootFolderPath.MyTokens}${f.folderPath}/${f.name}`;
         let fullFolderPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, dirtyPath, fullFolderPath, fullFolderPath === fullPath, f);
         return fullFolderPath === fullPath;
@@ -197,13 +197,13 @@ function find_my_token_folder(fullPath) {
  * @returns {undefined|*} the "Builtin Token" object if found; else undefined
  */
 function find_builtin_token(fullPath) {
-    if (!fullPath.startsWith(SidebarListItem.PathAboveVTT)) {
-        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", SidebarListItem.PathAboveVTT);
+    if (!fullPath.startsWith(RootFolderPath.AboveVTT)) {
+        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", RootFolderPath.AboveVTT);
         return undefined;
     }
     console.groupCollapsed("find_builtin_token");
     let found = builtInTokens.find(t => {
-        let dirtyPath = `${SidebarListItem.PathAboveVTT}${t.folderPath}/${t.name}`;
+        let dirtyPath = `${RootFolderPath.AboveVTT}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -215,13 +215,13 @@ function find_builtin_token(fullPath) {
 
 function backfill_mytoken_folders() {
     mytokens.forEach(myToken => {
-        if (myToken.folderPath !== SidebarListItem.PathRoot) {
+        if (myToken.folderPath !== RootFolderPath.Root) {
             // we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
             let parts = myToken.folderPath.split("/");
             let backfillPath = "";
             parts.forEach(part => {
                 let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-                if (fullBackfillPath !== SidebarListItem.PathRoot && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
+                if (fullBackfillPath !== RootFolderPath.Root && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
                     // we don't have this folder yet so add it
                     let newFolder = { folderPath: sanitize_folder_path(backfillPath), name: part, collapsed: true };
                     console.log("adding folder", newFolder);
@@ -252,7 +252,7 @@ function rebuild_token_items_list() {
     // My Tokens Folders
     for (let i = 0; i < mytokensfolders.length; i++) {
         let folder = mytokensfolders[i];
-        let myTokensPath = sanitize_folder_path(`${SidebarListItem.PathMyTokens}${folder.folderPath}`);
+        let myTokensPath = sanitize_folder_path(`${RootFolderPath.MyTokens}${folder.folderPath}`);
         tokenItems.push(SidebarListItem.Folder(myTokensPath, folder.name, folder.collapsed));
     }
 
@@ -264,7 +264,7 @@ function rebuild_token_items_list() {
 
     // AboveVTT Tokens
     let allBuiltinPaths = builtInTokens
-        .filter(item => item.folderPath !== SidebarListItem.PathRoot && item.folderPath !== "" && item.folderPath !== undefined)
+        .filter(item => item.folderPath !== RootFolderPath.Root && item.folderPath !== "" && item.folderPath !== undefined)
         .map(item => item.folderPath);
     let builtinPaths = [...new Set(allBuiltinPaths)];
     for (let i = 0; i < builtinPaths.length; i++) {
@@ -272,7 +272,7 @@ function rebuild_token_items_list() {
         let pathComponents = path.split("/");
         let folderName = pathComponents.pop();
         let folderPath = pathComponents.join("/");
-        let builtinFolderPath = `${SidebarListItem.PathAboveVTT}/${folderPath}`;
+        let builtinFolderPath = `${RootFolderPath.AboveVTT}/${folderPath}`;
         tokenItems.push(SidebarListItem.Folder(builtinFolderPath, folderName, true));
     }
     for (let i = 0; i < builtInTokens.length; i++) {
@@ -310,7 +310,7 @@ function filter_token_list(searchTerm) {
         allFolders.removeClass("collapsed"); // auto expand all folders
         for (let i = 0; i < allFolders.length; i++) {
             let currentFolder = $(allFolders[i]);
-            if (matches_full_path(currentFolder, SidebarListItem.PathMonsters)) {
+            if (matches_full_path(currentFolder, RootFolderPath.Monsters)) {
                 // we always want the monsters folder to be open when searching
                 continue;
             }
@@ -345,7 +345,7 @@ function inject_monster_tokens(searchTerm, skip) {
             listItems.push(item);
         }
         console.log("search_monsters converted", listItems);
-        let monsterFolder = find_html_row_from_path(SidebarListItem.PathMonsters, tokensPanel.body);
+        let monsterFolder = find_html_row_from_path(RootFolderPath.Monsters, tokensPanel.body);
         inject_monster_list_items(listItems);
         if (searchTerm.length > 0) {
             monsterFolder.removeClass("collapsed");
@@ -366,7 +366,7 @@ function inject_monster_tokens(searchTerm, skip) {
 }
 
 function inject_monster_list_items(listItems) {
-    let monsterFolder = find_html_row_from_path(SidebarListItem.PathMonsters, tokensPanel.body);
+    let monsterFolder = find_html_row_from_path(RootFolderPath.Monsters, tokensPanel.body);
     if (monsterFolder === undefined || monsterFolder.length === 0) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
         return;
@@ -386,11 +386,11 @@ function init_tokens_panel() {
     console.log("init_tokens_panel");
 
     tokens_rootfolders = [
-        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NamePlayers, false),
-        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameMonsters, false),
-        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameMyTokens, false),
-        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameAboveVTT, false),
-        SidebarListItem.Folder(SidebarListItem.PathRoot, SidebarListItem.NameEncounters, false)
+        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NamePlayers, false),
+        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameMonsters, false),
+        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameMyTokens, false),
+        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameAboveVTT, false),
+        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameEncounters, false)
     ];
 
     if(localStorage.getItem('MyTokens') != null){
@@ -614,7 +614,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         if (listItem.isTypeFolder()) {
             let fullPath = listItem.fullPath();
             // find and place all items in this folder... but not subfolders
-            tokensToPlace = (listItem.fullPath().startsWith(SidebarListItem.PathMonsters) ? window.monsterListItems : window.tokenListItems)
+            tokensToPlace = (listItem.fullPath().startsWith(RootFolderPath.Monsters) ? window.monsterListItems : window.tokenListItems)
                 .filter(item => !item.isTypeFolder()) // if we ever want to add everything at every subfolder depth, remove this line
                 .filter(item => item.folderPath === fullPath);
         } else if (listItem.isTypeEncounter()) {
@@ -661,10 +661,10 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     options.name = listItem.name;
 
     switch (listItem.type) {
-        case SidebarListItem.TypeFolder:
+        case ItemType.Folder:
             console.log("TODO: place all tokens in folder?", listItem);
             break;
-        case SidebarListItem.TypeMyToken:
+        case ItemType.MyToken:
             options = {...options, ...find_token_options_for_list_item(listItem)};
             let tokenSizeSetting = myToken.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
@@ -674,7 +674,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             options.tokenSize = tokenSize;
             break;
-        case SidebarListItem.TypePC:
+        case ItemType.PC:
             let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
             let playerData = window.PLAYER_STATS[listItem.sheet];
             if (pc === undefined) {
@@ -689,7 +689,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.color = "#" + get_player_token_border_color(pc.sheet);
             options = {...options, ...find_token_options_for_list_item(listItem)};
             break;
-        case SidebarListItem.TypeMonster:
+        case ItemType.Monster:
             let hpVal;
             switch (window.TOKEN_SETTINGS['defaultmaxhptype']) {
                 case 'max':
@@ -723,7 +723,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 options.color = `#${color}`;
             }
             break;
-        case SidebarListItem.TypeBuiltinToken:
+        case ItemType.BuiltinToken:
             options = {...options, ...find_token_options_for_list_item(listItem)};
             options.disablestat = true;
             break;
@@ -750,9 +750,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
  */
 function token_size_for_item(listItem) {
     switch (listItem.type) {
-        case SidebarListItem.TypeFolder:
+        case ItemType.Folder:
             return 1;
-        case SidebarListItem.TypeMyToken:
+        case ItemType.MyToken:
             let myToken = find_my_token(listItem.fullPath());
             let tokenSizeSetting = myToken.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
@@ -760,16 +760,16 @@ function token_size_for_item(listItem) {
                 tokenSize = 1; // TODO: handle custom sizes
             }
             return tokenSize;
-        case SidebarListItem.TypePC:
+        case ItemType.PC:
             return 1;
-        case SidebarListItem.TypeMonster:
+        case ItemType.Monster:
             switch (listItem.monsterData.sizeId) {
                 case 5: return 2;
                 case 6: return 3;
                 case 7: return 4;
                 default: return 1;
             }
-        case SidebarListItem.TypeBuiltinToken:
+        case ItemType.BuiltinToken:
             return 1;
     }
 }
@@ -777,17 +777,17 @@ function token_size_for_item(listItem) {
 function alternative_images_for_item(listItem) {
     let alternativeImages;
     switch (listItem.type) {
-        case SidebarListItem.TypeMyToken:
+        case ItemType.MyToken:
             alternativeImages = find_my_token(listItem.fullPath())?.alternativeImages;
             break;
-        case SidebarListItem.TypePC:
+        case ItemType.PC:
             alternativeImages = get_player_image_mappings(listItem.sheet);
             break;
-        case SidebarListItem.TypeMonster:
+        case ItemType.Monster:
             alternativeImages = get_custom_monster_images(listItem.monsterData.id);
             break;
-        case SidebarListItem.TypeBuiltinToken:
-            alternativeImages = builtInTokens.find(bt => listItem.fullPath() === sanitize_folder_path(`${SidebarListItem.PathAboveVTT}${bt.folderPath}/${bt.name}`) )?.alternativeImages;
+        case ItemType.BuiltinToken:
+            alternativeImages = builtInTokens.find(bt => listItem.fullPath() === sanitize_folder_path(`${RootFolderPath.AboveVTT}${bt.folderPath}/${bt.name}`) )?.alternativeImages;
             break;
     }
 
@@ -975,12 +975,12 @@ function my_token_path_exists(folderPath) {
  * @param listItem {SidebarListItem} The folder to create a new folder within
  */
 function create_mytoken_folder_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolderPath.MyTokens)) {
         console.warn("create_mytoken_folder_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
     let newFolderName = "New Folder";
     let newFolderCount = mytokensfolders.filter(f => f.folderPath === adjustedPath && f.name.startsWith(newFolderName)).length;
     console.log("newFolderCount", newFolderCount);
@@ -989,7 +989,7 @@ function create_mytoken_folder_inside(listItem) {
     }
     let newFolder = { folderPath: adjustedPath, name: newFolderName, collapsed: true };
     mytokensfolders.push(newFolder);
-    let newFolderFullPath = sanitize_folder_path(`${SidebarListItem.PathMyTokens}${newFolder.folderPath}/${newFolder.name}`);
+    let newFolderFullPath = sanitize_folder_path(`${RootFolderPath.MyTokens}${newFolder.folderPath}/${newFolder.name}`);
     did_change_mytokens_items();
     expand_all_folders_up_to(newFolderFullPath, tokensPanel.body);
     let newListItem = window.tokenListItems.find(i => i.fullPath() === newFolderFullPath);
@@ -1004,7 +1004,7 @@ function create_mytoken_folder_inside(listItem) {
  * @returns {string|undefined} the path of the newly created folder; undefined if the folder could not be created.
  */
 function rename_mytoken_folder(item, newName, alertUser = true) {
-    if (!item.isTypeFolder() || !item.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
+    if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolderPath.MyTokens)) {
         console.warn("rename_folder called with an incorrect item type", item);
         if (alertUser !== false) {
             alert("An unexpected error occurred");
@@ -1021,8 +1021,8 @@ function rename_mytoken_folder(item, newName, alertUser = true) {
         return;
     }
 
-    let fromFullPath = sanitize_folder_path(item.fullPath().replace(SidebarListItem.PathMyTokens, ""));
-    let fromFolderPath = sanitize_folder_path(item.folderPath.replace(SidebarListItem.PathMyTokens, ""));
+    let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolderPath.MyTokens, ""));
+    let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolderPath.MyTokens, ""));
     let toFullPath = sanitize_folder_path(`${fromFolderPath}/${newName}`);
     if (my_token_path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
@@ -1067,7 +1067,7 @@ function rename_mytoken_folder(item, newName, alertUser = true) {
 
 function delete_mytokens_within_folder(listItem) {
     console.groupCollapsed(`delete_mytokens_within_folder`);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
 
     console.log("about to delete all tokens within", adjustedPath);
     console.debug("before deleting from mytokens", mytokens);
@@ -1085,8 +1085,8 @@ function delete_mytokens_within_folder(listItem) {
 function move_mytokens_to_parent_folder(listItem) {
     // this is different from move_mytokens_folder in that it moved everything out of listItem
     console.groupCollapsed(`move_mytokens_to_parent_folder`);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
-    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(SidebarListItem.PathMyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
+    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolderPath.MyTokens, ""));
 
     console.debug("before moving mytokens", mytokens);
     mytokens.forEach(token => {
@@ -1118,7 +1118,7 @@ function move_mytokens_to_parent_folder(listItem) {
 
 function delete_mytokens_folder(listItem) {
     console.log("delete_mytokens_folder", listItem);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
     console.debug("before deleting from mytokensfolders", mytokensfolders);
     mytokensfolders = mytokensfolders.filter(folder => sanitize_folder_path(`${folder.folderPath}/${folder.name}`) !== adjustedPath);
     console.debug("after deleting from mytokensfolders", mytokensfolders);
@@ -1129,12 +1129,12 @@ function delete_mytokens_folder(listItem) {
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
 function create_token_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolderPath.MyTokens)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let folderPath = listItem.fullPath().replace(SidebarListItem.PathMyTokens, "");
+    let folderPath = listItem.fullPath().replace(RootFolderPath.MyTokens, "");
     let newTokenName = "New Token";
     let newTokenCount = mytokens.filter(t => t.folderPath === folderPath && t.name.startsWith(newTokenName)).length;
     console.log("newTokenCount", newTokenCount);
@@ -1168,9 +1168,9 @@ function create_token_inside(listItem) {
  */
 function display_token_configuration_modal(listItem, placedToken = undefined) {
     switch (listItem?.type) {
-        case SidebarListItem.TypeMyToken:
-        case SidebarListItem.TypeMonster:
-        case SidebarListItem.TypePC:
+        case ItemType.MyToken:
+        case ItemType.Monster:
+        case ItemType.PC:
             break;
         default:
             console.warn("display_token_configuration_modal was called with incorrect item type", listItem);
@@ -1390,13 +1390,13 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
  */
 function rename_my_token(myToken, newName, alertUser) {
     let newPath = sanitize_folder_path(`${myToken.folderPath}/${newName}`);
-    let newFullPath = sanitize_folder_path(`${SidebarListItem.PathMyTokens}${newPath}`);
+    let newFullPath = sanitize_folder_path(`${RootFolderPath.MyTokens}${newPath}`);
     let existing = find_my_token(newFullPath);
     if (existing !== undefined) {
         if (alertUser !== false) {
             alert(`A Token with the name "${newName}" already exists at "${newFullPath}"`);
         }
-        console.warn(`A Token with the name ${newName} already exists in the folder "${SidebarListItem.PathMyTokens}${myToken.folderPath}"`);
+        console.warn(`A Token with the name ${newName} already exists in the folder "${RootFolderPath.MyTokens}${myToken.folderPath}"`);
         return false;
     }
     myToken.name = newName;
@@ -1545,21 +1545,21 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
 function alternative_images(listItem) {
     let alternativeImages = [];
     switch (listItem.type) {
-        case SidebarListItem.TypeBuiltinToken:
+        case ItemType.BuiltinToken:
             let builtin = find_builtin_token(listItem.fullPath());
             alternativeImages = builtin?.alternativeImages;
             break;
-        case SidebarListItem.TypeMyToken:
+        case ItemType.MyToken:
             let myToken = find_my_token(listItem.fullPath());
             alternativeImages = myToken?.alternativeImages;
             break;
-        case SidebarListItem.TypePC:
+        case ItemType.PC:
             alternativeImages = get_player_image_mappings(listItem.sheet);
             break;
-        case SidebarListItem.TypeMonster:
+        case ItemType.Monster:
             alternativeImages = get_custom_monster_images(listItem.monsterData.id);
             break;
-        case SidebarListItem.TypeFolder:
+        case ItemType.Folder:
             break;
     }
     if (alternativeImages === undefined) {
@@ -1579,7 +1579,7 @@ function persist_token_folders_remembered_state() {
     if (window.tokenListItems === undefined) return;
     let rememberedFolderState = {};
     let foldersToRemember = window.tokenListItems
-        .filter(item => item.isTypeFolder() && item.fullPath().startsWith(SidebarListItem.PathAboveVTT))
+        .filter(item => item.isTypeFolder() && item.fullPath().startsWith(RootFolderPath.AboveVTT))
         .concat(tokens_rootfolders);
     foldersToRemember.forEach(f => {
         rememberedFolderState[f.fullPath()] = f.collapsed
@@ -2229,24 +2229,24 @@ function move_mytoken_to_folder(listItem, folderPath) {
         console.warn("move_mytoken_to_folder could not find myToken for listItem", listItem);
         return;
     }
-    myToken.folderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathMyTokens, ""));
+    myToken.folderPath = sanitize_folder_path(folderPath.replace(RootFolderPath.MyTokens, ""));
 }
 
 function move_mytokens_folder(listItem, folderPath) {
     // this is different from move_mytokens_to_parent_folder in that it moves the listItem keeping everything within the folder intact
-    if (listItem.isTypeFolder() && listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
+    if (listItem.isTypeFolder() && listItem.folderPath.startsWith(RootFolderPath.MyTokens)) {
         console.groupCollapsed("move_mytokens_folder");
 
-        let fromPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+        let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
 
         let folderObject = find_my_token_folder(listItem.fullPath());
-        let newFolderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathMyTokens, ""));
+        let newFolderPath = sanitize_folder_path(folderPath.replace(RootFolderPath.MyTokens, ""));
         if (folderObject) {
             folderObject.folderPath = newFolderPath;
         }
         listItem.folderPath = newFolderPath;
 
-        let toPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathMyTokens, ""));
+        let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
 
         console.debug("before moving mytokens", mytokens);
         mytokens.forEach(token => {
@@ -2277,383 +2277,3 @@ function move_mytokens_folder(listItem, folderPath) {
         console.warn("move_mytoken_to_folder was called with the wrong item type", listItem);
     }
 }
-
-function migrate_token_customizations() {
-    load_custom_monster_image_mapping();
-    if (window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate === true) {
-        console.log("migrate_token_customizations has already completed");
-        return;
-    }
-    try {
-        let newCustomizations = [];
-
-        console.log("migrate_token_customizations starting to migrate player customizations");
-        // converting from a map with the id as the key to a list of objects with the id inside the object
-        let oldCustomizations = read_player_token_customizations();
-        for (let playerId in oldCustomizations) {
-            if (typeof playerId === "string" && playerId.length > 0) {
-                const newCustomization = TokenCustomization.PC(playerId, oldCustomizations[playerId]);
-                newCustomizations.push(newCustomization);
-                oldCustomizations[playerId].didMigrate = true;
-                console.debug("migrate_token_customizations migrated", oldCustomizations[playerId], "to", newCustomization);
-            } else {
-                console.debug("migrate_token_customizations did not migrate", oldCustomizations[playerId]);
-            }
-        }
-        console.log("migrate_token_customizations finished migrating player customizations");
-
-        if (window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate !== true) {
-            console.log("migrate_token_customizations starting to migrate monster customizations");
-            for(let monsterIdNumber in window.CUSTOM_TOKEN_IMAGE_MAP) {
-                const images = window.CUSTOM_TOKEN_IMAGE_MAP[monsterIdNumber];
-                const monsterId = `${monsterIdNumber}`; // monster ids are numbers, but we want it to be a string to be consistent with other ids
-                const newCustomization = TokenCustomization.Monster(monsterId, { alternativeImages: images });
-                newCustomizations.push(newCustomization);
-                console.debug("migrate_token_customizations migrated", monsterIdNumber, images, "to", newCustomization);
-            }
-            console.log("migrate_token_customizations finished migrating monster customizations");
-        }
-
-        persist_all_token_customizations(newCustomizations, function (success, errorType) {
-            if (success === true) {
-                // TODO: remove them entirely at some point
-                write_player_token_customizations(oldCustomizations);
-                window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = true;
-                save_custom_monster_image_mapping();
-                console.log("migrate_token_customizations successfully persisted migrated customizations", newCustomizations);
-            } else {
-                console.error("migrate_token_customizations failed to persist new customizations", newCustomizations, errorType);
-            }
-        });
-
-    } catch (error) {
-        console.error("migrate_token_customizations failed", error);
-    }
-}
-
-function rollback_token_customizations_migration() {
-    localStorage.setItem("TokenCustomizations", JSON.stringify([]));
-    let playerCustomizations = read_player_token_customizations();
-    for (let playerId in playerCustomizations) {
-        playerCustomizations[playerId].didMigrate = false;
-    }
-    write_player_token_customizations(playerCustomizations);
-    window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = false;
-    save_custom_monster_image_mapping();
-}
-
-function persist_all_token_customizations(customizations, callback) {
-    if (typeof callback !== 'function') {
-        callback = function(){};
-    }
-    console.log("persist_all_token_customizations starting");
-    // TODO: send to cloud instead of storing locally
-    localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
-    callback(true);
-
-    return; // TODO: remove everything above, and just do this instead
-
-    let http_api_gw="https://services.abovevtt.net";
-    let searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has("dev")){
-        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-    }
-
-    window.ajaxQueue.addRequest({
-        url: `${http_api_gw}/services?action=setTokenCustomizations&userId=todo`, // TODO: figure this out
-        success: function (response) {
-            console.warn(`persist_all_token_customizations succeeded`, response);
-            callback(true);
-        },
-        error: function (errorMessage) {
-            console.warn(`persist_all_token_customizations failed`, errorMessage);
-            callback(false, errorMessage?.responseJSON?.type);
-        }
-    })
-}
-
-function persist_token_customization(customization, callback) {
-    if (typeof callback !== 'function') {
-        callback = function(){};
-    }
-    try {
-        if (
-            customization === undefined
-            || typeof customization.id !== "string" || customization.id.length === 0
-            || !TokenCustomization.validTypes.includes(customization.tokenType)
-            || !customization.tokenOptions
-        ) {
-            console.warn("Not persisting invalid customization", customization);
-            callback(false, "Invalid Customization");
-            return;
-        }
-
-        let existingIndex = window.TOKEN_CUSTOMIZATIONS.findIndex(c => c.tokenType === customization.tokenType && c.id === customization.id);
-        if (existingIndex) {
-            window.TOKEN_CUSTOMIZATIONS[existingIndex] = customization;
-        } else {
-            window.TOKEN_CUSTOMIZATIONS.push(customization);
-        }
-
-        window.persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
-
-    } catch (error) {
-        console.error("failed to persist customization", customization, error);
-        callback(false);
-    }
-}
-
-function fetch_token_customizations(callback) {
-    if (typeof callback !== 'function') {
-        callback = function(){};
-    }
-    try {
-        console.log("persist_token_customizations starting");
-        // TODO: fetch from the cloud instead of storing locally
-        let customMappingData = localStorage.getItem('TokenCustomizations');
-        let parsedCustomizations = [];
-        if (customMappingData !== undefined && customMappingData != null) {
-            $.parseJSON(customMappingData).forEach(obj => {
-                try {
-                    parsedCustomizations.push(TokenCustomization.fromJson(obj));
-                } catch (error) {
-                    // this one failed, but keep trying to parse the others
-                    console.error("persist_token_customizations failed to parse customization object", obj);
-                }
-            });
-        }
-        window.TOKEN_CUSTOMIZATIONS = parsedCustomizations;
-        callback(window.TOKEN_CUSTOMIZATIONS);
-    } catch (error) {
-        console.error("persist_token_customizations failed");
-        callback(false);
-    }
-
-    return; // TODO: remove everything above, and just do this instead
-
-    let http_api_gw="https://services.abovevtt.net";
-    let searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has("dev")){
-        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-    }
-
-    window.ajaxQueue.addRequest({
-        url: `${http_api_gw}/services?action=getTokenCustomizations&userId=todo`, // TODO: figure this out
-        success: function (response) {
-            console.warn(`persist_token_customizations succeeded`, response);
-            callback(response); // TODO: grabe the actual list of objects from the response
-        },
-        error: function (errorMessage) {
-            console.warn(`persist_token_customizations failed`, errorMessage);
-            callback(false, errorMessage?.responseJSON?.type);
-        }
-    });
-}
-
-
-// these are what the cloud data will look like
-// const tokenCustomizationExamples = [
-//     {
-//         id: "/userid/characterId",
-//         type: "pc",
-//         tokenOptions: {
-//           alternativeImages: [],
-//           square: true,
-//           ...
-//         }
-//     },
-//     {
-//         id: "17001",
-//         type: "monster",
-//         tokenOptions: { ... }
-//     },
-//     // probably don't need to do any of the below, but we could
-//     {
-//         id: "playersFolder",
-//         type: "folder",
-//         alternativeImages: [], // will always be empty because folders don't have images
-//         tokenOptions: {}
-//     },
-//     {
-//         id: "monstersFolder",
-//         type: "folder",
-//         alternativeImages: [], // will always be empty because folders don't have images
-//         tokenOptions: {}
-//     },
-//     {
-//         id: "myTokensFolder",
-//         type: "folder",
-//         alternativeImages: [], // will always be empty because folders don't have images
-//         tokenOptions: {}
-//     }
-// ];
-//
-// const myTokenExamples = [
-//     {
-//         id: uuid(),
-//         name: "Wagon",
-//         type: "myToken",
-//         folderPath: "/Vehicles",
-//         alternativeImages: [],
-//         tokenOptions: {}
-//     },
-//     {
-//         id: uuid(),
-//         name: "Vehicles",
-//         type: "Folder",
-//         folderPath: "/",
-//         alternativeImages: [],
-//         tokenOptions: {}
-//     }
-// ];
-
-class TokenCustomization {
-
-    /**
-     * @param playerSheet {string} the id of the DDB character
-     * @param tokenOptions {object} the overrides for token.options
-     * @returns {TokenCustomization} the token customization for the player
-     * @constructor
-     */
-    static PC(playerSheet, tokenOptions) {
-        return new TokenCustomization(playerSheet, SidebarListItem.TypePC, tokenOptions);
-    }
-
-    /**
-     * @param monsterId {number|string} the id of the DDB monster
-     * @param tokenOptions {object} the overrides for token.options
-     * @returns {TokenCustomization} the token customization for the monster
-     * @constructor
-     */
-    static Monster(monsterId, tokenOptions) {
-        return new TokenCustomization(`${monsterId}`, SidebarListItem.TypeMonster, tokenOptions);
-    }
-
-    static MyToken(id, tokenOptions) {
-        return new TokenCustomization(id, SidebarListItem.TypeMyToken, tokenOptions);
-    }
-
-    static Folder(id, tokenOptions) {
-        return new TokenCustomization(id, SidebarListItem.TypeFolder, tokenOptions);
-    }
-
-    /**
-     * @param obj {object} the raw JSON object with the same structure as a TokenCustomization object
-     * @returns {TokenCustomization} a typed object instead of the raw JSON object that was given
-     */
-    static fromJson(obj) {
-        return new TokenCustomization(obj.id, obj.tokenType, obj.tokenOptions);
-    }
-
-    static validTypes = [SidebarListItem.TypePC, SidebarListItem.TypeMonster, SidebarListItem.TypeMyToken, SidebarListItem.TypeFolder];
-    // never call this directly! use the static functions above
-    constructor(id, tokenType, tokenOptions) {
-        if (!TokenCustomization.validTypes.includes(tokenType)) {
-            throw `Invalid Type ${tokenType}`;
-        }
-        if (typeof id !== "string" || id.length === 0) {
-            throw `Invalid id ${id}`;
-        }
-        this.id = id;
-        this.tokenType = tokenType;
-        if (typeof tokenOptions === "object") {
-            this.tokenOptions = tokenOptions;
-        } else {
-            this.tokenOptions = {};
-        }
-    }
-
-    setTokenOption(key, value) {
-        console.debug("setTokenOption", key, value);
-        if (value === undefined) {
-            delete this.tokenOptions[key];
-        } else if (value === true || value === "true") {
-            this.tokenOptions[key] = true;
-        } else if (value === false || value === "false") {
-            this.tokenOptions[key] = false;
-        } else if (!isNaN(value) && typeof value === "string") {
-            if (value.includes(".")) {
-                this.tokenOptions[key] = parseFloat(value);
-            } else {
-                this.tokenOptions[key] = parseInt(value);
-            }
-        } else {
-            this.tokenOptions[key] = value;
-        }
-    }
-
-    addAlternativeImage(imageUrl) {
-        if (imageUrl.startsWith("data:")) {
-            return;
-        }
-        if (this.tokenOptions.alternativeImages === undefined) {
-            this.tokenOptions.alternativeImages = [];
-        }
-        const parsed = parse_img(imageUrl);
-        if (!this.tokenOptions.alternativeImages.includes(parsed)) {
-            this.tokenOptions.alternativeImages.push(parsed);
-        }
-    }
-    removeAlternativeImage(imageUrl) {
-        if (this.tokenOptions.alternativeImages === undefined) {
-            return;
-        }
-        let index = this.tokenOptions.alternativeImages.findIndex(i => i === imageUrl);
-        if (typeof index === "number" && index >= 0) {
-            this.tokenOptions.alternativeImages.splice(index, 1);
-        }
-        const parsed = parse_img(imageUrl);
-        let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => i === parsed);
-        if (typeof parsedIndex === "number" && parsedIndex >= 0) {
-            this.tokenOptions.alternativeImages.splice(parsedIndex, 1);
-        }
-    }
-    removeAllAlternativeImages() {
-        this.tokenOptions.alternativeImages = [];
-    }
-    randomImage() {
-        if (this.tokenOptions.alternativeImages && this.tokenOptions.alternativeImages.length > 0) {
-            let randomIndex = getRandomInt(0, this.tokenOptions.alternativeImages.length);
-            return this.tokenOptions.alternativeImages[randomIndex];
-        }
-        return undefined;
-    }
-}
-
-/**
- * @param type {string} the type of customization you're looking for. EX: SidebarListItem.TypeMonster
- * @param id {string|number} the id of the customization you're looking for. EX: pc.sheet, monsterData.id, etc
- * @returns {TokenCustomization|undefined} a token customization for the item if found, else undefined
- */
-function find_token_customization(type, id) {
-    return window.TOKEN_CUSTOMIZATIONS.find(c => c.tokenType === type && c.id === `${id}`); // convert it to a string just to be safe. DDB monsters use numbers for ids, but we use strings for everything
-}
-
-/**
- * @param type {string} the type of customization you're looking for. EX: SidebarListItem.TypeMonster
- * @param id {string|number} the id of the customization you're looking for. EX: pc.sheet, monsterData.id, etc
- * @returns {TokenCustomization|undefined} a token customization for the item if found. If not found, a new TokenCustomization object will be created and returned.
- * @throws an error if a customization object cannot be created
- */
-function find_or_create_token_customization(type, id) {
-    return find_token_customization(type, id) || new TokenCustomization(id, type, {});
-}
-
-
-
-/**
- * @param playerSheet {string} the id of the DDB character
- * @returns {TokenCustomization|undefined} a token customization for the monster or undefined if not found
- */
-function find_player_token_customization(playerSheet) {
-    return window.TOKEN_CUSTOMIZATIONS.find(c => c.tokenType === SidebarListItem.TypePC && c.id === playerSheet);
-}
-
-/**
- * @param playerSheet {string} the id of the DDB character
- * @returns {TokenCustomization} a token customization for the player. If it doesn't already exist, a new one will be created and returned
- */
-function get_player_token_customization(playerSheet) {
-    return find_player_token_customization(playerSheet) || TokenCustomization.PC(playerSheet, {});
-}
-
