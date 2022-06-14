@@ -175,6 +175,17 @@ function token_setting_options() {
 				{ value: false, label: 'DM only', description: "The token's stat block is not accessible to players via the token context menu. Players can not alter the HP/AC of this token." }
 			],
 			defaultValue: false
+		},
+		{
+			name: "defaultmaxhptype",
+			label: "Max HP Calculation",
+			type: 'dropdown',
+			options: [
+				{ value: "average", label: "Average", description: "Monster Max HP will be set to the average value." },
+				{ value: "roll", label: "Roll", description: "Monster Max HP will be individually rolled." },
+				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value." }
+			],
+			defaultValue: "average"
 		}
 	];
 }
@@ -372,8 +383,23 @@ function redraw_settings_panel_token_examples(settings) {
 
 function build_example_token(options) {
 	let mergedOptions = {...default_options(), ...window.TOKEN_SETTINGS, ...options};
-	mergedOptions.hp = 10;
-	mergedOptions.max_hp = 10;
+	let hpnum;
+	switch (mergedOptions['defaultmaxhptype']) {
+		case 'average':
+			hpnum = 10;
+			break;
+		case 'max':
+			hpnum = 15;
+			break;
+		case 'roll':
+			hpnum = 5 + Math.floor(Math.random() * 11); // Random 5-15
+			break;
+		default:
+			hpnum = 10;
+			break;
+	}
+	mergedOptions.hp = hpnum;
+	mergedOptions.max_hp = hpnum;
 	mergedOptions.id = `exampleToken-${uuid()}`;
 	mergedOptions.size = 100;
 	mergedOptions.ac = 10;
