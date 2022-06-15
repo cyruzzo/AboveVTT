@@ -62,7 +62,7 @@ function migrate_to_my_tokens() {
         }
     }
 
-    migrateFolderAtPath(RootFolderPath.Root);
+    migrateFolderAtPath(RootFolder.Root.path);
     tokendata.didMigrateToMyToken = true;
     persist_my_tokens();
     persist_customtokens();
@@ -92,7 +92,7 @@ function rollback_from_my_tokens() {
             rollbackFolderAtPath(nextFolderPath);
         }
     };
-    rollbackFolderAtPath(RootFolderPath.Root);
+    rollbackFolderAtPath(RootFolder.Root.path);
     persist_customtokens();
     console.groupEnd();
 }
@@ -116,13 +116,13 @@ function list_item_from_monster_id(monsterId) {
 function list_item_from_player_id(playerId) {
     let pc = window.pcs.find(p => p.sheet = playerId);
     if (pc === undefined) return undefined;
-    let fullPath = sanitize_folder_path(`${RootFolderPath.Players}/${pc.name}`);
+    let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
 }
 
 function list_item_from_token(placedToken) {
     let listItemPath = placedToken.options.listItemPath;
-    if (listItemPath !== undefined && listRootFolderPath.length > 0) {
+    if (listItemPath !== undefined && listItemPath.length > 0) {
         // this token was placed after we unified tokens
         return find_sidebar_list_item_from_path(listItemPath);
     }
@@ -137,11 +137,11 @@ function list_item_from_token(placedToken) {
         let tokenDataPath = placedToken.options.tokendatapath !== undefined ? placedToken.options.tokendatapath : "";
         let tokenDataName = placedToken.options.tokendataname !== undefined ? placedToken.options.tokendataname : placedToken.options.name;
         if (tokenDataPath.startsWith("/AboveVTT BUILTIN")) {
-            let convertedPath = tokenDataPath.replace("/AboveVTT BUILTIN", RootFolderPath.AboveVTT);
+            let convertedPath = tokenDataPath.replace("/AboveVTT BUILTIN", RootFolder.AboveVTT.path);
             let fullPath = sanitize_folder_path(`${convertedPath}/${tokenDataName}`);
             return find_sidebar_list_item_from_path(fullPath);
         } else {
-            let fullPath = sanitize_folder_path(`${RootFolderPath.MyTokens}/${tokenDataPath}/${tokenDataName}`);
+            let fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${tokenDataPath}/${tokenDataName}`);
             return find_sidebar_list_item_from_path(fullPath);
         }
     }
@@ -153,13 +153,13 @@ function list_item_from_token(placedToken) {
  * @returns {undefined|*} the "My Token" object if found; else undefined
  */
 function find_my_token(fullPath) {
-    if (!fullPath.startsWith(RootFolderPath.MyTokens)) {
-        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", RootFolderPath.MyTokens);
+    if (!fullPath.startsWith(RootFolder.MyTokens.path)) {
+        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", RootFolder.MyTokens.path);
         return undefined;
     }
     console.groupCollapsed("find_my_token");
     let found = mytokens.find(t => {
-        let dirtyPath = `${RootFolderPath.MyTokens}${t.folderPath}/${t.name}`;
+        let dirtyPath = `${RootFolder.MyTokens.path}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -175,13 +175,13 @@ function find_my_token(fullPath) {
  * @returns {undefined|*} the Folder object if found; else undefined
  */
 function find_my_token_folder(fullPath) {
-    if (!fullPath.startsWith(RootFolderPath.MyTokens)) {
-        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", RootFolderPath.MyTokens);
+    if (!fullPath.startsWith(RootFolder.MyTokens.path)) {
+        console.warn("find_my_token was called with the wrong token type.", fullPath, "should start with", RootFolder.MyTokens.path);
         return undefined;
     }
     console.groupCollapsed("find_my_token_folder");
     let found = mytokensfolders.find(f => {
-        let dirtyPath = `${RootFolderPath.MyTokens}${f.folderPath}/${f.name}`;
+        let dirtyPath = `${RootFolder.MyTokens.path}${f.folderPath}/${f.name}`;
         let fullFolderPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, dirtyPath, fullFolderPath, fullFolderPath === fullPath, f);
         return fullFolderPath === fullPath;
@@ -197,13 +197,13 @@ function find_my_token_folder(fullPath) {
  * @returns {undefined|*} the "Builtin Token" object if found; else undefined
  */
 function find_builtin_token(fullPath) {
-    if (!fullPath.startsWith(RootFolderPath.AboveVTT)) {
-        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", RootFolderPath.AboveVTT);
+    if (!fullPath.startsWith(RootFolder.AboveVTT.path)) {
+        console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", RootFolder.AboveVTT.path);
         return undefined;
     }
     console.groupCollapsed("find_builtin_token");
     let found = builtInTokens.find(t => {
-        let dirtyPath = `${RootFolderPath.AboveVTT}${t.folderPath}/${t.name}`;
+        let dirtyPath = `${RootFolder.AboveVTT.path}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
         console.debug("looking for: ", fullPath, dirtyPath, fullTokenPath, fullTokenPath === fullPath, t);
         return fullTokenPath === fullPath;
@@ -215,13 +215,13 @@ function find_builtin_token(fullPath) {
 
 function backfill_mytoken_folders() {
     mytokens.forEach(myToken => {
-        if (myToken.folderPath !== RootFolderPath.Root) {
+        if (myToken.folderPath !== RootFolder.Root.path) {
             // we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
             let parts = myToken.folderPath.split("/");
             let backfillPath = "";
             parts.forEach(part => {
                 let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-                if (fullBackfillPath !== RootFolderPath.Root && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
+                if (fullBackfillPath !== RootFolder.Root.path && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
                     // we don't have this folder yet so add it
                     let newFolder = { folderPath: sanitize_folder_path(backfillPath), name: part, collapsed: true };
                     console.log("adding folder", newFolder);
@@ -265,7 +265,7 @@ function rebuild_token_items_list() {
 
     // AboveVTT Tokens
     let allBuiltinPaths = builtInTokens
-        .filter(item => item.folderPath !== RootFolderPath.Root && item.folderPath !== "" && item.folderPath !== undefined)
+        .filter(item => item.folderPath !== RootFolder.Root.path && item.folderPath !== "" && item.folderPath !== undefined)
         .map(item => item.folderPath);
     let builtinPaths = [...new Set(allBuiltinPaths)];
     for (let i = 0; i < builtinPaths.length; i++) {
@@ -273,13 +273,13 @@ function rebuild_token_items_list() {
         let pathComponents = path.split("/");
         let folderName = pathComponents.pop();
         let folderPath = pathComponents.join("/");
-        let builtinFolderPath = sanitize_folder_path(`${RootFolderPath.AboveVTT}/${folderPath}`);
+        let builtinFolderPath = sanitize_folder_path(`${RootFolder.AboveVTT.path}/${folderPath}`);
         tokenItems.push(
             SidebarListItem.Folder(path_to_html_id(builtinFolderPath, folderName),
                 builtinFolderPath,
                 folderName,
                 true,
-            builtinFolderPath === RootFolderPath.AboveVTT ? RootFolderId.BuiltinTokens : path_to_html_id(builtinFolderPath)
+            builtinFolderPath === RootFolder.AboveVTT.path ? RootFolder.AboveVTT.id : path_to_html_id(builtinFolderPath)
             )
         );
     }
@@ -318,7 +318,7 @@ function filter_token_list(searchTerm) {
         allFolders.removeClass("collapsed"); // auto expand all folders
         for (let i = 0; i < allFolders.length; i++) {
             let currentFolder = $(allFolders[i]);
-            if (matches_full_path(currentFolder, RootFolderPath.Monsters)) {
+            if (matches_full_path(currentFolder, RootFolder.Monsters.path)) {
                 // we always want the monsters folder to be open when searching
                 continue;
             }
@@ -353,7 +353,7 @@ function inject_monster_tokens(searchTerm, skip) {
             listItems.push(item);
         }
         console.log("search_monsters converted", listItems);
-        let monsterFolder = find_html_row_from_path(RootFolderPath.Monsters, tokensPanel.body);
+        let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
         inject_monster_list_items(listItems);
         if (searchTerm.length > 0) {
             monsterFolder.removeClass("collapsed");
@@ -374,7 +374,7 @@ function inject_monster_tokens(searchTerm, skip) {
 }
 
 function inject_monster_list_items(listItems) {
-    let monsterFolder = find_html_row_from_path(RootFolderPath.Monsters, tokensPanel.body);
+    let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
     if (monsterFolder === undefined || monsterFolder.length === 0) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
         return;
@@ -394,11 +394,11 @@ function init_tokens_panel() {
     console.log("init_tokens_panel");
 
     tokens_rootfolders = [
-        SidebarListItem.Folder(RootFolderId.Players, RootFolderPath.Root, SidebarListItem.NamePlayers, false, path_to_html_id(RootFolderPath.Root)),
-        SidebarListItem.Folder(RootFolderId.Monsters, RootFolderPath.Root, SidebarListItem.NameMonsters, false, path_to_html_id(RootFolderPath.Root)),
-        SidebarListItem.Folder(RootFolderId.MyTokens, RootFolderPath.Root, SidebarListItem.NameMyTokens, false, path_to_html_id(RootFolderPath.Root)),
-        SidebarListItem.Folder(RootFolderId.BuiltinTokens, RootFolderPath.Root, SidebarListItem.NameAboveVTT, false, path_to_html_id(RootFolderPath.Root)),
-        SidebarListItem.Folder(RootFolderId.Encounter, RootFolderPath.Root, SidebarListItem.NameEncounters, false, path_to_html_id(RootFolderPath.Root))
+        SidebarListItem.Folder(RootFolder.Players.id, RootFolder.Root.path, RootFolder.Players.name, false, path_to_html_id(RootFolder.Root.path)),
+        SidebarListItem.Folder(RootFolder.Monsters.id, RootFolder.Root.path, RootFolder.Monsters.name, false, path_to_html_id(RootFolder.Root.path)),
+        SidebarListItem.Folder(RootFolder.MyTokens.id, RootFolder.Root.path, RootFolder.MyTokens.name, false, path_to_html_id(RootFolder.Root.path)),
+        SidebarListItem.Folder(RootFolder.AboveVTT.id, RootFolder.Root.path, RootFolder.AboveVTT.name, false, path_to_html_id(RootFolder.Root.path)),
+        SidebarListItem.Folder(RootFolder.Encounters.id, RootFolder.Root.path, RootFolder.Encounters.name, false, path_to_html_id(RootFolder.Root.path))
     ];
 
     if(localStorage.getItem('MyTokens') != null){
@@ -624,7 +624,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         if (listItem.isTypeFolder()) {
             let fullPath = listItem.fullPath();
             // find and place all items in this folder... but not subfolders
-            tokensToPlace = (listItem.fullPath().startsWith(RootFolderPath.Monsters) ? window.monsterListItems : window.tokenListItems)
+            tokensToPlace = (listItem.fullPath().startsWith(RootFolder.Monsters.path) ? window.monsterListItems : window.tokenListItems)
                 .filter(item => !item.isTypeFolder()) // if we ever want to add everything at every subfolder depth, remove this line
                 .filter(item => item.folderPath === fullPath);
         } else if (listItem.isTypeEncounter()) {
@@ -669,6 +669,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     // set up whatever you need to. We'll override a few things after
     let options = {...window.TOKEN_SETTINGS};
     options.name = listItem.name;
+
+
+    // TODO: handle parent folder options!!!
+
+
+
 
     switch (listItem.type) {
         case ItemType.Folder:
@@ -797,7 +803,7 @@ function alternative_images_for_item(listItem) {
             alternativeImages = get_custom_monster_images(listItem.monsterData.id);
             break;
         case ItemType.BuiltinToken:
-            alternativeImages = builtInTokens.find(bt => listItem.fullPath() === sanitize_folder_path(`${RootFolderPath.AboveVTT}${bt.folderPath}/${bt.name}`) )?.alternativeImages;
+            alternativeImages = builtInTokens.find(bt => listItem.fullPath() === sanitize_folder_path(`${RootFolder.AboveVTT.path}${bt.folderPath}/${bt.name}`) )?.alternativeImages;
             break;
     }
 
@@ -985,12 +991,12 @@ function my_token_path_exists(folderPath) {
  * @param listItem {SidebarListItem} The folder to create a new folder within
  */
 function create_mytoken_folder_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolderPath.MyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_mytoken_folder_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
     let newFolderName = "New Folder";
     let newFolderCount = mytokensfolders.filter(f => f.folderPath === adjustedPath && f.name.startsWith(newFolderName)).length;
     console.log("newFolderCount", newFolderCount);
@@ -999,7 +1005,7 @@ function create_mytoken_folder_inside(listItem) {
     }
     let newFolder = { folderPath: adjustedPath, name: newFolderName, collapsed: true };
     mytokensfolders.push(newFolder);
-    let newFolderFullPath = sanitize_folder_path(`${RootFolderPath.MyTokens}${newFolder.folderPath}/${newFolder.name}`);
+    let newFolderFullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}${newFolder.folderPath}/${newFolder.name}`);
     did_change_mytokens_items();
     expand_all_folders_up_to(newFolderFullPath, tokensPanel.body);
     let newListItem = window.tokenListItems.find(i => i.fullPath() === newFolderFullPath);
@@ -1014,7 +1020,7 @@ function create_mytoken_folder_inside(listItem) {
  * @returns {string|undefined} the path of the newly created folder; undefined if the folder could not be created.
  */
 function rename_mytoken_folder(item, newName, alertUser = true) {
-    if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolderPath.MyTokens)) {
+    if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolder.MyTokens.path)) {
         console.warn("rename_folder called with an incorrect item type", item);
         if (alertUser !== false) {
             alert("An unexpected error occurred");
@@ -1031,8 +1037,8 @@ function rename_mytoken_folder(item, newName, alertUser = true) {
         return;
     }
 
-    let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolderPath.MyTokens, ""));
-    let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolderPath.MyTokens, ""));
+    let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolder.MyTokens.path, ""));
+    let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolder.MyTokens.path, ""));
     let toFullPath = sanitize_folder_path(`${fromFolderPath}/${newName}`);
     if (my_token_path_exists(toFullPath)) {
         console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
@@ -1077,7 +1083,7 @@ function rename_mytoken_folder(item, newName, alertUser = true) {
 
 function delete_mytokens_within_folder(listItem) {
     console.groupCollapsed(`delete_mytokens_within_folder`);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
 
     console.log("about to delete all tokens within", adjustedPath);
     console.debug("before deleting from mytokens", mytokens);
@@ -1095,8 +1101,8 @@ function delete_mytokens_within_folder(listItem) {
 function move_mytokens_to_parent_folder(listItem) {
     // this is different from move_mytokens_folder in that it moved everything out of listItem
     console.groupCollapsed(`move_mytokens_to_parent_folder`);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
-    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolderPath.MyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
+    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.MyTokens.path, ""));
 
     console.debug("before moving mytokens", mytokens);
     mytokens.forEach(token => {
@@ -1128,7 +1134,7 @@ function move_mytokens_to_parent_folder(listItem) {
 
 function delete_mytokens_folder(listItem) {
     console.log("delete_mytokens_folder", listItem);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
+    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
     console.debug("before deleting from mytokensfolders", mytokensfolders);
     mytokensfolders = mytokensfolders.filter(folder => sanitize_folder_path(`${folder.folderPath}/${folder.name}`) !== adjustedPath);
     console.debug("after deleting from mytokensfolders", mytokensfolders);
@@ -1139,12 +1145,12 @@ function delete_mytokens_folder(listItem) {
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
 function create_token_inside(listItem) {
-    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolderPath.MyTokens)) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let folderPath = listItem.fullPath().replace(RootFolderPath.MyTokens, "");
+    let folderPath = listItem.fullPath().replace(RootFolder.MyTokens.path, "");
     let newTokenName = "New Token";
     let newTokenCount = mytokens.filter(t => t.folderPath === folderPath && t.name.startsWith(newTokenName)).length;
     console.log("newTokenCount", newTokenCount);
@@ -1400,13 +1406,13 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
  */
 function rename_my_token(myToken, newName, alertUser) {
     let newPath = sanitize_folder_path(`${myToken.folderPath}/${newName}`);
-    let newFullPath = sanitize_folder_path(`${RootFolderPath.MyTokens}${newPath}`);
+    let newFullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}${newPath}`);
     let existing = find_my_token(newFullPath);
     if (existing !== undefined) {
         if (alertUser !== false) {
             alert(`A Token with the name "${newName}" already exists at "${newFullPath}"`);
         }
-        console.warn(`A Token with the name ${newName} already exists in the folder "${RootFolderPath.MyTokens}${myToken.folderPath}"`);
+        console.warn(`A Token with the name ${newName} already exists in the folder "${RootFolder.MyTokens.path}${myToken.folderPath}"`);
         return false;
     }
     myToken.name = newName;
@@ -1589,7 +1595,7 @@ function persist_token_folders_remembered_state() {
     if (window.tokenListItems === undefined) return;
     let rememberedFolderState = {};
     let foldersToRemember = window.tokenListItems
-        .filter(item => item.isTypeFolder() && item.fullPath().startsWith(RootFolderPath.AboveVTT))
+        .filter(item => item.isTypeFolder() && item.fullPath().startsWith(RootFolder.AboveVTT.path))
         .concat(tokens_rootfolders);
     foldersToRemember.forEach(f => {
         rememberedFolderState[f.fullPath()] = f.collapsed
@@ -2236,24 +2242,24 @@ function move_mytoken_to_folder(listItem, folderPath) {
         console.warn("move_mytoken_to_folder could not find myToken for listItem", listItem);
         return;
     }
-    myToken.folderPath = sanitize_folder_path(folderPath.replace(RootFolderPath.MyTokens, ""));
+    myToken.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.MyTokens.path, ""));
 }
 
 function move_mytokens_folder(listItem, folderPath) {
     // this is different from move_mytokens_to_parent_folder in that it moves the listItem keeping everything within the folder intact
-    if (listItem.isTypeFolder() && listItem.folderPath.startsWith(RootFolderPath.MyTokens)) {
+    if (listItem.isTypeFolder() && listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
         console.groupCollapsed("move_mytokens_folder");
 
-        let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
+        let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
 
         let folderObject = find_my_token_folder(listItem.fullPath());
-        let newFolderPath = sanitize_folder_path(folderPath.replace(RootFolderPath.MyTokens, ""));
+        let newFolderPath = sanitize_folder_path(folderPath.replace(RootFolder.MyTokens.path, ""));
         if (folderObject) {
             folderObject.folderPath = newFolderPath;
         }
         listItem.folderPath = newFolderPath;
 
-        let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.MyTokens, ""));
+        let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
 
         console.debug("before moving mytokens", mytokens);
         mytokens.forEach(token => {

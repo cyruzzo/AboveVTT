@@ -1534,7 +1534,7 @@ function init_scenes_panel() {
 
 	let addSceneButton = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
 	addSceneButton.on("click", function (clickEvent) {
-		create_scene_inside(RootFolderPath.Scenes);
+		create_scene_inside(RootFolder.Scenes.path);
 	});
 
 	let addFolderButton = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
@@ -1544,7 +1544,7 @@ function init_scenes_panel() {
 		if (numberOfNewFolders > 0) {
 			newFolderName = `${newFolderName} ${numberOfNewFolders}`
 		}
-		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolderPath.Scenes, newFolderName), RootFolderPath.Scenes, newFolderName, true, path_to_html_id(RootFolderPath.Scenes, newFolderName));
+		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolder.Scenes.path, newFolderName), RootFolder.Scenes.path, newFolderName, true, path_to_html_id(RootFolder.Scenes.path, newFolderName));
 		window.sceneListFolders.push(newFolderItem);
 		display_folder_configure_modal(newFolderItem);
 		did_update_scenes();
@@ -1582,13 +1582,13 @@ function rebuild_scene_items_list() {
 	window.sceneListItems
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => {
-		if (item.folderPath !== RootFolderPath.Root) {
+		if (item.folderPath !== RootFolder.Root.path) {
 			// we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
 			let parts = item.folderPath.split("/");
 			let backfillPath = "";
 			parts.forEach(part => {
 				let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-				if (fullBackfillPath !== "" && fullBackfillPath !== "/" && fullBackfillPath !== RootFolderPath.Scenes && !window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
+				if (fullBackfillPath !== "" && fullBackfillPath !== "/" && fullBackfillPath !== RootFolder.Scenes.path && !window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
 					// we don't have this folder yet so add it
 					let backfillItem = SidebarListItem.Folder(path_to_html_id(backfillPath, part), backfillPath, part, true, path_to_html_id(backfillPath));
 					console.log("adding folder", backfillItem);
@@ -1618,10 +1618,10 @@ function redraw_scene_list(searchTerm) {
 	// this is similar to the structure of a SidebarListItem.Folder row.
 	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
 	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
-	let list = $(`<div id="${path_to_html_id(RootFolderPath.Scenes)}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
+	let list = $(`<div id="${path_to_html_id(RootFolder.Scenes.path)}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
 	scenesPanel.body.empty();
 	scenesPanel.body.append(list);
-	set_full_path(list, RootFolderPath.Scenes);
+	set_full_path(list, RootFolder.Scenes.path);
 
 	// first let's add all folders because we need the folder to exist in order to add items into it
 	// don't filter folders by the searchTerm because we need the folder to exist in order to add items into it
@@ -1683,7 +1683,7 @@ function create_scene_inside(fullPath) {
 
 	let sceneData = default_scene_data();
 	sceneData.title = newSceneName;
-	sceneData.folderPath = fullPath.replace(RootFolderPath.Scenes, "");
+	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
 
 	window.ScenesHandler.scenes.push(sceneData);
 	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
@@ -1693,12 +1693,12 @@ function create_scene_inside(fullPath) {
 
 function create_scene_folder_inside(fullPath) {
 	let newFolderName = "New Folder";
-	let adjustedPath = sanitize_folder_path(fullPath.replace(RootFolderPath.Scenes, ""));
-	let numberOfNewFolders = window.sceneListFolders.filter(i => sanitize_folder_path(i.folderPath.replace(RootFolderPath.Scenes, "")) === adjustedPath && i.name.startsWith(newFolderName)).length;
+	let adjustedPath = sanitize_folder_path(fullPath.replace(RootFolder.Scenes.path, ""));
+	let numberOfNewFolders = window.sceneListFolders.filter(i => sanitize_folder_path(i.folderPath.replace(RootFolder.Scenes.path, "")) === adjustedPath && i.name.startsWith(newFolderName)).length;
 	if (numberOfNewFolders > 0) {
 		newFolderName = `${newFolderName} ${numberOfNewFolders}`
 	}
-	let newFolderFullPath = sanitize_folder_path(`${RootFolderPath.Scenes}/${adjustedPath}`);
+	let newFolderFullPath = sanitize_folder_path(`${RootFolder.Scenes.path}/${adjustedPath}`);
 	let newFolderItem = SidebarListItem.Folder(path_to_html_id(newFolderFullPath, newFolderName), newFolderFullPath, newFolderName, true, path_to_html_id(newFolderFullPath));
 	window.sceneListFolders.push(newFolderItem);
 	did_update_scenes();
@@ -1707,7 +1707,7 @@ function create_scene_folder_inside(fullPath) {
 
 function rename_scene_folder(item, newName, alertUser) {
 	console.groupCollapsed("rename_folder");
-	if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolderPath.Scenes)) {
+	if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolder.Scenes.path)) {
 		console.warn("rename_folder called with an incorrect item type", item);
 		console.groupEnd();
 		if (alertUser !== false) {
@@ -1724,8 +1724,8 @@ function rename_scene_folder(item, newName, alertUser) {
 		return;
 	}
 
-	let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolderPath.Scenes, ""));
-	let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolderPath.Scenes, ""));
+	let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolder.Scenes.path, ""));
+	let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolder.Scenes.path, ""));
 	let toFullPath = sanitize_folder_path(`${fromFolderPath}/${newName}`);
 	if (scene_path_exists(toFullPath)) {
 		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
@@ -1775,7 +1775,7 @@ function rename_scene_folder(item, newName, alertUser) {
  * @returns {boolean} whether or not the path exists
  */
 function scene_path_exists(folderPath) {
-	const comparison = folderPath.startsWith(RootFolderPath.Scenes) ? folderPath : sanitize_folder_path(`${RootFolderPath.Scenes}/${folderPath}`);
+	const comparison = folderPath.startsWith(RootFolder.Scenes.path) ? folderPath : sanitize_folder_path(`${RootFolder.Scenes.path}/${folderPath}`);
 	const existingScene = window.sceneListItems.find(s => s.fullPath() === comparison) !== undefined;
 	const existingFolder = window.sceneListFolders.find(f => f.fullPath() === comparison) !== undefined;
 	console.debug("scene_path_exists", comparison, existingScene, existingFolder);
@@ -1847,7 +1847,7 @@ function expand_folders_to_active_scenes() {
 
 function delete_scenes_within_folder(listItem) {
 	console.groupCollapsed(`delete_mytokens_within_folder`);
-	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.Scenes, ""));
+	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	console.log("about to delete all scenes within", adjustedPath);
 	console.debug("before deleting from scenes", window.ScenesHandler.scenes);
@@ -1866,8 +1866,8 @@ function delete_scenes_within_folder(listItem) {
 
 function move_scenes_to_parent_folder(listItem) {
 	console.groupCollapsed(`move_mytokens_to_parent_folder`);
-	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.Scenes, ""));
-	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolderPath.Scenes, ""));
+	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
+	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.Scenes.path, ""));
 
 	console.debug("before moving scenes", window.ScenesHandler.scenes);
 	window.ScenesHandler.scenes
@@ -1898,17 +1898,17 @@ function delete_scenes_folder(listItem) {
 function move_scene_to_folder(listItem, folderPath) {
 	let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.sceneId);
 	let scene = window.ScenesHandler.scenes[sceneIndex];
-	scene.folderPath = sanitize_folder_path(folderPath.replace(RootFolderPath.Scenes, ""));
+	scene.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
 	window.ScenesHandler.persist_scene(sceneIndex);
 }
 
 function move_scenes_folder(listItem, folderPath) {
 	console.groupCollapsed(`move_scenes_folder`);
-	let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.Scenes, ""));
+	let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	// move the actual item
-	listItem.folderPath = sanitize_folder_path(folderPath.replace(RootFolderPath.Scenes, ""));
-	let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolderPath.Scenes, ""));
+	listItem.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
+	let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	// move subfolders. This isn't exactly necessary since we'll just rebuild the list anyway, but any empty folders need to be updated
 	window.sceneListFolders.forEach(f => {

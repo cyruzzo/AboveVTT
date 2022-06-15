@@ -9,54 +9,42 @@ class ItemType {
     static Scene = "scene";
 }
 
-class RootFolderPath {
-    static Root = "/";
-    static Players = "/Players";
-    static Monsters = "/Monsters";
-    static MyTokens = "/My Tokens";
-    static AboveVTT = "/AboveVTT Tokens";
-    static Encounters = "/Encounters";
-    static Scenes = "/Scenes";
+class RootFolder {
+    static Root = { name: "", path: "/", id: "root" };
+    static Players = { name: "Players", path: "/Players", id: "playersFolder" };
+    static Monsters = { name: "Monsters", path: "/Monsters", id: "monstersFolder" };
+    static MyTokens = { name: "My Tokens", path: "/My Tokens", id: "myTokensFolder" };
+    static AboveVTT = { name: "AboveVTT Tokens", path: "/AboveVTT Tokens", id: "builtinTokensFolder" };
+    static Encounters = { name: "Encounters", path: "/Encounters", id: "encountersFolder" };
+    static Scenes = { name: "Scenes", path: "/Scenes", id: "scenesFolder" };
     static allValues() {
-        return [
-            RootFolderPath.Root,
-            RootFolderPath.Players,
-            RootFolderPath.Monsters,
-            RootFolderPath.MyTokens,
-            RootFolderPath.AboveVTT,
-            RootFolderPath.Encounters,
-            RootFolderPath.Scenes
-        ]
+           return [
+               RootFolder.Root,
+               RootFolder.Players,
+               RootFolder.Monsters,
+               RootFolder.MyTokens,
+               RootFolder.AboveVTT,
+               RootFolder.Encounters,
+               RootFolder.Scenes
+           ]
     }
-    static matchingId(rootFolderId) {
-        switch (rootFolderId) {
-            case RootFolderId.Players: return RootFolderPath.Players;
-            case RootFolderId.Monsters: return RootFolderPath.Monsters;
-            case RootFolderId.MyTokens: return RootFolderPath.MyTokens;
-            case RootFolderId.BuiltinTokens: return RootFolderPath.AboveVTT;
-            case RootFolderId.Encounter: return RootFolderPath.Encounters;
-            case RootFolderId.Scenes: return RootFolderPath.Scenes;
-            default: return undefined;
-        }
+    static allNames() {
+        return RootFolder.allValues().map(f => f.name);
     }
-}
-
-class RootFolderId {
-    static Players = "playersFolder";
-    static Monsters = "monstersFolder";
-    static MyTokens = "myTokensFolder";
-    static BuiltinTokens = "builtinTokensFolder";
-    static Encounter = "encountersFolder";
-    static Scenes = "scenesFolder";
-    static allValues() {
-        return [
-            RootFolderId.Players,
-            RootFolderId.Monsters,
-            RootFolderId.MyTokens,
-            RootFolderId.BuiltinTokens,
-            RootFolderId.Encounter,
-            RootFolderId.Scenes,
-        ]
+    static allPaths() {
+        return RootFolder.allValues().map(f => f.path);
+    }
+    static allIds() {
+        return RootFolder.allValues().map(f => f.id);
+    }
+    static findById(id) {
+        return RootFolder.allValues().find(folder => folder.id === id);
+    }
+    static findByName(name) {
+        return RootFolder.allValues().find(folder => folder.name === name);
+    }
+    static findByPath(path) {
+        return RootFolder.allValues().find(folder => folder.path === path);
     }
 }
 
@@ -73,7 +61,7 @@ class TokenCustomization {
     /** {string} The type of item this TokenCustomization represents. See `validTypes` for possible options */
     type;
 
-    /** {string} The id of the folder this object is in. Typically, an uuid or one of the options in RootFolderId */
+    /** {string} The id of the folder this object is in. Typically, an uuid or one of the options in RootFolder.*.id */
     parentId;
 
     /** {object} The same object structure as Token.options. This gets set on token.options during token creation */
@@ -89,7 +77,7 @@ class TokenCustomization {
      * @constructor
      */
     static PC(playerSheet, tokenOptions) {
-        return new TokenCustomization(playerSheet, ItemType.PC, RootFolderId.Players, tokenOptions);
+        return new TokenCustomization(playerSheet, ItemType.PC, RootFolder.Players.id, tokenOptions);
     }
 
     /**
@@ -99,12 +87,12 @@ class TokenCustomization {
      * @constructor
      */
     static Monster(monsterId, tokenOptions) {
-        return new TokenCustomization(`${monsterId}`, ItemType.Monster, RootFolderId.Monsters, tokenOptions);
+        return new TokenCustomization(`${monsterId}`, ItemType.Monster, RootFolder.Monsters.id, tokenOptions);
     }
 
     /**
      * @param id {string} the id of the MyToken object. eg: uuid()
-     * @param parentId {string} the id of the Folder this belongs to. eg: uuid() or one of the options in RootFolderId
+     * @param parentId {string} the id of the Folder this belongs to. eg: uuid() or one of the options in RootFolder.*.id
      * @param tokenOptions {object} the overrides for token.options
      * @returns {TokenCustomization} the token customization for the MyToken
      * @constructor
@@ -115,7 +103,7 @@ class TokenCustomization {
 
     /**
      * @param id {string} the id of the Folder object. eg: uuid()
-     * @param parentId {string} the id of the Folder this belongs to. eg: uuid() or one of the options in RootFolderId
+     * @param parentId {string} the id of the Folder this belongs to. eg: uuid() or one of the options in RootFolder.*.id
      * @param tokenOptions {object} the overrides for token.options
      * @returns {TokenCustomization} the token customization for the Folder
      * @constructor
@@ -161,7 +149,7 @@ class TokenCustomization {
             this.tokenOptions[key] = true;
         } else if (value === false || value === "false") {
             this.tokenOptions[key] = false;
-        } else if (!isNaN(value) && typeof value === "string") {
+        } else if (!isNaN(parseFloat(value)) && typeof value === "string") {
             if (value.includes(".")) {
                 this.tokenOptions[key] = parseFloat(value);
             } else {
@@ -212,23 +200,54 @@ class TokenCustomization {
     findParent() {
         return window.TOKEN_CUSTOMIZATIONS.find(tc => tc.id === this.parentId);
     }
+    findAncestors(found = []) {
+        found.push(this);
+        let parent = this.findParent();
+        if (parent) {
+            return parent.findAncestors(found);
+        } else {
+            let root = RootFolder.findById(this.parentId);
+            if (root === undefined) {
+                root = RootFolder.allValues().find(f => path_to_html_id(f.path) === this.parentId);
+            }
+            if (root !== undefined && root.id !== RootFolder.Root.id) {
+                try {
+                    let rootCustomization = find_or_create_token_customization(ItemType.Folder, root.id, RootFolder.Root.path);
+                    found.push(rootCustomization);
+                } catch (error) {
+                    console.warn("Failed to create root customization for", this, error);
+                }
+            }
+            return found;
+        }
+    }
     folderPath() {
-        if (RootFolderId.allValues().includes(this.id)) {
-            return RootFolderPath.Root;
-        }
-        if (RootFolderId.allValues().includes(this.parentId)) {
-            return RootFolderPath.matchingId(this.parentId);
-        }
         const parent = this.findParent();
         if (parent) {
-            return parent.fullPath();
-        } else {
-            return undefined; // idk what do here yet... I wouldn't expect this to ever happen
+            return sanitize_folder_path(parent.findAncestors().reverse().map(tc => tc.name()).join("/"));
         }
+        return RootFolder.findById(this.parentId).path;
     }
     fullPath() {
-        return sanitize_folder_path(`${this.folderPath()}/${this.name()}`);
+        return sanitize_folder_path(this.findAncestors().reverse().map(tc => tc.name()).join("/"));
     }
+    // folderPath() {
+    //     if (RootFolder.allIds().includes(this.id)) {
+    //         return RootFolder.Root.path;
+    //     }
+    //     if (RootFolder.allIds().includes(this.parentId)) {
+    //         return RootFolder.allValues().find(f => f.id === this.parentId)?.path;
+    //     }
+    //     const parent = this.findParent();
+    //     if (parent) {
+    //         return parent.fullPath();
+    //     } else {
+    //         return undefined; // idk what do here yet... I wouldn't expect this to ever happen
+    //     }
+    // }
+    // fullPath() {
+    //     return sanitize_folder_path(`${this.folderPath()}/${this.name()}`);
+    // }
     name() {
         let n;
         if (this.tokenType === ItemType.PC) {
@@ -237,13 +256,17 @@ class TokenCustomization {
             if (!n) {
                 console.warn("Failed to find pc name for token customization. This might happen if this pc is not part of this campaign", pc, this);
             }
+        } else if (RootFolder.allIds().includes(this.id)) {
+            n = RootFolder.findById(this.id).name;
+        } else if (RootFolder.allPaths().map(p => path_to_html_id(p)).includes(this.id)) {
+            n = RootFolder.allPaths().map(p => path_to_html_id(p)).name;
         } else {
             n = this.tokenOptions?.name;
             if (!n) {
                 console.warn("Failed to find the name of a token customization", this);
             }
         }
-        return n;
+        return n || "undefined";
     }
     isTypeMyToken() {
         return this.tokenType === ItemType.MyToken;
@@ -256,6 +279,14 @@ class TokenCustomization {
     }
     isTypeMonster() {
         return this.tokenType === ItemType.Monster;
+    }
+
+    allCombinedOptions() {
+        let combinedOptions = {};
+        this.findAncestors().reverse().forEach(option => {
+            combinedOptions = {...combinedOptions, ...option};
+        });
+        return combinedOptions;
     }
 }
 
@@ -359,7 +390,7 @@ function migrate_token_customizations() {
             let parentPath = sanitize_folder_path(folder.folderPath);
             let parentId = easyFolderReference[parentPath]?.id;
             if (typeof parentId !== "string" || parentId.length === 0) {
-                parentId = RootFolderId.MyTokens;
+                parentId = RootFolder.MyTokens.id;
             }
             let newCustomization = TokenCustomization.Folder(folder.id, parentId, {
                 name: folder.name,
@@ -376,7 +407,7 @@ function migrate_token_customizations() {
             let parentPath = sanitize_folder_path(myToken.folderPath);
             let parentId = easyFolderReference[parentPath]?.id;
             if (typeof parentId !== "string" || parentId.length === 0) {
-                parentId = RootFolderId.MyTokens;
+                parentId = RootFolder.MyTokens.id;
             }
             let tokenOptions = {...myToken};
             if (myToken.alternativeImages) {
