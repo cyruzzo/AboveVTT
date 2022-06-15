@@ -1368,7 +1368,6 @@ function persist_folders_remembered_state() {
 
 function update_token_folders_remembered_state() {
     if (!window.tokenListItems || !window.sceneListFolders) {
-        console.debug("update_token_folders_remembered_state not even trying", !window.tokenListItems, !window.sceneListFolders);
         return; // still starting up
     }
 
@@ -1377,20 +1376,14 @@ function update_token_folders_remembered_state() {
         .concat(tokens_rootfolders)
         .concat(window.sceneListFolders);
 
-    console.debug("update_token_folders_remembered_state item count", items.length);
-
     if(localStorage.getItem('FolderRememberedState') != null) {
         let rememberedStates = JSON.parse(localStorage.getItem('FolderRememberedState'));
         items.forEach(item => {
             let state = rememberedStates[item.id];
-            console.debug("update_token_folders_remembered_state before", state, item);
             if (state === true || state === false) {
                 item.collapsed = state;
             }
-            console.debug("update_token_folders_remembered_state after", state, item);
         });
-    } else {
-        console.debug("update_token_folders_remembered_state nope");
     }
 }
 

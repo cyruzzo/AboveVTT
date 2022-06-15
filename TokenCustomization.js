@@ -451,6 +451,7 @@ function migrate_token_customizations() {
                         window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = true;
                         save_custom_monster_image_mapping();
                         console.log("migrate_token_customizations successfully persisted migrated customizations", newCustomizations);
+                        did_change_mytokens_items();
                     } else {
                         console.error("migrate_token_customizations failed to persist new customizations", newCustomizations, errorType);
                     }
