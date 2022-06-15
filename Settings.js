@@ -310,6 +310,18 @@ function init_settings(){
 		});
 	});
 	body.append(tokenOptionsButton);
+
+	const clearAllOverridesWarning = `This will remove ALL overridden token options from every player, monster, custom token, and folder in the Tokens Panel. This shouldn't remove any custom images from those tokens. This will not update any tokens that have been placed on a scene. This cannot be undone.`;
+	let clearAllTokenOverrides = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear All Token Option Overrides</button>`);
+	clearAllTokenOverrides.on("click", function() {
+		if (confirm(clearAllOverridesWarning)) {
+			window.TOKEN_CUSTOMIZATIONS.forEach(tc => tc.clearTokenOptions());
+			persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+		}
+	});
+	body.append(clearAllTokenOverrides);
+
+
 	body.append(`<br />`);
 
 	const experimental_features = [

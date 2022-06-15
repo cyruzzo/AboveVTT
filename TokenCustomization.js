@@ -296,6 +296,18 @@ class TokenCustomization {
         });
         return combinedOptions;
     }
+
+    // this does not change tokenOptions.name or tokenOptions.alternativeImages. Everything else will be removed.
+    clearTokenOptions() {
+        let clearedOptions = {};
+        if (this.tokenOptions.name !== undefined) {
+            clearedOptions.name = name;
+        }
+        if (Array.isArray(this.tokenOptions.alternativeImages)) {
+            clearedOptions.alternativeImages = [...this.tokenOptions.alternativeImages];
+        }
+        this.tokenOptions = clearedOptions;
+    }
 }
 
 /**
