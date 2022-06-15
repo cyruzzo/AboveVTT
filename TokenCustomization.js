@@ -289,8 +289,10 @@ class TokenCustomization {
 
     allCombinedOptions() {
         let combinedOptions = {};
-        this.findAncestors().reverse().forEach(option => {
-            combinedOptions = {...combinedOptions, ...option};
+        this.findAncestors().reverse().forEach(tc => {
+            if (typeof tc.tokenOptions === "object") {
+                combinedOptions = {...combinedOptions, ...tc.tokenOptions};
+            }
         });
         return combinedOptions;
     }

@@ -516,7 +516,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 console.log("enable_draggable_token_creation stop");
                 let draggedRow = $(event.target).closest(".list-item-identifier");
                 let draggedItem = find_sidebar_list_item(draggedRow);
-                let hidden = event.shiftKey || window.TOKEN_SETTINGS["hidden"];
+                let hidden = event.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
                 let src = $(ui.helper).attr("src");
                 create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY);
             } else {
@@ -623,23 +623,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
 
     // set up whatever you need to. We'll override a few things after
-    let options = {...window.TOKEN_SETTINGS};
+    let options = {...window.TOKEN_SETTINGS, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
     options.name = listItem.name;
-    options.itemType = listItem.type;
-    options.itemId = listItem.id;
-
-
-    // TODO: handle parent folder options!!!
-
-
-
 
     switch (listItem.type) {
         case ItemType.Folder:
             console.log("TODO: place all tokens in folder?", listItem);
             break;
         case ItemType.MyToken:
-            options = {...options, ...find_token_options_for_list_item(listItem)};
             let tokenSizeSetting = options.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
@@ -661,7 +652,6 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
             options.color = "#" + get_player_token_border_color(pc.sheet);
-            options = {...options, ...find_token_options_for_list_item(listItem)};
             break;
         case ItemType.Monster:
             let hpVal;
@@ -681,7 +671,6 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.max_hp = hpVal;
             options.sizeId = listItem.monsterData.sizeId;
             options.ac = listItem.monsterData.armorClass;
-            options = {...options, ...find_token_options_for_list_item(listItem)};
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
             let placedCount = 1;
@@ -698,16 +687,21 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             break;
         case ItemType.BuiltinToken:
-            options = {...options, ...find_token_options_for_list_item(listItem)};
             options.disablestat = true;
             break;
     }
 
+    options.itemType = listItem.type;
+    options.itemId = listItem.id;
     options.listItemPath = listItem.fullPath();
-    options.hidden = hidden;
+    if (hidden === true || hidden === false) {
+        options.hidden = hidden;
+    }
     options.imgsrc = random_image_for_item(listItem, specificImage);
-
-    console.log("create_and_place_token about to place token with options", options);
+    // TODO: figure out if we still need to do this, and where they are coming from
+    delete options.undefined;
+    delete options[""];
+    console.log("create_and_place_token about to place token with options", options, hidden);
 
     if (eventPageX === undefined || eventPageY === undefined) {
         place_token_in_center_of_view(options);
@@ -1843,7 +1837,7 @@ function find_token_options_for_list_item(listItem) {
     if (listItem.isTypeBuiltinToken()) {
         return find_builtin_token(listItem.fullPath());
     } else {
-        return find_token_customization(listItem.type, listItem.id)?.tokenOptions || {};
+        return find_token_customization(listItem.type, listItem.id)?.allCombinedOptions() || {};
     }
 }
 

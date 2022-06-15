@@ -1317,7 +1317,7 @@ function did_click_add_button(clickEvent) {
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
   console.log("did_click_add_button", clickedItem);
-  let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
+  let hidden = clickEvent.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
   create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
   update_pc_token_rows();
 }
@@ -1393,7 +1393,7 @@ function display_folder_configure_modal(listItem) {
   let itemType;
   if (listItemFullPath.startsWith(RootFolder.Scenes.path)) {
     itemType = ItemType.Scene;
-  } else if (listItemFullPath.startsWith(RootFolder.Scenes.path)) {
+  } else if (listItemFullPath.startsWith(RootFolder.MyTokens.path)) {
     itemType = ItemType.MyToken;
   }
 
