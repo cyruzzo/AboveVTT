@@ -1736,7 +1736,7 @@ function init_things() {
 		window.ScenesHandler = new ScenesHandler(gameId);
 		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
 			if (didSucceed === false) {
-				alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+				showGenericAlert();
 			}
 			init_ui();
 			if (is_encounters_page()) {
@@ -2773,7 +2773,7 @@ $(function() {
 				if (errorType === "EncounterLimitException") {
 					alert("Failed to create a backing Encounter! AboveVTT requires 1 available Encounter, but it looks like you already have more than your subscription level allows. Try deleting some encounters (or renaming one of them to \"AboveVTT\") and try again");
 				} else {
-					alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
+					showGenericAlert();
 				}
 				$(".joindm").removeClass("button-loading");
 				return;
@@ -3507,4 +3507,8 @@ function adjust_site_bar() {
 			"z-index": -1
 		});
 	}
+}
+
+function showGenericAlert() {
+	alert("An unexpected error occurred! Please check the developer console for errors, and report this via the AboveVTT Discord.");
 }

@@ -196,6 +196,12 @@ class TokenCustomization {
         }
         return undefined;
     }
+    alternativeImages() {
+        if (Array.isArray(this.tokenOptions.alternativeImages)) {
+            return this.tokenOptions.alternativeImages;
+        }
+        return [];
+    }
 
     findParent() {
         return window.TOKEN_CUSTOMIZATIONS.find(tc => tc.id === this.parentId);
@@ -588,4 +594,54 @@ function fetch_token_customizations(callback) {
             callback(false, errorMessage?.responseJSON?.type);
         }
     });
+}
+
+function delete_token_customization_by_type_and_id(itemType, id, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
+    let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === itemType && tc.id === id);
+    if (index >= 0) {
+        window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
+    }
+    persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
+
+    return; // TODO: remove everything above, and just do this instead
+
+    let http_api_gw="https://services.abovevtt.net";
+    let searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.has("dev")){
+        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+    }
+
+    window.ajaxQueue.addRequest({
+        url: `${http_api_gw}/services?action=deleteTokenCustomization&id=${id}&tokenType=${itemType}&userId=todo`, // TODO: figure this out
+        type: "DELETE",
+        success: function (response) {
+            console.warn(`delete_token_customization succeeded`, response);
+            let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === customization.tokenType && tc.id === customization.id);
+            if (index >= 0) {
+                window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
+            }
+            callback(true);
+        },
+        error: function (errorMessage) {
+            console.warn(`delete_token_customization failed`, errorMessage);
+            callback(false, errorMessage?.responseJSON?.type);
+        }
+    });
+
+}
+
+function find_customization_for_placed_token(placedToken) {
+    if (placedToken.options.itemType && placedToken.options.itemId) {
+        return find_token_customization(placedToken.options.itemType, placedToken.options.itemId);
+    } else if (placedToken.isMonster()) {
+        return find_token_customization(ItemType.Monster, placedToken.options.id);
+    } else if (placedToken.isPlayer()) {
+        return find_token_customization(ItemType.PC, placedToken.options.id);
+    } else {
+        // we don't have any other way to find the customization :(
+        return undefined;
+    }
 }

@@ -1548,7 +1548,7 @@ function init_scenes_panel() {
 		window.sceneListFolders.push(newFolderItem);
 		display_folder_configure_modal(newFolderItem);
 		did_update_scenes();
-		expand_all_folders_up_to(newFolderItem.fullPath(), scenesPanel.body);
+		expand_all_folders_up_to_item(newFolderItem);
 	});
 
 	let headerWrapper = $(`<div class="scenes-panel-add-buttons-wrapper"></div>`);
@@ -1579,6 +1579,7 @@ function rebuild_scene_items_list() {
 	if (window.sceneListFolders === undefined) {
 		window.sceneListFolders = [];
 	}
+	window.sceneListFolders = [];
 	window.sceneListItems
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => {
@@ -1706,20 +1707,20 @@ function create_scene_folder_inside(fullPath) {
 }
 
 function rename_scene_folder(item, newName, alertUser) {
-	console.groupCollapsed("rename_folder");
+	console.groupCollapsed("rename_scene_folder");
 	if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolder.Scenes.path)) {
-		console.warn("rename_folder called with an incorrect item type", item);
 		console.groupEnd();
+		console.warn("rename_scene_folder called with an incorrect item type", item);
 		if (alertUser !== false) {
-			alert("An unexpected error occurred");
+			showGenericAlert();
 		}
 		return;
 	}
 	if (!item.canEdit()) {
-		console.warn("Not allowed to rename folder", item);
 		console.groupEnd();
+		console.warn("rename_scene_folder Not allowed to rename folder", item);
 		if (alertUser !== false) {
-			alert("An unexpected error occurred");
+			showGenericAlert();
 		}
 		return;
 	}
@@ -1837,11 +1838,11 @@ function register_scene_row_context_menu() {
 function expand_folders_to_active_scenes() {
 	let dmSceneItem = window.sceneListItems.find(i => i.sceneId === window.CURRENT_SCENE_DATA.id);
 	if (dmSceneItem) {
-		expand_all_folders_up_to(dmSceneItem.fullPath(), scenesPanel.body);
+		expand_all_folders_up_to_item(dmSceneItem);
 	}
 	let pcSceneItem = window.sceneListItems.find(i => i.sceneId === window.PLAYER_SCENE_ID);
 	if (pcSceneItem) {
-		expand_all_folders_up_to(pcSceneItem.fullPath(), scenesPanel.body);
+		expand_all_folders_up_to_item(pcSceneItem);
 	}
 }
 

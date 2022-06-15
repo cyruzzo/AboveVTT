@@ -689,6 +689,7 @@ function export_file(){
 			DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
 			DataFile.mytokens=mytokens;
 			DataFile.mytokensfolders=mytokensfolders;
+			DataFile.tokencustomizations=window.TOKEN_CUSTOMIZATIONS;
 			DataFile.notes=window.JOURNAL.notes;
 			DataFile.journalchapters=window.JOURNAL.chapters;	
 			DataFile.soundpads=window.SOUNDPADS;
@@ -725,6 +726,18 @@ function import_readfile() {
 		}
 		$("#sounds-panel").remove(); init_audio();
 		persist_soundpad();
+
+		if (DataFile.tokencustomizations !== undefined) {
+			let customizations = [];
+			customizations = DataFile.tokencustomizations.forEach(json => {
+				try {
+					customizations = TokenCustomization.fromJson(json);
+				} catch (error) {
+					console.error("Failed to parse TokenCustomization from json", json);
+				}
+			});
+			persist_all_token_customizations(customizations);
+		}
 
 		if (DataFile.mytokens !== undefined) {
 			mytokens = DataFile.mytokens;
