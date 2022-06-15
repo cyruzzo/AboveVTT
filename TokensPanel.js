@@ -655,7 +655,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             break;
         case ItemType.Monster:
             let hpVal;
-            switch (window.TOKEN_SETTINGS['defaultmaxhptype']) {
+            switch (options['defaultmaxhptype']) {
                 case 'max':
                     const hitDiceData = listItem.monsterData.hitPointDice;
                     hpVal = hitDiceData.diceCount * hitDiceData.diceValue + hitDiceData.fixedValue;
@@ -664,6 +664,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     hpVal = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
                     break;
                 case 'average':
+                default:
                     hpVal = listItem.monsterData.averageHitPoints;
                     break;
             }
