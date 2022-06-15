@@ -268,16 +268,12 @@ function rebuild_token_items_list() {
         .filter(item => item.folderPath !== RootFolderPath.Root && item.folderPath !== "" && item.folderPath !== undefined)
         .map(item => item.folderPath);
     let builtinPaths = [...new Set(allBuiltinPaths)];
-    console.log("heyyy builtinPaths", builtinPaths)
     for (let i = 0; i < builtinPaths.length; i++) {
         let path = builtinPaths[i];
         let pathComponents = path.split("/");
         let folderName = pathComponents.pop();
         let folderPath = pathComponents.join("/");
         let builtinFolderPath = sanitize_folder_path(`${RootFolderPath.AboveVTT}/${folderPath}`);
-        console.log("heyyy builtinFolderPath", builtinFolderPath);
-        console.log("heyyy path_to_html_id(builtinFolderPath, folderName)", path_to_html_id(builtinFolderPath, folderName));
-        console.log("heyyy path_to_html_id(builtinFolderPath)", path_to_html_id(builtinFolderPath));
         tokenItems.push(
             SidebarListItem.Folder(path_to_html_id(builtinFolderPath, folderName),
                 builtinFolderPath,
@@ -680,7 +676,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             break;
         case ItemType.MyToken:
             options = {...options, ...find_token_options_for_list_item(listItem)};
-            let tokenSizeSetting = myToken.tokenSize;
+            let tokenSizeSetting = options.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1;
@@ -767,8 +763,8 @@ function token_size_for_item(listItem) {
         case ItemType.Folder:
             return 1;
         case ItemType.MyToken:
-            let myToken = find_my_token(listItem.fullPath());
-            let tokenSizeSetting = myToken.tokenSize;
+            let options = find_token_options_for_list_item(listItem);
+            let tokenSizeSetting = options.tokenSize;
             let tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1; // TODO: handle custom sizes
@@ -1337,7 +1333,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
         let customization;
         try {
-             customization = find_or_create_token_customization(listItem.type, listItem.id);
+             customization = find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId);
         } catch (error) {
             console.error("Failed to find_or_create TokenCustomization object from listItem", listItem);
             return;
@@ -2083,10 +2079,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 }
 
 function find_token_options_for_list_item(listItem) {
-    if (listItem.isTypeMyToken()) {
-        // TODO: soon to use find_token_customization as well
-        return find_my_token(listItem.fullPath());
-    } else if (listItem.isTypeBuiltinToken()) {
+    if (listItem.isTypeBuiltinToken()) {
         return find_builtin_token(listItem.fullPath());
     } else {
         return find_token_customization(listItem.type, listItem.id)?.tokenOptions || {};

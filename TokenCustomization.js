@@ -271,11 +271,12 @@ function find_token_customization(type, id) {
 /**
  * @param type {string} the type of customization you're looking for. EX: ItemType.Monster
  * @param id {string|number} the id of the customization you're looking for. EX: pc.sheet, monsterData.id, etc
+ * @param parentId {string|number} the id of the parent that will be created. EX: pc.sheet, monsterData.id, etc
  * @returns {TokenCustomization|undefined} a token customization for the item if found. If not found, a new TokenCustomization object will be created and returned.
  * @throws an error if a customization object cannot be created
  */
-function find_or_create_token_customization(type, id) {
-    return find_token_customization(type, id) || new TokenCustomization(id, type, {});
+function find_or_create_token_customization(type, id, parentId) {
+    return find_token_customization(type, id) || new TokenCustomization(id, type, parentId, {});
 }
 
 /**

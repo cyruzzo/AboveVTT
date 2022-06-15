@@ -1421,18 +1421,13 @@ function display_folder_configure_modal(listItem) {
   set_full_path(folderNameInput, listItemFullPath);
   sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder));
 
-  // Coming Soon...
-  // let folderOptions = {};
-  // let folderOptionsButton = build_override_token_options_button(sidebarModal, listItem, undefined, folderOptions, function () {
-  //   if (value === true || value === false) {
-  //     folderOptions[name] = value;
-  //   } else {
-  //     delete folderOptions[name];
-  //   }
-  // }, function () {
-  //
-  // });
-  // sidebarModal.body.append(folderOptionsButton);
+  let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId);
+  let folderOptionsButton = build_override_token_options_button(sidebarModal, listItem, undefined, customization.tokenOptions, function (key, value) {
+    customization.setTokenOption(key, value);
+  }, function () {
+    persist_token_customization(customization);
+  });
+  sidebarModal.body.append(folderOptionsButton);
 
   let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
   saveButton.on("click", function (clickEvent) {

@@ -2032,19 +2032,19 @@ function get_custom_monster_images(monsterId) {
 }
 
 function add_custom_monster_image_mapping(monsterId, imgsrc) {
-	let customization = find_or_create_token_customization(ItemType.Monster, monsterId);
+	let customization = find_or_create_token_customization(ItemType.Monster, monsterId, RootFolderId.Monsters);
 	customization.addAlternativeImage(imgsrc);
 	persist_token_customization(customization);
 }
 
 function remove_custom_monster_image(monsterId, imgsrc) {
-	let customization = find_or_create_token_customization(ItemType.Monster, monsterId);
+	let customization = find_or_create_token_customization(ItemType.Monster, monsterId, RootFolderId.Monsters);
 	customization.removeAlternativeImage(imgsrc);
 	persist_token_customization(customization);
 }
 
 function remove_all_custom_monster_images(monsterId) {
-	let customization = find_or_create_token_customization(ItemType.Monster, monsterId);
+	let customization = find_or_create_token_customization(ItemType.Monster, monsterId, RootFolderId.Monsters);
 	customization.removeAllAlternativeImages();
 	persist_token_customization(customization);
 }
