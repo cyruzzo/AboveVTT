@@ -1847,7 +1847,7 @@ function expand_folders_to_active_scenes() {
 }
 
 function delete_scenes_within_folder(listItem) {
-	console.groupCollapsed(`delete_mytokens_within_folder`);
+	console.groupCollapsed(`delete_scenes_within_folder`);
 	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	console.log("about to delete all scenes within", adjustedPath);
@@ -1866,7 +1866,7 @@ function delete_scenes_within_folder(listItem) {
 }
 
 function move_scenes_to_parent_folder(listItem) {
-	console.groupCollapsed(`move_mytokens_to_parent_folder`);
+	console.groupCollapsed(`move_scenes_to_parent_folder`);
 	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.Scenes.path, ""));
 

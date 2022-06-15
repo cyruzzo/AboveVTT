@@ -969,63 +969,56 @@ function create_mytoken_folder_inside(listItem) {
     });
 }
 
-function delete_mytokens_within_folder(listItem) {
-    console.groupCollapsed(`delete_mytokens_within_folder`);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
-
-    console.log("about to delete all tokens within", adjustedPath);
-    console.debug("before deleting from mytokens", mytokens);
-    mytokens = mytokens.filter(token => !token.folderPath.startsWith(adjustedPath));
-    console.debug("after deleting from mytokens", mytokens);
-
-    console.log("about to delete all folders within", adjustedPath);
-    console.debug("before deleting from mytokensfolders", mytokensfolders);
-    mytokensfolders = mytokensfolders.filter(folder => !folder.folderPath.startsWith(adjustedPath))
-    console.debug("after deleting from mytokensfolders", mytokensfolders);
-
-    console.groupEnd();
+function delete_mytokens_folder_and_everything_in_it(listItem) {
+    console.log("delete_mytokens_folder_and_everything_in_it about to delete all tokens with parentId", listItem.id);
+    delete_token_customization_by_parent_id(listItem.id, function (deletedChildren, deletedChildrenErrorType) {
+        if (deletedChildren) {
+            console.log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
+            delete_token_customization_by_type_and_id(listItem.type, listItem.id, function (deletedFolder, deletedFolderErrorType) {
+                did_change_mytokens_items();
+                expand_all_folders_up_to_item(listItem);
+                if (deletedFolder) {
+                    console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
+                } else {
+                    console.error("delete_mytokens_folder_and_everything_in_it failed delete the folder with id", listItem.id, deletedFolderErrorType);
+                    showGenericAlert();
+                }
+            });
+        } else {
+            did_change_mytokens_items();
+            expand_all_folders_up_to_item(listItem);
+            console.error("delete_mytokens_within_folder failed to delete token customizations", deletedChildrenErrorType);
+            showGenericAlert();
+        }
+    });
 }
 
-function move_mytokens_to_parent_folder(listItem) {
+function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
     // this is different from move_mytokens_folder in that it moved everything out of listItem
-    console.groupCollapsed(`move_mytokens_to_parent_folder`);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
-    let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.MyTokens.path, ""));
 
-    console.debug("before moving mytokens", mytokens);
-    mytokens.forEach(token => {
-        if (token.folderPath.startsWith(adjustedPath)) {
-            let newFolderPath = sanitize_folder_path(token.folderPath.replace(adjustedPath, oneLevelUp));
-            console.log(`moving ${token.name} up one level to ${newFolderPath}`, token);
-            token.folderPath = newFolderPath;
-        } else {
-            console.debug(`not moving token up one level`, token);
+    console.log("move_mytokens_to_parent_folder_and_delete_folder about to move all items out of", listItem.id);
+    window.TOKEN_CUSTOMIZATIONS.forEach(tc => {
+        if (tc.parentId === listItem.id) {
+            tc.parentId = listItem.parentId;
         }
     });
-    console.debug("after moving mytokens", mytokens);
-
-    console.debug("before moving mytokensfolders", mytokensfolders);
-    mytokensfolders = mytokensfolders.filter(folder => sanitize_folder_path(`${folder.folderPath}/${folder.name}`) !== adjustedPath); // remove the folder itself
-    mytokensfolders.forEach(f => {
-        if (f.folderPath.startsWith(adjustedPath)) {
-            let newFolderPath = sanitize_folder_path(f.folderPath.replace(adjustedPath, oneLevelUp));
-            console.log("moving folder up to", newFolderPath, f);
-            f.folderPath = newFolderPath;
+    let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === listItem.type && tc.id === listItem.id);
+    if (index >= 0) {
+        console.log(window.TOKEN_CUSTOMIZATIONS.length);
+        window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
+        console.log(window.TOKEN_CUSTOMIZATIONS.length);
+    } else {
+        console.log("move_mytokens_to_parent_folder_and_delete_folder could not find customization with id", listItem.id);
+    }
+    persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, function (didSucceed, errorType) {
+        if (didSucceed) {
+            console.log("move_mytokens_to_parent_folder_and_delete_folder successfully moved all children up one level and deleted folder with id", listItem.id);
         } else {
-            console.debug("not moving folder up", f);
+            console.error("move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id, errorType);
+            showGenericAlert();
         }
+        callback(didSucceed, errorType);
     });
-    console.debug("after moving mytokensfolders", mytokensfolders);
-
-    console.groupEnd();
-}
-
-function delete_mytokens_folder(listItem) {
-    console.log("delete_mytokens_folder", listItem);
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
-    console.debug("before deleting from mytokensfolders", mytokensfolders);
-    mytokensfolders = mytokensfolders.filter(folder => sanitize_folder_path(`${folder.folderPath}/${folder.name}`) !== adjustedPath);
-    console.debug("after deleting from mytokensfolders", mytokensfolders);
 }
 
 /**
@@ -1197,27 +1190,6 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     });
     inputWrapper.append(tokenOptionsButton);
     inputWrapper.append(`<br />`);
-
-
-    // // submit form button
-    // let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save</button>`);
-    // saveButton.on("click", function (event) {
-    //     let nameInput = $(event.target).parent().find("input[name='addCustomName']");
-    //     if (nameInput.length > 0 && nameInput.val().length > 0) {
-    //         rename(nameInput.val());
-    //     }
-    //
-    //     // just in case, they pasted a url, but didn't press the enter key or click the Add button, we should grab the url and save it
-    //     if (listItem.image === undefined || listItem.image.length === 0) {
-    //         let imageUrl = $(event.target).parent().find(`input[name='addCustomImage']`)[0].value;
-    //         if (imageUrl !== undefined && imageUrl.length > 0) {
-    //             addImageUrl(imageUrl);
-    //         }
-    //     }
-    //
-    //     did_change_mytokens_items();
-    //     close_sidebar_modal();
-    // });
 }
 
 function build_override_token_options_button(sidebarPanel, listItem, placedToken, options, updateValue, didChange) {

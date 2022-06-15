@@ -1572,10 +1572,7 @@ function delete_folder_and_delete_children(listItem) {
   }
 
   if (listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
-    delete_mytokens_within_folder(listItem);
-    delete_mytokens_folder(listItem);
-    did_change_mytokens_items();
-    expand_all_folders_up_to_item(listItem);
+    delete_mytokens_folder_and_everything_in_it(listItem);
   } else if (listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
     delete_scenes_within_folder(listItem);
     delete_scenes_folder(listItem);
@@ -1602,10 +1599,10 @@ function delete_folder_and_move_children_up_one_level(listItem) {
   }
 
   if (listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
-    move_mytokens_to_parent_folder(listItem);
-    delete_mytokens_folder(listItem);
-    did_change_mytokens_items();
-    expand_all_folders_up_to_item(listItem);
+    move_mytokens_to_parent_folder_and_delete_folder(listItem, function (didSucceed, errorType) {
+      did_change_mytokens_items();
+      expand_all_folders_up_to_id(listItem.parentId);
+    });
   } else if (listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
     move_scenes_to_parent_folder(listItem);
     delete_scenes_folder(listItem);

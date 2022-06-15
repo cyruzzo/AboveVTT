@@ -597,6 +597,47 @@ function fetch_token_customizations(callback) {
     });
 }
 
+// deletes everything within a folder
+function delete_token_customization_by_parent_id(parentId, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
+    if (typeof parentId !== "string" || parentId.length === 0) {
+        console.warn("delete_token_customization_by_parent_id received an invalid parentId", parentId);
+        callback(false);
+        return;
+    }
+
+    window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId !== parentId);
+
+    persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
+
+    return; // TODO: remove everything above, and just do this instead
+
+    let http_api_gw="https://services.abovevtt.net";
+    let searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.has("dev")){
+        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+    }
+
+    window.ajaxQueue.addRequest({
+        url: `${http_api_gw}/services?action=deleteTokenCustomizations&parentId=${parentId}&userId=todo`, // TODO: figure this out
+        type: "DELETE",
+        success: function (response) {
+            console.warn(`delete_token_customization succeeded`, response);
+            let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === customization.tokenType && tc.id === customization.id);
+            if (index >= 0) {
+                window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
+            }
+            callback(true);
+        },
+        error: function (errorMessage) {
+            console.warn(`delete_token_customization failed`, errorMessage);
+            callback(false, errorMessage?.responseJSON?.type);
+        }
+    });
+}
+
 function delete_token_customization_by_type_and_id(itemType, id, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
