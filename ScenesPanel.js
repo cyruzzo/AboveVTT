@@ -1576,9 +1576,6 @@ function rebuild_scene_items_list() {
 	console.group("rebuild_scene_items_list");
 	window.sceneListItems = window.ScenesHandler.scenes.map(s => SidebarListItem.Scene(s)).sort(SidebarListItem.sortComparator);
 	// TODO: read scene folders from localStorage?
-	if (window.sceneListFolders === undefined) {
-		window.sceneListFolders = [];
-	}
 	window.sceneListFolders = [];
 	window.sceneListItems
 		.sort(SidebarListItem.folderDepthComparator)
@@ -1601,6 +1598,7 @@ function rebuild_scene_items_list() {
 			});
 		}
 	});
+	update_token_folders_remembered_state();
 	console.groupEnd();
 }
 

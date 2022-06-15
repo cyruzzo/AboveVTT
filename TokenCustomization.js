@@ -398,10 +398,7 @@ function migrate_token_customizations() {
             if (typeof parentId !== "string" || parentId.length === 0) {
                 parentId = RootFolder.MyTokens.id;
             }
-            let newCustomization = TokenCustomization.Folder(folder.id, parentId, {
-                name: folder.name,
-                collapsed: folder.collapsed
-            });
+            let newCustomization = TokenCustomization.Folder(folder.id, parentId, { name: folder.name });
             newCustomizations.push(newCustomization);
             console.debug("migrate_token_customizations migrated", sanitize_folder_path(`${folder.folderPath}/${folder.name}`), "to", newCustomization);
         });

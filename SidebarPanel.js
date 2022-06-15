@@ -1239,9 +1239,7 @@ function did_click_row(clickEvent) {
         clickedRow.addClass("collapsed");
         clickedItem.collapsed = true;
       }
-      if (clickedItem.isTokensPanelItem()) {
-        persist_token_folders_remembered_state();
-      }
+      persist_folders_remembered_state();
       if (clickedItem.isTypeEncounter()) {
         // we explicitly allowed it to pass through and be treated like a folder so now we need to act on it
         fetch_encounter_monsters_if_necessary(clickedRow, clickedItem);

@@ -250,6 +250,7 @@ function rebuild_token_items_list() {
     }
 
     window.tokenListItems = tokenItems;
+    update_token_folders_remembered_state();
     console.groupEnd();
 }
 
@@ -368,7 +369,6 @@ function init_tokens_panel() {
     migrate_to_my_tokens();
     migrate_token_customizations();
     rebuild_token_items_list();
-    update_token_folders_remembered_state();
 
     let header = tokensPanel.header;
     // TODO: remove this warning once tokens are saved in the cloud
@@ -407,6 +407,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
         return;
     }
     console.groupCollapsed("redraw_token_list");
+    update_token_folders_remembered_state();
     let list = $(`<div class="custom-token-list"></div>`);
     tokensPanel.body.empty();
     tokensPanel.body.append(list);
@@ -955,7 +956,7 @@ function create_mytoken_folder_inside(listItem) {
     if (newFolderCount > 0) {
         newFolderName += ` ${newFolderCount + 1}`;
     }
-    let newFolder = TokenCustomization.Folder(uuid(), listItem.id, { name: newFolderName, collapsed: true });
+    let newFolder = TokenCustomization.Folder(uuid(), listItem.id, { name: newFolderName });
     persist_token_customization(newFolder, function(didSucceed, errorType) {
         if (didSucceed) {
             did_change_mytokens_items();
@@ -1349,31 +1350,47 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
 function persist_my_tokens() {
     localStorage.setItem("MyTokens", JSON.stringify(mytokens));
     localStorage.setItem("MyTokensFolders", JSON.stringify(mytokensfolders));
-    persist_token_folders_remembered_state();
+    persist_folders_remembered_state();
 }
 
-function persist_token_folders_remembered_state() {
+function persist_folders_remembered_state() {
     if (window.tokenListItems === undefined) return;
     let rememberedFolderState = {};
-    let foldersToRemember = window.tokenListItems
-        .filter(item => item.isTypeFolder() && item.fullPath().startsWith(RootFolder.AboveVTT.path))
-        .concat(tokens_rootfolders);
-    foldersToRemember.forEach(f => {
-        rememberedFolderState[f.fullPath()] = f.collapsed
-    });
-    localStorage.setItem("TokensFolderRememberedState", JSON.stringify(rememberedFolderState));
+    window.tokenListItems
+        .filter(item => item.isTypeFolder())
+        .concat(tokens_rootfolders)
+        .concat(window.sceneListFolders)
+        .forEach(f => {
+            rememberedFolderState[f.id] = f.collapsed;
+        });
+    localStorage.setItem("FolderRememberedState", JSON.stringify(rememberedFolderState));
 }
 
 function update_token_folders_remembered_state() {
-    let tokenItems = window.tokenListItems.concat(tokens_rootfolders);
-    if(localStorage.getItem('TokensFolderRememberedState') != null){
-        let rememberedStates = JSON.parse(localStorage.getItem('TokensFolderRememberedState'));
-        tokenItems.forEach(item => {
-            let state = rememberedStates[item.fullPath()];
+    if (!window.tokenListItems || !window.sceneListFolders) {
+        console.debug("update_token_folders_remembered_state not even trying", !window.tokenListItems, !window.sceneListFolders);
+        return; // still starting up
+    }
+
+    let items = window.tokenListItems
+        .filter(item => item.isTypeFolder())
+        .concat(tokens_rootfolders)
+        .concat(window.sceneListFolders);
+
+    console.debug("update_token_folders_remembered_state item count", items.length);
+
+    if(localStorage.getItem('FolderRememberedState') != null) {
+        let rememberedStates = JSON.parse(localStorage.getItem('FolderRememberedState'));
+        items.forEach(item => {
+            let state = rememberedStates[item.id];
+            console.debug("update_token_folders_remembered_state before", state, item);
             if (state === true || state === false) {
                 item.collapsed = state;
             }
+            console.debug("update_token_folders_remembered_state after", state, item);
         });
+    } else {
+        console.debug("update_token_folders_remembered_state nope");
     }
 }
 
@@ -1462,11 +1479,8 @@ function inject_encounter_monsters() {
 
 /** A convenience function to be called after any "My Tokens" are updated */
 function did_change_mytokens_items() {
-    // persist_my_tokens();
     rebuild_token_items_list();
-    update_token_folders_remembered_state();
     redraw_token_list();
-    // filter_token_list(tokensPanel.body.find(".token-search").val());
 }
 
 /**
