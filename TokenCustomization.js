@@ -535,13 +535,14 @@ function persist_token_customization(customization, callback) {
         }
 
         let existingIndex = window.TOKEN_CUSTOMIZATIONS.findIndex(c => c.tokenType === customization.tokenType && c.id === customization.id);
-        if (existingIndex) {
+        if (existingIndex >= 0) {
             window.TOKEN_CUSTOMIZATIONS[existingIndex] = customization;
         } else {
             window.TOKEN_CUSTOMIZATIONS.push(customization);
         }
 
-        window.persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+        // TODO: call the API with a single object instead of persisting everything
+        persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
 
     } catch (error) {
         console.error("failed to persist customization", customization, error);

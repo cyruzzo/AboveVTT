@@ -1423,6 +1423,7 @@ function display_folder_configure_modal(listItem) {
         redraw_token_list();
         expand_all_folders_up_to_id(foundItem.id);
       }
+      sidebarModal.updateHeader(newFolderName, updatedFullPath, "Edit or delete this folder.");
       return updatedFullPath;
     } else {
       // there was a naming conflict, and the user has been alerted. select the entire text so they can easily change it
@@ -1491,6 +1492,7 @@ function rename_folder(item, newName, alertUser = true) {
     let customization = find_token_customization(item.type, item.id);
     customization.setTokenOption("name", newName);
     persist_token_customization(customization);
+    did_change_mytokens_items();
     return customization.fullPath();
   } else if (item.folderPath.startsWith(RootFolder.Scenes.path)) {
     return rename_scene_folder(item, newName, alertUser);

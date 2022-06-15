@@ -939,15 +939,6 @@ function register_token_row_context_menu() {
 }
 
 /**
- * determines if the given path exists or not.
- * @param folderPath {string} the path you are looking for
- * @returns {boolean} whether or not the path exists
- */
-function my_token_path_exists(folderPath) {
-    return mytokensfolders.find(token => token.folderPath === folderPath) !== undefined || mytokensfolders.find(folder => folder.folderPath === folderPath || sanitize_folder_path(`${folder.folderPath}/${folder.name}`) === folderPath) !== undefined
-}
-
-/**
  * Creates a "My Tokens" folder within another "My Tokens" folder
  * @param listItem {SidebarListItem} The folder to create a new folder within
  */
@@ -957,20 +948,25 @@ function create_mytoken_folder_inside(listItem) {
         return;
     }
 
-    let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.MyTokens.path, ""));
     let newFolderName = "New Folder";
-    let newFolderCount = mytokensfolders.filter(f => f.folderPath === adjustedPath && f.name.startsWith(newFolderName)).length;
-    console.log("newFolderCount", newFolderCount);
+    let newFolderCount = window.TOKEN_CUSTOMIZATIONS
+        .filter(tc => tc.tokenType === ItemType.Folder && tc.name().startsWith(newFolderName))
+        .length;
     if (newFolderCount > 0) {
         newFolderName += ` ${newFolderCount + 1}`;
     }
-    let newFolder = { folderPath: adjustedPath, name: newFolderName, collapsed: true };
-    mytokensfolders.push(newFolder);
-    let newFolderFullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}${newFolder.folderPath}/${newFolder.name}`);
-    did_change_mytokens_items();
-    let newListItem = window.tokenListItems.find(i => i.fullPath() === newFolderFullPath);
-    display_folder_configure_modal(newListItem);
-    expand_all_folders_up_to_item(newListItem);
+    let newFolder = TokenCustomization.Folder(uuid(), listItem.id, { name: newFolderName, collapsed: true });
+    persist_token_customization(newFolder, function(didSucceed, errorType) {
+        if (didSucceed) {
+            did_change_mytokens_items();
+            let newListItem = window.tokenListItems.find(li => li.type === ItemType.Folder && li.id === newFolder.id);
+            display_folder_configure_modal(newListItem);
+            expand_all_folders_up_to_item(newListItem);
+        } else {
+            console.error("create_mytoken_folder_inside failed to create a new folder", errorType);
+            showGenericAlert();
+        }
+    });
 }
 
 function delete_mytokens_within_folder(listItem) {
@@ -1132,7 +1128,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         persist_token_customization(customization);
         redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
         removeAllButton.show();
-        inputWrapper.find(".token-image-modal-footer-title").text(determineLabelText());
+        inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
     };
 
     // MyToken name input handler
@@ -1143,6 +1139,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             persist_token_customization(customization);
             sidebarPanel.updateHeader(newName, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+            did_change_mytokens_items();
+            expand_all_folders_up_to_id(customization.id);
         }
     };
 
@@ -1315,9 +1313,9 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     }
 
     if (alternative_images_for_item(listItem).length === 0) {
-        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title").text("Replace The Default Image");
+        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text("Replace The Default Image");
     } else {
-        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title").text("Add More Custom Images");
+        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text("Add More Custom Images");
     }
 }
 
