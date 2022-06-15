@@ -1576,7 +1576,9 @@ function rebuild_scene_items_list() {
 	console.group("rebuild_scene_items_list");
 	window.sceneListItems = window.ScenesHandler.scenes.map(s => SidebarListItem.Scene(s)).sort(SidebarListItem.sortComparator);
 	// TODO: read scene folders from localStorage?
-	window.sceneListFolders = [];
+	if (!window.sceneListFolders) {
+		window.sceneListFolders = [];
+	}
 	window.sceneListItems
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => {
