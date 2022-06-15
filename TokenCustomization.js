@@ -35,6 +35,7 @@ class RootFolderPath {
             case RootFolderId.MyTokens: return RootFolderPath.MyTokens;
             case RootFolderId.BuiltinTokens: return RootFolderPath.AboveVTT;
             case RootFolderId.Encounter: return RootFolderPath.Encounters;
+            case RootFolderId.Scenes: return RootFolderPath.Scenes;
             default: return undefined;
         }
     }
@@ -46,13 +47,15 @@ class RootFolderId {
     static MyTokens = "myTokensFolder";
     static BuiltinTokens = "builtinTokensFolder";
     static Encounter = "encountersFolder";
+    static Scenes = "scenesFolder";
     static allValues() {
         return [
             RootFolderId.Players,
             RootFolderId.Monsters,
             RootFolderId.MyTokens,
             RootFolderId.BuiltinTokens,
-            RootFolderId.Encounter
+            RootFolderId.Encounter,
+            RootFolderId.Scenes,
         ]
     }
 }
@@ -241,6 +244,18 @@ class TokenCustomization {
             }
         }
         return n;
+    }
+    isTypeMyToken() {
+        return this.tokenType === ItemType.MyToken;
+    }
+    isTypeFolder() {
+        return this.tokenType === ItemType.Folder;
+    }
+    isTypePC() {
+        return this.tokenType === ItemType.PC;
+    }
+    isTypeMonster() {
+        return this.tokenType === ItemType.Monster;
     }
 }
 

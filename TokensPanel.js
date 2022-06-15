@@ -250,30 +250,42 @@ function rebuild_token_items_list() {
         .map(pc => SidebarListItem.PC(pc.sheet, pc.name, pc.image));
 
     // My Tokens Folders
-    for (let i = 0; i < mytokensfolders.length; i++) {
-        let folder = mytokensfolders[i];
-        let myTokensPath = sanitize_folder_path(`${RootFolderPath.MyTokens}${folder.folderPath}`);
-        tokenItems.push(SidebarListItem.Folder(myTokensPath, folder.name, folder.collapsed));
-    }
+    window.TOKEN_CUSTOMIZATIONS
+        .filter(tc => tc.tokenType === ItemType.Folder)
+        .forEach(tc => {
+            if ($(`#${tc.id}`).length === 0) { // only add them once. This can happen for folders that we add, but allow token customization overrides
+                tokenItems.push(SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId))
+            }
+        })
 
     // My Tokens
-    for (let i = 0; i < mytokens.length; i++) {
-        let myToken = mytokens[i];
-        tokenItems.push(SidebarListItem.MyToken(myToken));
-    }
+    window.TOKEN_CUSTOMIZATIONS
+        .filter(tc => tc.tokenType === ItemType.MyToken)
+        .forEach(tc => tokenItems.push(SidebarListItem.MyToken(tc)))
 
     // AboveVTT Tokens
     let allBuiltinPaths = builtInTokens
         .filter(item => item.folderPath !== RootFolderPath.Root && item.folderPath !== "" && item.folderPath !== undefined)
         .map(item => item.folderPath);
     let builtinPaths = [...new Set(allBuiltinPaths)];
+    console.log("heyyy builtinPaths", builtinPaths)
     for (let i = 0; i < builtinPaths.length; i++) {
         let path = builtinPaths[i];
         let pathComponents = path.split("/");
         let folderName = pathComponents.pop();
         let folderPath = pathComponents.join("/");
-        let builtinFolderPath = `${RootFolderPath.AboveVTT}/${folderPath}`;
-        tokenItems.push(SidebarListItem.Folder(builtinFolderPath, folderName, true));
+        let builtinFolderPath = sanitize_folder_path(`${RootFolderPath.AboveVTT}/${folderPath}`);
+        console.log("heyyy builtinFolderPath", builtinFolderPath);
+        console.log("heyyy path_to_html_id(builtinFolderPath, folderName)", path_to_html_id(builtinFolderPath, folderName));
+        console.log("heyyy path_to_html_id(builtinFolderPath)", path_to_html_id(builtinFolderPath));
+        tokenItems.push(
+            SidebarListItem.Folder(path_to_html_id(builtinFolderPath, folderName),
+                builtinFolderPath,
+                folderName,
+                true,
+            builtinFolderPath === RootFolderPath.AboveVTT ? RootFolderId.BuiltinTokens : path_to_html_id(builtinFolderPath)
+            )
+        );
     }
     for (let i = 0; i < builtInTokens.length; i++) {
         tokenItems.push(SidebarListItem.BuiltinToken(builtInTokens[i]));
@@ -386,11 +398,11 @@ function init_tokens_panel() {
     console.log("init_tokens_panel");
 
     tokens_rootfolders = [
-        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NamePlayers, false),
-        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameMonsters, false),
-        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameMyTokens, false),
-        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameAboveVTT, false),
-        SidebarListItem.Folder(RootFolderPath.Root, SidebarListItem.NameEncounters, false)
+        SidebarListItem.Folder(RootFolderId.Players, RootFolderPath.Root, SidebarListItem.NamePlayers, false, path_to_html_id(RootFolderPath.Root)),
+        SidebarListItem.Folder(RootFolderId.Monsters, RootFolderPath.Root, SidebarListItem.NameMonsters, false, path_to_html_id(RootFolderPath.Root)),
+        SidebarListItem.Folder(RootFolderId.MyTokens, RootFolderPath.Root, SidebarListItem.NameMyTokens, false, path_to_html_id(RootFolderPath.Root)),
+        SidebarListItem.Folder(RootFolderId.BuiltinTokens, RootFolderPath.Root, SidebarListItem.NameAboveVTT, false, path_to_html_id(RootFolderPath.Root)),
+        SidebarListItem.Folder(RootFolderId.Encounter, RootFolderPath.Root, SidebarListItem.NameEncounters, false, path_to_html_id(RootFolderPath.Root))
     ];
 
     if(localStorage.getItem('MyTokens') != null){
@@ -466,7 +478,8 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
         .forEach(item => {
             let row = build_sidebar_list_row(item);
             console.debug("appending item", item);
-            find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
+            $(`#${item.parentId} > .folder-item-list`).append(row);
+            // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
     // now let's add all the other items
@@ -482,7 +495,8 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
                 enable_draggable_token_creation(row);
             }
             console.debug("appending item", item);
-            find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
+            $(`#${item.parentId} > .folder-item-list`).append(row);
+            // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
     update_pc_token_rows();
@@ -1323,7 +1337,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
         let customization;
         try {
-             customization = find_or_create_token_customization(listItem.type, listItem.backingId());
+             customization = find_or_create_token_customization(listItem.type, listItem.id);
         } catch (error) {
             console.error("Failed to find_or_create TokenCustomization object from listItem", listItem);
             return;
@@ -2075,7 +2089,7 @@ function find_token_options_for_list_item(listItem) {
     } else if (listItem.isTypeBuiltinToken()) {
         return find_builtin_token(listItem.fullPath());
     } else {
-        return find_token_customization(listItem.type, listItem.backingId())?.tokenOptions || {};
+        return find_token_customization(listItem.type, listItem.id)?.tokenOptions || {};
     }
 }
 

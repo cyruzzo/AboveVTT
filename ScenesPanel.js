@@ -1544,7 +1544,7 @@ function init_scenes_panel() {
 		if (numberOfNewFolders > 0) {
 			newFolderName = `${newFolderName} ${numberOfNewFolders}`
 		}
-		let newFolderItem = SidebarListItem.Folder(RootFolderPath.Scenes, newFolderName, true);
+		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolderPath.Scenes, newFolderName), RootFolderPath.Scenes, newFolderName, true, path_to_html_id(RootFolderPath.Scenes, newFolderName));
 		window.sceneListFolders.push(newFolderItem);
 		display_folder_configure_modal(newFolderItem);
 		did_update_scenes();
@@ -1588,9 +1588,9 @@ function rebuild_scene_items_list() {
 			let backfillPath = "";
 			parts.forEach(part => {
 				let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-				if (!window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
+				if (fullBackfillPath !== "" && fullBackfillPath !== "/" && fullBackfillPath !== RootFolderPath.Scenes && !window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
 					// we don't have this folder yet so add it
-					let backfillItem = SidebarListItem.Folder(backfillPath, part, true);
+					let backfillItem = SidebarListItem.Folder(path_to_html_id(backfillPath, part), backfillPath, part, true, path_to_html_id(backfillPath));
 					console.log("adding folder", backfillItem);
 					window.sceneListFolders.push(backfillItem);
 				} else {
@@ -1618,7 +1618,7 @@ function redraw_scene_list(searchTerm) {
 	// this is similar to the structure of a SidebarListItem.Folder row.
 	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
 	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
-	let list = $(`<div class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
+	let list = $(`<div id="${path_to_html_id(RootFolderPath.Scenes)}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
 	scenesPanel.body.empty();
 	scenesPanel.body.append(list);
 	set_full_path(list, RootFolderPath.Scenes);
@@ -1629,7 +1629,8 @@ function redraw_scene_list(searchTerm) {
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => {
 			let row = build_sidebar_list_row(item);
-			let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			let folder = $(`#${item.parentId} > .folder-item-list`);
 			if (folder.length > 0) {
 				console.debug("appending folder item", item, folder);
 				folder.append(row);
@@ -1644,7 +1645,8 @@ function redraw_scene_list(searchTerm) {
 		.filter(item => item.nameOrContainingFolderMatches(nameFilter))
 		.forEach(item => {
 			let row = build_sidebar_list_row(item);
-			let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			let folder = $(`#${item.parentId} > .folder-item-list`);
+			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 			if (folder.length > 0) {
 				console.debug("appending scene item", item, folder);
 				folder.append(row);
@@ -1697,7 +1699,7 @@ function create_scene_folder_inside(fullPath) {
 		newFolderName = `${newFolderName} ${numberOfNewFolders}`
 	}
 	let newFolderFullPath = sanitize_folder_path(`${RootFolderPath.Scenes}/${adjustedPath}`);
-	let newFolderItem = SidebarListItem.Folder(newFolderFullPath, newFolderName, true);
+	let newFolderItem = SidebarListItem.Folder(path_to_html_id(newFolderFullPath, newFolderName), newFolderFullPath, newFolderName, true, path_to_html_id(newFolderFullPath));
 	window.sceneListFolders.push(newFolderItem);
 	did_update_scenes();
 	display_folder_configure_modal(newFolderItem);

@@ -473,16 +473,20 @@ class SidebarListItem {
   static NameEncounters = "Encounters";
 
   /** Do not call this directly! It is a generic constructor for a SidebarListItem. Use one of the static functions instead.
+   * @param id {string} a unique identifier for the backing item
    * @param name {string} the name displayed to the user
    * @param image {string} the src of the img tag
    * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
    * @param folderPath {string} the folder this item is in
+   * @param parentId {string|undefined} a string id of the folder this item is in
    */
-  constructor(name, image, type, folderPath = RootFolderPath.Root) {
+  constructor(id, name, image, type, folderPath = RootFolderPath.Root, parentId = "root") {
+    this.id = id;
     this.name = name;
     this.image = image;
     this.type = type;
     this.folderPath = sanitize_folder_path(folderPath);
+    this.parentId = parentId;
   }
 
   /**
@@ -490,39 +494,55 @@ class SidebarListItem {
    * @param folderPath {string} the path that the folder is in (not including the name of this folder)
    * @param name {string} the name of the folder
    * @param collapsed {boolean} whether or not the folder is open or closed.
-   * @param subtitle {string|undefined} a subtitle to be displayed. defaults to undefined
+   * @param parentId {string|undefined} a string id of the folder this item is in
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
-  static Folder(folderPath, name, collapsed, subtitle = undefined) {
+  static Folder(id, folderPath, name, collapsed, parentId) {
   // static Folder(folderPath, name, collapsed, subtitle = undefined) {
-    console.debug(`SidebarListItem.Folder ${folderPath}/${name}, collapsed: ${collapsed}`);
-    let item = new SidebarListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath);
-    item.collapsed = collapsed;
-    item.subtitle = subtitle;
+    console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}`);
+    let item = new SidebarListItem(id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath, parentId);
+    if (collapsed === true || collapsed === false) {
+      item.collapsed = collapsed;
+    } else {
+      item.collapsed = true;
+    }
     return item;
   }
 
   /**
    * Creates a "My Token" list item.
-   * @param tokenData {object} an object that represents the "My Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
+   * @param tokenCustomization {TokenCustomization} an object that represents the "My Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
-  static MyToken(tokenData) {
-    console.debug("SidebarListItem.MyToken", tokenData);
-    return new SidebarListItem(tokenData.name, tokenData.image, ItemType.MyToken, `${RootFolderPath.MyTokens}/${tokenData.folderPath}`);
+  static MyToken(tokenCustomization) {
+    console.debug("SidebarListItem.MyToken", tokenCustomization);
+    let image = "";
+    if (typeof tokenCustomization.tokenOptions?.alternativeImages === "object" && tokenCustomization.tokenOptions.alternativeImages.length > 0) {
+      image = tokenCustomization.tokenOptions.alternativeImages[0];
+    }
+    return new SidebarListItem(
+        tokenCustomization.id,
+        tokenCustomization.tokenOptions.name,
+        image,
+        ItemType.MyToken,
+        tokenCustomization.folderPath(),
+        tokenCustomization.parentId
+    );
   }
 
   /**
    * Creates a Builtin list item.
    * @param tokenData {object} an object that represents the "Builtin Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
+   * @param parentId {string|undefined} a string id of the folder this item is in
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
   static BuiltinToken(tokenData) {
     console.debug("SidebarListItem.BuiltinToken", tokenData);
-    return new SidebarListItem(tokenData.name, tokenData.image, ItemType.BuiltinToken, `${RootFolderPath.AboveVTT}/${tokenData.folderPath}`);
+    let folderPath = sanitize_folder_path(`${RootFolderPath.AboveVTT}/${tokenData.folderPath}`);
+    return new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.image, ItemType.BuiltinToken, folderPath, path_to_html_id(folderPath));
   }
 
   /**
@@ -533,7 +553,7 @@ class SidebarListItem {
    */
   static Monster(monsterData) {
     console.debug("SidebarListItem.Monster", monsterData);
-    let item = new SidebarListItem(monsterData.name, monsterData.avatarUrl, ItemType.Monster, RootFolderPath.Monsters);
+    let item = new SidebarListItem(monsterData.id, monsterData.name, monsterData.avatarUrl, ItemType.Monster, RootFolderPath.Monsters, RootFolderId.Monsters);
     item.monsterData = monsterData;
     return item;
   }
@@ -548,7 +568,7 @@ class SidebarListItem {
    */
   static PC(sheet, name, image) {
     console.debug("SidebarListItem.PC", sheet, name, image);
-    let item = new SidebarListItem(name, image, ItemType.PC, RootFolderPath.Players);
+    let item = new SidebarListItem(sheet, name, image, ItemType.PC, RootFolderPath.Players, RootFolderId.Players);
     item.sheet = sheet;
     return item;
   }
@@ -566,7 +586,7 @@ class SidebarListItem {
       name = encounter.name;
     }
     console.debug(`SidebarListItem.Encounter ${RootFolderPath.Encounters}/${name}, collapsed: ${collapsed}`);
-    let item = new SidebarListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Encounter, RootFolderPath.Encounters);
+    let item = new SidebarListItem(encounter.id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Encounter, RootFolderPath.Encounters, RootFolderId.Encounter);
     if ((typeof encounter.flavorText == 'string') && encounter.flavorText.length > 0) {
       item.description = encounter.flavorText;
     }
@@ -581,7 +601,8 @@ class SidebarListItem {
       name = sceneData.title;
     }
     let scenePath = sceneData.folderPath || "";
-    let item = new SidebarListItem(name, sceneData.player_map, ItemType.Scene, sanitize_folder_path(`${RootFolderPath.Scenes}/${scenePath}`));
+    let folderPath = sanitize_folder_path(`${RootFolderPath.Scenes}/${scenePath}`);
+    let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, path_to_html_id(folderPath));
     console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
     item.sceneId = sceneData.id;
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
@@ -715,22 +736,6 @@ class SidebarListItem {
   nameOrContainingFolderMatches(searchTerm) {
     return this.name.toLowerCase().includes(searchTerm.toLowerCase()) // any item with a partially matching name
     || this.containingFolderName().toLowerCase().includes(searchTerm.toLowerCase()) // all items within a folder with a partially matching name
-  }
-
-  backingId() {
-    switch (this.type) {
-      case ItemType.PC:
-        return this.sheet;
-      case ItemType.Monster:
-        return this.monsterData.id;
-      case ItemType.Folder:
-      case ItemType.MyToken:
-      case ItemType.Scene:
-      case ItemType.BuiltinToken:
-      case ItemType.Encounter:
-      default:
-        return this.id; // could be undefined
-    }
   }
 }
 
@@ -872,6 +877,14 @@ function set_full_path(html, fullPath) {
   return html.attr("data-full-path", encode_full_path(fullPath)).addClass("list-item-identifier");
 }
 
+function path_to_html_id(path, name) {
+  if (name === undefined) {
+    return path.replace(/\W/g,'_');
+  } else {
+    return sanitize_folder_path(`${path}/${name}`).replace(/\W/g,'_');
+  }
+}
+
 /**
  * encodes the path of an item so it can be safely stored on an html object
  * @param fullPath {string} the path to encode
@@ -927,7 +940,7 @@ function matches_full_path(html, fullPath) {
  */
 function build_sidebar_list_row(listItem) {
 
-  let row = $(`<div class="sidebar-list-item-row" title="${listItem.name}"></div>`);
+  let row = $(`<div id="${listItem.id}" class="sidebar-list-item-row" title="${listItem.name}"></div>`);
   set_full_path(row, listItem.fullPath());
 
   let rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
