@@ -250,6 +250,7 @@ function rebuild_token_items_list() {
     }
 
     window.tokenListItems = tokenItems;
+    rebuild_ddb_npcs();
     update_token_folders_remembered_state();
     console.groupEnd();
 }
@@ -353,6 +354,7 @@ function init_tokens_panel() {
         SidebarListItem.Folder(RootFolder.Monsters.id, RootFolder.Root.path, RootFolder.Monsters.name, false, path_to_html_id(RootFolder.Root.path)),
         SidebarListItem.Folder(RootFolder.MyTokens.id, RootFolder.Root.path, RootFolder.MyTokens.name, false, path_to_html_id(RootFolder.Root.path)),
         SidebarListItem.Folder(RootFolder.AboveVTT.id, RootFolder.Root.path, RootFolder.AboveVTT.name, false, path_to_html_id(RootFolder.Root.path)),
+        SidebarListItem.Folder(RootFolder.DDB.id, RootFolder.Root.path, RootFolder.DDB.name, false, path_to_html_id(RootFolder.Root.path)),
         SidebarListItem.Folder(RootFolder.Encounters.id, RootFolder.Root.path, RootFolder.Encounters.name, false, path_to_html_id(RootFolder.Root.path))
     ];
 
@@ -760,7 +762,8 @@ function alternative_images_for_item(listItem) {
             }
             break;
         case ItemType.BuiltinToken:
-            alternativeImages = builtInTokens.find(bt => listItem.fullPath() === sanitize_folder_path(`${RootFolder.AboveVTT.path}${bt.folderPath}/${bt.name}`) )?.alternativeImages();
+        case ItemType.DDBToken:
+            alternativeImages = listItem.tokenOptions.alternativeImages;
             break;
     }
 
@@ -1212,19 +1215,18 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
  * @param placedToken {Token|undefined} undefined if this modal does not represnet a token that is placed on the scene; else the Token object that corresponds to a token that is placed on the scene
  */
 function display_builtin_token_details_modal(listItem, placedToken) {
-    if (!listItem?.isTypeBuiltinToken()) {
+    if (listItem?.isTypeBuiltinToken() || listItem?.isTypeDDBToken()) {
+        // close any that are already open just to be safe
+        close_sidebar_modal();
+
+        let sidebarPanel = new SidebarPanel("builtin-token-details-modal");
+        display_sidebar_modal(sidebarPanel);
+        sidebarPanel.updateHeader(listItem.name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
+
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    } else {
         console.warn("display_builtin_token_details_modal was called with incorrect item type", listItem);
-        return;
     }
-
-    // close any that are already open just to be safe
-    close_sidebar_modal();
-
-    let sidebarPanel = new SidebarPanel("builtin-token-details-modal");
-    display_sidebar_modal(sidebarPanel);
-    sidebarPanel.updateHeader(listItem.name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
-
-    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 }
 
 /**
@@ -1835,8 +1837,8 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 }
 
 function find_token_options_for_list_item(listItem) {
-    if (listItem.isTypeBuiltinToken()) {
-        return find_builtin_token(listItem.fullPath());
+    if (listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) {
+        return listItem.tokenOptions;
     } else {
         return find_token_customization(listItem.type, listItem.id)?.allCombinedOptions() || {};
     }

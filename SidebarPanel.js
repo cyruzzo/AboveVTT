@@ -545,7 +545,16 @@ class SidebarListItem {
   static BuiltinToken(tokenData) {
     console.debug("SidebarListItem.BuiltinToken", tokenData);
     let folderPath = sanitize_folder_path(`${RootFolder.AboveVTT.path}/${tokenData.folderPath}`);
-    return new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.image, ItemType.BuiltinToken, folderPath, path_to_html_id(folderPath));
+    let item = new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.image, ItemType.BuiltinToken, folderPath, path_to_html_id(folderPath));
+    item.tokenOptions = tokenData;
+    return item
+  }
+  static DDBToken(tokenData) {
+    console.debug("SidebarListItem.DDBToken", tokenData);
+    let folderPath = sanitize_folder_path(`${RootFolder.DDB.path}/${tokenData.folderPath}`);
+    let item = new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.alternativeImages[0], ItemType.DDBToken, folderPath, path_to_html_id(folderPath));
+    item.tokenOptions = tokenData;
+    return item
   }
 
   /**
@@ -663,6 +672,9 @@ class SidebarListItem {
   /** @returns {boolean} whether or not this item represents a Builtin Token */
   isTypeBuiltinToken() { return this.type === ItemType.BuiltinToken }
 
+  /** @returns {boolean} whether or not this item represents a Builtin Token */
+  isTypeDDBToken() { return this.type === ItemType.DDBToken }
+
   /** @returns {boolean} whether or not this item represents an Encounter */
   isTypeEncounter() { return this.type === ItemType.Encounter }
 
@@ -678,7 +690,7 @@ class SidebarListItem {
         return this.folderPath.startsWith(RootFolder.Players.path) || this.folderPath.startsWith(RootFolder.Monsters.path) || this.folderPath.startsWith(RootFolder.MyTokens.path) || this.folderPath.startsWith(RootFolder.AboveVTT.path) || this.folderPath.startsWith(RootFolder.Encounters.path);
       }
     }
-    return this.isTypeMyToken() || this.isTypePC() || this.isTypeMonster() || this.isTypeBuiltinToken()
+    return this.isTypeMyToken() || this.isTypePC() || this.isTypeMonster() || this.isTypeBuiltinToken() || this.isTypeDDBToken()
   }
 
   /** @returns {boolean} whether or not this item represents an object that can be edited by the user */
@@ -1164,8 +1176,8 @@ function build_sidebar_list_row(listItem) {
 
       break;
     case ItemType.BuiltinToken:
+    case ItemType.DDBToken:
       subtitle.hide();
-      // TODO: Style specifically for Builtin
       row.css("cursor", "default");
       break;
     case ItemType.Scene:
@@ -1204,7 +1216,7 @@ function build_sidebar_list_row(listItem) {
       break;
   }
 
-  if (listItem.canEdit() || listItem.isTypeBuiltinToken()) { // can't edit builtin, but need access to the list of images for drag and drop reasons.
+  if (listItem.canEdit() || listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) { // can't edit builtin or DDB, but need access to the list of images for drag and drop reasons.
     let settingsButton = $(`
         <div class="token-row-gear" title="configure">
             <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
@@ -1341,6 +1353,7 @@ function display_sidebar_list_item_configuration_modal(listItem) {
       }
       break;
     case ItemType.BuiltinToken:
+    case ItemType.DDBToken:
       display_builtin_token_details_modal(listItem);
       break;
     case ItemType.MyToken:

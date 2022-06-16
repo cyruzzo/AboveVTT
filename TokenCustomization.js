@@ -5,6 +5,7 @@ class ItemType {
     static PC = "pc";
     static Monster = "monster";
     static BuiltinToken = "builtinToken";
+    static DDBToken = "ddbToken";
     static Encounter = "encounter";
     static Scene = "scene";
 }
@@ -15,6 +16,7 @@ class RootFolder {
     static Monsters = { name: "Monsters", path: "/Monsters", id: "monstersFolder" };
     static MyTokens = { name: "My Tokens", path: "/My Tokens", id: "myTokensFolder" };
     static AboveVTT = { name: "AboveVTT Tokens", path: "/AboveVTT Tokens", id: "builtinTokensFolder" };
+    static DDB = { name: "D&D Beyond Tokens", path: "/DDB", id: "_DDB" };
     static Encounters = { name: "Encounters", path: "/Encounters", id: "encountersFolder" };
     static Scenes = { name: "Scenes", path: "/Scenes", id: "scenesFolder" };
     static allValues() {
@@ -25,7 +27,8 @@ class RootFolder {
                RootFolder.MyTokens,
                RootFolder.AboveVTT,
                RootFolder.Encounters,
-               RootFolder.Scenes
+               RootFolder.Scenes,
+               RootFolder.DDB,
            ]
     }
     static allNames() {
@@ -698,5 +701,108 @@ function find_customization_for_placed_token(placedToken) {
     } else {
         // we don't have any other way to find the customization :(
         return undefined;
+    }
+}
+
+function rebuild_ddb_npcs(redrawList = false) {
+    if (!window.DM) {
+        return;
+    }
+    if (!window.ddbPortraits) {
+        fetch_ddb_portraits();
+        return;
+    }
+
+    // Unfortunately, window.ddbConfigJson.raceGroups do not match the portrait ids. Those must be for monsters?
+    // Anyway, this is how I collected the race ids. Navigate to https://www.dndbeyond.com/races and enter the following into the console
+    /*
+    var playableRaces = [];
+    $("a.listing-card__link").each(function() {
+        playableRaces.push( $(this).attr("href").match(/[^\/]+$/)[0] );
+    })
+    JSON.stringify(playableRaces)
+    */
+    // then copy the output and paste it into the JSON.parse here. Everything else is taken care of
+    const playableRaceIds = JSON.parse('["16-dragonborn","13-dwarf","3-elf","18-gnome","20-half-elf","14-halfling","2-half-orc","1-human","7-tiefling","342045-orc-of-exandria","410992-leonin","410993-satyr","706719-lineages","883673-owlin","1026377-aarakocra","1026378-aasimar","1026379-air-genasi","1026380-bugbear","1026381-centaur","1026382-changeling","1026383-deep-gnome","1026384-duergar","1026385-earth-genasi","1026386-eladrin","814913-fairy","1026387-firbolg","1026388-fire-genasi","1026389-githyanki","1026390-githzerai","1026391-goblin","1026392-goliath","814914-harengon","1026393-hobgoblin","1026394-kenku","1026395-kobold","1026396-lizardfolk","1026397-minotaur","1026398-orc","1026399-satyr","1026400-sea-elf","1026401-shadar-kai","1026402-shifter","1026403-tabaxi","1026404-tortle","1026405-triton","1026406-water-genasi","1026407-yuan-ti","4-aarakocra","23-genasi","22-goliath","24-aasimar","32-bugbear","25-firbolg","33-goblin","34-hobgoblin","28-kenku","516426-kobold","29-lizardfolk","516433-orc","30-tabaxi","31-triton","37-yuan-ti-pureblood","40-feral-tiefling","41-tortle","260666-changeling","260720-kalashtar","260737-orc-of-eberron","260758-shifter","260828-warforged","25294-gith","67624-centaur","67607-loxodon","67599-minotaur","67585-simic-hybrid","67582-vedalken","169862-verdan","229754-locathah","302384-grung"]');
+
+    const uglyCapitalization = function(str) {
+        let capitalizeNext = true;
+        let newString = "";
+        for (let i = 0; i < str.length; i++) {
+            let currentChar = str[i];
+            if (capitalizeNext) {
+                newString += currentChar.toUpperCase();
+                capitalizeNext = false;
+            } else {
+                newString += currentChar;
+                capitalizeNext = (currentChar === "-");
+            }
+        }
+        return newString;
+    }
+
+    // process the list of ids into objects that can be parsed and matched to window.ddbPortraits
+    // { "Aarakocra": [4, 1026377], "Human": [1] } // legacy and non-legacy get merged into the same list of portraits. I manually merge orc and orc-of-exandria as well
+    var playableRaces = {};
+    playableRaceIds.forEach(id => {
+        let portraitId = parseInt(id);
+        let name = uglyCapitalization(id.replace(`${portraitId}-`, ""));
+        if (name.startsWith("Orc")) {
+            name = "Orc"; // merge orc-of-exandria into orc.
+        } else if (name.includes("Genasi") || name.includes("Simic")) { // Most names have hyphens, but Simic Hybrid and all the Genasi variants have spaces.
+            name = name.replaceAll("-", " ");
+        }
+        if (playableRaces[name]) {
+            playableRaces[name].push(portraitId);
+        } else {
+            playableRaces[name] = [portraitId];
+        }
+    });
+
+    for (let playableRaceName in playableRaces) {
+        const portraitIds = playableRaces[playableRaceName];
+        let altImages = [];
+        portraitIds.forEach(pId => {
+            altImages = altImages.concat(window.ddbPortraits.filter(p => p.raceId === pId).map(p => p.avatarUrl))
+        });
+        console.log("hey", altImages);
+        if (altImages.length > 0) { // no need to add it if DDB doesn't have any images for it
+            window.tokenListItems.push(SidebarListItem.DDBToken({
+                folderPath: "/",
+                name: playableRaceName,
+                alternativeImages: altImages
+            }));
+        }
+    }
+
+    if (redrawList) {
+        redraw_token_list();
+    }
+}
+
+/*{
+    "id": 2,
+    "name": null,
+    "avatarId": 10064,
+    "avatarUrl": "https://www.dndbeyond.com/avatars/10/64/636339379309450725.png?width=150&height=150&fit=crop&quality=95&auto=webp",
+    "raceId": 16,
+    "subRaceId": null,
+    "classId": null,
+    "tags": [],
+    "decorationKey": "2"
+},*/
+function fetch_ddb_portraits() {
+    if (window.DM && !window.ddbPortraits) {
+        window.ajaxQueue.addDDBRequest({
+            url: "https://character-service.dndbeyond.com/character/v5/game-data/portraits?sharingSetting=2",
+            success: function (responseData) {
+                console.log("Successfully fetched config/json from DDB API");
+                window.ddbPortraits = responseData.data;
+                rebuild_ddb_npcs(true); // this is the first time we've had enough data to draw the list so do it
+            },
+            error: function (errorMessage) {
+                console.warn("Failed to fetch config json from DDB API", errorMessage);
+            }
+        });
     }
 }
