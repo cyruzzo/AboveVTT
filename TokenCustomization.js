@@ -563,6 +563,7 @@ function persist_token_customization(customization, callback) {
 }
 
 function fetch_token_customizations(callback) {
+    if (!window.DM) return;
     if (typeof callback !== 'function') {
         callback = function(){};
     }
