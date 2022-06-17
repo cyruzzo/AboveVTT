@@ -1367,7 +1367,7 @@ function display_sidebar_list_item_configuration_modal(listItem) {
         edit_scene_dialog(index);
       } else {
         console.error("Failed to find scene index for scene with id", listItem.sceneId);
-        showGenericAlert();
+        showDebuggingAlert();
       }
       break;
     default:
@@ -1494,7 +1494,7 @@ function rename_folder(item, newName, alertUser = true) {
   if (!item.isTypeFolder()) {
     console.warn("rename_folder called with an incorrect item type", item);
     if (alertUser !== false) {
-      showGenericAlert();
+      showDebuggingAlert();
     }
     return undefined;
   }
@@ -1508,7 +1508,7 @@ function rename_folder(item, newName, alertUser = true) {
   } else if (item.folderPath.startsWith(RootFolder.Scenes.path)) {
     return rename_scene_folder(item, newName, alertUser);
   } else if (alertUser !== false) {
-    showGenericAlert();
+    showDebuggingAlert();
   }
   return undefined;
 }

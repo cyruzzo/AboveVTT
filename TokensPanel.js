@@ -963,7 +963,7 @@ function create_mytoken_folder_inside(listItem) {
             expand_all_folders_up_to_item(newListItem);
         } else {
             console.error("create_mytoken_folder_inside failed to create a new folder", errorType);
-            showGenericAlert();
+            showDebuggingAlert();
         }
     });
 }
@@ -980,14 +980,14 @@ function delete_mytokens_folder_and_everything_in_it(listItem) {
                     console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
                 } else {
                     console.error("delete_mytokens_folder_and_everything_in_it failed delete the folder with id", listItem.id, deletedFolderErrorType);
-                    showGenericAlert();
+                    showDebuggingAlert();
                 }
             });
         } else {
             did_change_mytokens_items();
             expand_all_folders_up_to_item(listItem);
             console.error("delete_mytokens_within_folder failed to delete token customizations", deletedChildrenErrorType);
-            showGenericAlert();
+            showDebuggingAlert();
         }
     });
 }
@@ -1014,7 +1014,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
             console.log("move_mytokens_to_parent_folder_and_delete_folder successfully moved all children up one level and deleted folder with id", listItem.id);
         } else {
             console.error("move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id, errorType);
-            showGenericAlert();
+            showDebuggingAlert();
         }
         callback(didSucceed, errorType);
     });
@@ -1056,7 +1056,7 @@ function create_token_inside(listItem) {
             display_token_configuration_modal(newItem);
         } else {
             console.error("Failed to create My Token", customization, error);
-            showGenericAlert();
+            showDebuggingAlert();
         }
     });
 }
@@ -1077,10 +1077,12 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             return;
     }
 
-    let customization = find_token_customization(listItem.type, listItem.id);
-    if (customization === undefined) {
-        console.warn("display_token_configuration_modal failed to find a customization object matching listItem:", listItem);
-        alert("Failed to find a matching token customization object.");
+    let customization;
+    try {
+        customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id);
+    } catch (error) {
+        console.error("display_token_configuration_modal failed to create a customization object for listItem:", listItem, error);
+        showDebuggingAlert("Failed to create a token customization object.");
         return;
     }
 
@@ -1796,7 +1798,7 @@ function register_custom_token_image_context_menu() {
                             let customization = find_token_customization(listItem.type, listItem.id);
                             if (!customization) {
                                 console.error("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
-                                showGenericAlert();
+                                showDebuggingAlert();
                                 return;
                             }
                             customization.removeAlternativeImage(imgSrc);
@@ -1804,7 +1806,7 @@ function register_custom_token_image_context_menu() {
                             redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                         } else {
                             console.error("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
-                            showGenericAlert();
+                            showDebuggingAlert();
                             return;
                         }
                         selectedItem.remove();
@@ -1836,7 +1838,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
         }
         if (!customization) {
             console.error("build_remove_all_images_button failed to find token customization for listItem:", listItem, ", placedToken:", placedToken);
-            showGenericAlert();
+            showDebuggingAlert();
             return;
         }
         if (window.confirm(`Are you sure you want to remove all custom images for ${tokenName}?\nThis will reset the token images back to the default`)) {

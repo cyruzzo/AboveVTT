@@ -90,7 +90,7 @@ class TokenCustomization {
      * @constructor
      */
     static Monster(monsterId, tokenOptions) {
-        return new TokenCustomization(`${monsterId}`, ItemType.Monster, RootFolder.Monsters.id, tokenOptions);
+        return new TokenCustomization(monsterId, ItemType.Monster, RootFolder.Monsters.id, tokenOptions);
     }
 
     /**
@@ -125,6 +125,9 @@ class TokenCustomization {
 
     // never call this directly! use the static functions above
     constructor(id, tokenType, parentId, tokenOptions) {
+        if (tokenType === ItemType.Monster) {
+            id = `${id}`; // DDB uses numbers for monster ids, but we want to use strings to keep everything consistent
+        }
         if (typeof id !== "string" || id.length === 0) {
             throw `Invalid id ${id}`;
         }

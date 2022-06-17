@@ -1712,7 +1712,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.groupEnd();
 		console.warn("rename_scene_folder called with an incorrect item type", item);
 		if (alertUser !== false) {
-			showGenericAlert();
+			showDebuggingAlert();
 		}
 		return;
 	}
@@ -1720,7 +1720,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.groupEnd();
 		console.warn("rename_scene_folder Not allowed to rename folder", item);
 		if (alertUser !== false) {
-			showGenericAlert();
+			showDebuggingAlert();
 		}
 		return;
 	}
