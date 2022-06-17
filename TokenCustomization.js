@@ -168,7 +168,7 @@ class TokenCustomization {
 
     addAlternativeImage(imageUrl) {
         if (imageUrl.startsWith("data:")) {
-            return;
+            return false;
         }
         if (this.tokenOptions.alternativeImages === undefined) {
             this.tokenOptions.alternativeImages = [];
@@ -177,6 +177,7 @@ class TokenCustomization {
         if (!this.tokenOptions.alternativeImages.includes(parsed)) {
             this.tokenOptions.alternativeImages.push(parsed);
         }
+        return true;
     }
     removeAlternativeImage(imageUrl) {
         if (this.tokenOptions.alternativeImages === undefined) {

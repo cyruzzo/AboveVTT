@@ -1118,9 +1118,17 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     // images
     let addImageUrl = function (newImageUrl) {
-        customization.addAlternativeImage(newImageUrl);
+        const redraw = customization.alternativeImages().length === 0;  // if it's the first custom image we need to redraw the entire body; else we can just append new ones
+        const didAdd = customization.addAlternativeImage(newImageUrl);
+        if (!didAdd) {
+            return; // no need to do anything if the image wasn't added. This can happen if they accidentally hit enter a few times which would try to add the same url multiple times
+        }
         persist_token_customization(customization);
-        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        if (redraw) {
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+        } else {
+            sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
+        }
         removeAllButton.show();
         inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
     };
@@ -1231,6 +1239,17 @@ function display_builtin_token_details_modal(listItem, placedToken) {
     }
 }
 
+function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
+    let parsedImage = parse_img(imageUrl);
+    let tokenDiv = build_alternative_image_for_modal(parsedImage, find_token_options_for_list_item(listItem), placedToken);
+    if (placedToken?.isMonster()) {
+        tokenDiv.attr("data-monster", placedToken.options.monster);
+    }
+    set_full_path(tokenDiv, listItem.fullPath());
+    enable_draggable_token_creation(tokenDiv, parsedImage);
+    return tokenDiv;
+}
+
 /**
  * Clears the body of the given sidebarPanel and adds a new element for every alternative image the listItem has
  * @param sidebarPanel {SidebarPanel} the modal to display objects in
@@ -1251,17 +1270,6 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
     let modalBody = sidebarPanel.body
     modalBody.empty();
 
-    const buildTokenDiv = function(imageUrl) {
-        let parsedImage = parse_img(imageUrl);
-        let tokenDiv = build_alternative_image_for_modal(parsedImage, find_token_options_for_list_item(listItem), placedToken);
-        if (placedToken?.isMonster()) {
-            tokenDiv.attr("data-monster", placedToken.options.monster);
-        }
-        set_full_path(tokenDiv, listItem.fullPath());
-        enable_draggable_token_creation(tokenDiv, parsedImage);
-        return tokenDiv;
-    }
-
     // clone our images array instead of using a reference so we don't accidentally change the current images for all tokens
     // we also need to parse and compare every image to know if we need to add the placedToken image
     let alternativeImages = alternative_images_for_item(listItem).map(image => parse_img(image));
@@ -1269,28 +1277,28 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
     let placedImg = parse_img(placedToken?.options?.imgsrc);
     if (placedImg.length > 0 && !alternativeImages.includes(placedImg)) {
         // the placedToken image has been changed by the user so put it at the front
-        let tokenDiv = buildTokenDiv(placedImg);
+        let tokenDiv = build_token_div_for_sidebar_modal(placedImg, listItem, placedToken);
         tokenDiv.attr("data-token-id", placedToken.options.id);
         modalBody.append(tokenDiv);
     }
 
     if (alternativeImages.length === 0 && placedImg !== parse_img(listItem.image)) {
         // if we don't have any alternative images, show the default image
-        let tokenDiv = buildTokenDiv(listItem.image);
+        let tokenDiv = build_token_div_for_sidebar_modal(listItem.image, listItem, placedToken);
         modalBody.append(tokenDiv);
     }
 
 
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
-            let tokenDiv = buildTokenDiv(alternativeImages[i]);
+            let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
             setTimeout(function () {
                 // JS doesn't have threads, but setTimeout allows us to execute this inefficient block of code after the rest of the modal has finished drawing.
                 // This gives the appearance of a faster UI because the modal will display and then these images will pop in.
                 // most of the time, this isn't needed, but if there are a lot of images (like /DDBTokens/Human), this make a pretty decent impact.
-                let tokenDiv = buildTokenDiv(alternativeImages[i]);
+                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
                 modalBody.append(tokenDiv);
             });
         }
@@ -1773,7 +1781,7 @@ function register_custom_token_image_context_menu() {
                     copy_to_clipboard(imgSrc);
                 }
             };
-            if (!element.hasClass("custom-token-image-item")) {
+            if (!element.hasClass("change-token-image-item")) {
                 items.border = "---";
                 items.remove = {
                     name: "Remove",
