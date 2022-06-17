@@ -304,7 +304,7 @@ class TokenCustomization {
     clearTokenOptions() {
         let clearedOptions = {};
         if (this.tokenOptions.name !== undefined) {
-            clearedOptions.name = name;
+            clearedOptions.name = this.tokenOptions.name;
         }
         if (Array.isArray(this.tokenOptions.alternativeImages)) {
             clearedOptions.alternativeImages = [...this.tokenOptions.alternativeImages];
@@ -765,7 +765,6 @@ function rebuild_ddb_npcs(redrawList = false) {
         portraitIds.forEach(pId => {
             altImages = altImages.concat(window.ddbPortraits.filter(p => p.raceId === pId).map(p => p.avatarUrl))
         });
-        console.log("hey", altImages);
         if (altImages.length > 0) { // no need to add it if DDB doesn't have any images for it
             window.tokenListItems.push(SidebarListItem.DDBToken({
                 folderPath: "/",

@@ -1234,8 +1234,9 @@ function display_builtin_token_details_modal(listItem, placedToken) {
  * @param sidebarPanel {SidebarPanel} the modal to display objects in
  * @param listItem {SidebarListItem} the list item the modal represents
  * @param placedToken {Token|undefined} undefined if this modal does not represnet a token that is placed on the scene; else the Token object that corresponds to a token that is placed on the scene
+ * @param drawInline {boolean} If you need to add elements to the body AFTER all the images have been drawn, then pass true. Otherwise, images will be drawn in their own setTimeout to avoid blocking the UI. If you're adding things to the sidebarPanle.body, you might consider adding them to the footer or between the body and the footer instead.
  */
-function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
+function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawInline = false) {
     if (sidebarPanel === undefined) {
         console.warn("redraw_token_images_in_modal was called without a sidebarPanel");
         return;
@@ -1277,16 +1278,28 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
         modalBody.append(tokenDiv);
     }
 
+
     for (let i = 0; i < alternativeImages.length; i++) {
-        let tokenDiv = buildTokenDiv(alternativeImages[i]);
-        modalBody.append(tokenDiv);
+        if (drawInline) {
+            let tokenDiv = buildTokenDiv(alternativeImages[i]);
+            modalBody.append(tokenDiv);
+        } else {
+            setTimeout(function () {
+                // JS doesn't have threads, but setTimeout allows us to execute this inefficient block of code after the rest of the modal has finished drawing.
+                // This gives the appearance of a faster UI because the modal will display and then these images will pop in.
+                // most of the time, this isn't needed, but if there are a lot of images (like /DDBTokens/Human), this make a pretty decent impact.
+                let tokenDiv = buildTokenDiv(alternativeImages[i]);
+                modalBody.append(tokenDiv);
+            });
+        }
     }
 
-    if (alternative_images_for_item(listItem).length === 0) {
+    if (alternativeImages.length === 0) {
         sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text("Replace The Default Image");
     } else {
         sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text("Add More Custom Images");
     }
+
 }
 
 /**
