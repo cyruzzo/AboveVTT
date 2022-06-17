@@ -621,6 +621,25 @@ class SidebarListItem {
     return item;
   }
 
+  // size is number of squares, not feet
+  static Aoe(shape, size, style, name=undefined) {
+    if (typeof name !== "string" || name.length === 0) {
+      name = `${shape} AoE`;
+    }
+    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}`
+    let item = new SidebarListItem(path_to_html_id(RootFolder.Aoe.path, name), name, image, ItemType.Aoe, RootFolder.Aoe.path, RootFolder.Aoe.id);
+    console.debug(`SidebarListItem.Aoe`, item);
+    item.shape = shape;
+    let parsedSize = parseInt(size);
+    if (isNaN(parsedSize)) {
+      item.size = parsedSize;
+    } else {
+      item.size = 1;
+    }
+    item.style = style;
+    return item;
+  }
+
   /**
    * A comparator for sorting by folder, then alphabetically.
    * @param lhs {SidebarListItem}
@@ -681,6 +700,9 @@ class SidebarListItem {
   /** @returns {boolean} whether or not this item represents a Scene */
   isTypeScene() { return this.type === ItemType.Scene }
 
+  /** @returns {boolean} whether or not this item represents an AoE */
+  isTypeAoe() { return this.type === ItemType.Aoe }
+
   /** @returns {boolean} whether or not this item is listed in the tokens panel */
   isTokensPanelItem() {
     if (this.isTypeFolder()) {
@@ -703,6 +725,7 @@ class SidebarListItem {
       case ItemType.Monster:
       case ItemType.Encounter:
       case ItemType.Scene:
+      case ItemType.Aoe:
         return true;
       case ItemType.BuiltinToken:
       default:
@@ -723,6 +746,7 @@ class SidebarListItem {
       case ItemType.Monster:
       case ItemType.BuiltinToken:
       case ItemType.Encounter: // we technically could support this, but I don't think we should
+      case ItemType.Aoe: // we technically could support this, but I don't think we should
       default:
         return false;
     }
@@ -749,6 +773,7 @@ class SidebarListItem {
 
   /** @returns {boolean} true if the name partially matches the searchTerm or if the containing folder name partially matches the searchTerm */
   nameOrContainingFolderMatches(searchTerm) {
+    if (!this.name) return false;
     return this.name.toLowerCase().includes(searchTerm.toLowerCase()) // any item with a partially matching name
     || this.containingFolderName().toLowerCase().includes(searchTerm.toLowerCase()) // all items within a folder with a partially matching name
   }
@@ -771,6 +796,20 @@ function sanitize_folder_path(dirtyPath) {
     cleanPath = `/${cleanPath}`;
   }
   return cleanPath;
+}
+
+/**
+ * @param html {*|jQuery|HTMLElement} the html representation of the item
+ * @returns {SidebarListItem|undefined} SidebarListItem.Aoe if found, else undefined
+ */
+function is_html_aoe(html) {
+  let shape = html.attr("data-shape");
+  let style = html.attr("data-style");
+  let size = html.attr("data-size");
+  if (shape && style && size) { // TODO: be more thorough with data validation here
+    return SidebarListItem.Aoe(shape, size, style);
+  }
+  return undefined
 }
 
 /**
@@ -973,8 +1012,19 @@ function build_sidebar_list_row(listItem) {
 
   let imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
   rowItem.append(imgHolder);
-  let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
-  imgHolder.append(img);
+  if (listItem.type !== "aoe"){
+    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
+    imgHolder.append(img);
+  }
+  else{
+    // possibly change the background-image-size so it looks nicer as a small image
+    let img = $(
+      `<div data-img="true"; 
+      class="aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}">
+       </div>
+      `)
+    imgHolder.append(img);
+  }
 
   let details = $(`<div class="sidebar-list-item-row-details"></div>`);
   rowItem.append(details);
@@ -1214,6 +1264,21 @@ function build_sidebar_list_row(listItem) {
       rowItem.append(switch_dm);
       rowItem.append(switch_players);
       break;
+    case ItemType.Aoe:
+      row.attr("data-shape", listItem.shape);
+      let size = listItem.size
+      if (window.CURRENT_SCENE_DATA?.fpsq > 0){
+          size =  size * window.CURRENT_SCENE_DATA.fpsq
+      }else{
+        // when this is initialised current scene data won't exist.
+        size = 5
+      }
+      row.attr("data-size", listItem.size);
+      row.attr("data-style", listItem.style);
+      subtitle.append(`<div class="subtitle-attibute">${listItem.style}</div>`);
+      subtitle.append(`<div class="subtitle-attibute">${size}ft</div>`);
+
+      break;
   }
 
   if (listItem.canEdit() || listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) { // can't edit builtin or DDB, but need access to the list of images for drag and drop reasons.
@@ -1301,6 +1366,9 @@ function did_click_row(clickEvent) {
         remove_sidebar_flyout();
       });
       break;
+    case ItemType.Aoe:
+      // bain todo open context menu to choose style / size
+    break;
   }
 }
 
@@ -1369,6 +1437,9 @@ function display_sidebar_list_item_configuration_modal(listItem) {
         console.error("Failed to find scene index for scene with id", listItem.sceneId);
         showDebuggingAlert();
       }
+      break;
+    case ItemType.Aoe:
+      display_aoe_token_configuration_modal(listItem);
       break;
     default:
       console.warn("display_sidebar_list_item_configuration_modal not supported for listItem", listItem);

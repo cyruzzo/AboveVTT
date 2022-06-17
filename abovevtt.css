@@ -1704,6 +1704,147 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
 }
 
+.aoe-button-moveable {
+    font-size: 20px !important;
+    /* align-items: flex-end; */
+}
+
+/* AOE BORDERS */
+.aoe-border {
+    width: 100%;
+    background-position-y: bottom;
+    height: 100%;
+    background-repeat: repeat-x;
+    position:absolute;
+}
+
+.aoe-border-cone {
+    clip-path: polygon(0% 100%, 5% 100%, 50% 10%, 92% 95%, 5% 95%, 0% 100%, 100% 100%, 50% 0%);
+    background-color: white;
+    animation: mymove 5s infinite alternate ease-in-out ;
+}
+.aoe-border-basic{
+    border: white 10px solid;
+}
+
+/* END AOE BORDERS */
+
+/* AOE SHAPES */
+.aoe-shape-circle {
+    border-radius: 50%;
+}
+
+.aoe-shape-cone {
+    clip-path: polygon(50% 10%, 7% 95%, 92% 95%);
+}
+/* END AOE SHAPES */
+
+/* AOE STYLES */
+.aoe-style-acid{
+    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    box-shadow: inset -20px -20px 2px 1000px rgba(13, 253, 0, 0.49);
+}
+.aoe-style-bludgeoning{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
+}
+.aoe-style-default{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/06/188-comp-512x512.jpg);
+}
+.aoe-style-fire{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/979765607484506122/fire_background.png);
+}
+.aoe-style-force{
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg);
+}
+.aoe-style-ice {
+    background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
+}
+.aoe-style-lightning{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979769717529137162/lightninig.png);
+}
+.aoe-style-nature{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/04/0527-1-512x512.jpg);
+    filter: brightness(1.2) contrast(1.2);
+}
+.aoe-style-necrotic {
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
+}
+.aoe-style-piercing{
+    background-image: url(https://previews.123rf.com/images/sylverarts/sylverarts1801/sylverarts180100741/92992928-horror-style-horrible-seamless-pattern-vector-background-blackthorn-branches-with-thorns-stylish-end.jpg);
+}
+.aoe-style-poison {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(119, 247, 0, 0.52);
+}
+.aoe-style-psychic {
+    background-image: url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(115, 10, 235, 0.49);
+}
+.aoe-style-radiant {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/06/0097-512x512.jpg);
+    background-size: 200px
+}
+.aoe-style-slashing{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/980017219813654559/slashing.png);
+}
+.aoe-style-thunder{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2018/11/0069-512x512.jpg);
+}
+.aoe-style-water{
+    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    box-shadow: inset -20px -20px 2px 1000px rgba(49, 177, 246, 0.49);
+}
+
+/* SPECIFIC SPELL STYLES */
+.aoe-style-fog-cloud{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
+}
+.aoe-style-hypnotic-pattern{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984334770618109992/hypnotic-pattern.png?width=676&height=676) !important;
+}
+.aoe-style-stinking-cloud{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
+    box-shadow: inset -20px -20px 2px 1000px rgba(49, 246, 85, 0.49) !important;
+}
+.aoe-style-web{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984332168111222784/tileable3pxsquareweb.png) !important;
+}
+
+
+
+/* END AOE STYLES */
+
+.aoe-token-tileable {
+    height: 100%;
+    width: 100%;
+    opacity: 50%;
+    background-repeat: repeat;
+    background-size: 300px;
+    filter: blur(0.5px);
+    position: absolute;
+    animation: mymove 5s infinite alternate ease-in-out ;
+}
+@keyframes mymove {
+    from{
+        opacity: 0.3
+    }
+    to {
+        opacity: 0.7
+    }
+  }
+
+
+
+div.token-image {
+    width: 100%;
+    height: 100%;
+}
+
+
+.token:before{
+    transform: rotate(var(--token-rotation));
+}
+
 .markers-icon:before,
 .context-menu-markers-icon:before {
     display: inline-block;
@@ -2291,6 +2432,7 @@ h5.token-image-modal-footer-title:after {
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
 }
+.custom-token-image-item [data-img],
 .custom-token-image-item img {
     position: absolute;
     top: 0;
@@ -2302,6 +2444,11 @@ h5.token-image-modal-footer-title:after {
     width: 100%;
     height: 100%;
 }
+
+.custom-token-image-item [data-img]:hover {
+    border: lightgrey solid 2px;
+}
+
 .token-image-sizing-dummy {
     /* this allows us to size the img using a 1:1 aspect ratio without having to use js to calculate the height after the felx width has been determined */
     margin-top: 100%;
@@ -2449,6 +2596,20 @@ h5.token-image-modal-footer-title:after {
     border-radius: 3px;
     object-fit: cover;
 }
+.sidebar-list-item-row-img .aoe-shape-line{
+    transform: scaleX(0.5);
+}
+.custom-token-image-item .aoe-shape-line{
+    width: 50%;
+    left: 25%
+}
+.custom-token-image-item .aoe-token-tileable,
+.sidebar-list-item-row-img [data-img]{
+    background-size: 100px;
+    animation: none;
+    opacity: 100%;
+}
+.sidebar-list-item-row-img [data-img],
 .sidebar-list-item-row-img img {
     object-fit: contain;
     width: 38px;

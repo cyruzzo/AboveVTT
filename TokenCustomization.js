@@ -8,6 +8,7 @@ class ItemType {
     static DDBToken = "ddbToken";
     static Encounter = "encounter";
     static Scene = "scene";
+    static Aoe = "aoe";
 }
 
 class RootFolder {
@@ -19,6 +20,7 @@ class RootFolder {
     static DDB = { name: "D&D Beyond Tokens", path: "/DDB", id: "_DDB" };
     static Encounters = { name: "Encounters", path: "/Encounters", id: "encountersFolder" };
     static Scenes = { name: "Scenes", path: "/Scenes", id: "scenesFolder" };
+    static Aoe = { name: "Area of Effects", path: "/Area of Effects", id: "aoeFolder" };
     static allValues() {
            return [
                RootFolder.Root,
@@ -29,6 +31,7 @@ class RootFolder {
                RootFolder.Encounters,
                RootFolder.Scenes,
                RootFolder.DDB,
+               RootFolder.Aoe
            ]
     }
     static allNames() {

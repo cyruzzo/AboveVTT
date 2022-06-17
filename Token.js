@@ -63,6 +63,15 @@ class Token {
 		}
 	}
 
+	isLineAoe() {
+		// 1 being a single square which is usually 5ft
+		return this.options.size === "" && this.options.gridWidth === 1 && this.options.gridHeight > 0
+	}
+
+	isAoe() {
+		return this.options.imgsrc?.startsWith("class")
+	}
+
 	isPlayer() {
 		// player tokens have ids with a structure like "/profile/username/characters/someId"
 		// monster tokens have a uuid for their id
@@ -82,12 +91,27 @@ class Token {
 	}
 
 	gridSize() {
-		let size = parseFloat(this.options.size);
+		let size = parseInt(this.options.size);
 		if (isNaN(size)) {
-			return 1; // default to small
+			// assume this token uses gridHeight/gridWidth instead.
+			if (this.options.gridWidth === 1 && this.options.gridHeight > 0){
+				return Math.round(this.options.gridHeight)
+			}
+			return 1; // default to medium
 		}
-		let gridSize = parseFloat(window.CURRENT_SCENE_DATA.hpps); // one grid square
+		let gridSize = parseInt(window.CURRENT_SCENE_DATA.hpps); // one grid square
 		return Math.round(size / gridSize);
+	}
+
+	sizeWidth() {
+		let w = parseInt(this.options.gridWidth);
+		if (isNaN(w)) return this.options.size;
+		return parseInt(window.CURRENT_SCENE_DATA.hpps) * w;
+	}
+	sizeHeight() {
+		let h = parseInt(this.options.gridHeight);
+		if (isNaN(h)) return this.options.size;
+		return parseInt(window.CURRENT_SCENE_DATA.vpps) * h;
 	}
 
 	hasCondition(conditionName) {
@@ -134,9 +158,16 @@ class Token {
 		return ct_list_tokens().includes(this.options.id);
 	}
 
-	size(newsize) {
+	size(newSize) {
 		this.update_from_page();
-		this.options.size = newsize;
+
+		if(this.isLineAoe()){
+			// token is not proportional such as a line aoe token
+			this.options.gridHeight = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
+		}
+		else{
+			this.options.size = newSize;
+		}
 		this.place_sync_persist()
 	}
 
@@ -211,8 +242,9 @@ class Token {
 
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
-		
-		tokenElement.children("img").css("transform", "scale(" + imageScale + ") rotate(" + newRotation + "deg)");	
+		tokenElement.css("--token-rotation", newRotation + "deg");
+		tokenElement.find(".token-image").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);
+
 	}
 	moveUp() {
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
@@ -316,8 +348,8 @@ class Token {
 		var n = $("<div/>");
 		n.html(text);
 		n.css('position', 'absolute');
-		n.css('top', parseInt(this.options.top));
-		n.css('left', parseInt(this.options.left) + (this.options.size / 2) - 130);
+		n.css('top', parseInt(this.options.top)); // anything to do with sizeHeight() here?
+		n.css('left', parseInt(this.options.left) + (this.sizeWidth() / 2) - 130);
 		n.css("z-index", "60");
 		n.css("opacity", 0.9)
 
@@ -387,8 +419,8 @@ class Token {
 
 
 
-		let tokenWidth = this.options.size;
-		let tokenHeight = this.options.size;
+		let tokenWidth = this.sizeWidth();
+		let tokenHeight = this.sizeHeight();
 			
 		if(tokenData.disableaura || !tokenData.hp || !tokenData.max_hp) {
 			token.css('--token-hp-aura-color', 'transparent');
@@ -573,7 +605,7 @@ class Token {
 
 	build_hp() {
 		var self = this;
-		var bar_height = Math.floor(this.options.size * 0.2);
+		var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 		if (bar_height > 60)
 			bar_height = 60;
@@ -581,8 +613,8 @@ class Token {
 		var hpbar = $("<div class='hpbar'/>");
 		hpbar.css("position", 'absolute');
 		hpbar.css('height', bar_height);
-		hpbar.css('left', (Math.floor(this.options.size * 0.35) / 2));
-		hpbar.css('top', this.options.size - bar_height);
+		hpbar.css('left', (Math.floor(this.sizeWidth() * 0.35) / 2));
+		hpbar.css('top', this.sizeHeight() - bar_height);
 		hpbar.css('background', '#ff7777');
 		hpbar.width("max-width: 100%");
 
@@ -590,7 +622,7 @@ class Token {
 
 		$("<div class='token'/>").css("font-size",fs);
 
-		var input_width = Math.floor(this.options.size * 0.3);
+		var input_width = Math.floor(this.sizeWidth() * 0.3);
 		if (input_width > 90)
 			input_width = 90;
 
@@ -646,7 +678,7 @@ class Token {
 	}
 
 	build_ac() {
-		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
+		var bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		var ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");
 		ac.css('right', "-1px");
@@ -669,9 +701,9 @@ class Token {
 	}
 
 	build_elev() {
-		var bar_height = Math.max(16, Math.floor(this.options.size * 0.2)); // no less than 16px
+		var bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		var elev = $("<div class='elev'/>");
-		let bar_width = Math.floor(this.options.size * 0.2);
+		let bar_width = Math.floor(this.sizeWidth() * 0.2);
 		elev.css("position", "absolute");
 		elev.css('right', bar_width * 4.35 + "px");
 		elev.css('width', bar_height + "px");
@@ -759,17 +791,17 @@ class Token {
 	build_conditions(parent) {
 		console.group("build_conditions")
 		let self=this;
-		let bar_width = Math.floor(this.options.size * 0.2);
+		let bar_width = Math.floor(this.sizeWidth() * 0.2);
 		const cond = $("<div class='conditions' style='padding:0;margin:0'/>");
 		const moreCond = $(`<div class='conditions' style='left:${bar_width}px;'/>`);
 		cond.css('left', "0");
 
-		const symbolSize = Math.min(bar_width >= 22 ? bar_width : (this.options.size / 4), 45);
+		const symbolSize = Math.min(bar_width >= 22 ? bar_width : (this.sizeWidth() / 4), 45);
 
-		moreCond.css('left', this.options.size - symbolSize);
+		moreCond.css('left', this.sizeWidth() - symbolSize);
 		[cond, moreCond].forEach(cond_bar => {
 			cond_bar.width(symbolSize);
-			cond_bar.height(this.options.size - bar_width);
+			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
 		})
 		if (this.options.inspiration){
 			if (!this.options.custom_conditions.includes("Inspiration")){
@@ -903,6 +935,11 @@ class Token {
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 
+		let imageScale = this.options.imageSize;
+		let rotation = 0;
+		if (this.options.rotation != undefined) {
+			rotation = this.options.rotation;
+		}
 
 		if (old.length > 0) {
 			console.trace();
@@ -928,12 +965,7 @@ class Token {
 
 
 
-			let scale = this.get_token_scale();
-			let imageScale = this.options.imageSize;
-			var rotation = 0;
-			if (this.options.rotation != undefined) {
-				rotation = this.options.rotation;
-			}
+
 			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 	
@@ -957,26 +989,30 @@ class Token {
 			}
 
 
-			if (old.attr('width') != this.options.size) {
+
+
+
+
+			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
 				// NEED RESIZING
-				old.find("img").css("border-width", Math.min(4, Math.round((this.options.size / 60.0) * 4)));
+				old.find("img").css("border-width", Math.min(4, Math.round((this.sizeWidth() / 60.0) * 4)));
 				old.find("img").css({
-					"max-height": this.options.size,
-					"max-width": this.options.size
+					"max-height": this.sizeWidth(),
+					"max-width": this.sizeHeight()
 				});
 
 
 				old.animate({
-					width: this.options.size,
-					height: this.options.size
+					width: this.sizeWidth(),
+					height: this.sizeHeight()
 				}, { duration: 1000, queue: false });
 				
-				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps)); // width vs height here?
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				old.css("z-index", "calc(5000 + var(--z-index-diff))");
 				old.css("--z-index-diff", zindexdiff);
 
-				var bar_height = Math.floor(this.options.size * 0.2);
+				var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 				if (bar_height > 60)
 					bar_height = 60;
@@ -1006,26 +1042,52 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
-			
-			if(old.find("img").attr("src")!=this.options.imgsrc){
-				old.find("img").attr("src",this.options.imgsrc);
-			}
-		
-			if(this.options.disableborder){
-				old.find("img").css("border-width","0");
-			}
-			
-			setTokenAuras(old, this.options);
+			const oldImage = old.find(".token-image,[data-img]")
+			// token uses an image for it's image
+			if (!this.options.imgsrc.startsWith("class")){
+				if(oldImage.attr("src")!=this.options.imgsrc){
+					oldImage.attr("src",this.options.imgsrc);
+				}
 
-			setTokenBase(old, this.options);
-			
-			if(!(this.options.square) && !(old.find("img").hasClass('token-round'))){
-				old.find("img").addClass("token-round");
+				if(this.options.disableborder){
+					oldImage.css("border-width","0");
+				}
+
+				setTokenAuras(old, this.options);
+
+				setTokenBase(old, this.options);
+
+				if(!(this.options.square) && !oldImage.hasClass('token-round')){
+					oldImage.addClass("token-round");
+				}
+
+				if(old.find("img").hasClass('token-round') && (this.options.square) ){
+					oldImage.removeClass("token-round");
+				}
+				if(this.options.legacyaspectratio == false) {
+					// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
+					oldImage.addClass("preserve-aspect-ratio");
+				} else {
+					// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
+					// if the option is true, the user actively enabled the option
+					oldImage.removeClass("preserve-aspect-ratio");
+				}
+
+
+			} else{
+				// token is an aoe div that uses styles instead of an image
+				// do something with it maybe?
+				// re-calc the border width incase the token has changed size
+				oldImage.css(`transform:scale("${imageScale}") rotate("${rotation}deg");`)
+
+                old.css("pointer-events", "none");
+                oldImage.css("pointer-events", "auto");
 			}
-			
-			if(old.find("img").hasClass('token-round') && (this.options.square) ){
-				old.find("img").removeClass("token-round");
-			}
+
+			oldImage.css("max-height", this.sizeHeight());
+			oldImage.css("max-width", this.sizeWidth());
+
+			setTokenAuras(old, this.options);
 
 			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
 				old.draggable("disable");
@@ -1040,15 +1102,6 @@ class Token {
 
 			this.update_health_aura(old);
 
-			if(this.options.legacyaspectratio == false) {
-				// if the option is false, the token was either placed after the option was introduced, or the user actively chose to use the new option
-				old.find("img").addClass("preserve-aspect-ratio");
-			} else {
-				// if the option is undefined, this token was placed before the option existed and should therefore use the legacy behavior
-				// if the option is true, the user actively enabled the option
-				old.find("img").removeClass("preserve-aspect-ratio");
-			}
-
 			// store custom token info if available
 			if (typeof this.options.tokendatapath !== "undefined" && this.options.tokendatapath != "") {
 				old.attr("data-tokendatapath", this.options.tokendatapath);
@@ -1056,16 +1109,13 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			// console.groupEnd()
+			console.groupEnd()
 		}
 		else { // adding a new token
 			// console.group("new token")
 			var tok = $("<div/>");
-			var hpbar = $("<input class='hpbar'>");
-			let scale = this.get_token_scale()
-			let imageScale = this.options.imageSize;
 			
-			var bar_height = Math.floor(this.options.size * 0.2);
+			var bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 			if (bar_height > 60)
 				bar_height = 60;
@@ -1073,45 +1123,61 @@ class Token {
 			var fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
 
-			var rotation = 0;
-			if (this.options.rotation != undefined) {
-				rotation = this.options.rotation;
+			let tokenImage
+			// new aoe tokens use arrays as imsrc
+			if (!this.isAoe()){
+				let imgClass = 'token-image';
+				if(this.options.legacyaspectratio == false) {
+					imgClass = 'token-image preserve-aspect-ratio';
+				}
+				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+				if(!(this.options.square)){
+					tokenImage.addClass("token-round");
+				}
+
+				tokenImage.attr("src", this.options.imgsrc);
+
+				if(this.options.disableborder)
+					tokenImage.css("border-width","0");
+
+				tokenImage.css("max-height", this.options.size);
+				tokenImage.css("max-width", this.options.size);
+				tokenImage.attr("src", this.options.imgsrc);
+
+			} else {
+				tokenImage = build_aoe_token_image(this)
+
+                tok.css("pointer-events", "none");
+                tokenImage.css("pointer-events", "auto");
 			}
-			let imgClass = 'token-image';
-			if(this.options.legacyaspectratio == false) {
-				imgClass = 'token-image preserve-aspect-ratio';
-			}
-			var tokimg = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
-			if(!(this.options.square)){
-				tokimg.addClass("token-round");
-			}
+			tok.append(tokenImage);
+
+
+			tokenImage.css("max-height", this.sizeHeight());
+			tokenImage.css("max-width", this.sizeWidth());
+
+			tok.attr("data-id", this.options.id);
 
 
 
-			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps));
+			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps)); // sizeHeight() or sizeWidth() here?
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
 			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
-			tok.width(this.options.size);
-			tok.height(this.options.size);
+			tok.width(this.sizeWidth());
+			tok.height(this.sizeHeight());
 			tok.addClass('token');
-
-			tok.append(tokimg);
+			tok.append(tokenImage);
 
 
 			tok.attr("data-id", this.options.id);
-			tokimg.attr("src", this.options.imgsrc);
-			tokimg.css("max-height", this.options.size);
-			tokimg.css("max-width", this.options.size);
-		
 
 			tok.addClass("VTTToken");
 
 			this.update_health_aura(tok);
 
-			if(this.options.disableborder)
-				tokimg.css("border-width","0");
+
 				
 			tok.css("position", "absolute");
 			tok.css("--z-index-diff", zindexdiff);
@@ -1173,7 +1239,7 @@ class Token {
 				y: 0
 			};
 			tok.draggable({
-				scroll: false,
+				handle: "img, [data-img]",
 				stop:
 					function (event) {
 						//remove cover for smooth drag
@@ -1212,8 +1278,8 @@ class Token {
 							if (el.length > 0) {
 								const auraSize = parseInt(el.css("width"));
 
-								el.css("top", `${selectedNewtop - ((auraSize - self.options.size) / 2)}px`);
-								el.css("left", `${selectedNewleft - ((auraSize - self.options.size) / 2)}px`);
+								el.css("top", `${selectedNewtop - ((auraSize - self.sizeHeight()) / 2)}px`);
+								el.css("left", `${selectedNewleft - ((auraSize - self.sizeWidth()) / 2)}px`);
 							}
 
 							for (var id in window.TOKEN_OBJECTS) {
@@ -1238,8 +1304,8 @@ class Token {
 										if (selEl.length > 0) {
 											const auraSize = parseInt(selEl.css("width"));
 
-											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
-											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
+											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
 										}
 									}
 								}
@@ -1553,13 +1619,14 @@ class Token {
  * @param token jquery selected div with the class token
  */
 function toggle_player_selectable(tokenInstance, token){
+	const tokenImage = token?.find("img, [data-img]")
 	if (tokenInstance.options.locked && !window.DM){
-		token?.css("cursor","default");
-		token?.css("pointer-events","none");
+		tokenImage?.css("cursor","default");
+		tokenImage?.css("pointer-events","none");
 	}
 	else{
-		token?.css("cursor","move");
-		token?.css("pointer-events","auto");
+		tokenImage?.css("cursor","move");
+		tokenImage?.css("pointer-events","auto");
 	}
 }
 
@@ -1688,7 +1755,10 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...tokenObject
 	};
-	options.imgsrc = parse_img(options.imgsrc);
+	// aoe tokens have classes instead of images
+	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
+		options.imgsrc = parse_img(options.imgsrc);
+	}
 
 	options.left = `${x}px`;
 	options.top = `${y}px`;
@@ -1868,6 +1938,7 @@ function setTokenAuras (token, options) {
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
+		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
@@ -1932,7 +2003,7 @@ function setTokenBase(token, options) {
 
 	if (options.tokenStyleSelect === "virtualMiniCircle") {
 		base.toggleClass('square', false);
-		base.toggleClass('circle', true);		
+		base.toggleClass('circle', true);
 	}
 	if (options.tokenStyleSelect === "virtualMiniSquare"){
 		base.toggleClass('square', true);
@@ -1941,7 +2012,7 @@ function setTokenBase(token, options) {
 	if (options.tokenStyleSelect !== "noConstraint") {
 		token.children("img").toggleClass("freeform", false);
 	}
-	
+
 	if (options.tokenStyleSelect === "circle") {
 		//Circle
 		options.square = false;
@@ -1997,7 +2068,7 @@ function setTokenBase(token, options) {
 		}
 	}
 
-	
+
 	token.children(".base").toggleClass("border-color-base", false);
 	token.children(".base").toggleClass("grass-base", false);
 	token.children(".base").toggleClass("rock-base", false);
@@ -2005,7 +2076,7 @@ function setTokenBase(token, options) {
 	token.children(".base").toggleClass("sand-base", false);
 	token.children(".base").toggleClass("water-base", false);
 
-	
+
 	if(options.tokenBaseStyleSelect === "border-color"){
 		token.children(".base").toggleClass("border-color-base", true);
 	}
@@ -2024,7 +2095,7 @@ function setTokenBase(token, options) {
 	else if(options.tokenBaseStyleSelect === "water"){
 		token.children(".base").toggleClass("water-base", true);
 	}
-			
+
 }
 
 function get_custom_monster_images(monsterId) {
@@ -2077,9 +2148,8 @@ const radToDeg = 180 / Math.PI;
 
 /// Returns result in degrees
 function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
-	const halfSize = token.options.size / 2;
-	const tokenCenterX = parseFloat(token.options.left) + halfSize;
-	const tokenCenterY = parseFloat(token.options.top) + halfSize;
+	const tokenCenterX = parseFloat(token.options.left) + (token.sizeWidth() / 2);
+	const tokenCenterY = parseFloat(token.options.top) + (token.sizeHeight() / 2);
 	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
 	const degrees = target * radToDeg;
 	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
@@ -2128,7 +2198,6 @@ function do_draw_selected_token_bounding_box() {
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	for (id in window.TOKEN_OBJECTS) {
-		//console.log(id)
 		let selector = "div[data-id='" + id + "']";
 		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {
@@ -2334,8 +2403,8 @@ function paste_selected_tokens() {
 		let newId = uuid();
 		options.id = newId;
 		// TODO: figure out the location under the cursor and paste there instead of doing an offset
-		options.top = `${parseFloat(options.top) + Math.round(options.size / 2)}px`;
-		options.left = `${parseFloat(options.left) + Math.round(options.size / 2)}px`;
+		options.top = `${parseFloat(options.top) + Math.round(token.sizeHeight() / 2)}px`;
+		options.left = `${parseFloat(options.left) + Math.round(token.sizeWidth() / 2)}px`;
 		options.selected = true;
 		window.ScenesHandler.create_update_token(options);
 		// deselect the old and select the new so the user can easily move the new tokens around after pasting them

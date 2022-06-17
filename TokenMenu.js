@@ -47,13 +47,13 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 
 		if (diff > 0) {
 			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
-			// align to the top of the row
-			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y
+			// align to the top of the row. 14 is half the height of the button
+			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
 			if(buttonPosition < contextMenuCenter) {
 				flyoutTop =  buttonPosition - (flyoutHeight / 5)
 			}
 			else{
-				flyoutTop =  buttonPosition - (flyoutHeight / 1.2)
+				flyoutTop =  buttonPosition - (flyoutHeight / 2)
 			}				
 		}	
 
@@ -169,6 +169,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			}
 			ct_persist();
 		});
+		
 		body.append(combatButton);
 
 
@@ -940,28 +941,18 @@ function build_adjustments_flyout_menu(tokenIds) {
 	nameWrapper.append(nameInput); // input below label
 	body.append(nameWrapper);
 
-
-	// size
 	let tokenSizes = tokens.map(t => t.gridSize());
 	let uniqueSizes = [...new Set(tokenSizes)];
 	console.log("uniqueSizes", uniqueSizes);
-	let sizeInputs = build_token_size_input(1, function (newSize) {
+	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
 		tokens.forEach(token => {
-			if (newSize === 0) {
-				// tiny comes back as 0 but it's actually 0.5
-				token.size(Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5);
-			} else if (!isNaN(newSize)) {
+			if (!isNaN(newSize)) {
 				token.size(Math.round(window.CURRENT_SCENE_DATA.hpps) * newSize);
 			} else {
 				console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
 			}
 		});
 	});
-	if (uniqueSizes.length === 1) {
-		sizeInputs.find(`select > option[value="${uniqueSizes[0]}"]`).attr("selected", "selected");
-	} else {
-		sizeInputs.find("select").prepend(`<option value="multiple" selected>Multiple Values</option>`);
-	}
 	body.append(sizeInputs);
 
 	//image scaling size
@@ -975,6 +966,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 	});
 	body.append(imageSizeWrapper);
+	if (tokens.some((t) => t.isAoe())){
+		let imageSizeInput = imageSizeWrapper.find(".image-scale-input-number");
+		let imageSizeInputRange = imageSizeWrapper.find(".image-scale-input-range");
+		imageSizeInputRange.attr("disabled", true)
+		imageSizeInputRange.attr("title", "Aoe tokens can't be adjusted this way")
+		imageSizeInput.attr("disabled",true)
+		imageSizeInput.attr("title", "Aoe tokens can't be adjusted this way")
+	}
+		
 
 	//border color selections
 	let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
@@ -1021,7 +1021,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 	
 
 	let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-	if(tokens.length === 1 && window.DM){
+	if(tokens.length === 1 && window.DM && !tokens[0].isAoe()){
 		body.append(changeImageMenuButton)
 	}
 
@@ -1186,14 +1186,21 @@ function build_options_flyout_menu(tokenIds) {
 
 /**
  * Builds and returns HTML inputs for updating token size
- * @param currentTokenSize {number|string} the current size of the token this input is for
+ * @param tokenSizes {Array<Number>} the current size of the token this input is for
  * @param changeHandler {function} the function to be called when the input changes. This function takes a single {float} variable. EX: function(numberOfSquares) { ... } where numberOfSquares is 1 for medium, 2 for large, etc
  * @returns {*|jQuery|HTMLElement} the jQuery object containing all the input elements
  */
-function build_token_size_input(currentTokenSize, changeHandler) {
-	let sizeNumber = parseFloat(currentTokenSize); // 0.5, 1, 2, 3, 4, 5, etc
-	if (isNaN(sizeNumber)) {
-		sizeNumber = 1;
+function build_token_size_input(tokenSizes, changeHandler) {
+	let numGridSquares = undefined
+	// get the first value if there's only 1 value
+	if (tokenSizes.length === 1){
+		numGridSquares = tokenSizes[0]
+		if (isNaN(numGridSquares)) {
+			numGridSquares = 1;
+		}
+	}else{
+		// multiple options
+		numGridSquares = -1
 	}
 
 	let upsq = window.CURRENT_SCENE_DATA.upsq;
@@ -1201,54 +1208,63 @@ function build_token_size_input(currentTokenSize, changeHandler) {
 		upsq = "ft";
 	}
 
-	let customStyle = sizeNumber > 4 ? "display:flex;" : "display:none;"
+	function isSizeCustom(){
+		return (numGridSquares != 0.5  && 
+			    numGridSquares != 1  && 
+			    numGridSquares != 2  && 
+			    numGridSquares != 3  && 
+			    numGridSquares != 4)
+	}
 
+	let customStyle = numGridSquares > 4 ? "display:flex;" : "display:none;"
+	const size = numGridSquares * window.CURRENT_SCENE_DATA.fpsq
 	let output = $(`
  		<div class="token-image-modal-footer-select-wrapper">
  			<div class="token-image-modal-footer-title">Token Size</div>
  			<select name="data-token-size">
- 				<option value="0">Tiny (2.5${upsq})</option>
- 				<option value="1">Small/Medium (5${upsq})</option>
- 				<option value="2">Large (10${upsq})</option>
- 				<option value="3">Huge (15${upsq})</option>
- 				<option value="4">Gargantuan (20${upsq})</option>
- 				<option value="custom">Custom</option>
+			 	${numGridSquares === -1 ? '<option value="multiple" selected="true" disabled="disabled">Multiple Values</option>' : ""}
+ 				<option value="0.5" ${numGridSquares > 0 && numGridSquares < 1 ? "selected='true'": ""}>Tiny (2.5${upsq})</option>
+ 				<option value="1" ${numGridSquares === 1 ? "selected='true'": ""}>Small/Medium (5${upsq})</option>
+ 				<option value="2" ${numGridSquares === 2 ? "selected='true'": ""}>Large (10${upsq})</option>
+ 				<option value="3" ${numGridSquares === 3 ? "selected='true'": ""}>Huge (15${upsq})</option>
+ 				<option value="4" ${numGridSquares === 4 ? "selected='true'": ""}>Gargantuan (20${upsq})</option>
+ 				<option value="custom" ${isSizeCustom() ? "selected='true'": ""}>Custom</option>
  			</select>
  		</div>
  		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
- 			<div class="token-image-modal-footer-title">Number Of Squares</div>
- 			<input type="text" name="data-token-size-custom" placeholder="5" style="width: 3rem;">
+ 			<div class="token-image-modal-footer-title">Custom size in ${upsq}</div>
+ 			<input type="number" min="${window.CURRENT_SCENE_DATA.fpsq / 2}" step="${window.CURRENT_SCENE_DATA.fpsq /2}"
+			 name="data-token-size-custom" value=${size} style="width: 3rem;">
  		</div>
  	`);
 
 	let tokenSizeInput = output.find("select");
 	let customSizeInput = output.find("input");
-	if (sizeNumber > 4) {
-		tokenSizeInput.val("custom");
-		customSizeInput.val(`${sizeNumber}`);
-	} else {
-		tokenSizeInput.val(`${sizeNumber}`);
-	}
 
-	tokenSizeInput.change(function(changeEvent) {
-		let selectInput = $(changeEvent.target);
-		let newValue = selectInput.val();
-		let customInputWrapper = selectInput.parent().next();
+	tokenSizeInput.change(function(event) {
+		let customInputWrapper = $(event.target).parent().next();
 		console.log("tokenSizeInput changed");
-		if (newValue === "custom") {
+		if ($(event.target).val() === "custom") {
 			customInputWrapper.show();
 		} else {
+			customInputWrapper.find("input").val($(event.target).val() * window.CURRENT_SCENE_DATA.fpsq)
 			customInputWrapper.hide();
-			changeHandler(parseFloat(newValue));
+			changeHandler(parseFloat($(event.target).val()));
 		}
 	});
 
-	customSizeInput.change(function(changeEvent) {
+	customSizeInput.change(function(event) {
 		console.log("customSizeInput changed");
-		let textInput = $(changeEvent.target);
-		let numberOfSquares = parseFloat(textInput.val());
-		if (!isNaN(numberOfSquares)) {
-			changeHandler(numberOfSquares);
+		// convert custom footage into squares
+		let newValue = 
+			parseFloat($(event.target).val() / window.CURRENT_SCENE_DATA.fpsq);
+		// tiny is the smallest you can go with a custom size
+		if (newValue < 0.5){
+			 newValue = 0.5
+			$(event.target).val(window.CURRENT_SCENE_DATA.fpsq / 2)
+		}
+		if (!isNaN(newValue)) {
+			changeHandler(newValue);
 		}
 	});
 
