@@ -245,14 +245,17 @@ function get_aoe_default_options(){
     return options
 }
 
-function build_aoe_img_name(style, shape, name) {
+function build_aoe_class_name(style, shape, name) {
     if (!style.startsWith("aoe-style-")) {
         style = `aoe-style-${style}`;
     }
     if (!shape.startsWith("aoe-shape")) {
         shape = `aoe-shape-${shape}`;
     }
-    return `class=aoe-token-tileable ${style} ${shape} ${name ? set_spell_override_style(name) : ""}`;
+    return `aoe-token-tileable ${style} ${shape} ${name ? set_spell_override_style(name) : ""}`;
+}
+function build_aoe_img_name(style, shape, name) {
+    return `class=${build_aoe_class_name(style, shape, name)}`;
 }
 function build_aoe_token_options(style, shape, countGridSquares, name = "") {
     shape = sanitize_aoe_shape(shape)

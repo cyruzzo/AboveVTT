@@ -412,7 +412,9 @@ function build_example_token(options) {
 	mergedOptions.hp = hpnum;
 	mergedOptions.max_hp = hpnum;
 	mergedOptions.id = `exampleToken-${uuid()}`;
-	mergedOptions.size = 100;
+	mergedOptions.size = 90;
+	// mergedOptions.gridHeight = 1;
+	// mergedOptions.gridWidth = 1;
 	mergedOptions.ac = 10;
 
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
@@ -422,14 +424,16 @@ function build_example_token(options) {
 	token.delete();
 
 	html.addClass("example-token");
-	html.css({
-		float: "left",
-		width: "33%",
-		position: "relative",
-		opacity: 1,
-		top: 0,
-		left: 0
-	});
+	// html.css({
+	// 	float: "left",
+	// 	width: 90,
+	// 	height: 90,
+	// 	position: "relative",
+	// 	opacity: 1,
+	// 	top: 0,
+	// 	left: 0,
+	// 	padding: "3px 0px"
+	// });
 	return html;
 }
 

@@ -412,7 +412,10 @@ function init_tokens_panel() {
 
 function redraw_token_list_item(item){
     const row = build_sidebar_list_row(item);
-    const oldRow = find_html_row_from_path(item.fullPath(), tokensPanel.body)
+    let oldRow = $(`#${item.id}`);
+    if (oldRow.length === 0) {
+        oldRow = find_html_row_from_path(item.fullPath(), tokensPanel.body)
+    }
     $(oldRow).replaceWith(row);
     enable_draggable_token_creation(row);
 }
@@ -514,59 +517,58 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 draggedRow = $(event.target);
             }
             let draggedItem = find_sidebar_list_item(draggedRow);
-
-            let [helperWidth, helperHeight] = get_helper_size(draggedItem)
-
-            if (draggedItem.isTypeAoe()) {
-
-                // update the token menu with the dragged out of the modal
-                if (!draggedRow.attr("data-style")) {
-                    // this occurs when dragging from the modal instead,
-                    draggedItem.style = draggedRow.find("[data-style]").attr("data-style");
-                    draggedItem.size = parseInt($("#aoe_feet_height").val()) / window.CURRENT_SCENE_DATA.fpsq;
-                    redraw_token_list_item(draggedItem);
-                }
-
-                helper = draggedRow.find("[data-img]").clone();
-                [helperWidth, helperHeight] = get_helper_size(draggedItem)
-
-                if (isPlayerSheetAoe) {
-                    let aoeItem = SidebarListItem.Aoe(
-                        $(playerAoe).attr("data-shape"),
-                        $(playerAoe).attr("data-size"),
-                        $(playerAoe).attr("data-style")
-                    )
-                    $(helper).attr("data-style", aoeItem.style);
-                    $(helper).attr("data-size", aoeItem.size);
-                    $(helper).attr("class", `aoe-token-tileable aoe-style-${aoeItem.style} aoe-shape-${aoeItem.shape}`);
-                    [helperWidth, helperHeight] = get_helper_size(aoeItem);
-                    $(helper).attr("data-name-override", $(playerAoe).attr("data-name"));
-                } else {
-                    const style = draggedRow.attr("data-style");
-                    const shape = draggedRow.attr("data-shape");
-                    $(helper).attr("data-style", style);
-                    $(helper).attr("data-shape", shape);
-                    $(helper).attr("data-size", draggedRow.attr("data-size"));
-                    $(helper).attr("class", `aoe-token-tileable ${style} aoe-shape-${shape}`);
-                }
-
-                 // perform specific resizing based on shape
-                 if (draggedItem.shape === "circle"){
-                    helperWidth = helperWidth * 2
-                    helperHeight = helperHeight * 2
-                }
-                else if (draggedItem.shape === "line"){
-                    helperWidth = Math.round(window.CURRENT_SCENE_DATA.hpps)  / (1.0 / window.ZOOM)
-                }
-            } else {
-
-                helper = draggedRow.find("img.token-image").clone();
+            if (!draggedItem.isTypeAoe()) {
+                let draggedItem = find_sidebar_list_item(draggedRow);
+                let helper = draggedRow.find("img.token-image").clone();
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
                 } else {
-                    const randomImage = random_image_for_item(draggedItem);
+                    let randomImage = random_image_for_item(draggedItem);
                     helper.attr("src", randomImage);
                 }
+                helper.addClass("draggable-token-creation");
+                return helper;
+            }
+
+            let [helperWidth, helperHeight] = get_helper_size(draggedItem)
+
+            // update the token menu with the dragged out of the modal
+            if (draggedRow.closest(".sidebar-modal").length > 0) {
+                draggedItem.style = draggedRow.attr("data-style").replaceAll("aoe-style-", "");
+                draggedItem.size = parseInt($("#aoe_feet_height").val()) / window.CURRENT_SCENE_DATA.fpsq;
+                redraw_token_list_item(draggedItem);
+            }
+
+            helper = draggedRow.find("[data-img]").clone();
+            [helperWidth, helperHeight] = get_helper_size(draggedItem)
+
+            if (isPlayerSheetAoe) {
+                let aoeItem = SidebarListItem.Aoe(
+                    $(playerAoe).attr("data-shape"),
+                    $(playerAoe).attr("data-size"),
+                    $(playerAoe).attr("data-style")
+                )
+                $(helper).attr("data-style", aoeItem.style);
+                $(helper).attr("data-size", aoeItem.size);
+                $(helper).attr("class", `aoe-token-tileable aoe-style-${aoeItem.style} aoe-shape-${aoeItem.shape}`);
+                [helperWidth, helperHeight] = get_helper_size(aoeItem);
+                $(helper).attr("data-name-override", $(playerAoe).attr("data-name"));
+            } else {
+                const style = draggedRow.attr("data-style");
+                const shape = draggedRow.attr("data-shape");
+                $(helper).attr("data-style", style);
+                $(helper).attr("data-shape", shape);
+                $(helper).attr("data-size", draggedRow.attr("data-size"));
+                $(helper).attr("class", build_aoe_class_name(style, shape, ""));
+            }
+
+             // perform specific resizing based on shape
+             if (draggedItem.shape === "circle"){
+                helperWidth = helperWidth * 2
+                helperHeight = helperHeight * 2
+            }
+            else if (draggedItem.shape === "line"){
+                helperWidth = Math.round(window.CURRENT_SCENE_DATA.hpps)  / (1.0 / window.ZOOM)
             }
 
             $(helper).css('width', `${helperWidth}px`);
@@ -577,19 +579,22 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
 
         },
         start: function (event, ui) {
-            event.stopPropagation();
+            console.log("enable_draggable_token_creation start");
             let draggedRow = $(event.target).closest(".list-item-identifier");
             if ($(event.target).hasClass("list-item-identifier")) {
                 draggedRow = $(event.target);
             }
-            const draggedItem = find_sidebar_list_item(draggedRow);
+            let draggedItem = find_sidebar_list_item(draggedRow);
+            if (!draggedItem.isTypeAoe()) {
+                const tokenSize = token_size_for_item(draggedItem);
+                const width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
+                const helperWidth = width / (1.0 / window.ZOOM);
+                $(ui.helper).css('width', `${helperWidth}px`);
+            }
             $(this).draggable('instance').offset.click = {
                 left: Math.floor(ui.helper.width() / 2),
                 top: Math.floor(ui.helper.height() / 2)
             };
-            if (draggedItem.isTypeAoe()) {
-
-            }
         },
         drag: function (event, ui) {
             if (event.shiftKey) {
@@ -840,6 +845,7 @@ function token_size_for_item(listItem) {
             }
             return tokenSize;
         case ItemType.PC:
+        case ItemType.DDBToken:
             return 1;
         case ItemType.Monster:
             switch (listItem.monsterData.sizeId) {
@@ -1192,21 +1198,27 @@ function create_token_inside(listItem) {
 
     let name = listItem.name;
     let tokenSize = token_size_for_item(listItem) * window.CURRENT_SCENE_DATA.fpsq;
-    sidebarPanel.updateHeader(
-        name,
-        "Select size and drag out style"
-        );
+    sidebarPanel.updateHeader(name, "Select size and drag out style");
 
 
-    sidebarPanel.inputWrapper.append("<div class='menu-subtitle'>Size</div>");
-
-    sidebarPanel.inputWrapper.append(
-        `<div><input min='5' id='aoe_feet_height' value='${tokenSize}'
-            style='width:100%;text-align:center;margin-bottom:20px'
-            maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}'>
-         </div>`);
+    sidebarPanel.inputWrapper.append("");
+    sidebarPanel.inputWrapper.append(`
+        <div class="token-image-modal-url-label-wrapper">
+            <div class='token-image-modal-footer-title image-size-title'>Token Size</div>
+            <input min='5' id='aoe_feet_height' value='${tokenSize}' maxlength='4' type='number' step='${window.CURRENT_SCENE_DATA.fpsq}' />
+        </div>
+    `);
+    $("#aoe_feet_height").on("input", mydebounce(() => {
+        const value = $("#aoe_feet_height").val();
+        listItem.size = Math.round(parseInt(value) / window.CURRENT_SCENE_DATA.fpsq);
+        redraw_token_list_item(listItem);
+    }, 200));
     $("#aoe_feet_height").keydown(function(e) {
-        close_sidebar_modal()
+        if (e.key === "Enter") {
+            close_sidebar_modal();
+        } else if (e.key === "Escape") {
+            $(e.target).blur();
+        }
     });
     redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 }
