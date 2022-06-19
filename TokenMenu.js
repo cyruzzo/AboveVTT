@@ -973,6 +973,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 		imageSizeInputRange.attr("title", "Aoe tokens can't be adjusted this way")
 		imageSizeInput.attr("disabled",true)
 		imageSizeInput.attr("title", "Aoe tokens can't be adjusted this way")
+
+
 	}
 		
 

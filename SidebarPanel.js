@@ -1945,7 +1945,11 @@ function move_item_into_folder_item(listItem, folderItem) {
     rebuild_token_items_list();
     enable_draggable_change_folder(ItemType.MyToken);
   } else if (listItem.isTypeScene() || (listItem.isTypeFolder() && listItem.folderPath.startsWith(RootFolder.Scenes.path))) {
-    move_scene_to_folder(listItem, folderItem.fullPath());
+    if (listItem.isTypeScene()) {
+      move_scene_to_folder(listItem, folderItem.fullPath());
+    } else if (listItem.isTypeFolder()) {
+      move_scenes_folder(listItem, folderItem.fullPath());
+    }
     did_update_scenes();
     enable_draggable_change_folder(ItemType.Scene);
   } else {

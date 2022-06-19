@@ -425,12 +425,6 @@ function edit_scene_dialog(scene_id) {
 		console.log("Saving scene changes")
 
 		const formData = get_edit_form_data();
-		const newName = $("#edit_scene_form").find("input[name=title]").val();
-		const toFullPath = `${scene.folderPath}/${newName}`;
-		if (scene_path_exists(sanitize_folder_path(`${scene.folderPath}/${newName}`))) {
-			alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
-			return;
-		}
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
@@ -830,13 +824,6 @@ function edit_scene_dialog(scene_id) {
 
 	wizard.click(
 		function() {
-
-			const newName = $("#edit_scene_form").find("input[name=title]").val();
-			const toFullPath = `${scene.folderPath}/${newName}`;
-			if (scene_path_exists(sanitize_folder_path(`${scene.folderPath}/${newName}`))) {
-				alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
-				return;
-			}
 
 			form.find("input").each(function() {
 				var n = $(this).attr('name');
@@ -1725,23 +1712,28 @@ function rename_scene_folder(item, newName, alertUser) {
 		return;
 	}
 
+
 	let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolder.Scenes.path, ""));
 	let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolder.Scenes.path, ""));
 	let toFullPath = sanitize_folder_path(`${fromFolderPath}/${newName}`);
-	if (scene_path_exists(toFullPath)) {
-		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
+
+	const newId = path_to_html_id(toFullPath);
+	const existingFolder = window.sceneListFolders.find(f => f.id === newId);
+	if (existingFolder !== undefined) {
 		console.groupEnd();
+		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists. item: `, item, ", existingFolder: ", existingFolder);
 		if (alertUser !== false) {
-			alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
+			alert(`An item with the name "${newName}" already exists at "${item.fullPath()}"`);
 		}
 		return;
 	}
+
 
 	console.log(`updating scenes from ${fromFullPath} to ${toFullPath}`);
 	window.ScenesHandler.scenes.forEach((scene, index) => {
 		if (scene.folderPath?.startsWith(fromFullPath)) {
 			let newFolderPath = sanitize_folder_path(scene.folderPath.replace(fromFullPath, toFullPath));
-			console.debug(`changing scene ${scene.title} folderpath from ${scene.folderPath} to ${newFolderPath}`);
+			console.debug(`changing scene ${scene.title} folderPath from ${scene.folderPath} to ${newFolderPath}`);
 			scene.folderPath = newFolderPath;
 			window.ScenesHandler.persist_scene(index);
 		} else {
@@ -1754,10 +1746,12 @@ function rename_scene_folder(item, newName, alertUser) {
 		if (folder.fullPath() === item.fullPath()) {
 			console.debug(`changing folder from ${folder.name} to ${newName}`);
 			folder.name = newName;
+			folder.id = path_to_html_id(folder.fullPath());
 		} else if (folder.folderPath.startsWith(fromFullPath)) {
 			let newFolderPath = sanitize_folder_path(folder.folderPath.replace(fromFullPath, toFullPath));
 			console.debug(`changing folder ${folder.name} folderPath from ${folder.folderPath} to ${newFolderPath}`);
 			folder.folderPath = newFolderPath;
+			folder.id = path_to_html_id(folder.fullPath());
 		} else {
 			console.debug("not moving folder", folder);
 		}
@@ -1768,19 +1762,6 @@ function rename_scene_folder(item, newName, alertUser) {
 
 	console.groupEnd();
 	return toFullPath;
-}
-
-/**
- * determines if the given path exists or not.
- * @param folderPath {string} the path you are looking for
- * @returns {boolean} whether or not the path exists
- */
-function scene_path_exists(folderPath) {
-	const comparison = folderPath.startsWith(RootFolder.Scenes.path) ? folderPath : sanitize_folder_path(`${RootFolder.Scenes.path}/${folderPath}`);
-	const existingScene = window.sceneListItems.find(s => s.fullPath() === comparison) !== undefined;
-	const existingFolder = window.sceneListFolders.find(f => f.fullPath() === comparison) !== undefined;
-	console.debug("scene_path_exists", comparison, existingScene, existingFolder);
-	return (existingScene || existingFolder);
 }
 
 function register_scene_row_context_menu() {
@@ -1909,12 +1890,16 @@ function move_scenes_folder(listItem, folderPath) {
 
 	// move the actual item
 	listItem.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
+	listItem.id = path_to_html_id(listItem.fullPath());
+	listItem.parentId = path_to_html_id(listItem.folderPath);
 	let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	// move subfolders. This isn't exactly necessary since we'll just rebuild the list anyway, but any empty folders need to be updated
 	window.sceneListFolders.forEach(f => {
 		if (f.folderPath.startsWith(fromPath)) {
 			f.folderPath = f.folderPath.replace(fromPath, toPath);
+			f.id = path_to_html_id(f.fullPath());
+			f.parentId = path_to_html_id(f.folderPath);
 		}
 	});
 
