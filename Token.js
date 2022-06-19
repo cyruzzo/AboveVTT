@@ -259,7 +259,6 @@ class Token {
 		// Sets how far tokens are allowed to move outside of the scene
 		const movePadding = this.options.size * this.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
 		// Stop movement if new position is outside of the scene
-		console.warn(this.sceneBoundaries.left - movePadding);
 		if (
 			top  < (this.sceneBoundaries.top - movePadding)    || 
 			top  > (this.sceneBoundaries.bottom + movePadding) ||
@@ -1199,6 +1198,9 @@ class Token {
 				x: 0,
 				y: 0
 			};
+
+			const movePaddingWhileDragging = self.options.size * self.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
+
 			tok.draggable({
 				scroll: false,
 				stop:
@@ -1389,6 +1391,11 @@ class Token {
 					remove_selected_token_bounding_box();
 				},
 
+				/**
+				 * Dragging a token.
+				 * @param {Event} event mouse event
+				 * @param {Object} ui UI-object
+				 */
 				drag: function(event, ui) {
 					event.stopPropagation()
 					var zoom = window.ZOOM;
@@ -1399,6 +1406,11 @@ class Token {
 
 					// this was copied the place function in this file. We should make this a single function to be used in other places
 					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
+
+					// Constrain token within scene
+					tokenPosition.x = clamp(tokenPosition.x, self.sceneBoundaries.left - movePaddingWhileDragging, self.sceneBoundaries.right + movePaddingWhileDragging);
+					tokenPosition.y = clamp(tokenPosition.y, self.sceneBoundaries.top - movePaddingWhileDragging, self.sceneBoundaries.bottom + movePaddingWhileDragging);
+
 					ui.position = {
 						left: tokenPosition.x,
 						top: tokenPosition.y
