@@ -31,6 +31,9 @@ const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404"
 
 class Token {
 
+	// Defines how many grid fields a token is allowed to be moved outside of the scene.
+	SCENE_MOVE_GRID_PADDING_MULTIPLIER = 1;
+
 	constructor(options) {
 		this.selected = false;
 		this.options = options;
@@ -49,6 +52,14 @@ class Token {
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
 		}
+
+		// Store scene boundaries when token is created
+		this.sceneBoundaries = {
+			top: 0,
+			bottom: $("#scene_map").height() - window.CURRENT_SCENE_DATA.vpps,			
+			left: 0,
+			right: $("#scene_map").width() - window.CURRENT_SCENE_DATA.hpps,
+		};
 	}
 
 
@@ -230,18 +241,42 @@ class Token {
 		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		this.move(this.options.top, newLeft)
 	}
+
+	/**
+	 * Move token to new position.
+	 * @param {String|Number} top position from the top
+	 * @param {String|Number} left position from the left
+	 * @returns void
+	 */
 	move(top, left) {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
+
+		// Save handle params
+		top = parseFloat(top);
+		left = parseFloat(left);
+
+		// Sets how far tokens are allowed to move outside of the scene
+		const movePadding = this.options.size * this.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
+		// Stop movement if new position is outside of the scene
+		console.warn(this.sceneBoundaries.left - movePadding);
+		if (
+			top  < (this.sceneBoundaries.top - movePadding)    || 
+			top  > (this.sceneBoundaries.bottom + movePadding) ||
+			left < (this.sceneBoundaries.left - movePadding)   || 
+			left > (this.sceneBoundaries.right + movePadding)
+		) { return; }
+
 		this.update_from_page();
-		this.options.top = top;
-		this.options.left = left;
+		this.options.top = top + 'px';
+		this.options.left = left + 'px';
 		this.place(100);
 		this.sync();
 		if (this.persist != null) {
 			this.persist();
 		}
 	}
+
 	snap_to_closest_square() {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
