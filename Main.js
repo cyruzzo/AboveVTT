@@ -1375,6 +1375,12 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			.MuiButtonBase-root {
 				width: 100%;
 			}
+      #site #site-main{
+        padding-top: 0px !important;
+      }
+      .ct-character-sheet-mobile__header{
+        top: 0px !important; 
+      }
 			</style>
 		`);
 		console.log("removing headers");
@@ -1382,6 +1388,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		$(event.target).contents().find(".site-bar").remove();
 		$(event.target).contents().find(".page-header").remove();
 		$(event.target).contents().find(".homebrew-comments").remove();
+		$(event.target).contents().find(".mega-menu__fallback").remove();
 
 		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
 			let addedElement = $(addedEvent.target);
