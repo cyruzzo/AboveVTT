@@ -334,6 +334,16 @@ function init_settings(){
 				{ value: false, label: "Not Streaming", description: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
 			],
 			defaultValue: false
+		},
+		{
+			name: 'iframeStatBlocks',
+			label: 'Fetch Monster Stat Blocks',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
+				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
+			],
+			defaultValue: false
 		}
 	];
 
@@ -357,6 +367,13 @@ function init_settings(){
 				} else {
 					window.MB.sendMessage("custom/myVTT/disabledicestream");
 				}
+			} else if (name === "iframeStatBlocks") {
+				if (newValue == true) {
+					use_iframes_for_monsters();
+				} else {
+					stop_using_iframes_for_monsters();
+				}
+				window.EXPERIMENTAL_SETTINGS[setting.name] = should_use_iframes_for_monsters();
 			} else {
 				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
 				persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
