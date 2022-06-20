@@ -102,7 +102,6 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 });
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
-    console.log("Mousetrap.bind('esc'");
     stop_drawing();
     $('#select-button').click();
     close_token_context_menu();
@@ -122,6 +121,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         // only close the sidebar if there isn't something on the screen explicitly trying to keep it open
         close_sidebar_modal();
     }
+    remove_tooltip();
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open
