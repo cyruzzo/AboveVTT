@@ -2868,6 +2868,7 @@ h5.token-image-modal-footer-title:after {
     height: 100px;
     display: flex;
     margin: 10px 0px;
+    justify-content: space-between;
 }
 
 /* all the rc-switch styles were lifted from the content sharing screen /campaigns/<campaign_id>/content-management and then tweaked slightly */
