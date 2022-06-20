@@ -1076,7 +1076,7 @@ function build_sidebar_list_row(listItem) {
           reorderButton.on("click", function (clickEvent) {
             clickEvent.stopPropagation();
             if ($(clickEvent.currentTarget).hasClass("active")) {
-              disable_draggable_change_folder(ItemType.MyToken);
+              disable_draggable_change_folder();
             } else {
               enable_draggable_change_folder(ItemType.MyToken);
             }
@@ -1740,10 +1740,11 @@ function list_item_image_flyout(hoverEvent) {
   }
 }
 
-function disable_draggable_change_folder(listItemType) {
+function disable_draggable_change_folder() {
   $(".token-row-drag-handle").remove();
-  switch (listItemType) {
-    case ItemType.MyToken:
+
+  // MyToken
+  if (tokensPanel) {
       tokensPanel.body.find(".token-row-button").show();
       tokensPanel.body.find(".token-row-button.reorder-button").show();
       tokensPanel.body.find(".reorder-button").removeClass("active");
@@ -1758,8 +1759,10 @@ function disable_draggable_change_folder(listItemType) {
       try {
         tokensPanel.body.find(".sidebar-list-item-row").droppable("destroy");
       } catch (e) {} // don't care if it fails, just try
-      break;
-    case ItemType.Scene:
+  }
+
+  // Scenes
+  if (scenesPanel) {
       scenesPanel.body.find(".token-row-gear").show();
       scenesPanel.body.find(".token-row-button").show();
       scenesPanel.header.find(".token-row-gear").show();
@@ -1776,7 +1779,6 @@ function disable_draggable_change_folder(listItemType) {
       try {
         scenesPanel.body.find(".sidebar-list-item-row").droppable("destroy");
       } catch (e) {} // don't care if it fails, just try
-      break;
   }
 }
 
@@ -1801,7 +1803,7 @@ function add_expand_collapse_buttons_to_header(sidebarPanel) {
  */
 function enable_draggable_change_folder(listItemType) {
 
-  disable_draggable_change_folder(listItemType);
+  disable_draggable_change_folder();
 
   const droppableOptions = {
     greedy: true,

@@ -1513,7 +1513,7 @@ function init_scenes_panel() {
 	let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Scenes"><span class="material-icons">reorder</span></button>`);
 	reorderButton.on("click", function (clickEvent) {
 		if ($(clickEvent.currentTarget).hasClass("active")) {
-			disable_draggable_change_folder(ItemType.Scene);
+			disable_draggable_change_folder();
 		} else {
 			enable_draggable_change_folder(ItemType.Scene);
 		}

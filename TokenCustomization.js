@@ -242,7 +242,13 @@ class TokenCustomization {
         if (parent) {
             return sanitize_folder_path(parent.findAncestors().reverse().map(tc => tc.name()).join("/"));
         }
-        return RootFolder.findById(this.parentId).path;
+        const root = RootFolder.findById(this.parentId)
+        if (root) {
+            return root.path;
+        } else {
+            console.warn("TokenCustomization.folderPath() could not find the root!", this);
+            return RootFolder.MyTokens.path;
+        }
     }
     fullPath() {
         return sanitize_folder_path(this.findAncestors().reverse().map(tc => tc.name()).join("/"));
@@ -456,7 +462,7 @@ function migrate_token_customizations() {
 
         // fetch monsters so we can get the monster names
         console.log("migrate_token_customizations starting to fetch monsters to fill names");
-        window.EncounterHandler.fetch_monsters([...monsterIdsToFetch], function (response) {
+        fetch_monsters([...monsterIdsToFetch], function (response) {
             if (typeof response === "object") {
                 response.forEach(m => {
                     let found = newCustomizations.find(c => c.tokenType === ItemType.Monster && c.id === `${m.id}`);

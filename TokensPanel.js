@@ -198,6 +198,8 @@ function backfill_mytoken_folders() {
  */
 function rebuild_token_items_list() {
     console.groupCollapsed("rebuild_token_items_list");
+    try {
+
 
     backfill_mytoken_folders(); // just in case we're missing any folders
 
@@ -254,6 +256,10 @@ function rebuild_token_items_list() {
     rebuild_ddb_npcs();
     update_token_folders_remembered_state();
     console.groupEnd();
+    } catch (error) {
+        console.groupEnd();
+        console.error("rebuild_token_items_list caught an unexpected error", error);
+    }
 }
 
 /**

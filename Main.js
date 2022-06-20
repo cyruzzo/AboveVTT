@@ -535,6 +535,8 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 	close_sidebar_modal();
 	$(clickedTab.attr("data-target")).addClass('selected-tab');
 
+	disable_draggable_change_folder();
+
 	// switch back to gamelog if they change tabs
 	if (!isCharacterSheetInfo) {
 		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab. 
