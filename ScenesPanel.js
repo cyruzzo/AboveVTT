@@ -1517,7 +1517,7 @@ function init_scenes_panel() {
 	scenesPanel.updateHeader("Scenes");
 	add_expand_collapse_buttons_to_header(scenesPanel);
 
-	let searchInput = $(`<input name="scene-search" type="text" style="width:96%;margin:2%" placeholder="search scenes">`);
+	let searchInput = $(`<input name="scene-search" type="search" style="width:96%;margin:2%" placeholder="search scenes">`);
 	searchInput.off("input").on("input", mydebounce(() => {
 		let textValue = scenesPanel.header.find("input[name='scene-search']").val();
 		redraw_scene_list(textValue);
@@ -1567,9 +1567,16 @@ function init_scenes_panel() {
 	}, 5000); // do better than this... or don't, it probably doesn't matter
 }
 
+/**
+ * Updates and redraws the scene list in the sidebar
+ */
 function did_update_scenes() {
 	rebuild_scene_items_list();
-	redraw_scene_list("");
+
+	// Filters scene list by search input if scenes-panel is active
+	const sceneSearchInput = $("#scenes-panel.selected-tab input[name='scene-search']");
+	const sceneSearchTerm = sceneSearchInput ? sceneSearchInput.val() : '';
+	redraw_scene_list(sceneSearchTerm);
 }
 
 function rebuild_scene_items_list() {
