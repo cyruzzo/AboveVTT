@@ -28,6 +28,12 @@ const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404"
 					"A0A000", "A000A0", "00A0A0", "A0A0A0", "E00000", "00E000", "0000E0",
 					"E0E000", "E000E0", "00E0E0", "E0E0E0"];
 
+const availableToAoe = [
+	"hidden",
+	"locked",  // not sure why you'd want this, but it doesn't hurt to support it
+	"restrictPlayerMove",
+	"revealname"
+];
 
 class Token {
 
@@ -51,6 +57,24 @@ class Token {
 		}
 	}
 
+	defaultAoeOptions() {
+		if (this.isAoe()) {
+			// look at build_aoe_token_options and set defaults here
+			token_setting_options().forEach(option => {
+				if (!availableToAoe.includes(option.name)) {
+					delete this.options[option.name];
+				}
+			});
+			delete this.options.aura1;
+			delete this.options.aura2;
+			this.options.auraVisible = false;
+			this.options.square = true;
+			this.options.disablestat = true
+			this.options.hidestat = true
+			this.options.disableborder = true
+			this.options.disableaura = true
+		}
+	}
 
 	stopAnimation(){
 		var selector = "div[data-id='" + this.options.id + "']";
@@ -90,24 +114,60 @@ class Token {
 		}
 	}
 
-	gridSize() {
-		let size = parseInt(this.options.size);
-		if (isNaN(size)) {
-			// assume this token uses gridHeight/gridWidth instead.
-			if (this.options.gridWidth === 1 && this.options.gridHeight > 0){
-				return Math.round(this.options.gridHeight)
+	// number of grid spaces. eg: 0.5 for tiny, 1 for small/medium, 2 for large, etc
+	numberOfGridSpacesWide() {
+		try {
+			let output = 1;
+			const w = parseFloat(this.options.gridWidth);
+			if (!isNaN(w)) {
+				output = w;
+			} else {
+				const calculatedFromSize = (parseFloat(this.options.size) / parseFloat(window.CURRENT_SCENE_DATA.hpps));
+				if (!isNaN(calculatedFromSize)) {
+					output = calculatedFromSize;
+				}
 			}
-			return 1; // default to medium
+			output = Math.round(output * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+			if (output < 0.5) {
+				return 0.5;
+			}
+			return output;
+		} catch (error) {
+			console.warn("Failed to parse gridHeight for token", this, error);
+			return 1;
 		}
-		let gridSize = parseInt(window.CURRENT_SCENE_DATA.hpps); // one grid square
-		return Math.round(size / gridSize);
+	}
+	// number of grid spaces. eg: 0.5 for tiny, 1 for small/medium, 2 for large, etc
+	numberOfGridSpacesTall() {
+		try {
+			let output = 1;
+			const h = parseFloat(this.options.gridHeight);
+			if (!isNaN(h)) {
+				output = h;
+			} else {
+				const calculatedFromSize = (parseFloat(this.options.size) / parseFloat(window.CURRENT_SCENE_DATA.vpps));
+				if (!isNaN(calculatedFromSize)) {
+					output = calculatedFromSize;
+				}
+			}
+			output = Math.round(output * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+			if (output < 0.5) {
+				return 0.5;
+			}
+			return output;
+		} catch (error) {
+			console.warn("Failed to parse gridHeight for token", this, error);
+			return 1;
+		}
 	}
 
+	// number of pixels
 	sizeWidth() {
 		let w = parseInt(this.options.gridWidth);
 		if (isNaN(w)) return this.options.size;
 		return parseInt(window.CURRENT_SCENE_DATA.hpps) * w;
 	}
+	// number of pixels
 	sizeHeight() {
 		let h = parseInt(this.options.gridHeight);
 		if (isNaN(h)) return this.options.size;
@@ -924,6 +984,10 @@ class Token {
 			// No scene loaded!
 			return;
 		}
+
+		// we don't allow certain options to be set for AOE tokens
+		this.defaultAoeOptions();
+
 		// console.group("place")
 		if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 			animationDuration = 1000;

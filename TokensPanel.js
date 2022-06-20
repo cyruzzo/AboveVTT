@@ -802,7 +802,8 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.disablestat = true;
             break;
         case ItemType.Aoe:
-            options = {...options, ...build_aoe_token_options(listItem.style, listItem.shape, listItem.size, nameOverride)};
+            // we don't want to allow other options for aoe so this is a full replacement of options
+            options = build_aoe_token_options(listItem.style, listItem.shape, listItem.size, nameOverride);
             // specificImage = options.imgsrc; // force it to use what we just built
             break;
     }
@@ -838,10 +839,13 @@ function token_size_for_item(listItem) {
             return 1;
         case ItemType.MyToken:
             let options = find_token_options_for_list_item(listItem);
-            let tokenSizeSetting = options.tokenSize;
-            let tokenSize = parseInt(tokenSizeSetting);
-            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
-                tokenSize = 1; // TODO: handle custom sizes
+            let tokenSizeSetting = parseFloat(options.tokenSize);
+            if (isNaN(tokenSizeSetting)) {
+                return 1;
+            }
+            const tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+            if (tokenSize < 0.5) {
+                return 0.5;
             }
             return tokenSize;
         case ItemType.PC:
@@ -1254,7 +1258,6 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     display_sidebar_modal(sidebarPanel);
 
     let name = listItem.name;
-    let tokenSize = token_size_for_item(listItem);
 
     sidebarPanel.updateHeader(name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
     redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
@@ -1336,7 +1339,14 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     }
 
     // token size
-    let tokenSizeInput = build_token_size_input(tokenSize, function (newSize) {
+    let tokenSizes = [];
+    if (placedToken) {
+        tokenSizes.push(placedToken.numberOfGridSpacesWide());
+        tokenSizes.push(placedToken.numberOfGridSpacesTall());
+    } else {
+        tokenSizes.push(token_size_for_item(listItem))
+    }
+    let tokenSizeInput = build_token_size_input(tokenSizes, function (newSize) {
         customization.setTokenOption("tokenSize", newSize);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);

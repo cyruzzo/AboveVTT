@@ -95,6 +95,13 @@ function token_context_menu_expanded(tokenIds, e) {
 		console.warn(`token_context_menu_expanded was called with ids: ${JSON.stringify(tokenIds)}, but no matching tokens could be found`);
 		return;
 	}
+
+	// Aoe tokens are treated differently from everything else so we need to check this more often
+	let isAoeList = tokens.map(t => t.isAoe());
+	let uniqueAoeList = [...new Set(isAoeList)];
+	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
+	const someTokensAreAoe = (uniqueAoeList.includes(true));
+
 	$("#tokenOptionsPopup").remove();
 	let tokenOptionsClickCloseDiv = $("<div id='tokenOptionsClickCloseDiv'></div>");
 	tokenOptionsClickCloseDiv.off().on("click", function(){
@@ -139,7 +146,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		}
 	}
 
-	if(window.DM){
+	if (window.DM && !allTokensAreAoe) {
 		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
 		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
 		let combatButton = $(`<button></button>`);
@@ -279,9 +286,11 @@ function token_context_menu_expanded(tokenIds, e) {
 		})
 	});
 	if(window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()))){
-		body.append(aurasRow);
+		if (!someTokensAreAoe) {
+			body.append(aurasRow);
+		}
 	}
-	if(window.DM) {
+	if(window.DM && !someTokensAreAoe) {
 		if (tokens.length === 1) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
@@ -294,7 +303,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	}
 
 	if(window.DM) {
-		let optionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Options</div></div>`);
+		let optionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Options</div></div>`);
 		optionsRow.hover(function (hoverEvent) {
 			context_menu_flyout("options-flyout", hoverEvent, function(flyout) {
 				flyout.append(build_options_flyout_menu(tokenIds));
@@ -305,6 +314,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	}
 
 	if(window.DM) {
+		body.append(`<hr style="opacity: 0.3" />`);
 		let deleteTokenMenuButton = $("<button class='deleteMenuButton icon-close-red material-icons'>Delete</button>")
 	 	body.append(deleteTokenMenuButton);
 	 	deleteTokenMenuButton.off().on("click", function(){
@@ -900,6 +910,12 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 function build_adjustments_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
+
+	// Aoe tokens are treated differently from everything else so we need to check this more often
+	let isAoeList = tokens.map(t => t.isAoe());
+	let uniqueAoeList = [...new Set(isAoeList)];
+	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
+
 	let body = $("<div></div>");
 	body.css({
 		width: "320px",
@@ -941,7 +957,11 @@ function build_adjustments_flyout_menu(tokenIds) {
 	nameWrapper.append(nameInput); // input below label
 	body.append(nameWrapper);
 
-	let tokenSizes = tokens.map(t => t.gridSize());
+	let tokenSizes = [];
+	tokens.forEach(t => {
+		tokenSizes.push(t.numberOfGridSpacesWide());
+		tokenSizes.push(t.numberOfGridSpacesTall());
+	});
 	let uniqueSizes = [...new Set(tokenSizes)];
 	console.log("uniqueSizes", uniqueSizes);
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
@@ -952,91 +972,92 @@ function build_adjustments_flyout_menu(tokenIds) {
 				console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
 			}
 		});
-	});
+	}, allTokensAreAoe); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
 	body.append(sizeInputs);
-
-	//image scaling size
-	let tokenImageScales = tokens.map(t => t.options.imageSize);
-	let uniqueScales = [...new Set(tokenImageScales)];
-	let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
-	let imageSizeWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
-		tokens.forEach(token => {
-			token.options.imageSize = imageSize;
-			token.place_sync_persist();
-		});
-	});
-	body.append(imageSizeWrapper);
-	if (tokens.some((t) => t.isAoe())){
-		let imageSizeInput = imageSizeWrapper.find(".image-scale-input-number");
-		let imageSizeInputRange = imageSizeWrapper.find(".image-scale-input-range");
-		imageSizeInputRange.attr("disabled", true)
-		imageSizeInputRange.attr("title", "Aoe tokens can't be adjusted this way")
-		imageSizeInput.attr("disabled",true)
-		imageSizeInput.attr("title", "Aoe tokens can't be adjusted this way")
-
-
+	if (allTokensAreAoe) {
+		sizeInputs.find("select").closest(".token-image-modal-footer-select-wrapper").hide(); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
 	}
-		
 
-	//border color selections
-	let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
-	let tokenBorderColors = tokens.map(t => t.options.color);
-	if(tokenBorderColors.length === 1) {
-		borderColorInput.val(tokenBorderColors[0] || "#dddddd");	
-	}
-	let borderColorWrapper = $(`
-		<div class="token-image-modal-url-label-wrapper border-color-wrapper">
-			<div class="token-image-modal-footer-title border-color-title">Border Color</div>
-		</div>
-	`);
-	borderColorWrapper.append(borderColorInput); 
-	body.append(borderColorWrapper);
-	let colorPicker = $(borderColorInput);
-	colorPicker.spectrum({
-		type: "color",
-		showInput: true,
-		showInitial: true,
-		containerClassName: 'prevent-sidebar-modal-close',
-		clickoutFiresChange: true,
-		color: tokens[0].options.color,
-		appendTo: "parent"
-	});
-	const borderColorPickerChange = function(event, tinycolor) {
-		let borderColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-		if (event.type === 'change') {
+	if (!allTokensAreAoe) {
+
+		//image scaling size
+		let tokenImageScales = tokens.map(t => t.options.imageSize);
+		let uniqueScales = [...new Set(tokenImageScales)];
+		let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
+		let imageSizeWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
 			tokens.forEach(token => {
-				token.options.color = borderColor;
-				$("#combat_area tr[data-target='" + token.options.id + "'] img[class*='Avatar']").css("border-color", borderColor);
+				token.options.imageSize = imageSize;
 				token.place_sync_persist();
 			});
+		});
+		body.append(imageSizeWrapper);
+		if (tokens.some((t) => t.isAoe())){
+			let imageSizeInput = imageSizeWrapper.find(".image-scale-input-number");
+			let imageSizeInputRange = imageSizeWrapper.find(".image-scale-input-range");
+			imageSizeInputRange.attr("disabled", true)
+			imageSizeInputRange.attr("title", "Aoe tokens can't be adjusted this way")
+			imageSizeInput.attr("disabled",true)
+			imageSizeInput.attr("title", "Aoe tokens can't be adjusted this way")
 		}
-		else {
-			tokens.forEach(token => {
-				token.options.color = borderColor;		
-				token.place_sync_persist();	
-			});
-		}
-	};
-	colorPicker.on('dragstop.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
-	colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
-	colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
-	
 
-	let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-	if(tokens.length === 1 && window.DM && !tokens[0].isAoe()){
+
+		//border color selections
+		let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
+		let tokenBorderColors = tokens.map(t => t.options.color);
+		if(tokenBorderColors.length === 1) {
+			borderColorInput.val(tokenBorderColors[0] || "#dddddd");
+		}
+		let borderColorWrapper = $(`
+			<div class="token-image-modal-url-label-wrapper border-color-wrapper">
+				<div class="token-image-modal-footer-title border-color-title">Border Color</div>
+			</div>
+		`);
+		borderColorWrapper.append(borderColorInput);
+		body.append(borderColorWrapper);
+		let colorPicker = $(borderColorInput);
+		colorPicker.spectrum({
+			type: "color",
+			showInput: true,
+			showInitial: true,
+			containerClassName: 'prevent-sidebar-modal-close',
+			clickoutFiresChange: true,
+			color: tokens[0].options.color,
+			appendTo: "parent"
+		});
+		const borderColorPickerChange = function(event, tinycolor) {
+			let borderColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+			if (event.type === 'change') {
+				tokens.forEach(token => {
+					token.options.color = borderColor;
+					$("#combat_area tr[data-target='" + token.options.id + "'] img[class*='Avatar']").css("border-color", borderColor);
+					token.place_sync_persist();
+				});
+			}
+			else {
+				tokens.forEach(token => {
+					token.options.color = borderColor;
+					token.place_sync_persist();
+				});
+			}
+		};
+		colorPicker.on('dragstop.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
+		colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
+		colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
+		let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
 		body.append(changeImageMenuButton)
+
+		changeImageMenuButton.off().on("click", function() {
+			close_token_context_menu();
+			id = tokens[0].options.id;
+			if (!(id in window.TOKEN_OBJECTS)) {
+				return;
+			}
+			let tok = window.TOKEN_OBJECTS[id];
+			display_change_image_modal(tok);
+		});
 	}
-
-	changeImageMenuButton.off().on("click", function(){
-		close_token_context_menu();
-		id = tokens[0].options.id;
-		if (!(id in window.TOKEN_OBJECTS)) {
-			return;
-		}
-		let tok = window.TOKEN_OBJECTS[id];
-		display_change_image_modal(tok);
-	});
-
 	return body;
 }
 
@@ -1109,6 +1130,12 @@ function build_token_image_scale_input(startingScale, didUpdate) {
 
 function build_options_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
+
+	// Aoe tokens are treated differently from everything else so we need to check this more often
+	let isAoeList = tokens.map(t => t.isAoe());
+	let uniqueAoeList = [...new Set(isAoeList)];
+	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
+
 	let body = $("<div></div>");
 	body.css({
 		width: "320px",
@@ -1124,14 +1151,17 @@ function build_options_flyout_menu(tokenIds) {
 	}
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
+		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
+			continue;
+		} else if(setting.name === 'square' || setting.name === 'legacyaspectratio') {
+			continue;
+		}
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
 		let uniqueSettings = [...new Set(tokenSettings)];
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
 		}
-		if(setting.name === 'square' || setting.name === 'legacyaspectratio')
-			continue;
 
 		if (setting.type === "dropdown") {
 			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
@@ -1190,17 +1220,18 @@ function build_options_flyout_menu(tokenIds) {
  * Builds and returns HTML inputs for updating token size
  * @param tokenSizes {Array<Number>} the current size of the token this input is for
  * @param changeHandler {function} the function to be called when the input changes. This function takes a single {float} variable. EX: function(numberOfSquares) { ... } where numberOfSquares is 1 for medium, 2 for large, etc
+ * @param forceCustom {boolean} whether or not to force the current setting to be custom even if the size is a standard size... We do this for aoe
  * @returns {*|jQuery|HTMLElement} the jQuery object containing all the input elements
  */
-function build_token_size_input(tokenSizes, changeHandler) {
-	let numGridSquares = undefined
+function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) {
+	let numGridSquares = undefined;
 	// get the first value if there's only 1 value
-	if (tokenSizes.length === 1){
+	if (tokenSizes.length === 1) {
 		numGridSquares = tokenSizes[0]
 		if (isNaN(numGridSquares)) {
 			numGridSquares = 1;
 		}
-	}else{
+	} else {
 		// multiple options
 		numGridSquares = -1
 	}
@@ -1210,27 +1241,22 @@ function build_token_size_input(tokenSizes, changeHandler) {
 		upsq = "ft";
 	}
 
-	function isSizeCustom(){
-		return (numGridSquares != 0.5  && 
-			    numGridSquares != 1  && 
-			    numGridSquares != 2  && 
-			    numGridSquares != 3  && 
-			    numGridSquares != 4)
-	}
+	const isSizeCustom = (forceCustom || ![0.5, 1, 2, 3, 4].includes(numGridSquares));
+	console.log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
 
-	let customStyle = numGridSquares > 4 ? "display:flex;" : "display:none;"
-	const size = numGridSquares * window.CURRENT_SCENE_DATA.fpsq
+	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
+	const size = (numGridSquares > 0) ? (numGridSquares * window.CURRENT_SCENE_DATA.fpsq) : 1;
 	let output = $(`
  		<div class="token-image-modal-footer-select-wrapper">
  			<div class="token-image-modal-footer-title">Token Size</div>
  			<select name="data-token-size">
-			 	${numGridSquares === -1 ? '<option value="multiple" selected="true" disabled="disabled">Multiple Values</option>' : ""}
- 				<option value="0.5" ${numGridSquares > 0 && numGridSquares < 1 ? "selected='true'": ""}>Tiny (2.5${upsq})</option>
- 				<option value="1" ${numGridSquares === 1 ? "selected='true'": ""}>Small/Medium (5${upsq})</option>
- 				<option value="2" ${numGridSquares === 2 ? "selected='true'": ""}>Large (10${upsq})</option>
- 				<option value="3" ${numGridSquares === 3 ? "selected='true'": ""}>Huge (15${upsq})</option>
- 				<option value="4" ${numGridSquares === 4 ? "selected='true'": ""}>Gargantuan (20${upsq})</option>
- 				<option value="custom" ${isSizeCustom() ? "selected='true'": ""}>Custom</option>
+			 	${numGridSquares === -1 ? '<option value="multiple" selected="selected" disabled="disabled">Multiple Values</option>' : ""}
+ 				<option value="0.5" ${numGridSquares > 0 && numGridSquares < 1 ? "selected='selected'": ""}>Tiny (2.5${upsq})</option>
+ 				<option value="1" ${numGridSquares === 1 ? "selected='selected'": ""}>Small/Medium (5${upsq})</option>
+ 				<option value="2" ${numGridSquares === 2 ? "selected='selected'": ""}>Large (10${upsq})</option>
+ 				<option value="3" ${numGridSquares === 3 ? "selected='selected'": ""}>Huge (15${upsq})</option>
+ 				<option value="4" ${numGridSquares === 4 ? "selected='selected'": ""}>Gargantuan (20${upsq})</option>
+ 				<option value="custom" ${isSizeCustom ? "selected='selected'": ""}>Custom</option>
  			</select>
  		</div>
  		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
