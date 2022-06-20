@@ -1575,7 +1575,7 @@ function did_update_scenes() {
 
 	// Filters scene list by search input if scenes-panel is active
 	const sceneSearchInput = $("#scenes-panel.selected-tab input[name='scene-search']");
-	const sceneSearchTerm = sceneSearchInput ? sceneSearchInput.val() : '';
+	const sceneSearchTerm = (sceneSearchInput.length > 0) ? sceneSearchInput.val() : '';
 	redraw_scene_list(sceneSearchTerm);
 }
 
