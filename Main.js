@@ -1,15 +1,20 @@
 var abovevtt_version = '0.74';
 
 /**
- * before the page refreshes perform the innards
- * @param {*} event 
+ * Before the page refreshes perform the innards
+ * @param {Event} event
  */
 window.onbeforeunload = function(event)
 {
-	console.log("refreshing page, storing zoom first")
-	add_zoom_to_storage()
+	console.log("refreshing page, storing zoom first");
+	add_zoom_to_storage();
 };
 
+/**
+ * Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
+ * @param {String} url to parse
+ * @returns String
+ */
 function parse_img(url){
 	if (typeof url !== "string") {
 		return "";
@@ -23,6 +28,12 @@ function parse_img(url){
 	return retval;
 }
 
+/**
+ * Waits for a global variable to be set.
+ * Then triggers the callback function.
+ * @param {String} name a global variable name
+ * @param {Function} callback
+ */
 function whenAvailable(name, callback) {
     var interval = 10; // ms
     window.setTimeout(function() {
@@ -34,6 +45,10 @@ function whenAvailable(name, callback) {
     }, interval);
 }
 
+/**
+ * Returns a random color in hex format.
+ * @returns String
+ */
 function getRandomColorOLD() {
 	var letters = '0123456789ABCDEF';
 	var color = '#';
@@ -43,6 +58,10 @@ function getRandomColorOLD() {
 	return color;
 }
 
+/**
+ * Generates a random uuid string.
+ * @returns String
+ */
 function uuid() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -50,29 +69,59 @@ function uuid() {
 	});
 }
 
+/**
+ * Generates a random integer number between min and max.
+ * @param {Number} min lower boundary (including)
+ * @param {Number} max upper boundary (excluding)
+ * @returns Number
+ */
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min)) + min; //Il max � escluso e il min � incluso
+	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-// Constrains a number between a minimum and maximum value
+/**
+ * Constrains a given number between a minimum and maximum value.
+ * @param {Number} Number a given value
+ * @param {Number} min lower boundary (including)
+ * @param {Number} max upper boundary (including)
+ * @returns Number
+ */
 function clamp (number, min, max) {
 	return Math.min(Math.max(number, min), max)
 }
 
+/**
+ * Extracts a YouTube VideoID from a given URL.
+ * Returns false if no ID vas found.
+ * @param {String} url Youtube video URL
+ * @returns String | false
+ */
 function youtube_parser(url) {
 	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
 	var match = url.match(regExp);
 	return (match && match[7].length == 11) ? match[7] : false;
 }
 
+/**
+ * Check is a given URL is valid
+ * @param {string} value any URL
+ * @returns boolean
+ */
 function validateUrl(value) {
   return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
 }
 
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.1
+
+/**
+ * Changes the zoom level.
+ * @param {Number} newZoom new zoom value
+ * @param {Number} x zoom center horizontal
+ * @param {Number} y zoom center vertical
+ */
 function change_zoom(newZoom, x, y) {
 	console.group("change_zoom")
 	console.log("zoom", newZoom, x , y)
@@ -95,21 +144,21 @@ function change_zoom(newZoom, x, y) {
 	$("body").css("--window-zoom", window.ZOOM)
 	console.groupEnd()
 }
-/** 
-* Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene
-* @param {float} z - current zoom level
+
+/**
+* Adds the current zoom level and scrollLeft, scrollTop offsets to local storage along with the title of the scene.
 */
-function add_zoom_to_storage(){
-	console.group("add_zoom_to_storage")
-	console.log("storing zoom")
+function add_zoom_to_storage() {
+	console.group("add_zoom_to_storage");
+	console.log("storing zoom");
 	
-	if(window.ZOOM !== get_reset_zoom()){
+	if(window.ZOOM !== get_reset_zoom()) {
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
-		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
-		if (zoomIndex !== -1){
-			zooms[zoomIndex].zoom = window.ZOOM
-			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft())
-			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop())
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
+		if (zoomIndex !== -1) {
+			zooms[zoomIndex].zoom = window.ZOOM;
+			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft());
+			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop());
 		}
 		else{
 			// zoom doesn't exist
@@ -125,10 +174,11 @@ function add_zoom_to_storage(){
 	
 	console.groupEnd("add_zoom_to_storage")
 }
-/** 
-* sets default values for VTTWRAPPER and black_layer based off zoom
+
+/**
+* Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
-function set_default_vttwrapper_size(){
+function set_default_vttwrapper_size() {
 	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
 	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
 	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
@@ -136,41 +186,41 @@ function set_default_vttwrapper_size(){
 }
 
 /**
- * Removes the zoom for the current scene from local storage, applied when user click "fit zoom" button
+ * Removes the zoom for the current scene from local storage, applied when user click "fit zoom" button.
  */
-function remove_zoom_from_storage(){
+function remove_zoom_from_storage() {
 	const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
-	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
-	if (zoomIndex !== -1){
-		console.log("removing zoom from storage", zooms[zoomIndex])
-		zooms.splice(zoomIndex, 1)
+	const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
+	if (zoomIndex !== -1) {
+		console.log("removing zoom from storage", zooms[zoomIndex]);
+		zooms.splice(zoomIndex, 1);
 	}
 	localStorage.setItem('zoom', JSON.stringify(zooms));
 }
 
 /** 
-* Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found
+* Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found.
 */
-function apply_zoom_from_storage(){
-	console.group("apply_zoom_from_storage")
-	const zoomState = localStorage.getItem("zoom")
-	if (zoomState){
-		const zooms = JSON.parse(zoomState)
-		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title)
-		if(zoomIndex !== -1){
-			console.log("restoring zoom level", zooms[zoomIndex])
+function apply_zoom_from_storage() {
+	console.group("apply_zoom_from_storage");
+	const zoomState = localStorage.getItem("zoom");
+	if (zoomState) {
+		const zooms = JSON.parse(zoomState);
+		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
+		if(zoomIndex !== -1) {
+			console.log("restoring zoom level", zooms[zoomIndex]);
 			change_zoom(
 				zooms[zoomIndex].zoom,
 				undefined,
 				undefined,
 				false)
-			// this bit doesn't work
+			// TODO: this bit doesn't work
 			$(window).scrollLeft(zooms[zoomIndex].leftOffset);
 			$(window).scrollTop(zooms[zoomIndex].topOffset);
 			
 		}
 		else{
-			// zooms in storage but not for this scene
+			// Zooms in storage but not for this scene
 			console.log("scene does not have a zoom stored")
 			reset_zoom()
 		}
@@ -183,56 +233,67 @@ function apply_zoom_from_storage(){
 	console.groupEnd()
 }
 
+/**
+ * Decreases zoom level by 10%.
+ * Prevents zooming below MIN_ZOOM.
+ */
 function decrease_zoom() {
 	if (window.ZOOM > MIN_ZOOM) {
-		change_zoom(window.ZOOM * 0.9)
+		change_zoom(window.ZOOM * 0.9);
 	}
 }
 /** 
-* gets the zoom value that will fit the map to the viewport
-* @return {float} 
+* Gets the zoom values that will fit the map to the viewport
+* @return {Number}
 */
-function get_reset_zoom () {
+function get_reset_zoom() {
 	const wH = $(window).height();
-	const mH = $("#scene_map").height()
+	const mH = $("#scene_map").height();
 	const wW = $(window).width();
-	const mW = $("#scene_map").width()
+	const mW = $("#scene_map").width();
 
-	console.log(wH, mH, wW, mW)
-	return Math.min((wH / mH),(wW / mW))
+	console.log(wH, mH, wW, mW);
+	return Math.min((wH / mH), (wW / mW));
 }
 
 /** 
-* entrypoint for user clicking the fit map button. will remove local storage state as by default this func is called when no state is found
+* Entrypoint for user clicking the fit map button.
+* Will remove local storage state as by default this function is called when no state is found.
 */
-function reset_zoom () {
-	console.group("reset_zoom")
-	console.log("zooming on centre of map")	
-	// change_zoom is great for mousezooming, but tricky when just hitting the centre of the map
-	// so don't give it any x/y and just use the scrollintoview center instead
-	change_zoom(get_reset_zoom(), undefined, undefined)
+function reset_zoom() {
+	console.group("reset_zoom");
+	console.log("zooming on centre of map");
+	// change_zoom is great for mouse zooming, but tricky when just hitting the centre of the map
+	// so don't give it any x/y and just use the scrollIntoView center instead
+	change_zoom(get_reset_zoom(), undefined, undefined);
 	$("#scene_map")[0].scrollIntoView({
 		behavior: 'auto',
 		block: 'center',
 		inline: 'center'
 	});
-	// don't store any zoom for this scene as we default to map fit on load
-	remove_zoom_from_storage()
-	console.groupEnd()
+	// Don't store any zoom for this scene as we default to map fit on load
+	remove_zoom_from_storage();
+	console.groupEnd();
 }
 
+/**
+ * Increases zoom level by 10%.
+ */
 function increase_zoom() {
-	change_zoom(window.ZOOM * 1.10)
+	change_zoom(window.ZOOM * 1.10);
 }
 
-function getPlayerIDFromSheet(sheet_url)
-{
+/**
+ * Extracts the character ID from a given URL.
+ * Returns -1 if no ID is found.
+ * @param {String} sheet_url a DDB character URL
+ * @returns string | -1
+ */
+function getPlayerIDFromSheet(sheet_url) {
 	let playerID = -1;
-	if(sheet_url)
-	{
+	if(sheet_url) {
 		let urlSplit = sheet_url.split("/");
-		if(urlSplit.length > 0)
-		{
+		if(urlSplit.length > 0) {
 			playerID = urlSplit[urlSplit.length - 1];
 		}
 	}
@@ -241,6 +302,10 @@ function getPlayerIDFromSheet(sheet_url)
 
 window.YTTIMEOUT = null;
 
+/**
+ * Shows an error message when a map_load_error event occurs.
+ * @param {Event} e event object
+ */
 function map_load_error_cb(e) {
 	console.log(e);
 	let src = e.currentTarget.getAttribute("src");
@@ -258,13 +323,25 @@ function map_load_error_cb(e) {
 	}
 }
 
-/// the first time we load, an overlay is shown to mask all the window modifications we do. This removes it. See `Load.js` for the injection of the overlay.
+/**
+ * The first time we load, an overlay is shown to mask all the window modifications we do.
+ * This removes it. See `Load.js` for the injection of the overlay.
+ */
 function remove_loading_overlay() {
 	$("#loading_overlay").animate({ "opacity": 0 }, 1000, function() {
 		$("#loading_overlay").hide();
 	});
 }
-// both DM and players use this when you're in the cloud
+
+/**
+ * Creates a new map for DM & Players.
+ * Both DM and players use this when you're in the cloud.
+ * @param {String} url the URL to the map
+ * @param {Boolean} is_video flag for animated maps
+ * @param {Number} width of the map
+ * @param {Number} height of the map
+ * @param {Function} callback trigged after map is loaded
+ */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
 
 	remove_loading_overlay();
@@ -300,14 +377,14 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 
 
 		let smooth = function() {
-			if (window.YTPLAYER.playerInfo.playerState != 1){ // something went wrong. tries to reset
+			if (window.YTPLAYER.playerInfo.playerState != 1){ // Something went wrong. tries to reset
 				window.YTPLAYER.seekTo(0);
 				window.YTPLAYER.playVideo();
 				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
 				return;
 			}
 			remaining = window.YTPLAYER.playerInfo.duration - window.YTPLAYER.playerInfo.currentTime;
-			if (remaining < 2) { // we should be able to just skip on the last second
+			if (remaining < 2) { // We should be able to just skip on the last second
 				window.YTPLAYER.seekTo(0);
 				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
 			}
@@ -364,9 +441,13 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 
 }
 
-
-
-function set_pointer(data,dontscroll=false) {
+/**
+ * Displays a marker at the given point in the given color.
+ * Scrolls to marker if dontscroll flag is not set
+ * @param {Object} data see Main.js: init_ui -> tempOverlay.dblclick function for details
+ * @param {Boolean} dontscroll prevent scrolling
+ */
+function set_pointer(data, dontscroll = false) {
 
 	let marker = $("<div></div>");
 	marker.css({
@@ -392,7 +473,7 @@ function set_pointer(data,dontscroll=false) {
 		left: data.x - 60,
 	}, 1375, function() { marker.remove() });
 
-	// calculate pageX and pageY and scroll there!
+	// Calculate pageX and pageY and scroll there!
 
 	if(!dontscroll){
 		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
@@ -404,6 +485,9 @@ function set_pointer(data,dontscroll=false) {
 	}
 }
 
+/**
+ * Add .notification and .highlight-gamelog classes to #switch_gamelog.
+ */
 function notify_gamelog() {
 	if (!$("#switch_gamelog").hasClass("selected-tab")) {
 		if ($("#switch_gamelog").hasClass("notification")) {
@@ -421,15 +505,27 @@ function notify_gamelog() {
 	}
 }
 
+/**
+ * Triggers sidebar tab change based on given event.
+ * @param {event} e click event
+ */
 function switch_control(e) {
-	change_sidbar_tab($(e.currentTarget))
+	change_sidbar_tab($(e.currentTarget));
 }
 
+/**
+ * Removes 'active' classes from active sidebar tab
+ */
 function deselect_all_sidebar_tabs() {
 	$(".selected-tab .sidebar-tab-image").removeClass("ct-primary-box__tab--extras ddbc-tab-list__nav-item ddbc-tab-list__nav-item--is-active");
-	$(".selected-tab").removeClass("selected-tab")
+	$(".selected-tab").removeClass("selected-tab");
 }
 
+/**
+ * Changes the active tab in the sidebar.
+ * @param {DOMObject} clickedTab selected DOM object.
+ * @param {Boolean} isCharacterSheetInfo switch back to gamelog if false
+ */
 function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 
 	deselect_all_sidebar_tabs();
@@ -449,7 +545,10 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 
 }
 
-function report_connection(){
+/**
+ * Posts a message to the chat when a player connected to the server.
+ */
+function report_connection() {
 	var msgdata = {
 			player: window.PLAYER_NAME,
 			img: window.PLAYER_IMG,
@@ -476,6 +575,12 @@ function should_use_iframes_for_monsters() {
 	}
 	return window.fetchMonsterStatBlocks;
 }
+
+/**
+ * Loads and displays a monster stats block
+ * @param {Number} monsterid given monster ID
+ * @param {UUID} token_id selected token ID
+ */
 function load_monster_stat(monsterid, token_id) {
 	if (should_use_iframes_for_monsters()) {
 		load_monster_stat_iframe(monsterid, token_id);
@@ -497,7 +602,7 @@ function load_monster_stat_iframe(monsterid, token_id) {
 
 	window.StatHandler.getStat(monsterid, function(stats) {
 		iframe.on("load", function(event) {
-			console.log('carico mostro');
+			console.log('Loaded monster');
 			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
 			$(event.target).contents().find("#mega-menu-target").remove();
 			$(event.target).contents().find(".site-bar").remove();
@@ -528,12 +633,12 @@ function load_monster_stat_iframe(monsterid, token_id) {
 
 			scan_monster($(event.target).contents(), stats, token_id);
 			$(event.target).contents().find("a").attr("target", "_blank");
-			$(".sidebar-panel-loading-indicator").hide()
-			iframe.fadeIn("slow")
-			console.groupEnd()
+			$(".sidebar-panel-loading-indicator").hide();
+			iframe.fadeIn("slow");
+			console.groupEnd();
 		});
 
-		iframe.attr('src', stats.data.url)
+		iframe.attr('src', stats.data.url);
 	})
 
 	container.append(iframe);
@@ -548,7 +653,7 @@ function load_monster_stat_iframe(monsterid, token_id) {
 		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
 			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);
 		});
-		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function(){
+		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function() {
 			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", false);
 		});
 
@@ -616,15 +721,15 @@ function build_draggable_monster_window() {
 	}
 
 	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-	if($("#monster_close_title_button").length==0){
-		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	if($("#monster_close_title_button").length==0) {
+		const monster_close_title_button = $('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>');
 		$("#resizeDragMon").append(monster_close_title_button);
 		monster_close_title_button.click(function() {
-			close_player_monster_stat_block()
+			close_player_monster_stat_block();
 		});
 	}
 	$("#resizeDragMon").addClass("moveableWindow");
-	if(!$("#resizeDragMon").hasClass("minimized")){
+	if(!$("#resizeDragMon").hasClass("minimized")) {
 		$("#resizeDragMon").addClass("restored");
 	}
 	else{
@@ -634,29 +739,29 @@ function build_draggable_monster_window() {
 		addClasses: false,
 		handles: "all",
 		containment: "#windowContainment",
-		start: function () {
+		start: function() {
 			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 		},
-		stop: function () {
+		stop: function() {
 			$('.iframeResizeCover').remove();
 		},
 		minWidth: 200,
 		minHeight: 200
 	});
 
-	$("#resizeDragMon").mousedown(function(){
+	$("#resizeDragMon").mousedown(function() {
 		frame_z_index_when_click($(this));
 	});
 	$("#resizeDragMon").draggable({
 		addClasses: false,
 		scroll: false,
 		containment: "#windowContainment",
-		start: function () {
+		start: function() {
 			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 		},
-		stop: function () {
+		stop: function() {
 			$('.iframeResizeCover').remove();
 		}
 	});
@@ -665,13 +770,21 @@ function build_draggable_monster_window() {
 	return $("#resizeDragMon");
 }
 
+/**
+ * Hides any open monster stat block windows.
+ */
 function close_player_monster_stat_block() {
 	$("#resizeDragMon.minimized").dblclick();
-	console.debug("close_player_monster_stat_block is closing the stat block")
+	console.debug("close_player_monster_stat_block is closing the stat block");
 	$("#resizeDragMon").addClass("hideMon");
 }
 
-function minimize_player_monster_window_double_click(titleBar){
+/**
+ * Register event to minimize/restore the monster stat block window when double clicking the DOMObject.
+ * @param {DOMObject} titleBar the window's title bar
+ */
+function minimize_player_monster_window_double_click(titleBar) {
+	console.log(1);
 	titleBar.off('dblclick').on('dblclick', function() {
 		if (titleBar.hasClass("restored")) {
 			titleBar.data("prev-height", titleBar.height());
@@ -701,8 +814,12 @@ function minimize_player_monster_window_double_click(titleBar){
 	});
 }
 
+/**
+ * Creates sidebar menu.
+ * @returns void
+ */
 function init_controls() {
-	
+
 	if ($("#switch_gamelog").length > 0) {
 		// no need to do this more than once. DDB rips things out when you resize the window which is why this could be called multiple times
 		return;
@@ -717,7 +834,7 @@ function init_controls() {
 	}
 	$(".sidebar").css("height", "calc(100vh - 24px)");
 
-	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // CLICKA SU lucchetto.  // This is safe to call multiple times
+	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // Click on the padlock icon  // This is safe to call multiple times
 
 	let sidebarControlsParent = is_characters_page() ? $(".ct-sidebar__controls") : $(".sidebar__controls");
 	sidebarControlsParent.find(".avtt-sidebar-controls").remove();
@@ -823,37 +940,45 @@ function init_controls() {
 }
 
 const MAX_ZOOM_STEP = 20
-function init_mouse_zoom(){
+/**
+ * Register event for mousewheel zoom.
+ */
+function init_mouse_zoom() {
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
 
-			var newScale
+			var newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
-				newScale = window.ZOOM * 0.9
+				newScale = window.ZOOM * 0.9;
 			}
 			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
-				newScale = window.ZOOM * 1.10
+				newScale = window.ZOOM * 1.10;
 			}
 			else {
-				newScale = window.ZOOM - 0.01 * e.deltaY
+				newScale = window.ZOOM - 0.01 * e.deltaY;
 			}
 
 			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
-				change_zoom(newScale, e.clientX, e.clientY)
+				change_zoom(newScale, e.clientX, e.clientY);
 			}
 		}
-	}, { passive: false } )
+	}, { passive: false } );
 }
 
 
-
+/**
+ * Start sending google analytics heartbeat events.
+ */
 function ga_heartbeat() {
 	ga('AboveVTT.send', 'event', 'keepalive', 'keepalive');
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
 }
 
-
+/**
+ * Creates and displays splash screen
+ * Also starts Google Analytics heartbeat.
+ */
 function init_splash() {
 	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT');
 	ga('AboveVTT.send', 'pageview');
@@ -866,14 +991,13 @@ function init_splash() {
 	cont.append("<h1 style='padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.77</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:10px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
-	s=$("<div/>");
+	s = $("<div/>");
 	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
-	s.append(
-		"");
+	s.append("");
 	s.append(`
 	<div style='display:inline-block; vertical-align:top;width:300px;'>
 	<div style='padding-top:10px;padding-bottom:10px;'>
-		This is a <b>FREE</b> passion project <b>still in developement. Some bugs are to be expected</b>If you need help or want to report a bug <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>
+		This is a <b>FREE</b> passion project <b>still in development. Some bugs are to be expected</b>If you need help or want to report a bug <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>
 	</div>
 	<div class='splashLinks'>
 		<div class="splashLinkRow">
@@ -888,8 +1012,7 @@ function init_splash() {
 	</div>
 	<div style='padding-top:10px;'>Project Owner/Founder: <b>Daniele <i>cyruzzo</i> Martini</b></div>
 	</div>
-	`
-	);
+	`);
 
 	s.append('<iframe width="280" height="157" src="https://www.youtube.com/embed/2GZ8q-hB7pg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
 	cont.append(s);
@@ -916,10 +1039,10 @@ function init_splash() {
 	l3 = ["Daniel Wall","Cameron Warner","Martin Brandt","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","Cody Vegas Rothwell","damian tier","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","David Meese","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Randy Zuendel","Invictus92","Robert J Correa","Cistern","its Bonez","BelowtheDM","Unlucky Archer","Michael Crane","Alexander Glass","Steve Vlaminck","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","DH Ford","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Bjscuba135","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Rojo","Mischa","AnyxKrypt","KeithRichard-Thompson","Torben Schwank","Unix Wizard","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Scott Anderson","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","BereanHeart Gaming","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Urchin Prince","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Steven Van Eckeren","Stellar5","Jack Posey","ThaFreaK","Stephen Morrey","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Simon Perkins","Reid Bollinger","Konrad Scheffel","Thomas Thomas","Joseph Hensley","Chris Avis","Christian Weckwert","Titus France","Fabrizio Tronci","Michael Whittington","Simon Haldon","Thiago Neves","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","Xiax","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Arpad","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jeffrey Voetsch","Jay Gattis","Assi","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Tom Jones","Ian Panth","Alfred","Jason","Chris Hagmann","Taylor Hodgson","BKBW","Tim Cortis","Timothy Yuen","Cody Pederson","Keovar","Benjamin Moncier","Bart Robbins","Kerry Kilgour","John Doty","Guillaume Carrier-Turcotte","Christian Fernandez","Rob S"];
 
 
-	let shortener =  (p)=>p.length>17? p.replaceAll(" ","").replaceAll("-",""):p;
-	l1=l1.map(shortener);
-	l2=l2.map(shortener);
-	l3=l3.map(shortener);
+	let shortener =  (p) => p.length>17 ? p.replaceAll(" ","").replaceAll("-","") : p;
+	l1 = l1.map(shortener);
+	l2 = l2.map(shortener);
+	l3 = l3.map(shortener);
 
 	l1div = $("<div class='patreons-title'>Masters</div>");
 	l1ul = $("<ul/>");
@@ -963,9 +1086,14 @@ function init_splash() {
 	}, true);
 }
 
-// UNIFIED TOKEN HANDLING
 var MYCOBALT_TOKEN = false;
 var MYCOBALT_TOKEN_EXPIRATION = 0;
+/**
+ * UNIFIED TOKEN HANDLING
+ * Triggers callback with a valid DDB cobalt token
+ * @param {Function} callback
+ * @returns void
+ */
 function get_cobalt_token(callback) {
 	if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
 		console.log("TOKEN IS CACHED");
@@ -989,11 +1117,14 @@ function get_cobalt_token(callback) {
 	});
 }
 
-/* Attempts to force DDBs WebSocket to re-connect.
-* Return false - wasn't able to force / no need
-* Return true - was able to attempt force reconnect */
+
 var DDB_WS_OBJ = null;
 var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+/**
+ * Attempts to force DDBs WebSocket to re-connect.
+ * @returns Bool false - wasn't able to force / no need
+ * @returns Bool true - was able to attempt force reconnec
+ */
 function forceDdbWsReconnect() {
 	try {
 		if (DDB_WS_FORCE_RECONNECT_LOCK) {
@@ -1041,7 +1172,7 @@ function forceDdbWsReconnect() {
 	}
 }
 
-
+/** DEPRECATED - don't use */
 function init_spells() {
 	return; // this isn't used anywhere so stop building it
 
@@ -1077,6 +1208,10 @@ function init_spells() {
 
 }
 		
+/**
+ * Register event to minimize/restore a player window when double clicking the DOMObject.
+ * @param {DOMObject} titleBar the window's title bar
+ */
 function minimize_player_window_double_click(titleBar) {
 	titleBar.off('dblclick').on('dblclick', function() {
 		if(titleBar.hasClass("restored")) {
@@ -1105,8 +1240,12 @@ function minimize_player_window_double_click(titleBar) {
 	});
 }
 
+/**
+ * Move frames behind each other in the order they were clicked
+ * @param {DOMObject} moveableFrame
+ */
 function frame_z_index_when_click(moveableFrame){
-	//move frames behind each other in the order they were clicked
+
 	if(moveableFrame.css('z-index') != 50000) {
 		moveableFrame.css('z-index', 50000);
 		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
@@ -1115,7 +1254,10 @@ function frame_z_index_when_click(moveableFrame){
 	}
 }
 
-
+/**
+ * Deprecated?
+ * NOTE: No reference found within the project
+ */
 function observe_character_sheet_companion(documentToObserve){
 	console.group("observe_character_sheet_companion")
 	let mutation_target = documentToObserve.get(0);
@@ -1152,8 +1294,11 @@ function observe_character_sheet_companion(documentToObserve){
 }
 
 
-
-function init_sheet(){	
+/**
+ * Prepare character sheet window.
+ * @returns void
+ */
+function init_sheet() {
 	if (is_characters_page()) {
 		
 		// in case we're re-initializing, remove these before adding them again
@@ -1262,8 +1407,13 @@ function init_sheet(){
 	}
 }
 
-function init_player_sheet(pc_sheet, loadWait = 0)
-{
+/**
+ * Loads the given URL in the character sheet window.
+ * @param {String} pc_sheet URL to a player character on DDB
+ * @param {Boolean} loadWait
+ * @returns
+ */
+function init_player_sheet(pc_sheet, loadWait = 0) {
 
 	if (is_characters_page()) {
 		// characters page manipulates the html on the page instead of loading an iframe
@@ -1280,16 +1430,20 @@ function init_player_sheet(pc_sheet, loadWait = 0)
 	iframe.attr('data-sheet_url', pc_sheet);
 	iframe.attr('data-init_load', 0);
 
-	if((!window.DM) ||(window.KEEP_PLAYER_SHEET_LOADED))
-	{
+	if((!window.DM) || (window.KEEP_PLAYER_SHEET_LOADED)) {
+		console.error('here');
 		var loadSheet = function (sheetFrame, sheet_url) {
 			sheetFrame.attr('src', sheet_url);
 		};
-		setTimeout(loadSheet, loadWait,iframe,pc_sheet);
+		// TODO: these parameters are not correct: iframe, pc_sheet
+		setTimeout(loadSheet, loadWait, iframe, pc_sheet);
 	}
 }
 
-/// documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
+/**
+ * Observers character sheet for AOE spells.
+ * @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
+ */
 function observe_character_sheet_aoe(documentToObserve) {
 
 	const mutation_target = documentToObserve.get(0);
@@ -1301,8 +1455,8 @@ function observe_character_sheet_aoe(documentToObserve) {
 
 	const aoe_observer = new MutationObserver(function() {
 		const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
-		if (icons.length > 0){
-			icons.wrap(function(){
+		if (icons.length > 0) {
+			icons.wrap(function() {
 				$(this).addClass("above-vtt-visited");
 				const button = $("<button class='above-aoe integrated-dice__container'></button>");
 
@@ -1327,7 +1481,7 @@ function observe_character_sheet_aoe(documentToObserve) {
 				// set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
 				// enable_draggable_token_creation(button);
 				button.css("border-width","1px");
-				button.click(function(e){
+				button.click(function(e) {
 					e.stopPropagation();
 					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
 					hide_player_sheet();
@@ -1343,9 +1497,10 @@ function observe_character_sheet_aoe(documentToObserve) {
 		}
 	});
 
-	aoe_observer.observe(mutation_target,mutation_config);
+	aoe_observer.observe(mutation_target, mutation_config);
 }
 
+/** DEPRECATED - dont use */
 function init_player_sheets()
 {
 	return;
@@ -1358,9 +1513,14 @@ function init_player_sheets()
 	});
 }
 
-
+/**
+ * Opens the character sheet window.
+ * @param {String} sheet_url URL to DDB charater
+ * @param {Boolean} closeIfOpen - currenlty not in use
+ * @returns
+ */
 function open_player_sheet(sheet_url, closeIfOpen = true) {
-	if($("#sheet.minimized").length>0) {
+	if($("#sheet.minimized").length > 0) {
 		$("#sheet.minimized").dblclick();
 	}
 	console.log("open_player_sheet"+sheet_url);
@@ -1619,6 +1779,9 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	}
 }
 
+/**
+ * Closes and unloads the character sheet window.
+ */
 function close_player_sheet()
 {
 	let container = $("#sheet");
@@ -1639,6 +1802,9 @@ function close_player_sheet()
 	}
 }
 
+/**
+ * Notifie about player joining the game.
+ */
 function notify_player_join() {
 	var playerdata = {
 		abovevtt_version: abovevtt_version,
@@ -1649,6 +1815,10 @@ function notify_player_join() {
 	window.MB.sendMessage("custom/myVTT/playerjoin", playerdata);
 }
 
+/**
+ * Check if all players have the same AboveVTT version.
+ * @returns Number - latest version seen
+ */
 function check_versions_match() {
 	var latestVersionSeen = 0.0;
 	var oldestVersionSeen = 1000.0;
@@ -1670,7 +1840,10 @@ function check_versions_match() {
 	return latestVersionSeen;
 }
 
-/** @returns {String} The id of the `game` which is usually the same as the campaign id */
+/**
+ * Returns the current game ID.
+ * @returns {String} The id of the `game` which is usually the same as the campaign id
+ */
 function find_game_id() {
 	if (window.gameId === undefined) {
 		if (is_encounters_page()) {
@@ -1683,14 +1856,18 @@ function find_game_id() {
 	return window.gameId;
 };
 
-/** returns true if all connected users are on a version that is greater than or equal to `versionString` */
+/**
+ * Check if all connected users are on a version that is greater than or equal to `versionString`
+ * @returns {Boolean}
+ */
 function is_supported_version(versionString) {
 	return abovevtt_version >= versionString;
 }
 
 
-
-
+/**
+ * Main init function.
+ */
 function init_above(){
 	console.log("init_above");
 
@@ -1700,72 +1877,69 @@ function init_above(){
 	//window.STARTING = true;
 	let gameId = find_game_id();
 
-	let http_api_gw="https://services.abovevtt.net";
+	let http_api_gw = "https://services.abovevtt.net";
 	let searchParams = new URLSearchParams(window.location.search);
-	if(searchParams.has("dev")){
-		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	if(searchParams.has("dev")) {
+		http_api_gw = "https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
 	}
 
 	//THIS SHOULD HAVE ALREADY BEEN SET
 	// window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	//let gameid = $("#message-broker-client").attr("data-gameId");
 	
-	let hasData=false;
-	if (localStorage.getItem('ScenesHandler' + gameId) != null){
-		hasData=true;
+	let hasData = false;
+	if (localStorage.getItem('ScenesHandler' + gameId) != null) {
+		hasData = true;
 	}
-	if (localStorage.getItem('Migrated' + gameId) != null){
-		hasData=false;
+	if (localStorage.getItem('Migrated' + gameId) != null) {
+		hasData = false;
 	}
 
-	
 
 	$.ajax({
-		url:http_api_gw+"/services?action=getCampaignData&campaign="+window.CAMPAIGN_SECRET,
-		success:function(campaignData){
+		url: http_api_gw+"/services?action=getCampaignData&campaign=" + window.CAMPAIGN_SECRET,
+		success: function(campaignData) {
 			console.log(campaignData);
-			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud){
-				window.CLOUD=true;
+			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud) {
+				window.CLOUD = true;
 				init_things();
 			}
-			else{ // CHECK IF THIS IS A NEW CAMPAIGN
+			else { // CHECK IF THIS IS A NEW CAMPAIGN
 				if (hasData || (window.FORCED_DM)) {
 					console.log("**********UNMIGRATED CAMPAIGN*************");
-					window.CLOUD=false;
+					window.CLOUD = false;
 					init_things();
 				}
 				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
-					if(window.DM){
+					if(window.DM) {
 						$.ajax({
-							url:http_api_gw+"/services?action=setCampaignData&campaign="+window.CAMPAIGN_SECRET,
+							url: http_api_gw+"/services?action=setCampaignData&campaign=" + window.CAMPAIGN_SECRET,
 							type:'PUT',
 							contentType:'application/json',
 							data:JSON.stringify({
 								cloud:1
 							}),
-							success: function(){
+							success: function() {
 								console.log("******* WELCOME TO THE CLOUD*************")
-								window.CLOUD=true;
+								window.CLOUD = true;
 								init_things();
 							}
 						});
 					}
 					else{ // PLAYER SHOULD NOT FORCE CLOUD MIGRATION
-						window.CLOUD=false;
+						window.CLOUD = false;
 						init_things();
 					}
-
 				}
-
-
 			}
-			
 		}
 	}
 	)
-
 }
 
+/**
+ * Initializes global vafriables.
+ */
 function init_things() {
 	console.log("init things");
 	window.STARTING = true;
@@ -1836,9 +2010,16 @@ function init_things() {
 	$("#site").append("<div id='windowContainment'></div>");
 }
 
-/// this is used when initializing on the character page. DDB loads the page in an async modular fashion. We use this to determine if we need to call other initialization functions during this process
 var needs_ui = true;
-/// DDB loads the page in an async modular fashion. As they are injecting things, we need to adjust the UI in the sidebar. This will loop until everything is loaded and adjusted to our liking.
+/**
+ * Initializes the sidebar on the character page.
+ *
+ * DDB loads the page in an async modular fashion.
+ * We use this to determine if we need to call other initialization functions during this process.
+ * As they are injecting things, we need to adjust the UI in the sidebar.
+ * This will loop until everything is loaded and adjusted to our liking.
+ * @returns void
+ */
 function init_character_page_sidebar() {
 	if ($(".ct-sidebar__portal").length == 0) {
 		// not ready yet, try again in a second
@@ -1848,11 +2029,11 @@ function init_character_page_sidebar() {
 		return;
 	}
 
-	// open the gamelog, and lock it open
+	// Open the gamelog, and lock it open
 	$(".ct-character-header__group--game-log").click();
 	$(".ct-sidebar__control--unlock").click();
 
-	// after that click, give it a second to inject and render the sidebar
+	// After that click, give it a second to inject and render the sidebar
 	setTimeout(function() {
 
 		$("#site-main").css({"display": "block", "visibility": "hidden"});
@@ -1897,7 +2078,7 @@ function init_character_page_sidebar() {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddbc-character-name").text();
 			try {
-				// this should be just fine, but catch any parsing errors just in case
+				// This should be just fine, but catch any parsing errors just in case
 				window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, ""));
 			} catch {}
 			init_ui();
@@ -1905,7 +2086,7 @@ function init_character_page_sidebar() {
 			monitor_character_sidebar_changes();
 			hide_player_sheet();
 			init_splash();
-			$("#loading_overlay").css("z-index", 0); // allow them to see their character sheets, etc even if the DM isn't online yet
+			$("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
 			observe_character_sheet_aoe($(document));
 			// WIP to allow players to add in tokens from their extra tab
 			// observe_character_sheet_companion($(document));
@@ -1919,7 +2100,12 @@ function init_character_page_sidebar() {
 	}, 1000);
 }
 
-/// when we play on the character sheet, we need to monitor for gamelog changes because DDB swaps it out frequently. Any time they do that, we need to react to those changes
+/**
+ * Monitor gamelog.
+ *
+ * when we play on the character sheet, we need to monitor for gamelog changes because DDB swaps it out frequently.
+ * Any time they do that, we need to react to those changes.
+ */
 function monitor_character_sidebar_changes() {
 
 	$(".ct-character-header__group--game-log").click(function(event) {
@@ -1979,7 +2165,14 @@ function monitor_character_sidebar_changes() {
 
 }
 
-// when the user clicks on an item in a character sheet, the details are shown in a sidebar. This will inject a "send to gamelog" button and properly send the pertinent sidebar content to the gamelog.
+//
+/**
+ * Add inject button into sidebar.
+ *
+ * When the user clicks on an item in a character sheet, the details are shown in a sidebar.
+ * This will inject a "send to gamelog" button and properly send the pertinent sidebar content to the gamelog.
+ * @param {DOMObject} sidebarPaneContent
+ */
 function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 	// we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
 	console.log("inject_sidebar_send_to_gamelog_button")
@@ -2065,7 +2258,14 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 	});
 }
 
-/// We add dice buttons and an input for chatting in the gamelog. This does that injection on initial load as well as any time the character sheet re-adds the gamelog to the sidebar. see `monitor_character_sidebar_changes` for more details on sidebar changes
+/**
+ * Add Dice buttons into sidebar.
+ *
+ * We add dice buttons and an input for chatting in the gamelog.
+ * This does that injection on initial load as well as any time the character sheet re-adds the gamelog to the sidebar.
+ * See `monitor_character_sidebar_changes` for more details on sidebar changes.
+ * @returns
+ */
 function inject_chat_buttons() {
 	if ($(".glc-game-log").find("#chat-text").length > 0) {
 		// make sure we only ever inject these once. This gets called a lot on the character sheet which is intentional, but just in case we accidentally call it too many times, let's log it, and return
@@ -2267,6 +2467,9 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 	}, 0);
 }
 
+/**
+ * Initializes the user interface.
+ */
 function init_ui() {
 	console.log("init_ui");
 	window.ALLOWTOKENMEASURING=true;
@@ -2609,6 +2812,10 @@ const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5",
 					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0", 
 					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF", "cPick"];
 
+/**
+ * Create and add tool buttons.
+ * @returns void
+ */
 function init_buttons() {
 	if ($("#fog_menu").length > 0) {
 		return; // only need to do this once
@@ -2643,14 +2850,17 @@ function init_buttons() {
 
 	// STREAMING STUFF
 
-	window.STREAMPEERS={};
-	window.MYSTREAMID=uuid();
-	window.JOINTHEDICESTREAM=false;
+	window.STREAMPEERS = {};
+	window.MYSTREAMID = uuid();
+	window.JOINTHEDICESTREAM = false;
 
 	init_keypress_handler();
-
 }
 
+/**
+ * Create and add zoom controls.
+ * @returns void
+ */
 function init_zoom_buttons() {
 	
 	if ($("#zoom_buttons").length > 0) {
@@ -2689,7 +2899,13 @@ function init_zoom_buttons() {
 	}
 }
 
-/// The first time the screen loads, we cover it with an overlay to mask all the UI changes we do. This builds and injects a nice loading indicator to inform the user that everything is fine. See `Load.js` for the injection of the overlay.
+/**
+ * Show loading screen.
+ *
+ * The first time the screen loads, we cover it with an overlay to mask all the UI changes we do.
+ * This builds and injects a nice loading indicator to inform the user that everything is fine.
+ * See `Load.js` for the injection of the overlay.
+ */
 function init_loading_overlay_beholder() {
 	let loadingText = "One Moment While We Set The Scene...";
 	if (is_characters_page()) {
@@ -2715,11 +2931,13 @@ function init_loading_overlay_beholder() {
 	});
 	$("#loading_overlay").append(loadingIndicator);
 	// For safety reasons.. if something don't work.. it's better to just remove this overlay to make it easier to fix stuff
-	setTimeout(remove_loading_overlay,15000);
+	setTimeout(remove_loading_overlay, 15000);
 
 }
 
-/// the first time the window loads, start doing all the things
+/**
+ * The first time the window loads, start doing all the things
+ */
 $(function() {
 
 	// we injected an overlay in `Load.js` this makes it look nice by setting a background image, etc.
@@ -2747,11 +2965,11 @@ $(function() {
 	}
 
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
-	var is_dm=false;
-	if($(".ddb-campaigns-detail-body-dm-notes-private").length>0){
-		is_dm=true;
+	var is_dm = false;
+	if($(".ddb-campaigns-detail-body-dm-notes-private").length > 0) {
+		is_dm = true;
 	} else if (is_encounters_page()) {
-		is_dm=true;
+		is_dm = true;
 	}
 
 	// SCB: Add a dummy DIV to force the AboutVTT DIV below the standard DDB buttons
@@ -2766,14 +2984,14 @@ $(function() {
 	// SCB: Append our logo
 	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
 
-	if(is_dm){
+	if(is_dm) {
 		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link' style='position:relative'>JOIN AS DM</a>"));
 		warningDiv.append($("<a class='ddb-campaigns-warning-div' style='color: #333; padding-left: 15%'>If you press 'RESET INVITE LINK' you will lose your cloud data!</a>"));
 		warningtitleDiv.append($("<a class='above-vtt-warning-secondary-div' style='color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto; background-color: #fff; border: 2px solid #c53131; border-radius: 4px; padding: 10px 145px 30px 145px;'>WARNING FOR ABOVEVTT!!!</a>"));
 	}
 
 	$(".ddb-campaigns-character-card-footer-links").each(function() {
-		if($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length==0)
+		if($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length == 0)
 			return;
 
 		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
@@ -2851,7 +3069,7 @@ $(function() {
 	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + find_game_id())) || {};
 	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
 
-	$(".instructions").click(function(){
+	$(".instructions").click(function() {
 		if(campaign_banner.is(":visible"))
 			campaign_banner.hide();
 		else
@@ -2935,7 +3153,9 @@ $(function() {
 
 });
 
-
+/**
+ * Initializes the help menu.
+ */
 function init_help_menu() {
 	$('body').append(`
 		<div id="help-container">
@@ -3034,12 +3254,12 @@ function init_help_menu() {
 
 	$(function() {
         $('.help-tabs a').on('click', function() {
-        $('.help-tabs li').removeClass('active');
-        $(this).parent().addClass('active');
-        let currentTab = $(this).attr('href');
-        $('.tabs-content div').hide();
-        $(currentTab).show();
-        return false;
+			$('.help-tabs li').removeClass('active');
+			$(this).parent().addClass('active');
+			let currentTab = $(this).attr('href');
+			$('.tabs-content div').hide();
+			$(currentTab).show();
+			return false;
         });
     });
 
@@ -3052,6 +3272,9 @@ function init_help_menu() {
 	});
 }
 
+/**
+ * Load dice configuration from DDB.
+ */
 function init_my_dice_details(){
 	get_cobalt_token(function (token) {
 		window.ajaxQueue.addRequest({
@@ -3071,6 +3294,7 @@ function init_my_dice_details(){
     	});
 	});
 }
+
 /**
  * Attempts to convert the output of an rpgDiceRoller DiceRoll to the DDB format.
  * If the conversion is successful, it will be sent over the websocket, and this will return true.
@@ -3247,7 +3471,10 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", 
 	}
 }
 	
-// returns { name: 'Chrome', version: '96' }
+/**
+ * Gathers browser information from User Agent.
+ * @returns Object
+ */
 function get_browser() {
 	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
 	if(/trident/i.test(M[1])){
@@ -3270,21 +3497,30 @@ function get_browser() {
 	};
 }
 
-/// When playing on the characters page, this will show/hide the character sheet. When not on the character page, `open_player_sheet` and `close_player_sheet` are used.
+/**
+ * When playing on the characters page, this will show/hide the character sheet.
+ * When not on the character page, `open_player_sheet` and `close_player_sheet` are used.
+ */
 function toggle_player_sheet() {
 	if (is_player_sheet_open()) {
 		hide_player_sheet();
 	} else {
-		show_player_sheet()
+		show_player_sheet();
 	}
 }
 
-/// When playing on the characters page, this will tell you if the character sheet is open. When not on the character page, `open_player_sheet` and `close_player_sheet` are used.
+/**
+ * When playing on the characters page, this will tell you if the character sheet is open.
+ * When not on the character page, `open_player_sheet` and `close_player_sheet` are used.
+ */
 function is_player_sheet_open() {
 	return $(".ct-character-sheet__inner").css("z-index") > 0;
 }
 
-/// When playing on the characters page, this will show the character sheet. When not on the character page, `open_player_sheet` is used.
+/**
+ * When playing on the characters page, this will show the character sheet.
+ * When not on the character page, `open_player_sheet` is used.
+ */
 function show_player_sheet() {
 	$("#character-tools-target").css({
 		"visibility": "visible",
@@ -3309,7 +3545,10 @@ function show_player_sheet() {
 	}
 }
 
-/// When playing on the characters page, this will hide the character sheet. When not on the characters page, `close_player_sheet` is used.
+/**
+ * When playing on the characters page, this will hide the character sheet.
+ * When not on the characters page, `close_player_sheet` is used.
+ */
 function hide_player_sheet() {
 	$("#character-tools-target").css({
 		"visibility": "hidden",
@@ -3329,7 +3568,10 @@ function hide_player_sheet() {
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").removeClass("ddbc-tab-options__header-heading--is-active");
 }
 
-/// When playing on the characters page, this will toggle the width of the character sheet. When not on the characters page, `init_sheet` injects a button to handle the iframe resizing
+/**
+ * When playing on the characters page, this will toggle the width of the character sheet.
+ * When not on the characters page, `init_sheet` injects a button to handle the iframe resizing.
+ */
 function toggle_player_sheet_size() {
 	if (is_player_sheet_full_width()) {
 		player_sheet_layout = "thin";
@@ -3339,9 +3581,11 @@ function toggle_player_sheet_size() {
 	reposition_player_sheet();
 }
 
+/**
+ * If the window size changes, or if they open jitsi, or anything like that, we want to update the character sheet css without toggling the size.
+ * This is explicitly the opposite behavior as toggle_player_sheet_size().
+ */
 function reposition_player_sheet() {
-	// if the window size changes, or if they open jitsi, or anything like that, we want to update the character sheet css without toggling the size
-	// this is explicitly the opposite behavior as toggle_player_sheet_size()
 
 	let sidebarWidth = is_sidebar_visible() ? 340 : 0;
 	let playableSpace = window.innerWidth - sidebarWidth;
@@ -3375,19 +3619,29 @@ function reposition_player_sheet() {
 }
 
 let player_sheet_layout = "full"; // or thin
-/// When playing on the characters page, this will tell you if the character sheet is full width or thin. When not on the characters page, `init_sheet` injects a button to handle the iframe resizing
+/**
+ * When playing on the characters page, this will tell you if the character sheet is full width or thin.
+ * When not on the characters page, `init_sheet` injects a button to handle the iframe resizing.
+ */
 function is_player_sheet_full_width() {
 	return player_sheet_layout == "full";
 }
 
-/// When playing on the characters page, this will resize the character sheet to full width. When not on the characters page, `init_sheet` injects a button to handle the iframe resizing
+/**
+ * When playing on the characters page, this will resize the character sheet to full width.
+ * When not on the characters page, `init_sheet` injects a button to handle the iframe resizing.
+ */
 function resize_player_sheet_full_width() {
 	reset_character_sheet_css();
 	player_sheet_layout = "full";
 	adjust_site_bar();
 }
 
-/// When playing on the characters page, this will resize the character sheet to a thinner version. It rearranges a lot of the HTML to handle the thinner width. When not on the characters page, `init_sheet` injects a button to handle the iframe resizing
+/**
+ * When playing on the characters page, this will resize the character sheet to a thinner version.
+ * It rearranges a lot of the HTML to handle the thinner width.
+ * When not on the characters page, `init_sheet` injects a button to handle the iframe resizing.
+ */
 function resize_player_sheet_thin() {
 	reset_character_sheet_css();
 	if (window.innerWidth < 1024) {
@@ -3461,7 +3715,10 @@ function resize_player_sheet_thin() {
 
 }
 
-/// When playing on the characters page, this will clear any adjustments made by either resize functions, leaving the HTML at a clean slate so we can cleanly adjust to either full width or thin
+/**
+ * When playing on the characters page, this will clear any adjustments made by either resize functions,
+ * leaving the HTML at a clean slate so we can cleanly adjust to either full width or thin.
+ */
 function reset_character_sheet_css() {
 	$(".ct-sidebar__mask--visible").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 	$(".ct-subsections").removeAttr( 'style' );
@@ -3510,11 +3767,17 @@ function reset_character_sheet_css() {
 	$(".ct-character-header-tablet").css({ "background": "rgba(0, 0, 0, 0.85)" });
 }
 
+/**
+ * Check if sidebar is visible.
+ * @returns Boolean
+ */
 function is_sidebar_visible() {
 	return $("#hide_rightpanel").attr('data-visible') == 1;
 }
 
-/// this will show/hide the sidebar regardless of which page we are playing on
+/**
+ * This will show/hide the sidebar regardless of which page we are playing on.
+ */
 function toggle_sidebar_visibility() {
 		if (is_sidebar_visible()) {
 			hide_sidebar();
@@ -3523,7 +3786,10 @@ function toggle_sidebar_visibility() {
 		}
 }
 
-/// this will show the sidebar regardless of which page we are playing on. It will also adjust the position of the character sheet 
+/**
+ * This will show the sidebar regardless of which page we are playing on.
+ * It will also adjust the position of the character sheet .
+ */
 function show_sidebar() {
 
 	let toggleButton = $("#hide_rightpanel");
@@ -3544,7 +3810,10 @@ function show_sidebar() {
 	}
 }
 
-/// this will hide the sidebar regardless of which page we are playing on. It will also adjust the position of the character sheet 
+/**
+ * This will hide the sidebar regardless of which page we are playing on.
+ * It will also adjust the position of the character sheet .
+ */
 function hide_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-left").removeClass("point-right");
@@ -3564,6 +3833,10 @@ function hide_sidebar() {
 	}
 }
 
+/**
+ * Adjusts the sidebar size.
+ * @returns void
+ */
 function adjust_site_bar() {
 	if (!is_characters_page()) {
 		return;
