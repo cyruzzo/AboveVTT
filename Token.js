@@ -981,7 +981,7 @@ class Token {
 				old.css("font-size",fs);
 			}
 
-			if (this.options.hidden) {
+			if (this.options.hidden || is_token_under_fog(this.options.id)) {
 				if (window.DM)
 					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 				else
@@ -1133,7 +1133,7 @@ class Token {
 			}
 
 			var newopacity = 1.0;
-			if (this.options.hidden) {
+			if (this.options.hidden || is_token_under_fog(this.options.id)) {
 				if (window.DM)
 					newopacity = 0.5; // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 				else
@@ -1157,6 +1157,10 @@ class Token {
 			setTokenAuras(tok, this.options);
 
 			let click = {
+				x: 0,
+				y: 0
+			};
+			let currentTokenPosition = {
 				x: 0,
 				y: 0
 			};
@@ -1271,6 +1275,8 @@ class Token {
 
 				start: function (event) {
 					event.stopPropagation()
+					if(window.ALLOWTOKENMEASURING)
+						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.clientX;
@@ -1288,27 +1294,30 @@ class Token {
 
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
-					if (self.selected) {
-						for (let id in window.TOKEN_OBJECTS) {
-							if (window.TOKEN_OBJECTS[id].selected) {
-								$("[data-id='"+id+"']").addClass("pause_click");
-								if($("[data-id='"+id+"']").is(":animated")){
-									window.TOKEN_OBJECTS[id].stopAnimation();
-								}
-								if (id != self.options.id) {
-									var curr = window.TOKEN_OBJECTS[id];
-									curr.orig_top = curr.options.top;
-									curr.orig_left = curr.options.left;
 
-									const el = $("#aura_" + id.replaceAll("/", ""));
-									if (el.length > 0) {
-										el.attr("data-left", el.css("left").replace("px", ""));
-										el.attr("data-top", el.css("top").replace("px", ""));
-									}
+
+					if (self.selected && $(".token.tokenselected").length>1) {
+						for (let tok of $(".token.tokenselected")){
+							let id = $(tok).attr("data-id");
+							$(tok).addClass("pause_click");
+							if($(tok).is(":animated")){
+								window.TOKEN_OBJECTS[id].stopAnimation();
+							}
+							if (id != self.options.id) {
+								var curr = window.TOKEN_OBJECTS[id];
+								curr.orig_top = curr.options.top;
+								curr.orig_left = curr.options.left;
+
+								const el = $("#aura_" + id.replaceAll("/", ""));
+								if (el.length > 0) {
+									el.attr("data-left", el.css("left").replace("px", ""));
+									el.attr("data-top", el.css("top").replace("px", ""));
 								}
 							}
-						}
+
+						}												
 					}
+					
 
 					const el = $("#aura_" + self.options.id.replaceAll("/", ""));
 					if (el.length > 0) {
@@ -1317,27 +1326,29 @@ class Token {
 					}
 
 					if (window.ALLOWTOKENMEASURING){
-						// Setup waypoint manager
-						// reset measuring when a new token is picked up
-						if(window.previous_measured_token != self.options.id){
-							window.previous_measured_token = self.options.id
-							WaypointManager.cancelFadeout()
-							WaypointManager.clearWaypoints()
-						}
-						const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
-						const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
-						
-						if(WaypointManager.numWaypoints > 0){
-							WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
-							WaypointManager.cancelFadeout()
-						}
-						window.BEGIN_MOUSEX = tokenMidX;
-						window.BEGIN_MOUSEY = tokenMidY;
-						if (!self.options.disableborder){
-							WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
-						}else{
-							WaypointManager.resetDefaultDrawStyle()
-						}
+						setTimeout(function() {
+							// Setup waypoint manager
+							// reset measuring when a new token is picked up
+							if(window.previous_measured_token != self.options.id){
+								window.previous_measured_token = self.options.id
+								WaypointManager.cancelFadeout()
+								WaypointManager.clearWaypoints()
+							}
+							const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
+							const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
+
+							if(WaypointManager.numWaypoints > 0){
+								WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
+								WaypointManager.cancelFadeout()
+							}
+							window.BEGIN_MOUSEX = tokenMidX;
+							window.BEGIN_MOUSEY = tokenMidY;
+							if (!self.options.disableborder){
+								WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
+							}else{
+								WaypointManager.resetDefaultDrawStyle()
+							}
+						});
 					}
 
 					remove_selected_token_bounding_box();
@@ -1358,23 +1369,33 @@ class Token {
 						top: tokenPosition.y
 					};
 
-					const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-					const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+					if (window.ALLOWTOKENMEASURING) {
+						if (WaypointManager.numWaypoints === 0 || tokenPosition.x !== currentTokenPosition.x || tokenPosition.y !== currentTokenPosition.y) {
+							setTimeout(function() {
 
-					if (window.ALLOWTOKENMEASURING){
-						const canvas = document.getElementById("temp_overlay");
-						const context = canvas.getContext("2d");
-						// incase we click while on select, remove any line dashes
-						context.setLineDash([])
-						// list the temp overlay so we can see the ruler
-						clear_temp_canvas()
-						$("#temp_overlay").css("z-index", "50")
-						WaypointManager.setCanvas(canvas);
-						WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
-						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
-						context.fillStyle = '#f50';
+								const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
+								const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+
+								const canvas = document.getElementById("temp_overlay");
+								const context = canvas.getContext("2d");
+								// incase we click while on select, remove any line dashes
+								context.setLineDash([])
+								// list the temp overlay so we can see the ruler
+								clear_temp_canvas()
+								
+								WaypointManager.setCanvas(canvas);
+								WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
+								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
+								WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
+								context.fillStyle = '#f50';
+
+							});
+						}
 					}
+
+					currentTokenPosition.x = tokenPosition.x;
+					currentTokenPosition.y = tokenPosition.y;
+
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
 					/*$(event.target).css("left",ui.position.left);
@@ -1392,26 +1413,25 @@ class Token {
 					}
 
 
-					if (self.selected) { // if dragging on a selected token, we should move also the other selected tokens
+
+
+					if (self.selected && $(".token.tokenselected").length>1) {
+						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						//var offsetLeft=parseInt($(event.target).css("left"))-parseInt(orig_options.left);
-						//var offsetTop=parseInt($(event.target).css("top"))-parseInt(orig_options.top);
 						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						//console.log("OFFSETLEFT "+offsetLeft+ " OFFSETTOP " + offsetTop);
-
-						for (let id in window.TOKEN_OBJECTS) {
+						for (let tok of $(".token.tokenselected")){
+							let id = $(tok).attr("data-id");
 							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
-								var tok = $("#tokens div[data-id='" + id + "']");
-								tok.css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								tok.css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
+								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
+								$(tok).css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
 
-								const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
+								const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
@@ -1421,8 +1441,7 @@ class Token {
 									selEl.css('top', (currTop + offsetTop) + "px");
 								}
 							}
-						}
-
+						}													
 					}
 
 				}
@@ -1487,7 +1506,7 @@ class Token {
 		this.update_dead_cross(token)
 		// this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
-		check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
 	}
 

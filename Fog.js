@@ -369,9 +369,24 @@ class WaypointManagerClass {
 };
 
 
-// if it was not executed in the last second, execute it immediately
+function is_token_under_fog(tokenid){
+	if(window.DM)
+		return false;
+	var canvas = document.getElementById("fog_overlay");
+	var ctx = canvas.getContext("2d");
+	var left = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	var top = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
+	if (pixeldata[3] == 255)
+		return true;
+	else
+		return false;
+}
+
+
+// if it was not executed in the last 1 second, execute it immediately and asynchronously
 // if it's already scheduled to be executed, return
-// otherwise, schedule it to execute in 1 second
+// otherwise, schedule it to execute in 5 seconds
 function check_token_visibility(){
 	if(window.DM)
 		return;
@@ -380,12 +395,12 @@ function check_token_visibility(){
 	}
 	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
 		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
-		do_check_token_visibility();
+		setTimeout(do_check_token_visibility(),1);
 		return;
 	}
 	else {
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
-		setTimeout(do_check_token_visibility,1000);
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+5000;
+		setTimeout(do_check_token_visibility,5000);
 		return;
 	}
 }
@@ -402,10 +417,11 @@ function do_check_token_visibility() {
 		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
 		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-		auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 		if (pixeldata[3] == 255) {
+			
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
@@ -867,13 +883,15 @@ function drawing_mousedown(e) {
 	const [pointX, pointY] = get_event_cursor_position(e)
 	
 	if(window.DRAWSHAPE === "brush"){
+		window.BEGIN_MOUSEX = pointX
+		window.BEGIN_MOUSEY = pointY
+		window.MOUSEDOWN = true;
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
 		// draw a dot
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
-		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
 		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
 	}
 	else if (window.DRAWSHAPE === "polygon") {
@@ -959,10 +977,10 @@ function drawing_mousemove(e) {
 		const width = mouseX - window.BEGIN_MOUSEX;
 		const height = mouseY - window.BEGIN_MOUSEY;
 		// bain todo why is this here?
-		if(window.DRAWSHAPE !== "brush")
-		{
-			redraw_fog();
-		}
+		// if(window.DRAWSHAPE !== "brush")
+		// {
+		// 	redraw_fog();
+		// }
 
 		if (window.DRAWSHAPE == "rect") {
 			if(window.DRAWFUNCTION == "draw_text")
@@ -1049,7 +1067,7 @@ function drawing_mousemove(e) {
 			{
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 
-				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, lineWidth);
+				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, window.LINEWIDTH);
 
 				window.BRUSHWAIT = true;
 				if (mouseMoveFps < 75) {
@@ -1153,6 +1171,9 @@ function drawing_mouseup(e) {
 				data[0] = "rect"
 				break;
 			case "arc":
+				const centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+				const centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+				const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 				data[0] = "arc"
 				data[3] = centerX
 				data[4] = centerY
@@ -1167,8 +1188,8 @@ function drawing_mouseup(e) {
 			case "brush":
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 				// cap with a dot
-				window.BRUSHPOINTS.push({x:window.mouseX+1, y:window.mouseY+1});
-				window.BRUSHPOINTS.push({x:window.mouseX-1, y:window.mouseY-1});
+				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
+				window.BRUSHPOINTS.push({x:mouseX-1, y:mouseY-1});
 				data[0] = "brush"
 				data[3] = window.BRUSHPOINTS
 				data[4] = null
@@ -1308,9 +1329,9 @@ function drawing_contextmenu(e) {
  */
 function finalise_drawing_fog(mouseX, mouseY, width, height) {
 	if (window.DRAWSHAPE == "arc") {
-		centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
-		centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
-		radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
+		const centerX = (window.BEGIN_MOUSEX + mouseX) / 2;
+		const centerY = (window.BEGIN_MOUSEY + mouseY) / 2;
+		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
@@ -1962,8 +1983,8 @@ function init_draw_menu(buttons){
 		if (r === true) {
 			// keep only text
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
-			redraw_drawings();
-			sync_drawings
+			redraw_drawings()
+			sync_drawings()
 		}
 	});
 
@@ -1974,7 +1995,7 @@ function init_draw_menu(buttons){
         while (currentElement--) {
             if (!window.DRAWINGS[currentElement][0].includes("text")){
                 window.DRAWINGS.splice(currentElement, 1)
-                redraw_drawings();
+                redraw_drawings()
 				sync_drawings()
                 break
             }

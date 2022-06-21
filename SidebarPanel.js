@@ -178,6 +178,7 @@ class SidebarPanel {
     `);
   }
 
+
   // imageUrlEntered is a function that takes a string in the form of a url
   build_image_url_input(titleText, imageUrlEntered) {
 
@@ -645,7 +646,7 @@ function find_sidebar_list_item(html) {
     }
   }
 
-  let sceneId = html.attr("data-scene-id")
+  let sceneId = html.attr("data-scene-id");
   if (typeof sceneId === "string" && sceneId.length > 0) {
     foundItem = window.sceneListItems.find(item => item.sceneId == sceneId);
     if (foundItem !== undefined) {
@@ -653,7 +654,6 @@ function find_sidebar_list_item(html) {
     }
   }
 
-  let fullPath = harvest_full_path(html);
   if (html.attr("data-monster") !== undefined) {
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
@@ -662,6 +662,7 @@ function find_sidebar_list_item(html) {
     }
   }
 
+  let fullPath = harvest_full_path(html);
   return find_sidebar_list_item_from_path(fullPath);
 }
 
@@ -1021,16 +1022,9 @@ function build_sidebar_list_row(listItem) {
     case SidebarListItem.TypeScene:
       row.attr("data-scene-id", listItem.sceneId);
       row.addClass("scene-item");
-      if (listItem.isVideo) {
-        imgHolder.html(`<span class="material-icons scene-list-item-is-video">play_circle_outline</span>`);
-      } else {
-        imgHolder.hover(function (hoverEvent) {
-          sidebar_flyout(hoverEvent, function(flyout) {
-            let imgsrc = $(hoverEvent.currentTarget).find("img").attr("src")
-            flyout.append(`<img class='list-item-image-flyout' src="${imgsrc}" alt="scene map preview" />`);
-          });
-        });
-      }
+      imgHolder.remove(); // we don't want the overhead of full images loading in. Clicking the row displays a preview of the image
+      row.css("cursor", "pointer");
+      row.attr("title", `${listItem.name}\nclick to preview`);
       let switch_dm = $(`<button class='dm_scenes_button token-row-button' title="Move DM To This Scene"></button>`);
       switch_dm.append(svg_dm());
       if(window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id === listItem.sceneId){
@@ -1130,7 +1124,30 @@ function did_click_row(clickEvent) {
       // display_builtin_token_details_modal(clickedItem);
       break;
     case SidebarListItem.TypeScene:
-      // nothing to do here.
+      // show the preview
+      $(`.sidebar-flyout`).remove(); // never duplicate
+      let flyout = $(`<div class='sidebar-flyout'></div>`);
+      $("body").append(flyout);
+      if (clickedItem.isVideo) {
+        flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
+      } else {
+        flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
+      }
+      let height = flyout.height();
+      let halfHeight = (height / 2);
+      let top = clickEvent.clientY - halfHeight;
+      if (top < 30) { // make sure it's always below the main UI buttons
+        top = 30;
+      } else if (clickEvent.clientY + halfHeight > window.innerHeight - 30) {
+        top = window.innerHeight - height - 30;
+      }
+      flyout.css({
+        "top": top
+      });
+      clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
+        $(mouseleaveEvent.currentTarget).off("mouseleave");
+        $(`.sidebar-flyout`).remove();
+      });
       break;
   }
 }
@@ -1250,6 +1267,11 @@ function display_folder_configure_modal(listItem) {
       folderNameInput,
       `<button>Save</button>`,
       function(newFolderName, input, event) {
+        let oldPath = harvest_full_path($(input));
+        if (oldPath.endsWith(`/${newFolderName}`)) {
+          close_sidebar_modal();
+          return;
+        }
         let foundItem = find_sidebar_list_item($(input));
         let updateFullPath = rename_folder(foundItem, newFolderName);
         if (updateFullPath === undefined) {
@@ -1460,8 +1482,10 @@ function disable_draggable_change_folder(listItemType) {
       tokensPanel.body.find(".token-row-button.reorder-button").show();
       tokensPanel.body.find(".reorder-button").removeClass("active");
       tokensPanel.body.find(" > .custom-token-list > .folder").show();
+      tokensPanel.body.removeClass("folder");
       tokensPanel.header.find("input[name='token-search']").show();
       tokensPanel.updateHeader("Tokens");
+      add_expand_collapse_buttons_to_header(tokensPanel);
       try {
         tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
       } catch (e) {} // don't care if it fails, just try
@@ -1478,6 +1502,8 @@ function disable_draggable_change_folder(listItemType) {
       scenesPanel.header.find(".scenes-panel-add-buttons-wrapper")
       scenesPanel.header.find(".reorder-button").removeClass("active");
       scenesPanel.header.find(".scenes-panel-add-buttons-wrapper .reorder-explanation").hide();
+      scenesPanel.body.removeClass("folder");
+
       try {
         scenesPanel.body.find(".sidebar-list-item-row").draggable("destroy");
       } catch (e) {} // don't care if it fails, just try
@@ -1488,6 +1514,21 @@ function disable_draggable_change_folder(listItemType) {
   }
 }
 
+function add_expand_collapse_buttons_to_header(sidebarPanel) {
+  let expandAll = $(`<button class="token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
+  expandAll.on("click", function (clickEvent) {
+    $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").removeClass("collapsed");
+  });
+  let collapseAll = $(`<button class="token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
+  collapseAll.on("click", function (clickEvent) {
+    $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").addClass("collapsed");
+  });
+  let buttonWrapper = $("<div class='expand-collapse-wrapper'></div>");
+  sidebarPanel.header.find(".sidebar-panel-header-title").append(buttonWrapper);
+  buttonWrapper.append(expandAll);
+  buttonWrapper.append(collapseAll);
+}
+
 /**
  * allows you to drag items from one folder to another
  * @param listItemType {string} SidebarListItem.TypeMyTokens || SidebarListItem.TypeScene
@@ -1496,6 +1537,31 @@ function enable_draggable_change_folder(listItemType) {
 
   disable_draggable_change_folder(listItemType);
 
+  const droppableOptions = {
+    greedy: true,
+    tolerance: "pointer",
+    accept: ".draggable-sidebar-item-reorder:not(.drag-cancelled)",
+    drop: function (dropEvent, ui) {
+      let draggedRow = $(ui.helper);
+      let draggedItem = find_sidebar_list_item(draggedRow);
+      let droppedFolder = $(dropEvent.target);
+      if (droppedFolder.hasClass("sidebar-panel-body")) {
+        // they dropped it on the header so find the root folder
+        if (listItemType === SidebarListItem.TypeScene) {
+          move_item_into_folder(draggedItem, SidebarListItem.PathScenes);
+        } else if (listItemType === SidebarListItem.TypeMyToken) {
+          move_item_into_folder(draggedItem, SidebarListItem.PathMyTokens);
+        } else {
+          console.warn("Unable to reorder item by dropping it on the body", listItemType, draggedItem);
+        }
+      } else {
+        let folderItem = find_sidebar_list_item(droppedFolder);
+        console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
+        move_item_into_folder(draggedItem, folderItem.fullPath());
+      }
+    }
+  };
+
   switch (listItemType) {
     case SidebarListItem.TypeMyToken:
 
@@ -1503,19 +1569,20 @@ function enable_draggable_change_folder(listItemType) {
 
       tokensPanel.body.find(".token-row-gear").hide();
       tokensPanel.body.find(".token-row-button").hide();
-      tokensPanel.body.find(".folder").removeClass("collapsed");
+      // tokensPanel.body.find(".folder").removeClass("collapsed");
       tokensPanel.body.find(" > .custom-token-list > .folder").hide();
       tokensPanel.body.find(".reorder-button").show();
       tokensPanel.body.find(".reorder-button").addClass("active");
       tokensPanel.header.find("input[name='token-search']").hide();
       tokensPanel.updateHeader("Tokens", "", "Drag items to move them between folders");
+      add_expand_collapse_buttons_to_header(tokensPanel);
 
       let myTokensRootItem = tokens_rootfolders.find(i => i.name === SidebarListItem.NameMyTokens);
       let myTokensRootFolder = find_html_row(myTokensRootItem, tokensPanel.body);
       // make sure we expand all folders that can be dropped on
       myTokensRootFolder.show();
       myTokensRootFolder.removeClass("collapsed");
-      myTokensRootFolder.find(".folder").removeClass("collapsed");
+      // myTokensRootFolder.find(".folder").removeClass("collapsed");
 
       // TODO: disable the draggable that was added here enable_draggable_token_creation
       // tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
@@ -1545,21 +1612,10 @@ function enable_draggable_change_folder(listItemType) {
         }
       });
 
-      const droppableOptions = {
-        greedy: true,
-        accept: ".draggable-sidebar-item-reorder:not(.drag-cancelled)",
-        drop: function (dropEvent, ui) {
-          let draggedRow = $(ui.helper);
-          let draggedItem = find_sidebar_list_item(draggedRow);
-          let droppedFolder = $(dropEvent.target);
-          let folderItem = find_sidebar_list_item(droppedFolder);
-          console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
-          move_item_into_folder(draggedItem, folderItem.fullPath());
-        }
-      };
-
       myTokensRootFolder.droppable(droppableOptions); // allow dropping on root MyTokens folder
       myTokensRootFolder.find(".folder").droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
+      tokensPanel.body.addClass("folder").addClass("not-collapsible");  // allow dropping on folders within MyTokens folder
+      tokensPanel.body.droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
 
       break;
     case SidebarListItem.TypeScene:
@@ -1570,7 +1626,7 @@ function enable_draggable_change_folder(listItemType) {
       scenesPanel.header.find(".reorder-button").addClass("active");
       scenesPanel.body.find(".token-row-gear").hide();
       scenesPanel.body.find(".token-row-button").hide();
-      scenesPanel.body.find(".folder").removeClass("collapsed");
+      scenesPanel.body.addClass("folder").addClass("not-collapsible"); // we want the root to act like a folder, but we don't want to allow it to collapse
 
       scenesPanel.body.find(".sidebar-list-item-row").draggable({
         container: scenesPanel.body,
@@ -1598,18 +1654,7 @@ function enable_draggable_change_folder(listItemType) {
         }
       });
 
-      scenesPanel.body.find(".folder").droppable({
-        greedy: true,
-        accept: ".draggable-sidebar-item-reorder:not(.drag-cancelled)",
-        drop: function (dropEvent, ui) {
-          let draggedRow = $(ui.helper);
-          let draggedItem = find_sidebar_list_item(draggedRow);
-          let droppedFolder = $(dropEvent.target);
-          let folderItem = find_sidebar_list_item(droppedFolder);
-          console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
-          move_item_into_folder(draggedItem, folderItem.fullPath());
-        }
-      });
+      scenesPanel.container.find(".folder").droppable(droppableOptions);
 
       break;
     default:

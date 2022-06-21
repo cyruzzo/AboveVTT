@@ -57,7 +57,7 @@ const builtInTokens = [
   },
   {
     "name": "Commoner",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
     "alternativeImages": [
       "https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
@@ -79,7 +79,7 @@ const builtInTokens = [
   },
   {
     "name": "Dragonborn [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/92aaNuq.png",
     "alternativeImages": [
       "https://i.imgur.com/92aaNuq.png",
@@ -90,7 +90,7 @@ const builtInTokens = [
   },
   {
     "name": "Dragonborn [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/0qQpdH6.png",
     "alternativeImages": [
       "https://i.imgur.com/0qQpdH6.png",
@@ -112,7 +112,7 @@ const builtInTokens = [
   },
   {
     "name": "Drow [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/lwPqseX.png",
     "alternativeImages": [
       "https://i.imgur.com/lwPqseX.png",
@@ -138,7 +138,7 @@ const builtInTokens = [
   },
   {
     "name": "Drow [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/RgY5TkF.png",
     "alternativeImages": [
       "https://i.imgur.com/RgY5TkF.png",
@@ -159,7 +159,7 @@ const builtInTokens = [
   },
   {
     "name": "Dwarf [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/4Xuzbp6.png",
     "alternativeImages": [
       "https://i.imgur.com/4Xuzbp6.png",
@@ -172,7 +172,7 @@ const builtInTokens = [
   },
   {
     "name": "Dwarf [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/T6K1v8s.png",
     "alternativeImages": [
       "https://i.imgur.com/T6K1v8s.png",
@@ -198,7 +198,7 @@ const builtInTokens = [
   },
   {
     "name": "Elf [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/5brExHK.png",
     "alternativeImages": [
       "https://i.imgur.com/5brExHK.png",
@@ -223,7 +223,7 @@ const builtInTokens = [
   },
   {
     "name": "Elf [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/KhyErAR.png",
     "alternativeImages": [
       "https://i.imgur.com/KhyErAR.png",
@@ -274,7 +274,7 @@ const builtInTokens = [
   },
   {
     "name": "Genasi",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/YnlG0US.png",
     "alternativeImages": [
       "https://i.imgur.com/YnlG0US.png",
@@ -287,7 +287,7 @@ const builtInTokens = [
   },
   {
     "name": "Guard [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing",
     "alternativeImages": [
       "https://drive.google.com/file/d/1C9ghQrfHckKPOMEHdmStaN47y0OXUPZ9/view?usp=sharing"
@@ -295,7 +295,7 @@ const builtInTokens = [
   },
   {
     "name": "Human [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/NjP2sGL.png",
     "alternativeImages": [
       "https://i.imgur.com/NjP2sGL.png",
@@ -328,7 +328,7 @@ const builtInTokens = [
   },
   {
     "name": "Human [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/vyeBFvg.png",
     "alternativeImages": [
       "https://i.imgur.com/vyeBFvg.png",
@@ -435,7 +435,7 @@ const builtInTokens = [
   },
   {
     "name": "Maid [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing",
     "alternativeImages": [
       "https://drive.google.com/file/d/1wB5yKNKQ5dqkLhvWA5UZybLBBTDu-57c/view?usp=sharing"
@@ -443,7 +443,7 @@ const builtInTokens = [
   },
   {
     "name": "Orc [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/gmUUKun.png",
     "alternativeImages": [
       "https://i.imgur.com/gmUUKun.png",
@@ -454,7 +454,7 @@ const builtInTokens = [
   },
   {
     "name": "Orc [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/4pWxSUn.png",
     "alternativeImages": [
       "https://i.imgur.com/4pWxSUn.png",
@@ -472,7 +472,7 @@ const builtInTokens = [
   },
   {
     "name": "Tiefling [F]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/r6fKPlI.png",
     "alternativeImages": [
       "https://i.imgur.com/r6fKPlI.png",
@@ -497,7 +497,7 @@ const builtInTokens = [
   },
   {
     "name": "Tiefling [M]",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/iLKRQF5.png",
     "alternativeImages": [
       "https://i.imgur.com/iLKRQF5.png",
@@ -515,7 +515,7 @@ const builtInTokens = [
   },
   {
     "name": "Warforged",
-    "folderPath": "/",
+    "folderPath": "/NPCs",
     "image": "https://i.imgur.com/N5Nvgkw.png",
     "alternativeImages": [
       "https://i.imgur.com/N5Nvgkw.png",

@@ -871,7 +871,7 @@ div#combat_button{
 }
 
 #patreons {
-	padding-top:10px;
+	padding-top:0px;
     font-size: 8px;
 
    -webkit-column-count: 8;
@@ -2144,9 +2144,15 @@ div.ct-sidebar__pane-content > div.selected-tab {
     font-style: normal;
     font-weight: bold;
     font-size: 18px;
+    justify-content: space-between;
 }
 .sidebar-panel-header-title:empty{
     margin: 0px;
+}
+.sidebar-panel-header-title .expand-collapse-wrapper {
+    display: flex;
+    flex-direction: row;
+    margin-right: 6px;
 }
 .sidebar-panel-header-subtitle {
     font-size: 12px;
@@ -2180,6 +2186,7 @@ div.ct-sidebar__pane-content > div.selected-tab {
 }
 div.token-image-modal-footer-title {
     font-size: 13px;
+    /*width: 100%;*/
 }
 h1.token-image-modal-footer-title:after,
 h2.token-image-modal-footer-title:after,
@@ -2217,6 +2224,10 @@ h5.token-image-modal-footer-title:after {
     padding: 4px;
     border-top: 1px solid #d8e1e8;
 }
+.footer-input-wrapper .sidebar-panel-header-explanation {
+    font-size: 12px;
+    padding: 0;
+}
 .token-image-modal-url-label-wrapper {
     display: flex;
     flex-grow: 1;
@@ -2224,6 +2235,12 @@ h5.token-image-modal-footer-title:after {
 .token-image-modal-url-label-add-wrapper {
     display: flex;
     flex-direction: row;
+}
+.token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper {
+    flex-direction: column;
+}
+.token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title {
+    width: 100%;
 }
 .token-image-modal-remove-all-button {
     appearance: none;
@@ -2750,6 +2767,9 @@ h5.token-image-modal-footer-title:after {
     -webkit-animation-name: rcSwitchOn;
     animation-name: rcSwitchOn;
     background-image: none !important;
+}
+.rc-switch:focus{
+    outline: 2px solid #000;
 }
 
 .sidebar-hovertext:before {
@@ -3351,21 +3371,6 @@ button.avtt-roll-button {
 }
 #combat_area td [class*="AvatarPortrait"]{
     border-radius: 5px;
-}
- #combat_tracker button:focus{
-    outline: 1px solid #ddd;
-
-}
-#combat_tracker button{
-     font-weight:600;
-     background:#fff;
-     color: #1b9af0;
-     text-shadow: 1px 1px 2px  #fff;
-     border: 1px solid #1b9af0;
-     margin: 2px;
-     border-radius:2px; 
-     width: fit-content;
-     height: 22px;
 }
 #round_number_label button{
     margin-left: 6px;
@@ -3986,6 +3991,10 @@ div.ddbc-tab-options--layout-pill>button{
 
 .url-validator.invalid {
     color: red;
+}
+
+.url-validator.unsure {
+    color: rgb(255 82 0);
 }
 
 .url-validator.valid {

@@ -410,6 +410,7 @@ function init_tokens_panel() {
     let header = tokensPanel.header;
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
+    add_expand_collapse_buttons_to_header(tokensPanel);
     header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
@@ -578,12 +579,12 @@ function update_pc_token_rows() {
                 abilityValue.find(".ability_score").text(a.score);
 
             });
-            row.find(".tokens-panel-row-details-subtitle .pp-value").text(playerData.pp);
-            row.find(".tokens-panel-row-details-subtitle .walking-value").text(playerData.walking);
+            row.find(".pp-value").text(playerData.pp);
+            row.find(".walking-value").text(playerData.walking);
             if (playerData.inspiration) {
-                row.find(".sidebar-list-item-row-details-subtitle .inspiration").show();
+                row.find(".inspiration").show();
             } else {
-                row.find(".sidebar-list-item-row-details-subtitle .inspiration").hide();
+                row.find(".inspiration").hide();
             }
         }
     });
@@ -1189,6 +1190,16 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     let inputWrapper = sidebarPanel.inputWrapper;
 
+
+    // we want this as a function so we can easily update the label as the user adds/removes images
+    const determineLabelText = function() {
+        if (alternative_images_for_item(listItem).length === 0) {
+            return "Replace The Default Image";
+        } else {
+            return "Add More Custom Images";
+        }
+    }
+
     // images
     let addImageUrl = function (newImageUrl) {
         if (listItem.isTypeMonster()) {
@@ -1210,8 +1221,10 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         }
         redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
         removeAllButton.show();
+        inputWrapper.find(".token-image-modal-footer-title").text(determineLabelText())
     };
-    let imageUrlInput = sidebarPanel.build_image_url_input("Add More Images", addImageUrl);
+
+    let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
     inputWrapper.append(imageUrlInput);
 
     if (listItem.isTypeMyToken()) {
@@ -1423,6 +1436,11 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken) {
     }
 
     decorate_modal_images(sidebarPanel, listItem, placedToken);
+    if (alternative_images_for_item(listItem).length === 0) {
+        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title").text("Replace The Default Image");
+    } else {
+        sidebarPanel.footer.find(".token-image-modal-url-label-add-wrapper .token-image-modal-url-label-wrapper .token-image-modal-footer-title").text("Add More Custom Images");
+    }
 }
 
 /**
@@ -1591,17 +1609,19 @@ function refresh_encounter(clickedRow, clickedItem, callback) {
             console.warn("Failed to refresh encounter", response);
             callback(false);
         } else {
-            fetch_and_inject_encounter_monsters(clickedRow, clickedItem);
             clickedItem.name = response.name;
             clickedItem.description = response.flavorText;
             clickedRow.find(".sidebar-list-item-row-details-title").text(response.name);
             clickedRow.find(".sidebar-list-item-row-details-subtitle").text(response.flavorText);
-            callback(true);
+            fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback);
         }
     });
 }
 
-function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
+function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
@@ -1609,6 +1629,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
+            callback(false);
         } else {
             let monsterItems = response
                 .map(monsterData => SidebarListItem.Monster(monsterData))
@@ -1616,6 +1637,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem) {
             encounter_monster_items[clickedItem.encounterId] = monsterItems;
             update_monster_item_cache(monsterItems); // let's cache these so we won't have to fetch them again if the user places them on the scene
             inject_encounter_monsters();
+            callback(true);
         }
     });
 }
