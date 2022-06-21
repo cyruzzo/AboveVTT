@@ -3837,7 +3837,7 @@ button.avtt-roll-button {
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
-    filter:  drop-shadow(var(--token-border-color) -1px 0px 1px) drop-shadow(var(--token-border-color) 1px 0px 1px) drop-shadow(var(--token-border-color) 0px 1px 1px) drop-shadow(var(--token-border-color) 0px -1px 1px) drop-shadow(var(--token-hp-aura-color) 1px 0px 2px) drop-shadow(var(--token-hp-aura-color) 0px 1px 2px) drop-shadow(var(--token-hp-aura-color) 0px -1px 2px) drop-shadow(var(--token-hp-aura-color) -1px 0px 2px) drop-shadow(var(--token-temp-hp) 1px 0px 2px) drop-shadow(var(--token-temp-hp) -1px 0px 2px) drop-shadow(var(--token-temp-hp) 0px -1px 2px) drop-shadow(var(--token-temp-hp) 0px 1px 2px);
+    filter:  drop-shadow(#ffffff22 0px 0px 1px) drop-shadow(var(--token-border-color) 0px 0px 0.2px) drop-shadow(var(--token-border-color) 0px 0px 0px) drop-shadow(var(--token-hp-aura-color) 0px 0px 1px) drop-shadow(var(--token-hp-aura-color) 0px 0px 0px) drop-shadow(var(--token-temp-hp) 0px 0px 1px) drop-shadow(var(--token-temp-hp) 0px 0px 0px);
 }
 .token>img:not(.preserve-aspect-ratio) {
     object-fit: cover;
