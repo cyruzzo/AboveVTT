@@ -31,7 +31,7 @@ const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404"
 
 class Token {
 
-	// Defines how many grid fields a token is allowed to be moved outside of the scene.
+	// Defines how many token-sizes a token is allowed to be moved outside of the scene.
 	SCENE_MOVE_GRID_PADDING_MULTIPLIER = 1;
 
 	constructor(options) {
@@ -53,13 +53,7 @@ class Token {
 			this.options.conditions = [];
 		}
 
-		// Store scene boundaries when token is created
-		this.sceneBoundaries = {
-			top: 0,
-			bottom: $("#scene_map").height() - window.CURRENT_SCENE_DATA.vpps,			
-			left: 0,
-			right: $("#scene_map").width() - window.CURRENT_SCENE_DATA.hpps,
-		};
+		this.prepareWalkableArea();
 	}
 
 
@@ -256,14 +250,12 @@ class Token {
 		top = parseFloat(top);
 		left = parseFloat(left);
 
-		// Sets how far tokens are allowed to move outside of the scene
-		const movePadding = this.options.size * this.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
 		// Stop movement if new position is outside of the scene
 		if (
-			top  < (this.sceneBoundaries.top - movePadding)    || 
-			top  > (this.sceneBoundaries.bottom + movePadding) ||
-			left < (this.sceneBoundaries.left - movePadding)   || 
-			left > (this.sceneBoundaries.right + movePadding)
+			top  < this.walkableArea.top    || 
+			top  > this.walkableArea.bottom ||
+			left < this.walkableArea.left   || 
+			left > this.walkableArea.bottom
 		) { return; }
 
 		this.update_from_page();
@@ -1199,8 +1191,6 @@ class Token {
 				y: 0
 			};
 
-			const movePaddingWhileDragging = self.options.size * self.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
-
 			tok.draggable({
 				scroll: false,
 				stop:
@@ -1408,8 +1398,8 @@ class Token {
 					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
 
 					// Constrain token within scene
-					tokenPosition.x = clamp(tokenPosition.x, self.sceneBoundaries.left - movePaddingWhileDragging, self.sceneBoundaries.right + movePaddingWhileDragging);
-					tokenPosition.y = clamp(tokenPosition.y, self.sceneBoundaries.top - movePaddingWhileDragging, self.sceneBoundaries.bottom + movePaddingWhileDragging);
+					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
+					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
 
 					ui.position = {
 						left: tokenPosition.x,
@@ -1582,6 +1572,27 @@ class Token {
 			return defaultValue;
 		}
 		return storedValue;
+	}
+
+	/**
+	 * Defines how far tokens are allowed to move outside of the scene
+	 */
+	prepareWalkableArea() {
+		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
+		const sizeOnGrid = {
+			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps),
+			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps)
+		};
+
+		// shorten variable to improve readability
+		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
+
+		this.walkableArea = {
+			top:  0 - (sizeOnGrid.y * multi),
+			left: 0 - (sizeOnGrid.x * multi),
+			right:  window.ScenesHandler.scene.width  + (sizeOnGrid.x * (multi -1)), // we need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.ScenesHandler.scene.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+		};	
 	}
 	
 }
