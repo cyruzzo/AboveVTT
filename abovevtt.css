@@ -242,7 +242,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: auto;
     background: #242527;
     z-index: 0;
-    
+
     transition: -webkit-transform ease-in-out 0.5s;
     transform-origin: top;
     transition-delay: 0.1s; /* Needed to calculate the vertical area to shift with translateX */
@@ -268,16 +268,16 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     right: 340px;
     display: none;
     position: fixed !important;
-    border-radius: 5px; 
+    border-radius: 5px;
     z-index: 10010;
-    border: 1px solid gray;  
+    border: 1px solid gray;
     top: 28px;
     bottom: auto;
     height: calc(100vh - 50px);
 }
 
 #sheet.open {
-    display: block !important;  
+    display: block !important;
     transition: none;
     transform: none;
     backdrop-filter: opacity(0);
@@ -294,12 +294,12 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: 85%;
     position: fixed !important;
     opacity: 1;
-    background: #242527;  
-    cursor: move;   
+    background: #242527;
+    cursor: move;
     z-index: 49000;
-    border-radius: 3px;   
+    border-radius: 3px;
     border: 1px solid gray;
-}  
+}
 
 #resizeDragMon.hideMon{
     visibility: hidden;
@@ -308,7 +308,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet iframe {
     width: 100%;
     height: calc(100% - 24px) !important;
-    border-radius: 0 0 3px 3px;   
+    border-radius: 0 0 3px 3px;
 }
 
 
@@ -350,24 +350,24 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
 #combat_tracker_inside .ui-resizable-sw {
-    bottom:-45px;  
+    bottom:-45px;
 }
 
 #combat_tracker_inside .ui-resizable-e,
 #combat_tracker_inside .ui-resizable-w {
-    height: calc(100% + 45px);  
+    height: calc(100% + 45px);
 }
 
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: -5px;  
+    bottom: -5px;
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w  {
-    height: 100%;  
+    height: 100%;
 }
 #combat_tracker_inside #combat_area{
     width: 100%;
@@ -429,21 +429,21 @@ div.top_menu.visible,
 #combat_footer,
 #combat_tracker_inside{
 	border-style: solid;
-	border-color: #ddd; 
+	border-color: #ddd;
 }
 #combat_footer{
 	border-width: 0px 1px 1px 1px;
-	border-radius: 0px 0px 5px 5px; 
+	border-radius: 0px 0px 5px 5px;
 	left: -1px;
 	right: -1px;
 	position: absolute;
 }
 
 #combat_footer button{
-	flex-grow: 1;   
+	flex-grow: 1;
 }
 #combat_footer{
-	display: flex;   
+	display: flex;
 }
 #combat_tracker_inside {
 	border-width: 1px 1px 0px 1px;
@@ -451,10 +451,10 @@ div.top_menu.visible,
     width: 250px;
 }
 #combat_tracker_inside #combat_footer button:last-of-type{
-	border-bottom-right-radius: 5px;   
+	border-bottom-right-radius: 5px;
 }
 #combat_tracker_inside #combat_footer button:first-of-type{
-	border-bottom-left-radius: 5px; 
+	border-bottom-left-radius: 5px;
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside{
@@ -554,13 +554,13 @@ div#scene_selector,
 /*combat UI Changes 2*/
 #combat_tracker_inside .tracker-list{
     height: calc(100% - 55px);
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
 }
 #round_number_label{
     width: calc(100% + 2px);
     left: -1px;
     position: relative;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
 }
 
 
@@ -1584,6 +1584,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .context-menu-icon-add-circle:before {
     content: "\e148" !important;
 }
+.icon-group-add:before,
+.context-menu-icon-group-add:before {
+    content: "\e7ef" !important;
+}
+.icon-group-remove:before,
+.context-menu-icon-group-remove:before {
+    content: "\e747" !important;
+}
 
 .context-menu-icon-hidden {
     border: 1px solid white;
@@ -1906,7 +1914,7 @@ audio::-webkit-media-controls-time-remaining-display{
     margin-top: 4px;
 }
 
-.note .mce-panel { 
+.note .mce-panel {
     border:  none;
 }
 
@@ -2274,7 +2282,7 @@ h5.token-image-modal-footer-title:after {
     width: auto;
 }
 .custom-token-image-item {
-    float: left; 
+    float: left;
     width: 33%;
     position: relative;
 }
@@ -2647,8 +2655,8 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-panel-content .sidebar-panel-body {
     background-color: rgb(235, 241, 245);
-    position: relative; 
-    width:100%; 
+    position: relative;
+    width:100%;
     overflow-y: auto;
     flex: auto;
 }
@@ -2846,7 +2854,7 @@ h5.token-image-modal-footer-title:after {
 @keyframes beholder-float {
     0% { transform: translate(0,  0px); }
     50%  { transform: translate(0, -20px); }
-    100%   { transform: translate(0, -0px); }   
+    100%   { transform: translate(0, -0px); }
 }
 
 div.sidebar__pane-content div.tooltip::after {
@@ -2866,7 +2874,7 @@ button.avtt-roll-button {
     line-height: 18px;
     letter-spacing: 1px;
     padding: 1px 4px 0;
-}			
+}
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
@@ -2899,34 +2907,34 @@ button.avtt-roll-button {
 #combat_footer,
 #combat_tracker_inside{
     border-style: solid;
-    border-color: #ddd; 
+    border-color: #ddd;
 }
 #combat_footer{
     border-width: 0px 1px 1px 1px;
-    border-radius: 0px 0px 5px 5px; 
+    border-radius: 0px 0px 5px 5px;
     left: -1px;
     right: -1px;
     position: absolute;
 }
 
 #combat_footer button{
-    flex-grow: 1;   
+    flex-grow: 1;
 }
 #combat_footer{
-    display: flex;   
+    display: flex;
 }
 #combat_tracker_inside {
     border-width: 1px 1px 0px 1px;
     border-radius: 5px 5px 0 0;
 }
 .body-rpgcharacter-sheet #combat_tracker_inside{
-    width: 200px;   
+    width: 200px;
 }
 #combat_tracker_inside #combat_footer button:last-of-type{
-    border-bottom-right-radius: 5px;   
+    border-bottom-right-radius: 5px;
 }
 #combat_tracker_inside #combat_footer button:first-of-type{
-    border-bottom-left-radius: 5px; 
+    border-bottom-left-radius: 5px;
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside{
@@ -2969,7 +2977,7 @@ button.avtt-roll-button {
     border-top-right-radius: 5px;
     line-height: 26px;
     text-shadow: 0px 0px  #000,
-        -1px -1px 0  #000,  
+        -1px -1px 0  #000,
          1px -1px 0  #000,
          -1px 1px 0  #000,
          1px 1px 0  #000;
@@ -3073,7 +3081,7 @@ button.avtt-roll-button {
     transition: all linear 0.2s;
     cursor: pointer;
 }
- 
+
 .text-input-title-bar-exit svg,
 #text_controller_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
@@ -3149,7 +3157,7 @@ button.avtt-roll-button {
     width: 100%;
     height: 100%;
 }
-#tokenOptionsContainer div, 
+#tokenOptionsContainer div,
 #tokenOptionsContainer h3 {
     font-size: 10px;
 }
@@ -3161,7 +3169,7 @@ button.avtt-roll-button {
     display: flex;
     align-self: center;
     line-height: 20px;
-}   
+}
 .menu-outer-aura,
 .menu-inner-aura{
     margin: 2px 0px;
@@ -3237,7 +3245,7 @@ button.avtt-roll-button {
 #resizeDragMon .ui-resizable-sw,
 #sheet .ui-resizable-s,
 #sheet .ui-resizable-sw{
-    bottom: -7px;  
+    bottom: -7px;
 }
 
 #resizeDragMon .ui-resizable-se,
@@ -3251,7 +3259,7 @@ button.avtt-roll-button {
 #resizeDragMon .ui-resizable-w,
 #sheet .ui-resizable-e,
 #sheet .ui-resizable-w   {
-    height: calc(100% + 4px);  
+    height: calc(100% + 4px);
 }
 
 /*Resizable Handle Test code */
@@ -3274,9 +3282,9 @@ button.avtt-roll-button {
 }
 
 #combat_area tr[data-current] td{
-    background: none;  
+    background: none;
 }
-#combat_area tr[data-current] td{  
+#combat_area tr[data-current] td{
     background: none;
     border: none;
 }
@@ -3287,25 +3295,25 @@ button.avtt-roll-button {
 }
 #combat_area tr td:last-of-type{
     border-bottom-right-radius: 8px;
-    border-top-right-radius: 8px; 
+    border-top-right-radius: 8px;
 }
  #combat_area tr td:first-of-type{
     border-bottom-left-radius: 8px;
-    border-top-left-radius: 8px;  
+    border-top-left-radius: 8px;
 }
 
 #combat_area tr[data-current][data-target*="characters"]{
-    background: #0F0;  
+    background: #0F0;
 }
 #combat_area tr[data-current]:not([data-target*="characters"]){
-    background: #0000;  
+    background: #0000;
 }
 
 #combat_area tr[data-current] input{
     border-color: #1b9af0;
 }
 #combat_area{
-    border-collapse:collapse;  
+    border-collapse:collapse;
 }
 
 #combat_area td input,
@@ -3334,15 +3342,15 @@ button.avtt-roll-button {
 #combat_area tr td div{
     top: 1px;
     position: relative;
-    font-size: 18px !important; 
+    font-size: 18px !important;
 }
 
 #combat_area tr td div.hp{
-    float: right;  
+    float: right;
 }
 
 #round_number_label{
-    height: 30px;  
+    height: 30px;
 }
 
 .VTTToken img ~ .hpbar:after {
@@ -3383,8 +3391,8 @@ button.avtt-roll-button {
  #combat_tracker button:focus{
     outline: 1px solid #ddd;
 }
-#combat_area tr[data-current] td img{      
-     box-shadow: 1px 1px 2px 0px #000000;  
+#combat_area tr[data-current] td img{
+     box-shadow: 1px 1px 2px 0px #000000;
 }
 #combat_area tr td input,
 .roundNum,
@@ -3392,7 +3400,7 @@ button.avtt-roll-button {
     box-shadow: 1px 1px 1px 0px #00000047;
 }
 
-#combat_tracker input[disabled=disabled], 
+#combat_tracker input[disabled=disabled],
 #combat_tracker input[disabled=disabled]:hover,
 #combat_tracker input[readonly]{
     opacity: 1;
@@ -3400,7 +3408,7 @@ button.avtt-roll-button {
 }
 
 #combat_footer{
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
     padding-top: 13px;
 }
 
@@ -3437,7 +3445,7 @@ button.avtt-roll-button {
     content: 'Hide/Reveal in Combat Tracker for Players';
 }
 .rollInitiativeCombatButton:after{
-    content:'Roll Initiative';         
+    content:'Roll Initiative';
 }
 .findTokenCombatButton:after{
     content:'Find Token';
@@ -3446,7 +3454,7 @@ button.avtt-roll-button {
     content:'Remove from Combat';
 }
 .openSheetCombatButton:after{
-    content:'Open Sheet';   
+    content:'Open Sheet';
 }
 
 .combatHideFromPlayerInput{
@@ -3525,7 +3533,7 @@ button.avtt-roll-button {
 #combat_tracker td button svg{
     display: inline-block;
     vertical-align: middle;
-} 
+}
 #combat_area{
     width: 100%;
 }
@@ -3535,7 +3543,7 @@ button.avtt-roll-button {
 }
 /*minimize windows*/
 
-.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title), 
+.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title),
 #combat_tracker_title_bar.minimized:after,
 #combat_tracker_title_bar.minimized ~ *{
     display: none !important;
@@ -3557,7 +3565,7 @@ button.avtt-roll-button {
     font-weight: bold;
     line-height: 25px;
     text-shadow: 0px 0px  #000,
-        -1px -1px 0  #000,  
+        -1px -1px 0  #000,
         1px -1px 0  #000,
         -1px 1px 0  #000,
         1px 1px 0  #000;
@@ -3591,7 +3599,7 @@ button.avtt-roll-button {
     object-fit: cover;
     width: 100%;
     height: 100%;
-} 
+}
 
 .image-size-wrapper,
 .border-color-wrapper {
@@ -3641,7 +3649,7 @@ button.avtt-roll-button {
     font-size: 10px;
     display: flex;
     flex-direction: row;
-    width: 100%;    
+    width: 100%;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -3658,7 +3666,7 @@ button.avtt-roll-button {
 .menu-input-label{
     text-align: center;
     background: none;
-    font-size: 10px;   
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -3668,7 +3676,7 @@ button.avtt-roll-button {
 }
 
 #menuStatDiv {
-    width: 100%; 
+    width: 100%;
     padding: 5px;
     display: flex;
     align-content: center;
@@ -3719,7 +3727,7 @@ button.avtt-roll-button {
 }
 
 #adjustments-flyout button#changeTokenImage:before{
-   content: "\e413"; 
+   content: "\e413";
 }
 
 
@@ -3745,10 +3753,10 @@ button.avtt-roll-button {
     content: '';
     right: 5px;
     top: 7px;
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent; 
+    border-bottom: 5px solid transparent;
     border-left: 5px solid #738694;
 }
 .flyout-from-menu-item:hover:after {
@@ -3780,7 +3788,7 @@ button.avtt-roll-button {
 }
 
 
-#prewiz, 
+#prewiz,
 #wizard_popup{
     z-index: 58000;
 }
@@ -3860,9 +3868,9 @@ button.avtt-roll-button {
     color: rgb(111, 116, 120);
     box-shadow: 1px 1px 1px -1px #0003, 1px 2px 0px -2px #0003;
 }
-.stream-dice-button:hover:after { 
+.stream-dice-button:hover:after {
     opacity:1;
-    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 500ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;  
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 500ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
 .stream-dice-button:after{
@@ -3883,7 +3891,7 @@ button.avtt-roll-button {
 
 .stream-dice-button.enabled:hover:after {
     opacity:1;
-    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 500ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;   
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 500ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
 .stream-dice-button.enabled:after {
@@ -4138,4 +4146,3 @@ div.note[id^="ui-id"] .mce-btn button {
 .sidebar-list-item-row.ui-draggable-dragging {
     z-index: 100000;
 }
-

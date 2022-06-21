@@ -136,37 +136,6 @@ function token_context_menu_expanded(tokenIds, e) {
 				body.append(button);
 			}
 		}
-	} else {
-		let groupButton = $(`<button></button>`);
-		let groupButtonInternals = `Group Tokens<span class="material-icons icon-person-add"></span>`;
-		let ungroupButtonInternals = `Ungroup Tokens<span class="material-icons icon-person-remove"></span>`;
-		if (tokens.every(token => token.options.group_id == undefined)) {
-			groupButton.addClass('group-tokens');
-			groupButton.html(groupButtonInternals);
-		} else {
-			groupButton.addClass('ungroup-tokens');
-			groupButton.html(ungroupButtonInternals);
-		}
-		groupButton.on("click", function(clickEvent) {
-			let clickedButton = $(clickEvent.currentTarget);
-			if (clickedButton.hasClass("group-tokens")) {
-				clickedButton.removeClass("group-tokens").addClass("ungroup-tokens");
-				clickedButton.html(ungroupButtonInternals);
-				let groupId = uuid();
-				tokens.forEach(token => {
-					token.options.group_id = groupId;
-					token.place_sync_persist();
-				});
-			} else {
-				clickedButton.removeClass("ungroup-tokens").addClass("group-tokens");
-				clickedButton.html(groupButtonInternals);
-				tokens.forEach(token => {
-					delete token.options.group_id;
-					token.place_sync_persist();
-				});
-			}
-		});
-		body.append(groupButton);
 	}
 
 	if(window.DM){
@@ -253,6 +222,39 @@ function token_context_menu_expanded(tokenIds, e) {
 				token.place_sync_persist();
 			});
 		});
+	}
+
+	if (tokens.length > 1) {
+		let groupButton = $(`<button></button>`);
+		let groupButtonInternals = `Group Tokens<span class="material-icons icon-group-add"></span>`;
+		let ungroupButtonInternals = `Ungroup Tokens<span class="material-icons icon-group-remove"></span>`;
+		if (tokens.every(token => token.options.group_id == undefined)) {
+			groupButton.addClass('group-tokens');
+			groupButton.html(groupButtonInternals);
+		} else {
+			groupButton.addClass('ungroup-tokens');
+			groupButton.html(ungroupButtonInternals);
+		}
+		groupButton.on("click", function(clickEvent) {
+			let clickedButton = $(clickEvent.currentTarget);
+			if (clickedButton.hasClass("group-tokens")) {
+				clickedButton.removeClass("group-tokens").addClass("ungroup-tokens");
+				clickedButton.html(ungroupButtonInternals);
+				let groupId = uuid();
+				tokens.forEach(token => {
+					token.options.group_id = groupId;
+					token.place_sync_persist();
+				});
+			} else {
+				clickedButton.removeClass("ungroup-tokens").addClass("group-tokens");
+				clickedButton.html(groupButtonInternals);
+				tokens.forEach(token => {
+					delete token.options.group_id;
+					token.place_sync_persist();
+				});
+			}
+		});
+		body.append(groupButton);
 	}
 
 	if (tokens.length === 1) {
