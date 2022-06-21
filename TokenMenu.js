@@ -45,7 +45,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 
 
 		if (diff > 0) {
-			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
+			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row
 			// align to the top of the row
 			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y
 			if(buttonPosition < contextMenuCenter) {
@@ -53,8 +53,8 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 			}
 			else{
 				flyoutTop =  buttonPosition - (flyoutHeight / 1.2)
-			}				
-		}	
+			}
+		}
 
 		flyout.css({
 			left: contextMenu.width(),
@@ -70,8 +70,8 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 				bottom: 0
 			});
 		}
-		
-	} 
+
+	}
 }
 
 function close_token_context_menu() {
@@ -102,12 +102,12 @@ function token_context_menu_expanded(tokenIds, e) {
 		tokenOptionsClickCloseDiv.remove();
 		$(".sp-container").spectrum("destroy");
 		$(".sp-container").remove();
-		$(`.context-menu-flyout`).remove(); 
+		$(`.context-menu-flyout`).remove();
 	});
 
 	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
 
-	
+
 	let body = $("<div id='tokenOptionsContainer'></div>");
 	moveableTokenOptions.append(body);
 
@@ -136,6 +136,37 @@ function token_context_menu_expanded(tokenIds, e) {
 				body.append(button);
 			}
 		}
+	} else {
+		let groupButton = $(`<button></button>`);
+		let groupButtonInternals = `Group Tokens<span class="material-icons icon-person-add"></span>`;
+		let ungroupButtonInternals = `Ungroup Tokens<span class="material-icons icon-person-remove"></span>`;
+		if (tokens.every(token => token.options.group_id == undefined)) {
+			groupButton.addClass('group-tokens');
+			groupButton.html(groupButtonInternals);
+		} else {
+			groupButton.addClass('ungroup-tokens');
+			groupButton.html(ungroupButtonInternals);
+		}
+		groupButton.on("click", function(clickEvent) {
+			let clickedButton = $(clickEvent.currentTarget);
+			if (clickedButton.hasClass("group-tokens")) {
+				clickedButton.removeClass("group-tokens").addClass("ungroup-tokens");
+				clickedButton.html(ungroupButtonInternals);
+				let groupId = uuid();
+				tokens.forEach(token => {
+					token.options.group_id = groupId;
+					token.place_sync_persist();
+				});
+			} else {
+				clickedButton.removeClass("ungroup-tokens").addClass("group-tokens");
+				clickedButton.html(groupButtonInternals);
+				tokens.forEach(token => {
+					delete token.options.group_id;
+					token.place_sync_persist();
+				});
+			}
+		});
+		body.append(groupButton);
 	}
 
 	if(window.DM){
@@ -199,25 +230,25 @@ function token_context_menu_expanded(tokenIds, e) {
 
 		toTopMenuButton.off().on("click", function(tokenIds){
 			tokens.forEach(token => {
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
+				$(".token").each(function(){
+					let tokenId = $(this).attr('data-id');
 					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
 					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
 						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-					}		
+					}
 				});
 				token.place_sync_persist();
 			});
 		});
 
 		toBottomMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {			
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
+			tokens.forEach(token => {
+				$(".token").each(function(){
+					let tokenId = $(this).attr('data-id');
 					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
 					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
 						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-					}		
+					}
 				});
 				token.place_sync_persist();
 			});
@@ -240,18 +271,18 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 	}
 
-	
-	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){ 
+
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){
 		$(".maxHpMenuInput").prop('disabled', false);
 		$(".acMenuInput").prop('disabled', false);
 		$(".hpMenuInput").prop('disabled', false);
 	}
-	else { 
+	else {
 		$(".maxHpMenuInput").prop('disabled', true);
 		$(".acMenuInput").prop('disabled', true);
 		$(".hpMenuInput").prop('disabled', true);
-	}	
-	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);	
+	}
+	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);
 	conditionsRow.hover(function (hoverEvent) {
 		context_menu_flyout("conditions-flyout", hoverEvent, function(flyout) {
 			flyout.append(build_conditions_and_markers_flyout_menu(tokenIds));
@@ -323,7 +354,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			scroll: false,
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
@@ -331,7 +362,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			}
 		});
-	
+
 
 	moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
 
@@ -340,7 +371,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	}
 	else {
 		moveableTokenOptions.css("top", e.clientY - 10 + 'px');
-	}	
+	}
 }
 
 /**
@@ -453,7 +484,7 @@ function build_token_auras_inputs(tokenIds) {
 			token.options[name] = newValue;
 			token.place_sync_persist();
 		});
-	});	
+	});
 	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
 	let hideAuraInFog = build_toggle_input("hideaurafog", "Hide aura when hidden in fog", hideAuraIsEnabled, "Token's aura is hidden from players when in fog", "Token's aura is visible to players when token is in fog", function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
@@ -465,7 +496,7 @@ function build_token_auras_inputs(tokenIds) {
 	if(window.DM) {
 		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInFog);
 	}
-	
+
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledAurasInput);
 	if (auraIsEnabled) {
@@ -745,12 +776,12 @@ function build_notes_flyout_menu(tokenIds) {
 	if(tokenIds.length=1){
 		let has_note=id in window.JOURNAL.notes;
 		if(has_note){
-			let viewNoteButton = $(`<button class="icon-view-note material-icons">View Note</button>`)		
+			let viewNoteButton = $(`<button class="icon-view-note material-icons">View Note</button>`)
 			let deleteNoteButton = $(`<button class="icon-note-delete material-icons">Delete Note</button>`)
 			editNoteButton = $(`<button class="icon-note material-icons">Edit Note</button>`)
 			body.append(viewNoteButton);
-			body.append(editNoteButton);		
-			body.append(deleteNoteButton);	
+			body.append(editNoteButton);
+			body.append(deleteNoteButton);
 			viewNoteButton.off().on("click", function(){
 				window.JOURNAL.display_note(id);
 			});
@@ -776,13 +807,13 @@ function build_notes_flyout_menu(tokenIds) {
 				}
 			}
 			window.JOURNAL.edit_note(id);
-		});		
+		});
 	}
 
 	return body;
 }
 
-	
+
 
 function build_conditions_and_markers_flyout_menu(tokenIds) {
 
@@ -829,7 +860,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		{
 			isPlayerTokensSelected = true;
 		}
-	});	
+	});
 	let conditionsList = $(`<ul></ul>`);
 	conditionsList.css("width", "180px");
 	body.append(conditionsList);
@@ -935,12 +966,12 @@ function build_adjustments_flyout_menu(tokenIds) {
 	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
 	let tokenImageScales = tokens.map(t => t.options.imageSize);
 	if(tokenImageScales.length === 1) {
-		imageSizeInput.val(tokenImageScales[0] || 1);	
+		imageSizeInput.val(tokenImageScales[0] || 1);
 		imageSizeInputRange.val(tokenImageScales[0] || 1);
 	}
 	imageSizeInput.on('keyup', function(event) {
 		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
 			imageSize = event.target.value;
 		}
 		else if(event.target.value > 6){
@@ -950,7 +981,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 			imageSize = 0.2;
 		}
 		if (event.key == "Enter") {
-			imageSizeInput.val(imageSize);	
+			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 			tokens.forEach(token => {
 				token.options.imageSize = imageSize;
@@ -961,19 +992,19 @@ function build_adjustments_flyout_menu(tokenIds) {
 	});
 	imageSizeInput.on('focusout', function(event) {
 		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) { 
+		if(event.target.value <= 6 && event.target.value >= 0.2) {
 			imageSize = event.target.value;
 		}
 		else if(event.target.value > 6){
 			imageSize = 6;
-			imageSizeInput.val(imageSize);	
+			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 		}
 		else if(event.target.value < 0.2){
 			imageSize = 0.2;
-			imageSizeInput.val(imageSize);	
+			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
-		}	
+		}
 		tokens.forEach(token => {
 			token.options.imageSize = imageSize;
 			token.place_sync_persist();
@@ -1007,14 +1038,14 @@ function build_adjustments_flyout_menu(tokenIds) {
 	let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
 	let tokenBorderColors = tokens.map(t => t.options.color);
 	if(tokenBorderColors.length === 1) {
-		borderColorInput.val(tokenBorderColors[0] || "#dddddd");	
+		borderColorInput.val(tokenBorderColors[0] || "#dddddd");
 	}
 	let borderColorWrapper = $(`
 		<div class="token-image-modal-url-label-wrapper border-color-wrapper">
 			<div class="token-image-modal-footer-title border-color-title">Border Color</div>
 		</div>
 	`);
-	borderColorWrapper.append(borderColorInput); 
+	borderColorWrapper.append(borderColorInput);
 	body.append(borderColorWrapper);
 	let colorPicker = $(borderColorInput);
 	colorPicker.spectrum({
@@ -1037,15 +1068,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 		}
 		else {
 			tokens.forEach(token => {
-				token.options.color = borderColor;		
-				token.place_sync_persist();	
+				token.options.color = borderColor;
+				token.place_sync_persist();
 			});
 		}
 	};
 	colorPicker.on('dragstop.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
 	colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
 	colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
-	
+
 
 	let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
 	if(tokens.length === 1 && window.DM){
@@ -1088,7 +1119,7 @@ function build_options_flyout_menu(tokenIds) {
 		{ name: "legacyaspectratio", label: "Ignore Image Aspect Ratio", enabledDescription:"Token will stretch non-square images to fill the token space", disabledDescription: "Token will respect the aspect ratio of the image provided" },
 		{ name: "player_owned", label: "Player access to sheet/stats", enabledDescription:"Tokens' sheet is accessible to players via RMB click on token. If token stats is visible to players, players can modify the hp of the token", disabledDescription: "Tokens' sheet is not accessible to players. Players can't modify token stats"}
 	];
-	if (tokens.length == 1 && !tokens[0].isPlayer()){		
+	if (tokens.length == 1 && !tokens[0].isPlayer()){
 		let removename = "hidestat";
 		token_settings = $.grep(token_settings, function(e){
 		     return e.name != removename;
