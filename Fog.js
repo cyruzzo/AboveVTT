@@ -331,7 +331,7 @@ class WaypointManagerClass {
 	 * redraws the waypoints using various levels of opacity until completely clear
 	 * then removes all waypoints and resets canvas opacity
 	 */
-	 fadeoutMeasuring(){
+	fadeoutMeasuring(){
 		let alpha = 1.0
 		const self = this
 		// only ever allow a single fadeout to occur
@@ -341,16 +341,15 @@ class WaypointManagerClass {
 			return
 		}
 		this.timerId = setInterval(function(){ fadeout() }, 100);
-
+		
 		function fadeout(){
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
 			self.draw(false)
-			alpha = alpha - 0.2;
+			alpha = alpha - 0.08;
 			if (alpha <= 0.0){
 				self.cancelFadeout()
 				self.clearWaypoints();
-				clear_temp_canvas()
 			}
 		}
 	}
