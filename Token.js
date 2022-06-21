@@ -1295,7 +1295,6 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 
-
 					if (self.selected && $(".token.tokenselected").length>1) {
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
@@ -1414,7 +1413,6 @@ class Token {
 
 
 
-
 					if (self.selected && $(".token.tokenselected").length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
@@ -1477,31 +1475,16 @@ class Token {
 				}
 
 				// get the tokens that share a group with this one
-				let groupTokens = [];
-				let currentToken = window.TOKEN_OBJECTS[tokID];
-				let groupId = currentToken.options.group_id;
-				console.log(`Group ID ${groupId}`);
-				if (groupId) {
-					for (const tokenId in window.TOKEN_OBJECTS) {
-						if (window.TOKEN_OBJECTS[tokenId].options.group_id == groupId) {
-							groupTokens.push(window.TOKEN_OBJECTS[tokenId]);
-							console.log(`Pushing id ${tokenId}`);
-						}
-					}
-				} else {
-					groupTokens.push(window.TOKEN_OBJECTS[tokID]);
-				}
+				let groupTokens = window.TOKEN_OBJECTS[tokID].get_grouped_tokens();
 				if (thisSelected == true) {
 					groupTokens.forEach(token => {
 						let currentParentToken = $("#tokens").find("div[data-id='" + token.options.id + "']");
-						console.log(currentParentToken);
 						currentParentToken.addClass('tokenselected');
 						toggle_player_selectable(token, currentParentToken);
 					});
 				} else {
 					groupTokens.forEach(token => {
 						let currentParentToken = $("#tokens").find("div[data-id='" + token.options.id + "']");
-						console.log(currentParentToken);
 						currentParentToken.removeClass('tokenselected');
 					});
 				}
@@ -1559,6 +1542,23 @@ class Token {
 			return defaultValue;
 		}
 		return storedValue;
+	}
+
+  // returns a list of all token objects that share a group id with this one
+	// returns list with only current token if current token has no group
+	get_grouped_tokens() {
+		let groupTokens = [];
+		let groupId = this.options.group_id;
+		if (groupId) {
+			for (const tokenId in window.TOKEN_OBJECTS) {
+				if (window.TOKEN_OBJECTS[tokenId].options.group_id == groupId) {
+					groupTokens.push(window.TOKEN_OBJECTS[tokenId]);
+				}
+			}
+		} else {
+			groupTokens.push(this);
+		}
+		return groupTokens;
 	}
 
 }

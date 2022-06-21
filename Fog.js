@@ -59,7 +59,7 @@ class WaypointManagerClass {
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
 	}
-	
+
 	resetDefaultDrawStyle(){
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
@@ -322,7 +322,7 @@ class WaypointManagerClass {
 		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);
-		
+
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd);
 	}
@@ -356,7 +356,7 @@ class WaypointManagerClass {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	cancelFadeout(){
 		if (this.timerId !== undefined){
@@ -364,7 +364,7 @@ class WaypointManagerClass {
 			this.ctx.globalAlpha = 1.0
 			this.timerId = undefined
 
-		}	
+		}
 	}
 
 	/**
@@ -381,7 +381,7 @@ class WaypointManagerClass {
 			return
 		}
 		this.timerId = setInterval(function(){ fadeout() }, 100);
-		
+
 		function fadeout(){
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
@@ -395,7 +395,7 @@ class WaypointManagerClass {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	cancelFadeout(){
 		if (this.timerId !== undefined){
@@ -403,7 +403,7 @@ class WaypointManagerClass {
 			this.ctx.globalAlpha = 1.0
 			this.timerId = undefined
 
-		}	
+		}
 	}
 };
 
@@ -460,12 +460,12 @@ function do_check_token_visibility() {
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 		if (pixeldata[3] == 255) {
-			
+
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
 					$(auraSelector).hide();
-			}			
+			}
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).show();
@@ -571,7 +571,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	startX = Math.round(startX)
 	startY = Math.round(startY)
 	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
-	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps; 
+	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
@@ -608,7 +608,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 }
 
 function draw_wizarding_box() {
-	
+
 	var gridCanvas = document.getElementById("grid_overlay");
 	var gridContext = gridCanvas.getContext("2d");
 	gridCanvas.width = $("#scene_map").width();
@@ -856,10 +856,10 @@ function get_event_cursor_position(event){
 }
 
 /**
- * Pulls information from menu's or buttons without menu's to set values used by 
+ * Pulls information from menu's or buttons without menu's to set values used by
  * drawing mousemove, mousedown, mousecontext events
- * @param {Event} e 
- * @returns 
+ * @param {Event} e
+ * @returns
  */
 function drawing_mousedown(e) {
 	// perform some cleanup of the canvas/objects
@@ -878,7 +878,7 @@ function drawing_mousedown(e) {
 	context.setLineDash([])
 	// get teh data from the menu's/buttons
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
-	
+
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
 	window.DRAWTYPE = data.fill
@@ -903,7 +903,7 @@ function drawing_mousedown(e) {
 		context.setLineDash([10, 5])
 		if (e.which == 1) {
 			$("#temp_overlay").css('cursor', 'crosshair');
-		}		
+		}
 	}
 	// figure out what these 3 returns are supposed to be for.
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -920,7 +920,7 @@ function drawing_mousedown(e) {
 	}
 	// end of wtf is this return block doing?
 	const [pointX, pointY] = get_event_cursor_position(e)
-	
+
 	if(window.DRAWSHAPE === "brush"){
 		window.BEGIN_MOUSEX = pointX
 		window.BEGIN_MOUSEY = pointY
@@ -963,7 +963,7 @@ function drawing_mousedown(e) {
 			window.DRAWTYPE === "filled" ? 1 : window.LINEWIDTH,
 		);
 		drawClosingArea(context, window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0]);
-		
+
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		window.BEGIN_MOUSEX = e.clientX;
@@ -984,12 +984,12 @@ function drawing_mousedown(e) {
 
 /**
  * Draws the respective shape from window.DRAWSHAPE onto the screen
- * 
- * @param {Event} e 
- * @returns 
+ *
+ * @param {Event} e
+ * @returns
  */
 function drawing_mousemove(e) {
-	
+
 	if (window.MOUSEMOVEWAIT) {
 		return;
 	}
@@ -1005,7 +1005,7 @@ function drawing_mousemove(e) {
 	const isFilled = window.DRAWTYPE === "filled"
 	const mouseMoveFps = Math.round((1000.0 / 16.0));
 
-	
+
 	window.MOUSEMOVEWAIT = true;
 	setTimeout(function() {
 		window.MOUSEMOVEWAIT = false;
@@ -1070,12 +1070,12 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "cone") {
 			drawCone(context,
-				     window.BEGIN_MOUSEX, 
-					 window.BEGIN_MOUSEY, 
-					 mouseX, 
-					 mouseY, 
-					 window.DRAWCOLOR, 
-					 isFilled, 
+				     window.BEGIN_MOUSEX,
+					 window.BEGIN_MOUSEY,
+					 mouseX,
+					 mouseY,
+					 window.DRAWCOLOR,
+					 isFilled,
 					 window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "line") {
@@ -1090,14 +1090,14 @@ function drawing_mousemove(e) {
 				}
 			}else{
 				drawLine(context,
-					window.BEGIN_MOUSEX, 
-					window.BEGIN_MOUSEY, 
-					mouseX, 
-					mouseY, 
-					window.DRAWCOLOR, 
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY,
+					mouseX,
+					mouseY,
+					window.DRAWCOLOR,
 					window.LINEWIDTH);
 			}
-			
+
 		}
 		else if (window.DRAWSHAPE == "brush"){
 			// Only add a new point every 75ms to keep the drawing size low
@@ -1142,8 +1142,8 @@ function drawing_mousemove(e) {
 /**
  * Drawing finished (most of the time) set the final shape into window.DRAWING/windo.REVEAL
  * then call redraw functions and sync functions
- * @param {Event} e 
- * @returns 
+ * @param {Event} e
+ * @returns
  */
 function drawing_mouseup(e) {
 	// ignore this if we're dragging a token
@@ -1161,9 +1161,9 @@ function drawing_mouseup(e) {
 	}
 	// ignore if right mouse buttons for the following
 	if((window.DRAWFUNCTION == "draw" ||
-		window.DRAWFUNCTION == "reveal" || 
-		window.DRAWFUNCTION == "hide" || 
-		window.DRAWFUNCTION == "draw_text" || 
+		window.DRAWFUNCTION == "reveal" ||
+		window.DRAWFUNCTION == "hide" ||
+		window.DRAWFUNCTION == "draw_text" ||
 		window.DRAWFUNCTION === "select") && e.which !== 1)
 	{
 		return;
@@ -1184,7 +1184,7 @@ function drawing_mouseup(e) {
 	if (window.DRAWFUNCTION === 'select') {
 		$("#temp_overlay").css('cursor', '');
 	}
-	
+
 	window.MOUSEDOWN = false;
 	const width = mouseX - window.BEGIN_MOUSEX;
 	const height = mouseY - window.BEGIN_MOUSEY;
@@ -1275,7 +1275,7 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "hide" || window.DRAWFUNCTION == "reveal"){
 		finalise_drawing_fog(mouseX, mouseY, width, height)
 	}
-	
+
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
@@ -1292,11 +1292,12 @@ function drawing_mouseup(e) {
 			if (window.DM || !curr.options.hidden) {
 				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
-					curr.selected = true;
-					curr.place();
+					curr.get_grouped_tokens().forEach(token => {
+						token.selected = true;
+						token.place();
+					});
 				}
 			}
-			
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
@@ -1308,7 +1309,7 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "measure") {
 		WaypointManager.fadeoutMeasuring()
 	}
-	
+
 }
 
 function drawing_contextmenu(e) {
@@ -1404,7 +1405,7 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
 
 /**
  * Gets the relevant draw information from the button and menu provided
- * 
+ *
  * @param {$} button the selected button when the user clicks on the canvas
  * @param {$} menuSelector the open menu if it exists
  * @returns {Object} draw data, containing at least "shape" and "function", optionally "frommenu"
@@ -1488,11 +1489,11 @@ function handle_drawing_button_click() {
 			}
 			// toggle the button off...
 			if($(clicked).hasClass("menu-option")){
-				// but only toggled on or off if they're not a unique-with which must always have 
+				// but only toggled on or off if they're not a unique-with which must always have
 				// 1 option selected
 				if(!$(clicked).attr("data-unique-with")){
 					$(clicked).removeClass(`${buttonSelectedClasses}`)
-				}			
+				}
 			}
 		}else{
 			// unselect any matching unique-with buttons
@@ -1526,7 +1527,7 @@ function handle_drawing_button_click() {
 		target.on('mouseup',  data, drawing_mouseup);
 		target.on('mousemove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
-		
+
 	})
 	// during initialisation of VTT default to the select button
 	$('#select-button').click();
@@ -1545,7 +1546,7 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 		ctx.lineWidth = lineWidth;
 		ctx.stroke();
 	}
-	
+
 }
 
 function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6)
@@ -1564,7 +1565,7 @@ function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidt
 		ctx.rect(startx, starty, width, height);
 		ctx.stroke();
 	}
-	
+
 }
 
 function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth = 6)
@@ -1586,7 +1587,7 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 		ctx.strokeStyle = style;
 		ctx.stroke();
 	}
-	
+
 }
 
 function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
@@ -1663,7 +1664,7 @@ function drawPolygon (
 		ctx.strokeStyle = style;
 		ctx.stroke();
 	}
-	
+
 }
 
 function clear_temp_canvas(){
@@ -1708,7 +1709,7 @@ function savePolygon(e) {
 		redraw_drawings();
 	}
 	clear_temp_canvas()
-	
+
 	window.ScenesHandler.persist();
 
 	if(window.CLOUD){
@@ -1717,7 +1718,7 @@ function savePolygon(e) {
 		}
 		else{
 			sync_fog();
-		}			
+		}
 	}
 	else{
 		window.MB.sendMessage(
@@ -1785,24 +1786,24 @@ function drawClosingArea(ctx, pointX, pointY) {
 }
 
 function init_fog_menu(buttons){
-	
+
 
 
 	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
 	fog_menu.append("<div class='menu-subtitle' data-skip='true'>Reveal</div>");
 	fog_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'> 
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option button-enabled ddbc-tab-options__header-heading--is-active'
-				data-shape='rect' data-function="reveal" data-unique-with="fog" > 
-					Square 
-			</button> 
+				data-shape='rect' data-function="reveal" data-unique-with="fog" >
+					Square
+			</button>
 		</div>`);
 	fog_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'> 
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
-				data-shape='arc' data-function="reveal" data-unique-with="fog" > 
-					Circle 
-				</button> 
+				data-shape='arc' data-function="reveal" data-unique-with="fog" >
+					Circle
+				</button>
 			</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
@@ -1945,7 +1946,7 @@ function init_draw_menu(buttons){
 				 	Polygon
 			</button>
 		</div>`);
-	
+
 
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
@@ -1970,7 +1971,7 @@ function init_draw_menu(buttons){
 	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
-	
+
 	draw_menu.append("<div class='menu-subtitle' data-skip='true'>Type</div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
@@ -2051,5 +2052,5 @@ function init_draw_menu(buttons){
 	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</button>");
 
 	buttons.append(draw_button);
-	draw_menu.css("left",draw_button.position().left);	
+	draw_menu.css("left",draw_button.position().left);
 }
