@@ -322,6 +322,22 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     border-radius: 0px 0px 3px 3px;
 }
 
+#resizeDragMon .avtt-stat-block-container {
+    margin: 25px 0px 0px 0px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+#resizeDragMon .avtt-stat-block-container .detail-content {
+    background: #fff;
+    width: 100%;
+}
+#site.body-rpgcharacter #resizeDragMon .avtt-stat-block-container .detail-content > .mon-stat-block {
+    padding-top: 0;
+    margin-top: 0;
+}
+#site.body-rpgcharacter #resizeDragMon .avtt-stat-block-container {
+    margin: 25px 0px 0px 0px;
+}
 
 #resizeDragMon iframe {
     z-index: -10000;
@@ -1704,6 +1720,147 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     content: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/unconscious.svg);
 }
 
+.aoe-button-moveable {
+    font-size: 20px !important;
+    /* align-items: flex-end; */
+}
+
+/* AOE BORDERS */
+.aoe-border {
+    width: 100%;
+    background-position-y: bottom;
+    height: 100%;
+    background-repeat: repeat-x;
+    position:absolute;
+}
+
+.aoe-border-cone {
+    clip-path: polygon(0% 100%, 5% 100%, 50% 10%, 92% 95%, 5% 95%, 0% 100%, 100% 100%, 50% 0%);
+    background-color: white;
+    animation: mymove 5s infinite alternate ease-in-out ;
+}
+.aoe-border-basic{
+    border: white 10px solid;
+}
+
+/* END AOE BORDERS */
+
+/* AOE SHAPES */
+.aoe-shape-circle {
+    border-radius: 50%;
+}
+
+.aoe-shape-cone {
+    clip-path: polygon(50% 10%, 7% 95%, 92% 95%);
+}
+/* END AOE SHAPES */
+
+/* AOE STYLES */
+.aoe-style-acid{
+    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    box-shadow: inset -20px -20px 2px 1000px rgba(13, 253, 0, 0.49);
+}
+.aoe-style-bludgeoning{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
+}
+.aoe-style-default{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/06/188-comp-512x512.jpg);
+}
+.aoe-style-fire{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/979765607484506122/fire_background.png);
+}
+.aoe-style-force{
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg);
+}
+.aoe-style-ice {
+    background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
+}
+.aoe-style-lightning{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/979769717529137162/lightninig.png);
+}
+.aoe-style-nature{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/04/0527-1-512x512.jpg);
+    filter: brightness(1.2) contrast(1.2);
+}
+.aoe-style-necrotic {
+    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
+}
+.aoe-style-piercing{
+    background-image: url(https://previews.123rf.com/images/sylverarts/sylverarts1801/sylverarts180100741/92992928-horror-style-horrible-seamless-pattern-vector-background-blackthorn-branches-with-thorns-stylish-end.jpg);
+}
+.aoe-style-poison {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(119, 247, 0, 0.52);
+}
+.aoe-style-psychic {
+    background-image: url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
+    box-shadow: inset -20px -20px 2px 1000px rgba(115, 10, 235, 0.49);
+}
+.aoe-style-radiant {
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/06/0097-512x512.jpg);
+    background-size: 200px
+}
+.aoe-style-slashing{
+    background-image: url(https://cdn.discordapp.com/attachments/954822823636009041/980017219813654559/slashing.png);
+}
+.aoe-style-thunder{
+    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2018/11/0069-512x512.jpg);
+}
+.aoe-style-water{
+    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    box-shadow: inset -20px -20px 2px 1000px rgba(49, 177, 246, 0.49);
+}
+
+/* SPECIFIC SPELL STYLES */
+.aoe-style-fog-cloud{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
+}
+.aoe-style-hypnotic-pattern{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984334770618109992/hypnotic-pattern.png?width=676&height=676) !important;
+}
+.aoe-style-stinking-cloud{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
+    box-shadow: inset -20px -20px 2px 1000px rgba(49, 246, 85, 0.49) !important;
+}
+.aoe-style-web{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/984332168111222784/tileable3pxsquareweb.png) !important;
+}
+
+
+
+/* END AOE STYLES */
+
+.aoe-token-tileable {
+    height: 100%;
+    width: 100%;
+    opacity: 50%;
+    background-repeat: repeat;
+    background-size: 300px;
+    filter: blur(0.5px);
+    position: absolute;
+    animation: mymove 5s infinite alternate ease-in-out ;
+}
+@keyframes mymove {
+    from{
+        opacity: 0.3
+    }
+    to {
+        opacity: 0.7
+    }
+  }
+
+
+
+div.token-image {
+    width: 100%;
+    height: 100%;
+}
+
+
+.token:before{
+    transform: rotate(var(--token-rotation));
+}
+
 .markers-icon:before,
 .context-menu-markers-icon:before {
     display: inline-block;
@@ -2188,6 +2345,13 @@ div.token-image-modal-footer-title {
     font-size: 13px;
     /*width: 100%;*/
 }
+h1.token-image-modal-footer-title,
+h2.token-image-modal-footer-title,
+h3.token-image-modal-footer-title,
+h4.token-image-modal-footer-title,
+h5.token-image-modal-footer-title {
+    display: block;
+}
 h1.token-image-modal-footer-title:after,
 h2.token-image-modal-footer-title:after,
 h3.token-image-modal-footer-title:after,
@@ -2217,7 +2381,8 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 30%;
+    min-width: 35%;
+    max-width: 35%;
 }
 .footer-input-wrapper {
     width: 100%;
@@ -2273,14 +2438,21 @@ h5.token-image-modal-footer-title:after {
     margin: 0px 4px 0px 4px;
     width: auto;
 }
+.example-token,
 .custom-token-image-item {
-    float: left; 
-    width: 33%;
-    position: relative;
+    top: 0 !important;
+    left: 0 !important;
+    float: left !important;
+    width: 90px !important;
+    height: 90px !important;
+    margin: 5px !important;
+    position: relative !important;
+    opacity: 1 !important;
 }
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
 }
+.custom-token-image-item [data-img],
 .custom-token-image-item img {
     position: absolute;
     top: 0;
@@ -2292,6 +2464,11 @@ h5.token-image-modal-footer-title:after {
     width: 100%;
     height: 100%;
 }
+
+.custom-token-image-item [data-img]:hover {
+    border: lightgrey solid 2px;
+}
+
 .token-image-sizing-dummy {
     /* this allows us to size the img using a 1:1 aspect ratio without having to use js to calculate the height after the felx width has been determined */
     margin-top: 100%;
@@ -2349,11 +2526,9 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-flyout {
     position: fixed;
-    right: 350px;
-    z-index: 1000;
-    border: 1px solid #d8e1e8;
+    z-index: 100000;
     box-shadow: 1px 1px 10px black, -1px -1px 10px black;
-    border-radius: 15px;
+    border-radius: 5px;
     overflow: hidden;
 }
 .list-item-image-flyout {
@@ -2361,6 +2536,11 @@ h5.token-image-modal-footer-title:after {
     height: 400px;
     object-fit: cover;
     display: block;
+}
+.sidebar-token-options-flyout-container {
+    width: 400px;
+    padding: 5px;
+    background-color: rgb(235, 241, 245);
 }
 #scenes-panel .sidebar-list-item-row.scene-item .scene-item-footer {
     display: flex;
@@ -2436,6 +2616,20 @@ h5.token-image-modal-footer-title:after {
     border-radius: 3px;
     object-fit: cover;
 }
+.sidebar-list-item-row-img .aoe-shape-line{
+    transform: scaleX(0.5);
+}
+.custom-token-image-item .aoe-shape-line{
+    width: 50%;
+    left: 25%
+}
+.custom-token-image-item .aoe-token-tileable,
+.sidebar-list-item-row-img [data-img]{
+    background-size: 100px;
+    animation: none;
+    opacity: 100%;
+}
+.sidebar-list-item-row-img [data-img],
 .sidebar-list-item-row-img img {
     object-fit: contain;
     width: 38px;
@@ -2690,6 +2884,7 @@ h5.token-image-modal-footer-title:after {
     height: 100px;
     display: flex;
     margin: 10px 0px;
+    justify-content: space-between;
 }
 
 /* all the rc-switch styles were lifted from the content sharing screen /campaigns/<campaign_id>/content-management and then tweaked slightly */
@@ -2772,6 +2967,17 @@ h5.token-image-modal-footer-title:after {
     outline: 2px solid #000;
 }
 
+.sidebar-hover-text-flyout {
+    display: block;
+    max-width: 400px;
+    padding: 0px 10px;
+    background-color: rgba(28,29,30,0.8);
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    text-transform: none;
+}
 .sidebar-hovertext:before {
     content: attr(data-hover);
     font-family: 'Roboto', sans-serif;
@@ -3189,11 +3395,6 @@ button.avtt-roll-button {
     background: none;
 }
 
-.token-image-modal-footer-title,
-.token-image-modal-footer-select-wrapper{
-    min-width: fit-content;
-}
-
 .menu-outer-aura h3,
 .menu-inner-aura h3{
     min-width: 50px;
@@ -3580,8 +3781,59 @@ button.avtt-roll-button {
 }
 
 /*end combat tracker face lift*/
+.token>.base{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #0000001c;
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 5% 0 0 5%;
+    backdrop-filter: blur(3px) brightness(0.2);
+    z-index: -1;
+    border: inset 5px var(--token-border-color, #ffffff44);
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
+}
+.token>.base.noborder{
+    border: solid 5px var(--token-hp-aura-color);
+}
 
-.token>img {
+
+.token>.base.noborder.nohpaura{
+    border: inset 5px #ffffff44;
+}
+
+.token>.base.large-or-smaller-base{
+    border: inset 2px var(--token-border-color, #ffffff44);
+    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
+}
+.token>.base.noborder.large-or-smaller-base{
+    border: solid 2px var(--token-hp-aura-color);
+}
+
+.token>.base.noborder.nohpaura.large-or-smaller-base{
+    border: inset 2px #ffffff44;
+}
+
+.token>img{
+    border: 2px solid var(--token-border-color, #ffffff44);
+    box-shadow: 0 0 2px 3px var(--token-hp-aura-color);
+}
+.token>.base~img{
+    filter: none;
+    border: 0px;
+    box-shadow: none;
+}
+.base.circle,
+.base.circle:after{
+    border-radius: 50%;
+}
+.token>img.freeform {
+    border: 0px;
+    box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
@@ -3592,6 +3844,53 @@ button.avtt-roll-button {
     width: 100%;
     height: 100%;
 } 
+
+.base:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: 30%;
+    opacity: 1;
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
+}
+.base.large-or-smaller-base:after{
+    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
+}
+
+.base.border-color-base{
+    background: var(--token-border-color, #ffffff44);
+    backdrop-filter: blur(2px) brightness(0.9) opacity(0.8);
+}
+.base.grass-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/ground_grass_gen_07.png);
+}
+.base.tile-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/textureStone_0.png);
+}
+.base.sand-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/dirt4.png);
+}
+.base.rock-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/Rockface%20red_0.png);
+}
+.base.water-base:after{
+    background-image: url(https://opengameart.org/sites/default/files/Untitled-3_1.jpg);
+}
+
+#tokenWrapper__tokenStyleSelect,
+#tokenWrapper__tokenBaseStyleSelect{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#tokenWrapper__tokenBaseStyleSelect{
+    transition: height 1500ms linear 0s;
+    overflow: hidden;
+}
 
 .image-size-wrapper,
 .border-color-wrapper {
@@ -3606,6 +3905,7 @@ button.avtt-roll-button {
 .border-color-title {
     display:  inline-block !important;
 }
+#aoe_feet_height,
 .image-scale-input-number {
     float: right;
     padding-left: 5px !important;
@@ -3712,7 +4012,10 @@ button.avtt-roll-button {
     filter: drop-shadow(0px 0px 2px #000d);
     color: #ddd !important;
 }
-
+#tokenOptionsContainer>button.deleteMenuButton {
+    border-top: 1px solid #ddd;
+    margin-top: 5px;
+}
 #tokenOptionsContainer button:before{
     width: 20px;
     height: 20px;

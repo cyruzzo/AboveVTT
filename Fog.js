@@ -331,46 +331,6 @@ class WaypointManagerClass {
 	 * redraws the waypoints using various levels of opacity until completely clear
 	 * then removes all waypoints and resets canvas opacity
 	 */
-	 fadeoutMeasuring(){
-		let alpha = 1.0
-		const self = this
-		// only ever allow a single fadeout to occur
-		// this stops weird flashing behaviour with interacting
-		// interval function calls
-		if (this.timerId){
-			return
-		}
-		this.timerId = setInterval(function(){ fadeout() }, 100);
-
-		function fadeout(){
-			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
-			self.ctx.globalAlpha = alpha;
-			self.draw(false)
-			alpha = alpha - 0.2;
-			if (alpha <= 0.0){
-				self.cancelFadeout()
-				self.clearWaypoints();
-				clear_temp_canvas()
-			}
-		}
-	}
-
-	/**
-	 * 
-	 */
-	cancelFadeout(){
-		if (this.timerId !== undefined){
-			clearInterval(this.timerId);
-			this.ctx.globalAlpha = 1.0
-			this.timerId = undefined
-
-		}	
-	}
-
-	/**
-	 * redraws the waypoints using various levels of opacity until completely clear
-	 * then removes all waypoints and resets canvas opacity
-	 */
 	fadeoutMeasuring(){
 		let alpha = 1.0
 		const self = this
@@ -390,6 +350,7 @@ class WaypointManagerClass {
 			if (alpha <= 0.0){
 				self.cancelFadeout()
 				self.clearWaypoints();
+				clear_temp_canvas()
 			}
 		}
 	}
@@ -453,8 +414,8 @@ function do_check_token_visibility() {
 
 
 	for (var id in window.TOKEN_OBJECTS) {
-		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
-		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
+		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2);
+		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2);
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
