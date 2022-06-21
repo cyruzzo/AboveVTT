@@ -43,6 +43,9 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
 }
 
 function build_monster_stat_block(statBlock) {
+    if (!statBlock.userHasAccess) {
+        return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
+    }
     return `
 <div class="container avtt-stat-block-container">
   <div id="content" class="main content-container" style="padding:0!important">
@@ -53,7 +56,7 @@ function build_monster_stat_block(statBlock) {
         <div class="more-info details-more-info" style="padding: 2px;">
           <div class="detail-content">
 
-            <div class="mon-stat-block" style="column-count: 1;">
+            <div class="mon-stat-block" style="column-count: 1;margin:0;">
               <div class="mon-stat-block__header">
                 <div class="mon-stat-block__name">
                   <a class="mon-stat-block__name-link" href="${statBlock.data.url}" target="_blank">
@@ -268,7 +271,7 @@ function build_monster_stat_block(statBlock) {
 
 
 
-            <div class="image">
+            <div class="image" style="display: block;">
               <a href="${statBlock.data.largeAvatarUrl}" data-lightbox="Abhorrent Overlord-mobile" data-title="<a target='_blank' href='${statBlock.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>" target="_blank">
                 <img src="${statBlock.data.largeAvatarUrl}" alt="${statBlock.data.name}" class="monster-image" style="max-width: 100%;">
               </a>
@@ -331,6 +334,10 @@ class MonsterStatBlock {
 
     findObj(key, id) {
         return window.ddbConfigJson[key]?.find(obj => obj.id === id);
+    }
+
+    get userHasAccess() {
+        return this.data.isReleased || this.data.isHomebrew;
     }
 
     get hitPointDiceString() {
