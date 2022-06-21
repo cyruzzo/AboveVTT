@@ -1864,7 +1864,13 @@ function display_monster_filter_modal() {
             // it was just created. no need to do anything until it actually loads something
             return;
         }
-
+        $(event.target).contents().find("head").append(
+            `<style>
+                .input-select .input-select__dropdown-wrapper {
+                    transition: max-height 0.5s ease 0.1s;
+                }
+            </style>`
+        );
         $(event.target).contents().find("body").addClass("prevent-sidebar-modal-close");
         $(event.target).contents().find(".monster-listing__header button").click();
         $(event.target).contents().find(".popup-overlay").css("background", "rgb(235, 241, 245)");
