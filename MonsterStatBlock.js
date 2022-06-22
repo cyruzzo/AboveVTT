@@ -36,6 +36,19 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
     const html = build_monster_stat_block(statBlock);
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
+    container.find("#monster-image-to-gamelog-link").on("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const imgContainer = $(e.target).parent().prev();
+        let html = window.MB.encode_message_text(imgContainer[0].outerHTML);
+        const data = {
+            player: window.PLAYER_NAME,
+            img: window.PLAYER_IMG,
+            text: html
+        };
+        window.MB.inject_chat(data);
+        notify_gamelog();
+    });
     scan_monster(container, statBlock, tokenId);
     // scan_creature_pane(container, statBlock.name, statBlock.image);
     add_stat_block_hover(container);
@@ -276,9 +289,13 @@ function build_monster_stat_block(statBlock) {
                 <img src="${statBlock.data.largeAvatarUrl}" alt="${statBlock.data.name}" class="monster-image" style="max-width: 100%;">
               </a>
             </div>
+            <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
+                <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details Page</a>
+                <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${statBlock.data.largeAvatarUrl}" target='_blank' >Send Image To Gamelog</a>
+            </div>
 
 
-            <div class="more-info-content">
+            <div class="more-info-content" style="padding:10px;">
 
               <div class="mon-details__description-block">
                 <h3 class="mon-details__description-block-heading">Description</h3>
@@ -715,4 +732,13 @@ function add_stat_block_hover(statBlockContainer) {
             remove_tooltip();
         }
     });
+}
+
+function send_img_to_gamelog(monsterId) {
+    let ddbId = parseInt(monsterId);
+    if (isNaN(ddbId)) {
+        console.error("send_img_to_gamelog failed to parse monsterId", monsterId);
+        return;
+    }
+
 }
