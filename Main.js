@@ -580,31 +580,67 @@ function should_use_iframes_for_monsters() {
 
 /**
  * Loads and displays a monster stats block
- * @param {Number} monsterid given monster ID
- * @param {UUID} token_id selected token ID
+ * @param {Number} monsterId given monster ID
+ * @param {UUID} tokenId selected token ID
  */
-function load_monster_stat(monsterid, token_id) {
+function load_monster_stat(monsterId, tokenId) {
 	if (should_use_iframes_for_monsters()) {
-		load_monster_stat_iframe(monsterid, token_id);
+		load_monster_stat_iframe(monsterId, tokenId);
 		return;
 	}
 	let container = build_draggable_monster_window();
-	build_and_display_stat_block_with_id(monsterid, container, token_id, function () {
+	build_and_display_stat_block_with_id(monsterId, container, tokenId, function () {
 		$(".sidebar-panel-loading-indicator").hide();
 	});
 }
 
-function load_monster_stat_iframe(monsterid, token_id) {
+function load_monster_stat_iframe(monsterId, tokenId) {
 
-	let container = build_draggable_monster_window();
+	console.group("load_monster_stat")
+	// monster block exists
+	if($("#monster_block").length > 0){
+		// same monster, update trackers and return early
+		if ($("#monster_block").attr("data-monid") == monsterId){
+			const token = window.TOKEN_OBJECTS[tokenId];
+			// rebuild any ability trackers specific to this token
+			rebuild_ability_trackers($("#monster_block").contents(), tokenId)
 
-	let iframe = $("<iframe>");
+			$("#resizeDragMon").removeClass("hideMon");
+			console.groupEnd()
+			return
+		}
+		// clean up old monster block before removing
+		$("#monster_block").attr("id","old_monster_block")
+		$("#old_monster_block").hide()
+		$(".sidebar-panel-loading-indicator").show()
+		$("#old_monster_block").off("load")
+		$("#old_monster_block").attr("src", null)
+		$('#old_monster_block').remove();
+		$("#resizeDragMon").removeClass("hideMon");
+	}
 
+	// create a monster block wrapper element
+	if (! $("#resizeDragMon").length) {
+		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+		$("body").append(monStatBlockContainer)
+		monStatBlockContainer.append(build_combat_tracker_loading_indicator())
+		const loadingIndicator = monStatBlockContainer.find(".sidebar-panel-loading-indicator")
+		loadingIndicator.css("top", "25px")
+		loadingIndicator.css("height", "calc(100% - 25px)")
+		monStatBlockContainer.show("slow")
+		monStatBlockContainer.resize(function(e) {
+			e.stopPropagation();
+		});
+	}
+
+	const iframe = $(`<iframe id=monster_block data-monid=${monsterId}>`);
 	iframe.css("display", "none");
 
-	window.StatHandler.getStat(monsterid, function(stats) {
+	$("#resizeDragMon").append(iframe);
+
+	window.StatHandler.getStat(monsterId, function(stats) {
 		iframe.on("load", function(event) {
-			console.log('Loaded monster');
+			console.log('carico mostro');
 			$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
 			$(event.target).contents().find("#mega-menu-target").remove();
 			$(event.target).contents().find(".site-bar").remove();
@@ -613,17 +649,17 @@ function load_monster_stat_iframe(monsterid, token_id) {
 			$(event.target).contents().find("header").hide();
 			$(event.target).contents().find("#site-main").css("padding", "0px");
 			$(event.target).contents().find("#footer").remove();
-			let img = $(event.target).contents().find(".detail-content").find(".image");
-			let statblock = $(event.target).contents().find(".mon-stat-block");
+			const img = $(event.target).contents().find(".detail-content").find(".image");
+			const statblock = $(event.target).contents().find(".mon-stat-block");
 			if (img.length == 1) {
 				img.insertAfter(statblock);
-				var cast = $("<button>Send IMG To Gamelog</button>");
+				const sendToGamelog = $("<button>Send IMG To Gamelog</button>");
 				img.css("text-align", "center");
-				img.append(cast);
+				img.append(sendToGamelog);
 
-				let imgsrc = img.find("a").attr('href');
-				cast.click(function() {
-					var msgdata = {
+				const imgsrc = img.find("a").attr('href');
+				sendToGamelog.click(function() {
+					const msgdata = {
 						player: window.PLAYER_NAME,
 						img: window.PLAYER_IMG,
 						text: "<img width='100%' class='magnify' href='" + imgsrc + "' src='" + imgsrc + "'>",
@@ -633,30 +669,29 @@ function load_monster_stat_iframe(monsterid, token_id) {
 				});
 			}
 
-			scan_monster($(event.target).contents(), stats, token_id);
+
+			scan_monster($(event.target).contents(), stats, tokenId);
 			$(event.target).contents().find("a").attr("target", "_blank");
-			$(".sidebar-panel-loading-indicator").hide();
-			iframe.fadeIn("slow");
-			console.groupEnd();
+			$(".sidebar-panel-loading-indicator").hide()
+			$("#monster_block").fadeIn("slow")
+			console.groupEnd()
 		});
 
-		iframe.attr('src', stats.data.url);
+		iframe.attr('src', stats.data.url)
 	})
 
-	container.append(iframe);
-
 	$(iframe).on("load", function(event){
-		let tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
-		$("head", $("#resizeDragMon iframe").contents()).append(tooltipCSS);
+		const tooltipCSS = $(`<style>.hovering-tooltip{ display: block !important; left: 5px !important; right: 5px !important; pointer-events: none !important; min-width: calc(100% - 10px);} </style>`);
+		$("head", $("#monster_block").contents()).append(tooltipCSS);
 
-		$("body", $("#resizeDragMon iframe").contents()).css('width', 'calc(100% + 670px)');
-		$("#site", $("#resizeDragMon iframe").contents()).css('padding-right', '670px');
+		$("body", $("#monster_block").contents()).css('width', 'calc(100% + 670px)');
+		$("#site", $("#monster_block").contents()).css('padding-right', '670px');
 
-		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseover mousemove", function(){
-			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", true);
+		$(".tooltip-hover", $("#monster_block").contents()).on("mouseover mousemove", function(){
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#monster_block").contents()).toggleClass("hovering-tooltip", true);
 		});
-		$(".tooltip-hover", $("#resizeDragMon iframe").contents()).on("mouseout", function() {
-			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#resizeDragMon iframe").contents()).toggleClass("hovering-tooltip", false);
+		$(".tooltip-hover", $("#monster_block").contents()).on("mouseout", function(){
+			$("#db-tooltip-container .body .tooltip, #db-tooltip-container", $("#monster_block").contents()).toggleClass("hovering-tooltip", false);
 		});
 
 		// if the user right-clicks a tooltip, send it to the gamelog
@@ -664,7 +699,7 @@ function load_monster_stat_iframe(monsterid, token_id) {
 			clickEvent.preventDefault();
 			clickEvent.stopPropagation();
 
-			let toPost = $("#db-tooltip-container", $("#resizeDragMon iframe").contents()).clone();
+			const toPost = $("#db-tooltip-container", $("#monster_block").contents()).clone();
 			toPost.find(".waterdeep-tooltip").attr("style", "display:block!important");
 			toPost.find(".tooltip").attr("style", "display:block!important");
 			toPost.css({
@@ -693,7 +728,52 @@ function load_monster_stat_iframe(monsterid, token_id) {
 		});
 	});
 
+	/*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	if($("#monster_close_title_button").length==0){
+		const monster_close_title_button=$('<div id="monster_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+		$("#resizeDragMon").append(monster_close_title_button);
+		monster_close_title_button.click(function() {
+			close_player_monster_stat_block()
+		});
+	}
+	$("#resizeDragMon").addClass("moveableWindow");
+	if(!$("#resizeDragMon").hasClass("minimized")){
+		$("#resizeDragMon").addClass("restored");
+	}
+	else{
+		$("#resizeDragMon").dblclick();
+	}
+	$("#resizeDragMon").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 200,
+		minHeight: 200
+	});
 
+	$("#resizeDragMon").mousedown(function(){
+		frame_z_index_when_click($(this));
+	});
+	$("#resizeDragMon").draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	minimize_player_monster_window_double_click($("#resizeDragMon"));
 }
 
 function build_draggable_monster_window() {
@@ -715,8 +795,8 @@ function build_draggable_monster_window() {
 		container = $("#resizeDragMon");
 	}
 	container.resize(function(e) {
-        	e.stopPropagation();
-   	});
+		e.stopPropagation();
+	});
 
 	if(!$("#site #resizeDragMon").length>0){
 		$("#site").prepend(container);
@@ -772,6 +852,7 @@ function build_draggable_monster_window() {
 	return $("#resizeDragMon");
 }
 
+
 /**
  * Hides any open monster stat block windows.
  */
@@ -786,7 +867,6 @@ function close_player_monster_stat_block() {
  * @param {DOMObject} titleBar the window's title bar
  */
 function minimize_player_monster_window_double_click(titleBar) {
-	console.log(1);
 	titleBar.off('dblclick').on('dblclick', function() {
 		if (titleBar.hasClass("restored")) {
 			titleBar.data("prev-height", titleBar.height());
@@ -799,8 +879,9 @@ function minimize_player_monster_window_double_click(titleBar) {
 			titleBar.width(200);
 			titleBar.addClass("minimized");
 			titleBar.removeClass("restored");
-			titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
-			
+			// titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
+			titleBar.prepend('<div class="monster_title">Monster: '+$("#monster_block").contents().find(".mon-stat-block__name-link").text()+"</div>");
+
 		} else if(titleBar.hasClass("minimized")) {
 			titleBar.data("prev-minimized-top", titleBar.css("top"));
 			titleBar.data("prev-minimized-left", titleBar.css("left"));
