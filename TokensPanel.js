@@ -1833,13 +1833,24 @@ function fetch_characters() {
  * @returns {string} a human-readable challenge rating
  */
 function convert_challenge_rating_id(crId) {
+    if (window.ddbConfigJson?.challengeRatings) {
+        const definition = window.ddbConfigJson.challengeRatings.find(cr => cr.id === crId);
+        if (typeof definition?.value === "number") {
+            return definition.value;
+        }
+    }
+    // we couldn't find the official definition, but this basically how it all maps out
     switch (crId) {
         case 0: return "0"; // ???
         case 1: return "0";
         case 2: return "1/8";
         case 3: return "1/4";
         case 4: return "1/2";
-        default: return `${crId - 4}`;
+        default:
+            if (crId > 28) {
+                return `${crId - 5}`;
+            }
+            return `${crId - 4}`;
     }
 }
 

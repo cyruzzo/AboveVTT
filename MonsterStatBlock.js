@@ -43,6 +43,7 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
         const imgContainer = $(e.target).parent().prev();
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
+    container.find("div.image").append(statBlock.imageHtml());
     scan_monster(container, statBlock, tokenId);
     // scan_creature_pane(container, statBlock.name, statBlock.image);
     add_stat_block_hover(container);
@@ -258,6 +259,13 @@ function build_monster_stat_block(statBlock) {
                 </div>
 
                 <div class="mon-stat-block__description-block">
+                    <div class="mon-stat-block__description-block-heading">Reactions</div>
+                    <div class="mon-stat-block__description-block-content">
+                      ${statBlock.reactionsDescription}
+                    </div>
+                </div>
+
+                <div class="mon-stat-block__description-block">
                     <div class="mon-stat-block__description-block-heading">Legendary Actions</div>
                     <div class="mon-stat-block__description-block-content">
                       ${statBlock.legendaryActionsDescription}
@@ -278,11 +286,7 @@ function build_monster_stat_block(statBlock) {
 
 
 
-            <div class="image" style="display: block;">
-              <a href="${statBlock.data.largeAvatarUrl}" data-lightbox="Abhorrent Overlord-mobile" data-title="<a target='_blank' href='${statBlock.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>" target="_blank">
-                <img src="${statBlock.data.largeAvatarUrl}" alt="${statBlock.data.name}" class="monster-image" style="max-width: 100%;">
-              </a>
-            </div>
+            <div class="image" style="display: block;"></div>
             <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
                 <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details Page</a>
                 <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${statBlock.data.largeAvatarUrl}" target='_blank' >Send Image To Gamelog</a>
@@ -470,6 +474,9 @@ class MonsterStatBlock {
     }
 
     get skillsHtml() {
+        if (typeof this.data.skillsHtml === "string" && this.data.skillsHtml.length > 0) {
+            return this.data.skillsHtml; // data.skills isn't always correct. Or at least wasn't correct for Vecna
+        }
         // we do this instead of using `data.skillsHtml` so we can alphabetize, but more importantly so we can inject the specific roll buttons
         if (!this.data.skills || this.data.skills.length === 0) {
             return "<span class='hideme'></span>";
@@ -512,7 +519,7 @@ class MonsterStatBlock {
     }
 
     get conditionImmunitiesHtml() {
-        if (this.data.conditionImmunitiesHtml) {
+        if (this.data.conditionImmunitiesHtml === "string" && this.data.conditionImmunitiesHtml.length > 0) {
             return this.data.conditionImmunitiesHtml;
         }
         if (!this.data.conditionImmunities || this.data.conditionImmunities.length === 0) {
@@ -528,7 +535,7 @@ class MonsterStatBlock {
     }
 
     get sensesHtml() {
-        // if (this.data.sensesHtml) {
+        // if (typeof this.data.sensesHtml === "string" && this.data.sensesHtml.length > 0) {
         //     return this.data.sensesHtml;
         // }
         const ppString = `Passive Perception ${this.data.passivePerception}`;
@@ -561,7 +568,7 @@ class MonsterStatBlock {
 
     get challengeRatingHtml() {
         const definition = this.findObj("challengeRatings", this.data.challengeRatingId);
-        const crString = convert_challenge_rating_id(this.data.challengeRatingId);
+        const crString = parseInt(definition.value);
         return `${crString} (${definition.xp.toLocaleString()} XP)`;
     }
 
@@ -596,6 +603,10 @@ class MonsterStatBlock {
         return this.stringOrHideMeHack(this.data.bonusActionsDescription);
     }
 
+    get reactionsDescription() {
+        return this.stringOrHideMeHack(this.data.reactionsDescription);
+    }
+
     get legendaryActionsDescription() {
         return this.stringOrHideMeHack(this.data.legendaryActionsDescription);
     }
@@ -617,6 +628,59 @@ class MonsterStatBlock {
             return str;
         }
         return hidemeHack;
+    }
+
+    imageHtml() {
+        // const url = this.findBestAvatarUrl();
+        let img = $(`<img
+            src="${this.data.largeAvatarUrl}"
+            alt="${this.data.name}"
+            class="monster-image"
+            style="max-width: 100%;"
+            data-large-avatar-url="${this.data.largeAvatarUrl}"
+            data-avatar-url="${this.data.avatarUrl}"
+            data-basic-avatar-url="${this.data.basicAvatarUrl}"
+            data-current-avatar-url="largeAvatarUrl"
+        />`);
+        img.on("error", function (e) {
+            let el = $(e.target)
+            let cur = el.attr("data-current-avatar-url");
+            let nextUrl;
+            if (cur === "largeAvatarUrl") {
+                nextUrl = el.attr("data-large-avatar-url");
+                try {
+                    var parts = nextUrl.split("/");
+                    parts[parts.length - 2] = "1000";
+                    parts[parts.length - 3] = "1000";
+                    nextUrl = parts.join("/");
+                    el.attr("data-current-avatar-url", "hacky");
+                } catch (error) {
+                    console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
+                    nextUrl = el.attr("data-avatar-url");
+                    el.attr("data-current-avatar-url", "avatarUrl");
+                }
+            } else if (cur === "hacky") {
+                nextUrl = el.attr("data-avatar-url");
+                el.attr("data-current-avatar-url", "avatarUrl");
+            } else if (cur === "avatarUrl") {
+                nextUrl = el.attr("data-basic-avatar-url");
+                el.attr("data-current-avatar-url", "basicAvatarUrl");
+            } else {
+                console.warn("imageHtml failed to load image", el, e);
+                return;
+            }
+            console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
+            el.attr("src", nextUrl);
+            el.parent().attr("href", nextUrl);
+            el.parent().attr("data-title", `<a target='_blank' href='${nextUrl}' class='link link-full'>View Full Image</a>`);
+        });
+
+
+        let html = $(`<a href="${this.data.largeAvatarUrl}" data-lightbox="Abhorrent Overlord-mobile"
+           data-title="<a target='_blank' href='${this.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>"
+           target="_blank"></a>`);
+        html.append(img);
+        return html;
     }
 }
 
