@@ -339,6 +339,28 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     margin: 25px 0px 0px 0px;
 }
 
+
+a.ddbeb-button {
+    align-items: center;
+    -webkit-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    background: #fff;
+    border: 1px solid #d8e1e8;
+    border-radius: 3px;
+    color: #1b9af0!important;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: Roboto,Open Sans,Helvetica,sans-serif!important;
+    font-size: 12px;
+    font-weight: 700;
+    height: 40px;
+    justify-content: center;
+    letter-spacing: 1px;
+    padding: 0 16px;
+    text-transform: uppercase;
+}
+
 #resizeDragMon iframe {
     z-index: -10000;
 }

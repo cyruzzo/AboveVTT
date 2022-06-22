@@ -1715,15 +1715,44 @@ function build_and_display_sidebar_flyout(clientY, buildFunction) {
   });
 }
 
+function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true) {
+  if (!container || container.length === 0 || !flyout || flyout.length === 0) {
+    console.warn("position_flyout_on_best_side_of received an empty object", container, flyout);
+    return;
+  }
+  const distanceFromLeft = container[0].getBoundingClientRect().left;
+  const distanceFromRight = window.innerWidth - distanceFromLeft - container.width();
+  if (distanceFromLeft > distanceFromRight) {
+    if (resizeFlyoutToFit && (flyout.width() > distanceFromLeft)) {
+      flyout.css("width", distanceFromLeft);
+    }
+    position_flyout_left_of(container, flyout);
+  } else {
+    if (resizeFlyoutToFit && (flyout.width() > distanceFromRight)) {
+      flyout.css("width", distanceFromRight);
+    }
+    position_flyout_right_of(container, flyout);
+  }
+}
+
 function position_flyout_left_of(container, flyout) {
+  if (!container || container.length === 0 || !flyout || flyout.length === 0) {
+    console.warn("position_flyout_left_of received an empty object", container, flyout);
+    return;
+  }
   flyout.css("left", container[0].getBoundingClientRect().left - flyout.width());
 }
 
 function position_flyout_right_of(container, flyout) {
+  if (!container || container.length === 0 || !flyout || flyout.length === 0) {
+    console.warn("position_flyout_right_of received an empty object", container, flyout);
+    return;
+  }
   flyout.css("left", container[0].getBoundingClientRect().left + container.width());
 }
 
 function remove_sidebar_flyout() {
+  console.log("remove_sidebar_flyout");
   $(`.sidebar-flyout`).remove();
 }
 

@@ -2831,7 +2831,6 @@ function init_ui() {
 				remove_sidebar_flyout();
 			}
 		}
-		remove_tooltip(); // maybe too heavy-handed?
 	}
 
 	// Helper function to disable window mouse handlers, required when we

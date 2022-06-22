@@ -34,20 +34,14 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId)
 
 function display_stat_block_in_container(statBlock, container, tokenId) {
     const html = build_monster_stat_block(statBlock);
+    container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
         e.stopPropagation();
         e.preventDefault();
         const imgContainer = $(e.target).parent().prev();
-        let html = window.MB.encode_message_text(imgContainer[0].outerHTML);
-        const data = {
-            player: window.PLAYER_NAME,
-            img: window.PLAYER_IMG,
-            text: html
-        };
-        window.MB.inject_chat(data);
-        notify_gamelog();
+        send_html_to_gamelog(imgContainer[0].outerHTML);
     });
     scan_monster(container, statBlock, tokenId);
     // scan_creature_pane(container, statBlock.name, statBlock.image);
@@ -635,14 +629,14 @@ const DAMAGE_ADJUSTMENT_TYPE_IMMUNITY = 2;
 
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
 
-const fetch_and_display_tooltip = mydebounce((dataTooltipHref, clientX, clientY) => {
-    // dataTolltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
+const fetch_tooltip = mydebounce((dataTooltipHref, callback) => {
+    // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
     try {
         if (window.tooltipCache === undefined) {
             window.tooltipCache = {};
         }
-        console.log("fetch_and_display_tooltip starting for ", dataTooltipHref);
+        console.log("fetch_tooltip starting for ", dataTooltipHref);
 
         const parts = dataTooltipHref.split("/");
         const idIndex = parts.findIndex(p => p.includes("-tooltip"));
@@ -650,21 +644,10 @@ const fetch_and_display_tooltip = mydebounce((dataTooltipHref, clientX, clientY)
         const type = parts[idIndex - 1];
         const typeAndId = `${type}/${id}`;
 
-        const displayExisting = function () {
-            const existingJson = window.tooltipCache[typeAndId];
-            if (existingJson !== undefined) {
-                console.log("fetch_and_display_tooltip existingJson", existingJson);
-                display_tooltip(existingJson, clientX, clientY);
-                return true;
-            }
-            console.log("fetch_and_display_tooltip no existingJson");
-            return false;
-        };
-
-        if (displayExisting()) {
-            // We displayed an existing tooltip.
-            // No need to make the API call or even queue up the api call.
-            // Just display it immediately
+        const existingJson = window.tooltipCache[typeAndId];
+        if (existingJson !== undefined) {
+            console.log("fetch_tooltip existingJson", existingJson);
+            callback(existingJson);
             return;
         }
 
@@ -673,15 +656,20 @@ const fetch_and_display_tooltip = mydebounce((dataTooltipHref, clientX, clientY)
             beforeSend: function() {
                 // only make the call if we don't have it cached.
                 // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
-                return !displayExisting();
+                const alreadyFetched = window.tooltipCache[typeAndId];
+                if (alreadyFetched) {
+                    callback(alreadyFetched);
+                    return false;
+                }
+                return true;
             },
             success: function (response) {
-                console.log("fetch_and_display_tooltip success", response);
+                console.log("fetch_tooltip success", response);
                 window.tooltipCache[typeAndId] = response;
-                display_tooltip(response, clientX, clientY);
+                callback(response);
             },
             error: function (error) {
-                console.warn("fetch_and_display_tooltip error", error);
+                console.warn("fetch_tooltip error", error);
             }
         });
     } catch(error) {
@@ -689,56 +677,88 @@ const fetch_and_display_tooltip = mydebounce((dataTooltipHref, clientX, clientY)
     }
 }, 200);
 
-function display_tooltip(tooltipJson, clientX, clientY) {
-    console.log("display_tooltip", tooltipJson);
+function display_tooltip(tooltipJson, container, clientY) {
     if (typeof tooltipJson?.Tooltip === "string") {
         remove_tooltip();
-        $("#ddbeb-popup-container").append(tooltipJson.Tooltip);
-        let left = "unset";
-        let right = "340px"; // to the left of the sidebar
-        // TODO: place it next to the cursor, but don't let it trigger mouseleave
-        // if (clientX !== undefined) {
-        //     left = `${clientX}px`;
-        //     right = "unset";
-        // }
-        let top = "100px";
-        if (clientY !== undefined) {
-            top = `${Math.min(clientY, window.innerHeight - $("#ddbeb-popup-container").height())}px`;
-        }
-        $("#ddbeb-popup-container").css({
-            top: top,
-            left: left,
-            right: right,
-            position: "fixed",
-            "z-index": 10000
+
+        const tooltipHtmlString = tooltipJson.Tooltip;
+
+        build_and_display_sidebar_flyout(clientY, function (flyout) {
+            const tooltipHtml = $(tooltipHtmlString);
+            flyout.append(tooltipHtml);
+            tooltipHtml.css({
+                "width": "100%",
+                "max-width": "100%",
+                "min-width": "100%"
+            });
+            let sendToGamelogButton = $(`<a class="ddbeb-button monster-details-link" href="#">Send To Gamelog</a>`);
+            sendToGamelogButton.css({
+                // "position": "relative"
+                "float": "right"
+            });
+            sendToGamelogButton.on("click", function(ce) {
+                ce.stopPropagation();
+                ce.preventDefault();
+                const tooltipWithoutButton = $(tooltipHtmlString);
+                tooltipWithoutButton.css({
+                    "width": "100%",
+                    "max-width": "100%",
+                    "min-width": "100%"
+                });
+                send_html_to_gamelog(tooltipWithoutButton[0].outerHTML);
+            });
+            tooltipHtml.find(".tooltip-header-identifier").before(sendToGamelogButton);
+            tooltipHtml.find(".tooltip-body").prepend(sendToGamelogButton);
+            position_flyout_on_best_side_of(container, flyout);
+            flyout.hover(function (hoverEvent) {
+                if (hoverEvent.type === "mouseenter") {
+                    clearTimeout(removeToolTipTimer);
+                    removeToolTipTimer = undefined;
+                } else {
+                    remove_tooltip(500);
+                }
+            });
+            flyout.css("background-color", "#fff");
         });
     }
 }
 
-function remove_tooltip() {
-    $("#ddbeb-popup-container").css("z-index", -10);
-    $("#ddbeb-popup-container").empty();
+let removeToolTipTimer = undefined;
+function remove_tooltip(delay = 0) {
+    if (delay > 0) {
+        removeToolTipTimer = setTimeout(remove_sidebar_flyout, delay);
+    } else {
+        clearTimeout(removeToolTipTimer);
+        removeToolTipTimer = undefined;
+        remove_sidebar_flyout();
+    }
 }
 
 function add_stat_block_hover(statBlockContainer) {
-    $(statBlockContainer).find(".tooltip-hover").hover(function (hoverEvent) {
-        console.log("add_stat_block_hover", hoverEvent);
+    const tooltip = $(statBlockContainer).find(".tooltip-hover");
+    tooltip.hover(function (hoverEvent) {
         if (hoverEvent.type === "mouseenter") {
             const href = $(hoverEvent.currentTarget).attr("data-tooltip-href");
             if (typeof href === "string") {
-                fetch_and_display_tooltip(href, hoverEvent.clientX, hoverEvent.clientY);
+                // fetch_and_display_tooltip(href, hoverEvent.clientX, hoverEvent.clientY);
+                fetch_tooltip(href, function (tooltipJson) {
+                    display_tooltip(tooltipJson, $(hoverEvent.target).closest("#resizeDragMon"), hoverEvent.clientY);
+                });
             }
         } else {
-            remove_tooltip();
+            remove_tooltip(500);
         }
     });
 }
 
-function send_img_to_gamelog(monsterId) {
-    let ddbId = parseInt(monsterId);
-    if (isNaN(ddbId)) {
-        console.error("send_img_to_gamelog failed to parse monsterId", monsterId);
-        return;
-    }
-
+function send_html_to_gamelog(outerHtml) {
+    console.log("send_html_to_gamelog", outerHtml);
+    let html = window.MB.encode_message_text(outerHtml);
+    const data = {
+        player: window.PLAYER_NAME,
+        img: window.PLAYER_IMG,
+        text: html
+    };
+    window.MB.inject_chat(data);
+    notify_gamelog();
 }
