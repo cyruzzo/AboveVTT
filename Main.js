@@ -972,15 +972,20 @@ function init_controls() {
 		sidebarControls.append(b2);
 	}
 
-	b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
-	let b6ImageDiv = $('<div></div>');
-	let b6ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-	let b6Image = `${window.EXTENSION_PATH}assets/icons/speaker.svg`;
-	b6ImageDiv.css({ "mask": `url(${b6Image}) no-repeat center / contain`, "-webkit-mask": `url(${b6Image}) no-repeat center / contain` });
-	b6ImageDivWrapper.append(b6ImageDiv);
-	b6.append(b6ImageDivWrapper);
-	b6.click(switch_control);
-	sidebarControls.append(b6);
+	if (window.DM) {
+		b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
+		let b6ImageDiv = $('<div></div>');
+		let b6ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+		let b6Image = `${window.EXTENSION_PATH}assets/icons/speaker.svg`;
+		b6ImageDiv.css({
+			"mask": `url(${b6Image}) no-repeat center / contain`,
+			"-webkit-mask": `url(${b6Image}) no-repeat center / contain`
+		});
+		b6ImageDivWrapper.append(b6ImageDiv);
+		b6.append(b6ImageDivWrapper);
+		b6.click(switch_control);
+		sidebarControls.append(b6);
+	}
 
 	b4 = $("<div id='switch_journal' class='tab-btn hasTooltip button-icon blue-tab' data-name='Journal' data-target='#journal-panel'></div>");
 	let b4ImageDiv = $('<div></div>');
@@ -996,20 +1001,16 @@ function init_controls() {
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
 	sidebarControls.append(b4);*/
 
-	if (window.DM) {
-		b7 = $("<div id='switch_settings' class='tab-btn hasTooltip button-icon trailing-edge blue-tab' data-name='Settings' data-target='#settings-panel'></div>");
+	b7 = $("<div id='switch_settings' class='tab-btn hasTooltip button-icon trailing-edge blue-tab' data-name='Settings' data-target='#settings-panel'></div>");
 
-		let b7ImageDiv = $('<div></div>');
-		let b7ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b7Image = `${window.EXTENSION_PATH}assets/icons/cog.svg`;
-		b7ImageDiv.css({ "mask": `url(${b7Image}) no-repeat center / contain`, "-webkit-mask": `url(${b7Image}) no-repeat center / contain` });
-		b7ImageDivWrapper.append(b7ImageDiv);
-		b7.append(b7ImageDivWrapper);
-		b7.click(switch_control);
-		sidebarControls.append(b7);
-	} else {
-		b4.addClass("trailing-edge");
-	}
+	let b7ImageDiv = $('<div></div>');
+	let b7ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+	let b7Image = `${window.EXTENSION_PATH}assets/icons/cog.svg`;
+	b7ImageDiv.css({ "mask": `url(${b7Image}) no-repeat center / contain`, "-webkit-mask": `url(${b7Image}) no-repeat center / contain` });
+	b7ImageDivWrapper.append(b7ImageDiv);
+	b7.append(b7ImageDivWrapper);
+	b7.click(switch_control);
+	sidebarControls.append(b7);
 
 	$(".tab-btn").on("click", function(e) {
 		$(".tab-btn").removeClass('selected-tab');
@@ -2792,7 +2793,10 @@ function init_ui() {
 			curDown = true;
 			$("body").css("cursor", "grabbing");
 			//cover iframes so you can drag through windows
-			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			if (get_avtt_setting_value("iframeStatBlocks") === true) {
+				// iframes yoink the right-click drag when you're moving the map. The non-iframe stat blocks don't need to worry about this
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			}
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			//return false;
 		}

@@ -189,8 +189,8 @@ function avtt_settings() {
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
 			options: [
-				{ value: true, label: "Streaming", description: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
-				{ value: false, label: "Not Streaming", description: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
+				{ value: true, label: "Streaming", description: `When you roll DDB dice (to Everyone), all players who also enable this feature will see your rolls and you will see theirs. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
+				{ value: false, label: "Not Streaming", description: `When you enable this, DDB dice rolls will be visible to you and all other players who also enable this. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
 			],
 			defaultValue: false
 		},
@@ -241,9 +241,12 @@ function set_avtt_setting_value(name, newValue) {
 			break;
 		case "streamDiceRolls":
 			if (newValue === true || newValue === false) {
+				window.JOINTHEDICESTREAM = newValue;
 				enable_dice_streaming_feature(newValue)
 			} else {
-				enable_dice_streaming_feature(get_avtt_setting_default_value(name));
+				const defaultValue = get_avtt_setting_default_value(name);
+				window.JOINTHEDICESTREAM = defaultValue;
+				enable_dice_streaming_feature(defaultValue);
 			}
 			break;
 		default:
@@ -332,77 +335,80 @@ function cloud_migration(scenedata=null){
 	});
 }
 
-function init_settings(){
+function init_settings() {
 
 	let body = settingsPanel.body;
 
+	if (window.DM) {
 
-	if((!window.CLOUD) && (!window.FORCED_DM)){
-		body.append(`
-		<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
-		<div class="sidebar-panel-header-explanation">
-			<p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
-			<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
-		</div>
-		`)
-	}
-	else if(window.CLOUD){
-		body.append('<b>Your scenes are stored in the "cloud"</b>');
-	}
-
-	body.append(`
-		<h5 class="token-image-modal-footer-title">Import / Export</h5>
-		<div class="sidebar-panel-header-explanation">
-			<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
-			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
-			Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
-			<div class="sidebar-panel-footer-horizontal-wrapper">
-			<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
-			<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
-				<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
-		</div>
-	`);
-
-	$("#input_file").change(import_readfile);
-
-	body.append(`
-		<br />
-		<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
-		<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>
-	`);
-
-	let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
-	tokenOptionsButton.on("click", function (clickEvent) {
-		build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-			let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
-				if (value === true || value === false || typeof value === 'string') {
-					window.TOKEN_SETTINGS[name] = value;
-				} else {
-					delete window.TOKEN_SETTINGS[name];
-				}
-			}, function() {
-				persist_token_settings(window.TOKEN_SETTINGS);
-				redraw_settings_panel_token_examples();
-			});
-			optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
-			flyout.append(optionsContainer);
-			position_flyout_left_of(body, flyout);
-		});
-	});
-	body.append(tokenOptionsButton);
-
-	const clearAllOverridesWarning = `This will remove ALL overridden token options from every player, monster, custom token, and folder in the Tokens Panel. This shouldn't remove any custom images from those tokens. This will not update any tokens that have been placed on a scene. This cannot be undone.`;
-	let clearAllTokenOverrides = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear All Token Option Overrides</button>`);
-	clearAllTokenOverrides.on("click", function() {
-		if (confirm(clearAllOverridesWarning)) {
-			window.TOKEN_CUSTOMIZATIONS.forEach(tc => tc.clearTokenOptions());
-			persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+		if((!window.CLOUD) && (!window.FORCED_DM)){
+			body.append(`
+			<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
+			<div class="sidebar-panel-header-explanation">
+				<p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
+				<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
+			</div>
+			`)
 		}
-	});
-	body.append(clearAllTokenOverrides);
+		else if(window.CLOUD){
+			body.append('<b>Your scenes are stored in the "cloud"</b>');
+		}
+
+		body.append(`
+			<h5 class="token-image-modal-footer-title">Import / Export</h5>
+			<div class="sidebar-panel-header-explanation">
+				<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
+				<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
+				Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
+				<div class="sidebar-panel-footer-horizontal-wrapper">
+				<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
+				<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
+					<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
+			</div>
+		`);
+
+		$("#input_file").change(import_readfile);
+
+		body.append(`
+			<br />
+			<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
+			<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>
+		`);
+
+		let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
+		tokenOptionsButton.on("click", function (clickEvent) {
+			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+				let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
+					if (value === true || value === false || typeof value === 'string') {
+						window.TOKEN_SETTINGS[name] = value;
+					} else {
+						delete window.TOKEN_SETTINGS[name];
+					}
+				}, function() {
+					persist_token_settings(window.TOKEN_SETTINGS);
+					redraw_settings_panel_token_examples();
+				});
+				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
+				flyout.append(optionsContainer);
+				position_flyout_left_of(body, flyout);
+			});
+		});
+		body.append(tokenOptionsButton);
+
+		const clearAllOverridesWarning = `This will remove ALL overridden token options from every player, monster, custom token, and folder in the Tokens Panel. This shouldn't remove any custom images from those tokens. This will not update any tokens that have been placed on a scene. This cannot be undone.`;
+		let clearAllTokenOverrides = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear All Token Option Overrides</button>`);
+		clearAllTokenOverrides.on("click", function() {
+			if (confirm(clearAllOverridesWarning)) {
+				window.TOKEN_CUSTOMIZATIONS.forEach(tc => tc.clearTokenOptions());
+				persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+			}
+		});
+		body.append(clearAllTokenOverrides);
 
 
-	body.append(`<br />`);
+		body.append(`<br />`);
+
+	}
 
 	const experimental_features = avtt_settings();
 
@@ -612,6 +618,7 @@ function enable_dice_streaming_feature(enabled){
 		if($(".stream-dice-button").length>0)
 			return;
 		$(".glc-game-log>[class*='Container-Flex']").append($(`<div  id="stream_dice"><div class='stream-dice-button'>Dice Stream Disabled</div></div>`));
+		update_dice_streaming_feature(window.JOINTHEDICESTREAM);
 		$(".stream-dice-button").off().on("click", function(){
 			if(window.JOINTHEDICESTREAM){
 				update_dice_streaming_feature(false);
