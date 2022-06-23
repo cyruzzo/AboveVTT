@@ -1,22 +1,3 @@
-
-function is_valid_token_option_value(tokenOptionName, value) {
-	return token_setting_options().find(o => o.name === tokenOptionName)?.options?.map(value).includes(value);
-}
-
-function convert_option_to_override_dropdown(tokenOption) {
-	// Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays or objects
-	// we are explicitly not using the spread operator at this level because we need to deep copy the object
-	let converted = {
-		name: tokenOption.name,
-		label: tokenOption.label,
-		type: 'dropdown',
-		options: tokenOption.options.map(option => { return {...option} }),
-		defaultValue: undefined
-	};
-	converted.options.push({ value: undefined, label: "Not Overridden", description: "Changing this setting will override the default settings" });
-	return converted;
-}
-
 function token_setting_options() {
 	return [
 		{
@@ -191,6 +172,105 @@ function token_setting_options() {
 	];
 }
 
+function avtt_settings() {
+	return [
+		{
+			name: 'allowTokenMeasurement',
+			label: 'Measure while dragging tokens',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
+				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
+			],
+			defaultValue: true
+		},
+		{
+			name: 'streamDiceRolls',
+			label: 'Stream Dice Rolls',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Streaming", description: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
+				{ value: false, label: "Not Streaming", description: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'iframeStatBlocks',
+			label: 'Fetch Monster Stat Blocks',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
+				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
+			],
+			defaultValue: false
+		}
+	]
+}
+
+function get_avtt_setting_default_value(name) {
+	return avtt_settings().find(s => s.name === name)?.defaultValue;
+}
+function get_avtt_setting_value(name) {
+	switch (name) {
+		case "allowTokenMeasurement": return window.ALLOWTOKENMEASURING;
+		case "iframeStatBlocks": return should_use_iframes_for_monsters();
+		default:
+			const setValue = window.EXPERIMENTAL_SETTINGS[name];
+			if (setValue !== undefined) {
+				return setValue;
+			}
+			return get_avtt_setting_default_value(name);
+	}
+}
+function set_avtt_setting_value(name, newValue) {
+	console.log(`set_avtt_setting_value ${name} is now ${newValue}`);
+	switch (name) {
+		case "allowTokenMeasurement":
+			if (newValue === true || newValue === false) {
+				window.ALLOWTOKENMEASURING = newValue;
+			} else {
+				window.ALLOWTOKENMEASURING = get_avtt_setting_default_value(name);
+			}
+			break;
+		case "iframeStatBlocks":
+			if (newValue === true) {
+				use_iframes_for_monsters();
+			} else {
+				stop_using_iframes_for_monsters();
+			}
+			break;
+		case "streamDiceRolls":
+			if (newValue === true || newValue === false) {
+				enable_dice_streaming_feature(newValue)
+			} else {
+				enable_dice_streaming_feature(get_avtt_setting_default_value(name));
+			}
+			break;
+		default:
+			window.EXPERIMENTAL_SETTINGS[name] = newValue;
+			persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+			break;
+	}
+}
+
+function is_valid_token_option_value(tokenOptionName, value) {
+	return token_setting_options().find(o => o.name === tokenOptionName)?.options?.map(value).includes(value);
+}
+
+function convert_option_to_override_dropdown(tokenOption) {
+	// Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays or objects
+	// we are explicitly not using the spread operator at this level because we need to deep copy the object
+	let converted = {
+		name: tokenOption.name,
+		label: tokenOption.label,
+		type: 'dropdown',
+		options: tokenOption.options.map(option => { return {...option} }),
+		defaultValue: undefined
+	};
+	converted.options.push({ value: undefined, label: "Not Overridden", description: "Changing this setting will override the default settings" });
+	return converted;
+}
+
 function b64EncodeUnicode(str) {
         // first we use encodeURIComponent to get percent-encoded UTF-8,
         // then we convert the percent encodings into raw bytes which
@@ -324,71 +404,34 @@ function init_settings(){
 
 	body.append(`<br />`);
 
-	const experimental_features = [
-		{
-			name: 'streamDiceRolls',
-			label: 'Stream Dice Rolls',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Streaming", description: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
-				{ value: false, label: "Not Streaming", description: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
-			],
-			defaultValue: false
-		},
-		{
-			name: 'iframeStatBlocks',
-			label: 'Fetch Monster Stat Blocks',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
-				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
-			],
-			defaultValue: false
-		}
-	];
+	const experimental_features = avtt_settings();
 
 	body.append(`
 		<br />
-		<h5 class="token-image-modal-footer-title">Experimental Features</h5>
-		<div class="sidebar-panel-header-explanation">These are experimental features. You must explicitly opt-in to them. Use at your own risk.</div>
+		<h5 class="token-image-modal-footer-title" >Above VTT Settings</h5>
+		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time so we recommend using the defaults values... (Except the dice streaming. You should probably enable that because that's just awesome!)</div>
 	`);
 	for(let i = 0; i < experimental_features.length; i++) {
 		let setting = experimental_features[i];
 		if (setting.dmOnly === true && !window.DM) {
 			continue;
 		}
-		let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name] || setting.defaultValue;
+		let currentValue = get_avtt_setting_value(setting.name);
 		let inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
-			console.log(`experimental setting ${name} is now ${newValue}`);
-			if (name === "streamDiceRolls") {
-				enable_dice_streaming_feature(newValue);
-				if(newValue == true) {
-					window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature");
-				} else {
-					window.MB.sendMessage("custom/myVTT/disabledicestream");
-				}
-			} else if (name === "iframeStatBlocks") {
-				if (newValue == true) {
-					use_iframes_for_monsters();
-				} else {
-					stop_using_iframes_for_monsters();
-				}
-				window.EXPERIMENTAL_SETTINGS[setting.name] = should_use_iframes_for_monsters();
-			} else {
-				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
-				persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-			}
+			set_avtt_setting_value(name, newValue);
 		});
 		body.append(inputWrapper);
 	}
-	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Opt out of all expirimental features." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Opt out of all</button>`);
+	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Reset to defaults." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset to Defaults</button>`);
 	optOutOfAll.click(function () {
 		for (let i = 0; i < experimental_features.length; i++) {
 			let setting = experimental_features[i];
 			let toggle = body.find(`button[name=${setting.name}]`);
-			if (toggle.hasClass("rc-switch-checked")) {
-				toggle.click();
+			toggle.removeClass("rc-switch-checked").removeClass("rc-switch-unknown");
+			if (setting.defaultValue === true) {
+				toggle.addClass("rc-switch-checked");
 			}
+			set_avtt_setting_value(setting.name, setting.defaultValue);
 		}
 	});
 	body.append(optOutOfAll);
