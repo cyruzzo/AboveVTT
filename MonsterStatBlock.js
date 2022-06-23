@@ -750,6 +750,7 @@ function display_tooltip(tooltipJson, container, clientY) {
         const tooltipHtmlString = tooltipJson.Tooltip;
 
         build_and_display_sidebar_flyout(clientY, function (flyout) {
+            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
             const tooltipHtml = $(tooltipHtmlString);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
