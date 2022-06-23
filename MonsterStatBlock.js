@@ -44,6 +44,7 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
     container.find("div.image").append(statBlock.imageHtml());
+    container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
     scan_monster(container, statBlock, tokenId);
     // scan_creature_pane(container, statBlock.name, statBlock.image);
     add_stat_block_hover(container);
@@ -745,21 +746,14 @@ function display_tooltip(tooltipJson, container, clientY) {
     if (typeof tooltipJson?.Tooltip === "string") {
         remove_tooltip();
 
+        console.log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip;
 
         build_and_display_sidebar_flyout(clientY, function (flyout) {
             const tooltipHtml = $(tooltipHtmlString);
             flyout.append(tooltipHtml);
-            tooltipHtml.css({
-                "width": "100%",
-                "max-width": "100%",
-                "min-width": "100%"
-            });
-            let sendToGamelogButton = $(`<a class="ddbeb-button monster-details-link" href="#">Send To Gamelog</a>`);
-            sendToGamelogButton.css({
-                // "position": "relative"
-                "float": "right"
-            });
+            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+            sendToGamelogButton.css({ "float": "right" });
             sendToGamelogButton.on("click", function(ce) {
                 ce.stopPropagation();
                 ce.preventDefault();
@@ -771,9 +765,27 @@ function display_tooltip(tooltipJson, container, clientY) {
                 });
                 send_html_to_gamelog(tooltipWithoutButton[0].outerHTML);
             });
-            tooltipHtml.find(".tooltip-header-identifier").before(sendToGamelogButton);
-            tooltipHtml.find(".tooltip-body").prepend(sendToGamelogButton);
-            position_flyout_on_best_side_of(container, flyout);
+
+            const buttonFooter = $("<div></div>");
+            buttonFooter.css({
+                height: "40px",
+                width: "100%",
+                position: "relative",
+                background: "#fff"
+            });
+            flyout.append(buttonFooter);
+            buttonFooter.append(sendToGamelogButton);
+
+            const didResize = position_flyout_on_best_side_of(container, flyout);
+            if (didResize) {
+                // only mess with the html that DDB gave us if we absolutely have to
+                tooltipHtml.css({
+                    "width": "100%",
+                    "max-width": "100%",
+                    "min-width": "100%"
+                });
+            }
+
             flyout.hover(function (hoverEvent) {
                 if (hoverEvent.type === "mouseenter") {
                     clearTimeout(removeToolTipTimer);
@@ -802,11 +814,17 @@ function add_stat_block_hover(statBlockContainer) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
     tooltip.hover(function (hoverEvent) {
         if (hoverEvent.type === "mouseenter") {
-            const href = $(hoverEvent.currentTarget).attr("data-tooltip-href");
-            if (typeof href === "string") {
-                // fetch_and_display_tooltip(href, hoverEvent.clientX, hoverEvent.clientY);
-                fetch_tooltip(href, function (tooltipJson) {
-                    display_tooltip(tooltipJson, $(hoverEvent.target).closest("#resizeDragMon"), hoverEvent.clientY);
+            const dataTooltipHref = $(hoverEvent.currentTarget).attr("data-tooltip-href");
+            if (typeof dataTooltipHref === "string") {
+                fetch_tooltip(dataTooltipHref, function (tooltipJson) {
+                    let container = $(hoverEvent.target).closest("#resizeDragMon");
+                    if (container.length === 0) {
+                        container = $(hoverEvent.target).closest(".sidebar-modal");
+                    }
+                    if (container.length === 0) {
+                        container = is_characters_page() ? $(".ct-sidebar__pane-content") : $(".sidebar__pane-content");
+                    }
+                    display_tooltip(tooltipJson, container, hoverEvent.clientY);
                 });
             }
         } else {

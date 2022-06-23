@@ -1716,23 +1716,27 @@ function build_and_display_sidebar_flyout(clientY, buildFunction) {
 }
 
 function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true) {
+  let didResize = false;
   if (!container || container.length === 0 || !flyout || flyout.length === 0) {
     console.warn("position_flyout_on_best_side_of received an empty object", container, flyout);
-    return;
+    return didResize;
   }
   const distanceFromLeft = container[0].getBoundingClientRect().left;
   const distanceFromRight = window.innerWidth - distanceFromLeft - container.width();
   if (distanceFromLeft > distanceFromRight) {
     if (resizeFlyoutToFit && (flyout.width() > distanceFromLeft)) {
       flyout.css("width", distanceFromLeft);
+      didResize = true;
     }
     position_flyout_left_of(container, flyout);
   } else {
     if (resizeFlyoutToFit && (flyout.width() > distanceFromRight)) {
       flyout.css("width", distanceFromRight);
+      didResize = true;
     }
     position_flyout_right_of(container, flyout);
   }
+  return didResize;
 }
 
 function position_flyout_left_of(container, flyout) {
