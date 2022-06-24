@@ -1825,6 +1825,9 @@ function register_scene_row_context_menu() {
 }
 
 function expand_folders_to_active_scenes() {
+	if (!window.DM || !window.CURRENT_SCENE_DATA || !window.sceneListItems || !window.PLAYER_SCENE_ID) {
+		return;
+	}
 	let dmSceneItem = window.sceneListItems.find(i => i.sceneId === window.CURRENT_SCENE_DATA.id);
 	if (dmSceneItem) {
 		expand_all_folders_up_to_item(dmSceneItem);

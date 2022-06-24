@@ -1124,6 +1124,7 @@ div#combat_button{
     padding: 5px;
     border: 5px #c0f3fff5 solid;
     z-index: 0;
+    pointer-events: none;
 }
 
 .tokenselected.ui-draggable-disabled::before{
