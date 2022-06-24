@@ -77,14 +77,15 @@ class Token {
 	}
 
 	stopAnimation(){
-		var selector = "div[data-id='" + this.options.id + "']";
-		var tok = $("#tokens").find(selector);
-
-		if(tok.is(":visible")){
-			tok.stop(true,true);
-			this.doing_highlight=false;
-
+		const tok = $(`#tokens div[data-id="${this.options.id}"]`);
+		if (tok.length === 0) {
+			this.update_opacity(undefined);
+			return;
 		}
+
+		tok.stop(true, true);
+		this.doing_highlight = false;
+		this.update_opacity(tok, false);
 	}
 
 	isLineAoe() {
@@ -840,6 +841,39 @@ class Token {
 		}
 	}
 
+	update_opacity(html = undefined, animated = false) {
+		let tok;
+		if (html) {
+			tok = html;
+		} else {
+			tok = $(`#tokens div[data-id="${this.options.id}"]`);
+		}
+
+		if (!tok) {
+			console.log("update_opacity failed to find an html element", this);
+			return;
+		}
+
+		if (this.options.hidden || is_token_under_fog(this.options.id)) {
+			if (window.DM) {
+				if (animated) {
+					tok.animate({ opacity: 0.5 }, { duration: 500, queue: false });
+				} else {
+					tok.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
+				}
+			} else {
+				tok.hide();
+			}
+		} else {
+			if (animated) {
+				tok.animate({ opacity: 1 }, { duration: 500, queue: false });
+			} else {
+				tok.css("opacity", 1); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
+			}
+			tok.show();
+		}
+	}
+
 	/**
 	 * Adds stats hp/ac/elev when token doesn't have them, or rebuilds them if it does
 	 * @param token jquery selected div with the class "token"
@@ -1000,7 +1034,6 @@ class Token {
 		// we don't allow certain options to be set for AOE tokens
 		this.defaultAoeOptions();
 
-		// console.group("place")
 		if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 			animationDuration = 1000;
 		}
@@ -1097,16 +1130,7 @@ class Token {
 				old.css("font-size",fs);
 			}
 
-			if (this.options.hidden || is_token_under_fog(this.options.id)) {
-				if (window.DM)
-					old.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
-				else
-					old.hide();
-			}
-			else {
-				old.css("opacity", 1);
-				old.show();
-			}
+			this.update_opacity(old);
 
 			this.build_conditions(old);
 
@@ -1280,28 +1304,15 @@ class Token {
 				tok.attr("data-tokendataname", this.options.tokendataname);
 			}
 
-			var newopacity = 1.0;
-			if (this.options.hidden || is_token_under_fog(this.options.id)) {
-				if (window.DM)
-					newopacity = 0.5; // DM SEE HIDDEN TOKENS AS OPACITY 0.5
-				else
-					tok.hide();
-			}
-
 			// CONDITIONS
 			this.build_conditions().forEach(cond_bar => {
 				tok.append(cond_bar);
 			});
 
-			
-
 
 			$("#tokens").append(tok);
-			tok.animate({
-				opacity: newopacity
-			}, { duration: 500, queue: false });
+			this.update_opacity(tok, true);
 
-			
 			setTokenAuras(tok, this.options);
 
 			setTokenBase(tok, this.options);
