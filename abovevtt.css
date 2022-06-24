@@ -3846,10 +3846,6 @@ button.avtt-roll-button {
     bottom: -2px;
 }
 
-.token>.base.noborder.nohpaura.large-or-smaller-base{
-    border-color: #ffffff44;
-}
-
 .token>img{
     border: 2px solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 2px 3px var(--token-hp-aura-color);
