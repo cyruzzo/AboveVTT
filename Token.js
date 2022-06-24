@@ -1844,7 +1844,8 @@ function token_menu() {
 			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 			} else {
-				token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
+				let tokens = window.TOKEN_OBJECTS[$(event.currentTarget).attr("data-id")].get_grouped_tokens().map(t => t.options.id);
+				token_context_menu_expanded(tokens, event);
 			}
 		});
 		return;
