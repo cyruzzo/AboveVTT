@@ -2133,6 +2133,10 @@ function setTokenBase(token, options) {
 		else{
 			token.children(".base").toggleClass("nohpaura", false);
 		}
+		token.toggleClass("hasbase", true);
+	}
+	else{
+		token.toggleClass("hasbase", false);
 	}
 
 
