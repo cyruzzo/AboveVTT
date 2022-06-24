@@ -2487,14 +2487,12 @@ function paste_selected_tokens() {
 }
 
 function delete_selected_tokens() {
-	
 	// move all the tokens into a separate list so the DM can "undo" the deletion
 	let tokensToDelete = [];
 	for (id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) {
 			if (window.DM || token.options.deleteableByPlayers == true) {				
-				window.TOKEN_OBJECTS_RECENTLY_DELETED[id] = Object.assign({}, token.options);
 				tokensToDelete.push(token);
 			}
 		}
@@ -2502,6 +2500,8 @@ function delete_selected_tokens() {
 
 	if (tokensToDelete.length == 0) return;
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+	tokensToDelete.forEach(t => window.TOKEN_OBJECTS_RECENTLY_DELETED[t.options.id] = Object.assign({}, t.options));
+	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
 	if(window.CLOUD){
 		for (let i = 0; i < tokensToDelete.length; i++) {
@@ -2521,6 +2521,7 @@ function delete_selected_tokens() {
 }
 
 function undo_delete_tokens() {
+	console.log("undo_delete_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 	if (!window.DM) return;
 	for (id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
 		let options = window.TOKEN_OBJECTS_RECENTLY_DELETED[id];

@@ -272,8 +272,7 @@ Mousetrap.bind('command+z', function(e) {
 
 function handle_undo(){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
-    if ($("#select_button").hasClass(buttonSelectedClasses) && 
-        Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0){
+    if ($("#select-button").hasClass(buttonSelectedClasses)){
         undo_delete_tokens();
     }
     else if(($("#fog_button").hasClass(buttonSelectedClasses))){
