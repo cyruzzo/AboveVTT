@@ -1777,7 +1777,7 @@ function disable_draggable_change_folder() {
   $(".token-row-drag-handle").remove();
 
   // MyToken
-  if (tokensPanel) {
+  if (typeof tokensPanel !== 'undefined') {
       tokensPanel.body.find(".token-row-button").show();
       tokensPanel.body.find(".token-row-button.reorder-button").show();
       tokensPanel.body.find(".reorder-button").removeClass("active");
@@ -1795,7 +1795,7 @@ function disable_draggable_change_folder() {
   }
 
   // Scenes
-  if (scenesPanel) {
+  if (typeof scenesPanel !== 'undefined') {
       scenesPanel.body.find(".token-row-gear").show();
       scenesPanel.body.find(".token-row-button").show();
       scenesPanel.header.find(".token-row-gear").show();
