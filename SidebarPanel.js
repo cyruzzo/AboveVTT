@@ -868,9 +868,9 @@ function find_sidebar_list_item_from_path(fullPath) {
 
   let foundItem;
   if (fullPath.startsWith(RootFolder.Scenes.path)) {
-    foundItem = window.sceneListItems.find(matchingPath);
+    foundItem = window.sceneListItems?.find(matchingPath);
     if (foundItem === undefined) {
-      foundItem = window.sceneListFolders.find(matchingPath);
+      foundItem = window.sceneListFolders?.find(matchingPath);
     }
     if (foundItem !== undefined) {
       return foundItem;
@@ -880,10 +880,10 @@ function find_sidebar_list_item_from_path(fullPath) {
   // check all the tokens items
   foundItem = tokens_rootfolders.find(matchingPath);
   if (foundItem === undefined) {
-    foundItem = window.tokenListItems.find(matchingPath);
+    foundItem = window.tokenListItems?.find(matchingPath);
   }
   if (foundItem === undefined) {
-    foundItem = window.monsterListItems.find(matchingPath);
+    foundItem = window.monsterListItems?.find(matchingPath);
   }
   if (foundItem === undefined) {
     foundItem = Object.values(cached_monster_items).find(matchingPath);
