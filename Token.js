@@ -97,9 +97,12 @@ class Token {
 	}
 
 	isPlayer() {
-		// player tokens have ids with a structure like "/profile/username/characters/someId"
+		// player tokens have ids with a structure like "/profile/username/characters/someId" or "characters/someId"
 		// monster tokens have a uuid for their id
 		return is_player_id(this.options.id);
+	}
+	isCurrentPlayer() {
+		return this.isPlayer() && this.options.id.endsWith(`characters/${window.PLAYER_ID}`)
 	}
 
 	isMonster() {
@@ -1601,7 +1604,7 @@ class Token {
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
-			if(!window.DM && this.options.restrictPlayerMove){
+			if (!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) {
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
 			}
