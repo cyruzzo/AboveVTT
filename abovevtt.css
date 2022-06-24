@@ -3817,33 +3817,37 @@ button.avtt-roll-button {
     backdrop-filter: blur(3px) brightness(0.7);
     z-index: -1;
     border: inset 5px var(--token-border-color, #ffffff44);
-    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
-}
-.token>.base.circle {
-    border: solid 5px var(--token-border-color, #ffffff44);
-}
-.token>.base.noborder{
-    border: solid 5px var(--token-hp-aura-color);
 }
 
 
-.token>.base.noborder.nohpaura{
-    border: inset 5px #ffffff44;
+.VTTToken .base{
+    filter: drop-shadow(0.5px 0px 1px #000b);
 }
-
 .token>.base.large-or-smaller-base{
-    border: inset 2px var(--token-border-color, #ffffff44);
-    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
+    border-width: 2px;
 }
-.token>.base.large-or-smaller-base.circle {
-    border: solid 2px var(--token-border-color, #ffffff44);
+
+.base.circle:before {
+    content: "";
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: radial-gradient(transparent 45% 67%, #00000088 74% 94%);
+    border-radius: 50%;
+    z-index: 1;
+    position: absolute;
+    display: block;
 }
-.token>.base.noborder.large-or-smaller-base{
-    border: solid 2px var(--token-hp-aura-color);
+.base.large-or-smaller-base.circle:before {
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
 }
 
 .token>.base.noborder.nohpaura.large-or-smaller-base{
-    border: inset 2px #ffffff44;
+    border-color: #ffffff44;
 }
 
 .token>img{
@@ -3884,27 +3888,35 @@ button.avtt-roll-button {
     opacity: 1;
     box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
 }
+
 .base.large-or-smaller-base:after{
     box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
 }
-
+.VTTToken.token>.base.circle{
+    border-style: solid;
+}
 .base.border-color-base{
     background: var(--token-border-color, #ffffff44);
     backdrop-filter: blur(2px) brightness(0.9) opacity(0.8);
 }
-.base.grass-base:after{
+.base.grass-base:after,
+.token>.base.grass-base{
     background-image: url(https://opengameart.org/sites/default/files/ground_grass_gen_07.png);
 }
-.base.tile-base:after{
+.base.tile-base:after,
+.token>.base.tile-base{
     background-image: url(https://opengameart.org/sites/default/files/textureStone_0.png);
 }
-.base.sand-base:after{
+.base.sand-base:after,
+.token>.base.sand-base{
     background-image: url(https://opengameart.org/sites/default/files/dirt4.png);
 }
-.base.rock-base:after{
+.base.rock-base:after,
+.token>.base.rock-base{
     background-image: url(https://opengameart.org/sites/default/files/Rockface%20red_0.png);
 }
-.base.water-base:after{
+.base.water-base:after,
+.token>.base.water-base{
     background-image: url(https://opengameart.org/sites/default/files/Untitled-3_1.jpg);
 }
 
