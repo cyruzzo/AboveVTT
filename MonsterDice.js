@@ -21,11 +21,11 @@ function scan_monster(target, stats, tokenId) {
 	const displayName = window.TOKEN_OBJECTS[tokenId]?.options.name || target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
 	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
 
-	const clickHandler = function(clickEvent) {
+	function clickHandler(clickEvent) {
 		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", stats.data.id)
 	};
 
-	const rightClickHandler = function(contextmenuEvent) {
+	function rightClickHandler(contextmenuEvent) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", stats.data.id);
 	}
 
@@ -34,17 +34,19 @@ function scan_monster(target, stats, tokenId) {
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find(".mon-stat-block p").each(function() {
-		let currentElement = $(this)
-		if (currentElement.find(".avtt-roll-button").length == 0) {
-                        $(currentElement).find("span[data-dicenotation]").each(function (){
-				console.log("this",$(this))
-				const modMatch = $(this).attr("data-dicenotation")?.match(/(\+|-).*/gm)
+		if ($(this).find(".avtt-roll-button").length == 0) {
+				$($(this)).find("span[data-dicenotation]").each(function (){
+				// clone the element as if it came from an iframe these variables won't be freed from memory
+				let currentElement = $(this).clone()
+				const modMatch = $(currentElement).attr("data-dicenotation")?.match(/(\+|-).*/gm)
 				const modifier = (modMatch ? modMatch.shift() : "").replaceAll("(", "").replaceAll(")", "");
-				const dice = $(this).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "")
-				const rollType = $(this).attr("data-rolltype")?.replace(" ","-")
-				const actionType = $(this).attr("data-rollaction")?.replace(" ","-") || "custom"
-				const text = $(this)?.text()
+				const dice = $(currentElement).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "")
+				const rollType = $(currentElement).attr("data-rolltype")?.replace(" ","-")
+				const actionType = $(currentElement).attr("data-rollaction")?.replace(" ","-") || "custom"
+				const text = $(currentElement)?.text()
 				$(this).replaceWith(`<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
+				// terminate the clones reference, overkill but rather be safe when it comes to memory
+				currentElement = null
 			})
 		}
 	});
@@ -82,26 +84,45 @@ function scan_monster(target, stats, tokenId) {
 function add_ability_tracker_inputs_on_each(target, tokenId){
 	const token = window.TOKEN_OBJECTS[tokenId];
 	target.find(".mon-stat-block__description-block-content > p").each(function() {
-		let element = $(this);
-		if (element.find(".injected-input").length == 0) {
-			const matchForEachSlot = element.text().match(/([0-9])\/Day each:/i)
+		let currentElement = $(this).clone();
+		if (currentElement.find(".injected-input").length == 0) {
+			const matchForEachSlot = currentElement.text().match(/([0-9])\/Day each:/i)
 			if (matchForEachSlot){
-				const numberFound = parseInt(matchForEachSlot[1]);
-				element.children().each(function (indexInArray, valueOfElement) { 
-					const key  = $(valueOfElement).text()
-					const remaining = token.get_tracked_ability(key, numberFound);
-
-					$(valueOfElement).after(createCountTracker(tokenId, key.replace(/\s/g, ""), remaining, "", ""))
+				let numberFound = parseInt(matchForEachSlot[1]);
+				$(this).children().each(function (indexInArray, valueOfElement) { 
+					let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
+					// token already has this ability tracked
+					if (token.options.abilityTracker?.[spellName] >= 0){
+						numberFound = token.options.abilityTracker[spellName]
+					}else{
+						token.track_ability(spellName, numberFound)
+					}
+					$(valueOfElement).after(
+						createCountTracker(
+							token,
+							spellName, 
+							numberFound,
+							 "",
+							 ""
+						)
+					)
+					spellName = null
 				});			
 			}
 			
 		}
+		// terminate the clones reference, overkill but rather be safe when it comes to memory
+		currentElement = null
 	});	
 }
 
+function rebuild_ability_trackers(target, tokenId){
+	target.find(".injected-input").remove()
+	add_ability_tracker_inputs(target, tokenId)
+}
+
 /**
- * Creates the input tracker used for spell/legendaries and then calls token.track_ability
- * @param {object} token 
+ * Creates the input tracker used for spell/legendaries with a change handler that calls token.track_ability
  * @param {string} key 
  * @param {string} remaining 
  * @param {string} foundDescription 
@@ -125,7 +146,7 @@ function createCountTracker(token, key, remaining, foundDescription, description
  * @returns 
  */
 function add_ability_tracker_inputs(target, tokenId) {
-	let token = window.TOKEN_OBJECTS[tokenId];
+	const token = window.TOKEN_OBJECTS[tokenId];
 	if (token === undefined) {
 		// nothing to track if we don't have a token
 		return;
@@ -135,14 +156,19 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// However, it seems to work just fine if we append the input at the end instead of inline.
 
 	const processInput = function(element, regex, descriptionPostfix, includeMatchingDescription = true) {
-		let foundMatches = element.text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
+		const foundMatches = element.clone().text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
 		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
 			let numberFound = parseInt(foundMatches[1]);
 			if (!isNaN(numberFound)) {
-				let foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
-				let key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
-				let remaining = token.get_tracked_ability(key, numberFound);
-				const input = createCountTracker(token, key, remaining, foundDescription, descriptionPostfix)
+				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
+				const key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
+				// token already has this ability tracked, update the input
+				if (token.options.abilityTracker?.[key] >= 0){
+					numberFound = token.options.abilityTracker[key]
+				} else{
+					token.track_ability(key, numberFound)
+				}
+				const input = createCountTracker(token, key, numberFound, foundDescription, descriptionPostfix)
 				element.append(`<br>`);
 				element.append(input);
 			}
@@ -152,11 +178,12 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
 	target.find(".mon-stat-block__description-block-content > p").each(function() {
 		let element = $(this);
-		if (element.find(".injected-input").length === 0) {
-			processInput(element, /\(([0-9]) slots?\)/, "slots remaining");
-			processInput(element, /\(([0-9])\/Day\)/i, "remaining");
-			processInput(element, /can take ([0-9]) legendary actions/i, "Legendary Actions remaining", false);
+		if ($(this).find(".injected-input").length === 0) {
+			processInput(element, /\(([0-9]) slots?\)/, "slots remaining")
+			processInput(element, /\(([0-9])\/Day\)/i, "remaining")
+			processInput(element, /can take ([0-9]) legendary actions/i, "Legendary Actions remaining", false)
 		}
+		element = null
 	});	
 	add_ability_tracker_inputs_on_each(target, tokenId)
 }
@@ -172,15 +199,17 @@ function add_ability_tracker_inputs(target, tokenId) {
  */
 function replace_ability_scores_with_avtt_rollers(target, outerSelector, innerSelector, addAdvDisButton) {
 	$(target).find(outerSelector).each(function() {
-		const currentElement = $(this)
+		let currentElement = $(this).clone()
 		if (currentElement.find(".avtt-roll-button").length === 0) {
-			const abilityType = $(this).find(innerSelector).html()
+			const abilityType = $(currentElement).find(innerSelector).html()
 			const rollType="check"
 			// matches (+1) 
-			let updated = currentElement.html()
+			const updated = currentElement.html()
 				.replaceAll(/(\([+\-] ?[0-9][0-9]?\))/g, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${abilityType} class='avtt-roll-button' title="${abilityType} ${rollType}">$1</button>`);
-			$(currentElement).html(updated);
+			$(this).html(updated);
 		}
+		// terminate the clones reference, overkill but rather be safe when it comes to memory
+		currentElement = null
 	});
 }
 
@@ -196,7 +225,7 @@ function replace_ability_scores_with_avtt_rollers(target, outerSelector, innerSe
 function replace_saves_skill_with_avtt_rollers(target, outerSelector, labelSelector, dataSelector, addAdvDisButton){
 // replace saving throws, skills, etc
 $(target).find(outerSelector).each(function() {
-	let currentElement = $(this)
+	let currentElement = $(this).clone()
 	if (currentElement.find(".avtt-roll-button").length === 0) {
 		const label = $(currentElement).find(labelSelector).html()
 		if (label === "Saving Throws" || label === "Skills"){
@@ -211,10 +240,11 @@ $(target).find(outerSelector).each(function() {
 				// matches "+1"
 				allTidBits.push(tidbit.replace(/([+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">$1</button>`))
 			})
-			const thisTidBitData = $(currentElement).find(dataSelector)
-			$(thisTidBitData).html(allTidBits);				
+			$(this).find(dataSelector).html(allTidBits);				
 		}
 	}
+	// terminate the clones reference, overkill but rather be safe when it comes to memory
+	currentElement = null
 });}
 
 
@@ -225,15 +255,15 @@ $(target).find(outerSelector).each(function() {
 function scan_player_creature_pane(target) {
 	console.group("scan_player_creature_pan")
 
-	let creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
-	let creatureName = target.find(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
-	let creatureAvatar = window.pc.image;
+	const creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
+	const creatureName = target.find(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
+	const creatureAvatar = window.pc?.image;
  	try {
  		// not all creatures have an avatar for some reason
  		creatureAvatar = target.find(".ct-sidebar__header .ct-sidebar__header-preview-image").css("background-image").slice(4, -1).replace(/"/g, "");
  	} catch { }
-	let pc = window.pcs.find(t => t.sheet.includes(find_currently_open_character_sheet()));
-	let displayName = `${pc.name} (${creatureName} ${creatureType})`;
+	const pc = window.pcs.find(t => t.sheet.includes(find_currently_open_character_sheet()));
+	const displayName = `${pc.name} (${creatureName} ${creatureType})`;
 	
 	const clickHandler = function(clickEvent) {
 		roll_button_clicked(clickEvent, displayName, creatureAvatar)
@@ -249,7 +279,7 @@ function scan_player_creature_pane(target) {
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find(".ct-creature-pane__block p").each(function() {
-		let currentElement = $(this)
+		const currentElement = $(this).clone()
 		if (currentElement.find(".avtt-roll-button").length === 0) {
 			// apply most specific regex first matching all possible ways to write a dice notation
 			// to account for all the nuances of DNDB dice notation.
@@ -258,12 +288,14 @@ function scan_player_creature_pane(target) {
 			const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/g
 			// matches " +1 " or " + 1 "
 			const hitRollRegex = /\s([+-]\s?[0-9]+)\s/g
-			let actionType = currentElement.find("strong").html() || "custom"
-			let updated = currentElement.html()
+			const actionType = currentElement.find("strong").html() || "custom"
+			const updated = currentElement.html()
 				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} damage">$1</button>`)
 				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} to hit">$1</button>`)
-			$(currentElement).html(updated);
+			$(this).html(updated);
 		}
+		// terminate the clones reference, overkill but rather be safe when it comes to memory
+		currentElement = null
 	});
 	$(target).find(".avtt-roll-button").click(clickHandler);
 	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
@@ -276,7 +308,7 @@ function find_currently_open_character_sheet() {
 	}
 	let sheet;
 	$("#sheet").find("iframe").each(function () {
-		let src = $(this).attr("src");
+		const src = $(this).clone().attr("src");
 		if (src != "") {
 			sheet = src;
 		}
@@ -296,11 +328,11 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 	contextmenuEvent.stopPropagation();
 	contextmenuEvent.preventDefault();
 
-	let pressedButton = $(contextmenuEvent.currentTarget);
-	let expression = pressedButton.attr('data-exp');
-	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
-	let rollType = pressedButton.attr('data-rolltype');
-	let actionType = pressedButton.attr('data-actiontype');
+	const pressedButton = $(contextmenuEvent.currentTarget);
+	const expression = pressedButton.attr('data-exp');
+	const modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
+	const rollType = pressedButton.attr('data-rolltype');
+	const actionType = pressedButton.attr('data-actiontype');
 
 	if (rollType === "damage") {
 		damage_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
@@ -320,11 +352,11 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
  * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
  */
 function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undefined, entityId = undefined) {
-	let pressedButton = $(clickEvent.currentTarget);
-	let expression = pressedButton.attr('data-exp');
-	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
-	let rollType = pressedButton.attr('data-rolltype');
-	let action = pressedButton.attr('data-actiontype');
+	let pressedButton = $(clickEvent.currentTarget).clone();
+	const expression = pressedButton.attr('data-exp');
+	const modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
+	const rollType = pressedButton.attr('data-rolltype');
+	const action = pressedButton.attr('data-actiontype');
 
 	window.diceRoller.roll(new DiceRoll(
 		`${expression}${modifier}`,
@@ -335,6 +367,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 		entityType,
 		entityId
 	));
+	pressedButton = null
 }
 
 
@@ -372,32 +405,39 @@ function scan_creature_pane(target, displayName, creatureAvatar) {
 }
 
 /** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
- * @param currentElement {jQuery} the jQuery element that contains modifiers HTML */
-function replace_modifiers(currentElement) {
+ * @param target {jQuery} the jQuery element that contains modifiers HTML */
+function replace_modifiers(target) {
+	let currentElement = $(target).clone()
 	if (currentElement.find(".avtt-roll-button").length === 0) {
-		let innerHtml = currentElement.html();
-		let foundModifiers = innerHtml.match(/([\+\-] ?[0-9][0-9]?)/g);
+		const innerHtml = currentElement.html();
+		const foundModifiers = innerHtml.match(/([\+\-] ?[0-9][0-9]?)/g);
 		if (foundModifiers.length > 0) {
-			let mod = foundModifiers[0];
-			let button = $(`<button data-exp='1d20' data-mod='${mod}' data-rolltype='tohit' class='avtt-roll-button'>${innerHtml}</button>`);
-			currentElement.html(button);
+			const mod = foundModifiers[0];
+			const button = $(`<button data-exp='1d20' data-mod='${mod}' data-rolltype='tohit' class='avtt-roll-button'>${innerHtml}</button>`);
+			$(target).html(button);
 		}
 	}
+	// terminate the clones reference, overkill but rather be safe when it comes to memory
+	currentElement = null
 }
 
 /** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
- * @param currentElement {jQuery} the jQuery element that contains modifiers HTML */
-function replace_stat_block_tidbits(currentElement) {
+ * @param target {jQuery} the jQuery element that contains modifiers HTML */
+function replace_stat_block_tidbits(target) {
+	let currentElement = $(target).clone()
 	if (currentElement.find(".avtt-roll-button").length === 0) {
-		let updated = currentElement.html()
+		const updated = currentElement.html()
 			.replaceAll(/([\+\-] ?[0-9][0-9]?)/g, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>");
-		currentElement.html(updated);
+		$(target).html(updated);
 	}
+	// terminate the clones reference, overkill but rather be safe when it comes to memory
+	currentElement = null
 }
 
 /** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
- * @param currentElement {jQuery} the jQuery element that contains modifiers HTML */
-function replace_stat_block_description(currentElement) {
+ * @param target {jQuery} the jQuery element that contains modifiers HTML */
+function replace_stat_block_description(target) {
+	const currentElement = $(target).clone()
 	if (currentElement.find(".avtt-roll-button").length === 0) {
 		// apply most specific regex first matching all possible ways to write a dice notation
 		// to account for all the nuances of DNDB dice notation.
@@ -406,9 +446,11 @@ function replace_stat_block_description(currentElement) {
 		const damageRollRegex = /([0-9]+d[0-9]+\s?([\+-]\s?[0-9]+)?)/g
 		// matches " +1 " or " + 1 "
 		const hitRollRegex = /\s([\+-]\s?[0-9]+)\s/g
-		let updated = currentElement.html()
+		const updated = currentElement.html()
 			.replaceAll(damageRollRegex, "<button data-exp='$1' data-mod='' data-rolltype='damage' class='avtt-roll-button'>$1</button>")
 			.replaceAll(hitRollRegex, "<button data-exp='1d20' data-mod='$1' data-rolltype='tohit' class='avtt-roll-button'>$1</button>")
-		currentElement.html(updated);
+		$(target).html(updated);
 	}
+	// terminate the clones reference, overkill but rather be safe when it comes to memory
+	currentElement = null
 }
