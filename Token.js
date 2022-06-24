@@ -1179,6 +1179,17 @@ class Token {
 						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 						console.log("shallwesnap",shallwesnap);
 						console.log("toggleSnap",window.toggleSnap);
+
+						// get all the tokens that move with the current one
+						let tokensToMove = [];
+						if (self.selected && $(".token.tokenselected").length>1) {
+							tokensToMove = $(".token.tokenselected");
+						} else if (self.get_grouped_tokens().length>1) {
+							tokensToMove = self.get_grouped_tokens().map(t => $("#tokens [data-id='" + t.options.id + "']").get(0));
+							console.log("TOKENS TO MOVE");
+							console.log(tokensToMove);
+						}
+
 						if (shallwesnap) {
 
 							// calculate offset in real coordinates
@@ -1208,59 +1219,56 @@ class Token {
 								el.css("left", `${selectedNewleft - ((auraSize - self.options.size) / 2)}px`);
 							}
 
-							for (var id in window.TOKEN_OBJECTS) {
-								if (window.TOKEN_OBJECTS[id].selected) {
-									setTimeout(function(tempID) {
-										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										console.log($("[data-id='"+id+"']"));
-									}, 200, id);
-									if (id != self.options.id) {
-										const tok = $("#tokens div[data-id='" + id + "']");
+							for (let tokenToMove of tokensToMove) {
+								let id = $(tokenToMove).attr("data-id");
+								setTimeout(function(tempID) {
+									$("[data-id='"+tempID+"']").removeClass("pause_click");
+									console.log($("[data-id='"+id+"']"));
+								}, 200, id);
+								if (id != self.options.id) {
+									const tok = $("#tokens div[data-id='" + id + "']");
 
-										const oldtop = parseInt(tok.css("top"));
-										const oldleft = parseInt(tok.css("left"));
+									const oldtop = parseInt(tok.css("top"));
+									const oldleft = parseInt(tok.css("left"));
 
-										const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-										const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-										tok.css("top", newtop + "px");
-										tok.css("left", newleft + "px");
+									tok.css("top", newtop + "px");
+									tok.css("left", newleft + "px");
 
-										const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
-										if (selEl.length > 0) {
-											const auraSize = parseInt(selEl.css("width"));
+									const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
+									if (selEl.length > 0) {
+										const auraSize = parseInt(selEl.css("width"));
 
-											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
-											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
-										}
+										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
+										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].options.size) / 2)}px`);
 									}
 								}
 							}
 
 						} else {
 							// we want to remove the pause_click even when grid snapping is turned off
-							for (var id in window.TOKEN_OBJECTS) {
-								if (window.TOKEN_OBJECTS[id].selected) {
-									setTimeout(function(tempID) {
-										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										//console.log($("[data-id='"+id+"']"));
-									}, 200, id);
-								}
+							for (let tokenToMove of tokensToMove) {
+								let id = $(tokenToMove).attr("data-id");
+								setTimeout(function(tempID) {
+									$("[data-id='"+tempID+"']").removeClass("pause_click");
+									//console.log($("[data-id='"+id+"']"));
+								}, 200, id);
 							}
 						}
 
 						window.DRAGGING = false;
 
 						self.update_and_sync(event);
-						if (self.selected) {
-							for (id in window.TOKEN_OBJECTS) {
-								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
+							for (let tokenToMove of tokensToMove) {
+								let id = $(tokenToMove).attr("data-id");
+								if ((id != self.options.id)) {
 									var curr = window.TOKEN_OBJECTS[id];
 									var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
 									curr.update_and_sync(ev);
 								}
 							}
-						}
 
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
@@ -1295,25 +1303,30 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 
+					let tokensToMove = [];
 					if (self.selected && $(".token.tokenselected").length>1) {
-						for (let tok of $(".token.tokenselected")){
-							let id = $(tok).attr("data-id");
-							$(tok).addClass("pause_click");
-							if($(tok).is(":animated")){
-								window.TOKEN_OBJECTS[id].stopAnimation();
-							}
-							if (id != self.options.id) {
-								var curr = window.TOKEN_OBJECTS[id];
-								curr.orig_top = curr.options.top;
-								curr.orig_left = curr.options.left;
+						tokensToMove = $(".token.tokenselected");
+					} else if (self.get_grouped_tokens().length>1) {
+						tokensToMove = self.get_grouped_tokens().map(t => $("#tokens [data-id='" + t.options.id + "']").get(0));
+						console.log("TOKENS TO MOVE");
+						console.log(tokensToMove);
+					}
+					for (let tok of tokensToMove){
+						let id = $(tok).attr("data-id");
+						$(tok).addClass("pause_click");
+						if($(tok).is(":animated")){
+							window.TOKEN_OBJECTS[id].stopAnimation();
+						}
+						if (id != self.options.id) {
+							var curr = window.TOKEN_OBJECTS[id];
+							curr.orig_top = curr.options.top;
+							curr.orig_left = curr.options.left;
 
-								const el = $("#aura_" + id.replaceAll("/", ""));
-								if (el.length > 0) {
-									el.attr("data-left", el.css("left").replace("px", ""));
-									el.attr("data-top", el.css("top").replace("px", ""));
-								}
+							const el = $("#aura_" + id.replaceAll("/", ""));
+							if (el.length > 0) {
+								el.attr("data-left", el.css("left").replace("px", ""));
+								el.attr("data-top", el.css("top").replace("px", ""));
 							}
-
 						}
 					}
 
@@ -1412,36 +1425,40 @@ class Token {
 					}
 
 
-
+					let tokensToMove = [];
 					if (self.selected && $(".token.tokenselected").length>1) {
-						// if dragging on a selected token, we should move also the other selected tokens
-						// try to move other tokens by the same amount
-						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						tokensToMove = $(".token.tokenselected");
+					} else if (self.get_grouped_tokens().length>1) {
+						tokensToMove = self.get_grouped_tokens().map(t => $("#tokens [data-id='" + t.options.id + "']").get(0));
+						console.log("TOKENS TO MOVE");
+						console.log(tokensToMove);
+					}
+					// if dragging on a selected token, we should move also the other selected tokens
+					// try to move other tokens by the same amount
+					var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+					var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						for (let tok of $(".token.tokenselected")){
-							let id = $(tok).attr("data-id");
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
-								//console.log("sposto!");
-								var curr = window.TOKEN_OBJECTS[id];
-								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								$(tok).css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
-								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
-								//curr.place();
+					for (let tok of tokensToMove){
+						let id = $(tok).attr("data-id");
+						if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
+							//console.log("sposto!");
+							var curr = window.TOKEN_OBJECTS[id];
+							$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
+							$(tok).css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
+							//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
+							//curr.place();
 
-								const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
-								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + offsetLeft) + "px");
-									selEl.css('top', (currTop + offsetTop) + "px");
-								}
+							const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
+							if (selEl.length > 0) {
+								let currLeft = parseFloat(selEl.attr("data-left"));
+								let currTop = parseFloat(selEl.attr("data-top"));
+								let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+								let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+								selEl.css('left', (currLeft + offsetLeft) + "px");
+								selEl.css('top', (currTop + offsetTop) + "px");
 							}
 						}
 					}
-
 				}
 			});
 

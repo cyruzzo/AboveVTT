@@ -243,14 +243,14 @@ function token_context_menu_expanded(tokenIds, e) {
 				let groupId = uuid();
 				tokens.forEach(token => {
 					token.options.group_id = groupId;
-					token.place_sync_persist();
+					token.update_and_sync();
 				});
 			} else {
 				clickedButton.removeClass("ungroup-tokens").addClass("group-tokens");
 				clickedButton.html(groupButtonInternals);
 				tokens.forEach(token => {
 					delete token.options.group_id;
-					token.place_sync_persist();
+					token.update_and_sync();
 				});
 			}
 		});
