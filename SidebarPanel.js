@@ -26,10 +26,12 @@ function init_sidebar_tabs() {
     update_pclist();
   }
 
-  $("#sounds-panel").remove();
-  soundsPanel = new SidebarPanel("sounds-panel", false);
-  sidebarContent.append(soundsPanel.build());
-	init_audio();
+  if (window.DM) { // players will eventually have audio volume control in the settings panel
+    $("#sounds-panel").remove();
+    soundsPanel = new SidebarPanel("sounds-panel", false);
+    sidebarContent.append(soundsPanel.build());
+    init_audio();
+  }
 
   $("#journal-panel").remove();
   journalPanel = new SidebarPanel("journal-panel", false);
@@ -40,12 +42,12 @@ function init_sidebar_tabs() {
     window.JOURNAL.build_journal()
   }
 
-  if (window.DM) {
-    $("#settings-panel").remove();
-    settingsPanel = new SidebarPanel("settings-panel", false);
-    sidebarContent.append(settingsPanel.build());
-    init_settings();
-  }
+  $("#settings-panel").remove();
+  settingsPanel = new SidebarPanel("settings-panel", false);
+  sidebarContent.append(settingsPanel.build());
+  init_settings();
+
+  observe_hover_text($(".sidebar__inner"));
 }
 
 function sidebar_modal_is_open() {
@@ -60,6 +62,24 @@ function close_sidebar_modal() {
 function display_sidebar_modal(sidebarPanel) {
   $("#VTTWRAPPER").append(sidebarPanel.build());
   window.current_sidebar_modal = sidebarPanel;
+  observe_hover_text(sidebarPanel.container);
+}
+
+function observe_hover_text(sidebarPanelContent) {
+  sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text", function(hoverEvent) {
+    const displayText = $(hoverEvent.currentTarget).attr("data-hover");
+    if (typeof displayText === "string" && displayText.length > 0) {
+      if (hoverEvent.type === "mouseenter") {
+        build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
+          flyout.append(`<div class="sidebar-hover-text-flyout">${displayText}</div>`);
+          position_flyout_left_of(sidebarPanelContent, flyout);
+        });
+      } else {
+        // only remove hover text flyouts. Don't remove other types of flyouts that may or may not be up
+        $(".sidebar-hover-text-flyout").closest(".sidebar-flyout").remove();
+      }
+    }
+  });
 }
 
 class SidebarPanel {
@@ -188,14 +208,15 @@ class SidebarPanel {
       };
     }
 
-    return build_text_input_wrapper(titleText,
+    return build_text_input_wrapper(
+        titleText,
         `<input title="${titleText}" placeholder="https://..." name="addCustomImage" type="text" />`,
         `<button>Add</button>`,
         function(imageUrl, input, event) {
           if(imageUrl.startsWith("data:")){
             alert("You cannot use urls starting with data:");
           } else {
-            imageUrlEntered(imageUrl);
+            imageUrlEntered(parse_img(imageUrl));
           }
         }
     );
@@ -231,7 +252,7 @@ function build_close_button() {
  * @param inputSubmitCallback {function|undefined} the function to be called when the user presses enter, or clicks the button. function(inputValue, input, event) { ... }
  * @returns {*|jQuery|HTMLElement}
  */
-function build_text_input_wrapper(titleText, input, sideButton, inputSubmitCallback) {
+function build_text_input_wrapper(titleText, input, sideButton, inputSubmitCallback, submitOnFocusout = true) {
   let inputLabel = $(`<div class="token-image-modal-footer-title">${titleText}</div>`);
   let textInput = $(input);
   let submitButton = (sideButton !== undefined && sideButton.length > 0) ? $(sideButton) : $(`<button style="display:none;">Add</button>`);
@@ -241,9 +262,20 @@ function build_text_input_wrapper(titleText, input, sideButton, inputSubmitCallb
     textInput.on('keyup', function(event) {
       let inputValue = event.target.value;
       if (event.key === "Enter" && inputValue !== undefined && inputValue.length > 0) {
-        inputSubmitCallback(inputValue, event.target, event);
+        inputSubmitCallback(inputValue, $(event.target), event);
+      } else if (event.key === "Escape") {
+        $(event.target).blur();
       }
     });
+
+    if (submitOnFocusout) {
+      textInput.on('focusout', function(event) {
+        let inputValue = event.target.value;
+        if (inputValue !== undefined && inputValue.length > 0) {
+          inputSubmitCallback(inputValue, $(event.target), event);
+        }
+      });
+    }
 
     let inputName = textInput.attr("name");
     submitButton.on("click", function(event) {
@@ -281,48 +313,150 @@ function build_select_input(labelText, input) {
   return wrapper;
 }
 
-function build_toggle_input(name, labelText, enabled, enabledHoverText, disabledHoverText, changeHandler) {
+function update_hover_text(hoverElement, hoverText) {
+  if (hoverText !== undefined && hoverText.length > 0) {
+    hoverElement.addClass("sidebar-hover-text");
+    hoverElement.attr("data-hover", hoverText);
+    let hoverFlyout = $(".sidebar-flyout .sidebar-hover-text-flyout");
+    if (hoverFlyout.length > 0) {
+      // update the flyout text and reposition it
+      let flyout = hoverFlyout.closest(".sidebar-flyout");
+      let previousWidth = flyout.width();
+      hoverFlyout.text(hoverText);
+      let newWidth = flyout.width();
+      let oldPosition = flyout.position().left;
+      flyout.css("left", oldPosition + (previousWidth - newWidth));
+    }
+  } else {
+    hoverElement.removeClass("sidebar-hover-text");
+    hoverElement.removeAttr("data-hover");
+  }
+}
+
+/// changeHandler: function(name, newValue) // newValue will be one of [true, false, undefined], where `undefined` means "default"
+function build_token_option_select_input(option, currentValue, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
   let wrapper = $(`
     <div class="token-image-modal-footer-select-wrapper">
-      <div class="token-image-modal-footer-title">${labelText}</div>
+      <div class="token-image-modal-footer-title">${option.label}</div>
     </div>
   `);
-  let input = $(`<button name="${name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
-  const updateHoverText = function(hoverElement, hoverText) {
-    if (hoverText !== undefined && hoverText.length > 0) {
-      hoverElement.addClass("sidebar-hovertext");
-      hoverElement.attr("data-hover", hoverText);
+  let inputElement = $(`
+      <select name="${option.name}">
+          <option value="default">Default</option>
+          <option value="disabled">${option.disabledValue}</option>
+          <option value="enabled">${option.enabledValue}</option>
+      </select>
+  `);
+  wrapper.append(inputElement);
+
+  // explicitly look for true/false because the default value is undefined
+  if (currentValue === true) {
+    inputElement.val("enabled");
+    update_hover_text(wrapper, option.enabledDescription);
+  } else if (currentValue === false) {
+    inputElement.val("disabled");
+    update_hover_text(wrapper, option.disabledDescription);
+  } else {
+    inputElement.val("default");
+    if (window.TOKEN_SETTINGS[option.name] === true) {
+      update_hover_text(wrapper, option.enabledDescription);
     } else {
-      hoverElement.removeClass("sidebar-hovertext");
-      hoverElement.removeAttr("data-hover");
+      update_hover_text(wrapper, option.disabledDescription);
     }
   }
-  if (enabled === null) {
+  inputElement.change(function (event) {
+    console.log("update", event.target.name, "to", event.target.value);
+    if (event.target.value === "enabled") {
+      changeHandler(option.name, true);
+      update_hover_text(wrapper, option.enabledDescription);
+    } else if (event.target.value === "disabled") {
+      changeHandler(option.name, false);
+      update_hover_text(wrapper, option.disabledDescription);
+    } else {
+      changeHandler(option.name, undefined);
+      if (window.TOKEN_SETTINGS[option.name] === true) {
+        update_hover_text(wrapper, option.enabledDescription);
+      } else {
+        update_hover_text(wrapper, option.disabledDescription);
+      }
+    }
+  });
+
+  return wrapper;
+}
+
+function build_toggle_input(settingOption, currentValue, changeHandler) {
+  if (typeof changeHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  let wrapper = $(`
+    <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
+      <div class="token-image-modal-footer-title">${settingOption.label}</div>
+    </div>
+  `);
+  let input = $(`<button name="${settingOption.name}" type="button" role="switch" class="rc-switch"><span class="rc-switch-inner"></span></button>`);
+  if (currentValue === null) {
     input.addClass("rc-switch-unknown");
-    updateHoverText(wrapper, "This has multiple values. Clicking this will enable it for all.");
-  } else if (enabled === true) {
-    input.addClass("rc-switch-checked");
-    updateHoverText(wrapper, enabledHoverText);
+    update_hover_text(wrapper, "This has multiple values. Clicking this will enable it for all.");
   } else {
-    updateHoverText(wrapper, disabledHoverText);
+    if (currentValue === true) {
+      input.addClass("rc-switch-checked");
+    }
+    const currentlySetOption = settingOption.options.find(o => o.value === currentValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+    update_hover_text(wrapper, currentlySetOption?.description);
   }
   wrapper.append(input);
   input.click(function(clickEvent) {
     if ($(clickEvent.currentTarget).hasClass("rc-switch-checked")) {
       // it was checked. now it is no longer checked
       $(clickEvent.currentTarget).removeClass("rc-switch-checked");
-      updateHoverText(wrapper, disabledHoverText);
-      changeHandler(name, false);
+      changeHandler(settingOption.name, false);
+      const disabledOption = settingOption.options.find(o => o.value === false);
+      update_hover_text(wrapper, disabledOption?.description);
     } else {
       // it was not checked. now it is checked
       $(clickEvent.currentTarget).removeClass("rc-switch-unknown");
       $(clickEvent.currentTarget).addClass("rc-switch-checked");
-      updateHoverText(wrapper, enabledHoverText);
-      changeHandler(name, true);
+      changeHandler(settingOption.name, true);
+      const disabledOption = settingOption.options.find(o => o.value === true);
+      update_hover_text(wrapper, disabledOption?.description);
     }
+  });
+  return wrapper;
+}
+
+function build_dropdown_input(settingOption, currentValue, changeHandler) {
+  if (typeof changeHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  let wrapper = $(`
+     <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
+       <div class="token-image-modal-footer-title">${settingOption.label}</div>
+     </div>
+   `);
+
+  let input = $(`<select name="${settingOption.name}"></select>`);
+  wrapper.append(input);
+  for (const option of settingOption.options) {
+    input.append(`<option value="${option.value}">${option.label}</option>`);
+  }
+  if (currentValue !== undefined) {
+    input.find(`option[value='${currentValue}']`).attr('selected','selected');
+  } else {
+    input.find(`option[value='${settingOption.defaultValue}']`).attr('selected','selected');
+  }
+
+  const currentlySetOption = settingOption.options.find(o => o.value === currentValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+  update_hover_text(wrapper, currentlySetOption?.description);
+  input.change(function(event) {
+    let newValue = event.target.value;
+    changeHandler(settingOption.name, newValue);
+    const updatedOption = settingOption.options.find(o => o.value === newValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+    update_hover_text(wrapper, updatedOption?.description);
+    update_token_base_visibility(wrapper.parent());
   });
   return wrapper;
 }
@@ -341,41 +475,21 @@ function build_toggle_input(name, labelText, enabled, enabledHoverText, disabled
  */
 class SidebarListItem {
 
-  // the types of items that are supported
-  static TypeFolder = "folder";
-  static TypeMyToken = "myToken";
-  static TypePC = "pc";
-  static TypeMonster = "monster";
-  static TypeBuiltinToken = "builtinToken";
-  static TypeEncounter = "encounter";
-  static TypeScene = "scene";
-
-  static PathRoot = "/";
-  static PathPlayers = "/Players";
-  static PathMonsters = "/Monsters";
-  static PathMyTokens = "/My Tokens";
-  static PathAboveVTT = "/AboveVTT Tokens";
-  static PathEncounters = "/Encounters";
-  static PathScenes = "/Scenes";
-
-  // folder names within the tokens panel
-  static NamePlayers = "Players";
-  static NameMonsters = "Monsters";
-  static NameMyTokens = "My Tokens";
-  static NameAboveVTT = "AboveVTT Tokens";
-  static NameEncounters = "Encounters";
-
   /** Do not call this directly! It is a generic constructor for a SidebarListItem. Use one of the static functions instead.
+   * @param id {string} a unique identifier for the backing item
    * @param name {string} the name displayed to the user
    * @param image {string} the src of the img tag
    * @param type {string} the type of item this represents. One of [folder, myToken, monster, pc]
    * @param folderPath {string} the folder this item is in
+   * @param parentId {string|undefined} a string id of the folder this item is in
    */
-  constructor(name, image, type, folderPath = SidebarListItem.PathRoot) {
+  constructor(id, name, image, type, folderPath = RootFolder.Root.path, parentId = "root") {
+    this.id = id;
     this.name = name;
     this.image = image;
     this.type = type;
     this.folderPath = sanitize_folder_path(folderPath);
+    this.parentId = parentId;
   }
 
   /**
@@ -383,38 +497,64 @@ class SidebarListItem {
    * @param folderPath {string} the path that the folder is in (not including the name of this folder)
    * @param name {string} the name of the folder
    * @param collapsed {boolean} whether or not the folder is open or closed.
-   * @param subtitle {string|undefined} a subtitle to be displayed. defaults to undefined
+   * @param parentId {string|undefined} a string id of the folder this item is in
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
-  static Folder(folderPath, name, collapsed, subtitle = undefined) {
-    console.debug(`SidebarListItem.Folder ${folderPath}/${name}, collapsed: ${collapsed}`);
-    let item = new SidebarListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, SidebarListItem.TypeFolder, folderPath);
-    item.collapsed = collapsed;
-    item.subtitle = subtitle;
+  static Folder(id, folderPath, name, collapsed, parentId) {
+  // static Folder(folderPath, name, collapsed, subtitle = undefined) {
+    console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}`);
+    let item = new SidebarListItem(id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath, parentId);
+    if (collapsed === true || collapsed === false) {
+      item.collapsed = collapsed;
+    } else {
+      item.collapsed = true;
+    }
     return item;
   }
 
   /**
    * Creates a "My Token" list item.
-   * @param tokenData {object} an object that represents the "My Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
+   * @param tokenCustomization {TokenCustomization} an object that represents the "My Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
-  static MyToken(tokenData) {
-    console.debug("SidebarListItem.MyToken", tokenData);
-    return new SidebarListItem(tokenData.name, tokenData.image, SidebarListItem.TypeMyToken, `${SidebarListItem.PathMyTokens}/${tokenData.folderPath}`);
+  static MyToken(tokenCustomization) {
+    console.debug("SidebarListItem.MyToken", tokenCustomization);
+    let image = "";
+    if (typeof tokenCustomization.tokenOptions?.alternativeImages === "object" && tokenCustomization.tokenOptions.alternativeImages.length > 0) {
+      image = tokenCustomization.tokenOptions.alternativeImages[0];
+    }
+    return new SidebarListItem(
+        tokenCustomization.id,
+        tokenCustomization.tokenOptions.name,
+        image,
+        ItemType.MyToken,
+        tokenCustomization.folderPath(),
+        tokenCustomization.parentId
+    );
   }
 
   /**
    * Creates a Builtin list item.
    * @param tokenData {object} an object that represents the "Builtin Token". The object is an updated version of legacy tokendata objects, and mostly translates to the {Token}.options object
+   * @param parentId {string|undefined} a string id of the folder this item is in
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
   static BuiltinToken(tokenData) {
     console.debug("SidebarListItem.BuiltinToken", tokenData);
-    return new SidebarListItem(tokenData.name, tokenData.image, SidebarListItem.TypeBuiltinToken, `${SidebarListItem.PathAboveVTT}/${tokenData.folderPath}`);
+    let folderPath = sanitize_folder_path(`${RootFolder.AboveVTT.path}/${tokenData.folderPath}`);
+    let item = new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.image, ItemType.BuiltinToken, folderPath, path_to_html_id(folderPath));
+    item.tokenOptions = tokenData;
+    return item
+  }
+  static DDBToken(tokenData) {
+    console.debug("SidebarListItem.DDBToken", tokenData);
+    let folderPath = sanitize_folder_path(`${RootFolder.DDB.path}/${tokenData.folderPath}`);
+    let item = new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.alternativeImages[0], ItemType.DDBToken, folderPath, path_to_html_id(folderPath));
+    item.tokenOptions = tokenData;
+    return item
   }
 
   /**
@@ -425,7 +565,7 @@ class SidebarListItem {
    */
   static Monster(monsterData) {
     console.debug("SidebarListItem.Monster", monsterData);
-    let item = new SidebarListItem(monsterData.name, monsterData.avatarUrl, SidebarListItem.TypeMonster, SidebarListItem.PathMonsters);
+    let item = new SidebarListItem(monsterData.id, monsterData.name, monsterData.avatarUrl, ItemType.Monster, RootFolder.Monsters.path, RootFolder.Monsters.id);
     item.monsterData = monsterData;
     return item;
   }
@@ -440,7 +580,7 @@ class SidebarListItem {
    */
   static PC(sheet, name, image) {
     console.debug("SidebarListItem.PC", sheet, name, image);
-    let item = new SidebarListItem(name, image, SidebarListItem.TypePC, SidebarListItem.PathPlayers);
+    let item = new SidebarListItem(sheet, name, image, ItemType.PC, RootFolder.Players.path, RootFolder.Players.id);
     item.sheet = sheet;
     return item;
   }
@@ -457,8 +597,8 @@ class SidebarListItem {
     if ((typeof encounter.name == 'string') && encounter.name.length > 0) {
       name = encounter.name;
     }
-    console.debug(`SidebarListItem.Encounter ${SidebarListItem.PathEncounters}/${name}, collapsed: ${collapsed}`);
-    let item = new SidebarListItem(name, `${window.EXTENSION_PATH}assets/folder.svg`, SidebarListItem.TypeEncounter, SidebarListItem.PathEncounters);
+    console.debug(`SidebarListItem.Encounter ${RootFolder.Encounters.path}/${name}, collapsed: ${collapsed}`);
+    let item = new SidebarListItem(encounter.id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Encounter, RootFolder.Encounters.path, RootFolder.Encounters.id);
     if ((typeof encounter.flavorText == 'string') && encounter.flavorText.length > 0) {
       item.description = encounter.flavorText;
     }
@@ -473,10 +613,30 @@ class SidebarListItem {
       name = sceneData.title;
     }
     let scenePath = sceneData.folderPath || "";
-    let item = new SidebarListItem(name, sceneData.player_map, SidebarListItem.TypeScene, sanitize_folder_path(`${SidebarListItem.PathScenes}/${scenePath}`));
+    let folderPath = sanitize_folder_path(`${RootFolder.Scenes.path}/${scenePath}`);
+    let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, path_to_html_id(folderPath));
     console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
     item.sceneId = sceneData.id;
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
+    return item;
+  }
+
+  // size is number of squares, not feet
+  static Aoe(shape, size, style, name=undefined) {
+    if (typeof name !== "string" || name.length === 0) {
+      name = `${shape} AoE`;
+    }
+    const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}`
+    let item = new SidebarListItem(path_to_html_id(RootFolder.Aoe.path, name), name, image, ItemType.Aoe, RootFolder.Aoe.path, RootFolder.Aoe.id);
+    console.debug(`SidebarListItem.Aoe`, item);
+    item.shape = shape;
+    let parsedSize = parseInt(size);
+    if (isNaN(parsedSize)) {
+      item.size = parsedSize;
+    } else {
+      item.size = 1;
+    }
+    item.style = style;
     return item;
   }
 
@@ -517,50 +677,57 @@ class SidebarListItem {
   }
 
   /** @returns {boolean} whether or not this item represents a Folder */
-  isTypeFolder() { return this.type === SidebarListItem.TypeFolder }
+  isTypeFolder() { return this.type === ItemType.Folder }
 
   /** @returns {boolean} whether or not this item represents a "My Token" */
-  isTypeMyToken() { return this.type === SidebarListItem.TypeMyToken }
+  isTypeMyToken() { return this.type === ItemType.MyToken }
 
   /** @returns {boolean} whether or not this item represents a Player */
-  isTypePC() { return this.type === SidebarListItem.TypePC }
+  isTypePC() { return this.type === ItemType.PC }
 
   /** @returns {boolean} whether or not this item represents a Monster */
-  isTypeMonster() { return this.type === SidebarListItem.TypeMonster }
+  isTypeMonster() { return this.type === ItemType.Monster }
 
   /** @returns {boolean} whether or not this item represents a Builtin Token */
-  isTypeBuiltinToken() { return this.type === SidebarListItem.TypeBuiltinToken }
+  isTypeBuiltinToken() { return this.type === ItemType.BuiltinToken }
+
+  /** @returns {boolean} whether or not this item represents a Builtin Token */
+  isTypeDDBToken() { return this.type === ItemType.DDBToken }
 
   /** @returns {boolean} whether or not this item represents an Encounter */
-  isTypeEncounter() { return this.type === SidebarListItem.TypeEncounter }
+  isTypeEncounter() { return this.type === ItemType.Encounter }
 
   /** @returns {boolean} whether or not this item represents a Scene */
-  isTypeScene() { return this.type === SidebarListItem.TypeScene }
+  isTypeScene() { return this.type === ItemType.Scene }
+
+  /** @returns {boolean} whether or not this item represents an AoE */
+  isTypeAoe() { return this.type === ItemType.Aoe }
 
   /** @returns {boolean} whether or not this item is listed in the tokens panel */
   isTokensPanelItem() {
     if (this.isTypeFolder()) {
-      if (this.folderPath === SidebarListItem.PathRoot) {
-        return this.name === SidebarListItem.NamePlayers || this.name === SidebarListItem.NameMonsters || this.name === SidebarListItem.NameMyTokens || this.name === SidebarListItem.NameAboveVTT || this.name === SidebarListItem.NameEncounters;
+      if (this.folderPath === RootFolder.Root.path) {
+        return this.name === RootFolder.Players.name || this.name === RootFolder.Monsters.name || this.name === RootFolder.MyTokens.name || this.name === RootFolder.AboveVTT.name || this.name === RootFolder.Encounters.name;
       } else {
-        return this.folderPath.startsWith(SidebarListItem.PathPlayers) || this.folderPath.startsWith(SidebarListItem.PathMonsters) || this.folderPath.startsWith(SidebarListItem.PathMyTokens) || this.folderPath.startsWith(SidebarListItem.PathAboveVTT) || this.folderPath.startsWith(SidebarListItem.PathEncounters);
+        return this.folderPath.startsWith(RootFolder.Players.path) || this.folderPath.startsWith(RootFolder.Monsters.path) || this.folderPath.startsWith(RootFolder.MyTokens.path) || this.folderPath.startsWith(RootFolder.AboveVTT.path) || this.folderPath.startsWith(RootFolder.Encounters.path);
       }
     }
-    return this.isTypeMyToken() || this.isTypePC() || this.isTypeMonster() || this.isTypeBuiltinToken()
+    return this.isTypeMyToken() || this.isTypePC() || this.isTypeMonster() || this.isTypeBuiltinToken() || this.isTypeDDBToken()
   }
 
   /** @returns {boolean} whether or not this item represents an object that can be edited by the user */
   canEdit() {
     switch (this.type) {
-      case SidebarListItem.TypeFolder:
-        return this.folderPath.startsWith(SidebarListItem.PathMyTokens) || this.folderPath.startsWith(SidebarListItem.PathScenes);
-      case SidebarListItem.TypeMyToken:
-      case SidebarListItem.TypePC:
-      case SidebarListItem.TypeMonster:
-      case SidebarListItem.TypeEncounter:
-      case SidebarListItem.TypeScene:
+      case ItemType.Folder:
+        return this.folderPath.startsWith(RootFolder.MyTokens.path) || this.folderPath.startsWith(RootFolder.Scenes.path);
+      case ItemType.MyToken:
+      case ItemType.PC:
+      case ItemType.Monster:
+      case ItemType.Encounter:
+      case ItemType.Scene:
+      case ItemType.Aoe:
         return true;
-      case SidebarListItem.TypeBuiltinToken:
+      case ItemType.BuiltinToken:
       default:
         return false;
     }
@@ -569,16 +736,17 @@ class SidebarListItem {
   /** @returns {boolean} whether or not this item represents an object that can be deleted by the user */
   canDelete() {
     switch (this.type) {
-      case SidebarListItem.TypeFolder:
+      case ItemType.Folder:
         // TODO: allow deleting scenes folders
-        return this.folderPath.startsWith(SidebarListItem.PathMyTokens) || this.folderPath.startsWith(SidebarListItem.PathScenes);
-      case SidebarListItem.TypeMyToken:
-      case SidebarListItem.TypeScene:
+        return this.folderPath.startsWith(RootFolder.MyTokens.path) || this.folderPath.startsWith(RootFolder.Scenes.path);
+      case ItemType.MyToken:
+      case ItemType.Scene:
         return true;
-      case SidebarListItem.TypePC:
-      case SidebarListItem.TypeMonster:
-      case SidebarListItem.TypeBuiltinToken:
-      case SidebarListItem.TypeEncounter: // we technically could support this, but I don't think we should
+      case ItemType.PC:
+      case ItemType.Monster:
+      case ItemType.BuiltinToken:
+      case ItemType.Encounter: // we technically could support this, but I don't think we should
+      case ItemType.Aoe: // we technically could support this, but I don't think we should
       default:
         return false;
     }
@@ -605,6 +773,7 @@ class SidebarListItem {
 
   /** @returns {boolean} true if the name partially matches the searchTerm or if the containing folder name partially matches the searchTerm */
   nameOrContainingFolderMatches(searchTerm) {
+    if (!this.name) return false;
     return this.name.toLowerCase().includes(searchTerm.toLowerCase()) // any item with a partially matching name
     || this.containingFolderName().toLowerCase().includes(searchTerm.toLowerCase()) // all items within a folder with a partially matching name
   }
@@ -616,7 +785,7 @@ class SidebarListItem {
  */
 function sanitize_folder_path(dirtyPath) {
   if (dirtyPath === undefined) {
-    return SidebarListItem.PathRoot;
+    return RootFolder.Root.path;
   }
   let cleanPath = dirtyPath.replaceAll("///", "/").replaceAll("//", "/");
   // remove trailing slashes before adding one at the beginning. Otherwise, we return an empty string
@@ -627,6 +796,20 @@ function sanitize_folder_path(dirtyPath) {
     cleanPath = `/${cleanPath}`;
   }
   return cleanPath;
+}
+
+/**
+ * @param html {*|jQuery|HTMLElement} the html representation of the item
+ * @returns {SidebarListItem|undefined} SidebarListItem.Aoe if found, else undefined
+ */
+function is_html_aoe(html) {
+  let shape = html.attr("data-shape");
+  let style = html.attr("data-style");
+  let size = html.attr("data-size");
+  if (shape && style && size) { // TODO: be more thorough with data validation here
+    return SidebarListItem.Aoe(shape, size, style);
+  }
+  return undefined
 }
 
 /**
@@ -662,6 +845,15 @@ function find_sidebar_list_item(html) {
     }
   }
 
+  let htmlId = html.attr("id");
+  if (typeof htmlId === "string" && htmlId.length > 0) {
+    foundItem = window.tokenListItems.find(li => li.id === htmlId);
+    if (foundItem !== undefined) {
+      return foundItem;
+    }
+  }
+
+
   let fullPath = harvest_full_path(html);
   return find_sidebar_list_item_from_path(fullPath);
 }
@@ -675,7 +867,7 @@ function find_sidebar_list_item_from_path(fullPath) {
   const matchingPath = function(item) { return item.fullPath() === fullPath };
 
   let foundItem;
-  if (fullPath.startsWith(SidebarListItem.PathScenes)) {
+  if (fullPath.startsWith(RootFolder.Scenes.path)) {
     foundItem = window.sceneListItems.find(matchingPath);
     if (foundItem === undefined) {
       foundItem = window.sceneListFolders.find(matchingPath);
@@ -748,6 +940,14 @@ function set_full_path(html, fullPath) {
   return html.attr("data-full-path", encode_full_path(fullPath)).addClass("list-item-identifier");
 }
 
+function path_to_html_id(path, name) {
+  if (name === undefined) {
+    return path.replace(/\W/g,'_');
+  } else {
+    return sanitize_folder_path(`${path}/${name}`).replace(/\W/g,'_');
+  }
+}
+
 /**
  * encodes the path of an item so it can be safely stored on an html object
  * @param fullPath {string} the path to encode
@@ -803,7 +1003,7 @@ function matches_full_path(html, fullPath) {
  */
 function build_sidebar_list_row(listItem) {
 
-  let row = $(`<div class="sidebar-list-item-row" title="${listItem.name}"></div>`);
+  let row = $(`<div id="${listItem.id}" class="sidebar-list-item-row" title="${listItem.name}"></div>`);
   set_full_path(row, listItem.fullPath());
 
   let rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
@@ -812,8 +1012,19 @@ function build_sidebar_list_row(listItem) {
 
   let imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
   rowItem.append(imgHolder);
-  let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
-  imgHolder.append(img);
+  if (listItem.type !== "aoe"){
+    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
+    imgHolder.append(img);
+  }
+  else{
+    // possibly change the background-image-size so it looks nicer as a small image
+    let img = $(
+      `<div data-img="true"; 
+      class="aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}">
+       </div>
+      `)
+    imgHolder.append(img);
+  }
 
   let details = $(`<div class="sidebar-list-item-row-details"></div>`);
   rowItem.append(details);
@@ -833,8 +1044,8 @@ function build_sidebar_list_row(listItem) {
   }
 
   switch (listItem.type) {
-    case SidebarListItem.TypeEncounter: // explicitly allowing encounter to fall through because we want them to be treated like folders
-    case SidebarListItem.TypeFolder:
+    case ItemType.Encounter: // explicitly allowing encounter to fall through because we want them to be treated like folders
+    case ItemType.Folder:
       subtitle.hide();
       row.append(`<div class="folder-item-list"></div>`);
       row.addClass("folder");
@@ -842,7 +1053,7 @@ function build_sidebar_list_row(listItem) {
       if (listItem.collapsed === true) {
         row.addClass("collapsed");
       }
-      if (listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
+      if (listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         // add buttons for creating subfolders and tokens
         let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
         rowItem.append(addFolder);
@@ -865,13 +1076,13 @@ function build_sidebar_list_row(listItem) {
           reorderButton.on("click", function (clickEvent) {
             clickEvent.stopPropagation();
             if ($(clickEvent.currentTarget).hasClass("active")) {
-              disable_draggable_change_folder(SidebarListItem.TypeMyToken);
+              disable_draggable_change_folder();
             } else {
-              enable_draggable_change_folder(SidebarListItem.TypeMyToken);
+              enable_draggable_change_folder(ItemType.MyToken);
             }
           });
         }
-      } else if (listItem.fullPath().startsWith(SidebarListItem.PathScenes)) {
+      } else if (listItem.fullPath().startsWith(RootFolder.Scenes.path)) {
         // add buttons for creating subfolders and scenes
         let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
         rowItem.append(addFolder);
@@ -888,7 +1099,7 @@ function build_sidebar_list_row(listItem) {
           let clickedItem = find_sidebar_list_item(clickedRow);
           create_scene_inside(clickedItem.fullPath());
         });
-      } else if (listItem.fullPath() === SidebarListItem.PathMonsters) {
+      } else if (listItem.fullPath() === RootFolder.Monsters.path) {
         // add monster filter button on the root monsters folder
         let filterMonsters = $(`<button class="token-row-button monster-filter-button" title="Filter Monsters"><span class="material-icons">filter_alt</span></button>`);
         if (Object.keys(monster_search_filters).length > 0) {
@@ -911,12 +1122,12 @@ function build_sidebar_list_row(listItem) {
         }
       }
       break;
-    case SidebarListItem.TypeMyToken:
+    case ItemType.MyToken:
       subtitle.hide();
       // TODO: Style specifically for My Tokens
       row.css("cursor", "default");
       break;
-    case SidebarListItem.TypePC:
+    case ItemType.PC:
       let playerData = window.PLAYER_STATS[listItem.sheet];
       if (playerData === undefined) {
         subtitle.text("loading character details");
@@ -991,7 +1202,7 @@ function build_sidebar_list_row(listItem) {
       });
 
       break;
-    case SidebarListItem.TypeMonster:
+    case ItemType.Monster:
       row.attr("data-monster", listItem.monsterData.id);
       subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
       if (listItem.monsterData.isHomebrew === true) {
@@ -1014,12 +1225,12 @@ function build_sidebar_list_row(listItem) {
       }
 
       break;
-    case SidebarListItem.TypeBuiltinToken:
+    case ItemType.BuiltinToken:
+    case ItemType.DDBToken:
       subtitle.hide();
-      // TODO: Style specifically for Builtin
       row.css("cursor", "default");
       break;
-    case SidebarListItem.TypeScene:
+    case ItemType.Scene:
       row.attr("data-scene-id", listItem.sceneId);
       row.addClass("scene-item");
       imgHolder.remove(); // we don't want the overhead of full images loading in. Clicking the row displays a preview of the image
@@ -1053,9 +1264,24 @@ function build_sidebar_list_row(listItem) {
       rowItem.append(switch_dm);
       rowItem.append(switch_players);
       break;
+    case ItemType.Aoe:
+      row.attr("data-shape", listItem.shape);
+      let size = listItem.size
+      if (window.CURRENT_SCENE_DATA?.fpsq > 0){
+          size =  size * window.CURRENT_SCENE_DATA.fpsq
+      }else{
+        // when this is initialised current scene data won't exist.
+        size = 5
+      }
+      row.attr("data-size", listItem.size);
+      row.attr("data-style", listItem.style);
+      subtitle.append(`<div class="subtitle-attibute">${listItem.style}</div>`);
+      subtitle.append(`<div class="subtitle-attibute">${size}ft</div>`);
+
+      break;
   }
 
-  if (listItem.canEdit() || listItem.isTypeBuiltinToken()) { // can't edit builtin, but need access to the list of images for drag and drop reasons.
+  if (listItem.canEdit() || listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) { // can't edit builtin or DDB, but need access to the list of images for drag and drop reasons.
     let settingsButton = $(`
         <div class="token-row-gear" title="configure">
             <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
@@ -1081,8 +1307,8 @@ function did_click_row(clickEvent) {
   console.log("did_click_row", clickedItem);
 
   switch (clickedItem.type) {
-    case SidebarListItem.TypeEncounter:
-    case SidebarListItem.TypeFolder:
+    case ItemType.Encounter:
+    case ItemType.Folder:
       if (clickedRow.hasClass("collapsed")) {
         clickedRow.removeClass("collapsed");
         clickedItem.collapsed = false;
@@ -1090,28 +1316,19 @@ function did_click_row(clickEvent) {
         clickedRow.addClass("collapsed");
         clickedItem.collapsed = true;
       }
-      if (clickedItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-        let backingObject = find_my_token_folder(clickedItem.fullPath());
-        if (backingObject !== undefined) {
-          backingObject.collapsed = clickedItem.collapsed;
-          persist_my_tokens();
-        }
-      }
-      if (clickedItem.isTokensPanelItem()) {
-        persist_token_folders_remembered_state();
-      }
+      persist_folders_remembered_state();
       if (clickedItem.isTypeEncounter()) {
         // we explicitly allowed it to pass through and be treated like a folder so now we need to act on it
         fetch_encounter_monsters_if_necessary(clickedRow, clickedItem);
       }
       break;
-    case SidebarListItem.TypeMyToken:
+    case ItemType.MyToken:
       // display_sidebar_list_item_configuration_modal(clickedItem);
       break;
-    case SidebarListItem.TypePC:
+    case ItemType.PC:
       open_player_sheet(clickedItem.sheet);
       break;
-    case SidebarListItem.TypeMonster:
+    case ItemType.Monster:
       if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
         console.log(`Opening monster with id ${clickedItem.monsterData.id}, url ${clickedItem.monsterData.url}`);
         open_monster_item(clickedItem);
@@ -1120,12 +1337,12 @@ function did_click_row(clickEvent) {
         window.open(clickedItem.monsterData.url, '_blank');
       }
       break;
-    case SidebarListItem.TypeBuiltinToken:
+    case ItemType.BuiltinToken:
       // display_builtin_token_details_modal(clickedItem);
       break;
-    case SidebarListItem.TypeScene:
+    case ItemType.Scene:
       // show the preview
-      $(`.sidebar-flyout`).remove(); // never duplicate
+      remove_sidebar_flyout();
       let flyout = $(`<div class='sidebar-flyout'></div>`);
       $("body").append(flyout);
       if (clickedItem.isVideo) {
@@ -1146,9 +1363,12 @@ function did_click_row(clickEvent) {
       });
       clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
         $(mouseleaveEvent.currentTarget).off("mouseleave");
-        $(`.sidebar-flyout`).remove();
+        remove_sidebar_flyout();
       });
       break;
+    case ItemType.Aoe:
+      // bain todo open context menu to choose style / size
+    break;
   }
 }
 
@@ -1177,7 +1397,7 @@ function did_click_add_button(clickEvent) {
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
   console.log("did_click_add_button", clickedItem);
-  let hidden = clickEvent.shiftKey || window.TOKEN_SETTINGS["hidden"];
+  let hidden = clickEvent.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
   create_and_place_token(clickedItem, hidden, undefined, undefined, undefined);
   update_pc_token_rows();
 }
@@ -1188,34 +1408,38 @@ function did_click_add_button(clickEvent) {
  */
 function display_sidebar_list_item_configuration_modal(listItem) {
   switch (listItem?.type) {
-    case SidebarListItem.TypeEncounter:
+    case ItemType.Encounter:
       // TODO: support editing in an iframe on the page?
       window.open(`https://www.dndbeyond.com/encounters/${listItem.encounterId}/edit`, '_blank');
       break;
-    case SidebarListItem.TypeFolder:
-      if (listItem.folderPath.startsWith(SidebarListItem.PathMyTokens) || listItem.folderPath.startsWith(SidebarListItem.PathScenes)) {
+    case ItemType.Folder:
+      if (listItem.folderPath.startsWith(RootFolder.MyTokens.path) || listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
         display_folder_configure_modal(listItem);
       } else {
         console.warn("Only allowed to folders within the My Tokens folder and Scenes");
         return;
       }
       break;
-    case SidebarListItem.TypeBuiltinToken:
+    case ItemType.BuiltinToken:
+    case ItemType.DDBToken:
       display_builtin_token_details_modal(listItem);
       break;
-    case SidebarListItem.TypeMyToken:
-    case SidebarListItem.TypePC:
-    case SidebarListItem.TypeMonster:
+    case ItemType.MyToken:
+    case ItemType.PC:
+    case ItemType.Monster:
       display_token_configuration_modal(listItem);
       break;
-    case SidebarListItem.TypeScene:
+    case ItemType.Scene:
       let index = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.sceneId);
       if (index >= 0) {
         edit_scene_dialog(index);
       } else {
         console.error("Failed to find scene index for scene with id", listItem.sceneId);
-        alert("An unexpected error occurred");
+        showDebuggingAlert();
       }
+      break;
+    case ItemType.Aoe:
+      display_aoe_token_configuration_modal(listItem);
       break;
     default:
       console.warn("display_sidebar_list_item_configuration_modal not supported for listItem", listItem);
@@ -1228,9 +1452,9 @@ function create_folder_inside(listItem) {
     return;
   }
 
-  if (listItem.fullPath().startsWith(SidebarListItem.PathMyTokens)) {
+  if (listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
     create_mytoken_folder_inside(listItem);
-  } else if (listItem.fullPath().startsWith(SidebarListItem.PathScenes)) {
+  } else if (listItem.fullPath().startsWith(RootFolder.Scenes.path)) {
     create_scene_folder_inside(listItem.fullPath());
   } else {
     console.warn("create_folder_inside called with an incorrect item type", listItem);
@@ -1250,58 +1474,88 @@ function display_folder_configure_modal(listItem) {
   let sidebarId = "folder-configuration-modal";
   let sidebarModal = new SidebarPanel(sidebarId, true);
   let listItemFullPath = listItem.fullPath();
-  let container;
-  if (listItemFullPath.startsWith(SidebarListItem.PathScenes)) {
-    container = scenesPanel.body;
-  } else {
-    container = tokensPanel.body;
+  let itemType;
+  if (listItemFullPath.startsWith(RootFolder.Scenes.path)) {
+    itemType = ItemType.Scene;
+  } else if (listItemFullPath.startsWith(RootFolder.MyTokens.path)) {
+    itemType = ItemType.MyToken;
   }
 
   display_sidebar_modal(sidebarModal);
 
   sidebarModal.updateHeader(listItem.name, listItem.fullPath(), "Edit or delete this folder.");
 
+  const renameFolder = function(newFolderName, input, event) {
+    let oldPath = harvest_full_path(input);
+    if (oldPath.endsWith(`/${newFolderName}`)) {
+      // It did not change. Nothing to do here.
+      return undefined;
+    }
+    let foundItem = find_sidebar_list_item(input);
+    let updatedFullPath = rename_folder(foundItem, newFolderName, true);
+    if (updatedFullPath) {
+      // the name has been changed. Update the input so we know it has been changed later
+      set_full_path(input, updatedFullPath);
+      if (itemType === ItemType.Scene) {
+        rebuild_token_items_list();
+        redraw_scene_list();
+        expand_all_folders_up_to_id(path_to_html_id(updatedFullPath));
+      } else if (itemType === ItemType.Scene) {
+        rebuild_scene_items_list();
+        redraw_token_list();
+        expand_all_folders_up_to_id(foundItem.id);
+      }
+      sidebarModal.updateHeader(newFolderName, updatedFullPath, "Edit or delete this folder.");
+      return updatedFullPath;
+    } else {
+      // there was a naming conflict, and the user has been alerted. select the entire text so they can easily change it
+      input.select();
+      return false;
+    }
+  }
+
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
   set_full_path(folderNameInput, listItemFullPath);
-  sidebarModal.body.append(build_text_input_wrapper("Folder Name",
-      folderNameInput,
-      `<button>Save</button>`,
-      function(newFolderName, input, event) {
-        let oldPath = harvest_full_path($(input));
-        if (oldPath.endsWith(`/${newFolderName}`)) {
-          close_sidebar_modal();
-          return;
-        }
-        let foundItem = find_sidebar_list_item($(input));
-        let updateFullPath = rename_folder(foundItem, newFolderName);
-        if (updateFullPath === undefined) {
-          $(input).select();
-        } else {
-          close_sidebar_modal();
-          expand_all_folders_up_to(updateFullPath, container);
-        }
-      }
-  ));
+  sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder));
+
+  if (itemType === ItemType.MyToken) {
+    let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId);
+    let folderOptionsButton = build_override_token_options_button(sidebarModal, listItem, undefined, customization.tokenOptions, function (key, value) {
+      customization.setTokenOption(key, value);
+    }, function () {
+      persist_token_customization(customization);
+    });
+    sidebarModal.body.append(folderOptionsButton);
+  }
+
+  let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
+  saveButton.on("click", function (clickEvent) {
+    let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
+    let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
+    if (renameResult !== false) {
+      close_sidebar_modal();
+      expand_all_folders_up_to_item(listItem); // TODO: make sure this does the right thing. We may need to find the updated listItem
+    }
+  });
+  sidebarModal.body.append(saveButton);
 
   let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
   set_full_path(deleteFolderAndMoveChildrenButton, listItemFullPath);
   sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
   deleteFolderAndMoveChildrenButton.on("click", function(event) {
-    let fullPath = harvest_full_path($(event.currentTarget));
     let foundItem = find_sidebar_list_item($(event.currentTarget));
     delete_folder_and_move_children_up_one_level(foundItem);
     close_sidebar_modal();
-    expand_all_folders_up_to(fullPath, container);
+    expand_all_folders_up_to_item(foundItem);
   });
   let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
   set_full_path(deleteFolderAndChildrenButton, listItemFullPath);
   sidebarModal.footer.append(deleteFolderAndChildrenButton);
   deleteFolderAndChildrenButton.on("click", function(event) {
-    let fullPath = harvest_full_path($(event.currentTarget));
     let foundItem = find_sidebar_list_item($(event.currentTarget));
     delete_folder_and_delete_children(foundItem);
     close_sidebar_modal();
-    expand_all_folders_up_to(fullPath, container);
+    expand_all_folders_up_to_item(foundItem);
   });
 
   sidebarModal.body.find(`input[name="folderName"]`).select();
@@ -1311,19 +1565,23 @@ function rename_folder(item, newName, alertUser = true) {
   if (!item.isTypeFolder()) {
     console.warn("rename_folder called with an incorrect item type", item);
     if (alertUser !== false) {
-      alert("An unexpected error occurred");
+      showDebuggingAlert();
     }
-    return;
+    return undefined;
   }
 
-  if (item.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-    return rename_mytoken_folder(item, newName, alertUser);
-  } else if (item.folderPath.startsWith(SidebarListItem.PathScenes)) {
+  if (item.folderPath.startsWith(RootFolder.MyTokens.path)) {
+    let customization = find_token_customization(item.type, item.id);
+    customization.setTokenOption("name", newName);
+    persist_token_customization(customization);
+    did_change_mytokens_items();
+    return customization.fullPath();
+  } else if (item.folderPath.startsWith(RootFolder.Scenes.path)) {
     return rename_scene_folder(item, newName, alertUser);
   } else if (alertUser !== false) {
-    alert("An unexpected error occurred");
+    showDebuggingAlert();
   }
-
+  return undefined;
 }
 
 /**
@@ -1337,27 +1595,26 @@ function delete_item(listItem) {
   }
 
   switch (listItem.type) {
-    case SidebarListItem.TypeFolder:
+    case ItemType.Folder:
       delete_folder_and_delete_children(listItem);
       break;
-    case SidebarListItem.TypeMyToken:
-      let myToken = find_my_token(listItem.fullPath());
-      array_remove_index_by_value(mytokens, myToken);
+    case ItemType.MyToken:
+      delete_token_customization_by_type_and_id(listItem.type, listItem.id);
       did_change_mytokens_items();
       break;
-    case SidebarListItem.TypeScene:
+    case ItemType.Scene:
       if (confirm(`Are you sure that you want to delete the scene named "${listItem.name}"?`)) {
         window.ScenesHandler.delete_scene(listItem.sceneId);
         did_update_scenes();
       }
       break;
-    case SidebarListItem.TypePC:
+    case ItemType.PC:
       console.warn("Not allowed to delete player", listItem);
       break;
-    case SidebarListItem.TypeMonster:
+    case ItemType.Monster:
       console.warn("Not allowed to delete monster", listItem);
       break;
-    case SidebarListItem.TypeBuiltinToken:
+    case ItemType.BuiltinToken:
       console.warn("Not allowed to delete builtin token", listItem);
       break;
   }
@@ -1365,19 +1622,21 @@ function delete_item(listItem) {
 
 /**
  * removes the .collapsed class from all folders leading up to the specified path
- * @param fullPath {string} the path to expand
- * @param container {*|jQuery|HTMLElement} the element that contains the folder structure. EX: tokensPanel.body
+ * @param listItem {SidebarListItem|undefined} the item to expand up to
  */
-function expand_all_folders_up_to(fullPath, container) {
-  console.groupCollapsed("expand_all_folders_up_to", fullPath);
-  console.debug(`fullPath: ${fullPath}`);
-  let folderElement = find_html_row_from_path(fullPath, container);
-  console.debug(folderElement);
-  let parents = folderElement.parents(".collapsed")
-  console.debug(parents);
-  parents.removeClass("collapsed");
-  console.debug(parents);
-  console.groupEnd();
+function expand_all_folders_up_to_item(listItem) {
+  expand_all_folders_up_to_id(listItem?.id);
+}
+
+/**
+ * removes the .collapsed class from all folders leading up to the specified path
+ * @param id {string|undefined} the id of the element to expand up to
+ */
+function expand_all_folders_up_to_id(id) {
+  if (typeof id !== "string" || id.length === 0) return;
+  let element = $(`#${id}`)
+  element.parents(".collapsed").removeClass("collapsed");
+  element.removeClass("collapsed");
 }
 
 /**
@@ -1394,16 +1653,13 @@ function delete_folder_and_delete_children(listItem) {
     return;
   }
 
-  if (listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-    delete_mytokens_within_folder(listItem);
-    delete_mytokens_folder(listItem);
-    did_change_mytokens_items();
-    expand_all_folders_up_to(listItem.folderPath, tokensPanel.body);
-  } else if (listItem.folderPath.startsWith(SidebarListItem.PathScenes)) {
+  if (listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
+    delete_mytokens_folder_and_everything_in_it(listItem);
+  } else if (listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
     delete_scenes_within_folder(listItem);
     delete_scenes_folder(listItem);
     did_update_scenes();
-    expand_all_folders_up_to(listItem.folderPath, scenesPanel.body);
+    expand_all_folders_up_to_item(listItem);
   } else {
     console.warn("delete_folder_and_delete_children called with an incorrect item type", listItem);
   }
@@ -1424,41 +1680,84 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     return;
   }
 
-  if (listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-    move_mytokens_to_parent_folder(listItem);
-    delete_mytokens_folder(listItem);
-    did_change_mytokens_items();
-    expand_all_folders_up_to(listItem.folderPath, tokensPanel.body);
-  } else if (listItem.folderPath.startsWith(SidebarListItem.PathScenes)) {
+  if (listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
+    move_mytokens_to_parent_folder_and_delete_folder(listItem, function (didSucceed, errorType) {
+      did_change_mytokens_items();
+      expand_all_folders_up_to_id(listItem.parentId);
+    });
+  } else if (listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
     move_scenes_to_parent_folder(listItem);
     delete_scenes_folder(listItem);
     did_update_scenes();
-    expand_all_folders_up_to(listItem.folderPath, scenesPanel.body);
+    expand_all_folders_up_to_item(listItem);
   } else {
     console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
   }
 }
 
-function sidebar_flyout(hoverEvent, buildFunction) {
-  if (hoverEvent.type === "mouseenter") {
-    $(`.sidebar-flyout`).remove(); // never duplicate
-    let flyout = $(`<div class='sidebar-flyout'></div>`);
-    $("body").append(flyout);
-    buildFunction(flyout);
-    let height = flyout.height();
-    let halfHeight = (height / 2);
-    let top = hoverEvent.clientY - halfHeight;
-    if (top < 30) { // make sure it's always below the main UI buttons
-      top = 30;
-    } else if (hoverEvent.clientY + halfHeight > window.innerHeight - 30) {
-      top = window.innerHeight - height - 30;
-    }
-    flyout.css({
-      "top": top
-    });
-  } else {
-    $(`.sidebar-flyout`).remove(); // never duplicate
+function build_and_display_sidebar_flyout(clientY, buildFunction) {
+  let flyout = $(`<div class='sidebar-flyout'></div>`);
+  $("body").append(flyout);
+
+  buildFunction(flyout); // we want this built here so we can position the flyout based on the height of it
+
+  let height = flyout.height();
+  let halfHeight = (height / 2);
+  let top = clientY - halfHeight;
+  if (top < 30) { // make sure it's always below the main UI buttons
+    top = 30;
+  } else if (clientY + halfHeight > window.innerHeight - 30) {
+    top = window.innerHeight - height - 30;
   }
+
+  flyout.css({
+    "top": top
+  });
+}
+
+function position_flyout_on_best_side_of(container, flyout, resizeFlyoutToFit = true) {
+  let didResize = false;
+  if (!container || container.length === 0 || !flyout || flyout.length === 0) {
+    console.warn("position_flyout_on_best_side_of received an empty object", container, flyout);
+    return didResize;
+  }
+  const distanceFromLeft = container[0].getBoundingClientRect().left;
+  const distanceFromRight = window.innerWidth - distanceFromLeft - container.width();
+  if (distanceFromLeft > distanceFromRight) {
+    if (resizeFlyoutToFit && (flyout.width() > distanceFromLeft)) {
+      flyout.css("width", distanceFromLeft);
+      didResize = true;
+    }
+    position_flyout_left_of(container, flyout);
+  } else {
+    if (resizeFlyoutToFit && (flyout.width() > distanceFromRight)) {
+      flyout.css("width", distanceFromRight);
+      didResize = true;
+    }
+    position_flyout_right_of(container, flyout);
+  }
+  return didResize;
+}
+
+function position_flyout_left_of(container, flyout) {
+  if (!container || container.length === 0 || !flyout || flyout.length === 0) {
+    console.warn("position_flyout_left_of received an empty object", container, flyout);
+    return;
+  }
+  flyout.css("left", container[0].getBoundingClientRect().left - flyout.width());
+}
+
+function position_flyout_right_of(container, flyout) {
+  if (!container || container.length === 0 || !flyout || flyout.length === 0) {
+    console.warn("position_flyout_right_of received an empty object", container, flyout);
+    return;
+  }
+  flyout.css("left", container[0].getBoundingClientRect().left + container.width());
+}
+
+function remove_sidebar_flyout() {
+  console.log("remove_sidebar_flyout");
+  $(`.sidebar-flyout`).remove();
 }
 
 function list_item_image_flyout(hoverEvent) {
@@ -1474,10 +1773,11 @@ function list_item_image_flyout(hoverEvent) {
   }
 }
 
-function disable_draggable_change_folder(listItemType) {
+function disable_draggable_change_folder() {
   $(".token-row-drag-handle").remove();
-  switch (listItemType) {
-    case SidebarListItem.TypeMyToken:
+
+  // MyToken
+  if (typeof tokensPanel !== 'undefined') {
       tokensPanel.body.find(".token-row-button").show();
       tokensPanel.body.find(".token-row-button.reorder-button").show();
       tokensPanel.body.find(".reorder-button").removeClass("active");
@@ -1492,8 +1792,10 @@ function disable_draggable_change_folder(listItemType) {
       try {
         tokensPanel.body.find(".sidebar-list-item-row").droppable("destroy");
       } catch (e) {} // don't care if it fails, just try
-      break;
-    case SidebarListItem.TypeScene:
+  }
+
+  // Scenes
+  if (typeof scenesPanel !== 'undefined') {
       scenesPanel.body.find(".token-row-gear").show();
       scenesPanel.body.find(".token-row-button").show();
       scenesPanel.header.find(".token-row-gear").show();
@@ -1510,7 +1812,6 @@ function disable_draggable_change_folder(listItemType) {
       try {
         scenesPanel.body.find(".sidebar-list-item-row").droppable("destroy");
       } catch (e) {} // don't care if it fails, just try
-      break;
   }
 }
 
@@ -1531,11 +1832,11 @@ function add_expand_collapse_buttons_to_header(sidebarPanel) {
 
 /**
  * allows you to drag items from one folder to another
- * @param listItemType {string} SidebarListItem.TypeMyTokens || SidebarListItem.TypeScene
+ * @param listItemType {string} ItemType.MyTokens || ItemType.Scene
  */
 function enable_draggable_change_folder(listItemType) {
 
-  disable_draggable_change_folder(listItemType);
+  disable_draggable_change_folder();
 
   const droppableOptions = {
     greedy: true,
@@ -1545,25 +1846,32 @@ function enable_draggable_change_folder(listItemType) {
       let draggedRow = $(ui.helper);
       let draggedItem = find_sidebar_list_item(draggedRow);
       let droppedFolder = $(dropEvent.target);
-      if (droppedFolder.hasClass("sidebar-panel-body")) {
+      if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === path_to_html_id(RootFolder.Scenes.path)) {
         // they dropped it on the header so find the root folder
-        if (listItemType === SidebarListItem.TypeScene) {
-          move_item_into_folder(draggedItem, SidebarListItem.PathScenes);
-        } else if (listItemType === SidebarListItem.TypeMyToken) {
-          move_item_into_folder(draggedItem, SidebarListItem.PathMyTokens);
+        if (listItemType === ItemType.Scene) {
+          move_scene_to_folder(draggedItem, RootFolder.Scenes.path);
+          did_update_scenes();
+          enable_draggable_change_folder(ItemType.Scene);
+        } else if (listItemType === ItemType.MyToken) {
+          let customization = find_token_customization(draggedItem.type, draggedItem.id);
+          customization.parentId = RootFolder.MyTokens.id;
+          persist_token_customization(customization);
+          rebuild_token_items_list();
+          enable_draggable_change_folder(ItemType.MyToken);
         } else {
           console.warn("Unable to reorder item by dropping it on the body", listItemType, draggedItem);
         }
       } else {
         let folderItem = find_sidebar_list_item(droppedFolder);
         console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
-        move_item_into_folder(draggedItem, folderItem.fullPath());
+        move_item_into_folder_item(draggedItem, folderItem);
+        expand_all_folders_up_to_item(folderItem);
       }
     }
   };
 
   switch (listItemType) {
-    case SidebarListItem.TypeMyToken:
+    case ItemType.MyToken:
 
       redraw_token_list("", false);
 
@@ -1577,7 +1885,7 @@ function enable_draggable_change_folder(listItemType) {
       tokensPanel.updateHeader("Tokens", "", "Drag items to move them between folders");
       add_expand_collapse_buttons_to_header(tokensPanel);
 
-      let myTokensRootItem = tokens_rootfolders.find(i => i.name === SidebarListItem.NameMyTokens);
+      let myTokensRootItem = tokens_rootfolders.find(i => i.name === RootFolder.MyTokens.name);
       let myTokensRootFolder = find_html_row(myTokensRootItem, tokensPanel.body);
       // make sure we expand all folders that can be dropped on
       myTokensRootFolder.show();
@@ -1607,7 +1915,7 @@ function enable_draggable_change_folder(listItemType) {
           if (draggedRow.hasClass("drag-cancelled")) {
             draggedRow.removeClass("drag-cancelled");
             redraw_token_list("", false);
-            enable_draggable_change_folder(SidebarListItem.TypeMyToken);
+            enable_draggable_change_folder(ItemType.MyToken);
           }
         }
       });
@@ -1618,7 +1926,7 @@ function enable_draggable_change_folder(listItemType) {
       tokensPanel.body.droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
 
       break;
-    case SidebarListItem.TypeScene:
+    case ItemType.Scene:
       scenesPanel.header.find(".token-row-button").hide();
       scenesPanel.header.find(".scenes-panel-add-buttons-wrapper input").hide();
       scenesPanel.header.find(".scenes-panel-add-buttons-wrapper .reorder-explanation").show();
@@ -1649,7 +1957,7 @@ function enable_draggable_change_folder(listItemType) {
           if (draggedRow.hasClass("drag-cancelled")) {
             draggedRow.removeClass("drag-cancelled");
             redraw_scene_list("");
-            enable_draggable_change_folder(SidebarListItem.TypeScene);
+            enable_draggable_change_folder(ItemType.Scene);
           }
         }
       });
@@ -1664,26 +1972,22 @@ function enable_draggable_change_folder(listItemType) {
 
 }
 
-function move_item_into_folder(listItem, folderPath) {
-  if (listItem.isTypeMyToken()) {
-    move_mytoken_to_folder(listItem, folderPath);
-    persist_my_tokens();
+function move_item_into_folder_item(listItem, folderItem) {
+  if (listItem.isTypeMyToken() || (listItem.isTypeFolder() && listItem.fullPath().startsWith(RootFolder.MyTokens.path))) {
+    let customization = find_token_customization(listItem.type, listItem.id);
+    customization.parentId = folderItem.id;
+    persist_token_customization(customization);
     rebuild_token_items_list();
-    enable_draggable_change_folder(SidebarListItem.TypeMyToken);
-  } else if (listItem.isTypeScene()) {
-    move_scene_to_folder(listItem, folderPath);
+    enable_draggable_change_folder(ItemType.MyToken);
+  } else if (listItem.isTypeScene() || (listItem.isTypeFolder() && listItem.folderPath.startsWith(RootFolder.Scenes.path))) {
+    if (listItem.isTypeScene()) {
+      move_scene_to_folder(listItem, folderItem.fullPath());
+    } else if (listItem.isTypeFolder()) {
+      move_scenes_folder(listItem, folderItem.fullPath());
+    }
     did_update_scenes();
-    enable_draggable_change_folder(SidebarListItem.TypeScene);
-  } else if (listItem.isTypeFolder() && listItem.folderPath.startsWith(SidebarListItem.PathMyTokens)) {
-    move_mytokens_folder(listItem, folderPath);
-    persist_my_tokens();
-    rebuild_token_items_list();
-    enable_draggable_change_folder(SidebarListItem.TypeMyToken);
-  } else if (listItem.isTypeFolder() && listItem.folderPath.startsWith(SidebarListItem.PathScenes)) {
-    move_scenes_folder(listItem, folderPath);
-    did_update_scenes();
-    enable_draggable_change_folder(SidebarListItem.TypeScene);
+    enable_draggable_change_folder(ItemType.Scene);
   } else {
-    console.warn("move_item_into_folder was called with invalid item type", listItem)
+    console.warn("move_item_into_folder_item was called with invalid item type", listItem);
   }
 }

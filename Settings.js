@@ -1,65 +1,278 @@
-const token_setting_options = [
-	{
-		name: 'hidden',
-		label: 'Hide',
-		enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-		disabledDescription: 'New tokens will be visible to players when placed on the scene'
-	},
-	{
-		name: 'square',
-		label: 'Square Token',
-		enabledDescription: 'New tokens will be square',
-		disabledDescription: 'New tokens will be round'
-	},
-	{
-		name: 'locked',
-		label: 'Lock Token in Position',
-		enabledDescription: 'New tokens will not be movable',
-		disabledDescription: 'New tokens will be movable'
-	},
-	{
-		name: 'restrictPlayerMove',
-		label: 'Restrict Player Movement',
-		enabledDescription: 'Player will not be able to move new tokens',
-		disabledDescription: 'Player will be able to move new tokens'
-	},
-	{
-		name: 'disablestat',
-		label: 'Disable HP/AC',
-		enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-		disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
-	},
-	{
-		name: 'hidestat',
-		label: 'Hide HP/AC from players',
-		enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-		disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
-	},
-	{
-		name: 'disableborder',
-		label: 'Disable Border',
-		enabledDescription: 'New tokens will not have a border around them',
-		disabledDescription: 'New tokens will have a border around them'
-	},
-	{
-		name: 'disableaura',
-		label: 'Disable Health Meter',
-		enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-		disabledDescription: 'New tokens will have an aura around them that represents their current health'
-	},
-	{
-		name: 'revealname',
-		label: 'Show name to players',
-		enabledDescription: 'New tokens will have their name visible to players',
-		disabledDescription: 'New tokens will have their name hidden from players'
-	},
-	{
-		name: 'legacyaspectratio',
-		label: 'Ignore Image Aspect Ratio',
-		enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-		disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
+function token_setting_options() {
+	return [
+		{
+			name: 'tokenStyleSelect',
+			label: 'Token Style',
+			type: 'dropdown',
+			options: [
+				{ value: "circle", label: "Circle", description: `The token is round and is contained within the border. We set "Ignore Aspect Ratio" to true and "Square" to false. Great for tokens with a portrait art style!` },
+				{ value: "square", label: "Square", description: `The token is square and is contained within the border. We set "Ignore Aspect Ratio" to true and "Square" to true. Great for tokens with a portrait art style!` },
+				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with the largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
+				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with The largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
+				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` }
+			],
+			defaultValue: "circle"
+		},
+		{
+			name: 'tokenBaseStyleSelect',
+			label: 'Token Base Style',
+			type: 'dropdown',
+			options: [
+				{ value: "default", label: "Default", description: "A default dark semi-opaque plastic base." },
+				{ value: "border-color", label: "Match Border Color", description: "A base that matches the border color of the token." },
+				{ value: "grass", label: "Grass", description: "A grass covered base.." },
+				{ value: "tile", label: "Tile", description: "A tile base." },
+				{ value: "sand", label: "Sand", description: "A sand covered base." },
+				{ value: "rock", label: "Rock", description: "A rock base." },
+				{ value: "water", label: "Water", description: "A water base." }
+			],
+			defaultValue: "default"
+		},
+		{
+			name: 'hidden',
+			label: 'Hide',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Hidden", description: "The token is hidden to players." },
+				{ value: false, label: "Visible", description: "The token is visible to players." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'square',
+			label: 'Square Token',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Square", description: "The token is square." },
+				{ value: false, label: "Round", description: "The token is clipped to fit within a circle." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'locked',
+			label: 'Disable All Interaction',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Interaction Disabled", description: "The token can not be interacted with in any way. Not movable, not selectable by players, no hp/ac displayed, no border displayed, no nothing. Players shouldn't even know it's a token." },
+				{ value: false, label: "Interaction Allowed", description: "The token can be interacted with." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'restrictPlayerMove',
+			label: 'Restrict Player Movement',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Restricted", description: "Players can not move the token." },
+				{ value: false, label: "Unrestricted", description: "Players can move the token." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disablestat',
+			label: 'Remove HP/AC',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Removed", description: "The token does not have HP/AC shown to either the DM or the players." },
+				{ value: false, label: "Visible to DM", description: "The token has HP/AC shown to only the DM." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'hidestat',
+			label: 'Hide Player HP/AC',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Hidden", description: "Each player can see their own HP/AC, but can't see the HP/AC of other players." },
+				{ value: false, label: "Visible", description: "Each player can see their own HP/AC as well as the HP/AC of other players." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'hidehpbar',
+			label: 'Only show HP values on hover',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "On Hover", description: "HP values are only shown when you hover or select the token. The 'Disable HP/AC' option overrides this one." },
+				{ value: false, label: "Always", description: "HP values are always displayed on the token. The 'Disable HP/AC' option overrides this one." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disableborder',
+			label: 'Disable Border',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'No Border', description: "The token has a border drawn around the image." },
+				{ value: false, label: 'Border', description: "The token does not have a border drawn around the image." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disableaura',
+			label: 'Disable Health Aura',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'No Aura', description: "An aura is drawn around the token's image that represents current health." },
+				{ value: false, label: 'Health Aura', description: "Enable this to have an aura drawn around the token's image that represents current health." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'enablepercenthpbar',
+			label: 'Enable Token HP% Bar',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Health Bar', description: "The token has a traditional visual hp% bar below it" },
+				{ value: false, label: 'No Bar', description: "The token does not have a traditional visual hp% bar below it" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'revealname',
+			label: 'Show name to players',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Visible', description: "The token's name is visible to players" },
+				{ value: false, label: 'Hidden', description: "The token's name is hidden from players" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'legacyaspectratio',
+			label: 'Ignore Image Aspect Ratio',
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Stretch', description: "The token's image will stretch to fill the token space" },
+				{ value: false, label: 'Maintain', description: "New token's image will respect the aspect ratio of the image provided" }
+			],
+			defaultValue: false
+		},
+		{
+			name: "player_owned",
+			label: "Player Accessible Stats",
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Player & DM', description: "The token's stat block is accessible to players via the token context menu. Players can also alter the HP/AC of this token." },
+				{ value: false, label: 'DM only', description: "The token's stat block is not accessible to players via the token context menu. Players can not alter the HP/AC of this token." }
+			],
+			defaultValue: false
+		},
+		{
+			name: "defaultmaxhptype",
+			label: "Max HP Calculation",
+			type: 'dropdown',
+			options: [
+				{ value: "average", label: "Average", description: "Monster Max HP will be set to the average value." },
+				{ value: "roll", label: "Roll", description: "Monster Max HP will be individually rolled." },
+				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value." }
+			],
+			defaultValue: "average"
+		}
+	];
+}
+
+function avtt_settings() {
+	return [
+		{
+			name: 'allowTokenMeasurement',
+			label: 'Measure while dragging tokens',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
+				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
+			],
+			defaultValue: true
+		},
+		{
+			name: 'streamDiceRolls',
+			label: 'Stream Dice Rolls',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Streaming", description: `When you roll DDB dice (to Everyone), all players who also enable this feature will see your rolls and you will see theirs. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
+				{ value: false, label: "Not Streaming", description: `When you enable this, DDB dice rolls will be visible to you and all other players who also enable this. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'iframeStatBlocks',
+			label: 'Fetch Monster Stat Blocks',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
+				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
+			],
+			defaultValue: false
+		}
+	]
+}
+
+function get_avtt_setting_default_value(name) {
+	return avtt_settings().find(s => s.name === name)?.defaultValue;
+}
+function get_avtt_setting_value(name) {
+	switch (name) {
+		case "allowTokenMeasurement": return window.ALLOWTOKENMEASURING;
+		case "iframeStatBlocks": return should_use_iframes_for_monsters();
+		default:
+			const setValue = window.EXPERIMENTAL_SETTINGS[name];
+			if (setValue !== undefined) {
+				return setValue;
+			}
+			return get_avtt_setting_default_value(name);
 	}
-];
+}
+function set_avtt_setting_value(name, newValue) {
+	console.log(`set_avtt_setting_value ${name} is now ${newValue}`);
+	switch (name) {
+		case "allowTokenMeasurement":
+			if (newValue === true || newValue === false) {
+				window.ALLOWTOKENMEASURING = newValue;
+			} else {
+				window.ALLOWTOKENMEASURING = get_avtt_setting_default_value(name);
+			}
+			break;
+		case "iframeStatBlocks":
+			if (newValue === true) {
+				use_iframes_for_monsters();
+			} else {
+				stop_using_iframes_for_monsters();
+			}
+			break;
+		case "streamDiceRolls":
+			if (newValue === true || newValue === false) {
+				window.JOINTHEDICESTREAM = newValue;
+				enable_dice_streaming_feature(newValue)
+			} else {
+				const defaultValue = get_avtt_setting_default_value(name);
+				window.JOINTHEDICESTREAM = defaultValue;
+				enable_dice_streaming_feature(defaultValue);
+			}
+			break;
+		default:
+			window.EXPERIMENTAL_SETTINGS[name] = newValue;
+			persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+			break;
+	}
+}
+
+function is_valid_token_option_value(tokenOptionName, value) {
+	return token_setting_options().find(o => o.name === tokenOptionName)?.options?.map(value).includes(value);
+}
+
+function convert_option_to_override_dropdown(tokenOption) {
+	// Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays or objects
+	// we are explicitly not using the spread operator at this level because we need to deep copy the object
+	let converted = {
+		name: tokenOption.name,
+		label: tokenOption.label,
+		type: 'dropdown',
+		options: tokenOption.options.map(option => { return {...option} }),
+		defaultValue: undefined
+	};
+	converted.options.push({ value: undefined, label: "Not Overridden", description: "Changing this setting will override the default settings" });
+	return converted;
+}
 
 function b64EncodeUnicode(str) {
         // first we use encodeURIComponent to get percent-encoded UTF-8,
@@ -77,7 +290,7 @@ function b64DecodeUnicode(str) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     }
-    
+
 
 
 function download(data, filename, type) {
@@ -93,8 +306,8 @@ function download(data, filename, type) {
         a.click();
         setTimeout(function() {
             document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
+            window.URL.revokeObjectURL(url);
+        }, 0);
     }
 }
 
@@ -122,236 +335,109 @@ function cloud_migration(scenedata=null){
 	});
 }
 
-function init_settings(){
-	
+function init_settings() {
+
 	let body = settingsPanel.body;
 
-	
-	if((!window.CLOUD) && (!window.FORCED_DM)){
+	if (window.DM) {
+
+		if((!window.CLOUD) && (!window.FORCED_DM)){
+			body.append(`
+			<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
+			<div class="sidebar-panel-header-explanation">
+				<p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
+				<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
+			</div>
+			`)
+		}
+		else if(window.CLOUD){
+			body.append('<b>Your scenes are stored in the "cloud"</b>');
+		}
+
 		body.append(`
-		<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
-		<div class="sidebar-panel-header-explanation">
-			<p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
-			<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
-		</div>
-		`)
-	}
-	else if(window.CLOUD){
-		body.append('<b>Your scenes are stored in the "cloud"</b>');
-	}
-
-	body.append(`
-		<h5 class="token-image-modal-footer-title">Import / Export</h5>
-		<div class="sidebar-panel-header-explanation">
-			<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
-			<p>Export will download a file containing all of your scenes, custom tokens, and soundpads. 
-			Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
-			<div class="sidebar-panel-footer-horizontal-wrapper">
-			<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
-			<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hovertext" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
-				<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
-		</div>
-	`);
-
-	$("#input_file").change(import_readfile);
-	
-	body.append(`
-		<br />
-		<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
-		<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. Custom tokens allow you to override these settings on a per-token basis.</div>
-	`);
-
-
-	const token_settings = [
-		{
-			name: 'hidden',
-			label: 'Hide',
-			enabledDescription: 'New tokens will be hidden from players when placed on the scene',
-			disabledDescription: 'New tokens will be visible to players when placed on the scene'
-		},
-		{
-			name: 'square',
-			label: 'Square Token',
-			enabledDescription: 'New tokens will be square',
-			disabledDescription: 'New tokens will be round'
-		},
-		{
-			name: 'locked',
-			label: 'Lock Token in Position',
-			enabledDescription: 'New tokens will not be movable',
-			disabledDescription: 'New tokens will be movable'
-		},
-		{
-			name: 'restrictPlayerMove',
-			label: 'Restrict Player Movement',
-			enabledDescription: 'Player will not be able to move new tokens',
-			disabledDescription: 'Player will be able to move new tokens'
-		},
-		{
-			name: 'disablestat',
-			label: 'Disable HP/AC',
-			enabledDescription: 'New tokens will not have HP/AC shown to either the DM or the players. This is most useful for tokens that represent terrain, vehicles, etc.',
-			disabledDescription: 'New tokens will have HP/AC shown to only the DM.'
-		},
-		{
-			name: 'hidestat',
-			label: 'Hide HP/AC from players',
-			enabledDescription: "New player tokens will have their HP/AC hidden from other players. Each player will be able to see their own HP/AC, but won't be able to see the HP/AC of other players.",
-			disabledDescription: "New player tokens will have their HP/AC visible to other players. Each player will be able to see their own HP/AC as well as HP/AC of other players."
-		},
-		{
-			name: 'hidehpbar',
-			label: 'Only show HP values on hover',
-			enabledDescription: "HP values will only be shown when you hover or select a token",
-			disabledDescription: "Enable this to hide HP values except when you hover or select a token."
-		},	
-		{
-			name: 'disableborder',
-			label: 'Disable Border',
-			enabledDescription: 'New tokens will not have a border around them',
-			disabledDescription: 'New tokens will have a border around them'
-		},
-		{
-			name: 'disableaura',
-			label: 'Disable Health Meter',
-			enabledDescription: 'New tokens will not have an aura around them that represents their current health',
-			disabledDescription: 'New tokens will have an aura around them that represents their current health'
-		},
-		{
-			name: 'enablepercenthpbar', 
-			label: 'Enable Token HP% Bar', 
-			enabledDescription:'Token has a traditional visual hp% bar indicator', 
-			disabledDescription: 'Token does not have a traditional visual hp% bar indicator'
-		},
-		{
-			name: 'hideaurafog',
-			label: 'Hide Aura when token in Fog',
-			enabledDescription: "Token's aura is hidden from players when in fog",
-			disabledDescription: "Token's aura is visible to players when token is in fog"
-		},
-		{
-			name: 'auraislight',
-			label: 'auraislight',
-			enabledDescription: "",
-			disabledDescription: ""
-		},
-		{
-			name: 'revealname',
-			label: 'Show name to players',
-			enabledDescription: 'New tokens will have their name visible to players',
-			disabledDescription: 'New tokens will have their name hidden from players'
-		},
-		{
-			name: 'legacyaspectratio',
-			label: 'Ignore Image Aspect Ratio',
-			enabledDescription: 'New tokens will stretch non-square images to fill the token space',
-			disabledDescription: 'New tokens will respect the aspect ratio of the image provided'
-		}
-	];
-
-	for(let i = 0; i < token_settings.length; i++) {
-		let setting = token_settings[i];
-		let currentValue = window.TOKEN_SETTINGS[setting.name];
-		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-			console.log(`${name} setting is now ${newValue}`);
-			window.TOKEN_SETTINGS[name] = newValue;
-			persist_token_settings(window.TOKEN_SETTINGS);
-			redraw_settings_panel_token_examples();
-		});
-		if (setting.name == ('auraislight' || 'hideaurafog')){
-			continue
-		}
-		body.append(inputWrapper);
-	}
-
-	const build_example_token = function(imageUrl) {
-		return $(`
-			<div class="custom-token-image-item">
-				<div class="token-image-sizing-dummy"></div>
-				<img alt="example-token-img" class="token-image token-round" src="${imageUrl}" />
+			<h5 class="token-image-modal-footer-title">Import / Export</h5>
+			<div class="sidebar-panel-header-explanation">
+				<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
+				<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
+				Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
+				<div class="sidebar-panel-footer-horizontal-wrapper">
+				<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
+				<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
+					<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
 			</div>
 		`);
+
+		$("#input_file").change(import_readfile);
+
+		body.append(`
+			<br />
+			<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
+			<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>
+		`);
+
+		let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
+		tokenOptionsButton.on("click", function (clickEvent) {
+			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+				let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
+					if (value === true || value === false || typeof value === 'string') {
+						window.TOKEN_SETTINGS[name] = value;
+					} else {
+						delete window.TOKEN_SETTINGS[name];
+					}
+				}, function() {
+					persist_token_settings(window.TOKEN_SETTINGS);
+					redraw_settings_panel_token_examples();
+				});
+				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
+				flyout.append(optionsContainer);
+				position_flyout_left_of(body, flyout);
+			});
+		});
+		body.append(tokenOptionsButton);
+
+		const clearAllOverridesWarning = `This will remove ALL overridden token options from every player, monster, custom token, and folder in the Tokens Panel. This shouldn't remove any custom images from those tokens. This will not update any tokens that have been placed on a scene. This cannot be undone.`;
+		let clearAllTokenOverrides = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear All Token Option Overrides</button>`);
+		clearAllTokenOverrides.on("click", function() {
+			if (confirm(clearAllOverridesWarning)) {
+				window.TOKEN_CUSTOMIZATIONS.forEach(tc => tc.clearTokenOptions());
+				persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+			}
+		});
+		body.append(clearAllTokenOverrides);
+
+
+		body.append(`<br />`);
+
 	}
 
-	// Build example tokens to show the settings changes
-	body.append(`<div class="token-image-modal-footer-title">Example Tokens</div>`);
-	let tokenExamplesWrapper = $(`<div class="example-tokens-wrapper"></div>`);
-	body.append(tokenExamplesWrapper);
-	// not square image to show aspect ratio
-	tokenExamplesWrapper.append(build_example_token("https://www.dndbeyond.com/avatars/thumbnails/6/359/420/618/636272697874197438.png"));
-	// perfectly square image
-	tokenExamplesWrapper.append(build_example_token("https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg"));
-	// idk, something else I guess
-	tokenExamplesWrapper.append(build_example_token("https://i.imgur.com/2Lglcip.png"));
+	const experimental_features = avtt_settings();
 
-	let resetToDefaults = $(`<button class="token-image-modal-remove-all-button" title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset Token Settings to Defaults</button>`);
-	resetToDefaults.on("click", function () {
-		for (let i = 0; i < token_setting_options.length; i++) {
-			let setting = token_setting_options[i];
-			let toggle = body.find(`button[name=${setting.name}]`);
-			if (toggle.hasClass("rc-switch-checked")) {
-				toggle.click();
-			}
-		}
-		persist_token_settings(window.TOKEN_SETTINGS);
-		redraw_settings_panel_token_examples();
-	});
-	body.append(resetToDefaults);
-
-	const experimental_features = [
-		{
-			name: 'DEBUGddbDiceMonsterPanel',
-			label: 'Debug Monsters Tab Loading',
-			enabledDescription: "All of the loading indicators will be transparent, and the monsters tab will be selected by default. This is to allow developers to visually see what is happening while debugging. (Changing this requires a page reload)",
-			disabledDescription: "If you are not a developer, please ignore this feature. It is to allow developers to visually see what is happening in the monsters panel while debugging. (Changing this requires a page reload)",
-			dmOnly: true
-		}
-	];
-	
-	experimental_features.push({
-		name: 'streamDiceRolls',
-		label: 'Stream Dice Rolls',
-		enabledDescription: `You and your players can find the button to join the dice stream in the game log in the top right corner. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`,
-		disabledDescription: `This will enable the dice stream feature for everyone. You will all still have to join the dice stream. You and your players can find the button to do this in the game log in the top right corner once this feature is enabled. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.`
-	});
 	body.append(`
 		<br />
-		<h5 class="token-image-modal-footer-title">Experimental Features</h5>
-		<div class="sidebar-panel-header-explanation">These are experimental features. You must explicitly opt-in to them. Use at your own risk.</div>
+		<h5 class="token-image-modal-footer-title" >Above VTT Settings</h5>
+		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time so we recommend using the defaults values... (Except the dice streaming. You should probably enable that because that's just awesome!)</div>
 	`);
 	for(let i = 0; i < experimental_features.length; i++) {
 		let setting = experimental_features[i];
 		if (setting.dmOnly === true && !window.DM) {
 			continue;
 		}
-		let currentValue = window.EXPERIMENTAL_SETTINGS[setting.name];
-		if (currentValue === undefined && setting.defaultValue !== undefined) {
-			currentValue = setting.defaultValue;
-		}
-		let inputWrapper = build_toggle_input(setting.name, setting.label, currentValue, setting.enabledDescription, setting.disabledDescription, function(name, newValue) {
-			console.log(`experimental setting ${name} is now ${newValue}`);
-			if (name === "streamDiceRolls") {
-				enable_dice_streaming_feature(newValue);
-				if(newValue == true) {
-					window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature");
-				} else {
-					window.MB.sendMessage("custom/myVTT/disabledicestream");
-				}
-			} else {
-				window.EXPERIMENTAL_SETTINGS[setting.name] = newValue;
-				persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
-			}
+		let currentValue = get_avtt_setting_value(setting.name);
+		let inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
+			set_avtt_setting_value(name, newValue);
 		});
 		body.append(inputWrapper);
 	}
-	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Opt out of all expirimental features." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Opt out of all</button>`);
+	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Reset to defaults." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset to Defaults</button>`);
 	optOutOfAll.click(function () {
 		for (let i = 0; i < experimental_features.length; i++) {
 			let setting = experimental_features[i];
 			let toggle = body.find(`button[name=${setting.name}]`);
-			if (toggle.hasClass("rc-switch-checked")) {
-				toggle.click();
+			toggle.removeClass("rc-switch-checked").removeClass("rc-switch-unknown");
+			if (setting.defaultValue === true) {
+				toggle.addClass("rc-switch-checked");
 			}
+			set_avtt_setting_value(setting.name, setting.defaultValue);
 		}
 	});
 	body.append(optOutOfAll);
@@ -359,87 +445,170 @@ function init_settings(){
 	redraw_settings_panel_token_examples();
 }
 
-function redraw_settings_panel_token_examples() {
-	
-	let items = settingsPanel.body.find(".example-tokens-wrapper .custom-token-image-item");
-	items.css("margin", "auto");
-	items.css("width", "30%");
+function redraw_settings_panel_token_examples(settings) {
+	console.log("redraw_settings_panel_token_examples", settings);
+	let mergedSettings = {...window.TOKEN_SETTINGS};
+	if (settings !== undefined) {
+		mergedSettings = {...mergedSettings, ...settings};
+	}
+	delete mergedSettings.imageSize;
+	let items = $(".example-tokens-wrapper .example-token");
+	for (let i = 0; i < items.length; i++) {
+		let item = $(items[i]);
+		mergedSettings.imgsrc = item.find("img.token-image").attr("src");
+		item.replaceWith(build_example_token(mergedSettings));
+	}
+}
 
-	if (window.TOKEN_SETTINGS['hidden']) {
-		items.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
-	} else {
-		items.css("opacity", 1);
+function build_example_token(options) {
+	let mergedOptions = {...default_options(), ...window.TOKEN_SETTINGS, ...options};
+	let hpnum;
+	switch (mergedOptions['defaultmaxhptype']) {
+		case 'max':
+			hpnum = 15;
+			break;
+		case 'roll':
+			hpnum = 5 + Math.floor(Math.random() * 11); // Random 5-15
+			break;
+		case 'average':
+		default:
+			hpnum = 10;
+			break;
+	}
+	mergedOptions.hp = hpnum;
+	mergedOptions.max_hp = hpnum;
+	mergedOptions.id = `exampleToken-${uuid()}`;
+	mergedOptions.size = 90;
+	// mergedOptions.gridHeight = 1;
+	// mergedOptions.gridWidth = 1;
+	mergedOptions.ac = 10;
+
+	// TODO: this is horribly inneficient. Clean up token.place and then update this
+	let token = new Token(mergedOptions);
+	token.place(0);
+	let html = $(`#tokens div[data-id='${mergedOptions.id}']`).clone();
+	token.delete();
+
+	html.addClass("example-token");
+	// html.css({
+	// 	float: "left",
+	// 	width: 90,
+	// 	height: 90,
+	// 	position: "relative",
+	// 	opacity: 1,
+	// 	top: 0,
+	// 	left: 0,
+	// 	padding: "3px 0px"
+	// });
+	return html;
+}
+
+// used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
+// updateValue: function(name, newValue) {} // only update the data here
+// didChange: function() {} // do ui things here
+function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange) {
+	if (typeof updateValue !== 'function') {
+		updateValue = function(name, newValue){
+			console.warn("build_sidebar_token_options_flyout was not given an updateValue function so we can't set ", name, "to", value);
+		};
+	}
+	if (typeof didChange !== 'function') {
+		didChange = function(){
+			console.log("build_sidebar_token_options_flyout was not given adidChange function");
+		};
 	}
 
-	if (window.TOKEN_SETTINGS['square']) {
-		items.find("img").removeClass("token-round");
-	} else {
-		items.find("img").addClass("token-round");
+	let container = $(`<div class="sidebar-token-options-flyout-container prevent-sidebar-modal-close"></div>`);
+
+	// const updateValue = function(name, newValue) {
+	// 	if (is_valid_token_option_value(name, newValue)) {
+	// 		setValues[name] = newValue;
+	// 	} else {
+	// 		delete setValues[name];
+	// 	}
+	// };
+
+	availableOptions.forEach(option => {
+		const currentValue = setValues[option.name];
+		if (option.type === "dropdown") {
+			let inputWrapper = build_dropdown_input(option, currentValue, function(name, newValue) {
+				updateValue(name, newValue);
+				didChange();
+			});
+			container.append(inputWrapper);
+		} else if (option.type === "toggle") {
+			let inputWrapper = build_toggle_input(option, currentValue, function (name, newValue) {
+				updateValue(name, newValue);
+				didChange();
+			});
+			container.append(inputWrapper)
+		} else {
+			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
+		}
+	});
+	update_token_base_visibility(container);
+
+
+	// Build example tokens to show the settings changes
+	container.append(`<h5 class="token-image-modal-footer-title" style="margin-top:15px;">Example Tokens</h5>`);
+	let tokenExamplesWrapper = $(`<div class="example-tokens-wrapper"></div>`);
+	container.append(tokenExamplesWrapper);
+	// not square image to show aspect ratio
+	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/thumbnails/6/359/420/618/636272697874197438.png"}));
+	// perfectly square image
+	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg"}));
+	// idk, something else I guess
+	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://i.imgur.com/2Lglcip.png"}));
+
+	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
+	resetToDefaults.on("click", function (clickEvent) {
+
+		let tokenOptionsFlyoutContainer = $(clickEvent.currentTarget).parent();
+
+		// disable all toggle switches
+		tokenOptionsFlyoutContainer
+			.find(".rc-switch")
+			.removeClass("rc-switch-checked")
+			.removeClass("rc-switch-unknown");
+
+		// set all dropdowns to their default values
+		tokenOptionsFlyoutContainer
+			.find("select")
+			.each(function () {
+				let el = $(this);
+				let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
+				el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
+			});
+
+		// This is why we want multiple callback functions.
+		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
+		availableOptions.forEach(option => updateValue(option.name, undefined));
+		didChange();
+	});
+	container.append(resetToDefaults);
+
+	observe_hover_text(container);
+
+	return container;
+}
+
+function update_token_base_visibility(container) {
+	const selectedStyle = container.find("select[name=tokenStyleSelect]").val();
+	const findOtherOption = function(optionName) {
+		return container.find(`.token-image-modal-footer-select-wrapper[data-option-name=${optionName}]`);
 	}
-
-	if (window.TOKEN_SETTINGS['locked']) {
-		// nothing to show here?
-	} else {
-		// nothing to show here?
+	let styleSubSelect = findOtherOption("tokenBaseStyleSelect");
+	if(selectedStyle === "virtualMiniCircle" || selectedStyle === "virtualMiniSquare"){
+		styleSubSelect.show();
+	} else{
+		styleSubSelect.hide();
 	}
-
-	if (window.TOKEN_SETTINGS['disablestat']) {
-		items.find(".hpbar").remove();
-		items.find(".ac").remove();
-	} else if (window.CURRENT_SCENE_DATA !== undefined && window.CURRENT_SCENE_DATA.hpps !== undefined) {
-		items.find(".hpbar").remove();
-		items.find(".ac").remove();
-
-		// only do this if we've loaded scene data. Otherwise this breaks because it tries to do math on undefined
-		let tok = new Token(default_options());
-		tok.options.size = items.width();
-		tok.options.max_hp = 10;
-		tok.options.hp = 10;
-		tok.options.ac = 10;
-		let hp = tok.build_hp();
-		items.append(hp);
-		let ac = tok.build_ac();
-		items.append(ac);
-	}
-
-	if (window.TOKEN_SETTINGS['hidestat']) {
-		// anything to show here? This only affects players
+	if (selectedStyle === "noConstraint") {
+		findOtherOption("square").show();
+		findOtherOption("legacyaspectratio").show();
 	} else {
-		// anything to show here? This only affects players
-	}
-
-	if (window.TOKEN_SETTINGS['restrictPlayerMove']) {
-		// anything to show here? This only affects players
-	} else {
-		// anything to show here? This only affects players
-	}
-
-	if (window.TOKEN_SETTINGS['disableborder']) {
-		items.find("img").css("border", "0px solid #000")
-	} else {
-		items.find("img").css("border", "4px solid #000")
-	}
-
-	if (window.TOKEN_SETTINGS['disableaura']) {
-		items.find("img").css("box-shadow", "");
-		items.find("img").css("transform", `scale(1)`);
-	} else {
-		items.find("img").css("box-shadow", "rgb(5 255 0 / 80%) 0px 0px 7px 7px");
-		items.find("img").css("transform", `scale(0.88)`); // close enough
-	}
-
-	if (window.TOKEN_SETTINGS['revealname']) {
-		// this messes with the size of the example tokens, and we can't use the `VTTToken` class because otherwise the scene will think it's a real token
-		// so for now, do nothing, and revisit this in the future
-		// items.addClass('hasTooltip');
-	} else {
-		// items.removeClass('hasTooltip');
-	}
-
-	if (window.TOKEN_SETTINGS['legacyaspectratio']) {
-		items.find("img").removeClass("preserve-aspect-ratio");
-	} else {
-		items.find("img").addClass("preserve-aspect-ratio");
+		findOtherOption("square").hide();
+		findOtherOption("legacyaspectratio").hide();
 	}
 }
 
@@ -449,6 +618,7 @@ function enable_dice_streaming_feature(enabled){
 		if($(".stream-dice-button").length>0)
 			return;
 		$(".glc-game-log>[class*='Container-Flex']").append($(`<div  id="stream_dice"><div class='stream-dice-button'>Dice Stream Disabled</div></div>`));
+		update_dice_streaming_feature(window.JOINTHEDICESTREAM);
 		$(".stream-dice-button").off().on("click", function(){
 			if(window.JOINTHEDICESTREAM){
 				update_dice_streaming_feature(false);
@@ -469,7 +639,7 @@ function enable_dice_streaming_feature(enabled){
 	}
 }
 
-function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {		
+function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text()) {
 
 	if (enabled == true) {
 		// STREAMING STUFF
@@ -481,7 +651,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 				if($(this).text() == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
 						streamid: window.MYSTREAMID
-					});		
+					});
 				}
 				else if($(this).text() == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
@@ -503,7 +673,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
 		}
 		if (window.JOINTHEDICESTREAM) {
-			
+
 			for (let i in window.STREAMPEERS) {
 				console.log("replacing the track")
 				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
@@ -518,14 +688,14 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
 						streamid: window.MYSTREAMID
 					});
-				}		
+				}
 			}, 1000)
 			setTimeout(function(){
 				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
 					from: window.MYSTREAMID
 				})
 			}, 500);
-		} 
+		}
 	}
 	else {
 		$(`.stream-dice-button`).html("Dice Stream Disabled");
@@ -589,7 +759,7 @@ function export_file(){
 		notes:{},
 		journalchapters:[],
 		};
-	
+
 	export_scenes(
 		(scenes)=>{
 			DataFile.scenes=scenes;
@@ -600,8 +770,9 @@ function export_file(){
 			DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
 			DataFile.mytokens=mytokens;
 			DataFile.mytokensfolders=mytokensfolders;
+			DataFile.tokencustomizations=window.TOKEN_CUSTOMIZATIONS;
 			DataFile.notes=window.JOURNAL.notes;
-			DataFile.journalchapters=window.JOURNAL.chapters;	
+			DataFile.journalchapters=window.JOURNAL.chapters;
 			DataFile.soundpads=window.SOUNDPADS;
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		}
@@ -622,20 +793,32 @@ function import_readfile() {
 			var DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
 		}
 		catch{
-			
+
 		}
 		if(!DataFile){ // pre version 2
 			var DataFile=$.parseJSON(atob(reader.result));
 		}
-		
+
 		console.log(DataFile);
-		
-		
+
+
 		for(k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
 		$("#sounds-panel").remove(); init_audio();
 		persist_soundpad();
+
+		if (DataFile.tokencustomizations !== undefined) {
+			let customizations = [];
+			customizations = DataFile.tokencustomizations.forEach(json => {
+				try {
+					customizations = TokenCustomization.fromJson(json);
+				} catch (error) {
+					console.error("Failed to parse TokenCustomization from json", json);
+				}
+			});
+			persist_all_token_customizations(customizations);
+		}
 
 		if (DataFile.mytokens !== undefined) {
 			mytokens = DataFile.mytokens;
@@ -657,7 +840,7 @@ function import_readfile() {
 		persist_customtokens();
 
 		alert('Loading completed. Data merged');
-		
+
 		if(DataFile.notes){
 			window.JOURNAL.notes=DataFile.notes;
 			window.JOURNAL.chapters=DataFile.journalchapters;
