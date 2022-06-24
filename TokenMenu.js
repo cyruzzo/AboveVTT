@@ -647,7 +647,7 @@ function build_menu_stat_inputs(tokenIds) {
 	let hpMenuInput = $(`<label class='menu-input-label'>HP<input value='${hp}' class='menu-input hpMenuInput' type="text"></label>`);
 	let maxHpMenuInput = $(`<label class='menu-input-label'>Max HP<input value='${max_hp}' class='menu-input maxHpMenuInput' type="text"></label>`);
 	let acMenuInput = $(`<label class='menu-input-label'>AC<input value='${ac}' class='menu-input acMenuInput' type="text"></label>`);
-	let elevMenuInput = $(`<label class='menu-input-label'>Elevation<input value='${elev}' class='menu-input elevMenuInput' type="text"></label>`);
+	let elevMenuInput = $(`<label class='menu-input-label'>Elevation<input value='${elev}' class='menu-input elevMenuInput' type="number"></label>`);
 	body.append(elevMenuInput);
 	body.append(acMenuInput);
 	body.append(hpMenuInput);
@@ -744,31 +744,17 @@ function build_menu_stat_inputs(tokenIds) {
 	});
 
 	elevMenuInput.on('keyup', function(event) {
-		let newValue = event.target.value;
-		let newElev = newValue;
-
-		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
+		if (event.key == "Enter") {
 			tokens.forEach(token => {
-				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newElev = parseInt(token.options.elev) + parseInt(newValue);
-				}
-				token.options.elev = newElev;
+				token.options.elev = event.target.value;
 				token.place_sync_persist();
-				$(".elevMenuInput").val(newElev);
 			});
 		}
 	});
 	elevMenuInput.on('focusout', function(event) {
-		let newValue = event.target.value;
-		let newElev = newValue;
-
 		tokens.forEach(token => {
-			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newElev = parseInt(token.options.elev) + parseInt(newValue);
-			}
-			token.options.elev = newElev;
+			token.options.elev = event.target.value;
 			token.place_sync_persist();
-			$(".elevMenuInput").val(newElev);
 		});
 	});
 

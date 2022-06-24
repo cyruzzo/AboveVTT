@@ -770,11 +770,7 @@ class Token {
 		elev.css('height', bar_height + "px");
 		elev.css('bottom', '3px');
 		elev.css('color', 'white');
-		if (this.options.elev == 0){
-			elev.css('display', 'none');
-		}else if (this.options.elev == undefined){
-			elev.css('display', 'none');
-		}else if (this.options.elev > 0){
+		if (parseFloat(this.options.elev) > 0) {
 			elev.append(
 			$(`
 			<svg width="${bar_height + 5}px" height="${bar_height + 5}px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -783,7 +779,7 @@ class Token {
 			<text style="position:absolute;top:4px;left:8px;font-size:12px;color:#000;transform:translate(${this.options.elev > 9 ? 5.5 + 'px': 8.5 + 'px'},16px);">${this.options.elev}</text>
 			</svg>
 			`));
-		}else if (this.options.elev < 0){
+		} else if (parseFloat(this.options.elev) < 0) {
 			elev.append(
 			$(`
 			<svg width="${bar_height + 5}px" height="${bar_height + 5}px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -816,10 +812,23 @@ class Token {
 			showthem=true;
 		}
 
+
 		if(showthem){
-			token.find(".hpbar").css("visibility", "visible");
-			token.find(".ac").show();
-			token.find(".elev").show();
+			if (!this.options.max_hp && !this.options.hp) { // even if we are supposed to show them, only show them if they have something to show.
+				token.find(".hpbar").css("visibility", "hidden");
+			} else {
+				token.find(".hpbar").css("visibility", "visible");
+			}
+			if (!this.options.ac) { // even if we are supposed to show it, only show them if they have something to show.
+				token.find(".ac").hide();
+			} else {
+				token.find(".ac").show();
+			}
+			if (!this.options.elev) { // even if we are supposed to show it, only show them if they have something to show.
+				token.find(".elev").hide();
+			} else {
+				token.find(".ac").show();
+			}
 		}
 		else{
 			token.find(".hpbar").css("visibility", "hidden");
