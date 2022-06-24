@@ -3916,13 +3916,16 @@ button.avtt-roll-button {
 .token>.base.water-base{
     background-image: url(https://opengameart.org/sites/default/files/Untitled-3_1.jpg);
 }
-.token.hasbase:active .base{
+.token.hasbase.ui-draggable-dragging .base,
+.token.hasbase.pause_click .base{
     filter: drop-shadow(3px 3px 2px #000000dd)
 }
-.token.hasbase:active .base.large-or-smaller-base{
+.token.hasbase.ui-draggable-dragging .base.large-or-smaller-base,
+.token.hasbase.pause_click .base.large-or-smaller-base{
     filter: drop-shadow(1px 1px 2px #000000dd)
 }
-.token.hasbase:active{
+.token.hasbase.ui-draggable-dragging,
+.token.hasbase.pause_click{
     transform: translate(-1px, -1px)
 }
 
