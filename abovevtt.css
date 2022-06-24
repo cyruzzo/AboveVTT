@@ -3835,6 +3835,9 @@ button.avtt-roll-button {
     border: inset 2px var(--token-border-color, #ffffff44);
     box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
 }
+.token>.base.large-or-smaller-base.circle {
+    border: solid 2px var(--token-border-color, #ffffff44);
+}
 .token>.base.noborder.large-or-smaller-base{
     border: solid 2px var(--token-hp-aura-color);
 }
