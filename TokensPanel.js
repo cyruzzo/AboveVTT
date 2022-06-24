@@ -877,6 +877,7 @@ function token_size_for_item(listItem) {
  * @returns {string[]} a list of url strings
  */
 function alternative_images_for_item(listItem) {
+    if (!listItem) return [];
     let alternativeImages;
     switch (listItem.type) {
         case ItemType.MyToken:
@@ -1419,11 +1420,15 @@ function display_builtin_token_details_modal(listItem, placedToken) {
 
 function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
     let parsedImage = parse_img(imageUrl);
-    let tokenDiv = build_alternative_image_for_modal(parsedImage, find_token_options_for_list_item(listItem), placedToken, listItem);
+    let options = find_token_options_for_list_item(listItem);
+    if (placedToken) {
+        options = {...placedToken.options};
+    }
+    let tokenDiv = build_alternative_image_for_modal(parsedImage, options, placedToken, listItem);
     if (placedToken?.isMonster()) {
         tokenDiv.attr("data-monster", placedToken.options.monster);
     }
-    set_full_path(tokenDiv, listItem.fullPath());
+    set_full_path(tokenDiv, listItem?.fullPath());
     enable_draggable_token_creation(tokenDiv, parsedImage);
     return tokenDiv;
 }
@@ -1440,8 +1445,8 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         console.warn("redraw_token_images_in_modal was called without a sidebarPanel");
         return;
     }
-    if (listItem === undefined) {
-        console.warn("redraw_token_images_in_modal was called without a listItem");
+    if (listItem === undefined && placedToken === undefined) {
+        console.warn("redraw_token_images_in_modal was called without proper items");
         return;
     }
 
@@ -1450,7 +1455,11 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
     // clone our images array instead of using a reference so we don't accidentally change the current images for all tokens
     // we also need to parse and compare every image to know if we need to add the placedToken image
-    let alternativeImages = alternative_images_for_item(listItem).map(image => parse_img(image));
+    let alternativeImages = [];
+    if (placedToken?.options?.alternativeImages) {
+        alternativeImages = alternativeImages.concat(placedToken.options.alternativeImages);
+    }
+    alternativeImages = alternativeImages.concat(alternative_images_for_item(listItem).map(image => parse_img(image)));
 
     let placedImg = parse_img(placedToken?.options?.imgsrc);
     if (placedImg.length > 0 && !alternativeImages.includes(placedImg)) {
@@ -1460,12 +1469,12 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         modalBody.append(tokenDiv);
     }
 
-    if (alternativeImages.length === 0 && placedImg !== parse_img(listItem.image)) {
+    if (alternativeImages.length === 0 && placedImg !== parse_img(listItem?.image)) {
         // if we don't have any alternative images, show the default image
-        let tokenDiv = build_token_div_for_sidebar_modal(listItem.image, listItem, placedToken);
+        let tokenDiv = build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
         modalBody.append(tokenDiv);
     }
-    if (listItem.type === ItemType.Aoe ) {
+    if (listItem?.type === ItemType.Aoe) {
         const withoutDefault = get_available_styles().filter(aoeStyle => aoeStyle !== "Default")
         alternativeImages = withoutDefault.map(aoeStyle => {
           return `class=aoe-token-tileable aoe-style-${aoeStyle.toLowerCase()} aoe-shape-${listItem.shape}`
@@ -2093,6 +2102,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 }
 
 function find_token_options_for_list_item(listItem) {
+    if (!listItem) return {};
     if (listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) {
         return listItem.tokenOptions;
     } else {
@@ -2115,8 +2125,27 @@ function display_change_image_modal(placedToken) {
 
     /// draw tokens in the body
     let listItem = list_item_from_token(placedToken);
-    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
-    sidebarPanel.body.find(".custom-token-image-item").addClass("change-token-image-item");
+    let alternativeImages = [];
+    if (placedToken.options.alternativeImages) {
+        alternativeImages = alternativeImages.concat(placedToken.options.alternativeImages);
+    }
+    if (listItem?.alternativeImages) {
+        alternativeImages = alternativeImages.concat(listItem.alternativeImages);
+    }
+    alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
+    console.log("display_change_image_modal", alternativeImages);
+    alternativeImages.forEach(imgUrl => {
+        const image = parse_img(imgUrl);
+        const html = $(`<img class="example-token" src="${image}" alt="alternative image" />`);
+        // the user is changing their token image, allow them to simply click an image
+        // we don't want to allow drag and drop from this modal
+        html.on("click", function (imgClickEvent) {
+            placedToken.options.imgsrc = parse_img(image);
+            close_sidebar_modal();
+            placedToken.place_sync_persist();
+        });
+        sidebarPanel.body.append(html);
+    });
 
     // this will be called when the user enters a new url
     const add_token_customization_image = function(imageUrl) {
