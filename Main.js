@@ -2160,7 +2160,7 @@ function init_character_page_sidebar() {
 		});
 		if (needs_ui) {
 			needs_ui = false;
-			window.PLAYER_NAME = $(".ddbc-character-name").text();
+			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
 			try {
 				// This should be just fine, but catch any parsing errors just in case
 				window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, ""));
