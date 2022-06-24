@@ -63,7 +63,7 @@ function token_setting_options() {
 			label: 'Restrict Player Movement',
 			type: 'toggle',
 			options: [
-				{ value: true, label: "Restricted", description: "Players can not move the token." },
+				{ value: true, label: "Restricted", description: "Players can not move the token unless it is their token." },
 				{ value: false, label: "Unrestricted", description: "Players can move the token." }
 			],
 			defaultValue: false
