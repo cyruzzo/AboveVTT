@@ -988,48 +988,24 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 
 		//border color selections
-		let borderColorInput = $(`<input class="border-color-input" type="color" value="#ddd"/>`);
 		let tokenBorderColors = tokens.map(t => t.options.color);
-		if(tokenBorderColors.length === 1) {
-			borderColorInput.val(tokenBorderColors[0] || "#dddddd");
-		}
-		let borderColorWrapper = $(`
-			<div class="token-image-modal-url-label-wrapper border-color-wrapper">
-				<div class="token-image-modal-footer-title border-color-title">Border Color</div>
-			</div>
-		`);
-		borderColorWrapper.append(borderColorInput);
-		body.append(borderColorWrapper);
-		let colorPicker = $(borderColorInput);
-		colorPicker.spectrum({
-			type: "color",
-			showInput: true,
-			showInitial: true,
-			containerClassName: 'prevent-sidebar-modal-close',
-			clickoutFiresChange: true,
-			color: tokens[0].options.color,
-			appendTo: "parent"
-		});
-		const borderColorPickerChange = function(event, tinycolor) {
-			let borderColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-			if (event.type === 'change') {
+		let initialColor = tokenBorderColors.length === 1 ? tokenBorderColors[0] : random_token_color();
+		const borderColorWrapper = build_token_border_color_input(initialColor, function (newColor, eventType) {
+			if (eventType === 'change') {
 				tokens.forEach(token => {
-					token.options.color = borderColor;
-					$("#combat_area tr[data-target='" + token.options.id + "'] img[class*='Avatar']").css("border-color", borderColor);
+					token.options.color = newColor;
+					$("#combat_area tr[data-target='" + token.options.id + "'] img[class*='Avatar']").css("border-color", newColor);
 					token.place_sync_persist();
 				});
 			}
 			else {
 				tokens.forEach(token => {
-					token.options.color = borderColor;
+					token.options.color = newColor;
 					token.place_sync_persist();
 				});
 			}
-		};
-		colorPicker.on('dragstop.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
-		colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
-		colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
-
+		});
+		body.append(borderColorWrapper);
 
 		let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
 		body.append(changeImageMenuButton)

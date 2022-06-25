@@ -35,6 +35,11 @@ const availableToAoe = [
 	"revealname"
 ];
 
+function random_token_color() {
+	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
+	return TOKEN_COLORS[randomColorIndex];
+}
+
 class Token {
 
 	constructor(options) {

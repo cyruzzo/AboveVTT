@@ -1374,6 +1374,15 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     });
     inputWrapper.append(imageScaleWrapper);
 
+    // border color
+    const borderColorWrapper = build_token_border_color_input(random_token_color(), function (newColor, eventType) {
+        customization.setTokenOption("color", newColor);
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);
+    });
+    inputWrapper.append(borderColorWrapper);
+
+    // token options override
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
         customization.setTokenOption(name, value);
     }, function () {
@@ -1383,6 +1392,41 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     });
     inputWrapper.append(tokenOptionsButton);
     inputWrapper.append(`<br />`);
+}
+
+/// colorChangeCallback(borderColor, eventType)
+function build_token_border_color_input(initialColor, colorChangeCallback) {
+    if (typeof colorChangeCallback !== "function") {
+        console.warn("build_token_border_color_input was called without a callback function");
+        return;
+    }
+    // border color
+    let borderColorInput = $(`<input class="border-color-input" type="color" value="${initialColor}"/>`);
+    let borderColorWrapper = $(`
+        <div class="token-image-modal-url-label-wrapper border-color-wrapper">
+            <div class="token-image-modal-footer-title border-color-title">Border Color</div>
+        </div>
+    `);
+    borderColorWrapper.append(borderColorInput);
+    let colorPicker = $(borderColorInput);
+    colorPicker.spectrum({
+        type: "color",
+        showInput: true,
+        showInitial: true,
+        containerClassName: 'prevent-sidebar-modal-close',
+        clickoutFiresChange: true,
+        color: initialColor,
+        appendTo: "parent"
+    });
+    const borderColorPickerChange = function(event, tinycolor) {
+        let borderColor = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        colorChangeCallback(borderColor, event.type);
+    };
+    colorPicker.on('dragstop.spectrum', borderColorPickerChange);   // update the token as the player messes around with colors
+    colorPicker.on('change.spectrum', borderColorPickerChange); // commit the changes when the user clicks the submit button
+    colorPicker.on('hide.spectrum', borderColorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+    return borderColorWrapper;
 }
 
 function build_override_token_options_button(sidebarPanel, listItem, placedToken, options, updateValue, didChange) {
