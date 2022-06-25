@@ -1342,24 +1342,13 @@ function did_click_row(clickEvent) {
       break;
     case ItemType.Scene:
       // show the preview
-      remove_sidebar_flyout();
-      let flyout = $(`<div class='sidebar-flyout'></div>`);
-      $("body").append(flyout);
-      if (clickedItem.isVideo) {
-        flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
-      } else {
-        flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
-      }
-      let height = flyout.height();
-      let halfHeight = (height / 2);
-      let top = clickEvent.clientY - halfHeight;
-      if (top < 30) { // make sure it's always below the main UI buttons
-        top = 30;
-      } else if (clickEvent.clientY + halfHeight > window.innerHeight - 30) {
-        top = window.innerHeight - height - 30;
-      }
-      flyout.css({
-        "top": top
+      build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+        if (clickedItem.isVideo) {
+          flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
+        } else {
+          flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
+        }
+        flyout.css("right", "340px");
       });
       clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
         $(mouseleaveEvent.currentTarget).off("mouseleave");
