@@ -1509,6 +1509,11 @@ function init_scenes_panel() {
 		let textValue = scenesPanel.header.find("input[name='scene-search']").val();
 		redraw_scene_list(textValue);
 	}, 500));
+	searchInput.off("keyup").on('keyup', function(event) {
+		if (event.key === "Escape") {
+			$(event.target).blur();
+		}
+	});
 
 	let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Scenes"><span class="material-icons">reorder</span></button>`);
 	reorderButton.on("click", function (clickEvent) {

@@ -264,10 +264,16 @@ Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
-    handle_undo()
+    handle_undo();
 });
 Mousetrap.bind('command+z', function(e) {
-    handle_undo()
+    handle_undo();
+});
+Mousetrap.bind(']', function(e) {
+    select_next_tab();
+});
+Mousetrap.bind('[', function(e) {
+    select_prev_tab();
 });
 
 function handle_undo(){

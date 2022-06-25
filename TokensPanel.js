@@ -400,6 +400,11 @@ function init_tokens_panel() {
         let textValue = tokensPanel.header.find("input[name='token-search']").val();
         filter_token_list(textValue);
     }, 500));
+    searchInput.off("keyup").on('keyup', function(event) {
+        if (event.key === "Escape") {
+            $(event.target).blur();
+        }
+    });
     header.append(searchInput);
 
     register_token_row_context_menu();          // context menu for each row

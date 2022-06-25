@@ -505,6 +505,27 @@ function notify_gamelog() {
 	}
 }
 
+function select_next_tab() {
+	const currentlySelected = $(".sidebar__controls .selected-tab");
+	if (currentlySelected.attr("id") === "switch_settings") {
+		return; // already as far right as we can go
+	}
+	const nextTab = currentlySelected.next();
+	if (nextTab.length === 1) {
+		change_sidbar_tab(nextTab);
+	}
+}
+function select_prev_tab() {
+	const currentlySelected = $(".sidebar__controls .selected-tab");
+	if (currentlySelected.attr("id") === "switch_gamelog") {
+		return; // already as far left as we can go
+	}
+	const previousTab = currentlySelected.prev();
+	if (previousTab.length === 1) {
+		change_sidbar_tab(previousTab);
+	}
+}
+
 /**
  * Triggers sidebar tab change based on given event.
  * @param {event} e click event
