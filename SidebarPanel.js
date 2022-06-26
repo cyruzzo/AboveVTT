@@ -1838,7 +1838,11 @@ function enable_draggable_change_folder(listItemType) {
       if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === path_to_html_id(RootFolder.Scenes.path)) {
         // they dropped it on the header so find the root folder
         if (listItemType === ItemType.Scene) {
-          move_scene_to_folder(draggedItem, RootFolder.Scenes.path);
+          if (draggedItem.isTypeFolder()) {
+            move_scenes_folder(draggedItem, RootFolder.Scenes.path);
+          } else {
+            move_scene_to_folder(draggedItem, RootFolder.Scenes.path);
+          }
           did_update_scenes();
           enable_draggable_change_folder(ItemType.Scene);
         } else if (listItemType === ItemType.MyToken) {
