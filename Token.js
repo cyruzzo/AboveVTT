@@ -37,7 +37,7 @@ const availableToAoe = [
 
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
-	return TOKEN_COLORS[randomColorIndex];
+	return "#" + TOKEN_COLORS[randomColorIndex];
 }
 
 class Token {
@@ -1740,7 +1740,7 @@ function return_false() {
 
 function default_options() {
 	return {
-		color: '#000000',
+		color: random_token_color(),
 		conditions: [],
 		hp: "",
 		max_hp: "",

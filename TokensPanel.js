@@ -1375,12 +1375,40 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     inputWrapper.append(imageScaleWrapper);
 
     // border color
-    const borderColorWrapper = build_token_border_color_input(random_token_color(), function (newColor, eventType) {
+    const color = customization.tokenOptions.color || random_token_color();
+    const borderColorWrapper = build_token_border_color_input(color, function (newColor, eventType) {
         customization.setTokenOption("color", newColor);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
     });
+    borderColorWrapper.removeClass("border-color-wrapper"); // sets display:block!important; but we want to be able to hide this one
+    const specificBorderColorSetting = {
+        name: 'specificBorderColor',
+        label: 'Border Color',
+        type: 'toggle',
+        options: [
+            { value: true, label: "Specific Color", description: "The token will use the specified color." },
+            { value: false, label: "Round", description: "The token will use a random border color." }
+        ],
+        defaultValue: false
+    };
+    const specificBorderColorValue = (typeof customization.tokenOptions.color === "string" && customization.tokenOptions.color.length > 0);
+    const borderColorToggle = build_toggle_input(specificBorderColorSetting, specificBorderColorValue, function (useSpecificColorKey, useSpecificColorValue) {
+        if (useSpecificColorValue === true) {
+            customization.setTokenOption("color", color);
+            persist_token_customization(customization);
+            borderColorWrapper.show();
+        } else {
+            customization.setTokenOption("color", undefined);
+            persist_token_customization(customization);
+            borderColorWrapper.hide();
+        }
+    });
+    inputWrapper.append(borderColorToggle);
     inputWrapper.append(borderColorWrapper);
+    if (!specificBorderColorValue) {
+        borderColorWrapper.hide();
+    }
 
     // token options override
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
