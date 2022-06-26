@@ -1289,6 +1289,9 @@ class MessageBroker {
 				fetch_and_cache_scene_monster_items(true);
 			}
 			did_update_scenes();
+			if (window.reorderState === ItemType.Scene) {
+				enable_draggable_change_folder(ItemType.Scene);
+			}
 			console.groupEnd()
 			
 		});

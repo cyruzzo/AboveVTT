@@ -1763,6 +1763,7 @@ function list_item_image_flyout(hoverEvent) {
 }
 
 function disable_draggable_change_folder() {
+  window.reorderState = undefined;
   $(".token-row-drag-handle").remove();
 
   // MyToken
@@ -1826,6 +1827,7 @@ function add_expand_collapse_buttons_to_header(sidebarPanel) {
 function enable_draggable_change_folder(listItemType) {
 
   disable_draggable_change_folder();
+  window.reorderState = listItemType; // if you move the current scene, it will reload. When that happens, we need to know to re-enter this state.
 
   const droppableOptions = {
     greedy: true,
