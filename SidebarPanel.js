@@ -1508,7 +1508,7 @@ function display_folder_configure_modal(listItem) {
   sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder));
 
   if (itemType === ItemType.MyToken) {
-    let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId);
+    let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
     let folderOptionsButton = build_override_token_options_button(sidebarModal, listItem, undefined, customization.tokenOptions, function (key, value) {
       customization.setTokenOption(key, value);
     }, function () {

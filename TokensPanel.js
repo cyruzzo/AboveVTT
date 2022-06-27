@@ -8,13 +8,10 @@ cached_monster_items = {}; // monsterId: SidebarTokenItem
 aoe_items = [];
 
 /** Reads in tokendata, and writes to mytokens and mytokensfolders; marks tokendata objects with didMigrateToMyToken = false; */
-function migrate_to_my_tokens() {
-    if (tokendata.didMigrateToMyToken === true) {
-        console.log("migrate_to_my_tokens has already been run. returning early");
-        return;
-    }
+function migrate_tokendata() {
 
-    console.groupCollapsed("migrate_to_my_tokens");
+    let migratedFolders = [];
+    let migratedTokens = [];
 
     const migrateFolderAtPath = function(oldFolderPath) {
         let currentFolderPath = sanitize_folder_path(oldFolderPath);
@@ -45,33 +42,36 @@ function migrate_to_my_tokens() {
                 newToken.folderPath = currentFolderPath;
                 newToken.image = parse_img(newToken.img);
                 delete newToken.img;
-                let existing = mytokens.find(t => t.name === newToken.name && t.folderPath === newToken.folderPath)
+                let existing = migratedTokens.find(t => t.name === newToken.name && t.folderPath === newToken.folderPath)
                 if (existing !== undefined) {
-                    console.log("not adding duplicate token", newToken);
+                    console.log("migrate_to_my_tokens not adding duplicate token", newToken);
                 } else {
-                    console.log("successfully migrated token", newToken, "from", oldToken);
-                    mytokens.push(newToken);
+                    console.log("migrate_to_my_tokens successfully migrated token", newToken, "from", oldToken);
+                    migratedTokens.push(newToken);
                 }
                 oldToken.didMigrateToMyToken = true;
             }
         }
         if (folder.folders) {
             for (let folderKey in folder.folders) {
-                mytokensfolders.push({ name: folderKey, folderPath: currentFolderPath, collapsed: true });
+                if (folderKey.includes("AboveVTT BUILTIN")) {
+                    continue; // not migrating built in tokens
+                }
+                migratedFolders.push({ name: folderKey, folderPath: currentFolderPath, collapsed: true });
                 migrateFolderAtPath(`${currentFolderPath}/${folderKey}`);
             }
         }
     }
 
     migrateFolderAtPath(RootFolder.Root.path);
-    tokendata.didMigrateToMyToken = true;
-    persist_my_tokens();
-    persist_customtokens();
-    console.groupEnd();
+    return migrate_convert_mytokens_to_customizations(migratedFolders, migratedTokens);
 }
 
 /** erases mytokens and mytokensfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function rollback_from_my_tokens() {
+    console.warn("rollback_from_my_tokens is no longer supported");
+    return;
+
     console.groupCollapsed("rollback_from_my_tokens");
     tokendata.didMigrateToMyToken = false;
     mytokens = [];
@@ -385,7 +385,8 @@ function init_tokens_panel() {
     }
     $("#switch_tokens").click()
 
-    migrate_to_my_tokens();
+
+    migrate_tokendata(tokendata);
     migrate_token_customizations();
     rebuild_token_items_list();
 
@@ -1086,7 +1087,7 @@ function create_mytoken_folder_inside(listItem) {
     if (newFolderCount > 0) {
         newFolderName += ` ${newFolderCount + 1}`;
     }
-    let newFolder = TokenCustomization.Folder(uuid(), listItem.id, { name: newFolderName });
+    let newFolder = TokenCustomization.Folder(uuid(), listItem.id, RootFolder.MyTokens.id, { name: newFolderName });
     persist_token_customization(newFolder, function(didSucceed, errorType) {
         if (didSucceed) {
             did_change_mytokens_items();
@@ -1257,7 +1258,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     let customization;
     try {
-        customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id);
+        customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id, RootFolder.Monsters.id);
     } catch (error) {
         console.error("display_token_configuration_modal failed to create a customization object for listItem:", listItem, error);
         showDebuggingAlert("Failed to create a token customization object.");
@@ -1648,9 +1649,10 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
 
 /** writes mytokens and mytokensfolders to localStorage */
 function persist_my_tokens() {
-    localStorage.setItem("MyTokens", JSON.stringify(mytokens));
-    localStorage.setItem("MyTokensFolders", JSON.stringify(mytokensfolders));
-    persist_folders_remembered_state();
+    console.warn("persist_my_tokens no longer supported");
+    // localStorage.setItem("MyTokens", JSON.stringify(mytokens));
+    // localStorage.setItem("MyTokensFolders", JSON.stringify(mytokensfolders));
+    // persist_folders_remembered_state();
 }
 
 function persist_folders_remembered_state() {

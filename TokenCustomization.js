@@ -70,6 +70,9 @@ class TokenCustomization {
     /** {string} The id of the folder this object is in. Typically, an uuid or one of the options in RootFolder.*.id */
     parentId;
 
+    /** {string} The id of the root folder this object is in. One of the options in RootFolder.*.id. This is most important for Folder types */
+    rootId;
+
     /** {object} The same object structure as Token.options. This gets set on token.options during token creation */
     tokenOptions;
 
@@ -83,7 +86,7 @@ class TokenCustomization {
      * @constructor
      */
     static PC(playerSheet, tokenOptions) {
-        return new TokenCustomization(playerSheet, ItemType.PC, RootFolder.Players.id, tokenOptions);
+        return new TokenCustomization(playerSheet, ItemType.PC, RootFolder.Players.id, RootFolder.Players.id, tokenOptions);
     }
 
     /**
@@ -93,7 +96,7 @@ class TokenCustomization {
      * @constructor
      */
     static Monster(monsterId, tokenOptions) {
-        return new TokenCustomization(monsterId, ItemType.Monster, RootFolder.Monsters.id, tokenOptions);
+        return new TokenCustomization(monsterId, ItemType.Monster, RootFolder.Monsters.id, RootFolder.MyTokens.id, tokenOptions);
     }
 
     /**
@@ -104,7 +107,7 @@ class TokenCustomization {
      * @constructor
      */
     static MyToken(id, parentId, tokenOptions) {
-        return new TokenCustomization(id, ItemType.MyToken, parentId, tokenOptions);
+        return new TokenCustomization(id, ItemType.MyToken, parentId, RootFolder.MyTokens.id, tokenOptions);
     }
 
     /**
@@ -114,8 +117,8 @@ class TokenCustomization {
      * @returns {TokenCustomization} the token customization for the Folder
      * @constructor
      */
-    static Folder(id, parentId, tokenOptions) {
-        return new TokenCustomization(id, ItemType.Folder, parentId, tokenOptions);
+    static Folder(id, parentId, rootId, tokenOptions) {
+        return new TokenCustomization(id, ItemType.Folder, parentId, rootId, tokenOptions);
     }
 
     /**
@@ -123,16 +126,19 @@ class TokenCustomization {
      * @returns {TokenCustomization} a typed object instead of the raw JSON object that was given
      */
     static fromJson(obj) {
-        return new TokenCustomization(obj.id, obj.tokenType, obj.parentId, obj.tokenOptions);
+        return new TokenCustomization(obj.id, obj.tokenType, obj.parentId, obj.rootId, obj.tokenOptions);
     }
 
     // never call this directly! use the static functions above
-    constructor(id, tokenType, parentId, tokenOptions) {
+    constructor(id, tokenType, parentId, rootId, tokenOptions) {
         if (tokenType === ItemType.Monster) {
             id = `${id}`; // DDB uses numbers for monster ids, but we want to use strings to keep everything consistent
         }
         if (typeof id !== "string" || id.length === 0) {
             throw `Invalid id ${id}`;
+        }
+        if (typeof rootId !== "string" || rootId.length === 0) {
+            throw `Invalid rootId ${rootId}`;
         }
         if (!TokenCustomization.validTypes.includes(tokenType)) {
             throw `Invalid Type ${tokenType}`;
@@ -143,6 +149,7 @@ class TokenCustomization {
         this.id = id;
         this.tokenType = tokenType;
         this.parentId = parentId;
+        this.rootId = rootId;
         if (typeof tokenOptions === "object") {
             this.tokenOptions = {...tokenOptions}; // copy it
         } else {
@@ -228,7 +235,7 @@ class TokenCustomization {
             }
             if (root !== undefined && root.id !== RootFolder.Root.id) {
                 try {
-                    let rootCustomization = find_or_create_token_customization(ItemType.Folder, root.id, RootFolder.Root.path);
+                    let rootCustomization = find_or_create_token_customization(ItemType.Folder, root.id, RootFolder.Root.path, RootFolder.Root.path);
                     found.push(rootCustomization);
                 } catch (error) {
                     console.warn("Failed to create root customization for", this, error);
@@ -242,7 +249,7 @@ class TokenCustomization {
         if (parent) {
             return sanitize_folder_path(parent.findAncestors().reverse().map(tc => tc.name()).join("/"));
         }
-        const root = RootFolder.findById(this.parentId)
+        const root = RootFolder.findById(this.parentId) || RootFolder.findById(this.rootId);
         if (root) {
             return root.path;
         } else {
@@ -324,6 +331,10 @@ class TokenCustomization {
         }
         this.tokenOptions = clearedOptions;
     }
+
+    rootFolder() {
+        return RootFolder.findById(this.rootId);
+    }
 }
 
 /**
@@ -339,11 +350,12 @@ function find_token_customization(type, id) {
  * @param type {string} the type of customization you're looking for. EX: ItemType.Monster
  * @param id {string|number} the id of the customization you're looking for. EX: pc.sheet, monsterData.id, etc
  * @param parentId {string|number} the id of the parent that will be created. EX: pc.sheet, monsterData.id, etc
+ * @param rootId {string|number} the id of the RootFolder that will be created. EX: RootFolder.Player.id, RootFolder.Monster.id
  * @returns {TokenCustomization|undefined} a token customization for the item if found. If not found, a new TokenCustomization object will be created and returned.
  * @throws an error if a customization object cannot be created
  */
-function find_or_create_token_customization(type, id, parentId) {
-    return find_token_customization(type, id) || new TokenCustomization(id, type, parentId, {});
+function find_or_create_token_customization(type, id, parentId, rootId) {
+    return find_token_customization(type, id) || new TokenCustomization(id, type, parentId, rootId, {});
 }
 
 /**
@@ -363,6 +375,15 @@ function get_player_token_customization(playerSheet) {
 }
 
 function migrate_token_customizations() {
+    if (!window.TOKEN_CUSTOMIZATIONS) {
+        fetch_token_customizations(function() {
+            if (!window.TOKEN_CUSTOMIZATIONS) {
+                window.TOKEN_CUSTOMIZATIONS = [];
+            }
+            migrate_token_customizations();
+        })
+        return;
+    }
     load_custom_monster_image_mapping();
     if (window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate === true) {
         console.log("migrate_token_customizations has already completed");
@@ -378,17 +399,24 @@ function migrate_token_customizations() {
         for (let playerId in oldCustomizations) {
             if (typeof playerId === "string" && playerId.length > 0) {
                 let tokenOptions = {...oldCustomizations[playerId]};
-                if (tokenOptions.images) {
-                    // Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays/objects
-                    // images should be the only non-primitive. We need to make sure it's properly copied and not referencing the old objet in any way
-                    tokenOptions.alternativeImages = [...tokenOptions.images];
-                    delete tokenOptions.images;
+                const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.PC && tc.id === playerId);
+                if (existing) {
+                    if (tokenOptions.images) {
+                        tokenOptions.images.forEach(img => existing.addAlternativeImage(img));
+                    }
+                } else {
+                    if (tokenOptions.images) {
+                        // Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays/objects
+                        // images should be the only non-primitive. We need to make sure it's properly copied and not referencing the old objet in any way
+                        tokenOptions.alternativeImages = [...tokenOptions.images];
+                        delete tokenOptions.images;
+                    }
+                    delete tokenOptions.didMigrate;
+                    const newCustomization = TokenCustomization.PC(playerId, tokenOptions);
+                    newCustomizations.push(newCustomization);
+                    oldCustomizations[playerId].didMigrate = true;
+                    console.debug("migrate_token_customizations migrated", oldCustomizations[playerId], "to", newCustomization);
                 }
-                delete tokenOptions.didMigrate;
-                const newCustomization = TokenCustomization.PC(playerId, tokenOptions);
-                newCustomizations.push(newCustomization);
-                oldCustomizations[playerId].didMigrate = true;
-                console.debug("migrate_token_customizations migrated", oldCustomizations[playerId], "to", newCustomization);
             } else {
                 console.debug("migrate_token_customizations did not migrate", oldCustomizations[playerId]);
             }
@@ -399,9 +427,16 @@ function migrate_token_customizations() {
         let monsterIdsToFetch = new Set();
         console.log("migrate_token_customizations starting to migrate monster customizations");
         for(let monsterIdNumber in window.CUSTOM_TOKEN_IMAGE_MAP) {
-            const images = window.CUSTOM_TOKEN_IMAGE_MAP[monsterIdNumber];
+            const monsterId = `${monsterIdNumber}`; // monster ids are numbers, but we want it to be a string to be consistent with other ids
+            let images = window.CUSTOM_TOKEN_IMAGE_MAP[monsterIdNumber];
             if (Array.isArray(images)) {
-                const monsterId = `${monsterIdNumber}`; // monster ids are numbers, but we want it to be a string to be consistent with other ids
+                images = [];
+            }
+            const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.Monster && tc.id === monsterId);
+            if (existing) {
+                // already have one so just update it
+                images.forEach(img => existing.addAlternativeImage(img));
+            } else {
                 const newCustomization = TokenCustomization.Monster(monsterId, { alternativeImages: [...images] });
                 newCustomizations.push(newCustomization);
                 console.debug("migrate_token_customizations migrated", monsterIdNumber, images, "to", newCustomization);
@@ -410,55 +445,8 @@ function migrate_token_customizations() {
         }
         console.log("migrate_token_customizations finished migrating monster customizations");
 
-        // MyToken and MyToken folders migration
-        backfill_mytoken_folders(); // just in case
-        let easyFolderReference = {};
-        mytokensfolders.forEach(folder => {
-            // old structure: { name: folderKey, folderPath: currentFolderPath, collapsed: true }
-            folder.id = uuid();
-            let fullPath = sanitize_folder_path(`${folder.folderPath}/${folder.name}`);
-            easyFolderReference[fullPath] = folder;
-        });
-
-        console.log("migrate_token_customizations starting to migrate mytokenfolders customizations");
-        mytokensfolders.forEach(folder => {
-            // old structure: { name: folderKey, folderPath: currentFolderPath, collapsed: true }
-            let parentPath = sanitize_folder_path(folder.folderPath);
-            let parentId = easyFolderReference[parentPath]?.id;
-            if (typeof parentId !== "string" || parentId.length === 0) {
-                parentId = RootFolder.MyTokens.id;
-            }
-            let newCustomization = TokenCustomization.Folder(folder.id, parentId, { name: folder.name });
-            newCustomizations.push(newCustomization);
-            console.debug("migrate_token_customizations migrated", sanitize_folder_path(`${folder.folderPath}/${folder.name}`), "to", newCustomization);
-        });
-        console.log("migrate_token_customizations finished migrating mytokenfolders customizations");
-
-        // MyToken migration
-        console.log("migrate_token_customizations starting to migrate mytokens customizations");
-        mytokens.forEach(myToken => {
-            let parentPath = sanitize_folder_path(myToken.folderPath);
-            let parentId = easyFolderReference[parentPath]?.id;
-            if (typeof parentId !== "string" || parentId.length === 0) {
-                parentId = RootFolder.MyTokens.id;
-            }
-            let tokenOptions = {...myToken};
-            if (myToken.alternativeImages) {
-                // Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays/objects
-                // alternativeImages should be the only non-primitive. We need to make sure it's properly copied and not referencing the old objet in any way
-                tokenOptions.alternativeImages = [...myToken.alternativeImages]; //
-            }
-            delete tokenOptions.image;
-            delete tokenOptions.folderpath;
-            delete tokenOptions.folderPath;
-            delete tokenOptions.didMigrateToMyToken;
-            delete tokenOptions.oldFolderKey;
-            let newCustomization = TokenCustomization.MyToken(uuid(), parentId, tokenOptions);
-            newCustomizations.push(newCustomization);
-            console.debug("migrate_token_customizations migrated", sanitize_folder_path(`${myToken.folderPath}/${myToken.name}`), "to", newCustomization);
-        });
-        console.log("migrate_token_customizations finished migrating mytokens customizations");
-
+        const migratedFromMyTokens = migrate_convert_mytokens_to_customizations(mytokensfolders, mytokens);
+        newCustomizations = newCustomizations.concat(migratedFromMyTokens);
 
         // fetch monsters so we can get the monster names
         console.log("migrate_token_customizations starting to fetch monsters to fill names");
@@ -499,6 +487,91 @@ function migrate_token_customizations() {
     }
 }
 
+function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOfMyTokens) {
+
+    let existingPaths = new Set();
+    let easyFolderReference = {};
+    window.TOKEN_CUSTOMIZATIONS.forEach(tc => {
+        if (tc.tokenType === ItemType.Folder && tc.rootId === RootFolder.MyTokens.id) {
+            const fullPath = tc.fullPath();
+            easyFolderReference[fullPath] = tc.id;
+            existingPaths.add(fullPath);
+        } else if (tc.tokenType === ItemType.MyToken) {
+            existingPaths.add(tc.fullPath());
+        }
+    });
+    listOfMyTokenFolders.forEach(folder => {
+        const fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${folder.folderPath}/${folder.name}`);
+        if (!easyFolderReference[fullPath]) {
+            easyFolderReference[fullPath] = uuid();
+        }
+    });
+
+    let newCustomizations = [];
+
+    console.log("migrate_token_customizations starting to migrate mytokenfolders customizations");
+    listOfMyTokenFolders.forEach(folder => {
+        let fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${folder.folderPath}/${folder.name}`);
+        const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.Folder && (tc.id === folder.id || tc.fullPath() === fullPath));
+        if (existing) {
+            console.debug("migrate_token_customizations path already exists", fullPath);
+        } else {
+            // old structure: { name: folderKey, folderPath: currentFolderPath, collapsed: true }
+            let parentPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${folder.folderPath}`);
+            let parentId = easyFolderReference[parentPath];
+            if (typeof parentId !== "string" || parentId.length === 0) {
+                parentId = RootFolder.MyTokens.id;
+            }
+            if (!folder.id) {
+                folder.id = uuid();
+                easyFolderReference[fullPath] = folder.id;
+            }
+            let newCustomization = TokenCustomization.Folder(folder.id, parentId, RootFolder.MyTokens.id, { name: folder.name });
+            newCustomizations.push(newCustomization);
+            console.debug("migrate_token_customizations migrated", sanitize_folder_path(`${folder.folderPath}/${folder.name}`), "to", newCustomization);
+        }
+    });
+    console.log("migrate_token_customizations finished migrating mytokenfolders customizations");
+
+    // newCustomizations.forEach(tc => existingPaths.add(tc.fullPath()));
+
+    // MyToken migration
+    console.log("migrate_token_customizations starting to migrate mytokens customizations");
+    listOfMyTokens.forEach(myToken => {
+        let fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${myToken.folderPath}/${myToken.name}`);
+        const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.MyToken && (tc.id === myToken.customizationId || tc.fullPath() === fullPath));
+        if (existing) {
+            console.debug("migrate_token_customizations path already exists", fullPath);
+        } else {
+            let parentPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${myToken.folderPath}`);
+            let parentId = easyFolderReference[parentPath];
+            if (typeof parentId !== "string" || parentId.length === 0) {
+                parentId = RootFolder.MyTokens.id;
+            }
+            let tokenOptions = {...myToken};
+            if (myToken.alternativeImages) {
+                // Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays/objects
+                // alternativeImages should be the only non-primitive. We need to make sure it's properly copied and not referencing the old objet in any way
+                tokenOptions.alternativeImages = [...myToken.alternativeImages]; //
+            }
+            delete tokenOptions.image;
+            delete tokenOptions.folderpath;
+            delete tokenOptions.folderPath;
+            delete tokenOptions.didMigrateToMyToken;
+            delete tokenOptions.oldFolderKey;
+            let newCustomization = TokenCustomization.MyToken(uuid(), parentId, tokenOptions);
+            newCustomizations.push(newCustomization);
+            myToken.customizationId = newCustomization.id; // track the migration
+            console.debug("migrate_token_customizations migrated", fullPath, "to", newCustomization);
+        }
+    });
+    console.log("migrate_token_customizations finished migrating mytokens customizations");
+
+    persist_my_tokens(); // we added ids to myTokens so we need to save that
+
+    return newCustomizations;
+}
+
 function rollback_token_customizations_migration() {
     try {
         localStorage.setItem("TokenCustomizations", JSON.stringify([]));
@@ -518,7 +591,7 @@ function persist_all_token_customizations(customizations, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
     }
-    console.log("persist_all_token_customizations starting");
+    console.log("persist_all_token_customizations starting", customizations, JSON.stringify(customizations));
     // TODO: send to cloud instead of storing locally
     localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
     window.TOKEN_CUSTOMIZATIONS = customizations;
@@ -584,24 +657,26 @@ function fetch_token_customizations(callback) {
         callback = function(){};
     }
     try {
-        console.log("persist_token_customizations starting");
+        console.log("fetch_token_customizations starting");
         // TODO: fetch from the cloud instead of storing locally
         let customMappingData = localStorage.getItem('TokenCustomizations');
         let parsedCustomizations = [];
-        if (customMappingData !== undefined && customMappingData != null) {
+        if (customMappingData !== undefined && customMappingData != null && customMappingData !== "undefined") {
+            console.debug("fetch_token_customizations customMappingData", customMappingData, typeof customMappingData);
             $.parseJSON(customMappingData).forEach(obj => {
                 try {
-                    parsedCustomizations.push(TokenCustomization.fromJson(obj));
+                    let parsed = TokenCustomization.fromJson(obj);
+                    parsedCustomizations.push(parsed);
                 } catch (error) {
                     // this one failed, but keep trying to parse the others
-                    console.error("persist_token_customizations failed to parse customization object", obj);
+                    console.error("fetch_token_customizations failed to parse customization object", obj, error);
                 }
             });
         }
         window.TOKEN_CUSTOMIZATIONS = parsedCustomizations;
         callback(window.TOKEN_CUSTOMIZATIONS);
     } catch (error) {
-        console.error("persist_token_customizations failed");
+        console.error("fetch_token_customizations failed", error);
         callback(false);
     }
 

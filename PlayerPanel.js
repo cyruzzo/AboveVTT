@@ -193,7 +193,7 @@ function remove_all_player_image_mappings(playerId) {
 
 function get_player_image_mappings(playerId) {
 	try {
-		return find_or_create_token_customization(ItemType.PC, playerId, RootFolder.Players.id).tokenOptions.alternativeImages || [];
+		return find_or_create_token_customization(ItemType.PC, playerId, RootFolder.Players.id, RootFolder.Players.id, RootFolder.Players.id).tokenOptions.alternativeImages || [];
 	} catch (error) {
 		console.error("get_player_image_mappings failed to find_or_create_token_customization", playerId, error)
 		return [];

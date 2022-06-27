@@ -19,9 +19,10 @@ function convert_path(path){
 
 // deprecated, but still needed for migrate_to_my_tokens() to work
 function persist_customtokens(){
-	delete tokendata.folders["AboveVTT BUILTIN"];
-	localStorage.setItem("CustomTokens",JSON.stringify(tokendata));
-	delete tokendata.folders["AboveVTT BUILTIN"];
+	console.warn("persist_customtokens no longer supported");
+	// delete tokendata.folders["AboveVTT BUILTIN"];
+	// localStorage.setItem("CustomTokens",JSON.stringify(tokendata));
+	// delete tokendata.folders["AboveVTT BUILTIN"];
 }
 
 function context_menu_flyout(id, hoverEvent, buildFunction) {

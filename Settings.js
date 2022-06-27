@@ -763,13 +763,6 @@ function export_file(){
 	export_scenes(
 		(scenes)=>{
 			DataFile.scenes=scenes;
-
-			DataFile.tokendata=Object.assign({}, tokendata);
-			var tmp=DataFile.tokendata.folders['AboveVTT BUILTIN'];
-			delete DataFile.tokendata.folders['AboveVTT BUILTIN'];
-			DataFile.tokendata.folders['AboveVTT BUILTIN']=tmp;
-			DataFile.mytokens=mytokens;
-			DataFile.mytokensfolders=mytokensfolders;
 			DataFile.tokencustomizations=window.TOKEN_CUSTOMIZATIONS;
 			DataFile.notes=window.JOURNAL.notes;
 			DataFile.journalchapters=window.JOURNAL.chapters;
@@ -790,17 +783,14 @@ function import_readfile() {
 		// DECODE
 		var DataFile=null;
 		try{
-			var DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
+			DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
 		}
 		catch{
 
 		}
 		if(!DataFile){ // pre version 2
-			var DataFile=$.parseJSON(atob(reader.result));
+			DataFile=$.parseJSON(atob(reader.result));
 		}
-
-		console.log(DataFile);
-
 
 		for(k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
@@ -808,55 +798,88 @@ function import_readfile() {
 		$("#sounds-panel").remove(); init_audio();
 		persist_soundpad();
 
+		let customizations = window.TOKEN_CUSTOMIZATIONS;
 		if (DataFile.tokencustomizations !== undefined) {
-			let customizations = [];
-			customizations = DataFile.tokencustomizations.forEach(json => {
+			DataFile.tokencustomizations.forEach(json => {
 				try {
-					customizations = TokenCustomization.fromJson(json);
+					let importedCustomization = TokenCustomization.fromJson(json);
+					let existing = customizations.find(tc => tc.tokenType === importedCustomization.tokenType && tc.id === importedCustomization.id);
+					if (existing) {
+						existing.alternativeImages.forEach(img => importedCustomization.addAlternativeImage(img));
+					} else {
+						customizations.push(importedCustomization);
+					}
 				} catch (error) {
 					console.error("Failed to parse TokenCustomization from json", json);
 				}
 			});
-			persist_all_token_customizations(customizations);
 		}
 
 		if (DataFile.mytokens !== undefined) {
-			mytokens = DataFile.mytokens;
-		}
-		if (DataFile.mytokensfolders !== undefined) {
-			mytokensfolders = DataFile.mytokensfolders;
-		}
-		did_change_mytokens_items();
-
-		for(k in DataFile.tokendata.folders){
-			tokendata.folders[k]=DataFile.tokendata.folders[k];
-		}
-		if(!tokendata.tokens){
-			tokendata.tokens={};
-		}
-		for(k in DataFile.tokendata.tokens){
-			tokendata.tokens[k]=DataFile.tokendata.tokens[k];
-		}
-		persist_customtokens();
-
-		alert('Loading completed. Data merged');
-
-		if(DataFile.notes){
-			window.JOURNAL.notes=DataFile.notes;
-			window.JOURNAL.chapters=DataFile.journalchapters;
-			window.JOURNAL.persist();
-			window.JOURNAL.build_journal();
-		}
-
-
-		if(window.CLOUD){
-			cloud_migration(JSON.stringify(DataFile.scenes));
-		}
-		else{
-			for(i=0;i<DataFile.scenes.length;i++){
-				window.ScenesHandler.scenes.push(DataFile.scenes[i]);
+			let importedFolders = [];
+			if (DataFile.mytokensfolders !== undefined) {
+				importedFolders = DataFile.mytokensfolders;
 			}
+			const importedMytokens = DataFile.mytokens;
+			let migratedCustomizations = migrate_convert_mytokens_to_customizations(importedFolders, importedMytokens);
+			migratedCustomizations.forEach(migratedTC => {
+				let existing = customizations.find(existingTC => existingTC.tokenType === migratedTC.tokenType && existingTC.id === migratedTC.id);
+				if (!existing) {
+					customizations.push(migratedTC);
+				}
+			});
 		}
+
+		if (DataFile.tokendata) {
+			if (!tokendata) {
+				tokendata = {folders: {}, tokens: {}};
+			}
+			if (!tokendata.folders) {
+				tokendata.folders = {};
+			}
+			if(!tokendata.tokens){
+				tokendata.tokens={};
+			}
+			if (DataFile.tokendata.folders) {
+				for(k in DataFile.tokendata.folders){
+					tokendata.folders[k]=DataFile.tokendata.folders[k];
+				}
+			}
+			if (DataFile.tokendata.tokens) {
+				for(k in DataFile.tokendata.tokens){
+					tokendata.tokens[k]=DataFile.tokendata.tokens[k];
+				}
+			}
+			let migratedFromTokenData = migrate_tokendata();
+			migratedFromTokenData.forEach(migratedTC => {
+				let existing = customizations.find(existingTC => existingTC.tokenType === migratedTC.tokenType && existingTC.id === migratedTC.id);
+				if (!existing) {
+					console.log("adding migrated from tokendata", migratedTC);
+					customizations.push(migratedTC);
+				} else {
+					console.log("NOT adding migrated from tokendata", migratedTC, existing);
+				}
+			});
+		}
+
+		persist_all_token_customizations(customizations, function () {
+			if(DataFile.notes){
+				window.JOURNAL.notes=DataFile.notes;
+				window.JOURNAL.chapters=DataFile.journalchapters;
+				window.JOURNAL.persist();
+				window.JOURNAL.build_journal();
+			} else {
+				alert('Loading completed. Data merged');
+			}
+			if(window.CLOUD){
+				cloud_migration(JSON.stringify(DataFile.scenes));
+			}
+			else{
+				for(i=0;i<DataFile.scenes.length;i++){
+					window.ScenesHandler.scenes.push(DataFile.scenes[i]);
+				}
+			}
+		});
 	};
 	reader.readAsText($("#input_file").get(0).files[0]);
 }
