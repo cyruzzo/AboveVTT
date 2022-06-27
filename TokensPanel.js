@@ -2209,7 +2209,7 @@ function display_change_image_modal(placedToken) {
 
     /// draw tokens in the body
     let listItem = list_item_from_token(placedToken);
-    let alternativeImages = [];
+    let alternativeImages = [placedToken.options.imgsrc];
     if (placedToken.options.alternativeImages) {
         alternativeImages = alternativeImages.concat(placedToken.options.alternativeImages);
     }
