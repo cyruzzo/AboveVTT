@@ -186,8 +186,10 @@ class TokenCustomization {
         const parsed = parse_img(imageUrl);
         if (!this.tokenOptions.alternativeImages.includes(parsed)) {
             this.tokenOptions.alternativeImages.push(parsed);
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
     removeAlternativeImage(imageUrl) {
         if (this.tokenOptions.alternativeImages === undefined) {
