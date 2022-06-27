@@ -1924,7 +1924,12 @@ function convert_challenge_rating_id(crId) {
     if (window.ddbConfigJson?.challengeRatings) {
         const definition = window.ddbConfigJson.challengeRatings.find(cr => cr.id === crId);
         if (typeof definition?.value === "number") {
-            return definition.value;
+            switch (definition.value) {
+                case 0.125: return "1/8";
+                case 0.25: return "1/4";
+                case 0.5: return "1/2";
+                default: return `${definition.value}`;
+            }
         }
     }
     // we couldn't find the official definition, but this basically how it all maps out
