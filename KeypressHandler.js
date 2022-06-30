@@ -110,6 +110,18 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     try {
         $( '.ui-draggable-dragging' ).draggable("option", { revert: true }).trigger( 'mouseup' ).draggable("option", {revert: false })
     } catch (whoCares) { }
+    let elementPreventingSidebarClose = $(".prevent-sidebar-modal-close");
+    if (elementPreventingSidebarClose.length > 0) {
+        if (elementPreventingSidebarClose.hasClass("sidebar-flyout") || elementPreventingSidebarClose.closest(".sidebar-flyout").length > 0) {
+            // it's a flyout... close it
+            elementPreventingSidebarClose.remove();
+        }
+        // any others that we want to close on esc?
+    } else {
+        // only close the sidebar if there isn't something on the screen explicitly trying to keep it open
+        close_sidebar_modal();
+    }
+    remove_tooltip();
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open
@@ -252,16 +264,21 @@ Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
-    handle_undo()
+    handle_undo();
 });
 Mousetrap.bind('command+z', function(e) {
-    handle_undo()
+    handle_undo();
+});
+Mousetrap.bind(']', function(e) {
+    select_next_tab();
+});
+Mousetrap.bind('[', function(e) {
+    select_prev_tab();
 });
 
 function handle_undo(){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
-    if ($("#select_button").hasClass(buttonSelectedClasses) && 
-        Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0){
+    if ($("#select-button").hasClass(buttonSelectedClasses)){
         undo_delete_tokens();
     }
     else if(($("#fog_button").hasClass(buttonSelectedClasses))){

@@ -242,6 +242,10 @@ function ct_reorder(persist=true) {
 
 function ct_add_token(token,persist=true,disablerolling=false){
 
+	if (token.isAoe()) {
+		return; // don't add aoe to combat tracker
+	}
+
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;

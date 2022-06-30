@@ -297,31 +297,6 @@ class EncounterHandler {
 		});
 	}
 
-	fetch_monsters(monsterIds, callback) {
-		if (typeof callback !== 'function') {
-			console.warn("fetch_monsters was called without a callback.");
-			return;
-		}
-		if (typeof monsterIds === undefined || monsterIds.length === 0) {
-			callback([]);
-			return;
-		}
-		let uniqueMonsterIds = [...new Set(monsterIds)];
-		let queryParam = uniqueMonsterIds.map(id => `ids=${id}`).join("&");
-		console.log("fetch_monsters starting with ids", uniqueMonsterIds);
-		window.ajaxQueue.addDDBRequest({
-			url: `https://monster-service.dndbeyond.com/v1/Monster?${queryParam}`,
-			success: function (responseData) {
-				console.log(`fetch_monsters succeeded`);
-				callback(responseData.data);
-			},
-			error: function (errorMessage) {
-				console.warn("fetch_monsters failed", errorMessage);
-				callback(false, errorMessage?.responseJSON?.type);
-			}
-		})
-	}
-
 	fetch_encounter_monsters(encounterId, callback) {
 		if (typeof callback !== 'function') {
 			console.warn("fetch_encounter_monsters was called without a callback");
@@ -336,11 +311,37 @@ class EncounterHandler {
 		let monsterIds = encounter.monsters.map(m => m.id);
 		if (monsterIds.length > 0) {
 			console.log("fetch_encounter_monsters starting");
-			this.fetch_monsters(monsterIds, callback);
+			fetch_monsters(monsterIds, callback);
 		}
 	}
 
 }
+
+function fetch_monsters(monsterIds, callback) {
+	if (typeof callback !== 'function') {
+		console.warn("fetch_monsters was called without a callback.");
+		return;
+	}
+	if (typeof monsterIds === undefined || monsterIds.length === 0) {
+		callback([]);
+		return;
+	}
+	let uniqueMonsterIds = [...new Set(monsterIds)];
+	let queryParam = uniqueMonsterIds.map(id => `ids=${id}`).join("&");
+	console.log("fetch_monsters starting with ids", uniqueMonsterIds);
+	window.ajaxQueue.addDDBRequest({
+		url: `https://monster-service.dndbeyond.com/v1/Monster?${queryParam}`,
+		success: function (responseData) {
+			console.log(`fetch_monsters succeeded`);
+			callback(responseData.data);
+		},
+		error: function (errorMessage) {
+			console.warn("fetch_monsters failed", errorMessage);
+			callback(false, errorMessage?.responseJSON?.type);
+		}
+	})
+}
+
 
 /// builds and returns the loading indicator that covers the iframe
 function build_combat_tracker_loading_indicator(subtext = "One moment while we fetch this monster stat block") {
