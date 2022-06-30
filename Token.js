@@ -2120,6 +2120,7 @@ function setTokenBase(token, options) {
 			options.disableborder = true;
 			options.disableaura = true;
 			options.revealname = false;
+			options.enablepercenthpbar = false;
 		}
 
 		token.children("img").css("border-radius", "0");
