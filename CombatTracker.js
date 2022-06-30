@@ -307,7 +307,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		hp=$("<div class='hp'/>");
 		hp.text(token.options.hp);
-		
+		if(hp.text() === '0'){
+			entry.toggleClass("ct_dead", true);
+		}
+		else{
+			entry.toggleClass("ct_dead", false);
+		}
 		hp.css('font-size','11px');
 		//hp.css('width','20px');
 		if(window.DM || !(token.options.monster > 0) )
