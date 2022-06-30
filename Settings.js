@@ -618,7 +618,6 @@ function update_token_base_visibility(container) {
 		findOtherOption("disablestat").hide();
 		findOtherOption("disableborder").hide();
 		findOtherOption("disableaura").hide();
-		findOtherOption("revealname").hide();
 		findOtherOption("hidehpbar").hide();
 		findOtherOption("enablepercenthpbar").hide();
 		findOtherOption("player_owned").hide();
@@ -628,7 +627,6 @@ function update_token_base_visibility(container) {
 		findOtherOption("disablestat").show();
 		findOtherOption("disableborder").show();
 		findOtherOption("disableaura").show();
-		findOtherOption("revealname").show();
 		findOtherOption("hidehpbar").show();
 		findOtherOption("enablepercenthpbar").show();
 		findOtherOption("player_owned").show();

@@ -1091,26 +1091,20 @@ class Token {
 	
 			setTimeout(function() {old.find("img").css("transition", "")}, 200);
 			
-			if (old.attr('name') != this.options.name) {
-				var selector = "tr[data-target='"+this.options.id+"']";
-				var entry = $("#combat_area").find(selector);
-				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
-					old.removeClass('hasTooltip');
-						entry.removeClass("hasTooltip");
-				}	
-				if (this.options.name) {
-					if ((window.DM || !this.options.monster || this.options.revealname)) {
-						old.attr("data-name", this.options.name);
-						old.addClass("hasTooltip");
-							entry.attr("data-name", this.options.name);
-							entry.addClass("hasTooltip");
-					}
+			var selector = "tr[data-target='"+this.options.id+"']";
+			var entry = $("#combat_area").find(selector);
+			if(!(this.options.name) || !(this.options.revealname)) {
+				old.toggleClass('hasTooltip', false);
+				entry.toggleClass('hasTooltip', false);
+			}	
+			else if (this.options.name) {
+				if ((window.DM || !this.options.monster || this.options.revealname)) {
+					old.attr("data-name", this.options.name);
+					old.toggleClass('hasTooltip', true);
+					entry.attr("data-name", this.options.name);
+					entry.toggleClass('hasTooltip', true);
 				}
 			}
-
-
-
-
 
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
