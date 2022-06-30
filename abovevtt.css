@@ -854,7 +854,9 @@ div#scene_properties form > div {
     right: 0;
     bottom: 0;
     z-index: 2;
+    pointer-events: none;
 }
+
 
 .dead:before, .dead:after {
     position: absolute;
@@ -876,6 +878,42 @@ div#scene_properties form > div {
 .dead:after {
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
+}
+.ct_dead img{
+    filter: saturate(0);
+}
+.ct_dead .hp,
+.ct_dead .max_hp{
+    color: #bc0f0f;
+}
+#combat_area .ct_dead[data-current][data-target*="characters"]{
+    background: none;
+}
+.ct_dead:not([data-target*="characters"]) .delSVG path:not([fill*="none"]){
+    fill: #ff4848;
+    opacity: 0.7;
+}
+.ct_dead[data-current]:not([data-target*="characters"]) path:not([fill*="none"]){
+    fill: #ff4848;
+    opacity: 1;
+}
+#combat_area .ct_dead[data-current] input{
+    border-color: #bc0f0f;
+}
+
+.ct_dead[data-current]{
+    animation:  deadCombatGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes deadCombatGlow{
+    0%, 100%{
+        box-shadow: inset 0px 0px 25px 0px #bc0f0f;
+        filter: saturate(0.7);
+    }
+    50%{
+        box-shadow: inset 0px 0px 25px 2px #bc0f0f;
+        filter: saturate(1);
+    }
 }
 
 #combat_tracker {

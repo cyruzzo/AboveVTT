@@ -660,6 +660,12 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
 		}
+		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text() === '0'){
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
+		}
+		else{
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", false);
+		}
 		
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
 			console.log("Setting combat tracker opacity to 1.0")
@@ -1085,26 +1091,20 @@ class Token {
 	
 			setTimeout(function() {old.find("img").css("transition", "")}, 200);
 			
-			if (old.attr('name') != this.options.name) {
-				var selector = "tr[data-target='"+this.options.id+"']";
-				var entry = $("#combat_area").find(selector);
-				if (old.addClass('hasTooltip') && (!(this.options.name) || !(this.options.revealname))) {
-					old.removeClass('hasTooltip');
-						entry.removeClass("hasTooltip");
-				}	
-				if (this.options.name) {
-					if ((window.DM || !this.options.monster || this.options.revealname)) {
-						old.attr("data-name", this.options.name);
-						old.addClass("hasTooltip");
-							entry.attr("data-name", this.options.name);
-							entry.addClass("hasTooltip");
-					}
+			var selector = "tr[data-target='"+this.options.id+"']";
+			var entry = $("#combat_area").find(selector);
+			if(!(this.options.name) || !(this.options.revealname)) {
+				old.toggleClass('hasTooltip', false);
+				entry.toggleClass('hasTooltip', false);
+			}	
+			else if (this.options.name) {
+				if ((window.DM || !this.options.monster || this.options.revealname)) {
+					old.attr("data-name", this.options.name);
+					old.toggleClass('hasTooltip', true);
+					entry.attr("data-name", this.options.name);
+					entry.toggleClass('hasTooltip', true);
 				}
 			}
-
-
-
-
 
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
@@ -2110,13 +2110,22 @@ function setTokenBase(token, options) {
 		token.children("img").css("border-radius", "0");
 		token.children("img").removeClass("preserve-aspect-ratio");
 	}
-	else if(options.tokenStyleSelect === "noConstraint") {
+	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken") {
 		//Freeform
 		options.square = true;
 		options.legacyaspectratio = false;
+		if(options.tokenStyleSelect === "definitelyNotAToken"){
+			options.restrictPlayerMove = true;
+			options.disablestat = true;
+			options.disableborder = true;
+			options.disableaura = true;
+			options.revealname = false;
+		}
+
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
 		token.children("img").toggleClass("freeform", true);
+
 	}
 	else if(options.tokenStyleSelect === "virtualMiniCircle"){
 		$(`.token[data-id='${options.id}']`).prepend(base);

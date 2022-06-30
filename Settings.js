@@ -9,7 +9,9 @@ function token_setting_options() {
 				{ value: "square", label: "Square", description: `The token is square and is contained within the border. We set "Ignore Aspect Ratio" to true and "Square" to true. Great for tokens with a portrait art style!` },
 				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with the largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
 				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with The largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
-				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` }
+				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` },
+				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made too appear as a object tile` }
+			
 			],
 			defaultValue: "circle"
 		},
@@ -600,7 +602,8 @@ function update_token_base_visibility(container) {
 	let styleSubSelect = findOtherOption("tokenBaseStyleSelect");
 	if(selectedStyle === "virtualMiniCircle" || selectedStyle === "virtualMiniSquare"){
 		styleSubSelect.show();
-	} else{
+	} 
+	else{
 		styleSubSelect.hide();
 	}
 	if (selectedStyle === "noConstraint") {
@@ -609,6 +612,24 @@ function update_token_base_visibility(container) {
 	} else {
 		findOtherOption("square").hide();
 		findOtherOption("legacyaspectratio").hide();
+	}
+	if(selectedStyle == "definitelyNotAToken"){
+		findOtherOption("restrictPlayerMove").hide();
+		findOtherOption("disablestat").hide();
+		findOtherOption("disableborder").hide();
+		findOtherOption("disableaura").hide();
+		findOtherOption("hidehpbar").hide();
+		findOtherOption("enablepercenthpbar").hide();
+		findOtherOption("player_owned").hide();
+	} 
+	else{
+		findOtherOption("restrictPlayerMove").show();
+		findOtherOption("disablestat").show();
+		findOtherOption("disableborder").show();
+		findOtherOption("disableaura").show();
+		findOtherOption("hidehpbar").show();
+		findOtherOption("enablepercenthpbar").show();
+		findOtherOption("player_owned").show();
 	}
 }
 
