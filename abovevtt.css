@@ -893,7 +893,7 @@ div#scene_properties form > div {
     fill: #ff4848;
     opacity: 0.7;
 }
-.ct_dead[data-current]:not([data-target*="characters"]) path:not([fill*="none"]){
+.ct_dead[data-current]:not([data-target*="characters"]) .delSVG path:not([fill*="none"]){
     fill: #ff4848;
     opacity: 1;
 }
