@@ -621,6 +621,7 @@ function update_token_base_visibility(container) {
 		findOtherOption("hidehpbar").hide();
 		findOtherOption("enablepercenthpbar").hide();
 		findOtherOption("player_owned").hide();
+		findOtherOption("hidestat").hide();
 	} 
 	else{
 		findOtherOption("restrictPlayerMove").show();
@@ -630,6 +631,7 @@ function update_token_base_visibility(container) {
 		findOtherOption("hidehpbar").show();
 		findOtherOption("enablepercenthpbar").show();
 		findOtherOption("player_owned").show();
+		findOtherOption("hidestat").show();
 	}
 }
 
