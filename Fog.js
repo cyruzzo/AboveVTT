@@ -1923,7 +1923,7 @@ function init_draw_menu(buttons){
 		type: "color",
 		showInput: true,
 		showInitial: true,
-		clickoutFiresChange: false
+		clickoutFiresChange: true
 	});
 
     const colorPickerChange = function(e, tinycolor) {
