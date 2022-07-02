@@ -425,12 +425,6 @@ function edit_scene_dialog(scene_id) {
 		console.log("Saving scene changes")
 
 		const formData = get_edit_form_data();
-		const newName = $("#edit_scene_form").find("input[name=title]").val();
-		const toFullPath = `${scene.folderPath}/${newName}`;
-		if (scene_path_exists(sanitize_folder_path(`${scene.folderPath}/${newName}`))) {
-			alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
-			return;
-		}
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
@@ -830,13 +824,6 @@ function edit_scene_dialog(scene_id) {
 
 	wizard.click(
 		function() {
-
-			const newName = $("#edit_scene_form").find("input[name=title]").val();
-			const toFullPath = `${scene.folderPath}/${newName}`;
-			if (scene_path_exists(sanitize_folder_path(`${scene.folderPath}/${newName}`))) {
-				alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
-				return;
-			}
 
 			form.find("input").each(function() {
 				var n = $(this).attr('name');
@@ -1522,19 +1509,24 @@ function init_scenes_panel() {
 		let textValue = scenesPanel.header.find("input[name='scene-search']").val();
 		redraw_scene_list(textValue);
 	}, 500));
+	searchInput.off("keyup").on('keyup', function(event) {
+		if (event.key === "Escape") {
+			$(event.target).blur();
+		}
+	});
 
 	let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Scenes"><span class="material-icons">reorder</span></button>`);
 	reorderButton.on("click", function (clickEvent) {
 		if ($(clickEvent.currentTarget).hasClass("active")) {
-			disable_draggable_change_folder(SidebarListItem.TypeScene);
+			disable_draggable_change_folder();
 		} else {
-			enable_draggable_change_folder(SidebarListItem.TypeScene);
+			enable_draggable_change_folder(ItemType.Scene);
 		}
 	});
 
 	let addSceneButton = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
 	addSceneButton.on("click", function (clickEvent) {
-		create_scene_inside(SidebarListItem.PathScenes);
+		create_scene_inside(RootFolder.Scenes.path);
 	});
 
 	let addFolderButton = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
@@ -1544,11 +1536,11 @@ function init_scenes_panel() {
 		if (numberOfNewFolders > 0) {
 			newFolderName = `${newFolderName} ${numberOfNewFolders}`
 		}
-		let newFolderItem = SidebarListItem.Folder(SidebarListItem.PathScenes, newFolderName, true);
+		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolder.Scenes.path, newFolderName), RootFolder.Scenes.path, newFolderName, true, path_to_html_id(RootFolder.Scenes.path, newFolderName));
 		window.sceneListFolders.push(newFolderItem);
 		display_folder_configure_modal(newFolderItem);
 		did_update_scenes();
-		expand_all_folders_up_to(newFolderItem.fullPath(), scenesPanel.body);
+		expand_all_folders_up_to_item(newFolderItem);
 	});
 
 	let headerWrapper = $(`<div class="scenes-panel-add-buttons-wrapper"></div>`);
@@ -1571,6 +1563,7 @@ function init_scenes_panel() {
  * Updates and redraws the scene list in the sidebar
  */
 function did_update_scenes() {
+	if (!window.DM) return;
 	rebuild_scene_items_list();
 
 	// Filters scene list by search input if scenes-panel is active
@@ -1583,21 +1576,21 @@ function rebuild_scene_items_list() {
 	console.group("rebuild_scene_items_list");
 	window.sceneListItems = window.ScenesHandler.scenes.map(s => SidebarListItem.Scene(s)).sort(SidebarListItem.sortComparator);
 	// TODO: read scene folders from localStorage?
-	if (window.sceneListFolders === undefined) {
+	if (!window.sceneListFolders) {
 		window.sceneListFolders = [];
 	}
 	window.sceneListItems
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => {
-		if (item.folderPath !== SidebarListItem.PathRoot) {
+		if (item.folderPath !== RootFolder.Root.path) {
 			// we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
 			let parts = item.folderPath.split("/");
 			let backfillPath = "";
 			parts.forEach(part => {
 				let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-				if (!window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
+				if (fullBackfillPath !== "" && fullBackfillPath !== "/" && fullBackfillPath !== RootFolder.Scenes.path && !window.sceneListFolders.find(fi => fi.fullPath() === fullBackfillPath)) {
 					// we don't have this folder yet so add it
-					let backfillItem = SidebarListItem.Folder(backfillPath, part, true);
+					let backfillItem = SidebarListItem.Folder(path_to_html_id(backfillPath, part), backfillPath, part, true, path_to_html_id(backfillPath));
 					console.log("adding folder", backfillItem);
 					window.sceneListFolders.push(backfillItem);
 				} else {
@@ -1607,6 +1600,7 @@ function rebuild_scene_items_list() {
 			});
 		}
 	});
+	update_token_folders_remembered_state();
 	console.groupEnd();
 }
 
@@ -1625,10 +1619,10 @@ function redraw_scene_list(searchTerm) {
 	// this is similar to the structure of a SidebarListItem.Folder row.
 	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
 	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
-	let list = $(`<div class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
+	let list = $(`<div id="${path_to_html_id(RootFolder.Scenes.path)}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
 	scenesPanel.body.empty();
 	scenesPanel.body.append(list);
-	set_full_path(list, SidebarListItem.PathScenes);
+	set_full_path(list, RootFolder.Scenes.path);
 
 	// first let's add all folders because we need the folder to exist in order to add items into it
 	// don't filter folders by the searchTerm because we need the folder to exist in order to add items into it
@@ -1636,7 +1630,8 @@ function redraw_scene_list(searchTerm) {
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => {
 			let row = build_sidebar_list_row(item);
-			let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			let folder = $(`#${item.parentId} > .folder-item-list`);
 			if (folder.length > 0) {
 				console.debug("appending folder item", item, folder);
 				folder.append(row);
@@ -1651,7 +1646,8 @@ function redraw_scene_list(searchTerm) {
 		.filter(item => item.nameOrContainingFolderMatches(nameFilter))
 		.forEach(item => {
 			let row = build_sidebar_list_row(item);
-			let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+			let folder = $(`#${item.parentId} > .folder-item-list`);
+			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 			if (folder.length > 0) {
 				console.debug("appending scene item", item, folder);
 				folder.append(row);
@@ -1688,7 +1684,7 @@ function create_scene_inside(fullPath) {
 
 	let sceneData = default_scene_data();
 	sceneData.title = newSceneName;
-	sceneData.folderPath = fullPath.replace(SidebarListItem.PathScenes, "");
+	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
 
 	window.ScenesHandler.scenes.push(sceneData);
 	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
@@ -1698,54 +1694,59 @@ function create_scene_inside(fullPath) {
 
 function create_scene_folder_inside(fullPath) {
 	let newFolderName = "New Folder";
-	let adjustedPath = sanitize_folder_path(fullPath.replace(SidebarListItem.PathScenes, ""));
-	let numberOfNewFolders = window.sceneListFolders.filter(i => sanitize_folder_path(i.folderPath.replace(SidebarListItem.PathScenes, "")) === adjustedPath && i.name.startsWith(newFolderName)).length;
+	let adjustedPath = sanitize_folder_path(fullPath.replace(RootFolder.Scenes.path, ""));
+	let numberOfNewFolders = window.sceneListFolders.filter(i => sanitize_folder_path(i.folderPath.replace(RootFolder.Scenes.path, "")) === adjustedPath && i.name.startsWith(newFolderName)).length;
 	if (numberOfNewFolders > 0) {
 		newFolderName = `${newFolderName} ${numberOfNewFolders}`
 	}
-	let newFolderFullPath = sanitize_folder_path(`${SidebarListItem.PathScenes}/${adjustedPath}`);
-	let newFolderItem = SidebarListItem.Folder(newFolderFullPath, newFolderName, true);
+	let newFolderFullPath = sanitize_folder_path(`${RootFolder.Scenes.path}/${adjustedPath}`);
+	let newFolderItem = SidebarListItem.Folder(path_to_html_id(newFolderFullPath, newFolderName), newFolderFullPath, newFolderName, true, path_to_html_id(newFolderFullPath));
 	window.sceneListFolders.push(newFolderItem);
 	did_update_scenes();
 	display_folder_configure_modal(newFolderItem);
 }
 
 function rename_scene_folder(item, newName, alertUser) {
-	console.groupCollapsed("rename_folder");
-	if (!item.isTypeFolder() || !item.folderPath.startsWith(SidebarListItem.PathScenes)) {
-		console.warn("rename_folder called with an incorrect item type", item);
+	console.groupCollapsed("rename_scene_folder");
+	if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolder.Scenes.path)) {
 		console.groupEnd();
+		console.warn("rename_scene_folder called with an incorrect item type", item);
 		if (alertUser !== false) {
-			alert("An unexpected error occurred");
+			showDebuggingAlert();
 		}
 		return;
 	}
 	if (!item.canEdit()) {
-		console.warn("Not allowed to rename folder", item);
 		console.groupEnd();
+		console.warn("rename_scene_folder Not allowed to rename folder", item);
 		if (alertUser !== false) {
-			alert("An unexpected error occurred");
+			showDebuggingAlert();
 		}
 		return;
 	}
 
-	let fromFullPath = sanitize_folder_path(item.fullPath().replace(SidebarListItem.PathScenes, ""));
-	let fromFolderPath = sanitize_folder_path(item.folderPath.replace(SidebarListItem.PathScenes, ""));
+
+	let fromFullPath = sanitize_folder_path(item.fullPath().replace(RootFolder.Scenes.path, ""));
+	let fromFolderPath = sanitize_folder_path(item.folderPath.replace(RootFolder.Scenes.path, ""));
 	let toFullPath = sanitize_folder_path(`${fromFolderPath}/${newName}`);
-	if (scene_path_exists(toFullPath)) {
-		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists`);
+
+	const newId = path_to_html_id(toFullPath);
+	const existingFolder = window.sceneListFolders.find(f => f.id === newId);
+	if (existingFolder !== undefined) {
 		console.groupEnd();
+		console.warn(`Attempted to rename folder to ${newName}, which would be have a path: ${toFullPath} but a folder with that path already exists. item: `, item, ", existingFolder: ", existingFolder);
 		if (alertUser !== false) {
-			alert(`An item with the name "${newName}" already exists at "${toFullPath}"`);
+			alert(`An item with the name "${newName}" already exists at "${item.fullPath()}"`);
 		}
 		return;
 	}
+
 
 	console.log(`updating scenes from ${fromFullPath} to ${toFullPath}`);
 	window.ScenesHandler.scenes.forEach((scene, index) => {
 		if (scene.folderPath?.startsWith(fromFullPath)) {
 			let newFolderPath = sanitize_folder_path(scene.folderPath.replace(fromFullPath, toFullPath));
-			console.debug(`changing scene ${scene.title} folderpath from ${scene.folderPath} to ${newFolderPath}`);
+			console.debug(`changing scene ${scene.title} folderPath from ${scene.folderPath} to ${newFolderPath}`);
 			scene.folderPath = newFolderPath;
 			window.ScenesHandler.persist_scene(index);
 		} else {
@@ -1758,10 +1759,12 @@ function rename_scene_folder(item, newName, alertUser) {
 		if (folder.fullPath() === item.fullPath()) {
 			console.debug(`changing folder from ${folder.name} to ${newName}`);
 			folder.name = newName;
+			folder.id = path_to_html_id(folder.fullPath());
 		} else if (folder.folderPath.startsWith(fromFullPath)) {
 			let newFolderPath = sanitize_folder_path(folder.folderPath.replace(fromFullPath, toFullPath));
 			console.debug(`changing folder ${folder.name} folderPath from ${folder.folderPath} to ${newFolderPath}`);
 			folder.folderPath = newFolderPath;
+			folder.id = path_to_html_id(folder.fullPath());
 		} else {
 			console.debug("not moving folder", folder);
 		}
@@ -1772,19 +1775,6 @@ function rename_scene_folder(item, newName, alertUser) {
 
 	console.groupEnd();
 	return toFullPath;
-}
-
-/**
- * determines if the given path exists or not.
- * @param folderPath {string} the path you are looking for
- * @returns {boolean} whether or not the path exists
- */
-function scene_path_exists(folderPath) {
-	const comparison = folderPath.startsWith(SidebarListItem.PathScenes) ? folderPath : sanitize_folder_path(`${SidebarListItem.PathScenes}/${folderPath}`);
-	const existingScene = window.sceneListItems.find(s => s.fullPath() === comparison) !== undefined;
-	const existingFolder = window.sceneListFolders.find(f => f.fullPath() === comparison) !== undefined;
-	console.debug("scene_path_exists", comparison, existingScene, existingFolder);
-	return (existingScene || existingFolder);
 }
 
 function register_scene_row_context_menu() {
@@ -1840,19 +1830,22 @@ function register_scene_row_context_menu() {
 }
 
 function expand_folders_to_active_scenes() {
+	if (!window.DM || !window.CURRENT_SCENE_DATA || !window.sceneListItems || !window.PLAYER_SCENE_ID) {
+		return;
+	}
 	let dmSceneItem = window.sceneListItems.find(i => i.sceneId === window.CURRENT_SCENE_DATA.id);
 	if (dmSceneItem) {
-		expand_all_folders_up_to(dmSceneItem.fullPath(), scenesPanel.body);
+		expand_all_folders_up_to_item(dmSceneItem);
 	}
 	let pcSceneItem = window.sceneListItems.find(i => i.sceneId === window.PLAYER_SCENE_ID);
 	if (pcSceneItem) {
-		expand_all_folders_up_to(pcSceneItem.fullPath(), scenesPanel.body);
+		expand_all_folders_up_to_item(pcSceneItem);
 	}
 }
 
 function delete_scenes_within_folder(listItem) {
-	console.groupCollapsed(`delete_mytokens_within_folder`);
-	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+	console.groupCollapsed(`delete_scenes_within_folder`);
+	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	console.log("about to delete all scenes within", adjustedPath);
 	console.debug("before deleting from scenes", window.ScenesHandler.scenes);
@@ -1870,9 +1863,9 @@ function delete_scenes_within_folder(listItem) {
 }
 
 function move_scenes_to_parent_folder(listItem) {
-	console.groupCollapsed(`move_mytokens_to_parent_folder`);
-	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
-	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(SidebarListItem.PathScenes, ""));
+	console.groupCollapsed(`move_scenes_to_parent_folder`);
+	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
+	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.Scenes.path, ""));
 
 	console.debug("before moving scenes", window.ScenesHandler.scenes);
 	window.ScenesHandler.scenes
@@ -1903,22 +1896,26 @@ function delete_scenes_folder(listItem) {
 function move_scene_to_folder(listItem, folderPath) {
 	let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.sceneId);
 	let scene = window.ScenesHandler.scenes[sceneIndex];
-	scene.folderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathScenes, ""));
+	scene.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
 	window.ScenesHandler.persist_scene(sceneIndex);
 }
 
 function move_scenes_folder(listItem, folderPath) {
 	console.groupCollapsed(`move_scenes_folder`);
-	let fromPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+	let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	// move the actual item
-	listItem.folderPath = sanitize_folder_path(folderPath.replace(SidebarListItem.PathScenes, ""));
-	let toPath = sanitize_folder_path(listItem.fullPath().replace(SidebarListItem.PathScenes, ""));
+	listItem.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
+	listItem.id = path_to_html_id(listItem.fullPath());
+	listItem.parentId = path_to_html_id(listItem.folderPath);
+	let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	// move subfolders. This isn't exactly necessary since we'll just rebuild the list anyway, but any empty folders need to be updated
 	window.sceneListFolders.forEach(f => {
 		if (f.folderPath.startsWith(fromPath)) {
 			f.folderPath = f.folderPath.replace(fromPath, toPath);
+			f.id = path_to_html_id(f.fullPath());
+			f.parentId = path_to_html_id(f.folderPath);
 		}
 	});
 
