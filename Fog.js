@@ -864,6 +864,7 @@ function drawing_mousedown(e) {
 		context.setLineDash([10, 5])
 		if (e.which == 1) {
 			$("#temp_overlay").css('cursor', 'crosshair');
+			$("#temp_overlay").css('z-index', '50');
 		}		
 	}
 	// figure out what these 3 returns are supposed to be for.
@@ -1243,11 +1244,15 @@ function drawing_mouseup(e) {
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 			var toktop = parseInt(curr.options.top);
-			if ((Math.min(window.BEGIN_MOUSEY, mouseY, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
-				continue;
 			var tokleft = parseInt(curr.options.left);
-			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
+			var tokright = tokleft + parseInt(curr.options.size);
+			var tokbottom = toktop + parseInt(curr.options.size);
+
+			if ((Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom)) == tokbottom || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
 				continue;
+			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokright)) == tokright || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
+				continue;
+
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
@@ -1259,7 +1264,7 @@ function drawing_mouseup(e) {
 			}
 			
 		}
-
+		$("#temp_overlay").css('z-index', '25');
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 
 		redraw_fog();
