@@ -109,8 +109,8 @@ function token_context_menu_expanded(tokenIds, e) {
 		$("#tokenOptionsPopup").remove();
 		$('.context-menu-list').trigger('contextmenu:hide')
 		tokenOptionsClickCloseDiv.remove();
-		$(".sp-container").spectrum("destroy");
-		$(".sp-container").remove();
+		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
+		$("#tokenOptionsContainer .sp-container").remove();
 		$(`.context-menu-flyout`).remove(); 
 	});
 
