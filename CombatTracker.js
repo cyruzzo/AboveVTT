@@ -242,6 +242,10 @@ function ct_reorder(persist=true) {
 
 function ct_add_token(token,persist=true,disablerolling=false){
 
+	if (token.isAoe()) {
+		return; // don't add aoe to combat tracker
+	}
+
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
@@ -303,7 +307,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		hp=$("<div class='hp'/>");
 		hp.text(token.options.hp);
-		
+		if(hp.text() === '0'){
+			entry.toggleClass("ct_dead", true);
+		}
+		else{
+			entry.toggleClass("ct_dead", false);
+		}
 		hp.css('font-size','11px');
 		//hp.css('width','20px');
 		if(window.DM || !(token.options.monster > 0) )
