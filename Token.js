@@ -1958,6 +1958,8 @@ function token_menu() {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
+			if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
+				return;
 			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 			} else {
@@ -2119,7 +2121,6 @@ function setTokenBase(token, options) {
 			options.disablestat = true;
 			options.disableborder = true;
 			options.disableaura = true;
-			options.revealname = false;
 			options.enablepercenthpbar = false;
 		}
 
