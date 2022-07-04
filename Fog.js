@@ -331,46 +331,6 @@ class WaypointManagerClass {
 	 * redraws the waypoints using various levels of opacity until completely clear
 	 * then removes all waypoints and resets canvas opacity
 	 */
-	 fadeoutMeasuring(){
-		let alpha = 1.0
-		const self = this
-		// only ever allow a single fadeout to occur
-		// this stops weird flashing behaviour with interacting
-		// interval function calls
-		if (this.timerId){
-			return
-		}
-		this.timerId = setInterval(function(){ fadeout() }, 100);
-
-		function fadeout(){
-			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
-			self.ctx.globalAlpha = alpha;
-			self.draw(false)
-			alpha = alpha - 0.2;
-			if (alpha <= 0.0){
-				self.cancelFadeout()
-				self.clearWaypoints();
-				clear_temp_canvas()
-			}
-		}
-	}
-
-	/**
-	 * 
-	 */
-	cancelFadeout(){
-		if (this.timerId !== undefined){
-			clearInterval(this.timerId);
-			this.ctx.globalAlpha = 1.0
-			this.timerId = undefined
-
-		}	
-	}
-
-	/**
-	 * redraws the waypoints using various levels of opacity until completely clear
-	 * then removes all waypoints and resets canvas opacity
-	 */
 	fadeoutMeasuring(){
 		let alpha = 1.0
 		const self = this
@@ -390,6 +350,7 @@ class WaypointManagerClass {
 			if (alpha <= 0.0){
 				self.cancelFadeout()
 				self.clearWaypoints();
+				clear_temp_canvas()
 			}
 		}
 	}
@@ -453,8 +414,8 @@ function do_check_token_visibility() {
 
 
 	for (var id in window.TOKEN_OBJECTS) {
-		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
-		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].options.size / 2);
+		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2);
+		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2);
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
@@ -903,6 +864,7 @@ function drawing_mousedown(e) {
 		context.setLineDash([10, 5])
 		if (e.which == 1) {
 			$("#temp_overlay").css('cursor', 'crosshair');
+			$("#temp_overlay").css('z-index', '50');
 		}		
 	}
 	// figure out what these 3 returns are supposed to be for.
@@ -1282,11 +1244,15 @@ function drawing_mouseup(e) {
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 			var toktop = parseInt(curr.options.top);
-			if ((Math.min(window.BEGIN_MOUSEY, mouseY, toktop)) == toktop || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
-				continue;
 			var tokleft = parseInt(curr.options.left);
-			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokleft)) == tokleft || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
+			var tokright = tokleft + parseInt(curr.options.size);
+			var tokbottom = toktop + parseInt(curr.options.size);
+
+			if ((Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom)) == tokbottom || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
 				continue;
+			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokright)) == tokright || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
+				continue;
+
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
@@ -1298,7 +1264,7 @@ function drawing_mouseup(e) {
 			}
 			
 		}
-
+		$("#temp_overlay").css('z-index', '25');
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
 
 		redraw_fog();
@@ -1957,7 +1923,7 @@ function init_draw_menu(buttons){
 		type: "color",
 		showInput: true,
 		showInitial: true,
-		clickoutFiresChange: false
+		clickoutFiresChange: true
 	});
 
     const colorPickerChange = function(e, tinycolor) {
