@@ -31,6 +31,9 @@ const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404"
 
 class Token {
 
+	// Defines how many token-sizes a token is allowed to be moved outside of the scene.
+	SCENE_MOVE_GRID_PADDING_MULTIPLIER = 1;
+
 	constructor(options) {
 		this.selected = false;
 		this.options = options;
@@ -49,6 +52,8 @@ class Token {
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
 		}
+
+		this.prepareWalkableArea();
 	}
 
 
@@ -230,18 +235,39 @@ class Token {
 		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		this.move(this.options.top, newLeft)
 	}
+
+	/**
+	 * Move token to new position.
+	 * @param {String|Number} top position from the top
+	 * @param {String|Number} left position from the left
+	 * @returns void
+	 */
 	move(top, left) {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
+
+		// Save handle params
+		top = parseFloat(top);
+		left = parseFloat(left);
+
+		// Stop movement if new position is outside of the scene
+		if (
+			top  < this.walkableArea.top    || 
+			top  > this.walkableArea.bottom ||
+			left < this.walkableArea.left   || 
+			left > this.walkableArea.bottom
+		) { return; }
+
 		this.update_from_page();
-		this.options.top = top;
-		this.options.left = left;
+		this.options.top = top + 'px';
+		this.options.left = left + 'px';
 		this.place(100);
 		this.sync();
 		if (this.persist != null) {
 			this.persist();
 		}
 	}
+
 	snap_to_closest_square() {
 		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
@@ -1164,6 +1190,7 @@ class Token {
 				x: 0,
 				y: 0
 			};
+
 			tok.draggable({
 				scroll: false,
 				stop:
@@ -1354,6 +1381,11 @@ class Token {
 					remove_selected_token_bounding_box();
 				},
 
+				/**
+				 * Dragging a token.
+				 * @param {Event} event mouse event
+				 * @param {Object} ui UI-object
+				 */
 				drag: function(event, ui) {
 					event.stopPropagation()
 					var zoom = window.ZOOM;
@@ -1364,6 +1396,11 @@ class Token {
 
 					// this was copied the place function in this file. We should make this a single function to be used in other places
 					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
+
+					// Constrain token within scene
+					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
+					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
+
 					ui.position = {
 						left: tokenPosition.x,
 						top: tokenPosition.y
@@ -1535,6 +1572,27 @@ class Token {
 			return defaultValue;
 		}
 		return storedValue;
+	}
+
+	/**
+	 * Defines how far tokens are allowed to move outside of the scene
+	 */
+	prepareWalkableArea() {
+		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
+		const sizeOnGrid = {
+			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps),
+			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps)
+		};
+
+		// shorten variable to improve readability
+		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
+
+		this.walkableArea = {
+			top:  0 - (sizeOnGrid.y * multi),
+			left: 0 - (sizeOnGrid.x * multi),
+			right:  window.ScenesHandler.scene.width  + (sizeOnGrid.x * (multi -1)), // we need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.ScenesHandler.scene.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+		};	
 	}
 	
 }
