@@ -1298,6 +1298,7 @@ function drawing_mouseup(e) {
 					});
 				}
 			}
+			
 		}
 
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);

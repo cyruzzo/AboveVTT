@@ -1578,6 +1578,27 @@ class Token {
 		return groupTokens;
 	}
 
+	/**
+	 * Defines how far tokens are allowed to move outside of the scene
+	 */
+	prepareWalkableArea() {
+		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
+		const sizeOnGrid = {
+			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps),
+			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps)
+		};
+
+		// shorten variable to improve readability
+		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
+
+		this.walkableArea = {
+			top:  0 - (sizeOnGrid.y * multi),
+			left: 0 - (sizeOnGrid.x * multi),
+			right:  window.ScenesHandler.scene.width  + (sizeOnGrid.x * (multi -1)), // we need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.ScenesHandler.scene.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+		};
+	}
+	
 }
 
 /**
