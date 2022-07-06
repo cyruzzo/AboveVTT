@@ -1236,12 +1236,14 @@ class MessageBroker {
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			console.group("load_scenemap callback")
-			var owidth = $("#scene_map").width();
-			var oheight = $("#scene_map").height();
-			if (window.CURRENT_SCENE_DATA.scale_factor) {
-				$("#scene_map").width(owidth * window.CURRENT_SCENE_DATA.scale_factor);
-				$("#scene_map").height(oheight * window.CURRENT_SCENE_DATA.scale_factor);
-			}
+			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor || 1;
+			// Store current scene width and height
+			window.CURRENT_SCENE_DATA.width = $("#scene_map").width() * scaleFactor;
+			window.CURRENT_SCENE_DATA.height = $("#scene_map").height() * scaleFactor;
+			// Scale map according to scaleFactor
+			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
+			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
+			
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
