@@ -1112,6 +1112,12 @@ function build_options_flyout_menu(tokenIds) {
 		     return e.name != removename;
 		});
 	}
+	if (tokens.length === 1 && tokens[0].isPlayer()){
+		let removename = "player_owned";
+		token_settings = $.grep(token_settings, function(e){
+		     return e.name != removename;
+		});
+	}
 	for(let i = 0; i < token_settings.length; i++) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
