@@ -1119,7 +1119,7 @@ class Token {
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
 			var entry = $("#combat_area").find(selector);
-			if(!(this.options.name) || !(this.options.revealname)) {
+			if((!(this.options.name) || !(this.options.revealname)) && !window.DM) {
 				old.toggleClass('hasTooltip', false);
 				entry.toggleClass('hasTooltip', false);
 			}	
@@ -1762,8 +1762,8 @@ class Token {
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  window.ScenesHandler.scene.width  + (sizeOnGrid.x * (multi -1)), // we need to remove 1 token size because tokens are anchored in the top left
-			bottom: window.ScenesHandler.scene.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+			right:  window.CURRENT_SCENE_DATA.width  + (sizeOnGrid.x * (multi -1)), // we need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.CURRENT_SCENE_DATA.height + (sizeOnGrid.y * (multi -1)), // ... same as above
 		};	
 	}
 	
