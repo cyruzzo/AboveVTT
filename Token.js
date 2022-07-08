@@ -1111,7 +1111,7 @@ class Token {
 
 
 
-					
+
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 	
