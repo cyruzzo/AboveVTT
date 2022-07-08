@@ -825,33 +825,19 @@ function edit_scene_dialog(scene_id) {
 	wizard.click(
 		function() {
 
-			form.find("input").each(function() {
-				var n = $(this).attr('name');
-				var t = $(this).attr('type');
-				let nValue = null;
-				if (t == "checkbox") {
-					nValue = $(this).prop("checked") ? "1" : "0";
-				}
-				else {
-					nValue = $(this).val();
-				}
+			const formData = get_edit_form_data();
+			for (key in formData) {
+				scene[key] = formData[key];
+			}
 
-				if (((n === 'player_map') || (n==='dm_map'))
-					&& nValue.startsWith("https://drive.google.com")
-					&& nValue.indexOf("uc?id=") < 0
-				) {
-					nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
-				}
-				scene[n] = nValue;
-			});
-
-			scene.scale_factor=1;
-
-			if(window.CLOUD)
-				window.ScenesHandler.persist_current_scene(true);
-			else
+			if(window.CLOUD){
+				window.ScenesHandler.persist_scene(scene_id,true,true);
+			}
+			else{
 				window.ScenesHandler.persist();
-			window.ScenesHandler.switch_scene(scene_id);
+				window.ScenesHandler.switch_scene(scene_id);
+			}
+				
 
 
 			$("#edit_dialog").remove();
