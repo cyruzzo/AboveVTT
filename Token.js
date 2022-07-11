@@ -1276,7 +1276,7 @@ class Token {
 				tokenImage.attr("src", this.options.imgsrc);
 
 			} else {
-				tokenImage = build_aoe_token_image(this)
+				tokenImage = build_aoe_token_image(this, imageScale, rotation)
 
                 tok.css("pointer-events", "none");
                 tokenImage.css("pointer-events", "auto");
