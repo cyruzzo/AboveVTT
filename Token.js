@@ -1112,10 +1112,10 @@ class Token {
 
 
 
-			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
-			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
+			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
+			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 	
-			setTimeout(function() {old.find("img").css("transition", "")}, 200);
+			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
 			var entry = $("#combat_area").find(selector);
