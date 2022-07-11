@@ -1211,8 +1211,6 @@ class Token {
 				// re-calc the border width incase the token has changed size
 				oldImage.css(`transform:scale("${imageScale}") rotate("${rotation}deg");`)
 
-                old.css("pointer-events", "none");
-                oldImage.css("pointer-events", "auto");
 			}
 
 			oldImage.css("max-height", this.sizeHeight());
@@ -1278,8 +1276,6 @@ class Token {
 			} else {
 				tokenImage = build_aoe_token_image(this, imageScale, rotation)
 
-                tok.css("pointer-events", "none");
-                tokenImage.css("pointer-events", "auto");
 			}
 			tok.append(tokenImage);
 
