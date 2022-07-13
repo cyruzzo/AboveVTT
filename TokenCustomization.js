@@ -477,7 +477,7 @@ function migrate_token_customizations() {
                     }
                 });
             } else {
-                console.error("migrate_token_customizations failed", error);
+                console.error("migrate_token_customizations received a response that isn't an object", response);
                 console.log("migrate_token_customizations attempting to rollback the migration");
                 rollback_token_customizations_migration();
             }
@@ -805,6 +805,9 @@ function rebuild_ddb_npcs(redrawList = false) {
         fetch_ddb_portraits();
         return;
     }
+
+    // remove any DDB items because we're about to rebuild them.
+    window.tokenListItems = window.tokenListItems.filter(li => li.type !== ItemType.DDBToken);
 
     // Unfortunately, window.ddbConfigJson.raceGroups do not match the portrait ids. Those must be for monsters?
     // Anyway, this is how I collected the race ids. Navigate to https://www.dndbeyond.com/races and enter the following into the console
