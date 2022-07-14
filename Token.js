@@ -1114,7 +1114,7 @@ class Token {
 
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
-	
+			old.css("--token-rotation", rotation+"deg");
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
@@ -1277,6 +1277,7 @@ class Token {
 				tokenImage = build_aoe_token_image(this, imageScale, rotation)
 
 			}
+			tok.css("--token-rotation", rotation + "deg");
 			tok.append(tokenImage);
 
 
