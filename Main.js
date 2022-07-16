@@ -3992,7 +3992,7 @@ function showDebuggingAlert(message = "An unexpected error occurred!") {
 
 /**
  * Removes the splash screen.
- * @returns vaoid
+ * @returns void
  */
 function removeSplashScreen() {
 	// Skip if splash screen is no longer present
@@ -4000,27 +4000,4 @@ function removeSplashScreen() {
 
 	// Remove DOM Object
 	$("#splash").remove();
-
-	// Trigger Beyond20 check & show warning
-	if(isBeyond20Enabled()) {
-		showBeyond20Warning();
-	}
-
-}
-
-/**
- * Simple check if the Beyond20 browser extension is enabled.
- * 
- * This function currently checks for the presence of any DOM element with a class starting with "beyond20". 
- * @returns Boolean
- */
-function isBeyond20Enabled() {
-	return $("[class^=beyond20]").length > 0;
-}
-
-/**
- * Shows a simple alert to inform users to disable the Beyond20 browser extension.
- */
-function showBeyond20Warning() {
-	alert(`Beyond20 detected!\n\nTo avoid errors, please disable the Beyond20 borwser extension while playing with AboveVTT.`);
 }

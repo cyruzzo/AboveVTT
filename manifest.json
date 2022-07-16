@@ -39,6 +39,7 @@
 		"assets/*",
 		"images/*",
 		"ajaxQueue/*",
+		"beyond20/*",
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
 		"jquery.contextMenu.css",

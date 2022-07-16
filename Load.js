@@ -75,6 +75,7 @@ let scripts = [
 	{ src: "TokensPanel.js" },
 	{ src: "TokenCustomization.js" },
 	{ src: "built-in-tokens.js" },
+	{ src: "beyond20/index.js", type: "module" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
