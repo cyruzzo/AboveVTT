@@ -952,12 +952,21 @@ function build_adjustments_flyout_menu(tokenIds) {
 	let uniqueSizes = [...new Set(tokenSizes)];
 	console.log("uniqueSizes", uniqueSizes);
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
+		const hpps = Math.round(window.CURRENT_SCENE_DATA.hpps);
+
 		tokens.forEach(token => {
 			if (!isNaN(newSize)) {
-				token.size(Math.round(window.CURRENT_SCENE_DATA.hpps) * newSize);
+				newSize = hpps * newSize;
 			} else {
 				console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
+				return;
 			}
+			// Reset imageScale if new size is larger
+			if(token.options.size < newSize) {
+				token.imageSize(1);
+			}
+			token.size(newSize);	
+			clampTokenImageSize(token.options.imageSize, token.options.size);
 		});
 	}, allTokensAreAoe); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
 	body.append(sizeInputs);
@@ -971,8 +980,9 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let tokenImageScales = tokens.map(t => t.options.imageSize);
 		let uniqueScales = [...new Set(tokenImageScales)];
 		let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
-		let imageSizeWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
+		let imageSizeWrapper = build_token_image_scale_input(startingScale, tokens, function (imageSize) {
 			tokens.forEach(token => {
+				imageSize = clampTokenImageSize(imageSize, token.options.size);
 				token.options.imageSize = imageSize;
 				token.place_sync_persist();
 			});
@@ -1024,26 +1034,21 @@ function build_adjustments_flyout_menu(tokenIds) {
 	return body;
 }
 
-function build_token_image_scale_input(startingScale, didUpdate) {
+function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	if (isNaN(startingScale)) {
 		startingScale = 1;
 	}
-	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="6" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
-	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="6" step="0.1"/>`);
+	const maxImageScale = getTokenMaxImageScale(tokens[0].options.size);
+	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="${maxImageScale}" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="${maxImageScale}" step="0.1"/>`);
 	imageSizeInput.val(startingScale || 1);
 	imageSizeInputRange.val(startingScale || 1);
 	imageSizeInput.on('keyup', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) {
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-		}
+		let imageSize = event.target.value;
+		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+
 		if (event.key === "Enter") {
+			imageSize = clampTokenImageSize(imageSize, token.options.size);
 			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 			didUpdate(imageSize);
@@ -1053,20 +1058,10 @@ function build_token_image_scale_input(startingScale, didUpdate) {
 		imageSizeInputRange.val(imageSizeInput.val());
 	});
 	imageSizeInput.on('focusout', function(event) {
-		var imageSize;
-		if(event.target.value <= 6 && event.target.value >= 0.2) {
-			imageSize = event.target.value;
-		}
-		else if(event.target.value > 6){
-			imageSize = 6;
-			imageSizeInput.val(imageSize);
-			imageSizeInputRange.val(imageSize);
-		}
-		else if(event.target.value < 0.2){
-			imageSize = 0.2;
-			imageSizeInput.val(imageSize);
-			imageSizeInputRange.val(imageSize);
-		}
+		let imageSize = event.target.value;		
+		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		imageSizeInput.val(imageSize);	
+		imageSizeInputRange.val(imageSize);
 		didUpdate(imageSize);
 
 		imageSizeInputRange.val(imageSizeInput.val());
@@ -1079,6 +1074,7 @@ function build_token_image_scale_input(startingScale, didUpdate) {
 	});
 	imageSizeInputRange.on('mouseup', function(){
 		let imageSize = imageSizeInputRange.val();
+		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
 		didUpdate(imageSize);
 	});
 	let imageSizeWrapper = $(`
@@ -1207,6 +1203,9 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
 	const isSizeCustom = (forceCustom || ![0.5, 1, 2, 3, 4].includes(numGridSquares));
 	console.log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
 
+	// Limit custom token scale to grid size 
+	const maxScale = Math.max(window.ScenesHandler.scene.width / window.ScenesHandler.scene.hpps);
+
 	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
 	const size = (numGridSquares > 0) ? (numGridSquares * window.CURRENT_SCENE_DATA.fpsq) : 1;
 	let output = $(`
@@ -1260,4 +1259,54 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
 	});
 
 	return output;
+}
+
+/**
+ * Ensures the new imageSize is within the allowed boundaries.
+ * @param {number|string} newImageSize the new expected imageSize
+ * @param {number} tokenSize the current token size
+ * @returns the clamped imageSize
+ */
+ function clampTokenImageSize(newImageSize, tokenSize) {
+
+	const maxScale = getTokenMaxImageScale(tokenSize);
+	newImageSize = parseFloat(newImageSize);
+	newImageSize = clamp(newImageSize, 0.2, maxScale);	
+
+	// Update the DOM inputs if available
+	updateScaleInputs(newImageSize, maxScale);
+
+	return newImageSize;
+}
+
+/**
+ * Calculates the maximum imageScale for the given token size.
+ * @param {number} tokenSize current size of the token
+ * @returns maximum value for imageScale
+ */
+ function getTokenMaxImageScale(tokenSize) {
+	return Math.min(6, window.ScenesHandler.scene.width / parseFloat(tokenSize));
+}
+
+/**
+ * Updates the imageScales DOM inputs.
+ * @param {number} newScale the new imageScale
+ * @param {number} maxScale the maximum allowed imageScale
+ */
+function updateScaleInputs(newScale, maxScale) {
+	// Get DOM inputs
+	const imageScaleInputNumber = $(".image-scale-input-number");
+	const imageScaleInputRange = $(".image-scale-input-range");
+
+	// Update current value
+	if(parseFloat(imageScaleInputNumber.val()) > maxScale) {
+		imageScaleInputNumber.val(newScale);
+	}
+	if(parseFloat(imageScaleInputRange.val()) > maxScale) {
+		imageScaleInputRange.val(newScale);
+	}
+
+	// Update max values
+	imageScaleInputNumber.attr('max', maxScale);
+	imageScaleInputRange.attr('max', maxScale);
 }

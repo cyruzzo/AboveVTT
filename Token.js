@@ -44,6 +44,8 @@ class Token {
 
 	// Defines how many token-sizes a token is allowed to be moved outside of the scene.
 	SCENE_MOVE_GRID_PADDING_MULTIPLIER = 1;
+	MIN_TOKEN_SIZE = 25;
+	MAX_TOKEN_SIZE = 1000;
 
 	constructor(options) {
 		this.selected = false;
@@ -233,6 +235,11 @@ class Token {
 	}
 
 	size(newSize) {
+		this.MAX_TOKEN_SIZE = Math.max(window.ScenesHandler.scene.width, window.ScenesHandler.scene.height);
+
+		// Clamp token size to min/max token size
+		newSize = clamp(newSize, this.MIN_TOKEN_SIZE, this.MAX_TOKEN_SIZE);
+
 		this.update_from_page();
 
 		if(this.isLineAoe()){
