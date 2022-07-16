@@ -1174,8 +1174,8 @@ function init_splash() {
 
 	cont.append(patreons);
 	cont.click(function() {
-		$("#splash").remove();
-
+		removeSplashScreen();
+		
 	});
 
 	let closeButton = $(`<button class="ddbeb-modal__close-button qa-modal_close" title="Close Modal" ><svg class="" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g><g transform="rotate(45 50 50)"><rect x="0" y="45" width="100" height="10"></rect></g></svg></button>`);
@@ -2830,7 +2830,7 @@ function init_ui() {
 		//remove iframe cover that prevents mouse interaction
 		$('.iframeResizeCover').remove();
 		if (event.target.tagName.toLowerCase() !== 'a') {
-			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
+			removeSplashScreen(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
 		if (sidebar_modal_is_open() && event.which === 1) {
 			// check if the click was within the modal or within an element that we specifically don't want to close the modal
@@ -3988,4 +3988,39 @@ function adjust_site_bar() {
 const debuggingAlertText = "Please check the developer console (F12) for errors, and report this via the AboveVTT Discord.";
 function showDebuggingAlert(message = "An unexpected error occurred!") {
 	alert(`${message}\n${debuggingAlertText}`);
+}
+
+/**
+ * Removes the splash screen.
+ * @returns vaoid
+ */
+function removeSplashScreen() {
+	// Skip if splash screen is no longer present
+	if($("#splash").length === 0) { return; }
+
+	// Remove DOM Object
+	$("#splash").remove();
+
+	// Trigger Beyond20 check & show warning
+	if(isBeyond20Enabled()) {
+		showBeyond20Warning();
+	}
+
+}
+
+/**
+ * Simple check if the Beyond20 browser extension is enabled.
+ * 
+ * This function currently checks for the presence of any DOM element with a class starting with "beyond20". 
+ * @returns Boolean
+ */
+function isBeyond20Enabled() {
+	return $("[class^=beyond20]").length > 0;
+}
+
+/**
+ * Shows a simple alert to inform users to disable the Beyond20 browser extension.
+ */
+function showBeyond20Warning() {
+	alert(`Beyond20 detected!\n\nTo avoid errors, please disable the Beyond20 borwser extension while playing with AboveVTT.`);
 }
