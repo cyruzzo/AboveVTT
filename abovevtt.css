@@ -1893,7 +1893,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .token.isAoe{
     visibility: hidden;
 }
-.token.isAoe *{
+.token.isAoe .token-image,
+.token.isAoe .token-image *,
+.token.isAoe:before{
     visibility: visible;
 }
 .aoe-token-tileable {
