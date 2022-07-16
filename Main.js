@@ -2577,7 +2577,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
  */
 function init_ui() {
 	console.log("init_ui");
-	window.ALLOWTOKENMEASURING=true;
+
 	// ATTIVA GAMELOG
 	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
