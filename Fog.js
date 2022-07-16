@@ -1243,11 +1243,13 @@ function drawing_mouseup(e) {
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
-			var toktop = (parseInt($("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect().top) + window.scrollY - 200) * (1.0 / window.ZOOM);
-			var tokleft = (parseInt($("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect().left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokright = (parseInt($("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect().right) + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokbottom = (parseInt($("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect().bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
-
+			
+			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();			
+			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
+			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
+			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
+			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+			
 			if ((Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom)) == tokbottom || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
 				continue;
 			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokright)) == tokright || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
