@@ -1890,7 +1890,12 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 
 /* END AOE STYLES */
-
+.token.isAoe{
+    visibility: hidden;
+}
+.token.isAoe *{
+    visibility: visible;
+}
 .aoe-token-tileable {
     height: 100%;
     width: 100%;
