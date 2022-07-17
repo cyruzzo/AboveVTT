@@ -3712,6 +3712,10 @@ button.avtt-roll-button {
     opacity: 1;
     border-style: solid;
 }
+input.hp[disabled],
+input.max_hp[disabled]{
+    opacity: 1;
+}
 
 #combat_footer{
     background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
