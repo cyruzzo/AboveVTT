@@ -306,7 +306,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
 
 		hp=$("<div class='hp'/>");
+
 		var hp_input = $("<input class='hp'>");
+		if(token.isPlayer()){
+			hp_input.prop("disabled", true);
+		}
 		hp_input.val(token.options.hp);
 		hp.append(hp_input);
 		if(hp_input.val() === '0'){
@@ -325,7 +329,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		var divider = $("<div style='display:inline-block;float:left'>/</>");
 		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
 			divider.css('visibility', 'hidden');
-			divider.css('visibility', 'hidden');
 		}
 		if(window.DM || !(token.options.monster > 0) )
 			entry.append($("<td/>").append(divider));
@@ -334,6 +337,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
 		max_hp=$("<div class='max_hp'/>");
 		var maxhp_input = $("<input class='max_hp'>");
+		if(token.isPlayer()){
+			maxhp_input.prop("disabled", true);
+		}
 		maxhp_input.val(token.options.max_hp);
 		max_hp.append(maxhp_input);
 		max_hp.css('font-size','11px');
@@ -354,7 +360,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
 				old.find(".hp").val(hp_input.val().trim());
-				self.update_and_sync(e);
+				token.update_and_sync(e);
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
@@ -363,7 +369,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
 				old.find(".max_hp").val(maxhp_input.val().trim());
-				self.update_and_sync(e);
+				token.update_and_sync(e);
 			});
 			maxhp_input.click(function(e) {
 				$(e.target).select();

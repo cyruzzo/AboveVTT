@@ -882,13 +882,44 @@ div#scene_properties form > div {
 .ct_dead img{
     filter: saturate(0);
 }
+.hp,
+.max_hp,
+td:nth-of-type(4){
+    color: #000000dd;
+}
 .ct_dead .hp,
-.ct_dead .max_hp{
+.ct_dead .max_hp,
+.ct_dead td:nth-of-type(4){
     color: #bc0f0f;
 }
 #combat_area .ct_dead[data-current][data-target*="characters"]{
     background: none;
 }
+#combat_area [data-target*="characters"] input:not(.init){
+    text-decoration: none;
+    background: none;
+    border-width: 0;
+}
+#combat_area [data-monster] input.hp{
+    text-decoration: underline solid 0.5px #1b9af033;
+}
+#combat_area [data-monster].ct_dead input.hp{
+    text-decoration-color: #bc0f0f33;
+}
+
+#combat_area [data-monster] input:not(.init){
+    border-width: 0;
+    background: none;
+}
+
+#combat_area [data-monster] input.hp:focus{
+    text-decoration: underline;
+}
+#combat_area [data-monster] input:not(.init):focus{
+    border-width: 1px;
+}
+
+
 .ct_dead:not([data-target*="characters"]) .delSVG path:not([fill*="none"]){
     fill: #ff4848;
     opacity: 0.7;
@@ -3206,11 +3237,15 @@ button.avtt-roll-button {
 }
 #combat_area tr td:first-of-type,
 #combat_area tr td:nth-of-type(2),
-#combat_area tr td:nth-of-type(4){
-    width: 10%;
+#combat_area tr td:nth-of-type(5)
+{
+    width: 13%;
 }
-#combat_area tr td:nth-of-type(3){
-    width: 15%;
+#combat_area tr td:nth-of-type(4) {
+    width: 5px;
+}
+#combat_area tr td:nth-of-type(3) {
+    width: 13%;
 }
 #combat_area tr td:first-of-type,
 #combat_area tr td:nth-of-type(2),
@@ -3570,7 +3605,7 @@ button.avtt-roll-button {
     border-collapse:collapse;  
 }
 
-#combat_area td input,
+#combat_area td input.init,
 #round_number_label input{
     border-radius: 3px;
     border-color: #ddd;
@@ -3579,6 +3614,20 @@ button.avtt-roll-button {
     text-align:center;
     font-size: 14px !important;
 }
+#combat_area td input:not(.init){
+    border-radius: 3px;
+    border-color: #ddd;
+    width: 100% !important;
+    height:22px;
+}
+#combat_area td input.hp{
+    text-align: right;
+}
+
+#combat_area td input.max_hp{
+    text-align: left;
+}
+
 #round_number_label input{
     font-weight: 600;
     -moz-appearance: textfield !important;
@@ -3593,7 +3642,9 @@ button.avtt-roll-button {
 }
 
 
-#combat_area tr td div{
+#combat_area tr td div,
+#combat_area tr td input.hp,
+#combat_area tr td input.max_hp{
     top: 1px;
     position: relative;
     font-size: 18px !important; 
@@ -3648,7 +3699,8 @@ button.avtt-roll-button {
 #combat_area tr[data-current] td img{      
      box-shadow: 1px 1px 2px 0px #000000;  
 }
-#combat_area tr td input,
+#combat_area tr td input.init,
+#combat_area tr td input:focus,
 .roundNum,
 #combat_area tr td img {
     box-shadow: 1px 1px 1px 0px #00000047;
@@ -3659,6 +3711,10 @@ button.avtt-roll-button {
 #combat_tracker input[readonly]{
     opacity: 1;
     border-style: solid;
+}
+input.hp[disabled],
+input.max_hp[disabled]{
+    opacity: 1;
 }
 
 #combat_footer{

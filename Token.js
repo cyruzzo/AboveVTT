@@ -686,7 +686,7 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
 		}
-		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text() === '0'){
+		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] input.hp").val() === '0'){
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
 		}
 		else{
