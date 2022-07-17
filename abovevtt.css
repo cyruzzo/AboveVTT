@@ -916,7 +916,7 @@ td:nth-of-type(4){
     text-decoration: underline;
 }
 #combat_area [data-monster] input:not(.init):focus{
-    border: 1px;
+    border-width: 1px;
 }
 
 
