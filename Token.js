@@ -674,8 +674,8 @@ class Token {
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
-		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text(this.options.hp);
-		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").text("/"+this.options.max_hp);
+		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").val(this.options.hp);
+		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.options.max_hp);
 
 
 		if((!window.DM && this.options.hidestat == true) || this.options.disablestat == true) {
@@ -686,7 +686,7 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
 		}
-		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").text() === '0'){
+		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] input.hp").val() === '0'){
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
 		}
 		else{
