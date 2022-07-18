@@ -1284,7 +1284,8 @@ class MessageBroker {
 
 			if(window.DM)
 				get_pclist_player_data();
-
+			else
+				window.MB.sendMessage("custom/myVTT/syncmeup");
 
 
 			if (window.EncounterHandler !== undefined) {

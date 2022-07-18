@@ -2751,8 +2751,7 @@ function init_ui() {
 	}
 	else
 	{
-		setTimeout(function() {
-			window.MB.sendMessage("custom/myVTT/syncmeup");
+		setTimeout(function() {		
 			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
