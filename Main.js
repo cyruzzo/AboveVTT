@@ -2911,6 +2911,10 @@ function init_ui() {
 		setTimeout(get_pclist_player_data,25000);
 	}
 
+	if(window.DM && (!window.CLOUD)){
+		alert("YOUR SCENES ARE BEING MIGRATED TO THE CLOUD IN 20 SECONDS. AFTER THIS MIGRATION YOU'LL FIND YOUR SCENES ON THE RIGHT PANEL.");
+		setTimeout(cloud_migration,20000);
+	}
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
