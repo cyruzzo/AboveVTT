@@ -385,66 +385,67 @@ function init_audio(){
 	
 	if(!window.DM)
 		youtube_section.hide();
-
-	selector_section=$("<div/>");
-	soundpad_selector=$("<select id='soundpad_selector'/>");
-	soundpad_selector.append("<option value=''>-</option>");
-	for(k in window.SOUNDPADS){
-		soundpad_selector.append($("<option/>").attr('value',k).html(k));
-	}
-	selector_section.append("Load Soundpad:");
-	selector_section.append(soundpad_selector);
-	selector_section.append("Enable Edit:");
-	soundpad_enable_edit=$("<input type='checkbox' id='soundpad_enable_edit'>");
 	
-	soundpad_enable_edit.change(soundpad_check_editable);
-	selector_section.append(soundpad_enable_edit);
-	
-	btn_addsoundpad=$("<button class='soundpad_add'>NEW</button>");
-	selector_section.append(btn_addsoundpad);
-	soundsPanel.body.append(selector_section);
-	
-	btn_addsoundpad.click(function(){
-		var newname=prompt("New Soundpad Name");
-		if(newname){
-			window.SOUNDPADS[newname]={};
-			soundpad_selector.append($("<option/>").attr('value',newname).html(newname));
-			soundpad_selector.val(newname);
-			$("#soundpad_enable_edit").prop('checked', true);
-			build_soundpad(window.SOUNDPADS[newname]);
+	if(window.DM){
+		selector_section=$("<div/>");
+		soundpad_selector=$("<select id='soundpad_selector'/>");
+		soundpad_selector.append("<option value=''>-</option>");
+		for(k in window.SOUNDPADS){
+			soundpad_selector.append($("<option/>").attr('value',k).html(k));
 		}
-	});
-	
-	
-	btn_delsoundpad=$("<button class='soundpad_del'>DEL</button>");
-	btn_delsoundpad.click(function(){
-		c=confirm("Are you sure that you want to delete the current soundpad?");
-		if(c){
-			delete window.SOUNDPADS[soundpad_selector.val()];
+		selector_section.append("Load Soundpad:");
+		selector_section.append(soundpad_selector);
+		selector_section.append("Enable Edit:");
+		soundpad_enable_edit=$("<input type='checkbox' id='soundpad_enable_edit'>");
+		
+		soundpad_enable_edit.change(soundpad_check_editable);
+		selector_section.append(soundpad_enable_edit);
+		
+		btn_addsoundpad=$("<button class='soundpad_add'>NEW</button>");
+		selector_section.append(btn_addsoundpad);
+		soundsPanel.body.append(selector_section);
+		
+		btn_addsoundpad.click(function(){
+			var newname=prompt("New Soundpad Name");
+			if(newname){
+				window.SOUNDPADS[newname]={};
+				soundpad_selector.append($("<option/>").attr('value',newname).html(newname));
+				soundpad_selector.val(newname);
+				$("#soundpad_enable_edit").prop('checked', true);
+				build_soundpad(window.SOUNDPADS[newname]);
+			}
+		});
+		
+		
+		btn_delsoundpad=$("<button class='soundpad_del'>DEL</button>");
+		btn_delsoundpad.click(function(){
+			c=confirm("Are you sure that you want to delete the current soundpad?");
+			if(c){
+				delete window.SOUNDPADS[soundpad_selector.val()];
+				$("#soundpad").empty();
+				soundpad_selector.empty();
+				soundpad_selector.append("<option value=''>-</option>");
+				for (k in window.SOUNDPADS) {
+					soundpad_selector.append($("<option/>").attr('value', k).html(k));
+				}
+				persist_soundpad();
+			}
+		});
+		selector_section.append(btn_delsoundpad);
+		
+		soundpad_selector.on("change",function(){
 			$("#soundpad").empty();
-			soundpad_selector.empty();
-			soundpad_selector.append("<option value=''>-</option>");
-			for (k in window.SOUNDPADS) {
-				soundpad_selector.append($("<option/>").attr('value', k).html(k));
+			soundpad_id=$("#soundpad_selector").val();
+			if(soundpad_id!=""){
+				build_soundpad(window.SOUNDPADS[soundpad_id]);
+				
+				data={
+					soundpad: window.SOUNDPADS[soundpad_id]
+				}
+				window.MB.sendMessage("custom/myVTT/soundpad",data);
 			}
-			persist_soundpad();
-		}
-	});
-	selector_section.append(btn_delsoundpad);
-	
-	soundpad_selector.on("change",function(){
-		$("#soundpad").empty();
-		soundpad_id=$("#soundpad_selector").val();
-		if(soundpad_id!=""){
-			build_soundpad(window.SOUNDPADS[soundpad_id]);
-			
-			data={
-				soundpad: window.SOUNDPADS[soundpad_id]
-			}
-			window.MB.sendMessage("custom/myVTT/soundpad",data);
-		}
-	});
-	
+		});
+	}
 	
 	soundpad_element=$("<div id='soundpad'>");
 	soundsPanel.body.append(soundpad_element);
@@ -455,4 +456,3 @@ function init_audio(){
 	}
 	
 }
-
