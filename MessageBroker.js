@@ -1338,6 +1338,8 @@ class MessageBroker {
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
+			// also sync the journal
+			window.JOURNAL.sync();
 		}
 	}
 
