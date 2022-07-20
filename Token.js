@@ -1565,7 +1565,7 @@ class Token {
 					}
 					
 					// this was copied the place function in this file. We should make this a single function to be used in other places
-					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
+					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
