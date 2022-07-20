@@ -431,7 +431,7 @@ function migrate_token_customizations() {
         for(let monsterIdNumber in window.CUSTOM_TOKEN_IMAGE_MAP) {
             const monsterId = `${monsterIdNumber}`; // monster ids are numbers, but we want it to be a string to be consistent with other ids
             let images = window.CUSTOM_TOKEN_IMAGE_MAP[monsterIdNumber];
-            if (Array.isArray(images)) {
+            if (!Array.isArray(images)) {
                 images = [];
             }
             const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.Monster && tc.id === monsterId);
@@ -477,7 +477,7 @@ function migrate_token_customizations() {
                     }
                 });
             } else {
-                console.error("migrate_token_customizations failed", error);
+                console.error("migrate_token_customizations received a response that isn't an object", response);
                 console.log("migrate_token_customizations attempting to rollback the migration");
                 rollback_token_customizations_migration();
             }
@@ -556,6 +556,9 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
                 // alternativeImages should be the only non-primitive. We need to make sure it's properly copied and not referencing the old objet in any way
                 tokenOptions.alternativeImages = [...myToken.alternativeImages]; //
             }
+            else if(myToken.image){
+                tokenOptions.alternativeImages = [parse_img(myToken.image)]
+            }
             delete tokenOptions.image;
             delete tokenOptions.folderpath;
             delete tokenOptions.folderPath;
@@ -582,7 +585,7 @@ function rollback_token_customizations_migration() {
             playerCustomizations[playerId].didMigrate = false;
         }
         write_player_token_customizations(playerCustomizations);
-        window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate = false;
+        delete window.CUSTOM_TOKEN_IMAGE_MAP.didMigrate;
         save_custom_monster_image_mapping();
     } catch (error) {
         console.error("Failed to rollback token customization", error);
@@ -802,6 +805,9 @@ function rebuild_ddb_npcs(redrawList = false) {
         fetch_ddb_portraits();
         return;
     }
+
+    // remove any DDB items because we're about to rebuild them.
+    window.tokenListItems = window.tokenListItems.filter(li => li.type !== ItemType.DDBToken);
 
     // Unfortunately, window.ddbConfigJson.raceGroups do not match the portrait ids. Those must be for monsters?
     // Anyway, this is how I collected the race ids. Navigate to https://www.dndbeyond.com/races and enter the following into the console

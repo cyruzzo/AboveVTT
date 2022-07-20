@@ -1112,10 +1112,10 @@ class Token {
 
 
 
-			old.find("img").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
-			old.find("img").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
-	
-			setTimeout(function() {old.find("img").css("transition", "")}, 200);
+			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
+			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
+			old.css("--token-rotation", rotation+"deg");
+			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
 			var entry = $("#combat_area").find(selector);
@@ -1211,8 +1211,6 @@ class Token {
 				// re-calc the border width incase the token has changed size
 				oldImage.css(`transform:scale("${imageScale}") rotate("${rotation}deg");`)
 
-                old.css("pointer-events", "none");
-                oldImage.css("pointer-events", "auto");
 			}
 
 			oldImage.css("max-height", this.sizeHeight());
@@ -1276,11 +1274,10 @@ class Token {
 				tokenImage.attr("src", this.options.imgsrc);
 
 			} else {
-				tokenImage = build_aoe_token_image(this)
+				tokenImage = build_aoe_token_image(this, imageScale, rotation)
 
-                tok.css("pointer-events", "none");
-                tokenImage.css("pointer-events", "auto");
 			}
+			tok.css("--token-rotation", rotation + "deg");
 			tok.append(tokenImage);
 
 
@@ -1567,7 +1564,7 @@ class Token {
 					}
 					
 					// this was copied the place function in this file. We should make this a single function to be used in other places
-					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
+					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);

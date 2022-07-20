@@ -1522,7 +1522,7 @@ function init_scenes_panel() {
 		if (numberOfNewFolders > 0) {
 			newFolderName = `${newFolderName} ${numberOfNewFolders}`
 		}
-		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolder.Scenes.path, newFolderName), RootFolder.Scenes.path, newFolderName, true, path_to_html_id(RootFolder.Scenes.path, newFolderName));
+		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolder.Scenes.path, newFolderName), RootFolder.Scenes.path, newFolderName, true, path_to_html_id(RootFolder.Scenes.path));
 		window.sceneListFolders.push(newFolderItem);
 		display_folder_configure_modal(newFolderItem);
 		did_update_scenes();
