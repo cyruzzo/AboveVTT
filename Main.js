@@ -2777,8 +2777,6 @@ function init_ui() {
 			if(!window.CLOUD){
 				window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 			}
-			// also sync the journal
-			window.JOURNAL.sync();
 		}, 5000);
 	}
 	setTimeout(function() {
