@@ -1498,7 +1498,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #splash {
     position: fixed;
     transform: translate(0%, -4%);
-    top: 10px;
+    top: 50px;
     bottom: 0px;
     left: 0px;
     right: 0px;
