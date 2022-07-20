@@ -1556,8 +1556,8 @@ class Token {
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
-					let tokenX = Math.round(((event.clientX - click.x + original.left) + (window.scrollX - click.scrollX))/ zoom);
-					let tokenY = Math.round(((event.clientY - click.y + original.top) + (window.scrollY - click.scrollY))/ zoom);
+					let tokenX = Math.round((event.clientX - click.x + original.left + window.scrollX - click.scrollX) / zoom);
+					let tokenY = Math.round((event.clientY - click.y + original.top + window.scrollY - click.scrollY) / zoom);
 
 
 					if (should_snap_to_grid()) {
