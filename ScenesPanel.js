@@ -430,7 +430,8 @@ function edit_scene_dialog(scene_id) {
 		}
 
 		if(window.CLOUD){
-			window.ScenesHandler.persist_scene(scene_id,true,true);
+			const isNew = false;
+			window.ScenesHandler.persist_scene(scene_id, isNew);
 		}
 		else{
 			window.ScenesHandler.persist();
@@ -1130,7 +1131,7 @@ function init_scene_selector() {
 			offsety: 0,
 			grid: 0,
 			snap: 0,
-			reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+			reveals: [], // SPECIAL MESSAGE TO REVEAL EVERYTHING
 			order: Date.now()
 		}
 		);
