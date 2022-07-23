@@ -21,7 +21,8 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 	"color-picker.min.css",
 	"spectrum-2.0.8.min.css",
 	"magnific-popup.css",
-	"DiceContextMenu/DiceContextMenu.css"
+	"DiceContextMenu/DiceContextMenu.css",
+	"CloudHelper/syncIndicator.css"
 ].forEach(function(value, index, array) {
 	let l = document.createElement('link');
 	l.href = chrome.runtime.getURL(value);
@@ -75,6 +76,7 @@ let scripts = [
 	{ src: "TokensPanel.js" },
 	{ src: "TokenCustomization.js" },
 	{ src: "built-in-tokens.js" },
+	{ src: "CloudHelper/CloudHelper.js", type: "module" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },

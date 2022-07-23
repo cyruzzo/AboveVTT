@@ -39,6 +39,7 @@
 		"assets/*",
 		"images/*",
 		"ajaxQueue/*",
+		"CloudHelper/*",
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
 		"jquery.contextMenu.css",

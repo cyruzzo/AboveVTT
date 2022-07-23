@@ -1,0 +1,9 @@
+#switch_settings .sidebar-tab-image div {
+    animation: rotate360 10s linear infinite paused;
+}
+
+@keyframes rotate360 {
+    0%   { transform: rotate(0deg);   }
+    100% { transform: rotate(360deg); }
+}
+

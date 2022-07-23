@@ -339,6 +339,9 @@ class MessageBroker {
 				return;
 			if (event.data == "ping")
 				return;
+				
+			// Triggers the sync animation for each received message
+			window.CLOUD_HELPER.syncIndicator.showTimed();
 
 			var msg = $.parseJSON(event.data);
 			console.log(msg.eventType);
@@ -1412,6 +1415,9 @@ class MessageBroker {
 		var self = this;
 
 		//this.sendDDBMB(eventType,data); 
+
+		// Triggers the sync animation for each outgoing message
+		window.CLOUD_HELPER.syncIndicator.showTimed();
 
 		if(eventType.startsWith("custom")){
 			this.sendAboveMB(eventType,data,skipSceneId);
