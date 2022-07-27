@@ -241,6 +241,7 @@ class Token {
 		}
 		else{
 			this.options.size = newSize;
+			this.options.gridSquares = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
 		}
 		this.place_sync_persist()
 	}
@@ -1251,7 +1252,14 @@ class Token {
 
 			var fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
-
+			
+			if(this.options.gridSquares != undefined){
+				this.options.size = window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares;
+			}
+			else{
+				this.options.gridSquares = this.options.size / window.CURRENT_SCENE_DATA.hpps
+			}
+			
 			let tokenImage
 			// new aoe tokens use arrays as imsrc
 			if (!this.isAoe()){
