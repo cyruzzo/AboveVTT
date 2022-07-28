@@ -266,9 +266,6 @@ function edit_scene_dialog(scene_id) {
 	dialog.css('z-index', 99999);
 	dialog.css('border', 'solid 1px black');
 
-	dialog.mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
 	dialog.draggable({
 		addClasses: false,
 		scroll: false,
