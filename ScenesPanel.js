@@ -182,9 +182,9 @@ function edit_scene_dialog(scene_id) {
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
 			}else{
-				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
 			 
 		}
