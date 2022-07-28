@@ -175,7 +175,7 @@ function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
-		const row = $("<div style='width:100%;'/>");
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
 		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
 		rowLabel.css("font-weight", "bold");
 		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
@@ -240,7 +240,7 @@ function edit_scene_dialog(scene_id) {
 
 	dialog.append(template_section);
 	controls = $("<div/>");
-	controls.append("Import Template FROM:");
+	controls.append("Import Template From:");
 	toggle_ddb = $("<button>DnDBeyond.com</button>")
 	toggle_ddb.click(function() {
 		mega_importer(true);
@@ -266,6 +266,21 @@ function edit_scene_dialog(scene_id) {
 	dialog.css('z-index', 99999);
 	dialog.css('border', 'solid 1px black');
 
+	dialog.mousedown(function() {
+		frame_z_index_when_click($(this));
+	});
+	dialog.draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function() {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function() {
+			$('.iframeResizeCover').remove();
+		}
+	});
 	$("#site").append(dialog);
 
 	var container = scene_properties;
@@ -289,13 +304,21 @@ function edit_scene_dialog(scene_id) {
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	form.append(playerMapRow)
 	form.append(dmMapRow)
-
 	// add a row but override the normal input with a toggle
 	form.append(form_row(null,
-						'Use DM Map',
-						form_toggle("dm_map_usable",null, false, handle_basic_form_toggle_click)
-						)
-				);
+			'Use DM Map',
+			form_toggle("dm_map_usable",null, false,  function(event) {
+				handle_basic_form_toggle_click(event);
+				if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+					form.find("#dm_map_row").show()
+					
+				} else {
+					form.find("#dm_map_row").hide()
+				}
+			})
+		)
+	);
+
 	let darknessValue = scene.darkness_filter || 0;
 	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="95" step="5"/>`);
 	
@@ -926,11 +949,18 @@ function edit_scene_dialog(scene_id) {
 	container.css('opacity', '0.0');
 	container.append(form);
 
+	if($("#dm_map_usable_toggle").hasClass('rc-switch-checked')){
+		form.find("#dm_map_row").show()
+	}
+	else{
+		form.find("#dm_map_row").hide()
+	}
 	
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
-	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Optional");
+	$("#edit_scene_form").find(`[name='player_map']`).attr("placeholder", "Map image or video url here.       Toggle this if video -->");
+	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Only the DM will see this image/video");
 	validate_image_input($(playerMapRow).find("input")[0])
 	validate_image_input($(dmMapRow).find("input")[0])
 }
