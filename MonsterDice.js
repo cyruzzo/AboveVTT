@@ -279,7 +279,7 @@ function scan_player_creature_pane(target) {
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find(".ct-creature-pane__block p").each(function() {
-		const currentElement = $(this).clone()
+		let currentElement = $(this).clone()
 		if (currentElement.find(".avtt-roll-button").length === 0) {
 			// apply most specific regex first matching all possible ways to write a dice notation
 			// to account for all the nuances of DNDB dice notation.
