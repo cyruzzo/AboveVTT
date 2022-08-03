@@ -554,13 +554,13 @@ const builtInTokens = [
       })
     });
 builtInTokens.push({
-  "name": `! Exclamation Mark`,
+  "name": `! - Exclamation Mark`,
   "folderPath": "/Letters",
   "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png`,
   "disableborder": true
 })
 builtInTokens.push({
-  "name": `? Question Mark`,
+  "name": `? - Question Mark`,
   "folderPath": "/Letters",
   "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/QUESTION.png`,
   "disableborder": true
