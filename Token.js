@@ -506,11 +506,19 @@ class Token {
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		let tokenData = this.munge_token_data()
 		if (tokenData.max_hp > 0) {
-		 	var tokenHpAuraColor = token_health_aura(
-				Math.round((tokenData.hp / tokenData.max_hp) * 100)
-			);	
+			if(window.PLAYER_STATS[this.options.id] || !tokenData.temp_hp) {	
+				var tokenHpAuraColor = token_health_aura(
+					Math.round((tokenData.hp / tokenData.max_hp) * 100)
+				);	
+				token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
+			}
+			else{
+				var tokenHpAuraColor = token_health_aura(
+					Math.round(((tokenData.hp - tokenData.temp_hp) / tokenData.max_hp) * 100)
+				);	
+				token.css('--hp-percentage', Math.round(((tokenData.hp - tokenData.temp_hp) / tokenData.max_hp) * 100) + "%");
+			}
 		}
-		token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
 
 
 
