@@ -1280,10 +1280,11 @@ class Token {
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
 				tokenImage.attr("src", this.options.imgsrc);
+				tok.toggleClass("isAoe", false);
 
 			} else {
 				tokenImage = build_aoe_token_image(this, imageScale, rotation)
-
+				tok.toggleClass("isAoe", true);
 			}
 			tok.css("--token-rotation", rotation + "deg");
 			tok.append(tokenImage);
