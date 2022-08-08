@@ -2751,8 +2751,7 @@ function init_ui() {
 	}
 	else
 	{
-		setTimeout(function() {
-			window.MB.sendMessage("custom/myVTT/syncmeup");
+		setTimeout(function() {		
 			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
@@ -2778,8 +2777,6 @@ function init_ui() {
 			if(!window.CLOUD){
 				window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 			}
-			// also sync the journal
-			window.JOURNAL.sync();
 		}, 5000);
 	}
 	setTimeout(function() {
