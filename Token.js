@@ -354,10 +354,10 @@ class Token {
 
 		// Stop movement if new position is outside of the scene
 		if (
-			top  < this.walkableArea.top    || 
-			top  > this.walkableArea.bottom ||
-			left < this.walkableArea.left   || 
-			left > this.walkableArea.bottom
+			top  < this.walkableArea.top - this.options.size    || 
+			top  > this.walkableArea.bottom + this.options.size ||
+			left < this.walkableArea.left - this.options.size || 
+			left > this.walkableArea.right + this.options.size 
 		) { return; }
 
 		this.update_from_page();
