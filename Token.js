@@ -1133,7 +1133,7 @@ class Token {
 				entry.toggleClass('hasTooltip', false);
 			}	
 			else if (this.options.name) {
-				if ((window.DM || !this.options.monster || this.options.revealname)) {
+				if ((window.DM || this.isPlayer() || this.options.revealname)) {
 					old.attr("data-name", this.options.name);
 					old.toggleClass('hasTooltip', true);
 					entry.attr("data-name", this.options.name);
@@ -1336,7 +1336,7 @@ class Token {
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
 
-			if ((this.options.name) && (window.DM || !this.options.monster || this.options.revealname)) {
+			if ((this.options.name) && (window.DM || this.isPlayer() || this.options.revealname)) {
 				tok.attr("data-name", this.options.name);
 				tok.addClass("hasTooltip");
 			}
