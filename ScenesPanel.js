@@ -706,7 +706,6 @@ function edit_scene_dialog(scene_id) {
 			aligner2.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas(); redraw_fog();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
@@ -766,7 +765,6 @@ function edit_scene_dialog(scene_id) {
 			aligner1.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas();
 					redraw_fog();
 					click1.x = event.clientX;
