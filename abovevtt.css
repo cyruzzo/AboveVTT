@@ -561,7 +561,9 @@ div#scene_selector,
 }
 
 #edit_dialog {
-    height: 400px !important;
+    height: fit-content !important;
+    padding-bottom: 10px;
+    border-radius: 15px;
 }
 
 #combat_tracker_inside {
@@ -674,6 +676,11 @@ input {
 
 div#template_section {
     margin: 10px 5px;
+    font-weight: 600;
+}
+div#template_section {
+    padding-bottom: 5px;
+    border-bottom:  1px solid #00000066;
 }
 
 div#scene_properties {
