@@ -1469,8 +1469,8 @@ class Token {
 						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
-					click.x = event.clientX;
-					click.y = event.clientY;
+					click.x = event.pageX;
+					click.y = event.pageY;
 
 					if(tok.is(":animated")){
 						self.stopAnimation();
@@ -1554,8 +1554,8 @@ class Token {
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
-					let tokenX = Math.round((event.clientX - click.x + original.left) / zoom);
-					let tokenY = Math.round((event.clientY - click.y + original.top) / zoom);
+					let tokenX = Math.round((event.pageX - click.x + original.left) / zoom);
+					let tokenY = Math.round((event.pageY - click.y + original.top) / zoom);
 
 
 					if (should_snap_to_grid()) {
