@@ -175,16 +175,16 @@ function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
-		const row = $("<div style='width:100%;'/>");
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
 		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
 		rowLabel.css("font-weight", "bold");
 		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
 			}else{
-				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
 			 
 		}
@@ -240,7 +240,7 @@ function edit_scene_dialog(scene_id) {
 
 	dialog.append(template_section);
 	controls = $("<div/>");
-	controls.append("Import Template FROM:");
+	controls.append("Import Template From:");
 	toggle_ddb = $("<button>DnDBeyond.com</button>")
 	toggle_ddb.click(function() {
 		mega_importer(true);
@@ -266,6 +266,18 @@ function edit_scene_dialog(scene_id) {
 	dialog.css('z-index', 99999);
 	dialog.css('border', 'solid 1px black');
 
+	dialog.draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function() {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function() {
+			$('.iframeResizeCover').remove();
+		}
+	});
 	$("#site").append(dialog);
 
 	var container = scene_properties;
@@ -289,13 +301,21 @@ function edit_scene_dialog(scene_id) {
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	form.append(playerMapRow)
 	form.append(dmMapRow)
-
 	// add a row but override the normal input with a toggle
 	form.append(form_row(null,
-						'Use DM Map',
-						form_toggle("dm_map_usable",null, false, handle_basic_form_toggle_click)
-						)
-				);
+			'Use DM Map',
+			form_toggle("dm_map_usable",null, false,  function(event) {
+				handle_basic_form_toggle_click(event);
+				if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+					form.find("#dm_map_row").show()
+					
+				} else {
+					form.find("#dm_map_row").hide()
+				}
+			})
+		)
+	);
+
 	let darknessValue = scene.darkness_filter || 0;
 	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="95" step="5"/>`);
 	
@@ -430,7 +450,8 @@ function edit_scene_dialog(scene_id) {
 		}
 
 		if(window.CLOUD){
-			window.ScenesHandler.persist_scene(scene_id,true,true);
+			const isNew = false;
+			window.ScenesHandler.persist_scene(scene_id, isNew);
 		}
 		else{
 			window.ScenesHandler.persist();
@@ -686,7 +707,6 @@ function edit_scene_dialog(scene_id) {
 			aligner2.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas(); redraw_fog();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
@@ -746,7 +766,6 @@ function edit_scene_dialog(scene_id) {
 			aligner1.draggable({
 				stop: regrid,
 				start: function(event) {
-					window.CURRENT_SCENE_DATA.grid = 0;
 					reset_canvas();
 					redraw_fog();
 					click1.x = event.clientX;
@@ -825,33 +844,19 @@ function edit_scene_dialog(scene_id) {
 	wizard.click(
 		function() {
 
-			form.find("input").each(function() {
-				var n = $(this).attr('name');
-				var t = $(this).attr('type');
-				let nValue = null;
-				if (t == "checkbox") {
-					nValue = $(this).prop("checked") ? "1" : "0";
-				}
-				else {
-					nValue = $(this).val();
-				}
+			const formData = get_edit_form_data();
+			for (key in formData) {
+				scene[key] = formData[key];
+			}
 
-				if (((n === 'player_map') || (n==='dm_map'))
-					&& nValue.startsWith("https://drive.google.com")
-					&& nValue.indexOf("uc?id=") < 0
-				) {
-					nValue = 'https://drive.google.com/uc?id=' + nValue.split('/')[5];
-				}
-				scene[n] = nValue;
-			});
-
-			scene.scale_factor=1;
-
-			if(window.CLOUD)
-				window.ScenesHandler.persist_current_scene(true);
-			else
+			if(window.CLOUD){
+				window.ScenesHandler.persist_scene(scene_id,true,true);
+			}
+			else{
 				window.ScenesHandler.persist();
-			window.ScenesHandler.switch_scene(scene_id);
+				window.ScenesHandler.switch_scene(scene_id);
+			}
+				
 
 
 			$("#edit_dialog").remove();
@@ -940,11 +945,18 @@ function edit_scene_dialog(scene_id) {
 	container.css('opacity', '0.0');
 	container.append(form);
 
+	if($("#dm_map_usable_toggle").hasClass('rc-switch-checked')){
+		form.find("#dm_map_row").show()
+	}
+	else{
+		form.find("#dm_map_row").hide()
+	}
 	
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
-	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Optional");
+	$("#edit_scene_form").find(`[name='player_map']`).attr("placeholder", "Map image or video url here.       Toggle this if video -->");
+	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Only the DM will see this image/video");
 	validate_image_input($(playerMapRow).find("input")[0])
 	validate_image_input($(dmMapRow).find("input")[0])
 }
@@ -1130,7 +1142,7 @@ function init_scene_selector() {
 			offsety: 0,
 			grid: 0,
 			snap: 0,
-			reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+			reveals: [], // SPECIAL MESSAGE TO REVEAL EVERYTHING
 			order: Date.now()
 		}
 		);

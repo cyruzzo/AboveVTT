@@ -267,7 +267,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	}
 
 	if (token.options.ct_show == true || window.DM){
-		if ((token.options.name) && (window.DM || !token.options.monster || token.options.revealname)) {
+		if ((token.options.name) && (window.DM || token.isPlayer() || token.options.revealname)) {
 			entry.attr("data-name", token.options.name);
 			entry.addClass("hasTooltip");
 		}

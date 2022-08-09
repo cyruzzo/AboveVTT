@@ -26,12 +26,12 @@ function init_sidebar_tabs() {
     update_pclist();
   }
 
-  if (window.DM) { // players will eventually have audio volume control in the settings panel
-    $("#sounds-panel").remove();
-    soundsPanel = new SidebarPanel("sounds-panel", false);
-    sidebarContent.append(soundsPanel.build());
-    init_audio();
-  }
+  
+  $("#sounds-panel").remove();
+  soundsPanel = new SidebarPanel("sounds-panel", false);
+  sidebarContent.append(soundsPanel.build());
+  init_audio();
+  
 
   $("#journal-panel").remove();
   journalPanel = new SidebarPanel("journal-panel", false);

@@ -1098,6 +1098,7 @@ function build_options_flyout_menu(tokenIds) {
 	let isAoeList = tokens.map(t => t.isAoe());
 	let uniqueAoeList = [...new Set(isAoeList)];
 	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
+	let player_selected = false;
 
 	let body = $("<div></div>");
 	body.css({
@@ -1108,6 +1109,18 @@ function build_options_flyout_menu(tokenIds) {
 	let token_settings = token_setting_options();
 	if (tokens.length === 1 && !tokens[0].isPlayer()){
 		let removename = "hidestat";
+		token_settings = $.grep(token_settings, function(e){
+		     return e.name != removename;
+		});
+	}
+	for (var i = 0; i < tokens.length; i++) {
+	    if(tokens[i].isPlayer()){
+	    	player_selected = true;
+	    	break;
+	    }
+	}
+	if (player_selected){
+		let removename = "player_owned";
 		token_settings = $.grep(token_settings, function(e){
 		     return e.name != removename;
 		});

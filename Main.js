@@ -1093,7 +1093,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.78</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.78.2</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -2751,8 +2751,7 @@ function init_ui() {
 	}
 	else
 	{
-		setTimeout(function() {
-			window.MB.sendMessage("custom/myVTT/syncmeup");
+		setTimeout(function() {		
 			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
@@ -2778,8 +2777,6 @@ function init_ui() {
 			if(!window.CLOUD){
 				window.ScenesHandler.switch_scene(window.ScenesHandler.current_scene_id, ct_load); // LOAD THE SCENE AND PASS CT_LOAD AS CALLBACK
 			}
-			// also sync the journal
-			window.JOURNAL.sync();
 		}, 5000);
 	}
 	setTimeout(function() {
@@ -2912,6 +2909,10 @@ function init_ui() {
 		setTimeout(get_pclist_player_data,25000);
 	}
 
+	if(window.DM && (!window.CLOUD)){
+		alert("YOUR SCENES ARE BEING MIGRATED TO THE CLOUD IN 20 SECONDS. AFTER THIS MIGRATION YOU'LL FIND YOUR SCENES ON THE RIGHT PANEL.");
+		setTimeout(cloud_migration,20000);
+	}
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 

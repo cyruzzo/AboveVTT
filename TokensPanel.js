@@ -749,13 +749,16 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     let options = {...window.TOKEN_SETTINGS, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
     options.name = listItem.name;
 
+
+    let tokenSizeSetting;
+    let tokenSize;
     switch (listItem.type) {
         case ItemType.Folder:
             console.log("TODO: place all tokens in folder?", listItem);
             break;
         case ItemType.MyToken:
-            let tokenSizeSetting = options.tokenSize;
-            let tokenSize = parseInt(tokenSizeSetting);
+            tokenSizeSetting = options.tokenSize;
+            tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1;
                 // TODO: handle custom sizes
@@ -770,7 +773,13 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 return;
             }
             options.id = listItem.sheet;
-            options.tokenSize = 1;
+            tokenSizeSetting = options.tokenSize;
+            tokenSize = parseInt(tokenSizeSetting);
+            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+                tokenSize = 1;
+                // TODO: handle custom sizes
+            }
+            options.tokenSize = tokenSize;
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
@@ -793,7 +802,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             options.hp = hpVal;
             options.max_hp = hpVal;
-            options.sizeId = listItem.monsterData.sizeId;
+            tokenSizeSetting = options.tokenSize;
+            tokenSize = parseInt(tokenSizeSetting);
+            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+                options.sizeId = listItem.monsterData.sizeId;
+                // TODO: handle custom sizes
+            }
             options.ac = listItem.monsterData.armorClass;
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
@@ -846,30 +860,53 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
  * @returns {number} the tokenSize that corresponds to the token you're looking for
  */
 function token_size_for_item(listItem) {
+    let options;
+    let tokenSizeSetting;
+    let tokenSize;
     switch (listItem.type) {
         case ItemType.Folder:
             return 1;
         case ItemType.MyToken:
-            let options = find_token_options_for_list_item(listItem);
-            let tokenSizeSetting = parseFloat(options.tokenSize);
+            options = find_token_options_for_list_item(listItem);
+            tokenSizeSetting = parseFloat(options.tokenSize);
             if (isNaN(tokenSizeSetting)) {
                 return 1;
             }
-            const tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+            tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
             if (tokenSize < 0.5) {
                 return 0.5;
             }
             return tokenSize;
         case ItemType.PC:
+            options = find_token_options_for_list_item(listItem);
+            tokenSizeSetting = parseFloat(options.tokenSize);
+            if (isNaN(tokenSizeSetting)) {
+                return 1;
+            }
+            tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+            if (tokenSize < 0.5) {
+                return 0.5;
+            }
+            return tokenSize;
         case ItemType.DDBToken:
             return 1;
         case ItemType.Monster:
-            switch (listItem.monsterData.sizeId) {
-                case 5: return 2;
-                case 6: return 3;
-                case 7: return 4;
-                default: return 1;
+         options = find_token_options_for_list_item(listItem);
+            tokenSizeSetting = parseFloat(options.tokenSize);
+            if (isNaN(tokenSizeSetting)) {
+                switch (listItem.monsterData.sizeId) {
+                    case 5: return 2;
+                    case 6: return 3;
+                    case 7: return 4;
+                    default: return 1;
+                }
             }
+            tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+            if (tokenSize < 0.5) {
+                return 0.5;
+            }
+            return tokenSize;
+            
         case ItemType.BuiltinToken:
             return 1;
         case ItemType.Aoe:

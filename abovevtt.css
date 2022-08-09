@@ -561,7 +561,9 @@ div#scene_selector,
 }
 
 #edit_dialog {
-    height: 400px !important;
+    height: fit-content !important;
+    padding-bottom: 10px;
+    border-radius: 15px;
 }
 
 #combat_tracker_inside {
@@ -674,6 +676,11 @@ input {
 
 div#template_section {
     margin: 10px 5px;
+    font-weight: 600;
+}
+div#template_section {
+    padding-bottom: 5px;
+    border-bottom:  1px solid #00000066;
 }
 
 div#scene_properties {
@@ -1890,7 +1897,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 
 /* END AOE STYLES */
-
+.token.isAoe{
+    visibility: hidden;
+}
+.token.isAoe .token-image,
+.token.isAoe .token-image *,
+.token.isAoe:before{
+    visibility: visible;
+}
 .aoe-token-tileable {
     height: 100%;
     width: 100%;
@@ -3887,7 +3901,7 @@ button.avtt-roll-button {
 
 .token>img{
     border: 2px solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 2px 3px var(--token-hp-aura-color);
+    box-shadow: 0 0 2px 3px var(--token-hp-aura-color), 0 0 2px 5px var(--token-temp-hp);
 }
 .token>.base~img{
     filter: none;
@@ -3921,11 +3935,11 @@ button.avtt-roll-button {
     bottom: 0;
     background-size: 30%;
     opacity: 1;
-    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color);
+    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color), inset 0 0 5px 8px var(--token-temp-hp);
 }
 
 .base.large-or-smaller-base:after{
-    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color);
+    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color), inset 0 0 2px 4px var(--token-temp-hp);
 }
 .VTTToken.token>.base.circle{
     border-style: solid;

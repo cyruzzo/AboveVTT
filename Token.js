@@ -241,6 +241,7 @@ class Token {
 		}
 		else{
 			this.options.size = newSize;
+			this.options.gridSquares = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
 		}
 		this.place_sync_persist()
 	}
@@ -353,10 +354,10 @@ class Token {
 
 		// Stop movement if new position is outside of the scene
 		if (
-			top  < this.walkableArea.top    || 
-			top  > this.walkableArea.bottom ||
-			left < this.walkableArea.left   || 
-			left > this.walkableArea.bottom
+			top  < this.walkableArea.top - this.options.size    || 
+			top  > this.walkableArea.bottom + this.options.size ||
+			left < this.walkableArea.left - this.options.size || 
+			left > this.walkableArea.right + this.options.size 
 		) { return; }
 
 		this.update_from_page();
@@ -506,11 +507,19 @@ class Token {
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		let tokenData = this.munge_token_data()
 		if (tokenData.max_hp > 0) {
-		 	var tokenHpAuraColor = token_health_aura(
-				Math.round((tokenData.hp / tokenData.max_hp) * 100)
-			);	
+			if(window.PLAYER_STATS[this.options.id] || !tokenData.temp_hp) {	
+				var tokenHpAuraColor = token_health_aura(
+					Math.round((tokenData.hp / tokenData.max_hp) * 100)
+				);	
+				token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
+			}
+			else{
+				var tokenHpAuraColor = token_health_aura(
+					Math.round(((tokenData.hp - tokenData.temp_hp) / tokenData.max_hp) * 100)
+				);	
+				token.css('--hp-percentage', Math.round(((tokenData.hp - tokenData.temp_hp) / tokenData.max_hp) * 100) + "%");
+			}
 		}
-		token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
 
 
 
@@ -1124,7 +1133,7 @@ class Token {
 				entry.toggleClass('hasTooltip', false);
 			}	
 			else if (this.options.name) {
-				if ((window.DM || !this.options.monster || this.options.revealname)) {
+				if ((window.DM || this.isPlayer() || this.options.revealname)) {
 					old.attr("data-name", this.options.name);
 					old.toggleClass('hasTooltip', true);
 					entry.attr("data-name", this.options.name);
@@ -1251,7 +1260,14 @@ class Token {
 
 			var fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
-
+			
+			if(this.options.gridSquares != undefined){
+				this.options.size = window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares;
+			}
+			else{
+				this.options.gridSquares = this.options.size / window.CURRENT_SCENE_DATA.hpps
+			}
+			
 			let tokenImage
 			// new aoe tokens use arrays as imsrc
 			if (!this.isAoe()){
@@ -1272,10 +1288,11 @@ class Token {
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
 				tokenImage.attr("src", this.options.imgsrc);
+				tok.toggleClass("isAoe", false);
 
 			} else {
 				tokenImage = build_aoe_token_image(this, imageScale, rotation)
-
+				tok.toggleClass("isAoe", true);
 			}
 			tok.css("--token-rotation", rotation + "deg");
 			tok.append(tokenImage);
@@ -1319,7 +1336,7 @@ class Token {
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
 
-			if ((this.options.name) && (window.DM || !this.options.monster || this.options.revealname)) {
+			if ((this.options.name) && (window.DM || this.isPlayer() || this.options.revealname)) {
 				tok.attr("data-name", this.options.name);
 				tok.addClass("hasTooltip");
 			}
@@ -1469,8 +1486,8 @@ class Token {
 						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
-					click.x = event.clientX;
-					click.y = event.clientY;
+					click.x = event.pageX;
+					click.y = event.pageY;
 
 					if(tok.is(":animated")){
 						self.stopAnimation();
@@ -1554,8 +1571,8 @@ class Token {
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
-					let tokenX = Math.round((event.clientX - click.x + original.left) / zoom);
-					let tokenY = Math.round((event.clientY - click.y + original.top) / zoom);
+					let tokenX = Math.round((event.pageX - click.x + original.left) / zoom);
+					let tokenY = Math.round((event.pageY - click.y + original.top) / zoom);
 
 
 					if (should_snap_to_grid()) {
@@ -1564,7 +1581,7 @@ class Token {
 					}
 					
 					// this was copied the place function in this file. We should make this a single function to be used in other places
-					let tokenPosition = snap_point_to_grid(tokenX + (window.CURRENT_SCENE_DATA.hpps / 2), tokenY + (window.CURRENT_SCENE_DATA.vpps / 2));
+					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
