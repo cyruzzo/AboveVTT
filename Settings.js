@@ -105,8 +105,8 @@ function token_setting_options() {
 			label: 'Disable Border',
 			type: 'toggle',
 			options: [
-				{ value: true, label: 'No Border', description: "The token has a border drawn around the image." },
-				{ value: false, label: 'Border', description: "The token does not have a border drawn around the image." }
+				{ value: true, label: 'No Border', description: "The token does not have a border around it." },
+				{ value: false, label: 'Border', description: "The token has a border around it." }
 			],
 			defaultValue: false
 		},
@@ -115,8 +115,8 @@ function token_setting_options() {
 			label: 'Disable Health Aura',
 			type: 'toggle',
 			options: [
-				{ value: true, label: 'No Aura', description: "An aura is drawn around the token's image that represents current health." },
-				{ value: false, label: 'Health Aura', description: "Enable this to have an aura drawn around the token's image that represents current health." }
+				{ value: true, label: 'No Aura', description: "The token does not have an aura representing its current health." },
+				{ value: false, label: 'Health Aura', description: "The token has an aura representing current health around it." }
 			],
 			defaultValue: false
 		},
