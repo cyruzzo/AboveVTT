@@ -404,8 +404,8 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
 	
-	wizard = $("<button><b>Super Mega Wizard</b></button>");
-	manual_button = $("<button>Manual Grid Data</button>");
+	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
+	manual_button = $("<button type='button'>Manual Grid Data</button>");
 
 	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
@@ -901,7 +901,7 @@ function edit_scene_dialog(scene_id) {
 	);
 
 
-	cancel = $("<button type='button' >Cancel</button>");
+	cancel = $("<button type='button'>Cancel</button>");
 	cancel.click(function() {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
