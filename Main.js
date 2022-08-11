@@ -3940,9 +3940,9 @@ var childWindows = {};
 
 
 // This will popout the selector and it's children. Use a unique name for windows you want to open seperately. If you want to override an open window use the same name.
-function popoutWindow(name, cloneSelector){
+function popoutWindow(name, cloneSelector, width=400, height=800){
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
-width=400,height=800,left=100,top=100`;
+width=${width},height=${height},left=100,top=100`;
 	childWindows[name] = window.open(``, name, params);		
 	childWindows[name].onbeforeunload = function(){ 
 		closePopout(name);
