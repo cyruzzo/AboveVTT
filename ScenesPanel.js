@@ -919,7 +919,7 @@ function edit_scene_dialog(scene_id) {
 	})
 
 
-	var hide_all_button = $("<button>COVER WITH FOG</button>");
+	var hide_all_button = $("<button type='button'>COVER WITH FOG</button>");
 	if(window.CLOUD){
 		hide_all_button.hide();
 	}
