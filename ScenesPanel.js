@@ -102,6 +102,10 @@ function validate_image_input(element){
 	$(`#${self.name}_validator`).remove()
 	// no value so can't validate, return early
 	if (self.value?.length === 0) return
+	if(self.value.startsWith("data:")){
+		$(element).val("URLs that start with 'data:' will cause crashes. URL has been removed");
+		return;
+	}
 	const img = parse_img(self.value)
 	const validIcon = $(`<span id="${self.name}_validator" data-hover="Map image valid" class="sidebar-hovertext material-icons url-validator valid">check_circle_outline</span>`)
 
