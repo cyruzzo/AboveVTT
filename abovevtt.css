@@ -795,7 +795,7 @@ div#scene_properties form > div {
 }
 
 .tooltip-body {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .drag-cancelled {
