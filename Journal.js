@@ -267,6 +267,8 @@ class JournalManager{
 				$('.iframeResizeCover').remove();			
 			}
 		});
+		if(!window.DM)
+			$("[role='dialog']").css("height", "calc(100vh - 35px)")	
 		note.parent().mousedown(function() {
 			frame_z_index_when_click($(this));
 		});		
