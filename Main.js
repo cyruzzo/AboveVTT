@@ -3956,7 +3956,7 @@ width=${width},height=${height},left=100,top=100`;
 	$(childWindows[name].document).find('head').append($('link, style').clone());
 	$(childWindows[name].document).find('head').append($('link, style').clone());
 	$(childWindows[name].document).find('a[href^="/"]').each(function() {
-        this.href = "https://dndbeyond.com/" + this.pathname;
+        this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 	});
 	return childWindows[name];
 }
