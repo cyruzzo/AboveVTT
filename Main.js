@@ -762,7 +762,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 		$("#resizeDragMon").append(monster_popout_button);
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-			popoutWindow(`Monster_${name}`, $("#resizeDragMon .avtt-stat-block-container"));
+			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
 			monster_close_title_button.click();
 		});
 	}
@@ -845,7 +845,7 @@ function build_draggable_monster_window() {
 		$("#resizeDragMon").append(monster_popout_button);
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-			popoutWindow(`Monster_${name}`, $("#resizeDragMon .avtt-stat-block-container"));
+			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
 			monster_close_title_button.click();
 		});
 	}
@@ -3941,15 +3941,23 @@ var childWindows = {};
 
 // This will popout the selector and it's children. Use a unique name for windows you want to open seperately. If you want to override an open window use the same name.
 function popoutWindow(name, cloneSelector, width=400, height=800){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
 width=${width},height=${height},left=100,top=100`;
 	childWindows[name] = window.open(``, name, params);		
 	childWindows[name].onbeforeunload = function(){ 
 		closePopout(name);
 	}
+	setTimeout(function(){
+		childWindows[name].document.title = name
+	}, 1000);
 	$(childWindows[name].document).find('body, head').empty();
 	$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
 	$(childWindows[name].document).find('head').append($('link, style').clone());
+	$(childWindows[name].document).find('head').append($('link, style').clone());
+	$(childWindows[name].document).find('a[href^="/"]').each(function() {
+        this.href = "https://dndbeyond.com/" + this.pathname;
+	});
 	return childWindows[name];
 }
 
