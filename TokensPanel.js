@@ -763,7 +763,13 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 tokenSize = 1;
                 // TODO: handle custom sizes
             }
-            options.tokenSize = tokenSize;
+            if(tokenSize <= 0.5){
+                options.tokenSize = 0.5;
+            }
+            else{
+                options.tokenSize = tokenSize;
+            }
+            
             break;
         case ItemType.PC:
             let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
@@ -779,7 +785,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 tokenSize = 1;
                 // TODO: handle custom sizes
             }
-            options.tokenSize = tokenSize;
+                        if(tokenSize <= 0.5){
+                options.tokenSize = 0.5;
+            }
+            else{
+                options.tokenSize = tokenSize;
+            }
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
