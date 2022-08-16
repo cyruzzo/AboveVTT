@@ -44,6 +44,8 @@ class Token {
 
 	// Defines how many token-sizes a token is allowed to be moved outside of the scene.
 	SCENE_MOVE_GRID_PADDING_MULTIPLIER = 1;
+	MIN_TOKEN_SIZE = 25;
+	MAX_TOKEN_SIZE = 1000;
 
 	constructor(options) {
 		this.selected = false;
@@ -233,17 +235,25 @@ class Token {
 	}
 
 	size(newSize) {
+		this.MAX_TOKEN_SIZE = Math.max(window.ScenesHandler.scene.width, window.ScenesHandler.scene.height);
+
+		// Clamp token size to min/max token size
+		newSize = clamp(newSize, this.MIN_TOKEN_SIZE, this.MAX_TOKEN_SIZE);
+
 		this.update_from_page();
 
-		if(this.isLineAoe()){
+		if(this.isLineAoe()) {
 			// token is not proportional such as a line aoe token
 			this.options.gridHeight = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
 		}
-		else{
+		else {
 			this.options.size = newSize;
 			this.options.gridSquares = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
 		}
-		this.place_sync_persist()
+
+		this.place_sync_persist();
+
+		this.prepareWalkableArea();
 	}
 
 	imageSize(imageScale) {
@@ -1770,13 +1780,13 @@ class Token {
 			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps)
 		};
 
-		// shorten variable to improve readability
+		// Shorten variable to improve readability
 		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
 
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  window.CURRENT_SCENE_DATA.width  + (sizeOnGrid.x * (multi -1)), // we need to remove 1 token size because tokens are anchored in the top left
+			right:  window.CURRENT_SCENE_DATA.width  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
 			bottom: window.CURRENT_SCENE_DATA.height + (sizeOnGrid.y * (multi -1)), // ... same as above
 		};	
 	}
