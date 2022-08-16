@@ -3960,7 +3960,24 @@ width=${width},height=${height},left=100,top=100`;
 	});
 	return childWindows[name];
 }
-
+function updatePopoutWindow(name, cloneSelector){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+	if(!childWindows[name])
+		return;
+	$(childWindows[name].document).find('body').empty();
+	$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
+	$(childWindows[name].document).find('a[href^="/"]').each(function() {
+        this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
+	});
+	return childWindows[name];
+}
+function removeFromPopoutWindow(name, selector){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+	if(!childWindows[name])
+		return;
+	$(childWindows[name].document).find(selector).remove();
+	return childWindows[name];
+}
 function closePopout(name){
 	if(childWindows[name]){
 		childWindows[name].close();
