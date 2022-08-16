@@ -102,6 +102,10 @@ function validate_image_input(element){
 	$(`#${self.name}_validator`).remove()
 	// no value so can't validate, return early
 	if (self.value?.length === 0) return
+	if(self.value.startsWith("data:")){
+		$(element).val("URLs that start with 'data:' will cause crashes. URL has been removed");
+		return;
+	}
 	const img = parse_img(self.value)
 	const validIcon = $(`<span id="${self.name}_validator" data-hover="Map image valid" class="sidebar-hovertext material-icons url-validator valid">check_circle_outline</span>`)
 
@@ -400,8 +404,8 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
 	
-	wizard = $("<button><b>Super Mega Wizard</b></button>");
-	manual_button = $("<button>Manual Grid Data</button>");
+	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
+	manual_button = $("<button type='button'>Manual Grid Data</button>");
 
 	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
@@ -897,7 +901,7 @@ function edit_scene_dialog(scene_id) {
 	);
 
 
-	cancel = $("<button type='button' >Cancel</button>");
+	cancel = $("<button type='button'>Cancel</button>");
 	cancel.click(function() {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
@@ -915,7 +919,7 @@ function edit_scene_dialog(scene_id) {
 	})
 
 
-	var hide_all_button = $("<button>COVER WITH FOG</button>");
+	var hide_all_button = $("<button type='button'>COVER WITH FOG</button>");
 	if(window.CLOUD){
 		hide_all_button.hide();
 	}
