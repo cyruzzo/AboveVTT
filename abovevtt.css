@@ -794,6 +794,10 @@ div#scene_properties form > div {
     transition: 0.2s ease-in-out 0.5s;
 }
 
+.tooltip-body {
+    overflow-y: auto;
+}
+
 .drag-cancelled {
     display: none;
 }
