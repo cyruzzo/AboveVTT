@@ -3263,8 +3263,15 @@ button.avtt-roll-button {
 }
 #combat_area tr td:nth-of-type(3),
 #combat_area tr td:nth-of-type(5) {
+    width: 13%;
+}
+.body-rpgcharacter-sheet #combat_area tr td:nth-of-type(3),
+.body-rpgcharacter-sheet #combat_area tr td:nth-of-type(5) {
     width: 18%;
 }
+
+
+
 #combat_area tr td:first-of-type,
 #combat_area tr td:nth-of-type(2),
 #combat_area tr td:nth-of-type(3)
