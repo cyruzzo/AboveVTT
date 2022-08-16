@@ -386,7 +386,7 @@ function is_token_under_fog(tokenid){
 
 // if it was not executed in the last 1 second, execute it immediately and asynchronously
 // if it's already scheduled to be executed, return
-// otherwise, schedule it to execute in 5 seconds
+// otherwise, schedule it to execute in 1 second
 function check_token_visibility(){
 	if(window.DM)
 		return;
@@ -399,8 +399,8 @@ function check_token_visibility(){
 		return;
 	}
 	else {
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+5000;
-		setTimeout(do_check_token_visibility,5000);
+		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
+		setTimeout(do_check_token_visibility,1000);
 		return;
 	}
 }
@@ -429,6 +429,7 @@ function do_check_token_visibility() {
 			}
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
+			$(selector).css('opacity', 1);
 			$(selector).show();
 			$(auraSelector).show();
 			//console.log('SHOW '+id);
