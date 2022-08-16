@@ -306,8 +306,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		
 		hp=$("<div class='hp'/>");
-		hp.text(token.options.hp);
-		if(hp.text() === '0'){
+		var hp_input = $("<input class='hp'>");
+		if(token.isPlayer()){
+			hp_input.prop("disabled", true);
+		}
+		hp_input.val(token.options.hp);
+		hp.append(hp_input);
+		if(hp_input.val() === '0'){
 			entry.toggleClass("ct_dead", true);
 		}
 		else{
@@ -319,8 +324,23 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			entry.append($("<td/>").append(hp));
 		else
 			entry.append($("<td/>"))
+			
+		var divider = $("<div style='display:inline-block;float:left'>/</>");
+		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
+			divider.css('visibility', 'hidden');
+		}
+		if(window.DM || !(token.options.monster > 0))
+			entry.append($("<td/>").append(divider));
+		else
+			entry.append($("<td/>"));
+			
 		max_hp=$("<div class='max_hp'/>");
-		max_hp.text("/"+token.options.max_hp);
+		var maxhp_input = $("<input class='max_hp'>");
+		if(token.isPlayer()){
+			maxhp_input.prop("disabled", true);
+		}
+		maxhp_input.val(token.options.max_hp);
+		max_hp.append(maxhp_input);
 		max_hp.css('font-size','11px');
 		//max_hp.css('width','20px');
 		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
@@ -332,6 +352,32 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		else
 			entry.append($("<td/>"));
 		
+		// bind update functions to hp inputs, same as Token.js
+		// token update logic for hp pulls hp from token hpbar, so update hp bar manually
+		if (!token.isPlayer()) {
+			hp_input.change(function(e) {
+				var selector = "div[data-id='" + token.options.id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".hp").val(hp_input.val().trim());
+				token.update_and_sync(e);
+			});
+			hp_input.click(function(e) {
+				$(e.target).select();
+			});
+			maxhp_input.change(function(e) {
+				var selector = "div[data-id='" + token.options.id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".max_hp").val(maxhp_input.val().trim());
+				token.update_and_sync(e);
+			});
+			maxhp_input.click(function(e) {
+				$(e.target).select();
+			});
+		}
+		else {
+			hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+			maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
+		}
 		
 		var buttons=$("<td/>");
 		
