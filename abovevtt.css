@@ -3328,7 +3328,8 @@ button.avtt-roll-button {
 #monster_close_title_button,
 #player_close_title_button,
 #reload_player_frame_button,
-#token_options_title_bar_exit {
+#token_options_title_bar_exit,
+.popout-button {
     fill: #fff5;
     filter: drop-shadow(1px 1px 1px #000e);
     cursor: pointer;
@@ -3344,7 +3345,8 @@ button.avtt-roll-button {
 .text-input-title-bar-exit:hover,
 #text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
-#token_options_title_bar_exit:hover {
+#token_options_title_bar_exit:hover,
+.popout-button:hover {
     background: #ddd3;
     transition: all linear 0.2s;
 }
@@ -3361,7 +3363,8 @@ button.avtt-roll-button {
 #monster_close_title_button svg,
 #player_close_title_button svg,
 #reload_player_frame_button svg,
-#token_options_title_bar_exit svg {
+#token_options_title_bar_exit svg,
+.popout-button svg{
     height: 20px;
     width: 20px;
 }
@@ -3371,11 +3374,15 @@ button.avtt-roll-button {
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
 #player_close_title_button svg g rect,
-#token_options_title_bar_exit svg g rect {
+#token_options_title_bar_exit svg g rect{
     height: 80px;
     width: 10px;
     fill: #ddd;
     transform: translate(45px, 10px);
+}
+
+.popout-button svg path:not([fill='none']){
+    fill: #ddd;
 }
 
 .text-input-title-bar-enter {
@@ -3392,9 +3399,16 @@ button.avtt-roll-button {
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
 #player_close_title_button,
-#token_options_title_bar_exit {
+#token_options_title_bar_exit{
     position: absolute;
     right: 5px;
+    width: 20px;
+    height: 20px
+}
+
+.popout-button {
+    position: absolute;
+    right: 30px;
     width: 20px;
     height: 20px
 }
@@ -3411,7 +3425,8 @@ button.avtt-roll-button {
 .text-input-title-bar-exit,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
-#token_options_title_bar_exit {
+#token_options_title_bar_exit,
+.popout-button {
     top: 2px;
 }
 
