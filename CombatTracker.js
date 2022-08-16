@@ -29,10 +29,27 @@ function init_combat_tracker(){
 	ct_inside.hide();
 	$('#site').append(ct_inside);
 	const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
+	const ct_title_bar_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_title_bar_exit.click(function(){toggle.click();});
+	ct_title_bar.append(ct_title_bar_popout);
+	ct_title_bar_popout.click(function() {
+		let name = "Combat Tracker";
+		popoutWindow(name, $("#combat_tracker_inside"), $("#combat_tracker_inside").width(),  $("#combat_tracker_inside").height()+20);
+		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside").css({
+			'display': 'block',
+			'top': '0',
+			'left': '0',
+			'right': '0',
+			'bottom': '0',
+			'width': '100%'
+		});
+		ct_title_bar_exit.click();
+	});
+	
 	ct_title_bar.append(ct_title_bar_exit);
 	ct_inside.append(ct_title_bar);
 	ct_list_wrapper.append(ct_area);
@@ -489,11 +506,22 @@ function ct_persist(){
 	});
 	data.push({'data-target': 'round',
 				'round_number':window.ROUND_NUMBER});
-	
 	var itemkey="CombatTracker"+find_game_id();
-	
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
+	if(childWindows['Combat Tracker']){
+		$(childWindows['Combat Tracker'].document).find("body").empty("");
+		updatePopoutWindow("Combat Tracker", $("#combat_tracker_inside"));
+		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside").css({
+			'display': 'block',
+			'top': '0',
+			'left': '0',
+			'right': '0',
+			'bottom': '0',
+			'width': '100%'
+		});
+	}
 }
 
 function ct_load(data=null){
