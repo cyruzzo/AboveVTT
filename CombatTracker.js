@@ -556,9 +556,11 @@ function ct_load(data=null){
 			}		
 		}
 	}
-	ct_reorder();
-	if(window.DM)
+
+	if(window.DM){
+		ct_reorder();
 		ct_persist();
+	}
 }
 
 function ct_remove_token(token,persist=true) {
