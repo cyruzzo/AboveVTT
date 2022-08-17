@@ -101,6 +101,7 @@ function init_combat_tracker(){
 		next.removeAttr('data-current');
 		next.css('background','');
 		ct_persist();
+		ct_update_popout();
 	});
 
 	rn.find("#round_number").change(function (data) {
@@ -108,6 +109,7 @@ function init_combat_tracker(){
 			window.ROUND_NUMBER = Math.round(data.currentTarget.value);
 			ct_persist();
 		}
+		ct_update_popout();
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 	});
 	
@@ -137,8 +139,9 @@ function init_combat_tracker(){
 				ct_reorder(false);
 			});
 			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
-		});
 
+		});
+		ct_update_popout();
 		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
@@ -177,6 +180,7 @@ function init_combat_tracker(){
 			}
 		}
 		ct_persist();
+		ct_update_popout();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
 	});
 	
@@ -463,6 +467,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 					}
 					token.update_and_sync()
+					ct_update_popout();
 					ct_persist();
 				});
 				eye_button.append(open_eye);
@@ -485,7 +490,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		$("#combat_area").append(entry);
 		$("#combat_area td").css("vertical-align","middle");
-		
+		ct_update_popout();
 		if(persist){
 			ct_persist();
 		}
@@ -515,7 +520,10 @@ function ct_persist(){
 	var itemkey="CombatTracker"+find_game_id();
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
-	if(childWindows['Combat Tracker']){
+}
+
+function ct_update_popout(){
+		if(childWindows['Combat Tracker']){
 		$(childWindows['Combat Tracker'].document).find("body").empty("");
 		updatePopoutWindow("Combat Tracker", $("#combat_tracker_inside"));
 		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
@@ -575,6 +583,7 @@ function ct_load(data=null){
 			}
 		}
 	}
+	ct_update_popout()
 	if(window.DM)
 		ct_persist();
 }
@@ -593,6 +602,7 @@ function ct_remove_token(token,persist=true) {
 		}
 		$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
 	}
+	ct_update_popout()
 	if (persist) {
 		ct_persist();
 	}
