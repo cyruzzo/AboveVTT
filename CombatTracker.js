@@ -37,7 +37,7 @@ function init_combat_tracker(){
 	ct_title_bar.append(ct_title_bar_popout);
 	ct_title_bar_popout.click(function() {
 		let name = "Combat Tracker";
-		popoutWindow(name, $("#combat_tracker_inside"), $("#combat_tracker_inside").width(),  $("#combat_tracker_inside").height()+20);
+		popoutWindow(name, $("#combat_tracker_inside"), $("#combat_tracker_inside").width(),  $("#combat_tracker_inside").height());
 		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
 		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside").css({
 			'display': 'block',
@@ -45,8 +45,14 @@ function init_combat_tracker(){
 			'left': '0',
 			'right': '0',
 			'bottom': '0',
-			'width': '100%'
+			'width': '100%',
+			'height': '100%'
 		});
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
+		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
+		if(!window.DM){
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
+		}
 		ct_title_bar_exit.click();
 	});
 	
@@ -519,8 +525,14 @@ function ct_persist(){
 			'left': '0',
 			'right': '0',
 			'bottom': '0',
-			'width': '100%'
+			'width': '100%',
+			'height': '100%'
 		});
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
+		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
+		if(!window.DM){
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
+		}
 	}
 }
 
