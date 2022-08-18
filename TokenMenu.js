@@ -1051,21 +1051,15 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	imageSizeInput.val(startingScale || 1);
 	imageSizeInputRange.val(startingScale || 1);
 	imageSizeInput.on('keyup', function(event) {
-		let imageSize
-		if(!tokens){
-			imageSize = event.target.value;
-		}
-		else{
+		let imageSize = event.target.value;	
+		if(tokens !== false){
 			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
 		}
 
 		if (event.key === "Enter") {
-			if(!tokens){
-				imageSize = event.target.value;
-			}
-			else{
-				imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
-			}
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 			didUpdate(imageSize);
@@ -1075,11 +1069,8 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 		imageSizeInputRange.val(imageSizeInput.val());
 	});
 	imageSizeInput.on('focusout', function(event) {
-		let imageSize;	
-		if(!tokens){
-			imageSize = event.target.value;
-		}
-		else{
+		let imageSize = event.target.value;		
+		if(tokens !== false){
 			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
 		}
 		imageSizeInput.val(imageSize);	
@@ -1095,11 +1086,8 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 		imageSizeInput.val(imageSizeInputRange.val());
 	});
 	imageSizeInputRange.on('mouseup', function(){
-		let imageSize;	
-		if(!tokens){
-			imageSize = event.target.value;
-		}
-		else{
+		let imageSize = event.target.value;	
+		if(tokens !== false){
 			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
 		}
 		didUpdate(imageSize);
