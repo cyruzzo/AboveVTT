@@ -1416,7 +1416,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     // image scale
     let startingScale = customization.tokenOptions.imageSize || 1;
-    let imageScaleWrapper = build_token_image_scale_input(startingScale, function (imageSize) {
+    let imageScaleWrapper = build_token_image_scale_input(startingScale, false, function (imageSize) {
         customization.setTokenOption("imageSize", imageSize);
         persist_token_customization(customization);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
