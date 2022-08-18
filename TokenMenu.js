@@ -953,14 +953,13 @@ function build_adjustments_flyout_menu(tokenIds) {
 	console.log("uniqueSizes", uniqueSizes);
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
 		const hpps = Math.round(window.CURRENT_SCENE_DATA.hpps);
-
-		tokens.forEach(token => {
-			if (!isNaN(newSize)) {
-				newSize = hpps * newSize;
-			} else {
-				console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
-				return;
-			}
+		if (!isNaN(newSize)) {
+			newSize = hpps * newSize;
+		} else {
+			console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
+			return;
+		}
+		tokens.forEach(token => {			
 			// Reset imageScale if new size is larger
 			if(token.options.size < newSize) {
 				token.imageSize(1);
@@ -1231,7 +1230,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
  				<option value="2" ${numGridSquares === 2 ? "selected='selected'": ""}>Large (10${upsq})</option>
  				<option value="3" ${numGridSquares === 3 ? "selected='selected'": ""}>Huge (15${upsq})</option>
  				<option value="4" ${numGridSquares === 4 ? "selected='selected'": ""}>Gargantuan (20${upsq})</option>
- 				<option value="custom" ${isSizeCustom ? "selected='selected'": ""}>Custom</option>
+ 				<option value="custom" ${numGridSquares !== -1 && isSizeCustom ? "selected='selected'": ""}>Custom</option>
  			</select>
  		</div>
  		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
