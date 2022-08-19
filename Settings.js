@@ -489,7 +489,7 @@ function build_example_token(options) {
 	let token = new Token(mergedOptions);
 	token.place(0);
 	let html = $(`#tokens div[data-id='${mergedOptions.id}']`).clone();
-	token.delete();
+	token.delete(false, false);
 
 	html.addClass("example-token");
 	// html.css({
