@@ -285,23 +285,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
 		init.css('width','20px');
 		init.css('-webkit-appearance','none');
-		if(window.DM && typeof(token.options.init) == 'undefined'){
+		if(window.DM){
 			init.val(0);
-			init.change(function(){
-					ct_reorder();
-					token.options.init = init.val();
-					token.place_sync_persist();
-				}
-			);
-		}
-		else if(window.DM){
-			init.val(token.options.init);
-			init.change(function(){
-					ct_reorder();
-					token.options.init = init.val();
-					token.place_sync_persist();
-				}
-			);
+			init.change(ct_reorder);
 		}
 		else{
 			init.attr("disabled","disabled");
@@ -313,8 +299,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		if(window.DM && (token.options.monster > 0) && (!disablerolling)){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 					init.val(value);
-					token.options.init = value;
-					token.place_sync_persist();
 					setTimeout(ct_reorder,1000);
 				});
 		}
@@ -550,16 +534,8 @@ function ct_load(data=null){
 				}
 			}
 		}
-		for(tokenID in window.TOKEN_OBJECTS){
-			if(window.TOKEN_OBJECTS[tokenID].options.ct_show != undefined)
-			{
-				ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
-			}		
-		}
 	}
-
 	if(window.DM){
-		ct_reorder();
 		ct_persist();
 	}
 }
@@ -570,7 +546,7 @@ function ct_remove_token(token,persist=true) {
 		token.sync();
 		if (token.persist != null) token.persist();
 	}
-	
+
 	let id = token.options.id;
 	if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
 		if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {
