@@ -235,7 +235,7 @@ class Token {
 	}
 
 	size(newSize) {
-		this.MAX_TOKEN_SIZE = Math.max(window.ScenesHandler.scene.width, window.ScenesHandler.scene.height);
+		this.MAX_TOKEN_SIZE = Math.max(window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height);
 
 		// Clamp token size to min/max token size
 		newSize = clamp(newSize, this.MIN_TOKEN_SIZE, this.MAX_TOKEN_SIZE);
