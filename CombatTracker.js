@@ -54,6 +54,24 @@ function init_combat_tracker(){
 			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
 		}
 		ct_title_bar_exit.click();
+		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+			$(childWindows['Combat Tracker'].document).find('input.max_hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".max_hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+		}
 	});
 	
 	ct_title_bar.append(ct_title_bar_exit);
@@ -539,7 +557,7 @@ function ct_persist(){
 }
 
 function ct_update_popout(){
-		if(childWindows['Combat Tracker']){
+	if(childWindows['Combat Tracker']){
 		$(childWindows['Combat Tracker'].document).find("body").empty("");
 		updatePopoutWindow("Combat Tracker", $("#combat_tracker_inside"));
 		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
@@ -556,6 +574,24 @@ function ct_update_popout(){
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
 		if(!window.DM){
 			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
+		}
+		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+			$(childWindows['Combat Tracker'].document).find('input.max_hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".max_hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
 		}
 	}
 }
