@@ -241,7 +241,8 @@ function ct_reorder(persist=true) {
 
 
 function ct_add_token(token,persist=true,disablerolling=false){
-
+	if(token.options.name == "Not in the current map")
+		return;
 	if (token.isAoe()) {
 		return; // don't add aoe to combat tracker
 	}
