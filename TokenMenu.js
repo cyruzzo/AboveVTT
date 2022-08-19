@@ -1037,17 +1037,29 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	if (isNaN(startingScale)) {
 		startingScale = 1;
 	}
-	const maxImageScale = getTokenMaxImageScale(tokens[0].options.size);
+	let maxImageScale
+	if(!tokens){
+		maxImageScale = 6;
+	}
+	else{
+		maxImageScale = getTokenMaxImageScale(tokens[0].options.size);
+	}
+
+
 	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="${maxImageScale}" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
 	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="${maxImageScale}" step="0.1"/>`);
 	imageSizeInput.val(startingScale || 1);
 	imageSizeInputRange.val(startingScale || 1);
 	imageSizeInput.on('keyup', function(event) {
-		let imageSize = event.target.value;
-		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		let imageSize = event.target.value;	
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 
 		if (event.key === "Enter") {
-			imageSize = clampTokenImageSize(imageSize, token.options.size);
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 			didUpdate(imageSize);
@@ -1058,7 +1070,9 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	});
 	imageSizeInput.on('focusout', function(event) {
 		let imageSize = event.target.value;		
-		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 		imageSizeInput.val(imageSize);	
 		imageSizeInputRange.val(imageSize);
 		didUpdate(imageSize);
@@ -1072,8 +1086,10 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 		imageSizeInput.val(imageSizeInputRange.val());
 	});
 	imageSizeInputRange.on('mouseup', function(){
-		let imageSize = imageSizeInputRange.val();
-		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		let imageSize = event.target.value;	
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 		didUpdate(imageSize);
 	});
 	let imageSizeWrapper = $(`
