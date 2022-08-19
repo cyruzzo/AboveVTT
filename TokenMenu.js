@@ -953,14 +953,13 @@ function build_adjustments_flyout_menu(tokenIds) {
 	console.log("uniqueSizes", uniqueSizes);
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
 		const hpps = Math.round(window.CURRENT_SCENE_DATA.hpps);
-
-		tokens.forEach(token => {
-			if (!isNaN(newSize)) {
-				newSize = hpps * newSize;
-			} else {
-				console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
-				return;
-			}
+		if (!isNaN(newSize)) {
+			newSize = hpps * newSize;
+		} else {
+			console.log(`not updating tokens with size ${newSize}`); // probably undefined because we inject the "multiple" options below
+			return;
+		}
+		tokens.forEach(token => {			
 			// Reset imageScale if new size is larger
 			if(token.options.size < newSize) {
 				token.imageSize(1);
@@ -1038,17 +1037,29 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	if (isNaN(startingScale)) {
 		startingScale = 1;
 	}
-	const maxImageScale = getTokenMaxImageScale(tokens[0].options.size);
+	let maxImageScale
+	if(!tokens){
+		maxImageScale = 6;
+	}
+	else{
+		maxImageScale = getTokenMaxImageScale(tokens[0].options.size);
+	}
+
+
 	let imageSizeInput = $(`<input class="image-scale-input-number" type="number" max="${maxImageScale}" min="0.2" step="0.1" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
 	let imageSizeInputRange = $(`<input class="image-scale-input-range" type="range" value="1" min="0.2" max="${maxImageScale}" step="0.1"/>`);
 	imageSizeInput.val(startingScale || 1);
 	imageSizeInputRange.val(startingScale || 1);
 	imageSizeInput.on('keyup', function(event) {
-		let imageSize = event.target.value;
-		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		let imageSize = event.target.value;	
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 
 		if (event.key === "Enter") {
-			imageSize = clampTokenImageSize(imageSize, token.options.size);
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
 			didUpdate(imageSize);
@@ -1059,7 +1070,9 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	});
 	imageSizeInput.on('focusout', function(event) {
 		let imageSize = event.target.value;		
-		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 		imageSizeInput.val(imageSize);	
 		imageSizeInputRange.val(imageSize);
 		didUpdate(imageSize);
@@ -1073,8 +1086,10 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 		imageSizeInput.val(imageSizeInputRange.val());
 	});
 	imageSizeInputRange.on('mouseup', function(){
-		let imageSize = imageSizeInputRange.val();
-		imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		let imageSize = event.target.value;	
+		if(tokens !== false){
+			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
+		}
 		didUpdate(imageSize);
 	});
 	let imageSizeWrapper = $(`
@@ -1217,7 +1232,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
 	console.log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
 
 	// Limit custom token scale to grid size 
-	const maxScale = Math.max(window.ScenesHandler.scene.width / window.ScenesHandler.scene.hpps);
+	const maxScale = Math.max(window.CURRENT_SCENE_DATA.width / window.CURRENT_SCENE_DATA.hpps);
 
 	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
 	const size = (numGridSquares > 0) ? (numGridSquares * window.CURRENT_SCENE_DATA.fpsq) : 1;
@@ -1231,7 +1246,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
  				<option value="2" ${numGridSquares === 2 ? "selected='selected'": ""}>Large (10${upsq})</option>
  				<option value="3" ${numGridSquares === 3 ? "selected='selected'": ""}>Huge (15${upsq})</option>
  				<option value="4" ${numGridSquares === 4 ? "selected='selected'": ""}>Gargantuan (20${upsq})</option>
- 				<option value="custom" ${isSizeCustom ? "selected='selected'": ""}>Custom</option>
+ 				<option value="custom" ${numGridSquares !== -1 && isSizeCustom ? "selected='selected'": ""}>Custom</option>
  			</select>
  		</div>
  		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
@@ -1298,7 +1313,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
  * @returns maximum value for imageScale
  */
  function getTokenMaxImageScale(tokenSize) {
-	return Math.min(6, window.ScenesHandler.scene.width / parseFloat(tokenSize));
+	return Math.min(6, window.CURRENT_SCENE_DATA.width / parseFloat(tokenSize));
 }
 
 /**
