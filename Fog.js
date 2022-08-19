@@ -1641,12 +1641,6 @@ function clear_temp_canvas(){
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function clear_temp_canvas(){
-	const canvas = document.getElementById("temp_overlay");
-	const context = canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
-}
-
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
 	let data;
