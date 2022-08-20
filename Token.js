@@ -1614,13 +1614,7 @@ class Token {
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
 						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
-
-						currentTokenPosition.x = tokenPosition.x;
-						currentTokenPosition.y = tokenPosition.y;		
 					}
-
-					currentTokenPosition.x = tokenPosition.x;
-					currentTokenPosition.y = tokenPosition.y;
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
