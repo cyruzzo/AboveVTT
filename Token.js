@@ -1861,6 +1861,13 @@ function center_of_view() {
 	return { x: centerX, y: centerY };
 }
 
+
+function center_of_view() {
+	let centerX = $("#scene_map").width() - (($("#scene_map")[0].getBoundingClientRect().right - (window.innerWidth/2))/window.ZOOM) - 170/window.ZOOM
+	let centerY = $("#scene_map").height() - (($("#scene_map")[0].getBoundingClientRect().bottom - (window.innerHeight/2))/window.ZOOM)
+	return { x: centerX, y: centerY };
+}
+
 function should_snap_to_grid() {
 	return (window.CURRENT_SCENE_DATA.snap == "1" && !(window.toggleSnap))
 		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
@@ -1909,7 +1916,7 @@ function convert_point_from_map_to_view(mapX, mapY) {
 
 function place_token_in_center_of_view(tokenObject) {
 	let center = center_of_view();
-	place_token_at_view_point(tokenObject, center.x, center.y);
+	place_token_at_map_point(tokenObject, center.x, center.y);
 }
 
 function place_token_at_view_point(tokenObject, pageX, pageY) {
@@ -1940,8 +1947,6 @@ function place_token_at_map_point(tokenObject, x, y) {
 		options.imgsrc = parse_img(options.imgsrc);
 	}
 
-	options.left = `${x}px`;
-	options.top = `${y}px`;
 	if (options.size == undefined) {
 		if (options.sizeId != undefined) {
 			// sizeId was specified, convert it to size. This is used when adding from the monster pane
@@ -1965,7 +1970,8 @@ function place_token_at_map_point(tokenObject, x, y) {
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 		}
 	}
-
+	options.left = `${x - options.size/2}px`;
+	options.top = `${y - options.size/2}px`;
 	// set reasonable defaults for any global settings that aren't already set
 	const setReasonableDefault = function(optionName, reasonableDefault) {
 		if (options[optionName] === undefined) {
