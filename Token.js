@@ -1856,8 +1856,11 @@ function default_options() {
 }
 
 function center_of_view() {
-	let centerX = $("#scene_map").width() - (($("#scene_map")[0].getBoundingClientRect().right - (window.innerWidth/2))/window.ZOOM) - 170/window.ZOOM
-	let centerY = $("#scene_map").height() - (($("#scene_map")[0].getBoundingClientRect().bottom - (window.innerHeight/2))/window.ZOOM)
+	let centerX = (window.innerWidth/2) + window.scrollX 
+	if($("#hide_rightpanel").hasClass("point-right")){
+		centerX = centerX - 170;
+	}
+	let centerY = (window.innerHeight/2) + window.scrollY
 	return { x: centerX, y: centerY };
 }
 
@@ -1909,7 +1912,7 @@ function convert_point_from_map_to_view(mapX, mapY) {
 
 function place_token_in_center_of_view(tokenObject) {
 	let center = center_of_view();
-	place_token_at_map_point(tokenObject, center.x, center.y);
+	place_token_at_view_point(tokenObject, center.x, center.y);
 }
 
 function place_token_at_view_point(tokenObject, pageX, pageY) {
