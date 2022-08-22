@@ -1856,13 +1856,6 @@ function default_options() {
 }
 
 function center_of_view() {
-	let centerX = ($(window).width() / 2) + window.scrollX;
-	let centerY = ($(window).height() / 2) + window.scrollY;
-	return { x: centerX, y: centerY };
-}
-
-
-function center_of_view() {
 	let centerX = $("#scene_map").width() - (($("#scene_map")[0].getBoundingClientRect().right - (window.innerWidth/2))/window.ZOOM) - 170/window.ZOOM
 	let centerY = $("#scene_map").height() - (($("#scene_map")[0].getBoundingClientRect().bottom - (window.innerHeight/2))/window.ZOOM)
 	return { x: centerX, y: centerY };
