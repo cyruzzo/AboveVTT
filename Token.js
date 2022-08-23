@@ -1358,7 +1358,15 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				tok.attr("data-tokendataname", this.options.tokendataname);
 			}
-
+			if(window.initiative == undefined){
+				window.initiative = {};
+			}
+			if (this.options.init !== undefined){
+				window.initiative[this.options.id] = this.options.init;
+			}
+			else if (typeof window.initiative[this.options.id] !== undefined){		
+				this.options.init = window.initiative[this.options.id];
+			}
 			// CONDITIONS
 			this.build_conditions().forEach(cond_bar => {
 				tok.append(cond_bar);
