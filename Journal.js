@@ -281,7 +281,7 @@ class JournalManager{
 			popoutWindow(self.notes[id].title, note, journal_text.width(), journal_text.height());
 			removeFromPopoutWindow(self.notes[id].title, ".visibility-container");
 			removeFromPopoutWindow(self.notes[id].title, ".ui-resizable-handle");
-			$(window.childWindows[self.notes[id].title].document).find(".note").attr("style", "overflow:visible; max-height: none !important; height: auto;, min-height: 100%;");
+			$(window.childWindows[self.notes[id].title].document).find(".note").attr("style", "overflow:visible; max-height: none !important; height: auto; min-height: 100%;");
 		});
 	}
 	
