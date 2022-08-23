@@ -1358,14 +1358,17 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				tok.attr("data-tokendataname", this.options.tokendataname);
 			}
-			if(window.initiative == undefined){
-				window.initiative = {};
+			if(window.all_token_objects == undefined){
+				window.all_token_objects = {};
 			}
-			if (this.options.init !== undefined){
-				window.initiative[this.options.id] = this.options.init;
+			if(window.all_token_objects[this.options.id] == undefined){
+				window.all_token_objects[this.options.id] = {};
 			}
-			else if (typeof window.initiative[this.options.id] !== undefined){		
-				this.options.init = window.initiative[this.options.id];
+			if (this.options !== undefined){
+				window.all_token_objects[this.options.id] = this.options;
+			}
+			else if (typeof window.all_token_objects[this.options.id].init !== undefined){		
+				this.options.init = window.all_token_objects[this.options.id].init;
 			}
 			// CONDITIONS
 			this.build_conditions().forEach(cond_bar => {

@@ -286,10 +286,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		init.css('width','20px');
 		init.css('-webkit-appearance','none');
 		if(window.DM && typeof(token.options.init) == 'undefined'){
-			if(typeof window.initiative != undefined) {
-				if(typeof window.initiative[token.options.id] != undefined)	{
-					token.options.init = window.initiative[token.options.id];
-					init.val(token.options.init);
+			if(typeof window.all_token_objects != undefined) {
+				if(typeof window.all_token_objects[token.options.id] != undefined)	{
+					if (typeof window.all_token_objects[token.options.id].init != undefined){
+				 		token.options.init = window.all_token_objects[token.options.id].init;
+						init.val(token.options.init);
+					}
 				}
 			}
 			else{
@@ -297,8 +299,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			}
 			init.change(function(){
 					ct_reorder();
-					if(typeof window.initiative != undefined) {
-						window.initiative[token.options.id] = init.val()
+					if(typeof window.all_token_objects != undefined) {
+						window.all_token_objects[token.options.id].init = init.val()
 					}
 					token.options.init = init.val();
 					token.place_sync_persist();
@@ -309,8 +311,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			init.val(token.options.init);
 			init.change(function(){
 					ct_reorder();
-					if(typeof window.initiative != undefined) {
-						window.initiative[token.options.id] = init.val()
+					if(typeof window.all_token_objects != undefined) {
+						window.all_token_objects[token.options.id].init = init.val()
 					}
 					token.options.init = init.val();
 					token.place_sync_persist();
@@ -510,13 +512,16 @@ function ct_list_tokens() {
 function ct_persist(){
 	var data= [];
 	$('#combat_area tr').each( function () {
-	  data.push( {
-		'data-target': $(this).attr("data-target"),
-		'init': $(this).find(".init").val(),
-		'current': ($(this).attr("data-current")=="1"),
-		'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
-	   });
+	if(window.TOKEN_OBJECTS[$(this).attr("data-target")] !== undefined){
+		  	data.push( {
+				'data-target': $(this).attr("data-target"),
+				'init': $(this).find(".init").val(),
+				'current': ($(this).attr("data-current")=="1"),
+				'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
+			});
+	  	}
 	});
+
 	data.push({'data-target': 'round',
 				'round_number':window.ROUND_NUMBER});
 	
@@ -546,19 +551,14 @@ function ct_load(data=null){
 					token.options.ct_show = data[i]['data-ct-show'];
 				}
 				else{
-					if(window.initiative == undefined){
-						window.initiative = {};
+					if(window.all_token_objects == undefined){
+						window.all_token_objects = {};
 					}
-					window.initiative[data[i]['data-target']] = data[i]['init'];
-					token={
-						options:{
-							name: 'Not in the current map',
-							id: data[i]['data-target'],
-							imgsrc: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
-							hp:"0",
-							max_hp:"0",
-						}
+					if(window.all_token_objects[data[i]['data-target']] == undefined){
+						window.all_token_objects[data[i]['data-target']] = {};
 					}
+					window.all_token_objects[data[i]['data-target']].init = data[i]['init'];
+					token = new Token(window.all_token_objects[data[i]['data-target']]);
 				}
 
 				ct_add_token(token,false,true);
@@ -584,7 +584,7 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
-	if (persist == true) {
+	if (persist == true && $.isFunction(token.sync)) {
 		token.sync();
 		if (token.persist != null) token.persist();
 	}
