@@ -286,9 +286,20 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		init.css('width','20px');
 		init.css('-webkit-appearance','none');
 		if(window.DM && typeof(token.options.init) == 'undefined'){
-			init.val(0);
+			if(typeof window.initiative != undefined) {
+				if(typeof window.initiative[token.options.id] != undefined)	{
+					token.options.init = window.initiative[token.options.id];
+					init.val(token.options.init);
+				}
+			}
+			else{
+				init.val(0);
+			}
 			init.change(function(){
 					ct_reorder();
+					if(typeof window.initiative != undefined) {
+						window.initiative[token.options.id] = init.val()
+					}
 					token.options.init = init.val();
 					token.place_sync_persist();
 				}
@@ -298,6 +309,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			init.val(token.options.init);
 			init.change(function(){
 					ct_reorder();
+					if(typeof window.initiative != undefined) {
+						window.initiative[token.options.id] = init.val()
+					}
 					token.options.init = init.val();
 					token.place_sync_persist();
 				}
@@ -532,6 +546,10 @@ function ct_load(data=null){
 					token.options.ct_show = data[i]['data-ct-show'];
 				}
 				else{
+					if(window.initiative == undefined){
+						window.initiative = {};
+					}
+					window.initiative[data[i]['data-target']] = data[i]['init'];
 					token={
 						options:{
 							name: 'Not in the current map',
