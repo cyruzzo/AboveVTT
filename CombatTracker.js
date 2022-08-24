@@ -566,9 +566,9 @@ function ct_load(data=null){
 						window.all_token_objects[data[i]['data-target']] = {};
 					}
 					window.all_token_objects[data[i]['data-target']].init = data[i]['init'];
-					window.all_token_objects[data[i]['data-target']].ct_show = data[i]['data-ct-show'];
-					
+					window.all_token_objects[data[i]['data-target']].ct_show = data[i]['data-ct-show'];				
 					token = new Token(window.all_token_objects[data[i]['data-target']]);
+					token.options.sceneId = window.CURRENT_SCENE_DATA.id;
 					token.sync = function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', token.options);
 					};
@@ -581,12 +581,6 @@ function ct_load(data=null){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 				}
 			}
-		}
-		for(tokenID in window.TOKEN_OBJECTS){
-			if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
-			{
-				ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
-			}		
 		}
 	}
 
