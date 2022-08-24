@@ -512,12 +512,20 @@ function ct_list_tokens() {
 function ct_persist(){
 	var data= [];
 	$('#combat_area tr').each( function () {
-	if(window.TOKEN_OBJECTS[$(this).attr("data-target")] !== undefined){
+		if(window.TOKEN_OBJECTS[$(this).attr("data-target")] !== undefined){
 		  	data.push( {
 				'data-target': $(this).attr("data-target"),
 				'init': $(this).find(".init").val(),
 				'current': ($(this).attr("data-current")=="1"),
 				'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
+			});
+	  	}
+	  	else if(window.all_token_objects[$(this).attr("data-target")] !== undefined){
+	  		data.push( {
+				'data-target': $(this).attr("data-target"),
+				'init': $(this).find(".init").val(),
+				'current': ($(this).attr("data-current")=="1"),
+				'data-ct-show': window.all_token_objects[$(this).attr("data-target")].ct_show
 			});
 	  	}
 	});
@@ -558,10 +566,16 @@ function ct_load(data=null){
 						window.all_token_objects[data[i]['data-target']] = {};
 					}
 					window.all_token_objects[data[i]['data-target']].init = data[i]['init'];
+					window.all_token_objects[data[i]['data-target']].ct_show = data[i]['data-ct-show'];
+					
 					token = new Token(window.all_token_objects[data[i]['data-target']]);
+					token.sync = function(e) {				
+						window.MB.sendMessage('custom/myVTT/token', token.options);
+					};
 				}
-
-				ct_add_token(token,false,true);
+				if(token.options.ct_show == true)
+					ct_add_token(token,false,true);
+			
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
@@ -569,7 +583,7 @@ function ct_load(data=null){
 			}
 		}
 		for(tokenID in window.TOKEN_OBJECTS){
-			if(window.TOKEN_OBJECTS[tokenID].options.ct_show != undefined)
+			if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
 			{
 				ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
 			}		
@@ -584,7 +598,7 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
-	if (persist == true && $.isFunction(token.sync)) {
+	if (persist == true) {
 		token.sync();
 		if (token.persist != null) token.persist();
 	}
