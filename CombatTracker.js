@@ -315,7 +315,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 						window.all_token_objects[token.options.id].init = init.val()
 					}
 					token.options.init = init.val();
-					token.place_sync_persist();
 				}
 			);
 		}
@@ -330,7 +329,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 					init.val(value);
 					token.options.init = value;
-					token.place_sync_persist();
 					setTimeout(ct_reorder,1000);
 				});
 		}
