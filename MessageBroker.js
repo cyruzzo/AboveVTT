@@ -520,7 +520,7 @@ class MessageBroker {
 					window.TOKEN_OBJECTS[msg.data.id].highlight(true);
 				}
 			}
-			if (msg.eventType == "custom/myVTT/pointer") {
+			if (msg.eventType == "custom/myVTT/pointer") {z
 				set_pointer(msg.data,!msg.data.dm);
 			}
 
@@ -1001,8 +1001,7 @@ class MessageBroker {
 		}, 4000), 15000);
 	}
 
-    	handleCT(data){
-		$("#combat_area").empty();
+  handleCT(data){
 		ct_load(data);
 	}
 
@@ -1278,7 +1277,6 @@ class MessageBroker {
 					check_token_visibility();
 	
 			if(window.CLOUD && window.DM){
-				$("#combat_area").empty();
 				ct_load();
 			}
 

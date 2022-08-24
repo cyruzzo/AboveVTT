@@ -517,14 +517,6 @@ function ct_persist(){
 				'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
 			});
 	  	}
-	  	else if(window.all_token_objects[$(this).attr("data-target")] !== undefined){
-	  		data.push( {
-				'data-target': $(this).attr("data-target"),
-				'init': $(this).find(".init").val(),
-				'current': ($(this).attr("data-current")=="1"),
-				'data-ct-show': window.all_token_objects[$(this).attr("data-target")].ct_show
-			});
-	  	}
 	});
 
 	data.push({'data-target': 'round',
@@ -554,24 +546,11 @@ function ct_load(data=null){
 				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
 					token=window.TOKEN_OBJECTS[data[i]['data-target']];
 					token.options.ct_show = data[i]['data-ct-show'];
+
+					if(token.options.ct_show == true)
+						ct_add_token(token,false,true);
 				}
-				else{
-					if(window.all_token_objects == undefined){
-						window.all_token_objects = {};
-					}
-					if(window.all_token_objects[data[i]['data-target']] == undefined){
-						window.all_token_objects[data[i]['data-target']] = {};
-					}
-					window.all_token_objects[data[i]['data-target']].init = data[i]['init'];
-					window.all_token_objects[data[i]['data-target']].ct_show = data[i]['data-ct-show'];				
-					token = new Token(window.all_token_objects[data[i]['data-target']]);
-					token.options.sceneId = window.CURRENT_SCENE_DATA.id;
-					token.sync = function(e) {				
-						window.MB.sendMessage('custom/myVTT/token', token.options);
-					};
-				}
-				if(token.options.ct_show == true)
-					ct_add_token(token,false,true);
+		
 			
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
@@ -581,7 +560,14 @@ function ct_load(data=null){
 		}
 	}
 
+
 	if(window.DM){
+		for(tokenID in window.TOKEN_OBJECTS){
+			if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
+			{
+				ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
+			}
+		}
 		ct_reorder();
 		ct_persist();
 	}
