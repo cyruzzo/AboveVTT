@@ -168,12 +168,16 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedButton.html(addButtonInternals);
 				tokens.forEach(t =>{
 					t.options.ct_show = undefined;
-					ct_remove_token(t, false)
+					ct_remove_token(t, false);
+					t.place_sync_persist();
 				});
 			} else {
 				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
 				clickedButton.html(removeButtonInternals);
-				tokens.forEach(t => ct_add_token(t, false));
+				tokens.forEach(t => {
+					ct_add_token(t, false)
+					t.place_sync_persist();
+				});
 			}
 			ct_persist();
 		});

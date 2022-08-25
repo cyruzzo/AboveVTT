@@ -1358,7 +1358,18 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				tok.attr("data-tokendataname", this.options.tokendataname);
 			}
-
+			if(window.all_token_objects == undefined){
+				window.all_token_objects = {};
+			}
+			if(window.all_token_objects[this.options.id] == undefined){
+				window.all_token_objects[this.options.id] = {};
+			}
+			if (this.options !== undefined){
+				window.all_token_objects[this.options.id] = new Token(this.options);
+			}
+			else if (typeof window.all_token_objects[this.options.id].options.init !== undefined){		
+				this.options.init = window.all_token_objects[this.options.id].options.init;
+			}
 			// CONDITIONS
 			this.build_conditions().forEach(cond_bar => {
 				tok.append(cond_bar);
