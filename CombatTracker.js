@@ -501,6 +501,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		$("#combat_area").append(entry);
 		$("#combat_area td").css("vertical-align","middle");
 		
+		ct_reorder();
 		if(persist){
 			ct_persist();
 		}
