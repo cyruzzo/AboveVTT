@@ -286,10 +286,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		init.css('width','20px');
 		init.css('-webkit-appearance','none');
 		if(window.DM && typeof(token.options.init) == 'undefined'){
-			if(typeof window.all_token_objects != undefined) {
-				if(typeof window.all_token_objects[token.options.id] != undefined)	{
-					if (typeof window.all_token_objects[token.options.id].options.init != undefined){
+			if(typeof window.all_token_objects != 'undefined') {
+				if(typeof window.all_token_objects[token.options.id] != 'undefined')	{
+					if (typeof window.all_token_objects[token.options.id].options.init != 'undefined'){
 				 		token.options.init = window.all_token_objects[token.options.id].options.init;
+				 		window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 						init.val(token.options.init);
 						token.place_sync_persist();
 					}
@@ -300,9 +301,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			}
 			init.change(function(){
 					ct_reorder();
-					if(typeof window.all_token_objects != undefined) {
+					if(typeof window.all_token_objects != 'undefined') {
 						window.all_token_objects[token.options.id].options.init = init.val()
 					}
+					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					token.options.init = init.val();
 					token.place_sync_persist();
 				}
@@ -312,9 +314,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			init.val(token.options.init);
 			init.change(function(){
 					ct_reorder();
-					if(typeof window.all_token_objects != undefined) {
+					if(typeof window.all_token_objects != 'undefined') {
 						window.all_token_objects[token.options.id].options.init = init.val()
 					}
+					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					token.options.init = init.val();
 					token.place_sync_persist();
 				}
@@ -324,6 +327,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			init.val(token.options.init);
 			init.attr("disabled","disabled");
 		}
+	
 		entry.append($("<td/>").append(init));
 		
 		// auto roll initiative for monsters
@@ -535,18 +539,10 @@ function ct_persist(){
 	data.push({'data-target': 'round',
 				'round_number':window.ROUND_NUMBER});
 	
-	var itemkey="CombatTracker"+find_game_id();
-	
-	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
 }
 
 function ct_load(data=null){
-	
-	if(data==null && window.DM){
-		var itemkey="CombatTracker"+find_game_id();
-		data=$.parseJSON(localStorage.getItem(itemkey));
-	}
 	
 	if(data){	
 		for(i=0;i<data.length;i++){
@@ -586,13 +582,7 @@ function ct_load(data=null){
 					token.options.init = data[i]['init'];	
 					ct_add_token(token,false,true);
 				}
-				
-				for(tokenID in window.TOKEN_OBJECTS){
-					if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
-					{
-						ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
-					}		
-				}
+
 
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
@@ -600,6 +590,13 @@ function ct_load(data=null){
 				}
 			}
 		}
+	}
+
+	for(tokenID in window.TOKEN_OBJECTS){
+		if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
+		{
+			ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
+		}		
 	}
 	ct_reorder(false);
 

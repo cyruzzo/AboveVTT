@@ -949,6 +949,9 @@ class MessageBroker {
 							var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 							if(converted==entityid){
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
+								window.TOKEN_OBJECTS[$(this).attr('data-id')].place_sync_persist();
+								ct_reorder();
 							}
 						}
 					);
@@ -959,6 +962,8 @@ class MessageBroker {
 						console.log(converted);
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
+							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
+							window.TOKEN_OBJECTS[$(this).attr('data-target')].place_sync_persist();
 							ct_reorder();
 						}
 					});
