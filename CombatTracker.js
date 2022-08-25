@@ -126,7 +126,6 @@ function init_combat_tracker(){
 		});
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
-		ct_persist();
 	});
 	
 	next=$("<button id='combat_next_button'><u>N</u>EXT</button>");
@@ -292,42 +291,39 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				 		token.options.init = window.all_token_objects[token.options.id].options.init;
 				 		window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 						init.val(token.options.init);
-						token.place_sync_persist();
 					}
 				}
 			}
 			else{
 				init.val(0);
 			}
-			init.change(function(){
-					ct_reorder();
-					if(typeof window.all_token_objects != 'undefined') {
-						window.all_token_objects[token.options.id].options.init = init.val()
-					}
-					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-					token.options.init = init.val();
-					token.place_sync_persist();
-				}
-			);
 		}
 		else if(window.DM){
 			init.val(token.options.init);
-			init.change(function(){
-					ct_reorder();
-					if(typeof window.all_token_objects != 'undefined') {
-						window.all_token_objects[token.options.id].options.init = init.val()
-					}
-					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-					token.options.init = init.val();
-					token.place_sync_persist();
-				}
-			);
 		}
 		else{
 			init.val(token.options.init);
 			init.attr("disabled","disabled");
 		}
-	
+		if(window.DM){
+			init.change(function(){
+					if(typeof window.all_token_objects != 'undefined') 
+					{
+						window.all_token_objects[token.options.id].options.init = init.val()
+						window.all_token_objects[token.options.id].sync = function(e) {				
+							window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
+						};
+						window.all_token_objects[token.options.id].sync();
+					}
+					token.options.init = init.val();
+					if(window.TOKEN_OBJECTS[token.options.id] != undefined){
+						window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
+						window.TOKEN_OBJECTS[token.options.id].place_sync_persist()
+					}
+					ct_reorder();
+				}
+			);
+		}
 		entry.append($("<td/>").append(init));
 		
 		// auto roll initiative for monsters
@@ -336,8 +332,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 					init.val(value);
 					token.options.init = value;
-					token.place_sync_persist();
-					setTimeout(ct_reorder,1000);
+					token.sync();
+					ct_reorder();
 				});
 		}
 		
@@ -500,9 +496,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		$("#combat_area").append(entry);
 		$("#combat_area td").css("vertical-align","middle");
-		
-		ct_reorder();
+
 		if(persist){
+			ct_reorder();
 			ct_persist();
 		}
 	}
@@ -518,23 +514,12 @@ function ct_list_tokens() {
 
 function ct_persist(){
 	var data= [];
-	$('#combat_area tr').each( function () {
-		if(window.TOKEN_OBJECTS[$(this).attr("data-target")] !== undefined){
-		  	data.push( {
-				'data-target': $(this).attr("data-target"),
-				'init': $(this).find(".init").val(),
-				'current': ($(this).attr("data-current")=="1"),
-				'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
-			});
-	  	}
-	  	if(window.all_token_objects[$(this).attr("data-target")] !== undefined && window.TOKEN_OBJECTS[$(this).attr("data-target")] == undefined){
-		  	data.push( {
-				'data-target': $(this).attr("data-target"),
-				'init': $(this).find(".init").val(),
-				'current': ($(this).attr("data-current")=="1"),
-				'data-ct-show': window.all_token_objects[$(this).attr("data-target")].options.ct_show
-			});
-	  	}
+	$('#combat_area tr').each( function () {			
+	  	data.push( {
+			'data-target': $(this).attr("data-target"),
+			'current': ($(this).attr("data-current")=="1"),
+			'options': window.all_token_objects[$(this).attr("data-target")].options
+		});		  
 	});
 
 	data.push({'data-target': 'round',
@@ -545,47 +530,27 @@ function ct_persist(){
 
 function ct_load(data=null){
 	
+	
 	if(data){	
+		$("#combat_area tr[data-current]").removeAttr("data-current");
 		for(i=0;i<data.length;i++){
 			if (data[i]['data-target'] === 'round'){
 				window.ROUND_NUMBER = data[i]['round_number'];
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
 			} 
 			else if(data[i]['data-target'] !== undefined){
-				let token;
-				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
-					token=window.TOKEN_OBJECTS[data[i]['data-target']];
-					token.options.ct_show = data[i]['data-ct-show'];
-					token.options.init = data[i]['init'];		
+				if (window.all_token_objects[data[i]['data-target']] == undefined) {
+					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
 				}
-				else if(window.all_token_objects == undefined){
-					window.all_token_objects = {};				
-					if(window.all_token_objects[data[i]['data-target']] == undefined){
-						window.all_token_objects[data[i]['data-target']] = {};
-					}
-					if(window.all_token_objects[data[i]['data-target']].options == undefined){
-						window.all_token_objects[data[i]['data-target']].options = {};
-					}
-					window.all_token_objects[data[i]['data-target']].options.init = data[i]['init'];
-					window.all_token_objects[data[i]['data-target']].options.ct_show = data[i]['data-ct-show'];				
-					token = new Token(window.all_token_objects[data[i]['data-target']].options);
-					token.sync = function(e) {				
-						window.MB.sendMessage('custom/myVTT/token', token.options);
+				window.all_token_objects[data[i]['data-target']].options.ct_show = data[i]['options'].ct_show;
+				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true)
+				{
+					window.all_token_objects[data[i]['data-target']].sync = function(e) {				
+						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[data[i]['data-target']].options);
 					};
-					ct_add_token(token,false,true);
-				}
-				else if(data[i]['data-target'] in window.all_token_objects){
-					token = window.all_token_objects[data[i]['data-target']];
-					token.sync = function(e) {				
-						window.MB.sendMessage('custom/myVTT/token', token.options);
-					};
-					token.options.ct_show = data[i]['data-ct-show'];
-					token.options.init = data[i]['init'];	
-					ct_add_token(token,false,true);
-				}
-
-
-				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
+					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
+				}	
+				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 				}
@@ -593,23 +558,34 @@ function ct_load(data=null){
 		}
 	}
 
-	for(tokenID in window.TOKEN_OBJECTS){
-		if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
-		{
-			ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
-		}		
+	if(data == null){
+		for(tokenID in window.all_token_objects){
+			if(window.all_token_objects[tokenID].options.ct_show == true)
+			{
+				window.all_token_objects[tokenID].sync = function(e) {				
+					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[tokenID].options);
+				};
+				ct_add_token(window.all_token_objects[tokenID],false,true);
+			}		
+		}
 	}
-	ct_reorder(false);
-
 	if(window.DM){
-		ct_persist();
+		ct_reorder();
+	}
+	else{
+		ct_reorder(false);
 	}
 }
 
 function ct_remove_token(token,persist=true) {
 
 	if (persist == true) {
-		if(token.options.id in window.TOKEN_OBJECTS) token.sync();
+		if(token.options.id in window.TOKEN_OBJECTS){
+			window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;
+		} 
+		if(token.options.id in window.all_token_objects){
+			window.all_token_objects[token.options.id].options.ct_show = undefined;
+		} 
 		if (token.persist != null) token.persist();
 	}
 	

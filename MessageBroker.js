@@ -398,8 +398,7 @@ class MessageBroker {
 
 			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
-					if(["custom/myVTT/token",
-					    "custom/myVTT/delete_token",
+					if(["custom/myVTT/delete_token",
 						"custom/myVTT/createtoken",
 						"custom/myVTT/reveal",
 						"custom/myVTT/fogdata",
@@ -951,7 +950,6 @@ class MessageBroker {
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].place_sync_persist();
-								ct_reorder();
 							}
 						}
 					);
@@ -964,7 +962,6 @@ class MessageBroker {
 							$(this).find(".init").val(total);
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].place_sync_persist();
-							ct_reorder();
 						}
 					});
 					ct_persist();
@@ -1160,10 +1157,26 @@ class MessageBroker {
 	handleToken(msg) {
 		var data = msg.data;
 		//let t=new Token($.parseJSON(msg.data));
-
+		let inAllTokenObjects
 		if(data.id == undefined)
 			return;
+
+		if(window.all_token_objects != undefined){
+			if (data.id in window.all_token_objects) {
+				for (var property in data) {
+					window.all_token_objects[data.id].options[property] = data[property];
+				}
+				if (!data.hidden)
+					delete window.all_token_objects[data.id].options.hidden;
+
+					inAllTokenObjects = true;
+			}
+		}
+		
+		
 		if (data.id in window.TOKEN_OBJECTS) {
+			console.log(data.init);
+			console.log(data.name);
 			for (var property in data) {
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 			}
@@ -1172,11 +1185,10 @@ class MessageBroker {
 
 			window.TOKEN_OBJECTS[data.id].place();
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-
 		}
-		else {
+		else{
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
-
+			
 			if (window.DM) {
 				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
 			}
@@ -1188,13 +1200,20 @@ class MessageBroker {
 			};
 			t.place();
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-		}
 
 		if (window.DM) {
 			console.log("**** persistoooooooooo token");
 			window.ScenesHandler.persist();
 		}
 	}
+	if(window.DM) {
+		ct_reorder();
+	}
+	else{
+		ct_reorder(false);
+	}
+	
+}
 
 	handleScene(msg) {
 		// console.group("handlescene")
@@ -1283,14 +1302,14 @@ class MessageBroker {
 			if(!window.DM)
 					check_token_visibility();
 	
-			if(window.CLOUD && window.DM){
+			if(window.CLOUD){
+				$("#combat_area").empty();
 				ct_load();
 			}
 
 			if(window.DM)
 				get_pclist_player_data();
-			else
-				window.MB.sendMessage("custom/myVTT/syncmeup");
+
 
 
 			if (window.EncounterHandler !== undefined) {
@@ -1336,7 +1355,7 @@ class MessageBroker {
 	handleSyncMeUp(msg) {
 		if (DM) {
 			window.ScenesHandler.sync();
-			ct_persist(); // force refresh of combat tracker for late users
+	
 			if (window.CURRENT_SOUNDPAD) {
 				var data = {
 					soundpad: window.CURRENT_SOUNDPAD
