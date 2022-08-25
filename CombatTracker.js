@@ -265,7 +265,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		}	
 	}
 
-	if (token.options.ct_show == true || window.DM){
+	if (token.options.ct_show == true){
 		if ((token.options.name) && (window.DM || token.isPlayer() || token.options.revealname)) {
 			entry.attr("data-name", token.options.name);
 			entry.addClass("hasTooltip");
@@ -313,12 +313,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 						window.all_token_objects[token.options.id].sync = function(e) {				
 							window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
 						};
-						window.all_token_objects[token.options.id].sync();
+						window.all_token_objects[token.options.id].update_and_sync()
 					}
 					token.options.init = init.val();
 					if(window.TOKEN_OBJECTS[token.options.id] != undefined){
 						window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-						window.TOKEN_OBJECTS[token.options.id].place_sync_persist()
+						window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 					}
 					setTimeout(ct_reorder(), 500);
 				}
@@ -332,7 +332,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 					init.val(value);
 					token.options.init = value;
-					token.sync();
+					if(window.TOKEN_OBJECTS[token.options.id] != undefined){
+						window.TOKEN_OBJECTS[token.options.id].update_and_sync()
+					}
+					if(window.all_token_objects[token.options.id] != undefined){		
+						window.all_token_objects[token.options.id].update_and_sync()
+					}
 					setTimeout(ct_reorder(), 500);
 				});
 		}
@@ -430,7 +435,15 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		del=$('<button class="removeTokenCombatButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
 		del.click(
 			function(){
-				token.options.ct_show = undefined;
+				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
+					window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
+				}
+				if(window.all_token_objects[token.options.id] != undefined){
+					window.all_token_objects[token.options.id].options.ct_show = undefined;
+					window.all_token_objects[token.options.id].update_and_sync()
+				}
+
 				ct_remove_token(token);
 			}
 		);
@@ -578,16 +591,6 @@ function ct_load(data=null){
 
 function ct_remove_token(token,persist=true) {
 
-	if (persist == true) {
-		if(token.options.id in window.TOKEN_OBJECTS){
-			window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;
-		} 
-		if(token.options.id in window.all_token_objects){
-			window.all_token_objects[token.options.id].options.ct_show = undefined;
-		} 
-		if (token.persist != null) token.persist();
-	}
-	
 	let id = token.options.id;
 	if ($("#combat_area tr[data-target='" + id + "']").length > 0) {
 		if ($("#combat_area tr[data-target='" + id + "']").attr('data-current') == "1") {

@@ -949,7 +949,7 @@ class MessageBroker {
 							if(converted==entityid){
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
-								window.TOKEN_OBJECTS[$(this).attr('data-id')].place_sync_persist();
+								window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
 							}
 						}
 					);
@@ -961,10 +961,10 @@ class MessageBroker {
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
-							window.TOKEN_OBJECTS[$(this).attr('data-target')].place_sync_persist();
+							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 						}
 					});
-					ct_persist();
+					setTimeout(ct_reorder(), 500);
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
