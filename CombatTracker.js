@@ -473,7 +473,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
 						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 					}
-					token.update_and_sync()
+					if(token.options.id in window.TOKEN_OBJECTS) token.update_and_sync();		
 					ct_persist();
 				});
 				eye_button.append(open_eye);
