@@ -398,7 +398,8 @@ class MessageBroker {
 
 			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
-					if(["custom/myVTT/delete_token",
+					if(["custom/myVTT/token",
+						"custom/myVTT/delete_token",
 						"custom/myVTT/createtoken",
 						"custom/myVTT/reveal",
 						"custom/myVTT/fogdata",
