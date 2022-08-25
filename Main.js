@@ -452,26 +452,27 @@ function set_pointer(data, dontscroll = false) {
 	let marker = $("<div></div>");
 	marker.css({
 		"position": "absolute",
-		"top": data.y - 5,
-		"left": data.x - 5,
-		"width": "10px",
-		"height": "10px",
+		"top": data.y - 50,
+		"left": data.x - 50,
+		"width": "100px",
+		"height": "100px",
 		"z-index": "30",
 		"border-radius": "50%",
 		"opacity": "1.0",
-		"border-width": "8px",
+		"border-width": "18px",
 		"border-style": "double",
 		"border-color": data.color,
+		"transform": `scale(${(1 / window.ZOOM)})`,
+		"--ping-scale":`${(1 / window.ZOOM)}`,
+		"animation": 'pingAnimate linear 3s infinite',
+		"filter": "drop-shadow(1px 1px 0px #000)"
 	});
 	$("#tokens").append(marker);
 
-	marker.animate({
-		opacity: 0,
-		width: "120px",
-		height: "120px",
-		top: data.y - 60,
-		left: data.x - 60,
-	}, 1375, function() { marker.remove() });
+	
+	setTimeout(function(){marker.fadeOut(1000)}, 2000);
+	setTimeout(function(){marker.remove()}, 3000);
+
 
 	// Calculate pageX and pageY and scroll there!
 
@@ -3960,12 +3961,43 @@ width=${width},height=${height},left=100,top=100`;
 	});
 	return childWindows[name];
 }
-
+function updatePopoutWindow(name, cloneSelector){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+	if(!childWindows[name])
+		return;
+	$(childWindows[name].document).find('body').empty();
+	$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
+	$(childWindows[name].document).find('a[href^="/"]').each(function() {
+        this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
+	});
+	return childWindows[name];
+}
+function removeFromPopoutWindow(name, selector){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+	if(!childWindows[name])
+		return;
+	$(childWindows[name].document).find(selector).remove();
+	return childWindows[name];
+}
 function closePopout(name){
 	if(childWindows[name]){
 		childWindows[name].close();
 		delete childWindows[name];
 	}
+}
+
+
+
+
+
+
+
+function removeFromPopoutWindow(name, selector){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+	if(!childWindows[name])
+		return;
+	$(childWindows[name].document).find(selector).remove();
+	return childWindows[name];
 }
 
 /**
