@@ -1491,7 +1491,7 @@ class Token {
 					},
 
 				start: function (event) {
-					event.stopPropagation()
+					event.stopImmediatePropagation();
 					if(window.ALLOWTOKENMEASURING)
 						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
@@ -1543,7 +1543,6 @@ class Token {
 					}
 
 					if (window.ALLOWTOKENMEASURING){
-						setTimeout(function() {
 							// Setup waypoint manager
 							// reset measuring when a new token is picked up
 							if(window.previous_measured_token != self.options.id){
@@ -1565,7 +1564,13 @@ class Token {
 							}else{
 								WaypointManager.resetDefaultDrawStyle()
 							}
-						});
+							const canvas = document.getElementById("temp_overlay");
+							const context = canvas.getContext("2d");
+							// incase we click while on select, remove any line dashes
+							context.setLineDash([])
+							context.fillStyle = '#f50';
+							
+							WaypointManager.setCanvas(canvas);
 					}
 
 					remove_selected_token_bounding_box();
@@ -1577,7 +1582,7 @@ class Token {
 				 * @param {Object} ui UI-object
 				 */
 				drag: function(event, ui) {
-					event.stopPropagation()
+					event.stopImmediatePropagation();
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
@@ -1603,31 +1608,13 @@ class Token {
 					};
 
 					if (window.ALLOWTOKENMEASURING) {
-						if (WaypointManager.numWaypoints === 0 || tokenPosition.x !== currentTokenPosition.x || tokenPosition.y !== currentTokenPosition.y) {
-							setTimeout(function() {
+						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
+						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
-								const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-								const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
-
-								const canvas = document.getElementById("temp_overlay");
-								const context = canvas.getContext("2d");
-								// incase we click while on select, remove any line dashes
-								context.setLineDash([])
-								// list the temp overlay so we can see the ruler
-								clear_temp_canvas()
-								
-								WaypointManager.setCanvas(canvas);
-								WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
-								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-								WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
-								context.fillStyle = '#f50';
-
-							});
-						}
+						clear_temp_canvas();
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
 					}
-
-					currentTokenPosition.x = tokenPosition.x;
-					currentTokenPosition.y = tokenPosition.y;
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
