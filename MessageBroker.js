@@ -520,7 +520,7 @@ class MessageBroker {
 					window.TOKEN_OBJECTS[msg.data.id].highlight(true);
 				}
 			}
-			if (msg.eventType == "custom/myVTT/pointer") {z
+			if (msg.eventType == "custom/myVTT/pointer") {
 				set_pointer(msg.data,!msg.data.dm);
 			}
 
@@ -1002,6 +1002,7 @@ class MessageBroker {
 	}
 
   handleCT(data){
+  	$("#combat_area").empty();
 		ct_load(data);
 	}
 
@@ -1155,7 +1156,8 @@ class MessageBroker {
 		var data = msg.data;
 		//let t=new Token($.parseJSON(msg.data));
 
-
+		if(data.id == undefined)
+			return;
 		if (data.id in window.TOKEN_OBJECTS) {
 			for (var property in data) {
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
@@ -1277,6 +1279,7 @@ class MessageBroker {
 					check_token_visibility();
 	
 			if(window.CLOUD && window.DM){
+				$("#combat_area").empty();
 				ct_load();
 			}
 

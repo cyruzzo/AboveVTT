@@ -288,9 +288,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		if(window.DM && typeof(token.options.init) == 'undefined'){
 			if(typeof window.all_token_objects != undefined) {
 				if(typeof window.all_token_objects[token.options.id] != undefined)	{
-					if (typeof window.all_token_objects[token.options.id].init != undefined){
-				 		token.options.init = window.all_token_objects[token.options.id].init;
+					if (typeof window.all_token_objects[token.options.id].options.init != undefined){
+				 		token.options.init = window.all_token_objects[token.options.id].options.init;
 						init.val(token.options.init);
+						token.place_sync_persist();
 					}
 				}
 			}
@@ -300,9 +301,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			init.change(function(){
 					ct_reorder();
 					if(typeof window.all_token_objects != undefined) {
-						window.all_token_objects[token.options.id].init = init.val()
+						window.all_token_objects[token.options.id].options.init = init.val()
 					}
 					token.options.init = init.val();
+					token.place_sync_persist();
 				}
 			);
 		}
@@ -311,23 +313,26 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			init.change(function(){
 					ct_reorder();
 					if(typeof window.all_token_objects != undefined) {
-						window.all_token_objects[token.options.id].init = init.val()
+						window.all_token_objects[token.options.id].options.init = init.val()
 					}
 					token.options.init = init.val();
+					token.place_sync_persist();
 				}
 			);
 		}
 		else{
+			init.val(token.options.init);
 			init.attr("disabled","disabled");
 		}
 		entry.append($("<td/>").append(init));
 		
 		// auto roll initiative for monsters
 		
-		if(window.DM && (token.options.monster > 0) && (!disablerolling)){
+		if(window.DM && (token.options.monster > 0) && (!disablerolling) && token.options.init == undefined){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 					init.val(value);
 					token.options.init = value;
+					token.place_sync_persist();
 					setTimeout(ct_reorder,1000);
 				});
 		}
@@ -517,6 +522,14 @@ function ct_persist(){
 				'data-ct-show': window.TOKEN_OBJECTS[$(this).attr("data-target")].options.ct_show
 			});
 	  	}
+	  	if(window.all_token_objects[$(this).attr("data-target")] !== undefined){
+		  	data.push( {
+				'data-target': $(this).attr("data-target"),
+				'init': $(this).find(".init").val(),
+				'current': ($(this).attr("data-current")=="1"),
+				'data-ct-show': window.all_token_objects[$(this).attr("data-target")].options.ct_show
+			});
+	  	}
 	});
 
 	data.push({'data-target': 'round',
@@ -530,7 +543,7 @@ function ct_persist(){
 
 function ct_load(data=null){
 	
-	if(data==null){
+	if(data==null && window.DM){
 		var itemkey="CombatTracker"+find_game_id();
 		data=$.parseJSON(localStorage.getItem(itemkey));
 	}
@@ -540,18 +553,46 @@ function ct_load(data=null){
 			if (data[i]['data-target'] === 'round'){
 				window.ROUND_NUMBER = data[i]['round_number'];
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
-			}
+			} 
 			else{
 				let token;
 				if(data[i]['data-target'] in window.TOKEN_OBJECTS){
 					token=window.TOKEN_OBJECTS[data[i]['data-target']];
 					token.options.ct_show = data[i]['data-ct-show'];
-
-					if(token.options.ct_show == true)
-						ct_add_token(token,false,true);
+					token.options.init = data[i]['init'];		
 				}
-		
-			
+				else if(window.all_token_objects == undefined){
+					window.all_token_objects = {};				
+					if(window.all_token_objects[data[i]['data-target']] == undefined){
+						window.all_token_objects[data[i]['data-target']] = {};
+					}
+					if(window.all_token_objects[data[i]['data-target']].options == undefined){
+						window.all_token_objects[data[i]['data-target']].options = {};
+					}
+					window.all_token_objects[data[i]['data-target']].options.init = data[i]['init'];
+					window.all_token_objects[data[i]['data-target']].options.ct_show = data[i]['data-ct-show'];				
+					token = new Token(window.all_token_objects[data[i]['data-target']].options);
+					token.sync = function(e) {				
+						window.MB.sendMessage('custom/myVTT/token', token.options);
+					};
+					ct_add_token(token,false,true);
+				}
+				else if(data[i]['data-target'] in window.all_token_objects){
+					token = window.all_token_objects[data[i]['data-target']];
+					token.sync = function(e) {				
+						window.MB.sendMessage('custom/myVTT/token', token.options);
+					};
+					token.options.ct_show = data[i]['data-ct-show'];
+					token.options.init = data[i]['init'];	
+					ct_add_token(token,false,true);
+				}
+				
+				for(tokenID in window.TOKEN_OBJECTS){
+					if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
+					{
+						ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
+					}		
+				}
 				$("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
@@ -559,16 +600,9 @@ function ct_load(data=null){
 			}
 		}
 	}
-
+	ct_reorder(false);
 
 	if(window.DM){
-		for(tokenID in window.TOKEN_OBJECTS){
-			if(window.TOKEN_OBJECTS[tokenID].options.ct_show == true)
-			{
-				ct_add_token(window.TOKEN_OBJECTS[tokenID],false,true);
-			}
-		}
-		ct_reorder();
 		ct_persist();
 	}
 }

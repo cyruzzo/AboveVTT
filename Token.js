@@ -1365,10 +1365,10 @@ class Token {
 				window.all_token_objects[this.options.id] = {};
 			}
 			if (this.options !== undefined){
-				window.all_token_objects[this.options.id] = this.options;
+				window.all_token_objects[this.options.id] = new Token(this.options);
 			}
-			else if (typeof window.all_token_objects[this.options.id].init !== undefined){		
-				this.options.init = window.all_token_objects[this.options.id].init;
+			else if (typeof window.all_token_objects[this.options.id].options.init !== undefined){		
+				this.options.init = window.all_token_objects[this.options.id].options.init;
 			}
 			// CONDITIONS
 			this.build_conditions().forEach(cond_bar => {
