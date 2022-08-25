@@ -611,7 +611,7 @@ function ct_load(data=null){
 function ct_remove_token(token,persist=true) {
 
 	if (persist == true) {
-		token.sync();
+		if(token.options.id in window.TOKEN_OBJECTS) token.sync();
 		if (token.persist != null) token.persist();
 	}
 	
