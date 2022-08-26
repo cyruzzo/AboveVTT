@@ -1193,13 +1193,17 @@ class MessageBroker {
 			if (window.DM) {
 				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
 			}
-
+			if (data.left == undefined){
+				data.left = "0px";
+				data.top = "0px";
+			}
 			let t = new Token(data);
 			window.TOKEN_OBJECTS[data.id] = t;
 			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			};
 			t.place();
+	
 			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 
 		if (window.DM) {
@@ -1310,7 +1314,9 @@ class MessageBroker {
 
 			if(window.DM)
 				get_pclist_player_data();
-
+			else{
+			 	window.MB.sendMessage('custom/myVTT/syncmeup');
+			}
 
 
 			if (window.EncounterHandler !== undefined) {
@@ -1356,7 +1362,7 @@ class MessageBroker {
 	handleSyncMeUp(msg) {
 		if (DM) {
 			window.ScenesHandler.sync();
-	
+			ct_persist(); // force refresh of combat tracker for late users
 			if (window.CURRENT_SOUNDPAD) {
 				var data = {
 					soundpad: window.CURRENT_SOUNDPAD

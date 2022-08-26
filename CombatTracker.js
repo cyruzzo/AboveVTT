@@ -332,10 +332,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 					init.val(value);
 					token.options.init = value;
-					if(window.TOKEN_OBJECTS[token.options.id] != undefined){
+					if(window.TOKEN_OBJECTS[token.options.id] != undefined){			
 						window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 					}
-					if(window.all_token_objects[token.options.id] != undefined){		
+					if(window.all_token_objects[token.options.id] != undefined){				
 						window.all_token_objects[token.options.id].update_and_sync()
 					}
 					setTimeout(ct_reorder(), 500);
@@ -561,7 +561,8 @@ function ct_load(data=null){
 						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[data[i]['data-target']].options);
 					};
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
-				}	
+				}
+
 				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
