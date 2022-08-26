@@ -412,7 +412,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				var old = $("#tokens").find(selector);
 				old.find(".max_hp").val(maxhp_input.val().trim());
 				if(window.all_token_objects[token.options.id] != undefined){
-					window.all_token_objects[token.options.id].options.hp = hp_input.val();
+					window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
 				}
 				window.all_token_objects[token.options.id].update_and_sync(e);
 				ct_persist();
