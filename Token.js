@@ -721,6 +721,7 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
+		ct_update_popout();
 	}
 
 	build_hp() {
