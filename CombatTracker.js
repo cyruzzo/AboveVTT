@@ -393,16 +393,20 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		// bind update functions to hp inputs, same as Token.js
 		// token update logic for hp pulls hp from token hpbar, so update hp bar manually
-		if (!token.isPlayer()) {
+				if (!token.isPlayer()) {
 			hp_input.change(function(e) {
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
 				old.find(".hp").val(hp_input.val().trim());
 				if(window.all_token_objects[token.options.id] != undefined){
 					window.all_token_objects[token.options.id].options.hp = hp_input.val();
-				}
-				window.all_token_objects[token.options.id].update_and_sync(e);
-				ct_persist();
+					window.all_token_objects[token.options.id].update_and_sync();
+				}			
+				if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
+					window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
+				}			
+				setTimeout(ct_persist(), 500);
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
@@ -413,9 +417,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				old.find(".max_hp").val(maxhp_input.val().trim());
 				if(window.all_token_objects[token.options.id] != undefined){
 					window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
+					window.all_token_objects[token.options.id].update_and_sync();
 				}
-				window.all_token_objects[token.options.id].update_and_sync(e);
-				ct_persist();
+				if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
+					window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
+				}			
+				setTimeout(ct_persist(), 500);
 			});
 			maxhp_input.click(function(e) {
 				$(e.target).select();
@@ -573,13 +581,18 @@ function ct_load(data=null){
 				if (window.all_token_objects[data[i]['data-target']] == undefined) {
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
 				}
-				window.all_token_objects[data[i]['data-target']].options.ct_show = data[i]['options'].ct_show;
+				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true)
 				{
 					window.all_token_objects[data[i]['data-target']].sync = function(e) {				
-						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[data[i]['data-target']].options);
+						window.MB.sendMessage('custom/myVTT/token', this.options);
 					};
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
+					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
+						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
+						window.TOKEN_OBJECTS[data[i]['data-target']].options.max_hp = window.all_token_objects[data[i]['data-target']].options.max_hp;
+						window.TOKEN_OBJECTS[data[i]['data-target']].place();
+					}
 				}
 
 				
@@ -588,6 +601,7 @@ function ct_load(data=null){
 				}
 			}
 		}
+
 	}
 
 	if(data == null){
