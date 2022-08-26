@@ -1164,13 +1164,18 @@ class MessageBroker {
 
 		if(window.all_token_objects != undefined){
 			if (data.id in window.all_token_objects) {
-				for (var property in data) {
-					data[property] = window.all_token_objects[data.id].options[property];
+				for (var property in data) {		
+					if(msg.loading && (property == 'hp' || property == 'max_hp' || property == 'init' || property == 'ac')){
+						data[property] = window.all_token_objects[data.id].options[property];
+					}
+					else{
+					 window.all_token_objects[data.id].options[property] = data[property]; 
+					}
 				}
 				if (!data.hidden)
 					delete window.all_token_objects[data.id].options.hidden;
 
-					inAllTokenObjects = true;
+				inAllTokenObjects = true;
 			}
 		}
 		
@@ -1301,7 +1306,8 @@ class MessageBroker {
 
 			for (var i = 0; i < data.tokens.length; i++) {
 				self.handleToken({
-					data: data.tokens[i]
+					data: data.tokens[i],
+					loading: true
 				});
 			}
 			if(!window.DM)
