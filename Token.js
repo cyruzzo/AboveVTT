@@ -697,13 +697,15 @@ class Token {
 		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.options.max_hp);
 
 
-		if((!window.DM && this.options.hidestat == true) || this.options.disablestat == true) {
+		if((!window.DM && this.options.hidestat == true) || this.options.disablestat == true || (!window.DM && !this.options.player_owned)) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'hidden');
 		}	
 		else {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'visible');
 		}
 		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] input.hp").val() === '0'){
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
