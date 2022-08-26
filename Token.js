@@ -770,6 +770,16 @@ class Token {
 			hp_input.change(function(e) {
 				hp_input.val(hp_input.val().trim());
 				self.update_and_sync(e);
+				let tokenID = $(this).parent().parent().attr("data-id");
+				if(window.all_token_objects[tokenID] != undefined){
+					window.all_token_objects[tokenID].options.hp = hp_input.val();
+					window.all_token_objects[tokenID].update_and_sync();
+				}			
+				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
+					window.TOKEN_OBJECTS[tokenID].options.hp = hp_input.val();	
+					window.TOKEN_OBJECTS[tokenID].update_and_sync()
+				}
+				setTimeout(ct_persist(), 500);
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
@@ -777,6 +787,15 @@ class Token {
 			maxhp_input.change(function(e) {
 				maxhp_input.val(maxhp_input.val().trim());
 				self.update_and_sync(e);
+				if(window.all_token_objects[tokenID] != undefined){
+					window.all_token_objects[tokenID].options.max_hp = maxhp_input.val();
+					window.all_token_objects[tokenID].update_and_sync();
+				}
+				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
+					window.TOKEN_OBJECTS[tokenID].options.max_hp = maxhp_input.val();	
+					window.TOKEN_OBJECTS[tokenID].update_and_sync()
+				}
+				setTimeout(ct_persist(), 500);
 			});
 			maxhp_input.click(function(e) {
 				$(e.target).select();
