@@ -161,6 +161,12 @@ class TokenCustomization {
         console.debug("setTokenOption", key, value);
         if (value === undefined) {
             delete this.tokenOptions[key];
+        } else if (key === "name") { // we want to special case "name" because we want to guarantee that it's a string
+            if (typeof value === "string") {
+                this.tokenOptions[key] = value;
+            } else {
+                this.tokenOptions[key] = `${value}`;
+            }
         } else if (value === true || value === "true") {
             this.tokenOptions[key] = true;
         } else if (value === false || value === "false") {
