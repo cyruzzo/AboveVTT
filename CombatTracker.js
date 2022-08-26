@@ -398,7 +398,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
 				old.find(".hp").val(hp_input.val().trim());
-				token.update_and_sync(e);
+				if(window.all_token_objects[token.options.id] != undefined){
+					window.all_token_objects[token.options.id].options.hp = hp_input.val();
+				}
+				window.all_token_objects[token.options.id].update_and_sync(e);
+				ct_persist();
 			});
 			hp_input.click(function(e) {
 				$(e.target).select();
@@ -407,7 +411,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
 				old.find(".max_hp").val(maxhp_input.val().trim());
-				token.update_and_sync(e);
+				if(window.all_token_objects[token.options.id] != undefined){
+					window.all_token_objects[token.options.id].options.hp = hp_input.val();
+				}
+				window.all_token_objects[token.options.id].update_and_sync(e);
+				ct_persist();
 			});
 			maxhp_input.click(function(e) {
 				$(e.target).select();
