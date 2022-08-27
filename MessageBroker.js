@@ -1157,8 +1157,7 @@ class MessageBroker {
 
 	handleToken(msg) {
 		var data = msg.data;
-		//let t=new Token($.parseJSON(msg.data));
-		let inAllTokenObjects
+
 		if(data.id == undefined)
 			return;
 
@@ -1178,8 +1177,6 @@ class MessageBroker {
 
 				if (!data.hidden)
 					delete window.all_token_objects[data.id].options.hidden;
-
-				inAllTokenObjects = true;
 			}
 		}
 		
