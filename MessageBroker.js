@@ -1165,13 +1165,17 @@ class MessageBroker {
 		if(window.all_token_objects != undefined){
 			if (data.id in window.all_token_objects) {
 				for (var property in data) {		
-					if(msg.loading && (property == 'hp' || property == 'max_hp' || property == 'init' || property == 'ac')){
+					if(msg.loading && (property == 'hp' || property == 'max_hp' || property == 'init' || property == 'ac' || property == 'ct_show')){
 						data[property] = window.all_token_objects[data.id].options[property];
 					}
 					else{
 					 window.all_token_objects[data.id].options[property] = data[property]; 
 					}
 				}
+				if(data.ct_show == undefined){
+					window.all_token_objects[data.id].options["ct_show"] = undefined;
+				}
+
 				if (!data.hidden)
 					delete window.all_token_objects[data.id].options.hidden;
 
@@ -1185,6 +1189,9 @@ class MessageBroker {
 			console.log(data.name);
 			for (var property in data) {
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
+			}
+			if(data.ct_show == undefined){
+				window.TOKEN_OBJECTS[data.id].options["ct_show"] = undefined;
 			}
 			if (!data.hidden)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
