@@ -111,11 +111,16 @@ function init_combat_tracker(){
 
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
 				element.find(".init").val(value);
-				setTimeout(ct_reorder(), 500);
+				if(element.attr("data-target") in window.TOKEN_OBJECTS){
+					window.TOKEN_OBJECTS[element.attr("data-target")].options.init = value;
+				}
+				if(element.attr("data-target") in window.all_token_objects){
+					window.all_token_objects[element.attr("data-target")].options.init = value;
+				}
 			});
-			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
-
+		ct_reorder();
+		ct_update_popout();
 		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
@@ -161,15 +166,19 @@ function init_combat_tracker(){
 		$("#combat_area tr[data-monster]").each(function(idx){
 			let element=$(this);
 			if(element.find(".init").val()!=0) // DON'T ROLL AGAIN'
-				return;
-					
+				return;			
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
 				element.find(".init").val(value);
-				setTimeout(ct_reorder(), 500);
+				if(element.attr("data-target") in window.TOKEN_OBJECTS){
+					window.TOKEN_OBJECTS[element.attr("data-target")].options.init = value;
+				}
+				if(element.attr("data-target") in window.all_token_objects){
+					window.all_token_objects[element.attr("data-target")].options.init = value;
+				}
 			});
-			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
 		});
-		
+		ct_reorder();	
+		ct_update_popout();
 	});
 	
 	
