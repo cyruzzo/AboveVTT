@@ -311,7 +311,7 @@ class Token {
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
-		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow rotating if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow rotating if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow rotating if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
@@ -355,7 +355,7 @@ class Token {
 	 * @returns void
 	 */
 	move(top, left) {
-		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 
 		// Save handle params
@@ -1237,14 +1237,14 @@ class Token {
 
 			setTokenAuras(old, this.options);
 
-			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
+			if((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 			}
-			else if((window.DM && this.options.restrictPlayerMove) || !this.options.locked){
+			else if((window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || !this.options.locked){
 				old.draggable("enable");
 			}	
-			else if(!window.DM && (!this.options.restrictPlayerMove || !this.options.locked)){
+			else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
 				old.draggable("enable");
 			}
 
