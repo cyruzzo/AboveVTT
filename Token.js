@@ -381,7 +381,7 @@ class Token {
 	}
 
 	snap_to_closest_square() {
-		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 		// shamelessly copied from the draggable code later in this file
 		// this should be a XOR... (A AND !B) OR (!A AND B)
