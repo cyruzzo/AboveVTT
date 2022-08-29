@@ -638,7 +638,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 if (ui.helper.attr("data-shape") && ui.helper.attr("data-style")) {
                     src = build_aoe_img_name(ui.helper.attr("data-style"), ui.helper.attr("data-shape"));
                 }
-                create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2, false);
+                create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, false);
                 // create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2, false, ui.helper.attr("data-name-override"));
                 close_sidebar_modal();
             } else {
