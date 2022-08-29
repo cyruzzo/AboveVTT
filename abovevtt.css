@@ -957,7 +957,19 @@ td:nth-of-type(4){
         filter: saturate(1);
     }
 }
+@keyframes pingAnimate {
+    0%{
 
+        transform: scale(0);
+    }
+    50%{
+        transform: scale(calc(var(--ping-scale)));
+    }
+    100%{
+        transform: scale(0);
+    }
+
+}
 #combat_tracker {
     position: fixed;
     height: 450px;
