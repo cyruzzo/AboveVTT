@@ -773,7 +773,7 @@ class SidebarListItem {
 
   /** @returns {boolean} true if the name partially matches the searchTerm or if the containing folder name partially matches the searchTerm */
   nameOrContainingFolderMatches(searchTerm) {
-    if (!this.name) return false;
+    if (typeof this.name !== "string") return false;
     return this.name.toLowerCase().includes(searchTerm.toLowerCase()) // any item with a partially matching name
     || this.containingFolderName().toLowerCase().includes(searchTerm.toLowerCase()) // all items within a folder with a partially matching name
   }

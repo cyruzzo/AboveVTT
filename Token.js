@@ -721,6 +721,7 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
+		ct_update_popout();
 	}
 
 	build_hp() {
@@ -1856,8 +1857,11 @@ function default_options() {
 }
 
 function center_of_view() {
-	let centerX = ($(window).width() / 2) + window.scrollX;
-	let centerY = ($(window).height() / 2) + window.scrollY;
+	let centerX = (window.innerWidth/2) + window.scrollX 
+	if($("#hide_rightpanel").hasClass("point-right")){
+		centerX = centerX - 170;
+	}
+	let centerY = (window.innerHeight/2) + window.scrollY
 	return { x: centerX, y: centerY };
 }
 
@@ -1940,8 +1944,6 @@ function place_token_at_map_point(tokenObject, x, y) {
 		options.imgsrc = parse_img(options.imgsrc);
 	}
 
-	options.left = `${x}px`;
-	options.top = `${y}px`;
 	if (options.size == undefined) {
 		if (options.sizeId != undefined) {
 			// sizeId was specified, convert it to size. This is used when adding from the monster pane
@@ -1965,7 +1967,8 @@ function place_token_at_map_point(tokenObject, x, y) {
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 		}
 	}
-
+	options.left = `${x - options.size/2}px`;
+	options.top = `${y - options.size/2}px`;
 	// set reasonable defaults for any global settings that aren't already set
 	const setReasonableDefault = function(optionName, reasonableDefault) {
 		if (options[optionName] === undefined) {
