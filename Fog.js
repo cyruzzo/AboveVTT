@@ -334,6 +334,12 @@ class WaypointManagerClass {
 	fadeoutMeasuring(){
 		let alpha = 1.0
 		const self = this
+		if(self.ctx == undefined){
+				self.cancelFadeout()
+				self.clearWaypoints();
+				clear_temp_canvas()
+				return;
+		} 
 		// only ever allow a single fadeout to occur
 		// this stops weird flashing behaviour with interacting
 		// interval function calls
