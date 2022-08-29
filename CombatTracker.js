@@ -29,10 +29,51 @@ function init_combat_tracker(){
 	ct_inside.hide();
 	$('#site').append(ct_inside);
 	const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
+	const ct_title_bar_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_title_bar_exit.click(function(){toggle.click();});
+	ct_title_bar.append(ct_title_bar_popout);
+	ct_title_bar_popout.click(function() {
+		let name = "Combat Tracker";
+		popoutWindow(name, $("#combat_tracker_inside"), $("#combat_tracker_inside").width(),  $("#combat_tracker_inside").height()-25);//subtract titlebar height
+		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside").css({
+			'display': 'block',
+			'top': '0',
+			'left': '0',
+			'right': '0',
+			'bottom': '0',
+			'width': '100%',
+			'height': '100%'
+		});
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
+		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
+		if(!window.DM){
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
+		}
+		ct_title_bar_exit.click();
+		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+			$(childWindows['Combat Tracker'].document).find('input.max_hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".max_hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+		}
+	});
+	
 	ct_title_bar.append(ct_title_bar_exit);
 	ct_inside.append(ct_title_bar);
 	ct_list_wrapper.append(ct_area);
@@ -78,6 +119,7 @@ function init_combat_tracker(){
 		next.removeAttr('data-current');
 		next.css('background','');
 		ct_persist();
+		ct_update_popout();
 	});
 
 	rn.find("#round_number").change(function (data) {
@@ -85,6 +127,7 @@ function init_combat_tracker(){
 			window.ROUND_NUMBER = Math.round(data.currentTarget.value);
 			ct_persist();
 		}
+		ct_update_popout();
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 	});
 	
@@ -114,8 +157,9 @@ function init_combat_tracker(){
 				ct_reorder(false);
 			});
 			setTimeout(ct_persist,5000); // quick hack to save and resync only one time
-		});
 
+		});
+		ct_update_popout();
 		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
@@ -154,6 +198,7 @@ function init_combat_tracker(){
 			}
 		}
 		ct_persist();
+		ct_update_popout();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
 	});
 	
@@ -250,7 +295,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	selector="#combat_area tr[data-target='"+token.options.id+"']";
 	if($(selector).length>0)
 		return;
-
 
 	entry=$("<tr/>");
 	entry.css("height","30px");
@@ -433,6 +477,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 						$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 					}
 					token.update_and_sync()
+					ct_update_popout();
 					ct_persist();
 				});
 				eye_button.append(open_eye);
@@ -455,7 +500,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		$("#combat_area").append(entry);
 		$("#combat_area td").css("vertical-align","middle");
-		
+		ct_update_popout();
 		if(persist){
 			ct_persist();
 		}
@@ -482,11 +527,49 @@ function ct_persist(){
 	});
 	data.push({'data-target': 'round',
 				'round_number':window.ROUND_NUMBER});
-	
 	var itemkey="CombatTracker"+find_game_id();
-	
 	localStorage.setItem(itemkey,JSON.stringify(data));
 	window.MB.sendMessage("custom/myVTT/CT",data);
+}
+
+function ct_update_popout(){
+	if(childWindows['Combat Tracker']){
+		$(childWindows['Combat Tracker'].document).find("body").empty("");
+		updatePopoutWindow("Combat Tracker", $("#combat_tracker_inside"));
+		removeFromPopoutWindow("Combat Tracker", "#combat_tracker_title_bar");
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside").css({
+			'display': 'block',
+			'top': '0',
+			'left': '0',
+			'right': '0',
+			'bottom': '0',
+			'width': '100%',
+			'height': '100%'
+		});
+		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
+		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
+		if(!window.DM){
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
+		}
+		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+			$(childWindows['Combat Tracker'].document).find('input.max_hp').change(function(e) {
+				let id = $(this).parent().parent().parent().attr("data-target");
+				var selector = "div[data-id='" + id + "']";
+				var old = $("#tokens").find(selector);
+				old.find(".max_hp").val($(this).val());
+				window.TOKEN_OBJECTS[id].update_and_sync(e);
+				ct_update_popout();
+			});	
+		}
+	}
 }
 
 function ct_load(data=null){
@@ -527,9 +610,13 @@ function ct_load(data=null){
 				}
 			}
 		}
+
 	}
-	if(window.DM)
+
+	ct_update_popout()
+	if(window.DM){
 		ct_persist();
+	}
 }
 
 function ct_remove_token(token,persist=true) {
@@ -546,6 +633,7 @@ function ct_remove_token(token,persist=true) {
 		}
 		$("#combat_area tr[data-target='" + id + "']").remove(); // delete token from the combat tracker if it's there
 	}
+	ct_update_popout()
 	if (persist) {
 		ct_persist();
 	}

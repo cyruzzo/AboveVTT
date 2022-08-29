@@ -957,7 +957,19 @@ td:nth-of-type(4){
         filter: saturate(1);
     }
 }
+@keyframes pingAnimate {
+    0%{
 
+        transform: scale(0);
+    }
+    50%{
+        transform: scale(calc(var(--ping-scale)));
+    }
+    100%{
+        transform: scale(0);
+    }
+
+}
 #combat_tracker {
     position: fixed;
     height: 450px;
@@ -3429,6 +3441,14 @@ button.avtt-roll-button {
     fill: #ddd;
 }
 
+.journal-button.popout-button svg path:not([fill='none']){
+    fill: #878787; 
+}
+
+.journal-button.popout-button:hover svg path:not([fill='none']){
+    fill: #000; 
+}
+
 .text-input-title-bar-enter {
     fill: #ddd;
     position: absolute;
@@ -3473,7 +3493,42 @@ button.avtt-roll-button {
 .popout-button {
     top: 2px;
 }
+.journal-button{
+    filter: none;
+    border: 1px solid #c5c5c5;
+    background: #f6f6f6;
+    font-weight: normal;
+    position: absolute;
+    right: 33px;
+    top: 9px;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
 
+}
+.journal-button svg{
+    padding: 2px 1px 2px 0px;
+}
+    
+.body-rpgcharacter-sheet .journal-button{
+    filter: none;
+    border: 1px solid #c5c5c5;
+    background: #f6f6f6;
+    font-weight: normal;
+    position: absolute;
+    right: 43px;
+    top: 6px;
+    width: 30px;
+    height: 27px;   
+    border-radius: 3px;
+}
+.body-rpgcharacter-sheet .journal-button svg {
+    padding: 0px;
+    transform: scale(1.1);
+    left: 4px;
+    top: 3px;
+    position: relative;
+}
 #tokenOptionsPopup{
     position: fixed;
     z-index: 59000;
