@@ -764,6 +764,23 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
+			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+			$(window.childWindows[name].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+				$(window.childWindows[name].document).find("body").append($("div[role='presentation']").clone(true, true));
+				let popoutContext = $(window.childWindows[name].document).find(".dcm-container");
+				let maxLeft = window.childWindows[name].innerWidth - popoutContext.width();
+				let maxTop =  window.childWindows[name].innerHeight - popoutContext.height();
+				if(parseInt(popoutContext.css("left")) > maxLeft){
+					popoutContext.css("left", maxLeft)
+				}
+				if(parseInt(popoutContext.css("top")) > maxTop){
+					popoutContext.css("top", maxTop)
+				}
+				$(window.childWindows[name].document).find("div[role='presentation']").on("click", function (clickEvent) {
+           			 $(window.childWindows[name].document).find("div[role='presentation']").remove();
+        		});
+				$(".dcm-backdrop").remove();
+			});
 			monster_close_title_button.click();
 		});
 	}
@@ -847,6 +864,23 @@ function build_draggable_monster_window() {
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
+			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();	
+			$(window.childWindows[name].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
+				$(window.childWindows[name].document).find("body").append($("div[role='presentation']").clone(true, true));
+				let popoutContext = $(window.childWindows[name].document).find(".dcm-container");
+				let maxLeft = window.childWindows[name].innerWidth - popoutContext.width();
+				let maxTop =  window.childWindows[name].innerHeight - popoutContext.height();
+				if(parseInt(popoutContext.css("left")) > maxLeft){
+					popoutContext.css("left", maxLeft)
+				}
+				if(parseInt(popoutContext.css("top")) > maxTop){
+					popoutContext.css("top", maxTop)
+				}
+				$(window.childWindows[name].document).find("div[role='presentation']").on("click", function (clickEvent) {
+           			 $(window.childWindows[name].document).find("div[role='presentation']").remove();
+        		});
+				$(".dcm-backdrop").remove();
+			});
 			monster_close_title_button.click();
 		});
 	}
