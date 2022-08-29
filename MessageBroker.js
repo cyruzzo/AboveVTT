@@ -1165,7 +1165,7 @@ class MessageBroker {
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
 
 			window.TOKEN_OBJECTS[data.id].place();
-			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 
 		}
 		else {
@@ -1181,7 +1181,7 @@ class MessageBroker {
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			};
 			t.place();
-			check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
 
 		if (window.DM) {
