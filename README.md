@@ -9,7 +9,7 @@ but then things got out of hand. As this was just a way to "hack" inside DnDBeyo
 The goal was (and still is) to reach features quickly.
 
 # Contributing
-Cnsiderations:
+Considerations:
 - Right now AboveVTT have people running games with it, so the most important rule for any PR is *we try our best to don't break things*
 - Every PR *MUST* support basic compatibility with the previous versions of AboveVTT.
 - Don't reformat the pieces you are not editing. It makes the PR hard to read, and you risk causing conflicts with other people work.
