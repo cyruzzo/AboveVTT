@@ -4020,6 +4020,20 @@ function closePopout(name){
 	}
 }
 
+
+
+
+
+
+
+function removeFromPopoutWindow(name, selector){
+	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
+	if(!childWindows[name])
+		return;
+	$(childWindows[name].document).find(selector).remove();
+	return childWindows[name];
+}
+
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .
