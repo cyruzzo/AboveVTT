@@ -449,11 +449,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		// bind update functions to hp inputs, same as Token.js
 		// token update logic for hp pulls hp from token hpbar, so update hp bar manually
-				if (!token.isPlayer()) {
+		if (!token.isPlayer()) {
 			hp_input.change(function(e) {
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
-				old.find(".hp").val(hp_input.val().trim());
+			
+				if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
+					hp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(hp_input.val())));
+				}
+
+				old.find(".hp").val(hp_input.val().trim());	
+
 				if(window.all_token_objects[token.options.id] != undefined){
 					window.all_token_objects[token.options.id].options.hp = hp_input.val();
 					window.all_token_objects[token.options.id].update_and_sync();
@@ -470,13 +476,18 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			maxhp_input.change(function(e) {
 				var selector = "div[data-id='" + token.options.id + "']";
 				var old = $("#tokens").find(selector);
+
+				if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
+					maxhp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(maxhp_input.val())));
+				}
+
 				old.find(".max_hp").val(maxhp_input.val().trim());
 				if(window.all_token_objects[token.options.id] != undefined){
 					window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
 					window.all_token_objects[token.options.id].update_and_sync();
 				}
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-					window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+					window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}			
 				setTimeout(ct_persist(), 500);
