@@ -350,6 +350,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 		
 		
+			
 		hp=$("<div class='hp'/>");
 		var hp_input = $("<input class='hp'>");
 		if(token.isPlayer()){
@@ -364,20 +365,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			entry.toggleClass("ct_dead", false);
 		}
 		hp.css('font-size','11px');
-		//hp.css('width','20px');
-		if(window.DM || !(token.options.monster > 0) )
-			entry.append($("<td/>").append(hp));
-		else
-			entry.append($("<td/>"))
+		//hp.css('width','20px');	
 			
 		var divider = $("<div style='display:inline-block;float:left'>/</>");
-		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
-			divider.css('visibility', 'hidden');
-		}
-		if(window.DM || !(token.options.monster > 0))
-			entry.append($("<td/>").append(divider));
-		else
-			entry.append($("<td/>"));
 			
 		max_hp=$("<div class='max_hp'/>");
 		var maxhp_input = $("<input class='max_hp'>");
@@ -388,15 +378,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		max_hp.append(maxhp_input);
 		max_hp.css('font-size','11px');
 		//max_hp.css('width','20px');
-		if((token.options.hidestat == true && !window.DM) || token.options.disablestat) {
+
+		if((token.options.hidestat == true && !window.DM && token.options.name != window.PLAYER_NAME) || token.options.disablestat || (!(token.options.id.startsWith("/profile")) && !window.DM && !token.options.player_owned)) {
+			divider.css('visibility', 'hidden');
 			hp.css('visibility', 'hidden');
 			max_hp.css('visibility', 'hidden');
 		}
-		if(window.DM || !(token.options.monster > 0) )
-			entry.append($("<td/>").append(max_hp));
-		else
-			entry.append($("<td/>"));
-		
+
+		entry.append($("<td/>").append(hp));
+		entry.append($("<td/>").append(divider));
+		entry.append($("<td/>").append(max_hp));
+
 		// bind update functions to hp inputs, same as Token.js
 		// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 		if (!token.isPlayer()) {

@@ -911,22 +911,22 @@ td:nth-of-type(4){
     background: none;
     border-width: 0;
 }
-#combat_area [data-monster] input.hp{
+#combat_area tr:not([data-target*="characters"]) input.hp{
     text-decoration: underline solid 0.5px #1b9af033;
 }
-#combat_area [data-monster].ct_dead input.hp{
+#combat_area tr:not([data-target*="characters"]).ct_dead input.hp{
     text-decoration-color: #bc0f0f33;
 }
 
-#combat_area [data-monster] input:not(.init){
+#combat_area tr input:not(.init){
     border-width: 0;
     background: none;
 }
 
-#combat_area [data-monster] input.hp:focus{
+#combat_area tr:not([data-target*="characters"]) input.hp:focus{
     text-decoration: underline;
 }
-#combat_area [data-monster] input:not(.init):focus{
+#combat_area tr:not([data-target*="characters"]) input:not(.init):focus{
     border-width: 1px;
 }
 
