@@ -311,7 +311,7 @@ class Token {
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
-		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow rotating if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow rotating if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow rotating if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
@@ -355,7 +355,7 @@ class Token {
 	 * @returns void
 	 */
 	move(top, left) {
-		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 
 		// Save handle params
@@ -381,7 +381,7 @@ class Token {
 	}
 
 	snap_to_closest_square() {
-		if ((!window.DM && this.options.restrictPlayerMove) || this.options.locked) return; // don't allow moving if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 		// shamelessly copied from the draggable code later in this file
 		// this should be a XOR... (A AND !B) OR (!A AND B)
@@ -641,8 +641,8 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
 
-		if(old.is(':animated')){
-			this.stopAnimation(); // stop the animation and jump to the end.
+		if(old.is(':animated')){	
+			this.stopAnimation(); // stop the animation and jump to the end.	
 		}
 
 		this.options.left = old.css("left");
@@ -685,7 +685,7 @@ class Token {
 			self.sync(e);
 		if (self.persist != null)
 			self.persist(e);
-		check_token_visibility();
+		check_single_token_visibility(self.options.id);
 
 
 		/* UPDATE COMBAT TRACKER */
@@ -697,13 +697,15 @@ class Token {
 		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.options.max_hp);
 
 
-		if((!window.DM && this.options.hidestat == true) || this.options.disablestat == true) {
+		if((!window.DM && this.options.hidestat == true && this.options.name != window.PLAYER_NAME) || this.options.disablestat == true || (!(this.options.id.startsWith("/profile")) && !window.DM && !this.options.player_owned)) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'hidden');
 		}	
 		else {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'visible');
 		}
 		if($("#combat_tracker_inside tr[data-target='" + this.options.id + "'] input.hp").val() === '0'){
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
@@ -885,7 +887,7 @@ class Token {
 		else if(window.DM){ // in all the other cases.. the DM should always see HP/AC
 			showthem=true;
 		}
-		else if(this.options.player_owned){ // if it's player_owned.. always showthem
+		else if(this.options.player_owned || this.options.name == window.PLAYER_NAME){ // if it's player_owned.. always showthem
 			showthem=true;
 		}
 		else if(this.isPlayer() && (!this.options.hidestat)){
@@ -1036,7 +1038,7 @@ class Token {
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
-					symbolImage = $(`<img class='condition-img custom-condition' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style='background: ${conditionName}' />`);
+					symbolImage = $(`<div class='condition-img custom-condition' style='background: ${conditionName}' />`);
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
 				}
@@ -1257,14 +1259,14 @@ class Token {
 
 			setTokenAuras(old, this.options);
 
-			if((!window.DM && this.options.restrictPlayerMove) || this.options.locked){
+			if((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 			}
-			else if((window.DM && this.options.restrictPlayerMove) || !this.options.locked){
+			else if((window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || !this.options.locked){
 				old.draggable("enable");
 			}	
-			else if(!window.DM && (!this.options.restrictPlayerMove || !this.options.locked)){
+			else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
 				old.draggable("enable");
 			}
 
@@ -1456,73 +1458,61 @@ class Token {
 								el.css("left", `${selectedNewleft - ((auraSize - self.sizeWidth()) / 2)}px`);
 							}
 
-							for (var id in window.TOKEN_OBJECTS) {
-								if (window.TOKEN_OBJECTS[id].selected) {
-									setTimeout(function(tempID) {
-										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										console.log($("[data-id='"+id+"']"));
-									}, 200, id);
-									if (id != self.options.id) {
-										const tok = $("#tokens div[data-id='" + id + "']");
+							for (let tok of $(".token.tokenselected")){
+								let id = $(tok).attr("data-id");
+								var curr = window.TOKEN_OBJECTS[id];
+								$("[data-id='"+id+"']").removeClass("pause_click");
+								console.log($("[data-id='"+id+"']"));
 
-										const oldtop = parseInt(tok.css("top"));
-										const oldleft = parseInt(tok.css("left"));
+								if (id != self.options.id) {
 
-										const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-										const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									const oldtop = parseInt(tok.css("top"));
+									const oldleft = parseInt(tok.css("left"));
 
-										tok.css("top", newtop + "px");
-										tok.css("left", newleft + "px");
+									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-										const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
-										if (selEl.length > 0) {
-											const auraSize = parseInt(selEl.css("width"));
+									tok.css("top", newtop + "px");
+									tok.css("left", newleft + "px");
 
-											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
-											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
-										}
+									const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
+									if (selEl.length > 0) {
+										const auraSize = parseInt(selEl.css("width"));
+
+										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
+										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
 									}
 								}
+								
 							}
-
-						} else {
-							// we want to remove the pause_click even when grid snapping is turned off
-							for (var id in window.TOKEN_OBJECTS) {
-								if (window.TOKEN_OBJECTS[id].selected) {
-									setTimeout(function(tempID) {
-										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										//console.log($("[data-id='"+id+"']"));
-									}, 200, id);
-								}
-							}
-						}
-
-						window.DRAGGING = false;
-						
-						self.update_and_sync(event);
-						if (self.selected) {
-							for (id in window.TOKEN_OBJECTS) {
-								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
-									var curr = window.TOKEN_OBJECTS[id];
-									var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-									curr.update_and_sync(ev);
-								}
-							}
-						}
-
-						draw_selected_token_bounding_box();
-						window.toggleSnap=false;
-
+						}					
+				
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
 						$("#temp_overlay").css("z-index", "25")
 						if (window.ALLOWTOKENMEASURING){
 							WaypointManager.fadeoutMeasuring()
+						}	
+						self.update_and_sync(event, false);
+						if (self.selected ) {
+							for (let tok of $(".token.tokenselected")){
+								let id = $(tok).attr("data-id");
+								if (id == self.options.id)
+									continue;
+								var curr = window.TOKEN_OBJECTS[id];
+								var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
+								$("[data-id='"+id+"']").removeClass("pause_click");
+
+								curr.update_and_sync(ev);
+							}												
 						}
+						window.DRAGGING = false;
+						draw_selected_token_bounding_box();
+						window.toggleSnap=false;
 					},
 
 				start: function (event) {
-					event.stopPropagation()
+					event.stopImmediatePropagation();
 					if(window.ALLOWTOKENMEASURING)
 						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
@@ -1574,7 +1564,6 @@ class Token {
 					}
 
 					if (window.ALLOWTOKENMEASURING){
-						setTimeout(function() {
 							// Setup waypoint manager
 							// reset measuring when a new token is picked up
 							if(window.previous_measured_token != self.options.id){
@@ -1596,7 +1585,13 @@ class Token {
 							}else{
 								WaypointManager.resetDefaultDrawStyle()
 							}
-						});
+							const canvas = document.getElementById("temp_overlay");
+							const context = canvas.getContext("2d");
+							// incase we click while on select, remove any line dashes
+							context.setLineDash([])
+							context.fillStyle = '#f50';
+							
+							WaypointManager.setCanvas(canvas);
 					}
 
 					remove_selected_token_bounding_box();
@@ -1608,7 +1603,7 @@ class Token {
 				 * @param {Object} ui UI-object
 				 */
 				drag: function(event, ui) {
-					event.stopPropagation()
+					event.stopImmediatePropagation();
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
@@ -1634,31 +1629,13 @@ class Token {
 					};
 
 					if (window.ALLOWTOKENMEASURING) {
-						if (WaypointManager.numWaypoints === 0 || tokenPosition.x !== currentTokenPosition.x || tokenPosition.y !== currentTokenPosition.y) {
-							setTimeout(function() {
+						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
+						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
-								const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-								const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
-
-								const canvas = document.getElementById("temp_overlay");
-								const context = canvas.getContext("2d");
-								// incase we click while on select, remove any line dashes
-								context.setLineDash([])
-								// list the temp overlay so we can see the ruler
-								clear_temp_canvas()
-								
-								WaypointManager.setCanvas(canvas);
-								WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
-								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-								WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
-								context.fillStyle = '#f50';
-
-							});
-						}
+						clear_temp_canvas();
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
 					}
-
-					currentTokenPosition.x = tokenPosition.x;
-					currentTokenPosition.y = tokenPosition.y;
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
@@ -1687,7 +1664,7 @@ class Token {
 
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
+							if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
 								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");

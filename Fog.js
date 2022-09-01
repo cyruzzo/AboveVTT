@@ -389,6 +389,32 @@ function is_token_under_fog(tokenid){
 		return false;
 }
 
+function check_single_token_visibility(id){
+	console.log("check_single_token_visibility");
+	if (window.DM || $("#fog_overlay").is(":hidden"))
+		return;
+	var canvas = document.getElementById("fog_overlay");
+	var ctx = canvas.getContext("2d");
+			var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+			var selector = "div[data-id='" + id + "']";
+			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+			if (is_token_under_fog(id)) {
+
+				$(selector).hide();
+				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
+				{
+						$(auraSelector).hide();
+				}
+			}
+			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
+				$(selector).css('opacity', 1);
+				$(selector).show();
+				$(auraSelector).show();
+				//console.log('SHOW '+id);
+			}
+			$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
+}
+
 
 // if it was not executed in the last 1 second, execute it immediately and asynchronously
 // if it's already scheduled to be executed, return
@@ -1639,12 +1665,6 @@ function drawPolygon (
 		ctx.stroke();
 	}
 
-}
-
-function clear_temp_canvas(){
-	const canvas = document.getElementById("temp_overlay");
-	const context = canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function clear_temp_canvas(){
