@@ -641,8 +641,8 @@ class Token {
 		var selector = "div[data-id='" + this.options.id + "']";
 		var old = $("#tokens").find(selector);
 
-		if(old.is(':animated')){
-			this.stopAnimation(); // stop the animation and jump to the end.
+		if(old.is(':animated')){	
+			this.stopAnimation(); // stop the animation and jump to the end.	
 		}
 
 		this.options.left = old.css("left");
@@ -685,7 +685,7 @@ class Token {
 			self.sync(e);
 		if (self.persist != null)
 			self.persist(e);
-		check_token_visibility();
+		check_single_token_visibility(self.options.id);
 
 
 		/* UPDATE COMBAT TRACKER */
@@ -1426,73 +1426,61 @@ class Token {
 								el.css("left", `${selectedNewleft - ((auraSize - self.sizeWidth()) / 2)}px`);
 							}
 
-							for (var id in window.TOKEN_OBJECTS) {
-								if (window.TOKEN_OBJECTS[id].selected) {
-									setTimeout(function(tempID) {
-										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										console.log($("[data-id='"+id+"']"));
-									}, 200, id);
-									if (id != self.options.id) {
-										const tok = $("#tokens div[data-id='" + id + "']");
+							for (let tok of $(".token.tokenselected")){
+								let id = $(tok).attr("data-id");
+								var curr = window.TOKEN_OBJECTS[id];
+								$("[data-id='"+id+"']").removeClass("pause_click");
+								console.log($("[data-id='"+id+"']"));
 
-										const oldtop = parseInt(tok.css("top"));
-										const oldleft = parseInt(tok.css("left"));
+								if (id != self.options.id) {
 
-										const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-										const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									const oldtop = parseInt(tok.css("top"));
+									const oldleft = parseInt(tok.css("left"));
 
-										tok.css("top", newtop + "px");
-										tok.css("left", newleft + "px");
+									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
+									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-										const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
-										if (selEl.length > 0) {
-											const auraSize = parseInt(selEl.css("width"));
+									tok.css("top", newtop + "px");
+									tok.css("left", newleft + "px");
 
-											selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
-											selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
-										}
+									const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
+									if (selEl.length > 0) {
+										const auraSize = parseInt(selEl.css("width"));
+
+										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
+										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
 									}
 								}
+								
 							}
-
-						} else {
-							// we want to remove the pause_click even when grid snapping is turned off
-							for (var id in window.TOKEN_OBJECTS) {
-								if (window.TOKEN_OBJECTS[id].selected) {
-									setTimeout(function(tempID) {
-										$("[data-id='"+tempID+"']").removeClass("pause_click");
-										//console.log($("[data-id='"+id+"']"));
-									}, 200, id);
-								}
-							}
-						}
-
-						window.DRAGGING = false;
-						
-						self.update_and_sync(event);
-						if (self.selected) {
-							for (id in window.TOKEN_OBJECTS) {
-								if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected) {
-									var curr = window.TOKEN_OBJECTS[id];
-									var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-									curr.update_and_sync(ev);
-								}
-							}
-						}
-
-						draw_selected_token_bounding_box();
-						window.toggleSnap=false;
-
+						}					
+				
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
 						$("#temp_overlay").css("z-index", "25")
 						if (window.ALLOWTOKENMEASURING){
 							WaypointManager.fadeoutMeasuring()
+						}	
+						self.update_and_sync(event, false);
+						if (self.selected ) {
+							for (let tok of $(".token.tokenselected")){
+								let id = $(tok).attr("data-id");
+								if (id == self.options.id)
+									continue;
+								var curr = window.TOKEN_OBJECTS[id];
+								var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
+								$("[data-id='"+id+"']").removeClass("pause_click");
+
+								curr.update_and_sync(ev);
+							}												
 						}
+						window.DRAGGING = false;
+						draw_selected_token_bounding_box();
+						window.toggleSnap=false;
 					},
 
 				start: function (event) {
-					event.stopPropagation()
+					event.stopImmediatePropagation();
 					if(window.ALLOWTOKENMEASURING)
 						$("#temp_overlay").css("z-index", "50");
 					window.DRAWFUNCTION = "select"
@@ -1544,7 +1532,6 @@ class Token {
 					}
 
 					if (window.ALLOWTOKENMEASURING){
-						setTimeout(function() {
 							// Setup waypoint manager
 							// reset measuring when a new token is picked up
 							if(window.previous_measured_token != self.options.id){
@@ -1566,7 +1553,13 @@ class Token {
 							}else{
 								WaypointManager.resetDefaultDrawStyle()
 							}
-						});
+							const canvas = document.getElementById("temp_overlay");
+							const context = canvas.getContext("2d");
+							// incase we click while on select, remove any line dashes
+							context.setLineDash([])
+							context.fillStyle = '#f50';
+							
+							WaypointManager.setCanvas(canvas);
 					}
 
 					remove_selected_token_bounding_box();
@@ -1578,7 +1571,7 @@ class Token {
 				 * @param {Object} ui UI-object
 				 */
 				drag: function(event, ui) {
-					event.stopPropagation()
+					event.stopImmediatePropagation();
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
@@ -1604,31 +1597,13 @@ class Token {
 					};
 
 					if (window.ALLOWTOKENMEASURING) {
-						if (WaypointManager.numWaypoints === 0 || tokenPosition.x !== currentTokenPosition.x || tokenPosition.y !== currentTokenPosition.y) {
-							setTimeout(function() {
+						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
+						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
-								const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-								const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
-
-								const canvas = document.getElementById("temp_overlay");
-								const context = canvas.getContext("2d");
-								// incase we click while on select, remove any line dashes
-								context.setLineDash([])
-								// list the temp overlay so we can see the ruler
-								clear_temp_canvas()
-								
-								WaypointManager.setCanvas(canvas);
-								WaypointManager.registerMouseMove(tokenMidX, tokenMidY);
-								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-								WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
-								context.fillStyle = '#f50';
-
-							});
-						}
+						clear_temp_canvas();
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
 					}
-
-					currentTokenPosition.x = tokenPosition.x;
-					currentTokenPosition.y = tokenPosition.y;
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
@@ -1657,7 +1632,7 @@ class Token {
 
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
-							if ((id != self.options.id) && window.TOKEN_OBJECTS[id].selected && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
+							if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
 								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
