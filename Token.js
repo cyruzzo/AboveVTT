@@ -1466,16 +1466,16 @@ class Token {
 
 								if (id != self.options.id) {
 
-									const oldtop = parseInt(tok.css("top"));
-									const oldleft = parseInt(tok.css("left"));
+									const oldtop = parseInt($(tok).css("top"));
+									const oldleft = parseInt($(tok).css("left"));
 
 									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
 									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-									tok.css("top", newtop + "px");
-									tok.css("left", newleft + "px");
+									$(tok).css("top", newtop + "px");
+									$(tok).css("left", newleft + "px");
 
-									const selEl = tok.parent().parent().find("#aura_" + id.replaceAll("/", ""));
+									const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 									if (selEl.length > 0) {
 										const auraSize = parseInt(selEl.css("width"));
 
