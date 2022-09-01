@@ -1218,11 +1218,11 @@ class MessageBroker {
 		}
 
 
-		if (window.DM) {
-			console.log("**** persistoooooooooo token");
-			window.ScenesHandler.persist();
-		}
+	if (window.DM) {
+		console.log("**** persistoooooooooo token");
+		window.ScenesHandler.persist();
 	}
+	
 	if(window.DM) {
 		ct_reorder();
 	}
