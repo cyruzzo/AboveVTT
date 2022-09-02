@@ -284,8 +284,8 @@ function init_combat_tracker(){
 function ct_reorder(persist=true) {
 	var items = $("#combat_area").children().sort(
 		function(a, b) {
-			var vA = parseInt($(".init", a).val());
-			var vB = parseInt($(".init", b).val());
+			var vA = (isNaN(parseInt($(".init", a).val()))) ? -1 : parseInt($(".init", a).val());
+			var vB =  (isNaN(parseInt($(".init", b).val()))) ? -1 : parseInt($(".init", b).val());
 			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
 		});
 
