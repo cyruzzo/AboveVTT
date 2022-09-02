@@ -2720,7 +2720,8 @@ function init_ui() {
 			y: mousey,
 			from: window.PLAYER_NAME,
 			dm: window.DM,
-			color: pingColor
+			color: pingColor,
+			center_on_ping: $('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')
 		}
 
 		set_pointer(data,true);
@@ -3031,6 +3032,29 @@ function init_zoom_buttons() {
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
 
+	ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
+		<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 19.877 19.877" style="enable-background:new 0 0 19.877 19.877; width:20px; height:20px;" xml:space="preserve">
+		<g>
+			<g>
+				<path d="M9.938,3.403c-3.604,0-6.537,2.933-6.537,6.537s2.933,6.537,6.537,6.537s6.538-2.933,6.538-6.537    C16.476,6.336,13.542,3.403,9.938,3.403z M9.938,14.892c-2.73,0-4.952-2.222-4.952-4.952s2.222-4.952,4.952-4.952    c2.731,0,4.953,2.222,4.953,4.952S12.669,14.892,9.938,14.892z"/>
+				<path d="M9.938,0.001C4.458,0.001,0,4.459,0,9.938s4.458,9.938,9.938,9.938    c5.481,0,9.939-4.458,9.939-9.938C19.877,4.459,15.419,0.001,9.938,0.001z M9.938,18.292c-4.606,0-8.353-3.746-8.353-8.353    c0-4.606,3.747-8.353,8.353-8.353s8.353,3.747,8.353,8.353C18.291,14.545,14.544,18.292,9.938,18.292z"/>
+			</g>
+		</g>
+		</svg>
+		</svg></div></div>
+		`);
+	ping_center.click(function(){
+		if($('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){
+			$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+		}
+		else{
+			$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+		}		
+	});
+	if(window.DM)
+		zoom_section.append(ping_center);
+
 	zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
@@ -3054,7 +3078,7 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-122px");
+		zoom_section.css("left","-152px");
 	} else {
 		zoom_section.css("left","-170px");
 	}
