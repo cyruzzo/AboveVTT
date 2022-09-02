@@ -1490,7 +1490,7 @@ class Token {
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
 						$("#temp_overlay").css("z-index", "25")
-						if (window.ALLOWTOKENMEASURING){
+						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
 						self.update_and_sync(event, false);
@@ -1513,8 +1513,9 @@ class Token {
 
 				start: function (event) {
 					event.stopImmediatePropagation();
-					if(window.ALLOWTOKENMEASURING)
+					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						$("#temp_overlay").css("z-index", "50");
+					}
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					click.x = event.pageX;
@@ -1563,7 +1564,7 @@ class Token {
 						el.attr("data-top", el.css("top").replace("px", ""));
 					}
 
-					if (window.ALLOWTOKENMEASURING){
+					if (get_avtt_setting_value("allowTokenMeasurement")) {
 							// Setup waypoint manager
 							// reset measuring when a new token is picked up
 							if(window.previous_measured_token != self.options.id){
@@ -1628,7 +1629,7 @@ class Token {
 						top: tokenPosition.y
 					};
 
-					if (window.ALLOWTOKENMEASURING) {
+					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 

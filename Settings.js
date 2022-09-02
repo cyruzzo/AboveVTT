@@ -214,7 +214,6 @@ function get_avtt_setting_default_value(name) {
 }
 function get_avtt_setting_value(name) {
 	switch (name) {
-		case "allowTokenMeasurement": return window.ALLOWTOKENMEASURING;
 		case "iframeStatBlocks": return should_use_iframes_for_monsters();
 		default:
 			const setValue = window.EXPERIMENTAL_SETTINGS[name];
@@ -227,13 +226,6 @@ function get_avtt_setting_value(name) {
 function set_avtt_setting_value(name, newValue) {
 	console.log(`set_avtt_setting_value ${name} is now ${newValue}`);
 	switch (name) {
-		case "allowTokenMeasurement":
-			if (newValue === true || newValue === false) {
-				window.ALLOWTOKENMEASURING = newValue;
-			} else {
-				window.ALLOWTOKENMEASURING = get_avtt_setting_default_value(name);
-			}
-			break;
 		case "iframeStatBlocks":
 			if (newValue === true) {
 				use_iframes_for_monsters();
