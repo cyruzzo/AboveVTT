@@ -317,7 +317,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			token.options.ct_show = false;
 			if(typeof window.all_token_objects != 'undefined') {
 				window.all_token_objects[token.options.id].options.ct_show = false;
-				window.all_token_objects.update_and_sync();
+				window.all_token_objects[token.options.id].update_and_sync();
 			}
 		}
 		else {		
@@ -327,7 +327,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			else{
 				token.options.ct_show = true;
 				window.all_token_objects[token.options.id].options.ct_show = true;
-				window.all_token_objects.update_and_sync();
+				window.all_token_objects[token.options.id].update_and_sync();
 			}
 		}	
 	}
