@@ -1978,12 +1978,14 @@ function place_token_at_map_point(tokenObject, x, y) {
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 		}
 	}
-	if(window.all_token_objects[options.id] !== undefined){
-		if(window.all_token_objects[options.id].options.ct_show !== undefined){
-			options = window.all_token_objects[options.id].options;
-		  	$(`#combat_area tr[data-target='${options.id}'] .findSVG`).remove();
-	       	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
-	        $(`#combat_area tr[data-target='${options.id}'] .findTokenCombatButton`).append(findSVG);
+	if(window.all_token_objects !== undefined){
+		if(window.all_token_objects[options.id] !== undefined){
+			if(window.all_token_objects[options.id].options.ct_show !== undefined){
+				options = window.all_token_objects[options.id].options;
+			  	$(`#combat_area tr[data-target='${options.id}'] .findSVG`).remove();
+		       	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
+		        $(`#combat_area tr[data-target='${options.id}'] .findTokenCombatButton`).append(findSVG);
+			}
 		}
 	}
 	options.left = `${x - options.size/2}px`;
@@ -2619,10 +2621,14 @@ function paste_selected_tokens() {
 		let options = Object.assign({}, token.options);
 		let newId = uuid();
 		options.id = newId;
-		// TODO: figure out the location under the cursor and paste there instead of doing an offset
-		options.top = `${parseFloat(options.top) + Math.round(token.sizeHeight() / 2)}px`;
-		options.left = `${parseFloat(options.left) + Math.round(token.sizeWidth() / 2)}px`;
+		// TODO: figure out the location under the cursor and paste there instead of doing center of view
+		options.init = undefined;
+		options.ct_show = undefined;
 		options.selected = true;
+		let center = center_of_view() 
+		let mapView = convert_point_from_view_to_map(center.x, center.y, false);
+		options.top = `${mapView.y - Math.round(token.sizeHeight() / 2)}px`;
+		options.left = `${mapView.x - Math.round(token.sizeWidth() / 2) + token.sizeWidth()  * i + 5 - (token.sizeWidth() * ((window.TOKEN_PASTE_BUFFER.length/2)-1))}px`;
 		window.ScenesHandler.create_update_token(options);
 		// deselect the old and select the new so the user can easily move the new tokens around after pasting them
 		if(typeof window.TOKEN_OBJECTS[id] !== "undefined"){
@@ -2632,7 +2638,6 @@ function paste_selected_tokens() {
 		window.TOKEN_OBJECTS[newId].selected = true;
 		window.TOKEN_OBJECTS[newId].place_sync_persist();
 	}
-
 	// copy the newly selected tokens in case they paste again, we want them pasted in reference to the newly created tokens
 	copy_selected_tokens();
 	draw_selected_token_bounding_box();
