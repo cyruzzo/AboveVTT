@@ -1386,6 +1386,9 @@ class Token {
 			if(window.all_token_objects[this.options.id] == undefined){
 				window.all_token_objects[this.options.id] = {};
 			}
+			if(window.all_token_objects[this.options.id].ct_show !== undefined){
+				this.options.ct_show = window.all_token_objects[this.options.id].ct_show 
+			}
 			if (this.options !== undefined){
 				window.all_token_objects[this.options.id] = new Token(this.options);
 			}
@@ -2611,7 +2614,7 @@ function paste_selected_tokens() {
 
 	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
 		let id = window.TOKEN_PASTE_BUFFER[i];
-		let token = window.TOKEN_OBJECTS[id];
+		let token = window.all_token_objects[id];
 		if (token == undefined || token.isPlayer()) continue; // only allow copy/paste for monster tokens, and protect against pasting deleted tokens
 		let options = Object.assign({}, token.options);
 		let newId = uuid();
@@ -2622,8 +2625,10 @@ function paste_selected_tokens() {
 		options.selected = true;
 		window.ScenesHandler.create_update_token(options);
 		// deselect the old and select the new so the user can easily move the new tokens around after pasting them
-		window.TOKEN_OBJECTS[id].selected = false;
-		window.TOKEN_OBJECTS[id].place_sync_persist();
+		if(typeof window.TOKEN_OBJECTS[id] !== "undefined"){
+			window.TOKEN_OBJECTS[id].selected = false;
+			window.TOKEN_OBJECTS[id].place_sync_persist();
+		}
 		window.TOKEN_OBJECTS[newId].selected = true;
 		window.TOKEN_OBJECTS[newId].place_sync_persist();
 	}
