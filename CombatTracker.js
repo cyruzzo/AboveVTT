@@ -317,6 +317,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			token.options.ct_show = false;
 			if(typeof window.all_token_objects != 'undefined') {
 				window.all_token_objects[token.options.id].options.ct_show = false;
+				window.all_token_objects.update_and_sync();
 			}
 		}
 		else {		
@@ -325,6 +326,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			}
 			else{
 				token.options.ct_show = true;
+				window.all_token_objects[token.options.id].options.ct_show = true;
+				window.all_token_objects.update_and_sync();
 			}
 		}	
 	}
@@ -683,7 +686,7 @@ function ct_update_popout(){
 function ct_load(data=null){
 	
 	
-	if(data){	
+	if(!data.loading){	
 		$("#combat_area tr[data-current]").removeAttr("data-current");
 		for(i=0;i<data.length;i++){
 			if (data[i]['data-target'] === 'round'){
@@ -715,8 +718,7 @@ function ct_load(data=null){
 			}
 		}
 	}
-
-	if(data == null){
+	else{
 		for(tokenID in window.all_token_objects){
 			if(window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{
@@ -725,6 +727,9 @@ function ct_load(data=null){
 				};
 				ct_add_token(window.all_token_objects[tokenID],false,true);
 			}		
+		}
+		if(data.current){
+			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
 		}
 	}
 	if(window.DM){
