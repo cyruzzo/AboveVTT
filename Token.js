@@ -1385,9 +1385,9 @@ class Token {
 			}
 			if(window.all_token_objects[this.options.id] == undefined){
 				window.all_token_objects[this.options.id] = {};
-				if (this.options !== undefined){
-					window.all_token_objects[this.options.id] = new Token(this.options);
-				}
+			}
+			if (this.options !== undefined){
+				window.all_token_objects[this.options.id] = new Token(this.options);
 			}
 			else if (typeof window.all_token_objects[this.options.id].options.init !== undefined && window.all_token_objects[this.options.id].options.ct_show !== undefined){		
 				this.options.init = window.all_token_objects[this.options.id].options.init;
