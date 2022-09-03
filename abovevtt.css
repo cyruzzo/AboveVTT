@@ -4374,6 +4374,19 @@ input.max_hp[disabled]{
 .glc-game-log>div>div[class*="-Title"] {
     margin-bottom: 7px;
 }
+.glc-game-log .ct-sidebar__heading span:not([class*='uncommon'], [class*='rare'], [class*='very-rare'], [class*='legendary'], [class*='artifact']),
+.glc-game-log .ddbc-property-list span{
+    color: rgb(92, 112, 128);
+}
+.glc-game-log .ddbc-pencil-svg {
+    display: none;
+}
+.glc-game-log .ddbc-concentration-icon, 
+.glc-game-log .ddbc-ritual-icon{
+    position: absolute;
+    width: 24px;
+    height:  24px;
+}
 .stream-dice-button:hover {
     cursor: pointer;
     background: rgb(245, 248, 250);
