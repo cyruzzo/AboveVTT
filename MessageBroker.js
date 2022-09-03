@@ -1321,9 +1321,14 @@ class MessageBroker {
 					check_token_visibility();
 	
 			if(window.CLOUD){
+				let data = {
+					loading: true,
+					current: $("#combat_area [data-current]").attr('data-target')
+				}
 				$("#combat_area").empty();
-				ct_load();
+				ct_load(data);
 			}
+
 
 			if(window.DM)
 				get_pclist_player_data();
