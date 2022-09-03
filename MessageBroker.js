@@ -1182,8 +1182,6 @@ class MessageBroker {
 		
 		
 		if (data.id in window.TOKEN_OBJECTS) {
-			console.log(data.init);
-			console.log(data.name);
 			for (var property in data) {
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 			}
@@ -1197,15 +1195,11 @@ class MessageBroker {
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 
 		}
-		else{
+		else if (data.left !== undefined){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
 			
 			if (window.DM) {
 				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
-			}
-			if (data.left == undefined){
-				data.left = "0px";
-				data.top = "0px";
 			}
 			let t = new Token(data);
 			window.TOKEN_OBJECTS[data.id] = t;
