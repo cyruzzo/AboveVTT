@@ -695,7 +695,7 @@ function ct_load(data=null){
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
 				}
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
-				if(window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined)
+				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined )
 				{
 					window.all_token_objects[data[i]['data-target']].sync = function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', this.options);
@@ -718,7 +718,7 @@ function ct_load(data=null){
 
 	if(data == null){
 		for(tokenID in window.all_token_objects){
-			if(window.all_token_objects[tokenID].options.ct_show !== undefined)
+			if(window.all_token_objects[tokenID].options.ct_show == true || window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined ) 
 			{
 				window.all_token_objects[tokenID].sync = function(e) {				
 					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[tokenID].options);
