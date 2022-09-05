@@ -1305,9 +1305,9 @@ class MessageBroker {
 			}
 			console.log("LOADING TOKENS!");
 
-			for (var i = 0; i < data.tokens.length; i++) {
+			for (let id in data.tokens) {
 				self.handleToken({
-					data: data.tokens[i],
+					data: data.tokens[id],
 					loading: true
 				});
 			}
