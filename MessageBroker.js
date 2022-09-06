@@ -1217,10 +1217,10 @@ class MessageBroker {
 		window.ScenesHandler.persist();
 	}
 	
-	if(window.DM) {
+	if(window.DM && msg.persist != false && msg.data.ct_show != undefined) {
 		ct_reorder();
 	}
-	else{
+	else if(msg.data.ct_show != undefined){
 		ct_reorder(false);
 	}
 	
@@ -1315,7 +1315,8 @@ class MessageBroker {
 			for (let id in data.tokens) {
 				self.handleToken({
 					data: data.tokens[id],
-					loading: true
+					loading: true,
+					persist: false
 				});
 			}
 			if(!window.DM)

@@ -172,11 +172,21 @@ function init_combat_tracker(){
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
-		$("#combat_area button.removeTokenCombatButton").each(function() {
-			this.click();
-		});
+		for(id in window.all_token_objects)
+		{	
+			if(window.all_token_objects[id].options.ct_show == undefined)
+				continue;
+			ct_remove_token(window.all_token_objects[id], false);
+			if(window.TOKEN_OBJECTS[id] != undefined){
+				window.TOKEN_OBJECTS[id].options.ct_show = undefined;
+				window.TOKEN_OBJECTS[id].update_and_sync();
+			}
+			window.all_token_objects[id].options.ct_show = undefined;
+			window.all_token_objects[id].update_and_sync();
+		}
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
+		ct_persist();
 	});
 	
 	next=$("<button id='combat_next_button'><u>N</u>EXT</button>");
@@ -732,13 +742,7 @@ function ct_load(data=null){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
 		}
 	}
-	if(window.DM){
-		setTimeout(ct_reorder(), 500);
-	}
-	else{
-		setTimeout(ct_reorder(false), 500);
-	}
-ct_update_popout()
+	ct_update_popout()
 }
 
 
