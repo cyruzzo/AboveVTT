@@ -1195,7 +1195,7 @@ class MessageBroker {
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 
 		}
-		else if (data.left !== undefined){
+		else{
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
 			
 			if (window.DM) {
@@ -1216,14 +1216,6 @@ class MessageBroker {
 		console.log("**** persistoooooooooo token");
 		window.ScenesHandler.persist();
 	}
-	
-	if(window.DM && msg.persist != false && msg.data.ct_show != undefined) {
-		ct_reorder();
-	}
-	else if(msg.data.ct_show != undefined){
-		ct_reorder(false);
-	}
-	
 }
 
 	handleScene(msg) {

@@ -389,13 +389,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.all_token_objects[token.options.id].options.init = init.val()
 					window.all_token_objects[token.options.id].sync = function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
-					};
-					window.all_token_objects[token.options.id].update_and_sync()
+					}
+					window.all_token_objects[token.options.id].update_and_sync();
 				}
 				token.options.init = init.val();
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
 				setTimeout(ct_reorder(), 500);
 			}
@@ -623,7 +623,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
   	ct_update_popout();
 
-	if(window.DM){
+	if(window.DM && persist == true){
 		setTimeout(ct_reorder(), 500);
 	}
 	
