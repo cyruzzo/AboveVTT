@@ -398,8 +398,7 @@ class MessageBroker {
 
 			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
-					if(["custom/myVTT/token",
-						"custom/myVTT/delete_token",
+					if(["custom/myVTT/delete_token",
 						"custom/myVTT/createtoken",
 						"custom/myVTT/reveal",
 						"custom/myVTT/fogdata",
@@ -414,14 +413,15 @@ class MessageBroker {
 				}
 			}
 
-			if (msg.eventType == "custom/myVTT/token") {
+			if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
 				self.handleToken(msg);
 			}
 			if(msg.eventType=="custom/myVTT/delete_token"){
 				let tokenid=msg.data.id;
-				if(tokenid in window.TOKEN_OBJECTS)
+				if(tokenid in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[tokenid].options.deleteableByPlayers = true;
 					window.TOKEN_OBJECTS[tokenid].delete(false,false);
+				}
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
@@ -1179,10 +1179,11 @@ class MessageBroker {
 					delete window.all_token_objects[data.id].options.hidden;
 			}
 		}
-		
-		
+			
 		if (data.id in window.TOKEN_OBJECTS) {
 			for (var property in data) {
+				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top"))
+					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 			}
 			if(data.ct_show == undefined){
@@ -1193,9 +1194,8 @@ class MessageBroker {
 
 			window.TOKEN_OBJECTS[data.id].place();
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-
-		}
-		else{
+		}	
+		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
 			
 			if (window.DM) {
