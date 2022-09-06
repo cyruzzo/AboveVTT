@@ -164,7 +164,7 @@ function init_combat_tracker(){
 		});
 		ct_reorder();
 
-		setTimeout(ct_persist,5000); // quick hack to save and resync only one time
+		setTimeout(ct_persist,1000); // quick hack to save and resync only one time
 
 		ct_update_popout();
 		$("#combat_area tr").first().attr('data-current','1');
@@ -621,7 +621,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	$("#combat_area").append(entry);
 	$("#combat_area td").css("vertical-align","middle");
 
-  ct_update_popout();
+  	ct_update_popout();
 
 	if(window.DM){
 		setTimeout(ct_reorder(), 500);
