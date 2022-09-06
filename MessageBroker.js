@@ -1255,6 +1255,13 @@ class MessageBroker {
 			}
 		}
 
+		for(i in msg.data.tokens){
+			if(i == msg.data.tokens[i].id)
+				continue;
+			msg.data.tokens[msg.data.tokens[i].id] = msg.data.tokens[i];
+			delete msg.data.tokens[i];
+		}
+		msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
 		window.CURRENT_SCENE_DATA = msg.data;
 		if(window.CLOUD && window.DM){
 			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
