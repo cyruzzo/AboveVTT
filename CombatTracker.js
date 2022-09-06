@@ -742,7 +742,10 @@ function ct_load(data=null){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
 		}
 	}
-	ct_update_popout()
+	if(window.DM){
+		ct_reorder();
+	}
+	ct_update_popout();
 }
 
 

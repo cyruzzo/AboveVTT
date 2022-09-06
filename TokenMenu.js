@@ -179,6 +179,8 @@ function token_context_menu_expanded(tokenIds, e) {
 					t.update_and_sync();
 				});
 			}
+
+			ct_reorder();
 			ct_persist();
 		});
 		
