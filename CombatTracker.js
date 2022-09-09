@@ -162,9 +162,9 @@ function init_combat_tracker(){
 				}
 			});
 		});
-		ct_reorder();
-
-		setTimeout(ct_persist,1000); // quick hack to save and resync only one time
+		
+		setTimeout(ct_reorder,500); // quick hack to save and resync only one time
+		setTimeout(ct_update_popout,600);
 
 		ct_update_popout();
 		$("#combat_area tr").first().attr('data-current','1');
