@@ -118,9 +118,6 @@ function init_combat_tracker(){
 		$("#combat_area tr").first().attr('data-current','1');
 		next.removeAttr('data-current');
 		next.css('background','');
-		window.ScenesHandler.scene.currentCTID = $("#combat_area tr").first.attr('data-target');
-		window.ScenesHandler.scene.ROUND_NUMBER = window.ROUND_NUMBER;
-		window.ScenesHandler.persist_current_scene(true);
 		ct_persist();
 		ct_update_popout();
 	});
@@ -131,8 +128,6 @@ function init_combat_tracker(){
 			ct_persist();
 		}
 		ct_update_popout();
-		window.ScenesHandler.scene.ROUND_NUMBER = window.ROUND_NUMBER;
-		window.ScenesHandler.persist_current_scene(true);
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 	});
 	
@@ -167,7 +162,7 @@ function init_combat_tracker(){
 				}
 			});
 		});
-
+		
 		setTimeout(ct_reorder,500); // quick hack to save and resync only one time
 		setTimeout(ct_update_popout,600);
 
@@ -191,8 +186,6 @@ function init_combat_tracker(){
 		}
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
-		window.ScenesHandler.scene.ROUND_NUMBER = window.ROUND_NUMBER;
-		window.ScenesHandler.persist_current_scene(true);
 		ct_persist();
 	});
 	
@@ -212,7 +205,6 @@ function init_combat_tracker(){
 			next=current.next();
 			if(next.length==0){
 				window.ROUND_NUMBER++;
-				window.ScenesHandler.scene.ROUND_NUMBER = window.ROUND_NUMBER;
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
 				next=$("#combat_area tr").first()
 			}
@@ -221,8 +213,6 @@ function init_combat_tracker(){
 				$("[data-current][data-monster] button.openSheetCombatButton").click();
 			}
 		}
-		window.ScenesHandler.scene.currentCTID = $("#combat_area tr[data-current]").attr('data-target');
-		window.ScenesHandler.persist_current_scene(true);
 		ct_persist();
 		ct_update_popout();
 		//var target=$("#combat_area tr[data-current=1]").attr('data-target');
@@ -723,6 +713,7 @@ function ct_load(data=null){
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
 				{
+
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
@@ -747,12 +738,6 @@ function ct_load(data=null){
 		}
 		if(data.current){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
-		}
-		else if(window.CURRENT_SCENE_DATA.currentCTID != undefined){
-			$("#combat_area tr[data-target='"+window.CURRENT_SCENE_DATA.currentCTID+"']").attr("data-current","1"); 
-		}
-		if(window.ScenesHandler.scene.ROUND_NUMBER != undefined && document.getElementById('round_number').value < 2){
-			document.getElementById('round_number').value = window.ScenesHandler.scene.ROUND_NUMBER;
 		}
 	}
 	if(window.DM){
