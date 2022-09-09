@@ -2107,12 +2107,12 @@ ul.context-menu-list > li {
 
 .soundpad-section audio{
 	height:20px;
-	width: 200px;
+	width: 270px;
 }
 
 .soundpad-line-title{
 	display: inline-block;
-	width: 70px;
+	width: 100%;
 }
 
 #hide_rightpanel {
