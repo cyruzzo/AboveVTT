@@ -517,7 +517,7 @@ class MonsterStatBlock {
         }
         return objects.map(obj => obj.name).join(", ");
     }
-     get damageVulnerabilitiesHtml() {
+    get damageVulnerabilitiesHtml() {
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES);
     }
     get damageResistancesHtml() {
