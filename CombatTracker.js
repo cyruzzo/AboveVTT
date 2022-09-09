@@ -81,7 +81,7 @@ function init_combat_tracker(){
 	ct_inside.append(ct_title_bar);
 	ct_list_wrapper.append(ct_area);
 	ct_inside.append(ct_list_wrapper);
-	
+
 	$(ct_title_bar).dblclick(function(){
 		if($(ct_title_bar).hasClass("restored")){
 			$(ct_title_bar).data("prev-height", $("#combat_tracker_inside").height());
