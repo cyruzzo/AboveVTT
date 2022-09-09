@@ -850,7 +850,7 @@ div#scene_properties form > div {
 .hasTooltip:hover:after {
     opacity: 1;
     visibility: visible;
-    transition: .05s ease-in-out 0.3s;
+    transition: 0.05s ease-in-out 0.3s;
 }
 
 .hasTooltip.CTToken:hover:after {
