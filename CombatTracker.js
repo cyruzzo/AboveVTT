@@ -706,13 +706,14 @@ function ct_load(data=null){
 			else if(data[i]['data-target'] !== undefined){
 				if (window.all_token_objects[data[i]['data-target']] == undefined) {
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
+					window.all_token_objects[data[i]['data-target']].sync = function(e) {				
+						window.MB.sendMessage('custom/myVTT/token', this.options);
+					};
 				}
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
 				{
-					window.all_token_objects[data[i]['data-target']].sync = function(e) {				
-						window.MB.sendMessage('custom/myVTT/token', this.options);
-					};
+
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
@@ -732,9 +733,6 @@ function ct_load(data=null){
 		for(tokenID in window.all_token_objects){
 			if(window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{
-				window.all_token_objects[tokenID].sync = function(e) {				
-					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[tokenID].options);
-				};
 				ct_add_token(window.all_token_objects[tokenID],false,true);
 			}		
 		}

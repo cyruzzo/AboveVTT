@@ -297,6 +297,7 @@ class Token {
 		$(selector).remove();
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
+		delete window.all_token_objects[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		if (persist == true) {
 			if(window.CLOUD && sync){

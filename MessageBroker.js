@@ -1171,9 +1171,7 @@ class MessageBroker {
 					 window.all_token_objects[data.id].options[property] = data[property]; 
 					}
 				}
-				if(data.ct_show == undefined){
-					window.all_token_objects[data.id].options["ct_show"] = undefined;
-				}
+
 
 				if (!data.hidden)
 					delete window.all_token_objects[data.id].options.hidden;
