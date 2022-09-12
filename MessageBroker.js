@@ -398,8 +398,7 @@ class MessageBroker {
 
 			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
-					if(["custom/myVTT/token",
-					    "custom/myVTT/delete_token",
+					if(["custom/myVTT/delete_token",
 						"custom/myVTT/createtoken",
 						"custom/myVTT/reveal",
 						"custom/myVTT/fogdata",
@@ -414,14 +413,15 @@ class MessageBroker {
 				}
 			}
 
-			if (msg.eventType == "custom/myVTT/token") {
+			if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
 				self.handleToken(msg);
 			}
 			if(msg.eventType=="custom/myVTT/delete_token"){
 				let tokenid=msg.data.id;
-				if(tokenid in window.TOKEN_OBJECTS)
+				if(tokenid in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[tokenid].options.deleteableByPlayers = true;
 					window.TOKEN_OBJECTS[tokenid].delete(false,false);
+				}
 			}
 			if(msg.eventType == "custom/myVTT/createtoken"){
 				if(window.DM){
@@ -949,6 +949,8 @@ class MessageBroker {
 							var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 							if(converted==entityid){
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
+								window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
 							}
 						}
 					);
@@ -959,10 +961,11 @@ class MessageBroker {
 						console.log(converted);
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
-							ct_reorder();
+							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
+							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 						}
 					});
-					ct_persist();
+					setTimeout(ct_reorder(), 500);
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
@@ -1001,8 +1004,8 @@ class MessageBroker {
 		}, 4000), 15000);
 	}
 
-    	handleCT(data){
-		$("#combat_area").empty();
+  handleCT(data){
+  	$("#combat_area").empty();
 		ct_load(data);
 	}
 
@@ -1154,41 +1157,64 @@ class MessageBroker {
 
 	handleToken(msg) {
 		var data = msg.data;
-		//let t=new Token($.parseJSON(msg.data));
+
+		if(data.id == undefined)
+			return;
+
+		if(window.all_token_objects != undefined){
+			if (data.id in window.all_token_objects) {
+				for (var property in data) {		
+					if(msg.loading && property != "left" && property != "top"){
+						data[property] = window.all_token_objects[data.id].options[property];
+					}
+					else{
+					 window.all_token_objects[data.id].options[property] = data[property]; 
+					}
+				}
 
 
+				if (!data.hidden)
+					delete window.all_token_objects[data.id].options.hidden;
+			}
+		}
+			
 		if (data.id in window.TOKEN_OBJECTS) {
 			for (var property in data) {
+				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top"))
+					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
+			}
+			if(data.ct_show == undefined){
+				window.TOKEN_OBJECTS[data.id].options["ct_show"] = undefined;
 			}
 			if (!data.hidden)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
 
 			window.TOKEN_OBJECTS[data.id].place();
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-
-		}
-		else {
+		}	
+		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
-
+			
 			if (window.DM) {
 				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
 			}
-
 			let t = new Token(data);
 			window.TOKEN_OBJECTS[data.id] = t;
 			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			};
 			t.place();
+
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}
 
-		if (window.DM) {
-			console.log("**** persistoooooooooo token");
-			window.ScenesHandler.persist();
-		}
+
+	if (window.DM) {
+		console.log("**** persistoooooooooo token");
+		window.ScenesHandler.persist();
 	}
+}
 
 	handleScene(msg) {
 		// console.group("handlescene")
@@ -1219,6 +1245,13 @@ class MessageBroker {
 			}
 		}
 
+		for(i in msg.data.tokens){
+			if(i == msg.data.tokens[i].id)
+				continue;
+			msg.data.tokens[msg.data.tokens[i].id] = msg.data.tokens[i];
+			delete msg.data.tokens[i];
+		}
+		msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
 		window.CURRENT_SCENE_DATA = msg.data;
 		if(window.CLOUD && window.DM){
 			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
@@ -1269,23 +1302,31 @@ class MessageBroker {
 			}
 			console.log("LOADING TOKENS!");
 
-			for (var i = 0; i < data.tokens.length; i++) {
+			for (let id in data.tokens) {
 				self.handleToken({
-					data: data.tokens[i]
+					data: data.tokens[id],
+					loading: true,
+					persist: false
 				});
 			}
 			if(!window.DM)
 					check_token_visibility();
 	
-			if(window.CLOUD && window.DM){
+			if(window.CLOUD){
+				let data = {
+					loading: true,
+					current: $("#combat_area [data-current]").attr('data-target')
+				}
 				$("#combat_area").empty();
-				ct_load();
+				ct_load(data);
 			}
+
 
 			if(window.DM)
 				get_pclist_player_data();
-			else
-				window.MB.sendMessage("custom/myVTT/syncmeup");
+			else{
+			 	window.MB.sendMessage('custom/myVTT/syncmeup');
+			}
 
 
 			if (window.EncounterHandler !== undefined) {

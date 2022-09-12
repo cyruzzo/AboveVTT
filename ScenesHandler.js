@@ -256,7 +256,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		data.reveals = window.REVEALED;
 		data.drawings = window.DRAWINGS;
 		for (var id in window.TOKEN_OBJECTS) {
-			data.tokens.push(window.TOKEN_OBJECTS[id].options);
+			data.tokens[id].push(window.TOKEN_OBJECTS[id].options);
 		}
 
 		window.MB.sendMessage('custom/myVTT/scene', data); // issue with message size ??
@@ -550,7 +550,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		console.log("create_update_token");
 		let self = this;
 		let id = options.id;
-		////this.scene.tokens[id]=options;
+		this.scene.tokens[id]=options;
 
 		if (!(id in window.TOKEN_OBJECTS)) {
 

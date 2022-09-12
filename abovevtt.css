@@ -3932,6 +3932,11 @@ input.max_hp[disabled]{
     position:relative;
 }
 
+.addCTSVG{
+    padding: 4px;
+    bottom: 1px;
+}
+
 #combat_tracker td button,
 #combat_tracker td button svg{
     display: inline-block;
