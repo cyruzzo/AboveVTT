@@ -1731,12 +1731,21 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			.MuiButtonBase-root {
 				width: 100%;
 			}
-      #site #site-main{
-        padding-top: 0px !important;
-      }
-      .ct-character-sheet-mobile__header{
-        top: 0px !important; 
-      }
+			html body#site.body-rpgcharacter-sheet{
+				background-position: center 93px !important;
+			}
+			#site #site-main{
+				padding-top: 0px !important;
+			}
+			.ct-character-sheet-mobile__header{
+				top: 0px !important; 
+			}
+
+			@media (min-width: 1200px){
+				html body#site.body-rpgcharacter-sheet{
+					background-position: center 116px !important
+				}
+			}
 			</style>
 		`);
 		console.log("removing headers");
