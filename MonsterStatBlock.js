@@ -177,7 +177,12 @@ function build_monster_stat_block(statBlock) {
                     ${statBlock.skillsHtml}
                   </span>
                 </div>
-
+                <div class="mon-stat-block__tidbit">
+                  <span class="mon-stat-block__tidbit-label">Damage Vulnerabilities</span>
+                  <span class="mon-stat-block__tidbit-data">
+                    ${statBlock.damageVulnerabilitiesHtml}
+                  </span>
+                </div>
                 <div class="mon-stat-block__tidbit">
                   <span class="mon-stat-block__tidbit-label">Damage Resistances</span>
                   <span class="mon-stat-block__tidbit-data">
@@ -512,6 +517,9 @@ class MonsterStatBlock {
         }
         return objects.map(obj => obj.name).join(", ");
     }
+    get damageVulnerabilitiesHtml() {
+        return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES);
+    }
     get damageResistancesHtml() {
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_RESISTANCE);
     }
@@ -690,6 +698,7 @@ const hidemeHack = "<span class='hideme'></span>";
 // not sure where to find these, but I've reversed engineered it by looking at this.data.damageAdjustments and window.ddbConfigJson.damageAdjustments
 const DAMAGE_ADJUSTMENT_TYPE_RESISTANCE = 1;
 const DAMAGE_ADJUSTMENT_TYPE_IMMUNITY = 2;
+const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 
 
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
