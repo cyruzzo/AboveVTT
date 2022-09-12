@@ -161,6 +161,21 @@ button .ddbc-tab-options__header-heading .menu-option{
     background-color: #5d5d5d;
     color: #f2f2f2;
 }
+.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading svg path {
+    fill: #838383
+}
+.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active svg path {
+    fill: #fff;
+}
+
+
+.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading svg{
+    padding: 0px 0px 0px 1px;
+}
+#ping_center .ddbc-tab-options__header-heading{
+    width: 26px;
+    height: 24px;
+}
 .menu-subtitle {
     font-size: 11px;
     font-weight: 700;
