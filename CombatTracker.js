@@ -33,6 +33,9 @@ function init_combat_tracker(){
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
+	ct_list_wrapper.mouseover(function(){
+		$(this).css('--scrollY', $(this).scrollTop());
+	});
 	ct_title_bar_exit.click(function(){toggle.click();});
 	ct_title_bar.append(ct_title_bar_popout);
 	ct_title_bar_popout.click(function() {
