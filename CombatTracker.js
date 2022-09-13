@@ -118,14 +118,17 @@ function init_combat_tracker(){
 	reset_rounds.click(function (){
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
-		$("#combat_area tr").first().attr('data-current','1');
-		next.removeAttr('data-current');
-		next.css('background','');
-		let tokenID = $("#combat_area tr").first().attr('data-target');
+		let tokenID = $("#combat_area tr[data-current]").attr('data-target');
+		$("#combat_area tr[data-current]").removeAttr('data-current');
+		$("#combat_area tr[data-current]").css('background','');
+		$("#combat_area tr").first().attr('data-current','1');	
 		if(window.TOKEN_OBJECTS[tokenID].options.round != undefined){
-			delete window.TOKEN_OBJECTS[tokenID].options.round;
-			window.TOKEN_OBJECTS[tokenID].update_and_sync();
+			delete window.TOKEN_OBJECTS[tokenID].options.round;			
 		}
+		if(window.TOKEN_OBJECTS[tokenID].options.current != undefined){
+			delete window.TOKEN_OBJECTS[tokenID].options.current;
+		}
+		window.TOKEN_OBJECTS[tokenID].update_and_sync();
 		ct_persist();
 		ct_update_popout();
 	});
