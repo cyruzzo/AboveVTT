@@ -729,7 +729,9 @@ function ct_update_popout(){
 }
 
 function ct_load(data=null){
-	
+
+
+
 	
 	if(!data.loading){	
 		$("#combat_area tr[data-current]").removeAttr("data-current");
@@ -786,6 +788,31 @@ function ct_load(data=null){
 			}
 		}
 	}
+
+//load in local data on first load after 0.80
+	var itemkey="CombatTracker"+find_game_id();
+	data=$.parseJSON(localStorage.getItem(itemkey));
+	if(!(data[0]['already-loaded'])){
+		for(i in data){
+			if (data[i]['data-target'] === 'round'){
+				window.ROUND_NUMBER = data[i]['round_number'];
+				document.getElementById('round_number').value = window.ROUND_NUMBER;
+			}
+		    if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
+		        window.TOKEN_OBJECTS[data[i]['data-target']].options.init = data[i]['init']
+		        window.TOKEN_OBJECTS[data[i]['data-target']].update_and_sync();
+		        if(window.TOKEN_OBJECTS[data[i]['data-target']].ct_show == undefined){
+		        	window.TOKEN_OBJECTS[data[i]['data-target']].ct_show = data[i]['data-ct-show'];
+		        }
+		        window.TOKEN_OBJECTS[data[i]['data-target']].ct_show = data[i]['data-ct-show'];   
+		        $("#combat_area tr[data-target='"+data[i]['data-target']+"']").find(".init").val(data[i]['init']);
+		   		}   
+		}
+		data.unshift({'already-loaded': true})
+		localStorage.setItem(itemkey,JSON.stringify(data));
+	}
+	
+	
 	if(window.DM){
 		ct_reorder();
 	}
