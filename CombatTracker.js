@@ -729,9 +729,6 @@ function ct_update_popout(){
 }
 
 function ct_load(data=null){
-
-
-
 	
 	if(!data.loading){	
 		$("#combat_area tr[data-current]").removeAttr("data-current");
