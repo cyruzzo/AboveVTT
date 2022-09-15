@@ -129,7 +129,7 @@ function audio_changesettings(channel,volume,loop){
 
 
 
-function build_soundpad(soundpad) {
+function build_soundpad(soundpad, playing=false) {
 	window.CURRENT_SOUNDPAD=soundpad;
 	target=$("#soundpad");
 	console.log("loading soundpad");
@@ -322,8 +322,12 @@ function build_soundpad(soundpad) {
 	}
 	
 	soundpad_check_editable(); // hide / show buttons
-	if(window.DM)
+	if(window.DM){
 		persist_soundpad();
+	}
+	else if(playing){
+		window.MB.sendMessage("custom/myVTT/audioPlayingSyncMe");
+	}
 }
 
 

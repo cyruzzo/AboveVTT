@@ -478,6 +478,9 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/syncmeup") {
 				self.handleSyncMeUp(msg);
 			}
+			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
+				self.handleAudioPlayingSync(msg);
+			}
 			if(msg.eventType == "character-sheet/character-update/fulfilled"){
 				if(window.DM)
 					self.handleCharacterUpdate(msg);
@@ -633,7 +636,7 @@ class MessageBroker {
 				}	
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
-				build_soundpad(msg.data.soundpad);
+				build_soundpad(msg.data.soundpad, msg.data.playing);
 			}
 
 			if(msg.eventType=="custom/myVTT/playchannel"){
@@ -1374,13 +1377,36 @@ class MessageBroker {
 			window.ScenesHandler.sync();
 			ct_persist(); // force refresh of combat tracker for late users
 			if (window.CURRENT_SOUNDPAD) {
+				let audioPlaying;
+				for(i in $("audio")){
+			    if($("audio")[i].paused == false){
+			    		audioPlaying = true;
+			        break;
+			    }
+				}
 				var data = {
-					soundpad: window.CURRENT_SOUNDPAD
+					soundpad: window.CURRENT_SOUNDPAD,
+					playing: audioPlaying
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			// also sync the journal
 			window.JOURNAL.sync();
+		}
+	}
+
+	handleAudioPlayingSync(msg){
+		if(window.DM){
+			for(i in $("audio")){
+		    if($("audio")[i].paused == false){
+		    	var data={
+						channel: i,
+						time: $("audio")[i].currentTime,
+						volume: $("audio")[i].volume,
+					}
+					window.MB.sendMessage("custom/myVTT/playchannel",data);
+		    }
+			}
 		}
 	}
 
