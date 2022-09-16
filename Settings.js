@@ -71,6 +71,16 @@ function token_setting_options() {
 			defaultValue: false
 		},
 		{
+			name: 'revealInFog',
+			label: 'Reveal in Fog',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Revealed in Fog", description: "The token will not be hidden by fog." },
+				{ value: false, label: "Hidden in Fog", description: "The token will be hidden if in fog" }
+			],
+			defaultValue: false
+		},
+		{
 			name: 'disablestat',
 			label: 'Remove HP/AC',
 			type: 'toggle',
