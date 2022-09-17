@@ -3225,7 +3225,9 @@ button.avtt-roll-button {
     width: 100%;
 }
 
-.MuiModal-root{
+.MuiModal-root,
+div#selectedTokensBorder,
+div#selectedTokensBorderRotationGrabberConnector  {
     pointer-events: none;
 }
 
