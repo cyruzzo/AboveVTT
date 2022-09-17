@@ -1534,7 +1534,6 @@ class Token {
 
 					self.selected = true;
 					$("#tokens [data-id='" + self.options.id + "']").toggleClass("tokenselected", true);
-					if ((".token.tokenselected").length>1)
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
