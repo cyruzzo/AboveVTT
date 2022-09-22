@@ -1285,7 +1285,7 @@ function drawing_mouseup(e) {
 			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
 			let scaledRemainderTop = (tokbottom-toktop-size)/2;
 			let scaledRemainderLeft = (tokright-tokleft-size)/2;
-			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square'){
+			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
 				scaledRemainderTop = 0;
 				scaledRemainderLeft = 0;
 			}
