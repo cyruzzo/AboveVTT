@@ -1,6 +1,5 @@
 import { trackLibrary } from './track.js';
 import { mixer, Channel } from './mixer.js';
-import { StagedTrack } from './stage.js';
 import { log } from './helpers.js';
 
 /**
@@ -34,6 +33,9 @@ function init_mixer() {
             item.className = "audio-row";
             item.textContent = channel.name;
             item.setAttribute("data-id", id);
+
+            //item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
+
             // repeat button
             let loop = $('<button class="channel-loop-button" style="font-size:10px;"></button>');
             let loop_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7 22 3 18 7 14 8.4 15.45 6.85 17H17V13H19V19H6.85L8.4 20.55ZM5 11V5H17.15L15.6 3.45L17 2L21 6L17 10L15.6 8.55L17.15 7H7V11Z"/></svg>`);
@@ -77,6 +79,7 @@ function init_mixer() {
                 }
             });*/
             $(item).append(mixer.channelVolumeSlider(id), channel_play_pause, loop, mixer.channelProgressBar(id));
+
             mixerChannels.append(item);
         });
     }
@@ -84,6 +87,21 @@ function init_mixer() {
     mixer.onChannelListChange((e) => drawChannelList(e.target.channels()));
 
     // clear button
+
+  /*  const clear = document.createElement("button");
+    clear.textContent = 'Clear';
+    clear.onclick = () => mixer.clear();
+
+    // play/pause button
+    const playPause = document.createElement("button");
+    playPause.onclick = () => mixer.togglePaused();
+
+    /** @param {bool} */
+    const drawPlayPause = (paused) => playPause.textContent = paused ? "Play" : "Pause";
+    drawPlayPause(mixer.paused);
+    mixer.onPlayPause((e) => drawPlayPause(e.target.paused));*/
+
+
     let clear = $('<button class="mixer-clear-button"></button>');
     let clear_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3 16V14H10V16ZM3 12V10H14V12ZM3 8V6H14V8ZM14.4 22 13 20.6 15.6 18 13 15.4 14.4 14 17 16.6 19.6 14 21 15.4 18.4 18 21 20.6 19.6 22 17 19.4Z"/></svg>`);
     clear.append(clear_svg);
@@ -158,6 +176,20 @@ function init_trackLibrary() {
             item.className = "audio-row";
             item.setAttribute("data-id", id);
 
+   /*         const play = document.createElement('button');
+            play.textContent = 'Play';
+            play.onclick = () => {
+                const channel = new Channel(track.name, track.src);
+                channel.paused = false;
+                channel.loop = true;
+                mixer.addChannel(channel);
+            };
+            item.appendChild(play);
+            trackList.append(item);
+        });
+    });
+*/
+
             // play button
             let track_play_button = $('<button class="track-play-pause-button"></button>');          
             let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
@@ -175,6 +207,7 @@ function init_trackLibrary() {
             trackList.append(item);
         });
     });
+
 
     trackLibrary.dispatchEvent(new Event('onchange'));
 

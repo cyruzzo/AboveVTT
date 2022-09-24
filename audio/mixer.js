@@ -24,7 +24,9 @@ class Channel {
      * The current channel volume
      * @type {number}
      */
-    volume = 1;
+
+    volume = .5;
+
 
     /**
      * Loop this track

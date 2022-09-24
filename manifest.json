@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.76.2",
+	"version": "0.77",
 	"content_scripts": [
 		{
 			"matches": [
@@ -63,6 +63,7 @@
 		"Journal.js",
 		"Settings.js",
 		"color-picker.js",
+		"Text.js",
 		"AOETemplates.js",
 		"SceneData.js",
 		"CombatTracker.js",

@@ -35,6 +35,12 @@ Mousetrap.bind('d', function () {       //draw menu
     }
 });
 
+Mousetrap.bind('t', function () {       //draw menu
+    if (window.DM){
+        $('#text_button').click()
+    }
+});
+
 Mousetrap.bind('a', function () {       //aoe menu
     $('#aoe_button').click()
     return false;
@@ -79,7 +85,7 @@ Mousetrap.bind('-', function () {       //zoom minus
     $('#zoom_minus').click()
 });
 
-Mousetrap.bind('0', function () {
+Mousetrap.bind('0', function () {   
     $('#zoom_fit').click()
 });
 
@@ -97,89 +103,34 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
-    $(".drawbutton").removeClass('button-enabled button-selected');
-    $(".drawbutton").removeClass('ddbc-tab-options__header-heading--is-active');
-    $(".top_menu").removeClass('visible');
-    $("#fog_overlay").css("z-index", "20");
     $('#select-button').click();
-    $("#tokenOptionsClickCloseDiv").click();
+    close_token_context_menu();
     $(".draggable-token-creation").addClass("drag-cancelled");
+    $(".draggable-sidebar-item-reorder").addClass("drag-cancelled");
+    try {
+        $( '.ui-draggable-dragging' ).draggable("option", { revert: true }).trigger( 'mouseup' ).draggable("option", {revert: false })
+    } catch (whoCares) { }
 });
-
-
 
 //menu specific shortcuts, select the nth element of menu when it's open
-Mousetrap.bind('1', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(0)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(0)").click()
-    }
+function handle_menu_number_press(e) {
+    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
+    const button = $(`${visibleMenuId} .menu-option:eq(${parseInt(e.key) -1})`)
+    $(button).click()
+    $(button).children().first().focus()
+}
+Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
+    handle_menu_number_press(e)
 });
 
-Mousetrap.bind('2', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(1)").click()
+Mousetrap.bind('up', function (e) {
+    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
+    if (visibleMenuId){
+        // prevent scrolling the window
+        e.preventDefault();
+        $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().prevAll().not("[data-skip='true']").first().children().first().click()
     }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(1)").click()
-    }
-});
 
-Mousetrap.bind('3', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(2)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(2)").click()
-    }
-});
-
-Mousetrap.bind('4', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(3)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(3)").click()
-    }
-});
-
-Mousetrap.bind('5', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(4)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(4)").click()
-    }
-});
-
-Mousetrap.bind('6', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .menu-option:eq(5)").click()
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .menu-option:eq(5)").click()
-    }
-});
-
-Mousetrap.bind('up', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
-        return false;
-    }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click()
-        return false;
-    }
-    if ($("#aoe_menu").hasClass('visible')) {
-        if ($(".aoeshape").is(":focus")) {
-            $("#aoe_menu .aoeshape:focus").parent().prevAll('div').children('.aoeshape:first').focus();
-        } else {
-            $("#aoe_menu .remembered-selection").parent().prevAll('div').children('.menu-option:first').click();
-        }
-        return false;
-    }
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -190,23 +141,15 @@ Mousetrap.bind('up', function () {
     }
 });
 
-Mousetrap.bind('down', function () {
-    if ($("#fog_menu").hasClass('visible')) {
-        $("#fog_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
-        return false;
+Mousetrap.bind('down', function (e) {
+    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
+    if (visibleMenuId){
+        // prevent scrolling the window
+        e.preventDefault();
+        $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().nextAll().not("[data-skip='true']").first().children().first().click()
+
     }
-    if ($("#draw_menu").hasClass('visible')) {
-        $("#draw_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click()
-        return false;
-    }
-    if ($("#aoe_menu").hasClass('visible')) {
-        if ($(".aoeshape").is(":focus")) {
-            $("#aoe_menu .aoeshape:focus").parent().nextAll('div').children('.aoeshape:first').focus();
-        } else {
-            $("#aoe_menu .remembered-selection").parent().nextAll('div').children('.menu-option:first').click();
-        }
-        return false;
-    }
+
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -217,27 +160,6 @@ Mousetrap.bind('down', function () {
     }
 });
 
-Mousetrap.bind('tab', function () {
-    if ($("#aoe_menu").hasClass('visible')) {
-        if ($(".aoeshape").is(":focus")) {
-            $("#aoe_feet").focus();
-        } else {
-            $(".aoeshape").first().focus();
-        }
-        return false;
-    }
-});
-
-Mousetrap.bind('shift+tab', function () {
-    if ($("#aoe_menu").hasClass('visible')) {
-        if ($(".aoeshape").is(":focus")) {
-            $(".aoeshape").blur();
-        } else {
-            $("#aoe_feet").focus();
-        }
-        return false;
-    }
-});
 
 Mousetrap.bind('left', function () {
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
@@ -263,20 +185,22 @@ Mousetrap.bind('right', function () {
 
 Mousetrap.bind('alt', function () {
     if (altHeld) {
-        return;
+        return false;
     } else {
         altHeld = true;
     }
     if (!($('#measure-button').hasClass('button-enabled'))) {
         $('#measure-button').click()
     }
+    return false
 }, 'keydown');
 
 Mousetrap.bind('alt', function () {
     if ($('#measure-button').hasClass('button-enabled')) {
-        $('#measure-button').click()
+        $('#select-button').click()
     }
     altHeld = false;
+    return false
 }, 'keyup');
 
 
@@ -328,16 +252,28 @@ Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
-    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
-    if (Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0) {
-        undo_delete_tokens();
-    }
+    handle_undo()
 });
 Mousetrap.bind('command+z', function(e) {
-    if (Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0) {
+    handle_undo()
+});
+
+function handle_undo(){
+    const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+    if ($("#select_button").hasClass(buttonSelectedClasses) && 
+        Object.keys(window.TOKEN_OBJECTS_RECENTLY_DELETED).length != 0){
         undo_delete_tokens();
     }
-});
+    else if(($("#fog_button").hasClass(buttonSelectedClasses))){
+        $("#fog_undo").click()
+    }
+    else if(($("#draw_button").hasClass(buttonSelectedClasses))){
+        $("#draw_undo").click()
+    }
+    else if(($("#text_button").hasClass(buttonSelectedClasses))){
+        $("#text_undo").click()
+    }
+}
 
 var rotationKeyPresses = [];
 window.addEventListener("keydown", async (event) => {

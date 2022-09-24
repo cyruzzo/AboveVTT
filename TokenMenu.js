@@ -8,13 +8,13 @@ tokendata={
 function convert_path(path){
 	var pieces=path.split("/");
 	var current=tokendata;
-	
+
 	for(var i=0;i<pieces.length;i++){
-		if(pieces[i]=="")
+		if(!current || pieces[i]=="")
 			continue;
 		current=current.folders[pieces[i]];
 	}
-	return current;
+	return current || {};
 }
 
 // deprecated, but still needed for migrate_to_my_tokens() to work
@@ -29,12 +29,6 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	if (contextMenu.length === 0) {
 		console.warn("context_menu_flyout, but #tokenOptionsPopup could not be found");
 		return;
-	}
-
-	try {
-		clearTimeout(window.context_menu_flyout_timer);
-	} catch (e) {
-		console.debug("failed to clear window.context_menu_flyout_timer", window.context_menu_flyout_timer);
 	}
 
 	if (hoverEvent.type === "mouseenter") {
@@ -80,11 +74,14 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	} 
 }
 
+function close_token_context_menu() {
+	$("#tokenOptionsClickCloseDiv").click();
+}
+
 /**
  * Opens a sidebar modal with token configuration options
  * @param tokenIds {Array<String>} an array of ids for the tokens being configured
  */
-
 function token_context_menu_expanded(tokenIds, e) {
 	if (tokenIds === undefined || tokenIds.length === 0) {
 		console.warn(`token_context_menu_expanded was called without any token ids`);
@@ -111,13 +108,88 @@ function token_context_menu_expanded(tokenIds, e) {
 	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
 
 	
-	let body = $("<div id='tokenOptionsContainer')></div>");
+	let body = $("<div id='tokenOptionsContainer'></div>");
 	moveableTokenOptions.append(body);
 
 	$('body').append(moveableTokenOptions);
 	$('body').append(tokenOptionsClickCloseDiv);
 
 	// stat block / character sheet
+
+
+	if (tokens.length === 1) {
+		let token = tokens[0];
+		if (token.isPlayer() && window.DM) {
+			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
+			button.on("click", function() {
+				open_player_sheet(token.options.id);
+				close_token_context_menu();
+			});
+			body.append(button);
+		} else if (token.isMonster()) {
+			let button = $(`<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>`);
+			button.on("click", function() {
+				load_monster_stat(token.options.monster, token.options.id);
+				close_token_context_menu();
+			});
+			if(token.options.player_owned || window.DM){
+				body.append(button);
+			}
+		}
+	}
+
+	if(window.DM){
+		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
+		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
+		let combatButton = $(`<button></button>`);
+		let inCombatStatuses = [...new Set(tokens.map(t => t.isInCombatTracker()))];
+		if (inCombatStatuses.length === 1 && inCombatStatuses[0] === true) {
+			// they are all in the combat tracker. Make it a remove button
+			combatButton.addClass("remove-from-ct");
+			combatButton.html(removeButtonInternals);
+		} else {
+			// if any are not in the combat tracker, make it an add button.
+			combatButton.addClass("add-to-ct");
+			combatButton.html(addButtonInternals);
+		}
+		combatButton.on("click", function(clickEvent) {
+			let clickedButton = $(clickEvent.currentTarget);
+			if (clickedButton.hasClass("remove-from-ct")) {
+				clickedButton.removeClass("remove-from-ct").addClass("add-to-ct");
+				clickedButton.html(addButtonInternals);
+				tokens.forEach(t =>{
+					t.options.ct_show = undefined;
+					ct_remove_token(t, false)
+				});
+			} else {
+				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
+				clickedButton.html(removeButtonInternals);
+				tokens.forEach(t => ct_add_token(t, false));
+			}
+			ct_persist();
+		});
+		body.append(combatButton);
+
+
+		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
+		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
+		hiddenMenuButton.off().on("click", function(clickEvent){
+			let clickedItem = $(this);
+			let hideAll = clickedItem.hasClass("some-active");
+			tokens.forEach(token => {
+				if (hideAll || token.options.hidden !== true) {
+					token.hide();
+				} else {
+					token.show();
+				}
+				token.place_sync_persist();
+			});
+			clickedItem.removeClass("single-active all-active some-active active-condition");
+			clickedItem.addClass(determine_hidden_classname(tokenIds));
+		});
+		body.append(hiddenMenuButton);
+	}
+
 	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
 
@@ -151,76 +223,6 @@ function token_context_menu_expanded(tokenIds, e) {
 			});
 		});
 	}
-
-	if (tokens.length === 1) {
-		let token = tokens[0];
-		if (token.isPlayer() && window.DM) {
-			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
-			button.on("click", function() {
-				open_player_sheet(token.options.id);
-			});
-			body.append(button);
-		} else if (token.isMonster()) {
-			let button = $(`<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>`);
-			button.on("click", function() {
-				load_monster_stat(token.options.monster, token.options.id);
-				$("#tokenOptionsClickCloseDiv").click();
-			});
-			if(token.options.player_owned || window.DM){
-				body.append(button);
-			}
-		}
-	}
-
-	if(window.DM){
-		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
-		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
-		let combatButton = $(`<button></button>`);
-		let inCombatStatuses = [...new Set(tokens.map(t => t.isInCombatTracker()))];
-		if (inCombatStatuses.length === 1 && inCombatStatuses[0] === true) {
-			// they are all in the combat tracker. Make it a remove button
-			combatButton.addClass("remove-from-ct");
-			combatButton.html(removeButtonInternals);
-		} else {
-			// if any are not in the combat tracker, make it an add button.
-			combatButton.addClass("add-to-ct");
-			combatButton.html(addButtonInternals);
-		}
-		combatButton.on("click", function(clickEvent) {
-			let clickedButton = $(clickEvent.currentTarget);
-			if (clickedButton.hasClass("remove-from-ct")) {
-				clickedButton.removeClass("remove-from-ct").addClass("add-to-ct");
-				clickedButton.html(addButtonInternals);
-				tokens.forEach(t => ct_remove_token(t, false));
-			} else {
-				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
-				clickedButton.html(removeButtonInternals);
-				tokens.forEach(t => ct_add_token(t, false));
-			}
-			ct_persist();
-		});
-		body.append(combatButton);
-
-
-		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
-		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
-		hiddenMenuButton.off().on("click", function(clickEvent){
-			let clickedItem = $(this);
-			let hideAll = clickedItem.hasClass("some-active");
-			tokens.forEach(token => {
-				if (hideAll || token.options.hidden !== true) {
-					token.hide();
-				} else {
-					token.show();
-				}
-				token.place_sync_persist();
-			});
-			clickedItem.removeClass("single-active all-active some-active active-condition");
-			clickedItem.addClass(determine_hidden_classname(tokenIds));
-		});
-		body.append(hiddenMenuButton);
-	}
-	
 
 	if (tokens.length === 1) {
 		body.append(build_menu_stat_inputs(tokenIds));
@@ -310,7 +312,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	 			token.selected = true;
 	 		});
 			delete_selected_tokens();
-			$("#tokenOptionsClickCloseDiv").click();
+			close_token_context_menu();
 	 	});
 	 }
 
@@ -330,17 +332,14 @@ function token_context_menu_expanded(tokenIds, e) {
 			}
 		});
 	
-	$("#tokenOptionsPopup").mousedown(function() {
-		frame_z_index_when_click($(this));
-	});
 
-	moveableTokenOptions.css("left", Math.max(e.clientX - 245, 0) + 'px');
+	moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
 
 	if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
 		moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
 	}
 	else {
-		moveableTokenOptions.css("top", e.clientY + 'px');
+		moveableTokenOptions.css("top", e.clientY - 10 + 'px');
 	}	
 }
 
@@ -365,6 +364,9 @@ function build_token_auras_inputs(tokenIds) {
 	let hideAuraFromPlayers = tokens.map(t => t.options.hideaurafog);
 	let uniqueHideAuraFromPlayers = [...new Set(hideAuraFromPlayers)];
 
+	let auraLightValues = tokens.map(t => t.options.auraislight);
+	let uniqueAuraLightValues = [...new Set(auraLightValues)];
+
 
 
 	let auraIsEnabled = null;
@@ -374,6 +376,10 @@ function build_token_auras_inputs(tokenIds) {
 	let hideAuraIsEnabled = null;
 	if (uniqueHideAuraFromPlayers.length === 1) {
 		hideAuraIsEnabled = uniqueHideAuraFromPlayers[0];
+	}
+	let auraIsLightEnabled = null;
+	if (uniqueAuraLightValues.length === 1) {
+		auraIsLightEnabled = uniqueAuraLightValues[0];
 	}
 	let aura1Feet = tokens.map(t => t.options.aura1.feet);
 	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
@@ -440,7 +446,15 @@ function build_token_auras_inputs(tokenIds) {
 			wrapper.find(".token-config-aura-wrapper").hide();
 		}
 	});
-	wrapper.prepend(enabledAurasInput);	
+	wrapper.prepend(enabledAurasInput);
+	let auraIsLightInput = build_toggle_input("auraislight", "Change aura appearance to light", auraIsLightEnabled, "Token's aura is visually changed to look like light", "Default aura visual", function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});	
+	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
 	let hideAuraInFog = build_toggle_input("hideaurafog", "Hide aura when hidden in fog", hideAuraIsEnabled, "Token's aura is hidden from players when in fog", "Token's aura is visible to players when token is in fog", function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
@@ -451,6 +465,7 @@ function build_token_auras_inputs(tokenIds) {
 	if(window.DM) {
 		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInFog);
 	}
+	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledAurasInput);
 	if (auraIsEnabled) {
@@ -1037,7 +1052,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 		body.append(changeImageMenuButton)
 	}
 
-	changeImageMenuButton.off().on("click", function(){	
+	changeImageMenuButton.off().on("click", function(){
+		close_token_context_menu();
 		id = tokens[0].options.id;
 		if (!(id in window.TOKEN_OBJECTS)) {
 			return;
