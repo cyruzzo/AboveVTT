@@ -60,9 +60,28 @@ function addVideo(stream,streamerid) {
 	
 	let canvas=dicecanvas.get(0);
 	let ctx=canvas.getContext('2d');
-	let updateCanvas=function(){
-		delayedClear();
+	let tmpcanvas = document.createElement("canvas");
+  video.addEventListener("resize", function(){
+  		let videoAspectRatio = video.videoWidth / video.videoHeight
+			if (video.videoWidth > video.videoHeight)
+			{
+				tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
+				tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
+			}
+			else {
+				tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
+				tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
+			}
+			
 
+			dicecanvas.attr("width", tmpcanvas.width + "px");
+			dicecanvas.attr("height", tmpcanvas.height  + "px");
+			dicecanvas.css("height",tmpcanvas.height);
+			dicecanvas.css("width",tmpcanvas.width );
+  });
+
+	let updateCanvas=function(){
+		
 		//resize canvas due to Chrome bug - this may be fixed in chrome later
 		let diceRollPanel = $(".dice-rolling-panel__container");
 		if(parseInt(diceRollPanel.attr("width")) % 2 != 0){
@@ -71,26 +90,8 @@ function addVideo(stream,streamerid) {
 		if(parseInt(diceRollPanel.attr("height")) % 2 != 0){
 			diceRollPanel.attr("height", parseInt(diceRollPanel.attr("height"))+1);
 		}
-
-		let tmpcanvas = document.createElement("canvas");
-		let videoAspectRatio = video.videoWidth / video.videoHeight
-		if (video.videoWidth > video.videoHeight)
-		{
-			tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
-			tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
-		}
-		else {
-			tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
-			tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
-		}
 		
-		video.setAttribute("width", tmpcanvas.width)
-		video.setAttribute("height", tmpcanvas.height)
 		let tmpctx = tmpcanvas.getContext("2d");
-		dicecanvas.attr("width", tmpcanvas.width + "px");
-		dicecanvas.attr("height", tmpcanvas.height  + "px");
-		dicecanvas.css("height",tmpcanvas.height);
-		dicecanvas.css("width",tmpcanvas.width );
 		window.requestAnimationFrame(updateCanvas);
 		tmpctx.drawImage(video, 0, 0, tmpcanvas.width, tmpcanvas.height);
 		if(tmpcanvas.width>0)
