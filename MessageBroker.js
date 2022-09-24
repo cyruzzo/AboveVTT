@@ -95,7 +95,7 @@ function addVideo(stream,streamerid) {
 				const blue = frame.data[i + 2];
 				/*if ((red < 24) && (green < 24) && (blue < 24))
 					frame.data[i + 3] = 128;*/
-				if ((red < 14) && (green < 14) && (blue < 14))
+				if ((red == 0) && (green == 0) && (blue == 0))
 					frame.data[i + 3] = 0;
 				
 			}
