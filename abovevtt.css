@@ -3142,7 +3142,10 @@ h5.token-image-modal-footer-title:after {
     width: fit-content;
     white-space: nowrap;
 }
-
+.ct-sidebar{
+    inset: 0px 0px 0px auto !important;
+    right: 0px !important;
+ }
 .chat-text-wrapper.sidebar-hovertext:before{
  bottom: 100px;
  text-align: left;
