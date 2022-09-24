@@ -1188,8 +1188,7 @@ class Token {
 					width: this.sizeWidth(),
 					height: this.sizeHeight()
 				}, { duration: 1000, queue: false });
-				
-				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps)); // width vs height here?
+				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				old.css("z-index", "calc(5000 + var(--z-index-diff))");
 				old.css("--z-index-diff", zindexdiff);
@@ -1338,7 +1337,7 @@ class Token {
 
 
 
-			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/ (this.options.size/window.CURRENT_SCENE_DATA.hpps)); // sizeHeight() or sizeWidth() here?
+			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
