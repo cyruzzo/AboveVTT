@@ -687,8 +687,7 @@ class MonsterStatBlock {
         });
 
 
-        let html = $(`<a href="${this.data.largeAvatarUrl}" data-lightbox="Abhorrent Overlord-mobile"
-           data-title="<a target='_blank' href='${this.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>"
+        let html = $(`<a href="${this.data.largeAvatarUrl}" data-title="<a target='_blank' href='${this.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>"
            target="_blank"></a>`);
         html.append(img);
         return html;
