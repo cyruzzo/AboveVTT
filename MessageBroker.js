@@ -62,7 +62,16 @@ function addVideo(stream,streamerid) {
 	let ctx=canvas.getContext('2d');
 	let updateCanvas=function(){
 		delayedClear();
-		
+
+		//resize canvas due to Chrome bug - this may be fixed in chrome later
+		let diceRollPanel = $(".dice-rolling-panel__container");
+		if(parseInt(diceRollPanel.attr("width")) % 2 != 0){
+			diceRollPanel.attr("width", parseInt(diceRollPanel.attr("width"))+1);
+		}
+		if(parseInt(diceRollPanel.attr("height")) % 2 != 0){
+			diceRollPanel.attr("height", parseInt(diceRollPanel.attr("height"))+1);
+		}
+
 		let tmpcanvas = document.createElement("canvas");
 		let videoAspectRatio = video.videoWidth / video.videoHeight
 		if (video.videoWidth > video.videoHeight)
