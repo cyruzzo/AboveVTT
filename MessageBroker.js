@@ -72,8 +72,6 @@ function addVideo(stream,streamerid) {
 				tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
 				tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
 			}
-			
-
 			dicecanvas.attr("width", tmpcanvas.width + "px");
 			dicecanvas.attr("height", tmpcanvas.height  + "px");
 			dicecanvas.css("height",tmpcanvas.height);
@@ -81,15 +79,8 @@ function addVideo(stream,streamerid) {
   });
 
 	let updateCanvas=function(){
-		
 		//resize canvas due to Chrome bug - this may be fixed in chrome later
-		let diceRollPanel = $(".dice-rolling-panel__container");
-		if(parseInt(diceRollPanel.attr("width")) % 2 != 0){
-			diceRollPanel.attr("width", parseInt(diceRollPanel.attr("width"))+1);
-		}
-		if(parseInt(diceRollPanel.attr("height")) % 2 != 0){
-			diceRollPanel.attr("height", parseInt(diceRollPanel.attr("height"))+1);
-		}
+		resizeCanvasChromeBug()
 		
 		let tmpctx = tmpcanvas.getContext("2d");
 		window.requestAnimationFrame(updateCanvas);
@@ -112,6 +103,16 @@ function addVideo(stream,streamerid) {
 		}
 	};
 	updateCanvas();
+}
+
+function resizeCanvasChromeBug(){
+	let diceRollCanvas = $(".dice-rolling-panel__container");
+	if(parseInt(diceRollCanvas.attr("width")) % 2 != 0){
+		diceRollCanvas.attr("width", parseInt(diceRollCanvas.attr("width"))+1);
+	}
+	if(parseInt(diceRollCanvas.attr("height")) % 2 != 0){
+		diceRollCanvas.attr("height", parseInt(diceRollCanvas.attr("height"))+1);
+	}
 }
 
 class MessageBroker {
