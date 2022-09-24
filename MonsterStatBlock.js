@@ -41,6 +41,8 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
         e.stopPropagation();
         e.preventDefault();
         const imgContainer = $(e.target).parent().prev();
+        imgContainer.find("img").attr("href", imgContainer.find("img").attr("src"));
+        imgContainer.find("img").addClass("magnify");
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
     container.find("div.image").append(statBlock.imageHtml());
