@@ -3234,7 +3234,7 @@ button.avtt-roll-button {
     width: 100%;
     position: relative;
     height: 1px;
-    bottom: -1px;
+    bottom: 4px;
     left: 0px;
     background: lightgray;
 }
@@ -4871,7 +4871,7 @@ button.channel-loop-button{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    height: 13px;
+    height: 16px;
 }
 .channelNameOverflow:hover .channelName {
     margin-left: -100px;
