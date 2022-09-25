@@ -35,17 +35,17 @@ function init_mixer() {
             item.setAttribute("data-id", id);
 
             //item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
-            let remove = $('<button class="channel-remove-button" style="font-size:10px;">X</button>');
+            let remove = $('<button class="channel-remove-button"">X</button>');
             remove.off().on("click", function(){
                 mixer.deleteChannel(id);
             });
             // repeat button
-            let loop = $('<button class="channel-loop-button" style="font-size:10px;"></button>');
+            let loop = $('<button class="channel-loop-button""></button>');
             let loop_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7 22 3 18 7 14 8.4 15.45 6.85 17H17V13H19V19H6.85L8.4 20.55ZM5 11V5H17.15L15.6 3.45L17 2L21 6L17 10L15.6 8.55L17.15 7H7V11Z"/></svg>`);
             loop.append(loop_svg);
 
             // play/pause button
-            let channel_play_pause = $('<button class="channel-play-pause-button" style="font-size:10px;"></button>');
+            let channel_play_pause = $('<button class="channel-play-pause-button""></button>');
             let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');
             let pause_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M14 19V5H18V19ZM6 19V5H10V19Z"/></svg>');
             

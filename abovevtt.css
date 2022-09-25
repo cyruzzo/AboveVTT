@@ -4831,27 +4831,27 @@ div.note[id^="ui-id"] .mce-btn button {
     border:1px solid #fff9;
     border-width: 1px 0px 0px 1px;
 }
-#sounds-panel .sidebar-panel-header{
-    background: #454d5a;
-    color: #ddd;
+#sounds-panel .sidebar-panel-header {
+    background: #ebf1f5;
+    color: #000;
 }
 #sounds-panel .sidebar-panel-header button{
     border-radius: 50%;
-    background: #454d5a;
 }
 #sounds-panel .sidebar-panel-header button{
-    box-shadow: inset 1px 1px 4px -2px #ffffffe3, 2px 2px 2px -1px #000, 0px 1px 1px 0px #000;
+    box-shadow: inset 1px 1px 4px -2px #a0a0a0e3, 2px 2px 2px -1px #000000a3, 0px 1px 1px 0px #0006;
 }
 #sounds-panel .sidebar-panel-header button svg{
     transform: scale(0.8);
 }
-#sounds-panel .sidebar-panel-header button:active{
-    box-shadow: 2px 1px 1px 2px #0000, 1px 2px 0px -2px #0000;
+#sounds-panel .sidebar-panel-header button:active,
+#sounds-panel .sidebar-panel-header button.pressed:active{
+    box-shadow: inset 2px 1px 3px -1px #000, inset 1px 2px 3px -1px #000;
     border: 1px solid tranparent;
 }
 
 #sounds-panel .sidebar-panel-header svg path{
-    fill: #ddd;
+    fill: #000;
 }
 div#sounds-panel {
     overflow-y: visible;
@@ -4920,9 +4920,9 @@ button.channel-loop-button {
 .add-track-ok-button:active,
 .add-track-cancel-button:active,
 .channel-remove-button:active {
-  background-color: rgb(245, 248, 250);
-  box-shadow: none;
-  transform: translate(1px, 2px) scale(0.8);
+    background-color: rgb(245, 248, 250);
+    box-shadow: inset #000 1px 1px 3px 1px;
+    transform: translate(1px, 2px) scale(0.8);
 }
 .channel-play-pause-button,
 .channel-loop-button,
@@ -4930,7 +4930,8 @@ button.channel-loop-button {
     float:  right;
 }
 .channel-remove-button{
-    color: #ddd;
+    color: #000;
+    font-size: 18px;
 }
 input.trackName.trackInput {
     width: 100px;
@@ -4956,10 +4957,10 @@ div#importTrackFields {
     transition: height ease 250ms;
 }
 #sounds-panel .sidebar-panel-header button.pressed {
-    box-shadow: inset #000 1px 1px 3px 0px;
-    transform: translate(1px, 1px) scale(0.8);
-    background: #0F03 !important;
+    background: #7dc8fd66 !important;
     border: none;
+    box-shadow: inset #000 1px 1px 3px 0px;
+    transform: translate(0px, 1px) scale(0.8);
 }
 .mixer-clear-button{
     position: absolute;
