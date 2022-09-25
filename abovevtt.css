@@ -4765,11 +4765,14 @@ div.note[id^="ui-id"] .mce-btn button {
 }
 
 /*Audio Mixer Start*/
-.channel-progress-bar-total:hover .channel-progress-bar-progress,
-.channel-progress-bar-total:hover
+li.audio-row:hover .channel-progress-bar-total .channel-progress-bar-progress,
+li.audio-row:hover .channel-progress-bar-total
 {
     height:5px !important;
-    transition: 100ms height 100ms;
+}
+.channel-progress-bar-total,
+.channel-progress-bar-progress{
+    transition: 150ms height linear 500ms;
 }
 #sounds-panel .channel-progress-bar-progress{
     background: #1b9af0 !important;
@@ -4856,9 +4859,28 @@ div.note[id^="ui-id"] .mce-btn button {
 div#sounds-panel {
     overflow-y: visible;
 }
-button.channel-remove-button,
-button.channel-loop-button {
-    position: relative;
+
+
+button.channel-loop-button{
+    left: 20px;
+}
+
+.channelNameOverflow {
+    width: 100px;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 13px;
+}
+.channelNameOverflow:hover .channelName {
+    margin-left: -100px;
+}
+
+.channelName{
+    transition: margin ease 2s;
+    text-overflow: ellipsis;
+    display: inline;
 }
 
 .mixer-play-pause-button,

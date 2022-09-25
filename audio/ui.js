@@ -31,7 +31,7 @@ function init_mixer() {
         Object.entries(channels).forEach(([id, channel]) => {
             const item = document.createElement("li");
             item.className = "audio-row";
-            item.textContent = channel.name;
+            let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>${channel.name}</div></div>`)
             item.setAttribute("data-id", id);
 
             //item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
@@ -107,7 +107,7 @@ function init_mixer() {
                     mixer.updateChannel(id, channel);
                 }
             });
-            $(item).append(mixer.channelVolumeSlider(id), channel_play_pause, loop, remove, mixer.channelProgressBar(id));
+            $(item).append(channelNameDiv, mixer.channelVolumeSlider(id), channel_play_pause, loop, remove, mixer.channelProgressBar(id));
 
             mixerChannels.append(item);
         });
