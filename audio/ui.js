@@ -77,7 +77,7 @@ function init_mixer() {
                     channel_play_pause.toggleClass('playing', true);
                     channel_play_pause.toggleClass('pressed', true);
                     channel.paused = false;
-                    MIXER._players[id].play();
+                    mixer.updateChannel(id, channel);
                 }
                 else {
                     pause_svg.css('display', 'none');
@@ -85,7 +85,7 @@ function init_mixer() {
                     channel_play_pause.toggleClass('playing', false);
                     channel_play_pause.toggleClass('pressed', false);
                     channel.paused = true;
-                    MIXER._players[id].pause();
+                    mixer.updateChannel(id, channel);
                 }
             });
 
@@ -99,10 +99,12 @@ function init_mixer() {
                 if(channel.loop) {
                     loop.toggleClass('pressed', false);
                     channel.loop = false;
+                    mixer.updateChannel(id, channel);
                 }
                 else {
                     loop.toggleClass('pressed', true);
                     channel.loop = true;
+                    mixer.updateChannel(id, channel);
                 }
             });
             $(item).append(mixer.channelVolumeSlider(id), channel_play_pause, loop, remove, mixer.channelProgressBar(id));
@@ -115,18 +117,6 @@ function init_mixer() {
 
     // clear button
 
-  /*  const clear = document.createElement("button");
-    clear.textContent = 'Clear';
-    clear.onclick = () => mixer.clear();
-
-    // play/pause button
-    const playPause = document.createElement("button");
-    playPause.onclick = () => mixer.togglePaused();
-
-    /** @param {bool} */
-   /* const drawPlayPause = (paused) => playPause.textContent = paused ? "Play" : "Pause";
-    drawPlayPause(mixer.paused);
-    mixer.onPlayPause((e) => drawPlayPause(e.target.paused));*/
 
 
     let clear = $('<button class="mixer-clear-button"></button>');
