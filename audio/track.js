@@ -58,7 +58,13 @@ class TrackLibrary extends Library {
     find(name, src) {
         return [...this.map()].find(([_, track]) => track.name === name || track.src === src);
     }
-
+    deleteTrack(id){
+        this.delete(id);
+    }
+    addTrack(name, src){
+        const track = new Track(name, src);  
+        this.create(track);
+    }
     /**
      * Import a csv of tracks into the track library
      * @param {string} csv

@@ -35,12 +35,14 @@ function init_mixer() {
             item.setAttribute("data-id", id);
 
             //item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
-
+            let remove = $('<button class="channel-remove-button" style="font-size:10px;">X</button>');
+            remove.off().on("click", function(){
+                mixer.deleteChannel(id);
+            });
             // repeat button
             let loop = $('<button class="channel-loop-button" style="font-size:10px;"></button>');
             let loop_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7 22 3 18 7 14 8.4 15.45 6.85 17H17V13H19V19H6.85L8.4 20.55ZM5 11V5H17.15L15.6 3.45L17 2L21 6L17 10L15.6 8.55L17.15 7H7V11Z"/></svg>`);
             loop.append(loop_svg);
-            loop.on('click', /*set repeat*/);
 
             // play/pause button
             let channel_play_pause = $('<button class="channel-play-pause-button" style="font-size:10px;"></button>');
@@ -49,18 +51,20 @@ function init_mixer() {
             
             channel_play_pause.append(play_svg);
 
-            /*Activate Swap button when channel.paused
+            //Activate Swap button when channel.paused
 
-            channel_play_pause.append(pause_svg );
+            channel_play_pause.append(pause_svg);
             if(channel.paused) {
                 play_svg.css('display', 'block');
                 pause_svg.css('display', 'none');
                 channel_play_pause.toggleClass('playing', false);
+                channel_play_pause.toggleClass('pressed', false);
             }
             else {
                 pause_svg.css('display', 'block');
                 play_svg.css('display', 'none');
                 channel_play_pause.toggleClass('playing', true);
+                channel_play_pause.toggleClass('pressed', true);
             }
                 
             channel_play_pause.append(play_svg);
@@ -68,17 +72,40 @@ function init_mixer() {
 
             channel_play_pause.on('click', function(){
                 if(channel.paused) {
-                    mixer_playlist_svg.css('display', 'block');
-                    pause_svg.css('display', 'none');
-                    playPause.toggleClass('playing', false);
+                    play_svg.css('display', 'none');
+                    pause_svg.css('display', 'block');
+                    channel_play_pause.toggleClass('playing', true);
+                    channel_play_pause.toggleClass('pressed', true);
+                    channel.paused = false;
+                    MIXER._players[id].play();
                 }
                 else {
-                    pause_svg.css('display', 'block');
-                    mixer_playlist_svg.css('display', 'none');
-                    playPause.toggleClass('playing', true);
+                    pause_svg.css('display', 'none');
+                    play_svg.css('display', 'block');
+                    channel_play_pause.toggleClass('playing', false);
+                    channel_play_pause.toggleClass('pressed', false);
+                    channel.paused = true;
+                    MIXER._players[id].pause();
                 }
-            });*/
-            $(item).append(mixer.channelVolumeSlider(id), channel_play_pause, loop, mixer.channelProgressBar(id));
+            });
+
+            if(channel.loop) {
+                loop.toggleClass('pressed', true);
+            }
+            else {
+                loop.toggleClass('pressed', false);
+            }
+            loop.on('click', function(){
+                if(channel.loop) {
+                    loop.toggleClass('pressed', false);
+                    channel.loop = false;
+                }
+                else {
+                    loop.toggleClass('pressed', true);
+                    channel.loop = true;
+                }
+            });
+            $(item).append(mixer.channelVolumeSlider(id), channel_play_pause, loop, remove, mixer.channelProgressBar(id));
 
             mixerChannels.append(item);
         });
@@ -97,7 +124,7 @@ function init_mixer() {
     playPause.onclick = () => mixer.togglePaused();
 
     /** @param {bool} */
-    const drawPlayPause = (paused) => playPause.textContent = paused ? "Play" : "Pause";
+   /* const drawPlayPause = (paused) => playPause.textContent = paused ? "Play" : "Pause";
     drawPlayPause(mixer.paused);
     mixer.onPlayPause((e) => drawPlayPause(e.target.paused));*/
 
@@ -115,11 +142,13 @@ function init_mixer() {
         mixer_playlist_svg.css('display', 'block');
         pause_svg.css('display', 'none');
         playPause.toggleClass('playing', false);
+        playPause.toggleClass('pressed', false);
     }
     else {
         pause_svg.css('display', 'block');
         mixer_playlist_svg.css('display', 'none');
         playPause.toggleClass('playing', true);
+        playPause.toggleClass('pressed', true);
     }
         
     playPause.append(mixer_playlist_svg);
@@ -131,11 +160,13 @@ function init_mixer() {
             mixer_playlist_svg.css('display', 'block');
             pause_svg.css('display', 'none');
             playPause.toggleClass('playing', false);
+            playPause.toggleClass('pressed', false);
         }
         else {
             pause_svg.css('display', 'block');
             mixer_playlist_svg.css('display', 'none');
             playPause.toggleClass('playing', true);
+            playPause.toggleClass('pressed', true);
         }
     });
         
@@ -163,6 +194,28 @@ function init_trackLibrary() {
         fileInput.click();
     };
 
+    const addTrack = $(`<button id='addTrack'>Add Track</button>`)
+    const importTrackFields = $("<div id='importTrackFields'></div>")
+    const trackName = $(`<input class='trackName trackInput' placeholder='Track Name'/>`)
+    const trackSrc = $(`<input class='trackSrc trackInput' placeholder='https://.../example.mp3'/>`)
+    const okButton = $('<button class="add-track-ok-button">OK</button>');  
+    const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+    addTrack.off().on("click", function(){
+        importTrackFields.css("height", "25px");
+    });
+    cancelButton.off().on("click", function(){
+        importTrackFields.css("height", "0px");
+        trackName.val([]);
+        trackSrc.val([]);
+    });
+    okButton.off().on("click", function(){
+        importTrackFields.css("height", "0px");
+        trackLibrary.addTrack(trackName.val(), trackSrc.val());
+        trackName.val([]);
+        trackSrc.val([]);
+    });
+    importTrackFields.append(trackName, trackSrc, okButton, cancelButton);
+
     // track list
     const trackList = document.createElement("ul");
     trackList.id = 'track-list';
@@ -175,35 +228,26 @@ function init_trackLibrary() {
             item.textContent = track.name;
             item.className = "audio-row";
             item.setAttribute("data-id", id);
-
-   /*         const play = document.createElement('button');
-            play.textContent = 'Play';
-            play.onclick = () => {
-                const channel = new Channel(track.name, track.src);
-                channel.paused = false;
-                channel.loop = true;
-                mixer.addChannel(channel);
-            };
-            item.appendChild(play);
-            trackList.append(item);
-        });
-    });
-*/
-
+            let track_remove_button = $('<button class="track-remove-button">X</button>');  
+            track_remove_button.off().on("click", function(){
+                trackLibrary.deleteTrack(id);
+                item.remove();
+            });
             // play button
             let track_play_button = $('<button class="track-play-pause-button"></button>');          
             let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
             track_play_button.append(play_svg);
 
 
+
             track_play_button.on('click', function(){
-                const adhocStagedTrack = new StagedTrack(id);
-                adhocStagedTrack.autoplay = true;
-                adhocStagedTrack.loop = true;
-                mixer.addChannel(adhocStagedTrack.toChannel());
+                const channel = new Channel(track.name, track.src);
+                channel.paused = false;
+                channel.loop = true;
+                mixer.addChannel(channel);
             });
 
-            $(item).append(track_play_button); 
+            $(item).append(track_remove_button, track_play_button); 
             trackList.append(item);
         });
     });
@@ -211,7 +255,7 @@ function init_trackLibrary() {
 
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, importCSV, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, importCSV, addTrack, importTrackFields, trackList);
 }
 
 function init() {

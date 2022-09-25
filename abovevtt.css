@@ -4835,14 +4835,15 @@ div.note[id^="ui-id"] .mce-btn button {
     background: #454d5a;
     color: #ddd;
 }
-#sounds-panel .sidebar-panel-header svg,
 #sounds-panel .sidebar-panel-header button{
     border-radius: 50%;
     background: #454d5a;
 }
 #sounds-panel .sidebar-panel-header button{
-    box-shadow: 2px 1px 1px 2px #0009, 1px 2px 0px -2px #0003;
-    border: 1px solid #fff6;
+    box-shadow: inset 1px 1px 4px -2px #ffffffe3, 2px 2px 2px -1px #000, 0px 1px 1px 0px #000;
+}
+#sounds-panel .sidebar-panel-header button svg{
+    transform: scale(0.8);
 }
 #sounds-panel .sidebar-panel-header button:active{
     box-shadow: 2px 1px 1px 2px #0000, 1px 2px 0px -2px #0000;
@@ -4855,12 +4856,20 @@ div.note[id^="ui-id"] .mce-btn button {
 div#sounds-panel {
     overflow-y: visible;
 }
+button.channel-remove-button,
+button.channel-loop-button {
+    position: relative;
+}
 
 .mixer-play-pause-button,
 .track-play-pause-button,
 .mixer-clear-button,
 .channel-play-pause-button,
-.channel-loop-button {
+.channel-loop-button,
+.track-remove-button,
+.add-track-ok-button,
+.add-track-cancel-button,
+.channel-remove-button {
     box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
     border: 1px solid transparent;
     box-sizing: border-box;
@@ -4880,7 +4889,11 @@ div#sounds-panel {
 .track-play-pause-button:focus,
 .mixer-clear-button:focus,
 .channel-play-pause-button:focus,
-.channel-loop-button:focus {
+.channel-loop-button:focus,
+.track-remove-button:focus,
+.add-track-ok-button:focus,
+.add-track-cancel-button:focus,
+.channel-remove-button:focus {
     outline: none;
 }
 
@@ -4888,7 +4901,11 @@ div#sounds-panel {
 .track-play-pause-button:hover,
 .mixer-clear-button:hover,
 .channel-play-pause-button:hover,
-.channel-loop-button:hover  {
+.channel-loop-button:hover,
+.track-remove-button:hover,
+.add-track-ok-button:hover,
+.add-track-cancel-button:hover,
+.channel-remove-button:hover  {
     cursor: pointer;
     background: rgb(245, 248, 250);
     border: 1px solid rgb(206, 217, 224);
@@ -4898,15 +4915,51 @@ div#sounds-panel {
 .mixer-clear-button:active,
 .track-play-pause-button:active,
 .channel-play-pause-button:active,
-.channel-loop-button:active {
+.channel-loop-button:active,
+.track-remove-button:active,
+.add-track-ok-button:active,
+.add-track-cancel-button:active,
+.channel-remove-button:active {
   background-color: rgb(245, 248, 250);
   box-shadow: none;
   transform: translate(1px, 2px) scale(0.8);
 }
 .channel-play-pause-button,
-.channel-loop-button{
+.channel-loop-button,
+.channel-remove-button{
     float:  right;
-    margin-right: 5px;
+}
+.channel-remove-button{
+    color: #ddd;
+}
+input.trackName.trackInput {
+    width: 100px;
+}
+
+div#importTrackFields input {
+    width: 100px;
+    margin: 0px 5px 0px 0px;
+}
+.add-track-ok-button,
+.add-track-cancel-button{
+    left: 4px;
+    position: relative;
+}
+
+div#importTrackFields input.trackSrc {
+    width: 145px;
+}
+div#importTrackFields {
+    height: 0px;
+    overflow: hidden;
+    margin: 5px 0px;
+    transition: height ease 250ms;
+}
+#sounds-panel .sidebar-panel-header button.pressed {
+    box-shadow: inset #000 1px 1px 3px 0px;
+    transform: translate(1px, 1px) scale(0.8);
+    background: #0F03 !important;
+    border: none;
 }
 .mixer-clear-button{
     position: absolute;
