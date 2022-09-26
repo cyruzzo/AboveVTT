@@ -4874,11 +4874,11 @@ button.channel-loop-button{
     height: 16px;
 }
 .channelNameOverflow:hover .channelName {
-    margin-left: -100px;
+    margin-left: var(--name-width-overflow);
 }
 
 .channelName{
-    transition: margin ease 2s;
+    transition: margin linear 600ms;
     text-overflow: ellipsis;
     display: inline;
 }

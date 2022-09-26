@@ -34,6 +34,13 @@ function init_mixer() {
             let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>${channel.name}</div></div>`)
             item.setAttribute("data-id", id);
 
+              
+            var text_calc = $(`<div class='channelName'>${channel.name}</span>`);
+            $('body').prepend(text_calc);
+            var nameWidth = $('body').find('div.channelName:first').width();
+            text_calc.remove();
+            channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
+
             //item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
             let remove = $('<button class="channel-remove-button"">X</button>');
             remove.off().on("click", function(){
