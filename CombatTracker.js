@@ -220,8 +220,13 @@ function init_combat_tracker(){
 			console.log('nessuno selezionato');
 			$("#combat_area tr").first().attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
-			window.TOKEN_OBJECTS[currentTarget].options.current = true;
-			window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
+				window.TOKEN_OBJECTS[currentTarget].options.current = true;
+				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+			}
+			window.all_token_objects[currentTarget].options.current = true;
+			window.all_token_objects[currentTarget].update_and_sync();
+
 		}
 		else{
 			current.removeAttr('data-current');
@@ -239,7 +244,7 @@ function init_combat_tracker(){
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
-				delete window.TOKEN_OBJECTS[newTarget].options.round;
+				delete window.TOKEN_OBJECTS[currentTarget].options.round;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
