@@ -782,6 +782,9 @@ function ct_load(data=null){
 				}
 			}
 		}
+		if(window.childWindows['Combat Tracker'] != undefined)
+			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
+		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
 	}
 	else{
 		for(tokenID in window.all_token_objects){
