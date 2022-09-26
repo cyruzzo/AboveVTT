@@ -4878,7 +4878,7 @@ button.channel-loop-button{
 }
 
 .channelName{
-    transition: margin linear 600ms;
+    transition: margin 800ms ease-in 250ms;
     text-overflow: ellipsis;
     display: inline;
 }
