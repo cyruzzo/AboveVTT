@@ -1219,6 +1219,9 @@ div#combat_button{
     background: #e4c700;
 }
 
+#note.condition-container{
+    pointer-events: auto;
+}
 
 .tokenselected::before{
     content: "";
@@ -1259,6 +1262,7 @@ div#combat_button{
     top: 0;
     position: absolute;
     z-index: 5;
+    pointer-events: none;
 }
 
 .dnd-condition {
