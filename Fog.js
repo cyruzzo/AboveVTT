@@ -1141,6 +1141,8 @@ function drawing_mousemove(e) {
  * @returns
  */
 function drawing_mouseup(e) {
+	if(!window.MOUSEDOWN)
+		return;
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging").length > 0){
 		return
