@@ -651,9 +651,9 @@ class MessageBroker {
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
 				if(window.YTPLAYER){
-					$("#youtube_volume").val(msg.data.volume);
+					window.YTPLAYER.volume = msg.data.volume;
 					if(window.YTPLAYER)
-						window.YTPLAYER.setVolume(msg.data.volume);
+						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
 				}
 			}
 

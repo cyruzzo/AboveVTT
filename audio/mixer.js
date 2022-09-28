@@ -364,6 +364,7 @@ class Mixer extends EventTarget {
         Object.entries(this.channels()).forEach(([id, channel]) =>
             this._players[id].volume = e.target.value * channel.volume
         );
+        window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
     }
 
     /**
@@ -373,6 +374,7 @@ class Mixer extends EventTarget {
      */
     _masterSliderOnChange = (e) => {
         this.volume = e.target.value;
+        window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
     }
 
     /**

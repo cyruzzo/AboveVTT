@@ -10,6 +10,7 @@ function masterVolumeSlider() {
     const div = document.createElement("div");
     div.textContent = "Master Volume";
     div.className = "audio-row";
+    div.id = "master-volume"
     div.append(mixer.masterVolumeSlider());
 
     return div;
@@ -27,6 +28,26 @@ function init_mixer() {
     /** @param {Object.<string, Channel>} */
     const drawChannelList = (channels) => {
         mixerChannels.innerHTML = "";
+        let youtube_section= $("<li class='audio-row'></li>");;    
+        let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>Animated Map Audio</div>`)
+        let youtube_volume = $(`<input type="range" min="0." max="100" value="${window.YTPLAYER ? window.YTPLAYER.volume : 50}" step="1" class="volume-control" id="youtube_volume">`);
+        $(youtube_section).append(channelNameDiv, youtube_volume);
+        $(mixerChannels).append(youtube_section);
+        youtube_volume.on("change", function() {
+            window.YTPLAYER.volume = $("#youtube_volume").val();
+            if (window.YTPLAYER) {
+                window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+                data={
+                    volume: window.YTPLAYER.volume
+                };
+                window.MB.sendMessage("custom/myVTT/changeyoutube",data);
+            }
+        });
+        var text_calc = $(`<div class='channelName'>Animated Map Audio</span>`);
+        $('body').prepend(text_calc);
+        var nameWidth = $('body').find('div.channelName:first').width();
+        text_calc.remove();
+        channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
         /** @type {Object.<string, Channel>} */
         Object.entries(channels).forEach(([id, channel]) => {
             const item = document.createElement("li");
