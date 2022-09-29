@@ -4839,7 +4839,7 @@ li.audio-row:hover .channel-progress-bar-total
     color: #000;
 }
 #sounds-panel .sidebar-panel-header button{
-    border-radius: 50%;
+    border-radius: 5px;
 }
 #sounds-panel .sidebar-panel-header button{
     box-shadow: inset 1px 1px 4px -2px #a0a0a0e3, 2px 2px 2px -1px #000000a3, 0px 1px 1px 0px #0006;
@@ -4895,7 +4895,7 @@ button.channel-loop-button{
     box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
     border: 1px solid transparent;
     box-sizing: border-box;
-    border-radius: 50%;
+    border-radius: 5px;
     width: 24px;
     height: 24px;
     color: rgb(111, 116, 120);
@@ -4986,14 +4986,14 @@ div#importTrackFields {
 }
 .mixer-clear-button{
     position: absolute;
-    top: 17px;
-    right: 6px;
+    top: 54px;
+    right: 190px;
 }
 
 .mixer-play-pause-button{
     position: absolute;
-    top: 17px;
-    left: 51px;
+    top: 54px;
+    left: 174px;
 }
 
 .mixer-play-pause-button.playing{
