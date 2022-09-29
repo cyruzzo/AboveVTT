@@ -789,7 +789,7 @@ function ct_load(data=null){
 //load in local data on first load after 0.80
 	var itemkey="CombatTracker"+find_game_id();
 	data=$.parseJSON(localStorage.getItem(itemkey));
-	if(data !== undefined && data != null){
+	if(data !== undefined && data !== null){
 		if(!(data[0]['already-loaded'])){
 			for(i in data){
 				if (data[i]['data-target'] === 'round'){
