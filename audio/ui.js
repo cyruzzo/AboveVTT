@@ -161,12 +161,14 @@ function init_mixer() {
         pause_svg.css('display', 'none');
         playPause.toggleClass('playing', false);
         playPause.toggleClass('pressed', false);
+        $('head').append(`<style id="mixer-paused" />#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
     }
     else {
         pause_svg.css('display', 'block');
         mixer_playlist_svg.css('display', 'none');
         playPause.toggleClass('playing', true);
         playPause.toggleClass('pressed', true);
+        $('style#mixer-paused').remove();
     }
         
     playPause.append(mixer_playlist_svg);
@@ -179,12 +181,15 @@ function init_mixer() {
             pause_svg.css('display', 'none');
             playPause.toggleClass('playing', false);
             playPause.toggleClass('pressed', false);
+             $('head').append(`<style id="mixer-paused" />#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
+           
         }
         else {
             pause_svg.css('display', 'block');
             mixer_playlist_svg.css('display', 'none');
             playPause.toggleClass('playing', true);
             playPause.toggleClass('pressed', true);
+             $('style#mixer-paused').remove();
         }
     });
         
