@@ -93,10 +93,11 @@ function addVideo(stream,streamerid) {
 				const red = frame.data[i + 0];
 				const green = frame.data[i + 1];
 				const blue = frame.data[i + 2];
-				if ((red < 5) && (green < 5) && (blue < 5))
+				if ((red < 8) && (green < 8) && (blue < 8))
 					frame.data[i + 3] = 128;
-				if ((red == 0) && (green == 0) && (blue == 0))
+				if ((red < 4) && (green < 4) && (blue < 4))
 					frame.data[i + 3] = 0;
+				
 				
 			}
 			ctx.putImageData(frame,0,0);	
