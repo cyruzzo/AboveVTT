@@ -1164,7 +1164,7 @@ class MessageBroker {
 		if(window.all_token_objects != undefined){
 			if (data.id in window.all_token_objects) {
 				for (var property in window.all_token_objects[data.id].options) {		
-					if(msg.loading && property != "left" && property != "top"){
+					if(msg.loading && property != "left" && property != "top" && property != "hidden"){
 						data[property] = window.all_token_objects[data.id].options[property];
 					}
 					else if(property in data){
