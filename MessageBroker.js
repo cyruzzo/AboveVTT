@@ -1161,8 +1161,6 @@ class MessageBroker {
 		if(data.id == undefined)
 			return;
 
-
-
 		if(msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading){
 			data.size = window.CURRENT_SCENE_DATA.hpps * data.gridSquares;
 			if(window.all_token_objects != undefined){
@@ -1183,7 +1181,7 @@ class MessageBroker {
 						delete window.all_token_objects[data.id].options.hidden;
 				}
 			}
-		}		
+		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
 			for (var property in data) {

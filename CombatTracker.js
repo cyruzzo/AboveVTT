@@ -747,6 +747,7 @@ function ct_load(data=null){
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
 				{
+
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
@@ -767,7 +768,7 @@ function ct_load(data=null){
 			if(window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{
 				ct_add_token(window.all_token_objects[tokenID],false,true);
-			}
+			}		
 		}
 		if(data.current){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
