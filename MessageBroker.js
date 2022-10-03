@@ -1161,26 +1161,33 @@ class MessageBroker {
 		if(data.id == undefined)
 			return;
 
-		if(window.all_token_objects != undefined){
-			if (data.id in window.all_token_objects) {
-				for (var property in window.all_token_objects[data.id].options) {		
-					if(msg.loading && property != "left" && property != "top" && property != "hidden"){
-						data[property] = window.all_token_objects[data.id].options[property];
+
+
+		if(msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading){
+			data.size = window.CURRENT_SCENE_DATA.hpps * data.gridSquares;
+			if(window.all_token_objects != undefined){
+				if (data.id in window.all_token_objects) {
+					for (var property in window.all_token_objects[data.id].options) {		
+						if(property == "left" || property == "top" || property == "hidden")
+							continue;
+						if(msg.loading){
+							data[property] = window.all_token_objects[data.id].options[property];
+						}
+						else if(property in data){
+						 window.all_token_objects[data.id].options[property] = data[property]; 
+						}
 					}
-					else if(property in data){
-					 window.all_token_objects[data.id].options[property] = data[property]; 
-					}
+
+
+					if (!data.hidden)
+						delete window.all_token_objects[data.id].options.hidden;
 				}
-
-
-				if (!data.hidden)
-					delete window.all_token_objects[data.id].options.hidden;
 			}
-		}
+		}		
 			
 		if (data.id in window.TOKEN_OBJECTS) {
 			for (var property in data) {
-				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top"))
+				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 			}

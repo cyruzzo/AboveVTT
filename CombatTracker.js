@@ -593,7 +593,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(window.DM)
 		buttons.append(del);
 	
-	if(token.isMonster()){
+	if(!token.isPlayer()){
 		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat.click(function(){
@@ -747,7 +747,6 @@ function ct_load(data=null){
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
 				{
-
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
@@ -768,7 +767,7 @@ function ct_load(data=null){
 			if(window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{
 				ct_add_token(window.all_token_objects[tokenID],false,true);
-			}		
+			}
 		}
 		if(data.current){
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
