@@ -601,6 +601,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		});
 		if(window.DM){
 			buttons.append(stat);
+			if(!token.isMonster()){
+				stat.css("visibility", "hidden");
+			}
 
 			ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px; class='hideInPlayerCombatCheck' title="Show in player's Combat Tracker?" target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
 			//ct_show_checkbox.tooltip({ show: { effect: "blind", duration: 600 } });//Make this tooltip show a little quicker
