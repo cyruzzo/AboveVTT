@@ -1190,12 +1190,16 @@ class MessageBroker {
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 			}
 			if(data.ct_show == undefined){
-				window.TOKEN_OBJECTS[data.id].options["ct_show"] = undefined;
+				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
 			}
 			if (!data.hidden)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
 
 			window.TOKEN_OBJECTS[data.id].place();
+
+			if(window.DM && msg.loading){
+				window.TOKEN_OBJECTS[data.id].update_and_sync();
+			}
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){

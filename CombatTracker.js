@@ -634,7 +634,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 				}
 
-				if(token.options.id in window.TOKEN_OBJECTS) token.update_and_sync();		
+				if(token.options.id in window.TOKEN_OBJECTS) {
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				}	
 				ct_update_popout();
 				ct_persist();
 			});
