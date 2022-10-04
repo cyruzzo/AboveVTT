@@ -1483,7 +1483,6 @@ function init_sheet() {
 		if (window.innerWidth < 1200 || !is_player_sheet_open()) {
 			sheet_resize_button.hide();
 		}
-
 		// we're playing on the character page so return early to prevent an iframe from also loading the character sheet
 		return;
 	}
@@ -1914,12 +1913,23 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		observer.observe(mutation_target, mutation_config);
 
-		/*const waitToSync = (timeElapsed = 0) => {
+	//artificer infusions still require this as it is not included in ac values captured elsewhere
+		const waitToSync = (timeElapsed = 0) => {
 			setTimeout(() => {
 				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
 				if (ac_element.length > 0) {
-					synchp();
-					$(event.target).attr('data-init_load', 1);
+					if (tokenid in window.TOKEN_OBJECTS){
+						let totalAc = $(event.target).contents().find(".ddbc-armor-class-box__value").html();
+						if(window.TOKEN_OBJECTS[tokenID].options.ac != totalAc)
+						{
+							window.TOKEN_OBJECTS[tokenid].options.ac = totalAc
+							window.TOKEN_OBJECTS[tokenid].place();
+							window.TOKEN_OBJECTS[tokenid].update_and_sync();
+							if(tokenid in window.PLAYER_STATS)
+								window.PLAYER_STATS[tokenid].ac = totalAc;
+						}
+
+					}
 				} else {
 					if (timeElapsed < 15000) {
 						waitToSync(timeElapsed + 500);
@@ -1927,7 +1937,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 				}
 			}, 500);
 		};
-		waitToSync();*/
+		waitToSync();
 
 		setTimeout(function() {
 			$("#sheet").find("iframe").each(function() { 
@@ -3736,6 +3746,14 @@ function show_player_sheet() {
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").addClass("ddbc-tab-options__header-heading--is-active");
 	if (window.innerWidth < 1024) {
 		hide_sidebar();
+	}
+	for(id in window.TOKEN_OBJECTS){
+		if(id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[id].options.ac != $(".ddbc-armor-class-box__value").html()){
+			window.MB.sendMessage("custom/myVTT/actoplayerdata",{
+				id: window.PLAYER_ID,
+				ac: $(".ddbc-armor-class-box__value").html()
+			});
+		}
 	}
 }
 
