@@ -201,7 +201,6 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[id].update_and_sync();
 			}
 			window.all_token_objects[id].options.ct_show = undefined;
-			window.all_token_objects[id].update_and_sync();
 
 		}
 		window.ROUND_NUMBER = 1;
@@ -220,8 +219,14 @@ function init_combat_tracker(){
 			console.log('nessuno selezionato');
 			$("#combat_area tr").first().attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
-			window.TOKEN_OBJECTS[currentTarget].options.current = true;
-			window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+
+			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
+				window.TOKEN_OBJECTS[currentTarget].options.current = true;
+				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+			}
+			window.all_token_objects[currentTarget].options.current = true;
+
+
 		}
 		else{
 			current.removeAttr('data-current');
@@ -425,7 +430,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.all_token_objects[token.options.id].sync = function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
 					}
-					window.all_token_objects[token.options.id].update_and_sync();
 				}
 				token.options.init = init.val();
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
@@ -446,9 +450,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				token.options.init = value;
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){			
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
-				}
-				if(window.all_token_objects[token.options.id] != undefined){				
-					window.all_token_objects[token.options.id].update_and_sync()
 				}
 				setTimeout(ct_reorder(), 500);
 			});
@@ -510,7 +511,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].options.hp = hp_input.val();
-				window.all_token_objects[token.options.id].update_and_sync();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
@@ -532,7 +532,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
-				window.all_token_objects[token.options.id].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
@@ -584,7 +583,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			}
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].options.ct_show = undefined;
-				window.all_token_objects[token.options.id].update_and_sync();
 			}
 
 			ct_remove_token(token);
