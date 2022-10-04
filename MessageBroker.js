@@ -1192,7 +1192,7 @@ class MessageBroker {
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
 			}
-			if (!data.hidden)
+			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
 
 			window.TOKEN_OBJECTS[data.id].place();
