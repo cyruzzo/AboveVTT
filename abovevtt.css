@@ -4055,7 +4055,7 @@ input.max_hp[disabled]{
 }
 
 .token>img{
-    border: 2px solid var(--token-border-color, #ffffff44);
+    border: var(--token-border-width) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 2px 3px var(--token-hp-aura-color), 0 0 2px 5px var(--token-temp-hp);
 }
 .token>.base~img{
