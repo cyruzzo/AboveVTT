@@ -4056,10 +4056,10 @@ input.max_hp[disabled]{
 }
 
 .token>img{
-    --aura-width: max(2px, calc(4px / var(--window-zoom)));
+    --aura-width: max(2px, calc(3px / var(--window-zoom)));
     --zoom-border-width: max(2px, calc(var(--token-border-width) * 1.5 / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 var(--aura-width) 3px var(--token-hp-aura-color), 0 0 var(--aura-width) 5px var(--token-temp-hp);
+    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
 .token>.base~img{
     filter: none;
