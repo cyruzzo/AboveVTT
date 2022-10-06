@@ -4024,7 +4024,8 @@ input.max_hp[disabled]{
     margin: 5% 0 0 5%;
     backdrop-filter: blur(3px) brightness(0.7);
     z-index: -1;
-    border: inset 5px var(--token-border-color, #ffffff44);
+    --border-width: max(5px, calc(5px / var(--window-zoom)));
+    border: inset var(--border-width) var(--token-border-color, #ffffff44);
 }
 
 
@@ -4032,7 +4033,7 @@ input.max_hp[disabled]{
     filter: drop-shadow(0.5px 0px 1px #000b);
 }
 .token>.base.large-or-smaller-base{
-    border-width: 2px;
+    border-width: max(2px, calc(2px / var(--window-zoom)));
 }
 
 .base.circle:before {
@@ -4055,8 +4056,10 @@ input.max_hp[disabled]{
 }
 
 .token>img{
-    border: var(--token-border-width) solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 2px 3px var(--token-hp-aura-color), 0 0 2px 5px var(--token-temp-hp);
+    --aura-width: max(2px, calc(4px / var(--window-zoom)));
+    --zoom-border-width: max(2px, calc(var(--token-border-width) * 1.5 / var(--window-zoom)));
+    border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
+    box-shadow: 0 0 var(--aura-width) 3px var(--token-hp-aura-color), 0 0 var(--aura-width) 5px var(--token-temp-hp);
 }
 .token>.base~img{
     filter: none;
@@ -4073,7 +4076,8 @@ input.max_hp[disabled]{
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
-    filter:  drop-shadow(#ffffff22 0px 0px 1px) drop-shadow(var(--token-border-color) 0px 0px 0.2px) drop-shadow(var(--token-border-color) 0px 0px 0px) drop-shadow(var(--token-hp-aura-color) 0px 0px 1px) drop-shadow(var(--token-hp-aura-color) 0px 0px 0px) drop-shadow(var(--token-temp-hp) 0px 0px 1px) drop-shadow(var(--token-temp-hp) 0px 0px 0px);
+    --aura-width: max(1px, calc(0.5px / var(--window-zoom)));
+    filter:  drop-shadow(#ffffff22 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px 0px) drop-shadow(var(--token-hp-aura-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-hp-aura-color) 0px 0px 0px) drop-shadow(var(--token-temp-hp) 0px 0px var(--aura-width)) drop-shadow(var(--token-temp-hp) 0px 0px 0px);
 }
 .token>img:not(.preserve-aspect-ratio) {
     object-fit: cover;
@@ -4090,11 +4094,13 @@ input.max_hp[disabled]{
     bottom: 0;
     background-size: 30%;
     opacity: 1;
-    box-shadow: inset 0 0 5px 5px var(--token-hp-aura-color), inset 0 0 5px 8px var(--token-temp-hp);
+    --aura-width: max(5px, calc(5px / var(--window-zoom)));
+    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
 
 .base.large-or-smaller-base:after{
-    box-shadow: inset 0 0 2px 2px var(--token-hp-aura-color), inset 0 0 2px 4px var(--token-temp-hp);
+    --aura-width: max(2px, calc(2px / var(--window-zoom)));
+    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
 .VTTToken.token>.base.circle{
     border-style: solid;
