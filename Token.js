@@ -2173,20 +2173,14 @@ function setTokenAuras (token, options) {
 			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
+			options.hidden && !options.auraislight ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
-		if(options.auraislight){
-			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
-			let auraClone = $("[id='aura_" + tokenId + "']").clone();
-			auraClone.addClass("lightAura");
-			$("[id='aura_" + tokenId + "']").append(auraClone);		
-			$("[id='aura_" + tokenId + "']").attr("style", auraStyles);				
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", true);
+		if(options.auraislight){		
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", true);
 		}
 		else{
-			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", false);
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", false);
 		}
 
 		

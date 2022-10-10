@@ -4600,7 +4600,7 @@ div.ddbc-tab-options--layout-pill>button{
     display: none;
 }
 
-.aura-element.haslightchild{
+.aura-element.islight{
     backdrop-filter: opacity(0.5);
     z-index: 10;
     mix-blend-mode: overlay;
@@ -4615,12 +4615,7 @@ div.ddbc-tab-options--layout-pill>button{
     background: #fff;
     filter: brightness(var(--darkness-filter));
 }
-.lightAura{
-    background-image: none !important;
-    top: 0px !important;
-    left: 0px !important;
-    /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
-}
+
 
 @keyframes aurafx-flicker{
     0%  {filter: blur(10px);transform:scale(1);}
