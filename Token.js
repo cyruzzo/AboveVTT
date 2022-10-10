@@ -1864,7 +1864,8 @@ function default_options() {
 			feet: "0",
 			color: "rgba(255, 255, 0, 0.1)"
 		},
-		auraVisible: false
+		auraVisible: false,
+		auraOwned: false
 	};
 }
 
@@ -2163,7 +2164,7 @@ function setTokenAuras (token, options) {
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
 		} else {
-			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" style='${auraStyles}' />`);
+			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
 			auraElement.contextmenu(function(){return false;});
 			$("#VTT").prepend(auraElement);
 		}
@@ -2194,6 +2195,25 @@ function setTokenAuras (token, options) {
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
+	}
+	let playerTokens = $(".token[data-id^='/']");
+	for(let token of playerTokens){
+		if(token.dataset.name == window.PLAYER_NAME){
+			if(window.TOKEN_OBJECTS[token.dataset.id].options.auraowned){
+				let auras = $("[id^='aura_']");
+				for(let i = 0; i < auras.length; i++){
+					if(!auras[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.player_owned){
+						$(auras[i]).css("visibility", "hidden");
+					}
+				}
+			}
+			else{
+				let auras = $("[id^='aura_']");
+				for(let i = 0; i < auras.length; i++){
+						$(auras[i]).css("visibility", "visible");	
+				}
+			}
+		}
 	}
 }
 
