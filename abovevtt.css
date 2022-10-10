@@ -4604,6 +4604,7 @@ div.ddbc-tab-options--layout-pill>button{
     backdrop-filter: opacity(0.5);
     z-index: 10;
     mix-blend-mode: overlay;
+    filter: blur(10px);
     /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
 }
 #scene_map{
@@ -4615,13 +4616,10 @@ div.ddbc-tab-options--layout-pill>button{
     filter: brightness(var(--darkness-filter));
 }
 .lightAura{
-    backdrop-filter: blur(var(--light-blur)) !important;
     background-image: none !important;
     top: 0px !important;
     left: 0px !important;
     /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
-}
-.aura-element{
 }
 
 @keyframes aurafx-flicker{

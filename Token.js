@@ -2182,8 +2182,6 @@ function setTokenAuras (token, options) {
 			auraClone.addClass("lightAura");
 			$("[id='aura_" + tokenId + "']").append(auraClone);		
 			$("[id='aura_" + tokenId + "']").attr("style", auraStyles);				
-			let lightblur = totalSize/50 + "px";
-			$("[id='aura_" + tokenId + "']").css('--light-blur', lightblur);
 			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", true);
 		}
 		else{
