@@ -1555,9 +1555,112 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 .panel-warning {
-	background:red;
-    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+	background:#f7a7a3;
+    box-shadow: 0 0 15px 5px #ccc;
+    border-left: 5px solid #e90c00;
+    padding: 8px;
+    margin: 8px;
 }
+
+
+#btn_add_chapter {
+    background: none;
+    border: 1px solid #7f7f7f;
+    border-radius: 5px;
+    color: #7f7f7f;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 8px 0 8px auto;
+    padding: 8px;
+    cursor: pointer;
+}
+
+#btn_add_chapter:hover {
+    background: #7f7f7f;
+    color: #fff
+}
+
+.input-add-chapter {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-bottom: 1px solid #7f7f7f;
+}
+
+.input-add-chapter:focus {
+    outline: none;
+}
+
+.row-add-chapter {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center; 
+}
+
+.row-chapter {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.journal-chapter-title:hover {
+    text-decoration: underline;
+}
+
+.btn-chapter-icon {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.btn-chapter-icon:hover {
+    transform: scale(1.5);
+}
+
+.btn-chapter-icon:focus {
+    outline: none;
+}
+
+.btn-chapter-icon > img {
+    width: 16px;
+    height: 16px;
+}
+
+/* If the journal-chapter is collapsed, hide its children and make its background white */
+.collapsed {
+    background-color: #fff;
+}
+
+.journal-chapter {
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #d8e1e8;
+}
+
+.journal-chapter.collapsed > .note-list {
+    display: none;
+}
+
+.journal-chapter-title {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Roboto;
+    overflow: hidden;
+}
+
+.row-notes-entry {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
 
 .ct-sidebar__controls button,
 .sidebar__controls button{
@@ -2159,26 +2262,31 @@ audio::-webkit-media-controls-time-remaining-display{
 	top: -2px;
 }
 
-.journal-chapter-title{
-    font-weight: bold;
-    background: #dddddd;
-    min-height: 30px;
+.journal-note-entry{
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0 8px 8px;
+    background: #fff;
+    border-radius: 3px;
 }
 
-.journal-note-entry{
-	width:100%;
-	height: 20px;
-	margin-top:3px;
-	margin-bottom:3px;
+.journal-note-entry:last-child {
+    background: transparent;
 }
 
 .journal-entry-buttons{
-	float:right;
+	margin-left: auto;
 	height: 20px;
 }
 .journal-note-entry-title{
-	float:left;
-	height: 20px;
+	flex: 1;
+    padding: 8px;
+}
+
+.journal-note-entry-title:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .visibility-container{
