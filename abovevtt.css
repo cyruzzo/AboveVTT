@@ -4601,17 +4601,15 @@ div.ddbc-tab-options--layout-pill>button{
 }
 
 .aura-element.islight{
-    backdrop-filter: opacity(0.5);
-    z-index: 10;
-    mix-blend-mode: overlay;
-    filter: blur(10px);
-    /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
+    animation: aurafx-flicker 15s infinite alternate ease-in-out;
+    opacity: 0.5 !important;
+    z-index: 9;
 }
 #scene_map{
     mix-blend-mode: multiply;
 }
 #darkness_layer{
-    z-index: 9;
+    z-index: 8;
     background: #fff;
     filter: brightness(var(--darkness-filter));
 }
