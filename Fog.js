@@ -399,11 +399,13 @@ function check_single_token_visibility(id){
 			var selector = "div[data-id='" + id + "']";
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			if (is_token_under_fog(id)) {
-
 				$(selector).hide();
 				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 				{
-						$(auraSelector).hide();
+					$(auraSelector).hide();
+				}
+				else{
+					$(auraSelector).show();
 				}
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -412,7 +414,6 @@ function check_single_token_visibility(id){
 				$(auraSelector).show();
 				//console.log('SHOW '+id);
 			}
-			$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 }
 
 
