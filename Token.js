@@ -2188,10 +2188,10 @@ function setTokenAuras (token, options) {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
 	}
-	let playerTokens = $(".token[data-id^='/']");
-	for(let token of playerTokens){
-		if(token.dataset.name == window.PLAYER_NAME){
-			if(window.TOKEN_OBJECTS[token.dataset.id].options.auraowned){
+	if(!window.DM){
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		if(playerTokenId != undefined){
+			if(window.TOKEN_OBJECTS[playerTokenId].options.auraowned){
 				let auras = $("[id^='aura_']");
 				for(let i = 0; i < auras.length; i++){
 					if(!auras[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.player_owned){
