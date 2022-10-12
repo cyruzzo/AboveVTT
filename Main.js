@@ -1094,7 +1094,7 @@ function init_controls() {
 	if (!DM) {
 		sidebarControls.addClass("player");
 	}
-
+	addGamelogPopoutButton()
 }
 
 const MAX_ZOOM_STEP = 20
@@ -4002,17 +4002,37 @@ function show_sidebar() {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
+	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true`
+
+	addGamelogPopoutButton()
 }
 
 var childWindows = {};
 
+function addGamelogPopoutButton(){
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
+	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true`
 
+	gamelog_popout.off().on("click",function(){
+		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);	
+		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
+		setTimeout(function() {		
+			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
+		}, 500)
+		childWindows["Gamelog"].onload = function() {
+			popoutGamelogCleanup();
+		}	
+	});
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
+}
 // This will popout the selector and it's children. Use a unique name for windows you want to open seperately. If you want to override an open window use the same name.
-function popoutWindow(name, cloneSelector, width=400, height=800){
+function popoutWindow(name, cloneSelector, width=400, height=800, windowTarget=``){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
 width=${width},height=${height},left=100,top=100`;
-	childWindows[name] = window.open(``, name, params);		
+	childWindows[name] = window.open(windowTarget, name, params);		
 	childWindows[name].onbeforeunload = function(){ 
 		closePopout(name);
 	}
@@ -4027,6 +4047,58 @@ width=${width},height=${height},left=100,top=100`;
         this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 	});
 	return childWindows[name];
+}
+function popoutGamelogCleanup(){
+	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
+	$(childWindows["Gamelog"]).off().on("resize", function(event){
+		event.stopImmediatePropagation();
+		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+	});
+	setTimeout(function(){
+		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+		$(childWindows["Gamelog"].document).find(".sidebar-panel-loading-indicator").remove();
+		$(childWindows["Gamelog"].document).find(".dice-roller").remove();
+		$(childWindows["Gamelog"].document).find(".sidebar-panel-content:not('.glc-game-log')").remove();
+		$(childWindows["Gamelog"].document).find(".chat-text-wrapper").remove();
+		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
+		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
+		body *{
+		    visibility: hidden;
+		    /* width: 100%; */
+		}
+		body{
+			background: none !important;
+			overflow: hidden !important;
+		}
+
+		.sidebar,
+		.sidebar *,
+		.ct-sidebar,
+		.ct-sidebar *
+		{
+		    visibility:visible;
+		}
+
+		.sidebar__controls *{
+		    visibility: hidden;
+		    width:0px !important;
+		}
+		.sidebar__inner,
+		.sidebar,
+		.sidebar__pane-content,
+		.glc-game-log,
+		.ct-sidebar__inner,
+		.ct-sidebar,
+		.ct-sidebar__pane-content,
+		.ct-glc-game-log{
+		    width: 100% !important;
+		    max-width: 100% !important;
+		}
+		.ct-sidebar{
+			transform: none !important;
+		}
+		</style>`);
+	}, 5000);		
 }
 function updatePopoutWindow(name, cloneSelector){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();

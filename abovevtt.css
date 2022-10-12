@@ -3508,6 +3508,19 @@ button.avtt-roll-button {
 .popout-button {
     top: 2px;
 }
+
+.glc-game-log .popout-button{
+    position: relative;
+    display: inline; 
+    padding-left: 3px;
+    vertical-align: top;
+    right: 0;
+    filter: none;
+}
+.glc-game-log .popout-button path:not([fill='none']){
+    fill: #000;
+    right: 0;
+} 
 .journal-button{
     filter: none;
     border: 1px solid #c5c5c5;
