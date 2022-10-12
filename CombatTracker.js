@@ -201,7 +201,6 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[id].update_and_sync();
 			}
 			window.all_token_objects[id].options.ct_show = undefined;
-			window.all_token_objects[id].update_and_sync();
 
 		}
 		window.ROUND_NUMBER = 1;
@@ -220,8 +219,14 @@ function init_combat_tracker(){
 			console.log('nessuno selezionato');
 			$("#combat_area tr").first().attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
-			window.TOKEN_OBJECTS[currentTarget].options.current = true;
-			window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+
+			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
+				window.TOKEN_OBJECTS[currentTarget].options.current = true;
+				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+			}
+			window.all_token_objects[currentTarget].options.current = true;
+
+
 		}
 		else{
 			current.removeAttr('data-current');
@@ -425,7 +430,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.all_token_objects[token.options.id].sync = function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
 					}
-					window.all_token_objects[token.options.id].update_and_sync();
 				}
 				token.options.init = init.val();
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
@@ -446,9 +450,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				token.options.init = value;
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){			
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
-				}
-				if(window.all_token_objects[token.options.id] != undefined){				
-					window.all_token_objects[token.options.id].update_and_sync()
 				}
 				setTimeout(ct_reorder(), 500);
 			});
@@ -510,7 +511,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].options.hp = hp_input.val();
-				window.all_token_objects[token.options.id].update_and_sync();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
@@ -532,7 +532,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
-				window.all_token_objects[token.options.id].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
 				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
@@ -584,7 +583,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			}
 			if(window.all_token_objects[token.options.id] != undefined){
 				window.all_token_objects[token.options.id].options.ct_show = undefined;
-				window.all_token_objects[token.options.id].update_and_sync();
 			}
 
 			ct_remove_token(token);
@@ -593,7 +591,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(window.DM)
 		buttons.append(del);
 	
-	if(token.isMonster()){
+	if(!token.isPlayer()){
 		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat.click(function(){
@@ -601,6 +599,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		});
 		if(window.DM){
 			buttons.append(stat);
+			if(!token.isMonster()){
+				stat.css("visibility", "hidden");
+			}
 
 			ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px; class='hideInPlayerCombatCheck' title="Show in player's Combat Tracker?" target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
 			//ct_show_checkbox.tooltip({ show: { effect: "blind", duration: 600 } });//Make this tooltip show a little quicker
@@ -631,7 +632,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					$("#"+token.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 				}
 
-				if(token.options.id in window.TOKEN_OBJECTS) token.update_and_sync();		
+				if(token.options.id in window.TOKEN_OBJECTS) {
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+				}	
 				ct_update_popout();
 				ct_persist();
 			});
