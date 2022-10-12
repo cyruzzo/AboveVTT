@@ -4057,9 +4057,11 @@ function popoutGamelogCleanup(){
 		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
 		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
 		$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
-		removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(style):not(script):not(#site)");
-		removeFromPopoutWindow("Gamelog", "#site>*:not(#site-main)");
+		let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
+		removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer)");
 		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+		removeFromPopoutWindow("Gamelog", "iframe");
+		$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
 		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
 		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
 		body *{
