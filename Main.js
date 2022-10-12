@@ -4020,7 +4020,7 @@ function addGamelogPopoutButton(){
 		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
 		setTimeout(function() {		
 			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
-		}, 500)
+		}, 1000)
 		childWindows["Gamelog"].onload = function() {
 			popoutGamelogCleanup();
 		}	
@@ -4050,16 +4050,12 @@ width=${width},height=${height},left=100,top=100`;
 }
 function popoutGamelogCleanup(){
 	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
-	$(childWindows["Gamelog"]).off().on("resize", function(event){
-		event.stopImmediatePropagation();
-		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
-	});
 	setTimeout(function(){
 		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
-		$(childWindows["Gamelog"].document).find(".sidebar-panel-loading-indicator").remove();
-		$(childWindows["Gamelog"].document).find(".dice-roller").remove();
-		$(childWindows["Gamelog"].document).find(".sidebar-panel-content:not('.glc-game-log')").remove();
-		$(childWindows["Gamelog"].document).find(".chat-text-wrapper").remove();
+		removeFromPopoutWindow("Gamelog", ".sidebar-panel-loading-indicator");
+		removeFromPopoutWindow("Gamelog", ".dice-roller");
+		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
+		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
 		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
 		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
 		body *{
