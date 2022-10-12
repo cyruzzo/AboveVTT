@@ -2132,35 +2132,29 @@ function init_things() {
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
-	if (window.DM) {
+	if (window.DM && !window.location.search.includes("popoutgamelog=true")) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
-		if(!window.location.search.includes("popoutgamelog=true")){
-			window.EncounterHandler = new EncounterHandler(function(didSucceed) {
-				if (didSucceed === false) {
-					showDebuggingAlert();
-				}
-				init_ui();
-				if (is_encounters_page()) {
-				
-					// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
-					$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
-
-					$("#site-main").css({"display": "block", "visibility": "hidden"});
-					$(".dice-rolling-panel").css({"visibility": "visible"});
-					$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-					$("div.dice-toolbar").css({"bottom": "35px"});
-					$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-				}
-				
-				init_scene_selector();
-				init_splash();
-				
-			});
-		}
-		else{
+		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+			if (didSucceed === false) {
+				showDebuggingAlert();
+			}
 			init_ui();
-		}
+			if (is_encounters_page()) {
+			
+				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
+				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
+
+				$("#site-main").css({"display": "block", "visibility": "hidden"});
+				$(".dice-rolling-panel").css({"visibility": "visible"});
+				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
+				$("div.dice-toolbar").css({"bottom": "35px"});
+				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
+			}
+			
+			init_scene_selector();
+			init_splash();			
+		});
 	} else if (is_characters_page()) {
 		
 		hide_player_sheet();
