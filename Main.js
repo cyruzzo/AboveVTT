@@ -2135,27 +2135,32 @@ function init_things() {
 	if (window.DM) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
-		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
-			if (didSucceed === false) {
-				showDebuggingAlert();
-			}
-			init_ui();
-			if (is_encounters_page()) {
-			
-				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
-				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
+		if(!window.location.search.includes("popoutgamelog=true")){
+			window.EncounterHandler = new EncounterHandler(function(didSucceed) {
+				if (didSucceed === false) {
+					showDebuggingAlert();
+				}
+				init_ui();
+				if (is_encounters_page()) {
+				
+					// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
+					$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
 
-				$("#site-main").css({"display": "block", "visibility": "hidden"});
-				$(".dice-rolling-panel").css({"visibility": "visible"});
-				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-				$("div.dice-toolbar").css({"bottom": "35px"});
-				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-			}
-			
-			init_scene_selector();
-			init_splash();
-			
-		});
+					$("#site-main").css({"display": "block", "visibility": "hidden"});
+					$(".dice-rolling-panel").css({"visibility": "visible"});
+					$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
+					$("div.dice-toolbar").css({"bottom": "35px"});
+					$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
+				}
+				
+				init_scene_selector();
+				init_splash();
+				
+			});
+		}
+		else{
+			init_ui();
+		}
 	} else if (is_characters_page()) {
 		
 		hide_player_sheet();
@@ -4011,7 +4016,7 @@ var childWindows = {};
 function addGamelogPopoutButton(){
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
 	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
-	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true`
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true&popoutgamelog=true`
 
 	gamelog_popout.off().on("click",function(){
 		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);	
@@ -4049,6 +4054,22 @@ width=${width},height=${height},left=100,top=100`;
 function popoutGamelogCleanup(){
 	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
 	setTimeout(function(){
+		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
+			body{
+				overflow: hidden !important;
+			}
+			.sidebar__inner,
+			.sidebar,
+			.sidebar__pane-content,
+			.glc-game-log{
+			    width: 100% !important;
+			    max-width: 100% !important;
+			}
+			.mfp-wrap {
+		   		width: 100%;
+		   		z-index: 50000;
+			}
+		</style>`);
 		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
 		removeFromPopoutWindow("Gamelog", ".dice-roller");
 		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
@@ -4060,23 +4081,9 @@ function popoutGamelogCleanup(){
 		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
 		removeFromPopoutWindow("Gamelog", "iframe");
 		$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
-		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
-		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
-		body{
-			overflow: hidden !important;
-		}
-		.sidebar__inner,
-		.sidebar,
-		.sidebar__pane-content,
-		.glc-game-log{
-		    width: 100% !important;
-		    max-width: 100% !important;
-		}
-		.mfp-wrap {
-	   		width: 100%;
-	   		z-index: 50000;
-		}
-		</style>`);
+		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));data-emotion
+		$(childWindows["Gamelog"].document).find(".glc-game-log").prepend($(".sidepanel-content>div[class*='Container-Flex']").clone(true, true));
+		$(childWindows["Gamelog"].document).find("div[class*='Title']").remove();
 	}, 5000);		
 }
 function updatePopoutWindow(name, cloneSelector){
