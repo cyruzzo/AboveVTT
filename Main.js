@@ -4056,6 +4056,10 @@ function popoutGamelogCleanup(){
 		removeFromPopoutWindow("Gamelog", ".dice-roller");
 		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
 		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+		$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
+		removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(style):not(script):not(#site)");
+		removeFromPopoutWindow("Gamelog", "#site>*:not(#site-main)");
+		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
 		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
 		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
 		body *{
@@ -4120,21 +4124,6 @@ function closePopout(name){
 		delete childWindows[name];
 	}
 }
-
-
-
-
-
-
-
-function removeFromPopoutWindow(name, selector){
-	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
-	if(!childWindows[name])
-		return;
-	$(childWindows[name].document).find(selector).remove();
-	return childWindows[name];
-}
-
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .
