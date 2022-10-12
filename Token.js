@@ -777,7 +777,6 @@ class Token {
 				let tokenID = $(this).parent().parent().attr("data-id");
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].options.hp = hp_input.val();
-					window.all_token_objects[tokenID].update_and_sync();
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].options.hp = hp_input.val();	
@@ -793,7 +792,6 @@ class Token {
 				self.update_and_sync(e);
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].options.max_hp = maxhp_input.val();
-					window.all_token_objects[tokenID].update_and_sync();
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
 					window.TOKEN_OBJECTS[tokenID].options.max_hp = maxhp_input.val();	
