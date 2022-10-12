@@ -2153,7 +2153,8 @@ function init_things() {
 			}
 			
 			init_scene_selector();
-			init_splash();			
+			init_splash();
+
 		});
 	} else if (is_characters_page()) {
 		
