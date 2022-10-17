@@ -1200,7 +1200,18 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			if(playerTokenId != undefined && data.auraislight){
+				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+						check_token_visibility()
+				}
+				else{
+					check_single_token_visibility(data.id);
+				}	
+			}
+			else{
+				check_single_token_visibility(data.id);
+			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
@@ -1215,7 +1226,18 @@ class MessageBroker {
 			};
 			t.place();
 
-			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			if(playerTokenId != undefined && data.auraislight){
+				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+						check_token_visibility()
+				}
+				else{
+					check_single_token_visibility(data.id);
+				}	
+			}
+			else{
+				check_single_token_visibility(data.id);
+			}
 		}
 
 
