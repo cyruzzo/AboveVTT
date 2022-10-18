@@ -2263,6 +2263,7 @@ function init_character_page_sidebar() {
 			init_sheet();	
 			inject_chat_buttons();
 			init_zoom_buttons();
+			window.MB.sendMessage('custom/myVTT/syncmeup');
 		}
 	}, 1000);
 }
