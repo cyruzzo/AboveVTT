@@ -498,8 +498,8 @@ function build_token_auras_inputs(tokenIds) {
 		label: "Only show owned tokens aura",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Owned tokens Aura", description: "If enabled will only show players owned tokens and other tokens with 'Player Accessible Stats' auras" },
-			{ value: false, label: "All Auras", description: "Show all token auras" }
+			{ value: true, label: "Owned tokens Aura", description: "Only showing to the player their own token aura and other tokens with 'Player Accessible Stats' auras" },
+			{ value: false, label: "All Auras", description: "Showing all token Auras" }
 		],
 		defaultValue: false
 	};
