@@ -1019,9 +1019,9 @@ div#combat_button{
 	padding-top:0px;
     font-size: 8px;
 
-   -webkit-column-count: 8;
-      -moz-column-count: 8;
-           column-count: 8;
+   -webkit-column-count: 9;
+      -moz-column-count: 9;
+           column-count: 9;
 
    -webkit-column-gap: 20px;
       -moz-column-gap: 20px;
@@ -1573,7 +1573,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     right: 0px;
     margin: auto;
     height: 740px;
-    width: 700px;
+    width: 750px;
     z-index: 70001;
     border: 3px solid black;
     border-radius: 8px;
