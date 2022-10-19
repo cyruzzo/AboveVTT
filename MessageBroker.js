@@ -1173,9 +1173,14 @@ class MessageBroker {
 		if(data.id == undefined)
 			return;
 
-		if(msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading){
-			data.size = window.CURRENT_SCENE_DATA.hpps * data.gridSquares;
-			if(window.all_token_objects != undefined){
+		if (msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading) {
+			let gridSquares = parseFloat(data.gridSquares);
+			if (!isNaN(gridSquares)) {
+				data.size = window.CURRENT_SCENE_DATA.hpps * gridSquares;
+			} else {
+				data.size = window.CURRENT_SCENE_DATA.hpps;
+			}
+			if (window.all_token_objects != undefined) {
 				if (data.id in window.all_token_objects) {
 					for (var property in window.all_token_objects[data.id].options) {		
 						if(property == "left" || property == "top" || property == "hidden")
