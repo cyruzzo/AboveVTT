@@ -498,7 +498,7 @@ function build_token_auras_inputs(tokenIds) {
 		label: "Only show owned tokens aura",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Owned tokens Aura", description: "If enabled will only show players owned tokens auras" },
+			{ value: true, label: "Owned tokens Aura", description: "If enabled will only show players owned tokens and monsters with shared stats auras" },
 			{ value: false, label: "All Auras", description: "Show all token auras" }
 		],
 		defaultValue: false
@@ -509,8 +509,9 @@ function build_token_auras_inputs(tokenIds) {
 			token.options[name] = newValue;
 			token.place_sync_persist();
 		});
+		check_token_visibility();
 	});
-	if(allTokensArePlayer)
+	if(allTokensArePlayer && window.DM)
 		wrapper.find(".token-config-aura-wrapper").prepend(auraOwnedInput);
 	
 	const auraIsLightOption = {
@@ -518,8 +519,8 @@ function build_token_auras_inputs(tokenIds) {
 		label: "Change aura appearance to light",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light." },
-			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light." }
+			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light. If set on a player token: tokens not in visible 'light' auras are hidden." },
+			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light. If set on a player token: hide tokens not in visible 'light' auras." }
 		],
 		defaultValue: false
 	};
@@ -529,6 +530,7 @@ function build_token_auras_inputs(tokenIds) {
 			token.options[name] = newValue;
 			token.place_sync_persist();
 		});
+		check_token_visibility();
 	});	
 	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
 

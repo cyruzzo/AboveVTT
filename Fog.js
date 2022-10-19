@@ -393,24 +393,22 @@ function is_token_under_light_aura(tokenid){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let horizontalMiddle = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
 	let verticalMiddle = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
-
-	if(playerTokenId != undefined){
-		if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
-			let visibleLightAuras = $(".aura-element.islight:not([style*='visibility: hidden'])");
-			for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
-				let bounds = {
-					left: parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')), 
-					top:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')),
-					right:  parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')) + $(visibleLightAuras[auraIndex]).width(),
-					bottom:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')) + $(visibleLightAuras[auraIndex]).width()
-				};
-				let auraSize = $(visibleLightAuras[auraIndex]).width();
-				if(horizontalMiddle > bounds.left && horizontalMiddle < bounds.right && verticalMiddle > bounds.top && verticalMiddle < bounds.bottom){
-					return true;
-				}
-			}
+	let visibleLightAuras = $(".aura-element.islight:not([style*='visibility: hidden'])");
+	
+	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
+		let bounds = {
+			left: parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')), 
+			top:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')),
+			right:  parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')) + $(visibleLightAuras[auraIndex]).width(),
+			bottom:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')) + $(visibleLightAuras[auraIndex]).width()
+		};
+		let auraSize = $(visibleLightAuras[auraIndex]).width();
+		if(horizontalMiddle > bounds.left && horizontalMiddle < bounds.right && verticalMiddle > bounds.top && verticalMiddle < bounds.bottom){
+			return true;
 		}
 	}
+		
+	
 	return false;
 
 }
@@ -424,7 +422,10 @@ function check_single_token_visibility(id){
 			var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 			var selector = "div[data-id='" + id + "']";
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-			if (is_token_under_fog(id) || !is_token_under_light_aura(id)) {
+			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			
+			if (is_token_under_fog(id) || (playerTokenAuraIsLight && !is_token_under_light_aura(id))) {
 				$(selector).hide();
 				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 				{
@@ -479,7 +480,10 @@ function do_check_token_visibility() {
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-		if (pixeldata[3] == 255 || !is_token_under_light_aura(id)) {
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			
+		if (pixeldata[3] == 255 || (playerTokenAuraIsLight && !is_token_under_light_aura(id))) {
 
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
