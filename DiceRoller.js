@@ -189,6 +189,35 @@ class DiceRoll {
             }
         });
     }
+
+    /**
+     * @param slashCommandText {string} the slash command to parse and roll. EG: "/hit 2d20kh1+4 Shortsword". This is the only required value
+     * @param name {string|undefined} the name of the creature/player associated with this roll. This is displayed above the roll box in the gamelog. The character sheet defaults to the PC.name, the encounters page defaults to ""
+     * @param avatarUrl {string|undefined} the url for the image to be displayed in the gamelog. This is displayed to the left of the roll box in the gamelog. The character sheet defaults to the PC.avatar, the encounters page defaults to ""
+     * @param entityType {string|undefined} the type of entity associated with this roll. EG: "character", "monster", "user" etc. Generic rolls from the character sheet defaults to "character", generic rolls from the encounters page defaults to "user"
+     * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
+     * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
+     */
+    static fromSlashCommand(slashCommandText, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
+        let slashCommand = slashCommandText.match(slashCommandRegex)?.[0];
+        let expression = slashCommandText.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+        let action = slashCommandText.replace(slashCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+        console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
+        let rollType = undefined;
+        if (slashCommand.startsWith("/r")) {
+            // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
+            [action, rollType] = action.split(":") || [undefined, undefined];
+        } else if (slashCommand.startsWith("/hit")) {
+            rollType = "to hit";
+        } else if (slashCommand.startsWith("/dmg")) {
+            rollType = "damage";
+        } else if (slashCommand.startsWith("/skill")) {
+            rollType = "check";
+        } else if (slashCommand.startsWith("/save")) {
+            rollType = "save";
+        }
+        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride);
+    }
 }
 
 class DiceRoller {

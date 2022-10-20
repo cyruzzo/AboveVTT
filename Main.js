@@ -1658,6 +1658,42 @@ function observe_character_sheet_aoe(documentToObserve) {
 	aoe_observer.observe(mutation_target, mutation_config);
 }
 
+/**
+* Observers character sheet for Dice Roll formulae.
+* @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
+*/
+function observe_character_sheet_dice_rolls(documentToObserve) {
+    if (!is_characters_page()) {
+        return;
+    }
+
+    const dice_roll_observer = new MutationObserver(function() {
+        const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-visited')");
+        notes.each(function() {
+            $(this).addClass("above-vtt-visited");
+            try {
+                const text = $(this).text();
+                if (text.match(slashCommandRegex)?.[0]) {
+                    const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
+                    const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
+                    button.on("click", function (clickEvent) {
+                        clickEvent.stopPropagation();
+                        window.diceRoller.roll(diceRoll);
+                    });
+                    $(this).empty();
+                    $(this).append(button);
+                }
+            } catch (e) {
+                console.warn("Failed to parse DiceRoll expression", e);
+            }
+        });
+    });
+
+    const mutation_target = documentToObserve.get(0);
+    const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+    dice_roll_observer.observe(mutation_target, mutation_config);
+}
+
 /** DEPRECATED - dont use */
 function init_player_sheets()
 {
@@ -2255,6 +2291,7 @@ function init_character_page_sidebar() {
 			init_splash();
 			$("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
 			observe_character_sheet_aoe($(document));
+			observe_character_sheet_dice_rolls($(document));
 			// WIP to allow players to add in tokens from their extra tab
 			// observe_character_sheet_companion($(document));
 			

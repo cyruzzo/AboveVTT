@@ -3209,7 +3209,13 @@ button.avtt-roll-button {
     line-height: 18px;
     letter-spacing: 1px;
     padding: 1px 4px 0;
-}			
+}
+button.avtt-roll-formula-button {
+    font-size: 14px;
+    cursor: default;
+    color: #394B59;
+    padding: 9px;
+}
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
