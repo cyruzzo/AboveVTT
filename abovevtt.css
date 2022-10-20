@@ -3301,7 +3301,7 @@ button.avtt-roll-button {
 #combat_area tr td:nth-of-type(2),
 #combat_area tr td:nth-of-type(3)
 #combat_area td:last-of-type {
-        padding: 0px 5px 0px 0px;
+    padding: 0px 5px 0px 0px;
 }
 
 #text_controller_title_bar,
@@ -3749,6 +3749,12 @@ button.avtt-roll-button {
     border: 1px solid #ddd;
 }
 
+#site.encounter-details-page #combat_area td button{
+    margin: 0px 2px;
+}
+#site.encounter-details-page #combat_area tr td{
+    padding-bottom: 4px;
+}
 
 #combat_area tr td div,
 #combat_area tr td input.hp,
@@ -3789,10 +3795,18 @@ button.avtt-roll-button {
     top:2px;
     left: 2px;
     position: relative;
+    vertical-align: bottom;
 }
 #combat_area td [class*="AvatarPortrait"]{
     border-radius: 5px;
 }
+#combat_area td{
+    vertical-align: middle
+}
+.encounter-details-page #combat_area td{
+    vertical-align: bottom
+}
+
 #round_number_label button{
     margin-left: 6px;
 }
@@ -4528,7 +4542,18 @@ input.max_hp[disabled]{
 .sp-container {
     position: fixed !important;
 }
-
+.encounter-details-page #combat_area tr.CTToken.hasTooltip:before {
+    content: attr(data-name);
+    font-size: 12px;
+    position: absolute;
+    left: 42px;
+    width: calc(100% - 140px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    color: #444d;
+}
 .text-option{
     width:20px;
     height:20px;
