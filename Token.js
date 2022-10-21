@@ -739,7 +739,6 @@ class Token {
 		hpbar.css('height', bar_height);
 		hpbar.css('left', (Math.floor(this.sizeWidth() * 0.35) / 2));
 		hpbar.css('top', this.sizeHeight() - bar_height);
-		hpbar.css('background', '#ff7777');
 		hpbar.width("max-width: 100%");
 
 		var fs = Math.floor(bar_height / 1.3) + "px";

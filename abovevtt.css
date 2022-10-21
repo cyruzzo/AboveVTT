@@ -1267,6 +1267,10 @@ div#combat_button{
 
 .hpbar {
     z-index: 3;
+    background: #fd9696;
+    filter: drop-shadow(1px 1px 1px #0007);
+    border: 1px solid black;
+    border-radius: 5px;
 }
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
