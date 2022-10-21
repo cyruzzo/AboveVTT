@@ -4035,8 +4035,7 @@ input.max_hp[disabled]{
     border-width: 2px;
 }
 
-.base.circle:before,
-.base.circle ~ .hpvisualbar:before {
+.base.circle:before{
     content: "";
     top: -5px;
     left: -5px;
@@ -4048,8 +4047,7 @@ input.max_hp[disabled]{
     position: absolute;
     display: block;
 }
-.base.large-or-smaller-base.circle:before,
-.base.circle ~ .hpvisualbar:before {
+.base.large-or-smaller-base.circle:before{
     top: -2px;
     left: -2px;
     right: -2px;
