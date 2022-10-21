@@ -3749,10 +3749,10 @@ button.avtt-roll-button {
     border: 1px solid #ddd;
 }
 
-#site.encounter-details-page #combat_area td button{
+#combat_area td button{
     margin: 0px 2px;
 }
-#site.encounter-details-page #combat_area tr td{
+#site #combat_area tr td{
     padding-bottom: 4px;
 }
 
@@ -3790,20 +3790,18 @@ button.avtt-roll-button {
     box-shadow: inset 0px 0px 0px 1px var(--token-temp-hpbar), 0px 0px 3px 1px var(--token-temp-hpbar);
 }
 
-.encounter-builder-app #combat_area td [class*="AvatarPortrait"]{
+#combat_area td [class*="AvatarPortrait"]{
     border-radius: 5px;
     top:2px;
     left: 2px;
     position: relative;
     vertical-align: bottom;
 }
-#combat_area td [class*="AvatarPortrait"]{
-    border-radius: 5px;
-}
-#combat_area td{
+
+#combat_area tr td{
     vertical-align: middle
 }
-.encounter-details-page #combat_area td{
+#combat_area tr td{
     vertical-align: bottom
 }
 
@@ -4542,8 +4540,8 @@ input.max_hp[disabled]{
 .sp-container {
     position: fixed !important;
 }
-.encounter-details-page #combat_area tr.CTToken.hasTooltip:before {
-    content: attr(data-name);
+#combat_area tr.CTToken:before{
+    content:  '???';
     font-size: 12px;
     position: absolute;
     left: 42px;
@@ -4552,8 +4550,16 @@ input.max_hp[disabled]{
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: 600;
+    color: #4443;
+}
+#combat_area tr[data-name].CTToken:before{
+    content: attr(data-name);
     color: #444d;
 }
+body.body-rpgcharacter-sheet #combat_area tr.CTToken:before{
+    width: calc(100% - 80px);
+}
+
 .text-option{
     width:20px;
     height:20px;

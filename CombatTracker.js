@@ -51,10 +51,12 @@ function init_combat_tracker(){
 			'width': '100%',
 			'height': '100%'
 		});
-		if(window.DM){
-			$(childWindows['Combat Tracker'].document).find("body").toggleClass('encounter-details-page', true);
-			$(childWindows['Combat Tracker'].document).find("body").attr("id", "site");
+		if(!window.DM){
+			$(childWindows['Combat Tracker'].document).find("body").toggleClass('body-rpgcharacter-sheet', true);
 		}
+		
+		$(childWindows['Combat Tracker'].document).find("body").attr("id", "site");
+
 		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
 		if(!window.DM){
