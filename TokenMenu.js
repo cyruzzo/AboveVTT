@@ -1146,9 +1146,10 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.name === 'square' || setting.name === 'legacyaspectratio' || setting.name === 'defaultmaxhptype') {
+		} else if(setting.name === 'square' || setting.name === 'legacyaspectratio' || setting.name === 'defaultmaxhptype' || setting.name == 'enablepercenthpbar' || setting.name == 'disableaura') {
 			continue;
 		}
+
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
 		let uniqueSettings = [...new Set(tokenSettings)];
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
