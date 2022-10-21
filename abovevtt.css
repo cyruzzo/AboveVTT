@@ -4417,7 +4417,7 @@ input.max_hp[disabled]{
     right: 5px;
     bottom: 5px;
 }
-.VTTToken .base ~ .hpvisualbar:before {
+.VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
     left: 2px;
     right: 2px;
