@@ -1223,6 +1223,9 @@ class Token {
 				if(this.options.disableborder){
 					oldImage.css("border-width","0");
 				}
+				else{
+					oldImage.css("border-width","");
+				}
 
 				setTokenAuras(old, this.options);
 
