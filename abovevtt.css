@@ -4377,7 +4377,7 @@ input.max_hp[disabled]{
 }
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size:calc(98% - 7px / var(--window-zoom));
-    transform: scale(var(--token-scale));
+    transform: scale(var(--token-scale)) rotate(var(--token-rotation));
     height: calc(100% + 5px / min(1, var(--window-zoom)));
     width: calc(100% + 5px / min(1, var(--window-zoom)));
     top: min(-2px, calc(-2px / var(--window-zoom)));
