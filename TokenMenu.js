@@ -989,6 +989,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 			tokens.forEach(token => {
 				imageSize = clampTokenImageSize(imageSize, token.options.size);
 				token.options.imageSize = imageSize;
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--token-scale", imageSize)
 				token.place_sync_persist();
 			});
 		});

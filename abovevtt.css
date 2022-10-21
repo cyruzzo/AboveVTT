@@ -4374,8 +4374,9 @@ input.max_hp[disabled]{
     content:'';
     --mask-size:calc(98% - 2px / var(--window-zoom));
 }
-
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --mask-size:calc(98% - 7px / var(--window-zoom));
+    transform: scale(var(--token-scale));
     height: calc(100% + 5px / min(1, var(--window-zoom)));
     width: calc(100% + 5px / min(1, var(--window-zoom)));
     top: min(-2px, calc(-2px / var(--window-zoom)));

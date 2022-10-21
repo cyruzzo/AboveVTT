@@ -1171,6 +1171,7 @@ class Token {
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 			old.css("--token-rotation", rotation+"deg");
+			old.css("--token-scale", imageScale);
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
@@ -1323,6 +1324,7 @@ class Token {
 					imgClass = 'token-image preserve-aspect-ratio';
 				}
 				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+				tok.css("--token-scale", imageScale)
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
