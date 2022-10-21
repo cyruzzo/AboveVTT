@@ -4363,21 +4363,7 @@ input.max_hp[disabled]{
 #tokens {
     z-index: 40;
 }
-.token>.base{
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #0000001c;
-    width: 90%;
-    height: 90%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 5% 0 0 5%;
-    backdrop-filter: blur(3px) brightness(0.7);
-    z-index: -1;
-    border: inset 5px var(--token-border-color, #ffffff44);
-}
+
 .VTTToken:not(.freeform) .hpvisualbar:before,
 .VTTToken .base:before{
     display: var(--token-hpbar-display);
