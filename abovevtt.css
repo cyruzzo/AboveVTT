@@ -3023,7 +3023,9 @@ h5.token-image-modal-footer-title:after {
     margin: 10px 0px;
     justify-content: space-between;
 }
-
+.example-token{
+    --window-zoom: 1;
+}
 /* all the rc-switch styles were lifted from the content sharing screen /campaigns/<campaign_id>/content-management and then tweaked slightly */
 .rc-switch {
     position: relative;
