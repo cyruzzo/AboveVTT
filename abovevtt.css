@@ -1271,6 +1271,27 @@ div#combat_button{
     filter: drop-shadow(1px 1px 1px #0007);
     border: 1px solid black;
     border-radius: 5px;
+    display: block;
+    width: max-content;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.hpbar input,
+.hpbar div{
+    vertical-align: middle;
+    float: left;
+    height: 100%;
+    font-size: 100%;
+}
+.hpbar input{
+    font-weight: bold;
+    background: transparent;
+    text-align: center;
+    border: 0;
+    padding: 0;
+    line-height: 100%;
+    height: 100%;
+    font-size: 110%;
 }
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
