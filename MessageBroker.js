@@ -1165,36 +1165,50 @@ class MessageBroker {
 		if(data.id == undefined)
 			return;
 
-		if(window.all_token_objects != undefined){
-			if (data.id in window.all_token_objects) {
-				for (var property in data) {		
-					if(msg.loading && property != "left" && property != "top"){
-						data[property] = window.all_token_objects[data.id].options[property];
+		if (msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading) {
+			let gridSquares = parseFloat(data.gridSquares);
+			if (!isNaN(gridSquares)) {
+				data.size = window.CURRENT_SCENE_DATA.hpps * gridSquares;
+			} else {
+				data.size = window.CURRENT_SCENE_DATA.hpps;
+			}
+			if (window.all_token_objects != undefined) {
+				if (data.id in window.all_token_objects) {
+					for (var property in window.all_token_objects[data.id].options) {		
+						if(property == "left" || property == "top" || property == "hidden")
+							continue;
+						if(msg.loading){
+							data[property] = window.all_token_objects[data.id].options[property];
+						}
+						else if(property in data){
+						 window.all_token_objects[data.id].options[property] = data[property]; 
+						}
 					}
-					else{
-					 window.all_token_objects[data.id].options[property] = data[property]; 
-					}
+
+
+					if (!data.hidden)
+						delete window.all_token_objects[data.id].options.hidden;
 				}
-
-
-				if (!data.hidden)
-					delete window.all_token_objects[data.id].options.hidden;
 			}
 		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
 			for (var property in data) {
-				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top"))
+				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 			}
 			if(data.ct_show == undefined){
-				window.TOKEN_OBJECTS[data.id].options["ct_show"] = undefined;
+				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
 			}
-			if (!data.hidden)
+			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
 
 			window.TOKEN_OBJECTS[data.id].place();
+
+			if(window.DM && msg.loading){
+				window.TOKEN_OBJECTS[data.id].update_and_sync();
+			}
 			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
