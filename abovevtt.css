@@ -4380,8 +4380,8 @@ input.max_hp[disabled]{
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
     height: calc(100% + 5px / min(1, var(--window-zoom)));
     width: calc(100% + 5px / min(1, var(--window-zoom)));
-    top: min(-2px, calc(-2px / var(--window-zoom)));
-    left: min(-2px, calc(-2px / var(--window-zoom)));
+    top: min(-2.5px, calc(-2.5px / var(--window-zoom)));
+    left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
     right: 0px;
     background-color: #0b0b0ddd;
     background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
