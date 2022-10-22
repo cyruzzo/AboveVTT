@@ -1278,10 +1278,9 @@ div#combat_button{
 }
 .hpbar input,
 .hpbar div{
-    vertical-align: middle;
     float: left;
-    height: 100%;
-    font-size: 100%;
+    max-height: 100%;
+    line-height: normal;
 }
 .hpbar input{
     font-weight: bold;
@@ -1289,8 +1288,6 @@ div#combat_button{
     text-align: center;
     border: 0;
     padding: 0;
-    line-height: 100%;
-    height: 100%;
     font-size: 110%;
 }
 /* Classes for main buttons on campaign page */
