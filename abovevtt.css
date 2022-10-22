@@ -3303,6 +3303,9 @@ button.avtt-roll-button {
 #combat_area td:last-of-type {
     padding: 0px 5px 0px 0px;
 }
+#combat_area tr{
+    position: relative;
+}
 
 #text_controller_title_bar,
 .text-input-title-bar,
