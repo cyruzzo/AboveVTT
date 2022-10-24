@@ -1146,7 +1146,7 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.name === 'square' || setting.name === 'legacyaspectratio' || setting.name === 'defaultmaxhptype') {
+		} else if(setting.hiddenSetting) {
 			continue;
 		}
 		let tokenSettings = tokens.map(t => t.options[setting.name]);

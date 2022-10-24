@@ -1257,7 +1257,27 @@ class Token {
 			oldImage.css("max-width", this.sizeWidth());
 
 			setTokenAuras(old, this.options);
-
+			if(this.options.lockRestrictDrop == undefined){
+				if(this.options.restrictPlayerMove){
+					this.options.lockRestrictDrop = "restrict"
+				}
+				if(this.options.locked){
+					this.options.lockRestrictDrop = "lock"
+				}
+			}
+			else{
+				if(this.options.lockRestrictDrop == "restrict"){
+					this.options.restrictPlayerMove = true;
+					this.options.locked = false;
+				}
+				else if(this.options.lockRestrictDrop == "lock"){
+					this.options.locked = true;
+				}
+				else if(this.options.lockRestrictDrop == "none"){
+					this.options.locked = false;
+					this.options.restrictPlayerMove = false;
+				}
+			}
 			if((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked){
 				old.draggable("disable");
 				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
@@ -1690,6 +1710,28 @@ class Token {
 
 				}
 			});
+			
+			if(this.options.lockRestrictDrop == undefined){
+				if(this.options.restrictPlayerMove){
+					this.options.lockRestrictDrop = "restrict"
+				}
+				if(this.options.locked){
+					this.options.lockRestrictDrop = "lock"
+				}
+			}
+			else{
+				if(this.options.lockRestrictDrop == "restrict"){
+					this.options.restrictPlayerMove = true;
+					this.options.locked = false;
+				}
+				else if(this.options.lockRestrictDrop == "lock"){
+					this.options.locked = true;
+				}
+				else if(this.options.lockRestrictDrop == "none"){
+					this.options.locked = false;
+					this.options.restrictPlayerMove = false;
+				}
+			}
 
 			if(this.options.locked){
 				tok.draggable("disable");
