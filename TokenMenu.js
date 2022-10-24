@@ -1147,7 +1147,7 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.name === 'square' || setting.name === 'legacyaspectratio' || setting.name === 'defaultmaxhptype' || setting.name == 'enablepercenthpbar' || setting.name == 'disableaura') {
+		} else if(setting.hiddenSetting) {
 			continue;
 		}
 
