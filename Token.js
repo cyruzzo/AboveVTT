@@ -522,16 +522,28 @@ class Token {
 			$(`.token[data-id='${this.options.id}']`).append(hpvisualbar);
 		}
 
-		if (this.options.healthauratype == "none"){
-			this.options.disableaura = true;
-			this.options.enablepercenthpbar = false;
-		} else if(this.options.healthauratype == "bar"){
-			this.options.disableaura = true;
-			this.options.enablepercenthpbar = true;
-		} else if(this.options.healthauratype == "aura"){
-			this.options.disableaura = false;
-			this.options.enablepercenthpbar = false;
+
+		if(this.options.healthauratype == undefined){
+			if(this.options.disableaura){
+				this.options.healthauratype = "none"
+			}
+			if(this.options.enablepercenthpbar){
+				this.options.healthauratype = "bar"
+			}
 		}
+		else{
+			if(this.options.healthauratype == "none"){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = false;
+			} else if(this.options.healthauratype == "bar"){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = true;
+			} else if(this.options.healthauratype == "aura"){
+				this.options.disableaura = false;
+				this.options.enablepercenthpbar = false;
+			}
+		}
+
 
 		if (tokenData.max_hp > 0) {
 			if(window.PLAYER_STATS[this.options.id] || !tokenData.temp_hp) {	
