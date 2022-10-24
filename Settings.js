@@ -39,7 +39,7 @@ function token_setting_options() {
 				{ value: "bar", label: "Bar", description: "How this bar is displayed depends on token type. Color blind alternative to auras." },
 				{ value: "none", label: "None", description: "Tokens will not have a health visual" }
 			],
-			defaultValue: "average"
+			defaultValue: "aura"
 		},
 		{
 			name: 'hidden',
