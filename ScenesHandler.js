@@ -369,7 +369,20 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 			}
 			else {
-				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a, h3.adventure-chapter-header:contains('Maps') ~ ul a").each(function(idx) {
+				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a").each(function(idx) {
+					var title = $(this).html();
+					var url = $(this).attr('href');
+					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+					self.sources[keyword].chapters[ch_keyword] = {
+						type: 'dnb',
+						title: title,
+						url: url,
+						scenes: [],
+					};
+				});
+				iframe.contents().find("h3.adventure-chapter-header:contains('Maps') ~ ul a").each(function(idx) {
+					if(!(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test($(this).attr('href'))))
+						return;
 					var title = $(this).html();
 					var url = $(this).attr('href');
 					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
