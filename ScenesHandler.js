@@ -404,6 +404,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			return;
 		}
 		if(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(chapter_url)){
+			//'Maps' chapter maps at the end of books - individual images
 			var dm_map = '';
 			var player_map = chapter_url;
 			var header = self.sources[source_keyword].chapters[chapter_keyword].title;
@@ -533,11 +534,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					} else if ($(this).parent().next().find(".compendium-image-center a").length > 0) {
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center a");
 					}
-					else if (iframe.contents().find("body > img").length > 0){
+					else{
 						playerMapContainer = $(this);
-					}
-					if (playerMapContainer === undefined || playerMapContainer.length === 0) {
-						return;
 					}
 
 
