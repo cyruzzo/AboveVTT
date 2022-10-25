@@ -403,6 +403,31 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			callback();
 			return;
 		}
+		if(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(chapter_url)){
+			var dm_map = '';
+			var player_map = chapter_url;
+			var header = self.sources[source_keyword].chapters[chapter_keyword].title;
+			var thumb = chapter_url;
+			var id = self.sources[source_keyword].chapters[chapter_keyword].title;
+			var title = self.sources[source_keyword].chapters[chapter_keyword].title;
+
+			self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
+				id: id,
+				uuid: source_keyword + "/" + chapter_keyword + "/" + id,
+				title: title,
+				dm_map: dm_map,
+				player_map: player_map,
+				player_map_is_video: "0",
+				dm_map_is_video: "0",
+				scale: "100",
+				dm_map_usable: "0",
+				fog_of_war: "0",
+				thumb: thumb,
+				tokens: {},
+				reveals: [],
+			});
+			
+		}
 
 		var f = $("<iframe src='" + chapter_url + "'></iframe>");
 
@@ -457,7 +482,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			// COMPENDIUM IMAGES
 			let compendiumWithSubtitle = iframe.contents().find(".compendium-image-with-subtitle-center,.compendium-image-with-subtitle-right,.compendium-image-with-subtitle-left");
 			let compendiumWithoutSubtitle = iframe.contents().find(".compendium-image-center");
-			let individualMapsFromMapChapters = iframe.contents().find("body > img");
 
 			if (compendiumWithSubtitle.length > 0) {
 				compendiumWithSubtitle.each(function(idx) {
@@ -540,33 +564,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						reveals: [],
 					});
 
-				});
-			}
-			else if(individualMapsFromMapChapters.length > 0){
-				individualMapsFromMapChapters.each(function(idx) {
-
-					var dm_map = '';
-					var player_map = $(this).attr("src");
-					var header = self.sources[source_keyword].chapters[chapter_keyword].title;
-					var thumb = $(this).attr('src');
-					var id = self.sources[source_keyword].chapters[chapter_keyword].title;
-					var title = self.sources[source_keyword].chapters[chapter_keyword].title;
-
-					self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
-						id: id,
-						uuid: source_keyword + "/" + chapter_keyword + "/" + id,
-						title: title,
-						dm_map: dm_map,
-						player_map: player_map,
-						player_map_is_video: "0",
-						dm_map_is_video: "0",
-						scale: "100",
-						dm_map_usable: "0",
-						fog_of_war: "0",
-						thumb: thumb,
-						tokens: {},
-						reveals: [],
-					});
 				});
 			}
 
