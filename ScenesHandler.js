@@ -549,7 +549,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center");
 					} else if ($(this).parent().next().find(".compendium-image-center a").length > 0) {
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center a");
-					} else{
+					} else if($(this).parent().not('.compendium-image-view-player').length > 0){
 						playerMapContainer = $(this);
 					}
 					if (playerMapContainer === undefined || playerMapContainer.length === 0) {
