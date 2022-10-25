@@ -369,7 +369,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 			}
 			else {
-				iframe.contents().find("h3 >a").each(function(idx) {
+				iframe.contents().find("h3 >a, h3 ~ ul strong a").each(function(idx) {
 					var title = $(this).html();
 					var url = $(this).attr('href');
 					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
