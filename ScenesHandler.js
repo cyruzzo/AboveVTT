@@ -402,7 +402,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		if (Object.keys(self.sources[source_keyword].chapters[chapter_keyword].scenes).length > 0) { // EVITO DI SCANSIONARE DI NUOVO OGGETTI CHE HO GIA
 			callback();
 			return;
-		}
+		}	
 		if(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(chapter_url)){
 			//'Maps' chapter maps at the end of books - individual images
 			var dm_map = '';
@@ -426,8 +426,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				thumb: thumb,
 				tokens: {},
 				reveals: [],
-			});
-			
+			});		
 		}
 
 		var f = $("<iframe src='" + chapter_url + "'></iframe>");
@@ -486,6 +485,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			if (compendiumWithSubtitle.length > 0) {
 				compendiumWithSubtitle.each(function(idx) {
+					if ($(this).parent().is('figure'))
+						return;
 					var id = $(this).attr('id');
 					if (typeof id == typeof undefined) {
 						id = $(this).attr('data-content-chunk-id');
@@ -528,14 +529,18 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				compendiumWithoutSubtitle.each(function(idx) {
 					// import it only if there's a player version
 
+					if ($(this).parent().is('figure'))
+						return;
 					let playerMapContainer;
 					if ($(this).parent().next().is(".compendium-image-view-player")) {
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center");
 					} else if ($(this).parent().next().find(".compendium-image-center a").length > 0) {
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center a");
-					}
-					else{
+					} else{
 						playerMapContainer = $(this);
+					}
+					if (playerMapContainer === undefined || playerMapContainer.length === 0) {
+						return;
 					}
 
 
