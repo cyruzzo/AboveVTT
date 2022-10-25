@@ -1359,7 +1359,7 @@ function fill_importer(scene_set, start) {
 		}
 		entry.append(stats);
 
-		b = $("<button class='import_scene_button'>Import</button>");
+		b = $("<button>Import</button>");
 
 		b.click(function() {
 			var scene = current_scene;
