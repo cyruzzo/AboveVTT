@@ -2557,6 +2557,12 @@ h5.token-image-modal-footer-title:after {
     padding: 4px;
     margin: 10px;
 }
+div#importer_area>div>div:first-of-type {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0px 5px;
+}
 .sidebar-panel-footer-button {
     appearance: none;
     font-weight: 700;
