@@ -2849,12 +2849,12 @@ h5.token-image-modal-footer-title:after {
     justify-content: start;
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute {
-    flex-direction: row;
-    min-width: 40px;
-    margin-right: 8px;
-    flex-grow: 0;
-    justify-content: start;
     font-size: 12px;
+    min-width: 34px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute img {
     width: 24px;
@@ -2876,6 +2876,11 @@ h5.token-image-modal-footer-title:after {
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
+}
+.sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute.inspiration {
+    position: absolute;
+    top: 1px;
+    right: 100px;
 }
 .sidebar-list-item-row.player-row .player-expansion-button .material-icons {
     width: 100%;

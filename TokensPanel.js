@@ -669,6 +669,8 @@ function update_pc_token_rows() {
 
             });
             row.find(".pp-value").text(playerData.pp);
+            row.find(".pinv-value").text(playerData.pinv);
+            row.find(".pins-value").text(playerData.pins);
             row.find(".walking-value").text(playerData.walking);
             if (playerData.inspiration) {
                 row.find(".inspiration").show();

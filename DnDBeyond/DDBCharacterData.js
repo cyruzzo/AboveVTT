@@ -97,6 +97,8 @@ function getPlayerData(sheet_url, callback) {
             temp_hp: charData.hitPointInfo.tempHp,
             ac: charData.armorClass, 
             pp: charData.passivePerception,
+            pins: charData.passiveInsight,
+            pinv: charData.passiveInvestigation,
             conditions: conditions,
             abilities: abilities,
             walking: walkspeed+ "ft.",

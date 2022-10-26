@@ -1141,6 +1141,8 @@ function build_sidebar_list_row(listItem) {
             {abilityName: 'Charisma', abilityAbbr: 'cha', modifier: '?', score: '?', save: '?' }
           ],
           pp: '?',
+          pinv: '?',
+          pins: '?',
           inspiration: false,
           walking: '?'
         };
@@ -1176,6 +1178,8 @@ function build_sidebar_list_row(listItem) {
       subtitle.text("");
       subtitle.show();
       subtitle.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="material-icons">visibility</span><span class="pp-value">${playerData.pp}</span></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="material-icons">search</span><span class="pinv-value">${playerData.pinv}</span></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="material-icons">psychology_alt</span><span class="pins-value">${playerData.pins}</span></div>`);
       subtitle.append(`<div class="subtitle-attibute" title="Speed"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
       subtitle.append(`<div class="subtitle-attibute inspiration" title="Player Has Inspiration"><img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration"  alt="inspiration"/></div>`);
       if (playerData.inspiration) {
