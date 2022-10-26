@@ -2241,6 +2241,13 @@ function init_character_page_sidebar() {
 		  	$(`#switch_gamelog`).click();
 
 		});
+		$("a.ct-character-header-desktop__builder-link").on("click", function(){
+			setTimeout(function(){
+				$(".builder-sections-sheet-icon").off().on("click", function(){
+					window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?cs=${window.CAMPAIGN_SECRET}&cid=${get_campaign_id()}&abovevtt=true`;
+				});
+			}, 1000)
+		});
 		if (needs_ui) {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
