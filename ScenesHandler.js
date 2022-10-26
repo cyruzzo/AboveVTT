@@ -369,7 +369,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 			}
 			else {
-				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a").each(function(idx) {
+				//chapter, subchapter (eg icewind), chapter, handouts and maps (eg. Curse of Strahd)
+				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a, h3.adventure-chapter-header:contains('Appendices') ~ ul a").each(function(idx) {
 					var title = $(this).html();
 					var url = $(this).attr('href');
 					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
@@ -380,7 +381,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						scenes: [],
 					};
 				});
-				iframe.contents().find("h3.adventure-chapter-header:contains('Maps') ~ ul a").each(function(idx) {
+				//map sections that are just links to maps not always found in other chapters (eg wildemount/eberron)
+				iframe.contents().find("h3.adventure-chapter-header:contains('Map') ~ ul a").each(function(idx) {
 					if(!(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test($(this).attr('href'))))
 						return;
 					var title = $(this).html();
