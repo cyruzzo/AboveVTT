@@ -498,7 +498,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			if (compendiumWithSubtitle.length > 0) {
 				compendiumWithSubtitle.each(function(idx) {
-					if ($(this).parent().is('figure'))
+					if ($(this).parent().is('figure') || $(this).is('figure'))
 						return;
 					var id = $(this).attr('id');
 					if (typeof id == typeof undefined) {
@@ -542,7 +542,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				compendiumWithoutSubtitle.each(function(idx) {
 					// import it only if there's a player version
 
-					if ($(this).parent().is('figure'))
+					if ($(this).parent().is('figure') || $(this).is('figure'))
 						return;
 					let playerMapContainer;
 					if ($(this).parent().next().is(".compendium-image-view-player")) {
