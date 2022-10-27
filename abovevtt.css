@@ -3038,7 +3038,7 @@ h5.token-image-modal-footer-title:after {
     color: #666;
 }
 #playersFolder .subtitle-attibute.hp-attribute {
-    border: 1px solid #0DF;
+    border: 1px solid #1b9af0;
     border-radius: 2px;
     display: flex;
     width: 80px;
@@ -3051,7 +3051,7 @@ h5.token-image-modal-footer-title:after {
         align-items: center;
 }
 #playersFolder span.hp-value {
-    color: #0AF;
+    color: #1b9af0;
 }
 .fly-svg path,
 .fly-svg rect{
