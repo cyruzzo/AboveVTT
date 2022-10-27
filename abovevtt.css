@@ -1160,10 +1160,8 @@ div#combat_button{
 
 .ability_value {
     display: inline-block;
-    width: 44px;
-    padding: 5px;
+    width: 50px;
     text-align: center;
-    border:solid 2px #AE0404;
     position: relative;
     border-radius: 15px 25px 125px 25px/15px 225px 15px 255px;
     height: 60px;
@@ -1171,27 +1169,19 @@ div#combat_button{
 }
 
 .ability_name {
-    color: darkgrey;
+    color: #666;
     font-weight: bold;
+    font-size: 11px;
 }
 
 .ability_modifier {
     font-size: 18px;
     margin-top: -2px;
+    font-weight: bold;
 }
 
 .ability_score {
-    position: absolute;
-    bottom: -10px;
-    border-radius: 50%;
-    border: 1px solid #AE0404;
-    width: 25px;
-    background: #fff;
-    left: calc(20px / 2);
-    height: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-weight: bold;
 }
 
 .add-party-container {
@@ -2816,7 +2806,8 @@ h5.token-image-modal-footer-title:after {
     letter-spacing: 0px;
     padding: 0px 6px;
 }
-.token-row-button {
+.token-row-button,
+#playersFolder .token-row-gear {
     display: block;
     width: 30px;
     border-radius: 3px;
@@ -2828,7 +2819,8 @@ h5.token-image-modal-footer-title:after {
     min-width: 30px;
 }
 .sidebar-list-item-row.player-row {
-    height: 68px;
+    height: 120px;
+    transition: height 250ms linear;
 }
 .sidebar-list-item-row.player-row .player-expansion-button {
     height: 16px;
@@ -2890,16 +2882,14 @@ h5.token-image-modal-footer-title:after {
     font-weight: 700;
 }
 .sidebar-list-item-row.player-row.expanded {
-    height: 142px;
+    height: 186px;
+    transition: height 250ms linear;
 }
 .sidebar-list-item-row.player-row .player-card-footer {
-    max-height: 0px;
-    height: 0px;
-}
-.sidebar-list-item-row.player-row.expanded .player-card-footer {
     max-height: 76px;
     height: 76px;
 }
+
 .sidebar-list-item-row.player-row .ability_value {
     margin: 8px 0;
 }
@@ -3014,6 +3004,64 @@ h5.token-image-modal-footer-title:after {
     background-color: rgb(235, 241, 245);
     width: 100%;
     align-items: center;
+}
+#playersFolder .player-card-info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+#playersFolder .player-card-info .subtitle-attibute,
+#playersFolder .subtitle-attibute.hp-attribute  {
+    font-weight: bold;
+    display: flex;
+    font-size: 18px;
+    flex-direction: column-reverse;
+    width: 53px;
+    text-align: center;
+}
+
+#playersFolder span.subtitle-title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-end;
+    line-height: 10px;
+    margin-bottom: 3px;
+    padding: 2px;
+    font-size: 9px;
+    color: #666;
+}
+#playersFolder .subtitle-attibute.hp-attribute {
+    border: 1px solid #0DF;
+    border-radius: 2px;
+    display: flex;
+    width: 80px;
+    flex-direction: column-reverse;
+    float: right;
+    margin: 2px;
+}
+
+#playersFolder .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute{
+        align-items: center;
+}
+#playersFolder span.hp-value {
+    color: #0AF;
+}
+.fly-svg path,
+.fly-svg rect{
+    fill: #738694;
+}
+.fly-svg{
+    width: 10px;
+}
+.climb-svg{
+    width: 16px;
 }
 .chat-link {
   word-wrap: break-word;

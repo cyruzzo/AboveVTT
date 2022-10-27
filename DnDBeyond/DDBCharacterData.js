@@ -88,6 +88,15 @@ function getPlayerData(sheet_url, callback) {
             if (charData.speeds[i].key == "walk") {
                 walkspeed = charData.speeds[i].distance;
             }
+            else if (charData.speeds[i].key == "climb") {
+                climbspeed = charData.speeds[i].distance;
+            }
+            else if (charData.speeds[i].key == "fly") {
+                flyspeed = charData.speeds[i].distance;
+            }
+            else if (charData.speeds[i].key == "swim") {
+                swimspeed = charData.speeds[i].distance;
+            }
         }
 
         var playerdata = {
@@ -103,6 +112,9 @@ function getPlayerData(sheet_url, callback) {
             abilities: abilities,
             walking: walkspeed+ "ft.",
             inspiration: charData.inspiration,
+            climb: climbspeed+ "ft.",
+            fly: flyspeed+ "ft.",
+            swim: flyspeed+ "ft.",
         };
         if (callback) {
             callback(playerdata);

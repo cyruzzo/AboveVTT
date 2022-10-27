@@ -672,6 +672,30 @@ function update_pc_token_rows() {
             row.find(".pinv-value").text(playerData.pinv);
             row.find(".pins-value").text(playerData.pins);
             row.find(".walking-value").text(playerData.walking);
+            row.find(".ac-value").text(playerData.ac);
+            row.find(".hp-value").text(playerData.hp);
+            row.find(".max-hp-value").text(playerData.max_hp);
+            row.find(".fly-value").text(playerData.fly);
+            row.find(".climb-value").text(playerData.climb);
+            row.find(".swim-value").text(playerData.swim);
+            if(playerData.climb == '0ft.'){
+                row.find(".subtitle-attibute[title='Climb Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Climb Speed']").show()
+            }
+            if(playerData.fly == '0ft.'){
+                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Fly Speed']").show()
+            }
+            if(playerData.swim == '0ft.'){
+                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Swim Speed']").show()
+            }
             if (playerData.inspiration) {
                 row.find(".inspiration").show();
             } else {
