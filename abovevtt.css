@@ -2987,6 +2987,10 @@ h5.token-image-modal-footer-title:after {
 #players-panel .sidebar-panel-body {
     padding: 0px;
 }
+#playersFolder .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute{
+    flex-grow: 0;
+    margin-right: 0px;
+}
 .sidebar-panel-content .sidebar-panel-body {
     background-color: rgb(235, 241, 245);
     position: relative; 
