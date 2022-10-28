@@ -119,7 +119,7 @@ function getPlayerData(sheet_url, callback) {
             inspiration: charData.inspiration,
             climb: climbspeed+ "ft.",
             fly: flyspeed+ "ft.",
-            swim: flyspeed+ "ft.",
+            swim: swimspeed+ "ft.",
             exhaustion: exhaustionlevel
         };
         if (callback) {
