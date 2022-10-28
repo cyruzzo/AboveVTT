@@ -120,7 +120,8 @@ function getPlayerData(sheet_url, callback) {
             climb: climbspeed+ "ft.",
             fly: flyspeed+ "ft.",
             swim: swimspeed+ "ft.",
-            exhaustion: exhaustionlevel
+            exhaustion: exhaustionlevel,
+            theme: charData.theme
         };
         if (callback) {
             callback(playerdata);
@@ -401,6 +402,7 @@ var initalModules = {
                     weaponItems: charf1.getEquippedWeaponItems(state),
                     gearItems: charf1.getEquippedGearItems(state)
                 },
+                theme: charf1.getCharacterTheme(state),
 
                 //originRefRaceData: charf1.getDataOriginRefRaceData(state),
                 //optionalOrigins: charf1.getOptionalOrigins(state),
