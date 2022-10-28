@@ -3064,6 +3064,7 @@ h5.token-image-modal-footer-title:after {
 #playersFolder .ct-health-summary__exhaustion-mark {
     width: 11px;
     height: 11px;
+    border: none;
 }
 
 #playersFolder .player-card-info .subtitle-attibute,
