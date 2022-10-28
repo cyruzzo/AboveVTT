@@ -2806,8 +2806,8 @@ h5.token-image-modal-footer-title:after {
     letter-spacing: 0px;
     padding: 0px 6px;
 }
-.token-row-button,
-#playersFolder .token-row-gear {
+.token-row-button{
+    position: relative;
     display: block;
     width: 30px;
     border-radius: 3px;
@@ -2818,6 +2818,22 @@ h5.token-image-modal-footer-title:after {
     margin: 0 2px;
     min-width: 30px;
 }
+#playersFolder .token-row-button,
+#playersFolder .token-row-gear {
+    position: relative;
+    display: block;
+    width: 24px;
+    border-radius: 3px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #d8e1e8;
+    cursor: pointer;
+    margin: 0 2px;
+    min-width: 24px;
+    height: 21px;
+}
+
+
 .sidebar-list-item-row.player-row {
     height: 120px;
     transition: height 250ms linear;
@@ -2871,8 +2887,8 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute.inspiration {
     position: absolute;
-    top: 1px;
-    right: 100px;
+    top: 2px;
+    right: 82px;
 }
 .sidebar-list-item-row.player-row .player-expansion-button .material-icons {
     width: 100%;
@@ -3020,7 +3036,7 @@ h5.token-image-modal-footer-title:after {
     display: flex;
     font-size: 18px;
     flex-direction: column-reverse;
-    width: 53px;
+    width: 52px;
     text-align: center;
 }
 
@@ -3044,7 +3060,7 @@ h5.token-image-modal-footer-title:after {
     width: 80px;
     flex-direction: column-reverse;
     float: right;
-    margin: 2px;
+    margin: 2px 6px 2px 2px;
 }
 
 #playersFolder .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute{
@@ -3053,6 +3069,20 @@ h5.token-image-modal-footer-title:after {
 #playersFolder span.hp-value {
     color: #1b9af0;
 }
+#playersFolder .token-row-button svg, 
+#playersFolder .token-row-gear img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: scale(0.8);
+}
+#playersFolder .token-row-button .material-icons{
+    font-size: 18px;
+    padding: 0px;
+}
+
 .fly-svg path,
 .fly-svg rect{
     fill: #738694;
