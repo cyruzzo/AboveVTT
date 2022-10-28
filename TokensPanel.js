@@ -696,6 +696,8 @@ function update_pc_token_rows() {
             else{
                  row.find(".subtitle-attibute[title='Swim Speed']").show()
             }
+            
+            row.find(".player-card-footer").css("--player-border-color",  "#" + get_player_token_border_color(listItem.sheet))
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
             for(let i = 0; i <= playerData.exhaustion; i++){

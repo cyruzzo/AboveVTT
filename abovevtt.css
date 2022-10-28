@@ -3086,6 +3086,9 @@ h5.token-image-modal-footer-title:after {
     font-size: 18px;
     padding: 0px;
 }
+#playersFolder .ddbc-box-background svg path{
+    fill: var(--player-border-color, #F00);
+}
 
 .fly-svg path,
 .fly-svg rect{
