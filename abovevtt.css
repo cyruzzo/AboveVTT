@@ -3098,6 +3098,48 @@ h5.token-image-modal-footer-title:after {
   width: 100%;
   text-decoration: underline;
 }
+.ddbc-number-bar {
+    display: flex;
+    position: relative;
+    height: 10px;
+    flex-direction: row;
+}
+
+span.exhaustion-pip {
+    height: 4px;
+    width: 10px;
+    display: inline;
+    position: relative;
+    margin: 1px;
+    border: 1px solid #666;
+}
+span.exhaustion-pip.filled {
+    background: #202020;
+}
+
+span.exhaustion-pip.first{
+    border-bottom-left-radius: 5px;
+    border-top-left-radius:5px;
+}
+span.exhaustion-pip.last{
+    border-bottom-right-radius: 5px;
+    border-top-right-radius:5px;
+}
+
+.subtitle-attibute.exhaustion-attribute {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 26px;
+    right: 10px;
+}
+
+#playersFolder .exhaustion-attribute span.subtitle-title {
+    margin-bottom: 0px;
+    font-weight: bold;
+    font-size: 9px;
+}
 
 .example-tokens-wrapper {
     width: 100%;

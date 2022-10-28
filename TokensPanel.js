@@ -696,6 +696,11 @@ function update_pc_token_rows() {
             else{
                  row.find(".subtitle-attibute[title='Swim Speed']").show()
             }
+
+            row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
+            for(let i = 0; i <= playerData.exhaustion; i++){
+                 row.find(`.subtitle-attibute .exhaustion-pip:nth-of-type(${i})`).toggleClass("filled", true);
+            }
             if (playerData.inspiration) {
                 row.find(".inspiration").show();
             } else {

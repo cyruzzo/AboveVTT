@@ -1155,6 +1155,8 @@ function build_sidebar_list_row(listItem) {
         };
       }
       row.append(`<div class="subtitle-attibute hp-attribute" title="HP"><span class="subtitle-title">Hit Points</span><span class='hp-containter'><span class="hp-value">${playerData.hp}</span><span> / </span><span class='max-hp-value'>${playerData.max_hp}</span></span></div>`);
+      row.append(`<div class="subtitle-attibute exhaustion-attribute" title="HP"><span class="subtitle-title">Exhaustion</span><div class="ddbc-number-bar"><span class='first exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='last exhaustion-pip'></span></div></div>`);
+     
       playerInfo = $(`<div class='player-card-info'></div>`);
       playerInfo.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="subtitle-title">Passive Perception</span><span class="pp-value">${playerData.pp}</span></div>`);
       playerInfo.append(`<div class="subtitle-attibute" title="Passive Investigation"><span class="subtitle-title">Passive Investigation</span><span class="pinv-value">${playerData.pinv}</span></div>`);

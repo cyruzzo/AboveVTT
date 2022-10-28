@@ -56,11 +56,13 @@ function getPlayerData(sheet_url, callback) {
     getDDBCharData(charID, function (charData) {
 
         let conditions = [];
+        let exhaustionlevel = 0;
         for (var i = 0; i < charData.conditions.length; i++) {
             let condition = charData.conditions[i];
             let conditionString = condition.definition.name;
             if (condition.level) {
                 conditionString += " (Level " + condition.level + ")";
+                exhaustionlevel = condition.level;
             }
             conditions.push(conditionString);
         }
@@ -98,7 +100,10 @@ function getPlayerData(sheet_url, callback) {
                 swimspeed = charData.speeds[i].distance;
             }
         }
-
+    
+        for (var i = 0; i < charData.speeds.length; i++) {
+           
+        }
         var playerdata = {
             id: sheet_url,
             hp: charData.hitPointInfo.remainingHp,
@@ -115,6 +120,7 @@ function getPlayerData(sheet_url, callback) {
             climb: climbspeed+ "ft.",
             fly: flyspeed+ "ft.",
             swim: flyspeed+ "ft.",
+            exhaustion: exhaustionlevel
         };
         if (callback) {
             callback(playerdata);
