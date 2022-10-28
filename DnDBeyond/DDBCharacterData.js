@@ -121,7 +121,9 @@ function getPlayerData(sheet_url, callback) {
             fly: flyspeed+ "ft.",
             swim: swimspeed+ "ft.",
             exhaustion: exhaustionlevel,
-            theme: charData.theme
+            theme: charData.theme,
+            fails: charData.fails,
+            successes: charData.successes,
         };
         if (callback) {
             callback(playerdata);

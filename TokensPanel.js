@@ -700,6 +700,22 @@ function update_pc_token_rows() {
             row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
+            if(playerData.hp == 0){
+                row.find(".hp-attribute.death-saves.ct-health-summary__data").show();
+                row.find(".subtitle-attibute.hp-attribute").hide();
+                row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--inactive', true);
+                for(let i = 0; i <= playerData.fails; i++){
+                    row.find(`.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
+                }
+                 for(let i = 0; i <= playerData.successes; i++){
+                    row.find(`.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
+                }
+            }
+            else{
+                row.find(".subtitle-attibute.hp-attribute").show();
+                 row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
+            }
+
             for(let i = 0; i <= playerData.exhaustion; i++){
                  row.find(`.subtitle-attibute .exhaustion-pip:nth-of-type(${i})`).toggleClass("filled", true);
             }

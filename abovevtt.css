@@ -2904,6 +2904,7 @@ h5.token-image-modal-footer-title:after {
 .sidebar-list-item-row.player-row .player-card-footer {
     max-height: 76px;
     height: 76px;
+    margin-top: 4px;
 }
 
 .sidebar-list-item-row.player-row .ability_value {
@@ -3032,6 +3033,37 @@ h5.token-image-modal-footer-title:after {
     justify-content: center;
     align-content: center;
     align-items: center;
+}
+#playersFolder span.ct-health-summary__deathsaves-label {
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: none;
+    color: #666;
+    margin: 0px;
+    text-align: center;
+}
+
+#playersFolder .hp-attribute.death-saves.ct-health-summary__data.ct-health-summary__deathsaves {
+    float: right;
+    margin: 2px 6px 2px 2px;
+    border: 1px solid #d8e1e8;
+    border-radius: 2px;
+    display: flex;
+    width: 80px;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    height: fit-content;
+    padding: 2px 0px 0px 0px;
+}
+#playersFolder .ct-health-summary__deathsaves-group, 
+#playersFolder .ct-health-summary__exhaustion-group{
+    flex-direction: column;
+}
+
+#playersFolder .ct-health-summary__deathsaves-mark, 
+#playersFolder .ct-health-summary__exhaustion-mark {
+    width: 11px;
+    height: 11px;
 }
 
 #playersFolder .player-card-info .subtitle-attibute,
