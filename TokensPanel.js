@@ -704,6 +704,7 @@ function update_pc_token_rows() {
                 row.find(".hp-attribute.death-saves.ct-health-summary__data").show();
                 row.find(".subtitle-attibute.hp-attribute").hide();
                 row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--inactive', true);
+                row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--active', false);
                 for(let i = 0; i <= playerData.fails; i++){
                     row.find(`.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
                 }
