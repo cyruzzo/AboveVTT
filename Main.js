@@ -179,10 +179,10 @@ function add_zoom_to_storage() {
 * Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
 function set_default_vttwrapper_size() {
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
 }
 
 /**
