@@ -864,10 +864,10 @@ function get_event_cursor_position(event){
  */
 function drawing_mousedown(e) {
 	// perform some cleanup of the canvas/objects
-	clear_temp_canvas()
-	WaypointManager.resetDefaultDrawStyle()
-	WaypointManager.cancelFadeout()
-	if(e.button !== 2){
+	if(e.button !== 2 && !window.MOUSEDOWN){
+		clear_temp_canvas()
+		WaypointManager.resetDefaultDrawStyle()
+		WaypointManager.cancelFadeout()
 		WaypointManager.clearWaypoints()
 	}
 
@@ -1005,7 +1005,7 @@ function drawing_mousemove(e) {
 	const context = canvas.getContext("2d");
 
 	const isFilled = window.DRAWTYPE === "filled"
-	const mouseMoveFps = Math.round((1000.0 / 60.0));
+	const mouseMoveFps = Math.round((1000.0 / 24.0));
 
 
 	window.MOUSEMOVEWAIT = true;
