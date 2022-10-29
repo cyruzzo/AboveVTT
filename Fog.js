@@ -106,12 +106,12 @@ class WaypointManagerClass {
 	drawBobble(x, y, radius) {
 
 		if(radius == undefined) {
-			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3);
+			radius = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
 		}
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = this.drawStyle.lineWidth/window.CURRENT_SCENE_DATA.scale_factor
+		this.ctx.lineWidth = radius
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
 		this.ctx.fillStyle =  this.drawStyle.color
@@ -299,22 +299,22 @@ class WaypointManagerClass {
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 5));
+		this.ctx.lineWidth = Math.floor(Math.max(25 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
 		this.ctx.strokeStyle = this.drawStyle.color
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
+		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
+		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
+		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, true);
 		// draw the outline of the text box
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
+		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, false, true);
 
 		// Finally draw our text
 		this.ctx.fillStyle = this.drawStyle.textColor
