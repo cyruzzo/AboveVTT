@@ -125,7 +125,7 @@ class WaypointManagerClass {
 
 			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
-			this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+			this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 	}
 
 	// Track mouse moving
@@ -220,7 +220,7 @@ class WaypointManagerClass {
 		var slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 14) + "px Arial";
+		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26) + "px Arial";
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
@@ -256,12 +256,12 @@ class WaypointManagerClass {
 			contrastRect.x = labelX - margin + slopeModifier;
 			contrastRect.y = labelY - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + (margin * 3);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + (margin * 3);
 
 			textRect.x = labelX + slopeModifier;
 			textRect.y = labelY + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + margin;
 
 			textRect.x -= (textRect.width / 2);
 			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
@@ -286,12 +286,12 @@ class WaypointManagerClass {
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
 			contrastRect.y = snapPointYEnd - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + (margin * 3);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + (margin * 3);
 
 			textRect.x = snapPointXEnd + slopeModifier;
 			textRect.y = snapPointYEnd + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + margin;
 
 			textX = snapPointXEnd + margin + slopeModifier;
 			textY = snapPointYEnd + (margin * 2) + slopeModifier;
@@ -312,9 +312,9 @@ class WaypointManagerClass {
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height/window.CURRENT_SCENE_DATA.scale_factor, 10, true);
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
 		// draw the outline of the text box
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height/window.CURRENT_SCENE_DATA.scale_factor, 10, false, true);
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
 
 		// Finally draw our text
 		this.ctx.fillStyle = this.drawStyle.textColor
