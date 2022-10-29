@@ -582,12 +582,12 @@ function edit_scene_dialog(scene_id) {
 
 	let align_grid = function(square = false, just_rescaling = true) {
 
+		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
 
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
-			window.CURRENT_SCENE_DATA.scale_factor=1;
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
 			$("#VTT").css("--scene-width", window.CURRENT_SCENE_DATA.width + 'px');
 			$("#VTT").css("--scene-height", window.CURRENT_SCENE_DATA.height + 'px')
