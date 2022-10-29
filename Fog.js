@@ -106,7 +106,7 @@ class WaypointManagerClass {
 	drawBobble(x, y, radius) {
 
 		if(radius == undefined) {
-			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0), 3)/window.CURRENT_SCENE_DATA.scale_factor;
+			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3);
 		}
 
 		this.ctx.beginPath();
@@ -161,11 +161,11 @@ class WaypointManagerClass {
 		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		var currGridX = Math.floor(x / gridSize);
 		var currGridY = Math.floor(y / gridSize);
-		var snapPointXStart = (currGridX * gridSize) + (gridSize / 2);
-		var snapPointYStart = (currGridY * gridSize) + (gridSize / 2);
+		var snapPointXStart = (currGridX * gridSize) + (gridSize/2);
+		var snapPointYStart = (currGridY * gridSize);
 
 		// Add in scene offset
-		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx;
+		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
 		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety;
 
 		return { x: snapPointXStart, y: snapPointYStart }
@@ -193,15 +193,13 @@ class WaypointManagerClass {
 	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY) {
 
 		// Snap to centre of current grid square
-		var gridSize = window.CURRENT_SCENE_DATA.hpps;
-		var snapCoords = this.getSnapPointCoords(coord.startX, coord.startY);
-		var snapPointXStart = snapCoords.x;
-		var snapPointYStart = snapCoords.y;
+		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+		var snapPointXStart = coord.startX;
+		var snapPointYStart = coord.startY;
 		this.ctx.moveTo(snapPointXStart, snapPointYStart);
 
-		snapCoords = this.getSnapPointCoords(coord.endX, coord.endY);
-		var snapPointXEnd = snapCoords.x;
-		var snapPointYEnd = snapCoords.y;
+		var snapPointXEnd = coord.endX;
+		var snapPointYEnd = coord.endY;
 
 		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
 		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
@@ -210,7 +208,7 @@ class WaypointManagerClass {
 			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
-		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd))*window.CURRENT_SCENE_DATA.scale_factor;
+		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
 		distance = Math.round(distance / gridSize);
 		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
 		coord.distance = distance;
@@ -222,7 +220,7 @@ class WaypointManagerClass {
 		var slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0), 12)/window.CURRENT_SCENE_DATA.scale_factor + "px Arial";
+		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 14) + "px Arial";
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
@@ -257,13 +255,13 @@ class WaypointManagerClass {
 			// Calculate our coords and dimensions
 			contrastRect.x = labelX - margin + slopeModifier;
 			contrastRect.y = labelY - margin + slopeModifier;
-			contrastRect.width = (textMetrics.width + (margin * 4));
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
+			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + (margin * 3);
 
 			textRect.x = labelX + slopeModifier;
 			textRect.y = labelY + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + margin;
 
 			textRect.x -= (textRect.width / 2);
 			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
@@ -288,12 +286,12 @@ class WaypointManagerClass {
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
 			contrastRect.y = snapPointYEnd - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + (margin * 3);
 
 			textRect.x = snapPointXEnd + slopeModifier;
 			textRect.y = snapPointYEnd + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 40) + margin;
 
 			textX = snapPointXEnd + margin + slopeModifier;
 			textY = snapPointYEnd + (margin * 2) + slopeModifier;
@@ -301,19 +299,19 @@ class WaypointManagerClass {
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5))/window.CURRENT_SCENE_DATA.scale_factor;
+		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 5));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
 		this.ctx.strokeStyle = this.drawStyle.color
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3))/window.CURRENT_SCENE_DATA.scale_factor;
+		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3))/window.CURRENT_SCENE_DATA.scale_factor;
+		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height/window.CURRENT_SCENE_DATA.scale_factor, 10, true);
 		// draw the outline of the text box
 		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height/window.CURRENT_SCENE_DATA.scale_factor, 10, false, true);
@@ -853,8 +851,8 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function get_event_cursor_position(event){
-	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)))/window.CURRENT_SCENE_DATA.scale_factor;
-	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)))/window.CURRENT_SCENE_DATA.scale_factor;
+	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM))/window.CURRENT_SCENE_DATA.scale_factor);
+	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM))/window.CURRENT_SCENE_DATA.scale_factor);
 	return [pointX, pointY]
 }
 
@@ -1007,7 +1005,7 @@ function drawing_mousemove(e) {
 	const context = canvas.getContext("2d");
 
 	const isFilled = window.DRAWTYPE === "filled"
-	const mouseMoveFps = Math.round((1000.0 / 16.0));
+	const mouseMoveFps = Math.round((1000.0 / 60.0));
 
 
 	window.MOUSEMOVEWAIT = true;
