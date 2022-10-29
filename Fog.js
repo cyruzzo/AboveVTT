@@ -106,12 +106,12 @@ class WaypointManagerClass {
 	drawBobble(x, y, radius) {
 
 		if(radius == undefined) {
-			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0), 3);
+			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0), 3)/window.CURRENT_SCENE_DATA.scale_factor;
 		}
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = this.drawStyle.lineWidth
+		this.ctx.lineWidth = this.drawStyle.lineWidth/window.CURRENT_SCENE_DATA.scale_factor
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
 		this.ctx.fillStyle =  this.drawStyle.color
@@ -222,7 +222,7 @@ class WaypointManagerClass {
 		var slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + "px Arial";
+		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0), 12)/window.CURRENT_SCENE_DATA.scale_factor + "px Arial";
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
@@ -257,7 +257,7 @@ class WaypointManagerClass {
 			// Calculate our coords and dimensions
 			contrastRect.x = labelX - margin + slopeModifier;
 			contrastRect.y = labelY - margin + slopeModifier;
-			contrastRect.width = textMetrics.width + (margin * 4);
+			contrastRect.width = (textMetrics.width + (margin * 4));
 			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
 
 			textRect.x = labelX + slopeModifier;
@@ -266,8 +266,8 @@ class WaypointManagerClass {
 			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
 
 			textRect.x -= (textRect.width / 2);
-			textX = labelX + margin + slopeModifier - (textRect.width / 2);
-			textY = labelY + (margin * 2) + slopeModifier;
+			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
+			textY = (labelY + (margin * 2) + slopeModifier);
 		} else {
 			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
 			if (snapPointYStart <= snapPointYEnd) {
@@ -301,22 +301,22 @@ class WaypointManagerClass {
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5));
+		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5))/window.CURRENT_SCENE_DATA.scale_factor;
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
 		this.ctx.strokeStyle = this.drawStyle.color
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3))/window.CURRENT_SCENE_DATA.scale_factor;
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
+		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3))/window.CURRENT_SCENE_DATA.scale_factor;
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height/window.CURRENT_SCENE_DATA.scale_factor, 10, true);
 		// draw the outline of the text box
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
+		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height/window.CURRENT_SCENE_DATA.scale_factor, 10, false, true);
 
 		// Finally draw our text
 		this.ctx.fillStyle = this.drawStyle.textColor
@@ -572,7 +572,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	let skip = true;
 
 	gridContext.beginPath();
-	for (var i = startX; i < $("#scene_map").width(); i = i + incrementX) {
+	for (var i = startX; i < $("#scene_map").width()*$("#VTT").css("--scene-scale"); i = i + incrementX) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -581,13 +581,13 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 			skip = true;
 		}
 		gridContext.moveTo(i, 0);
-		gridContext.lineTo(i, $("#scene_map").height());
+		gridContext.lineTo(i, $("#scene_map").height()*$("#VTT").css("--scene-scale"));
 	}
 	gridContext.stroke();
 	skip = true;
 
 	gridContext.beginPath();
-	for (var i = startY; i < $("#scene_map").height(); i = i + incrementY) {
+	for (var i = startY; i < $("#scene_map").height()*$("#VTT").css("--scene-scale"); i = i + incrementY) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -596,7 +596,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 			skip = true;
 		}
 		gridContext.moveTo(0, i);
-		gridContext.lineTo($("#scene_map").width(), i);
+		gridContext.lineTo($("#scene_map").width()*$("#VTT").css("--scene-scale"), i);
 	}
 	gridContext.stroke();
 }
@@ -638,20 +638,23 @@ function draw_wizarding_box() {
 }
 
 function reset_canvas() {
-	$('#temp_overlay').get(0).width =($("#scene_map").width());
-	$('#temp_overlay').get(0).height =($("#scene_map").height());
+	$('#temp_overlay').get(0).width =$("#scene_map").width();
+	$('#temp_overlay').get(0).height =$("#scene_map").height();
 
-	$('#fog_overlay').get(0).width =($("#scene_map").width());
-	$('#fog_overlay').get(0).height =($("#scene_map").height());
 
-	$('#grid_overlay').get(0).width =($("#scene_map").width());
-	$('#grid_overlay').get(0).height =($("#scene_map").height());
+	$('#fog_overlay').get(0).width =$("#scene_map").width();
+	$('#fog_overlay').get(0).height =$("#scene_map").height();
 
-	$('#text_overlay').get(0).width= ($("#scene_map").width());
-	$('#text_overlay').get(0).height = ($("#scene_map").height());
+	$('#grid_overlay').get(0).width =$("#scene_map").width();
+	$('#grid_overlay').get(0).height =$("#scene_map").height();
+
+	$('#text_overlay').get(0).width= $("#scene_map").width();
+	$('#text_overlay').get(0).height = $("#scene_map").height();
 
 	$('#draw_overlay').get(0).width = $("#scene_map").width();
 	$('#draw_overlay').get(0).height = $("#scene_map").height();
+
+
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
 
@@ -677,15 +680,21 @@ function reset_canvas() {
 	var ctx_grid = canvas_grid.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.grid == "1" || window.WIZARDING) && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
-		canvas_grid.width = $("#scene_map").width();
-		canvas_grid.height = $("#scene_map").height();
+		if(window.WIZARDING){
+			$("#VTT").css("--scene-scale", 1)
+		}
+		else{
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
+		}
+		canvas_grid.width = $("#scene_map").width()*$("#VTT").css("--scene-scale");
+		canvas_grid.height = $("#scene_map").height()*$("#VTT").css("--scene-scale");
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
 
 		//alert(startX+ " "+startY);
 		if (window.WIZARDING) {
-			draw_wizarding_box()
+			draw_wizarding_box();
 		}
 		//alert('inizio 1');
 
@@ -844,8 +853,8 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function get_event_cursor_position(event){
-	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
-	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)))/window.CURRENT_SCENE_DATA.scale_factor;
+	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)))/window.CURRENT_SCENE_DATA.scale_factor;
 	return [pointX, pointY]
 }
 
@@ -1276,14 +1285,22 @@ function drawing_mouseup(e) {
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
-			
-			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();			
-			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
-			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
-			
-			if ((Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom)) == tokbottom || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
+
+
+			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
+			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
+			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
+			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
+			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
+			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
+			let scaledRemainderTop = (tokbottom-toktop-size)/2;
+			let scaledRemainderLeft = (tokright-tokleft-size)/2;
+			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
+				scaledRemainderTop = 0;
+				scaledRemainderLeft = 0;
+			}
+			if (Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
+
 				continue;
 			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokright)) == tokright || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
 				continue;

@@ -588,6 +588,9 @@ function edit_scene_dialog(scene_id) {
 			$("#tokens").hide();
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
 			window.CURRENT_SCENE_DATA.scale_factor=1;
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
+			$("#VTT").css("--scene-width", window.CURRENT_SCENE_DATA.width + 'px');
+			$("#VTT").css("--scene-height", window.CURRENT_SCENE_DATA.height + 'px')
 			var aligner1 = $("<canvas id='aligner1'/>");
 			aligner1.width(59);
 			aligner1.height(59);
@@ -861,7 +864,9 @@ function edit_scene_dialog(scene_id) {
 				window.ScenesHandler.switch_scene(scene_id);
 			}
 				
-
+			$("#VTT").css("--scene-scale", 1)
+			$("#VTT").css("--scene-width", window.CURRENT_SCENE_DATA.width + 'px');
+			$("#VTT").css("--scene-height", window.CURRENT_SCENE_DATA.height + 'px')
 
 			$("#edit_dialog").remove();
 			$("#scene_selector").removeAttr("disabled");

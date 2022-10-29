@@ -1285,12 +1285,19 @@ class MessageBroker {
 			console.group("load_scenemap callback")
 			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor || 1;
 			// Store current scene width and height
-			window.CURRENT_SCENE_DATA.width = $("#scene_map").width() * scaleFactor;
-			window.CURRENT_SCENE_DATA.height = $("#scene_map").height() * scaleFactor;
+			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
+			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
 			// Scale map according to scaleFactor
 			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
 			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
+			window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
+			window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
 			
+			$("#VTT").css("--scene-scale", scaleFactor)
+			$("#VTT").css("--scene-width", window.CURRENT_SCENE_DATA.width*scaleFactor + 'px');
+			$("#VTT").css("--scene-height", window.CURRENT_SCENE_DATA.height*scaleFactor + 'px')
+
+
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
