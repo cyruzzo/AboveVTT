@@ -210,7 +210,7 @@ class WaypointManagerClass {
 			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
-		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
+		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd))*window.CURRENT_SCENE_DATA.scale_factor;
 		distance = Math.round(distance / gridSize);
 		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
 		coord.distance = distance;
