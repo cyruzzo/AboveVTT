@@ -158,7 +158,7 @@ class WaypointManagerClass {
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;
 
-		var gridSize = window.CURRENT_SCENE_DATA.hpps;
+		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		var currGridX = Math.floor(x / gridSize);
 		var currGridY = Math.floor(y / gridSize);
 		var snapPointXStart = (currGridX * gridSize) + (gridSize / 2);
