@@ -248,9 +248,9 @@ function decrease_zoom() {
 */
 function get_reset_zoom() {
 	const wH = $(window).height();
-	const mH = $("#scene_map").height();
+	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 	const wW = $(window).width();
-	const mW = $("#scene_map").width();
+	const mW = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	console.log(wH, mH, wW, mW);
 	return Math.min((wH / mH), (wW / mW));

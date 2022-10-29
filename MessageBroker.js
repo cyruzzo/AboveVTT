@@ -1283,7 +1283,9 @@ class MessageBroker {
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			console.group("load_scenemap callback")
-			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor || 1;
+			if(!window.CURRENT_SCENE_DATA.scale_factor)
+				window.CURRENT_SCENE_DATA.scale_factor = 1;
+			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 			// Store current scene width and height
 			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
 			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
