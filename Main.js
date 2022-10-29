@@ -1117,7 +1117,7 @@ function init_mouse_zoom() {
 				newScale = window.ZOOM - 0.01 * e.deltaY;
 			}
 
-			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+			if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
 				change_zoom(newScale, e.clientX, e.clientY);
 			}
 		}
