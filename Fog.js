@@ -725,19 +725,19 @@ function redraw_fog() {
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
-			ctx.clearRect(d[0], d[1], d[2], d[3]);
+			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
 		}
 		if (d[5] == 0) { //REVEAL
 			if (d[4] == 0) { // REVEAL SQUARE
-				ctx.clearRect(d[0], d[1], d[2], d[3]);
+				ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
 				clearCircle(ctx, d[0], d[1], d[2]);
 			}
 			if (d[4] == 2) {
 				// reveal ALL!!!!!!!!!!
-				ctx.clearRect(0, 0, $("#scene_map").width(), $("#scene_map").height());
+				ctx.clearRect(0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
@@ -746,9 +746,9 @@ function redraw_fog() {
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
-				ctx.clearRect(d[0], d[1], d[2], d[3]);
+				ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 				ctx.fillStyle = fogStyle;
-				ctx.fillRect(d[0], d[1], d[2], d[3]);
+				ctx.fillRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
 				clearCircle(ctx, d[0], d[1], d[2]);
@@ -851,8 +851,8 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function get_event_cursor_position(event){
-	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM))/window.CURRENT_SCENE_DATA.scale_factor);
-	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM))/window.CURRENT_SCENE_DATA.scale_factor);
+	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
+	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
 	return [pointX, pointY]
 }
 
@@ -1551,7 +1551,7 @@ function handle_drawing_button_click() {
 function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth = 6)
 {
 	ctx.beginPath();
-	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	ctx.arc(centerX/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor, radius/window.CURRENT_SCENE_DATA.scale_factor, 0, 2 * Math.PI, false);
 	if(fill){
 		ctx.fillStyle = style;
 		ctx.fill();
@@ -1570,14 +1570,14 @@ function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidt
 	if(fill)
 	{
 		ctx.fillStyle = style;
-		ctx.fillRect(startx, starty, width, height);
+		ctx.fillRect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 	}
 	else
 	{
 		ctx.lineWidth = lineWidth;
 		ctx.strokeStyle = style;
 		ctx.beginPath();
-		ctx.rect(startx, starty, width, height);
+		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.stroke();
 	}
 
@@ -1589,9 +1589,9 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 	var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
 	var res = circle_intersection(startx, starty, T, endx, endy, L / 2);
 	ctx.beginPath();
-	ctx.moveTo(startx, starty);
-	ctx.lineTo(res[0], res[2]);
-	ctx.lineTo(res[1], res[3]);
+	ctx.moveTo(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(res[0]/window.CURRENT_SCENE_DATA.scale_factor, res[2]/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(res[1]/window.CURRENT_SCENE_DATA.scale_factor, res[3]/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.closePath();
 	if(fill){
 		ctx.fillStyle = style;
@@ -1610,8 +1610,8 @@ function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
 	ctx.beginPath();
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
-	ctx.moveTo(startx, starty);
-	ctx.lineTo(endx, endy);
+	ctx.moveTo(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(endx/window.CURRENT_SCENE_DATA.scale_factor, endy/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
@@ -1626,18 +1626,18 @@ function drawBrushstroke(ctx, points, style, lineWidth=6)
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
 	ctx.beginPath();
-	ctx.moveTo(p1.x, p1.y);
+	ctx.moveTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (var i = 1, len = points.length; i < len; i++) {
 	// we pick the point between pi+1 & pi+2 as the
 	// end point and p1 as our control point
 	var midPoint = midPointBtw(p1, p2);
-	ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+	ctx.quadraticCurveTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/window.CURRENT_SCENE_DATA.scale_factor);
 	p1 = points[i];
 	p2 = points[i+1];
 	}
 	// Draw last line as a straight line
-	ctx.lineTo(p1.x, p1.y);
+	ctx.lineTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
@@ -1652,15 +1652,15 @@ function drawPolygon (
 ) {
 	ctx.save();
 	ctx.beginPath();
-	ctx.moveTo(points[0].x, points[0].y);
+	ctx.moveTo(points[0].x/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.lineWidth = lineWidth;
 
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x, vertice.y);
+		ctx.lineTo(vertice.x/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 
 	if (mouseX !== null && mouseY !== null) {
-		ctx.lineTo(mouseX, mouseY);
+		ctx.lineTo(mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 	}
 
 	ctx.closePath();
@@ -1760,9 +1760,9 @@ function clearPolygon (ctx, points) {
 	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
-	ctx.moveTo(points[0].x, points[0].y);
+	ctx.moveTo(points[0].x/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/window.CURRENT_SCENE_DATA.scale_factor);
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x, vertice.y);
+		ctx.lineTo(vertice.x/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 	ctx.closePath();
 	ctx.fill();
@@ -1776,9 +1776,9 @@ function clearCircle(ctx, centerX, centerY, radius)
 	ctx.save();
 	ctx.beginPath();
 	ctx.fillStyle = "rgba(0,0,0,0);"
-	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	ctx.arc(centerX/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor, radius/window.CURRENT_SCENE_DATA.scale_factor, 0, 2 * Math.PI, false);
 	ctx.clip();
-	ctx.clearRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+	ctx.clearRect(centerX/window.CURRENT_SCENE_DATA.scale_factor - radius/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor - radius/window.CURRENT_SCENE_DATA.scale_factor, radius * 2/window.CURRENT_SCENE_DATA.scale_factor, radius * 2/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.restore();
 }
 
@@ -1787,8 +1787,8 @@ function drawClosingArea(ctx, pointX, pointY) {
 	ctx.lineWidth = "2";
 	ctx.beginPath();
 	ctx.rect(
-		pointX - POLYGON_CLOSE_DISTANCE,
-		pointY - POLYGON_CLOSE_DISTANCE,
+		pointX/window.CURRENT_SCENE_DATA.scale_factor - POLYGON_CLOSE_DISTANCE,
+		pointY/window.CURRENT_SCENE_DATA.scale_factor - POLYGON_CLOSE_DISTANCE,
 		POLYGON_CLOSE_DISTANCE * 2,
 		POLYGON_CLOSE_DISTANCE * 2);
 	ctx.stroke();
