@@ -1287,10 +1287,10 @@ function drawing_mouseup(e) {
 
 			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
 			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
-			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
-			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
-			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM)/window.CURRENT_SCENE_DATA.scale_factor;
+			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
+			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
+			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
+			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
 			let scaledRemainderTop = (tokbottom-toktop-size)/2;
 			let scaledRemainderLeft = (tokright-tokleft-size)/2;
 			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
