@@ -1284,16 +1284,16 @@ div#combat_button{
 }
 .hpbar:focus-within,
 .hpbar:hover{
-    transform: translateX(-50%) scale(max(1, 0.4/var(--window-zoom)));
+    transform: translateX(-50%) scale(max(1, 0.3/var(--window-zoom)*var(--scene-scale, 1)));
     transition: 250ms transform linear 500ms;
 }
 .hpbar.large-or-smaller:focus-within,
 .hpbar.large-or-smaller:hover{
-    transform: translateX(-50%) scale(max(1, 0.8/var(--window-zoom)));
+    transform: translateX(-50%) scale(max(1, 0.6/var(--window-zoom)*var(--scene-scale, 1)));
 }
 .hpbar.tiny-or-smaller:focus-within,
 .hpbar.tiny-or-smaller:hover{
-    transform: translateX(-50%) scale(max(1, 1.5/var(--window-zoom)));
+    transform: translateX(-50%) scale(max(1, 1.2/var(--window-zoom)*var(--scene-scale, 1)));
 }
 
 .hpbar input,
