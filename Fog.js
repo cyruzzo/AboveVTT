@@ -194,12 +194,12 @@ class WaypointManagerClass {
 
 		// Snap to centre of current grid square
 		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
-		var snapPointXStart = coord.startX;
-		var snapPointYStart = coord.startY;
+		var snapPointXStart = coord.startX/window.CURRENT_SCENE_DATA.scale_factor;
+		var snapPointYStart = coord.startY/window.CURRENT_SCENE_DATA.scale_factor;
 		this.ctx.moveTo(snapPointXStart, snapPointYStart);
 
-		var snapPointXEnd = coord.endX;
-		var snapPointYEnd = coord.endY;
+		var snapPointXEnd = coord.endX/window.CURRENT_SCENE_DATA.scale_factor;
+		var snapPointYEnd = coord.endY/window.CURRENT_SCENE_DATA.scale_factor;
 
 		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
 		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
