@@ -1289,15 +1289,8 @@ class MessageBroker {
 			// Store current scene width and height
 			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
 			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
-			// Scale map according to scaleFactor
-			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
-			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
-			window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
-			window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
-			
+			// Scale map according to scaleFactor			
 			$("#VTT").css("--scene-scale", scaleFactor)
-			$("#VTT").css("--scene-width", window.CURRENT_SCENE_DATA.width*scaleFactor + 'px');
-			$("#VTT").css("--scene-height", window.CURRENT_SCENE_DATA.height*scaleFactor + 'px')
 
 
 			reset_canvas();
