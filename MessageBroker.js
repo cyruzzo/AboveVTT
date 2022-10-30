@@ -1289,10 +1289,9 @@ class MessageBroker {
 			// Store current scene width and height
 			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
 			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
-			// Scale map according to scaleFactor			
+			// Scale map according to scaleFactor
 			$("#VTT").css("--scene-scale", scaleFactor)
-
-
+			
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
