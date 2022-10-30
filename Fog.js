@@ -194,12 +194,12 @@ class WaypointManagerClass {
 
 		// Snap to centre of current grid square
 		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
-		var snapPointXStart = coord.startX/window.CURRENT_SCENE_DATA.scale_factor;
-		var snapPointYStart = coord.startY/window.CURRENT_SCENE_DATA.scale_factor;
+		var snapPointXStart = coord.startX;
+		var snapPointYStart = coord.startY;
 		this.ctx.moveTo(snapPointXStart, snapPointYStart);
 
-		var snapPointXEnd = coord.endX/window.CURRENT_SCENE_DATA.scale_factor;
-		var snapPointYEnd = coord.endY/window.CURRENT_SCENE_DATA.scale_factor;
+		var snapPointXEnd = coord.endX;
+		var snapPointYEnd = coord.endY;
 
 		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
 		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
@@ -1086,7 +1086,7 @@ function drawing_mousemove(e) {
 					WaypointManager.setCanvas(canvas);
 					WaypointManager.cancelFadeout()
 					WaypointManager.registerMouseMove(mouseX, mouseY);
-					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mouseX, mouseY);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw(false);
 					context.fillStyle = '#f50';
 				}
