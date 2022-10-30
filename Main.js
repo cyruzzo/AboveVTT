@@ -2228,15 +2228,15 @@ function init_character_page_sidebar() {
 		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
-		$(".ct-sidebar__pane").on("click", ".set-conditions-button", function(clickEvent) {
+		$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	  	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click(); 	  	
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
 		  	$(`#switch_gamelog`).click();
 		});
-		$(".ct-sidebar__pane").on("click", ".remove-conditions-button", function(clickEvent) {
+		$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click(); 	
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
 		  	$(`#switch_gamelog`).click();
 
