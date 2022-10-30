@@ -2264,7 +2264,6 @@ function init_character_page_sidebar() {
 			inject_chat_buttons();
 			init_zoom_buttons();
 			monitor_character_sidebar_changes();
-			window.MB.sendMessage('custom/myVTT/syncmeup');
 		}
 	}, 1000);
 }
