@@ -1522,7 +1522,16 @@ class Token {
 					window.DRAGGING = true;
 					click.x = event.pageX;
 					click.y = event.pageY;
+					if(self.selected == false && $(".token.tokenselected").length>0){
+						for (let tok of $(".token.tokenselected")){
+							let id = $(tok).attr("data-id");
+							window.TOKEN_OBJECTS[id].selected = false;
+							$("#tokens [data-id='" + id + "']").toggleClass("tokenselected", false)
+						}
+					}
 
+					self.selected = true;
+					$("#tokens [data-id='" + self.options.id + "']").toggleClass("tokenselected", true);
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
