@@ -3317,7 +3317,10 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #combat_area tr td:nth-of-type(2),
 #combat_area tr td:nth-of-type(3)
 #combat_area td:last-of-type {
-        padding: 0px 5px 0px 0px;
+    padding: 0px 5px 0px 0px;
+}
+#combat_area tr{
+    position: relative;
 }
 
 #text_controller_title_bar,
@@ -3778,6 +3781,12 @@ div#selectedTokensBorderRotationGrabberConnector  {
     border: 1px solid #ddd;
 }
 
+#combat_area td button{
+    margin: 0px 2px;
+}
+#site #combat_area tr td{
+    padding-bottom: 4px;
+}
 
 #combat_area tr td div,
 #combat_area tr td input.hp,
@@ -3813,15 +3822,21 @@ div#selectedTokensBorderRotationGrabberConnector  {
     box-shadow: inset 0px 0px 0px 1px var(--token-temp-hpbar), 0px 0px 3px 1px var(--token-temp-hpbar);
 }
 
-.encounter-builder-app #combat_area td [class*="AvatarPortrait"]{
+#combat_area td [class*="AvatarPortrait"]{
     border-radius: 5px;
     top:2px;
     left: 2px;
     position: relative;
+    vertical-align: bottom;
 }
-#combat_area td [class*="AvatarPortrait"]{
-    border-radius: 5px;
+
+#combat_area tr td{
+    vertical-align: middle
 }
+#combat_area tr td{
+    vertical-align: bottom
+}
+
 #round_number_label button{
     margin-left: 6px;
 }
@@ -4562,6 +4577,25 @@ input.max_hp[disabled]{
 
 .sp-container {
     position: fixed !important;
+}
+#combat_area tr.CTToken:before{
+    content:  '???';
+    font-size: 12px;
+    position: absolute;
+    left: 42px;
+    width: calc(100% - 140px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    color: #4443;
+}
+#combat_area tr[data-name].CTToken:before{
+    content: attr(data-name);
+    color: #444d;
+}
+body.body-rpgcharacter-sheet #combat_area tr.CTToken:before{
+    width: calc(100% - 80px);
 }
 
 .text-option{
