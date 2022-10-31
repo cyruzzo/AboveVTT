@@ -344,6 +344,7 @@ function remove_loading_overlay() {
  */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
 
+	$("#darkness_layer").hide();
 	remove_loading_overlay();
 
 	$("#scene_map").remove();
@@ -408,7 +409,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		}
 
 		newmap.css("opacity","0");
-		newmap.on("load", () => newmap.animate({opacity:1},2000));
+		newmap.on("load", () => {
+			newmap.css('opacity', 1);
+			$("#darkness_layer").show();
+		});
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
