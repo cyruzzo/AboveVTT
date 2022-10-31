@@ -1175,7 +1175,7 @@ class Token {
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
 				// NEED RESIZING
-				old.find("img").css("border-width", Math.min(4, Math.round((this.sizeWidth() / 60.0) * 4)));
+				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps)+"px");
 				old.find("img").css({
 					"max-height": this.sizeWidth(),
 					"max-width": this.sizeHeight()
@@ -1221,6 +1221,9 @@ class Token {
 
 				if(this.options.disableborder){
 					oldImage.css("border-width","0");
+				}
+				else{
+					oldImage.css("border-width","");
 				}
 
 				setTokenAuras(old, this.options);
@@ -1314,7 +1317,7 @@ class Token {
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");
-
+				tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps)+"px");
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
 				tokenImage.attr("src", this.options.imgsrc);
