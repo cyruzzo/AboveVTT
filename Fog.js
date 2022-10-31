@@ -1276,16 +1276,22 @@ function drawing_mouseup(e) {
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
-			
-			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();			
+
+			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
+			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
 			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
 			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
 			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
 			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
-			
-			if ((Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom)) == tokbottom || (Math.max(window.BEGIN_MOUSEY, mouseY, toktop) == toktop))
+			let scaledRemainderTop = (tokbottom-toktop-size)/2;
+			let scaledRemainderLeft = (tokright-tokleft-size)/2;
+			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
+				scaledRemainderTop = 0;
+				scaledRemainderLeft = 0;
+			}
+			if (Math.min(window.BEGIN_MOUSEY, mouseY, tokbottom-scaledRemainderTop) == tokbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, toktop+scaledRemainderTop) == toktop+scaledRemainderTop)
 				continue;
-			if ((Math.min(window.BEGIN_MOUSEX, mouseX, tokright)) == tokright || (Math.max(window.BEGIN_MOUSEX, mouseX, tokleft) == tokleft))
+			if (Math.min(window.BEGIN_MOUSEX, mouseX, tokright-scaledRemainderLeft) == tokright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, tokleft+scaledRemainderLeft) == tokleft+scaledRemainderLeft)
 				continue;
 
 			c++;
