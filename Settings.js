@@ -820,7 +820,7 @@ function import_readfile() {
 					let importedCustomization = TokenCustomization.fromJson(json);
 					let existing = customizations.find(tc => tc.tokenType === importedCustomization.tokenType && tc.id === importedCustomization.id);
 					if (existing) {
-						existing.alternativeImages.forEach(img => importedCustomization.addAlternativeImage(img));
+						existing.alternativeImages().forEach(img => importedCustomization.addAlternativeImage(img));
 					} else {
 						customizations.push(importedCustomization);
 					}
