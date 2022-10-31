@@ -556,21 +556,21 @@ function clear_grid(){
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	const gridCanvas = document.getElementById("grid_overlay");
 	const gridContext = gridCanvas.getContext("2d");
-	clear_grid()
+	clear_grid();
 	gridContext.setLineDash(dash);
-	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
-	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
+	let startX = offsetX/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
+	let startY = offsetY/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety/window.CURRENT_SCENE_DATA.scale_factor;
 	startX = Math.round(startX)
 	startY = Math.round(startY)
-	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
-	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps;
+	const incrementX = hpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+	const incrementY = vpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
 	let skip = true;
 
-	gridContext.beginPath();
-	for (var i = startX; i < $("#scene_map").width()*$("#VTT").css("--scene-scale"); i = i + incrementX) {
+	gridContext.beginPath();	
+	for (var i = startX; i < $("#grid_overlay").width(); i = i + incrementX) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -579,13 +579,14 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 			skip = true;
 		}
 		gridContext.moveTo(i, 0);
-		gridContext.lineTo(i, $("#scene_map").height()*$("#VTT").css("--scene-scale"));
+		gridContext.lineTo(i, $("#grid_overlay").height());
 	}
 	gridContext.stroke();
 	skip = true;
 
+	
 	gridContext.beginPath();
-	for (var i = startY; i < $("#scene_map").height()*$("#VTT").css("--scene-scale"); i = i + incrementY) {
+	for (var i = startY; i < $("#grid_overlay").height(); i = i + incrementY) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -593,8 +594,10 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 		else {
 			skip = true;
 		}
+
 		gridContext.moveTo(0, i);
-		gridContext.lineTo($("#scene_map").width()*$("#VTT").css("--scene-scale"), i);
+		gridContext.lineTo($("#grid_overlay").width(), i);
+
 	}
 	gridContext.stroke();
 }
@@ -683,8 +686,8 @@ function reset_canvas() {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		canvas_grid.width = $("#scene_map").width()*$("#VTT").css("--scene-scale");
-		canvas_grid.height = $("#scene_map").height()*$("#VTT").css("--scene-scale");
+		canvas_grid.width = $("#scene_map").width();
+		canvas_grid.height = $("#scene_map").height();
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);

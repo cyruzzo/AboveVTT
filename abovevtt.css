@@ -4625,7 +4625,8 @@ div.ddbc-tab-options--layout-pill>button{
 #draw_overlay,
 #darkness_layer,
 #scene_map_container,
-#scene_map{
+#scene_map,
+#grid_overlay{
     transform: scale(var(--scene-scale));
     transform-origin: top left;
 }
