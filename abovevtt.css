@@ -2402,7 +2402,7 @@ body {
     right: 0px;
     width: 340px;
     z-index: -1;
-    height: calc(-30px + 100vh);
+    height: calc(-45px + 100vh);
 }
 div.sidebar__pane-content > div.selected-tab,
 div.ct-sidebar__pane-content > div.selected-tab {
