@@ -31,6 +31,17 @@ function token_setting_options() {
 			defaultValue: "default"
 		},
 		{
+			name: 'lockRestrictDrop',
+			label: 'Token Lock',
+			type: 'dropdown',
+			options: [
+				{ value: "none", label: "None", description: "Token is freely moveable by all players and the DM." },
+				{ value: "restrict", label: "Restrict player access", description: "Players will not be able to move this token unless it is thier owned PC Token. Will not be added to Players group selections." },
+				{ value: "lock", label: "Lock", description: "Locks token for both DM and Players. Will not be added to group selections." },
+			],
+			defaultValue: "none"
+		},
+		{
 			name: 'hidden',
 			label: 'Hide',
 			type: 'toggle',
@@ -58,7 +69,8 @@ function token_setting_options() {
 				{ value: true, label: "Interaction Disabled", description: "The token can not be interacted with in any way. Not movable, not selectable by players, no hp/ac displayed, no border displayed, no nothing. Players shouldn't even know it's a token." },
 				{ value: false, label: "Interaction Allowed", description: "The token can be interacted with." }
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		},
 		{
 			name: 'restrictPlayerMove',
@@ -68,7 +80,8 @@ function token_setting_options() {
 				{ value: true, label: "Restricted", description: "Players can not move the token unless it is their token." },
 				{ value: false, label: "Unrestricted", description: "Players can move the token." }
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		},
 		{
 			name: 'revealInFog',
@@ -533,6 +546,8 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	// };
 
 	availableOptions.forEach(option => {
+		if(option.hiddenSetting == true)
+			return;
 		const currentValue = setValues[option.name];
 		if (option.type === "dropdown") {
 			let inputWrapper = build_dropdown_input(option, currentValue, function(name, newValue) {
@@ -830,7 +845,7 @@ function import_readfile() {
 					let importedCustomization = TokenCustomization.fromJson(json);
 					let existing = customizations.find(tc => tc.tokenType === importedCustomization.tokenType && tc.id === importedCustomization.id);
 					if (existing) {
-						existing.alternativeImages.forEach(img => importedCustomization.addAlternativeImage(img));
+						existing.alternativeImages().forEach(img => importedCustomization.addAlternativeImage(img));
 					} else {
 						customizations.push(importedCustomization);
 					}
