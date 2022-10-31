@@ -1094,7 +1094,7 @@ function init_controls() {
 	if (!DM) {
 		sidebarControls.addClass("player");
 	}
-
+	addGamelogPopoutButton()
 }
 
 const MAX_ZOOM_STEP = 20
@@ -2142,7 +2142,7 @@ function init_things() {
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
-	if (window.DM) {
+	if (window.DM && !window.location.search.includes("popoutgamelog=true")) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
 		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
@@ -2164,7 +2164,7 @@ function init_things() {
 			
 			init_scene_selector();
 			init_splash();
-			
+
 		});
 	} else if (is_characters_page()) {
 		
@@ -4031,17 +4031,35 @@ function show_sidebar() {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
+	
+	addGamelogPopoutButton()
 }
 
 var childWindows = {};
 
+function addGamelogPopoutButton(){
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
+	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true&popoutgamelog=true`
 
+	gamelog_popout.off().on("click",function(){
+		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);	
+		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
+		setTimeout(function() {		
+			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
+		}, 1000)
+		childWindows["Gamelog"].onload = function() {
+			popoutGamelogCleanup();
+		}	
+	});
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
+}
 // This will popout the selector and it's children. Use a unique name for windows you want to open seperately. If you want to override an open window use the same name.
-function popoutWindow(name, cloneSelector, width=400, height=800){
+function popoutWindow(name, cloneSelector, width=400, height=800, windowTarget=``){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
 width=${width},height=${height},left=100,top=100`;
-	childWindows[name] = window.open(``, name, params);		
+	childWindows[name] = window.open(windowTarget, name, params);		
 	childWindows[name].onbeforeunload = function(){ 
 		closePopout(name);
 	}
@@ -4056,6 +4074,43 @@ width=${width},height=${height},left=100,top=100`;
         this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 	});
 	return childWindows[name];
+}
+function popoutGamelogCleanup(){
+	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
+	setTimeout(function(){
+		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
+			body{
+				overflow: hidden !important;
+			}
+			.sidebar__inner,
+			.sidebar,
+			.sidebar__pane-content,
+			.glc-game-log{
+			    width: 100% !important;
+			    max-width: 100% !important;
+			}
+			.mfp-wrap {
+		   		width: 100%;
+		   		z-index: 50000;
+			}
+			.ddb-campaigns-detail-gamelog {
+    			visibility: hidden;
+			}
+		</style>`);
+		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+		removeFromPopoutWindow("Gamelog", ".dice-roller");
+		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
+		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+		removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");	
+		$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
+		let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
+		removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
+		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+		removeFromPopoutWindow("Gamelog", "iframe");
+		$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
+		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
+		setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);	
+	}, 5000);		
 }
 function updatePopoutWindow(name, cloneSelector){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
@@ -4081,21 +4136,6 @@ function closePopout(name){
 		delete childWindows[name];
 	}
 }
-
-
-
-
-
-
-
-function removeFromPopoutWindow(name, selector){
-	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
-	if(!childWindows[name])
-		return;
-	$(childWindows[name].document).find(selector).remove();
-	return childWindows[name];
-}
-
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .

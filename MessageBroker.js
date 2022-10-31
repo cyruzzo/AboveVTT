@@ -353,6 +353,8 @@ class MessageBroker {
 				return;
 
 			var msg = $.parseJSON(event.data);
+			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending")
+				return;
 			console.log(msg.eventType);
 			
 			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
