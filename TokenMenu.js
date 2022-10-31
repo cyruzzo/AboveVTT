@@ -297,7 +297,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			body.append(aurasRow);
 		}
 	}
-	if(window.DM && !someTokensAreAoe) {
+	if(window.DM) {
 		if (tokens.length === 1) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
@@ -378,6 +378,14 @@ function build_token_auras_inputs(tokenIds) {
 		"flex-direction": "row"
 	})
 
+	let allTokensArePlayer = true;
+	for(token in tokens){
+		if(!window.TOKEN_OBJECTS[tokens[token].options.id].isPlayer()){
+			allTokensArePlayer=false;
+			break;
+		}
+	}
+
 	let auraVisibleValues = tokens.map(t => t.options.auraVisible);
 	let uniqueAuraVisibleValues = [...new Set(auraVisibleValues)];
 
@@ -387,6 +395,8 @@ function build_token_auras_inputs(tokenIds) {
 	let auraLightValues = tokens.map(t => t.options.auraislight);
 	let uniqueAuraLightValues = [...new Set(auraLightValues)];
 
+	let auraOwnedValues = tokens.map(t => t.options.auraowned);
+	let uniqueAuraOwnedValues = [...new Set(auraOwnedValues)];
 
 
 	let auraIsEnabled = null;
@@ -401,6 +411,11 @@ function build_token_auras_inputs(tokenIds) {
 	if (uniqueAuraLightValues.length === 1) {
 		auraIsLightEnabled = uniqueAuraLightValues[0];
 	}
+	let auraOnlyForOwnedTokenEnabled = null;
+	if (uniqueAuraOwnedValues.length === 1) {
+		auraOnlyForOwnedTokenEnabled = uniqueAuraOwnedValues[0];
+	}
+
 	let aura1Feet = tokens.map(t => t.options.aura1.feet);
 	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
 	let aura2Feet = tokens.map(t => t.options.aura2.feet);
@@ -478,13 +493,34 @@ function build_token_auras_inputs(tokenIds) {
 	});
 	wrapper.prepend(enabledAurasInput);
 
+	const auraOnlyForOwnedToken = {
+		name: "auraowned",
+		label: "Only show owned tokens aura",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Owned tokens Aura", description: "Only showing to the player their own token aura and other tokens with 'Player Accessible Stats' auras" },
+			{ value: false, label: "All Auras", description: "Showing all token Auras" }
+		],
+		defaultValue: false
+	};
+	let auraOwnedInput = build_toggle_input(auraOnlyForOwnedToken, auraOnlyForOwnedTokenEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+		check_token_visibility();
+	});
+	if(allTokensArePlayer && window.DM)
+		wrapper.find(".token-config-aura-wrapper").prepend(auraOwnedInput);
+	
 	const auraIsLightOption = {
 		name: "auraislight",
 		label: "Change aura appearance to light",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light." },
-			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light." }
+			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light and is interacting with the scene darkness filter. If set on a player token: tokens not in visible 'light' auras are hidden." },
+			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light and interact with the scene darkness filter. If set on a player token: hide tokens not in visible 'light' auras." }
 		],
 		defaultValue: false
 	};
@@ -494,6 +530,7 @@ function build_token_auras_inputs(tokenIds) {
 			token.options[name] = newValue;
 			token.place_sync_persist();
 		});
+		check_token_visibility();
 	});	
 	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
 

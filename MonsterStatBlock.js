@@ -41,6 +41,8 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
         e.stopPropagation();
         e.preventDefault();
         const imgContainer = $(e.target).parent().prev();
+        imgContainer.find("img").attr("href", imgContainer.find("img").attr("src"));
+        imgContainer.find("img").addClass("magnify");
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
     container.find("div.image").append(statBlock.imageHtml());
@@ -577,7 +579,19 @@ class MonsterStatBlock {
 
     get challengeRatingHtml() {
         const definition = this.findObj("challengeRatings", this.data.challengeRatingId);
-        const crString = parseInt(definition.value);
+        let crString = parseInt(definition.value);
+        if(definition.value == 0.125){
+          crString = `1/8`
+        }
+        else if(definition.value == 0.25){
+          crString = `1/4`
+        }
+        else if(definition.value == 0.5){
+          crString = `1/2`
+        }
+
+
+
         return `${crString} (${definition.xp.toLocaleString()} XP)`;
     }
 
@@ -685,8 +699,7 @@ class MonsterStatBlock {
         });
 
 
-        let html = $(`<a href="${this.data.largeAvatarUrl}" data-lightbox="Abhorrent Overlord-mobile"
-           data-title="<a target='_blank' href='${this.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>"
+        let html = $(`<a href="${this.data.largeAvatarUrl}" data-title="<a target='_blank' href='${this.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>"
            target="_blank"></a>`);
         html.append(img);
         return html;
