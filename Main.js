@@ -2162,11 +2162,16 @@ function init_things() {
 		init_character_page_sidebar();
 
 		$(window).off("resize").on("resize", function() {
-			// when the user resizes the window, bring everything out into view. They can alwasy re-hide it if they want to
-			setTimeout(function() {
-				init_character_page_sidebar();
-				hide_sidebar();
-			}, 500);
+			if(window.showPanel == undefined){
+				window.showPanel = is_sidebar_visible();
+			}
+			init_character_page_sidebar();	
+			setTimeout(function(){
+				if(!window.showPanel){
+					hide_sidebar();
+				}
+			}, 1000)
+			
 		});
 
 	} else {
@@ -2264,6 +2269,7 @@ function init_character_page_sidebar() {
 			inject_chat_buttons();
 			init_zoom_buttons();
 		}
+
 	}, 1000);
 }
 
@@ -3989,7 +3995,7 @@ function show_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-right").removeClass("point-left");
 	toggleButton.attr('data-visible', 1);
-
+	window.showPanel = true;
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--not-visible").click();
 	} else {
@@ -4075,7 +4081,7 @@ function hide_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-left").removeClass("point-right");
 	toggleButton.attr('data-visible', 0);
-
+	window.showPanel = false;
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--visible").click();
 	} else {
