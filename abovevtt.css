@@ -2136,6 +2136,10 @@ ul.context-menu-list > li {
     top: -3px;
 }
 
+#site .mfp-wrap {
+    z-index: 100000;
+}
+
 .soundpad-section-title{
 	font-weight: bold;
 	background: #dddddd;
