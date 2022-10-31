@@ -739,14 +739,14 @@ class Token {
 		hpbar.css('height', bar_height);
 		hpbar.css('top', Math.floor(this.sizeHeight() - bar_height));
 
-		hpbar.toggleClass('large-or-smaller', false);
+		hpbar.toggleClass('medium-or-smaller', false);
 		hpbar.toggleClass('tiny-or-smaller', false);
 		
 		let tokenWidth = this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps;
-		if(tokenWidth < 3 && tokenWidth >= 1)
-			hpbar.toggleClass('large-or-smaller', true);
+		if(tokenWidth < 2 && tokenWidth >= 1)
+			hpbar.toggleClass('medium', true);
 		if(tokenWidth < 1)
-			hpbar.toggleClass('tiny-or-smaller', true);
+			hpbar.toggleClass('smaller-than-medium', true);
 		
 
 		var fs = Math.floor(bar_height / 1.2) + "px";
