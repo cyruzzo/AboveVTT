@@ -1160,10 +1160,8 @@ div#combat_button{
 
 .ability_value {
     display: inline-block;
-    width: 44px;
-    padding: 5px;
+    width: 50px;
     text-align: center;
-    border:solid 2px #AE0404;
     position: relative;
     border-radius: 15px 25px 125px 25px/15px 225px 15px 255px;
     height: 60px;
@@ -1171,27 +1169,19 @@ div#combat_button{
 }
 
 .ability_name {
-    color: darkgrey;
+    color: #666;
     font-weight: bold;
+    font-size: 11px;
 }
 
 .ability_modifier {
     font-size: 18px;
     margin-top: -2px;
+    font-weight: bold;
 }
 
 .ability_score {
-    position: absolute;
-    bottom: -10px;
-    border-radius: 50%;
-    border: 1px solid #AE0404;
-    width: 25px;
-    background: #fff;
-    left: calc(20px / 2);
-    height: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-weight: bold;
 }
 
 .add-party-container {
@@ -2880,7 +2870,8 @@ div#importer_area>div>div:first-of-type {
     letter-spacing: 0px;
     padding: 0px 6px;
 }
-.token-row-button {
+.token-row-button{
+    position: relative;
     display: block;
     width: 30px;
     border-radius: 3px;
@@ -2891,8 +2882,25 @@ div#importer_area>div>div:first-of-type {
     margin: 0 2px;
     min-width: 30px;
 }
+#playersFolder .token-row-button,
+#playersFolder .token-row-gear {
+    position: relative;
+    display: block;
+    width: 24px;
+    border-radius: 3px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #d8e1e8;
+    cursor: pointer;
+    margin: 0 2px;
+    min-width: 24px;
+    height: 21px;
+}
+
+
 .sidebar-list-item-row.player-row {
-    height: 68px;
+    height: 120px;
+    transition: height 250ms linear;
 }
 .sidebar-list-item-row.player-row .player-expansion-button {
     height: 16px;
@@ -2913,12 +2921,12 @@ div#importer_area>div>div:first-of-type {
     justify-content: start;
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute {
-    flex-direction: row;
-    min-width: 40px;
-    margin-right: 8px;
-    flex-grow: 0;
-    justify-content: start;
     font-size: 12px;
+    min-width: 34px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute img {
     width: 24px;
@@ -2941,6 +2949,11 @@ div#importer_area>div>div:first-of-type {
     word-wrap: normal;
     direction: ltr;
 }
+.sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute.inspiration {
+    position: absolute;
+    top: 2px;
+    right: 82px;
+}
 .sidebar-list-item-row.player-row .player-expansion-button .material-icons {
     width: 100%;
     height: 100%;
@@ -2949,16 +2962,15 @@ div#importer_area>div>div:first-of-type {
     font-weight: 700;
 }
 .sidebar-list-item-row.player-row.expanded {
-    height: 142px;
+    height: 186px;
+    transition: height 250ms linear;
 }
 .sidebar-list-item-row.player-row .player-card-footer {
-    max-height: 0px;
-    height: 0px;
-}
-.sidebar-list-item-row.player-row.expanded .player-card-footer {
     max-height: 76px;
     height: 76px;
+    margin-top: 4px;
 }
+
 .sidebar-list-item-row.player-row .ability_value {
     margin: 8px 0;
 }
@@ -3040,6 +3052,10 @@ div#importer_area>div>div:first-of-type {
 #players-panel .sidebar-panel-body {
     padding: 0px;
 }
+#playersFolder .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute{
+    flex-grow: 0;
+    margin-right: 0px;
+}
 .sidebar-panel-content .sidebar-panel-body {
     background-color: rgb(235, 241, 245);
     position: relative; 
@@ -3074,10 +3090,159 @@ div#importer_area>div>div:first-of-type {
     width: 100%;
     align-items: center;
 }
+#playersFolder .player-card-info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+#playersFolder span.ct-health-summary__deathsaves-label {
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: none;
+    color: #666;
+    margin: 0px;
+    text-align: center;
+}
+
+#playersFolder .hp-attribute.death-saves.ct-health-summary__data.ct-health-summary__deathsaves {
+    float: right;
+    margin: 2px 6px 2px 2px;
+    border: 1px solid #d8e1e8;
+    border-radius: 2px;
+    display: flex;
+    width: 80px;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    height: fit-content;
+    padding: 2px 0px 0px 0px;
+}
+#playersFolder .ct-health-summary__deathsaves-group, 
+#playersFolder .ct-health-summary__exhaustion-group{
+    flex-direction: column;
+}
+
+#playersFolder .ct-health-summary__deathsaves-mark, 
+#playersFolder .ct-health-summary__exhaustion-mark {
+    width: 11px;
+    height: 11px;
+    border: none;
+}
+
+#playersFolder .player-card-info .subtitle-attibute,
+#playersFolder .subtitle-attibute.hp-attribute  {
+    font-weight: bold;
+    display: flex;
+    font-size: 18px;
+    flex-direction: column-reverse;
+    width: 52px;
+    text-align: center;
+}
+
+#playersFolder span.subtitle-title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-end;
+    line-height: 10px;
+    margin-bottom: 3px;
+    padding: 2px;
+    font-size: 9px;
+    color: #666;
+}
+#playersFolder .subtitle-attibute.hp-attribute {
+    border: 1px solid #d8e1e8;
+    border-radius: 2px;
+    display: flex;
+    width: 80px;
+    flex-direction: column-reverse;
+    float: right;
+    margin: 2px 6px 2px 2px;
+}
+
+#playersFolder .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute{
+        align-items: center;
+}
+#playersFolder span.hp-value {
+    color: #1b9af0;
+}
+#playersFolder .token-row-button svg, 
+#playersFolder .token-row-gear img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: scale(0.8);
+}
+#playersFolder .token-row-button .material-icons{
+    font-size: 18px;
+    padding: 0px;
+}
+#playersFolder .ddbc-box-background svg path{
+    fill: var(--player-border-color, #F00);
+}
+
+.fly-svg path,
+.fly-svg rect{
+    fill: #738694;
+}
+.fly-svg{
+    width: 10px;
+}
+.climb-svg{
+    width: 16px;
+}
 .chat-link {
   word-wrap: break-word;
   width: 100%;
   text-decoration: underline;
+}
+.ddbc-number-bar {
+    display: flex;
+    position: relative;
+    height: 10px;
+    flex-direction: row;
+}
+
+span.exhaustion-pip {
+    height: 4px;
+    width: 10px;
+    display: inline;
+    position: relative;
+    margin: 1px;
+    border: 1px solid #666;
+}
+span.exhaustion-pip.filled {
+    background: #202020;
+}
+
+span.exhaustion-pip.first{
+    border-bottom-left-radius: 5px;
+    border-top-left-radius:5px;
+}
+span.exhaustion-pip.last{
+    border-bottom-right-radius: 5px;
+    border-top-right-radius:5px;
+}
+
+.subtitle-attibute.exhaustion-attribute {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 26px;
+    right: 10px;
+}
+
+#playersFolder .exhaustion-attribute span.subtitle-title {
+    margin-bottom: 0px;
+    font-weight: bold;
+    font-size: 9px;
 }
 
 .example-tokens-wrapper {
