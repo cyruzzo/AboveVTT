@@ -248,7 +248,7 @@ class Token {
 		}
 		else {
 			this.options.size = newSize;
-			this.options.gridSquares = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
+			this.options.gridSquares = newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		}
 
 		this.place_sync_persist();
