@@ -744,6 +744,7 @@ class Token {
 		if (bar_height > 60)
 			bar_height = 60;
 
+		bar_height = Math.ceil(bar_height);
 		var hpbar = $("<div class='hpbar'/>");
 		hpbar.css("position", 'absolute');
 		hpbar.css('height', bar_height);
@@ -761,13 +762,13 @@ class Token {
 
 		var fs = Math.floor(bar_height / 1.2) + "px";
 
-		$("<div class='token'/>").css("font-size",fs);
+		hpbar.css("--font-size",fs);
 
 		var input_width = Math.floor(this.sizeWidth() * 0.3);
 		if (input_width > 90)
 			input_width = 90;
 
-		var hp_input = $("<input class='hp'>").css('width', input_width);
+		var hp_input = $("<input class='hp'>").css('width', input_width)
 		hp_input.val(this.options.hp);
 
 		var maxhp_input = $("<input class='max_hp'>").css('width', input_width);
