@@ -56,11 +56,13 @@ function getPlayerData(sheet_url, callback) {
     getDDBCharData(charID, function (charData) {
 
         let conditions = [];
+        let exhaustionlevel = 0;
         for (var i = 0; i < charData.conditions.length; i++) {
             let condition = charData.conditions[i];
             let conditionString = condition.definition.name;
             if (condition.level) {
                 conditionString += " (Level " + condition.level + ")";
+                exhaustionlevel = condition.level;
             }
             conditions.push(conditionString);
         }
@@ -88,8 +90,20 @@ function getPlayerData(sheet_url, callback) {
             if (charData.speeds[i].key == "walk") {
                 walkspeed = charData.speeds[i].distance;
             }
+            else if (charData.speeds[i].key == "climb") {
+                climbspeed = charData.speeds[i].distance;
+            }
+            else if (charData.speeds[i].key == "fly") {
+                flyspeed = charData.speeds[i].distance;
+            }
+            else if (charData.speeds[i].key == "swim") {
+                swimspeed = charData.speeds[i].distance;
+            }
         }
-
+    
+        for (var i = 0; i < charData.speeds.length; i++) {
+           
+        }
         var playerdata = {
             id: sheet_url,
             hp: charData.hitPointInfo.remainingHp,
@@ -97,10 +111,19 @@ function getPlayerData(sheet_url, callback) {
             temp_hp: charData.hitPointInfo.tempHp,
             ac: charData.armorClass, 
             pp: charData.passivePerception,
+            pins: charData.passiveInsight,
+            pinv: charData.passiveInvestigation,
             conditions: conditions,
             abilities: abilities,
             walking: walkspeed+ "ft.",
             inspiration: charData.inspiration,
+            climb: climbspeed+ "ft.",
+            fly: flyspeed+ "ft.",
+            swim: swimspeed+ "ft.",
+            exhaustion: exhaustionlevel,
+            theme: charData.theme,
+            fails: charData.fails,
+            successes: charData.successes,
         };
         if (callback) {
             callback(playerdata);
@@ -381,6 +404,7 @@ var initalModules = {
                     weaponItems: charf1.getEquippedWeaponItems(state),
                     gearItems: charf1.getEquippedGearItems(state)
                 },
+                theme: charf1.getCharacterTheme(state),
 
                 //originRefRaceData: charf1.getDataOriginRefRaceData(state),
                 //optionalOrigins: charf1.getOptionalOrigins(state),

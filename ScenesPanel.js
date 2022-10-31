@@ -321,21 +321,17 @@ function edit_scene_dialog(scene_id) {
 	);
 
 	let darknessValue = scene.darkness_filter || 0;
-	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="95" step="5"/>`);
+	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
 	
 	darknessFilterRange.on(' input change', function(){
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
 	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-	   	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
    		}
 	});
 	darknessFilterRange.on(' mouseup', function(){
    	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
-   	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
 
@@ -582,8 +578,9 @@ function edit_scene_dialog(scene_id) {
 
 	let align_grid = function(square = false, just_rescaling = true) {
 
-		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
 
+		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
+    
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
@@ -1311,6 +1308,8 @@ function fill_importer(scene_set, start) {
 	area.animate({ opacity: "1" }, 300);
 
 	var ddb_extra_found=false;
+	totalPages = Math.max(1, Math.ceil(scene_set.length / 8));
+	pageNumber = 1 + Math.ceil(start / 8)
 	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
 		let current_scene = scene_set[i];
 
@@ -1449,6 +1448,12 @@ function fill_importer(scene_set, start) {
 	buttons.append(next);
 	footer.append(buttons);
 
+	pageNumbersDiv = $(`<div class='page-number'>${pageNumber} / ${totalPages}</div>`)
+	footer.append(pageNumbersDiv);
+
+	if(scene_set.length == 0){
+		area.append(`<div style='border:none !important;'>There were no maps/handouts found in this chapter</div>`)
+	}
 
 
 }
