@@ -671,6 +671,10 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/playerdata") {
 				self.handlePlayerData(msg.data);
 			}
+			if (msg.eventType == "custom/myVTT/actoplayerdata") {
+				self.acToPlayerData(msg.data);
+			}
+
 			if (msg.eventType == "dice/roll/pending"){
 				// check for injected_data!
 				if(msg.data.injected_data){
@@ -1036,6 +1040,20 @@ class MessageBroker {
 		update_pclist();
 	}
 
+	acToPlayerData(data) {
+		if (!window.DM)
+			return;
+		for(id in window.TOKEN_OBJECTS){
+			if(id.endsWith(data.id)){
+				window.TOKEN_OBJECTS[id].options.ac = data.ac;
+				window.TOKEN_OBJECTS[id].place();
+				window.TOKEN_OBJECTS[id].update_and_sync();
+				if(id in window.PLAYER_STATS)
+					window.PLAYER_STATS[id].ac = data.ac;
+			}
+		}	
+	}
+	
 	sendTokenUpdateFromPlayerData(data) {
 		console.group("sendTokenUpdateFromPlayerData")
 		if (data.id in window.TOKEN_OBJECTS) {
