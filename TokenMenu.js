@@ -297,7 +297,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			body.append(aurasRow);
 		}
 	}
-	if(window.DM && !someTokensAreAoe) {
+	if(window.DM) {
 		if (tokens.length === 1) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {

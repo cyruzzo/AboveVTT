@@ -1964,7 +1964,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 .token.isAoe .token-image,
 .token.isAoe .token-image *,
-.token.isAoe:before{
+.token.isAoe:before,
+.token.isAoe div#note {
     visibility: visible;
 }
 .aoe-token-tileable {
