@@ -2256,6 +2256,22 @@ function init_character_page_sidebar() {
 		  	$(`#switch_gamelog`).click();
 
 		});
+		$("a.ct-character-header-desktop__builder-link").on("click", function(){
+			setTimeout(function(){
+				$(".builder-sections-sheet-icon").off().on("click", function(){
+					window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?cs=${window.CAMPAIGN_SECRET}&cid=${get_campaign_id()}&abovevtt=true`;
+				});
+			}, 1000)
+		});
+		$(".ct-character-header-info__content").on("click", function(){ 
+			setTimeout(function(){
+				$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
+				$(".ct-pane-menu__item:contains('Manage Character & Levels')").off().on("click", function(){
+					$("a.ct-character-header-desktop__builder-link")[0].click();
+				});
+			}, 1000)		
+		});
+		
 		if (needs_ui) {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
