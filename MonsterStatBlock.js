@@ -579,7 +579,19 @@ class MonsterStatBlock {
 
     get challengeRatingHtml() {
         const definition = this.findObj("challengeRatings", this.data.challengeRatingId);
-        const crString = parseInt(definition.value);
+        let crString = parseInt(definition.value);
+        if(definition.value == 0.125){
+          crString = `1/8`
+        }
+        else if(definition.value == 0.25){
+          crString = `1/4`
+        }
+        else if(definition.value == 0.5){
+          crString = `1/2`
+        }
+
+
+
         return `${crString} (${definition.xp.toLocaleString()} XP)`;
     }
 
