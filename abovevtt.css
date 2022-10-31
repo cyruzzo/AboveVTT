@@ -4621,24 +4621,21 @@ div.ddbc-tab-options--layout-pill>button{
 [id^="streamer-"].hidden {
     display: none;
 }
+
+.aura-element.islight{
+    animation: aurafx-flicker 15s infinite alternate ease-in-out;
+    opacity: 0.5 !important;
+    z-index: 9;
+}
 #scene_map{
+    mix-blend-mode: multiply;
+}
+#darkness_layer{
+    z-index: 8;
+    background: #fff;
     filter: brightness(var(--darkness-filter));
 }
-.aura-element.haslightchild{
-    backdrop-filter: brightness(var(--light-filter));
-    mix-blend-mode: soft-light;
-    /*animation: aurafx-flicker-no-blur 10s infinite alternate ease-in-out*/
-}
-.lightAura{
-    backdrop-filter: blur(var(--light-blur)) !important;
-    background-image: none !important;
-    top: 0px !important;
-    left: 0px !important;
-    mix-blend-mode: plus-lighter !important;
-    /*animation: aurafx-flicker 10s infinite alternate ease-in-out*/
-}
-.aura-element{
-}
+
 
 @keyframes aurafx-flicker{
     0%  {filter: blur(10px);transform:scale(1);}

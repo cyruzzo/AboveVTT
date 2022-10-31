@@ -2728,6 +2728,10 @@ function init_ui() {
 	tempOverlay.css("left", "0");
 	tempOverlay.css("z-index", "25");
 
+	const darknessLayer = $("<div id='darkness_layer'></div>");
+	darknessLayer.css("position", "absolute");
+	darknessLayer.css("top", "0");
+	darknessLayer.css("left", "0");
 
 	tempOverlay.dblclick(function(e) {
 		e.preventDefault();
@@ -2788,6 +2792,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textOverlay);
 	VTT.append(tempOverlay);
+	VTT.append(darknessLayer);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");

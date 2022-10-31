@@ -321,21 +321,17 @@ function edit_scene_dialog(scene_id) {
 	);
 
 	let darknessValue = scene.darkness_filter || 0;
-	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="95" step="5"/>`);
+	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
 	
 	darknessFilterRange.on(' input change', function(){
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
 	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-	   	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
    		}
 	});
 	darknessFilterRange.on(' mouseup', function(){
    	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
-   	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
 

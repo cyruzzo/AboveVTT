@@ -686,9 +686,19 @@ class Token {
 			self.sync(e);
 		if (self.persist != null)
 			self.persist(e);
-		check_single_token_visibility(self.options.id);
-
-
+		
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		if(playerTokenId != undefined && self.options.auraislight){
+			if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+					check_token_visibility()
+			}
+			else{
+				check_single_token_visibility(self.options.id);
+			}	
+		}
+		else{
+			check_single_token_visibility(self.options.id);
+		}
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 	}
@@ -1873,7 +1883,8 @@ function default_options() {
 			feet: "0",
 			color: "rgba(255, 255, 0, 0.1)"
 		},
-		auraVisible: false
+		auraVisible: false,
+		auraOwned: false
 	};
 }
 
@@ -2172,7 +2183,7 @@ function setTokenAuras (token, options) {
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
 		} else {
-			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" style='${auraStyles}' />`);
+			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
 			auraElement.contextmenu(function(){return false;});
 			$("#VTT").prepend(auraElement);
 		}
@@ -2181,28 +2192,39 @@ function setTokenAuras (token, options) {
 			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
+			options.hidden && !options.auraislight ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
-		if(options.auraislight){
-			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
-			let auraClone = $("[id='aura_" + tokenId + "']").clone();
-			auraClone.addClass("lightAura");
-			$("[id='aura_" + tokenId + "']").append(auraClone);		
-			$("[id='aura_" + tokenId + "']").attr("style", auraStyles);				
-			let lightblur = totalSize/50 + "px";
-			$("[id='aura_" + tokenId + "']").css('--light-blur', lightblur);
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", true);
+		if(options.auraislight){		
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", true);
 		}
 		else{
-			$("[id='aura_" + tokenId + "'] > [id='aura_" + tokenId + "']").remove();
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("haslightchild", false);
+			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", false);
 		}
 
 		
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
+	}
+	if(!window.DM){
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		if(playerTokenId != undefined){
+			if(window.TOKEN_OBJECTS[playerTokenId].options.auraowned){
+				let auras = $("[id^='aura_']");
+				for(let i = 0; i < auras.length; i++){
+					if(!auras[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.player_owned){
+						$(auras[i]).css("visibility", "hidden");
+					}
+				}
+			}
+			else{
+				let auras = $("[id^='aura_']");
+				for(let i = 0; i < auras.length; i++){
+						$(auras[i]).css("visibility", "visible");	
+				}
+			}
+		}
 	}
 }
 
