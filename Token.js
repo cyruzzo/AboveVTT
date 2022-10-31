@@ -739,7 +739,7 @@ class Token {
 
 	build_hp() {
 		var self = this;
-		var bar_height = Math.floor(this.sizeHeight() * 0.2);
+		var bar_height = this.sizeHeight() * 0.2;
 
 		if (bar_height > 60)
 			bar_height = 60;
@@ -747,12 +747,19 @@ class Token {
 		var hpbar = $("<div class='hpbar'/>");
 		hpbar.css("position", 'absolute');
 		hpbar.css('height', bar_height);
-		hpbar.css('left', (Math.floor(this.sizeWidth() * 0.35) / 2));
-		hpbar.css('top', this.sizeHeight() - bar_height);
-		hpbar.css('background', '#ff7777');
-		hpbar.width("max-width: 100%");
+		hpbar.css('top', Math.floor(this.sizeHeight() - bar_height));
 
-		var fs = Math.floor(bar_height / 1.3) + "px";
+		hpbar.toggleClass('medium-or-smaller', false);
+		hpbar.toggleClass('tiny-or-smaller', false);
+		
+		let tokenWidth = this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps;
+		if(tokenWidth < 2 && tokenWidth >= 1)
+			hpbar.toggleClass('medium', true);
+		if(tokenWidth < 1)
+			hpbar.toggleClass('smaller-than-medium', true);
+		
+
+		var fs = Math.floor(bar_height / 1.2) + "px";
 
 		$("<div class='token'/>").css("font-size",fs);
 
@@ -760,21 +767,20 @@ class Token {
 		if (input_width > 90)
 			input_width = 90;
 
-		var hp_input = $("<input class='hp'>").css("height", bar_height).css('font-weight', 'bold').css('float', 'left').css('background', 'rgba(0,0,0,0)').css('text-align', 'center').css('width', input_width).css("border", '0').css("padding", 0).css('font-size', fs);
+		var hp_input = $("<input class='hp'>").css('width', input_width);
 		hp_input.val(this.options.hp);
 
-		var maxhp_input = $("<input class='max_hp'>").css("height", bar_height).css('font-weight', 'bold').css('float', 'left').css('background', 'rgba(0,0,0,0)').css('text-align', 'center').css('width', input_width).css("border", '0').css("padding", 0).css('font-size', fs);
+		var maxhp_input = $("<input class='max_hp'>").css('width', input_width);
 		maxhp_input.val(this.options.max_hp);
 
 		if (this.options.disableaura){
 			console.log("building hp bar", this.options)
 			this.options.temp_hp && this.options.temp_hp > 0 ?
 				hpbar.css('background', '#77a2ff')
-				: hpbar.css('background', '#ff7777');
+				: hpbar.css('background', '');
 		}
 
-		var divider = $("<div style='display:inline-block;float:left'>/</>");
-		divider.css('font-size', fs);
+		var divider = $("<div>/</>");
 
 
 		hpbar.append(hp_input);

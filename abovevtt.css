@@ -1271,6 +1271,51 @@ div#combat_button{
 
 .hpbar {
     z-index: 3;
+    background: #fd9696;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: block;
+    left: 50%;
+    max-width: 100%;
+    transform: translateX(-50%);
+    width: max-content;
+}
+.hpbar.tiny-or-smaller{
+    border-radius: 2px;
+}
+.hpbar{
+    transition: 250ms transform linear 0ms;
+}
+.hpbar:focus-within,
+.hpbar:hover{
+    transform: translateX(-50%) scale(min(max(1, 0.5/var(--window-zoom)), 3));
+    transition: 250ms transform linear 500ms;
+}
+.hpbar.medium:focus-within,
+.hpbar.medium:hover{
+    transform: translateX(-50%) scale(min(max(1, 1/var(--window-zoom)), 5));
+}
+.hpbar.smaller-than-medium:focus-within,
+.hpbar.smaller-than-medium:hover{
+    transform: translateX(-50%) scale(min(max(1, 1.5/var(--window-zoom)), 6));
+}
+
+.hpbar input,
+.hpbar div{
+    float: left;
+    height: 100%;
+    line-height: normal;
+}
+.hpbar input{
+    font-weight: bold;
+    background: transparent;
+    text-align: center;
+    border: 0;
+    padding: 0;
+    font-size: 110%;
+    outline: none;
+    outline-offset: 0;
+    filter: none;
 }
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
