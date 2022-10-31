@@ -1305,6 +1305,8 @@ function fill_importer(scene_set, start) {
 	area.animate({ opacity: "1" }, 300);
 
 	var ddb_extra_found=false;
+	totalPages = Math.max(1, Math.ceil(scene_set.length / 8));
+	pageNumber = 1 + Math.ceil(start / 8)
 	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
 		let current_scene = scene_set[i];
 
@@ -1443,6 +1445,12 @@ function fill_importer(scene_set, start) {
 	buttons.append(next);
 	footer.append(buttons);
 
+	pageNumbersDiv = $(`<div class='page-number'>${pageNumber} / ${totalPages}</div>`)
+	footer.append(pageNumbersDiv);
+
+	if(scene_set.length == 0){
+		area.append(`<div style='border:none !important;'>There were no maps/handouts found in this chapter</div>`)
+	}
 
 
 }

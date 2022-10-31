@@ -2388,7 +2388,11 @@ body {
   .tabs-content div:not(:first-child) {
     display: none;
   }
-
+.page-number {
+    position: absolute;
+    bottom: 41px;
+    font-weight: bold;
+}
 .tabs-content dt {
     display: inline-block;
     text-align: center;
