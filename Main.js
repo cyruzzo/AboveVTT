@@ -1094,7 +1094,7 @@ function init_controls() {
 	if (!DM) {
 		sidebarControls.addClass("player");
 	}
-
+	addGamelogPopoutButton()
 }
 
 const MAX_ZOOM_STEP = 20
@@ -1117,7 +1117,7 @@ function init_mouse_zoom() {
 				newScale = window.ZOOM - 0.01 * e.deltaY;
 			}
 
-			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+			if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
 				change_zoom(newScale, e.clientX, e.clientY);
 			}
 		}
@@ -1146,7 +1146,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.80.1</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.81RC1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -1483,7 +1483,6 @@ function init_sheet() {
 		if (window.innerWidth < 1200 || !is_player_sheet_open()) {
 			sheet_resize_button.hide();
 		}
-
 		// we're playing on the character page so return early to prevent an iframe from also loading the character sheet
 		return;
 	}
@@ -1914,12 +1913,23 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		observer.observe(mutation_target, mutation_config);
 
-		/*const waitToSync = (timeElapsed = 0) => {
+	//artificer infusions still require this as it is not included in ac values captured elsewhere
+		const waitToSync = (timeElapsed = 0) => {
 			setTimeout(() => {
 				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
 				if (ac_element.length > 0) {
-					synchp();
-					$(event.target).attr('data-init_load', 1);
+					if (tokenid in window.TOKEN_OBJECTS){
+						let totalAc = $(event.target).contents().find(".ddbc-armor-class-box__value").html();
+						if(window.TOKEN_OBJECTS[tokenID].options.ac != totalAc)
+						{
+							window.TOKEN_OBJECTS[tokenid].options.ac = totalAc
+							window.TOKEN_OBJECTS[tokenid].place();
+							window.TOKEN_OBJECTS[tokenid].update_and_sync();
+							if(tokenid in window.PLAYER_STATS)
+								window.PLAYER_STATS[tokenid].ac = totalAc;
+						}
+
+					}
 				} else {
 					if (timeElapsed < 15000) {
 						waitToSync(timeElapsed + 500);
@@ -1927,7 +1937,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 				}
 			}, 500);
 		};
-		waitToSync();*/
+		waitToSync();
 
 		setTimeout(function() {
 			$("#sheet").find("iframe").each(function() { 
@@ -2132,7 +2142,7 @@ function init_things() {
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
-	if (window.DM) {
+	if (window.DM && !window.location.search.includes("popoutgamelog=true")) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
 		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
@@ -2154,7 +2164,7 @@ function init_things() {
 			
 			init_scene_selector();
 			init_splash();
-			
+
 		});
 	} else if (is_characters_page()) {
 		
@@ -2162,11 +2172,16 @@ function init_things() {
 		init_character_page_sidebar();
 
 		$(window).off("resize").on("resize", function() {
-			// when the user resizes the window, bring everything out into view. They can alwasy re-hide it if they want to
-			setTimeout(function() {
-				init_character_page_sidebar();
-				hide_sidebar();
-			}, 500);
+			if(window.showPanel == undefined){
+				window.showPanel = is_sidebar_visible();
+			}
+			init_character_page_sidebar();	
+			setTimeout(function(){
+				if(!window.showPanel){
+					hide_sidebar();
+				}
+			}, 1000)
+			
 		});
 
 	} else {
@@ -2228,19 +2243,35 @@ function init_character_page_sidebar() {
 		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
-		$(".ct-sidebar__pane").on("click", ".set-conditions-button", function(clickEvent) {
+		$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	  	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click(); 	  	
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
 		  	$(`#switch_gamelog`).click();
 		});
-		$(".ct-sidebar__pane").on("click", ".remove-conditions-button", function(clickEvent) {
+		$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click(); 	
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
 		  	$(`#switch_gamelog`).click();
 
 		});
+		$("a.ct-character-header-desktop__builder-link").on("click", function(){
+			setTimeout(function(){
+				$(".builder-sections-sheet-icon").off().on("click", function(){
+					window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?cs=${window.CAMPAIGN_SECRET}&cid=${get_campaign_id()}&abovevtt=true`;
+				});
+			}, 1000)
+		});
+		$(".ct-character-header-info__content").on("click", function(){ 
+			setTimeout(function(){
+				$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
+				$(".ct-pane-menu__item:contains('Manage Character & Levels')").off().on("click", function(){
+					$("a.ct-character-header-desktop__builder-link")[0].click();
+				});
+			}, 1000)		
+		});
+		
 		if (needs_ui) {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
@@ -2263,8 +2294,11 @@ function init_character_page_sidebar() {
 			init_sheet();	
 			inject_chat_buttons();
 			init_zoom_buttons();
-			window.MB.sendMessage('custom/myVTT/syncmeup');
+			monitor_character_sidebar_changes();
+      window.MB.sendMessage('custom/myVTT/syncmeup');
+
 		}
+
 	}, 1000);
 }
 
@@ -2713,6 +2747,10 @@ function init_ui() {
 	tempOverlay.css("left", "0");
 	tempOverlay.css("z-index", "25");
 
+	const darknessLayer = $("<div id='darkness_layer'></div>");
+	darknessLayer.css("position", "absolute");
+	darknessLayer.css("top", "0");
+	darknessLayer.css("left", "0");
 
 	tempOverlay.dblclick(function(e) {
 		e.preventDefault();
@@ -2773,6 +2811,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textOverlay);
 	VTT.append(tempOverlay);
+	VTT.append(darknessLayer);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
@@ -3738,6 +3777,14 @@ function show_player_sheet() {
 	if (window.innerWidth < 1024) {
 		hide_sidebar();
 	}
+	for(id in window.TOKEN_OBJECTS){
+		if(id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[id].options.ac != $(".ddbc-armor-class-box__value").html()){
+			window.MB.sendMessage("custom/myVTT/actoplayerdata",{
+				id: window.PLAYER_ID,
+				ac: $(".ddbc-armor-class-box__value").html()
+			});
+		}
+	}
 }
 
 /**
@@ -3990,7 +4037,7 @@ function show_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-right").removeClass("point-left");
 	toggleButton.attr('data-visible', 1);
-
+	window.showPanel = true;
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--not-visible").click();
 	} else {
@@ -4003,17 +4050,35 @@ function show_sidebar() {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
+	
+	addGamelogPopoutButton()
 }
 
 var childWindows = {};
 
+function addGamelogPopoutButton(){
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
+	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true&popoutgamelog=true`
 
+	gamelog_popout.off().on("click",function(){
+		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);	
+		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
+		setTimeout(function() {		
+			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
+		}, 1000)
+		childWindows["Gamelog"].onload = function() {
+			popoutGamelogCleanup();
+		}	
+	});
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
+}
 // This will popout the selector and it's children. Use a unique name for windows you want to open seperately. If you want to override an open window use the same name.
-function popoutWindow(name, cloneSelector, width=400, height=800){
+function popoutWindow(name, cloneSelector, width=400, height=800, windowTarget=``){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
 width=${width},height=${height},left=100,top=100`;
-	childWindows[name] = window.open(``, name, params);		
+	childWindows[name] = window.open(windowTarget, name, params);		
 	childWindows[name].onbeforeunload = function(){ 
 		closePopout(name);
 	}
@@ -4028,6 +4093,43 @@ width=${width},height=${height},left=100,top=100`;
         this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 	});
 	return childWindows[name];
+}
+function popoutGamelogCleanup(){
+	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
+	setTimeout(function(){
+		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
+			body{
+				overflow: hidden !important;
+			}
+			.sidebar__inner,
+			.sidebar,
+			.sidebar__pane-content,
+			.glc-game-log{
+			    width: 100% !important;
+			    max-width: 100% !important;
+			}
+			.mfp-wrap {
+		   		width: 100%;
+		   		z-index: 50000;
+			}
+			.ddb-campaigns-detail-gamelog {
+    			visibility: hidden;
+			}
+		</style>`);
+		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+		removeFromPopoutWindow("Gamelog", ".dice-roller");
+		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
+		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+		removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");	
+		$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
+		let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
+		removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
+		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+		removeFromPopoutWindow("Gamelog", "iframe");
+		$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
+		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
+		setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);	
+	}, 5000);		
 }
 function updatePopoutWindow(name, cloneSelector){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
@@ -4053,21 +4155,6 @@ function closePopout(name){
 		delete childWindows[name];
 	}
 }
-
-
-
-
-
-
-
-function removeFromPopoutWindow(name, selector){
-	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
-	if(!childWindows[name])
-		return;
-	$(childWindows[name].document).find(selector).remove();
-	return childWindows[name];
-}
-
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .
@@ -4076,7 +4163,7 @@ function hide_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-left").removeClass("point-right");
 	toggleButton.attr('data-visible', 0);
-
+	window.showPanel = false;
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--visible").click();
 	} else {

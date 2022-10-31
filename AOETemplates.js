@@ -125,8 +125,9 @@ function place_aoe_token_in_centre(options){
     }
     else{
         const center = center_of_view();
-        options.left = center.x;
-        options.top = center.y;
+        let mapPosition = convert_point_from_view_to_map(center.x, center.y);
+        options.left = mapPosition.x;
+        options.top = mapPosition.y;
         window.MB.sendMessage("custom/myVTT/createtoken",options);
     }
 }
