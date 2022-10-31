@@ -60,28 +60,29 @@ function addVideo(stream,streamerid) {
 	
 	let canvas=dicecanvas.get(0);
 	let ctx=canvas.getContext('2d');
+	let tmpcanvas = document.createElement("canvas");
+  video.addEventListener("resize", function(){
+  		let videoAspectRatio = video.videoWidth / video.videoHeight
+			if (video.videoWidth > video.videoHeight)
+			{
+				tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
+				tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
+			}
+			else {
+				tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
+				tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
+			}
+			dicecanvas.attr("width", tmpcanvas.width + "px");
+			dicecanvas.attr("height", tmpcanvas.height  + "px");
+			dicecanvas.css("height",tmpcanvas.height);
+			dicecanvas.css("width",tmpcanvas.width );
+  });
+
 	let updateCanvas=function(){
-		delayedClear();
+		//resize canvas due to Chrome bug - this may be fixed in chrome later
+		resizeCanvasChromeBug()
 		
-		let tmpcanvas = document.createElement("canvas");
-		let videoAspectRatio = video.videoWidth / video.videoHeight
-		if (video.videoWidth > video.videoHeight)
-		{
-			tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
-			tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
-		}
-		else {
-			tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
-			tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
-		}
-		
-		video.setAttribute("width", tmpcanvas.width)
-		video.setAttribute("height", tmpcanvas.height)
 		let tmpctx = tmpcanvas.getContext("2d");
-		dicecanvas.attr("width", tmpcanvas.width + "px");
-		dicecanvas.attr("height", tmpcanvas.height  + "px");
-		dicecanvas.css("height",tmpcanvas.height);
-		dicecanvas.css("width",tmpcanvas.width );
 		window.requestAnimationFrame(updateCanvas);
 		tmpctx.drawImage(video, 0, 0, tmpcanvas.width, tmpcanvas.height);
 		if(tmpcanvas.width>0)
@@ -92,16 +93,27 @@ function addVideo(stream,streamerid) {
 				const red = frame.data[i + 0];
 				const green = frame.data[i + 1];
 				const blue = frame.data[i + 2];
-				/*if ((red < 24) && (green < 24) && (blue < 24))
-					frame.data[i + 3] = 128;*/
-				if ((red < 14) && (green < 14) && (blue < 14))
+				if ((red < 8) && (green < 8) && (blue < 8))
+					frame.data[i + 3] = 128;
+				if ((red < 4) && (green < 4) && (blue < 4))
 					frame.data[i + 3] = 0;
+				
 				
 			}
 			ctx.putImageData(frame,0,0);	
 		}
 	};
 	updateCanvas();
+}
+
+function resizeCanvasChromeBug(){
+	let diceRollCanvas = $(".dice-rolling-panel__container");
+	if(parseInt(diceRollCanvas.attr("width")) % 2 != 0){
+		diceRollCanvas.attr("width", parseInt(diceRollCanvas.attr("width"))+1);
+	}
+	if(parseInt(diceRollCanvas.attr("height")) % 2 != 0){
+		diceRollCanvas.attr("height", parseInt(diceRollCanvas.attr("height"))+1);
+	}
 }
 
 class MessageBroker {
