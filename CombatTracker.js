@@ -349,6 +349,7 @@ function ct_reorder(persist=true) {
 		});
 
 	$("#combat_area").append(items);
+	ct_update_popout();
 	if(persist)
 		ct_persist();
 }
@@ -738,6 +739,11 @@ function ct_update_popout(){
 				ct_update_popout();
 			});
 		}
+		
+		if($(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]").length>0){
+			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
+		}
+		
 	}
 }
 
@@ -835,7 +841,10 @@ function ct_load(data=null){
 	if(window.DM){
 		ct_reorder();
 	}
-	ct_update_popout();
+	else{
+		ct_update_popout();
+	}
+
 }
 
 
