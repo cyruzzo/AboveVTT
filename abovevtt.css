@@ -2899,7 +2899,18 @@ div#importer_area>div>div:first-of-type {
     height: 21px;
 }
 
-
+.note-text ul{
+    list-style-type: disc;
+}
+.note-text ol{
+    list-style-type: decimal;
+}
+.note-text ol,
+.note-text ul{
+    display: block;
+    margin-block-start: 1em;
+    padding-inline-start: 40px;
+}
 .sidebar-list-item-row.player-row {
     height: 120px;
     transition: height 250ms linear;
