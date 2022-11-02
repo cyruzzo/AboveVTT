@@ -519,8 +519,8 @@ function build_token_auras_inputs(tokenIds) {
 		label: "Change aura appearance to light",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light and is interacting with the scene darkness filter. If set on a player token: tokens not in visible 'light' auras are hidden." },
-			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light and interact with the scene darkness filter. If set on a player token: hide tokens not in visible 'light' auras." }
+			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light and is interacting with the scene darkness filter. If set on a player token and darkness is set on the scene: tokens not in visible 'light' auras are hidden." },
+			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light and interact with the scene darkness filter. If set on a player token and darkness is set on the scene: hide tokens not in visible 'light' auras." }
 		],
 		defaultValue: false
 	};
