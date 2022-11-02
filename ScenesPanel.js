@@ -324,11 +324,16 @@ function edit_scene_dialog(scene_id) {
 	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
 	
 	darknessFilterRange.on(' input change', function(){
+		$("#darkness_layer").toggleClass("smooth-transition", true);
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
    	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
 	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    		}
+   		setTimeout(function(){
+   			$("#darkness_layer").toggleClass("smooth-transition", false);
+   		}, 400);
+   		
 	});
 	darknessFilterRange.on(' mouseup', function(){
    	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());

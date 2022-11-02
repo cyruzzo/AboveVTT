@@ -424,8 +424,10 @@ function check_single_token_visibility(id){
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 			let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-						
-			if (is_token_under_fog(id) || (playerTokenAuraIsLight && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
+			let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
+
+			if (is_token_under_fog(id) || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
+
 				$(selector).hide();
 				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 				{
@@ -483,8 +485,9 @@ function do_check_token_visibility() {
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+		let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 			
-		if ((pixeldata[3] == 255 || (playerTokenAuraIsLight && !is_token_under_light_aura(id))) && !window.TOKEN_OBJECTS[id].options.revealInFog) {
+		if (pixeldata[3] == 255 || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{

@@ -344,6 +344,7 @@ function remove_loading_overlay() {
  */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
 
+	$("#darkness_layer").hide();
 	remove_loading_overlay();
 
 	$("#scene_map").remove();
@@ -408,7 +409,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		}
 
 		newmap.css("opacity","0");
-		newmap.on("load", () => newmap.animate({opacity:1},2000));
+		newmap.on("load", () => {
+			newmap.css('opacity', 1);
+			$("#darkness_layer").show();
+		});
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
@@ -1146,7 +1150,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.81RC1</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.81RC2</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");

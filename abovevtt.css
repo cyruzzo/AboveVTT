@@ -1294,7 +1294,10 @@ div#combat_button{
 .hpbar div{
     float: left;
     height: 100%;
-    line-height: normal;
+    font-size: var(--font-size);
+    line-height: var(--font-size);
+    display: flex;
+    align-items: center;
 }
 .hpbar input{
     font-weight: bold;
@@ -1302,7 +1305,6 @@ div#combat_button{
     text-align: center;
     border: 0;
     padding: 0;
-    font-size: 110%;
     outline: none;
     outline-offset: 0;
     filter: none;
@@ -4229,6 +4231,10 @@ input.max_hp[disabled]{
     z-index: 49000;
 }
 /*minimize windows*/
+
+#darkness_layer.smooth-transition{
+    transition: filter 350ms linear;
+}
 
 .minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title), 
 #combat_tracker_title_bar.minimized:after,
