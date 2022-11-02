@@ -1365,9 +1365,11 @@ class MessageBroker {
 				$("#scene_map").css("opacity","0");
 				console.log("switching back to player map");
 				$("#scene_map").off("load");
-				$("#scene_map").on("load", () => $("#scene_map").animate({opacity:1},2000));
-				$("#scene_map").attr("src",data.player_map);
-				
+				$("#scene_map").on("load", () => {
+					$("#scene_map").css('opacity', 1)
+					$("#darkness_layer").show();
+				});
+				$("#scene_map").attr("src",data.player_map);		
 			}
 			console.log("LOADING TOKENS!");
 
