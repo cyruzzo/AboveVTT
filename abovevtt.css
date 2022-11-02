@@ -4232,6 +4232,10 @@ input.max_hp[disabled]{
 }
 /*minimize windows*/
 
+#darkness_layer.smooth-transition{
+    transition: filter 350ms linear;
+}
+
 .minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title), 
 #combat_tracker_title_bar.minimized:after,
 #combat_tracker_title_bar.minimized ~ *{
