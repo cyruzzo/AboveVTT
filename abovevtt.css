@@ -2902,15 +2902,25 @@ div#importer_area>div>div:first-of-type {
 .note-text ul{
     list-style-type: disc;
 }
+.note-text li>ul{
+    list-style-type: circle;
+}
+.note-text li>ul ul{
+    list-style-type: square;
+}
 .note-text ol{
     list-style-type: decimal;
 }
-.note-text ol,
-.note-text ul{
+.note-text>ol,
+.note-text>ul{
     display: block;
     margin-block-start: 1em;
+}
+.note-text ol,
+.note-text ul{
     padding-inline-start: 40px;
 }
+
 .sidebar-list-item-row.player-row {
     height: 120px;
     transition: height 250ms linear;
