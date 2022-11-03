@@ -825,7 +825,7 @@ function import_readfile() {
 		for(k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
-		$("#sounds-panel").remove(); init_audio();
+		$("#sounds-panel").remove();
 		persist_soundpad();
 
 		let customizations = window.TOKEN_CUSTOMIZATIONS;
