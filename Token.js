@@ -682,7 +682,7 @@ class Token {
 			self.sync(e);
 		if (self.persist != null)
 			self.persist(e);
-
+		
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		if(playerTokenId != undefined && self.options.auraislight){
 			if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
