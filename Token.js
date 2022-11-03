@@ -696,7 +696,6 @@ class Token {
 		else{
 			check_single_token_visibility(self.options.id);
 		}
-
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
