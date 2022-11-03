@@ -686,19 +686,6 @@ class Token {
 			self.sync(e);
 		if (self.persist != null)
 			self.persist(e);
-		
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		if(playerTokenId != undefined && self.options.auraislight){
-			if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
-					check_token_visibility()
-			}
-			else{
-				check_single_token_visibility(self.options.id);
-			}	
-		}
-		else{
-			check_single_token_visibility(self.options.id);
-		}
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 	}
@@ -1821,6 +1808,18 @@ class Token {
 		// this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
 		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		if(playerTokenId != undefined && this.options.auraislight){
+			if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+					check_token_visibility()
+			}
+			else{
+				check_single_token_visibility(self.options.id);
+			}	
+		}
+		else{
+			check_single_token_visibility(self.options.id);
+		}
 		console.groupEnd()
 	}
 
