@@ -682,8 +682,7 @@ class Token {
 			self.sync(e);
 		if (self.persist != null)
 			self.persist(e);
-		/* UPDATE COMBAT TRACKER */
-		this.update_combat_tracker()
+
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		if(playerTokenId != undefined && self.options.auraislight){
 			if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
@@ -696,6 +695,8 @@ class Token {
 		else{
 			check_single_token_visibility(self.options.id);
 		}
+		/* UPDATE COMBAT TRACKER */
+		this.update_combat_tracker()
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
