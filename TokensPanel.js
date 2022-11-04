@@ -304,35 +304,45 @@ function filter_token_list(searchTerm) {
  * @param searchTerm {string} the search term that the user typed into the search input
  * @param skip {number} the pagination offset. This function will inject a "Load More" button with the skip details embedded. You don't need to pass anything for this.
  */
-function inject_monster_tokens(searchTerm, skip) {
+function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     console.log("inject_monster_tokens about to call search_monsters");
     search_monsters(searchTerm, skip, function (monsterSearchResponse) {
-        let listItems = [];
+        let listItems = addedList;
+        let monstersNotOwnedSkipped = 0;
 
         for (let i = 0; i < monsterSearchResponse.data.length; i++) {
             let m = monsterSearchResponse.data[i];
             let item = SidebarListItem.Monster(m)
+            if(!item.monsterData.isReleased && item.monsterData.homebrewStatus != 1){
+                monstersNotOwnedSkipped += 1;
+                continue;   
+            }
             window.monsterListItems.push(item);
             listItems.push(item);
         }
         console.log("search_monsters converted", listItems);
         let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
-        inject_monster_list_items(listItems);
-        if (searchTerm.length > 0) {
-            monsterFolder.removeClass("collapsed");
+        if(listItems.length < 10 && monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)){
+            inject_monster_tokens(searchTerm, skip + 10, listItems);
         }
-        console.log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
-        monsterFolder.find(".load-more-button").remove();
-        if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)) {
-            // add load more button
-            let loadMoreButton = $(`<button class="ddbeb-button load-more-button" data-skip="${monsterSearchResponse.pagination.skip}">Load More</button>`);
-            loadMoreButton.click(function(loadMoreClickEvent) {
-                console.log("load more!", loadMoreClickEvent);
-                let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
-                inject_monster_tokens(searchTerm, previousSkip + 10);
-            });
-            monsterFolder.find(`> .folder-item-list`).append(loadMoreButton);
-        }
+        else{
+            inject_monster_list_items(listItems);
+            if (searchTerm.length > 0) {
+                monsterFolder.removeClass("collapsed");
+            }     
+            console.log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
+            monsterFolder.find(".load-more-button").remove();
+            if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)) {
+                // add load more button
+                let loadMoreButton = $(`<button class="ddbeb-button load-more-button" data-skip="${monsterSearchResponse.pagination.skip}">Load More</button>`);
+                loadMoreButton.click(function(loadMoreClickEvent) {
+                    console.log("load more!", loadMoreClickEvent);
+                    let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
+                    inject_monster_tokens(searchTerm, previousSkip + 10);
+                });
+                monsterFolder.find(`> .folder-item-list`).append(loadMoreButton);
+            }
+        }   
     });
 }
 
