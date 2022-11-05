@@ -308,13 +308,11 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     console.log("inject_monster_tokens about to call search_monsters");
     search_monsters(searchTerm, skip, function (monsterSearchResponse) {
         let listItems = addedList;
-        let monstersNotOwnedSkipped = 0;
 
         for (let i = 0; i < monsterSearchResponse.data.length; i++) {
             let m = monsterSearchResponse.data[i];
             let item = SidebarListItem.Monster(m)
             if(!item.monsterData.isReleased && item.monsterData.homebrewStatus != 1){
-                monstersNotOwnedSkipped += 1;
                 continue;   
             }
             window.monsterListItems.push(item);
