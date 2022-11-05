@@ -308,8 +308,13 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     console.log("inject_monster_tokens about to call search_monsters");
     search_monsters(searchTerm, skip, function (monsterSearchResponse) {
         let listItems = addedList;
+        let remainderItems = 0;
 
         for (let i = 0; i < monsterSearchResponse.data.length; i++) {
+            if(listItems.length == 10){
+                remainderItems = 10 - i;
+                break;
+            }
             let m = monsterSearchResponse.data[i];
             let item = SidebarListItem.Monster(m)
             if(!item.monsterData.isReleased && item.monsterData.homebrewStatus != 1){
@@ -336,7 +341,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
                 loadMoreButton.click(function(loadMoreClickEvent) {
                     console.log("load more!", loadMoreClickEvent);
                     let previousSkip = parseInt($(loadMoreClickEvent.currentTarget).attr("data-skip"));
-                    inject_monster_tokens(searchTerm, previousSkip + 10);
+                    inject_monster_tokens(searchTerm, previousSkip - remainderItems + 10);
                 });
                 monsterFolder.find(`> .folder-item-list`).append(loadMoreButton);
             }
