@@ -335,7 +335,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             }     
             console.log("search_monster pagination ", monsterSearchResponse.pagination.total, monsterSearchResponse.pagination.skip, monsterSearchResponse.pagination.total > monsterSearchResponse.pagination.skip);
             monsterFolder.find(".load-more-button").remove();
-            if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)) {
+            if (monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip - remainderItems + 10)) {
                 // add load more button
                 let loadMoreButton = $(`<button class="ddbeb-button load-more-button" data-skip="${monsterSearchResponse.pagination.skip}">Load More</button>`);
                 loadMoreButton.click(function(loadMoreClickEvent) {
