@@ -112,8 +112,45 @@ function init_jitsi_box() {
 		</div>`
 	);
 
+	
+	
 	jitsi_box.css("z-index", "100");
+
+	// JITSI WORKAROUND
+	var observer = new MutationObserver(function( mutations ){
+		console.log("Got Mutations");
+		console.log(mutations);
+		mutations.forEach(function( mutation ) {
+		var newNodes = mutation.addedNodes; // DOM NodeList
+		if( newNodes !== null ) { // If there are new nodes added
+			var $nodes = $( newNodes ); // jQuery set
+			$nodes.each(function() {
+				console.log("FOUND ADDED NODE");
+				var $node = $( this );
+				if( $node.is( "iframe" ) ) {
+					console.log("patching and reloading iframe");
+					$node.attr("referrerpolicy","no-referrer");
+					$node.get(0).src+="";
+				}
+			});
+		}
+		});    
+	});
+	
+	var config = { 
+		attributes: true, 
+		childList: true, 
+		characterData: true 
+	};
+
+	observer.observe(jitsi_box.find("#jitsi_container").get(0), config);
+
+	// END OF JITSI WORKAROUND
+
 	$("#site").append(jitsi_box);
+	
+
+	
 	$("#jitsi_switch").css("position", "absolute").css("top", 0).css("left", 0);
 	$("#jitsi_switch").click(jitsi_switch);
 	$("#jitsi_close").css("position", "absolute").css("top", 0).css("left", "64px");
