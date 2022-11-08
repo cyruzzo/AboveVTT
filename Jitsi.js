@@ -18,7 +18,7 @@ function create_jitsi_button() {
 }
 
 function init_jitsi(tileLayout) {
-	const domain = 'meet.jit.si';
+	const domain = '8x8.vc';
 	const options = {
 		roomName: 'aboveVTT-' + find_game_id(),
 		width: '100%',
