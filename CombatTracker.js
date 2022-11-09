@@ -203,8 +203,11 @@ function init_combat_tracker(){
 			ct_remove_token(window.all_token_objects[id], false);
 			if(window.TOKEN_OBJECTS[id] != undefined){
 				window.TOKEN_OBJECTS[id].options.ct_show = undefined;
-				if(window.TOKEN_OBJECTS[id].round != undefined){
+				if(window.TOKEN_OBJECTS[id].options.round != undefined){
 					delete window.TOKEN_OBJECTS[tokenID].options.round;	
+				}
+				if(window.TOKEN_OBJECTS[id].options.current != undefined){
+					delete window.TOKEN_OBJECTS[tokenID].options.current;	
 				}
 				window.TOKEN_OBJECTS[id].update_and_sync();
 			}
@@ -588,7 +591,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	del.click(
 		function(){
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){
-				window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;
+				window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;	
+				if(window.TOKEN_OBJECTS[id].options.round != undefined){
+					delete window.TOKEN_OBJECTS[tokenID].options.round;	
+				}
+				if(window.TOKEN_OBJECTS[id].options.current != undefined){
+					delete window.TOKEN_OBJECTS[tokenID].options.current;	
+				}
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}
 			if(window.all_token_objects[token.options.id] != undefined){
