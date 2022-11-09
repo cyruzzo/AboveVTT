@@ -806,7 +806,15 @@ function ct_load(data=null){
 			}		
 		}
 		if(data.current){
+			for (tokenID in window.TOKEN_OBJECTS){
+				if(window.TOKEN_OBJECTS[tokenID].options.current != undefined){
+					delete window.TOKEN_OBJECTS[tokenID].options.current;
+					window.TOKEN_OBJECTS[tokenID].update_and_sync();
+				}
+			}
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
+			window.TOKEN_OBJECTS[data.current].options.current = true;
+			window.TOKEN_OBJECTS[data.current].update_and_sync();
 		}
 		else{
 			for (tokenID in window.TOKEN_OBJECTS){
