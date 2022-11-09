@@ -1347,7 +1347,7 @@ class MessageBroker {
 			// Scale map according to scaleFactor
 			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
 			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
-			
+			$("#VTT").css('--scene-url', `url('${data.map}')`);
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();

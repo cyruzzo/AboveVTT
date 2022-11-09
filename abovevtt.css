@@ -4914,6 +4914,7 @@ div.ddbc-tab-options--layout-pill>button{
     z-index: 8;
     background: #fff;
     filter: brightness(var(--darkness-filter));
+    -webkit-mask-image: var(--scene-url);
 }
 
 
