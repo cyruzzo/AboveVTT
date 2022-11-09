@@ -204,10 +204,10 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[id] != undefined){
 				window.TOKEN_OBJECTS[id].options.ct_show = undefined;
 				if(window.TOKEN_OBJECTS[id].options.round != undefined){
-					delete window.TOKEN_OBJECTS[tokenID].options.round;	
+					delete window.TOKEN_OBJECTS[id].options.round;	
 				}
 				if(window.TOKEN_OBJECTS[id].options.current != undefined){
-					delete window.TOKEN_OBJECTS[tokenID].options.current;	
+					delete window.TOKEN_OBJECTS[id].options.current;	
 				}
 				window.TOKEN_OBJECTS[id].update_and_sync();
 			}
@@ -592,11 +592,11 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		function(){
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){
 				window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;	
-				if(window.TOKEN_OBJECTS[id].options.round != undefined){
-					delete window.TOKEN_OBJECTS[tokenID].options.round;	
+				if(window.TOKEN_OBJECTS[token.options.id].options.round != undefined){
+					delete window.TOKEN_OBJECTS[token.options.id].options.round;	
 				}
-				if(window.TOKEN_OBJECTS[id].options.current != undefined){
-					delete window.TOKEN_OBJECTS[tokenID].options.current;	
+				if(window.TOKEN_OBJECTS[token.options.id].options.current != undefined){
+					delete window.TOKEN_OBJECTS[token.options.id].options.current;	
 				}
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}
