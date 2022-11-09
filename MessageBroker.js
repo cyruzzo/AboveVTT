@@ -1192,7 +1192,8 @@ class MessageBroker {
 
 	handleToken(msg) {
 		var data = msg.data;
-
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		let auraislightchanged = false;
 		if(data.id == undefined)
 			return;
 
@@ -1224,6 +1225,9 @@ class MessageBroker {
 		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
+			if(data.id == playerTokenId && window.TOKEN_OBJECTS[data.id].options.auraislight != data.auraislight){
+				auraislightchanged = true;
+			}
 			for (var property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
@@ -1240,17 +1244,23 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			
 			if(playerTokenId != undefined && data.auraislight){
 				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
-						check_token_visibility()
+						check_token_visibility();
 				}
 				else{
 					check_single_token_visibility(data.id);
 				}	
 			}
 			else{
-				check_single_token_visibility(data.id);
+				if(auraislightchanged){
+					check_token_visibility();
+				}
+				else{
+					check_single_token_visibility(data.id);
+				}
+
 			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
