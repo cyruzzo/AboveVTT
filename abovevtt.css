@@ -342,7 +342,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     overflow-y: auto;
     overflow-x: hidden;
 }
-#resizeDragMon .avtt-stat-block-container .detail-content {
+#resizeDragMon .avtt-stat-block-container .details-more-info {
     background: #fff;
     width: 100%;
 }
