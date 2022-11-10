@@ -346,6 +346,25 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     background: #fff;
     width: 100%;
 }
+#resizeDragMon .avtt-stat-block-container .ability-block__stat{
+    width:  16.666666667%;
+}
+
+#resizeDragMon .avtt-stat-block-container .ability-block__data{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#resizeDragMon .avtt-stat-block-container .mon-stat-block .tooltip-hover{
+    color: inherit !important;
+    font-weight: inherit !important;
+    -webkit-text-decoration: underline solid #47d18c;
+    text-decoration: underline solid #47d18c;
+}
+#resizeDragMon .avtt-stat-block-container .ddbc-creature-block__header{
+    margin-top: 10px;
+}
 #site.body-rpgcharacter #resizeDragMon .avtt-stat-block-container .detail-content > .mon-stat-block {
     padding-top: 0;
     margin-top: 0;
