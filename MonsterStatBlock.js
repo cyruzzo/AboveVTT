@@ -57,13 +57,12 @@ function build_monster_stat_block(statBlock) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
-
     return `
 <div class="container avtt-stat-block-container">
   <div id="content" class="main content-container" style="padding:0!important">
     <section class="primary-content" role="main">
 
-      <div class="monster-details ">
+      <div class="monster-details">
 
         <div class="more-info details-more-info" style="padding: 2px;">
           <div class="detail-content">
