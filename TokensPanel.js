@@ -669,7 +669,57 @@ function update_pc_token_rows() {
 
             });
             row.find(".pp-value").text(playerData.pp);
+            row.find(".pinv-value").text(playerData.pinv);
+            row.find(".pins-value").text(playerData.pins);
             row.find(".walking-value").text(playerData.walking);
+            row.find(".ac-value").text(playerData.ac);
+            row.find(".hp-value").text(playerData.hp);
+            row.find(".max-hp-value").text(playerData.max_hp);
+            row.find(".fly-value").text(playerData.fly);
+            row.find(".climb-value").text(playerData.climb);
+            row.find(".swim-value").text(playerData.swim);
+            if(playerData.climb == '0ft.'){
+                row.find(".subtitle-attibute[title='Climb Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Climb Speed']").show()
+            }
+            if(playerData.fly == '0ft.'){
+                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Fly Speed']").show()
+            }
+            if(playerData.swim == '0ft.'){
+                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Swim Speed']").show()
+            }
+            
+            row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
+
+            row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
+            if(playerData.hp == 0){
+                row.find(".hp-attribute.death-saves.ct-health-summary__data").show();
+                row.find(".subtitle-attibute.hp-attribute").hide();
+                row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--inactive', true);
+                row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--active', false);
+                for(let i = 0; i <= playerData.fails; i++){
+                    row.find(`.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
+                }
+                 for(let i = 0; i <= playerData.successes; i++){
+                    row.find(`.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
+                }
+            }
+            else{
+                row.find(".subtitle-attibute.hp-attribute").show();
+                 row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
+            }
+
+            for(let i = 0; i <= playerData.exhaustion; i++){
+                 row.find(`.subtitle-attibute .exhaustion-pip:nth-of-type(${i})`).toggleClass("filled", true);
+            }
             if (playerData.inspiration) {
                 row.find(".inspiration").show();
             } else {

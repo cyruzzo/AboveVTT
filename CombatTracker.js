@@ -51,6 +51,12 @@ function init_combat_tracker(){
 			'width': '100%',
 			'height': '100%'
 		});
+		if(!window.DM){
+			$(childWindows['Combat Tracker'].document).find("body").toggleClass('body-rpgcharacter-sheet', true);
+		}
+		
+		$(childWindows['Combat Tracker'].document).find("body").attr("id", "site");
+
 		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
 		if(!window.DM){
@@ -343,6 +349,7 @@ function ct_reorder(persist=true) {
 		});
 
 	$("#combat_area").append(items);
+	ct_update_popout();
 	if(persist)
 		ct_persist();
 }
@@ -660,7 +667,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	
 	$("#combat_area").append(entry);
-	$("#combat_area td").css("vertical-align","middle");
 
   	ct_update_popout();
 
@@ -733,6 +739,11 @@ function ct_update_popout(){
 				ct_update_popout();
 			});
 		}
+		
+		if($(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]").length>0){
+			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
+		}
+		
 	}
 }
 
@@ -830,7 +841,10 @@ function ct_load(data=null){
 	if(window.DM){
 		ct_reorder();
 	}
-	ct_update_popout();
+	else{
+		ct_update_popout();
+	}
+
 }
 
 

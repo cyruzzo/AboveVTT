@@ -60,28 +60,29 @@ function addVideo(stream,streamerid) {
 	
 	let canvas=dicecanvas.get(0);
 	let ctx=canvas.getContext('2d');
+	let tmpcanvas = document.createElement("canvas");
+  video.addEventListener("resize", function(){
+  		let videoAspectRatio = video.videoWidth / video.videoHeight
+			if (video.videoWidth > video.videoHeight)
+			{
+				tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
+				tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
+			}
+			else {
+				tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
+				tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
+			}
+			dicecanvas.attr("width", tmpcanvas.width + "px");
+			dicecanvas.attr("height", tmpcanvas.height  + "px");
+			dicecanvas.css("height",tmpcanvas.height);
+			dicecanvas.css("width",tmpcanvas.width );
+  });
+
 	let updateCanvas=function(){
-		delayedClear();
+		//resize canvas due to Chrome bug - this may be fixed in chrome later
+		resizeCanvasChromeBug()
 		
-		let tmpcanvas = document.createElement("canvas");
-		let videoAspectRatio = video.videoWidth / video.videoHeight
-		if (video.videoWidth > video.videoHeight)
-		{
-			tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
-			tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
-		}
-		else {
-			tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
-			tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
-		}
-		
-		video.setAttribute("width", tmpcanvas.width)
-		video.setAttribute("height", tmpcanvas.height)
 		let tmpctx = tmpcanvas.getContext("2d");
-		dicecanvas.attr("width", tmpcanvas.width + "px");
-		dicecanvas.attr("height", tmpcanvas.height  + "px");
-		dicecanvas.css("height",tmpcanvas.height);
-		dicecanvas.css("width",tmpcanvas.width );
 		window.requestAnimationFrame(updateCanvas);
 		tmpctx.drawImage(video, 0, 0, tmpcanvas.width, tmpcanvas.height);
 		if(tmpcanvas.width>0)
@@ -92,16 +93,27 @@ function addVideo(stream,streamerid) {
 				const red = frame.data[i + 0];
 				const green = frame.data[i + 1];
 				const blue = frame.data[i + 2];
-				/*if ((red < 24) && (green < 24) && (blue < 24))
-					frame.data[i + 3] = 128;*/
-				if ((red < 14) && (green < 14) && (blue < 14))
+				if ((red < 8) && (green < 8) && (blue < 8))
+					frame.data[i + 3] = 128;
+				if ((red < 4) && (green < 4) && (blue < 4))
 					frame.data[i + 3] = 0;
+				
 				
 			}
 			ctx.putImageData(frame,0,0);	
 		}
 	};
 	updateCanvas();
+}
+
+function resizeCanvasChromeBug(){
+	let diceRollCanvas = $(".dice-rolling-panel__container");
+	if(parseInt(diceRollCanvas.attr("width")) % 2 != 0){
+		diceRollCanvas.attr("width", parseInt(diceRollCanvas.attr("width"))+1);
+	}
+	if(parseInt(diceRollCanvas.attr("height")) % 2 != 0){
+		diceRollCanvas.attr("height", parseInt(diceRollCanvas.attr("height"))+1);
+	}
 }
 
 class MessageBroker {
@@ -341,6 +353,8 @@ class MessageBroker {
 				return;
 
 			var msg = $.parseJSON(event.data);
+			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending")
+				return;
 			console.log(msg.eventType);
 			
 			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
@@ -477,6 +491,9 @@ class MessageBroker {
 			}
 			if (msg.eventType == "custom/myVTT/syncmeup") {
 				self.handleSyncMeUp(msg);
+			}
+			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
+				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType == "character-sheet/character-update/fulfilled"){
 				if(window.DM)
@@ -633,7 +650,7 @@ class MessageBroker {
 				}	
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
-				build_soundpad(msg.data.soundpad);
+				build_soundpad(msg.data.soundpad, msg.data.playing);
 			}
 
 			if(msg.eventType=="custom/myVTT/playchannel"){
@@ -656,6 +673,10 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/playerdata") {
 				self.handlePlayerData(msg.data);
 			}
+			if (msg.eventType == "custom/myVTT/actoplayerdata") {
+				self.acToPlayerData(msg.data);
+			}
+
 			if (msg.eventType == "dice/roll/pending"){
 				// check for injected_data!
 				if(msg.data.injected_data){
@@ -1021,6 +1042,20 @@ class MessageBroker {
 		update_pclist();
 	}
 
+	acToPlayerData(data) {
+		if (!window.DM)
+			return;
+		for(id in window.TOKEN_OBJECTS){
+			if(id.endsWith(data.id)){
+				window.TOKEN_OBJECTS[id].options.ac = data.ac;
+				window.TOKEN_OBJECTS[id].place();
+				window.TOKEN_OBJECTS[id].update_and_sync();
+				if(id in window.PLAYER_STATS)
+					window.PLAYER_STATS[id].ac = data.ac;
+			}
+		}	
+	}
+	
 	sendTokenUpdateFromPlayerData(data) {
 		console.group("sendTokenUpdateFromPlayerData")
 		if (data.id in window.TOKEN_OBJECTS) {
@@ -1205,7 +1240,18 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			if(playerTokenId != undefined && data.auraislight){
+				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+						check_token_visibility()
+				}
+				else{
+					check_single_token_visibility(data.id);
+				}	
+			}
+			else{
+				check_single_token_visibility(data.id);
+			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
@@ -1220,7 +1266,18 @@ class MessageBroker {
 			};
 			t.place();
 
-			check_single_token_visibility(data.id); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			if(playerTokenId != undefined && data.auraislight){
+				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+						check_token_visibility()
+				}
+				else{
+					check_single_token_visibility(data.id);
+				}	
+			}
+			else{
+				check_single_token_visibility(data.id);
+			}
 		}
 
 
@@ -1298,9 +1355,7 @@ class MessageBroker {
 			apply_zoom_from_storage();
 
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
-   	 	let lightnessPercent = 100 + (parseInt(window.CURRENT_SCENE_DATA.darkness_filter)/5);
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-   	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
 
 			set_default_vttwrapper_size()
 			
@@ -1310,9 +1365,11 @@ class MessageBroker {
 				$("#scene_map").css("opacity","0");
 				console.log("switching back to player map");
 				$("#scene_map").off("load");
-				$("#scene_map").on("load", () => $("#scene_map").animate({opacity:1},2000));
-				$("#scene_map").attr("src",data.player_map);
-				
+				$("#scene_map").on("load", () => {
+					$("#scene_map").css('opacity', 1)
+					$("#darkness_layer").show();
+				});
+				$("#scene_map").attr("src",data.player_map);		
 			}
 			console.log("LOADING TOKENS!");
 
@@ -1388,13 +1445,36 @@ class MessageBroker {
 			window.ScenesHandler.sync();
 			ct_persist(); // force refresh of combat tracker for late users
 			if (window.CURRENT_SOUNDPAD) {
+				let audioPlaying;
+				for(i in $("audio")){
+			    if($("audio")[i].paused == false){
+			    		audioPlaying = true;
+			        break;
+			    }
+				}
 				var data = {
-					soundpad: window.CURRENT_SOUNDPAD
+					soundpad: window.CURRENT_SOUNDPAD,
+					playing: audioPlaying
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			// also sync the journal
 			window.JOURNAL.sync();
+		}
+	}
+
+	handleAudioPlayingSync(msg){
+		if(window.DM){
+			for(i in $("audio")){
+		    if($("audio")[i].paused == false){
+		    	var data={
+						channel: i,
+						time: $("audio")[i].currentTime,
+						volume: $("audio")[i].volume,
+					}
+					window.MB.sendMessage("custom/myVTT/playchannel",data);
+		    }
+			}
 		}
 	}
 
