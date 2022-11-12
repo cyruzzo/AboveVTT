@@ -1,6 +1,3 @@
-const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|w)\s/;
-const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|\+|-|\d+|\s+)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match.
-
 class ChatObserver {
 
     //#region PUBLIC
