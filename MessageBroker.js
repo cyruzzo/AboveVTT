@@ -666,7 +666,12 @@ class MessageBroker {
 				if(window.YTPLAYER){
 					$("#youtube_volume").val(msg.data.volume);
 					if(window.YTPLAYER)
+					{
 						window.YTPLAYER.setVolume(msg.data.volume);
+					}
+					else{
+						$("#scene_map").prop("volume", msg.data.volume/100);
+					}
 				}
 			}
 
