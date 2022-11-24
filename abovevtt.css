@@ -4190,6 +4190,11 @@ input.max_hp[disabled]{
     text-align: center;
     width: 125px;
 }
+.import-loading-indicator .loading-status-indicator__subtext.complete {
+    overflow: visible;
+    white-space: nowrap;
+    transform: translate(-50%);
+}
 
 /*one button*/
 .encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(1) {

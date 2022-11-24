@@ -336,6 +336,8 @@ function cloud_migration(scenedata=null){
 		data: scenedata,
 		success:function(data){
 			localStorage.setItem("Migrated"+gameid,"1");
+			$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
+			$(".import-loading-indicator .loading-status-indicator__subtext").text("Import complete. Please rejoin AboveVTT");
 			alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
 			location.reload();
 		}
