@@ -4182,6 +4182,15 @@ input.max_hp[disabled]{
     pointer-events: none;
 }
 
+.import-loading-indicator{
+    position: fixed;
+    z-index: 100000;
+    left: calc(50% - 170px);
+    top: 50px;
+    text-align: center;
+    width: 125px;
+}
+
 /*one button*/
 .encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(1) {
     margin-right:60px;
