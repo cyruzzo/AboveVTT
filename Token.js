@@ -737,8 +737,6 @@ class Token {
 		var self = this;
 		var bar_height = this.sizeHeight() * 0.2;
 
-		if (bar_height > 60)
-			bar_height = 60;
 
 		bar_height = Math.ceil(bar_height);
 		var hpbar = $("<div class='hpbar'/>");
@@ -750,6 +748,8 @@ class Token {
 		hpbar.toggleClass('tiny-or-smaller', false);
 		
 		let tokenWidth = this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps;
+		if(tokenWidth >= 10)
+			hpbar.toggleClass('greater-than-10-wide', true);
 		if(tokenWidth < 2 && tokenWidth >= 1)
 			hpbar.toggleClass('medium', true);
 		if(tokenWidth < 1)
@@ -761,8 +761,6 @@ class Token {
 		hpbar.css("--font-size",fs);
 
 		var input_width = Math.floor(this.sizeWidth() * 0.3);
-		if (input_width > 90)
-			input_width = 90;
 
 		var hp_input = $("<input class='hp'>").css('width', input_width)
 		hp_input.val(this.options.hp);
