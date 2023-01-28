@@ -784,7 +784,10 @@ function ct_update_popout(){
 }
 
 function ct_load(data=null){
-	
+	// any time the combat tracker changes, we need to make sure we adjust our cursor streaming for anyone that only wants streaming during "combatTurn"
+	// make sure we do this before the `data` object gets changed below
+	update_peer_communication_with_combat_tracker_data(data);
+
 	if(!data.loading){	
 		$("#combat_area tr[data-current]").removeAttr("data-current");
 		for(i=0;i<data.length;i++){

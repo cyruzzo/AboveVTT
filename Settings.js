@@ -213,7 +213,7 @@ function token_setting_options() {
 }
 
 function avtt_settings() {
-	return [
+	let settings = [
 		{
 			name: 'allowTokenMeasurement',
 			label: 'Measure while dragging tokens',
@@ -222,7 +222,7 @@ function avtt_settings() {
 				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
 				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
 			],
-			defaultValue: false
+			defaultValue: true
 		},
 		{
 			name: 'streamDiceRolls',
@@ -243,8 +243,75 @@ function avtt_settings() {
 				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
 			],
 			defaultValue: false
+		},
+		{
+			name: "peerStreaming",
+			label: "Allow Streaming Cursor/Ruler",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
+				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
+			],
+			defaultValue: true
 		}
-	]
+	];
+
+	if (window.DM) {
+		// Remove the `dm` an option for the DM and tweak the descriptions to remove references to the DM.
+		settings.push(
+			{
+				name: "receiveCursorFromPeers",
+				label: "Cursors You See",
+				type: "dropdown",
+				options: [
+					{ value: "all", label: "Everyone", description: `When players move their cursor, you will see where their cursor is. You will not see cursors of any player that disables cursor/ruler streaming.` },
+					{ value: "none", label: "No One", description: `You will not see the cursor position of any player.` },
+					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' cursors during their turn in combat. You will not see cursors of any player that disables cursor/ruler streaming.` }
+				],
+				defaultValue: "all"
+			},
+			{
+				name: "receiveRulerFromPeers",
+				label: "Rulers You See",
+				type: "dropdown",
+				options: [
+					{ value: "all", label: "Everyone", description: `When players measure while dragging a token or measure with the ruler tool, you will see their ruler. You will not see rulers of any player that disables cursor/ruler streaming.` },
+					{ value: "none", label: "No One", description: `You will not see any token measurement or ruler measurement from any player.` },
+					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' token measurement and ruler measurement during their turn in combat. You will not see rulers of any player that disables cursor/ruler streaming.` }
+				],
+				defaultValue: "all"
+			}
+		);
+	} else {
+		settings.push(
+			{
+				name: "receiveCursorFromPeers",
+				label: "Cursors You See",
+				type: "dropdown",
+				options: [
+					{ value: "all", label: "Everyone", description: `When other players or the DM move their cursor, you will see where their cursor is. You will not see cursors of any player or DM that disables cursor/ruler streaming.` },
+					{ value: "none", label: "No One", description: `You will not see the cursor position of any player or the DM.` },
+					{ value: "dm", label: "DM Only", description: `You will only see the DM's cursor position. You will not see cursors of any player or DM that disables cursor/ruler streaming.` },
+					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see other players' cursors during their turn in combat. You will also see the DM's cursor position. You will not see cursors of any player or DM that disables cursor/ruler streaming.` }
+				],
+				defaultValue: "all"
+			},
+			{
+				name: "receiveRulerFromPeers",
+				label: "Rulers You See",
+				type: "dropdown",
+				options: [
+					{ value: "all", label: "Everyone", description: `When other players or the DM measure while dragging a token or measure with the ruler tool, you will see their ruler. You will not see rulers of any player or DM that disables cursor/ruler streaming.` },
+					{ value: "none", label: "No One", description: `You will not see any token measurement or ruler measurement from any player or the DM.` },
+					{ value: "dm", label: "DM Only", description: `You will only see the DM's token or ruler measurement. You will not see rulers of any player or DM that disables cursor/ruler streaming.` },
+					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see other players' token measurement and ruler measurement during their turn in combat. You will also see the DM's token measurement and ruler tool. You will not see rulers of any player or DM that disables cursor/ruler streaming.` }
+				],
+				defaultValue: "all"
+			}
+		);
+	}
+
+	return settings;
 }
 
 function get_avtt_setting_default_value(name) {
@@ -261,10 +328,18 @@ function get_avtt_setting_value(name) {
 			return get_avtt_setting_default_value(name);
 	}
 }
+
 function set_avtt_setting_value(name, newValue) {
 	console.log(`set_avtt_setting_value ${name} is now ${newValue}`);
+
+	// store the setting
+	window.EXPERIMENTAL_SETTINGS[name] = newValue;
+	persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+
+	// take action based on the newly changed setting
 	switch (name) {
 		case "iframeStatBlocks":
+			// TODO: change this to use window.EXPERIMENTAL_SETTINGS[name] instead of using special logic
 			if (newValue === true) {
 				use_iframes_for_monsters();
 			} else {
@@ -272,6 +347,7 @@ function set_avtt_setting_value(name, newValue) {
 			}
 			break;
 		case "streamDiceRolls":
+			// TODO: change this to use window.EXPERIMENTAL_SETTINGS[name] instead of using special logic
 			if (newValue === true || newValue === false) {
 				window.JOINTHEDICESTREAM = newValue;
 				enable_dice_streaming_feature(newValue)
@@ -281,9 +357,13 @@ function set_avtt_setting_value(name, newValue) {
 				enable_dice_streaming_feature(defaultValue);
 			}
 			break;
-		default:
-			window.EXPERIMENTAL_SETTINGS[name] = newValue;
-			persist_experimental_settings(window.EXPERIMENTAL_SETTINGS);
+		case "peerStreaming":
+			toggle_peer_settings_visibility(newValue);
+			local_peer_setting_changed(name, newValue);
+			break;
+		case "receiveCursorFromPeers":
+		case "receiveRulerFromPeers":
+			local_peer_setting_changed(name, newValue);
 			break;
 	}
 }
@@ -444,8 +524,7 @@ function init_settings() {
 
 	}
 
-	const experimental_features = avtt_settings();
-
+	let experimental_features = avtt_settings();
 	body.append(`
 		<br />
 		<h5 class="token-image-modal-footer-title" >Above VTT Settings</h5>
@@ -457,25 +536,51 @@ function init_settings() {
 			continue;
 		}
 		let currentValue = get_avtt_setting_value(setting.name);
-		let inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
-			set_avtt_setting_value(name, newValue);
-		});
-		body.append(inputWrapper);
+		let inputWrapper;
+		switch (setting.type) {
+			case "toggle":
+				inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
+					set_avtt_setting_value(name, newValue);
+				});
+				break;
+			case "dropdown":
+				inputWrapper = build_dropdown_input(setting, currentValue, function (name, newValue) {
+					set_avtt_setting_value(name, newValue);
+				})
+				break;
+		}
+		if (inputWrapper) {
+			body.append(inputWrapper);
+		}
 	}
 	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Reset to defaults." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset to Defaults</button>`);
 	optOutOfAll.click(function () {
 		for (let i = 0; i < experimental_features.length; i++) {
 			let setting = experimental_features[i];
-			let toggle = body.find(`button[name=${setting.name}]`);
-			toggle.removeClass("rc-switch-checked").removeClass("rc-switch-unknown");
-			if (setting.defaultValue === true) {
-				toggle.addClass("rc-switch-checked");
+			switch (setting.type) {
+				case "toggle":
+					let toggle = body.find(`button[name=${setting.name}]`);
+					toggle.removeClass("rc-switch-checked").removeClass("rc-switch-unknown");
+					if (setting.defaultValue === true) {
+						toggle.addClass("rc-switch-checked");
+					}
+					break;
+				case "dropdown":
+					let dropdown = body.find(`select[name=${setting.name}]`);
+					const index = setting.options.findIndex(op => op.value === setting.defaultValue);
+					dropdown[0].selectedIndex = index;
+					dropdown.prop("selectedIndex", index);
+					break;
+				default:
+					console.warn("optOutOfAll button is not handling setting with type", setting.type, setting);
+					break;
 			}
 			set_avtt_setting_value(setting.name, setting.defaultValue);
 		}
 	});
 	body.append(optOutOfAll);
 
+	toggle_peer_settings_visibility(get_avtt_setting_value("peerStreaming"));
 	redraw_settings_panel_token_examples();
 }
 

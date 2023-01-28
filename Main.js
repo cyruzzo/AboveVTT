@@ -8,6 +8,7 @@ window.onbeforeunload = function(event)
 {
 	console.log("refreshing page, storing zoom first");
 	add_zoom_to_storage();
+	window.PeerManager.send(PeerEvent.goodbye());
 };
 
 /**
@@ -146,6 +147,7 @@ function change_zoom(newZoom, x, y) {
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
 	$("body").css("--window-zoom", window.ZOOM)
+	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 	console.groupEnd()
 }
 
@@ -155,7 +157,7 @@ function change_zoom(newZoom, x, y) {
 function add_zoom_to_storage() {
 	console.group("add_zoom_to_storage");
 	console.log("storing zoom");
-	
+
 	if(window.ZOOM !== get_reset_zoom()) {
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
@@ -171,11 +173,11 @@ function add_zoom_to_storage() {
 				"zoom":window.ZOOM,
 				"leftOffset": Math.round($(window).scrollLeft()),
 				"topOffset": Math.round($(window).scrollTop())
-			}); 
+			});
 		}
 		localStorage.setItem('zoom', JSON.stringify(zooms));
 	} else {console.log("zoom has not changed, skipping storage")}
-	
+
 	console.groupEnd("add_zoom_to_storage")
 }
 
@@ -202,7 +204,7 @@ function remove_zoom_from_storage() {
 	localStorage.setItem('zoom', JSON.stringify(zooms));
 }
 
-/** 
+/**
 * Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found.
 */
 function apply_zoom_from_storage() {
@@ -221,7 +223,7 @@ function apply_zoom_from_storage() {
 			// TODO: this bit doesn't work
 			$(window).scrollLeft(zooms[zoomIndex].leftOffset);
 			$(window).scrollTop(zooms[zoomIndex].topOffset);
-			
+
 		}
 		else{
 			// Zooms in storage but not for this scene
@@ -246,7 +248,7 @@ function decrease_zoom() {
 		change_zoom(window.ZOOM * 0.9);
 	}
 }
-/** 
+/**
 * Gets the zoom values that will fit the map to the viewport
 * @return {Number}
 */
@@ -260,7 +262,7 @@ function get_reset_zoom() {
 	return Math.min((wH / mH), (wW / mW));
 }
 
-/** 
+/**
 * Entrypoint for user clicking the fit map button.
 * Will remove local storage state as by default this function is called when no state is found.
 */
@@ -347,7 +349,7 @@ function remove_loading_overlay() {
  * @param {Function} callback trigged after map is loaded
  */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
-	
+
 	$("#scene_map_container").toggleClass('map-loading', true);
 
 	remove_loading_overlay();
@@ -407,7 +409,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		$("#scene_map_container").toggleClass('video', false);
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
-		
+
 		newmap.on("error", map_load_error_cb);
 		if (width != null) {
 			newmap.width(width);
@@ -416,7 +418,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		newmap.on("load", () => {
 			$("#scene_map_container").toggleClass('map-loading', false);
 		});
-		if (callback != null) {	
+		if (callback != null) {
 			newmap.on("load", callback);
 		}
 		$("#scene_map_container").append(newmap);
@@ -448,7 +450,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			$("#scene_map_container").toggleClass('map-loading', false);
 		}
 		$("#scene_map_container").append(newmap);
-		
+
 	}
 
 }
@@ -481,7 +483,7 @@ function set_pointer(data, dontscroll = false) {
 	});
 	$("#tokens").append(marker);
 
-	
+
 	setTimeout(function(){marker.fadeOut(1000)}, 2000);
 	setTimeout(function(){marker.remove()}, 3000);
 
@@ -502,6 +504,9 @@ function set_pointer(data, dontscroll = false) {
  * Add .notification and .highlight-gamelog classes to #switch_gamelog.
  */
 function notify_gamelog() {
+	if (window.color) {
+		$("#switch_gamelog").css("--player-border-color", window.color);
+	}
 	if (!$("#switch_gamelog").hasClass("selected-tab")) {
 		if ($("#switch_gamelog").hasClass("notification")) {
 			$("#switch_gamelog").removeClass("notification");
@@ -516,6 +521,20 @@ function notify_gamelog() {
 	if ($(".GameLog_GameLog__2z_HZ").scrollTop() < 0) {
 		$(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
 	}
+}
+
+/**
+ * Add .notification and .highlight-gamelog classes to #switch_gamelog.
+ * @param {string} color - a valid css color
+ */
+function flash_tokens_tab(color) {
+	const tokensTab = window.DM ? $("#switch_tokens") : $("#switch_characters");
+	// unlike the gamelog, we don't want this to stay highlighted. Just flash it, and be done
+	tokensTab.css("--player-border-color", color);
+	tokensTab.addClass("notification");
+	setTimeout(function() {
+		tokensTab.removeClass("notification");
+	}, 800);
 }
 
 function select_next_tab() {
@@ -573,8 +592,8 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 
 	// switch back to gamelog if they change tabs
 	if (!isCharacterSheetInfo) {
-		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab. 
-		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog. 
+		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab.
+		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog.
 		// Since the user clicked the tab, we need to show the gamelog instead of any detail info that was previously shown.
 		$(".ct-character-header__group--game-log").click();
 	}
@@ -588,7 +607,7 @@ function report_connection() {
 	var msgdata = {
 			player: window.PLAYER_NAME,
 			img: window.PLAYER_IMG,
-			text: PLAYER_NAME + " has connected to the server!",	
+			text: PLAYER_NAME + " has connected to the server!",
 	};
 	window.MB.inject_chat(msgdata);
 }
@@ -876,7 +895,7 @@ function build_draggable_monster_window() {
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
-			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();	
+			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 			$(window.childWindows[name].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
 				$(window.childWindows[name].document).find("body").append($("div[role='presentation']").clone(true, true));
 				let popoutContext = $(window.childWindows[name].document).find(".dcm-container");
@@ -960,7 +979,7 @@ function minimize_player_monster_window_double_click(titleBar) {
 			titleBar.data("prev-top", titleBar.css("top"));
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
-			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.css("left", titleBar.data("prev-minimized-left"));
 			titleBar.height(23);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
@@ -978,7 +997,7 @@ function minimize_player_monster_window_double_click(titleBar) {
 			titleBar.addClass("restored");
 			titleBar.removeClass("minimized");
 			$(".monster_title").remove();
-			
+
 		}
 	});
 }
@@ -993,7 +1012,7 @@ function init_controls() {
 		// no need to do this more than once. DDB rips things out when you resize the window which is why this could be called multiple times
 		return;
 	}
-	
+
 	init_sidebar_tabs();
 
 	if (is_characters_page()) {
@@ -1009,7 +1028,7 @@ function init_controls() {
 	sidebarControlsParent.find(".avtt-sidebar-controls").remove();
 	sidebarControlsParent.children().css({ "visibility": "hidden", "width": "0px", "height": "0px", "position": "absolute" });
 	sidebarControlsParent.css({ "display": "block", "visibility": "visible", "height": "28px", "position": "relative", "top": "0px", "left": "0px" });
-	
+
 	let sidebarControls = $("<div class='avtt-sidebar-controls' style='width:100%;height:100%;display:flex;'></div>");
 	sidebarControlsParent.append(sidebarControls);
 
@@ -1377,7 +1396,7 @@ function init_spells() {
 	});
 
 }
-		
+
 /**
  * Register event to minimize/restore a player window when double clicking the DOMObject.
  * @param {DOMObject} titleBar the window's title bar
@@ -1390,7 +1409,7 @@ function minimize_player_window_double_click(titleBar) {
 			titleBar.data("prev-top", titleBar.css("top"));
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
-			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.css("left", titleBar.data("prev-minimized-left"));
 			titleBar.height(23);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
@@ -1470,7 +1489,7 @@ function observe_character_sheet_companion(documentToObserve){
  */
 function init_sheet() {
 	if (is_characters_page()) {
-		
+
 		// in case we're re-initializing, remove these before adding them again
 		$("#sheet_button").remove();
 		$("#sheet_resize_button").remove();
@@ -1521,21 +1540,21 @@ function init_sheet() {
 		iframe.attr('src', currentSrc);
 	});
 	container.append(reload_button);
-	
+
 	$("#site").append(container);
 
 	if(window.DM){
 		/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 		$("#sheet").addClass("moveableWindow");
 		if(!$("#sheet").hasClass("minimized")){
-			$("#sheet").addClass("restored"); 
+			$("#sheet").addClass("restored");
 		}
 		$("#sheet").resizable({
 			addClasses: false,
 			handles: "all",
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
@@ -1553,7 +1572,7 @@ function init_sheet() {
 			scroll: false,
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
@@ -1738,19 +1757,6 @@ function observe_character_sheet_dice_rolls(documentToObserve) {
 	dice_roll_observer.observe(mutation_target, mutation_config);
 }
 
-/** DEPRECATED - dont use */
-function init_player_sheets()
-{
-	return;
-	// preload character sheets
-	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
-	var sheetLoadWait = 4000;
-	window.pcs.forEach(function(pc, index) {
-		init_player_sheet(pc.sheet, sheetLoadWait);
-		sheetLoadWait += 1500;
-	});
-}
-
 /**
  * Opens the character sheet window.
  * @param {String} sheet_url URL to DDB charater
@@ -1769,8 +1775,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 	let container = $("#sheet");
 	let iframe = container.find("iframe");
-	
-	
+
+
 	iframe.css('height', container.height() - 25);
 	container.addClass("open");
 
@@ -1952,6 +1958,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			if (!window.DM) {
 				window.PLAYERDATA = playerdata;
 				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
+				send_player_data_to_all_peers(playerdata);
 			}
 			else {
 				window.MB.handlePlayerData(playerdata);
@@ -1986,7 +1993,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		observe_character_sheet_aoe($(event.target).contents());
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
-		
+
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
@@ -2010,8 +2017,10 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 							window.TOKEN_OBJECTS[tokenid].options.ac = totalAc
 							window.TOKEN_OBJECTS[tokenid].place();
 							window.TOKEN_OBJECTS[tokenid].update_and_sync();
-							if(tokenid in window.PLAYER_STATS)
+							if(tokenid in window.PLAYER_STATS) {
 								window.PLAYER_STATS[tokenid].ac = totalAc;
+								send_player_data_to_all_peers(window.PLAYER_STATS[tokenid])
+							}
 						}
 
 					}
@@ -2025,13 +2034,13 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		waitToSync();
 
 		setTimeout(function() {
-			$("#sheet").find("iframe").each(function() { 
+			$("#sheet").find("iframe").each(function() {
 				// we've removed some header stuff, so move the background image up to remove the dead space
 				$(this.contentDocument.body).css("background-position-y", "90px");
 			})
 		}, 1000);
 	});
-	
+
 	$("#sheet").find("button").css('display', 'inherit');
 	// reload if there have been changes
 	if(iframe.attr('data-changed') == 'true')
@@ -2088,14 +2097,14 @@ function notify_player_join() {
 function check_versions_match() {
 	var latestVersionSeen = 0.0;
 	var oldestVersionSeen = 1000.0;
-	
+
 	$.each(window.CONNECTED_PLAYERS, function(key, value) {
 		latestVersionSeen = Math.max(latestVersionSeen, value);
 		oldestVersionSeen = Math.min(oldestVersionSeen, value);
 	});
 
 	if (latestVersionSeen != oldestVersionSeen) {
-		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';		
+		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';
 		for (const [key, value] of Object.entries(window.CONNECTED_PLAYERS)) {
 			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
 		}
@@ -2138,7 +2147,7 @@ function init_above(){
 	console.log("init_above");
 
 	// WORKAROUND FOR ANNOYING DDB BUG WITH COOKIES AND UPVOTING STUFF
-	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
+	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT";
 	// END OF IT
 	//window.STARTING = true;
 	let gameId = find_game_id();
@@ -2152,7 +2161,7 @@ function init_above(){
 	//THIS SHOULD HAVE ALREADY BEEN SET
 	// window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	//let gameid = $("#message-broker-client").attr("data-gameId");
-	
+
 	let hasData = false;
 	if (localStorage.getItem('ScenesHandler' + gameId) != null) {
 		hasData = true;
@@ -2176,7 +2185,7 @@ function init_above(){
 					window.CLOUD = false;
 					init_things();
 				}
-				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
+				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D
 					if(window.DM) {
 						$.ajax({
 							url: http_api_gw+"/services?action=setCampaignData&campaign=" + window.CAMPAIGN_SECRET,
@@ -2221,6 +2230,7 @@ function init_things() {
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	window.TOKEN_PASTE_BUFFER = [];
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+	window.TOKEN_CUSTOMIZATIONS = [];
 
 	if (window.CAMPAIGN_SECRET === undefined) {
 		window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
@@ -2228,6 +2238,7 @@ function init_things() {
 
 	fetch_token_customizations();
 
+	window.PeerManager = new PeerManager();
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
@@ -2240,7 +2251,7 @@ function init_things() {
 			}
 			init_ui();
 			if (is_encounters_page()) {
-			
+
 				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
 				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
 
@@ -2250,13 +2261,13 @@ function init_things() {
 				$("div.dice-toolbar").css({"bottom": "35px"});
 				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
 			}
-			
+
 			init_scene_selector();
 			init_splash();
 
 		});
 	} else if (is_characters_page()) {
-		
+
 		hide_player_sheet();
 		init_character_page_sidebar();
 
@@ -2264,13 +2275,13 @@ function init_things() {
 			if(window.showPanel == undefined){
 				window.showPanel = is_sidebar_visible();
 			}
-			init_character_page_sidebar();	
+			init_character_page_sidebar();
 			setTimeout(function(){
 				if(!window.showPanel){
 					hide_sidebar();
 				}
 			}, 1000)
-			
+
 		});
 
 	} else {
@@ -2310,7 +2321,7 @@ function init_character_page_sidebar() {
 		$("#site-main").css({"display": "block", "visibility": "hidden"});
 		$(".dice-rolling-panel").css({"visibility": "visible"});
 		$("div.dice-toolbar").css({"bottom": "35px"});
-		$("#mega-menu-target").hide();		
+		$("#mega-menu-target").hide();
 		$(".ct-character-header-desktop").css({
 			"background": "rgba(0,0,0,.85)"
 		});
@@ -2329,18 +2340,18 @@ function init_character_page_sidebar() {
 			"top": "0px",
 			"z-index": 5
 		});
-		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
+		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
 		$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click(); 	  	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
 		  	$(`#switch_gamelog`).click();
 		});
 		$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click(); 	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
 		  	$(`#switch_gamelog`).click();
 
@@ -2352,15 +2363,15 @@ function init_character_page_sidebar() {
 				});
 			}, 1000)
 		});
-		$(".ct-character-header-info__content").on("click", function(){ 
+		$(".ct-character-header-info__content").on("click", function(){
 			setTimeout(function(){
 				$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
 				$(".ct-pane-menu__item:contains('Manage Character & Levels')").off().on("click", function(){
 					$("a.ct-character-header-desktop__builder-link")[0].click();
 				});
-			}, 1000)		
+			}, 1000)
 		});
-		
+
 		if (needs_ui) {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
@@ -2378,10 +2389,10 @@ function init_character_page_sidebar() {
 			observe_character_sheet_dice_rolls($(document));
 			// WIP to allow players to add in tokens from their extra tab
 			// observe_character_sheet_companion($(document));
-			
+
 		} else {
 			init_controls();
-			init_sheet();	
+			init_sheet();
 			inject_chat_buttons();
 			init_zoom_buttons();
 			monitor_character_sidebar_changes();
@@ -2520,7 +2531,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 		toInject.append(sidebarPaneContent.find(".ct-spell-detail__level-school").clone());
 		toInject.append(sidebarPaneContent.find(".ct-speed-manage-pane__speeds").clone());
 		toInject.append(sidebarPaneContent.find(".ct-armor-manage-pane__items").clone());
-		
+
 		if (sidebarPaneContent.find(".ct-creature-pane__block").length > 0) {
 			// extras tab creatures need a little extra love
 			toInject.append(sidebarPaneContent.find(".ct-creature-pane__block").clone());
@@ -2611,7 +2622,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 			let dieSize = $(this).attr("alt");
 			$(`.dice-die-button[data-dice='${dieSize}']`).click();
 		} else {
-			// there aren't any DDB dice on the screen so use our own 
+			// there aren't any DDB dice on the screen so use our own
 			const dataCount = $(this).attr("data-count");
 			if (dataCount === undefined) {
 				$(this).attr("data-count", 1);
@@ -2691,7 +2702,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		const rollButton = $(`<button class="roll-button">Roll</button>`);
 		$("body").append(rollButton);
 		rollButton.on("click", function (e) {
-	
+
 			if ($(".dice-toolbar").hasClass("rollable")) {
 				let theirRollButton = $(".dice-toolbar__target").children().first();
 				if (theirRollButton.length > 0) {
@@ -2700,12 +2711,12 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 					return;
 				}
 			}
-	
+
 			const rollExpression = [];
 			$(".dice-roller > div img[data-count]").each(function() {
 				rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
 			});
-	
+
 			let sendToDM = window.DM || false;
 			let sentAsDDB = send_rpg_dice_to_ddb(rollExpression.join("+"), sendToDM);
 			if (!sentAsDDB) {
@@ -2720,7 +2731,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 					id: window.DM ? `li_${uuid}` : undefined
 				};
 				window.MB.inject_chat(data);
-	
+
 				if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
 					$("#" + uuid).on("click", () => {
 						const newData = {...data, dmonly: false, id: undefined, text: text};
@@ -2729,7 +2740,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 					});
 				}
 			}
-	
+
 			$(".roll-button").removeClass("show");
 			$(".dice-roller > div img[data-count]").removeAttr("data-count");
 			$(".dice-roller > div span").remove();
@@ -2764,7 +2775,7 @@ function init_ui() {
 	console.log("init_ui");
 
 	// ATTIVA GAMELOG
-	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
+	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
@@ -2825,6 +2836,14 @@ function init_ui() {
 	fog.css("left", "0");
 	fog.css("position", "absolute");
 	fog.css("z-index", "20");
+
+	// this overlay sits above other canvases, but below tempOverlay
+	// when peers stream their rulers, this canvas is where we draw them
+	const peerOverlay = $("<canvas id='peer_overlay'></canvas>");
+	peerOverlay.css("position", "absolute");
+	peerOverlay.css("top", "0");
+	peerOverlay.css("left", "0");
+	peerOverlay.css("z-index", "15"); // below fog
 
 	// this overlay sits above all other canvases
 	// we draw to this and then bake the image into the corresponding
@@ -2898,6 +2917,7 @@ function init_ui() {
 	VTT.append(tokens);
 	VTT.append(background);
 	VTT.append(mapContainer);
+	VTT.append(peerOverlay);
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(drawOverlay);
@@ -2940,19 +2960,15 @@ function init_ui() {
 	init_controls();
 	init_sheet();
 	init_my_dice_details()
-	if(window.DM)
-	{
-		init_player_sheets();
-	}
-	else
-	{
-		setTimeout(function() {		
+	setTimeout(function() {
+		find_and_set_player_color();
+		if(!window.DM) {
 			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
-			//open_player_sheet(window.PLAYER_SHEET, false);
-		}, 5000);
-	}
+		}
+		enable_peer_manager();
+	}, 5000);
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
 
@@ -3110,9 +3126,9 @@ function init_ui() {
 	}
 }
 
-const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
-					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA", 
-					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0", 
+const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5",
+					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA",
+					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0",
 					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF", "cPick"];
 
 /**
@@ -3127,9 +3143,9 @@ function init_buttons() {
 	$("body").append(buttons);
 
 	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
-	
+
 	buttons.append($("<button style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</button>"));
-	
+
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_draw_menu(buttons)
@@ -3165,7 +3181,7 @@ function init_buttons() {
  * @returns void
  */
 function init_zoom_buttons() {
-	
+
 	if ($("#zoom_buttons").length > 0) {
 		return;
 	}
@@ -3173,7 +3189,26 @@ function init_zoom_buttons() {
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
 
-	ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
+	if(window.DM) {
+		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);
+		cursor_ruler_toggle.click(function (event) {
+			console.log("cursor_ruler_toggle", event);
+			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
+			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
+				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
+				window.PeerManager.allowCursorAndRulerStreaming = false;
+			} else {
+				iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+				window.PeerManager.allowCursorAndRulerStreaming = true;
+			}
+		});
+		cursor_ruler_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">left_click</span></div>`);
+		zoom_section.append(cursor_ruler_toggle);
+		if (!get_avtt_setting_value("peerStreaming")) {
+			cursor_ruler_toggle.hide();
+		}
+
+		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
 		<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active">
 				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 19.877 19.877" style="enable-background:new 0 0 19.877 19.877; width:20px; height:20px;" xml:space="preserve">
 		<g>
@@ -3185,23 +3220,22 @@ function init_zoom_buttons() {
 		</svg>
 		</svg></div></div>
 		`);
-	ping_center.click(function(){
-		if($('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){
-			$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
-		}
-		else{
-			$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
-		}		
-	});
-	if(window.DM)
+		ping_center.click(function () {
+			if ($('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+				$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+			} else {
+				$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+			}
+		});
 		zoom_section.append(ping_center);
+	}
 
 	zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
 	zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
-	
+
 	zoom_minus.click(decrease_zoom)
 	zoom_section.append(zoom_minus);
 
@@ -3219,7 +3253,7 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-152px");
+		zoom_section.css("left","-180px");
 	} else {
 		zoom_section.css("left","-170px");
 	}
@@ -3394,6 +3428,7 @@ $(function() {
 
 	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + find_game_id())) || {};
 	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
+	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />')
 
 	$(".instructions").click(function() {
 		if(campaign_banner.is(":visible"))
@@ -3439,8 +3474,8 @@ $(function() {
 			}, 2000);
 		});
 	});
-	
-	
+
+
 	if (window.location.search.includes("abovevtt=true")) {
 		gather_pcs();
 		if (is_encounters_page()) {
@@ -3796,21 +3831,21 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", 
 		return false;
 	}
 }
-	
+
 /**
  * Gathers browser information from User Agent.
  * @returns Object
  */
 function get_browser() {
-	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
+	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 	if(/trident/i.test(M[1])){
-			tem=/\brv[ :]+(\d+)/g.exec(ua) || []; 
+			tem=/\brv[ :]+(\d+)/g.exec(ua) || [];
 			return {name:'IE',version:(tem[1]||'')};
-			}   
+			}
 	if(M[1]==='Chrome'){
 			tem=ua.match(/\bOPR|Edge\/(\d+)/)
 			if(tem!=null)   {return {name:'Opera', version:tem[1]};}
-			}   
+			}
 	M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
 	if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
 	return {
@@ -3859,7 +3894,7 @@ function show_player_sheet() {
 		"visibility": "visible",
 		"z-index": 3
 	});
-	if (window.innerWidth > 1540) { // DDB resize point + sidebar width 
+	if (window.innerWidth > 1540) { // DDB resize point + sidebar width
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead
 		$("#sheet_resize_button").show();
 	} else {
@@ -3940,7 +3975,7 @@ function reposition_player_sheet() {
 		$(".ct-character-sheet-mobile__header").css({ "width": `100%`, "left": "0px", "right": `0px` });
 		$(".ct-character-sheet-mobile").css({ "background": "white" });
 	}
-	
+
 	if (forceLayout == "full") {
 		resize_player_sheet_full_width();
 	} else if (forceLayout == "thin") {
@@ -4027,13 +4062,13 @@ function resize_player_sheet_thin() {
 
 	$(".ct-character-header-desktop__group--share").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 	$(".ct-character-header-desktop__group--builder").css({"visibility": "hidden", "width": "0px", "height": "0px"});
-	
+
 	$(".ct-character-header-desktop__group--short-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "110px" });
 	$(".ct-character-header-desktop__group--long-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "0px" });
 	$(".ct-character-header-desktop__group--short-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
-	
+
 	$(".ct-character-header-desktop__group--campaign").css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
 
 	$(".ct-primary-box").css({ "height": "610px" });
@@ -4044,7 +4079,7 @@ function resize_player_sheet_thin() {
 	$(".ct-spells").css({ "height": "540px" });
 
 	player_sheet_layout = "thin";
-	
+
 	adjust_site_bar();
 
 }
@@ -4071,13 +4106,13 @@ function reset_character_sheet_css() {
 	$(".ct-character-header-desktop__group--short-rest .ct-character-header-desktop__button").removeAttr( 'style' );
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").removeAttr( 'style' );
 	$(".ct-character-header-desktop__group-tidbits").removeAttr( 'style' );
-	
+
 	$(".ct-character-header-desktop__group--campaign").removeAttr( 'style' );
 	$(".ct-primary-box").removeAttr( 'style' );
 	$(".ddbc-tab-options__content").removeAttr( 'style' );
 
 	$(".ct-character-sheet__inner").css({"visibility": "visible", "overflow-x": "hidden"});
-	
+
 	$(".ddbc-character-tidbits__menu-callout").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 
 	let maxHeight = window.innerHeight - 26;
@@ -4142,7 +4177,7 @@ function show_sidebar() {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
-	
+
 	addGamelogPopoutButton()
 }
 
@@ -4154,9 +4189,9 @@ function addGamelogPopoutButton(){
 	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true&popoutgamelog=true`
 
 	gamelog_popout.off().on("click",function(){
-		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);	
+		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);
 		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
-		setTimeout(function() {		
+		setTimeout(function() {
 			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
 		}, 1000)
 		let cleanedUpAlready = false;
@@ -4164,10 +4199,10 @@ function addGamelogPopoutButton(){
 			if(!cleanedUpAlready){
 				popoutGamelogCleanup();
 				cleanedUpAlready = true;
-			}	
+			}
 		}
 		if(!cleanedUpAlready){
-			setTimeout(function() {		
+			setTimeout(function() {
 				popoutGamelogCleanup();  //backup in case onload isn't triggered - I'll look into this more later
 				cleanedUpAlready = true;
 			}, 6000)
@@ -4181,8 +4216,8 @@ function popoutWindow(name, cloneSelector, width=400, height=800, windowTarget=`
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
 width=${width},height=${height},left=100,top=100`;
-	childWindows[name] = window.open(windowTarget, name, params);		
-	childWindows[name].onbeforeunload = function(){ 
+	childWindows[name] = window.open(windowTarget, name, params);
+	childWindows[name].onbeforeunload = function(){
 		closePopout(name);
 	}
 	setTimeout(function(){
@@ -4222,7 +4257,7 @@ function popoutGamelogCleanup(){
 	removeFromPopoutWindow("Gamelog", ".dice-roller");
 	removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
 	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
-	removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");	
+	removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");
 	$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
 	let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
 	removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
@@ -4230,7 +4265,7 @@ function popoutGamelogCleanup(){
 	removeFromPopoutWindow("Gamelog", "iframe");
 	$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
 	$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
-	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);				
+	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);
 }
 function updatePopoutWindow(name, cloneSelector){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
@@ -4271,7 +4306,7 @@ function hide_sidebar() {
 		let sidebar = is_characters_page() ? $(".ct-sidebar--right") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(340px)");
 	}
-	
+
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
@@ -4310,14 +4345,14 @@ function adjust_site_bar() {
 		"right": "0px",
 		"width": fullWidth
 	});
-	
+
 	if (is_player_sheet_open() || lockDisplay.length > 0) {
-		$(".site-bar").css({ 
+		$(".site-bar").css({
 			"visibility": "visible",
 			"z-index": 1
 		});
 	} else {
-		$(".site-bar").css({ 
+		$(".site-bar").css({
 			"visibility": "hidden",
 			"z-index": -1
 		});

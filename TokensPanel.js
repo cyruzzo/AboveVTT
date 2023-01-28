@@ -197,6 +197,7 @@ function backfill_mytoken_folders() {
  * token sources are window.pcs, mytokens, mytokensfolders, and builtInTokens
  */
 function rebuild_token_items_list() {
+    if (!window.DM) return;
     console.groupCollapsed("rebuild_token_items_list");
     try {
 
@@ -438,6 +439,7 @@ function redraw_token_list_item(item){
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
 function redraw_token_list(searchTerm, enableDraggable = true) {
+    if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
         return;
@@ -698,6 +700,7 @@ function update_pc_token_rows() {
             }
             
             row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
+            row.css("--player-border-color",  playerData.theme.themeColor);
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
             if(playerData.hp == 0){
@@ -844,7 +847,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
-            options.color = "#" + get_player_token_border_color(pc.sheet);
+            options.color = pc.color ? pc.color : get_token_color_by_index(window.pcs.indexOf(pc));
             break;
         case ItemType.Monster:
             let hpVal;

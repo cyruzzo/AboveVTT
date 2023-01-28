@@ -37,6 +37,7 @@ function get_pclist_player_data(retrying=false) {
             if (areArraysEqualSets(processedPlayers, players)) {
                 update_pclist();
             }
+            send_player_data_to_all_peers(playerData);
         })
     });
 }

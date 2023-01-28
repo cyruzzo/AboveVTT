@@ -1660,9 +1660,9 @@ class Token {
 							window.BEGIN_MOUSEX = tokenMidX;
 							window.BEGIN_MOUSEY = tokenMidY;
 							if (!self.options.disableborder){
-								WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
+								WaypointManager.drawStyle.color = window.color ? window.color : $(tok).css("--token-border-color");
 							}else{
-								WaypointManager.resetDefaultDrawStyle()
+								WaypointManager.resetDefaultDrawStyle();
 							}
 							const canvas = document.getElementById("temp_overlay");
 							const context = canvas.getContext("2d");
@@ -1714,6 +1714,9 @@ class Token {
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
 						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+						if (!self.options.hidden) {
+							send_ruler_to_peers();
+						}
 					}
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
@@ -2105,6 +2108,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	window.ScenesHandler.create_update_token(options);
 	if (options.id in window.PLAYER_STATS) {
 		window.MB.handlePlayerData(window.PLAYER_STATS[options.id]);
+		send_player_data_to_all_peers(window.PLAYER_STATS[options.id]);
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
 

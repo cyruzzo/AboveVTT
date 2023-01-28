@@ -48,6 +48,7 @@ let scripts = [
 	{ src: "rpg-dice-roller.bundle.min.js" },
 	{ src: "color-picker.js" },
 	{ src: "mousetrap.1.6.5.min.js" },
+	{ src: "peerjs.min.js" },
 	// AboveVTT Files
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
@@ -75,6 +76,8 @@ let scripts = [
 	{ src: "TokensPanel.js" },
 	{ src: "TokenCustomization.js" },
 	{ src: "built-in-tokens.js" },
+	{ src: "PeerManager.js" },
+	{ src: "PeerCommunication.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
