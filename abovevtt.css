@@ -3095,7 +3095,7 @@ div#importer_area>div>div:first-of-type {
 #playersFolder .player-card-info {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     align-content: center;
     align-items: center;

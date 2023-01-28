@@ -375,14 +375,10 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 
-		this.update_from_page();
 		this.options.top = top + 'px';
 		this.options.left = left + 'px';
 		this.place(100);
-		this.sync();
-		if (this.persist != null) {
-			this.persist();
-		}
+		this.update_and_sync();
 	}
 
 	snap_to_closest_square() {
