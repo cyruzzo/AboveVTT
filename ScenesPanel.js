@@ -1457,7 +1457,25 @@ function fill_importer(scene_set, start) {
 		area.append(`<div style='border:none !important;'>There were no maps/handouts found in this chapter</div>`)
 	}
 
-
+	let mapSearchContainer = document.createElement('div');
+	let mapSearchLabel = document.createElement('span');
+	mapSearchLabel.innerText = "Search By Title: ";
+	let mapSearch = '';
+	let mapSearchElement = document.createElement('input');
+	mapSearchElement.value = mapSearch;
+	mapSearchElement.addEventListener('change', () => {
+		const value = mapSearchElement.value;
+		if (value) {
+			let clonedScenes = JSON.parse(JSON.stringify(scene_set));
+			let filteredScenes = clonedScenes.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
+			fill_importer(filteredScenes, start);
+		} else {
+			fill_importer(scene_set, start);
+		}
+	});
+	mapSearchContainer.append(mapSearchLabel);
+	mapSearchContainer.append(mapSearchElement);
+	footer.append(mapSearchContainer);
 }
 
 function mega_importer(DDB = false) {
