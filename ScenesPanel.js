@@ -1450,7 +1450,18 @@ function fill_importer(scene_set, start) {
 	buttons.append(next);
 	footer.append(buttons);
 
-	pageNumbersDiv = $(`<div class='page-number'>${pageNumber} / ${totalPages}</div>`)
+	pageNumbersDiv = $(`<div class='page-number'></div>`);
+
+	let pageSelect = $(`<input id='pagination' value="${pageNumber}">`);
+	pageSelect.on(' input change', () => {
+		const val = pageSelect.val();
+		if (val && val >= 0) {
+			fill_importer(scene_set, (val * 8) - 8);
+		}
+	})
+	totalPageSpan = $(`<span> / ${totalPages}</span>`);
+	pageNumbersDiv.append(pageSelect);
+	pageNumbersDiv.append(totalPageSpan);
 	footer.append(pageNumbersDiv);
 
 	if(scene_set.length == 0){
