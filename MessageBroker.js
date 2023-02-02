@@ -1340,14 +1340,20 @@ class MessageBroker {
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			console.group("load_scenemap callback")
-			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor || 1;
+			if(!window.CURRENT_SCENE_DATA.scale_factor)
+				window.CURRENT_SCENE_DATA.scale_factor = 1;
+			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 			// Store current scene width and height
-			window.CURRENT_SCENE_DATA.width = $("#scene_map").width() * scaleFactor;
-			window.CURRENT_SCENE_DATA.height = $("#scene_map").height() * scaleFactor;
+			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
+			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
 			// Scale map according to scaleFactor
+
 			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
 			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
 			$("#VTT").css('--scene-url', `url('${data.map}')`);
+			$("#VTT").css("--scene-scale", scaleFactor)
+			
+
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();

@@ -371,14 +371,10 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 
-		this.update_from_page();
 		this.options.top = top + 'px';
 		this.options.left = left + 'px';
 		this.place(100);
-		this.sync();
-		if (this.persist != null) {
-			this.persist();
-		}
+		this.update_and_sync();
 	}
 
 	snap_to_closest_square() {
@@ -517,6 +513,34 @@ class Token {
 		console.group("update_health_aura")
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		let tokenData = this.munge_token_data()
+		if($(`.token[data-id='${this.options.id}']>.hpvisualbar`).length<1){
+			let hpvisualbar = $(`<div class='hpvisualbar'></div>`);
+			$(`.token[data-id='${this.options.id}']`).append(hpvisualbar);
+		}
+
+
+		if(this.options.healthauratype == undefined){
+			if(this.options.disableaura){
+				this.options.healthauratype = "none"
+			}
+			if(this.options.enablepercenthpbar){
+				this.options.healthauratype = "bar"
+			}
+		}
+		else{
+			if(this.options.healthauratype == "none"){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = false;
+			} else if(this.options.healthauratype == "bar"){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = true;
+			} else if(this.options.healthauratype == "aura"){
+				this.options.disableaura = false;
+				this.options.enablepercenthpbar = false;
+			}
+		}
+
+
 		if (tokenData.max_hp > 0) {
 			if(window.PLAYER_STATS[this.options.id] || !tokenData.temp_hp) {	
 				var tokenHpAuraColor = token_health_aura(
@@ -1172,6 +1196,7 @@ class Token {
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 			old.css("--token-rotation", rotation+"deg");
+			old.css("--token-scale", imageScale);
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
@@ -1346,6 +1371,7 @@ class Token {
 					imgClass = 'token-image preserve-aspect-ratio';
 				}
 				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+				tok.css("--token-scale", imageScale)
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
@@ -1626,7 +1652,7 @@ class Token {
 							const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
 
 							if(WaypointManager.numWaypoints > 0){
-								WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
+								WaypointManager.checkNewWaypoint(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor)
 								WaypointManager.cancelFadeout()
 							}
 							window.BEGIN_MOUSEX = tokenMidX;
@@ -1684,8 +1710,8 @@ class Token {
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
 						clear_temp_canvas();
-						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
@@ -1867,8 +1893,8 @@ class Token {
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  window.CURRENT_SCENE_DATA.width  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
-			bottom: window.CURRENT_SCENE_DATA.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+			right:  window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.CURRENT_SCENE_DATA.height * window.CURRENT_SCENE_DATA.scale_factor + (sizeOnGrid.y * (multi -1)), // ... same as above
 		};	
 	}
 	
@@ -2298,6 +2324,7 @@ function setTokenBase(token, options) {
 	}
 	if (options.tokenStyleSelect !== "noConstraint") {
 		token.children("img").toggleClass("freeform", false);
+		token.toggleClass("freeform", false);
 	}
 
 	if (options.tokenStyleSelect === "circle") {
@@ -2306,6 +2333,7 @@ function setTokenBase(token, options) {
 		options.legacyaspectratio = true;
 		token.children("img").css("border-radius", "50%")
 		token.children("img").removeClass("preserve-aspect-ratio");
+		token.toggleClass("square", false);
 	}
 	else if(options.tokenStyleSelect === "square"){
 		//Square
@@ -2313,6 +2341,7 @@ function setTokenBase(token, options) {
 		options.legacyaspectratio = true;
 		token.children("img").css("border-radius", "0");
 		token.children("img").removeClass("preserve-aspect-ratio");
+		token.toggleClass("square", true);
 	}
 	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken") {
 		//Freeform
@@ -2329,7 +2358,7 @@ function setTokenBase(token, options) {
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
 		token.children("img").toggleClass("freeform", true);
-
+		token.toggleClass("freeform", true);
 	}
 	else if(options.tokenStyleSelect === "virtualMiniCircle"){
 		$(`.token[data-id='${options.id}']`).prepend(base);
