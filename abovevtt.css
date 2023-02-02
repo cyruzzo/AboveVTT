@@ -1213,17 +1213,18 @@ div#combat_button{
     pointer-events: auto;
 }
 
-.tokenselected::before{
+.tokenselected::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: -7px;
+    left: -7px;
+    right: -7px;
+    bottom: -7px;
     border-radius: 0px;
     padding: 5px;
     border: 5px #c0f3fff5 solid;
     z-index: 0;
+    border-radius: 5px;
     pointer-events: none;
 }
 
@@ -4026,7 +4027,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
     height: 30px;  
 }
 
-.VTTToken img ~ .hpbar:after {
+.VTTToken img.freeform ~ .hpbar:after {
     display: var(--token-hpbar-display);
     transition: none;
     position: absolute;
@@ -4282,22 +4283,21 @@ input.max_hp[disabled]{
 
 /*end combat tracker face lift*/
 .token>.base{
-    position: absolute;
-    top: 0;
-    left: 0;
     background: #0000001c;
+    backdrop-filter: blur(3px) brightness(0.7);
+    z-index: -1;
+    border: inset 5px var(--token-border-color, #ffffff44);
+}
+
+.token>.base,
+.token>.base ~ .hpvisualbar{
     width: 90%;
     height: 90%;
     position: absolute;
     top: 0;
     left: 0;
     margin: 5% 0 0 5%;
-    backdrop-filter: blur(3px) brightness(0.7);
-    z-index: -1;
-    --border-width: max(5px, calc(5px / var(--window-zoom)));
-    border: inset var(--border-width) var(--token-border-color, #ffffff44);
 }
-
 
 .VTTToken .base{
     filter: drop-shadow(0.5px 0px 1px #000b);
@@ -4306,7 +4306,7 @@ input.max_hp[disabled]{
     border-width: max(2px, calc(2px / var(--window-zoom)));
 }
 
-.base.circle:before {
+.base.circle:before{
     content: "";
     top: -5px;
     left: -5px;
@@ -4318,7 +4318,7 @@ input.max_hp[disabled]{
     position: absolute;
     display: block;
 }
-.base.large-or-smaller-base.circle:before {
+.base.large-or-smaller-base.circle:before{
     top: -2px;
     left: -2px;
     right: -2px;
@@ -4639,6 +4639,68 @@ input.max_hp[disabled]{
 
 #tokens {
     z-index: 40;
+}
+
+.VTTToken:not(.freeform) .hpvisualbar:before{
+    display: var(--token-hpbar-display);
+    transition: none;
+    position: absolute;
+    visibility: visible;
+    z-index: -1;
+    filter: blur(1px);
+    content:'';
+    --mask-size:calc(98% - 2px / var(--window-zoom));
+}
+.VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --mask-size:calc(98% - 7px / var(--window-zoom));
+    transform: scale(var(--token-scale)) rotate(var(--token-rotation));
+    height: calc(100% + 5px / min(1, var(--window-zoom)));
+    width: calc(100% + 5px / min(1, var(--window-zoom)));
+    top: min(-2.5px, calc(-2.5px / var(--window-zoom)));
+    left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
+    right: 0px;
+    background-color: #0b0b0ddd;
+    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
+    clip-path: circle();
+    -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+    mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+}
+
+.VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 95%), linear-gradient(to top, #0000 var(--mask-size), #000 95%), linear-gradient(to bottom, #0000 var(--mask-size), #000 95%), linear-gradient(to right, #0000 var(--mask-size), #000 95%);
+    clip-path:none;
+}
+
+.VTTToken .base ~ .hpvisualbar:before {
+    background-size: 100%;
+    background-color: transparent;
+    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%);
+    clip-path: circle();
+    -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+    mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+    box-shadow:none;
+    z-index: -1;
+}
+
+.VTTToken .base.square ~ .hpvisualbar:before {
+    --mask-size: calc(95% - 2px / var(--window-zoom));
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 100%), linear-gradient(to top, #0000 var(--mask-size), #000 100%), linear-gradient(to bottom, #0000 var(--mask-size), #000 100%), linear-gradient(to right, #0000 var(--mask-size), #000 100%);
+    clip-path: none;
+}
+.VTTToken .base ~ .hpvisualbar:before {
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+}
+.VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+}
+.hpvisualbar{
+    pointer-events: none;
 }
 
 .stream-dice-button {

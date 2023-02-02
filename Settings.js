@@ -31,6 +31,17 @@ function token_setting_options() {
 			defaultValue: "default"
 		},
 		{
+			name: "healthauratype",
+			label: "Health Visual",
+			type: 'dropdown',
+			options: [
+				{ value: "aura", label: "Aura", description: "Tokens will have a colored aura" },
+				{ value: "bar", label: "Bar", description: "How this bar is displayed depends on token type. Color blind alternative to auras." },
+				{ value: "none", label: "None", description: "Tokens will not have a health visual" }
+			],
+			defaultValue: "aura"
+      },
+      {
 			name: 'lockRestrictDrop',
 			label: 'Token Lock',
 			type: 'dropdown',
@@ -59,7 +70,8 @@ function token_setting_options() {
 				{ value: true, label: "Square", description: "The token is square." },
 				{ value: false, label: "Round", description: "The token is clipped to fit within a circle." }
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		},
 		{
 			name: 'locked',
@@ -131,7 +143,8 @@ function token_setting_options() {
 				{ value: true, label: 'No Aura', description: "The token does not have an aura representing its current health." },
 				{ value: false, label: 'Health Aura', description: "The token has an aura representing current health around it." }
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		},
 		{
 			name: 'enablepercenthpbar',
@@ -141,7 +154,8 @@ function token_setting_options() {
 				{ value: true, label: 'Health Bar', description: "The token has a traditional visual hp% bar below it" },
 				{ value: false, label: 'No Bar', description: "The token does not have a traditional visual hp% bar below it" }
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		},
 		{
 			name: 'revealname',
@@ -161,7 +175,8 @@ function token_setting_options() {
 				{ value: true, label: 'Stretch', description: "The token's image will stretch to fill the token space" },
 				{ value: false, label: 'Maintain', description: "New token's image will respect the aspect ratio of the image provided" }
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		},
 		{
 			name: "player_owned",
