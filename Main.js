@@ -2755,6 +2755,8 @@ function init_ui() {
 	darknessLayer.css("left", "0");
 
 	tempOverlay.dblclick(function(e) {
+		if(window.DRAWFUNCTION != 'select')
+			return;
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
