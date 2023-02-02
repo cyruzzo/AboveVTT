@@ -663,11 +663,14 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-				if(window.YTPLAYER){
 					$("#youtube_volume").val(msg.data.volume);
 					if(window.YTPLAYER)
+					{
 						window.YTPLAYER.setVolume(msg.data.volume);
-				}
+					}
+					else{
+						$("#scene_map").prop("volume", msg.data.volume/100);
+					}
 			}
 
 			if (msg.eventType == "custom/myVTT/playerdata") {
