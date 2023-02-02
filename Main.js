@@ -179,10 +179,10 @@ function add_zoom_to_storage() {
 * Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
 function set_default_vttwrapper_size() {
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
 }
 
 /**
@@ -248,9 +248,9 @@ function decrease_zoom() {
 */
 function get_reset_zoom() {
 	const wH = $(window).height();
-	const mH = $("#scene_map").height();
+	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 	const wW = $(window).width();
-	const mW = $("#scene_map").width();
+	const mW = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	console.log(wH, mH, wW, mW);
 	return Math.min((wH / mH), (wW / mW));
@@ -429,7 +429,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
 		}
 
-		var newmap = $('<video style="' + newmapSize + ' position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay muted loop id="scene_map" src="' + url + '" />');
+		var newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop onloadstart="this.volume=${$("#youtube_volume").val()/100}" id="scene_map" src="${url}" />`);
 		newmap.on("loadeddata", callback);
 		newmap.on("error", map_load_error_cb);
 
@@ -1153,7 +1153,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.81RC2</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.81</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -1200,8 +1200,8 @@ function init_splash() {
 	patreons = $("<div id='patreons'/>");
 
 	l1 = ["Jordan Cohen","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Eric Invictus","Matthew Bennett","Hekkema","Nomad CLL","Vince Hamilton","D Martinez","airdragon11","William Wallace","Josh Ervin","Lazvon","Nic Ulrich"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","Elmer Senson","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","ThaFreaK","Avilar","Cyril Sneer","Mark Otten","Rollin Newcomb","Kristina Ziese","Erno Tolonen","Becky Egan","Geoffrey Boyd","Matt Dugger","Joseph Ramlow","Jonathan Campbell","Richard Morgan"];
-	l3 = ["Daniel Wall","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","CraftyHobo","CrazyPitesh","Eduardo Villela","Paul Maloney","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Robert J Correa","Cistern","its Bonez","Unlucky Archer","Michael Crane","Alexander Glass","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Luke Young","Scott Ganz","Brian Gabin","Mischa","AnyxKrypt","Torben Schwank","Unix Wizard","Andrew Thomas","Ciara McCumiskey","Daniel Long","Chealse Williams","David Meier","Thomas Thurner","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Steven Van Eckeren","Jack Posey","Stephen Morrey","Cinghiale Frollo","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Chris Thornton","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Reid Bollinger","Konrad Scheffel","Joseph Hensley","Chris Avis","Titus France","Michael Whittington","Simon Haldon","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jeffrey Voetsch","Jay Gattis","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Tom Jones","Ian Panth","Jason","Chris Hagmann","Taylor Hodgson-Scott","Tim Cortis","Timothy Yuen","Cody Pederson","Benjamin Moncier","Kerry Kilgour","Guillaume Carrier","Christian Fernandez","Rob S","DrZzs","PatrickJ","Adam  Reamer","Oceanman","Michael Voltz","Beyond The Edges","Dreamdancer","Josh Taylor","Alex Johansen","Dominic M.","Brad Marsh","Kim Hoffman","Katherine McKinley","Antony Victor Wright","Colleen Shea","Tony","Jeff Cigrand","Dodzod","Anarchist GM","Purge Thunder","David House","Garrett","UnixBomber","Magnus Tanner","Taborxi","Erik Velez","James Fleeting","Dracon Dragon","Steve Hutchinson","OldTedG735","Blake","David Stidolph","Claudia Carpenter","JazzFurgeson","Santiago Pacheco","Chris Neves","Brian Jones","Bill Gruetzenbach","Danielle Goldstein","MasterKELP","Ryan Adams","SCrisp","LEO R LIBBY JR","Celtic Exile","BrotherGlacius","ismael cedeno","Jeremy Blosser","taylor tullis","Eythan Watts","Matt Kircher","NDT 0117","ImmaGirl","David J Morand","Stefan Velev","John Prince","Lauren Marie","David Russell","Dan Glass","Michael Terry","Lyman Green","Aindrium"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","myrrh88","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","ThaFreaK","Avilar","Cyril Sneer","Mark Otten","Rollin Newcomb","Kristina Ziese","Erno Tolonen","Becky Egan","Geoffrey Boyd","Matt Dugger","Joseph Ramlow","Jonathan Campbell","Richard Morgan","Bill Croasmun","hidden_traitor"];
+	l3 = ["Daniel Wall","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","CraftyHobo","CrazyPitesh","Eduardo Villela","Paul Maloney","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Robert J Correa","Cistern","its Bonez","Michael Crane","Alexander Glass","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Joseph Pecor","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Mischa","AnyxKrypt","Torben Schwank","Unix Wizard","Andrew Thomas","Ciara McCumiskey","Daniel Long","David Meier","Thomas Thurner","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Jack Posey","Stephen Morrey","Cinghiale Frollo","Shawn Morriss","Tomi Skibinski","DM Eric V","Joey Lalor","Chris Thornton","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Sky Gewant","Reid Bollinger","Konrad Scheffel","Joseph Hensley","Chris Avis","Titus France","Michael Whittington","Simon Haldon","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jim Mapes","Jeffrey Voetsch","Jay Gattis","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Jason","Chris Hagmann","Taylor Hodgson-Scott","Tim Cortis","Timothy Yuen","Cody Pederson","Benjamin Moncier","Kerry Kilgour","Guillaume Carrier","Christian Fernandez","Rob S","DrZzs","PatrickJ","Oceanman","Michael Voltz","Beyond The Edges","Dreamdancer","Josh Taylor","Alex Johansen","Dominic M.","Brad Marsh","Kim Hoffman","Katherine McKinley","Colleen Shea","Tony","Jeff Cigrand","Dodzod","Anarchist GM","Purge Thunder","David House","Garrett","UnixBomber","Magnus Tanner","Taborxi","Dracon Dragon","Steve Hutchinson","OldTedG735","Blake","David Stidolph","Claudia Carpenter","JazzFurgeson","Santiago Pacheco","Chris Neves","Brian Jones","Bill Gruetzenbach","Danielle Goldstein","MasterKELP","Ryan Adams","SCrisp","LEO R LIBBY JR","Celtic Exile","BrotherGlacius","ismael cedeno","Jeremy Blosser","taylor tullis","Matt Kircher","NDT 0117","David J Morand","Stefan Velev","John Prince","Lauren Marie","David Russell","Dan Glass","Michael Terry","Lyman Green","Aindrium","wisdom_hunter","Howard Seal","Jos van Baren","Flux1","Anthony K Schlisser","Francesco Possati","Laurinel Gramatica","Joseph Lohrum","melissa penn","Jono Major"];
 
 
 	let shortener =  (p) => p.length>17 ? p.replaceAll(" ","").replaceAll("-","") : p;
@@ -2758,6 +2758,8 @@ function init_ui() {
 	darknessLayer.css("left", "0");
 
 	tempOverlay.dblclick(function(e) {
+		if(window.DRAWFUNCTION != 'select')
+			return;
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
