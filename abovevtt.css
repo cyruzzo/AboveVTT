@@ -4979,6 +4979,18 @@ div.ddbc-tab-options--layout-pill>button{
 }
 
 
+
+#temp_overlay,
+#fog_overlay,
+#text_overlay,
+#draw_overlay,
+#darkness_layer,
+#scene_map_container,
+#scene_map,
+#grid_overlay{
+    transform: scale(var(--scene-scale));
+    transform-origin: top left;
+}
 @keyframes aurafx-flicker{
     0%  {filter: blur(10px);transform:scale(1);}
     10% {filter: blur(15px);transform:scale(1.005);}

@@ -1652,7 +1652,7 @@ class Token {
 							const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
 
 							if(WaypointManager.numWaypoints > 0){
-								WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
+								WaypointManager.checkNewWaypoint(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor)
 								WaypointManager.cancelFadeout()
 							}
 							window.BEGIN_MOUSEX = tokenMidX;
@@ -1710,8 +1710,8 @@ class Token {
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
 						clear_temp_canvas();
-						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
@@ -1893,8 +1893,8 @@ class Token {
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  window.CURRENT_SCENE_DATA.width  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
-			bottom: window.CURRENT_SCENE_DATA.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+			right:  window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.CURRENT_SCENE_DATA.height * window.CURRENT_SCENE_DATA.scale_factor + (sizeOnGrid.y * (multi -1)), // ... same as above
 		};	
 	}
 	
