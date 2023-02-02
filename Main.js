@@ -416,7 +416,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
-		$("#VTT").append(newmap);
+		$("#scene_map_container").append(newmap);
 		$("#scene_map_container").css("width", $("#scene_map").width())
 		$("#scene_map_container").css("height", $("#scene_map").height())
 
@@ -2712,7 +2712,7 @@ function init_ui() {
 	mapContainer.css("top", "0");
 	mapContainer.css("left", "0");
 	mapContainer.css("position", "absolute");
-	mapContainer.css("z-index", "10");
+
 
 
 	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
@@ -2813,7 +2813,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textOverlay);
 	VTT.append(tempOverlay);
-	VTT.append(darknessLayer);
+	mapContainer.append(darknessLayer);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");

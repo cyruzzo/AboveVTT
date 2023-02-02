@@ -4904,7 +4904,6 @@ div.ddbc-tab-options--layout-pill>button{
 
 .aura-element.islight{
     animation: aurafx-flicker 15s infinite alternate ease-in-out;
-    opacity: 0.5 !important;
     z-index: 9;
 }
 #scene_map{
@@ -4916,7 +4915,10 @@ div.ddbc-tab-options--layout-pill>button{
     filter: brightness(var(--darkness-filter));
     -webkit-mask-image: var(--scene-url);
 }
-
+#scene_map_container{
+    overflow: clip;
+    -webkit-mask-image: var(--scene-url);
+}
 
 @keyframes aurafx-flicker{
     0%  {filter: blur(10px);transform:scale(1);}

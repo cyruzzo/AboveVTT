@@ -2234,7 +2234,7 @@ function setTokenAuras (token, options) {
 		} else {
 			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
 			auraElement.contextmenu(function(){return false;});
-			$("#VTT").prepend(auraElement);
+			$("#scene_map_container").prepend(auraElement);
 		}
 		if(window.DM){
 			options.hidden ? token.parent().parent().find("#aura_" + tokenId).css("opacity", 0.5)
@@ -2245,10 +2245,10 @@ function setTokenAuras (token, options) {
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
 		if(options.auraislight){		
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", true);
+			token.parent().parent().find("#aura_" + tokenId).toggleClass("islight", true);
 		}
 		else{
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", false);
+			token.parent().parent().find("#aura_" + tokenId).toggleClass("islight", false);
 		}
 
 		

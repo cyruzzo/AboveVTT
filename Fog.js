@@ -689,6 +689,10 @@ function reset_canvas() {
 	$('#darkness_layer').css("width", $("#scene_map").width());
 	$('#darkness_layer').css("height", $("#scene_map").height());
 
+	$("#scene_map_container").css("width", $("#scene_map").width())
+	$("#scene_map_container").css("height", $("#scene_map").height())
+
+
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
 
