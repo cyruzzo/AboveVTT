@@ -20,6 +20,10 @@ function parse_img(url){
 		return "";
 	}
 	retval = url;
+	if(retval.startsWith("data:")){
+		alert("You cannot use urls starting with data:");
+		return "";
+	}
 	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
 		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
 	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
