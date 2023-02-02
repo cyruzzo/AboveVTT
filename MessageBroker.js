@@ -1373,8 +1373,13 @@ class MessageBroker {
 			redraw_text();
 			apply_zoom_from_storage();
 
+
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
+   	 	if(window.DM && darknessPercent < 10){
+   	 		darknessPercent = 10;
+   	 	}
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+
 
 			set_default_vttwrapper_size()
 			
