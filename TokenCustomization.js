@@ -825,7 +825,7 @@ function rebuild_ddb_npcs(redrawList = false) {
     JSON.stringify(playableRaces)
     */
     // then copy the output and paste it into the JSON.parse here. Everything else is taken care of
-    const playableRaceIds = JSON.parse('["16-dragonborn","13-dwarf","3-elf","18-gnome","20-half-elf","14-halfling","2-half-orc","1-human","7-tiefling","410992-leonin","410993-satyr","706719-lineages","883673-owlin","1026377-aarakocra","1026378-aasimar","1026379-air-genasi","1026380-bugbear","1026381-centaur","1026382-changeling","1026383-deep-gnome","1026384-duergar","1026385-earth-genasi","1026386-eladrin","814913-fairy","1026387-firbolg","1026388-fire-genasi","1026389-githyanki","1026390-githzerai","1026391-goblin","1026392-goliath","814914-harengon","1026393-hobgoblin","1026394-kenku","1026395-kobold","1026396-lizardfolk","1026397-minotaur","1026398-orc","1026399-satyr","1026400-sea-elf","1026401-shadar-kai","1026402-shifter","1026403-tabaxi","1026404-tortle","1026405-triton","1026406-water-genasi","1026407-yuan-ti","24-aasimar","32-bugbear","25-firbolg","33-goblin","34-hobgoblin","28-kenku","516426-kobold","29-lizardfolk","516433-orc","30-tabaxi","31-triton","37-yuan-ti-pureblood","40-feral-tiefling","41-tortle","260666-changeling","260720-kalashtar","260758-shifter","260828-warforged","1121694-astral-elf","1121695-autognome","1121696-giff","1121697-hadozee","1121698-plasmoid","1121699-thri-kreen","25294-gith","67624-centaur","67607-loxodon","67599-minotaur","67585-simic-hybrid","67582-vedalken","169862-verdan","229754-locathah","302384-grung","4-aarakocra","23-genasi","22-goliath"]');
+    const playableRaceIds = JSON.parse('["16-dragonborn","13-dwarf","3-elf","18-gnome","20-half-elf","14-halfling","2-half-orc","1-human","7-tiefling","410992-leonin","410993-satyr","883673-owlin","1026377-aarakocra","1026378-aasimar","1026379-air-genasi","1026380-bugbear","1026381-centaur","1026382-changeling","1026383-deep-gnome","1026384-duergar","1026385-earth-genasi","1026386-eladrin","814913-fairy","1026387-firbolg","1026388-fire-genasi","1026389-githyanki","1026390-githzerai","1026391-goblin","1026392-goliath","814914-harengon","1026393-hobgoblin","1026394-kenku","1026395-kobold","1026396-lizardfolk","1026397-minotaur","1026398-orc","1026399-satyr","1026400-sea-elf","1026401-shadar-kai","1026402-shifter","1026403-tabaxi","1026404-tortle","1026405-triton","1026406-water-genasi","1026407-yuan-ti","24-aasimar","32-bugbear","25-firbolg","33-goblin","34-hobgoblin","28-kenku","516426-kobold","29-lizardfolk","516433-orc","30-tabaxi","31-triton","37-yuan-ti-pureblood","706719-lineages","40-feral-tiefling","41-tortle","260666-changeling","260720-kalashtar","260758-shifter","260828-warforged","1121694-astral-elf","1121695-autognome","1121696-giff","1121697-hadozee","1121698-plasmoid","1121699-thri-kreen","25294-gith","67624-centaur","67607-loxodon","67599-minotaur","67585-simic-hybrid","67582-vedalken","169862-verdan","229754-locathah","1214237-kender","302384-grung","4-aarakocra","23-genasi","22-goliath"]');
 
     const uglyCapitalization = function(str) {
         let capitalizeNext = true;
@@ -854,6 +854,7 @@ function rebuild_ddb_npcs(redrawList = false) {
         } else if (name.includes("Genasi") || name.includes("Simic")) { // Most names have hyphens, but Simic Hybrid and all the Genasi variants have spaces.
             name = name.replaceAll("-", " ");
         }
+        console.debug("rebuild_ddb_npcs Adding playable race", name, portraitId);
         if (playableRaces[name]) {
             playableRaces[name].push(portraitId);
         } else {
@@ -865,7 +866,7 @@ function rebuild_ddb_npcs(redrawList = false) {
         const portraitIds = playableRaces[playableRaceName];
         let altImages = [];
         portraitIds.forEach(pId => {
-            altImages = altImages.concat(window.ddbPortraits.filter(p => p.raceId === pId).map(p => p.avatarUrl))
+            altImages = altImages.concat(window.ddbPortraits.filter(p => p.raceId === pId).map(p => p.avatarUrl));
         });
         if (altImages.length > 0) { // no need to add it if DDB doesn't have any images for it
             window.tokenListItems.push(SidebarListItem.DDBToken({
@@ -873,6 +874,8 @@ function rebuild_ddb_npcs(redrawList = false) {
                 name: playableRaceName,
                 alternativeImages: altImages
             }));
+        } else {
+            console.log("rebuild_ddb_npcs DDB doesn't have any images for", playableRaceName);
         }
     }
 
