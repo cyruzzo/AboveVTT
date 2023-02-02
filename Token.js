@@ -2245,7 +2245,7 @@ function setTokenAuras (token, options) {
 		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
-		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
+		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius/window.CURRENT_SCENE_DATA.scale_factor}px, ${options.aura2.color} ${auraRadius/window.CURRENT_SCENE_DATA.scale_factor}px);`;
 		const totalSize = parseInt(options.size) + (2 * totalAura);
 		const absPosOffset = (options.size - totalSize) / 2;
 		const auraStyles = `width:${totalSize}px;
