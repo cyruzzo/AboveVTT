@@ -2732,7 +2732,7 @@ function paste_selected_tokens() {
 		let id = window.TOKEN_PASTE_BUFFER[i];
 		let token = window.all_token_objects[id];
 		if (token == undefined || token.isPlayer()) continue; // only allow copy/paste for monster tokens, and protect against pasting deleted tokens
-		let options = Object.assign({}, token.options);
+		let options = $.extend(true, {}, token.options);
 		let newId = uuid();
 		options.id = newId;
 		// TODO: figure out the location under the cursor and paste there instead of doing center of view
