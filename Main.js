@@ -363,7 +363,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		}
 
 		var newmap = $('<div style="width:' + width + 'px;height:' + height + 'px;position:absolute;top:0;left:0;z-index:10" id="scene_map" />');
-		$("#VTT").append(newmap);
+		$("#scene_map_container").append(newmap);
 		videoid = youtube_parser(url);
 		window.YTPLAYER = new YT.Player('scene_map', {
 			width: width,
@@ -395,7 +395,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		};
 
 		window.YTTIMEOUT = setTimeout(smooth, 5000);
-
+		$("#scene_map_container").toggleClass('video', true);
 		callback();
 	}
 	else if (is_video === "0" || !is_video) {
@@ -419,6 +419,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		$("#scene_map_container").append(newmap);
 		$("#scene_map_container").css("width", $("#scene_map").width())
 		$("#scene_map_container").css("height", $("#scene_map").height())
+		$("#scene_map_container").toggleClass('video', false);
 
 	}
 	else {
@@ -440,8 +441,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				$('#scene_map').height(this.videoHeight);
 			});
 		}
-		$("#VTT").append(newmap);
+		$("#scene_map_container").append(newmap);
+		$("#scene_map_container").toggleClass('video', true);
 	}
+	$("#darkness_layer").show();
 
 }
 

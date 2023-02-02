@@ -4913,10 +4913,15 @@ div.ddbc-tab-options--layout-pill>button{
     z-index: 8;
     background: #fff;
     filter: brightness(var(--darkness-filter));
+
+}
+#scene_map_container:not(.video) #darkness_layer{
     -webkit-mask-image: var(--scene-url);
 }
 #scene_map_container{
     overflow: clip;
+}
+#scene_map_container:not(.video){
     -webkit-mask-image: var(--scene-url);
 }
 
