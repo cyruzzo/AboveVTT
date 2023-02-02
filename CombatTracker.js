@@ -203,8 +203,11 @@ function init_combat_tracker(){
 			ct_remove_token(window.all_token_objects[id], false);
 			if(window.TOKEN_OBJECTS[id] != undefined){
 				window.TOKEN_OBJECTS[id].options.ct_show = undefined;
-				if(window.TOKEN_OBJECTS[id].round != undefined){
-					delete window.TOKEN_OBJECTS[tokenID].options.round;	
+				if(window.TOKEN_OBJECTS[id].options.round != undefined){
+					delete window.TOKEN_OBJECTS[id].options.round;	
+				}
+				if(window.TOKEN_OBJECTS[id].options.current != undefined){
+					delete window.TOKEN_OBJECTS[id].options.current;	
 				}
 				window.TOKEN_OBJECTS[id].update_and_sync();
 			}
@@ -588,7 +591,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	del.click(
 		function(){
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){
-				window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;
+				window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;	
+				if(window.TOKEN_OBJECTS[token.options.id].options.round != undefined){
+					delete window.TOKEN_OBJECTS[token.options.id].options.round;	
+				}
+				if(window.TOKEN_OBJECTS[token.options.id].options.current != undefined){
+					delete window.TOKEN_OBJECTS[token.options.id].options.current;	
+				}
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}
 			if(window.all_token_objects[token.options.id] != undefined){
@@ -797,7 +806,18 @@ function ct_load(data=null){
 			}		
 		}
 		if(data.current){
+			for (tokenID in window.TOKEN_OBJECTS){
+				if(window.TOKEN_OBJECTS[tokenID].options.current != undefined && tokenID != data.current){
+					delete window.TOKEN_OBJECTS[tokenID].options.current;
+					window.TOKEN_OBJECTS[tokenID].update_and_sync();
+				}
+			}
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
+			if(window.TOKEN_OBJECTS[data.current] != undefined){
+				window.TOKEN_OBJECTS[data.current].options.current = true;
+				window.TOKEN_OBJECTS[data.current].update_and_sync();
+			}
+
 		}
 		else{
 			for (tokenID in window.TOKEN_OBJECTS){
