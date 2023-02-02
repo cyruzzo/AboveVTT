@@ -1301,6 +1301,11 @@ div#combat_button{
     transform: translateX(-50%) scale(min(max(1, 0.5/var(--window-zoom)), 3));
     transition: 250ms transform linear 500ms;
 }
+
+.hpbar.greater-than-10-wide:focus-within,
+.hpbar.greater-than-10-wide:hover{
+    transform: translateX(-50%);
+}
 .hpbar.medium:focus-within,
 .hpbar.medium:hover{
     transform: translateX(-50%) scale(min(max(1, 1/var(--window-zoom)), 5));
