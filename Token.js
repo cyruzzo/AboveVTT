@@ -265,7 +265,9 @@ class Token {
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
-		this.options.ct_show = false;
+		if(this.options.ct_show !== undefined){//this is required as if it's undefined it's not in the combat tracker and changing it will add it to the combat tracker on next scene swap unintendedly.
+			this.options.ct_show = false;
+		}
 		if(this.options.monster) {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
@@ -277,7 +279,9 @@ class Token {
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
-		this.options.ct_show = true;
+		if(this.options.ct_show !== undefined){//this is required as if it's undefined it's not in the combat tracker and changing it will add it to the combat tracker on next scene swap unintendedly.		
+			this.options.ct_show = true;
+		}
 		if(this.options.monster) {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'block');
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
