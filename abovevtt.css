@@ -5052,9 +5052,7 @@ div.ddbc-tab-options--layout-pill>button{
 #fog_overlay,
 #text_overlay,
 #draw_overlay,
-#darkness_layer,
 #scene_map_container,
-#scene_map,
 #grid_overlay{
     transform: scale(var(--scene-scale));
     transform-origin: top left;
