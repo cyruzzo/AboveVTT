@@ -1523,8 +1523,8 @@ class Token {
 							if (el.length > 0) {
 								const auraSize = parseInt(el.css("width"));
 
-								el.css("top", `${selectedNewtop - ((auraSize - self.sizeHeight()) / 2)}px`);
-								el.css("left", `${selectedNewleft - ((auraSize - self.sizeWidth()) / 2)}px`);
+								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
+								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
 							}
 
 							for (let tok of $(".token.tokenselected")){
@@ -1546,10 +1546,10 @@ class Token {
 
 									const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 									if (selEl.length > 0) {
-										const auraSize = parseInt(selEl.css("width"));
+										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
 
-										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
-										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
+										selEl.css("top", `${newtop/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
+										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
 									}
 								}
 								
@@ -1728,8 +1728,8 @@ class Token {
 						let currTop = parseFloat(el.attr("data-top"));
 						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-						el.css('left', (currLeft + offsetLeft) + "px");
-						el.css('top', (currTop + offsetTop) + "px");
+						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
 
 
@@ -1757,8 +1757,8 @@ class Token {
 									let currTop = parseFloat(selEl.attr("data-top"));
 									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + offsetLeft) + "px");
-									selEl.css('top', (currTop + offsetTop) + "px");
+									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
 							}
 						}													
@@ -2239,22 +2239,22 @@ function token_health_aura(hpPercentage) {
 function setTokenAuras (token, options) {
 	if (!options.aura1) return;
 
-	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
-	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
+	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
 		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
-		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
+		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
-		const totalSize = parseInt(options.size) + (2 * totalAura);
-		const absPosOffset = (options.size - totalSize) / 2;
-		const auraStyles = `width:${totalSize}px;
-							height:${totalSize}px;
+		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totalAura);
+		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
+		const auraStyles = `width:${totalSize }px;
+							height:${totalSize }px;
 							left:${absPosOffset}px;
 							top:${absPosOffset}px;
 							background-image:${auraBg};
-							left:${parseFloat(options.left.replace('px', '')) - ((totalSize - options.size) / 2)}px;
-							top:${parseFloat(options.top.replace('px', '')) - ((totalSize - options.size) / 2)}px;
+							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							`;
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
