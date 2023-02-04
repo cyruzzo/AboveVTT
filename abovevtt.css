@@ -5037,13 +5037,18 @@ div.ddbc-tab-options--layout-pill>button{
     filter: brightness(var(--darkness-filter));
 
 }
-#scene_map_container:not(.video) #darkness_layer{
+#scene_map_container:not(.video){
     -webkit-mask-image: var(--scene-url);
 }
 #scene_map_container{
     overflow: clip;
+    transition: opacity 1.5s linear 0s;
+    opacity:1;
 }
-
+#scene_map_container.map-loading{
+    opacity: 0;
+    transition: none;
+}
 
 #temp_overlay,
 #fog_overlay,
