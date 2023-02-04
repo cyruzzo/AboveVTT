@@ -414,8 +414,6 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			newmap.height(height);
 		}
 		newmap.on("load", () => {
-			$("#scene_map_container").css("width", $("#scene_map").width())
-			$("#scene_map_container").css("height", $("#scene_map").height())
 			$("#scene_map_container").toggleClass('map-loading', false);
 		});
 		if (callback != null) {	
@@ -443,14 +441,10 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				console.log("video height:", this.videoHeight);
 				$('#scene_map').width(this.videoWidth);
 				$('#scene_map').height(this.videoHeight);
-				$("#scene_map_container").css("width", $("#scene_map").width());
-				$("#scene_map_container").css("height", $("#scene_map").height());
 				$("#scene_map_container").toggleClass('map-loading', false);
 			});
 		}
 		else{
-			$("#scene_map_container").css("width", width);
-			$("#scene_map_container").css("height", height);
 			$("#scene_map_container").toggleClass('map-loading', false);
 		}
 		$("#scene_map_container").append(newmap);

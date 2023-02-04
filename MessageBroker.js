@@ -1363,7 +1363,6 @@ class MessageBroker {
 
 			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
 			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
-			$("#VTT").css('--scene-url', `url('${data.map}')`);
 			$("#VTT").css("--scene-scale", scaleFactor)
 			
 
@@ -1375,8 +1374,8 @@ class MessageBroker {
 
 
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
-   	 	if(window.DM && darknessPercent < 10){
-   	 		darknessPercent = 10;
+   	 	if(window.DM && darknessPercent < 25){
+   	 		darknessPercent = 25;
    	 	}
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
