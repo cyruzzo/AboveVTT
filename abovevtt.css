@@ -5030,6 +5030,7 @@ div.ddbc-tab-options--layout-pill>button{
 }
 #scene_map{
     mix-blend-mode: multiply;
+    background:#000;
 }
 #darkness_layer{
     z-index: 8;
@@ -5037,9 +5038,7 @@ div.ddbc-tab-options--layout-pill>button{
     filter: brightness(var(--darkness-filter));
 
 }
-#scene_map_container:not(.video){
-    -webkit-mask-image: var(--scene-url);
-}
+
 #scene_map_container{
     overflow: clip;
     transition: opacity 1.5s linear 0s;
