@@ -438,7 +438,9 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		if (width == null) {
 			newmap.on("loadedmetadata", function (e) {
 				console.log("video width:", this.videoWidth);
-				console.log("video height:", this.videoHeight);;
+				console.log("video height:", this.videoHeight);
+				$('#scene_map').width(this.videoWidth);
+				$('#scene_map').height(this.videoHeight);
 				$("#scene_map_container").toggleClass('map-loading', false);
 			});
 		}
