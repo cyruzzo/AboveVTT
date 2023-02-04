@@ -5038,7 +5038,7 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 #scene_map_container:not(.video){
-    -webkit-mask-image: var(--scene-url);
+    -webkit-mask-box-image: var(--scene-url);
 }
 #scene_map_container{
     overflow: clip;
