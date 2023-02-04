@@ -347,8 +347,9 @@ function remove_loading_overlay() {
  * @param {Function} callback trigged after map is loaded
  */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
+	
+	$("#scene_map_container").toggleClass('map-loading', true);
 
-	$("#darkness_layer").hide();
 	remove_loading_overlay();
 
 	$("#scene_map").remove();
@@ -360,7 +361,7 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 
 	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
-
+		$("#scene_map_container").toggleClass('video', true);
 		if (width == null) {
 			width = 1920;
 			height = 1080;
@@ -399,10 +400,11 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		};
 
 		window.YTTIMEOUT = setTimeout(smooth, 5000);
-		$("#scene_map_container").toggleClass('video', true);
 		callback();
+		$("#scene_map_container").toggleClass('map-loading', false);
 	}
 	else if (is_video === "0" || !is_video) {
+		$("#scene_map_container").toggleClass('video', false);
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
 		
@@ -411,23 +413,21 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			newmap.width(width);
 			newmap.height(height);
 		}
-
-		newmap.css("opacity","0");
 		newmap.on("load", () => {
-			newmap.css('opacity', 1);
-			$("#darkness_layer").show();
+			$("#scene_map_container").css("width", $("#scene_map").width())
+			$("#scene_map_container").css("height", $("#scene_map").height())
+			$("#scene_map_container").toggleClass('map-loading', false);
 		});
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
 		$("#scene_map_container").append(newmap);
-		$("#scene_map_container").css("width", $("#scene_map").width())
-		$("#scene_map_container").css("height", $("#scene_map").height())
-		$("#scene_map_container").toggleClass('video', false);
+
 
 	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
+		$("#scene_map_container").toggleClass('video', true);
 		let newmapSize = 'width: 100vw; height: 100vh;';
 		if (width != null) {
 			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
@@ -443,12 +443,19 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				console.log("video height:", this.videoHeight);
 				$('#scene_map').width(this.videoWidth);
 				$('#scene_map').height(this.videoHeight);
+				$("#scene_map_container").css("width", $("#scene_map").width());
+				$("#scene_map_container").css("height", $("#scene_map").height());
+				$("#scene_map_container").toggleClass('map-loading', false);
 			});
 		}
+		else{
+			$("#scene_map_container").css("width", width);
+			$("#scene_map_container").css("height", height);
+			$("#scene_map_container").toggleClass('map-loading', false);
+		}
 		$("#scene_map_container").append(newmap);
-		$("#scene_map_container").toggleClass('video', true);
+		
 	}
-	$("#darkness_layer").show();
 
 }
 
