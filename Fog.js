@@ -378,8 +378,8 @@ function is_token_under_fog(tokenid){
 		return false;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-	var left = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
-	var top = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 	if (pixeldata[3] == 255)
 		return true;
@@ -389,8 +389,8 @@ function is_token_under_fog(tokenid){
 
 function is_token_under_light_aura(tokenid){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let horizontalMiddle = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
-	let verticalMiddle = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let visibleLightAuras = $(".aura-element.islight:not([style*='visibility: hidden'])");
 	
 	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
@@ -473,8 +473,8 @@ function do_check_token_visibility() {
 
 
 	for (var id in window.TOKEN_OBJECTS) {
-		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2);
-		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2);
+		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
@@ -1870,7 +1870,7 @@ function init_fog_menu(buttons){
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
-			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
+			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor]];
 			redraw_fog();
 			if(window.CLOUD){
 				sync_fog();
