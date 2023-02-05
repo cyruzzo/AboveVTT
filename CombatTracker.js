@@ -56,14 +56,10 @@ function init_combat_tracker(){
 		}
 		
 		$(childWindows['Combat Tracker'].document).find("body").attr("id", "site");
-
-		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
-		if(!window.DM){
-			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
-		}
 		ct_title_bar_exit.click();
 		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.hp`).val($(this).val());
@@ -731,12 +727,9 @@ function ct_update_popout(){
 			'width': '100%',
 			'height': '100%'
 		});
-		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
-		if(!window.DM){
-			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
-		}
 		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.hp`).val($(this).val());

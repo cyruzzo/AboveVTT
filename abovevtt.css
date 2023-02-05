@@ -434,7 +434,7 @@ a.ddbeb-button {
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: -5px;  
+    bottom: -35px;  
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
@@ -3845,11 +3845,14 @@ div#selectedTokensBorderRotationGrabberConnector  {
     position: relative;
 }
 #combat_tracker_inside #endplayerturn{
-    width: 80%;
     pointer-events: none;
     background: #ddd;
     color: #888;
     opacity: 0.5;
+    padding:0px;
+}
+.body-rpgcharacter-sheet #combat_tracker_inside #combat_footer{
+    padding-top:5px;
 }
 #combat_tracker_inside #endplayerturn.enabled,
 #combat_tracker_inside #endplayerturn.enabled:hover{
