@@ -813,7 +813,8 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]);
+				clearPolygon(ctx, d[0], d[6], true);
+				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
 			
 			}
 		}
@@ -1727,7 +1728,8 @@ function drawPolygon (
 	lineWidth,
 	mouseX = null,
 	mouseY = null,
-	scale = window.CURRENT_SCENE_DATA.scale_factor
+	scale = window.CURRENT_SCENE_DATA.scale_factor,
+	replacefog = false
 ) {
 	ctx.save();
 	ctx.beginPath();
@@ -1755,6 +1757,16 @@ function drawPolygon (
 	else if(fill){
 		ctx.fillStyle = style;
 		ctx.fill();
+		if(replacefog && window.DM)
+		{
+			ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+			ctx.stroke();
+		}
+		else if(replacefog){
+			ctx.strokeStyle = 'rgba(0,0,0,1)';
+			ctx.stroke();
+		}
+		
 	}
 	else{
 		ctx.strokeStyle = style;
@@ -1834,7 +1846,7 @@ function isPointWithinDistance(points1, points2) {
 			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor) {
+function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor, layeredFog = false) {
 
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
@@ -1850,7 +1862,8 @@ function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_fact
 	})
 	ctx.closePath();
 	ctx.fill();
-	ctx.stroke();
+	if(!layeredFog)
+		ctx.stroke();
 	ctx.restore();
 	ctx.globalCompositeOperation = "source-over";
 }
