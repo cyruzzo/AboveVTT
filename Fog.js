@@ -766,16 +766,25 @@ function redraw_fog() {
 
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
+		let adjustedArray = [];
+		let revealedScale = (d[6] != undefined) ? d[6] : window.CURRENT_SCENE_DATA.scale_factor;
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
 			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
 		}
 		if (d[5] == 0) { //REVEAL
+
 			if (d[4] == 0) { // REVEAL SQUARE
-				ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
+				for(adjusted = 0; adjusted < 4; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
-				clearCircle(ctx, d[0], d[1], d[2]);
+				for(adjusted = 0; adjusted < 3; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
 			}
 			if (d[4] == 2) {
 				// reveal ALL!!!!!!!!!!
@@ -783,22 +792,29 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
-				clearPolygon(ctx, d[0]);
+				clearPolygon(ctx, d[0], d[6]);
 			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
-				ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
+				for(adjusted = 0; adjusted < 4; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 				ctx.fillStyle = fogStyle;
-				ctx.fillRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
+				ctx.fillRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
-				clearCircle(ctx, d[0], d[1], d[2]);
-				drawCircle(ctx, d[0], d[1], d[2], fogStyle);
+				for(adjusted = 0; adjusted < 3; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
+				drawCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2], fogStyle);
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				drawPolygon(ctx, d[0], fogStyle);
+				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]);
+			
 			}
 		}
 	}
@@ -1430,7 +1446,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const centerX = window.BEGIN_MOUSEX;
 		const centerY = window.BEGIN_MOUSEY;
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
-		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1439,7 +1455,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		window.ScenesHandler.persist();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1691,19 +1707,22 @@ function drawPolygon (
 	fill = true,
 	lineWidth,
 	mouseX = null,
-	mouseY = null
+	mouseY = null,
+	scale = window.CURRENT_SCENE_DATA.scale_factor
 ) {
 	ctx.save();
 	ctx.beginPath();
-	ctx.moveTo(points[0].x/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/window.CURRENT_SCENE_DATA.scale_factor);
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.lineWidth = lineWidth;
-
+		
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 
 	if (mouseX !== null && mouseY !== null) {
-		ctx.lineTo(mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	}
 
 	ctx.closePath();
@@ -1741,7 +1760,8 @@ function savePolygon(e) {
 			null,
 			null,
 			3,
-			fog_type_to_int()
+			fog_type_to_int(), 
+			window.CURRENT_SCENE_DATA.scale_factor
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -1755,7 +1775,8 @@ function savePolygon(e) {
 			null,
 			null,
 			null,
-			window.LINEWIDTH
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
@@ -1794,7 +1815,7 @@ function isPointWithinDistance(points1, points2) {
 			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon (ctx, points) {
+function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor) {
 
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
@@ -1803,9 +1824,10 @@ function clearPolygon (ctx, points) {
 	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
-	ctx.moveTo(points[0].x/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/window.CURRENT_SCENE_DATA.scale_factor);
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 	ctx.closePath();
 	ctx.fill();
