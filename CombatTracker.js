@@ -289,6 +289,12 @@ function init_combat_tracker(){
 		ct_reorder();	
 		ct_update_popout();
 	});
+
+	endplayerturn=$('<button id="endplayerturn">End Turn</button>');
+	endplayerturn.click(function(){
+		window.MB.sendMessage('custom/myVTT/endplayerturn');
+		$("#endplayerturn").toggleClass('enabled', false);
+	});
 	
 	
 	if(window.DM){
@@ -296,10 +302,12 @@ function init_combat_tracker(){
 		buttons.append(clear);
 		buttons.append(reroll);
 		buttons.append(next);
-		buttons.css('font-size','10px');
-		
-		ct_inside.append(buttons);
+		buttons.css('font-size','10px');	
 	}
+	else{
+		buttons.append(endplayerturn);
+	}
+	ct_inside.append(buttons);
 	
 	if(window.DM) {
 		ct.addClass('tracker-dm');
@@ -787,6 +795,12 @@ function ct_load(data=null){
 				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
+					if(window.TOKEN_OBJECTS[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
+						$("#endplayerturn").toggleClass('enabled', true);
+					}
+					else{
+						$("#endplayerturn").toggleClass('enabled', false);
+					}
 				}
 			}
 		}
@@ -816,6 +830,12 @@ function ct_load(data=null){
 			if(window.TOKEN_OBJECTS[data.current] != undefined){
 				window.TOKEN_OBJECTS[data.current].options.current = true;
 				window.TOKEN_OBJECTS[data.current].update_and_sync();
+			}
+			if(window.TOKEN_OBJECTS[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
+				$("#endplayerturn").toggleClass('enabled', true);
+			}
+			else{
+				$("#endplayerturn").toggleClass('enabled', false);
 			}
 
 		}

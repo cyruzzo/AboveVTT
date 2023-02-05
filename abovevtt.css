@@ -3844,6 +3844,25 @@ div#selectedTokensBorderRotationGrabberConnector  {
     top: 3px;
     position: relative;
 }
+#combat_tracker_inside #endplayerturn{
+    width: 80%;
+    pointer-events: none;
+    background: #ddd;
+    color: #888;
+    opacity: 0.5;
+}
+#combat_tracker_inside #endplayerturn.enabled,
+#combat_tracker_inside #endplayerturn.enabled:hover{
+    pointer-events:all;
+    color:#fff;
+    background: #c53131;  
+    opacity: 1;
+}
+#combat_tracker_inside #endplayerturn.enabled:active{
+    transform: translate(-1px, 1px);
+    box-shadow: inset 1px 1px 4px 0px #0008;  
+}
+
 #tokenOptionsPopup{
     position: fixed;
     z-index: 59000;

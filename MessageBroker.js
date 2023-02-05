@@ -649,6 +649,9 @@ class MessageBroker {
 					window.JOURNAL.sync();
 				}	
 			}
+			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
+					$("#combat_next_button").click();				
+			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad, msg.data.playing);
 			}
