@@ -859,11 +859,23 @@ function redraw_drawings() {
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text"))
 
 	for (var i = 0; i < drawings.length; i++) {
-		const [shape, fill, color, x, y, width, height, lineWidth] = drawings[i];
+
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
 		const isFilled = fill === "filled"
 
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone"){
+			x = x / adjustedScale;
+			y = y / adjustedScale;
+			height = height / adjustedScale;
+			width = width / adjustedScale;
+		}
+
+
 		if (shape == "eraser") {
-			ctx.clearRect(x, y, width, height);
+			ctx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		if (shape == "rect") {
 			drawRect(ctx,x, y, width, height, color, isFilled, lineWidth);
@@ -876,14 +888,14 @@ function redraw_drawings() {
 			drawCone(ctx, x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "line") {
-			drawLine(ctx,x, y, width, height, color, lineWidth);
+			drawLine(ctx,x, y, width, height, color, lineWidth, scale);
 		}
 		if (shape == "polygon") {
-			drawPolygon(ctx,x, color, isFilled, lineWidth);
+			drawPolygon(ctx,x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if (shape == "brush") {
-			drawBrushstroke(ctx, x, color, lineWidth, false);
+			drawBrushstroke(ctx, x, color, lineWidth, scale);
 		}
 	}
 }
@@ -1258,7 +1270,8 @@ function drawing_mouseup(e) {
 		 window.BEGIN_MOUSEY,
 		 width,
 		 height,
-		 window.LINEWIDTH];
+		 window.LINEWIDTH,
+		 window.CURRENT_SCENE_DATA.scale_factor];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw")){
@@ -1664,17 +1677,20 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 
 }
 
-function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
+function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6, scale=window.CURRENT_SCENE_DATA.scale_factor)
 {
 	ctx.beginPath();
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
-	ctx.moveTo(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor);
-	ctx.lineTo(endx/window.CURRENT_SCENE_DATA.scale_factor, endy/window.CURRENT_SCENE_DATA.scale_factor);
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor);	
+
+	ctx.moveTo(startx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, starty/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(endx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, endy/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
-function drawBrushstroke(ctx, points, style, lineWidth=6)
+function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor)
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
@@ -1685,18 +1701,21 @@ function drawBrushstroke(ctx, points, style, lineWidth=6)
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
 	ctx.beginPath();
-	ctx.moveTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor);
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+
+	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (var i = 1, len = points.length; i < len; i++) {
 	// we pick the point between pi+1 & pi+2 as the
 	// end point and p1 as our control point
 	var midPoint = midPointBtw(p1, p2);
-	ctx.quadraticCurveTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	p1 = points[i];
 	p2 = points[i+1];
 	}
 	// Draw last line as a straight line
-	ctx.lineTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
