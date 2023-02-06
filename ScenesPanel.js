@@ -936,6 +936,7 @@ function edit_scene_dialog(scene_id) {
 				$('#aligner1').remove();
 				$('#aligner2').remove();
 				window.ScenesHandler.scenes[currentSceneData.id] = currentSceneData;
+				window.ScenesHandler.persist_scene(currentSceneData.id);
 				$("#tokens").show();
 				$(".dm_scenes_button.selected-scene").click();
 			});
