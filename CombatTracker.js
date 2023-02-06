@@ -293,6 +293,7 @@ function init_combat_tracker(){
 		}
 		window.MB.sendMessage('custom/myVTT/endplayerturn', data);
 		$("#endplayerturn").toggleClass('enabled', false);
+		$("#endplayerturn").prop('disabled', true);
 	});
 	
 	
@@ -793,9 +794,11 @@ function ct_load(data=null){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 					if(window.TOKEN_OBJECTS[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
 						$("#endplayerturn").toggleClass('enabled', true);
+						$("#endplayerturn").prop('disabled', false);
 					}
 					else{
 						$("#endplayerturn").toggleClass('enabled', false);
+						$("#endplayerturn").prop('disabled', true);
 					}
 				}
 			}
@@ -829,9 +832,11 @@ function ct_load(data=null){
 			}
 			if(window.TOKEN_OBJECTS[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
 				$("#endplayerturn").toggleClass('enabled', true);
+				$("#endplayerturn").prop('disabled', false);
 			}
 			else{
 				$("#endplayerturn").toggleClass('enabled', false);
+				$("#endplayerturn").prop('disabled', true);
 			}
 
 		}
