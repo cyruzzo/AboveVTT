@@ -272,7 +272,7 @@ function init_combat_tracker(){
 	
 	prev=$("<button id='combat_prev_button'>PREV</button>");
 	prev.click(function(){
-		if($("#combat_area tr").length==0)
+		if($("#combat_area tr").length==0 || (document.getElementById('round_number').value <= 1 && $("#combat_area tr").first().attr('data-current') == 1))
 			return;
 
 		current=$("#combat_area tr[data-current=1]");
