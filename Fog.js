@@ -381,7 +381,7 @@ function is_token_under_fog(tokenid){
 	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-	if (pixeldata[3] == 255)
+	if (pixeldata[3] == 255 && !window.TOKEN_OBJECTS[tokenid].options.revealInFog)
 		return true;
 	else
 		return false;
@@ -424,7 +424,8 @@ function check_single_token_visibility(id){
 			let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 			let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 
-			if (is_token_under_fog(id) || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id))) {
+			if (is_token_under_fog(id) || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
+
 				$(selector).hide();
 				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 				{
@@ -479,12 +480,12 @@ function do_check_token_visibility() {
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 		let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 			
-		if (pixeldata[3] == 255 || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id))) {
-
+		if (pixeldata[3] == 255 || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
@@ -766,16 +767,25 @@ function redraw_fog() {
 
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
+		let adjustedArray = [];
+		let revealedScale = (d[6] != undefined) ? d[6] : window.CURRENT_SCENE_DATA.scale_factor;
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
 			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
 		}
 		if (d[5] == 0) { //REVEAL
+
 			if (d[4] == 0) { // REVEAL SQUARE
-				ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
+				for(adjusted = 0; adjusted < 4; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
-				clearCircle(ctx, d[0], d[1], d[2]);
+				for(adjusted = 0; adjusted < 3; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
 			}
 			if (d[4] == 2) {
 				// reveal ALL!!!!!!!!!!
@@ -783,22 +793,30 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
-				clearPolygon(ctx, d[0]);
+				clearPolygon(ctx, d[0], d[6]);
 			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
-				ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
+				for(adjusted = 0; adjusted < 4; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 				ctx.fillStyle = fogStyle;
-				ctx.fillRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
+				ctx.fillRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
-				clearCircle(ctx, d[0], d[1], d[2]);
-				drawCircle(ctx, d[0], d[1], d[2], fogStyle);
+				for(adjusted = 0; adjusted < 3; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
+				drawCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2], fogStyle);
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				drawPolygon(ctx, d[0], fogStyle);
+				clearPolygon(ctx, d[0], d[6], true);
+				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
+			
 			}
 		}
 	}
@@ -843,11 +861,23 @@ function redraw_drawings() {
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text"))
 
 	for (var i = 0; i < drawings.length; i++) {
-		const [shape, fill, color, x, y, width, height, lineWidth] = drawings[i];
+
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
 		const isFilled = fill === "filled"
 
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone"){
+			x = x / adjustedScale;
+			y = y / adjustedScale;
+			height = height / adjustedScale;
+			width = width / adjustedScale;
+		}
+
+
 		if (shape == "eraser") {
-			ctx.clearRect(x, y, width, height);
+			ctx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		if (shape == "rect") {
 			drawRect(ctx,x, y, width, height, color, isFilled, lineWidth);
@@ -860,14 +890,14 @@ function redraw_drawings() {
 			drawCone(ctx, x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "line") {
-			drawLine(ctx,x, y, width, height, color, lineWidth);
+			drawLine(ctx,x, y, width, height, color, lineWidth, scale);
 		}
 		if (shape == "polygon") {
-			drawPolygon(ctx,x, color, isFilled, lineWidth);
+			drawPolygon(ctx,x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if (shape == "brush") {
-			drawBrushstroke(ctx, x, color, lineWidth, false);
+			drawBrushstroke(ctx, x, color, lineWidth, scale);
 		}
 	}
 }
@@ -1242,7 +1272,8 @@ function drawing_mouseup(e) {
 		 window.BEGIN_MOUSEY,
 		 width,
 		 height,
-		 window.LINEWIDTH];
+		 window.LINEWIDTH,
+		 window.CURRENT_SCENE_DATA.scale_factor];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw")){
@@ -1430,7 +1461,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const centerX = window.BEGIN_MOUSEX;
 		const centerY = window.BEGIN_MOUSEY;
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
-		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1439,7 +1470,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		window.ScenesHandler.persist();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1648,17 +1679,20 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 
 }
 
-function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
+function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6, scale=window.CURRENT_SCENE_DATA.scale_factor)
 {
 	ctx.beginPath();
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
-	ctx.moveTo(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor);
-	ctx.lineTo(endx/window.CURRENT_SCENE_DATA.scale_factor, endy/window.CURRENT_SCENE_DATA.scale_factor);
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor);	
+
+	ctx.moveTo(startx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, starty/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(endx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, endy/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
-function drawBrushstroke(ctx, points, style, lineWidth=6)
+function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor)
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
@@ -1669,18 +1703,21 @@ function drawBrushstroke(ctx, points, style, lineWidth=6)
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
 	ctx.beginPath();
-	ctx.moveTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor);
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+
+	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (var i = 1, len = points.length; i < len; i++) {
 	// we pick the point between pi+1 & pi+2 as the
 	// end point and p1 as our control point
 	var midPoint = midPointBtw(p1, p2);
-	ctx.quadraticCurveTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	p1 = points[i];
 	p2 = points[i+1];
 	}
 	// Draw last line as a straight line
-	ctx.lineTo(p1.x/window.CURRENT_SCENE_DATA.scale_factor, p1.y/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
@@ -1691,19 +1728,23 @@ function drawPolygon (
 	fill = true,
 	lineWidth,
 	mouseX = null,
-	mouseY = null
+	mouseY = null,
+	scale = window.CURRENT_SCENE_DATA.scale_factor,
+	replacefog = false
 ) {
 	ctx.save();
 	ctx.beginPath();
-	ctx.moveTo(points[0].x/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/window.CURRENT_SCENE_DATA.scale_factor);
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.lineWidth = lineWidth;
-
+		
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 
 	if (mouseX !== null && mouseY !== null) {
-		ctx.lineTo(mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	}
 
 	ctx.closePath();
@@ -1717,6 +1758,16 @@ function drawPolygon (
 	else if(fill){
 		ctx.fillStyle = style;
 		ctx.fill();
+		if(replacefog && window.DM)
+		{
+			ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+			ctx.stroke();
+		}
+		else if(replacefog){
+			ctx.strokeStyle = 'rgba(0,0,0,1)';
+			ctx.stroke();
+		}
+		
 	}
 	else{
 		ctx.strokeStyle = style;
@@ -1741,7 +1792,8 @@ function savePolygon(e) {
 			null,
 			null,
 			3,
-			fog_type_to_int()
+			fog_type_to_int(), 
+			window.CURRENT_SCENE_DATA.scale_factor
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -1755,7 +1807,8 @@ function savePolygon(e) {
 			null,
 			null,
 			null,
-			window.LINEWIDTH
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
@@ -1794,7 +1847,7 @@ function isPointWithinDistance(points1, points2) {
 			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon (ctx, points) {
+function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor, layeredFog = false) {
 
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
@@ -1803,13 +1856,15 @@ function clearPolygon (ctx, points) {
 	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
-	ctx.moveTo(points[0].x/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/window.CURRENT_SCENE_DATA.scale_factor);
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 	ctx.closePath();
 	ctx.fill();
-	ctx.stroke();
+	if(!layeredFog)
+		ctx.stroke();
 	ctx.restore();
 	ctx.globalCompositeOperation = "source-over";
 }
@@ -1870,7 +1925,8 @@ function init_fog_menu(buttons){
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
-			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor]];
+			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor, 0, 0, window.CURRENT_SCENE_DATA.scale_factor]];
+
 			redraw_fog();
 			if(window.CLOUD){
 				sync_fog();

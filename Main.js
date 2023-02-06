@@ -1158,7 +1158,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.82-beta4</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.83-beta1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -1198,7 +1198,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2</b>");
+	cont.append("Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
@@ -1667,6 +1667,42 @@ function observe_character_sheet_aoe(documentToObserve) {
 	});
 
 	aoe_observer.observe(mutation_target, mutation_config);
+}
+
+/**
+* Observers character sheet for Dice Roll formulae.
+* @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
+*/
+function observe_character_sheet_dice_rolls(documentToObserve) {
+    if (!is_characters_page()) {
+        return;
+    }
+
+    const dice_roll_observer = new MutationObserver(function() {
+        const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-visited')");
+        notes.each(function() {
+            $(this).addClass("above-vtt-visited");
+            try {
+                const text = $(this).text();
+                if (text.match(slashCommandRegex)?.[0]) {
+                    const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
+                    const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
+                    button.on("click", function (clickEvent) {
+                        clickEvent.stopPropagation();
+                        window.diceRoller.roll(diceRoll);
+                    });
+                    $(this).empty();
+                    $(this).append(button);
+                }
+            } catch (e) {
+                console.warn("Failed to parse DiceRoll expression", e);
+            }
+        });
+    });
+
+    const mutation_target = documentToObserve.get(0);
+    const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+    dice_roll_observer.observe(mutation_target, mutation_config);
 }
 
 /** DEPRECATED - dont use */
@@ -2298,6 +2334,7 @@ function init_character_page_sidebar() {
 			init_splash();
 			$("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
 			observe_character_sheet_aoe($(document));
+			observe_character_sheet_dice_rolls($(document));
 			// WIP to allow players to add in tokens from their extra tab
 			// observe_character_sheet_companion($(document));
 			
