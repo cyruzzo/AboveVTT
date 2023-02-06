@@ -1453,7 +1453,24 @@ function fill_importer(scene_set, start) {
 	buttons.append(next);
 	footer.append(buttons);
 
-	pageNumbersDiv = $(`<div class='page-number'>${pageNumber} / ${totalPages}</div>`)
+	let pageNumbersDiv = document.createElement('div');
+	pageNumbersDiv.classList.add('page-number');
+
+	let pageSelect = document.createElement('input');
+	pageSelect.classList.add('styled-number-input');
+	pageSelect.value = pageNumber;
+	pageSelect.addEventListener('change', () => {
+		const val = pageSelect.value;
+		if (val && val >= 0 && val <= totalPages && val > 0) {
+			fill_importer(scene_set, (val * 8) - 8);
+		}
+	})
+
+	let totalPagesSpan = document.createElement('span');
+	totalPagesSpan.innerText = `/ ${totalPages}`;
+	totalPagesSpan.style.marginLeft = '5px';
+	pageNumbersDiv.append(pageSelect);
+	pageNumbersDiv.append(totalPagesSpan);
 	footer.append(pageNumbersDiv);
 
 	if(scene_set.length == 0){
