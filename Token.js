@@ -265,7 +265,9 @@ class Token {
 	hide() {
 		this.update_from_page();
 		this.options.hidden = true;
-		this.options.ct_show = false;
+		if(this.options.ct_show !== undefined){//this is required as if it's undefined it's not in the combat tracker and changing it will add it to the combat tracker on next scene swap unintendedly.
+			this.options.ct_show = false;
+		}
 		if(this.options.monster) {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'block');
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
@@ -277,7 +279,9 @@ class Token {
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
-		this.options.ct_show = true;
+		if(this.options.ct_show !== undefined){//this is required as if it's undefined it's not in the combat tracker and changing it will add it to the combat tracker on next scene swap unintendedly.		
+			this.options.ct_show = true;
+		}
 		if(this.options.monster) {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'block');
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
@@ -513,6 +517,34 @@ class Token {
 		console.group("update_health_aura")
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		let tokenData = this.munge_token_data()
+		if($(`.token[data-id='${this.options.id}']>.hpvisualbar`).length<1){
+			let hpvisualbar = $(`<div class='hpvisualbar'></div>`);
+			$(`.token[data-id='${this.options.id}']`).append(hpvisualbar);
+		}
+
+
+		if(this.options.healthauratype == undefined){
+			if(this.options.disableaura){
+				this.options.healthauratype = "none"
+			}
+			if(this.options.enablepercenthpbar){
+				this.options.healthauratype = "bar"
+			}
+		}
+		else{
+			if(this.options.healthauratype == "none"){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = false;
+			} else if(this.options.healthauratype == "bar"){
+				this.options.disableaura = true;
+				this.options.enablepercenthpbar = true;
+			} else if(this.options.healthauratype == "aura"){
+				this.options.disableaura = false;
+				this.options.enablepercenthpbar = false;
+			}
+		}
+
+
 		if (tokenData.max_hp > 0) {
 			if(window.PLAYER_STATS[this.options.id] || !tokenData.temp_hp) {	
 				var tokenHpAuraColor = token_health_aura(
@@ -737,8 +769,6 @@ class Token {
 		var self = this;
 		var bar_height = this.sizeHeight() * 0.2;
 
-		if (bar_height > 60)
-			bar_height = 60;
 
 		bar_height = Math.ceil(bar_height);
 		var hpbar = $("<div class='hpbar'/>");
@@ -750,6 +780,8 @@ class Token {
 		hpbar.toggleClass('tiny-or-smaller', false);
 		
 		let tokenWidth = this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps;
+		if(tokenWidth >= 10)
+			hpbar.toggleClass('greater-than-10-wide', true);
 		if(tokenWidth < 2 && tokenWidth >= 1)
 			hpbar.toggleClass('medium', true);
 		if(tokenWidth < 1)
@@ -761,8 +793,6 @@ class Token {
 		hpbar.css("--font-size",fs);
 
 		var input_width = Math.floor(this.sizeWidth() * 0.3);
-		if (input_width > 90)
-			input_width = 90;
 
 		var hp_input = $("<input class='hp'>").css('width', input_width)
 		hp_input.val(this.options.hp);
@@ -1168,6 +1198,7 @@ class Token {
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
 			old.css("--token-rotation", rotation+"deg");
+			old.css("--token-scale", imageScale);
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			var selector = "tr[data-target='"+this.options.id+"']";
@@ -1342,6 +1373,7 @@ class Token {
 					imgClass = 'token-image preserve-aspect-ratio';
 				}
 				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
+				tok.css("--token-scale", imageScale)
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
@@ -1491,8 +1523,8 @@ class Token {
 							if (el.length > 0) {
 								const auraSize = parseInt(el.css("width"));
 
-								el.css("top", `${selectedNewtop - ((auraSize - self.sizeHeight()) / 2)}px`);
-								el.css("left", `${selectedNewleft - ((auraSize - self.sizeWidth()) / 2)}px`);
+								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
+								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
 							}
 
 							for (let tok of $(".token.tokenselected")){
@@ -1514,10 +1546,10 @@ class Token {
 
 									const selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 									if (selEl.length > 0) {
-										const auraSize = parseInt(selEl.css("width"));
+										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
 
-										selEl.css("top", `${newtop - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()) / 2)}px`);
-										selEl.css("left", `${newleft - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()) / 2)}px`);
+										selEl.css("top", `${newtop/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
+										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
 									}
 								}
 								
@@ -1622,7 +1654,7 @@ class Token {
 							const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
 
 							if(WaypointManager.numWaypoints > 0){
-								WaypointManager.checkNewWaypoint(tokenMidX, tokenMidY)
+								WaypointManager.checkNewWaypoint(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor)
 								WaypointManager.cancelFadeout()
 							}
 							window.BEGIN_MOUSEX = tokenMidX;
@@ -1680,8 +1712,8 @@ class Token {
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
 						clear_temp_canvas();
-						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, tokenMidX, tokenMidY);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2)), Math.round(tokenPosition.y + self.options.size + 10));
+						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
@@ -1696,8 +1728,8 @@ class Token {
 						let currTop = parseFloat(el.attr("data-top"));
 						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-						el.css('left', (currLeft + offsetLeft) + "px");
-						el.css('top', (currTop + offsetTop) + "px");
+						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
 
 
@@ -1725,8 +1757,8 @@ class Token {
 									let currTop = parseFloat(selEl.attr("data-top"));
 									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
 									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + offsetLeft) + "px");
-									selEl.css('top', (currTop + offsetTop) + "px");
+									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
 							}
 						}													
@@ -1863,8 +1895,8 @@ class Token {
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  window.CURRENT_SCENE_DATA.width  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
-			bottom: window.CURRENT_SCENE_DATA.height + (sizeOnGrid.y * (multi -1)), // ... same as above
+			right:  window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
+			bottom: window.CURRENT_SCENE_DATA.height * window.CURRENT_SCENE_DATA.scale_factor + (sizeOnGrid.y * (multi -1)), // ... same as above
 		};	
 	}
 	
@@ -2207,22 +2239,22 @@ function token_health_aura(hpPercentage) {
 function setTokenAuras (token, options) {
 	if (!options.aura1) return;
 
-	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
-	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps : 0;
+	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
 		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
-		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size / 2)) : 0;
+		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
-		const totalSize = parseInt(options.size) + (2 * totalAura);
-		const absPosOffset = (options.size - totalSize) / 2;
-		const auraStyles = `width:${totalSize}px;
-							height:${totalSize}px;
+		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totalAura);
+		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
+		const auraStyles = `width:${totalSize }px;
+							height:${totalSize }px;
 							left:${absPosOffset}px;
 							top:${absPosOffset}px;
 							background-image:${auraBg};
-							left:${parseFloat(options.left.replace('px', '')) - ((totalSize - options.size) / 2)}px;
-							top:${parseFloat(options.top.replace('px', '')) - ((totalSize - options.size) / 2)}px;
+							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							`;
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
@@ -2230,7 +2262,7 @@ function setTokenAuras (token, options) {
 		} else {
 			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
 			auraElement.contextmenu(function(){return false;});
-			$("#VTT").prepend(auraElement);
+			$("#scene_map_container").prepend(auraElement);
 		}
 		if(window.DM){
 			options.hidden ? token.parent().parent().find("#aura_" + tokenId).css("opacity", 0.5)
@@ -2241,10 +2273,10 @@ function setTokenAuras (token, options) {
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
 		if(options.auraislight){		
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", true);
+			token.parent().parent().find("#aura_" + tokenId).toggleClass("islight", true);
 		}
 		else{
-			token.parent().parent().children("#aura_" + tokenId).toggleClass("islight", false);
+			token.parent().parent().find("#aura_" + tokenId).toggleClass("islight", false);
 		}
 
 		
@@ -2294,6 +2326,7 @@ function setTokenBase(token, options) {
 	}
 	if (options.tokenStyleSelect !== "noConstraint") {
 		token.children("img").toggleClass("freeform", false);
+		token.toggleClass("freeform", false);
 	}
 
 	if (options.tokenStyleSelect === "circle") {
@@ -2302,6 +2335,7 @@ function setTokenBase(token, options) {
 		options.legacyaspectratio = true;
 		token.children("img").css("border-radius", "50%")
 		token.children("img").removeClass("preserve-aspect-ratio");
+		token.toggleClass("square", false);
 	}
 	else if(options.tokenStyleSelect === "square"){
 		//Square
@@ -2309,6 +2343,7 @@ function setTokenBase(token, options) {
 		options.legacyaspectratio = true;
 		token.children("img").css("border-radius", "0");
 		token.children("img").removeClass("preserve-aspect-ratio");
+		token.toggleClass("square", true);
 	}
 	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken") {
 		//Freeform
@@ -2325,7 +2360,7 @@ function setTokenBase(token, options) {
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
 		token.children("img").toggleClass("freeform", true);
-
+		token.toggleClass("freeform", true);
 	}
 	else if(options.tokenStyleSelect === "virtualMiniCircle"){
 		$(`.token[data-id='${options.id}']`).prepend(base);
@@ -2695,7 +2730,7 @@ function paste_selected_tokens() {
 		let id = window.TOKEN_PASTE_BUFFER[i];
 		let token = window.all_token_objects[id];
 		if (token == undefined || token.isPlayer()) continue; // only allow copy/paste for monster tokens, and protect against pasting deleted tokens
-		let options = Object.assign({}, token.options);
+		let options = $.extend(true, {}, token.options);
 		let newId = uuid();
 		options.id = newId;
 		// TODO: figure out the location under the cursor and paste there instead of doing center of view

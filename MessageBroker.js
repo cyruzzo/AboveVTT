@@ -663,11 +663,14 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-				if(window.YTPLAYER){
 					$("#youtube_volume").val(msg.data.volume);
 					if(window.YTPLAYER)
+					{
 						window.YTPLAYER.setVolume(msg.data.volume);
-				}
+					}
+					else{
+						$("#scene_map").prop("volume", msg.data.volume/100);
+					}
 			}
 
 			if (msg.eventType == "custom/myVTT/playerdata") {
@@ -1192,7 +1195,8 @@ class MessageBroker {
 
 	handleToken(msg) {
 		var data = msg.data;
-
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		let auraislightchanged = false;
 		if(data.id == undefined)
 			return;
 
@@ -1224,6 +1228,9 @@ class MessageBroker {
 		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
+			if(data.id == playerTokenId && window.TOKEN_OBJECTS[data.id].options.auraislight != data.auraislight){
+				auraislightchanged = true;
+			}
 			for (var property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
@@ -1240,17 +1247,23 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			
 			if(playerTokenId != undefined && data.auraislight){
 				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
-						check_token_visibility()
+						check_token_visibility();
 				}
 				else{
 					check_single_token_visibility(data.id);
 				}	
 			}
 			else{
-				check_single_token_visibility(data.id);
+				if(auraislightchanged){
+					check_token_visibility();
+				}
+				else{
+					check_single_token_visibility(data.id);
+				}
+
 			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
@@ -1340,22 +1353,32 @@ class MessageBroker {
 
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			console.group("load_scenemap callback")
-			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor || 1;
+			if(!window.CURRENT_SCENE_DATA.scale_factor)
+				window.CURRENT_SCENE_DATA.scale_factor = 1;
+			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 			// Store current scene width and height
-			window.CURRENT_SCENE_DATA.width = $("#scene_map").width() * scaleFactor;
-			window.CURRENT_SCENE_DATA.height = $("#scene_map").height() * scaleFactor;
+			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
+			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
 			// Scale map according to scaleFactor
+
 			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
 			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
+			$("#VTT").css("--scene-scale", scaleFactor)
 			
+
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
 			redraw_text();
 			apply_zoom_from_storage();
 
+
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
+   	 	if(window.DM && darknessPercent < 25){
+   	 		darknessPercent = 25;
+   	 	}
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+
 
 			set_default_vttwrapper_size()
 			

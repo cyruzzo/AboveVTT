@@ -587,16 +587,16 @@ function draw_text(
     font,
     stroke,
 ) {
-    context.font = `${font.weight} ${font.style} ${font.size}px ${font.font}`;
+    context.font = `${font.weight} ${font.style} ${font.size/window.CURRENT_SCENE_DATA.scale_factor}px ${font.font}`;
     context.strokeStyle = stroke.color;
-    context.lineWidth = stroke.size;
+    context.lineWidth = stroke.size/window.CURRENT_SCENE_DATA.scale_factor;
     context.fillStyle = font.color;
 
     const lines = text.split(/\r?\n/);
     // these values are modified per line depending on the line width
     // and the alignment used
-    let x = startingX;
-    let y = startingY;
+    let x = startingX/window.CURRENT_SCENE_DATA.scale_factor;
+    let y = startingY/window.CURRENT_SCENE_DATA.scale_factor;
     // draw stroke text first
     if (font.shadow && font.shadow !== "none"){
         const shadowRegex = /(rgb\(.*\))\s(\d+px)\s(\d+px)\s(\d+px)/
@@ -633,8 +633,8 @@ function draw_text(
     });
     // loop the lines again as large stroke size will overlap the fill text
     // so add fill text in last
-    x = startingX;
-    y = startingY;
+    x = startingX/window.CURRENT_SCENE_DATA.scale_factor;
+    y = startingY/window.CURRENT_SCENE_DATA.scale_factor;
   
     context.filter = "none"
     lines.forEach((line) => {

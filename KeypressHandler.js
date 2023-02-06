@@ -298,6 +298,9 @@ window.addEventListener("keydown", async (event) => {
     if (event.shiftKey && arrowKeys.includes(event.key) ) {
         rotationKeyPresses.push(event.key)
     }
+    if((event.ctrlKey || event.metaKey) && event.key == 'a' && event.target.tagName == 'INPUT'){
+        event.target.select();
+    }
 });
 window.addEventListener("keyup", async (event) => {
     if (!event.shiftKey) {

@@ -1,6 +1,3 @@
-const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|w)\s/;
-const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|\+|-|\d+|\s+)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match.
-
 class ChatObserver {
 
     //#region PUBLIC
@@ -63,31 +60,13 @@ class ChatObserver {
     }
 
     #parseSlashCommand(text) {
-        let slashCommand = text.match(slashCommandRegex)?.[0];
-        let expression = text.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
-        let action = text.replace(slashCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
-        console.debug("ChatObserver#parseSlashCommand text: ", text, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
-        let rollType = undefined;
-        if (slashCommand.startsWith("/r")) {
-            // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
-            [action, rollType] = action.split(":") || [undefined, undefined];
-        } else if (slashCommand.startsWith("/hit")) {
-            rollType = "to hit";
-        } else if (slashCommand.startsWith("/dmg")) {
-            rollType = "damage";
-        } else if (slashCommand.startsWith("/skill")) {
-            rollType = "check";
-        } else if (slashCommand.startsWith("/save")) {
-            rollType = "save";
-        }
-
-        let diceRoll = new DiceRoll(expression, action, rollType);
+        let diceRoll = DiceRoll.fromSlashCommand(text);
         let didSend = window.diceRoller.roll(diceRoll);
         if (didSend === false) {
             // it was too complex so try to send it through rpgDiceRoller
+            let expression = text.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
             didSend = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
         }
-
         return didSend;
     }
 

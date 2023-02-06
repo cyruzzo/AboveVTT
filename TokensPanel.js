@@ -115,7 +115,7 @@ function list_item_from_monster_id(monsterId) {
 }
 
 function list_item_from_player_id(playerId) {
-    let pc = window.pcs.find(p => p.sheet = playerId);
+    let pc = window.pcs.find(p => p.sheet === playerId);
     if (pc === undefined) return undefined;
     let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
@@ -394,7 +394,7 @@ function init_tokens_panel() {
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
     add_expand_collapse_buttons_to_header(tokensPanel);
-    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
+    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
     searchInput.off("input").on("input", mydebounce(() => {
