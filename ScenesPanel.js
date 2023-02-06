@@ -1306,7 +1306,7 @@ function init_ddb_importer(target) {
 
 }
 
-function fill_importer(scene_set, start) {
+function fill_importer(scene_set, start, searchState = '') {
 	area = $("#importer_area");
 	area.empty();
 	area.css("opacity", "0");
@@ -1480,17 +1480,16 @@ function fill_importer(scene_set, start) {
 	let mapSearchContainer = document.createElement('div');
 	let mapSearchLabel = document.createElement('span');
 	mapSearchLabel.innerText = "Search By Title: ";
-	let mapSearch = '';
 	let mapSearchElement = document.createElement('input');
-	mapSearchElement.value = mapSearch;
+	mapSearchElement.value = searchState;
 	mapSearchElement.addEventListener('change', () => {
 		const value = mapSearchElement.value;
 		if (value) {
 			let clonedScenes = JSON.parse(JSON.stringify(scene_set));
 			let filteredScenes = clonedScenes.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
-			fill_importer(filteredScenes, start);
+			fill_importer(filteredScenes, start, value);
 		} else {
-			fill_importer(scene_set, start);
+			fill_importer(scene_set, start, value);
 		}
 	});
 	mapSearchContainer.append(mapSearchLabel);
