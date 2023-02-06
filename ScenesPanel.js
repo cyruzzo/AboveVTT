@@ -872,13 +872,15 @@ function edit_scene_dialog(scene_id) {
 			}
 
 			if(window.CLOUD){
-				window.ScenesHandler.persist_scene(scene_id,true,true);
+				window.ScenesHandler.persist_scene(scene_id,true);
 			}
 			else{
 				window.ScenesHandler.persist();
 				window.ScenesHandler.switch_scene(scene_id);
 			}
-			let currentSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
+			
+			window.ScenesHandler.switch_scene(scene_id);
+			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
 
 			$("#VTT").css("--scene-scale", 1)
 
@@ -935,10 +937,14 @@ function edit_scene_dialog(scene_id) {
 				exitWizard.remove();
 				$('#aligner1').remove();
 				$('#aligner2').remove();
-				window.ScenesHandler.scenes[currentSceneData.id] = currentSceneData;
-				window.ScenesHandler.persist_scene(currentSceneData.id);
+				window.WIZARDING = false;
+				window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = copiedSceneData;
+				window.ScenesHandler.scene = copiedSceneData;
+				window.CURRENT_SCENE_DATA = copiedSceneData;
+
+				window.ScenesHandler.persist_current_scene();
+				
 				$("#tokens").show();
-				$(".dm_scenes_button.selected-scene").click();
 			});
 
 		}
