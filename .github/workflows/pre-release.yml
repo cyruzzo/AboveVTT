@@ -1,0 +1,11 @@
+name: "Pre-Release"
+on:
+  release:
+    types: [prereleased]
+
+jobs:
+  pre_release_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: testing pre-release action
+        run: echo this is pre-release action
