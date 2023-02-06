@@ -36,7 +36,7 @@ function token_setting_options() {
 			type: 'dropdown',
 			options: [
 				{ value: "aura", label: "Aura", description: "Tokens will have a colored aura" },
-				{ value: "bar", label: "Bar", description: "How this bar is displayed depends on token type. Color blind alternative to auras." },
+				{ value: "bar", label: "HP Meter", description: "How this meter is displayed depends on token type. Color blind alternative to auras." },
 				{ value: "none", label: "None", description: "Tokens will not have a health visual" }
 			],
 			defaultValue: "aura"
