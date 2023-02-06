@@ -1457,10 +1457,11 @@ function fill_importer(scene_set, start) {
 	pageNumbersDiv.classList.add('page-number');
 
 	let pageSelect = document.createElement('input');
+	pageSelect.classList.add('styled-number-input');
 	pageSelect.value = pageNumber;
 	pageSelect.addEventListener('change', () => {
 		const val = pageSelect.value;
-		if (val && val >= 0) {
+		if (val && val >= 0 && val <= totalPages && val > 0) {
 			fill_importer(scene_set, (val * 8) - 8);
 		}
 	})
