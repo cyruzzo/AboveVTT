@@ -437,7 +437,7 @@ a.ddbeb-button {
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: -5px;  
+    bottom: -35px;  
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
@@ -3853,6 +3853,28 @@ div#selectedTokensBorderRotationGrabberConnector  {
     top: 3px;
     position: relative;
 }
+#combat_tracker_inside #endplayerturn{
+    pointer-events: none;
+    background: #ddd;
+    color: #888;
+    opacity: 0.5;
+    padding:0px;
+}
+.body-rpgcharacter-sheet #combat_tracker_inside #combat_footer{
+    padding-top:5px;
+}
+#combat_tracker_inside #endplayerturn.enabled,
+#combat_tracker_inside #endplayerturn.enabled:hover{
+    pointer-events:all;
+    color:#fff;
+    background: #c53131;  
+    opacity: 1;
+}
+#combat_tracker_inside #endplayerturn.enabled:active{
+    transform: translate(-1px, 1px);
+    box-shadow: inset 1px 1px 4px 0px #0008;  
+}
+
 #tokenOptionsPopup{
     position: fixed;
     z-index: 59000;

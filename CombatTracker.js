@@ -56,14 +56,10 @@ function init_combat_tracker(){
 		}
 		
 		$(childWindows['Combat Tracker'].document).find("body").attr("id", "site");
-
-		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
-		if(!window.DM){
-			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
-		}
 		ct_title_bar_exit.click();
 		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.hp`).val($(this).val());
@@ -310,6 +306,16 @@ function init_combat_tracker(){
 			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
 		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
 	});
+
+	endplayerturn=$('<button id="endplayerturn">End Turn</button>');
+	endplayerturn.click(function(){
+		let data = {
+			from: window.PLAYER_ID,
+		}
+		window.MB.sendMessage('custom/myVTT/endplayerturn', data);
+		$("#endplayerturn").toggleClass('enabled', false);
+		$("#endplayerturn").prop('disabled', true);
+	});
 	
 	
 	
@@ -318,10 +324,12 @@ function init_combat_tracker(){
 		buttons.append(clear);
 		buttons.append(reroll);
 		buttons.append(next);
-		buttons.css('font-size','10px');
-		
-		ct_inside.append(buttons);
+		buttons.css('font-size','10px');	
 	}
+	else{
+		buttons.append(endplayerturn);
+	}
+	ct_inside.append(buttons);
 	
 	if(window.DM) {
 		ct.addClass('tracker-dm');
@@ -745,12 +753,9 @@ function ct_update_popout(){
 			'width': '100%',
 			'height': '100%'
 		});
-		$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 		$(childWindows['Combat Tracker'].document).find("body").css('overflow', 'hidden');
-		if(!window.DM){
-			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside .tracker-list").css('height', 'calc(100% - 30px)');
-		}
 		if(window.DM) {
+			$(childWindows['Combat Tracker'].document).find("#combat_tracker_inside #combat_footer").css('bottom', '-5px');
 			$(childWindows['Combat Tracker'].document).find('input.hp').change(function(e) {
 				let id = $(this).parent().parent().parent().attr("data-target");
 				$(`tr[data-target='${id}'] input.hp`).val($(this).val());
@@ -809,6 +814,14 @@ function ct_load(data=null){
 				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
+					if(window.TOKEN_OBJECTS[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
+						$("#endplayerturn").toggleClass('enabled', true);
+						$("#endplayerturn").prop('disabled', false);
+					}
+					else{
+						$("#endplayerturn").toggleClass('enabled', false);
+						$("#endplayerturn").prop('disabled', true);
+					}
 				}
 			}
 		}
@@ -838,6 +851,14 @@ function ct_load(data=null){
 			if(window.TOKEN_OBJECTS[data.current] != undefined){
 				window.TOKEN_OBJECTS[data.current].options.current = true;
 				window.TOKEN_OBJECTS[data.current].update_and_sync();
+			}
+			if(window.TOKEN_OBJECTS[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
+				$("#endplayerturn").toggleClass('enabled', true);
+				$("#endplayerturn").prop('disabled', false);
+			}
+			else{
+				$("#endplayerturn").toggleClass('enabled', false);
+				$("#endplayerturn").prop('disabled', true);
 			}
 
 		}
