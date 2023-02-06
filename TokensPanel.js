@@ -115,7 +115,7 @@ function list_item_from_monster_id(monsterId) {
 }
 
 function list_item_from_player_id(playerId) {
-    let pc = window.pcs.find(p => p.sheet = playerId);
+    let pc = window.pcs.find(p => p.sheet === playerId);
     if (pc === undefined) return undefined;
     let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
