@@ -1306,7 +1306,7 @@ function init_ddb_importer(target) {
 
 }
 
-function fill_importer(scene_set, start) {
+function fill_importer(scene_set, start, searchState = '') {
 	area = $("#importer_area");
 	area.empty();
 	area.css("opacity", "0");
@@ -1434,14 +1434,14 @@ function fill_importer(scene_set, start) {
 		prev.attr("disabled", "disabled");
 
 	prev.click(function() {
-		fill_importer(scene_set, start - 8);
+		fill_importer(scene_set, start - 8, searchState);
 	})
 
 	next = $("<button>NEXT</button>");
 	if (i == scene_set.length)
 		next.attr("disabled", "disabled");
 	next.click(function() {
-		fill_importer(scene_set, start + 8);
+		fill_importer(scene_set, start + 8, searchState);
 	});
 
 	buttons = $("<div/>");
@@ -1462,7 +1462,7 @@ function fill_importer(scene_set, start) {
 	pageSelect.addEventListener('change', () => {
 		const val = pageSelect.value;
 		if (val && val >= 0 && val <= totalPages && val > 0) {
-			fill_importer(scene_set, (val * 8) - 8);
+			fill_importer(scene_set, (val * 8) - 8, searchState);
 		}
 	})
 
@@ -1477,7 +1477,29 @@ function fill_importer(scene_set, start) {
 		area.append(`<div style='border:none !important;'>There were no maps/handouts found in this chapter</div>`)
 	}
 
-
+	let mapSearchContainer = document.createElement('div');
+	let mapSearchLabel = document.createElement('span');
+	mapSearchLabel.innerText = "Search By Title: ";
+	let mapSearchElement = document.createElement('input');
+	mapSearchElement.value = searchState;
+	mapSearchElement.addEventListener('change', () => {
+		const value = mapSearchElement.value;
+		if (value) {
+			let clonedScenes = JSON.parse(JSON.stringify(scene_set));
+			let filteredScenes = clonedScenes.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
+			fill_importer(filteredScenes, start, value);
+		} else {
+			if($('#chapter_select').length > 0){
+				display_scenes();
+			}
+			else{
+				fill_importer(PRESET[$(`.importer_toggle[style*='background: red']`).attr('data-key')], 0);
+			}
+		}
+	});
+	mapSearchContainer.append(mapSearchLabel);
+	mapSearchContainer.append(mapSearchElement);
+	footer.append(mapSearchContainer);
 }
 
 function mega_importer(DDB = false) {
