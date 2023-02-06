@@ -1434,14 +1434,14 @@ function fill_importer(scene_set, start, searchState = '') {
 		prev.attr("disabled", "disabled");
 
 	prev.click(function() {
-		fill_importer(scene_set, start - 8);
+		fill_importer(scene_set, start - 8, searchState);
 	})
 
 	next = $("<button>NEXT</button>");
 	if (i == scene_set.length)
 		next.attr("disabled", "disabled");
 	next.click(function() {
-		fill_importer(scene_set, start + 8);
+		fill_importer(scene_set, start + 8, searchState);
 	});
 
 	buttons = $("<div/>");
@@ -1462,7 +1462,7 @@ function fill_importer(scene_set, start, searchState = '') {
 	pageSelect.addEventListener('change', () => {
 		const val = pageSelect.value;
 		if (val && val >= 0 && val <= totalPages && val > 0) {
-			fill_importer(scene_set, (val * 8) - 8);
+			fill_importer(scene_set, (val * 8) - 8, searchState);
 		}
 	})
 
