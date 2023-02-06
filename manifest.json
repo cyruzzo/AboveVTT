@@ -91,8 +91,7 @@
 				"Main.js",
 				"MonsterStatBlock.js"
 			],
-			"matches": ["*://*.dndbeyond.com/*"],
-			"extension_ids": []
+			"matches": ["*://*.dndbeyond.com/*"]
 		}
 	]
 }
