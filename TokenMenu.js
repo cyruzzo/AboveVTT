@@ -1026,6 +1026,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 			tokens.forEach(token => {
 				imageSize = clampTokenImageSize(imageSize, token.options.size);
 				token.options.imageSize = imageSize;
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--token-scale", imageSize)
 				token.place_sync_persist();
 			});
 		});
@@ -1186,6 +1187,7 @@ function build_options_flyout_menu(tokenIds) {
 		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype') {
 			continue;
 		}
+
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
 		let uniqueSettings = [...new Set(tokenSettings)];
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false

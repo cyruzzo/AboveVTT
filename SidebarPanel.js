@@ -216,7 +216,10 @@ class SidebarPanel {
           if(imageUrl.startsWith("data:")){
             alert("You cannot use urls starting with data:");
           } else {
-            imageUrlEntered(parse_img(imageUrl));
+            let imageUrlSplit = imageUrl.split(', ');
+            for(i = 0; i < imageUrlSplit.length; i++){
+              imageUrlEntered(parse_img(imageUrlSplit[i]));
+            }      
           }
         }
     );

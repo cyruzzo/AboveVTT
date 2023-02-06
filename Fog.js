@@ -106,12 +106,12 @@ class WaypointManagerClass {
 	drawBobble(x, y, radius) {
 
 		if(radius == undefined) {
-			radius = Math.max(15 * Math.max((1 - window.ZOOM), 0), 3);
+			radius = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
 		}
 
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = this.drawStyle.lineWidth
+		this.ctx.lineWidth = radius
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.stroke();
 		this.ctx.fillStyle =  this.drawStyle.color
@@ -125,7 +125,7 @@ class WaypointManagerClass {
 
 			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
-			this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+			this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 	}
 
 	// Track mouse moving
@@ -158,14 +158,14 @@ class WaypointManagerClass {
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;
 
-		var gridSize = window.CURRENT_SCENE_DATA.hpps;
+		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		var currGridX = Math.floor(x / gridSize);
 		var currGridY = Math.floor(y / gridSize);
-		var snapPointXStart = (currGridX * gridSize) + (gridSize / 2);
-		var snapPointYStart = (currGridY * gridSize) + (gridSize / 2);
+		var snapPointXStart = (currGridX * gridSize) + (gridSize/2);
+		var snapPointYStart = (currGridY * gridSize);
 
 		// Add in scene offset
-		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx;
+		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
 		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety;
 
 		return { x: snapPointXStart, y: snapPointYStart }
@@ -193,15 +193,13 @@ class WaypointManagerClass {
 	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY) {
 
 		// Snap to centre of current grid square
-		var gridSize = window.CURRENT_SCENE_DATA.hpps;
-		var snapCoords = this.getSnapPointCoords(coord.startX, coord.startY);
-		var snapPointXStart = snapCoords.x;
-		var snapPointYStart = snapCoords.y;
+		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+		var snapPointXStart = coord.startX;
+		var snapPointYStart = coord.startY;
 		this.ctx.moveTo(snapPointXStart, snapPointYStart);
 
-		snapCoords = this.getSnapPointCoords(coord.endX, coord.endY);
-		var snapPointXEnd = snapCoords.x;
-		var snapPointYEnd = snapCoords.y;
+		var snapPointXEnd = coord.endX;
+		var snapPointYEnd = coord.endY;
 
 		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
 		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
@@ -222,7 +220,7 @@ class WaypointManagerClass {
 		var slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + "px Arial";
+		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26) + "px Arial";
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
@@ -258,16 +256,16 @@ class WaypointManagerClass {
 			contrastRect.x = labelX - margin + slopeModifier;
 			contrastRect.y = labelY - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + (margin * 3);
 
 			textRect.x = labelX + slopeModifier;
 			textRect.y = labelY + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + margin;
 
 			textRect.x -= (textRect.width / 2);
-			textX = labelX + margin + slopeModifier - (textRect.width / 2);
-			textY = labelY + (margin * 2) + slopeModifier;
+			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
+			textY = (labelY + (margin * 2) + slopeModifier);
 		} else {
 			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
 			if (snapPointYStart <= snapPointYEnd) {
@@ -288,12 +286,12 @@ class WaypointManagerClass {
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
 			contrastRect.y = snapPointYEnd - margin + slopeModifier;
 			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + (margin * 3);
+			contrastRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + (margin * 3);
 
 			textRect.x = snapPointXEnd + slopeModifier;
 			textRect.y = snapPointYEnd + slopeModifier;
 			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0), 30) + margin;
+			textRect.height =  Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 30) + margin;
 
 			textX = snapPointXEnd + margin + slopeModifier;
 			textY = snapPointYEnd + (margin * 2) + slopeModifier;
@@ -301,22 +299,22 @@ class WaypointManagerClass {
 
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.lineWidth = Math.round(Math.max(25 * Math.max((1 - window.ZOOM), 0), 5));
+		this.ctx.lineWidth = Math.floor(Math.max(25 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		// Draw our centre line
 		this.ctx.strokeStyle = this.drawStyle.color
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
+		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
-		this.ctx.lineWidth = Math.round(Math.max(15 * Math.max((1 - window.ZOOM), 0), 3));
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, true);
+		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
+		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, true);
 		// draw the outline of the text box
-		roundRect(this.ctx, textRect.x, textRect.y, textRect.width, textRect.height, 10, false, true);
+		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, false, true);
 
 		// Finally draw our text
 		this.ctx.fillStyle = this.drawStyle.textColor
@@ -380,10 +378,10 @@ function is_token_under_fog(tokenid){
 		return false;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-	var left = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
-	var top = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-	if (pixeldata[3] == 255)
+	if (pixeldata[3] == 255 && !window.TOKEN_OBJECTS[tokenid].options.revealInFog)
 		return true;
 	else
 		return false;
@@ -391,8 +389,8 @@ function is_token_under_fog(tokenid){
 
 function is_token_under_light_aura(tokenid){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let horizontalMiddle = parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
-	let verticalMiddle = parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2);
+	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let visibleLightAuras = $(".aura-element.islight:not([style*='visibility: hidden'])");
 	
 	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
@@ -426,7 +424,8 @@ function check_single_token_visibility(id){
 			let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 			let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 
-			if (is_token_under_fog(id) || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id))) {
+			if (is_token_under_fog(id) || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
+
 				$(selector).hide();
 				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 				{
@@ -475,18 +474,18 @@ function do_check_token_visibility() {
 
 
 	for (var id in window.TOKEN_OBJECTS) {
-		var left = parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2);
-		var top = parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2);
+		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 		let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 			
-		if (pixeldata[3] == 255 || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id))) {
-
+		if (pixeldata[3] == 255 || (playerTokenAuraIsLight && playerAuraIsVisible && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id) && !window.TOKEN_OBJECTS[id].options.revealInFog)) {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
@@ -591,21 +590,21 @@ function clear_grid(){
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
 	const gridCanvas = document.getElementById("grid_overlay");
 	const gridContext = gridCanvas.getContext("2d");
-	clear_grid()
+	clear_grid();
 	gridContext.setLineDash(dash);
-	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
-	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
+	let startX = offsetX/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
+	let startY = offsetY/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety/window.CURRENT_SCENE_DATA.scale_factor;
 	startX = Math.round(startX)
 	startY = Math.round(startY)
-	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
-	const incrementY = vpps || window.CURRENT_SCENE_DATA.vpps;
+	const incrementX = hpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+	const incrementY = vpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
 	let skip = true;
 
-	gridContext.beginPath();
-	for (var i = startX; i < $("#scene_map").width(); i = i + incrementX) {
+	gridContext.beginPath();	
+	for (var i = startX; i < $("#grid_overlay").width(); i = i + incrementX) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -614,13 +613,14 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 			skip = true;
 		}
 		gridContext.moveTo(i, 0);
-		gridContext.lineTo(i, $("#scene_map").height());
+		gridContext.lineTo(i, $("#grid_overlay").height());
 	}
 	gridContext.stroke();
 	skip = true;
 
+	
 	gridContext.beginPath();
-	for (var i = startY; i < $("#scene_map").height(); i = i + incrementY) {
+	for (var i = startY; i < $("#grid_overlay").height(); i = i + incrementY) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -628,8 +628,10 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 		else {
 			skip = true;
 		}
+
 		gridContext.moveTo(0, i);
-		gridContext.lineTo($("#scene_map").width(), i);
+		gridContext.lineTo($("#grid_overlay").width(), i);
+
 	}
 	gridContext.stroke();
 }
@@ -689,6 +691,11 @@ function reset_canvas() {
 	$('#darkness_layer').css("width", $("#scene_map").width());
 	$('#darkness_layer').css("height", $("#scene_map").height());
 
+	$("#scene_map_container").css("width", $("#scene_map").width())
+	$("#scene_map_container").css("height", $("#scene_map").height())
+
+
+
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
 
@@ -714,6 +721,12 @@ function reset_canvas() {
 	var ctx_grid = canvas_grid.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.grid == "1" || window.WIZARDING) && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
+		if(window.WIZARDING){
+			$("#VTT").css("--scene-scale", 1)
+		}
+		else{
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
+		}
 		canvas_grid.width = $("#scene_map").width();
 		canvas_grid.height = $("#scene_map").height();
 
@@ -722,7 +735,7 @@ function reset_canvas() {
 
 		//alert(startX+ " "+startY);
 		if (window.WIZARDING) {
-			draw_wizarding_box()
+			draw_wizarding_box();
 		}
 		//alert('inizio 1');
 
@@ -754,39 +767,56 @@ function redraw_fog() {
 
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
+		let adjustedArray = [];
+		let revealedScale = (d[6] != undefined) ? d[6] : window.CURRENT_SCENE_DATA.scale_factor;
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
-			ctx.clearRect(d[0], d[1], d[2], d[3]);
+			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
 		}
 		if (d[5] == 0) { //REVEAL
+
 			if (d[4] == 0) { // REVEAL SQUARE
-				ctx.clearRect(d[0], d[1], d[2], d[3]);
+				for(adjusted = 0; adjusted < 4; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
-				clearCircle(ctx, d[0], d[1], d[2]);
+				for(adjusted = 0; adjusted < 3; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
 			}
 			if (d[4] == 2) {
 				// reveal ALL!!!!!!!!!!
-				ctx.clearRect(0, 0, $("#scene_map").width(), $("#scene_map").height());
+				ctx.clearRect(0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
-				clearPolygon(ctx, d[0]);
+				clearPolygon(ctx, d[0], d[6]);
 			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
-				ctx.clearRect(d[0], d[1], d[2], d[3]);
+				for(adjusted = 0; adjusted < 4; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 				ctx.fillStyle = fogStyle;
-				ctx.fillRect(d[0], d[1], d[2], d[3]);
+				ctx.fillRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
-				clearCircle(ctx, d[0], d[1], d[2]);
-				drawCircle(ctx, d[0], d[1], d[2], fogStyle);
+				for(adjusted = 0; adjusted < 3; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
+				drawCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2], fogStyle);
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				drawPolygon(ctx, d[0], fogStyle);
+				clearPolygon(ctx, d[0], d[6], true);
+				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
+			
 			}
 		}
 	}
@@ -831,11 +861,23 @@ function redraw_drawings() {
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text"))
 
 	for (var i = 0; i < drawings.length; i++) {
-		const [shape, fill, color, x, y, width, height, lineWidth] = drawings[i];
+
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
 		const isFilled = fill === "filled"
 
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone"){
+			x = x / adjustedScale;
+			y = y / adjustedScale;
+			height = height / adjustedScale;
+			width = width / adjustedScale;
+		}
+
+
 		if (shape == "eraser") {
-			ctx.clearRect(x, y, width, height);
+			ctx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		if (shape == "rect") {
 			drawRect(ctx,x, y, width, height, color, isFilled, lineWidth);
@@ -848,14 +890,14 @@ function redraw_drawings() {
 			drawCone(ctx, x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "line") {
-			drawLine(ctx,x, y, width, height, color, lineWidth);
+			drawLine(ctx,x, y, width, height, color, lineWidth, scale);
 		}
 		if (shape == "polygon") {
-			drawPolygon(ctx,x, color, isFilled, lineWidth);
+			drawPolygon(ctx,x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if (shape == "brush") {
-			drawBrushstroke(ctx, x, color, lineWidth, false);
+			drawBrushstroke(ctx, x, color, lineWidth, scale);
 		}
 	}
 }
@@ -894,10 +936,10 @@ function get_event_cursor_position(event){
  */
 function drawing_mousedown(e) {
 	// perform some cleanup of the canvas/objects
-	clear_temp_canvas()
-	WaypointManager.resetDefaultDrawStyle()
-	WaypointManager.cancelFadeout()
-	if(e.button !== 2){
+	if(e.button !== 2 && !window.MOUSEDOWN){
+		clear_temp_canvas()
+		WaypointManager.resetDefaultDrawStyle()
+		WaypointManager.cancelFadeout()
 		WaypointManager.clearWaypoints()
 	}
 
@@ -969,8 +1011,8 @@ function drawing_mousedown(e) {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
 				isPointWithinDistance(
-					{ x: window.BEGIN_MOUSEX[0], y: window.BEGIN_MOUSEY[0] },
-					{ x: pointX , y: pointY}
+					{ x: window.BEGIN_MOUSEX[0]/window.CURRENT_SCENE_DATA.scale_factor, y: window.BEGIN_MOUSEY[0]/window.CURRENT_SCENE_DATA.scale_factor },
+					{ x: pointX/window.CURRENT_SCENE_DATA.scale_factor , y: pointY/window.CURRENT_SCENE_DATA.scale_factor}
 				)
 			) {
 				savePolygon(e);
@@ -1035,7 +1077,7 @@ function drawing_mousemove(e) {
 	const context = canvas.getContext("2d");
 
 	const isFilled = window.DRAWTYPE === "filled"
-	const mouseMoveFps = Math.round((1000.0 / 16.0));
+	const mouseMoveFps = Math.round((1000.0 / 24.0));
 
 
 	window.MOUSEMOVEWAIT = true;
@@ -1116,7 +1158,7 @@ function drawing_mousemove(e) {
 					WaypointManager.setCanvas(canvas);
 					WaypointManager.cancelFadeout()
 					WaypointManager.registerMouseMove(mouseX, mouseY);
-					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, mouseX, mouseY);
+					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw(false);
 					context.fillStyle = '#f50';
 				}
@@ -1230,7 +1272,8 @@ function drawing_mouseup(e) {
 		 window.BEGIN_MOUSEY,
 		 width,
 		 height,
-		 window.LINEWIDTH];
+		 window.LINEWIDTH,
+		 window.CURRENT_SCENE_DATA.scale_factor];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw")){
@@ -1315,6 +1358,7 @@ function drawing_mouseup(e) {
 		var c = 0;
 		for (id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
+
 
 			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
 			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
@@ -1417,7 +1461,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const centerX = window.BEGIN_MOUSEX;
 		const centerY = window.BEGIN_MOUSEY;
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
-		data = [centerX, centerY, radius, 0, 1, fog_type_to_int()];
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1426,7 +1470,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		window.ScenesHandler.persist();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int()];
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -1581,7 +1625,7 @@ function handle_drawing_button_click() {
 function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth = 6)
 {
 	ctx.beginPath();
-	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	ctx.arc(centerX/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor, radius/window.CURRENT_SCENE_DATA.scale_factor, 0, 2 * Math.PI, false);
 	if(fill){
 		ctx.fillStyle = style;
 		ctx.fill();
@@ -1600,14 +1644,14 @@ function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidt
 	if(fill)
 	{
 		ctx.fillStyle = style;
-		ctx.fillRect(startx, starty, width, height);
+		ctx.fillRect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 	}
 	else
 	{
 		ctx.lineWidth = lineWidth;
 		ctx.strokeStyle = style;
 		ctx.beginPath();
-		ctx.rect(startx, starty, width, height);
+		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.stroke();
 	}
 
@@ -1619,9 +1663,9 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 	var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
 	var res = circle_intersection(startx, starty, T, endx, endy, L / 2);
 	ctx.beginPath();
-	ctx.moveTo(startx, starty);
-	ctx.lineTo(res[0], res[2]);
-	ctx.lineTo(res[1], res[3]);
+	ctx.moveTo(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(res[0]/window.CURRENT_SCENE_DATA.scale_factor, res[2]/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(res[1]/window.CURRENT_SCENE_DATA.scale_factor, res[3]/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.closePath();
 	if(fill){
 		ctx.fillStyle = style;
@@ -1635,17 +1679,20 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 
 }
 
-function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6)
+function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6, scale=window.CURRENT_SCENE_DATA.scale_factor)
 {
 	ctx.beginPath();
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
-	ctx.moveTo(startx, starty);
-	ctx.lineTo(endx, endy);
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor);	
+
+	ctx.moveTo(startx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, starty/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineTo(endx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, endy/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
-function drawBrushstroke(ctx, points, style, lineWidth=6)
+function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor)
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
@@ -1656,18 +1703,21 @@ function drawBrushstroke(ctx, points, style, lineWidth=6)
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
 	ctx.beginPath();
-	ctx.moveTo(p1.x, p1.y);
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+
+	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (var i = 1, len = points.length; i < len; i++) {
 	// we pick the point between pi+1 & pi+2 as the
 	// end point and p1 as our control point
 	var midPoint = midPointBtw(p1, p2);
-	ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+	ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	p1 = points[i];
 	p2 = points[i+1];
 	}
 	// Draw last line as a straight line
-	ctx.lineTo(p1.x, p1.y);
+	ctx.lineTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
 }
 
@@ -1678,19 +1728,23 @@ function drawPolygon (
 	fill = true,
 	lineWidth,
 	mouseX = null,
-	mouseY = null
+	mouseY = null,
+	scale = window.CURRENT_SCENE_DATA.scale_factor,
+	replacefog = false
 ) {
 	ctx.save();
 	ctx.beginPath();
-	ctx.moveTo(points[0].x, points[0].y);
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.lineWidth = lineWidth;
-
+		
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x, vertice.y);
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 
 	if (mouseX !== null && mouseY !== null) {
-		ctx.lineTo(mouseX, mouseY);
+		ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	}
 
 	ctx.closePath();
@@ -1704,6 +1758,16 @@ function drawPolygon (
 	else if(fill){
 		ctx.fillStyle = style;
 		ctx.fill();
+		if(replacefog && window.DM)
+		{
+			ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+			ctx.stroke();
+		}
+		else if(replacefog){
+			ctx.strokeStyle = 'rgba(0,0,0,1)';
+			ctx.stroke();
+		}
+		
 	}
 	else{
 		ctx.strokeStyle = style;
@@ -1728,7 +1792,8 @@ function savePolygon(e) {
 			null,
 			null,
 			3,
-			fog_type_to_int()
+			fog_type_to_int(), 
+			window.CURRENT_SCENE_DATA.scale_factor
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -1742,7 +1807,8 @@ function savePolygon(e) {
 			null,
 			null,
 			null,
-			window.LINEWIDTH
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
@@ -1781,7 +1847,7 @@ function isPointWithinDistance(points1, points2) {
 			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
 
-function clearPolygon (ctx, points) {
+function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor, layeredFog = false) {
 
 	/*
 	 * globalCompositeOperation does not accept alpha transparency,
@@ -1790,13 +1856,15 @@ function clearPolygon (ctx, points) {
 	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
-	ctx.moveTo(points[0].x, points[0].y);
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	points.forEach((vertice) => {
-		ctx.lineTo(vertice.x, vertice.y);
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 	ctx.closePath();
 	ctx.fill();
-	ctx.stroke();
+	if(!layeredFog)
+		ctx.stroke();
 	ctx.restore();
 	ctx.globalCompositeOperation = "source-over";
 }
@@ -1806,9 +1874,9 @@ function clearCircle(ctx, centerX, centerY, radius)
 	ctx.save();
 	ctx.beginPath();
 	ctx.fillStyle = "rgba(0,0,0,0);"
-	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+	ctx.arc(centerX/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor, radius/window.CURRENT_SCENE_DATA.scale_factor, 0, 2 * Math.PI, false);
 	ctx.clip();
-	ctx.clearRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+	ctx.clearRect(centerX/window.CURRENT_SCENE_DATA.scale_factor - radius/window.CURRENT_SCENE_DATA.scale_factor, centerY/window.CURRENT_SCENE_DATA.scale_factor - radius/window.CURRENT_SCENE_DATA.scale_factor, radius * 2/window.CURRENT_SCENE_DATA.scale_factor, radius * 2/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.restore();
 }
 
@@ -1817,8 +1885,8 @@ function drawClosingArea(ctx, pointX, pointY) {
 	ctx.lineWidth = "2";
 	ctx.beginPath();
 	ctx.rect(
-		pointX - POLYGON_CLOSE_DISTANCE,
-		pointY - POLYGON_CLOSE_DISTANCE,
+		pointX/window.CURRENT_SCENE_DATA.scale_factor - POLYGON_CLOSE_DISTANCE,
+		pointY/window.CURRENT_SCENE_DATA.scale_factor - POLYGON_CLOSE_DISTANCE,
 		POLYGON_CLOSE_DISTANCE * 2,
 		POLYGON_CLOSE_DISTANCE * 2);
 	ctx.stroke();
@@ -1857,7 +1925,8 @@ function init_fog_menu(buttons){
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
-			window.REVEALED = [[0, 0, $("#scene_map").width(), $("#scene_map").height()]];
+			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor, 0, 0, window.CURRENT_SCENE_DATA.scale_factor]];
+
 			redraw_fog();
 			if(window.CLOUD){
 				sync_fog();

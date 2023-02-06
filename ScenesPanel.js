@@ -188,7 +188,7 @@ function edit_scene_dialog(scene_id) {
 			if (imageValidation){
 				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
 			}else{
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
 			 
 		}
@@ -583,11 +583,14 @@ function edit_scene_dialog(scene_id) {
 
 	let align_grid = function(square = false, just_rescaling = true) {
 
-		window.ScenesHandler.scenes[scene_id].scale_factor=1;
+
+		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
+    
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
 			var aligner1 = $("<canvas id='aligner1'/>");
 			aligner1.width(59);
 			aligner1.height(59);
@@ -861,7 +864,7 @@ function edit_scene_dialog(scene_id) {
 				window.ScenesHandler.switch_scene(scene_id);
 			}
 				
-
+			$("#VTT").css("--scene-scale", 1)
 
 			$("#edit_dialog").remove();
 			$("#scene_selector").removeAttr("disabled");
@@ -1450,7 +1453,24 @@ function fill_importer(scene_set, start) {
 	buttons.append(next);
 	footer.append(buttons);
 
-	pageNumbersDiv = $(`<div class='page-number'>${pageNumber} / ${totalPages}</div>`)
+	let pageNumbersDiv = document.createElement('div');
+	pageNumbersDiv.classList.add('page-number');
+
+	let pageSelect = document.createElement('input');
+	pageSelect.classList.add('styled-number-input');
+	pageSelect.value = pageNumber;
+	pageSelect.addEventListener('change', () => {
+		const val = pageSelect.value;
+		if (val && val >= 0 && val <= totalPages && val > 0) {
+			fill_importer(scene_set, (val * 8) - 8);
+		}
+	})
+
+	let totalPagesSpan = document.createElement('span');
+	totalPagesSpan.innerText = `/ ${totalPages}`;
+	totalPagesSpan.style.marginLeft = '5px';
+	pageNumbersDiv.append(pageSelect);
+	pageNumbersDiv.append(totalPagesSpan);
 	footer.append(pageNumbersDiv);
 
 	if(scene_set.length == 0){
