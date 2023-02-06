@@ -1489,7 +1489,12 @@ function fill_importer(scene_set, start, searchState = '') {
 			let filteredScenes = clonedScenes.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
 			fill_importer(filteredScenes, start, value);
 		} else {
-			fill_importer(scene_set, start, value);
+			if($('#chapter_select').length > 0){
+				display_scenes();
+			}
+			else{
+				fill_importer(PRESET[$(`.importer_toggle[style*='background: red']`).attr('data-key')], 0);
+			}
 		}
 	});
 	mapSearchContainer.append(mapSearchLabel);
