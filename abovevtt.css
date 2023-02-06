@@ -5192,3 +5192,21 @@ div.note[id^="ui-id"] .mce-btn button {
 .sidebar-list-item-row.ui-draggable-dragging {
     z-index: 100000;
 }
+
+.styled-number-input {
+    height: 15px;
+    font-size: 13px;
+    font-weight: bold;
+    font-family: Roboto,Open Sans,Helvetica,sans-serif;
+    text-decoration: underline;
+    background: none;
+    border-width: 0;
+    text-align: right;
+    width: 30px;
+    border-radius: 2px;
+}
+
+.styled-number-input:focus {
+    text-decoration: none;
+    border-width: 1px;
+}
