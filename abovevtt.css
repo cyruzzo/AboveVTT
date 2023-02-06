@@ -417,7 +417,19 @@ a.ddbeb-button {
     top:-100px;
     left:-100px;
 }
-
+#exitWizard{
+    z-index: 50;
+    position: fixed;
+    top: 4px;
+    font-size: 20px;
+    line-height: 17px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    background-color: #c53131;
+    background-image: none;
+    border: none;
+}
 
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
