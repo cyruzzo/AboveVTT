@@ -20,6 +20,10 @@ function parse_img(url){
 		return "";
 	}
 	retval = url;
+	if(retval.startsWith("data:")){
+		alert("You cannot use urls starting with data:");
+		return "";
+	}
 	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
 		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
 	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
@@ -179,10 +183,10 @@ function add_zoom_to_storage() {
 * Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
 function set_default_vttwrapper_size() {
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
 }
 
 /**
@@ -248,9 +252,9 @@ function decrease_zoom() {
 */
 function get_reset_zoom() {
 	const wH = $(window).height();
-	const mH = $("#scene_map").height();
+	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 	const wW = $(window).width();
-	const mW = $("#scene_map").width();
+	const mW = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	console.log(wH, mH, wW, mW);
 	return Math.min((wH / mH), (wW / mW));
@@ -343,8 +347,9 @@ function remove_loading_overlay() {
  * @param {Function} callback trigged after map is loaded
  */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
+	
+	$("#scene_map_container").toggleClass('map-loading', true);
 
-	$("#darkness_layer").hide();
 	remove_loading_overlay();
 
 	$("#scene_map").remove();
@@ -356,14 +361,14 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 
 	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
-
+		$("#scene_map_container").toggleClass('video', true);
 		if (width == null) {
 			width = 1920;
 			height = 1080;
 		}
 
 		var newmap = $('<div style="width:' + width + 'px;height:' + height + 'px;position:absolute;top:0;left:0;z-index:10" id="scene_map" />');
-		$("#VTT").append(newmap);
+		$("#scene_map_container").append(newmap);
 		videoid = youtube_parser(url);
 		window.YTPLAYER = new YT.Player('scene_map', {
 			width: width,
@@ -395,10 +400,11 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		};
 
 		window.YTTIMEOUT = setTimeout(smooth, 5000);
-
 		callback();
+		$("#scene_map_container").toggleClass('map-loading', false);
 	}
 	else if (is_video === "0" || !is_video) {
+		$("#scene_map_container").toggleClass('video', false);
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
 		
@@ -407,28 +413,25 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			newmap.width(width);
 			newmap.height(height);
 		}
-
-		newmap.css("opacity","0");
 		newmap.on("load", () => {
-			newmap.css('opacity', 1);
-			$("#darkness_layer").show();
+			$("#scene_map_container").toggleClass('map-loading', false);
 		});
 		if (callback != null) {	
 			newmap.on("load", callback);
 		}
-		$("#VTT").append(newmap);
-		$("#scene_map_container").css("width", $("#scene_map").width())
-		$("#scene_map_container").css("height", $("#scene_map").height())
+		$("#scene_map_container").append(newmap);
+
 
 	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
+		$("#scene_map_container").toggleClass('video', true);
 		let newmapSize = 'width: 100vw; height: 100vh;';
 		if (width != null) {
 			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
 		}
 
-		var newmap = $('<video style="' + newmapSize + ' position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay muted loop id="scene_map" src="' + url + '" />');
+		var newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop onloadstart="this.volume=${$("#youtube_volume").val()/100}" id="scene_map" src="${url}" />`);
 		newmap.on("loadeddata", callback);
 		newmap.on("error", map_load_error_cb);
 
@@ -438,9 +441,14 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				console.log("video height:", this.videoHeight);
 				$('#scene_map').width(this.videoWidth);
 				$('#scene_map').height(this.videoHeight);
+				$("#scene_map_container").toggleClass('map-loading', false);
 			});
 		}
-		$("#VTT").append(newmap);
+		else{
+			$("#scene_map_container").toggleClass('map-loading', false);
+		}
+		$("#scene_map_container").append(newmap);
+		
 	}
 
 }
@@ -1150,7 +1158,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.81</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.82</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -1659,6 +1667,42 @@ function observe_character_sheet_aoe(documentToObserve) {
 	});
 
 	aoe_observer.observe(mutation_target, mutation_config);
+}
+
+/**
+* Observers character sheet for Dice Roll formulae.
+* @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
+*/
+function observe_character_sheet_dice_rolls(documentToObserve) {
+    if (!is_characters_page()) {
+        return;
+    }
+
+    const dice_roll_observer = new MutationObserver(function() {
+        const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-visited')");
+        notes.each(function() {
+            $(this).addClass("above-vtt-visited");
+            try {
+                const text = $(this).text();
+                if (text.match(slashCommandRegex)?.[0]) {
+                    const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
+                    const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
+                    button.on("click", function (clickEvent) {
+                        clickEvent.stopPropagation();
+                        window.diceRoller.roll(diceRoll);
+                    });
+                    $(this).empty();
+                    $(this).append(button);
+                }
+            } catch (e) {
+                console.warn("Failed to parse DiceRoll expression", e);
+            }
+        });
+    });
+
+    const mutation_target = documentToObserve.get(0);
+    const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+    dice_roll_observer.observe(mutation_target, mutation_config);
 }
 
 /** DEPRECATED - dont use */
@@ -2290,6 +2334,7 @@ function init_character_page_sidebar() {
 			init_splash();
 			$("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
 			observe_character_sheet_aoe($(document));
+			observe_character_sheet_dice_rolls($(document));
 			// WIP to allow players to add in tokens from their extra tab
 			// observe_character_sheet_companion($(document));
 			
@@ -2712,7 +2757,7 @@ function init_ui() {
 	mapContainer.css("top", "0");
 	mapContainer.css("left", "0");
 	mapContainer.css("position", "absolute");
-	mapContainer.css("z-index", "10");
+
 
 
 	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
@@ -2755,6 +2800,8 @@ function init_ui() {
 	darknessLayer.css("left", "0");
 
 	tempOverlay.dblclick(function(e) {
+		if(window.DRAWFUNCTION != 'select')
+			return;
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
@@ -2762,7 +2809,9 @@ function init_ui() {
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
-		let borderColor = $(`.token[data-name="`+window.PLAYER_NAME+`"]`).attr(`data-border-color`)
+		let dataName = window.PLAYER_NAME.replace(/\"/g,'\\"')
+
+		let borderColor = $(`.token[data-name="`+dataName+`"]`).attr(`data-border-color`)
 		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
 
 		data = {
@@ -2813,7 +2862,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textOverlay);
 	VTT.append(tempOverlay);
-	VTT.append(darknessLayer);
+	mapContainer.append(darknessLayer);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");

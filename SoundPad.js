@@ -385,6 +385,9 @@ function init_audio(){
 			};
 			window.MB.sendMessage("custom/myVTT/changeyoutube",data);
 		}
+		else{
+			$("#scene_map").prop("volume", $("#youtube_volume").val()/100);
+		}
 	});
 	
 	if(!window.DM)
