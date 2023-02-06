@@ -1010,8 +1010,8 @@ function drawing_mousedown(e) {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
 				isPointWithinDistance(
-					{ x: window.BEGIN_MOUSEX[0], y: window.BEGIN_MOUSEY[0] },
-					{ x: pointX , y: pointY}
+					{ x: window.BEGIN_MOUSEX[0]/window.CURRENT_SCENE_DATA.scale_factor, y: window.BEGIN_MOUSEY[0]/window.CURRENT_SCENE_DATA.scale_factor },
+					{ x: pointX/window.CURRENT_SCENE_DATA.scale_factor , y: pointY/window.CURRENT_SCENE_DATA.scale_factor}
 				)
 			) {
 				savePolygon(e);
