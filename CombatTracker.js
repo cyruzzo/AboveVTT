@@ -288,7 +288,10 @@ function init_combat_tracker(){
 
 	endplayerturn=$('<button id="endplayerturn">End Turn</button>');
 	endplayerturn.click(function(){
-		window.MB.sendMessage('custom/myVTT/endplayerturn');
+		let data = {
+			from: window.PLAYER_ID,
+		}
+		window.MB.sendMessage('custom/myVTT/endplayerturn', data);
 		$("#endplayerturn").toggleClass('enabled', false);
 	});
 	

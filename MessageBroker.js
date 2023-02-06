@@ -650,6 +650,7 @@ class MessageBroker {
 				}	
 			}
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
+				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
 					$("#combat_next_button").click();				
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
