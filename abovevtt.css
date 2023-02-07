@@ -642,23 +642,23 @@ input[name='darkness_filter_number']{
 }
 label[for='grid_line_width'] {
     font-size: 10px;
-    position: absolute;
-    font-weight:bold;
-    top: 173px;
-    left: 260px;
+    position: relative;
+    font-weight: bold;
+    top: -7px;
+    left: -83px;
     color: #555;
 }
 
 input#grid_line_width {
-    position: absolute !important;
-    top: 187px !important;
-    left: 240px;
+    position: relative !important;
+    top: 5px !important;
+    left: 7px;
 }
 
 input[name='gridStrokeNumberInput'] {
-    position: Absolute;
-    top: 181px;
-    left: 355px;
+    position: relative;
+    top: 3px;
+    left: -57px;
     width: 50px;
 }
 
@@ -688,6 +688,10 @@ button#dm_map_is_video_toggle::after {
 button#player_map_is_video_toggle.rc-switch-checked::after,
 button#dm_map_is_video_toggle.rc-switch-checked::after {
     left: 33px;
+}
+
+#show_grid_controls{
+    position:relative;
 }
 
 #combat_tracker_inside {
