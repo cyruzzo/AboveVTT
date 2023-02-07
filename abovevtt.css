@@ -662,6 +662,34 @@ input[name='gridStrokeNumberInput'] {
     width: 50px;
 }
 
+.isvideotogglelabel {
+    display: inline-block;
+    position: absolute;
+    width: 80px;
+    right: -20px;
+    font-size: 11px;
+    top: 6px;
+    font-size: 9px;
+}
+
+button#player_map_is_video_toggle,
+button#dm_map_is_video_toggle {
+    height: 12px;
+    top: -6px;
+    color: #555;
+}
+
+button#player_map_is_video_toggle::after,
+button#dm_map_is_video_toggle::after {
+    height: 7px;
+    width: 7px;
+}
+
+button#player_map_is_video_toggle.rc-switch-checked::after,
+button#dm_map_is_video_toggle.rc-switch-checked::after {
+    left: 33px;
+}
+
 #combat_tracker_inside {
     position: fixed;
     top: 67px;

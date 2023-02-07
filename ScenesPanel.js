@@ -302,7 +302,9 @@ function edit_scene_dialog(scene_id) {
 	
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
+	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
+	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	form.append(playerMapRow)
 	form.append(dmMapRow)
 	// add a row but override the normal input with a toggle
