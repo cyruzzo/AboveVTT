@@ -302,7 +302,9 @@ function edit_scene_dialog(scene_id) {
 	
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
+	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
+	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	form.append(playerMapRow)
 	form.append(dmMapRow)
 	// add a row but override the normal input with a toggle
@@ -322,8 +324,9 @@ function edit_scene_dialog(scene_id) {
 
 	let darknessValue = scene.darkness_filter || 0;
 	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
+	let darknessNumberInput = $(`<input name='darkness_filter_number' class='styled-number-input' type='number' min='0' max='100' value='${darknessValue}'/>`)
 	
-	darknessFilterRange.on(' input change', function(){
+	darknessFilterRange.on('input change', function(){
 		$("#darkness_layer").toggleClass("smooth-transition", true);
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
@@ -333,9 +336,23 @@ function edit_scene_dialog(scene_id) {
    		setTimeout(function(){
    			$("#darkness_layer").toggleClass("smooth-transition", false);
    		}, 400);
+   		darknessNumberInput.val(darknessFilterRange.val());
    		
 	});
-	darknessFilterRange.on(' mouseup', function(){
+	darknessNumberInput.on('input change', function(){
+		$("#darkness_layer").toggleClass("smooth-transition", true);
+		darknessFilterRange.val(darknessNumberInput.val());
+		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+   	 	let darknessPercent = 100 - darknessFilterRangeValue;
+   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+   		}
+   		setTimeout(function(){
+   			$("#darkness_layer").toggleClass("smooth-transition", false);
+   		}, 400);  		
+	});
+
+	darknessFilterRange.on('mouseup', function(){
    	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
@@ -344,6 +361,7 @@ function edit_scene_dialog(scene_id) {
 						'Darkness filter',
 						darknessFilterRange)
 	);
+	darknessFilterRange.after(darknessNumberInput);
 	form.append(form_row(null, 'Snap to Grid',form_toggle("snap", null, false, function(event) {
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 			// it was checked. now it is no longer checked
@@ -367,7 +385,17 @@ function edit_scene_dialog(scene_id) {
 	const gridStroke =$(
 		`<input id="grid_line_width" name="grid_line_width" style="display:inline-block; position:relative; top:2px; margin:0px; height:12px;"
 		type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
-	gridStroke.on("change input", handle_form_grid_on_change)
+	const gridStrokeLabel =$(`<label for='grid_line_width'>Grid Line Width</label>`);
+	const gridStrokeNumberInput = $(`<input type='number' class='styled-number-input' name='gridStrokeNumberInput' max='10' min='0.5' value='${scene["grid_line_width"] || 0.5}'/>`);
+	gridStroke.on("change input", function(){
+		gridStrokeNumberInput.val($(this).val());
+		handle_form_grid_on_change();
+	})
+	gridStrokeNumberInput.on("change input", function(){
+		gridStroke.val($(this).val());
+		handle_form_grid_on_change();
+		
+	})
 	showGridControls.append(
 		form_toggle("grid", null, false, function(event) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
@@ -388,6 +416,7 @@ function edit_scene_dialog(scene_id) {
 	)
 	showGridControls.append(gridColor)
 	showGridControls.append(gridStroke)
+	showGridControls.append(gridStrokeLabel, gridStrokeNumberInput);
 	form.append(form_row(null, 'Show Grid', showGridControls))
 
 	const colorPickers = form.find('input.spectrum');
@@ -414,12 +443,12 @@ function edit_scene_dialog(scene_id) {
 	form.append(form_row(null, 'Grid Scale', grid_buttons))
 
 	var manual = $("<div id='manual_grid_data'/>");
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input type='number' name='hpps'> X <input type='number' name='vpps'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input type='number' name='offsetx'> X <input type='number' name='offsety'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input type='number' name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input type='number' name='scale_factor'></div></div>"));
 
 	
 	manual.find("input").each(function() {

@@ -637,6 +637,97 @@ div#scene_selector,
     border-radius: 15px;
 }
 
+#edit_dialog button:not(.rc-switch){
+    background:none;
+    border-radius:5px;
+
+}
+#edit_dialog input[type='text']{
+    border-radius:5px;
+    border: 1px solid #ddd;
+    box-shadow:none;
+}
+
+
+input[name='darkness_filter_number']{
+    width:50px;
+    font-size:12px;
+}
+#edit_dialog input::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 4px; 
+  height: 12px; 
+  background: #1b9af0; 
+  cursor: pointer; 
+  border-radius:7px;
+}
+
+#edit_dialog input[type='range']{
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    height:8px !important;
+    width:110px !important;
+    border-radius:5px;
+}
+
+#edit_dialog input{
+    outline:none;
+}
+label[for='grid_line_width'] {
+    font-size: 10px;
+    position: relative;
+    font-weight: bold;
+    top: -7px;
+    left: -83px;
+    color: #555;
+}
+
+input#grid_line_width {
+    position: relative !important;
+    top: 5px !important;
+    left: 7px;
+}
+
+input[name='gridStrokeNumberInput'] {
+    position: relative;
+    top: 3px;
+    left: -57px;
+    width: 50px;
+}
+
+.isvideotogglelabel {
+    display: inline-block;
+    position: absolute;
+    width: 80px;
+    right: -20px;
+    font-size: 11px;
+    top: 6px;
+    font-size: 9px;
+}
+
+button#player_map_is_video_toggle,
+button#dm_map_is_video_toggle {
+    height: 12px;
+    top: -6px;
+    color: #555;
+}
+
+button#player_map_is_video_toggle::after,
+button#dm_map_is_video_toggle::after {
+    height: 7px;
+    width: 7px;
+}
+
+button#player_map_is_video_toggle.rc-switch-checked::after,
+button#dm_map_is_video_toggle.rc-switch-checked::after {
+    left: 33px;
+}
+
+#show_grid_controls{
+    position:relative;
+}
+
 #combat_tracker_inside {
     position: fixed;
     top: 67px;
@@ -5227,7 +5318,8 @@ div.note[id^="ui-id"] .mce-btn button {
     z-index: 100000;
 }
 
-.styled-number-input {
+.styled-number-input,
+#manual_grid_data input {
     height: 15px;
     font-size: 13px;
     font-weight: bold;
@@ -5240,7 +5332,19 @@ div.note[id^="ui-id"] .mce-btn button {
     border-radius: 2px;
 }
 
-.styled-number-input:focus {
+.styled-number-input:focus,
+#manual_grid_data input:focus {
     text-decoration: none;
     border-width: 1px;
+}
+
+#manual_grid_data input,
+input[name='darkness_filter_number'],
+input[name='gridStrokeNumberInput']{
+     text-decoration: none;
+     font-weight:normal;
+     border: 1px solid #ddd;
+}
+input[name='upsq'] {
+    padding-right: 17px;
 }
