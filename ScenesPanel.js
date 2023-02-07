@@ -484,7 +484,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist();	
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
-
+		$("#exitWizard").remove();
 		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
@@ -506,6 +506,7 @@ function edit_scene_dialog(scene_id) {
 			
 			consider_upscaling(window.ScenesHandler.scene);
 			
+			$("exitWizard").remove();
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -531,6 +532,7 @@ function edit_scene_dialog(scene_id) {
 			else
 				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
+			$("exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
@@ -556,6 +558,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist_current_scene();
 		else
 			window.ScenesHandler.persist();
+		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
 	}
 
@@ -578,6 +581,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist_current_scene();
 		else
 			window.ScenesHandler.persist();
+		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
 	}
 
@@ -826,7 +830,18 @@ function edit_scene_dialog(scene_id) {
 
 
 			$("body").append(wizard_popup);
-
+			wizard_popup.draggable({
+				addClasses: false,
+				scroll: false,
+				containment: "#windowContainment",
+				start: function() {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function() {
+					$('.iframeResizeCover').remove();
+				}
+			});
 			regrid();
 
 
@@ -857,13 +872,16 @@ function edit_scene_dialog(scene_id) {
 			}
 
 			if(window.CLOUD){
-				window.ScenesHandler.persist_scene(scene_id,true,true);
+				window.ScenesHandler.persist_scene(scene_id,true);
 			}
 			else{
 				window.ScenesHandler.persist();
 				window.ScenesHandler.switch_scene(scene_id);
 			}
-				
+			
+			window.ScenesHandler.switch_scene(scene_id);
+			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
+
 			$("#VTT").css("--scene-scale", 1)
 
 			$("#edit_dialog").remove();
@@ -873,7 +891,18 @@ function edit_scene_dialog(scene_id) {
 
 
 			prewiz = $("<table id='prewiz'/>");
-
+			prewiz.draggable({
+				addClasses: false,
+				scroll: false,
+				containment: "#windowContainment",
+				start: function() {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function() {
+					$('.iframeResizeCover').remove();
+				}
+			});
 			prewiz.append("<tr><td><button id='align_grid'>Align to Grid</button></td><td>Use this if you're working on a pre-gridded map and you want all features to work (precise token size, measurament tool,grid snapping!)</td></tr>");
 			prewiz.append("<tr><td><button id='create_grid'>Create Grid</button></td><td>Use this if you want advanced features on a map that don't have a grid!'</td></tr>");
 			prewiz.append("<tr><td><button id='rescale'>Just Rescale the Image</button></td><td>Use this if you just wanna change the size of the image.. It's good for generic images, world maps, or if you don't care about features and just want to have fun quickly</td></tr>");
@@ -898,6 +927,24 @@ function edit_scene_dialog(scene_id) {
 			$("#rescale").click(function() {
 				$("#prewiz").remove();
 				align_grid(true, true)
+			});
+
+			let exitWizard = $(`<button id='exitWizard' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'>Cancel Wizard<button>`);
+			$("body").append(exitWizard);
+			exitWizard.on('click', function(){
+				$("#prewiz").remove();
+				$("#wizard_popup").remove();
+				exitWizard.remove();
+				$('#aligner1').remove();
+				$('#aligner2').remove();
+				window.WIZARDING = false;
+				window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = copiedSceneData;
+				window.ScenesHandler.scene = copiedSceneData;
+				window.CURRENT_SCENE_DATA = copiedSceneData;
+
+				window.ScenesHandler.persist_current_scene();
+				
+				$("#tokens").show();
 			});
 
 		}
