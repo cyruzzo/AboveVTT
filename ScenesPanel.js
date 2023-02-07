@@ -668,7 +668,25 @@ function edit_scene_dialog(scene_id) {
 				scrollLeft: pageX + 200,
 			}, 500);
 
+			let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
+					<input type="range" name='verticalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="verticalMinorAdjustmentInput" data-orientation="vertical">
+					<label for="verticalMinorAdjustmentInput">Minor Vertical Adjustment</label>
+					<button id="resetMinorVerticalAdjustmentRange">Reset</button>
+			</div>`);
+			let horizontalMinorAdjustment = $(`<div id="horizontalMinorAdjustment">
+				 	<input type="range" name='horizontalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="horizontalMinorAdjustmentInput">
+					<label for="horizontalMinorAdjustmentInput">Minor Horizontal Adjustment</label>
+					<button id="resetMinorHorizontalAdjustmentRange">Reset</button>
+			</div>`);
 
+			horizontalMinorAdjustment.find('#resetMinorHorizontalAdjustmentRange').on('click', function(){
+				$("#horizontalMinorAdjustmentInput").val('50');
+				horizontalMinorAdjustment.find('input').trigger('change');
+			})
+			verticalMinorAdjustment.find('#resetMinorVerticalAdjustmentRange').on('click', function(){
+				$("#verticalMinorAdjustmentInput").val('50');
+				verticalMinorAdjustment.find('input').trigger('change');
+			})
 
 			let regrid = function(e) {
 
@@ -682,6 +700,11 @@ function edit_scene_dialog(scene_id) {
 					y: parseInt(aligner2.css("top")) + 29,
 				};
 
+				let adjustmentSliders = {
+					x: (horizontalMinorAdjustment.find('input').val()-50)/10,
+					y: (verticalMinorAdjustment.find('input').val()-50)/10,
+				}
+
 
 				if (just_rescaling) {
 					ppsx = (al2.x - al1.x);
@@ -690,8 +713,8 @@ function edit_scene_dialog(scene_id) {
 					offsety = 0;
 				}
 				else {
-					ppsx = (al2.x - al1.x) / 3.0;
-					ppsy = (al2.y - al1.y) / 3.0;
+					ppsx = (al2.x - al1.x) / 3.0 + adjustmentSliders.x;
+					ppsy = (al2.y - al1.y) / 3.0 + adjustmentSliders.y;
 					offsetx = al1.x % ppsx;
 					offsety = al1.y % ppsy;
 				}
@@ -814,6 +837,7 @@ function edit_scene_dialog(scene_id) {
 			$("#VTT").append(aligner1);
 			$("#VTT").append(aligner2);
 
+
 			wizard_popup = $("<div id='wizard_popup'></div>");
 			wizard_popup.css("position", "fixed");
 			wizard_popup.css("max-width", "800px");
@@ -823,10 +847,29 @@ function edit_scene_dialog(scene_id) {
 			wizard_popup.css("background", "rgba(254,215,62,0.8)");
 			wizard_popup.css("font-size", "20px");
 
-			if (!just_rescaling)
+
+
+			if (!just_rescaling){
 				wizard_popup.append("Move the pointers at the center of the map to define 3x3 Square on the map! ZOOM IN with the Top Right + button. <button id='step2btn'>Press when it's good enough</button>");
-			else
+								
+				verticalMinorAdjustment.find('input').on('change input',function(){
+					regrid();
+					console.log('verticalMinorAdjustment');
+
+				});
+				horizontalMinorAdjustment.find('input').on('change input',function(){
+					regrid();
+					console.log('horizontalMinorAdjustment');
+
+				});
+				wizard_popup.append(verticalMinorAdjustment);
+				wizard_popup.append(horizontalMinorAdjustment);
+
+
+			}
+			else{
 				wizard_popup.append("Set the green square to roughly the size of a medium token! <button id='step2btn'>Press when it's good enough</button>");
+			}
 
 
 			$("body").append(wizard_popup);
