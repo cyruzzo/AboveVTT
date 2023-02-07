@@ -4118,9 +4118,20 @@ function addGamelogPopoutButton(){
 		setTimeout(function() {		
 			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
 		}, 1000)
+		let cleanedUpAlready = false;
 		childWindows["Gamelog"].onload = function() {
-			popoutGamelogCleanup();
-		}	
+			if(!cleanedUpAlready){
+				popoutGamelogCleanup();
+				cleanedUpAlready = true;
+			}	
+		}
+		if(!cleanedUpAlready){
+			setTimeout(function() {		
+				popoutGamelogCleanup();  //backup in case onload isn't triggered - I'll look into this more later
+				cleanedUpAlready = true;
+			}, 6000)
+		}
+
 	});
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
 }
@@ -4147,40 +4158,38 @@ width=${width},height=${height},left=100,top=100`;
 }
 function popoutGamelogCleanup(){
 	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
-	setTimeout(function(){
-		$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
-			body{
-				overflow: hidden !important;
-			}
-			.sidebar__inner,
-			.sidebar,
-			.sidebar__pane-content,
-			.glc-game-log{
-			    width: 100% !important;
-			    max-width: 100% !important;
-			}
-			.mfp-wrap {
-		   		width: 100%;
-		   		z-index: 50000;
-			}
-			.ddb-campaigns-detail-gamelog {
-    			visibility: hidden;
-			}
-		</style>`);
-		$(childWindows["Gamelog"].document).find(".gamelog-button").click();
-		removeFromPopoutWindow("Gamelog", ".dice-roller");
-		removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
-		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
-		removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");	
-		$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
-		let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
-		removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
-		removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
-		removeFromPopoutWindow("Gamelog", "iframe");
-		$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
-		$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
-		setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);	
-	}, 5000);		
+	$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
+		body{
+			overflow: hidden !important;
+		}
+		.sidebar__inner,
+		.sidebar,
+		.sidebar__pane-content,
+		.glc-game-log{
+		    width: 100% !important;
+		    max-width: 100% !important;
+		}
+		.mfp-wrap {
+	   		width: 100%;
+	   		z-index: 50000;
+		}
+		.ddb-campaigns-detail-gamelog {
+			visibility: hidden;
+		}
+	</style>`);
+	$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+	removeFromPopoutWindow("Gamelog", ".dice-roller");
+	removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
+	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+	removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");	
+	$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
+	let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
+	removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
+	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+	removeFromPopoutWindow("Gamelog", "iframe");
+	$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
+	$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
+	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);				
 }
 function updatePopoutWindow(name, cloneSelector){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
