@@ -406,6 +406,25 @@ a.ddbeb-button {
 .ui-resizable-handle {
     z-index: 50100 !important;
 }
+
+#horizontalMinorAdjustmentInput,
+#verticalMinorAdjustmentInput
+{
+    width:100%;
+}
+#horizontalMinorAdjustment,
+#verticalMinorAdjustment
+{
+    position:relative;
+}
+
+#wizard_popup button#resetMinorVerticalAdjustmentRange,
+#wizard_popup button#resetMinorHorizontalAdjustmentRange {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display:inline-block;
+}
 .iframeResizeCover {
     z-index:9999999;
     position:absolute;
