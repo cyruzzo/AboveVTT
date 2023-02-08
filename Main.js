@@ -1669,40 +1669,73 @@ function observe_character_sheet_aoe(documentToObserve) {
 	aoe_observer.observe(mutation_target, mutation_config);
 }
 
+
+/** Called from our character sheet observer for Dice Roll formulae.
+ * @param element the jquery element that we observed changes to
+ */
+function inject_dice_roll(element) {
+	try {
+		if (element.find("button.avtt-roll-formula-button").length > 0) {
+			console.debug("inject_dice_roll already has a button")
+			return;
+		}
+		const text = element.text();
+		if (text.match(slashCommandRegex)?.[0]) {
+			const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
+			const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
+			button.on("click", function (clickEvent) {
+				clickEvent.stopPropagation();
+				window.diceRoller.roll(diceRoll);
+			});
+			element.empty();
+			element.append(button);
+		}
+	} catch (error) {
+		console.log("inject_dice_roll failed to process element", element, error);
+	}
+}
+
 /**
 * Observers character sheet for Dice Roll formulae.
 * @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
 */
 function observe_character_sheet_dice_rolls(documentToObserve) {
-    if (!is_characters_page()) {
-        return;
-    }
+	if (window.dice_roll_observer) {
+		window.dice_roll_observer.disconnect();
+	}
 
-    const dice_roll_observer = new MutationObserver(function() {
-        const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-visited')");
-        notes.each(function() {
-            $(this).addClass("above-vtt-visited");
-            try {
-                const text = $(this).text();
-                if (text.match(slashCommandRegex)?.[0]) {
-                    const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
-                    const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
-                    button.on("click", function (clickEvent) {
-                        clickEvent.stopPropagation();
-                        window.diceRoller.roll(diceRoll);
-                    });
-                    $(this).empty();
-                    $(this).append(button);
-                }
-            } catch (e) {
-                console.warn("Failed to parse DiceRoll expression", e);
-            }
-        });
-    });
+	window.dice_roll_observer = new MutationObserver(function(mutationList, observer) {
 
-    const mutation_target = documentToObserve.get(0);
-    const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-    dice_roll_observer.observe(mutation_target, mutation_config);
+		console.log("dice_roll_observer", mutationList);
+
+		// initial injection of our buttons
+		const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-visited')");
+		notes.each(function() {
+			console.log("dice_roll_observer iterating", mutationList);
+			$(this).addClass("above-vtt-visited"); // make sure we only parse this element once
+			inject_dice_roll($(this));
+		});
+
+		// handle updates to element changes that would strip our buttons
+		mutationList.forEach(mutation => {
+			if (mutation.type === "childList") {
+				mutation.addedNodes.forEach(node => {
+					if (typeof node.data === "string" && node.data.match(slashCommandRegex)?.[0]) {
+						inject_dice_roll($(mutation.target));
+					}
+				});
+			}
+			if (mutation.type === "characterData") {
+				if (typeof mutation.target.data === "string" && mutation.target.data.match(slashCommandRegex)?.[0]) {
+					inject_dice_roll($(mutation.target));
+				}
+			}
+		});
+	});
+
+	const mutation_target = documentToObserve.get(0);
+	const mutation_config = { attributes: false, childList: true, characterData: true, subtree: true };
+	dice_roll_observer.observe(mutation_target, mutation_config);
 }
 
 /** DEPRECATED - dont use */
@@ -1749,6 +1782,9 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
 		console.log("fixing up the character sheet");
+
+		observe_character_sheet_dice_rolls($(event.target).contents());
+
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {
@@ -1956,6 +1992,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
 			if (sidebar.length > 0 && $(event.target).contents().find("#castbutton").length == 0) {
 				inject_sidebar_send_to_gamelog_button($(event.target).contents().find(".ct-sidebar__pane-content > div"));
+
 			}
 		});
 
@@ -2024,6 +2061,10 @@ function close_player_sheet()
 			window.STREAMTASK=false;
 		}
 		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
+	}
+	if (window.dice_roll_observer) {
+		window.dice_roll_observer.disconnect();
+		delete window.dice_roll_observer;
 	}
 }
 

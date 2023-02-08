@@ -521,20 +521,39 @@ function replace_gamelog_message_expressions(listItem) {
 }
 
 function getCharacterStatModifiers() {
-    if (!is_characters_page()) {
-        return undefined;
+    if (is_characters_page()) {
+        let stats = $(".ddbc-ability-summary__secondary");
+        return {
+            "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
+            "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
+            "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
+            "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
+            "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
+            "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
+            "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+        };
     }
-
-    let stats = $(".ddbc-ability-summary__secondary");
-    return {
-        "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
-        "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
-        "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
-        "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
-        "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
-        "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
-        "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
-    };
+    if (window.DM) {
+        try {
+            const sheet = find_currently_open_character_sheet();
+            if (!sheet) return undefined;
+            const stats = window.PLAYER_STATS[sheet];
+            if (!stats || !stats.abilities) return undefined;
+            return {
+                "str": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "str").modifier),
+                "dex": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "dex").modifier),
+                "con": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "con").modifier),
+                "int": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "int").modifier),
+                "wis": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "wis").modifier),
+                "cha": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "cha").modifier),
+                "pb": parseInt($($("#sheet").find("iframe").contents()).find(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+            };
+        } catch (error) {
+            console.warn("getCharacterStatModifiers Failed to parse player stats", error);
+            return undefined;
+        }
+    }
+    return undefined;
 }
 
 /**
@@ -548,10 +567,6 @@ function replaceModifiersInSlashCommand(slashCommandText) {
     if (typeof slashCommandText !== "string") {
         console.warn("replaceModifiersInSlashCommand expected a string, but received", slashCommandText);
         return "";
-    }
-
-    if (!is_characters_page()) {
-        return slashCommandText; // this only works on the characters page
     }
 
     const expression = slashCommandText.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
