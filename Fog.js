@@ -592,12 +592,12 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid();
 	gridContext.setLineDash(dash);
-	let startX = offsetX/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
-	let startY = offsetY/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety/window.CURRENT_SCENE_DATA.scale_factor;
+	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
+	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
 	startX = Math.round(startX)
 	startY = Math.round(startY)
-	const incrementX = hpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
-	const incrementY = vpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor;
+	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
+	const incrementY = vpps|| window.CURRENT_SCENE_DATA.vpps;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
@@ -640,8 +640,8 @@ function draw_wizarding_box() {
 
 	var gridCanvas = document.getElementById("grid_overlay");
 	var gridContext = gridCanvas.getContext("2d");
-	gridCanvas.width = $("#scene_map").width();
-	gridCanvas.height = $("#scene_map").height();
+	gridCanvas.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
+	gridCanvas.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -671,30 +671,26 @@ function draw_wizarding_box() {
 	gridContext.stroke();
 
 }
+function ctxScale(canvasid){
+	var canvas = document.getElementById(canvasid);
+	var ctx = canvas.getContext("2d");
+	canvas.width = $("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor;
+  	canvas.height = $("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor;
+	ctx.scale(window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.scale_factor);
+}
 
 function reset_canvas() {
-	$('#temp_overlay').get(0).width =($("#scene_map").width());
-	$('#temp_overlay').get(0).height =($("#scene_map").height());
-
-	$('#fog_overlay').get(0).width =($("#scene_map").width());
-	$('#fog_overlay').get(0).height =($("#scene_map").height());
-
-	$('#grid_overlay').get(0).width =($("#scene_map").width());
-	$('#grid_overlay').get(0).height =($("#scene_map").height());
-
-	$('#text_overlay').get(0).width= ($("#scene_map").width());
-	$('#text_overlay').get(0).height = ($("#scene_map").height());
-
-	$('#draw_overlay').get(0).width = $("#scene_map").width();
-	$('#draw_overlay').get(0).height = $("#scene_map").height();
-
 	$('#darkness_layer').css("width", $("#scene_map").width());
 	$('#darkness_layer').css("height", $("#scene_map").height());
 
 	$("#scene_map_container").css("width", $("#scene_map").width())
 	$("#scene_map_container").css("height", $("#scene_map").height())
 
+	ctxScale('temp_overlay');
 
+	ctxScale('grid_overlay');
+	ctxScale('text_overlay');
+	ctxScale('draw_overlay');
 
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
@@ -705,8 +701,7 @@ function reset_canvas() {
 	}
 
 
-	canvas.width = $("#scene_map").width();
-	canvas.height = $("#scene_map").height();
+	ctxScale('fog_overlay');
 	if (window.DM) {
 		ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -727,8 +722,8 @@ function reset_canvas() {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		canvas_grid.width = $("#scene_map").width();
-		canvas_grid.height = $("#scene_map").height();
+		canvas_grid.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
+		canvas_grid.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -845,7 +840,7 @@ function redraw_text() {
 				drawRect(context,x,y,width,height,color);
 				break;
 			case "text-eraser":
-				context.clearRect(x, y, width, height);
+				context.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 				break;
 			default:
 				break;

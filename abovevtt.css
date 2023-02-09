@@ -5205,12 +5205,8 @@ div.ddbc-tab-options--layout-pill>button{
     transition: none;
 }
 
-#temp_overlay,
-#fog_overlay,
-#text_overlay,
-#draw_overlay,
-#scene_map_container,
-#grid_overlay{
+
+#scene_map_container{
     transform: scale(var(--scene-scale));
     transform-origin: top left;
 }
