@@ -585,7 +585,8 @@ function draw_text(
 
     if($(`svg[id='${id}']`).length>0)
         return;
-
+    if(rectColor == null)
+        rectcolor = 'transparent';
 
     let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor);   
 
