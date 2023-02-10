@@ -586,7 +586,7 @@ function draw_text(
     if($(`svg[id='${id}']`).length>0)
         return;
     if(rectColor == null)
-        rectcolor = 'transparent';
+        rectColor = 'transparent';
 
     let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor);   
 
@@ -616,7 +616,7 @@ function draw_text(
             <title>${text}</title>
             <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
             <g style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
-            <text x="${x}" y="${font.size}" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;">${textPart}</text>
+            <text x="${x}" y="${font.size}" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;">${textPart}</text>
             </g>
          </svg>
     `);
