@@ -580,7 +580,7 @@ function draw_text(
     stroke,
     rectColor = 'transparent',
     id = '',
-    scale = window.CURRENT_SCENE_DATA.scale_factor
+    scale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor
 ) {
 
     if($(`svg[id='${id}']`).length>0)
@@ -588,7 +588,9 @@ function draw_text(
     if(rectColor == null)
         rectColor = 'transparent';
 
-    let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor);   
+    divideScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
+
+    let adjustScale = (scale/divideScale);   
 
     font.size = font.size / adjustScale
     stroke.size = stroke.size / adjustScale
@@ -660,6 +662,7 @@ function draw_text(
 
 
     textSVG.on('dblclick', function(){
+
         create_text_controller();
 
         window.TEXTDATA = [];
@@ -705,10 +708,17 @@ function init_text_button(buttons) {
     textMenu = $(
         "<div id='text_menu' class='top_menu' style='position:fixed; top:25px; width:75px'></div>"
     );
-
+     textMenu.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+                <button id='text_select' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active'
+                    data-shape='rect' data-unique-with="control" data-function="draw_text">
+                        Move/Edit
+                </button>
+            </div>`
+    );
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-                <button id='text_draw' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active'
+                <button id='text_draw' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
                     data-shape='rect' data-unique-with="control" data-function="draw_text">
                         Draw
                 </button>

@@ -828,11 +828,13 @@ function redraw_text() {
 	$('#text_div').empty();
 	for(drawing in window.DRAWINGS){
 		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale] = window.DRAWINGS[drawing]
+
 		if(shape == 'text' && textid == undefined){
 			let newTextId = uuid();
+			setScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
 			window.DRAWINGS[drawing].push(rectColor);
 			window.DRAWINGS[drawing].push(newTextId);
-			window.DRAWINGS[drawing].push(window.CURRENT_SCENE_DATA.scale_factor)
+			window.DRAWINGS[drawing].push(setScale);
 		}
    		if(shape == 'text')
 			draw_text(undefined, ...window.DRAWINGS[drawing]);	
@@ -1624,7 +1626,7 @@ function handle_drawing_button_click() {
 		else{
 			$("#temp_overlay").css("z-index", "50")
 		}
-		if ($(clicked).is("#text_button")){
+		if ($(clicked).is("#text_button") && $("#text_button #text_select").hasClass('ddbc-tab-options__header-heading--is-active')){
 			$("#text_div").css("z-index", "51")
 		}
 		else{
