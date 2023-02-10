@@ -1626,7 +1626,7 @@ function handle_drawing_button_click() {
 		else{
 			$("#temp_overlay").css("z-index", "50")
 		}
-		if ($(clicked).is("#text_button") && $("#text_button #text_select").hasClass('ddbc-tab-options__header-heading--is-active')){
+		if (($(clicked).is("#text_button") ||$(clicked).is("#text_select")) && $("#text_select").hasClass('ddbc-tab-options__header-heading--is-active')){
 			$("#text_div").css("z-index", "51")
 		}
 		else{

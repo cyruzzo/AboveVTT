@@ -711,7 +711,7 @@ function init_text_button(buttons) {
      textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
                 <button id='text_select' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active'
-                    data-shape='rect' data-unique-with="control" data-function="draw_text">
+                   data-unique-with="control" data-function="edit_text">
                         Move/Edit
                 </button>
             </div>`
