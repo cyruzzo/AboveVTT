@@ -1818,7 +1818,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
-        clickedItem.activelyFetchingMonsters = true;
+        clickedItem.activelyFetchingMonsters = false;
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
@@ -2358,11 +2358,8 @@ function display_change_image_modal(placedToken) {
     inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can change the image for all tokens of this type by clicking the gear button on the token row in the Tokens tab.</div>`));
 }
 
-const fetch_and_cache_scene_monster_items = mydebounce( (clearCache = false) => {
+const fetch_and_cache_scene_monster_items = mydebounce( () => {
     console.log("fetch_and_cache_scene_monster_items");
-    if (clearCache) {
-        cached_monster_items = {};
-    }
     let monsterIds = [];
     for (let id in window.TOKEN_OBJECTS) {
         let token = window.TOKEN_OBJECTS[id];
