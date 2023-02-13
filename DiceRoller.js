@@ -6,7 +6,7 @@ $(function() {
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
 const validExpressionRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
-const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|w)\s/;
+const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|heal|w)\s/;
 const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|\+|-|\d+|\s+|STR|str|DEX|dex|CON|con|INT|int|WIS|wis|CHA|cha|PB|pb)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. It is also explicitly declaring the modifiers as case-sensitive because we can't search the entire thing as case-insensitive because the `d` in 1d20 needs to be lowercase.
 
 class DiceRoll {
@@ -200,6 +200,8 @@ class DiceRoll {
             rollType = "check";
         } else if (slashCommand.startsWith("/save")) {
             rollType = "save";
+        } else if (slashCommand.startsWith("/heal")) {
+            rollType = "heal";
         }
         return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride);
     }
