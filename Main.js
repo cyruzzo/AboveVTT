@@ -491,9 +491,10 @@ function set_pointer(data, dontscroll = false) {
 	if(!dontscroll){
 		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
 		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
+		var sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
 			scrollTop: pageY + 200,
-			scrollLeft: pageX + 200,
+			scrollLeft: pageX + 200 + sidebarSize/2,
 		}, 500);
 	}
 }
