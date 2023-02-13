@@ -3511,6 +3511,9 @@ span.exhaustion-pip.last{
     outline: 2px solid #000;
 }
 
+#grid_toggle:not(.rc-switch-checked) ~ *{
+    display:none !important;
+}
 .sidebar-hover-text-flyout {
     display: block;
     max-width: 400px;
