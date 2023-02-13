@@ -2808,11 +2808,11 @@ function init_ui() {
 	drawOverlay.css("left", "0");
 	drawOverlay.css("z-index", "18");
 
-	const textOverlay = $("<canvas id='text_overlay'></canvas>");
-	textOverlay.css("position", "absolute");
-	textOverlay.css("top", "0");
-	textOverlay.css("left", "0");
-	textOverlay.css("z-index", "18");
+	const textDiv = $("<div id='text_div'></div>");
+	textDiv.css("position", "absolute");
+	textDiv.css("top", "0");
+	textDiv.css("left", "0");
+	textDiv.css("z-index", "20");
 
 	const grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
@@ -2825,7 +2825,7 @@ function init_ui() {
 	fog.css("top", "0");
 	fog.css("left", "0");
 	fog.css("position", "absolute");
-	fog.css("z-index", "20");
+	fog.css("z-index", "21");
 
 	// this overlay sits above all other canvases
 	// we draw to this and then bake the image into the corresponding
@@ -2902,7 +2902,7 @@ function init_ui() {
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(drawOverlay);
-	VTT.append(textOverlay);
+	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	mapContainer.append(darknessLayer);
 

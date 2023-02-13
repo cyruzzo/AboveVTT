@@ -689,8 +689,10 @@ function reset_canvas() {
 	ctxScale('temp_overlay');
 
 	ctxScale('grid_overlay');
-	ctxScale('text_overlay');
 	ctxScale('draw_overlay');
+
+	$("#text_div").css("width", $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor);
+	$("#text_div").css("height", $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
 
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
@@ -822,30 +824,21 @@ function redraw_fog() {
  * Redraws all text drawing types from window.DRAWINGS
  */
 function redraw_text() {
-	const canvas = document.getElementById("text_overlay");
-	const context = canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	const textDrawings = window.DRAWINGS.filter(d => d[0].includes("text"))
+	$('#text_div').empty();
+	for(drawing in window.DRAWINGS){
+		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale] = window.DRAWINGS[drawing]
 
-	textDrawings.forEach(drawing => {
-		const [shape, fill, color, x, y, width, height, text, font, stroke] = drawing
-		switch (shape) {
-			case "text":
-				draw_text(context, ...drawing);
-				break;
-			case "text-rect":
-				// incase we have a drop-shadow filter applied still
-				context.filter = "none"
-				drawRect(context,x,y,width,height,color);
-				break;
-			case "text-eraser":
-				context.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
-				break;
-			default:
-				break;
+		if(shape == 'text' && textid == undefined){
+			let newTextId = uuid();
+			setScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
+			window.DRAWINGS[drawing].push(rectColor);
+			window.DRAWINGS[drawing].push(newTextId);
+			window.DRAWINGS[drawing].push(setScale);
 		}
-	})
+   		if(shape == 'text')
+			draw_text(undefined, ...window.DRAWINGS[drawing]);	
+	}
 }
 
 function redraw_drawings() {
@@ -1326,9 +1319,34 @@ function drawing_mouseup(e) {
 		}
 		else if (window.DRAWSHAPE === "text_erase"){
 			// text eraser lives on a different overlay and thus can't just be eraser
-			data[0] = "text-eraser"
-			window.DRAWINGS.push(data);
-			redraw_text();
+			var c = 0;
+			let svgTextArray = $('#text_div svg');
+			for (svgText in svgTextArray) {
+				var curr = svgTextArray[svgText].id;
+
+				if($("#text_div svg[id='" + curr+ "'] text")[0] == undefined)
+					continue;
+				let textImageRect = $("#text_div svg[id='" + curr+ "'] text")[0].getBoundingClientRect();	
+
+				
+				var texttop = (parseInt(textImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
+				var textleft = (parseInt(textImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
+				var textright = (parseInt(textImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
+				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+				let scaledRemainderTop = (textbottom-texttop-textImageRect.height)/2;
+				let scaledRemainderLeft = (textright-textleft-textImageRect.width)/2;
+
+				if (Math.min(window.BEGIN_MOUSEY, mouseY, textbottom-scaledRemainderTop) == textbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, texttop+scaledRemainderTop) == texttop+scaledRemainderTop)
+					continue;
+				if (Math.min(window.BEGIN_MOUSEX, mouseX, textright-scaledRemainderLeft) == textright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, textleft+scaledRemainderLeft) == textleft+scaledRemainderLeft)
+					continue;
+
+				c++;
+				// TOKEN IS INSIDE THE SELECTION
+				$("#text_div svg[id='" + curr + "']").remove();
+				window.DRAWINGS = window.DRAWINGS.filter(d => d[9] != curr);
+
+			}
 		}
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
@@ -1603,9 +1621,16 @@ function handle_drawing_button_click() {
 		// allow all drawing to be done above the tokens
 		if ($(clicked).is("#select-button")){
 			$("#temp_overlay").css("z-index", "25")
+			$
 		}
 		else{
 			$("#temp_overlay").css("z-index", "50")
+		}
+		if (($(clicked).is("#text_button") ||$(clicked).is("#text_select")) && $("#text_select").hasClass('ddbc-tab-options__header-heading--is-active')){
+			$("#text_div").css("z-index", "51")
+		}
+		else{
+			$("#text_div").css("z-index", "20")
 		}
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup',  data, drawing_mouseup);

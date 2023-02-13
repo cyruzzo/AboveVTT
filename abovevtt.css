@@ -5195,6 +5195,15 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 
+#text_div{
+    pointer-events:none;
+}
+
+#text_div svg text{
+    pointer-events:all;
+    cursor: move;
+}
+
 #scene_map_container{
     overflow: clip;
     transition: opacity 1.5s linear 0s;
