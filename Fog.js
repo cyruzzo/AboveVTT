@@ -431,7 +431,7 @@ function check_single_token_visibility(id){
 				{
 					$(auraSelector).hide();
 				}
-				else{
+				else if($(auraSelector).hasClass('islight')){
 					$(auraSelector).show();
 				}
 			}
@@ -441,7 +441,7 @@ function check_single_token_visibility(id){
 				$(auraSelector).show();
 				//console.log('SHOW '+id);
 			}
-			else if($(auraSelector).hasClass(islight)){
+			else if($(auraSelector).hasClass('islight')){
 				$(auraSelector).show();
 			}
 }
@@ -504,7 +504,7 @@ function do_check_token_visibility() {
 			$(auraSelector).show();
 			//console.log('SHOW '+id);
 		}
-		else if($(auraSelector).hasClass(islight)){
+		else if($(auraSelector).hasClass('islight')){
 			$(auraSelector).show();
 		}
 		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
