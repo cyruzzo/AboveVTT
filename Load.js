@@ -6,11 +6,20 @@ if (window.location.search.includes("abovevtt=true")) {
 	(document.body || document.documentElement).appendChild(loadingOverlay);
 }
 
+console.log("chrome.runtime.getURL", chrome.runtime.getURL("/"))
+console.log("chrome.runtime.getManifest().version_name", chrome.runtime.getManifest().version_name)
+
 var l = document.createElement('div');
 l.setAttribute("style", "display:none;");
 l.setAttribute("id", "extensionpath");
 l.setAttribute("data-path", chrome.runtime.getURL("/"));
 (document.body || document.documentElement).appendChild(l);
+
+var avttVersion = document.createElement('div');
+avttVersion.setAttribute("style", "display:none;");
+avttVersion.setAttribute("id", "avttversion");
+avttVersion.setAttribute("data-version", chrome.runtime.getManifest().version_name);
+(document.body || document.documentElement).appendChild(avttVersion);
 
 // load stylesheets
 [
