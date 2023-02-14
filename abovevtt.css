@@ -3512,6 +3512,9 @@ span.exhaustion-pip.last{
     outline: 2px solid #000;
 }
 
+#grid_toggle:not(.rc-switch-checked) ~ *{
+    display:none !important;
+}
 .sidebar-hover-text-flyout {
     display: block;
     max-width: 400px;
@@ -4385,18 +4388,64 @@ input.max_hp[disabled]{
     pointer-events: none;
 }
 
-.import-loading-indicator{
+.import-loading-indicator,
+.paused-indicator,
+.dm-paused-indicator{
     position: fixed;
     z-index: 100000;
     left: calc(50% - 170px);
     top: 50px;
     text-align: center;
-    width: 125px;
+    border-radius:20px;
+    border:1px solid #000;
+    box-shadow: 0px 0px 2px 2px #0008;
+    background: #fff6;
+    height: 112px;
+    width: 200px;
+    backdrop-filter: blur(6px);
+}
+.import-loading-indicator .loading-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+.import-loading-indicator .beholder-dm-screen{
+    top: -20px;
 }
 .import-loading-indicator .loading-status-indicator__subtext.complete {
     overflow: visible;
     white-space: nowrap;
     transform: translate(-50%);
+}
+
+.paused-indicator,
+.dm-paused-indicator{
+    top: unset;
+    bottom: 50px;
+    height: 130px;
+}
+.paused-indicator .paused-status-indicator__subtext,
+.dm-paused-indicator .paused-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.paused-indicator g.beholder-dm-screen__screen path,
+.dm-paused-indicator g.beholder-dm-screen__screen path,  
+.import-loading-indicator g.beholder-dm-screen__screen path {
+    fill: #201911;
+    stroke: #0c0a08;
 }
 
 /*one button*/
@@ -5196,6 +5245,15 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 
+#text_div{
+    pointer-events:none;
+}
+
+#text_div svg text{
+    pointer-events:all;
+    cursor: move;
+}
+
 #scene_map_container{
     overflow: clip;
     transition: opacity 1.5s linear 0s;
@@ -5291,6 +5349,23 @@ div.note[id^="ui-id"] .mce-btn button {
 }
 .reorder-button.active {
     background-color: #fff;
+}
+
+.body-rpgcharacter-sheet #VTT.paused *{
+    pointer-events: none !important;
+}
+
+#pause_players.paused #player-pause-svg,
+#pause_players #player-play-svg{
+    display: none;
+}
+#pause_players #player-pause-svg,
+#pause_players.paused #player-play-svg{
+    display: block;
+}
+
+#pause_players svg{
+    padding:0;
 }
 
 .token-row-drag-handle {

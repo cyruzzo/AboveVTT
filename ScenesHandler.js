@@ -185,7 +185,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
-			redraw_text()
+			redraw_text();
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()
