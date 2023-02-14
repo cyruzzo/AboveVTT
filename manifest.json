@@ -54,6 +54,7 @@
 		"purify.min.js",
 		"spectrum-2.0.8.min.js",
 		"spectrum-2.0.8.min.css",
+		"peerjs.min.js",
 		"AjaxQueueModule.js",
 		"DnDBeyond/DDBCharacterData.js",
 		"EncounterHandler.js",
@@ -87,6 +88,8 @@
 		"DiceRoller.js",
 		"ChatObserver.js",
 		"Main.js",
-		"MonsterStatBlock.js"
+		"MonsterStatBlock.js",
+		"PeerManager.js",
+		"PeerCommunication.js"
 	]
 }

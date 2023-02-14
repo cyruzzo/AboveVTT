@@ -410,7 +410,7 @@ class MessageBroker {
 				}
 			}
 
-			if(window.CLOUD && msg.sceneId){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
+			if(window.CLOUD && msg.sceneId && window.CURRENT_SCENE_DATA){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
 				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
 					if(["custom/myVTT/delete_token",
 						"custom/myVTT/createtoken",
@@ -1032,6 +1032,14 @@ class MessageBroker {
 					 }
 				}
 			}
+
+			if (msg.eventType === "custom/myVTT/peerReady") {
+				window.PeerManager.receivedPeerReady(msg);
+			}
+			if (msg.eventType === "custom/myVTT/peerConnect") {
+				window.PeerManager.receivedPeerConnect(msg);
+			}
+
 		};
 
 		get_cobalt_token(function(token) {
@@ -1066,6 +1074,7 @@ class MessageBroker {
 		// update combat tracker:
 
 		update_pclist();
+		send_player_data_to_all_peers(data);
 	}
 
 	acToPlayerData(data) {
@@ -1076,8 +1085,10 @@ class MessageBroker {
 				window.TOKEN_OBJECTS[id].options.ac = data.ac;
 				window.TOKEN_OBJECTS[id].place();
 				window.TOKEN_OBJECTS[id].update_and_sync();
-				if(id in window.PLAYER_STATS)
+				if(id in window.PLAYER_STATS) {
 					window.PLAYER_STATS[id].ac = data.ac;
+					send_player_data_to_all_peers(window.PLAYER_STATS[id]);
+				}
 			}
 		}	
 	}
@@ -1537,7 +1548,8 @@ class MessageBroker {
 				window.PLAYER_STATS[playerData.id] = playerData;
 				window.MB.sendTokenUpdateFromPlayerData(playerData);
 				update_pclist();
-        	});
+				send_player_data_to_all_peers(playerData);
+			});
 		});
 		
 	}

@@ -13,9 +13,9 @@ function update_pclist() {
 
 	window.pcs.forEach(function(item, index) {
 
-		pc = item;
+		const pc = item;
 		let pcSheet = pc.sheet === undefined ? '' : pc.sheet;
-		color = "#" + get_player_token_border_color(pcSheet);
+		const color = pc.color ? pc.color : get_token_color_by_index(index);
 
 		let playerData;
 		if (pc.sheet in window.PLAYER_STATS) {
@@ -83,6 +83,13 @@ function update_pclist() {
 		`;
 		let newplayer=$(newPlayerTemplate);
 		playersPanel.body.append(newplayer);
+		if (pc.p2pConnected) {
+			if (pc.sheet.includes(my_player_id())) {
+				update_player_online_indicator(my_player_id(), pc.p2pConnected, pc.color ? pc.color : window.color);
+			} else {
+				update_player_online_indicator(getPlayerIDFromSheet(pc.sheet), pc.p2pConnected, pc.color ? pc.color : color);
+			}
+		}
 	});
 
 	$(".whisper-btn").on("click",function(){
@@ -104,6 +111,7 @@ function get_higher_res_url(thumbnailUrl) {
 function gather_pcs() {
 	let campaignId = get_campaign_id();
 	if (is_encounters_page() || is_characters_page()) {
+		if (window.pcs) return; // we should only need to fetch this once
 		// they aren't on this page, but we've added them to localStorage to handle this scenario
 		window.pcs = $.parseJSON(localStorage.getItem(`CampaignCharacters${campaignId}`));
 		console.log(`reading "CampaignCharacters-${campaignId}", ${JSON.stringify(window.pcs)}`);
@@ -206,10 +214,66 @@ function random_image_for_player_token(playerId) {
 	return images[randomIndex];
 }
 
-function get_player_token_border_color(playerId) {
-	let index = window.pcs.findIndex(pc => pc.sheet == playerId);
+function get_token_color_by_index(index) {
 	if (index >= 0 && index < TOKEN_COLORS.length) {
-		return TOKEN_COLORS[index];
+		return "#" + TOKEN_COLORS[index];
 	}
-	return TOKEN_COLORS[0];
+	return "#" + TOKEN_COLORS[0];
+}
+
+function find_and_set_player_color() {
+	const playerId = my_player_id();
+
+	// 1. See if we've stored it locally
+	const locallyStored = localStorage.getItem(`PlayerColor-${playerId.replace(' ', '')}`); // "THE DM" has a space in it which won't work here
+	if (locallyStored != null) {
+		console.debug("find_and_set_player_color found a color in localStorage", locallyStored);
+		change_player_color(locallyStored);
+		return;
+	}
+
+	// 2. check if they have a customized character theme
+	const themeColor = $(".dice-toolbar").css("background-color");
+	if (window.DM || themeColor != 'rgb(228, 7, 18)') { // this is the theme color that DDB sets as default. Only allow allow that theme color for the DM
+		console.debug("find_and_set_player_color found a theme color", themeColor);
+		change_player_color(themeColor);
+		return;
+	}
+
+	// 3. use a random TOKEN_COLORS, but don't save that to disk
+	let index = find_pc_by_player_id(playerId);
+	const colorByIndex = get_token_color_by_index(index);
+	if (index >= 0) {
+		const pc = window.pcs[index];
+		if (pc.color) {
+			console.debug("find_and_set_player_color is using pc.color", pc.color);
+			change_player_color(pc.color);
+		}
+		console.debug("find_and_set_player_color found a TOKEN_COLOR using index", index, colorByIndex);
+		change_player_color(colorByIndex);
+	} else {
+		console.debug("find_and_set_player_color is using the first TOKEN_COLOR", colorByIndex);
+		change_player_color(colorByIndex);
+	}
+}
+
+function change_player_color(color) {
+	const playerId = my_player_id();
+	window.color = color;
+	const pc = find_pc_by_player_id(playerId);
+	if (pc) {
+		pc.color = color
+	}
+	WaypointManager.drawStyle.color = color;
+	window.PeerManager.send(PeerEvent.preferencesChange());
+	update_player_online_indicator(playerId, pc.p2pConnected, color);
+}
+
+function store_player_color(color) {
+	const playerId = my_player_id().replace(' ', ''); // "THE DM" has a space in it which won't work here
+	if (color) {
+		localStorage.setItem(`PlayerColor-${playerId}`, color);
+	} else {
+		localStorage.removeItem(`PlayerColor-${playerId}`, color);
+	}
 }

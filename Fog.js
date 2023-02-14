@@ -53,7 +53,7 @@ class WaypointManagerClass {
 		this.timerId = undefined;
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
-			color: "#f2f2f2",
+			color: window.color ? window.color : "#f2f2f2",
 			outlineColor: "black",
 			textColor: "black",
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
@@ -63,7 +63,7 @@ class WaypointManagerClass {
 	resetDefaultDrawStyle(){
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
-			color: "#f2f2f2",
+			color: window.color ? window.color : "#f2f2f2",
 			outlineColor: "black",
 			textColor: "black",
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
@@ -686,6 +686,7 @@ function reset_canvas() {
 	$("#scene_map_container").css("width", $("#scene_map").width())
 	$("#scene_map_container").css("height", $("#scene_map").height())
 
+	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
 
 	ctxScale('grid_overlay');
@@ -1149,6 +1150,7 @@ function drawing_mousemove(e) {
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw(false);
 					context.fillStyle = '#f50';
+					send_ruler_to_peers();
 				}
 			}else{
 				drawLine(context,
