@@ -99,15 +99,6 @@ function update_pclist() {
 	});
 }
 
-// Low res thumbnails have the form https://www.dndbeyond.com/avatars/thumbnails/17/212/60/60/636377840850178381.jpeg
-// Higher res of the same character can be found at  https://www.dndbeyond.com/avatars/17/212/636377840850178381.jpeg
-// This is a slightly hacky method of getting the higher resolution image from the url of the thumbnail.
-function get_higher_res_url(thumbnailUrl) {
-	const thumbnailUrlMatcher = /avatars\/thumbnails\/\d+\/\d+\/\d\d\/\d\d\//;
-	if (!thumbnailUrl.match(thumbnailUrlMatcher)) return thumbnailUrl;
-	return thumbnailUrl.replace(/\/thumbnails(\/\d+\/\d+\/)\d+\/\d+\//, '$1');
-}
-
 function gather_pcs() {
 	let campaignId = get_campaign_id();
 	if (is_encounters_page() || is_characters_page()) {

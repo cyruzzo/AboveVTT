@@ -577,9 +577,8 @@ function replaceModifiersInSlashCommand(slashCommandText) {
         return slashCommandText; // no valid expression to parse
     }
 
-    const pc = window.pcs?.find(t => t.sheet.includes(find_currently_open_character_sheet()));
     const modifiers = getCharacterStatModifiers();
-    if (pc === undefined || modifiers === undefined) {
+    if (modifiers === undefined) {
         return slashCommandText; // missing required info
     }
 

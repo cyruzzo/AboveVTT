@@ -56,6 +56,8 @@
 		"spectrum-2.0.8.min.css",
 		"peerjs.min.js",
 		"AjaxQueueModule.js",
+		"CoreFunctions.js",
+		"CharactersPage.js",
 		"DnDBeyond/DDBCharacterData.js",
 		"EncounterHandler.js",
 		"SidebarPanel.js",

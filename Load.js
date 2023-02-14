@@ -1,3 +1,4 @@
+console.log("Load.js is executing");
 
 if (window.location.search.includes("abovevtt=true")) {
 	let loadingOverlay = document.createElement('div');
@@ -32,7 +33,7 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 
 
 // load scripts
-let scripts = [
+window.scripts = [
 	// External Dependencies
 	{ src: "jquery-3.6.0.min.js" },
 	{ src: "jquery-ui.min.js" },
@@ -50,6 +51,7 @@ let scripts = [
 	{ src: "mousetrap.1.6.5.min.js" },
 	{ src: "peerjs.min.js" },
 	// AboveVTT Files
+	{ src: "CoreFunctions.js" },
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
@@ -81,18 +83,19 @@ let scripts = [
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
+	{ src: "CharactersPage.js" },
 	{ src: "Main.js" },
 	{ src: "MonsterStatBlock.js" }
 ]
 
 // Too many of our scripts depend on each other. 
 // This ensures that they are loaded sequentially to avoid any race conditions.
-
 function injectScript() {
 	if (scripts.length === 0) {
+		delete window.scripts;
 		return;
 	}
-	let nextScript = scripts.shift();
+	let nextScript = window.scripts.shift();
 	let s = document.createElement('script');
 	s.src = chrome.runtime.getURL(nextScript.src);
 	if (nextScript.type !== undefined) {
