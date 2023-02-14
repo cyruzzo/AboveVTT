@@ -3511,6 +3511,9 @@ span.exhaustion-pip.last{
     outline: 2px solid #000;
 }
 
+#grid_toggle:not(.rc-switch-checked) ~ *{
+    display:none !important;
+}
 .sidebar-hover-text-flyout {
     display: block;
     max-width: 400px;
@@ -4390,7 +4393,25 @@ input.max_hp[disabled]{
     left: calc(50% - 170px);
     top: 50px;
     text-align: center;
-    width: 125px;
+    border-radius:20px;
+    border:1px solid #000;
+    box-shadow: 0px 0px 2px 2px #0008;
+    background: #fff6;
+    height: 112px;
+    width: 200px;
+}
+.import-loading-indicator .loading-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+.import-loading-indicator .beholder-dm-screen{
+    top: -20px;
 }
 .import-loading-indicator .loading-status-indicator__subtext.complete {
     overflow: visible;
@@ -4427,13 +4448,11 @@ input.max_hp[disabled]{
 }
 
 .paused-indicator g.beholder-dm-screen__screen path,
-.dm-paused-indicator g.beholder-dm-screen__screen path  {
+.dm-paused-indicator g.beholder-dm-screen__screen path,  
+.import-loading-indicator g.beholder-dm-screen__screen path {
     fill: #201911;
     stroke: #0c0a08;
 }
-
-
-    
 
 /*one button*/
 .encounter-builder-app #combat_area td button:first-of-type:nth-last-of-type(1) {
@@ -5230,6 +5249,15 @@ div.ddbc-tab-options--layout-pill>button{
     background: #fff;
     filter: brightness(var(--darkness-filter));
 
+}
+
+#text_div{
+    pointer-events:none;
+}
+
+#text_div svg text{
+    pointer-events:all;
+    cursor: move;
 }
 
 #scene_map_container{

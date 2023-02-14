@@ -1391,8 +1391,7 @@ class MessageBroker {
 
 			reset_canvas();
 			redraw_fog();
-			redraw_drawings();
-			redraw_text();
+
 			apply_zoom_from_storage();
 
 

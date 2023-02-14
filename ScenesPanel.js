@@ -401,15 +401,11 @@ function edit_scene_dialog(scene_id) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 				// it was checked. now it is no longer checked
 				$(event.currentTarget).removeClass("rc-switch-checked");
-				gridStroke.hide()	
-				form.find(".sp-replacer").hide()
 				
 			} else {
 				// it was not checked. now it is checked
 				$(event.currentTarget).removeClass("rc-switch-unknown");
 				$(event.currentTarget).addClass("rc-switch-checked");
-				gridStroke.show()	
-				form.find(".sp-replacer").show()
 			}
 				handle_form_grid_on_change()
 		})

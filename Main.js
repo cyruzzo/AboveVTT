@@ -491,9 +491,10 @@ function set_pointer(data, dontscroll = false) {
 	if(!dontscroll){
 		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
 		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
+		var sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
 			scrollTop: pageY + 200,
-			scrollLeft: pageX + 200,
+			scrollLeft: pageX + 200 + sidebarSize/2,
 		}, 500);
 	}
 }
@@ -1158,7 +1159,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.83-beta3</div></h1>");
+	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.84-beta1</div></h1>");
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -2807,11 +2808,11 @@ function init_ui() {
 	drawOverlay.css("left", "0");
 	drawOverlay.css("z-index", "18");
 
-	const textOverlay = $("<canvas id='text_overlay'></canvas>");
-	textOverlay.css("position", "absolute");
-	textOverlay.css("top", "0");
-	textOverlay.css("left", "0");
-	textOverlay.css("z-index", "18");
+	const textDiv = $("<div id='text_div'></div>");
+	textDiv.css("position", "absolute");
+	textDiv.css("top", "0");
+	textDiv.css("left", "0");
+	textDiv.css("z-index", "20");
 
 	const grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
@@ -2824,7 +2825,7 @@ function init_ui() {
 	fog.css("top", "0");
 	fog.css("left", "0");
 	fog.css("position", "absolute");
-	fog.css("z-index", "20");
+	fog.css("z-index", "21");
 
 	// this overlay sits above all other canvases
 	// we draw to this and then bake the image into the corresponding
@@ -2901,7 +2902,7 @@ function init_ui() {
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(drawOverlay);
-	VTT.append(textOverlay);
+	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	mapContainer.append(darknessLayer);
 
