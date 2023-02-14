@@ -1457,7 +1457,7 @@ class MessageBroker {
 
 
 			if (window.EncounterHandler !== undefined) {
-				fetch_and_cache_scene_monster_items(true);
+				fetch_and_cache_scene_monster_items();
 			}
 			did_update_scenes();
 			if (window.reorderState === ItemType.Scene) {
