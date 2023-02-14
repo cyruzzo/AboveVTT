@@ -4546,6 +4546,17 @@ input.max_hp[disabled]{
     outline: none;
 }
 
+[class$='NotRoot'] [class*='-MessageCarrot']{
+    display:none;
+}
+[class$='NotRoot'] [class$='-MessageRoot']{
+    transform: scale(0.8) translateX(-50%);
+    left: calc(50% - 170px) !important;
+    position:fixed;
+    top:10px !important;;
+    transform-origin: center;
+}
+
 /*end combat tracker face lift*/
 .token>.base{
     background: #0000001c;
