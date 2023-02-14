@@ -1046,12 +1046,15 @@ function import_readfile() {
 			} else {
 				alert('Loading completed. Data merged');
 			}
+			// never import data urls
+			const sanitizedScenes = DataFile.scenes.filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
+			console.log("sanitizedScenes", sanitizedScenes);
 			if(window.CLOUD){
-				cloud_migration(JSON.stringify(DataFile.scenes));
+				cloud_migration(JSON.stringify(sanitizedScenes));
 			}
 			else{
 				for(i=0;i<DataFile.scenes.length;i++){
-					window.ScenesHandler.scenes.push(DataFile.scenes[i]);
+					window.ScenesHandler.scenes.push(sanitizedScenes[i]);
 				}
 			}
 		});
