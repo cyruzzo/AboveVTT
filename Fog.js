@@ -441,6 +441,9 @@ function check_single_token_visibility(id){
 				$(auraSelector).show();
 				//console.log('SHOW '+id);
 			}
+			else if($(auraSelector).hasClass(islight)){
+				$(auraSelector).show();
+			}
 }
 
 
@@ -489,7 +492,10 @@ function do_check_token_visibility() {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
-					$(auraSelector).hide();
+				$(auraSelector).hide();
+			}
+			else{
+				$(auraSelector).show();
 			}
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -497,6 +503,9 @@ function do_check_token_visibility() {
 			$(selector).show();
 			$(auraSelector).show();
 			//console.log('SHOW '+id);
+		}
+		else if($(auraSelector).hasClass(islight)){
+			$(auraSelector).show();
 		}
 		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 	}
