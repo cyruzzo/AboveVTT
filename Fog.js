@@ -489,7 +489,10 @@ function do_check_token_visibility() {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
-					$(auraSelector).hide();
+				$(auraSelector).hide();
+			}
+			else{
+				$(auraSelector).show();
 			}
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
