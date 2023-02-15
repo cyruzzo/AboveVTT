@@ -49,6 +49,7 @@ jobs:
           rm package-lock.json
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git pull
           git checkout -b ${{env.next_version_name}}
           git add manifest.json
           git commit -am "update manifest version_name to ${{env.next_version_name}}"
