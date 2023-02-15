@@ -1800,8 +1800,12 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     align-items: center;
     border-radius: 5px;
     cursor: pointer;
+    height:30px;
 }
-
+.note-list .sidebar-list-item-row-item {
+    margin-left:2px;
+    width:calc(100% - 1px);
+}
 .journal-chapter-title:hover {
     text-decoration: underline;
 }
@@ -1809,11 +1813,23 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .btn-chapter-icon {
     border: none;
     cursor: pointer;
-    background-color: transparent;
+    width: 30px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #f2f6f8;
+    border-left: 1px solid #d8e1e8;
+    margin: -4px 0px -4px 0px;
+    position:relative;
+    right:-3px;
+}
+.note-list .sidebar-list-item-row{
+    height:36px;
 }
 
-.btn-chapter-icon:hover {
-    transform: scale(1.5);
+.row-chapter .btn-chapter-icon {
+    height:36px;
+    margin:0px 1px 0px 0px;
+    right:0px;
 }
 
 .btn-chapter-icon:focus {
@@ -1821,8 +1837,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 .btn-chapter-icon > img {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
 }
 
 /* If the journal-chapter is collapsed, hide its children and make its background white */
@@ -1836,7 +1852,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     border: 1px solid #d8e1e8;
 }
 
-.journal-chapter.collapsed > .note-list {
+#journal-panel .folder.collapsed > .note-list {
     display: none;
 }
 
