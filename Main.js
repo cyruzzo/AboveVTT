@@ -3103,10 +3103,10 @@ function init_buttons() {
 
 	if (window.DM) {
 		init_fog_menu(buttons)
-		init_draw_menu(buttons)
 		init_text_button(buttons)
 
 	}
+	init_draw_menu(buttons)
 
 	setup_aoe_button();
 	handle_drawing_button_click();

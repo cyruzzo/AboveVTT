@@ -1402,7 +1402,7 @@ class MessageBroker {
 
 			reset_canvas();
 			redraw_fog();
-
+			redraw_drawings();
 			apply_zoom_from_storage();
 
 
@@ -1487,10 +1487,8 @@ class MessageBroker {
 		else {
 			window.DRAWINGS = [];
 		}
-		redraw_drawings();
+
 		redraw_text();
-
-
 		
 		
 		// console.groupEnd()
