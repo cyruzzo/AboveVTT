@@ -5123,6 +5123,10 @@ input.max_hp[disabled]{
     dominant-baseline: middle;
     paint-order: stroke;
     text-shadow: 1px 1px 2px #000;
+    pointer-events:none;
+}
+.custom-condition.text{
+    pointer-events:auto;
 }
 
 .button-loading::after {
