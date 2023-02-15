@@ -1,14 +1,15 @@
 name: release-build
 run-name: ${{ github.actor }} is publishing a pre-release build
-on: [workflow_dispatch]
-inputs:
-  prerelease:
-    description: "Should this release be marked as a pre-release?"
-    required: true
-    default: true
-  version_name:
-    description: "Something like 0.84 or 0.84-beta2"
-    required: true
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Should this release be marked as a pre-release?"
+        required: true
+        default: true
+      version_name:
+        description: "Something like 0.84 or 0.84-beta2"
+        required: true
 jobs:
   pre-release:
     runs-on: ubuntu-latest
