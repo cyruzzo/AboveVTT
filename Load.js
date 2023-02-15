@@ -19,7 +19,7 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 var avttVersion = document.createElement('div');
 avttVersion.setAttribute("style", "display:none;");
 avttVersion.setAttribute("id", "avttversion");
-avttVersion.setAttribute("data-version", chrome.runtime.getManifest().version_name);
+avttVersion.setAttribute("data-version", chrome.runtime.getManifest().version);
 (document.body || document.documentElement).appendChild(avttVersion);
 
 // load stylesheets
