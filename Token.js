@@ -191,9 +191,9 @@ class Token {
 	}
 
 	hasCondition(conditionName) {
-		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.includes(conditionName);
+		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.some(e => e.name === conditionName);
 	}
-	addCondition(conditionName) {
+	addCondition(conditionName, text='') {
 	    if (this.hasCondition(conditionName)) {
 	        // already did
 	        return;
@@ -210,7 +210,11 @@ class Token {
 	            this.options.conditions.push(conditionName);
 	        }
 	    } else {
-	        this.options.custom_conditions.push(conditionName);
+	    	let condition = {
+	    		'name': conditionName,
+	    		'text': text
+	    	}
+	        this.options.custom_conditions.push(condition);
 	    }
 	}
 	
@@ -1073,14 +1077,27 @@ class Token {
 				conditionCount++;
 			}
 
-			for (let i = 0; i < this.options.custom_conditions.length; i++) {
+			for (i = 0; i < this.options.custom_conditions.length; i++) {
+				//convert from old colored conditions
+				if(this.options.custom_conditions[i].name == undefined){
+					this.options.custom_conditions.push({
+						'name': DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []}),
+						'text': ''
+					});
+					this.options.custom_conditions.splice(i, 1)
+					i -= 1;
+					continue;
+				}
 				//Security logic to prevent HTML/JS from being injected into condition names.
-				const conditionName = DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []});
+				const conditionName = DOMPurify.sanitize( this.options.custom_conditions[i].name,{ALLOWED_TAGS: []});
+				const conditionText = DOMPurify.sanitize( this.options.custom_conditions[i].text,{ALLOWED_TAGS: []});
 				const conditionSymbolName = DOMPurify.sanitize( conditionName.replaceAll(' ','_').toLowerCase(),{ALLOWED_TAGS: []});
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
-					symbolImage = $(`<div class='condition-img custom-condition' style='background: ${conditionName}' />`);
+					symbolImage = $(`<div class='condition-img custom-condition text' style='background: ${conditionName}'><svg  viewBox="0 0 ${symbolSize} ${symbolSize}">
+									  <text class='custom-condition-text' x="50%" y="50%">${conditionText.charAt(0)}</text>
+									</svg></div>`);
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
 				}
@@ -2118,8 +2135,14 @@ function place_token_at_map_point(tokenObject, x, y) {
 }
 
 function array_remove_index_by_value(arr, item) {
-	for (var i = arr.length; i--;) {
-		if (arr[i] === item) { arr.splice(i, 1); }
+	const index = arr.findIndex(e => e.name === item);
+	if (index > -1) {
+	  arr.splice(index, 1)
+	}
+	else{
+		for (var i = arr.length; i--;) {
+			if (arr[i] === item) { arr.splice(i, 1); }
+		}
 	}
 }
 

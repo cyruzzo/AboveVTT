@@ -5107,6 +5107,24 @@ input.max_hp[disabled]{
     background-position: center;
 }
 
+.markers-icon>input[type='text']{
+    position: absolute;
+    width: 85%;
+    left: 0;
+}
+
+.custom-condition-text{
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    fill: #fff;
+    stroke: #000;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    text-shadow: 1px 1px 2px #000;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;

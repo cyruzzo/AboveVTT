@@ -874,9 +874,35 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 		let conditionItem = $(`<li class="${determine_condition_item_classname(tokenIds, conditionName)} icon-${conditionName.toLowerCase().replaceAll("(", "-").replaceAll(")", "").replaceAll(" ", "-")}"></li>`);
 		if (conditionName.startsWith("#")) {
-			let colorItem = $(`<span class="color-condition"></span>`);
+			let colorItem = $(`<input type='text' placeholder='custom condition'></input>`);
+			tokens.every(token => {
+				let colorItemArr = token.options.custom_conditions.find(e => e.name === conditionName)
+				if(colorItemArr != undefined){
+					colorItem.val(colorItemArr.text);	
+					return false;
+				}
+				return true;
+			});
+		
 			conditionItem.append(colorItem);
 			colorItem.css("background-color", conditionName);
+			colorItem.on("change", function(){
+				let clickedItem = $(this).parent();
+				tokens.forEach(token => {
+					if($(this).val() == "" && token.hasCondition(conditionName)){
+						token.removeCondition(conditionName)
+					}
+					else{
+						if(token.hasCondition(conditionName)){
+							token.removeCondition(conditionName);
+						}
+						token.addCondition(conditionName, $(this).val());
+					}	
+					token.place_sync_persist();	
+				});
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
+			});
 		} else {
 			conditionItem.append(`<span>${conditionName}</span>`);
 		}
