@@ -645,7 +645,7 @@ class Token {
 			'max-height': tokenHeight + 'px',
 		});
 
-		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.options.custom_conditions.includes("Concentration(Reminder)")){
+		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
 			var msgdata = {
 				player: this.options.name,
