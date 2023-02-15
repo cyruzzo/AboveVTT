@@ -53,4 +53,4 @@ jobs:
           git add manifest.json
           git commit -am "update manifest version_name to ${{env.next_version_name}}"
           git push --set-upstream origin "${{env.next_version_name}}"
-          git request-pull origin/master "${{env.next_version_name}}"
+          git request-pull origin/main "${{env.next_version_name}}"
