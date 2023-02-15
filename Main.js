@@ -8,6 +8,7 @@ window.onbeforeunload = function(event)
 {
 	console.log("refreshing page, storing zoom first");
 	add_zoom_to_storage();
+	window.PeerManager.send(PeerEvent.goodbye());
 };
 
 /**
@@ -20,6 +21,10 @@ function parse_img(url){
 		return "";
 	}
 	retval = url;
+	if(retval.startsWith("data:")){
+		alert("You cannot use urls starting with data:");
+		return "";
+	}
 	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
 		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
 	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
@@ -142,6 +147,7 @@ function change_zoom(newZoom, x, y) {
 	$(window).scrollLeft(pageX);
 	$(window).scrollTop(pageY);
 	$("body").css("--window-zoom", window.ZOOM)
+	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 	console.groupEnd()
 }
 
@@ -151,7 +157,7 @@ function change_zoom(newZoom, x, y) {
 function add_zoom_to_storage() {
 	console.group("add_zoom_to_storage");
 	console.log("storing zoom");
-	
+
 	if(window.ZOOM !== get_reset_zoom()) {
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
@@ -167,11 +173,11 @@ function add_zoom_to_storage() {
 				"zoom":window.ZOOM,
 				"leftOffset": Math.round($(window).scrollLeft()),
 				"topOffset": Math.round($(window).scrollTop())
-			}); 
+			});
 		}
 		localStorage.setItem('zoom', JSON.stringify(zooms));
 	} else {console.log("zoom has not changed, skipping storage")}
-	
+
 	console.groupEnd("add_zoom_to_storage")
 }
 
@@ -179,10 +185,10 @@ function add_zoom_to_storage() {
 * Sets default values for VTTWRAPPER and black_layer based off zoom.
 */
 function set_default_vttwrapper_size() {
-	$("#VTTWRAPPER").width($("#scene_map").width() * window.ZOOM + 1400);
-	$("#VTTWRAPPER").height($("#scene_map").height() * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.ZOOM + 2000);
+	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
+	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
 }
 
 /**
@@ -198,7 +204,7 @@ function remove_zoom_from_storage() {
 	localStorage.setItem('zoom', JSON.stringify(zooms));
 }
 
-/** 
+/**
 * Retrieves the zoom and scroll position from local storage using the scene title, will call reset_zoom if not found.
 */
 function apply_zoom_from_storage() {
@@ -217,7 +223,7 @@ function apply_zoom_from_storage() {
 			// TODO: this bit doesn't work
 			$(window).scrollLeft(zooms[zoomIndex].leftOffset);
 			$(window).scrollTop(zooms[zoomIndex].topOffset);
-			
+
 		}
 		else{
 			// Zooms in storage but not for this scene
@@ -242,21 +248,21 @@ function decrease_zoom() {
 		change_zoom(window.ZOOM * 0.9);
 	}
 }
-/** 
+/**
 * Gets the zoom values that will fit the map to the viewport
 * @return {Number}
 */
 function get_reset_zoom() {
 	const wH = $(window).height();
-	const mH = $("#scene_map").height();
+	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 	const wW = $(window).width();
-	const mW = $("#scene_map").width();
+	const mW = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	console.log(wH, mH, wW, mW);
 	return Math.min((wH / mH), (wW / mW));
 }
 
-/** 
+/**
 * Entrypoint for user clicking the fit map button.
 * Will remove local storage state as by default this function is called when no state is found.
 */
@@ -344,6 +350,8 @@ function remove_loading_overlay() {
  */
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
 
+	$("#scene_map_container").toggleClass('map-loading', true);
+
 	remove_loading_overlay();
 
 	$("#scene_map").remove();
@@ -355,14 +363,14 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 
 	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
-
+		$("#scene_map_container").toggleClass('video', true);
 		if (width == null) {
 			width = 1920;
 			height = 1080;
 		}
 
 		var newmap = $('<div style="width:' + width + 'px;height:' + height + 'px;position:absolute;top:0;left:0;z-index:10" id="scene_map" />');
-		$("#VTT").append(newmap);
+		$("#scene_map_container").append(newmap);
 		videoid = youtube_parser(url);
 		window.YTPLAYER = new YT.Player('scene_map', {
 			width: width,
@@ -394,37 +402,38 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 		};
 
 		window.YTTIMEOUT = setTimeout(smooth, 5000);
-
 		callback();
+		$("#scene_map_container").toggleClass('map-loading', false);
 	}
 	else if (is_video === "0" || !is_video) {
+		$("#scene_map_container").toggleClass('video', false);
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 		newmap.attr("src", url);
-		
+
 		newmap.on("error", map_load_error_cb);
 		if (width != null) {
 			newmap.width(width);
 			newmap.height(height);
 		}
-
-		newmap.css("opacity","0");
-		newmap.on("load", () => newmap.animate({opacity:1},2000));
-		if (callback != null) {	
+		newmap.on("load", () => {
+			$("#scene_map_container").toggleClass('map-loading', false);
+		});
+		if (callback != null) {
 			newmap.on("load", callback);
 		}
-		$("#VTT").append(newmap);
-		$("#scene_map_container").css("width", $("#scene_map").width())
-		$("#scene_map_container").css("height", $("#scene_map").height())
+		$("#scene_map_container").append(newmap);
+
 
 	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
+		$("#scene_map_container").toggleClass('video', true);
 		let newmapSize = 'width: 100vw; height: 100vh;';
 		if (width != null) {
 			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
 		}
 
-		var newmap = $('<video style="' + newmapSize + ' position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay muted loop id="scene_map" src="' + url + '" />');
+		var newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop onloadstart="this.volume=${$("#youtube_volume").val()/100}" id="scene_map" src="${url}" />`);
 		newmap.on("loadeddata", callback);
 		newmap.on("error", map_load_error_cb);
 
@@ -434,9 +443,14 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 				console.log("video height:", this.videoHeight);
 				$('#scene_map').width(this.videoWidth);
 				$('#scene_map').height(this.videoHeight);
+				$("#scene_map_container").toggleClass('map-loading', false);
 			});
 		}
-		$("#VTT").append(newmap);
+		else{
+			$("#scene_map_container").toggleClass('map-loading', false);
+		}
+		$("#scene_map_container").append(newmap);
+
 	}
 
 }
@@ -469,7 +483,7 @@ function set_pointer(data, dontscroll = false) {
 	});
 	$("#tokens").append(marker);
 
-	
+
 	setTimeout(function(){marker.fadeOut(1000)}, 2000);
 	setTimeout(function(){marker.remove()}, 3000);
 
@@ -479,9 +493,10 @@ function set_pointer(data, dontscroll = false) {
 	if(!dontscroll){
 		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
 		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
+		var sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
 			scrollTop: pageY + 200,
-			scrollLeft: pageX + 200,
+			scrollLeft: pageX + 200 + sidebarSize/2,
 		}, 500);
 	}
 }
@@ -490,6 +505,9 @@ function set_pointer(data, dontscroll = false) {
  * Add .notification and .highlight-gamelog classes to #switch_gamelog.
  */
 function notify_gamelog() {
+	if (window.color) {
+		$("#switch_gamelog").css("--player-border-color", window.color);
+	}
 	if (!$("#switch_gamelog").hasClass("selected-tab")) {
 		if ($("#switch_gamelog").hasClass("notification")) {
 			$("#switch_gamelog").removeClass("notification");
@@ -504,6 +522,20 @@ function notify_gamelog() {
 	if ($(".GameLog_GameLog__2z_HZ").scrollTop() < 0) {
 		$(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
 	}
+}
+
+/**
+ * Add .notification and .highlight-gamelog classes to #switch_gamelog.
+ * @param {string} color - a valid css color
+ */
+function flash_tokens_tab(color) {
+	const tokensTab = window.DM ? $("#switch_tokens") : $("#switch_characters");
+	// unlike the gamelog, we don't want this to stay highlighted. Just flash it, and be done
+	tokensTab.css("--player-border-color", color);
+	tokensTab.addClass("notification");
+	setTimeout(function() {
+		tokensTab.removeClass("notification");
+	}, 800);
 }
 
 function select_next_tab() {
@@ -561,8 +593,8 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 
 	// switch back to gamelog if they change tabs
 	if (!isCharacterSheetInfo) {
-		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab. 
-		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog. 
+		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab.
+		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog.
 		// Since the user clicked the tab, we need to show the gamelog instead of any detail info that was previously shown.
 		$(".ct-character-header__group--game-log").click();
 	}
@@ -576,7 +608,7 @@ function report_connection() {
 	var msgdata = {
 			player: window.PLAYER_NAME,
 			img: window.PLAYER_IMG,
-			text: PLAYER_NAME + " has connected to the server!",	
+			text: PLAYER_NAME + " has connected to the server!",
 	};
 	window.MB.inject_chat(msgdata);
 }
@@ -864,7 +896,7 @@ function build_draggable_monster_window() {
 		monster_popout_button.click(function() {
 			let name = $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 			popoutWindow(name, $("#resizeDragMon .avtt-stat-block-container"));
-			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();	
+			name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 			$(window.childWindows[name].document).find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
 				$(window.childWindows[name].document).find("body").append($("div[role='presentation']").clone(true, true));
 				let popoutContext = $(window.childWindows[name].document).find(".dcm-container");
@@ -948,7 +980,7 @@ function minimize_player_monster_window_double_click(titleBar) {
 			titleBar.data("prev-top", titleBar.css("top"));
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
-			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.css("left", titleBar.data("prev-minimized-left"));
 			titleBar.height(23);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
@@ -966,7 +998,7 @@ function minimize_player_monster_window_double_click(titleBar) {
 			titleBar.addClass("restored");
 			titleBar.removeClass("minimized");
 			$(".monster_title").remove();
-			
+
 		}
 	});
 }
@@ -981,7 +1013,7 @@ function init_controls() {
 		// no need to do this more than once. DDB rips things out when you resize the window which is why this could be called multiple times
 		return;
 	}
-	
+
 	init_sidebar_tabs();
 
 	if (is_characters_page()) {
@@ -997,7 +1029,7 @@ function init_controls() {
 	sidebarControlsParent.find(".avtt-sidebar-controls").remove();
 	sidebarControlsParent.children().css({ "visibility": "hidden", "width": "0px", "height": "0px", "position": "absolute" });
 	sidebarControlsParent.css({ "display": "block", "visibility": "visible", "height": "28px", "position": "relative", "top": "0px", "left": "0px" });
-	
+
 	let sidebarControls = $("<div class='avtt-sidebar-controls' style='width:100%;height:100%;display:flex;'></div>");
 	sidebarControlsParent.append(sidebarControls);
 
@@ -1094,7 +1126,7 @@ function init_controls() {
 	if (!DM) {
 		sidebarControls.addClass("player");
 	}
-
+	addGamelogPopoutButton()
 }
 
 const MAX_ZOOM_STEP = 20
@@ -1117,7 +1149,7 @@ function init_mouse_zoom() {
 				newScale = window.ZOOM - 0.01 * e.deltaY;
 			}
 
-			if (newScale > MIN_ZOOM && newScale < MAX_ZOOM) {
+			if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
 				change_zoom(newScale, e.clientX, e.clientY);
 			}
 		}
@@ -1146,7 +1178,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.80RC1</div></h1>");
+	cont.append(`<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}</div></h1>`);
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -1186,15 +1218,15 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2</b>");
+	cont.append("Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
 	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Max Puplett","Jordan Cohen","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Eric Invictus","VerintheCrow","Matthew Bennett","Tobias Ates","Nomad CLL","D Martinez","Matthew Tallungan","Mike Miller","airdragon11","William Wallace","Josh Ervin"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Jordan Innerarity","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","Elmer Senson","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Tittus","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","Avilar","Bain .","ZetsumeiGaming","Cyril Sneer","Mark Otten","Vince Hamilton","Rollin Newcomb","Kristina Ziese","Erno Tolonen","Becky Egan","Bob Karcher","Geoffrey Boyd","Jay M"];
-	l3 = ["Daniel Wall","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","CraftyHobo","CrazyPitesh","aaron hamilton","Eduardo Villela","Paul Maloney","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Robert J Correa","Cistern","its Bonez","Unlucky Archer","Michael Crane","Alexander Glass","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Chris Meece","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Åsmund Gravem","Joseph Pecor","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Mischa","AnyxKrypt","Torben Schwank","Unix Wizard","Andrew Thomas","Yavor Vlaskov","Ciara McCumiskey","Daniel Long","Chealse Williams","Simon Brumby","Thomas Edwards","David Meier","Thomas Thurner","Casanova1986","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Steven Van Eckeren","Jack Posey","ThaFreaK","Stephen Morrey","Cinghiale Frollo","Shawn Morriss","Tomi Skibinski","Eric VanSingel","Joey Lalor","Chris Thornton","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Troy Knoell","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Vandalo","Sky Gewant","Reid Bollinger","Konrad Scheffel","Joseph Hensley","Chris Avis","Titus France","Michael Whittington","Simon Haldon","Thiago Neves","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jeffrey Voetsch","Jay Gattis","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Tom Jones","Ian Panth","Alfred","Jason","Chris Hagmann","Taylor Hodgson","BKBW","Tim Cortis","Timothy Yuen","Cody Pederson","Keovar","Benjamin Moncier","Bart Robbins","Kerry Kilgour","John Doty","Guillaume Carrier-Turcotte","Christian Fernandez","Rob S","DrZzs","PatrickJ","Pensive Primate","Adam Reamer","David P","Oceanman","Michael Voltz","Beyond The Edges","Dreamdancer","Josh Taylor","Alex Johansen","Dominic M.","Brad Marsh","Kim Hoffman","David Thompson Scott","Katherine McKinley","Antony Victor Wright","Colleen Shea","Mark Sohm","Tony","Jeff Cigrand","Dodzod","Anarchist GM","Purge Thunder","David House","Garrett","UnixBomber","Magnus Tanner","Taborxi","Erik Velez","James Fleeting","Dracon Dragon","Steve Hutchinson","OldTedG735","Randy Pratt","Blake"];
+	l1 = ["Jordan Cohen","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Eric Invictus","Matthew Bennett","Hekkema","Nomad CLL","Vince Hamilton","D Martinez","airdragon11","William Wallace","Josh Ervin","Lazvon","Nic Ulrich"];
+	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","myrrh88","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","ThaFreaK","Avilar","Cyril Sneer","Mark Otten","Rollin Newcomb","Kristina Ziese","Erno Tolonen","Becky Egan","Geoffrey Boyd","Matt Dugger","Joseph Ramlow","Jonathan Campbell","Richard Morgan","Bill Croasmun","hidden_traitor"];
+	l3 = ["Daniel Wall","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","CraftyHobo","CrazyPitesh","Eduardo Villela","Paul Maloney","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Robert J Correa","Cistern","its Bonez","Michael Crane","Alexander Glass","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Joseph Pecor","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Mischa","AnyxKrypt","Torben Schwank","Unix Wizard","Andrew Thomas","Ciara McCumiskey","Daniel Long","David Meier","Thomas Thurner","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Jack Posey","Stephen Morrey","Cinghiale Frollo","Shawn Morriss","Tomi Skibinski","DM Eric V","Joey Lalor","Chris Thornton","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Sky Gewant","Reid Bollinger","Konrad Scheffel","Joseph Hensley","Chris Avis","Titus France","Michael Whittington","Simon Haldon","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jim Mapes","Jeffrey Voetsch","Jay Gattis","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Jason","Chris Hagmann","Taylor Hodgson-Scott","Tim Cortis","Timothy Yuen","Cody Pederson","Benjamin Moncier","Kerry Kilgour","Guillaume Carrier","Christian Fernandez","Rob S","DrZzs","PatrickJ","Oceanman","Michael Voltz","Beyond The Edges","Dreamdancer","Josh Taylor","Alex Johansen","Dominic M.","Brad Marsh","Kim Hoffman","Katherine McKinley","Colleen Shea","Tony","Jeff Cigrand","Dodzod","Anarchist GM","Purge Thunder","David House","Garrett","UnixBomber","Magnus Tanner","Taborxi","Dracon Dragon","Steve Hutchinson","OldTedG735","Blake","David Stidolph","Claudia Carpenter","JazzFurgeson","Santiago Pacheco","Chris Neves","Brian Jones","Bill Gruetzenbach","Danielle Goldstein","MasterKELP","Ryan Adams","SCrisp","LEO R LIBBY JR","Celtic Exile","BrotherGlacius","ismael cedeno","Jeremy Blosser","taylor tullis","Matt Kircher","NDT 0117","David J Morand","Stefan Velev","John Prince","Lauren Marie","David Russell","Dan Glass","Michael Terry","Lyman Green","Aindrium","wisdom_hunter","Howard Seal","Jos van Baren","Flux1","Anthony K Schlisser","Francesco Possati","Laurinel Gramatica","Joseph Lohrum","melissa penn","Jono Major"];
 
 
 	let shortener =  (p) => p.length>17 ? p.replaceAll(" ","").replaceAll("-","") : p;
@@ -1365,7 +1397,7 @@ function init_spells() {
 	});
 
 }
-		
+
 /**
  * Register event to minimize/restore a player window when double clicking the DOMObject.
  * @param {DOMObject} titleBar the window's title bar
@@ -1378,7 +1410,7 @@ function minimize_player_window_double_click(titleBar) {
 			titleBar.data("prev-top", titleBar.css("top"));
 			titleBar.data("prev-left", titleBar.css("left"));
 			titleBar.css("top", titleBar.data("prev-minimized-top"));
-			titleBar.css("left", titleBar.data("prev-minimized-left"));	
+			titleBar.css("left", titleBar.data("prev-minimized-left"));
 			titleBar.height(23);
 			titleBar.width(200);
 			titleBar.addClass("minimized");
@@ -1458,7 +1490,7 @@ function observe_character_sheet_companion(documentToObserve){
  */
 function init_sheet() {
 	if (is_characters_page()) {
-		
+
 		// in case we're re-initializing, remove these before adding them again
 		$("#sheet_button").remove();
 		$("#sheet_resize_button").remove();
@@ -1483,7 +1515,6 @@ function init_sheet() {
 		if (window.innerWidth < 1200 || !is_player_sheet_open()) {
 			sheet_resize_button.hide();
 		}
-
 		// we're playing on the character page so return early to prevent an iframe from also loading the character sheet
 		return;
 	}
@@ -1510,21 +1541,21 @@ function init_sheet() {
 		iframe.attr('src', currentSrc);
 	});
 	container.append(reload_button);
-	
+
 	$("#site").append(container);
 
 	if(window.DM){
 		/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
 		$("#sheet").addClass("moveableWindow");
 		if(!$("#sheet").hasClass("minimized")){
-			$("#sheet").addClass("restored"); 
+			$("#sheet").addClass("restored");
 		}
 		$("#sheet").resizable({
 			addClasses: false,
 			handles: "all",
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
@@ -1542,7 +1573,7 @@ function init_sheet() {
 			scroll: false,
 			containment: "#windowContainment",
 			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			},
 			stop: function () {
@@ -1658,17 +1689,30 @@ function observe_character_sheet_aoe(documentToObserve) {
 	aoe_observer.observe(mutation_target, mutation_config);
 }
 
-/** DEPRECATED - dont use */
-function init_player_sheets()
-{
-	return;
-	// preload character sheets
-	// wait a few seconds before actually loading the iframes, and wait a second between each load to avoid 429 errors
-	var sheetLoadWait = 4000;
-	window.pcs.forEach(function(pc, index) {
-		init_player_sheet(pc.sheet, sheetLoadWait);
-		sheetLoadWait += 1500;
-	});
+
+/** Called from our character sheet observer for Dice Roll formulae.
+ * @param element the jquery element that we observed changes to
+ */
+function inject_dice_roll(element) {
+	try {
+		if (element.find("button.avtt-roll-formula-button").length > 0) {
+			console.debug("inject_dice_roll already has a button")
+			return;
+		}
+		const text = element.text();
+		if (text.match(slashCommandRegex)?.[0]) {
+			const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
+			const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
+			button.on("click", function (clickEvent) {
+				clickEvent.stopPropagation();
+				window.diceRoller.roll(diceRoll);
+			});
+			element.empty();
+			element.append(button);
+		}
+	} catch (error) {
+		console.log("inject_dice_roll failed to process element", element, error);
+	}
 }
 
 /**
@@ -1689,8 +1733,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 	let container = $("#sheet");
 	let iframe = container.find("iframe");
-	
-	
+
+
 	iframe.css('height', container.height() - 25);
 	container.addClass("open");
 
@@ -1702,6 +1746,9 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
 		console.log("fixing up the character sheet");
+
+		observe_character_sheet_changes($(event.target).contents());
+
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {
@@ -1869,6 +1916,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			if (!window.DM) {
 				window.PLAYERDATA = playerdata;
 				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
+				send_player_data_to_all_peers(playerdata);
 			}
 			else {
 				window.MB.handlePlayerData(playerdata);
@@ -1903,23 +1951,37 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		observe_character_sheet_aoe($(event.target).contents());
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
-		
+
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
 			if (sidebar.length > 0 && $(event.target).contents().find("#castbutton").length == 0) {
 				inject_sidebar_send_to_gamelog_button($(event.target).contents().find(".ct-sidebar__pane-content > div"));
+
 			}
 		});
 
 		observer.observe(mutation_target, mutation_config);
 
-		/*const waitToSync = (timeElapsed = 0) => {
+	//artificer infusions still require this as it is not included in ac values captured elsewhere
+		const waitToSync = (timeElapsed = 0) => {
 			setTimeout(() => {
 				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
 				if (ac_element.length > 0) {
-					synchp();
-					$(event.target).attr('data-init_load', 1);
+					if (tokenid in window.TOKEN_OBJECTS){
+						let totalAc = $(event.target).contents().find(".ddbc-armor-class-box__value").html();
+						if(window.TOKEN_OBJECTS[tokenID].options.ac != totalAc)
+						{
+							window.TOKEN_OBJECTS[tokenid].options.ac = totalAc
+							window.TOKEN_OBJECTS[tokenid].place();
+							window.TOKEN_OBJECTS[tokenid].update_and_sync();
+							if(tokenid in window.PLAYER_STATS) {
+								window.PLAYER_STATS[tokenid].ac = totalAc;
+								send_player_data_to_all_peers(window.PLAYER_STATS[tokenid])
+							}
+						}
+
+					}
 				} else {
 					if (timeElapsed < 15000) {
 						waitToSync(timeElapsed + 500);
@@ -1927,16 +1989,16 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 				}
 			}, 500);
 		};
-		waitToSync();*/
+		waitToSync();
 
 		setTimeout(function() {
-			$("#sheet").find("iframe").each(function() { 
+			$("#sheet").find("iframe").each(function() {
 				// we've removed some header stuff, so move the background image up to remove the dead space
 				$(this.contentDocument.body).css("background-position-y", "90px");
 			})
 		}, 1000);
 	});
-	
+
 	$("#sheet").find("button").css('display', 'inherit');
 	// reload if there have been changes
 	if(iframe.attr('data-changed') == 'true')
@@ -1967,6 +2029,10 @@ function close_player_sheet()
 		}
 		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
 	}
+	if (window.dice_roll_observer) {
+		window.dice_roll_observer.disconnect();
+		delete window.dice_roll_observer;
+	}
 }
 
 /**
@@ -1989,14 +2055,14 @@ function notify_player_join() {
 function check_versions_match() {
 	var latestVersionSeen = 0.0;
 	var oldestVersionSeen = 1000.0;
-	
+
 	$.each(window.CONNECTED_PLAYERS, function(key, value) {
 		latestVersionSeen = Math.max(latestVersionSeen, value);
 		oldestVersionSeen = Math.min(oldestVersionSeen, value);
 	});
 
 	if (latestVersionSeen != oldestVersionSeen) {
-		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';		
+		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';
 		for (const [key, value] of Object.entries(window.CONNECTED_PLAYERS)) {
 			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
 		}
@@ -2039,7 +2105,7 @@ function init_above(){
 	console.log("init_above");
 
 	// WORKAROUND FOR ANNOYING DDB BUG WITH COOKIES AND UPVOTING STUFF
-	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
+	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT";
 	// END OF IT
 	//window.STARTING = true;
 	let gameId = find_game_id();
@@ -2053,7 +2119,7 @@ function init_above(){
 	//THIS SHOULD HAVE ALREADY BEEN SET
 	// window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
 	//let gameid = $("#message-broker-client").attr("data-gameId");
-	
+
 	let hasData = false;
 	if (localStorage.getItem('ScenesHandler' + gameId) != null) {
 		hasData = true;
@@ -2077,7 +2143,7 @@ function init_above(){
 					window.CLOUD = false;
 					init_things();
 				}
-				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D 
+				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D
 					if(window.DM) {
 						$.ajax({
 							url: http_api_gw+"/services?action=setCampaignData&campaign=" + window.CAMPAIGN_SECRET,
@@ -2110,8 +2176,6 @@ function init_above(){
 function init_things() {
 	console.log("init things");
 	window.STARTING = true;
-	let searchParams = new URLSearchParams(window.location.search)
-	var gameid = $("#message-broker-client").attr("data-gameId");
 	window.TOKEN_OBJECTS = {};
 	window.REVEALED = [];
 	window.DRAWINGS = [];
@@ -2122,6 +2186,7 @@ function init_things() {
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	window.TOKEN_PASTE_BUFFER = [];
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+	window.TOKEN_CUSTOMIZATIONS = [];
 
 	if (window.CAMPAIGN_SECRET === undefined) {
 		window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
@@ -2129,10 +2194,11 @@ function init_things() {
 
 	fetch_token_customizations();
 
+	window.PeerManager = new PeerManager();
 	window.MB = new MessageBroker();
 	window.StatHandler = new StatHandler();
 
-	if (window.DM) {
+	if (window.DM && !window.location.search.includes("popoutgamelog=true")) {
 		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 		window.ScenesHandler = new ScenesHandler(gameId);
 		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
@@ -2141,7 +2207,7 @@ function init_things() {
 			}
 			init_ui();
 			if (is_encounters_page()) {
-			
+
 				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
 				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
 
@@ -2151,22 +2217,27 @@ function init_things() {
 				$("div.dice-toolbar").css({"bottom": "35px"});
 				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
 			}
-			
+
 			init_scene_selector();
 			init_splash();
-			
+
 		});
 	} else if (is_characters_page()) {
-		
+
 		hide_player_sheet();
 		init_character_page_sidebar();
 
 		$(window).off("resize").on("resize", function() {
-			// when the user resizes the window, bring everything out into view. They can alwasy re-hide it if they want to
-			setTimeout(function() {
-				init_character_page_sidebar();
-				hide_sidebar();
-			}, 500);
+			if(window.showPanel == undefined){
+				window.showPanel = is_sidebar_visible();
+			}
+			init_character_page_sidebar();
+			setTimeout(function(){
+				if(!window.showPanel){
+					hide_sidebar();
+				}
+			}, 1000)
+
 		});
 
 	} else {
@@ -2206,7 +2277,7 @@ function init_character_page_sidebar() {
 		$("#site-main").css({"display": "block", "visibility": "hidden"});
 		$(".dice-rolling-panel").css({"visibility": "visible"});
 		$("div.dice-toolbar").css({"bottom": "35px"});
-		$("#mega-menu-target").hide();		
+		$("#mega-menu-target").hide();
 		$(".ct-character-header-desktop").css({
 			"background": "rgba(0,0,0,.85)"
 		});
@@ -2225,22 +2296,38 @@ function init_character_page_sidebar() {
 			"top": "0px",
 			"z-index": 5
 		});
-		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });		
+		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });
 		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
-		$(".ct-sidebar__pane").on("click", ".set-conditions-button", function(clickEvent) {
+		$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	  	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
 		  	$(`#switch_gamelog`).click();
 		});
-		$(".ct-sidebar__pane").on("click", ".remove-conditions-button", function(clickEvent) {
+		$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
 			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label, .ct-combat-tablet__cta-button, .ct-combat-mobile__cta-button').click(); 	
+		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
 		  	$(`#switch_gamelog`).click();
 
 		});
+		$("a.ct-character-header-desktop__builder-link").on("click", function(){
+			setTimeout(function(){
+				$(".builder-sections-sheet-icon").off().on("click", function(){
+					window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+				});
+			}, 1000)
+		});
+		$(".ct-character-header-info__content").on("click", function(){
+			setTimeout(function(){
+				$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
+				$(".ct-pane-menu__item:contains('Manage Character & Levels')").off().on("click", function(){
+					$("a.ct-character-header-desktop__builder-link")[0].click();
+				});
+			}, 1000)
+		});
+
 		if (needs_ui) {
 			needs_ui = false;
 			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
@@ -2257,13 +2344,15 @@ function init_character_page_sidebar() {
 			observe_character_sheet_aoe($(document));
 			// WIP to allow players to add in tokens from their extra tab
 			// observe_character_sheet_companion($(document));
-			
+
 		} else {
 			init_controls();
-			init_sheet();	
+			init_sheet();
 			inject_chat_buttons();
 			init_zoom_buttons();
+			monitor_character_sidebar_changes();
 		}
+
 	}, 1000);
 }
 
@@ -2397,7 +2486,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
 		toInject.append(sidebarPaneContent.find(".ct-spell-detail__level-school").clone());
 		toInject.append(sidebarPaneContent.find(".ct-speed-manage-pane__speeds").clone());
 		toInject.append(sidebarPaneContent.find(".ct-armor-manage-pane__items").clone());
-		
+
 		if (sidebarPaneContent.find(".ct-creature-pane__block").length > 0) {
 			// extras tab creatures need a little extra love
 			toInject.append(sidebarPaneContent.find(".ct-creature-pane__block").clone());
@@ -2488,7 +2577,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 			let dieSize = $(this).attr("alt");
 			$(`.dice-die-button[data-dice='${dieSize}']`).click();
 		} else {
-			// there aren't any DDB dice on the screen so use our own 
+			// there aren't any DDB dice on the screen so use our own
 			const dataCount = $(this).attr("data-count");
 			if (dataCount === undefined) {
 				$(this).attr("data-count", 1);
@@ -2568,7 +2657,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		const rollButton = $(`<button class="roll-button">Roll</button>`);
 		$("body").append(rollButton);
 		rollButton.on("click", function (e) {
-	
+
 			if ($(".dice-toolbar").hasClass("rollable")) {
 				let theirRollButton = $(".dice-toolbar__target").children().first();
 				if (theirRollButton.length > 0) {
@@ -2577,12 +2666,12 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 					return;
 				}
 			}
-	
+
 			const rollExpression = [];
 			$(".dice-roller > div img[data-count]").each(function() {
 				rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
 			});
-	
+
 			let sendToDM = window.DM || false;
 			let sentAsDDB = send_rpg_dice_to_ddb(rollExpression.join("+"), sendToDM);
 			if (!sentAsDDB) {
@@ -2597,7 +2686,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 					id: window.DM ? `li_${uuid}` : undefined
 				};
 				window.MB.inject_chat(data);
-	
+
 				if (window.DM) { // THIS STOPPED WORKING SINCE INJECT_CHAT
 					$("#" + uuid).on("click", () => {
 						const newData = {...data, dmonly: false, id: undefined, text: text};
@@ -2606,7 +2695,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 					});
 				}
 			}
-	
+
 			$(".roll-button").removeClass("show");
 			$(".dice-roller > div img[data-count]").removeAttr("data-count");
 			$(".dice-roller > div span").remove();
@@ -2641,7 +2730,7 @@ function init_ui() {
 	console.log("init_ui");
 
 	// ATTIVA GAMELOG
-	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button. 
+	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
 	$(".glc-game-log").addClass("sidepanel-content");
 	$(".sidebar").css("z-index", 9999);
@@ -2675,7 +2764,7 @@ function init_ui() {
 	mapContainer.css("top", "0");
 	mapContainer.css("left", "0");
 	mapContainer.css("position", "absolute");
-	mapContainer.css("z-index", "10");
+
 
 
 	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
@@ -2684,11 +2773,11 @@ function init_ui() {
 	drawOverlay.css("left", "0");
 	drawOverlay.css("z-index", "18");
 
-	const textOverlay = $("<canvas id='text_overlay'></canvas>");
-	textOverlay.css("position", "absolute");
-	textOverlay.css("top", "0");
-	textOverlay.css("left", "0");
-	textOverlay.css("z-index", "18");
+	const textDiv = $("<div id='text_div'></div>");
+	textDiv.css("position", "absolute");
+	textDiv.css("top", "0");
+	textDiv.css("left", "0");
+	textDiv.css("z-index", "20");
 
 	const grid = $("<canvas id='grid_overlay'></canvas>");
 	grid.css("position", "absolute");
@@ -2701,7 +2790,15 @@ function init_ui() {
 	fog.css("top", "0");
 	fog.css("left", "0");
 	fog.css("position", "absolute");
-	fog.css("z-index", "20");
+	fog.css("z-index", "21");
+
+	// this overlay sits above other canvases, but below tempOverlay
+	// when peers stream their rulers, this canvas is where we draw them
+	const peerOverlay = $("<canvas id='peer_overlay'></canvas>");
+	peerOverlay.css("position", "absolute");
+	peerOverlay.css("top", "0");
+	peerOverlay.css("left", "0");
+	peerOverlay.css("z-index", "15"); // below fog
 
 	// this overlay sits above all other canvases
 	// we draw to this and then bake the image into the corresponding
@@ -2712,8 +2809,14 @@ function init_ui() {
 	tempOverlay.css("left", "0");
 	tempOverlay.css("z-index", "25");
 
+	const darknessLayer = $("<div id='darkness_layer'></div>");
+	darknessLayer.css("position", "absolute");
+	darknessLayer.css("top", "0");
+	darknessLayer.css("left", "0");
 
 	tempOverlay.dblclick(function(e) {
+		if(window.DRAWFUNCTION != 'select')
+			return;
 		e.preventDefault();
 
 		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
@@ -2721,7 +2824,9 @@ function init_ui() {
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
-		let borderColor = $(`.token[data-name="`+window.PLAYER_NAME+`"]`).attr(`data-border-color`)
+		let dataName = window.PLAYER_NAME.replace(/\"/g,'\\"')
+
+		let borderColor = $(`.token[data-name="`+dataName+`"]`).attr(`data-border-color`)
 		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
 
 		data = {
@@ -2767,11 +2872,13 @@ function init_ui() {
 	VTT.append(tokens);
 	VTT.append(background);
 	VTT.append(mapContainer);
+	VTT.append(peerOverlay);
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(drawOverlay);
-	VTT.append(textOverlay);
+	VTT.append(textDiv);
 	VTT.append(tempOverlay);
+	mapContainer.append(darknessLayer);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
 	wrapper.css("margin-left", "200px");
@@ -2808,19 +2915,15 @@ function init_ui() {
 	init_controls();
 	init_sheet();
 	init_my_dice_details()
-	if(window.DM)
-	{
-		init_player_sheets();
-	}
-	else
-	{
-		setTimeout(function() {		
+	setTimeout(function() {
+		find_and_set_player_color();
+		if(!window.DM) {
 			notify_player_join();
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
-			//open_player_sheet(window.PLAYER_SHEET, false);
-		}, 5000);
-	}
+		}
+		enable_peer_manager();
+	}, 5000);
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
 
@@ -2978,9 +3081,9 @@ function init_ui() {
 	}
 }
 
-const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5", 
-					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA", 
-					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0", 
+const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5",
+					"#F48FB1", "#FFCC80", "#FFF59D", "#A5D6A7", "#81D4FA",
+					"#3949AB", "#8E24AA", "#212121", "#757575", "#E0E0E0",
 					"#7986CB", "#CE93D8", "#616161", "#BDBDBD", "#FFFFFF", "cPick"];
 
 /**
@@ -2995,9 +3098,9 @@ function init_buttons() {
 	$("body").append(buttons);
 
 	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
-	
+
 	buttons.append($("<button style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</button>"));
-	
+
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_draw_menu(buttons)
@@ -3033,7 +3136,7 @@ function init_buttons() {
  * @returns void
  */
 function init_zoom_buttons() {
-	
+
 	if ($("#zoom_buttons").length > 0) {
 		return;
 	}
@@ -3041,7 +3144,26 @@ function init_zoom_buttons() {
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
 
-	ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
+	if(window.DM) {
+		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);
+		cursor_ruler_toggle.click(function (event) {
+			console.log("cursor_ruler_toggle", event);
+			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
+			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
+				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
+				window.PeerManager.allowCursorAndRulerStreaming = false;
+			} else {
+				iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+				window.PeerManager.allowCursorAndRulerStreaming = true;
+			}
+		});
+		cursor_ruler_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">left_click</span></div>`);
+		zoom_section.append(cursor_ruler_toggle);
+		if (!get_avtt_setting_value("peerStreaming")) {
+			cursor_ruler_toggle.hide();
+		}
+
+		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
 		<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active">
 				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 19.877 19.877" style="enable-background:new 0 0 19.877 19.877; width:20px; height:20px;" xml:space="preserve">
 		<g>
@@ -3053,23 +3175,50 @@ function init_zoom_buttons() {
 		</svg>
 		</svg></div></div>
 		`);
-	ping_center.click(function(){
-		if($('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){
-			$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
-		}
-		else{
-			$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
-		}		
-	});
-	if(window.DM)
+		ping_center.click(function(){
+			if ($('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+				$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+			} else {
+				$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+			}
+		});
+
+		pause_players = $(`<div id='pause_players' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Pause players'> 
+		<div class="ddbc-tab-options__header-heading">
+				<svg id='player-pause-svg' xmlns="http://www.w3.org/2000/svg" height="20" width="20"><path d="M11.583 15.833V4.167H15v11.666Zm-6.583 0V4.167h3.417v11.666Z"/></svg>
+				<svg id='player-play-svg' xmlns="http://www.w3.org/2000/svg" height="20" width="20"><path d="M7 15.5v-11l8.5 5.5Zm1.521-5.521ZM8.5 12.75 12.75 10 8.5 7.25Z"/></svg>
+		</div></div>
+		`);
+
+		pause_players.click(function(){
+			pause_players.toggleClass('paused');
+			window.MB.sendMessage("custom/myVTT/pausePlayer",{
+				paused: pause_players.hasClass('paused')
+			});
+			if(pause_players.hasClass('paused')){
+				let pausedIndicator = $(`
+				<div class="dm-paused-indicator">
+					<div class="paused-status-indicator__subtext">Game Paused for Players.</div>
+					<svg class="beholder-dm-screen loading-status-indicator__svg animate" viewBox="0 0 285 176" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:overlay;width:100%;position:relative;padding:0 10%;"><defs><path id="beholder-eye-move-path" d="M0 0 a 15 5 0 0 0 15 0 a 15 5 0 0 1 -15 0 z"></path><clipPath id="beholder-eye-socket-clip-path"><path id="eye-socket" fill-rule="evenodd" clip-rule="evenodd" d="M145.5 76c-8.562 0-15.5-7.027-15.5-15.694 0-8.663 6.938-1.575 15.5-1.575 8.562 0 15.5-7.088 15.5 1.575C161 68.973 154.062 76 145.5 76z"></path></clipPath></defs><g class="beholder-dm-screen__beholder"><path fill-rule="evenodd" clip-rule="evenodd" d="M145.313 77.36c-10.2 0-18.466-8.27-18.466-18.47 0-10.197 8.266-1.855 18.466-1.855 10.199 0 18.465-8.342 18.465 1.855 0 10.2-8.266 18.47-18.465 18.47m59.557 4.296l-.083-.057c-.704-.5-1.367-1.03-1.965-1.59a12.643 12.643 0 0 1-1.57-1.801c-.909-1.268-1.51-2.653-1.859-4.175-.355-1.521-.461-3.179-.442-4.977.007-.897.049-1.835.087-2.827.038-.995.079-2.032.053-3.194-.031-1.158-.11-2.445-.519-3.97a10.494 10.494 0 0 0-1.014-2.43 8.978 8.978 0 0 0-1.938-2.32 9.64 9.64 0 0 0-2.468-1.54l-.314-.137-.299-.114-.609-.212c-.382-.105-.787-.227-1.151-.298-1.495-.315-2.819-.383-4.065-.39-1.248-.004-2.407.087-3.534.2a56.971 56.971 0 0 0-3.18.44c-6.271.646-12.648 1.559-13.689-.837-1.079-2.487-3.35-8.058 3.115-12.19 4.076.154 8.141.347 12.179.62 1.461.098 2.914.212 4.36.34-4.614.924-9.314 1.7-14.019 2.43h-.015a2.845 2.845 0 0 0-2.388 3.066 2.84 2.84 0 0 0 3.088 2.574c5.125-.462 10.25-.973 15.416-1.696 2.592-.378 5.17-.776 7.88-1.42a29.7 29.7 0 0 0 2.108-.59c.181-.06.363-.117.56-.193.197-.072.378-.136.594-.227.208-.09.405-.17.643-.291l.345-.174.394-.235c.064-.042.124-.076.196-.125l.235-.174.235-.174.117-.099.148-.136c.098-.094.189-.189.283-.287l.137-.152a3.44 3.44 0 0 0 .166-.22c.114-.154.224-.317.318-.484l.072-.125.038-.064.042-.09a5.06 5.06 0 0 0 .367-1.154c.045-.308.06-.63.045-.944a4.322 4.322 0 0 0-.042-.458 5.19 5.19 0 0 0-.386-1.207 5.356 5.356 0 0 0-.499-.799l-.091-.117-.072-.083a5.828 5.828 0 0 0-.303-.318l-.155-.151-.083-.076-.057-.05a9.998 9.998 0 0 0-.503-.382c-.152-.102-.28-.178-.424-.265l-.205-.124-.181-.091-.36-.186a18.713 18.713 0 0 0-.643-.28l-.591-.23c-1.521-.538-2.853-.856-4.197-1.159a83.606 83.606 0 0 0-3.951-.772c-2.604-.45-5.185-.829-7.763-1.166-4.273-.564-8.531-1.029-12.785-1.46 0-.004-.004-.004-.004-.004a38.55 38.55 0 0 0-4.81-3.1v-.004c.397-.223.965-.424 1.688-.549 1.135-.208 2.551-.242 4.05-.185 3.024.11 6.366.59 10.022.662 1.832.02 3.781-.056 5.84-.56a12.415 12.415 0 0 0 3.081-1.188 10.429 10.429 0 0 0 2.702-2.135 2.841 2.841 0 0 0-3.774-4.205l-.208.152c-.825.594-1.76.87-2.956.942-1.188.068-2.566-.09-4.004-.367-2.907-.553-6.003-1.556-9.5-2.32-1.763-.371-3.644-.7-5.802-.73a16.984 16.984 0 0 0-3.455.298 13.236 13.236 0 0 0-3.774 1.333 13.065 13.065 0 0 0-3.376 2.615 14.67 14.67 0 0 0-1.646 2.154h-.004a41.49 41.49 0 0 0-8.436-.863c-1.518 0-3.017.079-4.489.238-1.79-1.563-3.444-3.198-4.833-4.913a21.527 21.527 0 0 1-1.4-1.903 15.588 15.588 0 0 1-1.094-1.893c-.606-1.241-.905-2.422-.893-3.22a3.38 3.38 0 0 1 .038-.55c.034-.155.06-.31.121-.446.106-.273.276-.534.571-.776.579-.496 1.681-.81 2.884-.689 1.207.114 2.487.629 3.615 1.476 1.135.848 2.111 2.044 2.868 3.444l.038.076a2.848 2.848 0 0 0 3.471 1.329 2.843 2.843 0 0 0 1.714-3.641c-.768-2.135-1.96-4.235-3.675-6.003-1.71-1.76-3.924-3.18-6.502-3.872a12.604 12.604 0 0 0-4.076-.416 11.248 11.248 0 0 0-4.284 1.128 10.405 10.405 0 0 0-3.702 3.054c-.499.655-.901 1.37-1.237 2.104-.318.73-.568 1.488-.731 2.237-.337 1.503-.356 2.96-.238 4.315.125 1.362.405 2.63.764 3.822.36 1.196.803 2.317 1.298 3.373a31.9 31.9 0 0 0 1.605 3.043c.458.768.935 1.506 1.427 2.233h-.004a39.13 39.13 0 0 0-4.515 2.384c-3.111-.344-6.2-.76-9.242-1.294-2.033-.364-4.043-.769-6.007-1.26-1.96-.485-3.876-1.045-5.662-1.726a24.74 24.74 0 0 1-2.528-1.102c-.772-.393-1.48-.829-1.987-1.234a4.916 4.916 0 0 1-.56-.507c-.02-.015-.03-.03-.046-.045.288-.28.761-.621 1.314-.905.719-.382 1.566-.711 2.456-.984 1.79-.556 3.762-.9 5.76-1.098l.046-.007a2.843 2.843 0 0 0 2.547-2.805 2.846 2.846 0 0 0-2.824-2.868c-2.301-.02-4.628.11-7.028.567-1.2.231-2.418.538-3.671 1.022-.628.246-1.26.526-1.911.901a10.12 10.12 0 0 0-1.96 1.446c-.648.62-1.307 1.438-1.757 2.524-.114.261-.197.56-.284.844a7.996 7.996 0 0 0-.166.909c-.061.609-.05 1.237.049 1.809.189 1.162.632 2.12 1.109 2.891a11.265 11.265 0 0 0 1.529 1.942c1.056 1.082 2.127 1.88 3.194 2.6a33.287 33.287 0 0 0 3.21 1.855c2.142 1.093 4.284 1.979 6.434 2.774a98.121 98.121 0 0 0 6.464 2.112c.511.147 1.018.291 1.529.435a36.8 36.8 0 0 0-4.458 7.089v.004c-1.908-2.014-3.876-3.997-6.022-5.931a52.386 52.386 0 0 0-3.471-2.888 31.347 31.347 0 0 0-2.028-1.408 17.575 17.575 0 0 0-2.574-1.378 11.177 11.177 0 0 0-1.888-.616c-.761-.16-1.73-.31-3.02-.107a6.543 6.543 0 0 0-1.007.254 6.508 6.508 0 0 0-2.79 1.84 6.7 6.7 0 0 0-.594.783c-.083.129-.174.269-.238.39a7.248 7.248 0 0 0-.681 1.692 9.383 9.383 0 0 0-.3 2.02c-.022.584 0 1.09.038 1.568.084.953.231 1.786.401 2.577l.39 1.764c.027.14.065.268.087.408l.057.428.121.855.065.428.033.443.072.886c.061.586.061 1.196.076 1.801.05 2.426-.11 4.92-.435 7.407a50.6 50.6 0 0 1-1.503 7.35c-.17.594-.367 1.17-.548 1.76a55.283 55.283 0 0 1-.632 1.684l-.352.791c-.061.129-.114.276-.178.39l-.193.356-.186.355c-.064.121-.129.246-.193.326-.129.185-.257.375-.378.575l-.303.485a2.813 2.813 0 0 0 4.462 3.387c.295-.322.59-.655.878-.988.155-.17.265-.333.382-.496l.349-.488.344-.492c.117-.166.2-.325.303-.492l.583-.98a53.92 53.92 0 0 0 1.018-1.964c.295-.659.61-1.321.89-1.984a58.231 58.231 0 0 0 2.69-8.114 58.405 58.405 0 0 0 1.51-8.493c.068-.73.152-1.454.167-2.203l.045-1.12.02-.56-.012-.568-.004-.205c.167.186.333.371.496.557 1.608 1.84 3.179 3.838 4.708 5.889a181.94 181.94 0 0 1 4.481 6.328c.14.2.311.428.477.617.284.33.594.62.924.874 0 .216.003.424.015.636-2.661 2.861-5.265 5.821-7.748 9.034-1.567 2.06-3.096 4.19-4.485 6.715-.685 1.267-1.347 2.645-1.854 4.363-.246.879-.454 1.851-.496 3.02l-.007.44.022.473c.012.159.02.314.038.477.023.166.05.337.076.503.113.666.333 1.385.65 2.07.16.337.356.67.557.992.212.299.44.613.681.878a8.075 8.075 0 0 0 1.54 1.328c1.05.697 2.04 1.06 2.938 1.31 1.79.466 3.292.519 4.723.507 2.842-.053 5.367-.48 7.853-.98 4.943-1.022 9.618-2.434 14.243-3.948a2.845 2.845 0 0 0 1.911-3.236 2.842 2.842 0 0 0-3.323-2.267h-.015c-4.648.878-9.322 1.635-13.864 1.965-2.252.155-4.511.208-6.46-.027a10.954 10.954 0 0 1-1.685-.322c.004-.015.012-.026.015-.037.133-.273.322-.606.534-.954.235-.36.477-.73.768-1.117 1.14-1.548 2.619-3.164 4.183-4.723a83.551 83.551 0 0 1 2.585-2.468 35.897 35.897 0 0 0 2.312 4.16c.125.2.261.405.397.602 3.747-.413 7.415-1.06 10.356-1.617l.037-.007a7.47 7.47 0 0 1 8.702 5.957 7.491 7.491 0 0 1-4.724 8.38C132.172 94.372 138.542 96 145.313 96c20.358 0 37.087-14.708 38.994-33.514.193-.05.386-.098.576-.144a23.261 23.261 0 0 1 2.354-.458c.726-.102 1.393-.14 1.847-.125.125-.004.193.015.299.012.03.003.064.007.098.007h.053c.008.004.015.004.027.004.106 0 .094-.019.09-.068-.007-.05-.022-.125.019-.117.038.007.125.083.216.26.087.19.186.443.269.761.079.33.159.69.219 1.102.129.806.216 1.745.307 2.725.091.984.178 2.02.306 3.1.262 2.138.682 4.435 1.533 6.683.837 2.245 2.154 4.406 3.812 6.15.825.871 1.725 1.655 2.66 2.336.943.677 1.919 1.26 2.911 1.782a2.848 2.848 0 0 0 3.641-.874 2.848 2.848 0 0 0-.674-3.966" fill="#0398F3"></path><g clip-path="url(#beholder-eye-socket-clip-path)"><circle cx="137.5" cy="60" r="7" fill="#1B9AF0"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath xlink:href="#beholder-eye-move-path"></mpath></animateMotion></circle></g></g><g class="beholder-dm-screen__screen"><path fill="#EAEEF0" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M76 76h136v97H76z"></path><path d="M218 170.926V74.282l64-35.208v96.644l-64 35.208zM70 171.026V74.318L3 38.974v96.708l67 35.344z" fill="#F3F6F9" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+				</div>
+			`);
+				$("body").append(pausedIndicator);
+			}
+			else{
+				$(".dm-paused-indicator").remove();
+			}
+		});
+
 		zoom_section.append(ping_center);
+		zoom_section.append(pause_players);
+	}
 
 	zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
 	zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
-	
+
 	zoom_minus.click(decrease_zoom)
 	zoom_section.append(zoom_minus);
 
@@ -3087,7 +3236,7 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-152px");
+		zoom_section.css("left","-208px");
 	} else {
 		zoom_section.css("left","-170px");
 	}
@@ -3101,12 +3250,15 @@ function init_zoom_buttons() {
  * See `Load.js` for the injection of the overlay.
  */
 function init_loading_overlay_beholder() {
+
+	if ($("#loading-overlay-beholder").length > 0) return;
+
 	let loadingText = "One Moment While We Set The Scene...";
 	if (is_characters_page()) {
 		loadingText = "We'll Set The Scene When The DM Is Ready.";
 	}
 	let loadingIndicator = $(`
-		<div>
+		<div id="loading-overlay-beholder"">
 			<div class="sidebar-panel-loading-indicator" style="padding:0px;border-radius:40px;">
 				<svg class="beholder-dm-screen loading-status-indicator__svg animate" viewBox="0 0 285 176" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:overlay;margin-top:100px;width:100%;position:relative;padding:0 10%;"><defs><path id="beholder-eye-move-path" d="M0 0 a 15 5 0 0 0 15 0 a 15 5 0 0 1 -15 0 z"></path><clipPath id="beholder-eye-socket-clip-path"><path id="eye-socket" fill-rule="evenodd" clip-rule="evenodd" d="M145.5 76c-8.562 0-15.5-7.027-15.5-15.694 0-8.663 6.938-1.575 15.5-1.575 8.562 0 15.5-7.088 15.5 1.575C161 68.973 154.062 76 145.5 76z"></path></clipPath></defs><g class="beholder-dm-screen__beholder"><path fill-rule="evenodd" clip-rule="evenodd" d="M145.313 77.36c-10.2 0-18.466-8.27-18.466-18.47 0-10.197 8.266-1.855 18.466-1.855 10.199 0 18.465-8.342 18.465 1.855 0 10.2-8.266 18.47-18.465 18.47m59.557 4.296l-.083-.057c-.704-.5-1.367-1.03-1.965-1.59a12.643 12.643 0 0 1-1.57-1.801c-.909-1.268-1.51-2.653-1.859-4.175-.355-1.521-.461-3.179-.442-4.977.007-.897.049-1.835.087-2.827.038-.995.079-2.032.053-3.194-.031-1.158-.11-2.445-.519-3.97a10.494 10.494 0 0 0-1.014-2.43 8.978 8.978 0 0 0-1.938-2.32 9.64 9.64 0 0 0-2.468-1.54l-.314-.137-.299-.114-.609-.212c-.382-.105-.787-.227-1.151-.298-1.495-.315-2.819-.383-4.065-.39-1.248-.004-2.407.087-3.534.2a56.971 56.971 0 0 0-3.18.44c-6.271.646-12.648 1.559-13.689-.837-1.079-2.487-3.35-8.058 3.115-12.19 4.076.154 8.141.347 12.179.62 1.461.098 2.914.212 4.36.34-4.614.924-9.314 1.7-14.019 2.43h-.015a2.845 2.845 0 0 0-2.388 3.066 2.84 2.84 0 0 0 3.088 2.574c5.125-.462 10.25-.973 15.416-1.696 2.592-.378 5.17-.776 7.88-1.42a29.7 29.7 0 0 0 2.108-.59c.181-.06.363-.117.56-.193.197-.072.378-.136.594-.227.208-.09.405-.17.643-.291l.345-.174.394-.235c.064-.042.124-.076.196-.125l.235-.174.235-.174.117-.099.148-.136c.098-.094.189-.189.283-.287l.137-.152a3.44 3.44 0 0 0 .166-.22c.114-.154.224-.317.318-.484l.072-.125.038-.064.042-.09a5.06 5.06 0 0 0 .367-1.154c.045-.308.06-.63.045-.944a4.322 4.322 0 0 0-.042-.458 5.19 5.19 0 0 0-.386-1.207 5.356 5.356 0 0 0-.499-.799l-.091-.117-.072-.083a5.828 5.828 0 0 0-.303-.318l-.155-.151-.083-.076-.057-.05a9.998 9.998 0 0 0-.503-.382c-.152-.102-.28-.178-.424-.265l-.205-.124-.181-.091-.36-.186a18.713 18.713 0 0 0-.643-.28l-.591-.23c-1.521-.538-2.853-.856-4.197-1.159a83.606 83.606 0 0 0-3.951-.772c-2.604-.45-5.185-.829-7.763-1.166-4.273-.564-8.531-1.029-12.785-1.46 0-.004-.004-.004-.004-.004a38.55 38.55 0 0 0-4.81-3.1v-.004c.397-.223.965-.424 1.688-.549 1.135-.208 2.551-.242 4.05-.185 3.024.11 6.366.59 10.022.662 1.832.02 3.781-.056 5.84-.56a12.415 12.415 0 0 0 3.081-1.188 10.429 10.429 0 0 0 2.702-2.135 2.841 2.841 0 0 0-3.774-4.205l-.208.152c-.825.594-1.76.87-2.956.942-1.188.068-2.566-.09-4.004-.367-2.907-.553-6.003-1.556-9.5-2.32-1.763-.371-3.644-.7-5.802-.73a16.984 16.984 0 0 0-3.455.298 13.236 13.236 0 0 0-3.774 1.333 13.065 13.065 0 0 0-3.376 2.615 14.67 14.67 0 0 0-1.646 2.154h-.004a41.49 41.49 0 0 0-8.436-.863c-1.518 0-3.017.079-4.489.238-1.79-1.563-3.444-3.198-4.833-4.913a21.527 21.527 0 0 1-1.4-1.903 15.588 15.588 0 0 1-1.094-1.893c-.606-1.241-.905-2.422-.893-3.22a3.38 3.38 0 0 1 .038-.55c.034-.155.06-.31.121-.446.106-.273.276-.534.571-.776.579-.496 1.681-.81 2.884-.689 1.207.114 2.487.629 3.615 1.476 1.135.848 2.111 2.044 2.868 3.444l.038.076a2.848 2.848 0 0 0 3.471 1.329 2.843 2.843 0 0 0 1.714-3.641c-.768-2.135-1.96-4.235-3.675-6.003-1.71-1.76-3.924-3.18-6.502-3.872a12.604 12.604 0 0 0-4.076-.416 11.248 11.248 0 0 0-4.284 1.128 10.405 10.405 0 0 0-3.702 3.054c-.499.655-.901 1.37-1.237 2.104-.318.73-.568 1.488-.731 2.237-.337 1.503-.356 2.96-.238 4.315.125 1.362.405 2.63.764 3.822.36 1.196.803 2.317 1.298 3.373a31.9 31.9 0 0 0 1.605 3.043c.458.768.935 1.506 1.427 2.233h-.004a39.13 39.13 0 0 0-4.515 2.384c-3.111-.344-6.2-.76-9.242-1.294-2.033-.364-4.043-.769-6.007-1.26-1.96-.485-3.876-1.045-5.662-1.726a24.74 24.74 0 0 1-2.528-1.102c-.772-.393-1.48-.829-1.987-1.234a4.916 4.916 0 0 1-.56-.507c-.02-.015-.03-.03-.046-.045.288-.28.761-.621 1.314-.905.719-.382 1.566-.711 2.456-.984 1.79-.556 3.762-.9 5.76-1.098l.046-.007a2.843 2.843 0 0 0 2.547-2.805 2.846 2.846 0 0 0-2.824-2.868c-2.301-.02-4.628.11-7.028.567-1.2.231-2.418.538-3.671 1.022-.628.246-1.26.526-1.911.901a10.12 10.12 0 0 0-1.96 1.446c-.648.62-1.307 1.438-1.757 2.524-.114.261-.197.56-.284.844a7.996 7.996 0 0 0-.166.909c-.061.609-.05 1.237.049 1.809.189 1.162.632 2.12 1.109 2.891a11.265 11.265 0 0 0 1.529 1.942c1.056 1.082 2.127 1.88 3.194 2.6a33.287 33.287 0 0 0 3.21 1.855c2.142 1.093 4.284 1.979 6.434 2.774a98.121 98.121 0 0 0 6.464 2.112c.511.147 1.018.291 1.529.435a36.8 36.8 0 0 0-4.458 7.089v.004c-1.908-2.014-3.876-3.997-6.022-5.931a52.386 52.386 0 0 0-3.471-2.888 31.347 31.347 0 0 0-2.028-1.408 17.575 17.575 0 0 0-2.574-1.378 11.177 11.177 0 0 0-1.888-.616c-.761-.16-1.73-.31-3.02-.107a6.543 6.543 0 0 0-1.007.254 6.508 6.508 0 0 0-2.79 1.84 6.7 6.7 0 0 0-.594.783c-.083.129-.174.269-.238.39a7.248 7.248 0 0 0-.681 1.692 9.383 9.383 0 0 0-.3 2.02c-.022.584 0 1.09.038 1.568.084.953.231 1.786.401 2.577l.39 1.764c.027.14.065.268.087.408l.057.428.121.855.065.428.033.443.072.886c.061.586.061 1.196.076 1.801.05 2.426-.11 4.92-.435 7.407a50.6 50.6 0 0 1-1.503 7.35c-.17.594-.367 1.17-.548 1.76a55.283 55.283 0 0 1-.632 1.684l-.352.791c-.061.129-.114.276-.178.39l-.193.356-.186.355c-.064.121-.129.246-.193.326-.129.185-.257.375-.378.575l-.303.485a2.813 2.813 0 0 0 4.462 3.387c.295-.322.59-.655.878-.988.155-.17.265-.333.382-.496l.349-.488.344-.492c.117-.166.2-.325.303-.492l.583-.98a53.92 53.92 0 0 0 1.018-1.964c.295-.659.61-1.321.89-1.984a58.231 58.231 0 0 0 2.69-8.114 58.405 58.405 0 0 0 1.51-8.493c.068-.73.152-1.454.167-2.203l.045-1.12.02-.56-.012-.568-.004-.205c.167.186.333.371.496.557 1.608 1.84 3.179 3.838 4.708 5.889a181.94 181.94 0 0 1 4.481 6.328c.14.2.311.428.477.617.284.33.594.62.924.874 0 .216.003.424.015.636-2.661 2.861-5.265 5.821-7.748 9.034-1.567 2.06-3.096 4.19-4.485 6.715-.685 1.267-1.347 2.645-1.854 4.363-.246.879-.454 1.851-.496 3.02l-.007.44.022.473c.012.159.02.314.038.477.023.166.05.337.076.503.113.666.333 1.385.65 2.07.16.337.356.67.557.992.212.299.44.613.681.878a8.075 8.075 0 0 0 1.54 1.328c1.05.697 2.04 1.06 2.938 1.31 1.79.466 3.292.519 4.723.507 2.842-.053 5.367-.48 7.853-.98 4.943-1.022 9.618-2.434 14.243-3.948a2.845 2.845 0 0 0 1.911-3.236 2.842 2.842 0 0 0-3.323-2.267h-.015c-4.648.878-9.322 1.635-13.864 1.965-2.252.155-4.511.208-6.46-.027a10.954 10.954 0 0 1-1.685-.322c.004-.015.012-.026.015-.037.133-.273.322-.606.534-.954.235-.36.477-.73.768-1.117 1.14-1.548 2.619-3.164 4.183-4.723a83.551 83.551 0 0 1 2.585-2.468 35.897 35.897 0 0 0 2.312 4.16c.125.2.261.405.397.602 3.747-.413 7.415-1.06 10.356-1.617l.037-.007a7.47 7.47 0 0 1 8.702 5.957 7.491 7.491 0 0 1-4.724 8.38C132.172 94.372 138.542 96 145.313 96c20.358 0 37.087-14.708 38.994-33.514.193-.05.386-.098.576-.144a23.261 23.261 0 0 1 2.354-.458c.726-.102 1.393-.14 1.847-.125.125-.004.193.015.299.012.03.003.064.007.098.007h.053c.008.004.015.004.027.004.106 0 .094-.019.09-.068-.007-.05-.022-.125.019-.117.038.007.125.083.216.26.087.19.186.443.269.761.079.33.159.69.219 1.102.129.806.216 1.745.307 2.725.091.984.178 2.02.306 3.1.262 2.138.682 4.435 1.533 6.683.837 2.245 2.154 4.406 3.812 6.15.825.871 1.725 1.655 2.66 2.336.943.677 1.919 1.26 2.911 1.782a2.848 2.848 0 0 0 3.641-.874 2.848 2.848 0 0 0-.674-3.966" fill="#0398F3"></path><g clip-path="url(#beholder-eye-socket-clip-path)"><circle cx="137.5" cy="60" r="7" fill="#1B9AF0"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath xlink:href="#beholder-eye-move-path"></mpath></animateMotion></circle></g></g><g class="beholder-dm-screen__screen"><path fill="#EAEEF0" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M76 76h136v97H76z"></path><path d="M218 170.926V74.282l64-35.208v96.644l-64 35.208zM70 171.026V74.318L3 38.974v96.708l67 35.344z" fill="#F3F6F9" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
 				<div class="loading-status-indicator__subtext">${loadingText}</div>
@@ -3159,6 +3311,8 @@ $(function() {
 	}
 
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
+	window.AVTT_VERSION = $("#avttversion").attr('data-version');
+
 	var is_dm = false;
 	if($(".ddb-campaigns-detail-body-dm-notes-private").length > 0) {
 		is_dm = true;
@@ -3201,8 +3355,9 @@ $(function() {
 		newlink.click(function(e) {
 			e.preventDefault();
 			gather_pcs();
-			let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-			window.open(`https://www.dndbeyond.com${sheet}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
+			harvest_game_id_and_join_link(function () {
+				window.open(`https://www.dndbeyond.com${sheet}?abovevtt=true`, '_blank');
+			});
 		});
 
 		$(this).prepend(newlink);
@@ -3262,6 +3417,7 @@ $(function() {
 
 	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + find_game_id())) || {};
 	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
+	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />')
 
 	$(".instructions").click(function() {
 		if(campaign_banner.is(":visible"))
@@ -3287,8 +3443,9 @@ $(function() {
 				return;
 			}
 			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
-				let cs=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-				window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cs=${cs}&cid=${get_campaign_id()}&abovevtt=true`, '_blank');
+				harvest_game_id_and_join_link(function () {
+					window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cid=${window.gameId}&abovevtt=true`, '_blank');
+				});
 			} else {
 				// DDB doesn't support dice on their encounters page for non-subscribers so load the non-DDB dice version
 				window.DM = true;
@@ -3296,7 +3453,9 @@ $(function() {
 				window.PLAYER_NAME = "THE DM";
 				window.PLAYER_ID = false;
 				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-				init_above();
+				harvest_game_id_and_join_link(function () {
+					init_above();
+				});
 			}
 
 			let oldText = $(".joindm").text();
@@ -3307,8 +3466,8 @@ $(function() {
 			}, 2000);
 		});
 	});
-	
-	
+
+
 	if (window.location.search.includes("abovevtt=true")) {
 		gather_pcs();
 		if (is_encounters_page()) {
@@ -3320,28 +3479,29 @@ $(function() {
 			window.PLAYER_NAME = "THE DM";
 			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_above();
+			harvest_game_id_and_join_link(function () {
+				init_above();
+			});
 		} else if (is_characters_page()) {
-			let path = window.location.href;
-			let pathWithoutQuery = path.split("?")[0];
-			let lastComponent = pathWithoutQuery.substring(pathWithoutQuery.lastIndexOf('/') + 1);
-			const urlParams = new URLSearchParams(window.location.search);
-			window.gameId = urlParams.get('cid');
-			window.CAMPAIGN_SECRET = urlParams.get('cs');
 			window.DM = false;
 			window.PLAYER_SHEET = window.location.pathname;
-			window.PLAYER_ID = lastComponent;
+			window.PLAYER_ID = getPlayerIDFromSheet(window.PLAYER_SHEET);
 			// these will be updated after the initial load
 			window.PLAYER_NAME = "";
 			window.PLAYER_IMG = "https://www.dndbeyond.com/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-			init_above();
+			init_loading_overlay_beholder();
+			harvest_game_id_and_join_link(function () {
+				init_above();
+			});
 		} else {
 			window.DM = true;
 			window.PLAYER_SHEET = false;
 			window.PLAYER_NAME = "THE DM";
 			window.PLAYER_ID = false;
 			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			init_above();
+			harvest_game_id_and_join_link(function () {
+				init_above();
+			});
 		}
 	}
 
@@ -3664,21 +3824,21 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", 
 		return false;
 	}
 }
-	
+
 /**
  * Gathers browser information from User Agent.
  * @returns Object
  */
 function get_browser() {
-	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
+	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 	if(/trident/i.test(M[1])){
-			tem=/\brv[ :]+(\d+)/g.exec(ua) || []; 
+			tem=/\brv[ :]+(\d+)/g.exec(ua) || [];
 			return {name:'IE',version:(tem[1]||'')};
-			}   
+			}
 	if(M[1]==='Chrome'){
 			tem=ua.match(/\bOPR|Edge\/(\d+)/)
 			if(tem!=null)   {return {name:'Opera', version:tem[1]};}
-			}   
+			}
 	M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
 	if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
 	return {
@@ -3727,7 +3887,7 @@ function show_player_sheet() {
 		"visibility": "visible",
 		"z-index": 3
 	});
-	if (window.innerWidth > 1540) { // DDB resize point + sidebar width 
+	if (window.innerWidth > 1540) { // DDB resize point + sidebar width
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead
 		$("#sheet_resize_button").show();
 	} else {
@@ -3736,6 +3896,14 @@ function show_player_sheet() {
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").addClass("ddbc-tab-options__header-heading--is-active");
 	if (window.innerWidth < 1024) {
 		hide_sidebar();
+	}
+	for(id in window.TOKEN_OBJECTS){
+		if(id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[id].options.ac != $(".ddbc-armor-class-box__value").html()){
+			window.MB.sendMessage("custom/myVTT/actoplayerdata",{
+				id: window.PLAYER_ID,
+				ac: $(".ddbc-armor-class-box__value").html()
+			});
+		}
 	}
 }
 
@@ -3800,7 +3968,7 @@ function reposition_player_sheet() {
 		$(".ct-character-sheet-mobile__header").css({ "width": `100%`, "left": "0px", "right": `0px` });
 		$(".ct-character-sheet-mobile").css({ "background": "white" });
 	}
-	
+
 	if (forceLayout == "full") {
 		resize_player_sheet_full_width();
 	} else if (forceLayout == "thin") {
@@ -3887,13 +4055,13 @@ function resize_player_sheet_thin() {
 
 	$(".ct-character-header-desktop__group--share").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 	$(".ct-character-header-desktop__group--builder").css({"visibility": "hidden", "width": "0px", "height": "0px"});
-	
+
 	$(".ct-character-header-desktop__group--short-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "110px" });
 	$(".ct-character-header-desktop__group--long-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "0px" });
 	$(".ct-character-header-desktop__group--short-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
-	
+
 	$(".ct-character-header-desktop__group--campaign").css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
 
 	$(".ct-primary-box").css({ "height": "610px" });
@@ -3904,7 +4072,7 @@ function resize_player_sheet_thin() {
 	$(".ct-spells").css({ "height": "540px" });
 
 	player_sheet_layout = "thin";
-	
+
 	adjust_site_bar();
 
 }
@@ -3931,13 +4099,13 @@ function reset_character_sheet_css() {
 	$(".ct-character-header-desktop__group--short-rest .ct-character-header-desktop__button").removeAttr( 'style' );
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").removeAttr( 'style' );
 	$(".ct-character-header-desktop__group-tidbits").removeAttr( 'style' );
-	
+
 	$(".ct-character-header-desktop__group--campaign").removeAttr( 'style' );
 	$(".ct-primary-box").removeAttr( 'style' );
 	$(".ddbc-tab-options__content").removeAttr( 'style' );
 
 	$(".ct-character-sheet__inner").css({"visibility": "visible", "overflow-x": "hidden"});
-	
+
 	$(".ddbc-character-tidbits__menu-callout").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 
 	let maxHeight = window.innerHeight - 26;
@@ -3989,7 +4157,7 @@ function show_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-right").removeClass("point-left");
 	toggleButton.attr('data-visible', 1);
-
+	window.showPanel = true;
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--not-visible").click();
 	} else {
@@ -4002,18 +4170,47 @@ function show_sidebar() {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
+
+	addGamelogPopoutButton()
 }
 
 var childWindows = {};
 
+function addGamelogPopoutButton(){
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
+	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true&popoutgamelog=true`
 
+	gamelog_popout.off().on("click",function(){
+		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);
+		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
+		setTimeout(function() {
+			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
+		}, 1000)
+		let cleanedUpAlready = false;
+		childWindows["Gamelog"].onload = function() {
+			if(!cleanedUpAlready){
+				popoutGamelogCleanup();
+				cleanedUpAlready = true;
+			}
+		}
+		if(!cleanedUpAlready){
+			setTimeout(function() {
+				popoutGamelogCleanup();  //backup in case onload isn't triggered - I'll look into this more later
+				cleanedUpAlready = true;
+			}, 6000)
+		}
+
+	});
+	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
+}
 // This will popout the selector and it's children. Use a unique name for windows you want to open seperately. If you want to override an open window use the same name.
-function popoutWindow(name, cloneSelector, width=400, height=800){
+function popoutWindow(name, cloneSelector, width=400, height=800, windowTarget=``){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
 	const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
 width=${width},height=${height},left=100,top=100`;
-	childWindows[name] = window.open(``, name, params);		
-	childWindows[name].onbeforeunload = function(){ 
+	childWindows[name] = window.open(windowTarget, name, params);
+	childWindows[name].onbeforeunload = function(){
 		closePopout(name);
 	}
 	setTimeout(function(){
@@ -4027,6 +4224,41 @@ width=${width},height=${height},left=100,top=100`;
         this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 	});
 	return childWindows[name];
+}
+function popoutGamelogCleanup(){
+	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
+	$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
+		body{
+			overflow: hidden !important;
+		}
+		.sidebar__inner,
+		.sidebar,
+		.sidebar__pane-content,
+		.glc-game-log{
+		    width: 100% !important;
+		    max-width: 100% !important;
+		}
+		.mfp-wrap {
+	   		width: 100%;
+	   		z-index: 50000;
+		}
+		.ddb-campaigns-detail-gamelog {
+			visibility: hidden;
+		}
+	</style>`);
+	$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+	removeFromPopoutWindow("Gamelog", ".dice-roller");
+	removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
+	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+	removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");
+	$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
+	let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
+	removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
+	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
+	removeFromPopoutWindow("Gamelog", "iframe");
+	$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
+	$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
+	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);
 }
 function updatePopoutWindow(name, cloneSelector){
 	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
@@ -4052,21 +4284,6 @@ function closePopout(name){
 		delete childWindows[name];
 	}
 }
-
-
-
-
-
-
-
-function removeFromPopoutWindow(name, selector){
-	name = name.replace(/(\r\n|\n|\r)/gm, "").trim();
-	if(!childWindows[name])
-		return;
-	$(childWindows[name].document).find(selector).remove();
-	return childWindows[name];
-}
-
 /**
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .
@@ -4075,14 +4292,14 @@ function hide_sidebar() {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-left").removeClass("point-right");
 	toggleButton.attr('data-visible', 0);
-
+	window.showPanel = false;
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--visible").click();
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar--right") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(340px)");
 	}
-	
+
 	if (is_characters_page()) {
 		reposition_player_sheet();
 	} else {
@@ -4121,21 +4338,17 @@ function adjust_site_bar() {
 		"right": "0px",
 		"width": fullWidth
 	});
-	
+
 	if (is_player_sheet_open() || lockDisplay.length > 0) {
-		$(".site-bar").css({ 
+		$(".site-bar").css({
 			"visibility": "visible",
 			"z-index": 1
 		});
 	} else {
-		$(".site-bar").css({ 
+		$(".site-bar").css({
 			"visibility": "hidden",
 			"z-index": -1
 		});
 	}
 }
 
-const debuggingAlertText = "Please check the developer console (F12) for errors, and report this via the AboveVTT Discord.";
-function showDebuggingAlert(message = "An unexpected error occurred!") {
-	alert(`${message}\n${debuggingAlertText}`);
-}

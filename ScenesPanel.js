@@ -188,7 +188,7 @@ function edit_scene_dialog(scene_id) {
 			if (imageValidation){
 				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
 			}else{
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
 			 
 		}
@@ -302,7 +302,9 @@ function edit_scene_dialog(scene_id) {
 	
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
+	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
+	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	form.append(playerMapRow)
 	form.append(dmMapRow)
 	// add a row but override the normal input with a toggle
@@ -321,21 +323,37 @@ function edit_scene_dialog(scene_id) {
 	);
 
 	let darknessValue = scene.darkness_filter || 0;
-	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="95" step="5"/>`);
+	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
+	let darknessNumberInput = $(`<input name='darkness_filter_number' class='styled-number-input' type='number' min='0' max='100' value='${darknessValue}'/>`)
 	
-	darknessFilterRange.on(' input change', function(){
+	darknessFilterRange.on('input change', function(){
+		$("#darkness_layer").toggleClass("smooth-transition", true);
 		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
    	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
 	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-	   	 	$('#VTT').css('--light-filter', lightnessPercent + "%");
    		}
+   		setTimeout(function(){
+   			$("#darkness_layer").toggleClass("smooth-transition", false);
+   		}, 400);
+   		darknessNumberInput.val(darknessFilterRange.val());
+   		
 	});
-	darknessFilterRange.on(' mouseup', function(){
-   	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+	darknessNumberInput.on('input change', function(){
+		$("#darkness_layer").toggleClass("smooth-transition", true);
+		darknessFilterRange.val(darknessNumberInput.val());
+		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	let darknessPercent = 100 - darknessFilterRangeValue;
-   	 	let lightnessPercent = 100+(darknessFilterRangeValue/5);
+   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+   		}
+   		setTimeout(function(){
+   			$("#darkness_layer").toggleClass("smooth-transition", false);
+   		}, 400);  		
+	});
+
+	darknessFilterRange.on('mouseup', function(){
+   	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
 
@@ -343,6 +361,7 @@ function edit_scene_dialog(scene_id) {
 						'Darkness filter',
 						darknessFilterRange)
 	);
+	darknessFilterRange.after(darknessNumberInput);
 	form.append(form_row(null, 'Snap to Grid',form_toggle("snap", null, false, function(event) {
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 			// it was checked. now it is no longer checked
@@ -366,27 +385,34 @@ function edit_scene_dialog(scene_id) {
 	const gridStroke =$(
 		`<input id="grid_line_width" name="grid_line_width" style="display:inline-block; position:relative; top:2px; margin:0px; height:12px;"
 		type="range" min="0.5" max="10" step="0.5" value="${scene["grid_line_width"] || 0.5}">`)
-	gridStroke.on("change input", handle_form_grid_on_change)
+	const gridStrokeLabel =$(`<label for='grid_line_width'>Grid Line Width</label>`);
+	const gridStrokeNumberInput = $(`<input type='number' class='styled-number-input' name='gridStrokeNumberInput' max='10' min='0.5' value='${scene["grid_line_width"] || 0.5}'/>`);
+	gridStroke.on("change input", function(){
+		gridStrokeNumberInput.val($(this).val());
+		handle_form_grid_on_change();
+	})
+	gridStrokeNumberInput.on("change input", function(){
+		gridStroke.val($(this).val());
+		handle_form_grid_on_change();
+		
+	})
 	showGridControls.append(
 		form_toggle("grid", null, false, function(event) {
 			if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 				// it was checked. now it is no longer checked
 				$(event.currentTarget).removeClass("rc-switch-checked");
-				gridStroke.hide()	
-				form.find(".sp-replacer").hide()
 				
 			} else {
 				// it was not checked. now it is checked
 				$(event.currentTarget).removeClass("rc-switch-unknown");
 				$(event.currentTarget).addClass("rc-switch-checked");
-				gridStroke.show()	
-				form.find(".sp-replacer").show()
 			}
 				handle_form_grid_on_change()
 		})
 	)
 	showGridControls.append(gridColor)
 	showGridControls.append(gridStroke)
+	showGridControls.append(gridStrokeLabel, gridStrokeNumberInput);
 	form.append(form_row(null, 'Show Grid', showGridControls))
 
 	const colorPickers = form.find('input.spectrum');
@@ -413,12 +439,12 @@ function edit_scene_dialog(scene_id) {
 	form.append(form_row(null, 'Grid Scale', grid_buttons))
 
 	var manual = $("<div id='manual_grid_data'/>");
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input name='hpps'> X <input name='vpps'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input name='offsetx'> X <input name='offsety'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input name='fpsq'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input type='number' name='hpps'> X <input type='number' name='vpps'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input type='number' name='offsetx'> X <input type='number' name='offsety'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input type='number' name='fpsq'></div></div>"));
 	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input name='grid_subdivided'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input name='scale_factor'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>"));
+	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input type='number' name='scale_factor'></div></div>"));
 
 	
 	manual.find("input").each(function() {
@@ -483,7 +509,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist();	
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
-
+		$("#exitWizard").remove();
 		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
@@ -505,6 +531,7 @@ function edit_scene_dialog(scene_id) {
 			
 			consider_upscaling(window.ScenesHandler.scene);
 			
+			$("exitWizard").remove();
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -530,6 +557,7 @@ function edit_scene_dialog(scene_id) {
 			else
 				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
+			$("exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
@@ -555,6 +583,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist_current_scene();
 		else
 			window.ScenesHandler.persist();
+		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
 	}
 
@@ -577,17 +606,20 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist_current_scene();
 		else
 			window.ScenesHandler.persist();
+		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
 	}
 
 	let align_grid = function(square = false, just_rescaling = true) {
 
 
+		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
+    
 		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
-			window.CURRENT_SCENE_DATA.scale_factor=1;
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
 			var aligner1 = $("<canvas id='aligner1'/>");
 			aligner1.width(59);
 			aligner1.height(59);
@@ -661,7 +693,25 @@ function edit_scene_dialog(scene_id) {
 				scrollLeft: pageX + 200,
 			}, 500);
 
+			let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
+					<input type="range" name='verticalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="verticalMinorAdjustmentInput" data-orientation="vertical">
+					<label for="verticalMinorAdjustmentInput">Minor Vertical Adjustment</label>
+					<button id="resetMinorVerticalAdjustmentRange">Reset</button>
+			</div>`);
+			let horizontalMinorAdjustment = $(`<div id="horizontalMinorAdjustment">
+				 	<input type="range" name='horizontalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="horizontalMinorAdjustmentInput">
+					<label for="horizontalMinorAdjustmentInput">Minor Horizontal Adjustment</label>
+					<button id="resetMinorHorizontalAdjustmentRange">Reset</button>
+			</div>`);
 
+			horizontalMinorAdjustment.find('#resetMinorHorizontalAdjustmentRange').on('click', function(){
+				$("#horizontalMinorAdjustmentInput").val('50');
+				horizontalMinorAdjustment.find('input').trigger('change');
+			})
+			verticalMinorAdjustment.find('#resetMinorVerticalAdjustmentRange').on('click', function(){
+				$("#verticalMinorAdjustmentInput").val('50');
+				verticalMinorAdjustment.find('input').trigger('change');
+			})
 
 			let regrid = function(e) {
 
@@ -675,6 +725,11 @@ function edit_scene_dialog(scene_id) {
 					y: parseInt(aligner2.css("top")) + 29,
 				};
 
+				let adjustmentSliders = {
+					x: (horizontalMinorAdjustment.find('input').val()-50)/10,
+					y: (verticalMinorAdjustment.find('input').val()-50)/10,
+				}
+
 
 				if (just_rescaling) {
 					ppsx = (al2.x - al1.x);
@@ -683,8 +738,8 @@ function edit_scene_dialog(scene_id) {
 					offsety = 0;
 				}
 				else {
-					ppsx = (al2.x - al1.x) / 3.0;
-					ppsy = (al2.y - al1.y) / 3.0;
+					ppsx = (al2.x - al1.x) / 3.0 + adjustmentSliders.x;
+					ppsy = (al2.y - al1.y) / 3.0 + adjustmentSliders.y;
 					offsetx = al1.x % ppsx;
 					offsety = al1.y % ppsy;
 				}
@@ -807,6 +862,7 @@ function edit_scene_dialog(scene_id) {
 			$("#VTT").append(aligner1);
 			$("#VTT").append(aligner2);
 
+
 			wizard_popup = $("<div id='wizard_popup'></div>");
 			wizard_popup.css("position", "fixed");
 			wizard_popup.css("max-width", "800px");
@@ -816,14 +872,44 @@ function edit_scene_dialog(scene_id) {
 			wizard_popup.css("background", "rgba(254,215,62,0.8)");
 			wizard_popup.css("font-size", "20px");
 
-			if (!just_rescaling)
+
+
+			if (!just_rescaling){
 				wizard_popup.append("Move the pointers at the center of the map to define 3x3 Square on the map! ZOOM IN with the Top Right + button. <button id='step2btn'>Press when it's good enough</button>");
-			else
+								
+				verticalMinorAdjustment.find('input').on('change input',function(){
+					regrid();
+					console.log('verticalMinorAdjustment');
+
+				});
+				horizontalMinorAdjustment.find('input').on('change input',function(){
+					regrid();
+					console.log('horizontalMinorAdjustment');
+
+				});
+				wizard_popup.append(verticalMinorAdjustment);
+				wizard_popup.append(horizontalMinorAdjustment);
+
+
+			}
+			else{
 				wizard_popup.append("Set the green square to roughly the size of a medium token! <button id='step2btn'>Press when it's good enough</button>");
+			}
 
 
 			$("body").append(wizard_popup);
-
+			wizard_popup.draggable({
+				addClasses: false,
+				scroll: false,
+				containment: "#windowContainment",
+				start: function() {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function() {
+					$('.iframeResizeCover').remove();
+				}
+			});
 			regrid();
 
 
@@ -854,14 +940,17 @@ function edit_scene_dialog(scene_id) {
 			}
 
 			if(window.CLOUD){
-				window.ScenesHandler.persist_scene(scene_id,true,true);
+				window.ScenesHandler.persist_scene(scene_id,true);
 			}
 			else{
 				window.ScenesHandler.persist();
 				window.ScenesHandler.switch_scene(scene_id);
 			}
-				
+			
+			window.ScenesHandler.switch_scene(scene_id);
+			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
 
+			$("#VTT").css("--scene-scale", 1)
 
 			$("#edit_dialog").remove();
 			$("#scene_selector").removeAttr("disabled");
@@ -870,7 +959,18 @@ function edit_scene_dialog(scene_id) {
 
 
 			prewiz = $("<table id='prewiz'/>");
-
+			prewiz.draggable({
+				addClasses: false,
+				scroll: false,
+				containment: "#windowContainment",
+				start: function() {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function() {
+					$('.iframeResizeCover').remove();
+				}
+			});
 			prewiz.append("<tr><td><button id='align_grid'>Align to Grid</button></td><td>Use this if you're working on a pre-gridded map and you want all features to work (precise token size, measurament tool,grid snapping!)</td></tr>");
 			prewiz.append("<tr><td><button id='create_grid'>Create Grid</button></td><td>Use this if you want advanced features on a map that don't have a grid!'</td></tr>");
 			prewiz.append("<tr><td><button id='rescale'>Just Rescale the Image</button></td><td>Use this if you just wanna change the size of the image.. It's good for generic images, world maps, or if you don't care about features and just want to have fun quickly</td></tr>");
@@ -895,6 +995,24 @@ function edit_scene_dialog(scene_id) {
 			$("#rescale").click(function() {
 				$("#prewiz").remove();
 				align_grid(true, true)
+			});
+
+			let exitWizard = $(`<button id='exitWizard' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'>Cancel Wizard<button>`);
+			$("body").append(exitWizard);
+			exitWizard.on('click', function(){
+				$("#prewiz").remove();
+				$("#wizard_popup").remove();
+				exitWizard.remove();
+				$('#aligner1').remove();
+				$('#aligner2').remove();
+				window.WIZARDING = false;
+				window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = copiedSceneData;
+				window.ScenesHandler.scene = copiedSceneData;
+				window.CURRENT_SCENE_DATA = copiedSceneData;
+
+				window.ScenesHandler.persist_current_scene();
+				
+				$("#tokens").show();
 			});
 
 		}
@@ -1303,13 +1421,15 @@ function init_ddb_importer(target) {
 
 }
 
-function fill_importer(scene_set, start) {
+function fill_importer(scene_set, start, searchState = '') {
 	area = $("#importer_area");
 	area.empty();
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
 
 	var ddb_extra_found=false;
+	totalPages = Math.max(1, Math.ceil(scene_set.length / 8));
+	pageNumber = 1 + Math.ceil(start / 8)
 	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
 		let current_scene = scene_set[i];
 
@@ -1429,14 +1549,14 @@ function fill_importer(scene_set, start) {
 		prev.attr("disabled", "disabled");
 
 	prev.click(function() {
-		fill_importer(scene_set, start - 8);
+		fill_importer(scene_set, start - 8, searchState);
 	})
 
 	next = $("<button>NEXT</button>");
 	if (i == scene_set.length)
 		next.attr("disabled", "disabled");
 	next.click(function() {
-		fill_importer(scene_set, start + 8);
+		fill_importer(scene_set, start + 8, searchState);
 	});
 
 	buttons = $("<div/>");
@@ -1448,8 +1568,53 @@ function fill_importer(scene_set, start) {
 	buttons.append(next);
 	footer.append(buttons);
 
+	let pageNumbersDiv = document.createElement('div');
+	pageNumbersDiv.classList.add('page-number');
 
+	let pageSelect = document.createElement('input');
+	pageSelect.classList.add('styled-number-input');
+	pageSelect.value = pageNumber;
+	pageSelect.addEventListener('change', () => {
+		const val = pageSelect.value;
+		if (val && val >= 0 && val <= totalPages && val > 0) {
+			fill_importer(scene_set, (val * 8) - 8, searchState);
+		}
+	})
 
+	let totalPagesSpan = document.createElement('span');
+	totalPagesSpan.innerText = `/ ${totalPages}`;
+	totalPagesSpan.style.marginLeft = '5px';
+	pageNumbersDiv.append(pageSelect);
+	pageNumbersDiv.append(totalPagesSpan);
+	footer.append(pageNumbersDiv);
+
+	if(scene_set.length == 0){
+		area.append(`<div style='border:none !important;'>There were no maps/handouts found in this chapter</div>`)
+	}
+
+	let mapSearchContainer = document.createElement('div');
+	let mapSearchLabel = document.createElement('span');
+	mapSearchLabel.innerText = "Search By Title: ";
+	let mapSearchElement = document.createElement('input');
+	mapSearchElement.value = searchState;
+	mapSearchElement.addEventListener('change', () => {
+		const value = mapSearchElement.value;
+		if (value) {
+			let clonedScenes = JSON.parse(JSON.stringify(scene_set));
+			let filteredScenes = clonedScenes.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
+			fill_importer(filteredScenes, start, value);
+		} else {
+			if($('#chapter_select').length > 0){
+				display_scenes();
+			}
+			else{
+				fill_importer(PRESET[$(`.importer_toggle[style*='background: red']`).attr('data-key')], 0);
+			}
+		}
+	});
+	mapSearchContainer.append(mapSearchLabel);
+	mapSearchContainer.append(mapSearchElement);
+	footer.append(mapSearchContainer);
 }
 
 function mega_importer(DDB = false) {

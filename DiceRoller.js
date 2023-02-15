@@ -1,29 +1,13 @@
 
 $(function() {
     window.diceRoller = new DiceRoller();
-
-    // TODO: remove this once PR #394 is merged
-    if (!window.ajaxQueue.addDDBRequest) {
-        window.ajaxQueue.addDDBRequest = function(options) {
-            get_cobalt_token(function (token) {
-                let previousBeforeSend = options.beforeSend;
-                options.beforeSend = function (xhr) {
-                    if (previousBeforeSend) {
-                        previousBeforeSend(xhr);
-                    }
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                };
-                options.xhrFields = {
-                    withCredentials: true
-                };
-                $.ajax(options);
-            });
-        }
-    }
 });
 
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
 const validExpressionRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
+const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|heal|w)\s/;
+const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|\+|-|\d+|\s+|STR|str|DEX|dex|CON|con|INT|int|WIS|wis|CHA|cha|PB|pb)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. It is also explicitly declaring the modifiers as case-sensitive because we can't search the entire thing as case-insensitive because the `d` in 1d20 needs to be lowercase.
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -188,6 +172,38 @@ class DiceRoll {
                 this.#separatedDiceToRoll[diceType] += numberOfDice;
             }
         });
+    }
+
+    /**
+     * @param slashCommandText {string} the slash command to parse and roll. EG: "/hit 2d20kh1+4 Shortsword". This is the only required value
+     * @param name {string|undefined} the name of the creature/player associated with this roll. This is displayed above the roll box in the gamelog. The character sheet defaults to the PC.name, the encounters page defaults to ""
+     * @param avatarUrl {string|undefined} the url for the image to be displayed in the gamelog. This is displayed to the left of the roll box in the gamelog. The character sheet defaults to the PC.avatar, the encounters page defaults to ""
+     * @param entityType {string|undefined} the type of entity associated with this roll. EG: "character", "monster", "user" etc. Generic rolls from the character sheet defaults to "character", generic rolls from the encounters page defaults to "user"
+     * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
+     * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
+     */
+    static fromSlashCommand(slashCommandText, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
+        let modifiedSlashCommand = replaceModifiersInSlashCommand(slashCommandText);
+        let slashCommand = modifiedSlashCommand.match(slashCommandRegex)?.[0];
+        let expression = modifiedSlashCommand.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+        let action = modifiedSlashCommand.replace(slashCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+        console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
+        let rollType = undefined;
+        if (slashCommand.startsWith("/r")) {
+            // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
+            [action, rollType] = action.split(":") || [undefined, undefined];
+        } else if (slashCommand.startsWith("/hit")) {
+            rollType = "to hit";
+        } else if (slashCommand.startsWith("/dmg")) {
+            rollType = "damage";
+        } else if (slashCommand.startsWith("/skill")) {
+            rollType = "check";
+        } else if (slashCommand.startsWith("/save")) {
+            rollType = "save";
+        } else if (slashCommand.startsWith("/heal")) {
+            rollType = "heal";
+        }
+        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride);
     }
 }
 
@@ -504,4 +520,84 @@ function replace_gamelog_message_expressions(listItem) {
             console.log("injected avttExpressionResult", avttExpressionResult);
         }
     }
+}
+
+function getCharacterStatModifiers() {
+    if (is_characters_page()) {
+        let stats = $(".ddbc-ability-summary__secondary");
+        return {
+            "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
+            "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
+            "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
+            "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
+            "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
+            "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
+            "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+        };
+    }
+    if (window.DM) {
+        try {
+            const sheet = find_currently_open_character_sheet();
+            if (!sheet) return undefined;
+            const stats = window.PLAYER_STATS[sheet];
+            if (!stats || !stats.abilities) return undefined;
+            return {
+                "str": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "str").modifier),
+                "dex": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "dex").modifier),
+                "con": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "con").modifier),
+                "int": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "int").modifier),
+                "wis": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "wis").modifier),
+                "cha": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "cha").modifier),
+                "pb": parseInt($($("#sheet").find("iframe").contents()).find(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+            };
+        } catch (error) {
+            console.warn("getCharacterStatModifiers Failed to parse player stats", error);
+            return undefined;
+        }
+    }
+    return undefined;
+}
+
+/**
+ * Takes the raw strong from the chat input, and returns a new string with all the modifier keys replaced with numbers.
+ * This only works on the character page. If this is called from a different page, it will immediately return the given slashCommand.
+ * @example passing "1d20+dex+pb" would return "1d20+3+2" for a player that has a +2 dex mod and a proficiency bonus of 2
+ * @param slashCommandText {String} the string from the chat input
+ * @returns {String} a new string with numbers instead of modifier if on the characters page, else returns the given slashCommand.
+ */
+function replaceModifiersInSlashCommand(slashCommandText) {
+    if (typeof slashCommandText !== "string") {
+        console.warn("replaceModifiersInSlashCommand expected a string, but received", slashCommandText);
+        return "";
+    }
+
+    const expression = slashCommandText.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+
+    if (expression === undefined || expression === "") {
+        return slashCommandText; // no valid expression to parse
+    }
+
+    const modifiers = getCharacterStatModifiers();
+    if (modifiers === undefined) {
+        return slashCommandText; // missing required info
+    }
+
+    let modifiedExpression = `${expression}`; // make sure we use a copy of the string instead of altering the variable that was passed in
+    const modifiersToReplace = expression.matchAll(validModifierSubstitutions);
+    const validModifierPrefix = /(\s*[+|-]\s*)$/; // we only want to substitute valid parts of the expression. For example: We only want to replace the first `dex` in this string "/r 1d20 + dex dex-based attack"
+    for (const match of modifiersToReplace) {
+        const mod = match[0];
+        const expressionUpToThisPoint = match.input.substring(0, match.index);
+        if (validModifierPrefix.test(expressionUpToThisPoint)) {
+            // everything up to and including this match is valid. let's replace this modifier with the appropriate value.
+            modifiedExpression = modifiedExpression.replace(mod, modifiers[mod.toLowerCase()]); // explicitly only replacing the first match. We do not want to replaceAll here.
+        } else {
+            break; // we got to a point in the expression that is no longer valid. Stop substituting
+        }
+    }
+
+    const modifiedCommand = slashCommandText.replaceAll(expression, modifiedExpression);
+
+    console.log("replaceModifiersInSlashCommand changed", slashCommandText, "to", modifiedCommand);
+    return modifiedCommand;
 }

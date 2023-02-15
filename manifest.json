@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.80",
+	"version": "0.84",
 	"content_scripts": [
 		{
 			"matches": [
@@ -54,7 +54,10 @@
 		"purify.min.js",
 		"spectrum-2.0.8.min.js",
 		"spectrum-2.0.8.min.css",
+		"peerjs.min.js",
 		"AjaxQueueModule.js",
+		"CoreFunctions.js",
+		"CharactersPage.js",
 		"DnDBeyond/DDBCharacterData.js",
 		"EncounterHandler.js",
 		"SidebarPanel.js",
@@ -87,6 +90,8 @@
 		"DiceRoller.js",
 		"ChatObserver.js",
 		"Main.js",
-		"MonsterStatBlock.js"
+		"MonsterStatBlock.js",
+		"PeerManager.js",
+		"PeerCommunication.js"
 	]
 }

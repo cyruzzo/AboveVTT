@@ -115,7 +115,7 @@ function list_item_from_monster_id(monsterId) {
 }
 
 function list_item_from_player_id(playerId) {
-    let pc = window.pcs.find(p => p.sheet = playerId);
+    let pc = window.pcs.find(p => p.sheet === playerId);
     if (pc === undefined) return undefined;
     let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
@@ -197,6 +197,7 @@ function backfill_mytoken_folders() {
  * token sources are window.pcs, mytokens, mytokensfolders, and builtInTokens
  */
 function rebuild_token_items_list() {
+    if (!window.DM) return;
     console.groupCollapsed("rebuild_token_items_list");
     try {
 
@@ -394,7 +395,7 @@ function init_tokens_panel() {
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
     add_expand_collapse_buttons_to_header(tokensPanel);
-    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
+    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
     searchInput.off("input").on("input", mydebounce(() => {
@@ -438,6 +439,7 @@ function redraw_token_list_item(item){
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
 function redraw_token_list(searchTerm, enableDraggable = true) {
+    if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
         return;
@@ -669,7 +671,58 @@ function update_pc_token_rows() {
 
             });
             row.find(".pp-value").text(playerData.pp);
+            row.find(".pinv-value").text(playerData.pinv);
+            row.find(".pins-value").text(playerData.pins);
             row.find(".walking-value").text(playerData.walking);
+            row.find(".ac-value").text(playerData.ac);
+            row.find(".hp-value").text(playerData.hp);
+            row.find(".max-hp-value").text(playerData.max_hp);
+            row.find(".fly-value").text(playerData.fly);
+            row.find(".climb-value").text(playerData.climb);
+            row.find(".swim-value").text(playerData.swim);
+            if(playerData.climb == '0ft.'){
+                row.find(".subtitle-attibute[title='Climb Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Climb Speed']").show()
+            }
+            if(playerData.fly == '0ft.'){
+                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Fly Speed']").show()
+            }
+            if(playerData.swim == '0ft.'){
+                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
+            }
+            else{
+                 row.find(".subtitle-attibute[title='Swim Speed']").show()
+            }
+            
+            row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
+            row.css("--player-border-color",  playerData.theme.themeColor);
+
+            row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
+            if(playerData.hp == 0){
+                row.find(".hp-attribute.death-saves.ct-health-summary__data").show();
+                row.find(".subtitle-attibute.hp-attribute").hide();
+                row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--inactive', true);
+                row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--active', false);
+                for(let i = 0; i <= playerData.fails; i++){
+                    row.find(`.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
+                }
+                 for(let i = 0; i <= playerData.successes; i++){
+                    row.find(`.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
+                }
+            }
+            else{
+                row.find(".subtitle-attibute.hp-attribute").show();
+                 row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
+            }
+
+            for(let i = 0; i <= playerData.exhaustion; i++){
+                 row.find(`.subtitle-attibute .exhaustion-pip:nth-of-type(${i})`).toggleClass("filled", true);
+            }
             if (playerData.inspiration) {
                 row.find(".inspiration").show();
             } else {
@@ -794,7 +847,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
-            options.color = "#" + get_player_token_border_color(pc.sheet);
+            options.color = pc.color ? pc.color : get_token_color_by_index(window.pcs.indexOf(pc));
             break;
         case ItemType.Monster:
             let hpVal;
@@ -1768,7 +1821,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
-        clickedItem.activelyFetchingMonsters = true;
+        clickedItem.activelyFetchingMonsters = false;
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
@@ -2308,11 +2361,8 @@ function display_change_image_modal(placedToken) {
     inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can change the image for all tokens of this type by clicking the gear button on the token row in the Tokens tab.</div>`));
 }
 
-const fetch_and_cache_scene_monster_items = mydebounce( (clearCache = false) => {
+const fetch_and_cache_scene_monster_items = mydebounce( () => {
     console.log("fetch_and_cache_scene_monster_items");
-    if (clearCache) {
-        cached_monster_items = {};
-    }
     let monsterIds = [];
     for (let id in window.TOKEN_OBJECTS) {
         let token = window.TOKEN_OBJECTS[id];

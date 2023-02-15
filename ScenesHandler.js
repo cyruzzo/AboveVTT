@@ -185,7 +185,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
-			redraw_text()
+			redraw_text();
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()
@@ -209,7 +209,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				callback();
 
 			if (window.EncounterHandler !== undefined) {
-				fetch_and_cache_scene_monster_items(true);
+				fetch_and_cache_scene_monster_items();
 			} else {
 				console.log("Not updating avtt encounter");
 			}
@@ -369,7 +369,22 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 			}
 			else {
-				iframe.contents().find("h3 >a").each(function(idx) {
+				//chapter, subchapter (eg icewind), chapter, handouts and maps (eg. Curse of Strahd)
+				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a, h3.adventure-chapter-header:contains('Appendices') ~ ul a").each(function(idx) {
+					var title = $(this).html();
+					var url = $(this).attr('href');
+					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+					self.sources[keyword].chapters[ch_keyword] = {
+						type: 'dnb',
+						title: title,
+						url: url,
+						scenes: [],
+					};
+				});
+				//map sections that are just links to maps not always found in other chapters (eg wildemount/eberron)
+				iframe.contents().find("h3.adventure-chapter-header:contains('Map') ~ ul a").each(function(idx) {
+					if(!(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test($(this).attr('href'))))
+						return;
 					var title = $(this).html();
 					var url = $(this).attr('href');
 					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
@@ -402,6 +417,31 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		if (Object.keys(self.sources[source_keyword].chapters[chapter_keyword].scenes).length > 0) { // EVITO DI SCANSIONARE DI NUOVO OGGETTI CHE HO GIA
 			callback();
 			return;
+		}	
+		if(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(chapter_url)){
+			//'Maps' chapter maps at the end of books - individual images
+			var dm_map = '';
+			var player_map = chapter_url;
+			var header = self.sources[source_keyword].chapters[chapter_keyword].title;
+			var thumb = chapter_url;
+			var id = self.sources[source_keyword].chapters[chapter_keyword].title;
+			var title = self.sources[source_keyword].chapters[chapter_keyword].title;
+
+			self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
+				id: id,
+				uuid: source_keyword + "/" + chapter_keyword + "/" + id,
+				title: title,
+				dm_map: dm_map,
+				player_map: player_map,
+				player_map_is_video: "0",
+				dm_map_is_video: "0",
+				scale: "100",
+				dm_map_usable: "0",
+				fog_of_war: "0",
+				thumb: thumb,
+				tokens: {},
+				reveals: [],
+			});		
 		}
 
 		var f = $("<iframe src='" + chapter_url + "'></iframe>");
@@ -460,6 +500,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			if (compendiumWithSubtitle.length > 0) {
 				compendiumWithSubtitle.each(function(idx) {
+					if ($(this).parent().is('figure') || $(this).is('figure'))
+						return;
 					var id = $(this).attr('id');
 					if (typeof id == typeof undefined) {
 						id = $(this).attr('data-content-chunk-id');
@@ -502,11 +544,15 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				compendiumWithoutSubtitle.each(function(idx) {
 					// import it only if there's a player version
 
+					if ($(this).parent().is('figure') || $(this).is('figure'))
+						return;
 					let playerMapContainer;
 					if ($(this).parent().next().is(".compendium-image-view-player")) {
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center");
 					} else if ($(this).parent().next().find(".compendium-image-center a").length > 0) {
 						playerMapContainer = $(this).parent().next().find(".compendium-image-center a");
+					} else if($(this).parent().not('.compendium-image-view-player').length > 0){
+						playerMapContainer = $(this);
 					}
 					if (playerMapContainer === undefined || playerMapContainer.length === 0) {
 						return;

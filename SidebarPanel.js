@@ -48,6 +48,8 @@ function init_sidebar_tabs() {
   init_settings();
 
   observe_hover_text($(".sidebar__inner"));
+  observe_hover_text($(".sidebar-panel-content"));
+  observe_hover_text($(".chat-text-wrapper").parent());
 }
 
 function sidebar_modal_is_open() {
@@ -216,7 +218,10 @@ class SidebarPanel {
           if(imageUrl.startsWith("data:")){
             alert("You cannot use urls starting with data:");
           } else {
-            imageUrlEntered(parse_img(imageUrl));
+            let imageUrlSplit = imageUrl.split(', ');
+            for(i = 0; i < imageUrlSplit.length; i++){
+              imageUrlEntered(parse_img(imageUrlSplit[i]));
+            }      
           }
         }
     );
@@ -1141,15 +1146,36 @@ function build_sidebar_list_row(listItem) {
             {abilityName: 'Charisma', abilityAbbr: 'cha', modifier: '?', score: '?', save: '?' }
           ],
           pp: '?',
+          pinv: '?',
+          pins: '?',
           inspiration: false,
-          walking: '?'
+          walking: '?',
+          ac: '?',
+          hp: '?',
+          max_hp: '?',
+          temp_hp: '?',
+          fly: '?',
+          climb: '?',
+          swim: '?',
         };
       }
+      row.append(`<div class="subtitle-attibute hp-attribute" title="HP"><span class="subtitle-title">Hit Points</span><span class='hp-containter'><span class="hp-value">${playerData.hp}</span><span> / </span><span class='max-hp-value'>${playerData.max_hp}</span></span></div>`);
+      row.append(`<div class="subtitle-attibute exhaustion-attribute" title="HP"><span class="subtitle-title">Exhaustion</span><div class="ddbc-number-bar"><span class='first exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='exhaustion-pip'></span><span class='last exhaustion-pip'></span></div></div>`);
+      row.append(`<div style='display: none;' class="hp-attribute death-saves ct-health-summary__data ct-health-summary__deathsaves"><div class="ct-health-summary__deathsaves-content"><div class="ct-health-summary__deathsaves-group ct-health-summary__deathsaves--fail"><span class="ct-health-summary__deathsaves-label ">Failure</span><span class="ct-health-summary__deathsaves-marks"><span class="ct-health-summary__deathsaves-mark ct-health-summary__deathsaves-mark--inactive"></span><span class="ct-health-summary__deathsaves-mark ct-health-summary__deathsaves-mark--inactive"></span><span class="ct-health-summary__deathsaves-mark ct-health-summary__deathsaves-mark--inactive"></span></span></div><div class="ct-health-summary__deathsaves-group ct-health-summary__deathsaves--success"><span class="ct-health-summary__deathsaves-label ">Success</span><span class="ct-health-summary__deathsaves-marks"><span class="ct-health-summary__deathsaves-mark ct-health-summary__deathsaves-mark--inactive"></span><span class="ct-health-summary__deathsaves-mark ct-health-summary__deathsaves-mark--inactive"></span><span class="ct-health-summary__deathsaves-mark ct-health-summary__deathsaves-mark--inactive"></span></span></div></div></div>`);
+
+
+      let playerInfo = $(`<div class='player-card-info'></div>`);
+      playerInfo.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="subtitle-title">Passive Perception</span><span class="pp-value">${playerData.pp}</span></div>`);
+      playerInfo.append(`<div class="subtitle-attibute" title="Passive Investigation"><span class="subtitle-title">Passive Investigation</span><span class="pinv-value">${playerData.pinv}</span></div>`);
+      playerInfo.append(`<div class="subtitle-attibute" title="Passive Insight"><span class="subtitle-title">Passive Insight</span><span class="pins-value">${playerData.pins}</span></div>`);
+      playerInfo.append(`<div class="subtitle-attibute" title="Armor Class"><span class="subtitle-title">Armor Class</span><span class="ac-value">${playerData.ac}</span></div>`);
+      row.append(playerInfo);
+
       row.addClass("player-row");
       let abilities = $(`<div class="player-card-footer">`);
-      abilities.hide();
       abilities.append(playerData.abilities.map(a => `
-                <div class="ability_value" data-ability="${a.abilityAbbr}">
+               <div class="ability_value" data-ability="${a.abilityAbbr}">
+                    <div class="ddbc-box-background "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81 95" class="ddbc-svg ddbc-ability-score-box-svg "><path d="M4.52,13.62A34.66,34.66,0,0,1,3.08,6.26l0-.42.63-.2C5.22,5.18,9.41,3.35,9.41,1V0H71.59V1c0,2.37,4.19,4.2,5.66,4.66l.63.2,0,.42a35.34,35.34,0,0,1-1.44,7.36L76,7.3C74.42,6.71,70.47,5,69.74,2H11.26C10.52,5,6.58,6.71,5,7.3ZM2.32,79.46H2.6c.08-1.12.16-2.38.24-3.76A13,13,0,0,1,.63,69.83,9.4,9.4,0,0,1,3.21,62.6V61.43S1.83,35.67.56,31.56L.4,31l.47-.29a12.31,12.31,0,0,0,2.2-1.87,6.23,6.23,0,0,0,1.55-2.24A5.08,5.08,0,0,0,5,23.27c0-.11-.58-1.35-1.12-3l-.26,2.85c.27.79.5,1.63.71,2.49a5.17,5.17,0,0,1-1.56,2A33.13,33.13,0,0,0,1.74,23.6l-.07-.2L2.91,9.63c0,2,1.38,6.53,1.38,6.53a36.23,36.23,0,0,0,2.1,6.67A7.13,7.13,0,0,1,5,28.71C6.68,38,5.08,71,4.87,74.89A15.6,15.6,0,0,1,3,71.41c.08-2,.13-4.16.16-6.41a7.57,7.57,0,0,0-1.15,4.71,12,12,0,0,0,2.1,5.41l.15.22.45.64.06.07h0a29.64,29.64,0,0,0,5.74,5.66A39.48,39.48,0,0,1,14,83.83h0l.26.18c.79.54,1.55,1.09,2.29,1.65l.18.13h0c1.42,1.09,2.71,2.17,3.78,3.11,1.39,0,2.75.11,4,.22a16.4,16.4,0,0,1-3.19-3.33H17.91l-2.49-2h2.32a16.19,16.19,0,0,1-.88-4.16,4.31,4.31,0,0,1-5.21,1.79c.59.18,3,.53,5.24-4.08v0a8.24,8.24,0,0,1,2.52-5.32,13.54,13.54,0,0,0-1,10.29A1.76,1.76,0,0,0,19.8,83,11.36,11.36,0,0,1,19,78.77c0-8.55,9.66-15.51,21.54-15.51S62,70.22,62,78.77A11.36,11.36,0,0,1,61.2,83a1.76,1.76,0,0,0,1.34-.64,13.54,13.54,0,0,0-1-10.29A8.24,8.24,0,0,1,64.1,77.4v0c2.2,4.61,4.64,4.26,5.24,4.08a4.31,4.31,0,0,1-5.21-1.79,16.19,16.19,0,0,1-.88,4.16h2.32l-2.49,2H59.68a16.4,16.4,0,0,1-3.19,3.33c1.2-.11,2.57-.21,4-.22,1.07-.94,2.36-2,3.78-3.11h0l.18-.13c.74-.56,1.5-1.11,2.29-1.65l.26-.18h0a39.48,39.48,0,0,1,3.49-2.11,29.64,29.64,0,0,0,5.74-5.66h0l.06-.07.45-.64.15-.22A12,12,0,0,0,79,69.71,7.64,7.64,0,0,0,77.8,65c0,2.25.08,4.41.16,6.41a15.6,15.6,0,0,1-1.83,3.48C75.92,71,74.32,38,76,28.71a7.1,7.1,0,0,1-1.34-5.88,38.28,38.28,0,0,0,2.09-6.67s1.4-4.48,1.38-6.53L79.33,23.4l-.07.2a33.13,33.13,0,0,0-1.07,4.08,5.39,5.39,0,0,1-1.57-2c.22-.86.45-1.7.71-2.49l-.25-2.85c-.54,1.61-1.07,2.85-1.12,3a5.08,5.08,0,0,0,.42,3.36,6.23,6.23,0,0,0,1.55,2.24,12.31,12.31,0,0,0,2.2,1.87l.48.29-.17.53c-1.26,4.11-2.64,29.87-2.64,29.87,0,.39,0,.79,0,1.17a9.4,9.4,0,0,1,2.58,7.23,13.37,13.37,0,0,1-2.2,5.89c.07,1.38.15,2.64.23,3.76h.28c1.49-.12,2.79.71,2.16,1.75a2.46,2.46,0,0,1-1.72,1.15,2.58,2.58,0,0,0,.75-.85c.17-.3,0-.44-.14-.51l-.38,0h0a7.86,7.86,0,0,0-.84,0c.18,2.31.32,3.71.33,3.79L79,85.79H66.64c-1.46,1-2.84,2.15-4,3.15a11.85,11.85,0,0,1,7,2.12l-2.75,1.09h0a30,30,0,0,1-5.35,1.74h0l-.33,0L61,94c-9.66,1.67-10.67.75-10.67.75A10.09,10.09,0,0,0,57.11,92l.23-.24c.1-.1.62-.62,1.46-1.4-.62,0-1.22.07-1.81.12h0l-.44,0a8.82,8.82,0,0,0-1.18.23,7.12,7.12,0,0,0-.87.27l-.14,0a6.24,6.24,0,0,0-1,.44l-.11.07a5.63,5.63,0,0,0-.77.54l-.22.19a4.82,4.82,0,0,0-.75.86l-7.89.9.06,0a26.18,26.18,0,0,1-6.46,0l.06,0-7.89-.9a4.5,4.5,0,0,0-.76-.86l-.22-.2a7,7,0,0,0-.79-.55l-.09-.06a8.88,8.88,0,0,0-.95-.44L26.45,91c-.3-.11-.59-.2-.86-.27-.46-.11-.86-.17-1.14-.21l-.44,0h0c-.59,0-1.19-.09-1.81-.12.84.78,1.36,1.3,1.45,1.4l.24.24a10.09,10.09,0,0,0,6.78,2.71s-1,.92-10.67-.75l-.24,0-.33,0h0a29.76,29.76,0,0,1-5.35-1.74h0l-2.75-1.09a11.85,11.85,0,0,1,7-2.12c-1.2-1-2.58-2.1-4-3.15H2l.12-1.08c0-.08.15-1.48.33-3.79a7.86,7.86,0,0,0-.84,0h0l-.38,0c-.17.07-.31.21-.14.51a2.5,2.5,0,0,0,.74.85A2.47,2.47,0,0,1,.16,81.21c-.63-1,.67-1.87,2.16-1.75ZM76.78,49.11c.53-5.66,1.25-14.21,2.15-17.46a15.6,15.6,0,0,1-1.28-1,144.6,144.6,0,0,0-.87,18.5ZM74.63,80a11.89,11.89,0,0,1,1.8-.35c0-.46-.07-1-.1-1.48-.57.67-1.15,1.28-1.7,1.83Zm-5,3.82h7.17c-.06-.66-.15-1.61-.24-2.76a18.56,18.56,0,0,0-6.93,2.76ZM58.69,92.48l.07,0c1.06.59,4.54-.45,7.31-1.59a17.09,17.09,0,0,0-5.08-.6c-1.07,1-1.88,1.72-2.3,2.14ZM40.5,92.14c7,0,13-2.55,16.48-6.35.27-.3.53-.62.78-.94a.61.61,0,0,1,.07-.1,9.16,9.16,0,0,0,.61-.92,9.74,9.74,0,0,0,1.46-5.06c0-7.37-8.7-13.37-19.4-13.37s-19.4,6-19.4,13.37a9.83,9.83,0,0,0,1.45,5.06c.19.32.4.62.62.92l.08.1c.24.32.5.64.77.94,3.43,3.8,9.52,6.35,16.48,6.35ZM20,90.34a17.09,17.09,0,0,0-5.08.6c2.78,1.14,6.25,2.18,7.31,1.59l.07,0c-.42-.42-1.22-1.18-2.3-2.14ZM4.57,79.66a12.14,12.14,0,0,1,1.8.35c-.55-.55-1.13-1.16-1.7-1.83,0,.52-.07,1-.1,1.48Zm-.35,4.17h7.17a18.62,18.62,0,0,0-6.93-2.76c-.09,1.15-.18,2.1-.24,2.76Zm0-34.72a144.6,144.6,0,0,0-.87-18.5,15.6,15.6,0,0,1-1.28,1C3,34.9,3.68,43.45,4.22,49.11Z"></path></svg></div>
                     <div class="ability_name">${a.abilityAbbr.toUpperCase()}</div>
                     <div class="ability_modifier">${a.modifier}</div>
                     <div class="ability_score">${a.score}</div>
@@ -1164,20 +1190,42 @@ function build_sidebar_list_row(listItem) {
         console.log(r);
         if (r.hasClass("expanded")) {
           r.removeClass("expanded");
-          r.find(".player-card-footer").hide();
           r.find(".player-expansion-button .material-icons").text("expand_more");
         } else {
           r.addClass("expanded");
-          r.find(".player-card-footer").show();
           r.find(".player-expansion-button .material-icons").text("expand_less");
         }
       });
 
       subtitle.text("");
       subtitle.show();
-      subtitle.append(`<div class="subtitle-attibute" title="Passive Perception"><span class="material-icons">visibility</span><span class="pp-value">${playerData.pp}</span></div>`);
-      subtitle.append(`<div class="subtitle-attibute" title="Speed"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
       subtitle.append(`<div class="subtitle-attibute inspiration" title="Player Has Inspiration"><img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration"  alt="inspiration"/></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Walk Speed"><span class="material-icons">directions_run</span><span class="walking-value"">${playerData.walking}</span></div>`);
+
+      let climbingSvg = `    
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 100 100" width:"16px" xml:space="preserve">
+      <style type="text/css">
+        .st0{fill:#738694;}
+      </style>
+      <path class="st0" d="M46.1,24.9c4.1,0,7.4-3.3,7.4-7.3c0-4.1-3.3-7.4-7.4-7.4c-4.1,0-7.4,3.3-7.4,7.4C38.7,21.6,42,24.9,46.1,24.9z   M59.7,44.2c0,0,0,3.1,0,3.1C79.9,37.2,87.7,2.9,87.7,0H85C83.9,7.2,75.2,35.9,59.7,44.2z M53.5,100h3.1V66.9l-3.1,1.5V100z   M27.4,41.4l10.7-4.2V52h18.5V34.8L73.1,8.3c1.2-1.9,0.7-4.5-1.3-5.7c-1.9-1.2-4.5-0.7-5.6,1.2L52.2,26.4l-8.5,0  c-0.5,0-1.1,0.1-1.6,0.3l-14.6,5.7L19.9,21c-1.2-1.9-3.8-2.5-5.7-1.2c-1.9,1.2-2.5,3.8-1.3,5.8l9.4,14.3  C23.4,41.4,25.5,42.2,27.4,41.4z M72.2,51.1c-0.7-2.6-3.8-4.6-6.3-3.4L56.6,52v3.1H38.1L23.6,88.3c-1.1,2.5,0.1,5.7,2.7,7.1  c2.6,1.5,5.6,0.6,6.6-1.9l11.8-27.2c1,0.3,2.2,0.4,3.3,0.4c1.1,0,2.1-0.2,3-0.5l13.3-6.2l2.9,11.7c0.7,2.6,3.3,4.2,5.9,3.5  s4.2-3.3,3.5-5.9L72.2,51.1z"/>
+      </svg>`;
+       let flyingSvg = `    
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width:"16px" viewBox="0 0 147.1918 306.252" enable-background="new 0 0 147.1918 306.252" xml:space="preserve">
+      <g>
+        <path d="M8.0042,101.7569c0.8867,0,1.7881-0.1485,2.6719-0.4619c8.1865-2.9209,14.958-8.1631,20.6826-14.0489   c6.1074-6.3056,11.0987-13.4463,15.1934-19.997v42.2343c0,0.2681,0.0137,0.5327,0.04,0.794c-0.0049,0.498,0.0108,1,0.0664,1.5078   l11,99.999c0.7051,6.3975,6.1192,11.1338,12.4102,11.1338c0.457,0,0.918-0.0244,1.3828-0.0762   c0.707-0.0776,1.3867-0.226,2.0488-0.4135c0.6621,0.1875,1.3428,0.3359,2.0498,0.4135c0.4649,0.0518,0.9258,0.0762,1.3828,0.0762   c6.2911,0,11.7051-4.7363,12.4092-11.1338l11.001-99.999c0.0088-0.0806,0.0068-0.1597,0.0146-0.2402   c0.1817-0.6573,0.2862-1.3467,0.2862-2.0616V67.2696c1.832,2.9248,3.8408,5.9648,6.0312,8.9775   c7.3838,10.0586,16.8135,20.334,29.8428,25.0469c0.8828,0.3125,1.7852,0.4609,2.6709,0.4609   c3.293,0.001,6.3779-2.0469,7.541-5.3301c1.4766-4.164-0.7031-8.7353-4.8672-10.2119c-4.9785-1.748-9.9453-5.3525-14.5498-10.1103   c-6.9258-7.1114-12.8525-16.5987-17.374-24.4356c-2.2764-3.9316-4.1963-7.4209-5.9355-10.2295   c-0.8907-1.4189-1.6934-2.6533-2.7686-3.9228c-0.5576-0.6387-1.1689-1.3067-2.1914-2.0635   c-0.7149-0.4961-1.7402-1.1621-3.2578-1.5303c-0.1446-0.0576-0.294-0.105-0.4434-0.1543   c-4.0859,7.8535-12.2959,13.2325-21.7451,13.2325c-9.4482,0-17.6582-5.3794-21.7441-13.2325   c-0.1573,0.0523-0.3155,0.1031-0.4688,0.1651c-0.7988,0.2021-1.4765,0.4795-2.0068,0.7558   c-1.8369,1.0127-2.6016,1.9287-3.3516,2.7451c-1.3096,1.5372-2.2422,3.0342-3.3398,4.8262   c-3.6905,6.1279-8.6426,15.7031-15.127,24.6055C21.1302,75.7862,13.2406,83.503,5.3304,86.2119   c-4.166,1.4766-6.3437,6.0489-4.8691,10.2139C1.6253,99.7061,4.7113,101.7559,8.0042,101.7569z"/>
+        <path d="M73.597,44.9991c12.4268,0,22.5-10.0743,22.5-22.4991c0-12.4277-10.0732-22.5-22.5-22.5c-12.4258,0-22.5,10.0723-22.5,22.5   C51.097,34.9248,61.1712,44.9991,73.597,44.9991z"/>
+        <rect x="63.18" y="235.752" width="3.333" height="40"/>
+        <rect x="80.68" y="235.752" width="3.332" height="40"/>
+        <rect x="71.93" y="242.252" width="3.333" height="64"/>
+      </g>
+      </svg>`;
+      subtitle.append(`<div class="subtitle-attibute" title="Climb Speed"><span class="climb-svg">${climbingSvg}</span><span class="climb-value"">${playerData.climb}</span></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Fly Speed"><span class="fly-svg">${flyingSvg}</span><span class="fly-value"">${playerData.fly}</span></div>`);
+      subtitle.append(`<div class="subtitle-attibute" title="Swim Speed"><span class="material-icons">pool</span><span class="swim-value"">${playerData.swim}</span></div>`);
+
+
+
+
       if (playerData.inspiration) {
         subtitle.find(".inspiration").show();
       } else {
