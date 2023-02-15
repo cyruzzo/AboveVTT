@@ -1,5 +1,5 @@
 name: release-build
-run-name: ${{ github.actor }} is publishing a pre-release build
+run-name: ${{ github.actor }} is publishing a release build
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +11,7 @@ on:
         description: "Something like 0.84 or 0.84-beta2"
         required: true
 jobs:
-  pre-release:
+  publish-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
