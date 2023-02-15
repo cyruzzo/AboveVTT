@@ -19,7 +19,7 @@ class ChatObserver {
                     return;
                 }
                 let slashCommandMatch = value.match(slashCommandRegex);
-                if (slashCommandMatch?.index === 0) {
+                if (slashCommandMatch?.index === 0 && !value.startsWith("/w ")) {
                     if (self.#parseSlashCommand(value)) {
                         self.#didSubmit(input, value);
                     } else {
