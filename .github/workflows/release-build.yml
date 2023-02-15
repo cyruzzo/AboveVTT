@@ -1,9 +1,6 @@
-name: pre-release
+name: release-build
 run-name: ${{ github.actor }} is publishing a pre-release build
-on:
-  push:
-    paths:
-      - manifest.json
+on: [workflow_dispatch]
 jobs:
   pre-release:
     runs-on: ubuntu-latest
@@ -16,18 +13,19 @@ jobs:
         with:
           node-version: '14'
       - run: npm install node-jq --save
-      - name: "get version_name"
+      - name: "get version"
         run: |
-          versionName=$(cat manifest.json | jq -r .version_name) && echo $versionName
-          echo "next_version_name=${newVersionName}" >> $GITHUB_ENV
-      - name: "build the zip"
+          version=$(cat manifest.json | jq -r .version) && echo version
+          echo "next_version_name=${version}" >> $GITHUB_ENV
+      - name: "build zip"
         run: |
           git archive -o "AboveVTT-${{env.next_version_name}}.zip" HEAD
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: "publish release"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{env.next_version_name}}"
-          prerelease: true
+          prerelease: ${{ inputs.prerelease }}
           title: "${{env.next_version_name}}"
           files: |
             *.zip
