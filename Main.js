@@ -1178,7 +1178,7 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append("<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='" + window.EXTENSION_PATH + "assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>0.84-beta2</div></h1>");
+	cont.append(`<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}</div></h1>`);
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
@@ -3311,6 +3311,8 @@ $(function() {
 	}
 
 	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
+	window.AVTT_VERSION = $("#avttversion").attr('data-version');
+
 	var is_dm = false;
 	if($(".ddb-campaigns-detail-body-dm-notes-private").length > 0) {
 		is_dm = true;
