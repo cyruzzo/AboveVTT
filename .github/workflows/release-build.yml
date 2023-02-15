@@ -1,6 +1,14 @@
 name: release-build
 run-name: ${{ github.actor }} is publishing a pre-release build
 on: [workflow_dispatch]
+inputs:
+  prerelease:
+    description: "Should this release be marked as a pre-release?"
+    required: true
+    default: true
+  version_name:
+    description: "Something like 0.84 or 0.84-beta2"
+    required: true
 jobs:
   pre-release:
     runs-on: ubuntu-latest
@@ -13,20 +21,16 @@ jobs:
         with:
           node-version: '14'
       - run: npm install node-jq --save
-      - name: "get version"
-        run: |
-          version=$(cat manifest.json | jq -r .version) && echo version
-          echo "next_version_name=${version}" >> $GITHUB_ENV
       - name: "build zip"
         run: |
-          git archive -o "AboveVTT-${{env.next_version_name}}.zip" HEAD
+          git archive -o "AboveVTT-${{inputs.version_name}}.zip" HEAD
       - name: "publish release"
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{env.next_version_name}}"
+          automatic_release_tag: "${{env.version_name}}"
           prerelease: ${{ inputs.prerelease }}
-          title: "${{env.next_version_name}}"
+          title: "${{inputs.version_name}}"
           files: |
             *.zip
             LICENSE
