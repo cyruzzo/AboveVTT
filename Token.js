@@ -1034,11 +1034,10 @@ class Token {
 			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
 		})
 		if (this.options.inspiration){
-			if (!this.options.custom_conditions.includes("Inspiration")){
-				this.options.custom_conditions.push("Inspiration")
+			if (!this.hasCondition("Inspiration")){
+				this.addCondition("Inspiration")
 			}
 		} else{
-			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 		}
 		
