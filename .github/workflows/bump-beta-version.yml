@@ -2,7 +2,7 @@ name: bump-beta-version
 run-name: ${{ github.actor }} is bumping the beta version
 on: [workflow_dispatch]
 jobs:
-  update-manifest:
+  bump-beta-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -52,7 +52,5 @@ jobs:
           git checkout -b ${{env.next_version_name}}
           git add manifest.json
           git commit -am "update manifest version_name to ${{env.next_version_name}}"
-          branchName=$(git rev-parse --abbrev-ref HEAD) && echo $branchName
-          git push --set-upstream origin $(branchName)
-          https://github.com/cyruzzo/AboveVTT/compare/gridwizard?expand=1
-          git request-pull origin/master $(branchName)
+          git push --set-upstream origin "${{env.next_version_name}}"
+          git request-pull origin/master "${{env.next_version_name}}"

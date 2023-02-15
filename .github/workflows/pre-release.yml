@@ -5,7 +5,7 @@ on:
     paths:
       - manifest.json
 jobs:
-  update-manifest:
+  pre-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
