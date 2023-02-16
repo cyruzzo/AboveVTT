@@ -1100,7 +1100,8 @@ class Token {
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
 				}
-				symbolImage.attr('title', conditionName);
+
+				symbolImage.attr('title', (conditionText != '') ? conditionText : (conditionName.startsWith("#") ? '' : conditionName));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
 				symbolImage.height(symbolSize + "px");
