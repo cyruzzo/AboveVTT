@@ -810,7 +810,6 @@ function ct_load(data=null){
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.max_hp = window.all_token_objects[data[i]['data-target']].options.max_hp;
-						window.TOKEN_OBJECTS[data[i]['data-target']].place();
 					}
 				}
 
