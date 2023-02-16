@@ -723,6 +723,11 @@ function ct_list_tokens() {
 	return tokenIds;
 }
 
+/** @return {string|undefined} the id of the token that is currently active in the combat tracker; undefined if no active turn */
+function ct_current_turn() {
+	return $('#combat_area tr[data-current=1]').attr("data-target");
+}
+
 function ct_persist(){
 	var data= [];
 	$('#combat_area tr').each( function () {			

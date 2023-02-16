@@ -1595,10 +1595,13 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
+
+						pauseCursorEventListener = false;
 					},
 
 				start: function (event) {
 					event.stopImmediatePropagation();
+					pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						$("#temp_overlay").css("z-index", "50");
 					}
@@ -1724,17 +1727,19 @@ class Token {
 						top: tokenPosition.y
 					};
 
-					if (get_avtt_setting_value("allowTokenMeasurement")) {
+					const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
+					if (allowTokenMeasurement) {
 						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
 						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
-						if (!self.options.hidden) {
-							send_ruler_to_peers();
-						}
 					}
+					if (!self.options.hidden) {
+						sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
+					}
+
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 

@@ -306,14 +306,6 @@ class PeerManager {
           connectionsToSendTo = [];
         }
         break;
-      case PeerEventType.ruler:
-        if (this.allowCursorAndRulerStreaming) {
-          noisy_log("PeerManager.send filtering", data.message, this.skipCursorEvents, this.connections.map(pc => pc.playerId));
-          connectionsToSendTo = this.connections.filter(pc => !this.skipRulerEvents.includes(pc.playerId));
-        } else {
-          connectionsToSendTo = [];
-        }
-        break;
       default:
         noisy_log("PeerManager.send not filtering", data.message);
         connectionsToSendTo = this.connections;
