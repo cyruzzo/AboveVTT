@@ -30,6 +30,14 @@ function store_peer_preferences(preferences) {
   window.PEER_PREFERENCES[preferences.playerId] = preferences;
 }
 
+/** Logs that are super noisy should be sent through here.
+ * This allows us to enable these logs on the fly when we need to debug things that would otherwise flood the console */
+function noisy_log(...message) {
+  if (window.enableNoisyLogs === true) {
+    console.debug(...message);
+  }
+}
+
 //#endregion helper functions
 
 //#region PeerEvent declaration and documentation
@@ -145,7 +153,7 @@ class PeerEvent {
 /** Every time PeerManager receives an event on a connection, it sends it here to be handled. Nothing else should call this function */
 function handle_peer_event(eventData) {
   try {
-    // console.debug("handle_peer_event", eventData);
+    noisy_log("handle_peer_event", eventData);
     switch (eventData.message) {
       case PeerEventType.cursor:            update_peer_cursor(eventData); break;
       case PeerEventType.goodbye:           peer_said_goodbye(eventData); break;
@@ -156,7 +164,7 @@ function handle_peer_event(eventData) {
       default: console.debug("handle_peer_event is ignoring event", eventData); // using console.debug because we don't want to spam the console with warning or errors.
     }
   } catch (error) {
-    // using console.debug because we don't want to spam the console with warning or errors
+    // using console.debug because we don't want to spam the console with warnings or errors
     console.debug("handle_peer_event failed to handle event", eventData, error);
   }
 }
@@ -206,7 +214,7 @@ function enable_peer_manager() {
     } else {
       window.peerTimeout += 1; // wait a little longer each time so we don't just hammer it
     }
-    console.warn(`enable_peer_manager no peer id yet. Trying again in ${window.peerTimeout} seconds`);
+    console.log(`enable_peer_manager no peer id yet. Trying again in ${window.peerTimeout} seconds`);
     setTimeout(function() {
       enable_peer_manager()
     }, window.peerTimeout * 1000);
@@ -214,7 +222,7 @@ function enable_peer_manager() {
   }
   delete window.peerTimeout; // we're ready to go. We no longer need this hanging around;
 
-  console.debug("enable_peer_manager starting");
+  console.log("enable_peer_manager starting");
 
   window.PeerManager.enabled = true;
   window.PeerManager.readyToConnect();
@@ -224,6 +232,9 @@ function enable_peer_manager() {
 
     // update our online indicator
     update_player_online_indicator(my_player_id(), true, window.color);
+
+    // make sure we're ready to handle other peer cursors and rulers
+    init_peer_fade_functions();
 
     // start observing out cursor position and send it to all connected peers
     start_sending_cursor_to_peers();
@@ -235,7 +246,7 @@ function enable_peer_manager() {
 
 /** Disconnects all connections, and disables the PeerManager */
 function disable_peer_manager() {
-  console.debug("disable_peer_manager");
+  console.log("disable_peer_manager");
   try {
     // Any game logic that needs to be cleaned up before disconnecting should go in this try/catch. It may be overkill, but we definitely want the disconnect logic to execute no matter what happens here.
 
@@ -255,7 +266,7 @@ function disable_peer_manager() {
  * @param {string} peerId the id of the peerjs peer that we connected to
  * @param {string} playerId the id of the DDB player that we connected to */
 function peer_connected(peerId, playerId) {
-  console.debug("peer_connected", peerId, playerId);
+  console.log("peer_connected", peerId, playerId);
   try {
     // We just connected to this peer. Let's send them any data that they need right away
 
@@ -272,8 +283,10 @@ function peer_connected(peerId, playerId) {
       }
     }
 
+    init_peer_fade_function(playerId);
+
   } catch (error) {
-    console.debug("peer_connected caught an error", error);
+    console.warn("peer_connected caught an error", error);
   }
 }
 
@@ -281,12 +294,12 @@ function peer_connected(peerId, playerId) {
  * @param {string} peerId the id of the peerjs peer that we disconnected from
  * @param {string} playerId the id of the DDB player that we disconnected from */
 function peer_disconnected(peerId, playerId) {
-  console.debug("peer_disconnected", peerId, playerId);
+  console.log("peer_disconnected", peerId, playerId);
   try {
     // update online indicator
     update_player_online_indicator(playerId, false, "gray");
   } catch (error) {
-    console.debug("peer_disconnected caught an error", error);
+    console.warn("peer_disconnected caught an error", error);
   }
 }
 
@@ -304,13 +317,13 @@ function start_sending_cursor_to_peers() {
   }
   isTrackingCursor = true;
   window.PeerManager.send(PeerEvent.preferencesChange()) // this includes isTrackingCursor
-  console.debug("start_sending_cursor_to_peers");
+  console.log("start_sending_cursor_to_peers");
   addEventListener('mousemove', sendCursorPositionToPeers);
 }
 
 /** removes the event listener that calls {@link sendCursorPositionToPeers} */
 function stop_sending_cursor_to_peers() {
-  console.debug("stop_sending_cursor_to_peers");
+  console.log("stop_sending_cursor_to_peers");
   removeEventListener('mousemove', sendCursorPositionToPeers);
   isTrackingCursor = false;
   window.PeerManager.send(PeerEvent.preferencesChange())
@@ -351,7 +364,7 @@ function peer_changed_preferences(eventData) {
       }
       break;
     case "combatTurn":
-      // TODO: check current combat tracker, and call combat_tracker_updated
+      // do we need to check current combat tracker, and call combat_tracker_updated?
       break;
   }
   switch (eventData.receiveRulerFromPeers) {
@@ -369,13 +382,18 @@ function peer_changed_preferences(eventData) {
       }
       break;
     case "combatTurn":
-      // TODO: check current combat tracker, and call combat_tracker_updated
+      // do we need to check current combat tracker, and call combat_tracker_updated?
       break;
+  }
+
+  let ruler = get_peer_waypoint_manager(eventData.playerId);
+  if (ruler) {
+    ruler.drawStyle.color = eventData.color;
   }
 
   const pc = find_pc_by_player_id(eventData.playerId);
   if (!pc){
-    console.debug("peer_changed_preferences no pc", eventData);
+    console.debug("peer_changed_preferences no pc", eventData, window.pcs);
     return;
   }
   pc.color = eventData.color;
@@ -444,16 +462,49 @@ function update_old_player_card(playerId, isConnected, peerColor) {
   });
 }
 
+/** Sets up the peer fade functions. See {@link init_peer_fade_function} */
+function init_peer_fade_functions() {
+  if (!window.PEER_FADE_FUNCTIONS) {
+    window.PEER_FADE_FUNCTIONS = {};
+  }
+  if (window.pcs) {
+    window.pcs.forEach(pc => init_peer_fade_function(getPlayerIDFromSheet(pc.sheet)));
+  }
+}
+
+/** Creates and stores a debounce function for fading cursor and ruler streams for the playerId.
+ * We hold a separate function for each peer to ensure that every peer cursor/ruler fades out.
+ * With a single function, only the last playerId would get cleared which leaves other peer cursors and rulers on screen.
+ * An alternative could be to track timestamps from every peer event, and then fade them out within a setInterval function.
+ * The reason I went with separate debounce functions, is because setTimeout is significantly more efficient than date parsing.
+ * So while this sets a few different setTimeout functions, it's still more efficient than setting Date.now() for every event.
+ * @param {string} playerId the playerId that may stream their cursor or ruler */
+function init_peer_fade_function(playerId) {
+  if (typeof playerId === "string" && playerId.length > 0 && !window.PEER_FADE_FUNCTIONS[playerId]) {
+    window.PEER_FADE_FUNCTIONS[playerId] = mydebounce(() => {
+      noisy_log("executing peer_fade_function", playerId);
+      const waypointManager = get_peer_waypoint_manager(playerId, undefined);
+      waypointManager.clearWaypoints();
+      redraw_peer_rulers();
+      if (playerId === dm_id) {
+        $(`#cursorPosition-DM`).fadeOut();
+      } else {
+        $(`#cursorPosition-${playerId}`).fadeOut();
+      }
+    });
+  }
+}
+
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
 const sendCursorPositionToPeers = mydebounce( (mouseMoveEvent) => {
   try {
     if (is_player_sheet_open()) {
-      // console.debug("sendCursorPositionToPeers is_player_sheet_open");
+      noisy_log("sendCursorPositionToPeers is_player_sheet_open");
       return;  // ideally, we would add the event listener to the map only, but I couldn't find a clean way to do that without restructuring things
     }
 
     const [mouseX, mouseY] = get_event_cursor_position(mouseMoveEvent);
-    // console.debug("sendCursorPositionToPeers", mouseX, mouseY);
+    noisy_log("sendCursorPositionToPeers", mouseX, mouseY);
     window.PeerManager.send(PeerEvent.cursor(mouseX, mouseY));
   } catch (error) {
     console.log("Failed to sendCursorPositionToPeers", error);
@@ -462,11 +513,12 @@ const sendCursorPositionToPeers = mydebounce( (mouseMoveEvent) => {
 
 /** called when we receive a {@link PeerEvent.cursor} event */
 function update_peer_cursor(eventData) {
-  // console.debug("update_peer_cursor", eventData);
-  // TODO: check receiveCursorFromPeers
-  if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
-  const playerId = eventData.playerId === dm_id ? "DM" : eventData.playerId; // dm_id has whitespace in it which messes with html selectors
+  noisy_log("update_peer_cursor", eventData);
+  fade_peer_cursor_and_ruler(eventData.playerId);
+  // check receiveCursorFromPeers?
+  if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene so don't show their cursor
 
+  const playerId = eventData.playerId === dm_id ? "DM" : eventData.playerId; // dm_id has whitespace in it which messes with html selectors
   let cursorPosition = $(`#cursorPosition-${playerId}`);
   if (cursorPosition.length === 0) {
     cursorPosition = $(`<div class="peerCursorPosition" id="cursorPosition-${playerId}"></div>`);
@@ -479,13 +531,20 @@ function update_peer_cursor(eventData) {
     background: eventData.color
   });
   cursorPosition.fadeIn();
-  fadeCursor(playerId);
 }
 
-/** a debounced function that will fade out the player's cursor if we haven't received a {@link PeerEvent.cursor} event in over a second */
-const fadeCursor = mydebounce( (playerId) => {
-  $(`#cursorPosition-${playerId}`).fadeOut();
-}, 1000);
+/** Calls the debounce function for the playerId. See {@link init_peer_fade_function}
+ * @param {string} playerId the playerId that is streaming their cursor or ruler */
+function fade_peer_cursor_and_ruler(playerId) {
+  try {
+    // this function gets called a lot so don't bother checking if the function exists. It should.
+    // If it doesn't for some reason, we'll set it up in the catch, and then this will do the right thing next time around
+    window.PEER_FADE_FUNCTIONS[playerId]();
+  } catch (error) {
+    console.debug("fade_peer_cursor_and_ruler is missing a fade function", playerId, typeof playerId, error);
+    init_peer_fade_function(playerId);
+  }
+}
 
 /** Sends a {@link PeerEvent.playerData} event to a specific peer
  * @param {string} peerId the id of the peerjs peer to send to
@@ -523,15 +582,14 @@ const refreshTokensSidebarList = mydebounce( () => { // we want to debounce this
 
 /** a debounced function that will send {@link PeerEvent.ruler} event to all peers */
 const send_ruler_to_peers = mydebounce( () => {
-  if (!isTrackingCursor) return;
-  // console.debug("send_ruler_to_peers");
+  noisy_log("send_ruler_to_peers");
   window.PeerManager.send(PeerEvent.ruler());
 }, 0);
 
 /** called when we receive a {@link PeerEvent.ruler} event */
 function update_peer_ruler(eventData) {
-  // console.debug("update_peer_ruler", eventData)
-  if (!isTrackingCursor) return;
+  noisy_log("update_peer_ruler", eventData)
+  fade_peer_cursor_and_ruler(eventData.playerId);
   if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
   const waypointManager = get_peer_waypoint_manager(eventData.playerId, eventData.color);
   clear_peer_canvas()
@@ -540,15 +598,7 @@ function update_peer_ruler(eventData) {
   waypointManager.coords = eventData.coords;
   waypointManager.mouseDownCoords = eventData.mouseDownCoords;
   redraw_peer_rulers();
-  removeRuler(eventData.playerId);
 }
-
-/** a debounced function that will fade out the player's cursor if we haven't received a {@link PeerEvent.cursor} event in over a second */
-const removeRuler = mydebounce( (playerId) => {
-  const waypointManager = get_peer_waypoint_manager(playerId);
-  waypointManager.clearWaypoints();
-  redraw_peer_rulers();
-}, 1000);
 
 /** clears other player's rulers from our screen */
 function clear_peer_canvas() {
@@ -586,7 +636,7 @@ function get_peer_waypoint_manager(playerId, color) {
   }
   const canvas = document.getElementById("peer_overlay");
   const context = canvas.getContext("2d");
-  context.setLineDash([])
+  context.setLineDash([]);
   context.fillStyle = '#f50';
   waypointManager.setCanvas(canvas);
   return waypointManager;
@@ -597,12 +647,11 @@ function get_peer_waypoint_manager(playerId, color) {
 function update_peer_communication_with_combat_tracker_data(ctItems) {
   try {
     if (!Array.isArray(ctItems)) return;
-    console.debug("update_peer_communication_with_combat_tracker_data", ctItems, typeof ctItems);
+    console.debug("update_peer_communication_with_combat_tracker_data", ctItems);
     let myPlayerId = my_player_id();
     const currentTurn = ctItems.find(item => item.current === true && item.options)?.options?.id;
     const currentTurnId = currentTurn ? getPlayerIDFromSheet(currentTurn) : undefined;
     const isMyTurn = currentTurnId === myPlayerId;
-    // console.debug("peer update_peer_communication_after_combat_tracker_updated", myPlayerId, currentTurn);
     // start/stop sending events to everyone that specified "combatTurn"
     for (let playerId in window.PEER_PREFERENCES) {
       if (playerId === myPlayerId) continue; // we never send events to ourselves so there's no point tracking our own id
