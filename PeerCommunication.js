@@ -464,8 +464,11 @@ function update_old_player_card(playerId, isConnected, peerColor) {
 
 /** Sets up the peer fade functions. See {@link init_peer_fade_function} */
 function init_peer_fade_functions() {
-  if (!window.PEER_FADE_FUNCTIONS) {
-    window.PEER_FADE_FUNCTIONS = {};
+  if (!window.PEER_FADE_CURSOR_FUNCTIONS) {
+    window.PEER_FADE_CURSOR_FUNCTIONS = {};
+  }
+  if (!window.PEER_FADE_RULER_FUNCTIONS) {
+    window.PEER_FADE_RULER_FUNCTIONS = {};
   }
   if (window.pcs) {
     window.pcs.forEach(pc => init_peer_fade_function(getPlayerIDFromSheet(pc.sheet)));
@@ -480,17 +483,23 @@ function init_peer_fade_functions() {
  * So while this sets a few different setTimeout functions, it's still more efficient than setting Date.now() for every event.
  * @param {string} playerId the playerId that may stream their cursor or ruler */
 function init_peer_fade_function(playerId) {
-  if (typeof playerId === "string" && playerId.length > 0 && !window.PEER_FADE_FUNCTIONS[playerId]) {
-    window.PEER_FADE_FUNCTIONS[playerId] = mydebounce(() => {
-      noisy_log("executing peer_fade_function", playerId);
-      const waypointManager = get_peer_waypoint_manager(playerId, undefined);
-      waypointManager.clearWaypoints();
-      redraw_peer_rulers();
+  if (typeof playerId !== "string" || playerId.length === 0) return;
+  if (!window.PEER_FADE_CURSOR_FUNCTIONS[playerId]) {
+    window.PEER_FADE_CURSOR_FUNCTIONS[playerId] = mydebounce(() => {
+      noisy_log("executing PEER_FADE_CURSOR_FUNCTIONS", playerId);
       if (playerId === dm_id) {
         $(`#cursorPosition-DM`).fadeOut();
       } else {
         $(`#cursorPosition-${playerId}`).fadeOut();
       }
+    });
+  }
+  if (!window.PEER_FADE_RULER_FUNCTIONS[playerId]) {
+    window.PEER_FADE_RULER_FUNCTIONS[playerId] = mydebounce(() => {
+      noisy_log("executing PEER_FADE_RULER_FUNCTIONS", playerId);
+      const waypointManager = get_peer_waypoint_manager(playerId, undefined);
+      waypointManager.clearWaypoints();
+      redraw_peer_rulers();
     });
   }
 }
@@ -514,7 +523,7 @@ const sendCursorPositionToPeers = mydebounce( (mouseMoveEvent) => {
 /** called when we receive a {@link PeerEvent.cursor} event */
 function update_peer_cursor(eventData) {
   noisy_log("update_peer_cursor", eventData);
-  fade_peer_cursor_and_ruler(eventData.playerId);
+  fade_peer_cursor(eventData.playerId);
   // check receiveCursorFromPeers?
   if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene so don't show their cursor
 
@@ -533,15 +542,28 @@ function update_peer_cursor(eventData) {
   cursorPosition.fadeIn();
 }
 
-/** Calls the debounce function for the playerId. See {@link init_peer_fade_function}
- * @param {string} playerId the playerId that is streaming their cursor or ruler */
-function fade_peer_cursor_and_ruler(playerId) {
+/** Calls the fade cursor debounce function for the playerId. See {@link init_peer_fade_function}
+ * @param {string} playerId the playerId that is streaming their cursor */
+function fade_peer_cursor(playerId) {
   try {
     // this function gets called a lot so don't bother checking if the function exists. It should.
     // If it doesn't for some reason, we'll set it up in the catch, and then this will do the right thing next time around
-    window.PEER_FADE_FUNCTIONS[playerId]();
+    window.PEER_FADE_CURSOR_FUNCTIONS[playerId]();
   } catch (error) {
-    console.debug("fade_peer_cursor_and_ruler is missing a fade function", playerId, typeof playerId, error);
+    console.debug("fade_peer_cursor is missing a fade function", playerId, typeof playerId, error);
+    init_peer_fade_function(playerId);
+  }
+}
+
+/** Calls the fade ruler debounce function for the playerId. See {@link init_peer_fade_function}
+ * @param {string} playerId the playerId that is streaming their ruler */
+function fade_peer_ruler(playerId) {
+  try {
+    // this function gets called a lot so don't bother checking if the function exists. It should.
+    // If it doesn't for some reason, we'll set it up in the catch, and then this will do the right thing next time around
+    window.PEER_FADE_RULER_FUNCTIONS[playerId]();
+  } catch (error) {
+    console.debug("fade_peer_ruler is missing a fade function", playerId, typeof playerId, error);
     init_peer_fade_function(playerId);
   }
 }
@@ -589,7 +611,7 @@ const send_ruler_to_peers = mydebounce( () => {
 /** called when we receive a {@link PeerEvent.ruler} event */
 function update_peer_ruler(eventData) {
   noisy_log("update_peer_ruler", eventData)
-  fade_peer_cursor_and_ruler(eventData.playerId);
+  fade_peer_ruler(eventData.playerId);
   if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
   const waypointManager = get_peer_waypoint_manager(eventData.playerId, eventData.color);
   clear_peer_canvas()
