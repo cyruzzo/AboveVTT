@@ -296,19 +296,22 @@ function edit_scene_dialog(scene_id) {
 	form.append(uuid_hidden);
 
 	form.append(form_row('title', 'Scene Title'))
-	const playerMapRow = form_row('player_map', 'Player Map', null, true)
+	const playerMapRow = form_row('player_map', 'Map link', null, true)
 	
-	const dmMapRow = form_row('dm_map', 'Dm Map', null, true)
+	const dmMapRow = form_row('dm_map', 'DM Only Map', null, true)
 	
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
 	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
+	playerMapRow.attr('title', `This map will be shown to everyone if DM map is off or only players if the DM map is on. If you are using your own maps you will have to upload them to a public accessible place. Eg. discord, imgur, dropbox, gdrive etc.`)
+	
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
+	dmMapRow.attr('title', `This map will be shown to the DM only. It is used for a nearly indentical map to the main map that had secrets embedded in it that you don't want your players to see. Both maps must have links.`)
 	form.append(playerMapRow)
 	form.append(dmMapRow)
 	// add a row but override the normal input with a toggle
-	form.append(form_row(null,
+	form.append(form_row('dmMapToggle',
 			'Use DM Map',
 			form_toggle("dm_map_usable",null, false,  function(event) {
 				handle_basic_form_toggle_click(event);
@@ -321,6 +324,7 @@ function edit_scene_dialog(scene_id) {
 			})
 		)
 	);
+	form.find('#dmMapToggle_row').attr('title', `Enable this if you have a 2nd map that has secrets embedded that you don't want your players to see.`)
 
 	let darknessValue = scene.darkness_filter || 0;
 	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
@@ -357,12 +361,13 @@ function edit_scene_dialog(scene_id) {
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
 
-	form.append(form_row(null,
+	form.append(form_row('darknessFilter',
 						'Darkness filter',
 						darknessFilterRange)
 	);
+	form.find('#darknessFilter_row').attr('title', `This will darken the map by the percentage indicated. This filter interacts with light auras. Any light aura on the map will reveal the darkness. Fully opaque white light will completely eliminate the darkness in it's area.`)
 	darknessFilterRange.after(darknessNumberInput);
-	form.append(form_row(null, 'Snap to Grid',form_toggle("snap", null, false, function(event) {
+	form.append(form_row('snapToGrid', 'Snap to Grid',form_toggle("snap", null, false, function(event) {
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
 			// it was checked. now it is no longer checked
 			$(event.currentTarget).removeClass("rc-switch-checked");
@@ -378,6 +383,7 @@ function edit_scene_dialog(scene_id) {
 			}	
 		}
 	})));
+	form.find('#snapToGrid_row').attr('title', 'When enabled snaps the tokens to the grid. Otherwise tokens are able to be placed freely. Hold ctrl to when moving a token to temporarily override this.')
 
 
 	const showGridControls = $("<div id='show_grid_controls'/>");
@@ -413,8 +419,8 @@ function edit_scene_dialog(scene_id) {
 	showGridControls.append(gridColor)
 	showGridControls.append(gridStroke)
 	showGridControls.append(gridStrokeLabel, gridStrokeNumberInput);
-	form.append(form_row(null, 'Show Grid', showGridControls))
-
+	form.append(form_row('drawGrid', 'Draw Grid', showGridControls))
+	form.find('#drawGrid_row').attr('title', 'Draw the grid on the map. When enabled more settings for grid appearance will be available.')
 	const colorPickers = form.find('input.spectrum');
 	colorPickers.spectrum({
 		type: "color",
@@ -436,16 +442,24 @@ function edit_scene_dialog(scene_id) {
 	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
 	grid_buttons.append(manual_button);
-	form.append(form_row(null, 'Grid Scale', grid_buttons))
-
+	form.append(form_row('gridConfig', 'Grid Configuration', grid_buttons))
+	form.find('#gridConfig_row').attr('title', '2 options for setting up the grid. A wizard that will allow you to visually and quickly set up the grid. And manual setings if you know the required sizes. Manual settings also include custom units and unit type eg. 5 ft.')
 	var manual = $("<div id='manual_grid_data'/>");
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input type='number' name='hpps'> X <input type='number' name='vpps'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input type='number' name='offsetx'> X <input type='number' name='offsety'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input type='number' name='fpsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Grid is a subdivided 10 units</div><div style='display:inline-block; width:70'%'><input type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>"));
-	manual.append($("<div><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input type='number' name='scale_factor'></div></div>"));
-
+	manual.append($("<div title='Grid square size in pixels. Width x Height.'><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input type='number' name='hpps'> X <input type='number' name='vpps'></div></div>"));
+	manual.append($("<div title='Grid offset from the sides of the map in pixels. x offset, y offset.'><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input type='number' name='offsetx'> X <input type='number' name='offsety'></div></div>"));
+	manual.append($("<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input type='number' name='fpsq'></div></div>"));
+	manual.append($("<div title='The unit of the ruler measurment.'><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
+	manual.append($("<div id='gridSubdividedRow' title='Each side of a grid square will be 2x the units per square. For example a units per square of 5 ft and split grid will make 10ft squares and size tokens appropriately. It will split each grid square into 4 small/medium creature locations used for snap to grid, the ruler etc.'><div style='display:inline-block; width:30%'>Large creature grid squares</div><div style='display:inline-block; width:70'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>"));
+	manual.append($("<div title='This will multiply the dimensions of the map by the value input.'><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input type='number' name='scale_factor'></div></div>"));
+	manual.find('#gridSubdividedRow').append(form_toggle("gridSubdividedToggle",null, false,  function(event) {
+		handle_basic_form_toggle_click(event);
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+			manual.find("#gridSubdividedRow input").val('1');
+			
+		} else {
+			manual.find("#gridSubdividedRow input").val('0');
+		}
+	}));
 	
 	manual.find("input").each(function() {
 		$(this).css("width", "60px");
@@ -460,6 +474,8 @@ function edit_scene_dialog(scene_id) {
 			manual.show();
 		
 	});
+
+	form.append(`<div style='margin-top:20px; font-size:11px; font-weight: bold'>Hover settings for more info</div>`);
 
 
 	if (typeof scene.fog_of_war == "undefined")

@@ -707,14 +707,21 @@ input[name='gridStrokeNumberInput'] {
 }
 
 button#player_map_is_video_toggle,
-button#dm_map_is_video_toggle {
+button#dm_map_is_video_toggle,
+button#gridSubdividedToggle_toggle {
     height: 12px;
     top: -6px;
     color: #555;
 }
+button#gridSubdividedToggle_toggle{
+    top:0px;
+    width:60px;
+}
 
 button#player_map_is_video_toggle::after,
-button#dm_map_is_video_toggle::after {
+button#dm_map_is_video_toggle::after,
+button#gridSubdividedToggle_toggle::after
+ {
     height: 7px;
     width: 7px;
 }
@@ -722,6 +729,9 @@ button#dm_map_is_video_toggle::after {
 button#player_map_is_video_toggle.rc-switch-checked::after,
 button#dm_map_is_video_toggle.rc-switch-checked::after {
     left: 33px;
+}
+button#gridSubdividedToggle_toggle.rc-switch-checked::after{
+    left:50px;
 }
 
 #show_grid_controls{
