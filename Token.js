@@ -1079,6 +1079,11 @@ class Token {
 			for (i = 0; i < this.options.custom_conditions.length; i++) {
 				//convert from old colored conditions
 				if(this.options.custom_conditions[i].name == undefined){
+					if(this.options.custom_conditions[i].includes('Inspiration')){
+						this.options.custom_conditions.splice(i, 1)
+						i -= 1;
+						continue;
+					}
 					this.options.custom_conditions.push({
 						'name': DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []}),
 						'text': ''
