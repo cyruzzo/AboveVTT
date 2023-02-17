@@ -1810,6 +1810,15 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     text-decoration: underline;
 }
 
+.body-rpgcharacter-sheet .note-list button{
+    display: none;
+}
+.body-rpgcharacter-sheet #journal-panel .folder-item-list {
+    padding:0px;
+}
+.body-rpgcharacter-sheet #journal-panel .note-list{
+    padding: 0px 2px 0px 2px;
+}
 .btn-chapter-icon {
     border: none;
     cursor: pointer;

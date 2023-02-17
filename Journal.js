@@ -107,8 +107,9 @@ class JournalManager{
 		}
 		
 		// Create a chapter list that sorts journal-chapters with drag and drop
-		const chapter_list=$("<ul class='folder-item-list'></ul>");
+		const chapter_list=$(`<ul class='folder-item-list'></ul>`);
 		chapter_list.sortable({
+			items: '.folder',
 			update: function(event, ui) {
 				// Find the old index of the dragged element
 				const old_index = self.chapters.findIndex(function(chapter) {
@@ -132,29 +133,53 @@ class JournalManager{
 			console.log('xxx');
 			// A chapter title can be clicked to expand/collapse the chapter notes
 			let section_chapter=$(`
-				<div class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
+				<div data-index='${i}' class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
 			`);
 
 			// Create a sortale list of notes
 			const note_list=$("<ul class='note-list'></ul>");
 
-
+			var sender;
 			// Make the section_chapter sortable
-			note_list.sortable({
-				update: function(event, ui) {
-					// Find the old index of the dragged element
-					const old_index = self.chapters[i].notes.findIndex(function(note) {
-						return self.notes[note].title == ui.item.find(".journal-note-entry-title").text();
+			section_chapter.sortable({
+				connectWith: ".folder",
+				items: '.sidebar-list-item-row',
+		        receive: function(event, ui) {
+		            // Called only in case B (with !!sender == true)
+		            sender = ui.sender;
+		           	let sender_index = sender.attr('data-index');
+		           	let new_folder_index = ui.item.parent().closest('.folder').attr('data-index');
+		          	const old_index = self.chapters[sender_index].notes.findIndex(function(note) {
+						return self.notes[note].title == ui.item.find(".sidebar-list-item-row-details-title").text();
 					});
 					// Find the new index of the dragged element
 					const new_index = ui.item.index();
 					// Move the dragged element to the new index
-					self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
+					self.chapters[new_folder_index].notes.splice(new_index, 0, self.chapters[sender_index].notes.splice(old_index, 1)[0]);
 					self.persist();
 					window.MB.sendMessage('custom/myVTT/JournalChapters',{
 						chapters: self.chapters
 					});
 					self.build_journal();
+		            event.preventDefault();
+		        },
+				update: function(event, ui) {
+					// Find the old index of the dragged element
+					if(sender==undefined){
+						const old_index = self.chapters[i].notes.findIndex(function(note) {
+							return self.notes[note].title == ui.item.find(".sidebar-list-item-row-details-title").text();
+						});
+						// Find the new index of the dragged element
+						const new_index = ui.item.index();
+						// Move the dragged element to the new index
+						self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
+						self.persist();
+						window.MB.sendMessage('custom/myVTT/JournalChapters',{
+							chapters: self.chapters
+						});
+						self.build_journal();
+					}
+
 				}
 			});
 			let folderIcon = $(`<div class="sidebar-list-item-row-img"><img src="${window.EXTENSION_PATH}assets/folder.svg" class="token-image"></div>`)
@@ -247,10 +272,10 @@ class JournalManager{
 				let new_noteid=uuid();
 
 				const input_add_note=$("<input type='text' class='input-add-chapter' placeholder='New note title'>");
-
+				let note_added = false;
 				input_add_note.keydown(function(e){
 					if(e.keyCode == 13 && input_add_note.val() !== ""){
-						
+						note_added = true;
 						let new_note_title=input_add_note.val();
 						self.notes[new_noteid]={
 							title: new_note_title,
@@ -271,10 +296,13 @@ class JournalManager{
 					}
 				});
 
-				input_add_note.blur(function(){		
-					let e = $.Event('keydown');
-				    e.keyCode = 13;
-				    input_add_note.trigger(e);
+				input_add_note.blur(function(event){	
+					if(!note_added)	{
+						let e = $.Event('keydown');
+					    e.keyCode = 13;
+					    input_add_note.trigger(e);
+					}
+					
 				});
 
 				row_notes_entry.empty();
