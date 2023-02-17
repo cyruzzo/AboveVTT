@@ -436,7 +436,26 @@ class JournalManager{
 				note_list.append(entry);
 			}
 			section_chapter.append(note_list);
-		}		
+		}	
+
+		if(!window.journalsortable)
+			$('#journal-panel .ui-sortable').sortable('disable'); 
+
+		let sort_button = $(`<button class="token-row-button reorder-button" title="Reorder Journal"><span class="material-icons">reorder</span></button>`);
+
+		sort_button.on('click', function(){
+			if($('#journal-panel .ui-sortable-disabled').length > 0){
+				$('#journal-panel .ui-sortable').sortable('enable'); 
+				window.journalsortable = true;
+			}
+			else{
+				$('#journal-panel .ui-sortable').sortable('disable'); 
+				window.journalsortable = false;
+				
+			}
+		});
+		if(window.DM)
+			$('#journal-panel .sidebar-panel-body').prepend(sort_button);
 	}
 	
 	

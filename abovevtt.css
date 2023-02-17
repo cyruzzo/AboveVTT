@@ -1819,6 +1819,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .body-rpgcharacter-sheet #journal-panel .note-list{
     padding: 0px 2px 0px 2px;
 }
+
 .btn-chapter-icon {
     border: none;
     cursor: pointer;
@@ -1878,6 +1879,17 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     display: flex;
     align-items: center;
     flex: 1;
+}
+
+
+#journal-panel .ui-sortable:not(.ui-sortable-disabled) .note-list .sidebar-list-item-row-item{
+    height:24px;
+}
+#journal-panel .ui-sortable:not(.ui-sortable-disabled) .row-chapter{
+    height:15px;
+}
+#journal-panel .ui-sortable:not(.ui-sortable-disabled) button{
+    display:none;
 }
 
 
