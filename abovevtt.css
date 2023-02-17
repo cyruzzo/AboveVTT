@@ -1883,7 +1883,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 
 #journal-panel .ui-sortable:not(.ui-sortable-disabled) .note-list .sidebar-list-item-row-item{
-    height:24px;
+    height:26px;
 }
 #journal-panel .ui-sortable:not(.ui-sortable-disabled) .row-chapter{
     height:15px;
