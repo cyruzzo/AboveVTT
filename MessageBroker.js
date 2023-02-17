@@ -1488,6 +1488,7 @@ class MessageBroker {
 			window.DRAWINGS = [];
 		}
 
+
 		redraw_text();
 		
 		

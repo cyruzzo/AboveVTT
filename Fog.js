@@ -1159,7 +1159,7 @@ function drawing_mousemove(e) {
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw(false);
 					context.fillStyle = '#f50';
-					send_ruler_to_peers();
+					sendRulerPositionToPeers();
 				}
 			}else{
 				drawLine(context,

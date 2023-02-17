@@ -2240,7 +2240,11 @@ function init_things() {
 
 		});
 
-	} else {
+	} 
+	else if(window.location.search.includes("popoutgamelog=true")){
+		inject_chat_buttons();
+	}
+	else {
 		init_ui();
 		init_splash();
 	}
@@ -4187,20 +4191,7 @@ function addGamelogPopoutButton(){
 		setTimeout(function() {
 			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
 		}, 1000)
-		let cleanedUpAlready = false;
-		childWindows["Gamelog"].onload = function() {
-			if(!cleanedUpAlready){
-				popoutGamelogCleanup();
-				cleanedUpAlready = true;
-			}
-		}
-		if(!cleanedUpAlready){
-			setTimeout(function() {
-				popoutGamelogCleanup();  //backup in case onload isn't triggered - I'll look into this more later
-				cleanedUpAlready = true;
-			}, 6000)
-		}
-
+		childWindows["Gamelog"].addEventListener('load', popoutGamelogCleanup) 
 	});
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
 }
@@ -4240,10 +4231,17 @@ function popoutGamelogCleanup(){
 		}
 		.mfp-wrap {
 	   		width: 100%;
-	   		z-index: 50000;
+	   		z-index: 100000;
 		}
 		.ddb-campaigns-detail-gamelog {
 			visibility: hidden;
+		}
+		img.magnify{
+			pointer-events:none;
+		}
+		.body-rpgcampaign-details .sidebar {
+		    top: 0 !important;
+		    height: 100% !important;
 		}
 	</style>`);
 	$(childWindows["Gamelog"].document).find(".gamelog-button").click();
@@ -4251,6 +4249,7 @@ function popoutGamelogCleanup(){
 	removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
 	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
 	removeFromPopoutWindow("Gamelog", ".avtt-sidebar-controls");
+	removeFromPopoutWindow("Gamelog", ".sidebar__control");
 	$(childWindows["Gamelog"].document).find("body>div>.sidebar").parent().toggleClass("gamelogcontainer", true);
 	let gamelogMessageBroker = $(childWindows["Gamelog"].document).find(".ddb-campaigns-detail-gamelog").clone(true, true)
 	removeFromPopoutWindow("Gamelog", "body>*:not(.gamelogcontainer):not(.sidebar-panel-loading-indicator)");
