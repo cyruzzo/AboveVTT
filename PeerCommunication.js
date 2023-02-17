@@ -16,9 +16,11 @@ function my_player_id() {
   }
 }
 
-/** @return {object} The window.pcs object that matches the playerId */
-function find_pc_by_player_id(playerId) {
-  return window.pcs.find(pc => playerId === dm_id ? pc.sheet === '' : pc.sheet.includes(playerId));
+/** @param {string} idOrSheet the playerId or pc.sheet of the pc you're looking for
+ * @return {object} The window.pcs object that matches the idOrSheet */
+function find_pc_by_player_id(idOrSheet) {
+  if (!window.pcs) return undefined;
+  return window.pcs.find(pc => idOrSheet === dm_id ? pc.sheet === '' : pc.sheet.includes(idOrSheet));
 }
 
 /** a convenience function that stores peer preferences and creates window.PEER_PREFERENCES if it doesn't already exist
@@ -383,13 +385,24 @@ function peer_changed_preferences(eventData) {
     ruler.drawStyle.color = eventData.color;
   }
 
+  update_player_online_indicator(eventData.playerId, true, eventData.color);
+
   const pc = find_pc_by_player_id(eventData.playerId);
   if (!pc){
     console.debug("peer_changed_preferences no pc", eventData, window.pcs);
     return;
   }
   pc.color = eventData.color;
-  update_player_online_indicator(eventData.playerId, pc.p2pConnected, eventData.color);
+
+  if (window.DM) {
+    const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
+    if (tokenObject) {
+      tokenObject.options.color = eventData.color;
+      $("#combat_area tr[data-target='" + tokenObject.options.id + "'] img[class*='Avatar']").css("border-color", eventData.color);
+      tokenObject.place_sync_persist();
+    }
+    console.log("token-border-color tokenObject", tokenObject);
+  }
 }
 
 /** updates the online indicator in the tokens panel, and call {@link update_old_player_card} to update the online indicator in the players panel if necessary
@@ -449,6 +462,7 @@ function update_old_player_card(playerId, isConnected, peerColor) {
         } else {
           $(this).removeClass("peerConnected")
         }
+        $(this).find(".player-token > img").css("border", `3px solid ${color}`);
       }
     }
   });
