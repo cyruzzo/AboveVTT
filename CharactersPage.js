@@ -24,6 +24,7 @@ function init_character_sheet_page() {
     observe_character_sheet_changes($(document));
     inject_join_exit_abovevtt_button();
     observe_character_theme_change();
+    observe_character_image_change();
   });
 
   // observe window resizing and injeect our join/exit button if necessary
@@ -291,3 +292,19 @@ function observe_character_theme_change() {
   });
   window.theme_observer.observe(document.documentElement, { childList: true });
 }
+
+function observe_character_image_change() {
+  if (window.character_image_observer) window.character_image_observer.disconnect();
+  window.character_image_observer = new MutationObserver(function(mutationList, observer) {
+    mutationList.forEach(mutation => {
+      try {
+        // This should be just fine, but catch any parsing errors just in case
+        const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
+        window.PLAYER_IMG = updatedUrl;
+        window.PeerManager.send(PeerEvent.preferencesChange());
+      } catch { }
+    });
+  });
+  window.character_image_observer.observe(document.querySelector(".ddbc-character-avatar__portrait"), { attributeFilter: ["style"] });
+}
+

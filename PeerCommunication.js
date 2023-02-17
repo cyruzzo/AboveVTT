@@ -126,6 +126,7 @@ class PeerEvent {
       peerId: window.PeerManager.peer.id,
       playerId: my_player_id(),
       color: window.color,
+      image: window.PLAYER_IMG,
       receiveCursorFromPeers: get_avtt_setting_value("receiveCursorFromPeers"),
       receiveRulerFromPeers: get_avtt_setting_value("receiveRulerFromPeers")
     };
@@ -398,7 +399,12 @@ function peer_changed_preferences(eventData) {
     const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
     if (tokenObject) {
       tokenObject.options.color = eventData.color;
-      $("#combat_area tr[data-target='" + tokenObject.options.id + "'] img[class*='Avatar']").css("border-color", eventData.color);
+      $(`#combat_area tr[data-target='${tokenObject.options.id}'] img[class*='Avatar']`).css("border-color", eventData.color);
+      if (typeof eventData.image === "string" && eventData.image.length > 0 && tokenObject.options.alternativeImages && tokenObject.options.alternativeImages.indexOf(tokenObject.options.imgsrc) < 0) {
+        // the token is not using a custom image so update it with whatever the player has set
+        tokenObject.options.imgsrc = eventData.image
+      }
+
       tokenObject.place_sync_persist();
     }
     console.log("token-border-color tokenObject", tokenObject);
