@@ -83,6 +83,21 @@ function update_pclist() {
 		`;
 		let newplayer=$(newPlayerTemplate);
 		playersPanel.body.append(newplayer);
+		playersPanel.body.find(`.player-card`).each(function() {
+			const card = $(this);
+			if (card.attr("data-player-id").includes(my_player_id())) {
+				card.find(".whisper-btn").remove();
+				if (card.find(".change-theme-button").length === 0) {
+					const changeThemeButton = $(`<button class="change-theme-button">Change Theme</button>`);
+					card.find(".player-actions").append(changeThemeButton);
+					changeThemeButton.click(function (e) {
+						$(".ddbc-character-avatar__portrait").click(); // open the character details sidebar
+						$(".ct-character-manage-pane__decorate-button").click(); // open the "change sheet appearance" sidebar
+						$(".ct-decorate-pane__grid > .ct-decorate-pane__grid-item:nth-child(3)").click(); // expand the "theme" section
+					});
+				}
+			}
+		});
 		if (pc.p2pConnected) {
 			if (pc.sheet.includes(my_player_id())) {
 				update_player_online_indicator(my_player_id(), pc.p2pConnected, pc.color ? pc.color : window.color);
@@ -224,10 +239,11 @@ function find_and_set_player_color() {
 	}
 
 	// 2. check if they have a customized character theme
-	const themeColor = $(".dice-toolbar").css("background-color");
-	if (window.DM || themeColor != 'rgb(228, 7, 18)') { // this is the theme color that DDB sets as default. Only allow allow that theme color for the DM
+	const themeColor = $(".dice-toolbar").css("--dice-color");
+	if (themeColor && (window.DM || !themeColor.includes('#C53131'))) {
+		// #C53131 is the "DDB Red" theme color which DDB sets as default. Only allow allow that theme color for the DM. Also, sometimes DDB injects it as ' #C53131' which is why we're using `includes`
 		console.debug("find_and_set_player_color found a theme color", themeColor);
-		change_player_color(themeColor);
+		change_player_color(themeColor.trim());
 		return;
 	}
 

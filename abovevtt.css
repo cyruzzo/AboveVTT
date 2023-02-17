@@ -5498,3 +5498,13 @@ input[name='gridStrokeNumberInput']{
 input[name='upsq'] {
     padding-right: 17px;
 }
+
+.ct-decorate-pane__shop .ddbc-collapsible--opened .ddbc-collapsible__header,
+.ct-container-manager .ddbc-collapsible--opened > .ddbc-collapsible__header,
+.ct-equipment-manage-pane .ddbc-collapsible--opened:not(.ddbc-collapsible--minimal) > .ddbc-collapsible__header {
+    top: 0px;
+    z-index: 9;
+}
+.ct-decorate-pane__current-selections {
+    position: relative;
+}
