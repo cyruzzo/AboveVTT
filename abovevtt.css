@@ -1911,6 +1911,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .context-menu-icon-person:before {
     content: "\e7fd" !important;
 }
+.add-link:before,
+.context-menu-add-link:before {
+    content: "\e178" !important;
+}
+.link-off:before,
+.context-menu-link-off:before {
+    content: "\e16f" !important;
+}
 .icon-note-delete:before{
     content: "\e16c" !important;
 }
@@ -1959,13 +1967,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .markers-icon:after,
 .icon-condition:after,
 .context-menu-icon-hidden:after,
-.context-menu-icon-condition:after {
+.context-menu-icon-condition:after,
+.context-menu-icon-grouped:after {
     float: right;
     margin-right: 0px;
     font-family: "Material Icons", sans-serif;
     font-size: 20px;
     margin-top: -5px;
     margin-bottom: -10px;
+}
+.context-menu-icon-hidden:after,
+.context-menu-icon-condition:after,
+.context-menu-icon-grouped:after{
+    margin-top: 0px;
+    position:absolute;
+    right:8px;
 }
 #tokenOptionsContainer button.context-menu-icon-hidden:after {
     margin-top: -2px;
@@ -1974,18 +1990,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .markers-icon.single-active:after,
 .icon-condition.single-active:after,
 .context-menu-icon-hidden.single-active:after,
+.context-menu-icon-grouped.single-active:after,
 .context-menu-icon-condition.single-active:after {
     content: "\e876";
 }
 .markers-icon.all-active:after,
 .icon-condition.all-active:after,
 .context-menu-icon-hidden.all-active:after,
+.context-menu-icon-grouped.all-active:after,
 .context-menu-icon-condition.all-active:after {
     content: "\e6b1";
 }
 .markers-icon.some-active:after,
 .icon-condition.some-active:after,
 .context-menu-icon-hidden.some-active:after,
+.context-menu-icon-grouped.some-active:after,
 .context-menu-icon-condition.some-active:after {
     content: "\f1c2";
 }

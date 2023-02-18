@@ -147,6 +147,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		}
 	}
 
+
 	if (window.DM && !allTokensAreAoe) {
 		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
 		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
@@ -205,6 +206,41 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(hiddenMenuButton);
 	}
+
+	if (tokens.length > 1 || (tokens.length == 1 && tokens[0].options.groupId != undefined)) {
+		let addButtonInternals = `Group Tokens<span class="material-icons add-link"></span>`;
+		let removeButtonInternals = `Remove From Group<span class="material-icons link-off"></span>`;
+		let groupTokens = $(`<button class='${determine_grouped_classname(tokenIds)} context-menu-icon-grouped material-icons'></button>`);
+		if (groupTokens.hasClass('single-active')) {
+			// they are all in a group. Make it a remove button
+			groupTokens.addClass("remove-from-group");
+			groupTokens.html(removeButtonInternals);
+		} else {
+			// if any are not in the combat tracker, make it an add button.
+			groupTokens.addClass("add-to-group");
+			groupTokens.html(addButtonInternals);
+		}
+		groupTokens.off().on("click", function(clickEvent){
+			let clickedItem = $(this);
+			let groupAll = clickedItem.hasClass("some-active");
+			let group = uuid();
+			tokens.forEach(token => {
+				if (groupAll || clickedItem.hasClass('add-to-group')) {
+					token.options.groupId = id;
+				} else {
+					token.options.groupId = undefined;
+				}
+				token.place_sync_persist();
+			});
+			clickedItem.removeClass("single-active all-active some-active active-condition");
+			clickedItem.addClass(determine_grouped_classname(tokenIds));
+		});
+
+
+
+		body.append(groupTokens);
+	}
+
 
 	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
