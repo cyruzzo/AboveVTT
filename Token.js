@@ -2707,7 +2707,9 @@ function do_draw_selected_token_bounding_box() {
 			// the drag has started so remove the bounding boxes, but not the grabber
 			$("#selectedTokensBorder").remove();
 			$("#selectedTokensBorderRotationGrabberConnector").remove();
-			$("#rotationGrabberHolder").remove();		
+			$("#rotationGrabberHolder").remove();	
+			$("#groupRotationGrabber").remove();
+	
 		},
 		drag: function(event, ui) {
 			// adjust based on zoom level
@@ -2780,7 +2782,8 @@ function do_draw_selected_token_bounding_box() {
 			// the drag has started so remove the bounding boxes, but not the grabber
 			$("#selectedTokensBorder").remove();
 			$("#selectedTokensBorderRotationGrabberConnector").remove();
-			$("#rotationGrabberHolder").remove();		
+			$("#rotationGrabberHolder").remove();	
+			$("#rotationGrabber").remove();	
 		},
 		drag: function(event, ui) {
 			// adjust based on zoom level
