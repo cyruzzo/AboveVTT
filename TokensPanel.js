@@ -729,6 +729,13 @@ function update_pc_token_rows() {
                 row.find(".inspiration").hide();
             }
         }
+
+        const playerId = getPlayerIDFromSheet(listItem.sheet);
+        const pc = find_pc_by_player_id(playerId);
+        if (pc && pc.color) {
+            update_player_online_indicator(playerId, pc.p2pConnected, pc.color);
+            row.css("--player-border-color",  pc.color);
+        }
     });
 }
 

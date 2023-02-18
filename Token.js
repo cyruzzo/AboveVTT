@@ -645,7 +645,7 @@ class Token {
 			'max-height': tokenHeight + 'px',
 		});
 
-		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.options.custom_conditions.includes("Concentration(Reminder)")){
+		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
 			var msgdata = {
 				player: this.options.name,
@@ -1079,6 +1079,11 @@ class Token {
 			for (i = 0; i < this.options.custom_conditions.length; i++) {
 				//convert from old colored conditions
 				if(this.options.custom_conditions[i].name == undefined){
+					if(this.options.custom_conditions[i].includes('Inspiration')){
+						this.options.custom_conditions.splice(i, 1)
+						i -= 1;
+						continue;
+					}
 					this.options.custom_conditions.push({
 						'name': DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []}),
 						'text': ''
@@ -1100,7 +1105,8 @@ class Token {
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
 				}
-				symbolImage.attr('title', conditionName);
+
+				symbolImage.attr('title', (conditionText != '') ? conditionText : (conditionName.startsWith("#") ? '' : conditionName));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
 				symbolImage.height(symbolSize + "px");
@@ -1277,6 +1283,7 @@ class Token {
 			if (!this.options.imgsrc.startsWith("class")){
 				if(oldImage.attr("src")!=this.options.imgsrc){
 					oldImage.attr("src",this.options.imgsrc);
+					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", this.options.imgsrc);
 				}
 
 				if(this.options.disableborder){
@@ -1594,10 +1601,13 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
+
+						pauseCursorEventListener = false;
 					},
 
 				start: function (event) {
 					event.stopImmediatePropagation();
+					pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						$("#temp_overlay").css("z-index", "50");
 					}
@@ -1723,17 +1733,19 @@ class Token {
 						top: tokenPosition.y
 					};
 
-					if (get_avtt_setting_value("allowTokenMeasurement")) {
+					const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
+					if (allowTokenMeasurement) {
 						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
 						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
-						if (!self.options.hidden) {
-							send_ruler_to_peers();
-						}
 					}
+					if (!self.options.hidden) {
+						sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
+					}
+
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 

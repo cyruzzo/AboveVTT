@@ -77,7 +77,7 @@ class PeerManager {
         window.PeerManager.disconnectFromPeer(conn.peer);
       });
       conn.on("data", (data) => {
-        // console.debug("PeerManager connection data", data);
+        noisy_log("PeerManager connection data", data);
         handle_peer_event(data);
       });
       conn.on("error", (error) => {
@@ -279,7 +279,7 @@ class PeerManager {
    *  @param {string} playerId - the DDB id of the character
    *  @return {PeerConnection|undefined} the PeerConnection for the player if it exists, else undefined */
   findConnectionByPlayerId(playerId) {
-    // console.debug("PeerManager.findConnectionByPlayerId", playerId);
+    noisy_log("PeerManager.findConnectionByPlayerId", playerId);
     const playerIdString = `${playerId}`; // in case we get a number
     return this.connections.find(pc => pc.playerId === playerIdString);
   }
@@ -288,7 +288,7 @@ class PeerManager {
    *  @param {string} peerId - the id of the peerjs peer
    *  @return {PeerConnection|undefined} the PeerConnection for the peer if it exists, else undefined */
   findConnectionByPeerId(peerId) {
-    // console.debug("PeerManager.findConnectionByPeerId", peerId);
+    noisy_log("PeerManager.findConnectionByPeerId", peerId);
     return this.connections.find(pc => pc.peerId === peerId);
   }
 
@@ -300,22 +300,14 @@ class PeerManager {
     switch (data.message) {
       case PeerEventType.cursor:
         if (this.allowCursorAndRulerStreaming) {
-          // console.debug("PeerManager.send filtering", data.message, this.skipCursorEvents, this.connections.map(pc => pc.playerId));
+          noisy_log("PeerManager.send filtering", data.message, this.skipCursorEvents, this.connections.map(pc => pc.playerId));
           connectionsToSendTo = this.connections.filter(pc => !this.skipCursorEvents.includes(pc.playerId));
         } else {
           connectionsToSendTo = [];
         }
         break;
-      case PeerEventType.ruler:
-        if (this.allowCursorAndRulerStreaming) {
-          // console.debug("PeerManager.send filtering", data.message, this.skipCursorEvents, this.connections.map(pc => pc.playerId));
-          connectionsToSendTo = this.connections.filter(pc => !this.skipRulerEvents.includes(pc.playerId));
-        } else {
-          connectionsToSendTo = [];
-        }
-        break;
       default:
-        // console.debug("PeerManager.send not filtering", data.message);
+        noisy_log("PeerManager.send not filtering", data.message);
         connectionsToSendTo = this.connections;
       break;
     }
@@ -387,7 +379,7 @@ class PeerManager {
       // now let's check deep within peerjs for any that we don't know about
       for (const peerId in this.peer.connections) {
         const connections = this.peer.connections[peerId];
-        // console.log(`PeerManager.checkForStaleConnections this.peer.connections[${peerId}]`, connections)
+        noisy_log(`PeerManager.checkForStaleConnections this.peer.connections[${peerId}]`, connections)
         connections.forEach(conn => {
           if (!conn.open) {
             try {
