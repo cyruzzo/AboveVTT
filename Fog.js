@@ -2146,18 +2146,21 @@ function init_draw_menu(buttons){
 				 	Erase
 			</button>
 		</div>`);
-	draw_menu.append(`
-		<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
-				UNDO
-			</button>
-		</div>`);
-	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
-				CLEAR
-			</button>
-		</div>`);
+	if(window.DM){
+		draw_menu.append(`
+			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+					UNDO
+				</button>
+			</div>`);
+		draw_menu.append(
+			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
+					CLEAR
+				</button>
+			</div>`);
+	}
+
 
 	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
