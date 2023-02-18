@@ -66,17 +66,28 @@ function inject_dice_roll(element) {
     console.debug("inject_dice_roll already has a button")
     return;
   }
-  const text = element.text();
-  if (text.match(slashCommandRegex)?.[0]) {
-    const diceRoll = DiceRoll.fromSlashCommand(text, window.PLAYER_NAME, window.PLAYER_IMG);
-    const button = $(`<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}">${diceRoll.expression}</button>`);
-    button.on("click", function (clickEvent) {
-      clickEvent.stopPropagation();
-      window.diceRoller.roll(diceRoll);
-    });
-    element.empty();
-    element.append(button);
+  const slashCommands = element.text().matchAll(multiDiceRollCommandRegex);
+  if (!slashCommands) return;
+  let updatedInnerHtml = element.text();
+  for (const command of slashCommands) {
+    console.debug("inject_dice_roll command", command, command[0]);
+    try {
+      const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG);
+      updatedInnerHtml = updatedInnerHtml.replace(command[0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
+    } catch (error) {
+      console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
+      updatedInnerHtml = updatedInnerHtml.replace(command[0], '');
+    }
   }
+  element.empty();
+  console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
+  element.append(updatedInnerHtml);
+  element.find("button.avtt-roll-formula-button").click(function(clickEvent) {
+    clickEvent.stopPropagation();
+    const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
+    const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG);
+    window.diceRoller.roll(diceRoll);
+  });
 }
 
 /**
@@ -110,7 +121,7 @@ function observe_character_sheet_changes(documentToObserve) {
       switch (mutation.type) {
         case "childList":
           mutation.addedNodes.forEach(node => {
-            if (typeof node.data === "string" && node.data.match(slashCommandRegex)?.[0]) {
+            if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
               try {
                 inject_dice_roll($(mutation.target));
               } catch (error) {
@@ -121,7 +132,7 @@ function observe_character_sheet_changes(documentToObserve) {
           break;
         case "characterData":
           if (typeof mutation.target.data === "string") {
-            if (mutation.target.data.match(slashCommandRegex)?.[0]) {
+            if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
               try {
                 inject_dice_roll($(mutation.target));
               } catch (error) {

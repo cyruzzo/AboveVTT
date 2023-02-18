@@ -18,8 +18,8 @@ class ChatObserver {
                     input.val("");
                     return;
                 }
-                let slashCommandMatch = value.match(slashCommandRegex);
-                if (slashCommandMatch?.index === 0 && !value.startsWith("/w ")) {
+                let slashCommandMatch = value.match(diceRollCommandRegex);
+                if (slashCommandMatch?.index === 0) {
                     if (self.#parseSlashCommand(value)) {
                         self.#didSubmit(input, value);
                     } else {
@@ -64,7 +64,7 @@ class ChatObserver {
         let didSend = window.diceRoller.roll(diceRoll);
         if (didSend === false) {
             // it was too complex so try to send it through rpgDiceRoller
-            let expression = text.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+            let expression = text.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
             didSend = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
         }
         return didSend;
