@@ -837,7 +837,7 @@ function redraw_text() {
 
 	$('#text_div').empty();
 	for(drawing in window.DRAWINGS){
-		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale] = window.DRAWINGS[drawing]
+		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale, hidden] = window.DRAWINGS[drawing]
 
 		if(shape == 'text' && textid == undefined){
 			let newTextId = uuid();
@@ -845,6 +845,9 @@ function redraw_text() {
 			window.DRAWINGS[drawing].push(rectColor);
 			window.DRAWINGS[drawing].push(newTextId);
 			window.DRAWINGS[drawing].push(setScale);
+		}
+		if(shape == 'text' && hidden == undefined){
+			window.DRAWINGS[drawing].push(false);
 		}
    		if(shape == 'text')
 			draw_text(undefined, ...window.DRAWINGS[drawing]);	
