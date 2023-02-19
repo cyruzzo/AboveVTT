@@ -1490,7 +1490,6 @@ class MessageBroker {
 
 
 
-		redraw_text();
 		
 		
 		// console.groupEnd()
