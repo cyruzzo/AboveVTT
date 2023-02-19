@@ -1283,6 +1283,7 @@ class Token {
 			if (!this.options.imgsrc.startsWith("class")){
 				if(oldImage.attr("src")!=this.options.imgsrc){
 					oldImage.attr("src",this.options.imgsrc);
+					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", this.options.imgsrc);
 				}
 
 				if(this.options.disableborder){

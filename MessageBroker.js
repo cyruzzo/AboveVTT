@@ -1404,7 +1404,7 @@ class MessageBroker {
 			redraw_fog();
 			redraw_drawings();
 			apply_zoom_from_storage();
-
+			redraw_text();
 
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
    	 	if(window.DM && darknessPercent < 25){
@@ -1487,6 +1487,7 @@ class MessageBroker {
 		else {
 			window.DRAWINGS = [];
 		}
+
 
 
 		redraw_text();

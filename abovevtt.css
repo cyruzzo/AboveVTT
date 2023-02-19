@@ -5315,31 +5315,10 @@ div.ddbc-tab-options--layout-pill>button{
     transform: scale(var(--scene-scale));
     transform-origin: top left;
 }
+
 @keyframes aurafx-flicker{
-    0%  {filter: blur(10px);transform:scale(1);}
-    10% {filter: blur(15px);transform:scale(1.005);}
-    20% {filter: blur(10px);transform:scale(0.995);}
-    30% {filter: blur(10px);transform:scale(1);}
-    40% {filter: blur(15px);transform:scale(0.995);}
-    50% {filter: blur(20px);transform:scale(1.005);}
-    60% {filter: blur(15px);transform:scale(0.995);}
-    70% {filter: blur(12px);transform:scale(1);}
-    80% {filter: blur(15px);transform:scale(0.995);}
-    90% {filter: blur(10px);transform:scale(1.005);}
-    100%{filter: blur(15px);transform:scale(1);}
-}
-@keyframes aurafx-flicker-no-blur{
-    0%  {transform:scale(1);}
-    10% {transform:scale(1.005);}
-    20% {transform:scale(0.995);}
-    30% {transform:scale(1);}
-    40% {transform:scale(0.995);}
-    50% {transform:scale(1.005);}
-    60% {transform:scale(0.995);}
-    70% {transform:scale(1);}
-    80% {transform:scale(0.995);}
-    90% {transform:scale(1.005);}
-    100%{transform:scale(1);}
+    0%  {filter: blur(10px);}
+    100%{filter: blur(15px);}
 }
 
 .aurafx-flicker{
@@ -5497,4 +5476,14 @@ input[name='gridStrokeNumberInput']{
 }
 input[name='upsq'] {
     padding-right: 17px;
+}
+
+.ct-decorate-pane__shop .ddbc-collapsible--opened .ddbc-collapsible__header,
+.ct-container-manager .ddbc-collapsible--opened > .ddbc-collapsible__header,
+.ct-equipment-manage-pane .ddbc-collapsible--opened:not(.ddbc-collapsible--minimal) > .ddbc-collapsible__header {
+    top: 0px;
+    z-index: 9;
+}
+.ct-decorate-pane__current-selections {
+    position: relative;
 }

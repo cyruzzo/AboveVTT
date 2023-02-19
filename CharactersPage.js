@@ -23,6 +23,8 @@ function init_character_sheet_page() {
   set_window_name_and_image(function() {
     observe_character_sheet_changes($(document));
     inject_join_exit_abovevtt_button();
+    observe_character_theme_change();
+    observe_character_image_change();
   });
 
   // observe window resizing and injeect our join/exit button if necessary
@@ -270,3 +272,39 @@ function inject_join_button_on_character_list_page() {
     });
   });
 }
+
+function observe_character_theme_change() {
+  if (window.theme_observer) window.theme_observer.disconnect();
+  window.theme_observer = new MutationObserver(function(mutationList, observer) {
+    // console.log("theme_observer mutationList", mutationList);
+    mutationList.forEach(mutation => {
+      // console.log("theme_observer mutation", mutation, mutation.addedNodes, mutation.addedNodes.length);
+      if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach(node => {
+          // console.log("theme_observer node", node);
+          if (node.innerHTML && node.innerHTML.includes("--dice-color")) {
+            // console.log("theme_observer is calling find_and_set_player_color");
+            find_and_set_player_color();
+          }
+        });
+      }
+    });
+  });
+  window.theme_observer.observe(document.documentElement, { childList: true });
+}
+
+function observe_character_image_change() {
+  if (window.character_image_observer) window.character_image_observer.disconnect();
+  window.character_image_observer = new MutationObserver(function(mutationList, observer) {
+    mutationList.forEach(mutation => {
+      try {
+        // This should be just fine, but catch any parsing errors just in case
+        const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
+        window.PLAYER_IMG = updatedUrl;
+        window.PeerManager.send(PeerEvent.preferencesChange());
+      } catch { }
+    });
+  });
+  window.character_image_observer.observe(document.querySelector(".ddbc-character-avatar__portrait"), { attributeFilter: ["style"] });
+}
+
