@@ -1191,6 +1191,12 @@ class Token {
 		if (this.options.rotation != undefined) {
 			rotation = this.options.rotation;
 		}
+		if(this.options.groupId != undefined){
+			old.attr('data-group-id', this.options.groupId)
+		}
+		else{
+			old.removeAttr('data-group-id')
+		}		
 
 		if (old.length > 0) {
 			console.trace();
@@ -1387,7 +1393,9 @@ class Token {
 			else{
 				this.options.gridSquares = this.options.size / window.CURRENT_SCENE_DATA.hpps
 			}
-			
+			if(this.options.groupId != undefined)
+				tok.attr('data-group-id', this.options.groupId)
+
 			let tokenImage
 			// new aoe tokens use arrays as imsrc
 			if (!this.isAoe()){
@@ -1638,10 +1646,14 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 
-
+					$(`.token[data-group-id='${self.options.groupId}']`).toggleClass('tokenselected', true);
+				
+					
+					
 					if (self.selected && $(".token.tokenselected").length>1) {
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
+							window.TOKEN_OBJECTS[id].selected = true;
 							$(tok).addClass("pause_click");
 							if($(tok).is(":animated")){
 								window.TOKEN_OBJECTS[id].stopAnimation();
@@ -2189,6 +2201,24 @@ function determine_condition_item_classname(tokenIds, condition) {
 	}
 }
 
+function determine_grouped_classname(tokenIds) {
+	let allGroupedStatus = tokenIds
+		.map(id => window.TOKEN_OBJECTS[id].options.groupId !== undefined)
+		.filter(t => t !== undefined);
+	let uniqueGroupedStates = [...new Set(allGroupedStatus)];
+
+	if (uniqueGroupedStates.length === 0 || (uniqueGroupedStates.length === 1 && uniqueGroupedStates[0] === false)) {
+		// none of these tokens are hidden
+		return "none-active";
+	} else if (uniqueGroupedStates.length === 1 && uniqueGroupedStates[0] === true) {
+		// everything we were given is hidden. If we were given a single thing, return single, else return all
+		// return tokenIds.length === 1 ? "single-active active-condition" : "all-active active-condition";
+		return "single-active active-condition";
+	} else {
+		// some, but not all of the things are hidden
+		return "some-active active-condition";
+	}
+}
 
 function determine_hidden_classname(tokenIds) {
 	let allHiddenStates = tokenIds
