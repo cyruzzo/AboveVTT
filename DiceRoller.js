@@ -3,12 +3,12 @@ $(function() {
     window.diceRoller = new DiceRoller();
 });
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const validExpressionRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const validExpressionRegex = /^[dkhlro<=>\s\d+\-\(\)]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(r|roll|save|hit|dmg|skill|heal) [^\/]*/g; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
-const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|\+|-|\d+|\s+|STR|str|DEX|dex|CON|con|INT|int|WIS|wis|CHA|cha|PB|pb)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. It is also explicitly declaring the modifiers as case-sensitive because we can't search the entire thing as case-insensitive because the `d` in 1d20 needs to be lowercase.
+const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|\+|-|\d+|\s+|STR|str|DEX|dex|CON|con|INT|int|WIS|wis|CHA|cha|PB|pb)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. It is also explicitly declaring the modifiers as case-sensitive because we can't search the entire thing as case-insensitive because the `d` in 1d20 needs to be lowercase.
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -46,7 +46,7 @@ class DiceRoll {
         }
         try {
             let alteredRollType = newRollType.trim().toLowerCase().replace("-", " ");
-            const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
+            const validRollTypes = ["to hit", "damage", "save", "check", "heal", "reroll"];
             if (validRollTypes.includes(alteredRollType)) {
                 this.#diceRollType = alteredRollType;
             } else {
@@ -83,6 +83,10 @@ class DiceRoll {
             return true; // more than 1 expression messes with the parsing that DDB does
         }
 
+        if (this.expression.includes("ro")) {
+            return true; // reroll requires us to roll double the amount of dice, but then strip half the results based on the specified reroll rule
+        }
+
         if (this.expression.indexOf(this.diceExpressions[0]) !== 0) {
             return true; // 1-1d4 messes with the parsing that DDB does, but 1d4-1 is just fine
         }
@@ -98,7 +102,7 @@ class DiceRoll {
             return true;
         }
 
-        // not sure what else to look for yet, but this appears to be something like "1d20", "1d20-1", "1d20kh1+3". all of which are correctly parsed by DDB
+        // not sure what else to look for yet, but this appears to be something like "1d20", "1d20-1", "2d20kh1+3". all of which are correctly parsed by DDB
         return false;
     }
 
@@ -166,6 +170,10 @@ class DiceRoll {
         this.#individualDiceExpressions.forEach(diceExpression => {
             let diceType = diceExpression.match(/d\d+/g);
             let numberOfDice = parseInt(diceExpression.split("d")[0]);
+            if (diceExpression.includes("ro")) {
+                console.debug("diceExpression: ", diceExpression, ", includes reroll so we're doubling the number of dice for", diceType, ", numberOfDice before doubling: ", numberOfDice);
+                numberOfDice = numberOfDice * 2;
+            }
             console.debug("diceExpression: ", diceExpression, ", diceType: ", diceType, ", numberOfDice: ", numberOfDice);
             if (this.#separatedDiceToRoll[diceType] === undefined) {
                 this.#separatedDiceToRoll[diceType] = numberOfDice;
@@ -388,16 +396,22 @@ class DiceRoller {
                 // all the values are in the same order as the DDB expression so iterate over the expression, and pull out the values that correspond
                 let matchedValues = {}; // { d20: [1, 18], ... }
                 let rolledExpressions = r.diceNotationStr.match(allDiceRegex);
+                console.debug("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
+                    console.debug("diceExpression: ", diceExpression);
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     if (matchedValues[diceType] === undefined) {
                         matchedValues[diceType] = [];
                     }
+                    if (diceExpression.includes("ro")) {
+                        // we've doubled the dice in case we needed to reroll, so grab twice as many dice as expected
+                        numberOfDice = numberOfDice * 2;
+                    }
                     matchedValues[diceType] = matchedValues[diceType].concat(valuesToMatch.slice(0, numberOfDice));
                     valuesToMatch = valuesToMatch.slice(numberOfDice);
-                })
+                });
                 console.debug("matchedValues: ", JSON.stringify(matchedValues));
 
                 // 2. replace each dice expression in #pendingDiceRoll.expression with the corresponding dice roll results
@@ -408,9 +422,35 @@ class DiceRoller {
                 this.#pendingDiceRoll.diceExpressions.forEach(diceExpression => {
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
+                    const includesReroll = diceExpression.includes("ro");
+                    if (includesReroll) {
+                        // we've doubled the dice in case we needed to reroll so grab twice as many dice as expected
+                        numberOfDice = numberOfDice * 2;
+                    }
                     let calculationValues = matchedValues[diceType].slice(0, numberOfDice);
                     matchedValues[diceType] = matchedValues[diceType].slice(numberOfDice);
                     console.debug(diceExpression, "calculationValues: ", calculationValues);
+
+                    if (includesReroll) {
+                        // we have twice as many dice values as we need, so we need to figure out which dice values to drop.
+                        // the values are in-order, so we will only keep the front half of the array.
+                        // evaluate each of the calculationValues against the reroll rule.
+                        // any value that evaluates to false, gets dropped. This allows the reroll dice to "shift" into the front half of the array.
+                        // cut the matchedValues down to the expected size. This will drop any reroll dice that we didn't use
+                        const half = Math.ceil(calculationValues.length / 2);
+                        let rolledValues = calculationValues.slice(0, half)
+                        let rerolledValues = calculationValues.slice(half)
+                        const rerollModifier = diceExpression.match(/ro(<|<=|>|>=|=)\d+/);
+                        calculationValues = rolledValues.map(value => {
+                            const rerollExpression = rerollModifier[0].replace('ro', value).replace(/(?<!(<|>))=(?!(<|>))/, "==");
+                            console.debug("rerollExpression", rerollExpression)
+                            if (eval(rerollExpression)) {
+                                return rerolledValues.shift();
+                            } else {
+                                return value;
+                            }
+                        });
+                    }
 
                     if (diceExpression.includes("kh")) {
                         // "keep highest" was used so figure out how many to keep
