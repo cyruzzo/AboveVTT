@@ -1761,6 +1761,13 @@ function init_scenes_panel() {
  */
 function did_update_scenes() {
 	if (!window.DM) return;
+
+	// store this locally in case we run into the cloud bug that prevents the scenelist event from being sent down
+	const sanitizedScenes = window.ScenesHandler.scenes.filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
+	localStorage.setItem(`ScenesHandler${find_game_id()}`, JSON.stringify(sanitizedScenes));
+	console.debug("did_update_scenes", `ScenesHandler${find_game_id()}`, sanitizedScenes);
+
+
 	rebuild_scene_items_list();
 
 	// Filters scene list by search input if scenes-panel is active

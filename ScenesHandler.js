@@ -666,7 +666,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 		if(window.CLOUD){
-			this.scenes=[];
+			const fromStorage = localStorage.getItem(`ScenesHandler${find_game_id()}`);
+			if (fromStorage != null) {
+				this.scenes = $.parseJSON(fromStorage);
+				console.debug("from localStorage", `ScenesHandler${find_game_id()}`, this.scenes);
+			} else {
+				this.scenes=[];
+			}
 			this.current_scene_id=null;
 		}
 		else{ // LEGACY
