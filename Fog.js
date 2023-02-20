@@ -1316,7 +1316,8 @@ function drawing_mouseup(e) {
 		}
 		window.DRAWINGS.push(data);
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)
+			window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
 		else
@@ -1846,7 +1847,8 @@ function savePolygon(e) {
 	}
 	clear_temp_canvas()
 
-	window.ScenesHandler.persist();
+	if(window.DM)
+		window.ScenesHandler.persist();
 
 	if(window.CLOUD){
 		if(window.DRAWFUNCTION === "draw"){
@@ -2089,7 +2091,7 @@ function init_draw_menu(buttons){
 
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
-            id='background_color' name='background color' value='#e66465'/>
+            id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#e66465'}'/>
         `)
 
     let colorPickers = draw_menu.find('input.spectrum');
@@ -2144,18 +2146,21 @@ function init_draw_menu(buttons){
 				 	Erase
 			</button>
 		</div>`);
-	draw_menu.append(`
-		<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
-				UNDO
-			</button>
-		</div>`);
-	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
-				CLEAR
-			</button>
-		</div>`);
+	if(window.DM){
+		draw_menu.append(`
+			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+					UNDO
+				</button>
+			</div>`);
+		draw_menu.append(
+			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
+					CLEAR
+				</button>
+			</div>`);
+	}
+
 
 	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
