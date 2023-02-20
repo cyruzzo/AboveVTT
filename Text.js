@@ -202,6 +202,15 @@ function create_text_controller() {
             </button>
         </div>
     `);
+      flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <button id='hide_text' title="hide text" style="height:20px" data-toggle="true" data-key="hide" data-value="hide" class='drawbutton text-option ddbc-tab-options__header-heading menu-option'>
+                    <span class="material-icons">
+                        visibility_off
+                    </span>
+            </button>
+        </div>
+    `);
 
     let colorPickers = flexDiv.find("input.spectrum");
     colorPickers.spectrum({
@@ -484,6 +493,7 @@ function handle_draw_text_submit(event) {
         size: parseInt($(textBox).css("-webkit-text-stroke-width")) / window.ZOOM,
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
+    const hidden = $('#text_controller_inside #hide_text.button-enabled').length>0;
     // data should match params in draw_text
     // push the starting position of y south based on the font size
     let textid = uuid();
@@ -497,7 +507,8 @@ function handle_draw_text_submit(event) {
         stroke,
         rectColor,
         textid,
-        window.CURRENT_SCENE_DATA.scale_factor
+        window.CURRENT_SCENE_DATA.scale_factor,
+        hidden
     ];
     // bake this data and redraw all text
     window.DRAWINGS.push(data);
@@ -580,13 +591,16 @@ function draw_text(
     stroke,
     rectColor = 'transparent',
     id = '',
-    scale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor
+    scale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor,
+    hidden = false
 ) {
 
     if($(`svg[id='${id}']`).length>0)
         return;
     if(rectColor == null)
         rectColor = 'transparent';
+    if(!window.DM && hidden)
+        return;
 
     divideScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
 
@@ -613,8 +627,9 @@ function draw_text(
     let fontSize=font.size; 
     let lineHeight=12;  
     let textPart=text.split('\n').map(function(returnSplitText,i){ return `<tspan x="${x}" y="${font.size+i*fontSize}">${returnSplitText}</tspan>`}).join('\n');
+    let hiddenOpacity = (hidden) ? 0.5 : 1;
     let textSVG = $(`
-        <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
+        <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="opacity:${hiddenOpacity}; left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
             <title>${text}</title>
             <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
             <g style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
@@ -660,7 +675,26 @@ function draw_text(
     });
 
 
-
+    textSVG.on('contextmenu', function(e){
+        $(this).remove();
+        for(drawing in window.DRAWINGS){
+            if(window.DRAWINGS[drawing][9] == this.id){
+                if(!window.DRAWINGS[drawing][11]){
+                    window.DRAWINGS[drawing][11] = true;
+                }
+                else{
+                    window.DRAWINGS[drawing][11] = false;
+                }
+            }
+        }
+        redraw_text();
+        window.ScenesHandler.persist();
+        if(window.CLOUD)
+            sync_drawings();
+        else
+            window.MB.sendMessage('custom/myVTT/drawing', data);
+        return false;
+    });
     textSVG.on('dblclick', function(){
 
         create_text_controller();
