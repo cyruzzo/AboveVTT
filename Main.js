@@ -253,9 +253,10 @@ function decrease_zoom() {
 * @return {Number}
 */
 function get_reset_zoom() {
+	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right')) ? 340 : 0;
 	const wH = $(window).height();
 	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
-	const wW = $(window).width();
+	const wW = $(window).width()-sidebar_open;
 	const mW = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	console.log(wH, mH, wW, mW);
@@ -277,6 +278,8 @@ function reset_zoom() {
 		block: 'center',
 		inline: 'center'
 	});
+	if($('#hide_rightpanel').hasClass('point-right') &&  ($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor)*window.ZOOM+200 > $(window).width()-340)
+		$(window).scrollLeft(200);
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
