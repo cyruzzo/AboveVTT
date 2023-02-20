@@ -332,12 +332,13 @@ class Token {
 		if(this.options.imageSize === undefined) {
 			this.imageSize(1) 
 		}
-		let imageScale = this.options.imageSize;
+		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.css("--token-rotation", newRotation + "deg");
-		tokenElement.find(".token-image").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);
+		tokenElement.css("--token-scale", imageScale);
+		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 
 	}
 	moveUp() {
@@ -1186,7 +1187,7 @@ class Token {
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 
-		let imageScale = this.options.imageSize;
+		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 		let rotation = 0;
 		if (this.options.rotation != undefined) {
 			rotation = this.options.rotation;
@@ -1224,7 +1225,7 @@ class Token {
 
 
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
-			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
+			old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
 			old.css("--token-rotation", rotation+"deg");
 			old.css("--token-scale", imageScale);
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
@@ -1403,8 +1404,11 @@ class Token {
 				if(this.options.legacyaspectratio == false) {
 					imgClass = 'token-image preserve-aspect-ratio';
 				}
-				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
-				tok.css("--token-scale", imageScale)
+				let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
+				let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
+				tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+				tok.css("--token-scale", imageScale);
+				tok.css("--token-rotation", `${rotation}deg`);
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
@@ -2555,6 +2559,12 @@ function rotation_towards_cursor(token, mousex, mousey, largerSnapAngle) {
 	return Math.round(degrees / snap) * snap
 }
 
+function rotation_towards_cursor_from_point(tokenCenterX, tokenCenterY, mousex, mousey, largerSnapAngle) {
+	const target = Math.atan2(mousey - tokenCenterY, mousex - tokenCenterX) + Math.PI * 3 / 2; // down = 0
+	const degrees = target * radToDeg;
+	const snap = (largerSnapAngle == true) ? 45 : 5; // if we ever allow hex, use 45 for square and 60 for hex
+	return Math.round(degrees / snap) * snap
+}
 /// rotates all selected tokens to the specified newRotation
 function rotate_selected_tokens(newRotation, persist = false) {
 	if ($("#select-button").hasClass("button-enabled") || !window.DM) { // players don't have a select tool
@@ -2662,6 +2672,7 @@ function do_draw_selected_token_bounding_box() {
 	let grabberTop = top - grabberDistance - grabberSize + 2;
 	let grabberLeft = centerHorizontal - Math.ceil(grabberSize / 2) + 3;
 
+
 	// draw the bounding box
 	var boundingBox = $("<div id='selectedTokensBorder' />");
 	boundingBox.css("position", "absolute");
@@ -2711,11 +2722,26 @@ function do_draw_selected_token_bounding_box() {
 	grabber.css('cursor', 'move');
 	$("#tokens").append(grabber);
 
+	// draw the grabber with an eye symbol in it
+	var grabber2 = $('<div id="groupRotationGrabber"><svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 96 960 960" width="18"><path d="M479.956 651Q449 651 427 628.956q-22-22.045-22-53Q405 545 427.044 523q22.045-22 53-22Q511 501 533 523.044q22 22.045 22 53Q555 607 532.956 629q-22.045 22-53 22ZM480 936q-150 0-255-105.5T120 575h60q0 125 87.5 213T480 876q125.357 0 212.679-87.321Q780 701.357 780 576t-87.321-212.679Q605.357 276 480 276q-69 0-129 30.5T246 389h104v60H142V241h60v106q53-62 125.216-96.5T480 216q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840 576q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480 936Z"/></svg></div>')
+	grabber2.css("position", "absolute");
+	grabber2.css('top', `${grabberTop}px`);
+	grabber2.css('left', `${right}px`);
+	grabber2.css('width', `${grabberSize - 4}px`);
+	grabber2.css('height', `${grabberSize - 4}px`);
+	grabber2.css('z-index', 100000); // make sure the grabber is above all the tokens
+	grabber2.css('background', '#ced9e0')
+	grabber2.css('border-radius', `${Math.ceil(grabberSize / 2)}px`); // make it round
+	grabber2.css('padding', '1px');
+	grabber2.css('cursor', 'move');
+	$("#tokens").append(grabber2);
+
 	// handle eye grabber dragging
 	let click = {
 		x: 0,
 		y: 0
 	};
+	
 	grabber.draggable({
 		start: function (event) { 
 			// adjust based on zoom level
@@ -2727,7 +2753,9 @@ function do_draw_selected_token_bounding_box() {
 			// the drag has started so remove the bounding boxes, but not the grabber
 			$("#selectedTokensBorder").remove();
 			$("#selectedTokensBorderRotationGrabberConnector").remove();
-			$("#rotationGrabberHolder").remove();		
+			$("#rotationGrabberHolder").remove();	
+			$("#groupRotationGrabber").remove();
+	
 		},
 		drag: function(event, ui) {
 			// adjust based on zoom level
@@ -2755,6 +2783,96 @@ function do_draw_selected_token_bounding_box() {
 			}
 		},
 	});
+
+	let centerPointRotateOrigin = {
+		x: 0,
+		y: 0
+	};
+	
+	let angle;
+	grabber2.draggable({
+		start: function (event) { 
+			// adjust based on zoom level
+			click.x = event.clientX;
+			click.y = event.clientY;
+			self.orig_top = grabberTop;
+			self.orig_left = grabberLeft;
+
+			let furthest_coord = {}
+
+
+			$('.tokenselected').wrap('<div class="grouprotate"></div>');
+			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+				let id = window.CURRENTLY_SELECTED_TOKENS[i];
+				let token = window.TOKEN_OBJECTS[id];
+				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
+				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
+				let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+				let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+				let tokenTop = ($(`div.token[data-id='${id}']`).position().top + tokenImagePosition.top) / (window.ZOOM);
+				let tokenBottom = tokenTop + tokenImageHeight;
+				let tokenLeft = ($(`div.token[data-id='${id}']`).position().left  + tokenImagePosition.left) / (window.ZOOM);
+				let tokenRight = tokenLeft + tokenImageWidth;
+				
+				furthest_coord.top  = (furthest_coord.top  == undefined) ? tokenTop : Math.min(furthest_coord.top, tokenTop)
+				furthest_coord.left  = (furthest_coord.left  == undefined) ? tokenLeft : Math.min(furthest_coord.left, tokenLeft)
+
+				furthest_coord.right  = (furthest_coord.right  == undefined) ? tokenRight : Math.max(furthest_coord.right, tokenRight)
+				furthest_coord.bottom  = (furthest_coord.bottom  == undefined) ? tokenBottom : Math.max(furthest_coord.bottom , tokenBottom)
+			}
+
+			centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2;
+			centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2;
+			$('.grouprotate').css('transform-origin', `${centerPointRotateOrigin.x}px ${centerPointRotateOrigin.y}px` )
+
+			// the drag has started so remove the bounding boxes, but not the grabber
+			$("#selectedTokensBorder").remove();
+			$("#selectedTokensBorderRotationGrabberConnector").remove();
+			$("#rotationGrabberHolder").remove();	
+			$("#rotationGrabber").remove();	
+		},
+		drag: function(event, ui) {
+			// adjust based on zoom level
+			var zoom = window.ZOOM;
+			var original = ui.originalPosition;
+			ui.position = {
+				left: Math.round((event.clientX - click.x + original.left) / zoom),
+				top: Math.round((event.clientY - click.y + original.top) / zoom)
+			};
+
+			angle = rotation_towards_cursor_from_point(centerPointRotateOrigin.x, centerPointRotateOrigin.y, ui.position.left, ui.position.top, event.shiftKey)
+			$(`.grouprotate`).css({
+				'rotate': `${angle}deg`		
+			});
+
+		},
+		stop: function (event) { 
+			// rotate for all players
+							
+			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+				let id = window.CURRENTLY_SELECTED_TOKENS[i];
+				let token = window.TOKEN_OBJECTS[id];
+
+				currentplace = $(`.token[data-id='${id}']`).offset();
+
+				newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top)
+				window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
+				window.TOKEN_OBJECTS[id].options.top = `${newCoords.y}px`;
+				window.TOKEN_OBJECTS[id].options.rotation = angle + parseInt($(`.token[data-id='${id}']`).css('--token-rotation'));
+			
+			}
+
+			$(`.grouprotate`).remove();
+			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+				let id = window.CURRENTLY_SELECTED_TOKENS[i];
+				let token = window.TOKEN_OBJECTS[id];
+
+				token.place_sync_persist();
+			}
+
+			
+		},
+	});
 }
 
 /// removes everything that draw_selected_token_bounding_box added
@@ -2763,6 +2881,8 @@ function remove_selected_token_bounding_box() {
 	$("#selectedTokensBorderRotationGrabberConnector").remove();
 	$("#rotationGrabberHolder").remove();
 	$("#rotationGrabber").remove();
+	$("#groupRotationGrabber").remove();
+
 }
 
 function copy_selected_tokens() {
