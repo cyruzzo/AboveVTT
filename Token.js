@@ -332,12 +332,13 @@ class Token {
 		if(this.options.imageSize === undefined) {
 			this.imageSize(1) 
 		}
-		let imageScale = this.options.imageSize;
+		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		var selector = "div[data-id='" + this.options.id + "']";
 		var tokenElement = $("#tokens").find(selector);
 		tokenElement.css("--token-rotation", newRotation + "deg");
-		tokenElement.find(".token-image").css("transform", `scale(${imageScale}) rotate(${newRotation}deg)`);
+		tokenElement.css("--token-scale", imageScale);
+		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 
 	}
 	moveUp() {
@@ -1186,7 +1187,7 @@ class Token {
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 
-		let imageScale = this.options.imageSize;
+		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 		let rotation = 0;
 		if (this.options.rotation != undefined) {
 			rotation = this.options.rotation;
@@ -1218,7 +1219,7 @@ class Token {
 
 
 			old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
-			old.find(".token-image").css("transform", "scale(" + imageScale + ") rotate("+rotation+"deg)");
+			old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
 			old.css("--token-rotation", rotation+"deg");
 			old.css("--token-scale", imageScale);
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
@@ -1395,8 +1396,11 @@ class Token {
 				if(this.options.legacyaspectratio == false) {
 					imgClass = 'token-image preserve-aspect-ratio';
 				}
-				tokenImage = $("<img style='transform:scale(" + imageScale + ") rotate(" + rotation + "deg)' class='"+imgClass+"'/>");
-				tok.css("--token-scale", imageScale)
+				let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
+				let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
+				tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+				tok.css("--token-scale", imageScale);
+				tok.css("--token-rotation", `${rotation}deg`);
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
