@@ -2819,12 +2819,12 @@ function do_draw_selected_token_bounding_box() {
 				let id = window.CURRENTLY_SELECTED_TOKENS[i];
 				let token = window.TOKEN_OBJECTS[id];
 
-				currentplace = $(`.token[data-id=${id}]`).offset();
+				currentplace = $(`.token[data-id='${id}']`).offset();
 
 				newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top)
 				window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
 				window.TOKEN_OBJECTS[id].options.top = `${newCoords.y}px`;
-				window.TOKEN_OBJECTS[id].options.rotation = angle + parseInt($(`.token[data-id=${id}]`).css('--token-rotation'));
+				window.TOKEN_OBJECTS[id].options.rotation = angle + parseInt($(`.token[data-id='${id}']`).css('--token-rotation'));
 			
 			}
 
