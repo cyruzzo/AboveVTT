@@ -48,6 +48,8 @@ function init_sidebar_tabs() {
   init_settings();
 
   observe_hover_text($(".sidebar__inner"));
+  observe_hover_text($(".sidebar-panel-content"));
+  observe_hover_text($(".chat-text-wrapper").parent());
 }
 
 function sidebar_modal_is_open() {

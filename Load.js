@@ -1,3 +1,4 @@
+console.log("Load.js is executing");
 
 if (window.location.search.includes("abovevtt=true")) {
 	let loadingOverlay = document.createElement('div');
@@ -6,11 +7,20 @@ if (window.location.search.includes("abovevtt=true")) {
 	(document.body || document.documentElement).appendChild(loadingOverlay);
 }
 
+console.log("chrome.runtime.getURL", chrome.runtime.getURL("/"))
+console.log("chrome.runtime.getManifest().version_name", chrome.runtime.getManifest().version_name)
+
 var l = document.createElement('div');
 l.setAttribute("style", "display:none;");
 l.setAttribute("id", "extensionpath");
 l.setAttribute("data-path", chrome.runtime.getURL("/"));
 (document.body || document.documentElement).appendChild(l);
+
+var avttVersion = document.createElement('div');
+avttVersion.setAttribute("style", "display:none;");
+avttVersion.setAttribute("id", "avttversion");
+avttVersion.setAttribute("data-version", chrome.runtime.getManifest().version);
+(document.body || document.documentElement).appendChild(avttVersion);
 
 // load stylesheets
 [
@@ -32,7 +42,7 @@ l.setAttribute("data-path", chrome.runtime.getURL("/"));
 
 
 // load scripts
-let scripts = [
+window.scripts = [
 	// External Dependencies
 	{ src: "libs/jquery-3.6.0.min.js" },
 	{ src: "libs/jquery-ui.min.js" },
@@ -48,7 +58,9 @@ let scripts = [
 	{ src: "libs/rpg-dice-roller.bundle.min.js" },
 	{ src: "libs/color-picker.js" },
 	{ src: "libs/mousetrap.1.6.5.min.js" },
+	{ src: "libs/peerjs.min.js" },
 	// AboveVTT Files
+	{ src: "CoreFunctions.js" },
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
@@ -75,21 +87,24 @@ let scripts = [
 	{ src: "TokensPanel.js" },
 	{ src: "TokenCustomization.js" },
 	{ src: "built-in-tokens.js" },
+	{ src: "PeerManager.js" },
+	{ src: "PeerCommunication.js" },
 	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
+	{ src: "CharactersPage.js" },
 	{ src: "Main.js" },
 	{ src: "MonsterStatBlock.js" }
 ]
 
 // Too many of our scripts depend on each other. 
 // This ensures that they are loaded sequentially to avoid any race conditions.
-
 function injectScript() {
 	if (scripts.length === 0) {
+		delete window.scripts;
 		return;
 	}
-	let nextScript = scripts.shift();
+	let nextScript = window.scripts.shift();
 	let s = document.createElement('script');
 	s.src = chrome.runtime.getURL(nextScript.src);
 	if (nextScript.type !== undefined) {

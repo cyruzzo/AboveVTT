@@ -49,11 +49,11 @@ function get_canvas_max_area() {
 
 class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
-	reload(callback = null) {
+	reload(callback = null) { //This is still used for grid wizard loading since we load so many times.
 		this.switch_scene(this.current_scene_id, null);
 	}
 
-	switch_scene(sceneid, callback = null) { // THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
+	switch_scene(sceneid, callback = null) { //This is still used for grid wizard loading since we load so many times. -- THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
 		this.current_scene_id = sceneid;
 		var self = this;
 		var scene = this.scenes[sceneid];
@@ -157,7 +157,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 
-		// this is no more used in the cloud
+		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
 		load_scenemap(map_url, map_is_video, null, null, function() {
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
@@ -175,17 +175,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					alert("Your grid size is too large! We try to keep grid squares at least 50px for nice looking token.\nWe had to scale the map size, making it unsupported on your browser.\nTry to re-grid your map and reduce the number of grid squares.");
 				}
 			}
-
-			if (scene.scale_factor) {
-				$("#scene_map").width(owidth * scene.scale_factor);
-				$("#scene_map").height(oheight * scene.scale_factor);
-			}
-
+		
 			$("#scene_map").off("load");
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
-			redraw_text()
+			redraw_text();
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()
@@ -209,7 +204,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				callback();
 
 			if (window.EncounterHandler !== undefined) {
-				fetch_and_cache_scene_monster_items(true);
+				fetch_and_cache_scene_monster_items();
 			} else {
 				console.log("Not updating avtt encounter");
 			}
@@ -671,7 +666,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 		if(window.CLOUD){
-			this.scenes=[];
+			const fromStorage = localStorage.getItem(`ScenesHandler${find_game_id()}`);
+			if (fromStorage != null) {
+				this.scenes = $.parseJSON(fromStorage);
+				console.debug("from localStorage", `ScenesHandler${find_game_id()}`, this.scenes);
+			} else {
+				this.scenes=[];
+			}
 			this.current_scene_id=null;
 		}
 		else{ // LEGACY

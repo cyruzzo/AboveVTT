@@ -406,6 +406,25 @@ a.ddbeb-button {
 .ui-resizable-handle {
     z-index: 50100 !important;
 }
+
+#horizontalMinorAdjustmentInput,
+#verticalMinorAdjustmentInput
+{
+    width:100%;
+}
+#horizontalMinorAdjustment,
+#verticalMinorAdjustment
+{
+    position:relative;
+}
+
+#wizard_popup button#resetMinorVerticalAdjustmentRange,
+#wizard_popup button#resetMinorHorizontalAdjustmentRange {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display:inline-block;
+}
 .iframeResizeCover {
     z-index:9999999;
     position:absolute;
@@ -418,8 +437,23 @@ a.ddbeb-button {
     left:-100px;
 }
 
+#exitWizard{
+    z-index: 50;
+    position: fixed;
+    top: 4px;
+    font-size: 20px;
+    line-height: 17px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    background-color: #c53131;
+    background-image: none;
+    border: none;
+}
+
 .body-rpgcharacter-sheet #fog_overlay {
     filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
+
 }
 
 #combat_tracker_inside .ui-resizable-s,
@@ -437,7 +471,7 @@ a.ddbeb-button {
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: -35px;  
+    bottom: -35px;
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
@@ -601,6 +635,107 @@ div#scene_selector,
     height: fit-content !important;
     padding-bottom: 10px;
     border-radius: 15px;
+}
+
+#edit_dialog button:not(.rc-switch){
+    background:none;
+    border-radius:5px;
+
+}
+#edit_dialog input[type='text']{
+    border-radius:5px;
+    border: 1px solid #ddd;
+    box-shadow:none;
+}
+
+
+input[name='darkness_filter_number']{
+    width:50px;
+    font-size:12px;
+}
+#edit_dialog input::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 4px;
+  height: 12px;
+  background: #1b9af0;
+  cursor: pointer;
+  border-radius:7px;
+}
+
+#edit_dialog input[type='range']{
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    height:8px !important;
+    width:110px !important;
+    border-radius:5px;
+}
+
+#edit_dialog input{
+    outline:none;
+}
+label[for='grid_line_width'] {
+    font-size: 10px;
+    position: relative;
+    font-weight: bold;
+    top: -7px;
+    left: -83px;
+    color: #555;
+}
+
+input#grid_line_width {
+    position: relative !important;
+    top: 5px !important;
+    left: 7px;
+}
+
+input[name='gridStrokeNumberInput'] {
+    position: relative;
+    top: 3px;
+    left: -57px;
+    width: 50px;
+}
+
+.isvideotogglelabel {
+    display: inline-block;
+    position: absolute;
+    width: 80px;
+    right: -20px;
+    font-size: 11px;
+    top: 6px;
+    font-size: 9px;
+}
+
+button#player_map_is_video_toggle,
+button#dm_map_is_video_toggle,
+button#gridSubdividedToggle_toggle {
+    height: 12px;
+    top: -6px;
+    color: #555;
+}
+button#gridSubdividedToggle_toggle{
+    top:0px;
+    width:60px;
+}
+
+button#player_map_is_video_toggle::after,
+button#dm_map_is_video_toggle::after,
+button#gridSubdividedToggle_toggle::after
+ {
+    height: 7px;
+    width: 7px;
+}
+
+button#player_map_is_video_toggle.rc-switch-checked::after,
+button#dm_map_is_video_toggle.rc-switch-checked::after {
+    left: 33px;
+}
+button#gridSubdividedToggle_toggle.rc-switch-checked::after{
+    left:50px;
+}
+
+#show_grid_controls{
+    position:relative;
 }
 
 #combat_tracker_inside {
@@ -1472,7 +1607,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 .ct-sidebar__controls .tab-btn.notification,
 .sidebar__controls .tab-btn.notification {
-    background-color: red;
+    background-color: var(--player-border-color, #e40712);;
 }
 .ct-sidebar__controls .tab-btn.notification svg,
 .sidebar__controls .tab-btn.notification svg {
@@ -2826,6 +2961,7 @@ div#importer_area>div>div:first-of-type {
     display: flex;
     width: 100%;
     padding-right: 4px;
+    padding-left: 4px;
 }
 .sidebar-list-item-row-img {
     display: flex;
@@ -3386,6 +3522,9 @@ span.exhaustion-pip.last{
     outline: 2px solid #000;
 }
 
+#grid_toggle:not(.rc-switch-checked) ~ *{
+    display:none !important;
+}
 .sidebar-hover-text-flyout {
     display: block;
     max-width: 400px;
@@ -3867,12 +4006,12 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #combat_tracker_inside #endplayerturn.enabled:hover{
     pointer-events:all;
     color:#fff;
-    background: #c53131;  
+    background: #c53131;
     opacity: 1;
 }
 #combat_tracker_inside #endplayerturn.enabled:active{
     transform: translate(-1px, 1px);
-    box-shadow: inset 1px 1px 4px 0px #0008;  
+    box-shadow: inset 1px 1px 4px 0px #0008;
 }
 
 #tokenOptionsPopup{
@@ -4259,18 +4398,64 @@ input.max_hp[disabled]{
     pointer-events: none;
 }
 
-.import-loading-indicator{
+.import-loading-indicator,
+.paused-indicator,
+.dm-paused-indicator{
     position: fixed;
     z-index: 100000;
     left: calc(50% - 170px);
     top: 50px;
     text-align: center;
-    width: 125px;
+    border-radius:20px;
+    border:1px solid #000;
+    box-shadow: 0px 0px 2px 2px #0008;
+    background: #fff6;
+    height: 112px;
+    width: 200px;
+    backdrop-filter: blur(6px);
+}
+.import-loading-indicator .loading-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+.import-loading-indicator .beholder-dm-screen{
+    top: -20px;
 }
 .import-loading-indicator .loading-status-indicator__subtext.complete {
     overflow: visible;
     white-space: nowrap;
     transform: translate(-50%);
+}
+
+.paused-indicator,
+.dm-paused-indicator{
+    top: unset;
+    bottom: 50px;
+    height: 130px;
+}
+.paused-indicator .paused-status-indicator__subtext,
+.dm-paused-indicator .paused-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.paused-indicator g.beholder-dm-screen__screen path,
+.dm-paused-indicator g.beholder-dm-screen__screen path,  
+.import-loading-indicator g.beholder-dm-screen__screen path {
+    fill: #201911;
+    stroke: #0c0a08;
 }
 
 /*one button*/
@@ -4369,6 +4554,17 @@ input.max_hp[disabled]{
 
 #combat_tracker_inside *:focus{
     outline: none;
+}
+
+[class$='NotRoot'] [class*='-MessageCarrot']{
+    display:none;
+}
+[class$='NotRoot'] [class$='-MessageRoot']{
+    transform: scale(0.8) translateX(-50%);
+    left: calc(50% - 170px) !important;
+    position:fixed;
+    top:10px !important;;
+    transform-origin: center;
 }
 
 /*end combat tracker face lift*/
@@ -4921,6 +5117,28 @@ input.max_hp[disabled]{
     background-position: center;
 }
 
+.markers-icon>input[type='text']{
+    position: absolute;
+    width: 85%;
+    left: 0;
+}
+
+.custom-condition-text{
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    fill: #fff;
+    stroke: #000;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    text-shadow: 1px 1px 2px #000;
+    pointer-events:none;
+}
+.custom-condition.text{
+    pointer-events:auto;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;
@@ -5070,6 +5288,15 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 
+#text_div{
+    pointer-events:none;
+}
+
+#text_div svg text{
+    pointer-events:all;
+    cursor: move;
+}
+
 #scene_map_container{
     overflow: clip;
     transition: opacity 1.5s linear 0s;
@@ -5080,40 +5307,18 @@ div.ddbc-tab-options--layout-pill>button{
     transition: none;
 }
 
-#temp_overlay,
-#fog_overlay,
-#text_overlay,
-#draw_overlay,
-#scene_map_container,
-#grid_overlay{
+#peer_overlay {
+    pointer-events: none;
+}
+
+#scene_map_container{
     transform: scale(var(--scene-scale));
     transform-origin: top left;
 }
+
 @keyframes aurafx-flicker{
-    0%  {filter: blur(10px);transform:scale(1);}
-    10% {filter: blur(15px);transform:scale(1.005);}
-    20% {filter: blur(10px);transform:scale(0.995);}
-    30% {filter: blur(10px);transform:scale(1);}
-    40% {filter: blur(15px);transform:scale(0.995);}
-    50% {filter: blur(20px);transform:scale(1.005);}
-    60% {filter: blur(15px);transform:scale(0.995);}
-    70% {filter: blur(12px);transform:scale(1);}
-    80% {filter: blur(15px);transform:scale(0.995);}
-    90% {filter: blur(10px);transform:scale(1.005);}
-    100%{filter: blur(15px);transform:scale(1);}
-}
-@keyframes aurafx-flicker-no-blur{
-    0%  {transform:scale(1);}
-    10% {transform:scale(1.005);}
-    20% {transform:scale(0.995);}
-    30% {transform:scale(1);}
-    40% {transform:scale(0.995);}
-    50% {transform:scale(1.005);}
-    60% {transform:scale(0.995);}
-    70% {transform:scale(1);}
-    80% {transform:scale(0.995);}
-    90% {transform:scale(1.005);}
-    100%{transform:scale(1);}
+    0%  {filter: blur(10px);}
+    100%{filter: blur(15px);}
 }
 
 .aurafx-flicker{
@@ -5168,6 +5373,23 @@ div.note[id^="ui-id"] .mce-btn button {
     background-color: #fff;
 }
 
+.body-rpgcharacter-sheet #VTT.paused *{
+    pointer-events: none !important;
+}
+
+#pause_players.paused #player-pause-svg,
+#pause_players #player-play-svg{
+    display: none;
+}
+#pause_players #player-pause-svg,
+#pause_players.paused #player-play-svg{
+    display: block;
+}
+
+#pause_players svg{
+    padding:0;
+}
+
 .token-row-drag-handle {
     display: block;
     width: 30px;
@@ -5193,7 +5415,40 @@ div.note[id^="ui-id"] .mce-btn button {
     z-index: 100000;
 }
 
-.styled-number-input {
+.player-card.peerConnected .player-card-content::before,
+.sidebar-list-item-row.player-row.peerConnected::before {
+    content: "";
+    height: 16px;
+    width: 16px;
+    border-radius: 8px;
+    background: var(--player-border-color, gray);;
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    border: 1px solid #f2f2f2; /* white border to help it stand out against dark backgrounds */
+    box-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; /* black shadow border to help it stand out against light backgrounds */
+}
+.player-card.peerConnected .player-card-content:before {
+    top: unset;
+    left: 12px;
+}
+
+.peerCursorPosition {
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    background: rgb(182, 6, 14); /* default DDB color */
+    z-index: 19; /* fog is at z-index 20. Let's keep it below that so we don't show the DM messing around in the dark */
+    border-radius: 8px;
+    opacity: 0.7;
+    border: 1px solid #f2f2f2; /* white border to help it stand out against dark backgrounds */
+    box-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; /* black shadow border to help it stand out against light backgrounds */
+}
+
+
+.styled-number-input,
+#manual_grid_data input {
     height: 15px;
     font-size: 13px;
     font-weight: bold;
@@ -5206,7 +5461,29 @@ div.note[id^="ui-id"] .mce-btn button {
     border-radius: 2px;
 }
 
-.styled-number-input:focus {
+.styled-number-input:focus,
+#manual_grid_data input:focus {
     text-decoration: none;
     border-width: 1px;
+}
+
+#manual_grid_data input,
+input[name='darkness_filter_number'],
+input[name='gridStrokeNumberInput']{
+     text-decoration: none;
+     font-weight:normal;
+     border: 1px solid #ddd;
+}
+input[name='upsq'] {
+    padding-right: 17px;
+}
+
+.ct-decorate-pane__shop .ddbc-collapsible--opened .ddbc-collapsible__header,
+.ct-container-manager .ddbc-collapsible--opened > .ddbc-collapsible__header,
+.ct-equipment-manage-pane .ddbc-collapsible--opened:not(.ddbc-collapsible--minimal) > .ddbc-collapsible__header {
+    top: 0px;
+    z-index: 9;
+}
+.ct-decorate-pane__current-selections {
+    position: relative;
 }

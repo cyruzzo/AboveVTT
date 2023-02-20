@@ -197,6 +197,7 @@ function backfill_mytoken_folders() {
  * token sources are window.pcs, mytokens, mytokensfolders, and builtInTokens
  */
 function rebuild_token_items_list() {
+    if (!window.DM) return;
     console.groupCollapsed("rebuild_token_items_list");
     try {
 
@@ -438,6 +439,7 @@ function redraw_token_list_item(item){
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
 function redraw_token_list(searchTerm, enableDraggable = true) {
+    if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
         return;
@@ -698,6 +700,7 @@ function update_pc_token_rows() {
             }
             
             row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
+            row.css("--player-border-color",  playerData.theme.themeColor);
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
             if(playerData.hp == 0){
@@ -725,6 +728,13 @@ function update_pc_token_rows() {
             } else {
                 row.find(".inspiration").hide();
             }
+        }
+
+        const playerId = getPlayerIDFromSheet(listItem.sheet);
+        const pc = find_pc_by_player_id(playerId);
+        if (pc && pc.color) {
+            update_player_online_indicator(playerId, pc.p2pConnected, pc.color);
+            row.css("--player-border-color",  pc.color);
         }
     });
 }
@@ -844,7 +854,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
-            options.color = "#" + get_player_token_border_color(pc.sheet);
+            options.color = pc.color ? pc.color : get_token_color_by_index(window.pcs.indexOf(pc));
             break;
         case ItemType.Monster:
             let hpVal;
@@ -1818,7 +1828,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
-        clickedItem.activelyFetchingMonsters = true;
+        clickedItem.activelyFetchingMonsters = false;
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
@@ -2358,11 +2368,8 @@ function display_change_image_modal(placedToken) {
     inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can change the image for all tokens of this type by clicking the gear button on the token row in the Tokens tab.</div>`));
 }
 
-const fetch_and_cache_scene_monster_items = mydebounce( (clearCache = false) => {
+const fetch_and_cache_scene_monster_items = mydebounce( () => {
     console.log("fetch_and_cache_scene_monster_items");
-    if (clearCache) {
-        cached_monster_items = {};
-    }
     let monsterIds = [];
     for (let id in window.TOKEN_OBJECTS) {
         let token = window.TOKEN_OBJECTS[id];

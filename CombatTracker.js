@@ -723,6 +723,11 @@ function ct_list_tokens() {
 	return tokenIds;
 }
 
+/** @return {string|undefined} the id of the token that is currently active in the combat tracker; undefined if no active turn */
+function ct_current_turn() {
+	return $('#combat_area tr[data-current=1]').attr("data-target");
+}
+
 function ct_persist(){
 	var data= [];
 	$('#combat_area tr').each( function () {			
@@ -784,7 +789,10 @@ function ct_update_popout(){
 }
 
 function ct_load(data=null){
-	
+	// any time the combat tracker changes, we need to make sure we adjust our cursor streaming for anyone that only wants streaming during "combatTurn"
+	// make sure we do this before the `data` object gets changed below
+	update_peer_communication_with_combat_tracker_data(data);
+
 	if(!data.loading){	
 		$("#combat_area tr[data-current]").removeAttr("data-current");
 		for(i=0;i<data.length;i++){
@@ -807,14 +815,13 @@ function ct_load(data=null){
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
 						window.TOKEN_OBJECTS[data[i]['data-target']].options.max_hp = window.all_token_objects[data[i]['data-target']].options.max_hp;
-						window.TOKEN_OBJECTS[data[i]['data-target']].place();
 					}
 				}
 
 				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
-					if(window.TOKEN_OBJECTS[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
+					if(window.all_token_objects[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
 						$("#endplayerturn").toggleClass('enabled', true);
 						$("#endplayerturn").prop('disabled', false);
 					}
@@ -852,13 +859,15 @@ function ct_load(data=null){
 				window.TOKEN_OBJECTS[data.current].options.current = true;
 				window.TOKEN_OBJECTS[data.current].update_and_sync();
 			}
-			if(window.TOKEN_OBJECTS[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
-				$("#endplayerturn").toggleClass('enabled', true);
-				$("#endplayerturn").prop('disabled', false);
-			}
-			else{
-				$("#endplayerturn").toggleClass('enabled', false);
-				$("#endplayerturn").prop('disabled', true);
+			if(window.all_token_objects[data.current] != undefined){
+				if(window.all_token_objects[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"')){
+					$("#endplayerturn").toggleClass('enabled', true);
+					$("#endplayerturn").prop('disabled', false);
+				}
+				else{
+					$("#endplayerturn").toggleClass('enabled', false);
+					$("#endplayerturn").prop('disabled', true);
+				}
 			}
 
 		}

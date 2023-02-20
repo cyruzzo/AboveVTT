@@ -53,7 +53,7 @@ class WaypointManagerClass {
 		this.timerId = undefined;
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
-			color: "#f2f2f2",
+			color: window.color ? window.color : "#f2f2f2",
 			outlineColor: "black",
 			textColor: "black",
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
@@ -63,7 +63,7 @@ class WaypointManagerClass {
 	resetDefaultDrawStyle(){
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
-			color: "#f2f2f2",
+			color: window.color ? window.color : "#f2f2f2",
 			outlineColor: "black",
 			textColor: "black",
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
@@ -378,8 +378,8 @@ function is_token_under_fog(tokenid){
 		return false;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2));
+	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2));
 	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 	if (pixeldata[3] == 255 && !window.TOKEN_OBJECTS[tokenid].options.revealInFog)
 		return true;
@@ -431,7 +431,7 @@ function check_single_token_visibility(id){
 				{
 					$(auraSelector).hide();
 				}
-				else{
+				else if($(auraSelector).hasClass('islight')){
 					$(auraSelector).show();
 				}
 			}
@@ -440,6 +440,9 @@ function check_single_token_visibility(id){
 				$(selector).show();
 				$(auraSelector).show();
 				//console.log('SHOW '+id);
+			}
+			else if($(auraSelector).hasClass('islight')){
+				$(auraSelector).show();
 			}
 }
 
@@ -474,8 +477,8 @@ function do_check_token_visibility() {
 
 
 	for (var id in window.TOKEN_OBJECTS) {
-		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2));
+		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2));
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		var selector = "div[data-id='" + id + "']";
@@ -489,7 +492,10 @@ function do_check_token_visibility() {
 			$(selector).hide();
 			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
 			{
-					$(auraSelector).hide();
+				$(auraSelector).hide();
+			}
+			else{
+				$(auraSelector).show();
 			}
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -497,6 +503,9 @@ function do_check_token_visibility() {
 			$(selector).show();
 			$(auraSelector).show();
 			//console.log('SHOW '+id);
+		}
+		else if($(auraSelector).hasClass('islight')){
+			$(auraSelector).show();
 		}
 		$(".aura-element[id='aura_" + auraSelectorId + "'] ~ .aura-element[id='aura_" + auraSelectorId + "']").remove();
 	}
@@ -592,12 +601,12 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid();
 	gridContext.setLineDash(dash);
-	let startX = offsetX/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
-	let startY = offsetY/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety/window.CURRENT_SCENE_DATA.scale_factor;
+	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
+	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
 	startX = Math.round(startX)
 	startY = Math.round(startY)
-	const incrementX = hpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
-	const incrementY = vpps/window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor;
+	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
+	const incrementY = vpps|| window.CURRENT_SCENE_DATA.vpps;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
@@ -640,8 +649,8 @@ function draw_wizarding_box() {
 
 	var gridCanvas = document.getElementById("grid_overlay");
 	var gridContext = gridCanvas.getContext("2d");
-	gridCanvas.width = $("#scene_map").width();
-	gridCanvas.height = $("#scene_map").height();
+	gridCanvas.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
+	gridCanvas.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 
 	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -671,30 +680,29 @@ function draw_wizarding_box() {
 	gridContext.stroke();
 
 }
+function ctxScale(canvasid){
+	var canvas = document.getElementById(canvasid);
+	var ctx = canvas.getContext("2d");
+	canvas.width = $("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor;
+  	canvas.height = $("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor;
+	ctx.scale(window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.scale_factor);
+}
 
 function reset_canvas() {
-	$('#temp_overlay').get(0).width =($("#scene_map").width());
-	$('#temp_overlay').get(0).height =($("#scene_map").height());
-
-	$('#fog_overlay').get(0).width =($("#scene_map").width());
-	$('#fog_overlay').get(0).height =($("#scene_map").height());
-
-	$('#grid_overlay').get(0).width =($("#scene_map").width());
-	$('#grid_overlay').get(0).height =($("#scene_map").height());
-
-	$('#text_overlay').get(0).width= ($("#scene_map").width());
-	$('#text_overlay').get(0).height = ($("#scene_map").height());
-
-	$('#draw_overlay').get(0).width = $("#scene_map").width();
-	$('#draw_overlay').get(0).height = $("#scene_map").height();
-
 	$('#darkness_layer').css("width", $("#scene_map").width());
 	$('#darkness_layer').css("height", $("#scene_map").height());
 
 	$("#scene_map_container").css("width", $("#scene_map").width())
 	$("#scene_map_container").css("height", $("#scene_map").height())
 
+	ctxScale('peer_overlay');
+	ctxScale('temp_overlay');
 
+	ctxScale('grid_overlay');
+	ctxScale('draw_overlay');
+
+	$("#text_div").css("width", $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor);
+	$("#text_div").css("height", $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
 
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
@@ -705,8 +713,7 @@ function reset_canvas() {
 	}
 
 
-	canvas.width = $("#scene_map").width();
-	canvas.height = $("#scene_map").height();
+	ctxScale('fog_overlay');
 	if (window.DM) {
 		ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -727,8 +734,8 @@ function reset_canvas() {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		canvas_grid.width = $("#scene_map").width();
-		canvas_grid.height = $("#scene_map").height();
+		canvas_grid.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
+		canvas_grid.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -827,30 +834,21 @@ function redraw_fog() {
  * Redraws all text drawing types from window.DRAWINGS
  */
 function redraw_text() {
-	const canvas = document.getElementById("text_overlay");
-	const context = canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	const textDrawings = window.DRAWINGS.filter(d => d[0].includes("text"))
+	$('#text_div').empty();
+	for(drawing in window.DRAWINGS){
+		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale] = window.DRAWINGS[drawing]
 
-	textDrawings.forEach(drawing => {
-		const [shape, fill, color, x, y, width, height, text, font, stroke] = drawing
-		switch (shape) {
-			case "text":
-				draw_text(context, ...drawing);
-				break;
-			case "text-rect":
-				// incase we have a drop-shadow filter applied still
-				context.filter = "none"
-				drawRect(context,x,y,width,height,color);
-				break;
-			case "text-eraser":
-				context.clearRect(x, y, width, height);
-				break;
-			default:
-				break;
+		if(shape == 'text' && textid == undefined){
+			let newTextId = uuid();
+			setScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
+			window.DRAWINGS[drawing].push(rectColor);
+			window.DRAWINGS[drawing].push(newTextId);
+			window.DRAWINGS[drawing].push(setScale);
 		}
-	})
+   		if(shape == 'text')
+			draw_text(undefined, ...window.DRAWINGS[drawing]);	
+	}
 }
 
 function redraw_drawings() {
@@ -1161,6 +1159,7 @@ function drawing_mousemove(e) {
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw(false);
 					context.fillStyle = '#f50';
+					sendRulerPositionToPeers();
 				}
 			}else{
 				drawLine(context,
@@ -1317,7 +1316,8 @@ function drawing_mouseup(e) {
 		}
 		window.DRAWINGS.push(data);
 		redraw_drawings();
-		window.ScenesHandler.persist();
+		if(window.DM)
+			window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
 		else
@@ -1331,9 +1331,34 @@ function drawing_mouseup(e) {
 		}
 		else if (window.DRAWSHAPE === "text_erase"){
 			// text eraser lives on a different overlay and thus can't just be eraser
-			data[0] = "text-eraser"
-			window.DRAWINGS.push(data);
-			redraw_text();
+			var c = 0;
+			let svgTextArray = $('#text_div svg');
+			for (svgText in svgTextArray) {
+				var curr = svgTextArray[svgText].id;
+
+				if($("#text_div svg[id='" + curr+ "'] text")[0] == undefined)
+					continue;
+				let textImageRect = $("#text_div svg[id='" + curr+ "'] text")[0].getBoundingClientRect();	
+
+				
+				var texttop = (parseInt(textImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
+				var textleft = (parseInt(textImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
+				var textright = (parseInt(textImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
+				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+				let scaledRemainderTop = (textbottom-texttop-textImageRect.height)/2;
+				let scaledRemainderLeft = (textright-textleft-textImageRect.width)/2;
+
+				if (Math.min(window.BEGIN_MOUSEY, mouseY, textbottom-scaledRemainderTop) == textbottom-scaledRemainderTop || Math.max(window.BEGIN_MOUSEY, mouseY, texttop+scaledRemainderTop) == texttop+scaledRemainderTop)
+					continue;
+				if (Math.min(window.BEGIN_MOUSEX, mouseX, textright-scaledRemainderLeft) == textright-scaledRemainderLeft || Math.max(window.BEGIN_MOUSEX, mouseX, textleft+scaledRemainderLeft) == textleft+scaledRemainderLeft)
+					continue;
+
+				c++;
+				// TOKEN IS INSIDE THE SELECTION
+				$("#text_div svg[id='" + curr + "']").remove();
+				window.DRAWINGS = window.DRAWINGS.filter(d => d[9] != curr);
+
+			}
 		}
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
@@ -1608,9 +1633,16 @@ function handle_drawing_button_click() {
 		// allow all drawing to be done above the tokens
 		if ($(clicked).is("#select-button")){
 			$("#temp_overlay").css("z-index", "25")
+			$
 		}
 		else{
 			$("#temp_overlay").css("z-index", "50")
+		}
+		if (($(clicked).is("#text_button") ||$(clicked).is("#text_select")) && $("#text_select").hasClass('ddbc-tab-options__header-heading--is-active')){
+			$("#text_div").css("z-index", "51")
+		}
+		else{
+			$("#text_div").css("z-index", "20")
 		}
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup',  data, drawing_mouseup);
@@ -1815,7 +1847,8 @@ function savePolygon(e) {
 	}
 	clear_temp_canvas()
 
-	window.ScenesHandler.persist();
+	if(window.DM)
+		window.ScenesHandler.persist();
 
 	if(window.CLOUD){
 		if(window.DRAWFUNCTION === "draw"){
@@ -2058,7 +2091,7 @@ function init_draw_menu(buttons){
 
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
-            id='background_color' name='background color' value='#e66465'/>
+            id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#e66465'}'/>
         `)
 
     let colorPickers = draw_menu.find('input.spectrum');
@@ -2113,18 +2146,21 @@ function init_draw_menu(buttons){
 				 	Erase
 			</button>
 		</div>`);
-	draw_menu.append(`
-		<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
-				UNDO
-			</button>
-		</div>`);
-	draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
-				CLEAR
-			</button>
-		</div>`);
+	if(window.DM){
+		draw_menu.append(`
+			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+					UNDO
+				</button>
+			</div>`);
+		draw_menu.append(
+			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
+					CLEAR
+				</button>
+			</div>`);
+	}
+
 
 	draw_menu.find("#delete_drawing").click(function() {
 		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");

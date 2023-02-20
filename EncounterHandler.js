@@ -1,13 +1,4 @@
 
-function is_encounters_page() {
-	return window.location.pathname.includes("/encounters/");
-}
-function is_characters_page() {
-	return window.location.pathname.includes("/characters/");
-}
-function is_campaign_page() {
-	return window.location.pathname.includes("/campaigns/");
-}
 
 const DEFAULT_AVTT_ENCOUNTER_DATA = {
 	"name": "AboveVTT",

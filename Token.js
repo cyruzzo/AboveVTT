@@ -191,9 +191,9 @@ class Token {
 	}
 
 	hasCondition(conditionName) {
-		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.includes(conditionName);
+		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.some(e => e.name === conditionName);
 	}
-	addCondition(conditionName) {
+	addCondition(conditionName, text='') {
 	    if (this.hasCondition(conditionName)) {
 	        // already did
 	        return;
@@ -210,7 +210,11 @@ class Token {
 	            this.options.conditions.push(conditionName);
 	        }
 	    } else {
-	        this.options.custom_conditions.push(conditionName);
+	    	let condition = {
+	    		'name': conditionName,
+	    		'text': text
+	    	}
+	        this.options.custom_conditions.push(condition);
 	    }
 	}
 	
@@ -641,7 +645,7 @@ class Token {
 			'max-height': tokenHeight + 'px',
 		});
 
-		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.options.custom_conditions.includes("Concentration(Reminder)")){
+		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
 			var msgdata = {
 				player: this.options.name,
@@ -1030,11 +1034,10 @@ class Token {
 			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
 		})
 		if (this.options.inspiration){
-			if (!this.options.custom_conditions.includes("Inspiration")){
-				this.options.custom_conditions.push("Inspiration")
+			if (!this.hasCondition("Inspiration")){
+				this.addCondition("Inspiration")
 			}
 		} else{
-			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 		}
 		
@@ -1073,18 +1076,37 @@ class Token {
 				conditionCount++;
 			}
 
-			for (let i = 0; i < this.options.custom_conditions.length; i++) {
+			for (i = 0; i < this.options.custom_conditions.length; i++) {
+				//convert from old colored conditions
+				if(this.options.custom_conditions[i].name == undefined){
+					if(this.options.custom_conditions[i].includes('Inspiration')){
+						this.options.custom_conditions.splice(i, 1)
+						i -= 1;
+						continue;
+					}
+					this.options.custom_conditions.push({
+						'name': DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []}),
+						'text': ''
+					});
+					this.options.custom_conditions.splice(i, 1)
+					i -= 1;
+					continue;
+				}
 				//Security logic to prevent HTML/JS from being injected into condition names.
-				const conditionName = DOMPurify.sanitize( this.options.custom_conditions[i],{ALLOWED_TAGS: []});
+				const conditionName = DOMPurify.sanitize( this.options.custom_conditions[i].name,{ALLOWED_TAGS: []});
+				const conditionText = DOMPurify.sanitize( this.options.custom_conditions[i].text,{ALLOWED_TAGS: []});
 				const conditionSymbolName = DOMPurify.sanitize( conditionName.replaceAll(' ','_').toLowerCase(),{ALLOWED_TAGS: []});
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
-					symbolImage = $(`<div class='condition-img custom-condition' style='background: ${conditionName}' />`);
+					symbolImage = $(`<div class='condition-img custom-condition text' style='background: ${conditionName}'><svg  viewBox="0 0 ${symbolSize} ${symbolSize}">
+									  <text class='custom-condition-text' x="50%" y="50%">${conditionText.charAt(0)}</text>
+									</svg></div>`);
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
 				}
-				symbolImage.attr('title', conditionName);
+
+				symbolImage.attr('title', (conditionText != '') ? conditionText : (conditionName.startsWith("#") ? '' : conditionName));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
 				symbolImage.height(symbolSize + "px");
@@ -1261,6 +1283,7 @@ class Token {
 			if (!this.options.imgsrc.startsWith("class")){
 				if(oldImage.attr("src")!=this.options.imgsrc){
 					oldImage.attr("src",this.options.imgsrc);
+					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", this.options.imgsrc);
 				}
 
 				if(this.options.disableborder){
@@ -1578,10 +1601,13 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
+
+						pauseCursorEventListener = false;
 					},
 
 				start: function (event) {
 					event.stopImmediatePropagation();
+					pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						$("#temp_overlay").css("z-index", "50");
 					}
@@ -1660,9 +1686,9 @@ class Token {
 							window.BEGIN_MOUSEX = tokenMidX;
 							window.BEGIN_MOUSEY = tokenMidY;
 							if (!self.options.disableborder){
-								WaypointManager.drawStyle.color = $(tok).css("--token-border-color")
+								WaypointManager.drawStyle.color = window.color ? window.color : $(tok).css("--token-border-color");
 							}else{
-								WaypointManager.resetDefaultDrawStyle()
+								WaypointManager.resetDefaultDrawStyle();
 							}
 							const canvas = document.getElementById("temp_overlay");
 							const context = canvas.getContext("2d");
@@ -1707,7 +1733,8 @@ class Token {
 						top: tokenPosition.y
 					};
 
-					if (get_avtt_setting_value("allowTokenMeasurement")) {
+					const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
+					if (allowTokenMeasurement) {
 						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
 						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
 
@@ -1715,6 +1742,10 @@ class Token {
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
 						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
+					if (!self.options.hidden) {
+						sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
+					}
+
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
 					// HACK TEST 
@@ -2105,6 +2136,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	window.ScenesHandler.create_update_token(options);
 	if (options.id in window.PLAYER_STATS) {
 		window.MB.handlePlayerData(window.PLAYER_STATS[options.id]);
+		send_player_data_to_all_peers(window.PLAYER_STATS[options.id]);
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
 
@@ -2114,8 +2146,14 @@ function place_token_at_map_point(tokenObject, x, y) {
 }
 
 function array_remove_index_by_value(arr, item) {
-	for (var i = arr.length; i--;) {
-		if (arr[i] === item) { arr.splice(i, 1); }
+	const index = arr.findIndex(e => e.name === item);
+	if (index > -1) {
+	  arr.splice(index, 1)
+	}
+	else{
+		for (var i = arr.length; i--;) {
+			if (arr[i] === item) { arr.splice(i, 1); }
+		}
 	}
 }
 

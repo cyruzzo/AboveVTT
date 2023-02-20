@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.82",
+	"version": "0.85",
 	"content_scripts": [
 		{
 			"matches": [
@@ -50,6 +50,7 @@
 				"Settings.js",
 				"SoundPad.js",
 				"color-picker.js",
+				"CoreFunctions.js",
 				"Text.js",
 				"AOETemplates.js",
 				"SceneData.js",
@@ -73,7 +74,10 @@
 				"DiceRoller.js",
 				"ChatObserver.js",
 				"Main.js",
-				"MonsterStatBlock.js"
+				"MonsterStatBlock.js",
+				"PeerManager.js",
+				"PeerCommunication.js",
+				"CharactersPage.js"
 			],
 			"matches": ["*://*.dndbeyond.com/*"]
 		}

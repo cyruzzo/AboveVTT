@@ -6,7 +6,8 @@ $(function() {
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
 const validExpressionRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
-const slashCommandRegex = /\/(r|roll|save|hit|dmg|skill|w)\s/;
+const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/; // matches only the slash command. EG: `/r 1d20` would only match `/r`
+const multiDiceRollCommandRegex = /\/(r|roll|save|hit|dmg|skill|heal) [^\/]*/g; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
 const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|\+|-|\d+|\s+|STR|str|DEX|dex|CON|con|INT|int|WIS|wis|CHA|cha|PB|pb)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. It is also explicitly declaring the modifiers as case-sensitive because we can't search the entire thing as case-insensitive because the `d` in 1d20 needs to be lowercase.
 
 class DiceRoll {
@@ -184,9 +185,9 @@ class DiceRoll {
      */
     static fromSlashCommand(slashCommandText, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
         let modifiedSlashCommand = replaceModifiersInSlashCommand(slashCommandText);
-        let slashCommand = modifiedSlashCommand.match(slashCommandRegex)?.[0];
-        let expression = modifiedSlashCommand.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
-        let action = modifiedSlashCommand.replace(slashCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+        let slashCommand = modifiedSlashCommand.match(diceRollCommandRegex)?.[0];
+        let expression = modifiedSlashCommand.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+        let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
         console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
         let rollType = undefined;
         if (slashCommand.startsWith("/r")) {
@@ -200,6 +201,8 @@ class DiceRoll {
             rollType = "check";
         } else if (slashCommand.startsWith("/save")) {
             rollType = "save";
+        } else if (slashCommand.startsWith("/heal")) {
+            rollType = "heal";
         }
         return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride);
     }
@@ -521,20 +524,39 @@ function replace_gamelog_message_expressions(listItem) {
 }
 
 function getCharacterStatModifiers() {
-    if (!is_characters_page()) {
-        return undefined;
+    if (is_characters_page()) {
+        let stats = $(".ddbc-ability-summary__secondary");
+        return {
+            "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
+            "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
+            "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
+            "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
+            "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
+            "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
+            "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+        };
     }
-
-    let stats = $(".ddbc-ability-summary__secondary");
-    return {
-        "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
-        "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
-        "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
-        "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
-        "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
-        "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
-        "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
-    };
+    if (window.DM) {
+        try {
+            const sheet = find_currently_open_character_sheet();
+            if (!sheet) return undefined;
+            const stats = window.PLAYER_STATS[sheet];
+            if (!stats || !stats.abilities) return undefined;
+            return {
+                "str": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "str").modifier),
+                "dex": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "dex").modifier),
+                "con": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "con").modifier),
+                "int": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "int").modifier),
+                "wis": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "wis").modifier),
+                "cha": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "cha").modifier),
+                "pb": parseInt($($("#sheet").find("iframe").contents()).find(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+            };
+        } catch (error) {
+            console.warn("getCharacterStatModifiers Failed to parse player stats", error);
+            return undefined;
+        }
+    }
+    return undefined;
 }
 
 /**
@@ -550,19 +572,16 @@ function replaceModifiersInSlashCommand(slashCommandText) {
         return "";
     }
 
-    if (!is_characters_page()) {
-        return slashCommandText; // this only works on the characters page
-    }
-
-    const expression = slashCommandText.replace(slashCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+    const expression = slashCommandText.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
 
     if (expression === undefined || expression === "") {
         return slashCommandText; // no valid expression to parse
     }
 
-    const pc = window.pcs?.find(t => t.sheet.includes(find_currently_open_character_sheet()));
     const modifiers = getCharacterStatModifiers();
-    if (pc === undefined || modifiers === undefined) {
+    if (modifiers === undefined) {
+        // This will happen if the DM opens a character sheet before the character stats have loaded
+        console.warn("getCharacterStatModifiers returned undefined. This command may not parse properly", slashCommandText);
         return slashCommandText; // missing required info
     }
 
