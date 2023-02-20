@@ -202,6 +202,15 @@ function create_text_controller() {
             </button>
         </div>
     `);
+      flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <button id='hide_text' title="hide text" style="height:20px" data-toggle="true" data-key="hide" data-value="hide" class='drawbutton text-option ddbc-tab-options__header-heading menu-option'>
+                    <span class="material-icons">
+                        visibility_off
+                    </span>
+            </button>
+        </div>
+    `);
 
     let colorPickers = flexDiv.find("input.spectrum");
     colorPickers.spectrum({
@@ -484,6 +493,7 @@ function handle_draw_text_submit(event) {
         size: parseInt($(textBox).css("-webkit-text-stroke-width")) / window.ZOOM,
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
+    const hidden = $('#text_controller_inside #hide_text.button-enabled').length>0;
     // data should match params in draw_text
     // push the starting position of y south based on the font size
     let textid = uuid();
@@ -497,7 +507,8 @@ function handle_draw_text_submit(event) {
         stroke,
         rectColor,
         textid,
-        window.CURRENT_SCENE_DATA.scale_factor
+        window.CURRENT_SCENE_DATA.scale_factor,
+        hidden
     ];
     // bake this data and redraw all text
     window.DRAWINGS.push(data);
