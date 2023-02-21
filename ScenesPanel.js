@@ -547,7 +547,7 @@ function edit_scene_dialog(scene_id) {
 			
 			consider_upscaling(window.ScenesHandler.scene);
 			
-			$("exitWizard").remove();
+			$("#exitWizard").remove();
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
@@ -573,7 +573,7 @@ function edit_scene_dialog(scene_id) {
 			else
 				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
-			$("exitWizard").remove();
+			$("#exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
