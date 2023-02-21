@@ -1416,7 +1416,8 @@ class MessageBroker {
 			redraw_text();
 
 
-   	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
+			let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+   	 	let darknessPercent = 100 - parseInt(darknessfilter);
    	 	if(window.DM && darknessPercent < 25){
    	 		darknessPercent = 25;
    	 	}
