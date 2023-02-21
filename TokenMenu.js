@@ -333,6 +333,17 @@ function token_context_menu_expanded(tokenIds, e) {
 			body.append(aurasRow);
 		}
 	}
+	let lightRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Vision/Light</div></div>`);
+	lightRow.hover(function (hoverEvent) {
+		context_menu_flyout("light-flyout", hoverEvent, function(flyout) {
+			flyout.append(build_token_light_inputs(tokenIds));
+		})
+	});
+	if(window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()))){
+		if (!someTokensAreAoe) {
+			body.append(lightRow);
+		}
+	}
 	if(window.DM) {
 		if (tokens.length === 1) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
@@ -399,6 +410,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	}	
 }
 
+
 /**
  * Builds and returns HTML inputs for updating token auras
  * @param tokens {Array<Token>} the token objects that the aura configuration HTML is for
@@ -427,13 +439,9 @@ function build_token_auras_inputs(tokenIds) {
 
 	let hideAuraFromPlayers = tokens.map(t => t.options.hideaurafog);
 	let uniqueHideAuraFromPlayers = [...new Set(hideAuraFromPlayers)];
-
-	let auraLightValues = tokens.map(t => t.options.auraislight);
-	let uniqueAuraLightValues = [...new Set(auraLightValues)];
-
+	
 	let auraOwnedValues = tokens.map(t => t.options.auraowned);
 	let uniqueAuraOwnedValues = [...new Set(auraOwnedValues)];
-
 
 	let auraIsEnabled = null;
 	if (uniqueAuraVisibleValues.length === 1) {
@@ -442,10 +450,6 @@ function build_token_auras_inputs(tokenIds) {
 	let hideAuraIsEnabled = null;
 	if (uniqueHideAuraFromPlayers.length === 1) {
 		hideAuraIsEnabled = uniqueHideAuraFromPlayers[0];
-	}
-	let auraIsLightEnabled = null;
-	if (uniqueAuraLightValues.length === 1) {
-		auraIsLightEnabled = uniqueAuraLightValues[0];
 	}
 	let auraOnlyForOwnedTokenEnabled = null;
 	if (uniqueAuraOwnedValues.length === 1) {
@@ -515,7 +519,7 @@ function build_token_auras_inputs(tokenIds) {
 		],
 		defaultValue: false
 	};
-	let enabledAurasInput = build_toggle_input( auraOption, auraIsEnabled, function(name, newValue) {
+	let enabledAurasInput = build_toggle_input(auraOption, auraIsEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
@@ -527,7 +531,7 @@ function build_token_auras_inputs(tokenIds) {
 			wrapper.find(".token-config-aura-wrapper").hide();
 		}
 	});
-	wrapper.prepend(enabledAurasInput);
+	wrapper.prepend(enabledAurasInput);	
 
 	const auraOnlyForOwnedToken = {
 		name: "auraowned",
@@ -550,33 +554,14 @@ function build_token_auras_inputs(tokenIds) {
 	if(allTokensArePlayer && window.DM)
 		wrapper.find(".token-config-aura-wrapper").prepend(auraOwnedInput);
 	
-	const auraIsLightOption = {
-		name: "auraislight",
-		label: "Change aura appearance to light",
-		type: "toggle",
-		options: [
-			{ value: true, label: "Light", description: "The token's aura is visually changed to look like light and is interacting with the scene darkness filter. If set on a player token and darkness is set on the scene: tokens not in visible 'light' auras are hidden." },
-			{ value: false, label: "Default", description: "Enable this to make the token's aura look like light and interact with the scene darkness filter. If set on a player token and darkness is set on the scene: hide tokens not in visible 'light' auras." }
-		],
-		defaultValue: false
-	};
-	let auraIsLightInput = build_toggle_input(auraIsLightOption, auraIsLightEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
-		tokens.forEach(token => {
-			token.options[name] = newValue;
-			token.place_sync_persist();
-		});
-		check_token_visibility();
-	});	
-	wrapper.find(".token-config-aura-wrapper").prepend(auraIsLightInput);
 
 	const hideAuraInFogOption = {
 		name: "hideaurafog",
 		label: "Hide aura when hidden in fog",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Hidden", description: "The token's aura is hidden from players when the token is in fog." },
-			{ value: false, label: "Visible", description: "The token's aura is visible to players when the token is in fog." }
+			{ value: true, label: "Hidden", description: "The token's aura outside fog is hidden from players when the token is in fog." },
+			{ value: false, label: "Visible", description: "The token's aura outside fog is visible to players when the token is in fog." }
 		],
 		defaultValue: false
 	};
@@ -702,7 +687,229 @@ function build_token_auras_inputs(tokenIds) {
 
 	return body;
 }
+/**
+ * Builds and returns HTML inputs for updating token auras
+ * @param tokens {Array<Token>} the token objects that the aura configuration HTML is for
+ * @returns {*|jQuery|HTMLElement}
+ */
+function build_token_light_inputs(tokenIds) {
+	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
+	let body = $("<div></div>");
+	body.css({
+		width: "290px", // once we add Markers, make this wide enough to contain them all
+		padding: "5px",
+		display: "flex",
+		"flex-direction": "row"
+	})
 
+	let allTokensArePlayer = true;
+	for(token in tokens){
+		if(!window.TOKEN_OBJECTS[tokens[token].options.id].isPlayer()){
+			allTokensArePlayer=false;
+			break;
+		}
+	}
+
+
+	let auraLightValues = tokens.map(t => t.options.auraislight);
+	let uniqueAuraLightValues = [...new Set(auraLightValues)];
+
+
+	let auraIsLightEnabled = null;
+	if (uniqueAuraLightValues.length === 1) {
+		auraIsLightEnabled = uniqueAuraLightValues[0];
+	}
+
+	let aura1Feet = tokens.map(t => t.options.light1.feet);
+	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
+	let aura2Feet = tokens.map(t => t.options.light2.feet);
+	let uniqueAura2Feet = aura2Feet.length === 1 ? aura2Feet[0] : ""
+	let aura1Color = tokens.map(t => t.options.light1.color);
+	let uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : ""
+	let aura2Color = tokens.map(t => t.options.light2.color);
+	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : ""
+
+	let upsq = 'ft';
+	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
+		upsq = window.CURRENT_SCENE_DATA.upsq;
+	}
+	let wrapper = $(`
+		<div class="token-config-aura-input">
+
+			<div class="token-config-aura-wrapper">
+				<div class="token-image-modal-footer-select-wrapper">
+					<div class="token-image-modal-footer-title">Preset</div>
+					<select class="token-config-aura-preset">
+						<option value="none"></option>
+						<option value="candle">Candle (5/5)</option>
+						<option value="torch">Torch / Light (20/20)</option>
+						<option value="lamp">Lamp (15/30)</option>
+						<option value="lantern">Lantern (30/30)</option>
+					</select>
+				</div>
+				<div class="menu-inner-aura">
+					<h3 style="margin-bottom:0px;">Inner Aura</h3>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="light-radius" name="light1" type="text" value="${uniqueAura1Feet}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="light1Color" value="${uniqueAura1Color}" >
+					</div>
+				</div>
+				<div class="menu-outer-aura">
+					<h3 style="margin-bottom:0px;">Outer Aura</h3>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="light-radius" name="light2" type="text" value="${uniqueAura2Feet}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="light2Color" value="${uniqueAura1Color}" >
+					</div>
+				</div>
+			</div>
+		</div>
+	`);
+
+	const lightOption = {
+		name: "auraislight",
+		label: "Enable Token Vision/Light",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Enable", description: "Token has light/vision." },
+			{ value: false, label: "Disable", description: "Token has no light/vision." }
+		],
+		defaultValue: false
+	};
+	let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+		if (newValue) {
+			wrapper.find(".token-config-aura-wrapper").show();
+		} else {
+			wrapper.find(".token-config-aura-wrapper").hide();
+		}
+	});
+	wrapper.prepend(enabledLightInput);
+
+
+	
+
+	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
+	if (auraIsLightEnabled) {
+		wrapper.find(".token-config-aura-wrapper").show();
+	} else {
+		wrapper.find(".token-config-aura-wrapper").hide();
+	}
+
+	let radiusInputs = wrapper.find('input.light-radius');
+	radiusInputs.on('keyup', function(event) {
+		let newRadius = event.target.value;
+		if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {
+			tokens.forEach(token => {
+				token.options[event.target.name]['feet'] = newRadius;
+				token.place_sync_persist();
+			});
+			$(event.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
+		}
+	});
+	radiusInputs.on('focusout', function(event) {
+		let newRadius = event.target.value;
+		if (newRadius !== undefined && newRadius.length > 0) {
+			tokens.forEach(token => {
+				token.options[event.target.name]['feet'] = newRadius;
+				token.place_sync_persist();
+			});
+			$(event.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
+		}
+	});
+
+	let colorPickers = wrapper.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		containerClassName: 'prevent-sidebar-modal-close',
+		clickoutFiresChange: true,
+		appendTo: "parent"
+	});
+	wrapper.find("input[name='light1Color']").spectrum("set", uniqueAura1Color);
+	wrapper.find("input[name='light2Color']").spectrum("set", uniqueAura2Color);
+	const colorPickerChange = function(e, tinycolor) {
+		let auraName = e.target.name.replace("Color", "");
+		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+		console.log(auraName, e, tinycolor);
+		if (e.type === 'change') {
+			tokens.forEach(token => {
+				token.options[auraName]['color'] = color;
+				token.place_sync_persist();
+			});
+			$(e.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
+		} else {
+			tokens.forEach(token => {
+				let selector = "div[data-id='" + token.options.id + "']";
+				let html = $("#tokens").find(selector);
+				let options = Object.assign({}, token.options);
+				options[auraName]['color'] = color;
+				setTokenAuras(html, token.options)
+			});
+		}
+	};
+	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
+	wrapper.find(".token-config-aura-preset").on("change", function(e) {
+		let feet1 = "";
+		let feet2 = "";
+		let preset = e.target.value;
+		if (preset === "candle") {
+			feet1 = "5";
+			feet2 = "5";
+		} else if (preset === "torch") {
+			feet1 = "20";
+			feet2 = "20";
+		} else if (preset === "lamp") {
+			feet1 = "15";
+			feet2 = "30";
+		} else if (preset === "lantern") {
+			feet1 = "30";
+			feet2 = "30";
+		} else {
+			console.warn("somehow got an unexpected preset", preset, e);
+		}
+		let wrapper = $(e.target).closest(".token-config-aura-wrapper");
+		wrapper.find("input[name='light1']").val(feet1);
+		wrapper.find("input[name='light2']").val(feet2);
+
+		let color1 = "rgba(255, 255, 255, 0.8)";
+		let color2 = "rgba(255, 255, 255, 0.4)";
+		wrapper.find("input[name='light1Color']").spectrum("set", color1);
+		wrapper.find("input[name='light2Color']").spectrum("set", color2);
+
+		tokens.forEach(token => {
+			token.options.light1.feet = feet1;
+			token.options.light2.feet = feet2;
+			token.options.light1.color = color1;
+			token.options.light2.color = color2;
+			token.place_sync_persist();
+		});
+	});
+
+	$("#VTTWRAPPER .sidebar-modal").on("remove", function () {
+		console.log("removing sidebar modal!!!");
+		colorPickers.spectrum("destroy");
+	});
+	body.append(wrapper);
+
+	return body;
+}
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStatDiv'></div>");

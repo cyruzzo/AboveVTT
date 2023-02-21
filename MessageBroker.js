@@ -516,12 +516,18 @@ class MessageBroker {
 				window.DRAWINGS.push(msg.data);
 				redraw_drawings();
 				redraw_text();
+				redraw_light_walls();
+				redraw_light();
+				check_token_visibility();
 			}
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
 				redraw_drawings();
 				redraw_text();
+				redraw_light_walls();
+				redraw_light();
+				check_token_visibility();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){
@@ -1381,6 +1387,7 @@ class MessageBroker {
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 		$(".aura-element[id^='aura_'").remove();
+		$(".aura-element[id^='light_'").remove();
 
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
@@ -1403,15 +1410,17 @@ class MessageBroker {
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
+			redraw_light_walls();
+			redraw_light();
 			apply_zoom_from_storage();
 			redraw_text();
+
 
    	 	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter);
    	 	if(window.DM && darknessPercent < 25){
    	 		darknessPercent = 25;
    	 	}
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-
 
 			set_default_vttwrapper_size()
 			

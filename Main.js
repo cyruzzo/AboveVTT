@@ -2773,6 +2773,13 @@ function init_ui() {
 	fog.css("position", "absolute");
 	fog.css("z-index", "21");
 
+
+	const rayCasting = $("<canvas id='raycastingCanvas'></canvas>");
+	rayCasting.css("top", "0");
+	rayCasting.css("left", "0");
+	rayCasting.css("position", "absolute");
+	rayCasting.css("z-index", "22");
+
 	// this overlay sits above other canvases, but below tempOverlay
 	// when peers stream their rulers, this canvas is where we draw them
 	const peerOverlay = $("<canvas id='peer_overlay'></canvas>");
@@ -2859,6 +2866,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
+	VTT.append(rayCasting);
 	mapContainer.append(darknessLayer);
 
 	wrapper = $("<div id='VTTWRAPPER'/>");
@@ -3088,6 +3096,10 @@ function init_buttons() {
 
 	}
 	init_draw_menu(buttons)
+
+	if (window.DM) {
+		init_walls_menu(buttons)
+	}
 
 	setup_aoe_button();
 	handle_drawing_button_click();

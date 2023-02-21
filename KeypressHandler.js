@@ -101,9 +101,20 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
     $('#hide_rightpanel').click()
 });
 
+Mousetrap.bind('w', function () {
+    $('#wall_button').click()
+});
+
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
-    $('#select-button').click();
+
+    if(!$("#wall_button").hasClass("button-enabled")){
+        $('#select-button').click();
+    }
+    else{
+        redraw_light_walls();
+    }
+
     close_token_context_menu();
     $(".draggable-token-creation").addClass("drag-cancelled");
     $(".draggable-sidebar-item-reorder").addClass("drag-cancelled");
