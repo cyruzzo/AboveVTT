@@ -1533,7 +1533,10 @@ class Token {
 			this.update_opacity(tok, true);
 
 			setTokenAuras(tok, this.options);
-			setTokenLight(tok, this.options);
+			if(!this.options.id.includes('exampleToken')){
+				setTokenLight(tok, this.options);
+			}
+
 
 			setTokenBase(tok, this.options);
 
