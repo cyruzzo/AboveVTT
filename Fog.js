@@ -2832,7 +2832,9 @@ let particle = new Particle(new Vector(200, 200), 1);
 
   		
 	  for(j = 0; j < selectedTokens.length; j++){
-	  	selectedIds.push($(selectedTokens[j]).attr('data-id'))
+	  	let tokenId = $(selectedTokens[j]).attr('data-id');
+	  	if(window.TOKEN_OBJECTS[tokenId].options.reveal_light || window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM)
+	  		selectedIds.push(tokenId)
 	  }	  	
   }
 
