@@ -1548,6 +1548,7 @@ class Token {
 				x: 0,
 				y: 0
 			};
+			let selectedOrigCoords = {};
 
 			tok.draggable({
 				handle: "img, [data-img]",
@@ -1658,7 +1659,7 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
-
+						redraw_light();
 						pauseCursorEventListener = false;
 					},
 
@@ -1685,6 +1686,20 @@ class Token {
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
+
+					selectedOrigCoords = {
+						left: $('#scene_map_container').width(),
+						top:$('#scene_map_container').height(),
+						bottom: 0,
+						right:0,
+					};
+					let selectedTokens = $('.tokenselected');
+					for(let i = 0; i < selectedTokens.length; i++){
+						selectedOrigCoords.left = (parseInt($(selectedTokens[i]).css('left')) < selectedOrigCoords.left) ? parseInt($(selectedTokens[i]).css('left')) : selectedOrigCoords.left;
+						selectedOrigCoords.top = (parseInt($(selectedTokens[i]).css('top')) < selectedOrigCoords.top) ? parseInt($(selectedTokens[i]).css('top')) : selectedOrigCoords.top;
+						selectedOrigCoords.bottom = (parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() > selectedOrigCoords.bottom) ? parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() : selectedOrigCoords.bottom;
+						selectedOrigCoords.right = (parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() > selectedOrigCoords.right) ? parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() : selectedOrigCoords.right;
+					}				
 					
 					// for dragging behind iframes so tokens don't "jump" when you move past it
 					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
@@ -1726,7 +1741,6 @@ class Token {
 
 						}												
 					}
-					
 
 					let el = $("#aura_" + self.options.id.replaceAll("/", ""));
 					if (el.length > 0) {
@@ -1785,14 +1799,69 @@ class Token {
 					var original = ui.originalPosition;
 					let tokenX = Math.round((event.pageX - click.x + original.left) / zoom);
 					let tokenY = Math.round((event.pageY - click.y + original.top) / zoom);
-					redraw_light();
-
 					if (should_snap_to_grid()) {
 						tokenX += (window.CURRENT_SCENE_DATA.hpps / 2);
 						tokenY += (window.CURRENT_SCENE_DATA.vpps / 2);
 					}
+					let selectedCoords= {
+						left: $('#scene_map_container').width(),
+						top:$('#scene_map_container').height(),
+						bottom: 0,
+						right:0,
+					};
+					let selectedTokens = $('.tokenselected');
+			
 					
-					// this was copied the place function in this file. We should make this a single function to be used in other places
+					let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+					for(i=0; i<walls.length; i++){
+
+						let wallInitialScale = walls[8];
+						let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+						let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;			
+						let wallLine = [{
+							a: {
+								x: walls[i][3]/adjustedScale,
+								y: walls[i][4]/adjustedScale
+							},
+							b: {
+								x: walls[i][5]/adjustedScale,
+								y: walls[i][6]/adjustedScale
+							}			
+						}]
+						
+	
+
+
+						if(selectedTokens.length < 2){
+							let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenX+parseInt(self.options.size)/2, tokenY+parseInt(self.options.size)/2);
+						
+							if(intersect != false && !window.DM){	
+								tokenX = parseInt(self.orig_left)
+								tokenY = parseInt(self.orig_top)
+							}
+						}
+						else{
+							
+							let differenceLeft =  selectedOrigCoords.left - parseInt(self.orig_left) ;
+							let differenceRight =  selectedOrigCoords.right - parseInt(self.orig_left);
+							let differenceBottom = selectedOrigCoords.bottom - parseInt(self.orig_top);
+							let differenceTop =  selectedOrigCoords.top - parseInt(self.orig_top);
+
+
+							let intersect1 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceLeft, parseInt(self.orig_top)+differenceTop, tokenX+differenceLeft, tokenY+differenceTop);
+							let intersect2 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceLeft, parseInt(self.orig_top)+differenceBottom, tokenX+differenceLeft, tokenY+differenceBottom);
+							let intersect3 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceRight, parseInt(self.orig_top)+differenceTop, tokenX+differenceRight, tokenY+differenceTop);
+							let intersect4 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceRight, parseInt(self.orig_top)+differenceBottom, tokenX+differenceRight, tokenY+differenceBottom);
+						
+
+							if((intersect1 != false || intersect2 != false || intersect3!= false || intersect4 != false || window.RESET_GROUP_TOKENS) && !window.DM ){
+								window.RESET_GROUP_TOKEN = true;
+								tokenX = parseInt(self.orig_left)
+								tokenY = parseInt(self.orig_top)
+							}							
+						}
+					}
+
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 
 					// Constrain token within scene
@@ -1956,8 +2025,8 @@ class Token {
 
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 				draw_selected_token_bounding_box(); // update rotation bounding box
-				redraw_light();
 				check_token_visibility();
+				redraw_light();
 			});
 			
 			console.groupEnd()
@@ -2359,7 +2428,7 @@ function deselect_all_tokens() {
 		}
 	}
 	remove_selected_token_bounding_box();
-	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
 	if(window.DM && darknessPercent < 25){
    	 	darknessPercent = 25; 	
@@ -2526,7 +2595,7 @@ function setTokenLight (token, options) {
 			
 			let lights = $("[id^='light_']");
 			for(let i = 0; i < lights.length; i++){
-				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned & !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
+				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
 					$(lights[i]).css("visibility", "hidden");
 				}
 			}

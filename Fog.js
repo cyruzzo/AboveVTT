@@ -437,11 +437,10 @@ function check_single_token_visibility(id){
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 
 				$(selector).hide();
-				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
-				{
+				if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned){
 					$(auraSelector).hide();
 				}
-				else if($(auraSelector).hasClass('islight')){
+				else{
 					$(auraSelector).show();
 				}
 			}
@@ -502,8 +501,7 @@ function do_check_token_visibility() {
 			
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter == 100)))) {
 			$(selector).hide();
-			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
-			{
+			if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned){
 				$(auraSelector).hide();
 			}
 			else{
@@ -1529,23 +1527,6 @@ function drawing_mouseup(e) {
 			rh: height
 		};
 		
-        let lineLine = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-
-		  // calculate the direction of the lines
-		  let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-		  let uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-
-		  // if uA and uB are between 0-1, lines are colliding
-		  if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
-
-		    // optionally, draw a circle where the lines meet
-		    let intersectionX = x1 + (uA * (x2-x1));
-		    let intersectionY = y1 + (uA * (y2-y1));
-
-		    return {x: Math.floor(intersectionX), y: Math.floor(intersectionY)};
-		  }
-		  return false;
-		}
 	
 		for(i=0; i<walls.length; i++){
 
@@ -2760,7 +2741,7 @@ Particle.prototype.update = function(x, y) {
   this.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls) {
+Particle.prototype.look = function(ctx, walls, lightRadius=100000) {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
   for (let i = 0; i < this.rays.length; i++) {
     
@@ -2773,9 +2754,15 @@ Particle.prototype.look = function(ctx, walls) {
       pt = this.rays[i].cast(walls[j]);
       
       if (pt) {
-        const dist = Vector.dist(this.pos, pt);
+        const dist = (Vector.dist(this.pos, pt) < lightRadius) ? Vector.dist(this.pos, pt) : lightRadius;
         if (dist < record) {
           record = dist;
+          if(dist == lightRadius){
+          	pt = {
+	          	x: this.pos.x+this.rays[i].dir.x * lightRadius,
+	          	y: this.pos.y+this.rays[i].dir.y * lightRadius
+	          }
+          }
           closest=pt;
         }
 
@@ -2803,6 +2790,40 @@ Particle.prototype.draw = function(ctx) {
     this.rays[i].draw(ctx);
   }*/
 };
+function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
+
+	let left = lineLine(x1, y1, x2, y2, rectx, rexty, rectx, rexty+recth);
+	let right = lineLine(x1, y1, x2, y2, rectx+rectw, rexty, rectx+rectw, rexty+recth);
+	
+
+	let top = lineLine(x1, y1, x2, y2, rectx, rexty, rectx+rectw, rexty);
+	let bottom = lineLine(x1, y1, x2, y2, rectx, rexty+recth, rectx+rectw, rexty+recth);
+
+	return{
+		left: left,
+		right: right,
+		top: top,
+		bottom: bottom
+	}
+
+}
+function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
+
+  // calculate the direction of the lines
+  let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+  let uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+
+  // if uA and uB are between 0-1, lines are colliding
+  if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+
+    // optionally, draw a circle where the lines meet
+    let intersectionX = x1 + (uA * (x2-x1));
+    let intersectionY = y1 + (uA * (y2-y1));
+
+    return {x: Math.floor(intersectionX), y: Math.floor(intersectionY)};
+  }
+  return false;
+}
 function redraw_light(){
 
 
@@ -2848,9 +2869,12 @@ let particle = new Particle(new Vector(200, 200), 1);
   		$(light_auras[i]).css("visibility", "hidden");
   	}
   	if(selectedIds.length == 0 || found){
+  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !window.DM && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  			continue; 
   		if(window.DM){
   			$(light_auras[i]).css("visibility", "visible");
   		}
+
   		
 	  	let tokenPos = {
 	  		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
@@ -2859,6 +2883,7 @@ let particle = new Particle(new Vector(200, 200), 1);
 	
   	  particle.update(tokenPos.x, tokenPos.y); // moves particle
 	  particle.draw(context);            // draws particle
+
 	  particle.look(context, walls); 
 	
 	}    // draws rays
