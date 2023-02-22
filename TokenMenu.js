@@ -226,7 +226,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			let group = uuid();
 			tokens.forEach(token => {
 				if (groupAll || clickedItem.hasClass('add-to-group')) {
-					token.options.groupId = id;
+					token.options.groupId = group;
 				} else {
 					token.options.groupId = undefined;
 				}
