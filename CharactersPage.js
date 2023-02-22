@@ -71,7 +71,6 @@ function inject_dice_roll(element) {
   console.debug("inject_dice_roll slashCommands", slashCommands);
   let updatedInnerHtml = element.text();
   for (const command of slashCommands) {
-    console.debug("inject_dice_roll command", command, command[0]);
     try {
       const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG);
       updatedInnerHtml = updatedInnerHtml.replace(command[0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
