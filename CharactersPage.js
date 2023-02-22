@@ -66,8 +66,9 @@ function inject_dice_roll(element) {
     console.debug("inject_dice_roll already has a button")
     return;
   }
-  const slashCommands = element.text().matchAll(multiDiceRollCommandRegex);
-  if (!slashCommands) return;
+  const slashCommands = [...element.text().matchAll(multiDiceRollCommandRegex)];
+  if (slashCommands.length === 0) return;
+  console.debug("inject_dice_roll slashCommands", slashCommands);
   let updatedInnerHtml = element.text();
   for (const command of slashCommands) {
     console.debug("inject_dice_roll command", command, command[0]);
@@ -105,12 +106,12 @@ function observe_character_sheet_changes(documentToObserve) {
     // console.log("dice_roll_observer", mutationList);
 
     // initial injection of our buttons
-    const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-visited')");
+    const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
     notes.each(function() {
       // console.log("dice_roll_observer iterating", mutationList);
       try {
         inject_dice_roll($(this));
-        $(this).addClass("above-vtt-visited"); // make sure we only parse this element once
+        $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once
       } catch (error) {
         console.log("inject_dice_roll failed to process element", error);
       }
