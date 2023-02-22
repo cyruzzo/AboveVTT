@@ -437,11 +437,10 @@ function check_single_token_visibility(id){
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 
 				$(selector).hide();
-				if(window.TOKEN_OBJECTS[id].options.hideaurafog)
-				{
+				if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned){
 					$(auraSelector).hide();
 				}
-				else if($(auraSelector).hasClass('islight')){
+				else{
 					$(auraSelector).show();
 				}
 			}
@@ -502,8 +501,7 @@ function do_check_token_visibility() {
 			
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter == 100)))) {
 			$(selector).hide();
-			if(window.TOKEN_OBJECTS[id].options.hideaurafog)
-			{
+			if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned){
 				$(auraSelector).hide();
 			}
 			else{
@@ -1529,7 +1527,7 @@ function drawing_mouseup(e) {
 			rh: height
 		};
 		
-        let lineLine = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+		let lineLine = function(x1, y1, x2, y2, x3, y3, x4, y4) {
 
 		  // calculate the direction of the lines
 		  let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
@@ -1546,9 +1544,9 @@ function drawing_mouseup(e) {
 		  }
 		  return false;
 		}
-	
-		for(i=0; i<walls.length; i++){
 
+		for(i=0; i<walls.length; i++){
+			
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;
@@ -2760,7 +2758,7 @@ Particle.prototype.update = function(x, y) {
   this.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls) {
+Particle.prototype.look = function(ctx, walls, lightRadius=100000) {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
   for (let i = 0; i < this.rays.length; i++) {
     
@@ -2773,9 +2771,15 @@ Particle.prototype.look = function(ctx, walls) {
       pt = this.rays[i].cast(walls[j]);
       
       if (pt) {
-        const dist = Vector.dist(this.pos, pt);
+        const dist = (Vector.dist(this.pos, pt) < lightRadius) ? Vector.dist(this.pos, pt) : lightRadius;
         if (dist < record) {
           record = dist;
+          if(dist == lightRadius){
+          	pt = {
+	          	x: this.pos.x+this.rays[i].dir.x * lightRadius,
+	          	y: this.pos.y+this.rays[i].dir.y * lightRadius
+	          }
+          }
           closest=pt;
         }
 
@@ -2848,6 +2852,8 @@ let particle = new Particle(new Vector(200, 200), 1);
   		$(light_auras[i]).css("visibility", "hidden");
   	}
   	if(selectedIds.length == 0 || found){
+  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !window.DM && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  			continue; 
   		if(window.DM){
   			$(light_auras[i]).css("visibility", "visible");
   		}

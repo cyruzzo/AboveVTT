@@ -2359,7 +2359,7 @@ function deselect_all_tokens() {
 		}
 	}
 	remove_selected_token_bounding_box();
-	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
 	if(window.DM && darknessPercent < 25){
    	 	darknessPercent = 25; 	
@@ -2526,7 +2526,7 @@ function setTokenLight (token, options) {
 			
 			let lights = $("[id^='light_']");
 			for(let i = 0; i < lights.length; i++){
-				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned & !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
+				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
 					$(lights[i]).css("visibility", "hidden");
 				}
 			}
