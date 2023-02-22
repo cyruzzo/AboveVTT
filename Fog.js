@@ -1527,9 +1527,13 @@ function drawing_mouseup(e) {
 			rh: height
 		};
 		
+
 	
 		for(i=0; i<walls.length; i++){
 
+
+		for(i=0; i<walls.length; i++){
+			
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;
