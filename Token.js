@@ -2356,7 +2356,8 @@ function deselect_all_tokens() {
 		}
 	}
 	remove_selected_token_bounding_box();
-	let darknessPercent = 100 - parseInt(window.CURRENT_SCENE_DATA.darkness_filter); 	
+	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+	let darknessPercent = 100 - parseInt(darknessFilter); 	
 	if(window.DM && darknessPercent < 25){
    	 	darknessPercent = 25; 	
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
@@ -2454,7 +2455,7 @@ function setTokenAuras (token, options) {
 			if(window.TOKEN_OBJECTS[playerTokenId].options.auraowned){
 				let auras = $("[id^='aura_']");
 				for(let i = 0; i < auras.length; i++){
-					if(!auras[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.player_owned){
+					if(!auras[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.reveal_light){
 						$(auras[i]).css("visibility", "hidden");
 					}
 				}
@@ -2522,7 +2523,7 @@ function setTokenLight (token, options) {
 			
 			let lights = $("[id^='light_']");
 			for(let i = 0; i < lights.length; i++){
-				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned){
+				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned & !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
 					$(lights[i]).css("visibility", "hidden");
 				}
 			}

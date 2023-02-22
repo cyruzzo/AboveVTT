@@ -714,10 +714,17 @@ function build_token_light_inputs(tokenIds) {
 	let auraLightValues = tokens.map(t => t.options.auraislight);
 	let uniqueAuraLightValues = [...new Set(auraLightValues)];
 
+	let auraRevealLightValues = tokens.map(t => t.options.reveal_light);
+	let uniqueAuraRevealLightValues = [...new Set(auraRevealLightValues)];
 
 	let auraIsLightEnabled = null;
 	if (uniqueAuraLightValues.length === 1) {
 		auraIsLightEnabled = uniqueAuraLightValues[0];
+	}
+
+	let auraRevealLightEnabled = null;
+	if (uniqueAuraRevealLightValues.length === 1) {
+		auraRevealLightEnabled = uniqueAuraRevealLightValues[0];
 	}
 
 	let aura1Feet = tokens.map(t => t.options.light1.feet);
@@ -795,9 +802,27 @@ function build_token_light_inputs(tokenIds) {
 			wrapper.find(".token-config-aura-wrapper").hide();
 		}
 	});
+	const reveallightOption = {
+		name: "reveal_light",
+		label: "Reveal light to players",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Enable", description: "Token light is revealed to players." },
+			{ value: false, label: "Disable", description: "Token light is revealed to players." }
+		],
+		defaultValue: false
+	};
+	let revealLightInput = build_toggle_input(reveallightOption, auraRevealLightEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
+	
 	wrapper.prepend(enabledLightInput);
 
-
+	wrapper.find(".token-config-aura-wrapper").prepend(revealLightInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
