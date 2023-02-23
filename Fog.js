@@ -814,6 +814,13 @@ function redraw_fog() {
 				// REVEAL POLYGON
 				clearPolygon(ctx, d[0], d[6]);
 			}
+			if (d[4] == 4) {
+				for(adjusted = 0; adjusted < 2; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				// REVEAL BUCKET				
+				bucketFill(ctx, d[0], d[1]);
+			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
@@ -836,6 +843,13 @@ function redraw_fog() {
 				clearPolygon(ctx, d[0], d[6], true);
 				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
 			
+			}
+			if (d[4] == 4) {
+				for(adjusted = 0; adjusted < 2; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+				}
+				// HIDE BUCKET
+				bucketFill(ctx, d[0], d[1], fogStyle, 1);			
 			}
 		}
 	}
@@ -1853,14 +1867,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		redraw_fog();
 	}
 	else if(window.DRAWSHAPE == "paint-bucket"){
-		let particle = new Particle(new Vector(200, 200), 1);
-		let fog = true;
-		let distance = 10000;
-		let canvas = document.getElementById("fog_overlay");
-		let ctx = canvas.getContext("2d");
-	  	particle.update(mouseX, mouseY); // moves particle
-		particle.draw(ctx);            // draws particle
-		data = particle.look(ctx, walls, distance, fog, fog_type_to_int()); 
+		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor]
 		window.REVEALED.push(data);
 		if(window.CLOUD)
 			sync_fog();
@@ -2182,6 +2189,16 @@ function clear_temp_canvas(){
 	const context = canvas.getContext("2d");
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
+
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
+	let particle = new Particle(new Vector(200, 200), 1);
+	let fog = true;
+	let distance = 10000;
+  	particle.update(mouseX, mouseY); // moves particle
+	particle.draw(ctx);            // draws particle
+	particle.look(ctx, window.walls, distance, fog, fogStyle, fogType); 
+}
+
 
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
@@ -2774,7 +2791,7 @@ Particle.prototype.update = function(x, y) {
   this.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogType='') {
+Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0) {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
   for (let i = 0; i < this.rays.length; i++) {
     
@@ -2813,8 +2830,14 @@ Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fo
 	if(!fog){
 		  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
 	}
-	else{			
-		return [lightPolygon, null, null, null, 3, fogType, window.CURRENT_SCENE_DATA.scale_factor];
+	else{	
+		if(fogType == 0){
+			clearPolygon(ctx, lightPolygon);
+		}
+		else{
+			clearPolygon(ctx, lightPolygon, undefined, true);
+			drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
+		}
 	}
   
 };
