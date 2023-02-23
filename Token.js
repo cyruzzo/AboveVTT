@@ -342,21 +342,38 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 
 	}
-	moveUp() {
+	moveUp() {	
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
-		this.move(newTop, this.options.left)
+		let halfWidth = parseFloat(this.options.size)/2;
+		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop));
+		if(intersect== false){
+			this.move(newTop, this.options.left)	
+		}
 	}
 	moveDown() {
 		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
-		this.move(newTop, this.options.left)
+		let halfWidth = parseFloat(this.options.size)/2;
+		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop));
+		if(intersect== false){
+			this.move(newTop, this.options.left)	
+		}
+
 	}
 	moveLeft() {
 		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
-		this.move(this.options.top, newLeft)
+		let halfWidth = parseFloat(this.options.size)/2;
+		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
+		if(intersect== false){
+			this.move(this.options.top, newLeft)	
+		}
 	}
 	moveRight() {
 		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
-		this.move(this.options.top, newLeft)
+		let halfWidth = parseFloat(this.options.size)/2;
+		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
+		if(intersect== false){
+			this.move(this.options.top, newLeft)	
+		}
 	}
 
 	/**

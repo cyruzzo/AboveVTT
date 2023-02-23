@@ -2890,6 +2890,43 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
   }
   return false;
 }
+function detectWallCollision(x1, y1, x2, y2){
+	let selectedCoords= {
+		left: $('#scene_map_container').width(),
+		top:$('#scene_map_container').height(),
+		bottom: 0,
+		right:0,
+	};
+	let selectedTokens = $('.tokenselected');
+
+	
+	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+	for(i=0; i<walls.length; i++){
+
+		let wallInitialScale = walls[8];
+		let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+		let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;			
+		let wallLine = [{
+			a: {
+				x: walls[i][3]/adjustedScale,
+				y: walls[i][4]/adjustedScale
+			},
+			b: {
+				x: walls[i][5]/adjustedScale,
+				y: walls[i][6]/adjustedScale
+			}			
+		}]
+
+		let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, x1, y1, x2, y2);
+	
+		if(intersect != false){					
+			return intersect;	
+		}
+		
+	}
+	return false;
+}
+
 function redraw_light(){
 
 
