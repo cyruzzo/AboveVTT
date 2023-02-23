@@ -2936,7 +2936,7 @@ let particle = new Particle(new Vector(200, 200), 1);
   	}
 
   	if(selectedIds.length == 0 || found){
-  		if(selectedIds.length == 0  && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  		if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue;
   		
   		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
