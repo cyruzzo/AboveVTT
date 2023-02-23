@@ -437,7 +437,7 @@ function check_single_token_visibility(id){
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 
 				$(selector).hide();
-				if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned){
+				if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned && !window.TOKEN_OBJECTS[id].options.reveal_light){
 					$(auraSelector).hide();
 				}
 				else{
@@ -501,7 +501,7 @@ function do_check_token_visibility() {
 			
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter == 100)))) {
 			$(selector).hide();
-			if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned){
+			if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned && !window.TOKEN_OBJECTS[id].options.reveal_light){
 				$(auraSelector).hide();
 			}
 			else{
@@ -2854,7 +2854,7 @@ let particle = new Particle(new Vector(200, 200), 1);
   		
 	  for(j = 0; j < selectedTokens.length; j++){
 	  	let tokenId = $(selectedTokens[j]).attr('data-id');
-	  	if(window.TOKEN_OBJECTS[tokenId].options.reveal_light || window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM)
+	  	if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM)
 	  		selectedIds.push(tokenId)
 	  }	  	
   }
