@@ -969,7 +969,7 @@ function redraw_light_walls(clear=true){
 
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
 		window.walls.push(drawnWall);
-		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
+		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			canvas = document.getElementById("temp_overlay");
 			ctx = canvas.getContext("2d");
 			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
