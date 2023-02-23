@@ -1852,7 +1852,26 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		window.ScenesHandler.persist();
 		redraw_fog();
 	}
+	else if(window.DRAWSHAPE == "paint-bucket"){
+		let particle = new Particle(new Vector(200, 200), 1);
+		let fog = true;
+		let distance = 10000;
+		let canvas = document.getElementById("fog_overlay");
+		let ctx = canvas.getContext("2d");
+	  	particle.update(mouseX, mouseY); // moves particle
+		particle.draw(ctx);            // draws particle
+		data = particle.look(ctx, walls, distance, fog, fog_type_to_int()); 
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_fog();
+	}
 }
+
+
 
 /**
  * Hides all open menus from the top buttons and deselects all the buttons
@@ -2302,6 +2321,13 @@ function init_fog_menu(buttons){
 					Polygon
 			</button>
 		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_paint_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='paint-bucket' data-function="reveal" data-unique-with="fog">
+					Bucket Fill
+			</button>
+		</div>`);
 
 	var clear_button = $("<button class='ddbc-tab-options__header-heading menu-option' data-skip='true' >ALL</button>");
 	clear_button.click(function() {
@@ -2342,6 +2368,13 @@ function init_fog_menu(buttons){
 			<button id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='polygon' data-function="hide" data-unique-with="fog">
 					Polygon
+			</button>
+		</div>`);
+		fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_paint_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='paint-bucket' data-function="hide" data-unique-with="fog">
+					Bucket Fill
 			</button>
 		</div>`);
 
@@ -2741,7 +2774,7 @@ Particle.prototype.update = function(x, y) {
   this.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls, lightRadius=100000) {
+Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogType='') {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
   for (let i = 0; i < this.rays.length; i++) {
     
@@ -2777,7 +2810,13 @@ Particle.prototype.look = function(ctx, walls, lightRadius=100000) {
     } 
   }
   lightPolygon.push(lightPolygon[1]);
-  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+	if(!fog){
+		  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+	}
+	else{			
+		return [lightPolygon, null, null, null, 3, fogType, window.CURRENT_SCENE_DATA.scale_factor];
+	}
+  
 };
 
 Particle.prototype.draw = function(ctx) {
