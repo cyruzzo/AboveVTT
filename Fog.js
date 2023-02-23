@@ -2516,7 +2516,7 @@ function init_draw_menu(buttons){
 		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
 		if (r === true) {
 			// keep only text
-			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text"));
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall'));
 			redraw_drawings()
 			sync_drawings()
 		}
