@@ -1527,26 +1527,9 @@ function drawing_mouseup(e) {
 			rh: height
 		};
 		
-		let lineLine = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-
-		  // calculate the direction of the lines
-		  let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-		  let uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-
-		  // if uA and uB are between 0-1, lines are colliding
-		  if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
-
-		    // optionally, draw a circle where the lines meet
-		    let intersectionX = x1 + (uA * (x2-x1));
-		    let intersectionY = y1 + (uA * (y2-y1));
-
-		    return {x: Math.floor(intersectionX), y: Math.floor(intersectionY)};
-		  }
-		  return false;
-		}
-
+	
 		for(i=0; i<walls.length; i++){
-			
+
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;
@@ -2807,6 +2790,40 @@ Particle.prototype.draw = function(ctx) {
     this.rays[i].draw(ctx);
   }*/
 };
+function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
+
+	let left = lineLine(x1, y1, x2, y2, rectx, rexty, rectx, rexty+recth);
+	let right = lineLine(x1, y1, x2, y2, rectx+rectw, rexty, rectx+rectw, rexty+recth);
+	
+
+	let top = lineLine(x1, y1, x2, y2, rectx, rexty, rectx+rectw, rexty);
+	let bottom = lineLine(x1, y1, x2, y2, rectx, rexty+recth, rectx+rectw, rexty+recth);
+
+	return{
+		left: left,
+		right: right,
+		top: top,
+		bottom: bottom
+	}
+
+}
+function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
+
+  // calculate the direction of the lines
+  let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+  let uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+
+  // if uA and uB are between 0-1, lines are colliding
+  if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+
+    // optionally, draw a circle where the lines meet
+    let intersectionX = x1 + (uA * (x2-x1));
+    let intersectionY = y1 + (uA * (y2-y1));
+
+    return {x: Math.floor(intersectionX), y: Math.floor(intersectionY)};
+  }
+  return false;
+}
 function redraw_light(){
 
 
@@ -2857,6 +2874,7 @@ let particle = new Particle(new Vector(200, 200), 1);
   		if(window.DM){
   			$(light_auras[i]).css("visibility", "visible");
   		}
+
   		
 	  	let tokenPos = {
 	  		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
@@ -2865,6 +2883,7 @@ let particle = new Particle(new Vector(200, 200), 1);
 	
   	  particle.update(tokenPos.x, tokenPos.y); // moves particle
 	  particle.draw(context);            // draws particle
+
 	  particle.look(context, walls); 
 	
 	}    // draws rays

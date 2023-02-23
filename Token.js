@@ -1548,6 +1548,7 @@ class Token {
 				x: 0,
 				y: 0
 			};
+			let selectedOrigCoords = {};
 
 			tok.draggable({
 				handle: "img, [data-img]",
@@ -1658,7 +1659,7 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
-
+						redraw_light();
 						pauseCursorEventListener = false;
 					},
 
@@ -1685,6 +1686,20 @@ class Token {
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
+
+					selectedOrigCoords = {
+						left: $('#scene_map_container').width(),
+						top:$('#scene_map_container').height(),
+						bottom: 0,
+						right:0,
+					};
+					let selectedTokens = $('.tokenselected');
+					for(let i = 0; i < selectedTokens.length; i++){
+						selectedOrigCoords.left = (parseInt($(selectedTokens[i]).css('left')) < selectedOrigCoords.left) ? parseInt($(selectedTokens[i]).css('left')) : selectedOrigCoords.left;
+						selectedOrigCoords.top = (parseInt($(selectedTokens[i]).css('top')) < selectedOrigCoords.top) ? parseInt($(selectedTokens[i]).css('top')) : selectedOrigCoords.top;
+						selectedOrigCoords.bottom = (parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() > selectedOrigCoords.bottom) ? parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() : selectedOrigCoords.bottom;
+						selectedOrigCoords.right = (parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() > selectedOrigCoords.right) ? parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() : selectedOrigCoords.right;
+					}				
 					
 					// for dragging behind iframes so tokens don't "jump" when you move past it
 					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
@@ -1726,7 +1741,6 @@ class Token {
 
 						}												
 					}
-					
 
 					let el = $("#aura_" + self.options.id.replaceAll("/", ""));
 					if (el.length > 0) {
@@ -1785,14 +1799,50 @@ class Token {
 					var original = ui.originalPosition;
 					let tokenX = Math.round((event.pageX - click.x + original.left) / zoom);
 					let tokenY = Math.round((event.pageY - click.y + original.top) / zoom);
-					redraw_light();
-
 					if (should_snap_to_grid()) {
 						tokenX += (window.CURRENT_SCENE_DATA.hpps / 2);
 						tokenY += (window.CURRENT_SCENE_DATA.vpps / 2);
 					}
+					let selectedCoords= {
+						left: $('#scene_map_container').width(),
+						top:$('#scene_map_container').height(),
+						bottom: 0,
+						right:0,
+					};
+					let selectedTokens = $('.tokenselected');
+			
 					
-					// this was copied the place function in this file. We should make this a single function to be used in other places
+					let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+					for(i=0; i<walls.length; i++){
+
+						let wallInitialScale = walls[8];
+						let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+						let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;			
+						let wallLine = [{
+							a: {
+								x: walls[i][3]/adjustedScale,
+								y: walls[i][4]/adjustedScale
+							},
+							b: {
+								x: walls[i][5]/adjustedScale,
+								y: walls[i][6]/adjustedScale
+							}			
+						}]
+						
+	
+
+
+					
+						let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenX+parseInt(self.options.size)/2, tokenY+parseInt(self.options.size)/2);
+					
+						if(intersect != false && !window.DM){	
+							
+							tokenX = (parseInt(self.orig_left) > intersect.x) ? intersect.x : intersect.x - self.options.size;		
+							tokenY = (parseInt(self.orig_top) > intersect.y) ? intersect.y : intersect.y - self.options.size;	
+						}
+						
+					}
+
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 
 					// Constrain token within scene
@@ -1850,16 +1900,50 @@ class Token {
 					if (self.selected && $(".token.tokenselected").length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+						var offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
 						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+
+						
+
+						
+					
 
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
 							if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
+
+
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
-								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								$(tok).css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
+								tokenX = offsetLeft + parseInt(curr.orig_left);
+								tokenY = offsetTop + parseInt(curr.orig_top);
+								let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+								for(i=0; i<walls.length; i++){
+
+									let wallInitialScale = walls[8];
+									let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+									let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;			
+									let wallLine = [{
+										a: {
+											x: walls[i][3]/adjustedScale,
+											y: walls[i][4]/adjustedScale
+										},
+										b: {
+											x: walls[i][5]/adjustedScale,
+											y: walls[i][6]/adjustedScale
+										}			
+									}]
+										
+									let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size)/2, tokenY+parseInt(curr.options.size)/2);
+													
+									if(intersect != false && !window.DM){	
+										tokenX = (parseInt(curr.orig_left) > intersect.x) ? intersect.x : intersect.x - curr.options.size;		
+										tokenY = (parseInt(curr.orig_top) > intersect.y) ? intersect.y : intersect.y - curr.options.size;
+									}
+								}
+						
+								$(tok).css('left', tokenX + "px");
+								$(tok).css('top', tokenY + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
 
@@ -1956,8 +2040,8 @@ class Token {
 
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 				draw_selected_token_bounding_box(); // update rotation bounding box
-				redraw_light();
 				check_token_visibility();
+				redraw_light();
 			});
 			
 			console.groupEnd()
