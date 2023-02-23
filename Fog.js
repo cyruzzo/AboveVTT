@@ -816,10 +816,10 @@ function redraw_fog() {
 			}
 			if (d[4] == 4) {
 				for(adjusted = 0; adjusted < 2; adjusted++){
-					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// REVEAL BUCKET				
-				bucketFill(ctx, d[0], d[1]);
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1]);
 			}
 		}
 		if (d[5] == 1) { // HIDE
@@ -846,10 +846,10 @@ function redraw_fog() {
 			}
 			if (d[4] == 4) {
 				for(adjusted = 0; adjusted < 2; adjusted++){
-					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// HIDE BUCKET
-				bucketFill(ctx, d[0], d[1], fogStyle, 1);			
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1);			
 			}
 		}
 	}
