@@ -969,7 +969,7 @@ function redraw_light_walls(clear=true){
 
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
 		window.walls.push(drawnWall);
-		if (shape == "line" && $('#wall_button').hasClass('button-enabled')) {
+		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
 			canvas = document.getElementById("temp_overlay");
 			ctx = canvas.getContext("2d");
 			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
@@ -2197,6 +2197,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
   	particle.update(mouseX, mouseY); // moves particle
 	particle.draw(ctx);            // draws particle
 	particle.look(ctx, window.walls, distance, fog, fogStyle, fogType); 
+	redraw_light_walls();
 }
 
 
@@ -2425,6 +2426,9 @@ function init_fog_menu(buttons){
 	fog_menu.css("width", "75px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
+	fog_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
+		redraw_light_walls();
+	});
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_fog();
