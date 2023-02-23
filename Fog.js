@@ -2854,7 +2854,7 @@ let particle = new Particle(new Vector(200, 200), 1);
   		
 	  for(j = 0; j < selectedTokens.length; j++){
 	  	let tokenId = $(selectedTokens[j]).attr('data-id');
-	  	if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM)
+	  	if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM || (window.TOKEN_OBJECTS[tokenId].options.itemType == "pc" && window.TOKEN_OBJECTS[tokenId].options.reveal_light))
 	  		selectedIds.push(tokenId)
 	  }	  	
   }
@@ -2868,23 +2868,30 @@ let particle = new Particle(new Vector(200, 200), 1);
   	if(!found && window.DM && !window.TOKEN_OBJECTS[auraId].options.reveal_light){
   		$(light_auras[i]).css("visibility", "hidden");
   	}
+
   	if(selectedIds.length == 0 || found){
-  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !window.DM && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  		if(selectedIds.length == 0  && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  			continue;
+  		
+  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue; 
-  		if(window.DM){
-  			$(light_auras[i]).css("visibility", "visible");
-  		}
+
+
 
   		
+  		if(window.DM)
+  			$(light_auras[i]).css("visibility", "visible");
+  		
+  		
+  				
 	  	let tokenPos = {
 	  		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
 	  		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
 	  	}
 	
-  	  particle.update(tokenPos.x, tokenPos.y); // moves particle
-	  particle.draw(context);            // draws particle
-
-	  particle.look(context, walls); 
+	  	particle.update(tokenPos.x, tokenPos.y); // moves particle
+		particle.draw(context);            // draws particle
+		particle.look(context, walls); 
 	
 	}    // draws rays
   }
