@@ -1484,7 +1484,14 @@ class MessageBroker {
 			window.REVEALED = data.reveals;
 			reset_canvas();
 			redraw_light_walls();
-			redraw_fog();
+			let waitForWalls = function(){
+			    if(typeof window.walls !== "undefined"){
+			        redraw_fog();
+			    }
+			    else{
+			        setTimeout(waitForWalls, 250);
+			    }
+			}
 			//$("#fog_overlay").show();
 		}
 		else {
