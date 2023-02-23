@@ -2865,7 +2865,7 @@ let particle = new Particle(new Vector(200, 200), 1);
 
   	found = selectedIds.some(r=> r == auraId);
 
-  	if(!found && window.DM){
+  	if(!found && window.DM && !window.TOKEN_OBJECTS[auraId].options.reveal_light){
   		$(light_auras[i]).css("visibility", "hidden");
   	}
   	if(selectedIds.length == 0 || found){
