@@ -1832,34 +1832,15 @@ class Token {
 	
 
 
-						if(selectedTokens.length < 2){
-							let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenX+parseInt(self.options.size)/2, tokenY+parseInt(self.options.size)/2);
-						
-							if(intersect != false && !window.DM){	
-								tokenX = parseInt(self.orig_left)
-								tokenY = parseInt(self.orig_top)
-							}
-						}
-						else{
+					
+						let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenX+parseInt(self.options.size)/2, tokenY+parseInt(self.options.size)/2);
+					
+						if(intersect != false && !window.DM){	
 							
-							let differenceLeft =  selectedOrigCoords.left - parseInt(self.orig_left) ;
-							let differenceRight =  selectedOrigCoords.right - parseInt(self.orig_left);
-							let differenceBottom = selectedOrigCoords.bottom - parseInt(self.orig_top);
-							let differenceTop =  selectedOrigCoords.top - parseInt(self.orig_top);
-
-
-							let intersect1 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceLeft, parseInt(self.orig_top)+differenceTop, tokenX+differenceLeft, tokenY+differenceTop);
-							let intersect2 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceLeft, parseInt(self.orig_top)+differenceBottom, tokenX+differenceLeft, tokenY+differenceBottom);
-							let intersect3 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceRight, parseInt(self.orig_top)+differenceTop, tokenX+differenceRight, tokenY+differenceTop);
-							let intersect4 = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+differenceRight, parseInt(self.orig_top)+differenceBottom, tokenX+differenceRight, tokenY+differenceBottom);
-						
-
-							if((intersect1 != false || intersect2 != false || intersect3!= false || intersect4 != false || window.RESET_GROUP_TOKENS) && !window.DM ){
-								window.RESET_GROUP_TOKEN = true;
-								tokenX = parseInt(self.orig_left)
-								tokenY = parseInt(self.orig_top)
-							}							
+							tokenX = (parseInt(self.orig_left) > intersect.x) ? intersect.x : intersect.x - self.options.size;		
+							tokenY = (parseInt(self.orig_top) > intersect.y) ? intersect.y : intersect.y - self.options.size;	
 						}
+						
 					}
 
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
@@ -1919,16 +1900,50 @@ class Token {
 					if (self.selected && $(".token.tokenselected").length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						var offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+						var offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
 						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+
+						
+
+						
+					
 
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
 							if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
+
+
 								//console.log("sposto!");
 								var curr = window.TOKEN_OBJECTS[id];
-								$(tok).css('left', (parseInt(curr.orig_left) + offsetLeft) + "px");
-								$(tok).css('top', (parseInt(curr.orig_top) + offsetTop) + "px");
+								tokenX = offsetLeft + parseInt(curr.orig_left);
+								tokenY = offsetTop + parseInt(curr.orig_top);
+								let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+								for(i=0; i<walls.length; i++){
+
+									let wallInitialScale = walls[8];
+									let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+									let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;			
+									let wallLine = [{
+										a: {
+											x: walls[i][3]/adjustedScale,
+											y: walls[i][4]/adjustedScale
+										},
+										b: {
+											x: walls[i][5]/adjustedScale,
+											y: walls[i][6]/adjustedScale
+										}			
+									}]
+										
+									let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size)/2, tokenY+parseInt(curr.options.size)/2);
+													
+									if(intersect != false && !window.DM){	
+										tokenX = (parseInt(curr.orig_left) > intersect.x) ? intersect.x : intersect.x - curr.options.size;		
+										tokenY = (parseInt(curr.orig_top) > intersect.y) ? intersect.y : intersect.y - curr.options.size;
+									}
+								}
+						
+								$(tok).css('left', tokenX + "px");
+								$(tok).css('top', tokenY + "px");
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
 
