@@ -2859,6 +2859,8 @@ let particle = new Particle(new Vector(200, 200), 1);
 	  }	  	
   }
 
+
+
   for(i = 0; i < light_auras.length; i++)
   {  	
   	let auraId = $(light_auras[i]).attr('data-id');
@@ -2869,9 +2871,17 @@ let particle = new Particle(new Vector(200, 200), 1);
   		$(light_auras[i]).css("visibility", "hidden");
   	}
 
+
   	if(selectedIds.length == 0 || found){
-  		if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
-  			continue;
+  		if(window.playerObserverSetting == true){
+  			if(selectedIds.length == 0  && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned) 			
+  				continue;
+  		}
+  		else{ 			
+  			if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)			
+  				continue; 			
+  		}
+  		
   		
   		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue; 
