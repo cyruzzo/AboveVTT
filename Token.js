@@ -2974,9 +2974,10 @@ function do_draw_selected_token_bounding_box() {
 	grabber2.css('z-index', 100000); // make sure the grabber is above all the tokens
 	grabber2.css('background', '#ced9e0')
 	grabber2.css('border-radius', `${Math.ceil(grabberSize / 2)}px`); // make it round
-	grabber2.css('padding', '1px');
+	grabber2.css('padding', '2px');
 	grabber2.css('cursor', 'move');
-	$("#tokens").append(grabber2);
+	if(window.CURRENTLY_SELECTED_TOKENS.length > 1)
+		$("#tokens").append(grabber2);
 
 	// handle eye grabber dragging
 	let click = {
