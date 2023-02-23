@@ -814,6 +814,13 @@ function redraw_fog() {
 				// REVEAL POLYGON
 				clearPolygon(ctx, d[0], d[6]);
 			}
+			if (d[4] == 4) {
+				for(adjusted = 0; adjusted < 2; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
+				}
+				// REVEAL BUCKET				
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1]);
+			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
@@ -836,6 +843,13 @@ function redraw_fog() {
 				clearPolygon(ctx, d[0], d[6], true);
 				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
 			
+			}
+			if (d[4] == 4) {
+				for(adjusted = 0; adjusted < 2; adjusted++){
+					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
+				}
+				// HIDE BUCKET
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1);			
 			}
 		}
 	}
@@ -955,7 +969,7 @@ function redraw_light_walls(clear=true){
 
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
 		window.walls.push(drawnWall);
-		if (shape == "line" && $('#wall_button').hasClass('button-enabled')) {
+		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			canvas = document.getElementById("temp_overlay");
 			ctx = canvas.getContext("2d");
 			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
@@ -1852,7 +1866,19 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		window.ScenesHandler.persist();
 		redraw_fog();
 	}
+	else if(window.DRAWSHAPE == "paint-bucket"){
+		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor]
+		window.REVEALED.push(data);
+		if(window.CLOUD)
+			sync_fog();
+		else
+			window.MB.sendMessage('custom/myVTT/reveal', data);
+		window.ScenesHandler.persist();
+		redraw_fog();
+	}
 }
+
+
 
 /**
  * Hides all open menus from the top buttons and deselects all the buttons
@@ -2164,6 +2190,17 @@ function clear_temp_canvas(){
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
+	let particle = new Particle(new Vector(200, 200), 1);
+	let fog = true;
+	let distance = 10000;
+  	particle.update(mouseX, mouseY); // moves particle
+	particle.draw(ctx);            // draws particle
+	particle.look(ctx, window.walls, distance, fog, fogStyle, fogType); 
+	redraw_light_walls();
+}
+
+
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
 	let data;
@@ -2302,6 +2339,13 @@ function init_fog_menu(buttons){
 					Polygon
 			</button>
 		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_paint_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='paint-bucket' data-function="reveal" data-unique-with="fog">
+					Bucket Fill
+			</button>
+		</div>`);
 
 	var clear_button = $("<button class='ddbc-tab-options__header-heading menu-option' data-skip='true' >ALL</button>");
 	clear_button.click(function() {
@@ -2344,6 +2388,13 @@ function init_fog_menu(buttons){
 					Polygon
 			</button>
 		</div>`);
+		fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_paint_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='paint-bucket' data-function="hide" data-unique-with="fog">
+					Bucket Fill
+			</button>
+		</div>`);
 
 
 
@@ -2375,6 +2426,9 @@ function init_fog_menu(buttons){
 	fog_menu.css("width", "75px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
+	fog_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
+		redraw_light_walls();
+	});
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_fog();
@@ -2741,7 +2795,7 @@ Particle.prototype.update = function(x, y) {
   this.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls, lightRadius=100000) {
+Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0) {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
   for (let i = 0; i < this.rays.length; i++) {
     
@@ -2777,7 +2831,19 @@ Particle.prototype.look = function(ctx, walls, lightRadius=100000) {
     } 
   }
   lightPolygon.push(lightPolygon[1]);
-  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+	if(!fog){
+		  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+	}
+	else{	
+		if(fogType == 0){
+			clearPolygon(ctx, lightPolygon);
+		}
+		else{
+			clearPolygon(ctx, lightPolygon, undefined, true);
+			drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
+		}
+	}
+  
 };
 
 Particle.prototype.draw = function(ctx) {

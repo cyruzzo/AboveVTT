@@ -1408,9 +1408,10 @@ class MessageBroker {
 			
 
 			reset_canvas();
+			redraw_light_walls();
 			redraw_fog();
 			redraw_drawings();
-			redraw_light_walls();
+
 			redraw_light();
 			apply_zoom_from_storage();
 			redraw_text();
@@ -1482,7 +1483,15 @@ class MessageBroker {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
-			redraw_fog();
+			redraw_light_walls();
+			let waitForWalls = function(){
+			    if(typeof window.walls !== "undefined"){
+			        redraw_fog();
+			    }
+			    else{
+			        setTimeout(waitForWalls, 250);
+			    }
+			}
 			//$("#fog_overlay").show();
 		}
 		else {
