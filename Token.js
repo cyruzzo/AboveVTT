@@ -1237,6 +1237,7 @@ class Token {
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
+						redraw_light();
 					} });
 				
 
@@ -1407,7 +1408,7 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			redraw_light();
+
 			console.groupEnd()
 		}
 		else { // adding a new token
@@ -1677,7 +1678,6 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
-						redraw_light();
 						pauseCursorEventListener = false;
 					},
 

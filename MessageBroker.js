@@ -1305,6 +1305,7 @@ class MessageBroker {
 				}
 
 			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
+			redraw_light();
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
