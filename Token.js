@@ -2580,7 +2580,7 @@ function setTokenLight (token, options) {
 		if (token.parent().parent().find("#light_" + tokenId).length > 0) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 		} else {
-			const lightElement = $(`<div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}' />`);
+			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}' /></div>`);
 			lightElement.contextmenu(function(){return false;});
 			$("#scene_map_container").prepend(lightElement);
 		}
