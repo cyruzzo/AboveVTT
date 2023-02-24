@@ -98,6 +98,7 @@ class Token {
 		tok.stop(true, true);
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
+		redraw_light();
 	}
 
 	isLineAoe() {
@@ -308,6 +309,7 @@ class Token {
 		delete window.all_token_objects[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$("#light_" + id.replaceAll("/", "")).remove();
+		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {
 			if(window.CLOUD && sync){
 				window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
@@ -1236,6 +1238,7 @@ class Token {
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
+						redraw_light();
 					} });
 				
 
@@ -1406,7 +1409,6 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			redraw_light();
 			console.groupEnd()
 		}
 		else { // adding a new token
@@ -2597,7 +2599,7 @@ function setTokenLight (token, options) {
 		if (token.parent().parent().find("#light_" + tokenId).length > 0) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 		} else {
-			const lightElement = $(`<div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}' />`);
+			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}' /></div>`);
 			lightElement.contextmenu(function(){return false;});
 			$("#scene_map_container").prepend(lightElement);
 		}
@@ -2620,6 +2622,7 @@ function setTokenLight (token, options) {
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#light_" + tokenId).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${tokenId}']`).remove();
 	}
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");

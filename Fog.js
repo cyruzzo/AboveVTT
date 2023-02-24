@@ -520,6 +520,7 @@ function do_check_token_visibility() {
 		$(".aura-element[id='light_" + auraSelectorId + "'] ~ .aura-element[id='light_" + auraSelectorId + "']").remove();
 	}
 	console.log("finished");
+	redraw_light();
 }
 
 function circle2(a, b) {
@@ -2795,52 +2796,54 @@ Particle.prototype.update = function(x, y) {
   this.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0) {
+Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true) {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
-  for (let i = 0; i < this.rays.length; i++) {
-    
-    let pt;
-    let closest = null;
-    let record = Infinity;
-    
-    for (let j = 0; j < walls.length; j++) {
-    
-      pt = this.rays[i].cast(walls[j]);
-      
-      if (pt) {
-        const dist = (Vector.dist(this.pos, pt) < lightRadius) ? Vector.dist(this.pos, pt) : lightRadius;
-        if (dist < record) {
-          record = dist;
-          if(dist == lightRadius){
-          	pt = {
-	          	x: this.pos.x+this.rays[i].dir.x * lightRadius,
-	          	y: this.pos.y+this.rays[i].dir.y * lightRadius
+	for (let i = 0; i < this.rays.length; i++) {
+	    
+	    let pt;
+	    let closest = null;
+	    let record = Infinity;
+	    
+	    for (let j = 0; j < walls.length; j++) {
+	    
+	      pt = this.rays[i].cast(walls[j]);
+	      
+	      if (pt) {
+	        const dist = (Vector.dist(this.pos, pt) < lightRadius) ? Vector.dist(this.pos, pt) : lightRadius;
+	        if (dist < record) {
+	          record = dist;
+	          if(dist == lightRadius){
+	          	pt = {
+		          	x: this.pos.x+this.rays[i].dir.x * lightRadius,
+		          	y: this.pos.y+this.rays[i].dir.y * lightRadius
+		          }
 	          }
-          }
-          closest=pt;
-        }
+	          closest=pt;
+	        }
 
-       
-       
-      }
-    }
-    
-    if (closest) {
+	       
+	       
+	      }
+	    }
+	    
+	    if (closest) {
 
-      lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
-    } 
-  }
-  lightPolygon.push(lightPolygon[1]);
-	if(!fog){
-		  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+	      lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    } 
 	}
-	else{	
-		if(fogType == 0){
-			clearPolygon(ctx, lightPolygon);
+  	lightPolygon.push(lightPolygon[1]);
+  	if(draw == true){
+		if(!fog){
+			  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
 		}
-		else{
-			clearPolygon(ctx, lightPolygon, undefined, true);
-			drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
+		else{	
+			if(fogType == 0){
+				clearPolygon(ctx, lightPolygon);
+			}
+			else{
+				clearPolygon(ctx, lightPolygon, undefined, true);
+				drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
+			}
 		}
 	}
   
@@ -2930,40 +2933,40 @@ function detectWallCollision(x1, y1, x2, y2){
 function redraw_light(){
 
 
-let canvas = document.getElementById("raycastingCanvas");
-let context = canvas.getContext("2d");
-let canvasWidth = canvas.width;
-let canvasHeight = canvas.height;
-let offsetX = canvas.offsetLeft;
-let offsetY = canvas.offsetTop;
+	let canvas = document.getElementById("raycastingCanvas");
+	let context = canvas.getContext("2d");
+	let canvasWidth = canvas.width;
+	let canvasHeight = canvas.height;
+	let offsetX = canvas.offsetLeft;
+	let offsetY = canvas.offsetTop;
 
-let particle = new Particle(new Vector(200, 200), 1);
+	let particle = new Particle(new Vector(200, 200), 1);
 
-  context.clearRect(0,0,canvasWidth,canvasHeight);
-  
-  context.fillStyle = "black";
-  context.fillRect(0,0,canvasWidth,canvasHeight);
-  
+	context.clearRect(0,0,canvasWidth,canvasHeight);
 
-  let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
-  let selectedIds = [];
-  let selectedTokens = $('.tokenselected');
-  if(selectedTokens.length>0){
-  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
-  		$('#VTT').css('--darkness-filter', `${100-window.CURRENT_SCENE_DATA.darkness_filter}%`)
-  		$('#raycastingCanvas').css('opacity', '');
-  	}
+	context.fillStyle = "black";
+	context.fillRect(0,0,canvasWidth,canvasHeight);
 
+
+	let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
+	let selectedIds = [];
+	let selectedTokens = $('.tokenselected');
+	if(selectedTokens.length>0){
+	  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
+	  		$('#VTT').css('--darkness-filter', `${100-window.CURRENT_SCENE_DATA.darkness_filter}%`)
+	  		$('#raycastingCanvas').css('opacity', '');
+	  	}
   		
-	  for(j = 0; j < selectedTokens.length; j++){
-	  	let tokenId = $(selectedTokens[j]).attr('data-id');
-	  	if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM || (window.TOKEN_OBJECTS[tokenId].options.itemType == "pc" && window.TOKEN_OBJECTS[tokenId].options.reveal_light))
-	  		selectedIds.push(tokenId)
-	  }	  	
-  }
+		for(j = 0; j < selectedTokens.length; j++){
+		  	let tokenId = $(selectedTokens[j]).attr('data-id');
+			if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM || (window.TOKEN_OBJECTS[tokenId].options.itemType == "pc" && window.TOKEN_OBJECTS[tokenId].options.reveal_light))
+		  		selectedIds.push(tokenId)
+		}	  	
+	 }
 
-  for(i = 0; i < light_auras.length; i++)
-  {  	
+
+  for(i = 0; i < light_auras.length; i++){  	
+
   	let auraId = $(light_auras[i]).attr('data-id');
 
   	found = selectedIds.some(r=> r == auraId);
@@ -2972,13 +2975,26 @@ let particle = new Particle(new Vector(200, 200), 1);
   		$(light_auras[i]).css("visibility", "hidden");
   	}
 
+	let tokenPos = {
+		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
+		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
+	}
+	
+	particle.update(tokenPos.x, tokenPos.y); // moves particle
+	particle.look(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
+	let path = "";
+	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+	for( let i = 0; i < lightPolygon.length; i++ ){
+			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+	}
+	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+
   	if(selectedIds.length == 0 || found){
   		if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue;
   		
-  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.TOKEN_OBJECTS[auraId].options.itemType == "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue; 
-
 
 
   		
@@ -2986,19 +3002,13 @@ let particle = new Particle(new Vector(200, 200), 1);
   			$(light_auras[i]).css("visibility", "visible");
   		
   		
-  				
-	  	let tokenPos = {
-	  		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
-	  		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
-	  	}
-	
-	  	particle.update(tokenPos.x, tokenPos.y); // moves particle
-		particle.draw(context);            // draws particle
+  		particle.update(tokenPos.x, tokenPos.y); // moves particle
 		particle.look(context, walls); 
 	
 	}    // draws rays
-  }
 
+
+  }
 }
 
 
