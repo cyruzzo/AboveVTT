@@ -3092,13 +3092,12 @@ function init_buttons() {
 
 	if (window.DM) {
 		init_fog_menu(buttons)
-		init_text_button(buttons)
-
+		init_walls_menu(buttons)
 	}
 	init_draw_menu(buttons)
 
 	if (window.DM) {
-		init_walls_menu(buttons)
+		init_text_button(buttons)
 	}
 
 	setup_aoe_button();
