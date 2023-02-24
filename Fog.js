@@ -2963,11 +2963,6 @@ function redraw_light(){
 		}	  	
 	 }
 
-	let tokenPos = {
-		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
-		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
-	}
-
 
   for(i = 0; i < light_auras.length; i++){  	
 
