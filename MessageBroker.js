@@ -1305,7 +1305,6 @@ class MessageBroker {
 				}
 
 			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
-			redraw_light();
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
@@ -1413,7 +1412,7 @@ class MessageBroker {
 			redraw_fog();
 			redraw_drawings();
 
-			redraw_light();
+
 			apply_zoom_from_storage();
 			redraw_text();
 
@@ -1476,7 +1475,7 @@ class MessageBroker {
 				enable_draggable_change_folder(ItemType.Scene);
 			}
 			console.groupEnd()
-			
+		
 		});
 
 
@@ -1488,6 +1487,7 @@ class MessageBroker {
 			let waitForWalls = function(){
 			    if(typeof window.walls !== "undefined"){
 			        redraw_fog();
+			        redraw_light();
 			    }
 			    else{
 			        setTimeout(waitForWalls, 250);

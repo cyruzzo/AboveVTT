@@ -98,6 +98,7 @@ class Token {
 		tok.stop(true, true);
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
+		redraw_light();
 	}
 
 	isLineAoe() {
@@ -1408,7 +1409,6 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-
 			console.groupEnd()
 		}
 		else { // adding a new token
@@ -1678,6 +1678,7 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
+						redraw_light();
 						pauseCursorEventListener = false;
 					},
 

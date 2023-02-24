@@ -520,6 +520,7 @@ function do_check_token_visibility() {
 		$(".aura-element[id='light_" + auraSelectorId + "'] ~ .aura-element[id='light_" + auraSelectorId + "']").remove();
 	}
 	console.log("finished");
+	redraw_light();
 }
 
 function circle2(a, b) {
@@ -2978,6 +2979,15 @@ function redraw_light(){
 		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
 		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
 	}
+	
+	particle.update(tokenPos.x, tokenPos.y); // moves particle
+	particle.look(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
+	let path = "";
+	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+	for( let i = 0; i < lightPolygon.length; i++ ){
+			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+	}
+	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
   	if(selectedIds.length == 0 || found){
   		if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
@@ -2997,14 +3007,7 @@ function redraw_light(){
 	
 	}    // draws rays
 
-	particle.update(tokenPos.x, tokenPos.y); // moves particle
-	particle.look(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
-	let path = "";
-	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-	for( let i = 0; i < lightPolygon.length; i++ ){
-			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
-	}
-	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+
   }
 }
 
