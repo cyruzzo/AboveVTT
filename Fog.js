@@ -2970,7 +2970,7 @@ function redraw_light(){
 
   	found = selectedIds.some(r=> r == auraId);
 
-  	if(!found && !window.TOKEN_OBJECTS[auraId].options.reveal_light){
+  	if(!found && window.DM && !window.TOKEN_OBJECTS[auraId].options.reveal_light){
   		$(light_auras[i]).css("visibility", "hidden");
   	}
 
