@@ -308,6 +308,7 @@ class Token {
 		delete window.all_token_objects[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$("#light_" + id.replaceAll("/", "")).remove();
+		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {
 			if(window.CLOUD && sync){
 				window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
@@ -2603,6 +2604,7 @@ function setTokenLight (token, options) {
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#light_" + tokenId).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${tokenId}']`).remove();
 	}
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
