@@ -5448,7 +5448,7 @@ div.ddbc-tab-options--layout-pill>button{
 }
 
 .aura-element.islight{
-    animation: aurafx-flicker 15s infinite alternate ease-in-out;
+    filter:blur(10px);
     z-index: 9;
 }
 #scene_map{
