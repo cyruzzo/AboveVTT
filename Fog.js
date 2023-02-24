@@ -2968,8 +2968,9 @@ function redraw_light(){
 	particle.update(tokenPos.x, tokenPos.y); // moves particle
 	particle.look(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
 	let path = "";
+	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 	for( let i = 0; i < lightPolygon.length; i++ ){
-			path += (i && "L" || "M") + lightPolygon[i].x+','+lightPolygon[i].y
+			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
   }
