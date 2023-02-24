@@ -1499,53 +1499,59 @@ function fill_importer(scene_set, start, searchState = '') {
 
 		b.click(function() {
 			var scene = current_scene;
-		
-			$("#scene_properties input[name='player_map']").val(scene.player_map);
-			$("#scene_properties input[name='dm_map']").val(scene.dm_map);
-			$("#scene_properties input[name='title']").val(scene.title);
-			$("#scene_properties input[name='scale']").val(scene.scale);
+			if($(`.importer_toggle[data-key="Tutorial Maps"][style*='background: red;']`).length>0){
+				window.ScenesHandler.import_completed_scene_with_drawings(scene)
+			}
+			else{
+				$("#scene_properties input[name='player_map']").val(scene.player_map);
+				$("#scene_properties input[name='dm_map']").val(scene.dm_map);
+				$("#scene_properties input[name='title']").val(scene.title);
+				$("#scene_properties input[name='scale']").val(scene.scale);
+
+				
+				scene.player_map_is_video === "1" || scene.player_map.includes("youtube") ?
+					$("#player_map_is_video_toggle").addClass('rc-switch-checked') : 
+					$("#player_map_is_video_toggle").removeClass('rc-switch-checked')
+				
+			
+				scene.dm_map_is_video === "1" ?
+					$("dm_map_is_video_toggle").addClass('rc-switch-checked') : 
+					$("dm_map_is_video_toggle").removeClass('rc-switch-checked')
+
+
+				if (typeof scene.uuid !== "undefined")
+					$("#scene_properties input[name='uuid']").val(scene.uuid);
+
+				if (typeof scene.dm_map_usable !== "undefined")
+					$("#scene_properties input[name='dm_map_usable']").val(scene.dm_map_usable);
+
+				if (typeof scene.hpps !== "undefined")
+					$("#scene_properties input[name='hpps']").val(scene.hpps);
+				if (typeof scene.grid !== "undefined")
+					$("#scene_properties input[name='grid']").val(scene.grid);
+				if (typeof scene.vpps !== "undefined")
+					$("#scene_properties input[name='vpps']").val(scene.vpps);
+				if (typeof scene.snap !== "undefined")
+					$("#scene_properties input[name='snap']").val(scene.snap);
+				if (typeof scene.fpsq !== "undefined")
+					$("#scene_properties input[name='fpsq']").val(scene.fpsq);
+				if (typeof scene.upsq !== "undefined")
+					$("#scene_properties input[name='upsq']").val(scene.upsq);
+				if (typeof scene.offsetx !== "undefined")
+					$("#scene_properties input[name='offsetx']").val(scene.offsetx);
+				if (typeof scene.offsety !== "undefined")
+					$("#scene_properties input[name='offsety']").val(scene.offsety);
+				if (typeof scene.grid_subdivided !== "undefined")
+					$("#scene_properties input[name='grid_subdivided']").val(scene.grid_subdivided);
+				if (typeof scene.scale_factor !== "undefined")
+					$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
+
+				$("#mega_importer").remove();
+				validate_image_input($("input[name=player_map]")[0])
+				validate_image_input($("input[name=dm_map]")[0])
+			}
 
 			
-			scene.player_map_is_video === "1" || scene.player_map.includes("youtube") ?
-				$("#player_map_is_video_toggle").addClass('rc-switch-checked') : 
-				$("#player_map_is_video_toggle").removeClass('rc-switch-checked')
-			
-		
-			scene.dm_map_is_video === "1" ?
-				$("dm_map_is_video_toggle").addClass('rc-switch-checked') : 
-				$("dm_map_is_video_toggle").removeClass('rc-switch-checked')
-
-
-			if (typeof scene.uuid !== "undefined")
-				$("#scene_properties input[name='uuid']").val(scene.uuid);
-
-			if (typeof scene.dm_map_usable !== "undefined")
-				$("#scene_properties input[name='dm_map_usable']").val(scene.dm_map_usable);
-
-			if (typeof scene.hpps !== "undefined")
-				$("#scene_properties input[name='hpps']").val(scene.hpps);
-			if (typeof scene.grid !== "undefined")
-				$("#scene_properties input[name='grid']").val(scene.grid);
-			if (typeof scene.vpps !== "undefined")
-				$("#scene_properties input[name='vpps']").val(scene.vpps);
-			if (typeof scene.snap !== "undefined")
-				$("#scene_properties input[name='snap']").val(scene.snap);
-			if (typeof scene.fpsq !== "undefined")
-				$("#scene_properties input[name='fpsq']").val(scene.fpsq);
-			if (typeof scene.upsq !== "undefined")
-				$("#scene_properties input[name='upsq']").val(scene.upsq);
-			if (typeof scene.offsetx !== "undefined")
-				$("#scene_properties input[name='offsetx']").val(scene.offsetx);
-			if (typeof scene.offsety !== "undefined")
-				$("#scene_properties input[name='offsety']").val(scene.offsety);
-			if (typeof scene.grid_subdivided !== "undefined")
-				$("#scene_properties input[name='grid_subdivided']").val(scene.grid_subdivided);
-			if (typeof scene.scale_factor !== "undefined")
-				$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
-
-			$("#mega_importer").remove();
-			validate_image_input($("input[name=player_map]")[0])
-			validate_image_input($("input[name=dm_map]")[0])
 		});
 
 		entry.append($("<div>").append(b));

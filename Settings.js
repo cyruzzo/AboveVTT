@@ -449,6 +449,35 @@ function cloud_migration(scenedata=null){
 	});
 }
 
+function scene_import_with_drawings(scenedata=null){  //modified cloud_migration / import tool to import a single scene with drawings, walls etc without a refresh
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+	let gameid = find_game_id();
+
+	if(scenedata==null)
+		scenedata=localStorage.getItem("ScenesHandler"+gameid);
+	$.ajax({
+		url:http_api_gw+"/services?action=migrate&campaign="+window.CAMPAIGN_SECRET,
+		type:"POST",
+		contentType:'application/json',
+		data: scenedata,
+		success:function(data){
+			$('#edit_dialog').remove();
+			rebuild_scene_items_list();
+			redraw_scene_list();
+			let scenes = window.ScenesHandler.scenes;
+			let sceneId = scenes[scenes.length-1].id;
+			$(`.scene-item[data-scene-id='${sceneId}'] .dm_scenes_button`).click();
+
+
+		}
+	});
+}
+
+
 function init_settings() {
 
 	let body = settingsPanel.body;

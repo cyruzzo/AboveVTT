@@ -625,6 +625,22 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
 
+	import_completed_scene_with_drawings(scene){
+			const sanitizedScene = [scene].filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
+			console.log("sanitizedScene", sanitizedScene);
+			if(window.CLOUD){
+				if(sanitizedScene[0].notes != undefined){
+					for(let id in sanitizedScene[0].notes){
+						window.JOURNAL.notes[id] = sanitizedScene[0].notes[id];
+					}
+					delete sanitizedScene[0].notes;
+				}
+				window.JOURNAL.persist();
+				window.ScenesHandler.scenes.push(scene);
+				scene_import_with_drawings(JSON.stringify(sanitizedScene));
+			}
+	}
+
 	persist_current_scene(dontswitch=false){
 		let sceneData=Object.assign({},this.scene);
 		sceneData.reveals=[];
