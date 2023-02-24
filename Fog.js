@@ -1523,7 +1523,8 @@ function drawing_mouseup(e) {
 
 			}
 		}
-		window.ScenesHandler.persist();
+		if(window.DM)
+			window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
 		else

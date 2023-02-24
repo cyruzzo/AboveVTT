@@ -1281,7 +1281,9 @@ class MessageBroker {
 			}
 			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
-
+			if(data.groupId == undefined){
+				delete window.TOKEN_OBJECTS[data.id].options.groupId;
+			}
 			window.TOKEN_OBJECTS[data.id].place();
 
 			if(window.DM && msg.loading){
