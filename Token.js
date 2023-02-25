@@ -1161,25 +1161,26 @@ class Token {
 					window.JOURNAL.display_note(self.options.id);
 				})
 
-				let noteHover = `<div class="tooltip-header">
-						        <div class="tooltip-header-icon">
-						            
-						        </div>
-						        <div class="tooltip-header-text">
-						            ${window.JOURNAL.notes[this.options.id].title}
-						        </div>
-						        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
-						           Note
-						        </div>
-						    </div>
-						    <div class="tooltip-body note-text">
-						        <div class="tooltip-body-description">
-						            <div class="tooltip-body-description-text note-text">
-						                ${window.JOURNAL.notes[this.options.id].text}
-						            </div>
-						        </div>
-						    </div>
-						</div>`
+				let noteHover = `<div>
+									<div class="tooltip-header">
+							       	 	<div class="tooltip-header-icon">
+							            
+								        	</div>
+								        <div class="tooltip-header-text">
+								            ${window.JOURNAL.notes[this.options.id].title}
+								        </div>
+								        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+								           Note
+								        </div>
+						    		</div>
+							   		<div class="tooltip-body note-text">
+								        <div class="tooltip-body-description">
+								            <div class="tooltip-body-description-text note-text">
+								                ${window.JOURNAL.notes[this.options.id].text}
+								            </div>
+								        </div>
+								    </div>
+								</div>`
 							
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
 		

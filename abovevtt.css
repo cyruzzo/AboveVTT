@@ -5854,6 +5854,11 @@ button.journal-view-button.journal-button {
     text-align: center
 }
 /* START - New quote box implementation */
+[class*='MessageContainer'] .tooltip-body{
+    padding: 0px;
+}
+
+
 .note-text .text--quote-box {
     display: block !important;
     background-color: var(--compendium-quote-box-color, #FAF8EC) !important; /*Fallback: if the variable isn't declared, it'll default to pale yellow*/
