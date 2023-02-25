@@ -2799,12 +2799,14 @@ Particle.prototype.update = function(x, y) {
 
 Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true) {
 	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
+	let prevClosestWall = null;
+    let prevClosestPoint = null;
 	for (let i = 0; i < this.rays.length; i++) {
 	    
 	    let pt;
 	    let closest = null;
 	    let record = Infinity;
-	    
+
 	    for (let j = 0; j < walls.length; j++) {
 	    
 	      pt = this.rays[i].cast(walls[j]);
@@ -2820,19 +2822,22 @@ Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fo
 		          }
 	          }
 	          closest=pt;
+	          closestWall = walls[j]
 	        }
 
-	       
-	       
 	      }
-	    }
-	    
-	    if (closest) {
-
-	      lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    }	    
+	    if (closest && closestWall != prevClosestWall) {
+	    	if(prevClosestPoint){
+	    		 lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	}
+	    	lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
+	    prevClosestPoint = closest;
+	    prevClosestWall = closestWall;
 	}
-  	lightPolygon.push(lightPolygon[1]);
+	if(lightPolygon[1] != undefined)
+  		lightPolygon.push(lightPolygon[1]);
   	if(draw == true){
 		if(!fog){
 			  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
