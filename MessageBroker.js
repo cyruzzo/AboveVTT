@@ -1459,6 +1459,7 @@ class MessageBroker {
 				}
 				$("#combat_area").empty();
 				ct_load(data);
+				redraw_light();
 			}
 
 
