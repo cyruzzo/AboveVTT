@@ -520,7 +520,6 @@ function do_check_token_visibility() {
 		$(".aura-element[id='light_" + auraSelectorId + "'] ~ .aura-element[id='light_" + auraSelectorId + "']").remove();
 	}
 	console.log("finished");
-	redraw_light();
 }
 
 function circle2(a, b) {
