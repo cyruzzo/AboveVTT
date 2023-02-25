@@ -1474,11 +1474,13 @@ function drawing_mouseup(e) {
 			window.StoredWalls = [];
 			window.wallToStore = [];
 			window.MOUSEDOWN = false;
+			redraw_light_walls();
+			redraw_light();
 		}
 
 		
 		redraw_drawings();
-		redraw_light_walls();
+
 		if(window.DM)
 			window.ScenesHandler.persist();
 		if(window.CLOUD)
@@ -1723,6 +1725,7 @@ function drawing_mouseup(e) {
  		
 
 		redraw_light_walls();
+		redraw_light();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
