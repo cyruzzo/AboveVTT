@@ -1662,6 +1662,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
+						redraw_light();
 						self.update_and_sync(event, false);
 						if (self.selected ) {
 							for (let tok of $(".token.tokenselected")){
@@ -1678,7 +1679,7 @@ class Token {
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
 						window.toggleSnap=false;
-						redraw_light();
+
 						pauseCursorEventListener = false;
 					},
 
@@ -1802,7 +1803,10 @@ class Token {
 							
 							WaypointManager.setCanvas(canvas);
 					}
-
+					if(window.DM){
+				   		$("[id^='light_']").css('visibility', "visible");
+				   	}
+				   	redraw_light();
 					remove_selected_token_bounding_box();
 				},
 
@@ -2060,6 +2064,9 @@ class Token {
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 				draw_selected_token_bounding_box(); // update rotation bounding box
 				check_token_visibility();
+				if(window.DM){
+			   		$("[id^='light_']").css('visibility', "visible");
+			   	}
 				redraw_light();
 			});
 			
