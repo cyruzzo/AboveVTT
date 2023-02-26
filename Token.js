@@ -1805,8 +1805,8 @@ class Token {
 					}
 					if(window.DM){
 				   		$("[id^='light_']").css('visibility', "visible");
+				   		redraw_light();
 				   	}
-				   	redraw_light();
 					remove_selected_token_bounding_box();
 				},
 
