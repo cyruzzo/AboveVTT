@@ -10,6 +10,7 @@ function sync_drawings(){
 }
 
 
+
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 
 	if (typeof stroke == "undefined" ) {
@@ -2195,12 +2196,13 @@ function clear_temp_canvas(){
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
-	let particle = new Particle(new Vector(200, 200), 1);
+	if(window.PARTICLE == undefined){
+		initParticle(new Vector(200, 200), 1);
+	}
 	let fog = true;
 	let distance = 10000;
-  	particle.update(mouseX, mouseY); // moves particle
-	particle.draw(ctx);            // draws particle
-	particle.look(ctx, window.walls, distance, fog, fogStyle, fogType); 
+  	particleUpdate(mouseX, mouseY); // moves particle
+	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType); 
 	redraw_light_walls();
 }
 
@@ -2771,39 +2773,28 @@ Ray.prototype.cast = function(boundary) {
 };
 
 // particle object
-let Particle = function(pos, divisor) {
+function initParticle(pos, divisor) {
 	if(window.walls == undefined)
 		return;
-	this.pos = pos;
-	this.rays = [];
-	this.divisor =  divisor || 40; // the degree of approximation
-	for (let a = 0; a < 360; a += this.divisor) {
-		for(let i = 0; i < window.walls.length; i++){
-	  		let wallEdgeAngle1 = Math.atan2(window.walls[i].a.y - this.pos.y*window.CURRENT_SCENE_DATA.scale_factor, window.walls[i].a.x - this.pos.x*window.CURRENT_SCENE_DATA.scale_factor )* (180/Math.PI)
-	  		let wallEdgeAngle2 = Math.atan2(window.walls[i].b.y - this.pos.y*window.CURRENT_SCENE_DATA.scale_factor, window.walls[i].b.x - this.pos.x*window.CURRENT_SCENE_DATA.scale_factor )* (180/Math.PI);		
-	  		if( wallEdgeAngle1 > a-this.divisor && wallEdgeAngle1 < a )
-	  			this.rays.push(new Ray(this.pos, degreeToRadian(wallEdgeAngle1)));
-	  		if( wallEdgeAngle2 > a-this.divisor && wallEdgeAngle2 < a )
-	  			this.rays.push(new Ray(this.pos, degreeToRadian(wallEdgeAngle2)));
-	  	}
-	    this.rays.push(new Ray(this.pos, degreeToRadian(a)));
-
-  }
-
-
-  
+	window.PARTICLE = {};
+	window.PARTICLE.pos = pos;
+	window.PARTICLE.rays = [];
+	window.PARTICLE.divisor =  divisor || 40; // the degree of approximation
+	for (let a = 0; a < 360; a += window.PARTICLE.divisor) {
+    	window.PARTICLE.rays.push(new Ray(window.PARTICLE.pos, degreeToRadian(a)));
+	}
 };
 
-Particle.prototype.update = function(x, y) {
-  this.pos.x = x;
-  this.pos.y = y;
+function particleUpdate(x, y) {
+	window.PARTICLE.pos.x = x;
+	window.PARTICLE.pos.y = y;
 };
 
-Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true) {
-	lightPolygon = [{x: this.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: this.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true) {
+	lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	let prevClosestWall = null;
     let prevClosestPoint = null;
-	for (let i = 0; i < this.rays.length; i++) {
+	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
 	    
 	    let pt;
 	    let closest = null;
@@ -2811,16 +2802,16 @@ Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fo
 
 	    for (let j = 0; j < walls.length; j++) {
 	    
-	      pt = this.rays[i].cast(walls[j]);
+	      pt = window.PARTICLE.rays[i].cast(walls[j]);
 	      
 	      if (pt) {
-	        const dist = (Vector.dist(this.pos, pt) < lightRadius) ? Vector.dist(this.pos, pt) : lightRadius;
+	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
 	        if (dist < record) {
 	          record = dist;
 	          if(dist == lightRadius){
 	          	pt = {
-		          	x: this.pos.x+this.rays[i].dir.x * lightRadius,
-		          	y: this.pos.y+this.rays[i].dir.y * lightRadius
+		          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+		          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
 		          }
 	          }
 	          closest=pt;
@@ -2857,16 +2848,6 @@ Particle.prototype.look = function(ctx, walls, lightRadius=100000, fog=false, fo
   
 };
 
-Particle.prototype.draw = function(ctx) {
-  ctx.beginPath();
-  ctx.arc(this.pos.x, this.pos.y, 5, 0, 2 * Math.PI);
-  ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
-  ctx.stroke();
-  /* test line to show all rays
-  for (let i = 0; i < this.rays.length; i++) {
-    this.rays[i].draw(ctx);
-  }*/
-};
 function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
 
 	let left = lineLine(x1, y1, x2, y2, rectx, rexty, rectx, rexty+recth);
@@ -2948,7 +2929,10 @@ function redraw_light(){
 	let offsetX = canvas.offsetLeft;
 	let offsetY = canvas.offsetTop;
 
-	let particle = new Particle(new Vector(200, 200), 1);
+	if(window.PARTICLE == undefined){
+		initParticle(new Vector(200, 200), 1);
+	}
+
 
 	context.clearRect(0,0,canvasWidth,canvasHeight);
 
@@ -2980,14 +2964,15 @@ function redraw_light(){
   	found = selectedIds.some(r=> r == auraId);
 
 
+
 	let tokenPos = {
 		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
 		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
 	}
 	
 
-	particle.update(tokenPos.x, tokenPos.y); // moves particle
-	particle.look(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
+	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
+	particleLook(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
 
 	let path = "";
 	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -3010,9 +2995,12 @@ function redraw_light(){
 	  		$(light_auras[i]).css("visibility", "visible");
 	  	}
 
+
+  
   		
-  		particle.update(tokenPos.x, tokenPos.y); // moves particle
-		particle.look(context, walls); 
+  		
+		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+
 	
 	}    // draws rays
 
