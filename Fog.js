@@ -1475,11 +1475,13 @@ function drawing_mouseup(e) {
 			window.StoredWalls = [];
 			window.wallToStore = [];
 			window.MOUSEDOWN = false;
+			redraw_light_walls();
+			redraw_light();
 		}
 
 		
 		redraw_drawings();
-		redraw_light_walls();
+
 		if(window.DM)
 			window.ScenesHandler.persist();
 		if(window.CLOUD)
@@ -1724,6 +1726,7 @@ function drawing_mouseup(e) {
  		
 
 		redraw_light_walls();
+		redraw_light();
 		window.ScenesHandler.persist();
 		if(window.CLOUD)
 			sync_drawings();
@@ -2967,8 +2970,10 @@ function redraw_light(){
 		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
 	}
 	
+
 	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 	particleLook(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
+
 	let path = "";
 	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 	for( let i = 0; i < lightPolygon.length; i++ ){
@@ -2976,6 +2981,9 @@ function redraw_light(){
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
+  	if(!found && window.DM && !window.TOKEN_OBJECTS[auraId].options.reveal_light){
+  		$(light_auras[i]).css("visibility", "hidden");
+  	}
   	if(selectedIds.length == 0 || found){
   		if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue;
@@ -2983,11 +2991,16 @@ function redraw_light(){
   		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue; 
 
+	  	if(window.DM){
+	  		$(light_auras[i]).css("visibility", "visible");
+	  	}
+
 
   
   		
   		
 		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+
 	
 	}    // draws rays
 
