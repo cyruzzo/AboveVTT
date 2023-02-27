@@ -1160,7 +1160,92 @@ class Token {
 				conditionContainer.dblclick(function(){
 					window.JOURNAL.display_note(self.options.id);
 				})
-				symbolImage.attr('title', window.JOURNAL.notes[this.options.id].plain);
+
+				let noteHover = `<div>
+									<div class="tooltip-header">
+							       	 	<div class="tooltip-header-icon">
+							            
+								        	</div>
+								        <div class="tooltip-header-text">
+								            ${window.JOURNAL.notes[this.options.id].title}
+								        </div>
+								        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+								           Note
+								        </div>
+						    		</div>
+							   		<div class="tooltip-body note-text">
+								        <div class="tooltip-body-description">
+								            <div class="tooltip-body-description-text note-text">
+								                ${window.JOURNAL.notes[this.options.id].text}
+								            </div>
+								        </div>
+								    </div>
+								</div>`
+							
+				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
+		
+				let hoverNoteTimer;
+				symbolImage.on({
+					'mouseover': function(e){
+						hoverNoteTimer = setTimeout(function () {
+			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+					            const tooltipHtml = $(noteHover);
+					            flyout.append(tooltipHtml);
+					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+					            sendToGamelogButton.css({ "float": "right" });
+					            sendToGamelogButton.on("click", function(ce) {
+					                ce.stopPropagation();
+					                ce.preventDefault();
+					                const tooltipWithoutButton = $(noteHover);
+					                tooltipWithoutButton.css({
+					                    "width": "100%",
+					                    "max-width": "100%",
+					                    "min-width": "100%"
+					                });
+					                send_html_to_gamelog(noteHover);
+					            });
+					            flyout.css({
+					            	left: flyoutLocation.x - scrollX+20,
+					            	top: flyoutLocation.y - scrollY,
+					            	width: '400px'
+					            })
+
+					            const buttonFooter = $("<div></div>");
+					            buttonFooter.css({
+					                height: "40px",
+					                width: "100%",
+					                position: "relative",
+					                background: "#fff"
+					            });
+					            flyout.append(buttonFooter);
+					            buttonFooter.append(sendToGamelogButton);
+
+					      
+
+					            flyout.hover(function (hoverEvent) {
+					                if (hoverEvent.type === "mouseenter") {
+					                    clearTimeout(removeToolTipTimer);
+					                    removeToolTipTimer = undefined;
+					                } else {
+					                    remove_tooltip(500);
+					                }
+					            });
+					            flyout.css("background-color", "#fff");
+					        });
+			        	}, 500);		
+					
+					},
+					'mouseout': function(e){
+						clearTimeout(hoverNoteTimer)
+					}
+			
+			    });
+			
+			    
+							
+
+
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
 				symbolImage.height(symbolSize + "px");

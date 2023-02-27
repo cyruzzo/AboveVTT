@@ -5854,6 +5854,11 @@ button.journal-view-button.journal-button {
     text-align: center
 }
 /* START - New quote box implementation */
+[class*='MessageContainer'] .tooltip-body{
+    padding: 0px;
+}
+
+
 .note-text .text--quote-box {
     display: block !important;
     background-color: var(--compendium-quote-box-color, #FAF8EC) !important; /*Fallback: if the variable isn't declared, it'll default to pale yellow*/
@@ -6067,12 +6072,12 @@ button.journal-view-button.journal-button {
 }
 
 
-.note-text aside.rules-text a {
+.note-text .rules-text a {
     color: #129b54!important;
     transition: .3s
 }
 
-.note-text aside.rules-text p:first-child {
+.note-text .rules-text p:first-child {
     font-size: 16px
 }
 
@@ -6092,9 +6097,9 @@ button.journal-view-button.journal-button {
 }
 
 
-.note-text aside.block-torn-paper,
-.note-text aside.epigraph,
-.note-text aside.epigraph--with-author {
+.note-text .block-torn-paper,
+.note-text .epigraph,
+.note-text .epigraph--with-author {
     overflow: auto;
     background: var(--theme-quote-bg-color,#fff);
     color: var(--theme-quote-fg-color,#242527);
@@ -6110,12 +6115,12 @@ button.journal-view-button.journal-button {
     position: relative
 }
 
-.note-text aside.epigraph--with-author p:last-child {
+.note-text .epigraph--with-author p:last-child {
     font-style: italic;
     text-align: right
 }
 
-.note-text aside.rules-text {
+.note-text .rules-text {
     overflow: auto;
     display: block;
     margin: 30px 0;
@@ -6135,12 +6140,12 @@ button.journal-view-button.journal-button {
     filter: drop-shadow(0 5px 8px #ccc)
 }
 
-.note-text aside.rules-text p:first-child {
+.note-text .rules-text p:first-child {
     text-transform: uppercase;
     font-weight: 700
 }
 
-.note-text aside.read-aloud-text {
+.note-text .read-aloud-text {
     overflow: auto;
     display: block;
     margin: 30px 0;
