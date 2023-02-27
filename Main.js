@@ -678,7 +678,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 
 	// create a monster block wrapper element
 	if (! $("#resizeDragMon").length) {
-		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:300px"></div>`);
 		$("body").append(monStatBlockContainer)
 		monStatBlockContainer.append(build_combat_tracker_loading_indicator())
 		const loadingIndicator = monStatBlockContainer.find(".sidebar-panel-loading-indicator")
@@ -861,7 +861,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 
 function build_draggable_monster_window() {
 
-	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:300px"></div>`);
 
 	// check if the monster pane is not open
 	if (! $("#resizeDragMon").length) {
