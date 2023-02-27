@@ -1763,7 +1763,7 @@ function did_update_scenes() {
 	if (!window.DM) return;
 
 	// store this locally in case we run into the cloud bug that prevents the scenelist event from being sent down
-	const sanitizedScenes = window.ScenesHandler.scenes.filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
+	const sanitizedScenes = normalize_scene_urls(window.ScenesHandler.scenes);
 	localStorage.setItem(`ScenesHandler${find_game_id()}`, JSON.stringify(sanitizedScenes));
 	console.debug("did_update_scenes", `ScenesHandler${find_game_id()}`, sanitizedScenes);
 

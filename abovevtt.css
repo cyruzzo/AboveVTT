@@ -32,6 +32,45 @@ body > button,
     font-size: 12px;
 }
 
+#loading_overlay {
+    position: fixed;
+    top: -2%;
+    left: -2%;
+    width: 104%;
+    height: 104%;
+    z-index: 70000;
+    background-color: #26282a;
+}
+#loading_overlay_bg {
+    background-position: center;
+    background-size: cover;
+    filter: blur(4px);
+    width: 100%;
+    height: 100%;
+    background-color: #26282a;
+    opacity: 0.5;
+}
+#loading_overlay_bg.dm {
+    background-image: url(https://media-waterdeep.cursecdn.com/attachments/0/267/dmg1k.jpg)
+}
+#loading_overlay_bg.player {
+    background-image: url(https://media-waterdeep.cursecdn.com/attachments/0/264/phb1k.jpg)
+}
+
+.joindm {
+    position: relative;
+}
+
+
+.above_delete {
+    width: 400px;
+}
+.above_delete2 {
+    width: 400px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+}
+
 #cpick{
     display: block;
     margin-left: 27px;
