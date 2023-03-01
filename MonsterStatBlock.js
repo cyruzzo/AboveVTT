@@ -346,10 +346,6 @@ function fetch_config_json() {
     })
 }
 
-$(function() {
-    fetch_config_json();
-})
-
 class MonsterStatBlock {
     constructor(data) {
         this.data = data;

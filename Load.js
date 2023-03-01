@@ -3,12 +3,17 @@ console.log("Load.js is executing");
 if (window.location.search.includes("abovevtt=true")) {
 	let loadingOverlay = document.createElement('div');
 	loadingOverlay.setAttribute("id", "loading_overlay");
-	loadingOverlay.setAttribute("style", "position: fixed; top: -2%; left: -2%; width: 104%; height: 104%; z-index: 70000; background-color: #26282a;");
 	(document.body || document.documentElement).appendChild(loadingOverlay);
-}
 
-console.log("chrome.runtime.getURL", chrome.runtime.getURL("/"))
-console.log("chrome.runtime.getManifest().version_name", chrome.runtime.getManifest().version_name)
+	let loadingBg = document.createElement('div');
+	loadingBg.setAttribute("id", "loading_overlay_bg");
+	loadingOverlay.appendChild(loadingBg);
+	if (window.location.pathname.includes("/encounters/")) {
+		loadingBg.setAttribute("class", "dm");
+	} else if (window.location.pathname.includes("/characters/")) {
+		loadingBg.setAttribute("class", "player");
+	}
+}
 
 var l = document.createElement('div');
 l.setAttribute("style", "display:none;");
@@ -60,7 +65,8 @@ window.scripts = [
 	{ src: "mousetrap.1.6.5.min.js" },
 	{ src: "peerjs.min.js" },
 	// AboveVTT Files
-	{ src: "CoreFunctions.js" },
+	{ src: "AboveApi.js" },
+	{ src: "DDBApi.js" },
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
@@ -89,12 +95,16 @@ window.scripts = [
 	{ src: "built-in-tokens.js" },
 	{ src: "PeerManager.js" },
 	{ src: "PeerCommunication.js" },
-	// Files that execute when loaded
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
-	{ src: "CharactersPage.js" },
 	{ src: "Main.js" },
-	{ src: "MonsterStatBlock.js" }
+	{ src: "MonsterStatBlock.js" },
+	// AboveVTT files that execute when loaded
+	{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
+	{ src: "CampaignPage.js" },
+	{ src: "CharactersPage.js" },
+	// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
+	{ src: "Startup.js" }
 ]
 
 // Too many of our scripts depend on each other. 
