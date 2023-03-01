@@ -389,7 +389,7 @@ function is_token_under_fog(tokenid){
 	var pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
 
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 
 	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight)))
@@ -432,8 +432,8 @@ function check_single_token_visibility(id){
 			var selector = "div[data-id='" + id + "']";
 			let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
+			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			let playerAuraIsVisible =  (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 
@@ -498,7 +498,7 @@ function do_check_token_visibility() {
 		let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 			
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter == 100)))) {
 			$(selector).hide();

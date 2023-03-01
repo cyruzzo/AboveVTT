@@ -741,8 +741,9 @@ class Token {
 			self.persist(e);
 		
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		if(playerTokenId != undefined && self.options.auraislight){
-			if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+		if(self.options.auraislight){
+			if(playerTokenAuraIsLight){
 					check_token_visibility()
 			}
 			else{
@@ -2672,7 +2673,7 @@ function setTokenLight (token, options) {
 
 	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	if ((innerlightSize > 0 || outerlightSize > 0) && options.auraislight) {
+	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
 		const lightRadius = innerlightSize ? (innerlightSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
@@ -2718,16 +2719,15 @@ function setTokenLight (token, options) {
 	}
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		if(playerTokenId != undefined){
-			
-			let lights = $("[id^='light_']");
-			for(let i = 0; i < lights.length; i++){
-				if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
-					$(lights[i]).css("visibility", "hidden");
-				}
-			}
-			
-
+		
+		let lights = $("[id^='light_']");
+		for(let i = 0; i < lights.length; i++){
+			if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
+				$(lights[i]).css("visibility", "hidden");
+			}		
+			if(playerTokenId == undefined && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.itemType == 'pc'){
+				$(lights[i]).css("visibility", "visible");
+			}	
 		}
 	}
 }

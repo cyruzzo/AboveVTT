@@ -1266,9 +1266,9 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			
-			if(playerTokenId != undefined && data.auraislight){
-				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
+			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			if(data.auraislight){
+				if(playerTokenAuraIsLight){
 						check_token_visibility();
 				}
 				else{
@@ -1299,9 +1299,10 @@ class MessageBroker {
 			t.place();
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			if(playerTokenId != undefined && data.auraislight){
-				if(window.TOKEN_OBJECTS[playerTokenId].options.auraislight){
-						check_token_visibility()
+			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			if(data.auraislight){
+				if(playerTokenAuraIsLight){
+						check_token_visibility();
 				}
 				else{
 					check_single_token_visibility(data.id);
@@ -1426,9 +1427,7 @@ class MessageBroker {
 					persist: false
 				});
 			}
-			if(!window.DM)
-					check_token_visibility();
-	
+
 			if(window.CLOUD){
 				let data = {
 					loading: true,
@@ -1445,7 +1444,9 @@ class MessageBroker {
 			else{
 			 	window.MB.sendMessage('custom/myVTT/syncmeup');
 			}
-
+			if(!window.DM)
+					check_token_visibility();
+	
 
 			if (window.EncounterHandler !== undefined) {
 				fetch_and_cache_scene_monster_items();
