@@ -215,6 +215,16 @@ function token_setting_options() {
 function avtt_settings() {
 	let settings = [
 		{
+			name: 'alwaysShowSplash',
+			label: 'Always show splash screen',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Always", description: `You will always see the splash screen on startup.` },
+				{ value: false, label: "Only When New", description: `You will only see the splash screen on startup after updating to a new version.` }
+			],
+			defaultValue: true
+		},
+		{
 			name: 'allowTokenMeasurement',
 			label: 'Measure while dragging tokens',
 			type: 'toggle',
@@ -424,30 +434,6 @@ function download(data, filename, type) {
 }
 
 
-function cloud_migration(scenedata=null){
-	let http_api_gw="https://services.abovevtt.net";
-	let searchParams = new URLSearchParams(window.location.search);
-	if(searchParams.has("dev")){
-		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-	}
-	let gameid = find_game_id();
-
-	if(scenedata==null)
-		scenedata=localStorage.getItem("ScenesHandler"+gameid);
-	$.ajax({
-		url:http_api_gw+"/services?action=migrate&campaign="+window.CAMPAIGN_SECRET,
-		type:"POST",
-		contentType:'application/json',
-		data: scenedata,
-		success:function(data){
-			localStorage.setItem("Migrated"+gameid,"1");
-			$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
-			$(".import-loading-indicator .loading-status-indicator__subtext").text("Import complete. Please rejoin AboveVTT");
-			alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
-			location.reload();
-		}
-	});
-}
 
 function scene_import_with_drawings(scenedata=null){  //modified cloud_migration / import tool to import a single scene with drawings, walls etc without a refresh
 	let http_api_gw="https://services.abovevtt.net";
@@ -482,23 +468,12 @@ function init_settings() {
 
 	let body = settingsPanel.body;
 
+	body.append(`<h2 style='margin-top:10px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='200px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}</div></h2>`);
+
 	if (window.DM) {
 
-		if((!window.CLOUD) && (!window.FORCED_DM)){
-			body.append(`
-			<h5 class="token-image-modal-footer-title">MIGRATE YOUR SCENES TO THE CLOUD</h5>
-			<div class="sidebar-panel-header-explanation">
-				<p>Your data is currently stored on your browser's cache. Press migrate to move your data into the AboveVTT cloud (<b>WARNING. YOU RISK LOOSING YOU DATA</b>) </p>
-				<button onclick='cloud_migration();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="This will migrate your data to the cloud. Be careful or you may loose your scenes">MIGRATE</button>
-			</div>
-			`)
-		}
-		else if(window.CLOUD){
-			body.append('<b>Your scenes are stored in the "cloud"</b>');
-		}
-
 		body.append(`
-			<h5 class="token-image-modal-footer-title">Import / Export</h5>
+			<h3 class="token-image-modal-footer-title">Import / Export</h3>
 			<div class="sidebar-panel-header-explanation">
 				<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
 				<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
@@ -514,7 +489,7 @@ function init_settings() {
 
 		body.append(`
 			<br />
-			<h5 class="token-image-modal-footer-title">Default Options when placing tokens</h5>
+			<h3 class="token-image-modal-footer-title">Default Token Options</h3>
 			<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>
 		`);
 
@@ -556,7 +531,7 @@ function init_settings() {
 	let experimental_features = avtt_settings();
 	body.append(`
 		<br />
-		<h5 class="token-image-modal-footer-title" >Above VTT Settings</h5>
+		<h3 class="token-image-modal-footer-title" >Above VTT Settings</h3>
 		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time so we recommend using the defaults values... (Except the dice streaming. You should probably enable that because that's just awesome!)</div>
 	`);
 	for(let i = 0; i < experimental_features.length; i++) {
@@ -916,55 +891,34 @@ function persist_experimental_settings(settings) {
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
-function export_scenes(callback){
-	if(window.CLOUD){
-		let http_api_gw="https://services.abovevtt.net";
-		let searchParams = new URLSearchParams(window.location.search);
-		if(searchParams.has("dev")){
-			http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-		}
-
-		$.ajax({
-			url:http_api_gw+"/services?action=export_scenes&campaign="+window.CAMPAIGN_SECRET,
-			success: function(data){
-				callback(JSON.parse(data))
-			}
-		})
-	}
-	else{
-		let scenes=[];
-		for(i=0;i<window.ScenesHandler.scenes.length;i++){
-			var scene=Object.assign({}, window.ScenesHandler.scenes[i]);
-			scenes.push(scene);
-		}
-		callback(scenes);
-	}
-}
-
-function export_file(){
+function export_file() {
 	build_import_loading_indicator('Preparing Export File');
-	let DataFile={
+	let DataFile = {
 		version: 2,
-		scenes:[],
-		soundpads:{},
-		tokendata:{},
-		notes:{},
-		journalchapters:[],
-		};
+		scenes: [],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
 
-	export_scenes(
-		(scenes)=>{
-			DataFile.scenes=scenes;
-			DataFile.tokencustomizations=window.TOKEN_CUSTOMIZATIONS;
-			DataFile.notes=window.JOURNAL.notes;
-			DataFile.journalchapters=window.JOURNAL.chapters;
-			DataFile.soundpads=window.SOUNDPADS;
+	AboveApi.exportScenes()
+		.then(scenes => {
+			DataFile.scenes = scenes;
+			DataFile.tokencustomizations = window.TOKEN_CUSTOMIZATIONS;
+			DataFile.notes = window.JOURNAL.notes;
+			DataFile.journalchapters = window.JOURNAL.chapters;
+			DataFile.soundpads = window.SOUNDPADS;
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+		})
+		.catch(error => {
+			console.error("export_scenes failed to fetch from the cloud", error);
+			showDebuggingAlert();
+		})
+		.finally(() => {
 			$(".import-loading-indicator").remove();
-		}
-	);
-
-};
+		});
+}
 
 function build_import_loading_indicator(text='Loading Import File'){
 	let loadingIndicator = $(`
@@ -1075,17 +1029,17 @@ function import_readfile() {
 			} else {
 				alert('Loading completed. Data merged');
 			}
-			// never import data urls
-			const sanitizedScenes = DataFile.scenes.filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
-			console.log("sanitizedScenes", sanitizedScenes);
-			if(window.CLOUD){
-				cloud_migration(JSON.stringify(sanitizedScenes));
-			}
-			else{
-				for(i=0;i<DataFile.scenes.length;i++){
-					window.ScenesHandler.scenes.push(sanitizedScenes[i]);
-				}
-			}
+			AboveApi.migrateScenes(window.gameId, DataFile.scenes)
+				.then(() => {
+					$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
+					$(".import-loading-indicator .loading-status-indicator__subtext").text("Import complete. Please rejoin AboveVTT");
+					alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
+					location.reload();
+				})
+				.catch((error) => {
+					console.error("cloud_migration failed", error);
+					showDebuggingAlert();
+				});
 		});
 	};
 	reader.readAsText($("#input_file").get(0).files[0]);

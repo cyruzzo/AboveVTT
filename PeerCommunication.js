@@ -734,7 +734,9 @@ function peer_is_dragging_token(eventData) {
   if (!html || html.length === 0) {
     noisy_log("peer_is_dragging_token no html", eventData);
     html = $(`#tokens div[data-id='${eventData.tokenId}']`).clone();
-    html.attr("data-id", `dragging-${eventData.tokenId}`);
+    html.attr("data-clone-id", `dragging-${eventData.tokenId}`);
+    html.attr("data-id", ``);
+    html.removeClass('tokenselected');
     if (!html || html.length === 0) {
       noisy_log("peer_is_dragging_token no token on scene matching", `#tokens div[data-id='${eventData.tokenId}']`, eventData);
       return;

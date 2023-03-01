@@ -6,29 +6,29 @@ var abovevtt_version = '0.74';
  */
 window.onbeforeunload = function(event)
 {
-	console.log("refreshing page, storing zoom first");
-	add_zoom_to_storage();
-	window.PeerManager.send(PeerEvent.goodbye());
+	if (is_abovevtt_page()) {
+		console.log("refreshing page, storing zoom first");
+		add_zoom_to_storage();
+		window.PeerManager.send(PeerEvent.goodbye());
+	}
 };
 
-/**
- * Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
+/** Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
  * @param {String} url to parse
- * @returns String
- */
-function parse_img(url){
-	if (typeof url !== "string") {
-		return "";
-	}
-	retval = url;
-	if(retval.startsWith("data:")){
-		alert("You cannot use urls starting with data:");
-		return "";
-	}
-	if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
-		retval = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+ * @return {String} a sanitized and possibly modified url to help with loading maps */
+function parse_img(url) {
+	let retval = url;
+	if (typeof retval !== "string" || retval.trim().startsWith("data:")) {
+		console.warn("parse_img is removing a data url because those are not allowed");
+		retval = "";
+	} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
+		const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+		console.log("parse_img is converting", url, "to", parsed);
+		retval = parsed;
 	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
-		retval = retval.split("?dl=")[0] + "?raw=1";
+		const parsed = retval.split("?dl=")[0] + "?raw=1";
+		console.log("parse_img is converting", url, "to", parsed);
+		retval = parsed;
 	}
 	return retval;
 }
@@ -337,6 +337,7 @@ function map_load_error_cb(e) {
  * This removes it. See `Load.js` for the injection of the overlay.
  */
 function remove_loading_overlay() {
+	console.debug("startup remove_loading_overlay")
 	$("#loading_overlay").animate({ "opacity": 0 }, 1000, function() {
 		$("#loading_overlay").hide();
 	});
@@ -354,8 +355,6 @@ function remove_loading_overlay() {
 function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
 
 	$("#scene_map_container").toggleClass('map-loading', true);
-
-	remove_loading_overlay();
 
 	$("#scene_map").remove();
 
@@ -678,7 +677,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 
 	// create a monster block wrapper element
 	if (! $("#resizeDragMon").length) {
-		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+		const monStatBlockContainer = $(`<div id='resizeDragMon' style="display:none; left:300px"></div>`);
 		$("body").append(monStatBlockContainer)
 		monStatBlockContainer.append(build_combat_tracker_loading_indicator())
 		const loadingIndicator = monStatBlockContainer.find(".sidebar-panel-loading-indicator")
@@ -861,7 +860,7 @@ function load_monster_stat_iframe(monsterId, tokenId) {
 
 function build_draggable_monster_window() {
 
-	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:204px"></div>`);
+	const draggable_resizable_div = $(`<div id='resizeDragMon' style="display:none; left:300px"></div>`);
 
 	// check if the monster pane is not open
 	if (! $("#resizeDragMon").length) {
@@ -1178,6 +1177,13 @@ function init_splash() {
 
 	setTimeout(ga_heartbeat, 5 * 60 * 1000);
 
+	if (!get_avtt_setting_value("alwaysShowSplash") && localStorage.getItem("AboveVttLastUsedVersion") === window.AVTT_VERSION) {
+		// the user only wants to see the splash screen when there's a new version, and this is not a new version
+		console.log("not showing splash screen", localStorage.getItem("AboveVttLastUsedVersion"), window.AVTT_VERSION)
+		return;
+	}
+	localStorage.setItem("AboveVttLastUsedVersion", window.AVTT_VERSION);
+
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
@@ -1270,13 +1276,6 @@ function init_splash() {
 	cont.append(closeButton);
 
 	$(window.document.body).append(cont);
-
-	setTimeout(function() {
-		init_loading_overlay_beholder();
-	}, 0)
-	window.addEventListener("scroll", function(event) {
-	   event.stopImmediatePropagation();
-	}, true);
 }
 
 var MYCOBALT_TOKEN = false;
@@ -1363,42 +1362,6 @@ function forceDdbWsReconnect() {
 		console.log("forceDdbWsReconnect error: " + e);
 		DDB_WS_FORCE_RECONNECT_LOCK = false;
 	}
-}
-
-/** DEPRECATED - don't use */
-function init_spells() {
-	return; // this isn't used anywhere so stop building it
-
-
-	var panel = $("<div id='spells-panel' class='sidepanel-content'/>");
-	panel.hide();
-	var iframe = $("<iframe id='iframe-spells-panel'></iframe>");
-	iframe.attr("src", "/spells");
-
-	iframe.height(window.innerHeight - 50);
-	iframe.css("width", "100%");
-	iframe.on('load', function(e) {
-		$(event.target).contents().find("#site-main").css("padding", "0");
-		$(event.target).contents().find("header").hide();
-		//$(event.target).contents().find(".main-filter-container").hide();
-		$(event.target).contents().find("#mega-menu-target").remove();
-		$(event.target).contents().find(".site-bar").remove();
-		$(event.target).contents().find(".page-header").remove();
-		$(event.target).contents().find(".homebrew-comments").remove();
-		$(event.target).contents().find("#footer").hide();
-		$(event.target).contents().find("body").on("click", "a", function(e) {
-			if ($(this).attr('href') != "/spells")
-				$(this).attr("target", "_blank");
-		});
-	});
-
-
-	panel.append(iframe);
-	$(".sidebar__pane-content").append(panel);
-	$(window).resize(function() {
-		$("#iframe-spells-panel").height(window.innerHeight - 50);
-	});
-
 }
 
 /**
@@ -2050,21 +2013,6 @@ function check_versions_match() {
 	return latestVersionSeen;
 }
 
-/**
- * Returns the current game ID.
- * @returns {String} The id of the `game` which is usually the same as the campaign id
- */
-function find_game_id() {
-	if (window.gameId === undefined) {
-		if (is_encounters_page()) {
-			const urlParams = new URLSearchParams(window.location.search);
-			window.gameId = urlParams.get('cid');
-		} else {
-			window.gameId = $("#message-broker-client").attr("data-gameId");
-		}
-	}
-	return window.gameId;
-};
 
 /**
  * Check if all connected users are on a version that is greater than or equal to `versionString`
@@ -2074,162 +2022,6 @@ function is_supported_version(versionString) {
 	return abovevtt_version >= versionString;
 }
 
-
-/**
- * Main init function.
- */
-function init_above(){
-	console.log("init_above");
-
-	// WORKAROUND FOR ANNOYING DDB BUG WITH COOKIES AND UPVOTING STUFF
-	document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-	// END OF IT
-	//window.STARTING = true;
-	let gameId = find_game_id();
-
-	let http_api_gw = "https://services.abovevtt.net";
-	let searchParams = new URLSearchParams(window.location.search);
-	if(searchParams.has("dev")) {
-		http_api_gw = "https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-	}
-
-	//THIS SHOULD HAVE ALREADY BEEN SET
-	// window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-	//let gameid = $("#message-broker-client").attr("data-gameId");
-
-	let hasData = false;
-	if (localStorage.getItem('ScenesHandler' + gameId) != null) {
-		hasData = true;
-	}
-	if (localStorage.getItem('Migrated' + gameId) != null) {
-		hasData = false;
-	}
-
-
-	$.ajax({
-		url: http_api_gw+"/services?action=getCampaignData&campaign=" + window.CAMPAIGN_SECRET,
-		success: function(campaignData) {
-			console.log(campaignData);
-			if(campaignData.Item && campaignData.Item.data && campaignData.Item.data.cloud) {
-				window.CLOUD = true;
-				init_things();
-			}
-			else { // CHECK IF THIS IS A NEW CAMPAIGN
-				if (hasData || (window.FORCED_DM)) {
-					console.log("**********UNMIGRATED CAMPAIGN*************");
-					window.CLOUD = false;
-					init_things();
-				}
-				else{ // THIS IS A VIRGIN CAMPAIGN. LET'S SET IT UP FOR THE CLOUD!!! :D :D :D :D
-					if(window.DM) {
-						$.ajax({
-							url: http_api_gw+"/services?action=setCampaignData&campaign=" + window.CAMPAIGN_SECRET,
-							type:'PUT',
-							contentType:'application/json',
-							data:JSON.stringify({
-								cloud:1
-							}),
-							success: function() {
-								console.log("******* WELCOME TO THE CLOUD*************")
-								window.CLOUD = true;
-								init_things();
-							}
-						});
-					}
-					else{ // PLAYER SHOULD NOT FORCE CLOUD MIGRATION
-						window.CLOUD = false;
-						init_things();
-					}
-				}
-			}
-		}
-	}
-	)
-}
-
-/**
- * Initializes global vafriables.
- */
-function init_things() {
-	console.log("init things");
-	window.STARTING = true;
-	window.TOKEN_OBJECTS = {};
-	window.REVEALED = [];
-	window.DRAWINGS = [];
-	window.PLAYER_STATS = {};
-	window.CONNECTED_PLAYERS = {};
-	window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + gameId)) || {};
-	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + gameId)) || {};
-	window.CURRENTLY_SELECTED_TOKENS = [];
-	window.TOKEN_PASTE_BUFFER = [];
-	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
-	window.TOKEN_CUSTOMIZATIONS = [];
-
-	if (window.CAMPAIGN_SECRET === undefined) {
-		window.CAMPAIGN_SECRET=$(".ddb-campaigns-invite-primary").text().split("/").pop();
-	}
-
-	fetch_token_customizations();
-
-	window.PeerManager = new PeerManager();
-	window.MB = new MessageBroker();
-	window.StatHandler = new StatHandler();
-
-	if (window.DM && !window.location.search.includes("popoutgamelog=true")) {
-		window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
-		window.ScenesHandler = new ScenesHandler(gameId);
-		window.EncounterHandler = new EncounterHandler(function(didSucceed) {
-			if (didSucceed === false) {
-				showDebuggingAlert();
-			}
-			init_ui();
-			if (is_encounters_page()) {
-
-				// This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
-				$("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
-
-				$("#site-main").css({"display": "block", "visibility": "hidden"});
-				$(".dice-rolling-panel").css({"visibility": "visible"});
-				$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-				$("div.dice-toolbar").css({"bottom": "35px"});
-				$("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-			}
-
-			init_scene_selector();
-			init_splash();
-
-		});
-	} else if (is_characters_page()) {
-
-		hide_player_sheet();
-		init_character_page_sidebar();
-
-		$(window).off("resize").on("resize", function() {
-			if(window.showPanel == undefined){
-				window.showPanel = is_sidebar_visible();
-			}
-			init_character_page_sidebar();
-			setTimeout(function(){
-				if(!window.showPanel){
-					hide_sidebar();
-				}
-			}, 1000)
-
-		});
-
-	} 
-	else if(window.location.search.includes("popoutgamelog=true")){
-		inject_chat_buttons();
-	}
-	else {
-		init_ui();
-		init_splash();
-	}
-
-	$("#site").append("<div id='windowContainment'></div>");
-}
-
-var needs_ui = true;
 /**
  * Initializes the sidebar on the character page.
  *
@@ -2252,89 +2044,65 @@ function init_character_page_sidebar() {
 	$(".ct-character-header__group--game-log").click();
 	$(".ct-sidebar__control--unlock").click();
 
-	// After that click, give it a second to inject and render the sidebar
-	setTimeout(function() {
+	$("#site-main").css({"display": "block", "visibility": "hidden"});
+	$(".dice-rolling-panel").css({"visibility": "visible"});
+	$("div.dice-toolbar").css({"bottom": "35px"});
+	$("#mega-menu-target").hide();
+	$(".ct-character-header-desktop").css({
+		"background": "rgba(0,0,0,.85)"
+	});
 
-		$("#site-main").css({"display": "block", "visibility": "hidden"});
-		$(".dice-rolling-panel").css({"visibility": "visible"});
-		$("div.dice-toolbar").css({"bottom": "35px"});
-		$("#mega-menu-target").hide();
-		$(".ct-character-header-desktop").css({
-			"background": "rgba(0,0,0,.85)"
-		});
+	$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
+	$(".ct-sidebar__control--unlock").click();
+	$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
+	$(".ct-sidebar__pane-top").hide();
+	$(".ct-sidebar__pane-bottom").hide();
+	$(".ct-sidebar__pane-gap").hide();
+	$(".ct-sidebar__pane-content").css({"border": "none", "padding-bottom": "0px"});
+	$(".ct-sidebar__portal").css({
+		"right": "0px",
+		"position": "fixed",
+		"bottom": "0px",
+		"top": "0px",
+		"z-index": 5
+	});
+	$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });
+	$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
 
-		$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-		$(".ct-sidebar__control--unlock").click();
-		$("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-		$(".ct-sidebar__pane-top").hide();
-		$(".ct-sidebar__pane-bottom").hide();
-		$(".ct-sidebar__pane-gap").hide();
-		$(".ct-sidebar__pane-content").css({"border": "none", "padding-bottom": "0px"});
-		$(".ct-sidebar__portal").css({
-			"right": "0px",
-			"position": "fixed",
-			"bottom": "0px",
-			"top": "0px",
-			"z-index": 5
-		});
-		$(".ct-sidebar").css({ "right": "0px", "top": "0px", "bottom": "0px" });
-		$(".ct-sidebar__portal .ct-sidebar .ct-sidebar__inner .ct-sidebar__controls .avtt-sidebar-controls").css("display", "flex")
+	$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
+		let conditionName = $(clickEvent.target).parent().find("span").text();
+			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+			$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+			$(`#switch_gamelog`).click();
+	});
+	$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
+		let conditionName = $(clickEvent.target).parent().find("span").text();
+			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+			$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+			$(`#switch_gamelog`).click();
 
-		$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
-			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
-		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
-		  	$(`#switch_gamelog`).click();
-		});
-		$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
-			let conditionName = $(clickEvent.target).parent().find("span").text();
-		  	$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
-		  	$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
-		  	$(`#switch_gamelog`).click();
+	});
+	$("a.ct-character-header-desktop__builder-link").on("click", function(){
+		setTimeout(function(){
+			$(".builder-sections-sheet-icon").off().on("click", function(){
+				window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+			});
+		}, 1000)
+	});
+	$(".ct-character-header-info__content").on("click", function(){
+		setTimeout(function(){
+			$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
+			$(".ct-pane-menu__item:contains('Manage Character & Levels')").off().on("click", function(){
+				$("a.ct-character-header-desktop__builder-link")[0].click();
+			});
+		}, 1000)
+	});
 
-		});
-		$("a.ct-character-header-desktop__builder-link").on("click", function(){
-			setTimeout(function(){
-				$(".builder-sections-sheet-icon").off().on("click", function(){
-					window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
-				});
-			}, 1000)
-		});
-		$(".ct-character-header-info__content").on("click", function(){
-			setTimeout(function(){
-				$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
-				$(".ct-pane-menu__item:contains('Manage Character & Levels')").off().on("click", function(){
-					$("a.ct-character-header-desktop__builder-link")[0].click();
-				});
-			}, 1000)
-		});
-
-		if (needs_ui) {
-			needs_ui = false;
-			window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
-			try {
-				// This should be just fine, but catch any parsing errors just in case
-				window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, ""));
-			} catch {}
-			init_ui();
-			reposition_player_sheet();
-			monitor_character_sidebar_changes();
-			hide_player_sheet();
-			init_splash();
-			$("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
-			observe_character_sheet_aoe($(document));
-			// WIP to allow players to add in tokens from their extra tab
-			// observe_character_sheet_companion($(document));
-
-		} else {
-			init_controls();
-			init_sheet();
-			inject_chat_buttons();
-			init_zoom_buttons();
-			monitor_character_sidebar_changes();
-		}
-
-	}, 1000);
+	init_controls();
+	init_sheet();
+	inject_chat_buttons();
+	init_zoom_buttons();
+	monitor_character_sidebar_changes();
 }
 
 /**
@@ -2892,14 +2660,8 @@ function init_ui() {
 	black_layer.css("background", "black");
 	black_layer.css("opacity", "0");
 	$("body").append(black_layer);
-	black_layer.animate({ opacity: "1" }, 5000);
+	black_layer.animate({ opacity: "1" }, 1000);
 	black_layer.css("z-index", "1");
-
-	if(DM && window.CLOUD){
-		setTimeout(function(){
-			window.MB.sendMessage("custom/myVTT/dmjoin"); // join and ask for the scene list
-		},4000);
-	}
 
 	init_controls();
 	init_sheet();
@@ -3064,10 +2826,6 @@ function init_ui() {
 		setTimeout(get_pclist_player_data,25000);
 	}
 
-	if(window.DM && (!window.CLOUD)){
-		alert("YOUR SCENES ARE BEING MIGRATED TO THE CLOUD IN 20 SECONDS. AFTER THIS MIGRATION YOU'LL FIND YOUR SCENES ON THE RIGHT PANEL.");
-		setTimeout(cloud_migration,20000);
-	}
 }
 
 const DRAW_COLORS = ["#D32F2F", "#FB8C00", "#FFEB3B", "#9CCC65", "#039BE5",
@@ -3250,9 +3008,9 @@ function init_loading_overlay_beholder() {
 		loadingText = "We'll Set The Scene When The DM Is Ready.";
 	}
 	let loadingIndicator = $(`
-		<div id="loading-overlay-beholder"">
+		<div id="loading-overlay-beholder">
 			<div class="sidebar-panel-loading-indicator" style="padding:0px;border-radius:40px;">
-				<svg class="beholder-dm-screen loading-status-indicator__svg animate" viewBox="0 0 285 176" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:overlay;margin-top:100px;width:100%;position:relative;padding:0 10%;"><defs><path id="beholder-eye-move-path" d="M0 0 a 15 5 0 0 0 15 0 a 15 5 0 0 1 -15 0 z"></path><clipPath id="beholder-eye-socket-clip-path"><path id="eye-socket" fill-rule="evenodd" clip-rule="evenodd" d="M145.5 76c-8.562 0-15.5-7.027-15.5-15.694 0-8.663 6.938-1.575 15.5-1.575 8.562 0 15.5-7.088 15.5 1.575C161 68.973 154.062 76 145.5 76z"></path></clipPath></defs><g class="beholder-dm-screen__beholder"><path fill-rule="evenodd" clip-rule="evenodd" d="M145.313 77.36c-10.2 0-18.466-8.27-18.466-18.47 0-10.197 8.266-1.855 18.466-1.855 10.199 0 18.465-8.342 18.465 1.855 0 10.2-8.266 18.47-18.465 18.47m59.557 4.296l-.083-.057c-.704-.5-1.367-1.03-1.965-1.59a12.643 12.643 0 0 1-1.57-1.801c-.909-1.268-1.51-2.653-1.859-4.175-.355-1.521-.461-3.179-.442-4.977.007-.897.049-1.835.087-2.827.038-.995.079-2.032.053-3.194-.031-1.158-.11-2.445-.519-3.97a10.494 10.494 0 0 0-1.014-2.43 8.978 8.978 0 0 0-1.938-2.32 9.64 9.64 0 0 0-2.468-1.54l-.314-.137-.299-.114-.609-.212c-.382-.105-.787-.227-1.151-.298-1.495-.315-2.819-.383-4.065-.39-1.248-.004-2.407.087-3.534.2a56.971 56.971 0 0 0-3.18.44c-6.271.646-12.648 1.559-13.689-.837-1.079-2.487-3.35-8.058 3.115-12.19 4.076.154 8.141.347 12.179.62 1.461.098 2.914.212 4.36.34-4.614.924-9.314 1.7-14.019 2.43h-.015a2.845 2.845 0 0 0-2.388 3.066 2.84 2.84 0 0 0 3.088 2.574c5.125-.462 10.25-.973 15.416-1.696 2.592-.378 5.17-.776 7.88-1.42a29.7 29.7 0 0 0 2.108-.59c.181-.06.363-.117.56-.193.197-.072.378-.136.594-.227.208-.09.405-.17.643-.291l.345-.174.394-.235c.064-.042.124-.076.196-.125l.235-.174.235-.174.117-.099.148-.136c.098-.094.189-.189.283-.287l.137-.152a3.44 3.44 0 0 0 .166-.22c.114-.154.224-.317.318-.484l.072-.125.038-.064.042-.09a5.06 5.06 0 0 0 .367-1.154c.045-.308.06-.63.045-.944a4.322 4.322 0 0 0-.042-.458 5.19 5.19 0 0 0-.386-1.207 5.356 5.356 0 0 0-.499-.799l-.091-.117-.072-.083a5.828 5.828 0 0 0-.303-.318l-.155-.151-.083-.076-.057-.05a9.998 9.998 0 0 0-.503-.382c-.152-.102-.28-.178-.424-.265l-.205-.124-.181-.091-.36-.186a18.713 18.713 0 0 0-.643-.28l-.591-.23c-1.521-.538-2.853-.856-4.197-1.159a83.606 83.606 0 0 0-3.951-.772c-2.604-.45-5.185-.829-7.763-1.166-4.273-.564-8.531-1.029-12.785-1.46 0-.004-.004-.004-.004-.004a38.55 38.55 0 0 0-4.81-3.1v-.004c.397-.223.965-.424 1.688-.549 1.135-.208 2.551-.242 4.05-.185 3.024.11 6.366.59 10.022.662 1.832.02 3.781-.056 5.84-.56a12.415 12.415 0 0 0 3.081-1.188 10.429 10.429 0 0 0 2.702-2.135 2.841 2.841 0 0 0-3.774-4.205l-.208.152c-.825.594-1.76.87-2.956.942-1.188.068-2.566-.09-4.004-.367-2.907-.553-6.003-1.556-9.5-2.32-1.763-.371-3.644-.7-5.802-.73a16.984 16.984 0 0 0-3.455.298 13.236 13.236 0 0 0-3.774 1.333 13.065 13.065 0 0 0-3.376 2.615 14.67 14.67 0 0 0-1.646 2.154h-.004a41.49 41.49 0 0 0-8.436-.863c-1.518 0-3.017.079-4.489.238-1.79-1.563-3.444-3.198-4.833-4.913a21.527 21.527 0 0 1-1.4-1.903 15.588 15.588 0 0 1-1.094-1.893c-.606-1.241-.905-2.422-.893-3.22a3.38 3.38 0 0 1 .038-.55c.034-.155.06-.31.121-.446.106-.273.276-.534.571-.776.579-.496 1.681-.81 2.884-.689 1.207.114 2.487.629 3.615 1.476 1.135.848 2.111 2.044 2.868 3.444l.038.076a2.848 2.848 0 0 0 3.471 1.329 2.843 2.843 0 0 0 1.714-3.641c-.768-2.135-1.96-4.235-3.675-6.003-1.71-1.76-3.924-3.18-6.502-3.872a12.604 12.604 0 0 0-4.076-.416 11.248 11.248 0 0 0-4.284 1.128 10.405 10.405 0 0 0-3.702 3.054c-.499.655-.901 1.37-1.237 2.104-.318.73-.568 1.488-.731 2.237-.337 1.503-.356 2.96-.238 4.315.125 1.362.405 2.63.764 3.822.36 1.196.803 2.317 1.298 3.373a31.9 31.9 0 0 0 1.605 3.043c.458.768.935 1.506 1.427 2.233h-.004a39.13 39.13 0 0 0-4.515 2.384c-3.111-.344-6.2-.76-9.242-1.294-2.033-.364-4.043-.769-6.007-1.26-1.96-.485-3.876-1.045-5.662-1.726a24.74 24.74 0 0 1-2.528-1.102c-.772-.393-1.48-.829-1.987-1.234a4.916 4.916 0 0 1-.56-.507c-.02-.015-.03-.03-.046-.045.288-.28.761-.621 1.314-.905.719-.382 1.566-.711 2.456-.984 1.79-.556 3.762-.9 5.76-1.098l.046-.007a2.843 2.843 0 0 0 2.547-2.805 2.846 2.846 0 0 0-2.824-2.868c-2.301-.02-4.628.11-7.028.567-1.2.231-2.418.538-3.671 1.022-.628.246-1.26.526-1.911.901a10.12 10.12 0 0 0-1.96 1.446c-.648.62-1.307 1.438-1.757 2.524-.114.261-.197.56-.284.844a7.996 7.996 0 0 0-.166.909c-.061.609-.05 1.237.049 1.809.189 1.162.632 2.12 1.109 2.891a11.265 11.265 0 0 0 1.529 1.942c1.056 1.082 2.127 1.88 3.194 2.6a33.287 33.287 0 0 0 3.21 1.855c2.142 1.093 4.284 1.979 6.434 2.774a98.121 98.121 0 0 0 6.464 2.112c.511.147 1.018.291 1.529.435a36.8 36.8 0 0 0-4.458 7.089v.004c-1.908-2.014-3.876-3.997-6.022-5.931a52.386 52.386 0 0 0-3.471-2.888 31.347 31.347 0 0 0-2.028-1.408 17.575 17.575 0 0 0-2.574-1.378 11.177 11.177 0 0 0-1.888-.616c-.761-.16-1.73-.31-3.02-.107a6.543 6.543 0 0 0-1.007.254 6.508 6.508 0 0 0-2.79 1.84 6.7 6.7 0 0 0-.594.783c-.083.129-.174.269-.238.39a7.248 7.248 0 0 0-.681 1.692 9.383 9.383 0 0 0-.3 2.02c-.022.584 0 1.09.038 1.568.084.953.231 1.786.401 2.577l.39 1.764c.027.14.065.268.087.408l.057.428.121.855.065.428.033.443.072.886c.061.586.061 1.196.076 1.801.05 2.426-.11 4.92-.435 7.407a50.6 50.6 0 0 1-1.503 7.35c-.17.594-.367 1.17-.548 1.76a55.283 55.283 0 0 1-.632 1.684l-.352.791c-.061.129-.114.276-.178.39l-.193.356-.186.355c-.064.121-.129.246-.193.326-.129.185-.257.375-.378.575l-.303.485a2.813 2.813 0 0 0 4.462 3.387c.295-.322.59-.655.878-.988.155-.17.265-.333.382-.496l.349-.488.344-.492c.117-.166.2-.325.303-.492l.583-.98a53.92 53.92 0 0 0 1.018-1.964c.295-.659.61-1.321.89-1.984a58.231 58.231 0 0 0 2.69-8.114 58.405 58.405 0 0 0 1.51-8.493c.068-.73.152-1.454.167-2.203l.045-1.12.02-.56-.012-.568-.004-.205c.167.186.333.371.496.557 1.608 1.84 3.179 3.838 4.708 5.889a181.94 181.94 0 0 1 4.481 6.328c.14.2.311.428.477.617.284.33.594.62.924.874 0 .216.003.424.015.636-2.661 2.861-5.265 5.821-7.748 9.034-1.567 2.06-3.096 4.19-4.485 6.715-.685 1.267-1.347 2.645-1.854 4.363-.246.879-.454 1.851-.496 3.02l-.007.44.022.473c.012.159.02.314.038.477.023.166.05.337.076.503.113.666.333 1.385.65 2.07.16.337.356.67.557.992.212.299.44.613.681.878a8.075 8.075 0 0 0 1.54 1.328c1.05.697 2.04 1.06 2.938 1.31 1.79.466 3.292.519 4.723.507 2.842-.053 5.367-.48 7.853-.98 4.943-1.022 9.618-2.434 14.243-3.948a2.845 2.845 0 0 0 1.911-3.236 2.842 2.842 0 0 0-3.323-2.267h-.015c-4.648.878-9.322 1.635-13.864 1.965-2.252.155-4.511.208-6.46-.027a10.954 10.954 0 0 1-1.685-.322c.004-.015.012-.026.015-.037.133-.273.322-.606.534-.954.235-.36.477-.73.768-1.117 1.14-1.548 2.619-3.164 4.183-4.723a83.551 83.551 0 0 1 2.585-2.468 35.897 35.897 0 0 0 2.312 4.16c.125.2.261.405.397.602 3.747-.413 7.415-1.06 10.356-1.617l.037-.007a7.47 7.47 0 0 1 8.702 5.957 7.491 7.491 0 0 1-4.724 8.38C132.172 94.372 138.542 96 145.313 96c20.358 0 37.087-14.708 38.994-33.514.193-.05.386-.098.576-.144a23.261 23.261 0 0 1 2.354-.458c.726-.102 1.393-.14 1.847-.125.125-.004.193.015.299.012.03.003.064.007.098.007h.053c.008.004.015.004.027.004.106 0 .094-.019.09-.068-.007-.05-.022-.125.019-.117.038.007.125.083.216.26.087.19.186.443.269.761.079.33.159.69.219 1.102.129.806.216 1.745.307 2.725.091.984.178 2.02.306 3.1.262 2.138.682 4.435 1.533 6.683.837 2.245 2.154 4.406 3.812 6.15.825.871 1.725 1.655 2.66 2.336.943.677 1.919 1.26 2.911 1.782a2.848 2.848 0 0 0 3.641-.874 2.848 2.848 0 0 0-.674-3.966" fill="#0398F3"></path><g clip-path="url(#beholder-eye-socket-clip-path)"><circle cx="137.5" cy="60" r="7" fill="#1B9AF0"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath xlink:href="#beholder-eye-move-path"></mpath></animateMotion></circle></g></g><g class="beholder-dm-screen__screen"><path fill="#EAEEF0" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M76 76h136v97H76z"></path><path d="M218 170.926V74.282l64-35.208v96.644l-64 35.208zM70 171.026V74.318L3 38.974v96.708l67 35.344z" fill="#F3F6F9" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+				<svg class="beholder-dm-screen loading-status-indicator__svg animate" viewBox="0 0 285 176" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;margin-top:100px;width:100%;position:relative;padding:0 10%;"><defs><path id="beholder-eye-move-path" d="M0 0 a 15 5 0 0 0 15 0 a 15 5 0 0 1 -15 0 z"></path><clipPath id="beholder-eye-socket-clip-path"><path id="eye-socket" fill-rule="evenodd" clip-rule="evenodd" d="M145.5 76c-8.562 0-15.5-7.027-15.5-15.694 0-8.663 6.938-1.575 15.5-1.575 8.562 0 15.5-7.088 15.5 1.575C161 68.973 154.062 76 145.5 76z"></path></clipPath></defs><g class="beholder-dm-screen__beholder"><path fill-rule="evenodd" clip-rule="evenodd" d="M145.313 77.36c-10.2 0-18.466-8.27-18.466-18.47 0-10.197 8.266-1.855 18.466-1.855 10.199 0 18.465-8.342 18.465 1.855 0 10.2-8.266 18.47-18.465 18.47m59.557 4.296l-.083-.057c-.704-.5-1.367-1.03-1.965-1.59a12.643 12.643 0 0 1-1.57-1.801c-.909-1.268-1.51-2.653-1.859-4.175-.355-1.521-.461-3.179-.442-4.977.007-.897.049-1.835.087-2.827.038-.995.079-2.032.053-3.194-.031-1.158-.11-2.445-.519-3.97a10.494 10.494 0 0 0-1.014-2.43 8.978 8.978 0 0 0-1.938-2.32 9.64 9.64 0 0 0-2.468-1.54l-.314-.137-.299-.114-.609-.212c-.382-.105-.787-.227-1.151-.298-1.495-.315-2.819-.383-4.065-.39-1.248-.004-2.407.087-3.534.2a56.971 56.971 0 0 0-3.18.44c-6.271.646-12.648 1.559-13.689-.837-1.079-2.487-3.35-8.058 3.115-12.19 4.076.154 8.141.347 12.179.62 1.461.098 2.914.212 4.36.34-4.614.924-9.314 1.7-14.019 2.43h-.015a2.845 2.845 0 0 0-2.388 3.066 2.84 2.84 0 0 0 3.088 2.574c5.125-.462 10.25-.973 15.416-1.696 2.592-.378 5.17-.776 7.88-1.42a29.7 29.7 0 0 0 2.108-.59c.181-.06.363-.117.56-.193.197-.072.378-.136.594-.227.208-.09.405-.17.643-.291l.345-.174.394-.235c.064-.042.124-.076.196-.125l.235-.174.235-.174.117-.099.148-.136c.098-.094.189-.189.283-.287l.137-.152a3.44 3.44 0 0 0 .166-.22c.114-.154.224-.317.318-.484l.072-.125.038-.064.042-.09a5.06 5.06 0 0 0 .367-1.154c.045-.308.06-.63.045-.944a4.322 4.322 0 0 0-.042-.458 5.19 5.19 0 0 0-.386-1.207 5.356 5.356 0 0 0-.499-.799l-.091-.117-.072-.083a5.828 5.828 0 0 0-.303-.318l-.155-.151-.083-.076-.057-.05a9.998 9.998 0 0 0-.503-.382c-.152-.102-.28-.178-.424-.265l-.205-.124-.181-.091-.36-.186a18.713 18.713 0 0 0-.643-.28l-.591-.23c-1.521-.538-2.853-.856-4.197-1.159a83.606 83.606 0 0 0-3.951-.772c-2.604-.45-5.185-.829-7.763-1.166-4.273-.564-8.531-1.029-12.785-1.46 0-.004-.004-.004-.004-.004a38.55 38.55 0 0 0-4.81-3.1v-.004c.397-.223.965-.424 1.688-.549 1.135-.208 2.551-.242 4.05-.185 3.024.11 6.366.59 10.022.662 1.832.02 3.781-.056 5.84-.56a12.415 12.415 0 0 0 3.081-1.188 10.429 10.429 0 0 0 2.702-2.135 2.841 2.841 0 0 0-3.774-4.205l-.208.152c-.825.594-1.76.87-2.956.942-1.188.068-2.566-.09-4.004-.367-2.907-.553-6.003-1.556-9.5-2.32-1.763-.371-3.644-.7-5.802-.73a16.984 16.984 0 0 0-3.455.298 13.236 13.236 0 0 0-3.774 1.333 13.065 13.065 0 0 0-3.376 2.615 14.67 14.67 0 0 0-1.646 2.154h-.004a41.49 41.49 0 0 0-8.436-.863c-1.518 0-3.017.079-4.489.238-1.79-1.563-3.444-3.198-4.833-4.913a21.527 21.527 0 0 1-1.4-1.903 15.588 15.588 0 0 1-1.094-1.893c-.606-1.241-.905-2.422-.893-3.22a3.38 3.38 0 0 1 .038-.55c.034-.155.06-.31.121-.446.106-.273.276-.534.571-.776.579-.496 1.681-.81 2.884-.689 1.207.114 2.487.629 3.615 1.476 1.135.848 2.111 2.044 2.868 3.444l.038.076a2.848 2.848 0 0 0 3.471 1.329 2.843 2.843 0 0 0 1.714-3.641c-.768-2.135-1.96-4.235-3.675-6.003-1.71-1.76-3.924-3.18-6.502-3.872a12.604 12.604 0 0 0-4.076-.416 11.248 11.248 0 0 0-4.284 1.128 10.405 10.405 0 0 0-3.702 3.054c-.499.655-.901 1.37-1.237 2.104-.318.73-.568 1.488-.731 2.237-.337 1.503-.356 2.96-.238 4.315.125 1.362.405 2.63.764 3.822.36 1.196.803 2.317 1.298 3.373a31.9 31.9 0 0 0 1.605 3.043c.458.768.935 1.506 1.427 2.233h-.004a39.13 39.13 0 0 0-4.515 2.384c-3.111-.344-6.2-.76-9.242-1.294-2.033-.364-4.043-.769-6.007-1.26-1.96-.485-3.876-1.045-5.662-1.726a24.74 24.74 0 0 1-2.528-1.102c-.772-.393-1.48-.829-1.987-1.234a4.916 4.916 0 0 1-.56-.507c-.02-.015-.03-.03-.046-.045.288-.28.761-.621 1.314-.905.719-.382 1.566-.711 2.456-.984 1.79-.556 3.762-.9 5.76-1.098l.046-.007a2.843 2.843 0 0 0 2.547-2.805 2.846 2.846 0 0 0-2.824-2.868c-2.301-.02-4.628.11-7.028.567-1.2.231-2.418.538-3.671 1.022-.628.246-1.26.526-1.911.901a10.12 10.12 0 0 0-1.96 1.446c-.648.62-1.307 1.438-1.757 2.524-.114.261-.197.56-.284.844a7.996 7.996 0 0 0-.166.909c-.061.609-.05 1.237.049 1.809.189 1.162.632 2.12 1.109 2.891a11.265 11.265 0 0 0 1.529 1.942c1.056 1.082 2.127 1.88 3.194 2.6a33.287 33.287 0 0 0 3.21 1.855c2.142 1.093 4.284 1.979 6.434 2.774a98.121 98.121 0 0 0 6.464 2.112c.511.147 1.018.291 1.529.435a36.8 36.8 0 0 0-4.458 7.089v.004c-1.908-2.014-3.876-3.997-6.022-5.931a52.386 52.386 0 0 0-3.471-2.888 31.347 31.347 0 0 0-2.028-1.408 17.575 17.575 0 0 0-2.574-1.378 11.177 11.177 0 0 0-1.888-.616c-.761-.16-1.73-.31-3.02-.107a6.543 6.543 0 0 0-1.007.254 6.508 6.508 0 0 0-2.79 1.84 6.7 6.7 0 0 0-.594.783c-.083.129-.174.269-.238.39a7.248 7.248 0 0 0-.681 1.692 9.383 9.383 0 0 0-.3 2.02c-.022.584 0 1.09.038 1.568.084.953.231 1.786.401 2.577l.39 1.764c.027.14.065.268.087.408l.057.428.121.855.065.428.033.443.072.886c.061.586.061 1.196.076 1.801.05 2.426-.11 4.92-.435 7.407a50.6 50.6 0 0 1-1.503 7.35c-.17.594-.367 1.17-.548 1.76a55.283 55.283 0 0 1-.632 1.684l-.352.791c-.061.129-.114.276-.178.39l-.193.356-.186.355c-.064.121-.129.246-.193.326-.129.185-.257.375-.378.575l-.303.485a2.813 2.813 0 0 0 4.462 3.387c.295-.322.59-.655.878-.988.155-.17.265-.333.382-.496l.349-.488.344-.492c.117-.166.2-.325.303-.492l.583-.98a53.92 53.92 0 0 0 1.018-1.964c.295-.659.61-1.321.89-1.984a58.231 58.231 0 0 0 2.69-8.114 58.405 58.405 0 0 0 1.51-8.493c.068-.73.152-1.454.167-2.203l.045-1.12.02-.56-.012-.568-.004-.205c.167.186.333.371.496.557 1.608 1.84 3.179 3.838 4.708 5.889a181.94 181.94 0 0 1 4.481 6.328c.14.2.311.428.477.617.284.33.594.62.924.874 0 .216.003.424.015.636-2.661 2.861-5.265 5.821-7.748 9.034-1.567 2.06-3.096 4.19-4.485 6.715-.685 1.267-1.347 2.645-1.854 4.363-.246.879-.454 1.851-.496 3.02l-.007.44.022.473c.012.159.02.314.038.477.023.166.05.337.076.503.113.666.333 1.385.65 2.07.16.337.356.67.557.992.212.299.44.613.681.878a8.075 8.075 0 0 0 1.54 1.328c1.05.697 2.04 1.06 2.938 1.31 1.79.466 3.292.519 4.723.507 2.842-.053 5.367-.48 7.853-.98 4.943-1.022 9.618-2.434 14.243-3.948a2.845 2.845 0 0 0 1.911-3.236 2.842 2.842 0 0 0-3.323-2.267h-.015c-4.648.878-9.322 1.635-13.864 1.965-2.252.155-4.511.208-6.46-.027a10.954 10.954 0 0 1-1.685-.322c.004-.015.012-.026.015-.037.133-.273.322-.606.534-.954.235-.36.477-.73.768-1.117 1.14-1.548 2.619-3.164 4.183-4.723a83.551 83.551 0 0 1 2.585-2.468 35.897 35.897 0 0 0 2.312 4.16c.125.2.261.405.397.602 3.747-.413 7.415-1.06 10.356-1.617l.037-.007a7.47 7.47 0 0 1 8.702 5.957 7.491 7.491 0 0 1-4.724 8.38C132.172 94.372 138.542 96 145.313 96c20.358 0 37.087-14.708 38.994-33.514.193-.05.386-.098.576-.144a23.261 23.261 0 0 1 2.354-.458c.726-.102 1.393-.14 1.847-.125.125-.004.193.015.299.012.03.003.064.007.098.007h.053c.008.004.015.004.027.004.106 0 .094-.019.09-.068-.007-.05-.022-.125.019-.117.038.007.125.083.216.26.087.19.186.443.269.761.079.33.159.69.219 1.102.129.806.216 1.745.307 2.725.091.984.178 2.02.306 3.1.262 2.138.682 4.435 1.533 6.683.837 2.245 2.154 4.406 3.812 6.15.825.871 1.725 1.655 2.66 2.336.943.677 1.919 1.26 2.911 1.782a2.848 2.848 0 0 0 3.641-.874 2.848 2.848 0 0 0-.674-3.966" fill="#0398F3"></path><g clip-path="url(#beholder-eye-socket-clip-path)"><circle cx="137.5" cy="60" r="7" fill="#1B9AF0"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath xlink:href="#beholder-eye-move-path"></mpath></animateMotion></circle></g></g><g class="beholder-dm-screen__screen"><path fill="#EAEEF0" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M76 76h136v97H76z"></path><path d="M218 170.926V74.282l64-35.208v96.644l-64 35.208zM70 171.026V74.318L3 38.974v96.708l67 35.344z" fill="#F3F6F9" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
 				<div class="loading-status-indicator__subtext">${loadingText}</div>
 			</div>
 		</div>
@@ -3268,236 +3026,7 @@ function init_loading_overlay_beholder() {
 		"right": "0px"
 	});
 	$("#loading_overlay").append(loadingIndicator);
-	// For safety reasons.. if something don't work.. it's better to just remove this overlay to make it easier to fix stuff
-	setTimeout(remove_loading_overlay, 15000);
-
 }
-
-/**
- * The first time the window loads, start doing all the things
- */
-$(function() {
-
-	// we injected an overlay in `Load.js` this makes it look nice by setting a background image, etc.
-	let loadingBg = $(`<div></div>`);
-	loadingBg.css({
-		"background-position": "center",
-		"background-size": "cover",
-		"filter": "blur(4px)",
-		"width": "100%",
-		"height": "100%",
-		"background-color": "#26282a",
-		"opacity": "0.5",
-	});
-	$("#loading_overlay").append(loadingBg);
-	if (is_encounters_page()) {
-		// DMG cover art
-		loadingBg.css({
-			"background-image": "url(https://media-waterdeep.cursecdn.com/attachments/0/267/dmg1k.jpg)"
-		});
-	} else if (is_characters_page()) {
-		// PHB cover art
-		loadingBg.css({
-			"background-image": "url(https://media-waterdeep.cursecdn.com/attachments/0/264/phb1k.jpg)"
-		});
-	}
-
-	window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
-	window.AVTT_VERSION = $("#avttversion").attr('data-version');
-
-	var is_dm = false;
-	if($(".ddb-campaigns-detail-body-dm-notes-private").length > 0) {
-		is_dm = true;
-	} else if (is_encounters_page()) {
-		is_dm = true;
-	}
-
-	// SCB: Add a dummy DIV to force the AboutVTT DIV below the standard DDB buttons
-	$(".ddb-campaigns-detail-header-secondary-sharing").append($("<div style='clear:both'>"))
-
-	// SCB:Create a 'content DIV' for AboveVTT to add our controls to, so we can control styling better
-	var contentDiv = $("<div class='above-vtt-content-div'>").appendTo($(".ddb-campaigns-detail-header-secondary-sharing"));
-
-	var warningDiv = $("<div class='above-vtt-warning-div' style='padding-top: 20px;'>").appendTo($(".ddb-campaigns-invite-container"));
-	var warningtitleDiv = $("<div class='above-vtt-warning-secondary-div'>").appendTo($(".above-vtt-warning-div"));
-
-	// SCB: Append our logo
-	contentDiv.append($("<img class='above-vtt-logo above-vtt-right-margin-5px' width='120px' src='" + window.EXTENSION_PATH + "assets/logo.png'>"));
-
-	if(is_dm) {
-		contentDiv.append($("<a class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link' style='position:relative'>JOIN AS DM</a>"));
-		warningDiv.append($("<a class='ddb-campaigns-warning-div' style='color: #333; padding-left: 15%'>If you press 'RESET INVITE LINK' you will lose your cloud data!</a>"));
-		warningtitleDiv.append($("<a class='above-vtt-warning-secondary-div' style='color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto; background-color: #fff; border: 2px solid #c53131; border-radius: 4px; padding: 10px 145px 30px 145px;'>WARNING FOR ABOVEVTT!!!</a>"));
-	}
-
-	$(".ddb-campaigns-character-card-footer-links").each(function() {
-		if($(this).find(".ddb-campaigns-character-card-footer-links-item-edit").length == 0)
-			return;
-
-		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
-		let img = $(this).parent().parent().find('.user-selected-avatar').css('background-image');
-		let name = $(this).parent().parent().find(".ddb-campaigns-character-card-header-upper-character-info-primary").html();
-		if (img)
-			img = img.replace(/url\("(.*)"\)/, "$1");
-		else
-			img = "https://www.dndbeyond.com/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-
-		newlink = $("<a style='color:white;background: #1b9af0;' href='#' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>");
-
-		newlink.click(function(e) {
-			e.preventDefault();
-			gather_pcs();
-			harvest_game_id_and_join_link(function () {
-				window.open(`https://www.dndbeyond.com${sheet}?abovevtt=true`, '_blank');
-			});
-		});
-
-		$(this).prepend(newlink);
-
-		console.log('Sheet: ' + sheet + "img " + img);
-	});
-
-	delete_button = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete'>Delete AboveVTT Data for this campaign</a>");
-	delete_button.click(function() {
-		if (confirm("Are you sure?")) {
-			let gameId = find_game_id();
-			localStorage.removeItem("ScenesHandler" + gameId);
-			localStorage.removeItem("current_source" + gameId);
-			localStorage.removeItem("current_chapter" + gameId);
-			localStorage.removeItem("current_scene" + gameId);
-			localStorage.removeItem("CombatTracker"+gameId);
-			localStorage.removeItem("Journal"+gameId);
-			localStorage.removeItem("JournalChapters"+gameId);
-		}
-		else {
-			console.log('user canceled');
-		}
-	});
-
-	delete_button2 = $("<a class='above-vtt-campaignscreen-black-button button btn modal-link ddb-campaigns-detail-body-listing-campaign-link' id='above-delete2'>Delete Global AboveVTT Data (soundpads, tokens..)</a>");
-	delete_button2.click(function() {
-		if (confirm("Are you sure?")) {
-			localStorage.removeItem("Soundpads");
-			localStorage.removeItem("CustomTokens");
-		}
-		else {
-			console.log('user canceled');
-		}
-	});
-
-
-
-
-	var campaign_banner=$("<div id='campaign_banner'></div>")
-	campaign_banner.append("<h4><img class='above-vtt-right-margin-5px' alt='' width='100px' src='"+window.EXTENSION_PATH + "assets/logo.png'>Basic Instructions!</h4>");
-	campaign_banner.append("<br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>");
-	campaign_banner.append("Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>");
-	campaign_banner.append("Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>");
-	campaign_banner.append("If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>");
-	campaign_banner.append("If you need help, or just want to send us your feedback, join the <a target='_blank' href='https://discord.gg/cMkYKqGzRh'>AboveVTT Discord Community</a>.<br>");
-	campaign_banner.append("Do you like what you see? Then please support me on <a target='_blank' href='https://www.patreon.com/AboveVTT'>AboveVTT Patreon!</a><br><br>");
-	campaign_banner.append("<b>Deprecation</b> Due to technical changes. You no longer can join as DM if you're not the real DM of the campaign. If you need help recovering your local data for this campaign contact us on discord<br><br>");
-	campaign_banner.append("Use this button to delete all locally held data, to 'clear the cache' as it were: <br>");
-	campaign_banner.append(delete_button);
-	campaign_banner.append(delete_button2);
-	campaign_banner.hide();
-
-	delete_button.css({ "width": "400px" });
-	delete_button2.css({ "width": "400px", "margin-top": "6px", "margin-bottom": "10px" });
-
-	contentDiv.append($("<a class='above-vtt-campaignscreen-white-button above-vtt-right-margin-5px instructions btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Instructions</a>"));
-
-	window.EXPERIMENTAL_SETTINGS = $.parseJSON(localStorage.getItem('ExperimentalSettings' + find_game_id())) || {};
-	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>')
-	$("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />')
-
-	$(".instructions").click(function() {
-		if(campaign_banner.is(":visible"))
-			campaign_banner.hide();
-		else
-			campaign_banner.show();
-	});
-
-	$(".ddb-campaigns-detail-header-secondary-description").first().before(campaign_banner);
-
-	$(".joindm").click(function(e) {
-		e.preventDefault();
-		$(".joindm").addClass("button-loading");
-		gather_pcs();
-		window.EncounterHandler = new EncounterHandler(function(didSucceed, errorType) {
-			if (didSucceed === false) {
-				if (errorType === "EncounterLimitException") {
-					alert("Failed to create a backing Encounter! AboveVTT requires 1 available Encounter, but it looks like you already have more than your subscription level allows. Try deleting some encounters (or renaming one of them to \"AboveVTT\") and try again");
-				} else {
-					showDebuggingAlert();
-				}
-				$(".joindm").removeClass("button-loading");
-				return;
-			}
-			if (window.EncounterHandler.avttId !== undefined && window.EncounterHandler.avttId.length > 0) {
-				harvest_game_id_and_join_link(function () {
-					window.open(`https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}?cid=${window.gameId}&abovevtt=true`, '_blank');
-				});
-			} else {
-				// DDB doesn't support dice on their encounters page for non-subscribers so load the non-DDB dice version
-				window.DM = true;
-				window.PLAYER_SHEET = false;
-				window.PLAYER_NAME = "THE DM";
-				window.PLAYER_ID = false;
-				window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-				harvest_game_id_and_join_link(function () {
-					init_above();
-				});
-			}
-
-			let oldText = $(".joindm").text();
-			$(".joindm").removeClass("button-loading");
-			$(".joindm").text("Check for blocked pop ups!");
-			setTimeout(function () {
-				$(".joindm").text(oldText);
-			}, 2000);
-		});
-	});
-
-
-	if (window.location.search.includes("abovevtt=true")) {
-		gather_pcs();
-		if (is_encounters_page()) {
-			const urlParams = new URLSearchParams(window.location.search);
-			window.gameId = urlParams.get('cid');
-			window.CAMPAIGN_SECRET = urlParams.get('cs');
-			window.DM = true;
-			window.PLAYER_SHEET = false;
-			window.PLAYER_NAME = "THE DM";
-			window.PLAYER_ID = false;
-			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			harvest_game_id_and_join_link(function () {
-				init_above();
-			});
-		} else if (is_characters_page()) {
-			window.DM = false;
-			window.PLAYER_SHEET = window.location.pathname;
-			window.PLAYER_ID = getPlayerIDFromSheet(window.PLAYER_SHEET);
-			// these will be updated after the initial load
-			window.PLAYER_NAME = "";
-			window.PLAYER_IMG = "https://www.dndbeyond.com/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-			init_loading_overlay_beholder();
-			harvest_game_id_and_join_link(function () {
-				init_above();
-			});
-		} else {
-			window.DM = true;
-			window.PLAYER_SHEET = false;
-			window.PLAYER_NAME = "THE DM";
-			window.PLAYER_ID = false;
-			window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
-			harvest_game_id_and_join_link(function () {
-				init_above();
-			});
-		}
-	}
-
-});
 
 /**
  * Initializes the help menu.
@@ -3598,16 +3127,14 @@ function init_help_menu() {
 
 	$('#help-container').fadeOut(0);
 
-	$(function() {
-        $('.help-tabs a').on('click', function() {
-			$('.help-tabs li').removeClass('active');
-			$(this).parent().addClass('active');
-			let currentTab = $(this).attr('href');
-			$('.tabs-content div').hide();
-			$(currentTab).show();
-			return false;
-        });
-    });
+	$('.help-tabs a').on('click', function() {
+		$('.help-tabs li').removeClass('active');
+		$(this).parent().addClass('active');
+		let currentTab = $(this).attr('href');
+		$('.tabs-content div').hide();
+		$(currentTab).show();
+		return false;
+	});
 
 	$('#help-menu-outside').on('click', function() {
 		$('#help-container').fadeOut(200);
@@ -4171,15 +3698,16 @@ var childWindows = {};
 function addGamelogPopoutButton(){
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
 	const gamelog_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
-	let windowTarget = `https://dndbeyond.com/campaigns/${window.get_campaign_id()}?&abovevtt=true&popoutgamelog=true`
+	let windowTarget = `https://dndbeyond.com/campaigns/${window.find_game_id()}?popoutgamelog=true`
 
 	gamelog_popout.off().on("click",function(){
 		popoutWindow("Gamelog", $("<div/>"), 400, 800, windowTarget);
-		let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
-		setTimeout(function() {
-			$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
-		}, 1000)
-		childWindows["Gamelog"].addEventListener('load', popoutGamelogCleanup) 
+		// this seems to never go away for me so I just disabled it for now
+		// let beholderIndicator = build_combat_tracker_loading_indicator("One moment while we load the gamelog");
+		// setTimeout(function() {
+		// 	$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
+		// }, 1000)
+		childWindows["Gamelog"].addEventListener('load', popoutGamelogCleanup)
 	});
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
 }

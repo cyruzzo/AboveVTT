@@ -31,11 +31,12 @@ if (!isVttGamePage) {
         // External Dependencies
         { src: "jquery-3.6.0.min.js" },
         // AboveVTT Files
-        { src: "CoreFunctions.js" },
         { src: "DiceContextMenu/DiceContextMenu.js" },
-        // Files that execute when loaded
         { src: "DiceRoller.js" },
-        { src: "CharactersPage.js" } // this needs to execute after DiceRoller
+        { src: "DDBApi.js" },
+        // AboveVTT files that execute when loaded
+        { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
+        { src: "CharactersPage.js" } // Make sure CharactersPage executes last
     ]
 
     // Too many of our scripts depend on each other.

@@ -529,6 +529,8 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
+		$("#raycastingCanvas").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
 	};
 
 	let grid_10 = function() {
@@ -556,6 +558,8 @@ function edit_scene_dialog(scene_id) {
 			else
 				window.ScenesHandler.persist();
 			window.ScenesHandler.reload();
+			$("#raycastingCanvas").css('visibility', 'visible');
+			$("#darkness_layer").css('visibility', 'visible');
 		});
 
 		$("#grid_nodivide").click(function() {
@@ -578,6 +582,8 @@ function edit_scene_dialog(scene_id) {
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
+			$("#raycastingCanvas").css('visibility', 'visible');
+			$("#darkness_layer").css('visibility', 'visible');
 		});
 	}
 
@@ -601,6 +607,8 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist();
 		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
+		$("#raycastingCanvas").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
 	}
 
 
@@ -624,6 +632,8 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.persist();
 		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
+		$("#raycastingCanvas").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
 	}
 
 	let align_grid = function(square = false, just_rescaling = true) {
@@ -914,6 +924,8 @@ function edit_scene_dialog(scene_id) {
 
 
 			$("body").append(wizard_popup);
+			$("#raycastingCanvas").css('visibility', 'hidden');
+			$("#darkness_layer").css('visibility', 'hidden');
 			wizard_popup.draggable({
 				addClasses: false,
 				scroll: false,
@@ -1027,7 +1039,8 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA = copiedSceneData;
 
 				window.ScenesHandler.persist_current_scene();
-				
+				$("#raycastingCanvas").css('visibility', 'visible');
+				$("#darkness_layer").css('visibility', 'visible');
 				$("#tokens").show();
 			});
 
@@ -1769,7 +1782,7 @@ function did_update_scenes() {
 	if (!window.DM) return;
 
 	// store this locally in case we run into the cloud bug that prevents the scenelist event from being sent down
-	const sanitizedScenes = window.ScenesHandler.scenes.filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
+	const sanitizedScenes = normalize_scene_urls(window.ScenesHandler.scenes);
 	localStorage.setItem(`ScenesHandler${find_game_id()}`, JSON.stringify(sanitizedScenes));
 	console.debug("did_update_scenes", `ScenesHandler${find_game_id()}`, sanitizedScenes);
 

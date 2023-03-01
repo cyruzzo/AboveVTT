@@ -1757,10 +1757,9 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
 
 /** writes mytokens and mytokensfolders to localStorage */
 function persist_my_tokens() {
-    console.warn("persist_my_tokens no longer supported");
-    // localStorage.setItem("MyTokens", JSON.stringify(mytokens));
-    // localStorage.setItem("MyTokensFolders", JSON.stringify(mytokensfolders));
-    // persist_folders_remembered_state();
+    // this hasn't been a thing for a long time so let's clean up old data if it exists
+    localStorage.removeItem("MyTokens");
+    localStorage.removeItem("MyTokensFolders");
 }
 
 function persist_folders_remembered_state() {

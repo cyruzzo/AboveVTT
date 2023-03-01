@@ -449,41 +449,18 @@ class MessageBroker {
 				}
 			}
 
-			if(msg.eventType == "custom/myVTT/scenelist"){
-				remove_loading_overlay();
-				if(window.DM){
-					console.log("got scene list");
-
-					msg.data.sort((a,b) => {
-						if(a.order < b.order)
-							return -1;
-						if(a.order > b.order)
-							return 1;
-						return 0
-					});
-					window.ScenesHandler.scenes=msg.data;
-					window.PLAYER_SCENE_ID=msg.playersSceneId;
-					refresh_scenes();
-					did_update_scenes();
-				}
-			}
-
-			if(msg.eventType=="custom/myVTT/fetchscene"){
-				let sceneId=msg.data.sceneid;
-
-				let http_api_gw="https://services.abovevtt.net"; // uff.. we SHOULD REALLY PLACE THIS CHECK SOMEWHERE ELSE AND DO IT JUST ONE TIME...
-				let searchParams = new URLSearchParams(window.location.search);
-				if(searchParams.has("dev")){
-					http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-				}
-
-				$.ajax({
-					url: http_api_gw+"/services?action=getScene&campaign="+window.CAMPAIGN_SECRET+"&scene="+sceneId,
-					success: (response)=>{
+			if (msg.eventType === "custom/myVTT/fetchscene") {
+				if (window.startupSceneId === msg.data.sceneid) {
+					// we fetch this on startup because it's faster. Don't reload what we've already loaded
+					console.log("received custom/myVTT/fetchscene, but we've already loaded", msg.data.sceneid)
+				} else if (msg.data?.sceneid) {
+					AboveApi.getScene(msg.data.sceneid).then((response) => {
 						self.handleScene(response);
-					}
-				});
-
+					}).catch((error) => {
+						console.error("Failed to download scene", error);
+					});
+				}
+				delete window.startupSceneId; // we only want to prevent a double load of the initial scene, so we want to delete this no matter what.
 			}
 
 			if (msg.eventType == "custom/myVTT/scene") {
@@ -1343,7 +1320,7 @@ class MessageBroker {
 }
 
 	handleScene(msg) {
-		// console.group("handlescene")
+		console.debug("handlescene", msg);
 		if (window.DM && ! (window.CLOUD) ) {
 			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
 			location.reload();
@@ -1371,7 +1348,7 @@ class MessageBroker {
 			}
 		}
 
-		for(i in msg.data.tokens){
+		for(const i in msg.data.tokens){
 			if(i == msg.data.tokens[i].id)
 				continue;
 			msg.data.tokens[msg.data.tokens[i].id] = msg.data.tokens[i];
@@ -1459,6 +1436,7 @@ class MessageBroker {
 				}
 				$("#combat_area").empty();
 				ct_load(data);
+				redraw_light();
 			}
 
 
@@ -1477,7 +1455,6 @@ class MessageBroker {
 				enable_draggable_change_folder(ItemType.Scene);
 			}
 			console.groupEnd()
-		
 		});
 
 

@@ -653,10 +653,10 @@ class JournalManager{
 			      { title: 'h6', block: 'h6' }
 			    ] },
 				{ title: 'Containers', items: [
-			      { title: 'Quote Box', block: 'blockquote', wrapper: true, classes: 'text--quote-box'},
-			      { title: 'Rules Text', block: 'aside', wrapper: true, classes: 'rules-text' },
-			      { title: 'Ripped Paper', block: 'aside', wrapper: true, classes: 'block-torn-paper' },
-			      { title: 'Read Aloud Text', block: 'aside', wrapper: true, classes: 'read-aloud-text' },
+			      { title: 'Quote Box', block: 'div', wrapper: true, classes: 'text--quote-box'},
+			      { title: 'Rules Text', block: 'div', wrapper: true, classes: 'rules-text' },
+			      { title: 'Ripped Paper', block: 'div', wrapper: true, classes: 'block-torn-paper' },
+			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
 			      { title: 'Stat Block Paper', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
 			    ] }
 			],
@@ -1043,12 +1043,12 @@ class JournalManager{
 				}
 
 		
-				aside.rules-text a {
+				.rules-text a {
 				    color: #129b54!important;
 				    transition: .3s
 				}
 
-				aside.rules-text p:first-child {
+				.rules-text p:first-child {
 				    font-size: 16px
 				}
 
@@ -1067,7 +1067,7 @@ class JournalManager{
 				}
 
 
-				aside.block-torn-paper,aside.epigraph,aside.epigraph--with-author {
+				.block-torn-paper,.epigraph,.epigraph--with-author {
 				    overflow: auto;
 				    background: var(--theme-quote-bg-color,#fff);
 				    color: var(--theme-quote-fg-color,#242527);
@@ -1083,12 +1083,12 @@ class JournalManager{
 				    position: relative
 				}
 
-				aside.epigraph--with-author p:last-child {
+				.epigraph--with-author p:last-child {
 				    font-style: italic;
 				    text-align: right
 				}
 
-				aside.rules-text {
+				.rules-text {
 				    overflow: auto;
 				    display: block;
 				    margin: 30px 0;
@@ -1108,12 +1108,12 @@ class JournalManager{
 				    filter: drop-shadow(0 5px 8px #ccc)
 				}
 
-				aside.rules-text p:first-child {
+				.rules-text p:first-child {
 				    text-transform: uppercase;
 				    font-weight: 700
 				}
 
-				aside.read-aloud-text {
+				.read-aloud-text {
 				    overflow: auto;
 				    display: block;
 				    margin: 30px 0;
