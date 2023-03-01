@@ -941,6 +941,7 @@ function redraw_light_walls(clear=true){
 	canvas = document.getElementById("raycastingCanvas");
 	ctx = canvas.getContext("2d");
 
+	ctx.setLineDash([])
 
 
 	window.walls =[];
@@ -965,18 +966,52 @@ function redraw_light_walls(clear=true){
 	for (var i = 0; i < drawings.length; i++) {
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
 
+		if(lineWidth == undefined || lineWidth == null){
+			lineWidth = 6;
+		}
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+		
 
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
-		window.walls.push(drawnWall);
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			canvas = document.getElementById("temp_overlay");
 			ctx = canvas.getContext("2d");
 			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
 		}
+		if(color == "rgba(255, 100, 255, 0.5)"){
+			continue;
+		}
+		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
+		window.walls.push(drawnWall);
 
 	}
+}
+function open_close_door(x1, y1, x2, y2){
+	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && (d[2] == "rgba(255, 100, 255, 1)" || d[2] == "rgba(255, 100, 255, 0.5)")  && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
+	let color;
+	if(doors[0][2] == "rgba(255, 100, 255, 0.5)"){
+		color = "rgba(255, 100, 255, 1)"
+	}
+	else{
+		color = "rgba(255, 100, 255, 0.5)";
+	}
+
+	 window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		
+	let data = ['line',
+				 'wall',
+				 color,
+				 x1,
+				 y1,
+				 x2,
+				 y2,
+				 12,
+				 window.CURRENT_SCENE_DATA.scale_factor
+				 ];	
+	window.DRAWINGS.push(data);
+	redraw_light_walls();
+	redraw_light();
+						
 }
 
 function stop_drawing() {
@@ -1533,7 +1568,7 @@ function drawing_mouseup(e) {
 		else
 			window.MB.sendMessage('custom/myVTT/drawing', data);
 	}
-	else if (window.DRAWFUNCTION === "wall-eraser"){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" ){
 		let canvas = $("#raycastingCanvas")[0];
 		let ctx = canvas.getContext("2d");
 
@@ -1647,6 +1682,7 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
+
 					}	
 					if(right != false){
 						if(wallLine[0].b.x > wallLine[0].a.x){
@@ -1671,6 +1707,7 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
+					
 					}
 					if(top != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -1694,6 +1731,7 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
+					
 					}
 					if(bottom != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -1717,10 +1755,54 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
+						
 					}
-				
+
+					if(window.DRAWFUNCTION == 'wall-door-convert'){
+						x1 = undefined;
+
+						if(bottom != false){
+							x1 = bottom.x;
+							y1 = bottom.y;
+						}
+						if(left != false){
+							if(x1 == undefined){
+								x1 = left.x;
+								y1 = left.y;
+							}
+							else{
+								x2 = left.x;
+								y2 = left.y;
+							}
+						}
+						if(right != false){
+							if(x1 == undefined){
+								x1 = right.x;
+								y1 = right.y;
+							}
+							else{
+								x2 = right.x;
+								y2 = right.y;
+							}
+						}
+						if(top != false){							
+								x2 = top.x;
+								y2 = top.y;							
+						}
+						let data = ['line',
+						 'wall',
+						 "rgba(255, 100, 255, 1)",
+						 x1,
+						 y1,
+						 x2,
+						 y2,
+						 12,
+						 window.CURRENT_SCENE_DATA.scale_factor
+						 ];	
+						window.DRAWINGS.push(data);
+						
+					}	
 				}	
-				
 			}		
 		}
  		
@@ -2616,6 +2698,13 @@ function init_walls_menu(buttons){
 			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='line' data-function="wall" data-unique-with="draw">
 					Draw Wall
+			</button>
+		</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-door-convert" data-unique-with="draw">
+				 	Wall > Door 
 			</button>
 		</div>`);
 	wall_menu.append(
