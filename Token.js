@@ -2696,7 +2696,7 @@ function setTokenLight (token, options) {
 			$("#scene_map_container").prepend(lightElement);
 		}
 		if(window.DM){
-			options.hidden ? token.parent().parent().find("#light_" + tokenId).css("opacity", 0.5)
+			(options.hidden && !options.reveal_light) ? token.parent().parent().find("#light_" + tokenId).css("opacity", 0.5)
 			: token.parent().parent().find("#light_" + tokenId).css("opacity", 1)
 		}
 		else{
