@@ -2991,6 +2991,10 @@ function redraw_light(){
   		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue; 
 
+  		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  			continue;
+
 	  	if(window.DM){
 	  		$(light_auras[i]).css("visibility", "visible");
 	  	}
