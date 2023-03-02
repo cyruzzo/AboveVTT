@@ -51,10 +51,8 @@ class Token {
 		this.selected = false;
 		this.options = options;
 		this.sync = null;
-		this.persist = null;
-		if(window.CLOUD)
 			this.persist= ()=>{};
-		
+
 		this.doing_highlight = false;
 		if (typeof this.options.size == "undefined") {
 			this.options.size = window.CURRENT_SCENE_DATA.hpps; // one grid square
@@ -311,12 +309,8 @@ class Token {
 		$("#light_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {
-			if(window.CLOUD && sync){
+			if (sync) {
 				window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
-			}
-			else if(!window.CLOUD && window.DM){
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
 			}
 			draw_selected_token_bounding_box(); // redraw the selection box
 		}
@@ -435,8 +429,6 @@ class Token {
 	place_sync_persist() {
 		this.place();
 		this.sync();
-		if (this.persist != null)
-			this.persist();
 	}
 
 	highlight(dontscroll=false) {
@@ -737,9 +729,7 @@ class Token {
 		self.update_from_page();
 		if (self.sync != null)
 			self.sync(e);
-		if (self.persist != null)
-			self.persist(e);
-		
+
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 		if(self.options.auraislight){
@@ -2183,9 +2173,6 @@ class Token {
 			return;
 		}
 		this.options.abilityTracker[key] = asNumber;
-		if (this.persist !== undefined && this.persist != null) {
-			this.persist();
-		}
 	}
 	// returns the stored value as a number or returns defaultValue
 	get_tracked_ability(key, defaultValue) {
@@ -3315,19 +3302,9 @@ function delete_selected_tokens() {
 	tokensToDelete.forEach(t => window.TOKEN_OBJECTS_RECENTLY_DELETED[t.options.id] = Object.assign({}, t.options));
 	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
-	if(window.CLOUD){
 		for (let i = 0; i < tokensToDelete.length; i++) {
 			tokensToDelete[i].delete(); // don't persist on each token delete, we'll do that next
 		}
-	}
-	else{
-		// delete these in a separate loop to prevent altering the array while iterating over it
-		for (let i = 0; i < tokensToDelete.length; i++) {
-			tokensToDelete[i].delete(false); // don't persist on each token delete, we'll do that next
-		}
-		window.ScenesHandler.persist();
-		window.ScenesHandler.sync();
-	}
 	draw_selected_token_bounding_box(); // redraw the selection box
 	ct_persist();
 }
