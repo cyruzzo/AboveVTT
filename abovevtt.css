@@ -939,6 +939,7 @@ input {
 }
 #mega_importer.source_select .sidebar-scroll-menu {
     overflow: auto;
+    height: 100%;
 }
 #mega_importer.source_select #importer_area {
     overflow: auto;
