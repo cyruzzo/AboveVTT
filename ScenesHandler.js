@@ -626,19 +626,31 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	import_completed_scene_with_drawings(scene){
-			const sanitizedScene = [scene].filter(sceneData => !sceneData.dm_map.startsWith("data:") && !sceneData.player_map.startsWith("data:"));
-			console.log("sanitizedScene", sanitizedScene);
-			if(window.CLOUD){
-				if(sanitizedScene[0].notes != undefined){
-					for(let id in sanitizedScene[0].notes){
-						window.JOURNAL.notes[id] = sanitizedScene[0].notes[id];
+			console.log("import_completed_scene_with_drawings", scene);
+				if(scene.notes != undefined){
+					for(let id in scene.notes){
+						window.JOURNAL.notes[id] = scene.notes[id];
 					}
-					delete sanitizedScene[0].notes;
+					delete scene.notes;
 				}
 				window.JOURNAL.persist();
-				window.ScenesHandler.scenes.push(scene);
-				scene_import_with_drawings(JSON.stringify(sanitizedScene));
-			}
+				AboveApi.migrateScenes(window.gameId, [scene])
+					.then(migratedScenes => {
+						window.ScenesHandler.scenes = window.ScenesHandler.scenes.concat(migratedScenes);
+						rebuild_scene_items_list();
+						redraw_scene_list();
+						$(`.scene-item[data-scene-id='${migratedScenes[0].id}'] .dm_scenes_button`).click();
+					})
+					.then(() => {
+						const dialog = ('#edit_dialog');
+						const sceneToDelete = dialog.attr('data-scene-id');
+						window.ScenesHandler.delete_scene(sceneToDelete);
+						dialog.remove();
+					})
+					.catch(error => {
+						console.error("import_completed_scene_with_drawings failed to upload scene", scene, error);
+						showDebuggingAlert();
+					})
 	}
 
 	persist_current_scene(dontswitch=false){

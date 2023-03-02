@@ -452,11 +452,6 @@ function scene_import_with_drawings(scenedata=null){  //modified cloud_migration
 		data: scenedata,
 		success:function(data){
 			$('#edit_dialog').remove();
-			rebuild_scene_items_list();
-			redraw_scene_list();
-			let scenes = window.ScenesHandler.scenes;
-			let sceneId = scenes[scenes.length-1].id;
-			$(`.scene-item[data-scene-id='${sceneId}'] .dm_scenes_button`).click();
 
 
 		}

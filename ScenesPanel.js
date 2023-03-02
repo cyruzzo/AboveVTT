@@ -50,6 +50,8 @@ function preset_importer(target, key) {
 		$("#scene_properties input[name='dm_map_is_video']").prop('checked', scene.dm_map_is_video === "1");
 		$("#scene_properties input[name='title']").val(scene.title);
 		$("#scene_properties input[name='scale']").val(scene.scale);
+
+		$("#sources-import-iframe-container").remove();
 	});
 
 	target.append(sel);
@@ -236,7 +238,7 @@ function edit_scene_dialog(scene_id) {
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
-	dialog = $("<div id='edit_dialog'></div>");
+	dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 	template_section = $("<div id='template_section'/>");
@@ -247,7 +249,7 @@ function edit_scene_dialog(scene_id) {
 	controls.append("Import Template From:");
 	toggle_ddb = $("<button>DnDBeyond.com</button>")
 	toggle_ddb.click(function() {
-		mega_importer(true);
+		load_sources_iframe_for_map_import();
 	});
 	controls.append(toggle_ddb);
 
@@ -506,6 +508,7 @@ function edit_scene_dialog(scene_id) {
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
+		$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
 		did_update_scenes();
 	});
 
@@ -1355,6 +1358,11 @@ function display_chapters() {
 		$("#chapter_select").append($("<option value='" + property + "'>" + chapter.title + "</option>"))
 	}
 	$("#chapter_select").change();
+
+
+	const chapterSelectMenu = ddb_style_chapter_select(window.ScenesHandler.sources[source_name].chapters);
+	$("#importer_toggles").append(chapterSelectMenu);
+	$("#chapter_select").hide();
 }
 
 function display_scenes() {
@@ -1374,7 +1382,58 @@ function display_scenes() {
 			$("#scene_select").change();*/
 }
 
-function init_ddb_importer(target) {
+function ddb_style_chapter_select(chapters) {
+	console.log("ddb_style_chapter_select", chapters);
+	const menu = $(`
+		<div class="sidebar-scroll-menu">
+			<ul class="quick-menu quick-menu-tier-1">
+				<li class="quick-menu-item quick-menu-item-tier-1">
+
+					<div class="quick-menu-item-label">
+						<a class="quick-menu-item-link back-to-source-select" href="#">Source Select</a>
+					</div>
+					<ul class="quick-menu quick-menu-tier-2 chapter-list">
+
+					</ul>
+				</li>
+			</ul>
+		</div>	
+	`);
+	const chapterList = menu.find("ul.chapter-list");
+	for (const chapterKey in chapters) {
+		console.log("building", chapterKey, chapters[chapterKey]);
+		const chapterListItem = ddb_style_chapter_list_item(chapterKey, chapters[chapterKey].title);
+		chapterList.append(chapterListItem);
+		chapterListItem.find("a").click(function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			$("#chapter_select").val(chapterKey).change();
+			$(".current-source").removeClass("current-source");
+			$(e.currentTarget).parent().addClass("current-source");
+		});
+	}
+	chapterList.find("a:first").parent().addClass("current-source");
+	menu.find(".back-to-source-select").click(function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		$("#mega_importer").remove();
+		$("#sources-import-iframe-container").show();
+	});
+	return menu;
+}
+
+function ddb_style_chapter_list_item(chapterKey, chapterTitle) {
+	console.log("ddb_style_chapter_list_item", chapterKey, chapterTitle)
+	return $(`
+		<li class="quick-menu-item quick-menu-item-tier-2 quick-menu-item-closed">
+			<div class="quick-menu-item-label">
+				<a class="quick-menu-item-link" href="#" data-chapter="${chapterKey}">${chapterTitle}</a>
+			</div>
+		</li>
+	`);
+}
+
+function init_ddb_importer(target, selectedSource) {
 
 	panel = $("<div id='scenes-panel' class='sidepanel-content'></div>");
 	target.append(panel);
@@ -1382,12 +1441,18 @@ function init_ddb_importer(target) {
 
 	var source_select = $("<select id='source_select'/>");
 	source_select.css("display", "inline");
+	if (selectedSource) {
+		source_select.hide();
+	}
+
 	window.ScenesHandler.build_adventures(function() {
-
 		display_sources();
-		$("#source_select").change();
+		if (selectedSource) {
+			$("#source_select").val(selectedSource).change();
+		} else {
+			$("#source_select").change();
+		}
 	});
-
 
 	source_select.change(function() {
 		$("#chapter_select").empty();
@@ -1560,6 +1625,7 @@ function fill_importer(scene_set, start, searchState = '') {
 					$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
 
 				$("#mega_importer").remove();
+				$("#sources-import-iframe-container").remove();
 				validate_image_input($("input[name=player_map]")[0])
 				validate_image_input($("input[name=dm_map]")[0])
 			}
@@ -1652,7 +1718,7 @@ function fill_importer(scene_set, start, searchState = '') {
 	footer.append(mapSearchContainer);
 }
 
-function mega_importer(DDB = false) {
+function mega_importer(DDB = false, ddbSource) {
 	container = $("<div id='mega_importer'/>");
 	toggles = $("<div id='importer_toggles'/>");
 
@@ -1674,10 +1740,19 @@ function mega_importer(DDB = false) {
 		}
 	}
 	else {
-		init_ddb_importer(toggles);
+		if (ddbSource) {
+			container.addClass("source_select");
+			const titleBar = floating_window_title_bar("source_select_title_bar");
+			titleBar.find(".title-bar-exit").click(function() {
+				$("#sources-import-iframe-container").remove();
+				$("#mega_importer").remove();
+			});
+			container.append(titleBar)
+		}
+		init_ddb_importer(toggles, ddbSource);
 	}
 	container.append(toggles);
-	area = $("<div id='importer_area'/>").css({ height: "480px", width: "100%" });
+	area = $("<div id='importer_area'/>");
 	container.append(area);
 	bottom = $("<div id='importer_footer'/>").css({ height: "30px", width: "100%" });
 	container.append(bottom);
@@ -2153,4 +2228,48 @@ function move_scenes_folder(listItem, folderPath) {
 	});
 
 	console.groupEnd();
+}
+
+function load_sources_iframe_for_map_import() {
+	const iframeContainer = $(`<div id="sources-import-iframe-container"></div>`);
+	const iframe = $(`<iframe id='sources-import-iframe'></iframe>`);
+	iframeContainer.append(iframe);
+	$(document.body).append(iframeContainer);
+
+	iframe.off("load").on("load", function (event) {
+		if (!this.src) return; // it was just created. no need to do anything until it actually loads something
+		// hide DDB header and footer content.
+		const sourcesBody = $(event.target).contents();
+		sourcesBody.find("#site-main > .site-bar").hide();
+		sourcesBody.find("#site-main > header.page-header").hide();
+		sourcesBody.find("#mega-menu-target").hide();
+		sourcesBody.find("footer").hide();
+		sourcesBody.find(".ad-container").hide();
+		// hijack the links and open our importer instead
+		sourcesBody.find("a.sources-listing--item").click(function (event) {
+			event.stopPropagation();
+			event.preventDefault();
+			const sourceAbbreviation = event.currentTarget.href.split("/").pop();
+			mega_importer(true, sourceAbbreviation);
+			$("#sources-import-iframe-container").hide();
+		});
+	});
+
+	iframe.attr("src", `/sources`);
+
+	const titleBar = floating_window_title_bar("sources-import-iframe-title-bar");
+	iframeContainer.prepend(titleBar);
+	titleBar.find(".title-bar-exit").click(function() {
+		$("#sources-import-iframe-container").remove();
+		$("#mega_importer").remove();
+	});
+}
+
+function floating_window_title_bar(id) {
+	// <div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>
+	return $(`
+    <div id="${id}" class="restored floating-window-title-bar">
+      <div class="title-bar-exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+    </div>
+  `);
 }
