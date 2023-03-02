@@ -2547,7 +2547,10 @@ function deselect_all_tokens() {
 	if(window.DM && darknessPercent < 25){
    	 	darknessPercent = 25; 	
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-   	 	$('#raycastingCanvas').css('opacity', 0.5);
+   	 	$('#raycastingCanvas').css('opacity', 0);
+   	}
+   	else if(window.DM){
+   		$('#raycastingCanvas').css('opacity', '');
    	}
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
