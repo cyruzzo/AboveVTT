@@ -1033,12 +1033,9 @@ function open_close_door(x1, y1, x2, y2){
 	redraw_light_walls();
 	redraw_light();
 
-	if(window.DM)
-		window.ScenesHandler.persist();
-	if(window.CLOUD)
-		sync_drawings();
-	else
-		window.MB.sendMessage('custom/myVTT/drawing', data);
+
+	sync_drawings();
+
 						
 }
 
