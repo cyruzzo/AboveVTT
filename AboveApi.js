@@ -71,19 +71,18 @@ class AboveApi {
     return response;
   }
 
+  // Until we store more than {cloud:1} this isn't necessary
   static async getCampaignData() {
-    console.debug("startup", "getCampaignData")
     const response = await this.fetchJson("getCampaignData");
-    console.log("startup", "AboveApi.getCampaignData", response);
-    window.CLOUD = !!response?.Item?.data?.cloud;
+    console.log("AboveApi.getCampaignData", response);
     if(response.Item && response.Item.data) {
       return response.Item.data
     }
     return {};
   }
 
+  // Until we store more than {cloud:1} this isn't necessary
   static async setCampaignData() {
-    console.debug("startup", "setCampaignData")
     const config = {
       method: 'PUT',
       headers: {
@@ -95,7 +94,7 @@ class AboveApi {
     const url = this.#buildUrl("setCampaignData")
     const request = await fetch(url, config);
     const response = await request.json();
-    console.log("startup", "AboveApi.setCampaignData", response);
+    console.log("AboveApi.setCampaignData", response);
     return response;
   }
 
