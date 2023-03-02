@@ -1144,7 +1144,7 @@ function ddb_style_chapter_select(chapters) {
 		e.stopPropagation();
 		e.preventDefault();
 		$("#mega_importer").remove();
-		$("#sources-import-iframe-container").show();
+		$("#sources-import-iframe").show();
 	});
 	return menu;
 }
@@ -1394,7 +1394,9 @@ function fill_importer(scene_set, start, searchState = '') {
 	buttons.append(cancel);
 	buttons.append(prev);
 	buttons.append(next);
+	buttons.addClass('importPrevNextButtons')
 	footer.append(buttons);
+
 
 	let pageNumbersDiv = document.createElement('div');
 	pageNumbersDiv.classList.add('page-number');
@@ -1440,6 +1442,7 @@ function fill_importer(scene_set, start, searchState = '') {
 			}
 		}
 	});
+	mapSearchContainer.classList.add('mapSearch');
 	mapSearchContainer.append(mapSearchLabel);
 	mapSearchContainer.append(mapSearchElement);
 	footer.append(mapSearchContainer);
@@ -1469,12 +1472,6 @@ function mega_importer(DDB = false, ddbSource) {
 	else {
 		if (ddbSource) {
 			container.addClass("source_select");
-			const titleBar = floating_window_title_bar("source_select_title_bar");
-			titleBar.find(".title-bar-exit").click(function() {
-				$("#sources-import-iframe-container").remove();
-				$("#mega_importer").remove();
-			});
-			container.append(titleBar)
 		}
 		init_ddb_importer(toggles, ddbSource);
 	}
@@ -1483,9 +1480,13 @@ function mega_importer(DDB = false, ddbSource) {
 	container.append(area);
 	bottom = $("<div id='importer_footer'/>").css({ height: "30px", width: "100%" });
 	container.append(bottom);
-	$("body").append(container);
-	if (!DDB)
+	if (DDB)
+		adjust_create_import_edit_container(container, false);
+	if (!DDB){
+		adjust_create_import_edit_container(container);
 		first.click();
+	}
+
 }
 
 
@@ -1958,44 +1959,90 @@ function move_scenes_folder(listItem, folderPath) {
 }
 
 function load_sources_iframe_for_map_import() {
-	const iframeContainer = $(`<div id="sources-import-iframe-container"></div>`);
+
 	const iframe = $(`<iframe id='sources-import-iframe'></iframe>`);
-	iframeContainer.append(iframe);
-	$(document.body).append(iframeContainer);
+
+
+	adjust_create_import_edit_container(iframe);
+	$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load DnDBeyond Sources'));
 
 	iframe.off("load").on("load", function (event) {
 		if (!this.src) return; // it was just created. no need to do anything until it actually loads something
 		// hide DDB header and footer content.
 		const sourcesBody = $(event.target).contents();
-		sourcesBody.find("#site-main > .site-bar").hide();
-		sourcesBody.find("#site-main > header.page-header").hide();
-		sourcesBody.find("#mega-menu-target").hide();
-		sourcesBody.find("footer").hide();
-		sourcesBody.find(".ad-container").hide();
+		sourcesBody.find('head').append(`<style id='dndbeyondSourcesiFrameStyles' type="text/css">
+			#site-main,
+			.single-column #content{
+				padding: 0px !important;
+			} 
+			header[role='banner'],
+			#site-main > .site-bar,
+			#site-main > header.page-header,
+			#mega-menu-target,
+			footer,
+			.ad-container,
+			.ddb-site-banner{
+				display:none !important;
+			}
+			.ddb-collapsible-filter{
+				top:0px;
+				position:sticky !important;
+			}
+			</style>`);
+		$('#sources-import-content-container').find(".sidebar-panel-loading-indicator").remove();
+
 		// hijack the links and open our importer instead
 		sourcesBody.find("a.sources-listing--item").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();
 			const sourceAbbreviation = event.currentTarget.href.split("/").pop();
 			mega_importer(true, sourceAbbreviation);
-			$("#sources-import-iframe-container").hide();
-		});
+			iframe.hide();
+		});	
 	});
 
 	iframe.attr("src", `/sources`);
-
-	const titleBar = floating_window_title_bar("sources-import-iframe-title-bar");
-	iframeContainer.prepend(titleBar);
-	titleBar.find(".title-bar-exit").click(function() {
-		$("#sources-import-iframe-container").remove();
-		$("#mega_importer").remove();
-	});
 }
 
-function floating_window_title_bar(id) {
+function adjust_create_import_edit_container(content='', empty=true, title=''){
+	if($(`#sources-import-main-container`).length>0 ){	
+		if(empty==true)	
+			$('#sources-import-content-container').empty();
+		$('#sources-import-content-container').append(content);
+	}
+	else{
+		const mainContainer = $(`<div id="sources-import-main-container"></div>`);
+		const titleBar = floating_window_title_bar("sources-import-iframe-title-bar", title);
+		mainContainer.prepend(titleBar);
+		titleBar.find(".title-bar-exit").click(function() {
+			$("#sources-import-main-container").remove();
+			$("#mega_importer").remove();
+		});
+		const contentContainer = $(`<div id="sources-import-content-container"></div>`);
+		contentContainer.append(content);
+		mainContainer.append(contentContainer);
+		mainContainer.draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function() {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function() {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		$(document.body).append(mainContainer);
+	}
+}
+
+
+function floating_window_title_bar(id, title='') {
 	// <div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>
 	return $(`
     <div id="${id}" class="restored floating-window-title-bar">
+    <div class='title-bar-title'>${title}</div>
       <div class="title-bar-exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
     </div>
   `);

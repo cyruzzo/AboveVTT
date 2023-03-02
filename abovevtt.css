@@ -856,24 +856,27 @@ input {
 }
 
 #mega_importer {
+    width:100%;
+    height:100%;
+}
+
+#sources-import-main-container {
     top: 86px;
     left: 100px;
-    height: calc(100% - 250px);
+    height: calc(100% - 170px);
     width: calc(100% - 500px);
-    position: fixed;
+    position: fixed !important;
     z-index: 100000;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
-#sources-import-iframe-container {
-    top: 86px;
-    left: 100px;
-    height: calc(100% - 250px);
-    width: calc(100% - 500px);
-    position: fixed;
-    z-index: 100000;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+#sources-import-main-container .sidebar-panel-loading-indicator svg{
+    padding: 0px 20% !important;
+
+}
+#sources-import-main-container .sidebar-panel-loading-indicator{
+    top: 5px !important;
+    border-radius: 0px 0px 5px 5px !important;
 }
 #sources-import-iframe {
     top: 0;
@@ -882,6 +885,13 @@ input {
     width: 100%;
     position: absolute;
     border: none;
+    border-radius: 0px 0px 5px 5px;
+}
+
+
+#sources-import-content-container{
+    width:100%;
+    height:100%;
 }
 #mega_importer.source_select #scenes-panel {
     display: none;
@@ -892,11 +902,10 @@ input {
     padding: 20px;
     height: 100%;
     display: block;
-    overflow-y: scroll;
 }
 #mega_importer.source_select #importer_toggles {
-    overflow-y: scroll;
     height: 100% !important;
+    padding: 5px 10px 0px 0px;
 }
 #mega_importer.source_select #importer_toggles .back-to-source-select {
     background-image: url(https://www.dndbeyond.com/file-attachments/0/737/chevron-left-green.svg);
@@ -929,11 +938,19 @@ input {
     display: none;
 }
 #mega_importer.source_select .sidebar-scroll-menu {
-    overflow: scroll;
+    overflow: auto;
 }
 #mega_importer.source_select #importer_area {
-    overflow: scroll;
-    height: 100% !important;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#mega_importer.source_select #importer_toggles ~ #importer_area{
+    width: calc(100% - 290px) !important;
+    left: 290px;
+    position: absolute;
 }
 
 .floating-window-title-bar {
@@ -958,9 +975,6 @@ input {
     z-index: 1;
 }
 
-#importer_area {
-    height: 520px !important;
-}
 
 #importer_area > div {
     border: 1px solid #3d3d3d !important;
@@ -968,9 +982,18 @@ input {
     height: 220px !important;
 }
 
-#importer_footer > div {
+#importer_footer > div.page-number {
     right: 16px !important;
 }
+
+#importer_footer > div.mapSearch,
+#importer_footer > div.importPrevNextButtons{
+    bottom:0px;
+    position:absolute;
+    padding:5px;
+}
+
+
 
 #importer_footer button:disabled:hover {
     color: #fff;
@@ -2848,7 +2871,7 @@ body {
   }
 .page-number {
     position: absolute;
-    bottom: 41px;
+    bottom: 40px;
     font-weight: bold;
 }
 .tabs-content dt {
