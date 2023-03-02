@@ -211,53 +211,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}
 		});
 
-
-
-
-		this.persist();
-
 		// some things can't be done correctly until after the scene finishes loading
 		redraw_settings_panel_token_examples();
-
 	}
-
-	sync() {
-		if(window.CLOUD)
-			return;
-		console.log('inviooooooooooooooooooooooooooooooooooooooooooo');
-
-		$("#scene_map").width();
-
-		var data = {};
-		data.id=window.CURRENT_SCENE_DATA.id;
-		
-		data.grid = window.CURRENT_SCENE_DATA.grid;
-		data.snap = window.CURRENT_SCENE_DATA.snap;
-		//data.scale=window.CURRENT_SCENE_DATA.scaleX;
-		data.hpps = window.CURRENT_SCENE_DATA.hpps;
-		data.vpps = window.CURRENT_SCENE_DATA.vpps;
-		data.fpsq = window.CURRENT_SCENE_DATA.fpsq;
-		data.upsq = window.CURRENT_SCENE_DATA.upsq;
-		
-		data.grid_subdivded = window.CURRENT_SCENE_DATA.grid_subdivided;
-		data.offsetx = window.CURRENT_SCENE_DATA.offsetx;
-		data.offsety = window.CURRENT_SCENE_DATA.offsety;
-
-		data.map = this.scene.player_map;
-		data.is_video = this.scene.player_map_is_video;
-		data.width = $("#scene_map").width();
-		data.height = $("#scene_map").height();
-		data.tokens = [];
-		data.fog_of_war = this.scene.fog_of_war;
-		data.reveals = window.REVEALED;
-		data.drawings = window.DRAWINGS;
-		for (var id in window.TOKEN_OBJECTS) {
-			data.tokens[id].push(window.TOKEN_OBJECTS[id].options);
-		}
-
-		window.MB.sendMessage('custom/myVTT/scene', data); // issue with message size ??
-	}
-
 
 	display_scene_properties(scene_id) {
 		console.log('inizio....');
@@ -302,8 +258,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				};
 			});
 			iframe.remove();
-			//self.persist();
-			
+
 			// SORT
 			self.sources = Object.keys(scraped_sources)
 				.sort(
@@ -393,7 +348,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				});
 			}
 			iframe.remove();
-			self.persist();
 			callback();
 		});
 	}
@@ -582,7 +536,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}
 
 			iframe.remove();
-			self.persist();
 			console.log('INVOKO CALLBACK');
 			callback();
 		});
@@ -598,10 +551,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			window.TOKEN_OBJECTS[id] = new Token(options);
 
-			window.TOKEN_OBJECTS[id].persist = function() {
-				self.persist();
-			}
-
 			window.TOKEN_OBJECTS[id].sync = function() {
 				window.MB.sendMessage('custom/myVTT/token', window.TOKEN_OBJECTS[id].options);
 			}
@@ -609,8 +558,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		window.TOKEN_OBJECTS[id].place();
 		this.scene.hasTokens = true;
-		if (save)
-			this.persist();
 	}
 
 
@@ -661,84 +608,26 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}
 
-	delete_scene(sceneId) { // not the index, but the actual id
-		if(!window.CLOUD) return;
+	delete_scene(sceneId, reloadUI = true) { // not the index, but the actual id
 		window.MB.sendMessage("custom/myVTT/delete_scene",{ id: sceneId });
 		let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === sceneId);
 		window.ScenesHandler.scenes.splice(sceneIndex, 1);
+		if (reloadUI) {
+			did_update_scenes();
+		}
 	}
 
 	persist() {
-		if(window.CLOUD)
-			return;
-		console.log("persisting");
-		if (window.STARTING)
-			return;
-
-		for (var id in window.TOKEN_OBJECTS) {
-			this.scene.tokens[id] = window.TOKEN_OBJECTS[id].options;
-		}
-
-		if (typeof this.scene !== "undefined") {
-			this.scene.reveals = [].concat(window.REVEALED); // USE A CLONE OF THE CURRENT REVEALED ARRAY...
-			this.scene.drawings = [].concat(window.DRAWINGS);
-		}
-
-		localStorage.setItem("ScenesHandler" + this.gameid, JSON.stringify(this.scenes));
-		localStorage.setItem("CurrentScene" + this.gameid, this.current_scene_id);
+		console.error("ScenesHandler.persist is no longer a function. Stop calling it!");
 	}
 
-	constructor(gameid) {
-		this.gameid = gameid;
+	sync() {
+		console.error("ScenesHandler.sync is no longer a function. Stop calling it!");
+	}
 
+	constructor() {
 		this.sources = {};
-
-
-		if(window.CLOUD){
-			const fromStorage = localStorage.getItem(`ScenesHandler${find_game_id()}`);
-			if (fromStorage != null) {
-				this.scenes = $.parseJSON(fromStorage);
-				console.debug("from localStorage", `ScenesHandler${find_game_id()}`, this.scenes);
-			} else {
-				this.scenes=[];
-			}
-			this.current_scene_id=null;
-		}
-		else{ // LEGACY
-			if (localStorage.getItem('ScenesHandler' + gameid) != null) {
-				this.scenes = $.parseJSON(localStorage.getItem('ScenesHandler' + gameid));
-				this.current_scene_id = localStorage.getItem("CurrentScene" + gameid);
-				if (!this.scenes.hasOwnProperty('player_map_is_video')) {
-					this.scenes.player_map_is_video = "0";
-				}
-				if (!this.scenes.hasOwnProperty('dm_map_is_video')) {
-					this.scenes.dm_map_is_video = "0";
-				}
-			}
-			else {
-				this.scenes = [];
-				this.scenes.push({
-					title: "The Tavern",
-					dm_map: "",
-					player_map: "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
-					scale: "100",
-					dm_map_usable: "0",
-					player_map_is_video: "0",
-					dm_map_is_video: "0",
-					fog_of_war: "1",
-					tokens: {},
-					grid: "0",
-					hpps: "72",
-					vpps: "72",
-					snap: "1",
-					fpsq: "5",
-					upsq: "ft",
-					offsetx: 29,
-					offsety: 54,
-					reveals: [[0, 0, 0, 0, 2, 0]],
-				});
-				this.current_scene_id = 0;
-			}
-		} // END OF LEGACY
+		this.scenes = [];
+		this.current_scene_id = null;
 	}
 }

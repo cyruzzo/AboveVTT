@@ -67,9 +67,6 @@ async function start_above_vtt_common() {
   startup_step("Fetching token customizations");
   fetch_token_customizations();
 
-  startup_step("Fetching campaign info from AboveVTT servers");
-  await AboveApi.getCampaignData();
-
   startup_step("Creating StatHandler, PeerManager, and MessageBroker");
   window.StatHandler = new StatHandler();
   window.PeerManager = new PeerManager();
@@ -83,22 +80,21 @@ async function start_above_vtt_for_dm() {
 
   await start_above_vtt_common();
 
-  startup_step("Migrating to AboveVTT cloud");
-  await migrate_to_cloud_if_necessary();
-
   window.PLAYER_SHEET = false;
   window.PLAYER_ID = false;
   window.PLAYER_NAME = dm_id;
   window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
   window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 
+  startup_step("Fetching scenes from cloud");
+  window.ScenesHandler = new ScenesHandler();
+  window.ScenesHandler.scenes = await AboveApi.getSceneList();
+  await migrate_to_cloud_if_necessary();
+
   startup_step("Fetching Encounters from DDB");
   const avttId = window.location.pathname.split("/").pop();
   window.EncounterHandler = new EncounterHandler(avttId);
   await window.EncounterHandler.fetchAllEncounters();
-
-  startup_step("Creating ScenesHandler");
-  window.ScenesHandler = new ScenesHandler(window.gameId);
 
   startup_step("Setting up UI");
   // This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
@@ -181,107 +177,17 @@ async function lock_character_gamelog_open() {
 
 async function migrate_to_cloud_if_necessary() {
   if (!window.DM) {
-    console.debug("migrate_to_cloud_if_necessary not DM");
+    console.error("migrate_to_cloud_if_necessary was called when window.DM was set to", window.DM);
     return; // only the DM can migrate
   }
-  if (window.CLOUD) {
-    console.debug("migrate_to_cloud_if_necessary already in the cloud");
-    return; // we're already using cloud data
-  }
 
-  const gameId = find_game_id();
-  if (localStorage.getItem(`Migrated${gameId}`) != null) {
-    console.debug("migrate_to_cloud_if_necessary already migrated");
-    // we've already migrated this campaign, but we don't have window.CLOUD set for some reason
-    await AboveApi.setCampaignData();
-    await AboveApi.getCampaignData();
+  if (window.ScenesHandler.scenes.length > 0) {
+    console.log("migrate_to_cloud_if_necessary is not necessary");
     return;
   }
 
-  const localData = localStorage.getItem(`ScenesHandler${gameId}`);
-  let localScenes = [];
-  if (localData !== null) {
-    // we have local data so let's move it to the cloud
-    // this also does what `setCampaignData` does so there's no need to call `setCampaignData` here
-    console.debug("migrate_to_cloud_if_necessary localData", localData);
-    const scenes = JSON.parse(localData);
-    if (Array.isArray(scenes) && scenes.length > 0) {
-      localScenes = scenes;
-    }
-  }
-
-  if (localScenes.length) {
-    await AboveApi.migrateScenes(window.gameId, localScenes);
-  } else {
-    // this is a fresh campaign so let's tell the cloud about it
-    console.debug("migrate_to_cloud_if_necessary no localData");
-    await AboveApi.migrateScenes(window.gameId, [
-      {
-        id: "666",
-        title: "The Tavern",
-        dm_map: "",
-        player_map: "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
-        scale: "100",
-        dm_map_usable: "0",
-        player_map_is_video: "0",
-        dm_map_is_video: "0",
-        fog_of_war: "1",
-        tokens: {},
-        grid: "0",
-        hpps: "72",
-        vpps: "72",
-        snap: "1",
-        fpsq: "5",
-        upsq: "ft",
-        offsetx: 29,
-        offsety: 54,
-        reveals: []
-      }
-    ]);
-  }
-  await AboveApi.setCampaignData(); // migrate should do this for us, but just in case
-  await AboveApi.getCampaignData(); // make sure we have the latest data now that we've migrated
-}
-
-// only call this once on startup
-async function fetch_sceneList_and_scenes() {
-  console.log("fetch_sceneList_and_scenes calling AboveApi.getSceneList");
-  window.ScenesHandler.scenes = await AboveApi.getSceneList();
-  console.log("fetch_sceneList_and_scenes calling AboveApi.getCurrentScene");
-  if (window.ScenesHandler.scenes.length === 0) {
-    window.ScenesHandler.scenes = await add_scenes_for_new_campaign();
-  }
-
-  const currentSceneData = await AboveApi.getCurrentScene();
-
-  if (currentSceneData.playerscene) {
-    window.PLAYER_SCENE_ID = currentSceneData.playerscene;
-  } else if (window.ScenesHandler.scenes.length > 0) {
-    window.PLAYER_SCENE_ID = window.ScenesHandler.scenes[0].id;
-    console.log("fetch_sceneList_and_scenes sending custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
-    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
-  }
-
-  console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
-
-  if (currentSceneData.dmscene) {
-    const activeScene = await AboveApi.getScene(currentSceneData.dmscene);
-    console.log("attempting to handle scene", activeScene);
-    window.MB.handleScene(activeScene);
-  } else if (window.ScenesHandler.scenes.length > 0) {
-    const activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
-    console.log("attempting to handle scene", activeScene);
-    window.MB.handleScene(activeScene);
-  }
-
-  console.log("fetch_sceneList_and_scenes calling refresh_scenes");
-  refresh_scenes();
-  console.log("fetch_sceneList_and_scenes calling did_update_scenes");
-  did_update_scenes();
-  console.log("fetch_sceneList_and_scenes done");
-}
-
-async function add_scenes_for_new_campaign() {
+  // this is a fresh campaign so let's push our Tavern Scene
+  startup_step("Migrating to AboveVTT cloud");
   await AboveApi.migrateScenes(window.gameId, [
     {
       id: "666",
@@ -305,7 +211,36 @@ async function add_scenes_for_new_campaign() {
       reveals: []
     }
   ]);
-  await AboveApi.setCampaignData(); // migrate should do this for us, but just in case
-  await AboveApi.getCampaignData(); // make sure we have the latest data now that we've migrated
-  return await AboveApi.getSceneList();    // now fetch the scenes from the server
+  // now fetch the scenes from the server
+  window.ScenesHandler.scenes = await AboveApi.getSceneList();
+}
+
+// only call this once on startup
+async function fetch_sceneList_and_scenes() {
+
+  const currentSceneData = await AboveApi.getCurrentScene();
+
+  if (currentSceneData.playerscene) {
+    window.PLAYER_SCENE_ID = currentSceneData.playerscene;
+  } else if (window.ScenesHandler.scenes.length > 0) {
+    window.PLAYER_SCENE_ID = window.ScenesHandler.scenes[0].id;
+    console.log("fetch_sceneList_and_scenes sending custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
+    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
+  }
+
+  console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
+
+  if (currentSceneData.dmscene) {
+    const activeScene = await AboveApi.getScene(currentSceneData.dmscene);
+    console.log("attempting to handle scene", activeScene);
+    window.MB.handleScene(activeScene);
+  } else if (window.ScenesHandler.scenes.length > 0) {
+    const activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
+    console.log("attempting to handle scene", activeScene);
+    window.MB.handleScene(activeScene);
+  }
+
+  console.log("fetch_sceneList_and_scenes calling did_update_scenes");
+  did_update_scenes();
+  console.log("fetch_sceneList_and_scenes done");
 }

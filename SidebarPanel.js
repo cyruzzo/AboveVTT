@@ -12,12 +12,10 @@ function init_sidebar_tabs() {
     sidebarContent.append(tokensPanel.build());
     init_tokens_panel();
 
-    if (window.CLOUD) {
       $("#scenes-panel").remove();
       scenesPanel = new SidebarPanel("scenes-panel", false);
       sidebarContent.append(scenesPanel.build());
       init_scenes_panel();
-    }
 
   } else {
     $("#players-panel").remove();
@@ -1642,7 +1640,6 @@ function delete_item(listItem) {
     case ItemType.Scene:
       if (confirm(`Are you sure that you want to delete the scene named "${listItem.name}"?`)) {
         window.ScenesHandler.delete_scene(listItem.sceneId);
-        did_update_scenes();
       }
       break;
     case ItemType.PC:

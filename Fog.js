@@ -389,7 +389,7 @@ function is_token_under_fog(tokenid){
 	var pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
 
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 
 	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight)))
@@ -432,8 +432,8 @@ function check_single_token_visibility(id){
 			var selector = "div[data-id='" + id + "']";
 			let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			let playerAuraIsVisible =  (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
+			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			let playerAuraIsVisible =  (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
 
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 
@@ -498,9 +498,9 @@ function do_check_token_visibility() {
 		let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let playerTokenAuraIsLight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 			
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter == 100)))) {
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
 			$(selector).hide();
 			if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned && !window.TOKEN_OBJECTS[id].options.reveal_light){
 				$(auraSelector).hide();
@@ -1481,13 +1481,7 @@ function drawing_mouseup(e) {
 
 		
 		redraw_drawings();
-
-		if(window.DM)
-			window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
+		sync_drawings();
 	}
 	else if (window.DRAWFUNCTION === "eraser"){
 		if (window.DRAWSHAPE === "rect"){
@@ -1526,12 +1520,9 @@ function drawing_mouseup(e) {
 
 			}
 		}
-		if(window.DM)
-			window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
+
+		sync_drawings();
+
 	}
 	else if (window.DRAWFUNCTION === "wall-eraser"){
 		let canvas = $("#raycastingCanvas")[0];
@@ -1727,12 +1718,8 @@ function drawing_mouseup(e) {
 
 		redraw_light_walls();
 		redraw_light();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}	
+		sync_drawings();
+	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text";
 		const textWidth = e.clientX - window.BEGIN_MOUSEX
@@ -1855,30 +1842,18 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		sync_fog();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
 		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		sync_fog();
 		redraw_fog();
 	}
 	else if(window.DRAWSHAPE == "paint-bucket"){
 		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor]
 		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		sync_fog();
 		redraw_fog();
 	}
 }
@@ -2240,23 +2215,10 @@ function savePolygon(e) {
 	}
 	clear_temp_canvas()
 
-	if(window.DM)
-		window.ScenesHandler.persist();
-
-	if(window.CLOUD){
-		if(window.DRAWFUNCTION === "draw"){
-			sync_drawings();
-		}
-		else{
-			sync_fog();
-		}
-	}
-	else{
-		window.MB.sendMessage(
-			window.DRAWFUNCTION === "draw" ?
-				 'custom/myVTT/reveal' : 'custom/myVTT/drawing',
-			data
-		);
+	if (window.DRAWFUNCTION === "draw") {
+		sync_drawings();
+	} else {
+		sync_fog();
 	}
 	window.BEGIN_MOUSEX = [];
 	window.BEGIN_MOUSEY = [];
@@ -2361,13 +2323,7 @@ function init_fog_menu(buttons){
 			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor, 0, 0, window.CURRENT_SCENE_DATA.scale_factor]];
 
 			redraw_fog();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
+			sync_fog();
 		}
 	});
 
@@ -2410,13 +2366,7 @@ function init_fog_menu(buttons){
 		if (r == true) {
 			window.REVEALED = [];
 			redraw_fog();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
+			sync_fog();
 		}
 	});
 
@@ -2438,13 +2388,7 @@ function init_fog_menu(buttons){
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_fog();
-		if(window.CLOUD){
-			sync_fog();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
+		sync_fog();
 	});
 
 	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
@@ -2640,11 +2584,7 @@ function init_walls_menu(buttons){
 
 			redraw_light_walls();
 			redraw_light();
-	 		window.ScenesHandler.persist();
-			if(window.CLOUD)
-				sync_drawings();
-			else
-				window.MB.sendMessage('custom/myVTT/drawing', data);
+			sync_drawings();
 		}
 	});
 
@@ -2990,6 +2930,10 @@ function redraw_light(){
   		
   		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
   			continue; 
+
+  		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  			continue;
 
 	  	if(window.DM){
 	  		$(light_auras[i]).css("visibility", "visible");

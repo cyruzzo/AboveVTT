@@ -484,11 +484,7 @@ function edit_scene_dialog(scene_id) {
 		scene.fog_of_war = "1";
 
 
-	const submitButton = $("<button type='button'>Save And Switch</button>");
-
-	if(window.CLOUD)
-		submitButton.html("Save");
-
+	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(function() {
 		console.log("Saving scene changes")
 
@@ -497,14 +493,8 @@ function edit_scene_dialog(scene_id) {
 			scene[key] = formData[key];
 		}
 
-		if(window.CLOUD){
-			const isNew = false;
-			window.ScenesHandler.persist_scene(scene_id, isNew);
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.switch_scene(scene_id);
-		}
+		const isNew = false;
+		window.ScenesHandler.persist_scene(scene_id, isNew);
 		$("#edit_dialog").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
@@ -522,10 +512,7 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.upsq = "ft";
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
-		if(window.CLOUD)
-			window.ScenesHandler.persist_current_scene();
-		else
-			window.ScenesHandler.persist();	
+		window.ScenesHandler.persist_current_scene();
 		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
 		$("#exitWizard").remove();
@@ -556,10 +543,7 @@ function edit_scene_dialog(scene_id) {
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
-			if(window.CLOUD)
-				window.ScenesHandler.persist_current_scene();
-			else
-				window.ScenesHandler.persist();
+			window.ScenesHandler.persist_current_scene();
 			window.ScenesHandler.reload();
 			$("#raycastingCanvas").css('visibility', 'visible');
 			$("#darkness_layer").css('visibility', 'visible');
@@ -575,10 +559,7 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.fpsq = "10";
 			window.ScenesHandler.scene.upsq = "ft";
 			consider_upscaling(window.ScenesHandler.scene);
-			if(window.CLOUD)
-				window.ScenesHandler.persist_current_scene();
-			else
-				window.ScenesHandler.persist();
+			window.ScenesHandler.persist_current_scene();
 			window.ScenesHandler.reload();
 			$("#exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
@@ -604,10 +585,7 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		if(window.CLOUD)
-			window.ScenesHandler.persist_current_scene();
-		else
-			window.ScenesHandler.persist();
+		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
 		$("#raycastingCanvas").css('visibility', 'visible');
@@ -629,10 +607,7 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		if(window.CLOUD)
-			window.ScenesHandler.persist_current_scene();
-		else
-			window.ScenesHandler.persist();
+		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
 		window.ScenesHandler.reload();
 		$("#raycastingCanvas").css('visibility', 'visible');
@@ -644,7 +619,6 @@ function edit_scene_dialog(scene_id) {
 
 		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
     
-		/*window.ScenesHandler.persist();*/
 		window.ScenesHandler.switch_scene(scene_id, function() {
 			$("#tokens").hide();
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
@@ -970,14 +944,7 @@ function edit_scene_dialog(scene_id) {
 				scene[key] = formData[key];
 			}
 
-			if(window.CLOUD){
-				window.ScenesHandler.persist_scene(scene_id,true);
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.switch_scene(scene_id);
-			}
-			
+			window.ScenesHandler.persist_scene(scene_id,true);
 			window.ScenesHandler.switch_scene(scene_id);
 			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
 
@@ -1069,23 +1036,6 @@ function edit_scene_dialog(scene_id) {
 	})
 
 
-	var hide_all_button = $("<button type='button'>COVER WITH FOG</button>");
-	if(window.CLOUD){
-		hide_all_button.hide();
-	}
-	hide_all_button.click(function() {
-		r = confirm("This will delete all current FOG zones on this scene and HIDE ALL THE MAP to the player. Are you sure?");
-		if (r == true) {
-			scene.reveals = [];
-			if (scene_id == window.ScenesHandler.current_scene_id) {
-				window.REVEALED = [];
-				redraw_fog();
-			}
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
-	});
-
 	/*var export_grid=$("<button>Send Grid Data to the Community</button>")
 	export_grid.click(function(){
 	});*/
@@ -1094,7 +1044,6 @@ function edit_scene_dialog(scene_id) {
 
 	form.append(submitButton);
 	form.append(cancel);
-	form.append(hide_all_button);
 	//		f.append(export_grid);
 	container.css('opacity', '0.0');
 	container.append(form);
@@ -1113,228 +1062,6 @@ function edit_scene_dialog(scene_id) {
 	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Only the DM will see this image/video");
 	validate_image_input($(playerMapRow).find("input")[0])
 	validate_image_input($(dmMapRow).find("input")[0])
-}
-
-function refresh_scenes() {
-	target = $("#scene_selector");
-	target.find(".scene").remove();
-
-	for (var i = 0; i < window.ScenesHandler.scenes.length; i++) {
-		let scene_id = i;
-		var scene = window.ScenesHandler.scenes[i];
-		var newobj = $("<div class='scene' data-scene-index='"+i+"'/>");
-
-
-		title = $("<div class='scene_title' style='text-align:center;'/>");
-		title.html(scene.title);
-
-		if ( (i == window.ScenesHandler.current_scene_id)   && (!window.CLOUD))
-			newobj.addClass('active_scene');
-		newobj.append(title);
-		controls = $("<div/>");
-		if(window.CLOUD){
-			let switch_players=$("<button class='player_scenes_button'>PLAYERS</button>");
-
-			if(window.PLAYER_SCENE_ID==window.ScenesHandler.scenes[scene_id].id){
-				console.log("players are here!");
-				switch_players.addClass("selected");
-			}
-
-			switch_players.click(function(){
-				let msg={
-					sceneId:window.ScenesHandler.scenes[scene_id].id,
-				};
-				window.PLAYER_SCENE_ID=window.ScenesHandler.scenes[scene_id].id;
-				$(".player_scenes_button.selected").removeClass("selected");
-				$(this).addClass("selected");
-				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
-				add_zoom_to_storage()
-			});
-			
-			let switch_dm=$("<button class='dm_scenes_button'>DM</button>");
-			if(window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.id==window.ScenesHandler.scenes[scene_id].id)){
-				switch_dm.addClass("selected");
-			}
-			switch_dm.click(function(){
-				$(".dm_scenes_button.selected").removeClass("selected");
-				let msg={
-					sceneId:window.ScenesHandler.scenes[scene_id].id,
-					switch_dm: true
-				};
-				$(this).addClass("selected");
-				window.MB.sendMessage("custom/myVTT/switch_scene",msg);
-				add_zoom_to_storage()
-			});
-			if(scene.player_map){
-				switch_players.removeAttr("disabled");
-				switch_dm.removeAttr("disabled");
-			}
-			else{
-				switch_players.attr("disabled","true");
-				switch_dm.attr("disabled","true");
-			}
-			
-			controls.append(switch_players);
-			controls.append(switch_dm);
-		}
-		else{
-			switch_button = $("<button>SWITCH</button>");
-			if(scene.player_map)
-				switch_button.removeAttr("disabled");
-			else
-				switch_button.attr("disabled","true");
-				
-			switch_button.click(function() {
-				window.ScenesHandler.switch_scene(scene_id);
-				$("#scene_selector_toggle").click();
-				refresh_scenes();
-			});
-			controls.append(switch_button);
-		}
-		edit_button = $("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/edit.svg'></button>");
-		edit_button.click(function() {
-			edit_scene_dialog(scene_id);
-		});
-		controls.append(edit_button);
-		delete_button=$("<button><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
-		delete_button.click(function() {
-			r = confirm("Are you sure that you want to delete this scene?");
-			if (r == true) {
-				if(window.CLOUD){
-					window.MB.sendMessage("custom/myVTT/delete_scene",{id:window.ScenesHandler.scenes[scene_id].id})
-				}
-				window.ScenesHandler.scenes.splice(scene_id, 1);
-				if(!window.CLOUD){
-					window.ScenesHandler.persist();
-				}
-				refresh_scenes();
-				
-			}
-		});
-		controls.append(delete_button);
-		newobj.append(controls);
-
-		$("#addscene").parent().before(newobj);	
-	}
-	if(!$("#scene_selector").hasClass("ui-sortable")) {
-		$("#scene_selector").sortable({
-			handle: ".scene_title",
-			forcePlaceholderSize: true,
-			placeholder: "sortable_placeholder", 
-			update: function(event, ui) {
-				let fromSceneIndex = ui.item.attr("data-scene-index");
-				let toSceneIndex;
-				let j = 0;
-				let tempScenes = [];
-				$("#scene_selector").children('.scene').each(function(j) {
-					let oldSceneID = $(this).attr("data-scene-index");
-					if (fromSceneIndex == oldSceneID) {
-						toSceneIndex = j;
-					}
-					tempScenes.push(window.ScenesHandler.scenes[oldSceneID]);
-					$(this).attr("data-scene-index", j);
-					if ($(this).hasClass('active_scene')) {
-						window.ScenesHandler.current_scene_id = j;
-					}
-					j++;
-				});
-				console.log("Scene "+fromSceneIndex+" moved to "+toSceneIndex);
-				if(window.CLOUD){
-					let neworder;
-					console.log(window.ScenesHandler.scenes);
-					if(toSceneIndex < fromSceneIndex){ // moving back
-						if(toSceneIndex==0)
-							neworder=window.ScenesHandler.scenes[0].order-100;
-						else
-							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex-1].order)/2);
-					}
-					else{
-						if(toSceneIndex==(window.ScenesHandler.scenes.length-1)){
-							neworder=window.ScenesHandler.scenes[toSceneIndex].order+100;
-						}
-						else
-							neworder=Math.round((window.ScenesHandler.scenes[toSceneIndex].order + window.ScenesHandler.scenes[toSceneIndex+1].order)/2);
-					}
-					window.ScenesHandler.scenes[fromSceneIndex].order=neworder;
-					window.ScenesHandler.persist_scene(fromSceneIndex);
-				}
-				window.ScenesHandler.scenes = tempScenes;
-				window.ScenesHandler.persist();
-				refresh_scenes();
-			}
-		});
-	}
-	$("#scene_selector").css("overflow","auto");
-}
-
-function init_scene_selector() {
-	if (window.CLOUD) return;
-	ss = $("<div  id='scene_selector' />");
-	ss.hide();
-
-
-	addblock = $("<div style='float:left;overflow: hidden;display:block;'/>");
-	addbutton = $("<button id='addscene'><span class='material-icons button-icon md-dark md-32'>add</span></button></button>");
-
-	addbutton.click(function() {
-		window.ScenesHandler.scenes.push({
-			id: uuid(),
-			title: "New Scene",
-			dm_map: "",
-			player_map: "",
-			scale: "100",
-			dm_map_usable: "0",
-			player_map_is_video: "0",
-			dm_map_is_video: "0",
-			fog_of_war: "1",
-			tokens: {},
-			fpsq: 5,
-			upsq: 'ft',
-			hpps: 60,
-			vpps: 60,
-			offsetx: 0,
-			offsety: 0,
-			grid: 0,
-			snap: 0,
-			reveals: [], // SPECIAL MESSAGE TO REVEAL EVERYTHING
-			order: Date.now()
-		}
-		);
-		if(window.CLOUD){
-			window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length -1,true);
-		}
-		else{
-			window.ScenesHandler.persist();
-		}
-		refresh_scenes();
-	});
-
-
-	addblock.append(addbutton);
-	ss.append(addblock);
-
-
-	let toggle = $("<div id='scene_selector_toggle' class='hideable ddbc-tab-options__header-heading'>SCENES<span class='material-icons md-dark md-14 md-weight-700'>expand_more</span></div>");
-
-	toggle.click(function() {
-		if (ss.hasClass("menu_opened")) {
-			ss.slideUp().removeClass("menu_opened");
-			toggle.removeClass("menu_opened");
-			toggle.removeClass("ddbc-tab-options__header-heading--is-active");
-		} else {
-			ss.slideDown().addClass("menu_opened");
-			toggle.addClass("menu_opened");
-			toggle.addClass("ddbc-tab-options__header-heading--is-active");
-			refresh_scenes();
-		}
-
-		
-
-	});
-	$(window.document.body).append(ss);
-	let pill = $(`<div id="scene_selector_toggle_pill" class="ddbc-tab-options--layout-pill" />`);
-	pill.append(toggle);
-	$(window.document.body).append(pill);
 }
 
 function display_sources() {
@@ -2005,7 +1732,7 @@ function create_scene_folder_inside(fullPath) {
 }
 
 function rename_scene_folder(item, newName, alertUser) {
-	console.groupCollapsed("rename_scene_folder");
+	console.group("rename_scene_folder");
 	if (!item.isTypeFolder() || !item.folderPath.startsWith(RootFolder.Scenes.path)) {
 		console.groupEnd();
 		console.warn("rename_scene_folder called with an incorrect item type", item);
@@ -2142,14 +1869,14 @@ function expand_folders_to_active_scenes() {
 }
 
 function delete_scenes_within_folder(listItem) {
-	console.groupCollapsed(`delete_scenes_within_folder`);
+	console.group(`delete_scenes_within_folder`);
 	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	console.log("about to delete all scenes within", adjustedPath);
 	console.debug("before deleting from scenes", window.ScenesHandler.scenes);
 	window.ScenesHandler.scenes
 		.filter(scene => scene.folderPath?.startsWith(adjustedPath))
-		.forEach(scene => window.ScenesHandler.delete_scene(scene.id));
+		.forEach(scene => window.ScenesHandler.delete_scene(scene.id, false));
 	console.debug("after deleting from scenes", window.ScenesHandler.scenes);
 
 	console.log("about to delete all folders within", adjustedPath);
@@ -2161,7 +1888,7 @@ function delete_scenes_within_folder(listItem) {
 }
 
 function move_scenes_to_parent_folder(listItem) {
-	console.groupCollapsed(`move_scenes_to_parent_folder`);
+	console.group(`move_scenes_to_parent_folder`);
 	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.Scenes.path, ""));
 
@@ -2199,7 +1926,7 @@ function move_scene_to_folder(listItem, folderPath) {
 }
 
 function move_scenes_folder(listItem, folderPath) {
-	console.groupCollapsed(`move_scenes_folder`);
+	console.group(`move_scenes_folder`);
 	let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
 
 	// move the actual item
