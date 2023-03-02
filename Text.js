@@ -665,12 +665,7 @@ function draw_text(
                 window.DRAWINGS[drawing][2] = parseInt($(this).css('top')) + parseInt(font.size);     
             }
                         
-        
-            window.ScenesHandler.persist();
-            if(window.CLOUD)
-                sync_drawings();
-            else
-                window.MB.sendMessage('custom/myVTT/drawing', data);
+            sync_drawings();
         }
     });
 
@@ -688,11 +683,7 @@ function draw_text(
             }
         }
         redraw_text();
-        window.ScenesHandler.persist();
-        if(window.CLOUD)
-            sync_drawings();
-        else
-            window.MB.sendMessage('custom/myVTT/drawing', data);
+        sync_drawings();
         return false;
     });
     textSVG.on('dblclick', function(){
@@ -718,11 +709,7 @@ function draw_text(
         
        window.DRAWINGS = window.DRAWINGS.filter((d) => d[9] != $(this)[0].id);
         $(this).remove();
-        window.ScenesHandler.persist();
-        if(window.CLOUD)
-            sync_drawings();
-        else
-            window.MB.sendMessage('custom/myVTT/drawing', data);
+        sync_drawings();
     });
 }
 

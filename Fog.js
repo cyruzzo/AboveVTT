@@ -1481,13 +1481,7 @@ function drawing_mouseup(e) {
 
 		
 		redraw_drawings();
-
-		if(window.DM)
-			window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
+		sync_drawings();
 	}
 	else if (window.DRAWFUNCTION === "eraser"){
 		if (window.DRAWSHAPE === "rect"){
@@ -1526,12 +1520,9 @@ function drawing_mouseup(e) {
 
 			}
 		}
-		if(window.DM)
-			window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
+
+		sync_drawings();
+
 	}
 	else if (window.DRAWFUNCTION === "wall-eraser"){
 		let canvas = $("#raycastingCanvas")[0];
@@ -1727,12 +1718,8 @@ function drawing_mouseup(e) {
 
 		redraw_light_walls();
 		redraw_light();
-		window.ScenesHandler.persist();
-		if(window.CLOUD)
-			sync_drawings();
-		else
-			window.MB.sendMessage('custom/myVTT/drawing', data);
-	}	
+		sync_drawings();
+	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text";
 		const textWidth = e.clientX - window.BEGIN_MOUSEX
@@ -1855,30 +1842,18 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
 		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		sync_fog();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
 		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
 		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		sync_fog();
 		redraw_fog();
 	}
 	else if(window.DRAWSHAPE == "paint-bucket"){
 		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor]
 		window.REVEALED.push(data);
-		if(window.CLOUD)
-			sync_fog();
-		else
-			window.MB.sendMessage('custom/myVTT/reveal', data);
-		window.ScenesHandler.persist();
+		sync_fog();
 		redraw_fog();
 	}
 }
@@ -2240,23 +2215,10 @@ function savePolygon(e) {
 	}
 	clear_temp_canvas()
 
-	if(window.DM)
-		window.ScenesHandler.persist();
-
-	if(window.CLOUD){
-		if(window.DRAWFUNCTION === "draw"){
-			sync_drawings();
-		}
-		else{
-			sync_fog();
-		}
-	}
-	else{
-		window.MB.sendMessage(
-			window.DRAWFUNCTION === "draw" ?
-				 'custom/myVTT/reveal' : 'custom/myVTT/drawing',
-			data
-		);
+	if (window.DRAWFUNCTION === "draw") {
+		sync_drawings();
+	} else {
+		sync_fog();
 	}
 	window.BEGIN_MOUSEX = [];
 	window.BEGIN_MOUSEY = [];
@@ -2361,13 +2323,7 @@ function init_fog_menu(buttons){
 			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor, 0, 0, window.CURRENT_SCENE_DATA.scale_factor]];
 
 			redraw_fog();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
+			sync_fog();
 		}
 	});
 
@@ -2410,13 +2366,7 @@ function init_fog_menu(buttons){
 		if (r == true) {
 			window.REVEALED = [];
 			redraw_fog();
-			if(window.CLOUD){
-				sync_fog();
-			}
-			else{
-				window.ScenesHandler.persist();
-				window.ScenesHandler.sync();
-			}
+			sync_fog();
 		}
 	});
 
@@ -2438,13 +2388,7 @@ function init_fog_menu(buttons){
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_fog();
-		if(window.CLOUD){
-			sync_fog();
-		}
-		else{
-			window.ScenesHandler.persist();
-			window.ScenesHandler.sync();
-		}
+		sync_fog();
 	});
 
 	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
@@ -2640,11 +2584,7 @@ function init_walls_menu(buttons){
 
 			redraw_light_walls();
 			redraw_light();
-	 		window.ScenesHandler.persist();
-			if(window.CLOUD)
-				sync_drawings();
-			else
-				window.MB.sendMessage('custom/myVTT/drawing', data);
+			sync_drawings();
 		}
 	});
 

@@ -72,7 +72,7 @@ function rollback_from_my_tokens() {
     console.warn("rollback_from_my_tokens is no longer supported");
     return;
 
-    console.groupCollapsed("rollback_from_my_tokens");
+    console.group("rollback_from_my_tokens");
     tokendata.didMigrateToMyToken = false;
     mytokens = [];
     mytokensfolders = [];
@@ -158,7 +158,7 @@ function find_builtin_token(fullPath) {
         console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", RootFolder.AboveVTT.path);
         return undefined;
     }
-    console.groupCollapsed("find_builtin_token");
+    console.group("find_builtin_token");
     let found = builtInTokens.find(t => {
         let dirtyPath = `${RootFolder.AboveVTT.path}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
@@ -198,7 +198,7 @@ function backfill_mytoken_folders() {
  */
 function rebuild_token_items_list() {
     if (!window.DM) return;
-    console.groupCollapsed("rebuild_token_items_list");
+    console.group("rebuild_token_items_list");
     try {
 
 
@@ -444,7 +444,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
         // don't do anything on startup
         return;
     }
-    console.groupCollapsed("redraw_token_list");
+    console.group("redraw_token_list");
     update_token_folders_remembered_state();
     let list = $(`<div class="custom-token-list"></div>`);
     tokensPanel.body.empty();

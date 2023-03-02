@@ -410,21 +410,19 @@ class MessageBroker {
 				}
 			}
 
-			if(window.CLOUD && msg.sceneId && window.CURRENT_SCENE_DATA){ // WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
-				if(msg.sceneId!=window.CURRENT_SCENE_DATA.id){
-					if(["custom/myVTT/delete_token",
-						"custom/myVTT/createtoken",
-						"custom/myVTT/reveal",
-						"custom/myVTT/fogdata",
-						"custom/myVTT/drawing",
-						"custom/myVTT/drawdata",
-						"custom/myVTT/highlight",
-						"custom/myVTT/pointer",
-					   ].includes(msg.eventType)){
-						   console.log("skipping msg from a different scene");
-					   	return;
-					   }
-				}
+			// WE NEED TO IGNORE CERTAIN MESSAGE IF THEY'RE NOT FROM THE CURRENT SCENE
+			if (msg.sceneId && window.CURRENT_SCENE_DATA && msg.sceneId !== window.CURRENT_SCENE_DATA.id && [
+				"custom/myVTT/delete_token",
+				"custom/myVTT/createtoken",
+				"custom/myVTT/reveal",
+				"custom/myVTT/fogdata",
+				"custom/myVTT/drawing",
+				"custom/myVTT/drawdata",
+				"custom/myVTT/highlight",
+				"custom/myVTT/pointer"
+			].includes(msg.eventType)) {
+				console.log("skipping msg from a different scene");
+				return;
 			}
 
 			if (msg.eventType == "custom/myVTT/token" && (msg.sceneId == window.CURRENT_SCENE_DATA.id || msg.data.id in window.TOKEN_OBJECTS)) {
@@ -1312,20 +1310,10 @@ class MessageBroker {
 				check_single_token_visibility(data.id);
 			}
 		}
-
-
-	if (window.DM) {
-		console.log("**** persistoooooooooo token");
-		window.ScenesHandler.persist();
-	}
 }
 
 	handleScene(msg) {
 		console.debug("handlescene", msg);
-		if (window.DM && ! (window.CLOUD) ) {
-			alert('WARNING!!!!!!!!!!!!! ANOTHER USER JOINED AS DM!!!! ONLY ONE USER SHOULD JOIN AS DM. EXITING NOW!!!');
-			location.reload();
-		}
 
 		// DISABLED THANKS TO POLLING
 		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
@@ -1336,7 +1324,6 @@ class MessageBroker {
 		let data = msg.data;
 		let self=this;
 
-		if(window.CLOUD){
 			if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
 				data.map=data.dm_map;
 				if(data.dm_map_is_video=="1")
@@ -1347,7 +1334,6 @@ class MessageBroker {
 				if(data.player_map_is_video=="1")
 					data.is_video=true;
 			}
-		}
 
 		for(const i in msg.data.tokens){
 			if(i == msg.data.tokens[i].id)
@@ -1357,7 +1343,7 @@ class MessageBroker {
 		}
 		msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
 		window.CURRENT_SCENE_DATA = msg.data;
-		if(window.CLOUD && window.DM){
+		if(window.DM){
 			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
 		}
 		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
@@ -1407,7 +1393,7 @@ class MessageBroker {
 			set_default_vttwrapper_size()
 			
 			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
-			if(window.CLOUD && !window.DM && data.dm_map_usable=="1"){
+			if(!window.DM && data.dm_map_usable=="1"){
 				$("#scene_map").stop();
 				$("#scene_map").css("opacity","0");
 				console.log("switching back to player map");
@@ -1428,15 +1414,12 @@ class MessageBroker {
 				});
 			}
 
-			if(window.CLOUD){
-				let data = {
+				$("#combat_area").empty();
+				ct_load({
 					loading: true,
 					current: $("#combat_area [data-current]").attr('data-target')
-				}
-				$("#combat_area").empty();
-				ct_load(data);
+				});
 				redraw_light();
-			}
 
 
 			if(window.DM)
@@ -1446,7 +1429,7 @@ class MessageBroker {
 			}
 			if(!window.DM)
 					check_token_visibility();
-	
+
 
 			if (window.EncounterHandler !== undefined) {
 				fetch_and_cache_scene_monster_items();
@@ -1497,11 +1480,10 @@ class MessageBroker {
 
 	handleSyncMeUp(msg) {
 		if (DM) {
-			window.ScenesHandler.sync();
 			ct_persist(); // force refresh of combat tracker for late users
 			if (window.CURRENT_SOUNDPAD) {
 				let audioPlaying;
-				for(i in $("audio")){
+				for(const i in $("audio")){
 			    if($("audio")[i].paused == false){
 			    		audioPlaying = true;
 			        break;
@@ -1523,7 +1505,7 @@ class MessageBroker {
 
 	handleAudioPlayingSync(msg){
 		if(window.DM){
-			for(i in $("audio")){
+			for(const i in $("audio")){
 		    if($("audio")[i].paused == false){
 		    	var data={
 						channel: i,
@@ -1628,7 +1610,6 @@ class MessageBroker {
 			data: data,
 		}
 
-		if(window.CLOUD)
 			message.cloud=1;
 
 		if(!["custom/myVTT/switch_scene","custom/myVTT/update_scene"].includes(eventType))
