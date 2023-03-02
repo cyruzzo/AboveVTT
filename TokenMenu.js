@@ -752,6 +752,8 @@ function build_token_light_inputs(tokenIds) {
 						<option value="torch">Torch / Light (20/20)</option>
 						<option value="lamp">Lamp (15/30)</option>
 						<option value="lantern">Lantern (30/30)</option>
+						<option value="60ftdark">60ft Darkvision (60/0)</option>
+						<option value="120ftdark">120ft Darkvision (120/0)</option>
 					</select>
 				</div>
 				<div class="menu-inner-aura">
@@ -906,7 +908,16 @@ function build_token_light_inputs(tokenIds) {
 		} else if (preset === "lantern") {
 			feet1 = "30";
 			feet2 = "30";
-		} else {
+		} 
+		else if (preset === "60ftdark") {
+			feet1 = "60";
+			feet2 = "0";
+		} 
+		else if (preset === "120ftdark") {
+			feet1 = "120";
+			feet2 = "0";
+		} 
+		else {
 			console.warn("somehow got an unexpected preset", preset, e);
 		}
 		let wrapper = $(e.target).closest(".token-config-aura-wrapper");
