@@ -942,7 +942,7 @@ function redraw_light_walls(clear=true){
 	canvas = document.getElementById("raycastingCanvas");
 	ctx = canvas.getContext("2d");
 
-	
+
 
 	window.walls =[];
 	let wall5 = new Boundary(new Vector(0, 0), new Vector($('#scene_map_container').width(), 0));
@@ -972,7 +972,6 @@ function redraw_light_walls(clear=true){
 		}
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
-		
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			canvas = document.getElementById("temp_overlay");
@@ -1034,9 +1033,7 @@ function open_close_door(x1, y1, x2, y2){
 	redraw_light();
 
 
-	sync_drawings();
-
-						
+	sync_drawings();						
 }
 
 function stop_drawing() {
@@ -1113,7 +1110,8 @@ function drawing_mousedown(e) {
 	else if(window.DRAWFUNCTION === "wall"){
 		// semi transparent black
 		window.DRAWCOLOR = "rgba(0, 255, 0, 1)"
-		window.DRAWTYPE = "filled"
+		if(window.DRAWSHAPE == 'line')
+			window.DRAWTYPE = "filled"
 		window.LINEWIDTH = 6;
 	}
 	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" ){
@@ -1273,7 +1271,7 @@ function drawing_mousemove(e) {
 		// }
 
 		if (window.DRAWSHAPE == "rect") {
-			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ){
+			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall"){
 				redraw_light_walls(false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
@@ -1527,7 +1525,59 @@ function drawing_mouseup(e) {
 		default:
 			break;
 		}
-		window.DRAWINGS.push(data);
+		if(window.DRAWFUNCTION == 'wall' && window.DRAWSHAPE == 'rect'){
+			let rectLine = {
+				rx: window.BEGIN_MOUSEX,
+				ry: window.BEGIN_MOUSEY,		
+				rw: width,
+				rh: height
+			};
+			let line1 = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				rectLine.rx,
+				rectLine.ry,
+				rectLine.rx,
+				rectLine.ry + rectLine.rh,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line1);
+
+			let line2 = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				rectLine.rx,
+				rectLine.ry,
+				rectLine.rx + rectLine.rw,
+				rectLine.ry,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line2);
+			let line3 = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				rectLine.rx + rectLine.rw,
+				rectLine.ry,
+				rectLine.rx + rectLine.rw,
+				rectLine.ry + rectLine.rh,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line3);
+			let line4 = ['line',
+				"wall",
+				 window.DRAWCOLOR,
+				 rectLine.rx,
+				 rectLine.ry + rectLine.rh,
+				 rectLine.rx + rectLine.rw,
+				 rectLine.ry + rectLine.rh,
+				 window.LINEWIDTH,
+				 window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line4);
+		}
+		else{
+			window.DRAWINGS.push(data);
+		}
+
 		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'){
 			if ( e.button == 2) {
 				return;
@@ -1595,11 +1645,8 @@ function drawing_mouseup(e) {
 
 		sync_drawings();
 
-	}
+	}		
 	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" ){
-		let canvas = $("#raycastingCanvas")[0];
-		let ctx = canvas.getContext("2d");
-
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -1710,7 +1757,6 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
-
 					}	
 					if(right != false){
 						if(wallLine[0].b.x > wallLine[0].a.x){
@@ -1734,8 +1780,7 @@ function drawing_mouseup(e) {
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
-						window.DRAWINGS.push(data);
-					
+						window.DRAWINGS.push(data);				
 					}
 					if(top != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -1782,8 +1827,7 @@ function drawing_mouseup(e) {
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
-						window.DRAWINGS.push(data);
-						
+						window.DRAWINGS.push(data);					
 					}
 
 					if(window.DRAWFUNCTION == 'wall-door-convert'){
@@ -2679,6 +2723,13 @@ function init_walls_menu(buttons){
 			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='line' data-function="wall" data-unique-with="draw">
 					Draw Wall
+			</button>
+		</div>`);
+		wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall" data-unique-with="draw">
+					Rect Wall
 			</button>
 		</div>`);
 		wall_menu.append(
