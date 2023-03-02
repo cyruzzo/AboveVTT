@@ -988,9 +988,10 @@ function redraw_light_walls(clear=true){
 				doorButtonColor = '#ff6168ad'
 			
 
-
-			let openCloseDoorButton = $(`<div class='door-button' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='left: ${Math.floor((x+width)/2 - 10)}px; top: ${Math.floor((y+height)/2 - 10)}px; position:absolute; background:${doorButtonColor}; backdrop-filter: blur(6px); border-radius: 5px; width: 20px; height: 20px; cursor: pointer; border: 1px solid #000'>
-											<span class="material-symbols-outlined" style='font-size: 19px;filter: drop-shadow(0px 0px 1px white);'>
+			let midX = Math.floor((x+width)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
+			let midY = Math.floor((y+height)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
+			let openCloseDoorButton = $(`<div class='door-button' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px; background:${doorButtonColor};'>
+											<span class="material-symbols-outlined">
 												door_open
 											</span>
 										</div>`)
@@ -1025,7 +1026,7 @@ function open_close_door(x1, y1, x2, y2){
 				 x2,
 				 y2,
 				 12,
-				 window.CURRENT_SCENE_DATA.scale_factor
+				 doors[0][8]
 				 ];	
 	window.DRAWINGS.push(data);
 

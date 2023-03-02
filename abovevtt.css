@@ -313,6 +313,21 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet.thin {
     width: 420px;
 }
+.door-button{
+    backdrop-filter: blur(6px); 
+    border-radius: calc(5px / var(--window-zoom));
+    width: calc(20px / var(--window-zoom)); 
+    height: calc(20px / var(--window-zoom));  
+    cursor: pointer; 
+    border: calc(1px / var(--window-zoom)) solid #000;
+    position:absolute;
+    left: calc(var(--mid-x) - (10px / var(--window-zoom)));
+    top: calc(var(--mid-y) - (10px / var(--window-zoom)));
+}
+.door-button span{
+    font-size: calc(19px / var(--window-zoom)); 
+    filter: drop-shadow(0px 0px calc(1px / var(--window-zoom)) white);
+}
 
 
 /*for resizable and moveable monsters and sheets in DM view*/
