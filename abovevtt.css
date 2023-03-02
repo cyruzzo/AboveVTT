@@ -631,6 +631,9 @@ div.top_menu.visible,
     margin: 5px;
     background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
+#sources-import-main-container .sidebar-panel-loading-indicator{
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
 
 .sortable_placeholder {
     width: 171px;
