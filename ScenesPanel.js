@@ -264,27 +264,10 @@ function edit_scene_dialog(scene_id) {
 
 	scene_properties = $('<div id="scene_properties"/>');
 	dialog.append(scene_properties);
-	dialog.css('position', 'fixed');
-	dialog.css('width', '600px');
-	dialog.css('top', '100px');
-	dialog.css('left', '300px');
-	dialog.css('height', '350px');
-	dialog.css('z-index', 99999);
-	dialog.css('border', 'solid 1px black');
 
-	dialog.draggable({
-		addClasses: false,
-		scroll: false,
-		containment: "#windowContainment",
-		start: function() {
-			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function() {
-			$('.iframeResizeCover').remove();
-		}
-	});
-	$("#site").append(dialog);
+
+
+	adjust_create_import_edit_container(dialog);
 
 	var container = scene_properties;
 
@@ -495,7 +478,7 @@ function edit_scene_dialog(scene_id) {
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
-		$("#edit_dialog").remove();
+		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
 		$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
@@ -1030,7 +1013,7 @@ function edit_scene_dialog(scene_id) {
 				clear_grid()
 			}
 		}
-		$("#edit_dialog").remove();
+		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");
 		
 	})
@@ -1352,7 +1335,7 @@ function fill_importer(scene_set, start, searchState = '') {
 					$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
 
 				$("#mega_importer").remove();
-				$("#sources-import-iframe-container").remove();
+			
 				validate_image_input($("input[name=player_map]")[0])
 				validate_image_input($("input[name=dm_map]")[0])
 			}
@@ -1366,11 +1349,6 @@ function fill_importer(scene_set, start, searchState = '') {
 
 	footer = $("#importer_footer");
 	footer.empty();
-
-	cancel = $("<button>CLOSE</button>");
-	cancel.click(function() {
-		$("#mega_importer").remove();
-	});
 
 	prev = $("<button>PREV</button>");
 	if (start == 0)
@@ -1391,10 +1369,10 @@ function fill_importer(scene_set, start, searchState = '') {
 
 	buttons.css("right", "0");
 	buttons.css("position", "absolute");
-	buttons.append(cancel);
+
 	buttons.append(prev);
 	buttons.append(next);
-	buttons.addClass('importPrevNextButtons')
+	buttons.addClass
 	footer.append(buttons);
 
 
@@ -1480,13 +1458,10 @@ function mega_importer(DDB = false, ddbSource) {
 	container.append(area);
 	bottom = $("<div id='importer_footer'/>").css({ height: "30px", width: "100%" });
 	container.append(bottom);
-	if (DDB)
-		adjust_create_import_edit_container(container, false);
+	adjust_create_import_edit_container(container, false);
 	if (!DDB){
-		adjust_create_import_edit_container(container);
 		first.click();
 	}
-
 }
 
 
@@ -1963,7 +1938,7 @@ function load_sources_iframe_for_map_import() {
 	const iframe = $(`<iframe id='sources-import-iframe'></iframe>`);
 
 
-	adjust_create_import_edit_container(iframe);
+	adjust_create_import_edit_container(iframe, false);
 	$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load DnDBeyond Sources'));
 
 	iframe.off("load").on("load", function (event) {

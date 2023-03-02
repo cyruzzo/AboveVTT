@@ -674,9 +674,11 @@ div#scene_selector,
 }
 
 #edit_dialog {
-    height: fit-content !important;
-    padding-bottom: 10px;
-    border-radius: 15px;
+    top: 5px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    position: absolute !important;
 }
 
 #edit_dialog button:not(.rc-switch){
@@ -861,6 +863,8 @@ input {
 #mega_importer {
     width:100%;
     height:100%;
+    z-index: 10000;
+    position: absolute;
 }
 
 #sources-import-main-container {
@@ -872,6 +876,7 @@ input {
     z-index: 100000;
     border: 1px solid #ddd;
     border-radius: 5px;
+    min-width: 850px;
 }
 #sources-import-main-container .sidebar-panel-loading-indicator svg{
     padding: 0px 20% !important;
@@ -990,11 +995,10 @@ input {
     right: 16px !important;
 }
 
-#importer_footer > div.mapSearch,
-#importer_footer > div.importPrevNextButtons{
-    bottom:0px;
+#importer_footer{
+    bottom: 0px;
     position:absolute;
-    padding:5px;
+    padding:5pxc;
 }
 
 
