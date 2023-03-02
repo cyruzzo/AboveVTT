@@ -625,6 +625,34 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
 
+	import_completed_scene_with_drawings(scene){
+			console.log("import_completed_scene_with_drawings", scene);
+				if(scene.notes != undefined){
+					for(let id in scene.notes){
+						window.JOURNAL.notes[id] = scene.notes[id];
+					}
+					delete scene.notes;
+				}
+				window.JOURNAL.persist();
+				AboveApi.migrateScenes(window.gameId, [scene])
+					.then(migratedScenes => {
+						window.ScenesHandler.scenes = window.ScenesHandler.scenes.concat(migratedScenes);
+						rebuild_scene_items_list();
+						redraw_scene_list();
+						$(`.scene-item[data-scene-id='${migratedScenes[0].id}'] .dm_scenes_button`).click();
+					})
+					.then(() => {
+						const dialog = ('#edit_dialog');
+						const sceneToDelete = dialog.attr('data-scene-id');
+						window.ScenesHandler.delete_scene(sceneToDelete);
+						dialog.remove();
+					})
+					.catch(error => {
+						console.error("import_completed_scene_with_drawings failed to upload scene", scene, error);
+						showDebuggingAlert();
+					})
+	}
+
 	persist_current_scene(dontswitch=false){
 		let sceneData=Object.assign({},this.scene);
 		sceneData.reveals=[];
