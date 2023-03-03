@@ -1387,6 +1387,10 @@ class MessageBroker {
    	 	let darknessPercent = 100 - parseInt(darknessfilter);
    	 	if(window.DM && darknessPercent < 25){
    	 		darknessPercent = 25;
+   	 		$('#raycastingCanvas').css('opacity', '0');
+   	 	}
+   	 	else if(window.DM){
+   	 		$('#raycastingCanvas').css('opacity', '');
    	 	}
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
