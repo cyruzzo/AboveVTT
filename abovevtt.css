@@ -941,6 +941,7 @@ input {
 #mega_importer.source_select #importer_toggles .current-source {
     border-left-color: #47D18C;
     padding-left: 5px;
+    backdrop-filter: brightness(0.9);
 }
 #mega_importer.source_select #importer_footer {
     display: none;
