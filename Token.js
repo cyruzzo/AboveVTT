@@ -1315,7 +1315,12 @@ class Token {
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
 						redraw_light();
-					} });
+						if(!window.DM){
+									check_token_visibility();											
+							}
+						}
+						
+					});
 				
 
 
@@ -1519,6 +1524,16 @@ class Token {
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}
+			if(this.options.player_owned && this.options.reveal_light != 'never' && this.options.reveal_light != 'los'){
+				this.options.reveal_light = 'always'
+			}
+			if(this.options.reveal_light == undefined || this.options.reveal_light == false){
+				this.options.reveal_light = 'never';
+			}
+			if(this.options.reveal_light == true){
+				this.options.reveal_light = 'los'
+			}
+
 			let tokenImage
 			// new aoe tokens use arrays as imsrc
 			if (!this.isAoe()){
@@ -2139,11 +2154,14 @@ class Token {
 
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 				draw_selected_token_bounding_box(); // update rotation bounding box
-				check_token_visibility();
 				if(window.DM){
 			   		$("[id^='light_']").css('visibility', "visible");
 			   	}
-				redraw_light();
+			   	else if(tok.options.itemType == 'pc' || token.options.player_owned){
+			   		redraw_light();
+			   	}
+				
+				check_token_visibility();
 			});
 			
 			console.groupEnd()
@@ -2644,7 +2662,7 @@ function setTokenAuras (token, options) {
 			if(window.TOKEN_OBJECTS[playerTokenId].options.auraowned){
 				let auras = $("[id^='aura_']");
 				for(let i = 0; i < auras.length; i++){
-					if(!auras[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.reveal_light){
+					if(!auras[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.reveal_light != 'los' && window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.reveal_light != 'always'){
 						$(auras[i]).css("visibility", "hidden");
 					}
 				}
@@ -2687,7 +2705,7 @@ function setTokenLight (token, options) {
 			$("#scene_map_container").prepend(lightElement);
 		}
 		if(window.DM){
-			(options.hidden && !options.reveal_light) ? token.parent().parent().find("#light_" + tokenId).css("opacity", 0.5)
+			(options.hidden && options.reveal_light == 'never') ? token.parent().parent().find("#light_" + tokenId).css("opacity", 0.5)
 			: token.parent().parent().find("#light_" + tokenId).css("opacity", 1)
 		}
 		else{
@@ -2712,7 +2730,7 @@ function setTokenLight (token, options) {
 		
 		let lights = $("[id^='light_']");
 		for(let i = 0; i < lights.length; i++){
-			if(!lights[i].id.endsWith(window.PLAYER_ID) && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.player_owned && !window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light){
+			if(!lights[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light != 'always' && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light != 'los'){
 				$(lights[i]).css("visibility", "hidden");
 			}		
 			if(playerTokenId == undefined && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.itemType == 'pc'){

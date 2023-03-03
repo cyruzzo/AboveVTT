@@ -807,14 +807,15 @@ function build_token_light_inputs(tokenIds) {
 	const reveallightOption = {
 		name: "reveal_light",
 		label: "Reveal light to players",
-		type: "toggle",
+		type: "dropdown",
 		options: [
-			{ value: true, label: "Enable", description: "Token light is revealed to players." },
-			{ value: false, label: "Disable", description: "Token light is revealed to players." }
+			{ value: 'never', label: "Never", description: "Token light is revealed to players." },
+			{ value: 'los', label: "When in line of sight", description: "Token light is revealed to players when in line of sight." },
+			{ value: 'always', label: "Always", description: "Token light is revealed to players always." },
 		],
 		defaultValue: false
 	};
-	let revealLightInput = build_toggle_input(reveallightOption, auraRevealLightEnabled, function(name, newValue) {
+	let revealLightInput = build_dropdown_input(reveallightOption, auraRevealLightEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;

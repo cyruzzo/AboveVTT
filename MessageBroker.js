@@ -1243,9 +1243,6 @@ class MessageBroker {
 		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
-			if(data.id == playerTokenId && window.TOKEN_OBJECTS[data.id].options.auraislight != data.auraislight){
-				auraislightchanged = true;
-			}
 			for (var property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
@@ -1264,24 +1261,6 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			if(data.auraislight){
-				if(playerTokenAuraIsLight){
-						check_token_visibility();
-				}
-				else{
-					check_single_token_visibility(data.id);
-				}	
-			}
-			else{
-				if(auraislightchanged){
-					check_token_visibility();
-				}
-				else{
-					check_single_token_visibility(data.id);
-				}
-
-			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
