@@ -1911,7 +1911,7 @@ class Token {
 					let selectedTokens = $('.tokenselected');
 			
 					
-					let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+					let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
 					for(i=0; i<walls.length; i++){
 
 						let wallInitialScale = walls[8];

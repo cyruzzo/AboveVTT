@@ -934,6 +934,7 @@ function redraw_light_walls(clear=true){
 
 	let canvas = document.getElementById("temp_overlay");
 	let ctx = canvas.getContext("2d");
+	ctx.setLineDash([]);
 		
 	if(clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -962,21 +963,77 @@ function redraw_light_walls(clear=true){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
+	$('.door-button').remove();
 	for (var i = 0; i < drawings.length; i++) {
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
 
+		if(lineWidth == undefined || lineWidth == null){
+			lineWidth = 6;
+		}
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
-		window.walls.push(drawnWall);
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			canvas = document.getElementById("temp_overlay");
 			ctx = canvas.getContext("2d");
 			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
 		}
 
+		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)")){
+			let doorButtonColor;
+			if(color == "rgba(255, 100, 255, 0.5)")
+				doorButtonColor = '#9eff61ad'
+			if(color == "rgba(255, 100, 255, 1)")
+				doorButtonColor = '#ff6168ad'
+			
+
+			let midX = Math.floor((x+width)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
+			let midY = Math.floor((y+height)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
+			let openCloseDoorButton = $(`<div class='door-button' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px; background:${doorButtonColor};'>
+											<span class="material-symbols-outlined">
+												door_open
+											</span>
+										</div>`)
+			openCloseDoorButton.on('click', function(){open_close_door(x, y, width, height)});
+			$('#tokens').append(openCloseDoorButton);
+		}
+		if(color == "rgba(255, 100, 255, 0.5)"){
+			continue;
+		}
+		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
+		window.walls.push(drawnWall);
+
 	}
+}
+function open_close_door(x1, y1, x2, y2){
+	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && (d[2] == "rgba(255, 100, 255, 1)" || d[2] == "rgba(255, 100, 255, 0.5)")  && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
+	let color;
+	if(doors[0][2] == "rgba(255, 100, 255, 0.5)"){
+		color = "rgba(255, 100, 255, 1)"
+	}
+	else{
+		color = "rgba(255, 100, 255, 0.5)";
+	}
+
+	 window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		
+	let data = ['line',
+				 'wall',
+				 color,
+				 x1,
+				 y1,
+				 x2,
+				 y2,
+				 12,
+				 doors[0][8]
+				 ];	
+	window.DRAWINGS.push(data);
+
+	redraw_light_walls();
+	redraw_light();
+
+
+	sync_drawings();						
 }
 
 function stop_drawing() {
@@ -1053,7 +1110,15 @@ function drawing_mousedown(e) {
 	else if(window.DRAWFUNCTION === "wall"){
 		// semi transparent black
 		window.DRAWCOLOR = "rgba(0, 255, 0, 1)"
+		if(window.DRAWSHAPE == 'line')
+			window.DRAWTYPE = "filled"
+		window.LINEWIDTH = 6;
+	}
+	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" ){
+		// semi transparent black
+		window.DRAWCOLOR = "rgba(255, 100, 255, 1)"
 		window.DRAWTYPE = "filled"
+		window.LINEWIDTH = 12;
 	}
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
@@ -1070,17 +1135,19 @@ function drawing_mousedown(e) {
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
-	if (e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall")
+	if (e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall" && window.DRAWFUNCTION != "wall-door")
 		return;
 
+	if (e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door"))
+		return;
 
-	if(window.DRAWFUNCTION == "wall" && window.MOUSEDOWN && window.wallToStore != undefined){
+	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door") && window.MOUSEDOWN && window.wallToStore != undefined){
 		if(window.StoredWalls == undefined){
 			window.StoredWalls =[];
 		}
 		window.StoredWalls.push(window.wallToStore);
 	}
-	if ((e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && window.DRAWFUNCTION == "wall" && !window.MOUSEDOWN)
+	if ((e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door") && !window.MOUSEDOWN)
 		return;
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
@@ -1139,7 +1206,7 @@ function drawing_mousedown(e) {
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
 	}
-	else if(window.DRAWFUNCTION == "wall" && window.wallToStore != undefined){
+	else if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door") && window.wallToStore != undefined){
 		if(window.wallToStore.length>0) {
 			window.BEGIN_MOUSEX = window.wallToStore[2];
 			window.BEGIN_MOUSEY = window.wallToStore[3];
@@ -1204,7 +1271,7 @@ function drawing_mousemove(e) {
 		// }
 
 		if (window.DRAWSHAPE == "rect") {
-			if(window.DRAWFUNCTION == "wall-eraser"){
+			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall"){
 				redraw_light_walls(false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
@@ -1283,7 +1350,7 @@ function drawing_mousemove(e) {
 					window.DRAWCOLOR,
 					window.LINEWIDTH);
 			}
-			if(window.DRAWFUNCTION == 'wall'){
+			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
 				redraw_light_walls(false);
 				if(window.StoredWalls != undefined){
@@ -1354,8 +1421,7 @@ function drawing_mouseup(e) {
 	if ($(".ui-draggable-dragging").length > 0){
 		return
 	}
-	if (shiftHeld&& window.DRAWFUNCTION == "wall"){
-		drawing_mousedown(e);
+	if ((shiftHeld || e.button != 0) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door")){
 		return;
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
@@ -1409,7 +1475,7 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
-		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall')){
+		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door')){
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
@@ -1451,12 +1517,68 @@ function drawing_mouseup(e) {
 		switch(window.DRAWFUNCTION){
 		case 'wall':
 			data[1] = "wall"
-			break
+			break;
+		case 'wall-door':
+			data[1] = "wall"
+			data[2] = "rgba(255, 100, 255, 1)"
+			break;
 		default:
-			break
+			break;
 		}
-		window.DRAWINGS.push(data);
-		if(window.DRAWFUNCTION == "wall"){
+		if(window.DRAWFUNCTION == 'wall' && window.DRAWSHAPE == 'rect'){
+			let rectLine = {
+				rx: window.BEGIN_MOUSEX,
+				ry: window.BEGIN_MOUSEY,		
+				rw: width,
+				rh: height
+			};
+			let line1 = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				rectLine.rx,
+				rectLine.ry,
+				rectLine.rx,
+				rectLine.ry + rectLine.rh,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line1);
+
+			let line2 = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				rectLine.rx,
+				rectLine.ry,
+				rectLine.rx + rectLine.rw,
+				rectLine.ry,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line2);
+			let line3 = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				rectLine.rx + rectLine.rw,
+				rectLine.ry,
+				rectLine.rx + rectLine.rw,
+				rectLine.ry + rectLine.rh,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line3);
+			let line4 = ['line',
+				"wall",
+				 window.DRAWCOLOR,
+				 rectLine.rx,
+				 rectLine.ry + rectLine.rh,
+				 rectLine.rx + rectLine.rw,
+				 rectLine.ry + rectLine.rh,
+				 window.LINEWIDTH,
+				 window.CURRENT_SCENE_DATA.scale_factor];
+			window.DRAWINGS.push(line4);
+		}
+		else{
+			window.DRAWINGS.push(data);
+		}
+
+		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'){
 			if ( e.button == 2) {
 				return;
 			}
@@ -1523,11 +1645,8 @@ function drawing_mouseup(e) {
 
 		sync_drawings();
 
-	}
-	else if (window.DRAWFUNCTION === "wall-eraser"){
-		let canvas = $("#raycastingCanvas")[0];
-		let ctx = canvas.getContext("2d");
-
+	}		
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" ){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -1634,7 +1753,7 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 window.LINEWIDTH,
+						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
@@ -1658,10 +1777,10 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 window.LINEWIDTH,
+						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
-						window.DRAWINGS.push(data);
+						window.DRAWINGS.push(data);				
 					}
 					if(top != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -1681,10 +1800,11 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 window.LINEWIDTH,
+						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
 						window.DRAWINGS.push(data);
+					
 					}
 					if(bottom != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -1704,14 +1824,57 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 window.LINEWIDTH,
+						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor,
 						 ];	
-						window.DRAWINGS.push(data);
+						window.DRAWINGS.push(data);					
 					}
-				
+
+					if(window.DRAWFUNCTION == 'wall-door-convert'){
+						x1 = undefined;
+
+						if(bottom != false){
+							x1 = bottom.x;
+							y1 = bottom.y;
+						}
+						if(left != false){
+							if(x1 == undefined){
+								x1 = left.x;
+								y1 = left.y;
+							}
+							else{
+								x2 = left.x;
+								y2 = left.y;
+							}
+						}
+						if(right != false){
+							if(x1 == undefined){
+								x1 = right.x;
+								y1 = right.y;
+							}
+							else{
+								x2 = right.x;
+								y2 = right.y;
+							}
+						}
+						if(top != false){							
+								x2 = top.x;
+								y2 = top.y;							
+						}
+						let data = ['line',
+						 'wall',
+						 "rgba(255, 100, 255, 1)",
+						 x1,
+						 y1,
+						 x2,
+						 y2,
+						 12,
+						 window.CURRENT_SCENE_DATA.scale_factor
+						 ];	
+						window.DRAWINGS.push(data);
+						
+					}	
 				}	
-				
 			}		
 		}
  		
@@ -2562,6 +2725,27 @@ function init_walls_menu(buttons){
 					Draw Wall
 			</button>
 		</div>`);
+		wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall" data-unique-with="draw">
+					Rect Wall
+			</button>
+		</div>`);
+		wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='line' data-function="wall-door" data-unique-with="draw">
+				 	Draw Door 
+			</button>
+		</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-door-convert" data-unique-with="draw">
+				 	Wall>Door 
+			</button>
+		</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
@@ -2832,7 +3016,7 @@ function detectWallCollision(x1, y1, x2, y2){
 	let selectedTokens = $('.tokenselected');
 
 	
-	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
 	for(i=0; i<walls.length; i++){
 
 		let wallInitialScale = walls[8];
