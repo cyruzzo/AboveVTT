@@ -438,7 +438,7 @@ function check_single_token_visibility(id){
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 
 				$(selector).hide();
-				if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned && !window.TOKEN_OBJECTS[id].options.reveal_light){
+				if($(auraSelector).hasClass('islight') && window.TOKEN_OBJECTS[id].options.reveal_light == 'never'){
 					$(auraSelector).hide();
 				}
 				else{
@@ -502,7 +502,7 @@ function do_check_token_visibility() {
 			
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
 			$(selector).hide();
-			if($(auraSelector).hasClass('islight') && !window.TOKEN_OBJECTS[id].options.player_owned && !window.TOKEN_OBJECTS[id].options.reveal_light){
+			if($(auraSelector).hasClass('islight') && window.TOKEN_OBJECTS[id].options.reveal_light == 'never'){
 				$(auraSelector).hide();
 			}
 			else{
@@ -2734,6 +2734,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	let prevClosestWall = null;
     let prevClosestPoint = null;
+    let closestWall = null;
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
 	    
 	    let pt;
@@ -2755,7 +2756,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		          }
 	          }
 	          closest=pt;
-	          closestWall = walls[j]
+	          if(dist != lightRadius){
+	          	closestWall = walls[j]
+	          }
+	          
 	        }
 
 	      }
@@ -2766,6 +2770,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    	}
 	    	lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
+	    else if(closest){
+	    	lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    }
 	    prevClosestPoint = closest;
 	    prevClosestWall = closestWall;
 	}
@@ -2891,7 +2898,7 @@ function redraw_light(){
   		
 		for(j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
-			if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM || (window.TOKEN_OBJECTS[tokenId].options.itemType == "pc" && window.TOKEN_OBJECTS[tokenId].options.reveal_light))
+			if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM || (window.TOKEN_OBJECTS[tokenId].options.itemType == "pc" && window.TOKEN_OBJECTS[tokenId].options.reveal_light == 'always'))
 		  		selectedIds.push(tokenId)
 		}	  	
 	 }
@@ -2901,7 +2908,7 @@ function redraw_light(){
 
   	let auraId = $(light_auras[i]).attr('data-id');
 
-  	found = selectedIds.some(r=> r == auraId);
+  	found = selectedIds.some(r=> r == auraId) || window.TOKEN_OBJECTS[auraId].options.reveal_light == 'always';
 
 
 
@@ -2921,28 +2928,25 @@ function redraw_light(){
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
-  	if(!found && window.DM && !window.TOKEN_OBJECTS[auraId].options.reveal_light){
+ 	if(!found && window.DM && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always' && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'los'){
   		$(light_auras[i]).css("visibility", "hidden");
   	}
   	if(selectedIds.length == 0 || found){
-  		if(selectedIds.length == 0  && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
-  			continue;
-  		
-  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light && !auraId.includes(window.PLAYER_ID) && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.DM && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  		if(selectedIds.length == 0 && !auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always')
+  			continue; 		
+  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light == 'los' && !auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always')
   			continue; 
-
   		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.itemType != "pc" && !window.TOKEN_OBJECTS[auraId].options.player_owned)
+  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always' && !window.DM)
   			continue;
-
 	  	if(window.DM){
 	  		$(light_auras[i]).css("visibility", "visible");
 	  	}
 
-
-  
-  		
-  		
+  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light == 'always' && !window.TOKEN_OBJECTS[auraId].options.player_owned && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc'){
+  			let visibleRadius = ($(`.aura-element.islight[data-id='${auraId}']`).width()/2)+10;
+  			particleLook(context, walls, visibleRadius, undefined, undefined, undefined, false);
+  		}
 		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
 
 	
