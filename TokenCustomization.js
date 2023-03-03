@@ -135,16 +135,16 @@ class TokenCustomization {
             id = `${id}`; // DDB uses numbers for monster ids, but we want to use strings to keep everything consistent
         }
         if (typeof id !== "string" || id.length === 0) {
-            throw `Invalid id ${id}`;
+            throw new Error(`Invalid id ${id}`);
         }
         if (typeof rootId !== "string" || rootId.length === 0) {
-            throw `Invalid rootId ${rootId}`;
+            throw new Error(`Invalid rootId ${rootId}`);
         }
         if (!TokenCustomization.validTypes.includes(tokenType)) {
-            throw `Invalid Type ${tokenType}`;
+            throw new Error(`Invalid Type ${tokenType}`);
         }
         if (typeof parentId !== "string" || parentId.length === 0) {
-            throw `Invalid parentId ${parentId}`;
+            throw new Error(`Invalid parentId ${parentId}`);
         }
         this.id = id;
         this.tokenType = tokenType;

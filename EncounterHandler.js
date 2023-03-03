@@ -20,7 +20,7 @@ class EncounterHandler {
 			let urlId = window.location.pathname.split("/").pop();
 			this.avttId = urlId;
 		} else {
-			throw `Failed to create EncounterHandler with avttId: ${avttId} on page ${window.location.href}`;
+			throw new Error(`Failed to create EncounterHandler with avttId: ${avttId} on page ${window.location.href}`);
 		}
 		this.encounters = {};
 	}

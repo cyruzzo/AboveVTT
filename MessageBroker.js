@@ -1456,8 +1456,8 @@ class MessageBroker {
 
 
 
-		
-		
+
+		remove_loading_overlay();
 		// console.groupEnd()
 	}
 
@@ -1502,20 +1502,16 @@ class MessageBroker {
 	}
 
 	handleCharacterUpdate(msg){
-		let characterId=msg.data.characterId;
-
-		window.pcs.forEach(function(pc){
-			if(!pc.sheet.endsWith(characterId)) // we only poll for the characterId that sent this message
-				return;
-
+		const characterId = msg.data.characterId;
+		const pc = window.pcs.find(pc => pc.sheet.includes(characterId));
+		if (pc) {
 			getPlayerData(pc.sheet, function (playerData) {
 				window.PLAYER_STATS[playerData.id] = playerData;
 				window.MB.sendTokenUpdateFromPlayerData(playerData);
 				update_pclist();
 				send_player_data_to_all_peers(playerData);
 			});
-		});
-		
+		}
 	}
 	
 	inject_chat(injected_data) {
