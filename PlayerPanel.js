@@ -1,21 +1,22 @@
 
 function update_pclist() {
 
-	gather_pcs();
-	update_pc_token_rows(); // this updates the tokensPanel rows for the DM
+	console.log("update_pclist pcs", window.pcs);
 
 	if (window.DM) {
-		// only the players build out the tokensPanel. The DM uses TokensPanel
+		// only the players build out the playersPanel. The DM uses tokensPanel
+		update_pc_token_rows(); // this updates the tokensPanel rows for the DM
 		return;
 	}
 
 	playersPanel.body.empty();
 
-	window.pcs.forEach(function(item, index) {
+	const pcObjects = [...window.pcs, generic_pc_object(true)]; // add a pc object for the DM
+	pcObjects.forEach(function(item, index) {
 
 		const pc = item;
-		let pcSheet = pc.sheet === undefined ? '' : pc.sheet;
-		const color = pc.color ? pc.color : get_token_color_by_index(index);
+		const pcSheet = pc.sheet === undefined ? '' : pc.sheet;
+		const color = color_from_pc_object(pc);
 
 		let playerData;
 		if (pc.sheet in window.PLAYER_STATS) {
@@ -98,11 +99,12 @@ function update_pclist() {
 				}
 			}
 		});
-		if (pc.p2pConnected) {
+		const peerConnected = is_peer_connected(pc.id);
+		if (peerConnected) {
 			if (pc.sheet.includes(my_player_id())) {
-				update_player_online_indicator(my_player_id(), pc.p2pConnected, pc.color ? pc.color : window.color);
+				update_player_online_indicator(my_player_id(), peerConnected, color);
 			} else {
-				update_player_online_indicator(getPlayerIDFromSheet(pc.sheet), pc.p2pConnected, pc.color ? pc.color : color);
+				update_player_online_indicator(getPlayerIDFromSheet(pc.sheet), peerConnected, color);
 			}
 		}
 	});
@@ -181,63 +183,36 @@ function get_token_color_by_index(index) {
 	if (index >= 0 && index < TOKEN_COLORS.length) {
 		return "#" + TOKEN_COLORS[index];
 	}
-	return "#" + TOKEN_COLORS[0];
+	return "#" + TOKEN_COLORS[Math.floor(Math.random() * TOKEN_COLORS.length)];
 }
 
 function find_and_set_player_color() {
 	const playerId = my_player_id();
 
-	// 1. See if we've stored it locally
-	const locallyStored = localStorage.getItem(`PlayerColor-${playerId.replace(' ', '')}`); // "THE DM" has a space in it which won't work here
-	if (locallyStored != null) {
-		console.debug("find_and_set_player_color found a color in localStorage", locallyStored);
-		change_player_color(locallyStored);
+	if (playerId === dm_id) {
+		// DM just uses the default DDB theme
+		const dmPc = generic_pc_object(true);
+		change_player_color(dmPc.decorations.characterTheme.themeColor);
 		return;
 	}
 
-	// 2. check if they have a customized character theme
-	const themeColor = $(".dice-toolbar").css("--dice-color");
-	if (themeColor && (window.DM || !themeColor.includes('#C53131'))) {
-		// #C53131 is the "DDB Red" theme color which DDB sets as default. Only allow allow that theme color for the DM. Also, sometimes DDB injects it as ' #C53131' which is why we're using `includes`
-		console.debug("find_and_set_player_color found a theme color", themeColor);
-		change_player_color(themeColor.trim());
+	const pc = window.pcs.find(pc => pc.sheet.includes(playerId));
+	if (pc && pc.decorations?.characterTheme?.themeColor) {
+		// we were able to fetch the theme from DDB so use it
+		change_player_color(pc.decorations.characterTheme.themeColor);
 		return;
 	}
 
-	// 3. use a random TOKEN_COLORS, but don't save that to disk
-	let index = find_pc_by_player_id(playerId);
+	const index = window.pcs.findIndex(pc => pc.sheet.includes(idOrSheet));
 	const colorByIndex = get_token_color_by_index(index);
-	if (index >= 0) {
-		const pc = window.pcs[index];
-		if (pc.color) {
-			console.debug("find_and_set_player_color is using pc.color", pc.color);
-			change_player_color(pc.color);
-		}
-		console.debug("find_and_set_player_color found a TOKEN_COLOR using index", index, colorByIndex);
-		change_player_color(colorByIndex);
-	} else {
-		console.debug("find_and_set_player_color is using the first TOKEN_COLOR", colorByIndex);
-		change_player_color(colorByIndex);
-	}
+	change_player_color(colorByIndex);
 }
 
 function change_player_color(color) {
 	const playerId = my_player_id();
-	window.color = color;
-	const pc = find_pc_by_player_id(playerId);
-	if (pc) {
-		pc.color = color
-	}
+	// window.color = color; // TODO: stop using window.color
 	WaypointManager.drawStyle.color = color;
-	window.PeerManager.send(PeerEvent.preferencesChange());
-	update_player_online_indicator(playerId, pc?.p2pConnected, color);
-}
-
-function store_player_color(color) {
-	const playerId = my_player_id().replace(' ', ''); // "THE DM" has a space in it which won't work here
-	if (color) {
-		localStorage.setItem(`PlayerColor-${playerId}`, color);
-	} else {
-		localStorage.removeItem(`PlayerColor-${playerId}`, color);
-	}
+	// window.PeerManager.send(PeerEvent.preferencesChange());
+	const peerConnected = is_peer_connected(playerId);
+	update_player_online_indicator(playerId, peerConnected, color);
 }

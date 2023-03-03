@@ -127,14 +127,14 @@ class DiceRoll {
         let parsedExpression = expression.replaceAll(/\s+/g, ""); // remove all spaces
         if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);
-            throw "Invalid Expression";
+            throw new Error("Invalid Expression");
         }
 
         // find all dice expressions in the expression. converts "1d20+1d4" to ["1d20", "1d4"]
         let separateDiceExpressions = parsedExpression.match(allDiceRegex)
         if (!separateDiceExpressions) {
             console.warn("Not parsing expression because there are no valid dice expressions within it", expression);
-            throw "Invalid Expression";
+            throw new Error("Invalid Expression");
         }
 
         this.#fullExpression = parsedExpression;
@@ -357,6 +357,7 @@ class DiceRoller {
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
         if (!this.#waitingForRoll) {
+            // TODO: update DM rolls with dmAvatarUrl
             console.debug("not capturing: ", message);
             this.ddbDispatch(message);
         } else if (message.eventType === "dice/roll/pending") {

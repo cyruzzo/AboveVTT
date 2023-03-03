@@ -2884,7 +2884,7 @@ function save_custom_monster_image_mapping() {
 }
 
 function copy_to_clipboard(text) {
-	var $temp = $("<input>");
+	var $temp = $("<textarea>");
 	$("body").append($temp);
 	$temp.val(text).select();
 	document.execCommand("copy");

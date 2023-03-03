@@ -2,27 +2,6 @@
 
 //#region helper functions
 
-/** The string "THE DM" has been used in a lot of places.
- * This prevents typos or case sensitivity in strings.
- * @return {String} "THE DM" */
-const dm_id = "THE DM";
-
-/** @return {string} The id of the player as a string, {@link dm_id} for the dm */
-function my_player_id() {
-  if (window.DM) {
-    return dm_id;
-  } else {
-    return `${window.PLAYER_ID}`;
-  }
-}
-
-/** @param {string} idOrSheet the playerId or pc.sheet of the pc you're looking for
- * @return {object} The window.pcs object that matches the idOrSheet */
-function find_pc_by_player_id(idOrSheet) {
-  if (!window.pcs) return undefined;
-  return window.pcs.find(pc => idOrSheet === dm_id ? pc.sheet === '' : pc.sheet.includes(idOrSheet));
-}
-
 /** a convenience function that stores peer preferences and creates window.PEER_PREFERENCES if it doesn't already exist
  * @param {object} preferences a {@link PeerEvent.preferencesChange} event */
 function store_peer_preferences(preferences) {
@@ -38,6 +17,11 @@ function noisy_log(...message) {
   if (window.enableNoisyLogs === true) {
     console.debug(...message);
   }
+}
+
+function is_peer_connected(playerId) {
+  if (!playerId) return false;
+  return !!window.PeerManager?.connectedPlayerIds?.includes(playerId.toString());
 }
 
 //#endregion helper functions
@@ -125,7 +109,7 @@ class PeerEvent {
       message: PeerEventType.preferencesChange,
       peerId: window.PeerManager.peer.id,
       playerId: my_player_id(),
-      color: window.color,
+      color: window.color, // TODO: stop using window.color
       image: window.PLAYER_IMG,
       receiveCursorFromPeers: get_avtt_setting_value("receiveCursorFromPeers"),
       receiveRulerFromPeers: get_avtt_setting_value("receiveRulerFromPeers")
@@ -388,14 +372,11 @@ function peer_changed_preferences(eventData) {
 
   update_player_online_indicator(eventData.playerId, true, eventData.color);
 
-  const pc = find_pc_by_player_id(eventData.playerId);
-  if (!pc){
-    console.debug("peer_changed_preferences no pc", eventData, window.pcs);
-    return;
-  }
-  pc.color = eventData.color;
+  // TODO: do we need to re-fetch character data to get the updated theme?
+  // we should probably just send the theme object, and update window.pcs with that
 
   if (window.DM) {
+    const pc = find_pc_by_player_id(eventData.playerId);
     const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
     if (tokenObject) {
       tokenObject.options.color = eventData.color;
@@ -416,12 +397,11 @@ function peer_changed_preferences(eventData) {
  * @param {boolean} isConnected true if the player is connected, else false
  * @param {string} peerColor a valid CSS color string that represents the player, defaults to gray which indicates offline */
 function update_player_online_indicator(playerId, isConnected, peerColor) {
+  // TODO: refactor how color is sent and used
   const color = peerColor ? peerColor : "gray";
   const pc = find_pc_by_player_id(playerId);
   console.debug("update_player_online_indicator", playerId, isConnected, color, pc);
   if (pc) {
-    pc.p2pConnected = isConnected;
-    pc.color = color;
     if (window.DM) {
       const playerListItem = window.tokenListItems.find(li => li.type === ItemType.PC && li.id === pc.sheet);
       const rowHtml = find_html_row(playerListItem, tokensPanel.body);
@@ -439,7 +419,7 @@ function update_player_online_indicator(playerId, isConnected, peerColor) {
   } else if (playerId.toUpperCase() === dm_id) {
     update_old_player_card(playerId, isConnected, color);
   }
-  flash_tokens_tab(color);
+  // flash_tokens_tab(color);
 }
 
 /** updates the online indicator in the old players panel
@@ -483,7 +463,7 @@ function init_peer_fade_functions() {
     window.PEER_FADE_RULER_FUNCTIONS = {};
   }
   if (window.pcs) {
-    window.pcs.forEach(pc => init_peer_fade_function(getPlayerIDFromSheet(pc.sheet)));
+    window.pcs.forEach(pc => init_peer_fade_function(pc.id.toString()));
   }
 }
 

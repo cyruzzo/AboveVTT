@@ -12,15 +12,13 @@ $(function() {
           window.MB = new MessageBroker();
           inject_chat_buttons();
         } else {
-          gather_pcs();
           inject_instructions();
           inject_dm_join_button();
           inject_player_join_buttons();
         }
       })
       .catch(error => {
-        console.error("Failed to harvest gameId and campaignSecret on", window.location.href, error);
-        showDebuggingAlert();
+        showError(error, "Failed to harvest gameId and campaignSecret on", window.location.href);
       });
   }
 });
@@ -124,8 +122,7 @@ function inject_dm_join_button() {
         }, 2000);
       })
       .catch((error) => {
-        console.error("Failed to start AboveVTT", error);
-        showDebuggingAlert();
+        showError(error, "Failed to start AboveVTT from dm join button");
       })
       .finally(() => {
         $(e.currentTarget).removeClass("button-loading");

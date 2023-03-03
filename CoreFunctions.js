@@ -65,9 +65,160 @@ function is_gamelog_popout() {
   return is_campaign_page() && window.location.search.includes("popoutgamelog=true");
 }
 
-const debuggingAlertText = "Please check the developer console (F12) for errors, and report this via the AboveVTT Discord. You may need to press this OK button before the errors are shown in the console.";
-function showDebuggingAlert(message = "An unexpected error occurred!") {
-  alert(`${message}\n${debuggingAlertText}`);
+function removeError() {
+  $("#above-vtt-error-message").remove();
+}
+
+/** Displays an error to the user
+ * @param {Error} error an error object to be parsed and displayed
+ * @param {(string|*[])[]} extraInfo other relevant information */
+function showError(error, ...extraInfo) {
+
+  let container = $("#above-vtt-error-message");
+  if (container.length === 0) {
+    const container = $(`
+      <div id="above-vtt-error-message">
+        <h2>An unexpected error occurred!</h2>
+        <button id="close-error-button">Close</button>
+        <button id="copy-error-button">Copy Error Message</button>
+        <div id="error-message-body">An unexpected error occurred. Please report this via the AboveVTT Discord.</div>
+        <pre id="error-message-stack"></pre>
+      </div>
+    `);
+    $(document.body).append(container);
+  } else {
+    $("#error-message-stack").append("<br /><br />---------- Another Error Occurred ----------<br /><br />");
+  }
+
+  console.error(...extraInfo, error);
+  if (error?.constructor?.name !== "Error") {
+    error = new Error(error);
+  }
+  const stack = error.stack || new Error().stack;
+  const extraStrings = extraInfo.map(ei => {
+    if (typeof ei === "object") {
+      return JSON.stringify(ei);
+    } else {
+      return ei?.toString();
+    }
+  });
+
+  console.log(`extraString`, extraStrings)
+
+  $("#error-message-stack")
+    .append(extraStrings.join(`<br />`))
+    .append(`<br />`)
+    .append(stack);
+
+  $("#close-error-button").on("click", removeError);
+  $("#copy-error-button").on("click", function () {
+    const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
+    copy_to_clipboard("```\n"+textToCopy+"\n```");
+  });
+}
+
+
+/** The string "THE DM" has been used in a lot of places.
+ * This prevents typos or case sensitivity in strings.
+ * @return {String} "THE DM" */
+const dm_id = "THE DM";
+// Use Acererak as the avatar, because he's on the DMG cover... but also because he's the fucking boss!
+const dmAvatarUrl = "https://www.dndbeyond.com/avatars/thumbnails/30/787/140/140/636395106768471129.jpeg";
+const defaultAvatarUrl = "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/characters/default-avatar.png";
+
+/** an object that mimics window.pcs, but specific to the DM */
+function generic_pc_object(isDM) {
+  let pc = {
+    "decorations": {
+      "backdrop": { // barbarian because :shrug:
+        "largeBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/473/636453122224164304.jpeg",
+        "smallBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/472/636453122223383028.jpeg",
+        "backdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/471/636453122222914252.jpeg",
+        "thumbnailBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/474/636453122224476777.jpeg"
+      },
+      "characterTheme": {
+        "name": "DDB Red",
+        "isDarkMode": false,
+        "isDefault": true,
+        "backgroundColor": "#FEFEFE",
+        "themeColor": "#C53131"
+      },
+      "avatar": {
+        "avatarUrl": defaultAvatarUrl,
+        "frameUrl": null
+      }
+    },
+    "id": 0,
+    "image": defaultAvatarUrl,
+    "isAssignedToPlayer": false,
+    "name": "Unknown Character",
+    "sheet": "",
+    "userId": 0
+  };
+  if (isDM) {
+    pc.image = dmAvatarUrl;
+    pc.decorations.avatar.avatarUrl = dmAvatarUrl;
+    pc.name = dm_id;
+  }
+  return pc;
+}
+
+function color_for_player_id(playerId) {
+  const pc = find_pc_by_player_id(playerId);
+  return color_from_pc_object(pc);
+}
+
+function color_from_pc_object(pc) {
+  if (!pc) return get_token_color_by_index(-1);
+  if (pc.name === dm_id && pc.id === 0) {
+    // this is a DM pc object. The DM uses the default DDB theme
+    return pc.decorations.characterTheme.themeColor;
+  }
+  const isDefaultTheme = !!pc.decorations?.characterTheme?.isDefault;
+  if (!isDefaultTheme && pc.decorations?.characterTheme?.themeColor) { // only the DM can use the default theme color
+    return pc.decorations.characterTheme.themeColor;
+  } else {
+    const pcIndex = window.pcs.findIndex(p => p.id === p.id);
+    return get_token_color_by_index(pcIndex);
+  }
+}
+
+/** @return {string} The id of the player as a string, {@link dm_id} for the dm */
+function my_player_id() {
+  if (window.DM) {
+    return dm_id;
+  } else {
+    return `${window.PLAYER_ID}`;
+  }
+}
+
+/** @param {string} idOrSheet the playerId or pc.sheet of the pc you're looking for
+ * @return {object} The window.pcs object that matches the idOrSheet */
+function find_pc_by_player_id(idOrSheet) {
+  if (idOrSheet === dm_id) {
+    return generic_pc_object(true);
+  }
+  if (!window.pcs) {
+    console.error("window.pcs is undefined");
+    return generic_pc_object(false);
+  }
+  const pc = window.pcs.find(pc => pc.sheet.includes(idOrSheet));
+  return pc || generic_pc_object(false);
+}
+
+async function rebuild_window_pcs() {
+  const campaignCharacters = await DDBApi.fetchCampaignCharacterDetails(window.gameId);
+  window.pcs = campaignCharacters.map(characterData => {
+    return {
+      decorations: characterData.decorations,
+      id: characterData.characterId,
+      image: characterData.decorations?.avatar?.avatarUrl || defaultAvatarUrl,
+      isAssignedToPlayer: characterData.isAssignedToPlayer,
+      name: characterData.name,
+      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`,
+      userId: characterData.userId,
+    }
+  });
 }
 
 async function harvest_game_id() {
@@ -84,12 +235,24 @@ async function harvest_game_id() {
   }
 
   if (is_characters_page()) {
+    const campaignSummaryButton = $(".ddbc-campaign-summary");
+    if (campaignSummaryButton.length > 0) {
+      if ($(".ct-campaign-pane__name-link").length === 0) {
+        campaignSummaryButton.click(); // campaign sidebar is closed. open it
+      }
+      const fromLink = $(".ct-campaign-pane__name-link").attr("href")?.split("/")?.pop();
+      if (typeof fromLink === "string" && fromLink.length > 1) {
+        return fromLink;
+      }
+    }
+
+    // we didn't find it on the page so hit the DDB API, and try to pull it from there
     const characterId = window.location.pathname.split("/").pop();
     window.characterData = await DDBApi.fetchCharacter(characterId);
     return window.characterData.campaign.id.toString();
   }
 
-  throw `harvest_game_id failed to find gameId on ${window.location.href}`;
+  throw new Error(`harvest_game_id failed to find gameId on ${window.location.href}`);
 }
 
 function set_game_id(gameId) {
@@ -98,7 +261,7 @@ function set_game_id(gameId) {
 
 async function harvest_campaign_secret() {
   if (typeof window.gameId !== "string" || window.gameId.length <= 1) {
-    throw "harvest_campaign_secret requires gameId to be set. Make sure you call harvest_game_id first";
+    throw new Error("harvest_campaign_secret requires gameId to be set. Make sure you call harvest_game_id first");
   }
 
   if (is_campaign_page()) {
@@ -210,49 +373,6 @@ function find_game_id() {
 
   console.log("find_game_id found:", window.gameId);
   return window.gameId;
-}
-
-function gather_pcs() {
-  let campaignId = find_game_id();
-  if (is_encounters_page() || is_characters_page()) {
-    if (window.pcs) return; // we should only need to fetch this once
-    // they aren't on this page, but we've added them to localStorage to handle this scenario
-    window.pcs = $.parseJSON(localStorage.getItem(`CampaignCharacters${campaignId}`));
-    console.log(`reading "CampaignCharacters-${campaignId}", ${JSON.stringify(window.pcs)}`);
-    return;
-  }
-
-  window.pcs = [];
-  $(".ddb-campaigns-detail-body-listing-active").find(".ddb-campaigns-character-card").each(function(idx) {
-    let tmp = $(this).find(".ddb-campaigns-character-card-header-upper-character-info-primary");
-    let name = tmp.html();
-    tmp = $(this).find(".user-selected-avatar");
-    if (tmp.length > 0) {
-      const lowResUrl = tmp.css("background-image").slice(5, -2); // url("x") TO -> x
-      image = get_higher_res_url(lowResUrl)
-    } else {
-      image = "/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-    }
-    let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr("href");
-    let pc = {
-      name: name,
-      image: image,
-      sheet: sheet === undefined ? "" : sheet,
-      data: {}
-    };
-    console.log("trovato sheet " + sheet);
-    window.pcs.push(pc);
-  });
-
-  if(!window.DM){
-    window.pcs.push({
-      name: 'THE DM',
-      image: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
-      sheet: "", // MessageBroker calls `endsWith` on this so make sure it has something to read
-      data: {}
-    });
-  }
-  localStorage.setItem(`CampaignCharacters${campaignId}`, JSON.stringify(window.pcs));
 }
 
 function normalize_scene_urls(scenes) {
