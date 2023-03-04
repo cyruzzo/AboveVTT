@@ -99,10 +99,6 @@ async function start_above_vtt_for_dm() {
   startup_step("Setting up UI");
   // This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
   $("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
-  // This brings in the styles that are loaded on the classes page to support the importer.
-  $("body").append(`<link rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/blocks/css/compiled.css" >`);
-  $("body").append(`<link rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/css/compiled.css" >`);
-  // $("body").append(`<link rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/api/custom-css" >`);
   $("#site-main").css({"display": "block", "visibility": "hidden"});
   $(".dice-rolling-panel").css({"visibility": "visible"});
   $("div.sidebar").parent().css({"display": "block", "visibility": "visible"});

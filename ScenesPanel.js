@@ -1014,6 +1014,7 @@ function edit_scene_dialog(scene_id) {
 			}
 		}
 		$("#sources-import-main-container").remove();
+		$(".ddb-classes-page-stylesheet").remove();
 		$("#scene_selector").removeAttr("disabled");
 		
 	})
@@ -1981,13 +1982,19 @@ function load_sources_iframe_for_map_import() {
 }
 
 function adjust_create_import_edit_container(content='', empty=true, title=''){
-	if($(`#sources-import-main-container`).length>0 ){	
-		if(empty==true)	
-			$('#sources-import-content-container').empty();
-		$('#sources-import-content-container').append(content);
+	if($(`#sources-import-main-container`).length>0 ){
+		let existingContainer = $('#sources-import-content-container');
+		if(empty==true) {
+			existingContainer.empty();
+			existingContainer.append(`<link class="ddb-classes-page-stylesheet" rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/blocks/css/compiled.css" >`);
+			existingContainer.append(`<link class="ddb-classes-page-stylesheet"  rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/css/compiled.css" >`);
+		}
+		existingContainer.append(content);
 	}
 	else{
 		const mainContainer = $(`<div id="sources-import-main-container"></div>`);
+		mainContainer.append(`<link class="ddb-classes-page-stylesheet" rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/blocks/css/compiled.css" >`);
+		mainContainer.append(`<link class="ddb-classes-page-stylesheet"  rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/css/compiled.css" >`);
 		const titleBar = floating_window_title_bar("sources-import-iframe-title-bar", title);
 		mainContainer.prepend(titleBar);
 		titleBar.find(".title-bar-exit").click(function() {
