@@ -2779,17 +2779,18 @@ function setTokenBase(token, options) {
 		token.children("img").removeClass("preserve-aspect-ratio");
 		token.toggleClass("square", true);
 	}
-	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken") {
+	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken" ) {
 		//Freeform
 		options.square = true;
 		options.legacyaspectratio = false;
-		if(options.tokenStyleSelect === "definitelyNotAToken"){
+		if(options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken"){
 			options.restrictPlayerMove = true;
 			options.disablestat = true;
 			options.disableborder = true;
 			options.disableaura = true;
 			options.enablepercenthpbar = false;
 		}
+		token.toggleClass('labelToken', true);
 
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
@@ -2811,6 +2812,10 @@ function setTokenBase(token, options) {
 		options.legacyaspectratio = false;
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
+	}
+
+	if(options.tokenStyleSelect != 'labelToken'){
+		token.toggleClass('labelToken', false);
 	}
 
 	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){

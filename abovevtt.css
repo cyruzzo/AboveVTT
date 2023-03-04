@@ -1083,6 +1083,27 @@ div#scene_properties form > div {
     transition: visibility 0s ease-in-out 0s;
 }
 
+.labelToken.hasTooltip:after,
+.labelToken.hasTooltip:hover:after{
+    content: attr(data-name);
+    opacity: 1;
+    background: none;
+    color: #fff;
+    transition: none;
+    visibility: visible;
+    font-size: var(--font-size-zoom);
+    bottom: calc(-1 * (var(--font-size-zoom) + var(--font-size-zoom) / 1.5));
+    pointer-events: none;
+    --positive-shadow: calc(1px / var(--window-zoom));
+    --negative-shadow: calc(-1px / var(--window-zoom));
+    font-weight: bold;
+    text-shadow: 0px 0px 0px #000,
+        var(--negative-shadow) var(--negative-shadow) 0px #000,  
+        var(--positive-shadow) var(--negative-shadow) 0px  #000,
+        var(--negative-shadow)  var(--positive-shadow) 0px  #000,
+        var(--positive-shadow)  var(--positive-shadow) 0px  #000,
+        0px 0px 5px #000;
+}
 .dead {
     position: absolute;
     overflow: hidden;
