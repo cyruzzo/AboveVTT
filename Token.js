@@ -2723,7 +2723,7 @@ function setTokenLight (token, options) {
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#light_" + tokenId).remove();
-		token.parent().parent().find(`.aura-element-container-clip[id='${tokenId}']`).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).remove();
 	}
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
