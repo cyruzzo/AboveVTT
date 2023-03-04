@@ -1014,6 +1014,7 @@ function edit_scene_dialog(scene_id) {
 			}
 		}
 		$("#sources-import-main-container").remove();
+		$(".ddb-classes-page-stylesheet").remove();
 		$("#scene_selector").removeAttr("disabled");
 		
 	})
@@ -1520,7 +1521,8 @@ function init_scenes_panel() {
 
 	let addSceneButton = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
 	addSceneButton.on("click", function (clickEvent) {
-		create_scene_inside(RootFolder.Scenes.path);
+		// create_scene_inside(RootFolder.Scenes.path);
+		create_scene_root_container(RootFolder.Scenes.path);
 	});
 
 	let addFolderButton = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
@@ -1938,7 +1940,7 @@ function load_sources_iframe_for_map_import() {
 	const iframe = $(`<iframe id='sources-import-iframe'></iframe>`);
 
 
-	adjust_create_import_edit_container(iframe, false);
+	adjust_create_import_edit_container(iframe, true);
 	$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load DnDBeyond Sources'));
 
 	iframe.off("load").on("load", function (event) {
@@ -1980,13 +1982,19 @@ function load_sources_iframe_for_map_import() {
 }
 
 function adjust_create_import_edit_container(content='', empty=true, title=''){
-	if($(`#sources-import-main-container`).length>0 ){	
-		if(empty==true)	
-			$('#sources-import-content-container').empty();
-		$('#sources-import-content-container').append(content);
+	if($(`#sources-import-main-container`).length>0 ){
+		let existingContainer = $('#sources-import-content-container');
+		if(empty==true) {
+			existingContainer.empty();
+			existingContainer.append(`<link class="ddb-classes-page-stylesheet" rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/blocks/css/compiled.css" >`);
+			existingContainer.append(`<link class="ddb-classes-page-stylesheet"  rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/css/compiled.css" >`);
+		}
+		existingContainer.append(content);
 	}
 	else{
 		const mainContainer = $(`<div id="sources-import-main-container"></div>`);
+		mainContainer.append(`<link class="ddb-classes-page-stylesheet" rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/blocks/css/compiled.css" >`);
+		mainContainer.append(`<link class="ddb-classes-page-stylesheet"  rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/css/compiled.css" >`);
 		const titleBar = floating_window_title_bar("sources-import-iframe-title-bar", title);
 		mainContainer.prepend(titleBar);
 		titleBar.find(".title-bar-exit").click(function() {
@@ -2021,4 +2029,224 @@ function floating_window_title_bar(id, title='') {
       <div class="title-bar-exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
     </div>
   `);
+}
+
+function create_scene_root_container(fullPath) {
+	const container = $(`<div class="create-scene-container" data-folder-path="${encode_full_path(fullPath)}"></div>`);
+	const ddb = $(`<button>DDB Maps</button>`);
+	const free = $(`<button>Free Maps</button>`);
+	const custom = $(`<button>Custom URL</button>`);
+	container.append(ddb);
+	container.append(free);
+	container.append(custom);
+	ddb.click(function () {
+		load_sources_iframe_for_map_import();
+	});
+	free.click(function() {
+		test_tutorial();
+	});
+	custom.click(function() {
+		create_scene_inside(fullPath);
+	});
+	adjust_create_import_edit_container(container, true);
+}
+
+function build_scene_import_list_item(name, imageUrl) {
+	// This is taken straight from DDB /sources
+	// DDB sets data-collapsible-search="BR|Basic Rules|Sourcebook". We currently just use the name, but we could allow shorthand like they do. Maybe we could do "${name}|Tutorial" or "${name}|Neutral Party"
+	// Anyway, we need to update our search mechanism to grab all "li.sources-listing--item-wrapper", and hide any that don't partially match `data-collapsible-search`
+	return $(`<li class="sources-listing--item-wrapper j-collapsible__item" data-collapsible-search="${name}">
+    <a href="sources/basic-rules" class="sources-listing--item">
+        <div class="sources-listing--item--avatar" style="background-image: url('${imageUrl}');"></div>
+        <div class="sources-listing--item--title">${name}</div>
+    </a>
+	</li>`);
+}
+
+function test_tutorial() {
+
+	// const importerArea = $("#importer_area");
+	// importerArea.empty();
+	// importerArea.css({
+	// 	"overflow-y": "auto",
+	// 	"height": "100%"
+	// });
+	// $("#importer_footer").hide();
+	// $("#importer_toggles").hide();
+
+	const container = build_import_container();
+	// importerArea.append(container);
+
+	const tutorialSection = build_import_collapsible_section("AboveVTT Tutorials", `${window.EXTENSION_PATH}assets/avtt-logo.png`);
+	container.find(".no-results").before(tutorialSection);
+
+	const theTavernDescription = `
+		<p>Learn the basics of AboveVTT by exploring The Tavern!<br><strong>This Tutorial Covers:</strong></p>
+		<p class="characters-statblock" style="font-family: Roboto Condensed; font-size: 14px">&bull; Tools<br>&bull; Tokens<br>&bull; Scene Creation</p>
+	`;
+	const theTavern = build_tutorial_import_list_item(
+		"The Tavern",
+		"https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
+		["tools", "tokens", "scenes"],
+		theTavernDescription
+	);
+	tutorialSection.find("ul").append(theTavern);
+
+	adjust_create_import_edit_container(container, true);
+}
+
+function build_tutorial_import_list_item(name, imageUrl, additionalSearchTerms, descriptionHtml) {
+	let searchTerms = `${name}`;
+	if (Array.isArray(additionalSearchTerms) && additionalSearchTerms.length > 0) {
+		searchTerms += "|"
+		searchTerms += additionalSearchTerms.join("|");
+	}
+	const listItem = $(`
+		<li class="j-collapsible__item listing-card" data-collapsible-search="${searchTerms}">
+    	<div class="listing-card__content">
+        <a href="${imageUrl}" target="_blank" class="listing-card__link">
+					
+					<div class="listing-card__bg" style="background-image: url('${imageUrl}');background-size: cover;background-position: center;"></div>
+					
+					<div class="listing-card__body" style="white-space: normal">
+						<div class="listing-card__header">
+							<img class="listing-card__icon" src="${window.EXTENSION_PATH}assets/avtt-logo.png" alt="logo" />
+							<div class="listing-card__header-primary">
+								<h3 class="listing-card__title">${name}</h3>
+								<div class="listing-card__source">Tutorial</div>
+							</div>
+						</div>
+					
+						<div class="listing-card__description">
+							${descriptionHtml || ""}
+						</div>
+					</div>
+				
+					<div class="listing-card__callout">
+						<div class="listing-card__callout-button import-button"><span>Import</span></div>
+					</div>
+			
+				</a>
+			</div>
+		</li>
+	`);
+	listItem.find(".import-button").click(function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		alert("build the import functionality!");
+
+	});
+	listItem.find("a.listing-card__link").magnificPopup({
+		type: 'image'
+	});
+	return listItem;
+}
+
+function build_import_container() {
+	return $(`
+	<div class="container">
+  <div id="content" class="main content-container">
+    <section class="primary-content" role="main">
+
+
+      <div class="static-container">
+
+        <div class="ddb-collapsible-filter j-collapsible__search">
+          <div class="ddb-collapsible-filter__box">
+            <div class="ddb-collapsible-filter__search-icon"></div>
+            <input type="search" class="j-collapsible__search-input ddb-collapsible-filter__input" id="collapsible-search-input" placeholder="Search by Name or Source">
+            <div class="ddb-collapsible-filter__clear ddb-collapsible-filter__clear--hidden j-collapsible__search-clear">Clear X</div>
+          </div>
+        </div>
+
+				<!--		build_import_collapsible_section objects go here		-->
+
+
+
+        <div class="ddb-collapsible-filter__no-results ddb-collapsible-filter__no-results--hidden no-results">
+          You Rolled a 1
+        </div>
+      </div>
+
+
+    </section>
+  </div>
+</div>
+	`);
+}
+
+function build_import_collapsible_section(sectionLabel, logoUrl) {
+	const section = $(`
+	        <div class="j-collapsible ddb-collapsible">
+          <div class="j-collapsible__trigger ddb-collapsible__header">
+            <div class="ddb-collapsible__header-primary">
+
+              <div class="ddb-collapsible__avatar">
+                <img class="ddb-collapsible__avatar-img" src="${logoUrl}" alt="${sectionLabel}" style="border:none;">
+              </div>
+
+              <div class="ddb-collapsible__label">
+                ${sectionLabel}
+              </div>
+            </div>
+            <div class="ddb-collapsible__header-callout">
+              <div class="ddb-collapsible__icon"></div>
+            </div>
+          </div>
+          <div class="j-collapsible__content ddb-collapsible__content">
+
+
+            <!-- Outside Caption -->
+
+            <header class="  no-sub no-nav">
+
+              <!-- Navigation -->
+
+
+              <!-- Main Title -->
+
+
+              <!-- Sub title -->
+
+
+            </header>
+
+            <!-- Inside Caption -->
+
+
+            <!-- Outside Caption -->
+
+
+            <!-- Inside Caption -->
+            <div class="listing-container listing-container-ul RPGClass-listing card-listing">
+              <div class="listing-header">
+
+              </div>
+              <div class="listing-body">
+                <ul class="listing listing-rpgclass rpgclass-listing">
+
+
+
+
+                </ul>
+              </div>
+              <div class="listing-footer">
+
+              </div>
+            </div>
+          </div>
+        </div>
+	`);
+	section.find(".ddb-collapsible__header").click(function(e) {
+		const header = $(e.currentTarget);
+		const content = header.next();
+		if (header.hasClass("ddb-collapsible__header--closed")) {
+			header.removeClass("ddb-collapsible__header--closed");
+			content.show();
+		} else {
+			header.addClass("ddb-collapsible__header--closed");
+			content.hide();
+		}
+	});
+	return section;
 }
