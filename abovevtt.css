@@ -873,10 +873,11 @@ input {
     height: calc(100% - 170px);
     width: calc(100% - 500px);
     position: fixed !important;
-    z-index: 100000;
+    z-index: 99999;
     border: 1px solid #ddd;
     border-radius: 5px;
     min-width: 850px;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 #sources-import-main-container .sidebar-panel-loading-indicator svg{
     padding: 0px 20% !important;
