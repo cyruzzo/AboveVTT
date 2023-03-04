@@ -2295,9 +2295,7 @@ function default_options() {
 		light2: {
 			feet: "1000",
 			color: "rgba(255, 255, 255, 0.5)"
-		},
-		lightVisible: false,
-		lightOwned: false,
+		}
 		
 	};
 }
@@ -2379,12 +2377,21 @@ function place_token_at_map_point(tokenObject, x, y) {
 		window.TOKEN_OBJECTS[tokenObject.id].highlight();
 		return;
 	}
+	let options = {};
+	if(tokenObject.options == undefined){
+		options = {
+			...default_options(),
+			...window.TOKEN_SETTINGS,
+			...tokenObject
+		};
+	}else{
+		options = {
+			...tokenObject.options,
+			...window.TOKEN_SETTINGS,
+			...tokenObject
+		};
+	}
 
-	let options = {
-		...default_options(),
-		...window.TOKEN_SETTINGS,
-		...tokenObject
-	};
 	// aoe tokens have classes instead of images
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
 		options.imgsrc = parse_img(options.imgsrc);
@@ -2679,8 +2686,8 @@ function setTokenAuras (token, options) {
 function setTokenLight (token, options) {
 	if (!options.light1) return;
 
-	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const innerlightSize = options.light1.feet != undefined ? (options.light1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerlightSize = options.light2.feet != undefined  ? (options.light2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;

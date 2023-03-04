@@ -1862,6 +1862,10 @@ function add_expand_collapse_buttons_to_header(sidebarPanel) {
   sidebarPanel.header.find(".sidebar-panel-header-title").append(buttonWrapper);
   buttonWrapper.append(expandAll);
   buttonWrapper.append(collapseAll);
+    buttonWrapper.append(`<button onclick='open_uvtt_file();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">Import universal VTT walls, light etc.</button>
+          <input accept='.uvtt, .dd2vtt, .df2vtt' id='input_uvtt_file' type='file' style='display: none' />`);
+    
+  $("#input_uvtt_file").change(import_uvtt_scene);
 }
 
 /**

@@ -174,6 +174,146 @@ function validate_image_input(element){
 	}
 	
 }
+function open_uvtt_file(){
+	$('#input_uvtt_file').trigger('click');
+}
+function import_uvtt_scene(){
+	/* to figure out later - hosted uvtt files
+	$.ajax({
+		type: "GET",
+	    jsonpCallback: 'jsonCallback',
+	    contentType: "application/json",
+	    dataType: 'jsonp',
+		url: url,
+		success: function(response){ console.log(response) },
+		error: function((response){ console.log(response) }
+	})*/
+
+	var reader = new FileReader();
+	reader.onload = function() {
+		// DECODE
+		var DataFile=null;
+		try{
+			DataFile=$.parseJSON(reader.result);
+
+		}
+		catch{
+			console.error('UVTT FILE NOT SUPPORTED')
+		}
+		DataFile=$.parseJSON(reader.result);
+		let gridSize = DataFile.resolution.pixels_per_grid;
+		window.ScenesHandler.scene.hpps = gridSize;
+		window.ScenesHandler.scene.vpps = gridSize;
+		window.ScenesHandler.scene.height = gridSize * DataFile.resolution.map_size.y;
+		window.ScenesHandler.scene.width = gridSize * DataFile.resolution.map_size.x;
+		window.ScenesHandler.scene.offsetx = DataFile.resolution.map_origin.x * gridSize;
+		window.ScenesHandler.scene.offsety = DataFile.resolution.map_origin.y * gridSize;
+
+		
+		window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "wall");
+
+		for(let i = 0; i<DataFile.line_of_sight.length; i++){
+			for(let j = 1; j<DataFile.line_of_sight[i].length; j++){
+				window.DRAWINGS.push(['line',
+					'wall',
+					"rgba(0, 255, 0, 1)",
+					DataFile.line_of_sight[i][j-1].x*gridSize,
+					DataFile.line_of_sight[i][j-1].y*gridSize,
+					DataFile.line_of_sight[i][j].x*gridSize,
+					DataFile.line_of_sight[i][j].y*gridSize,
+					6,
+					window.CURRENT_SCENE_DATA.scale_factor,
+					])
+			}
+		}
+	
+
+
+		for(let i = 0; i<DataFile.portals.length; i++){
+			let color = (DataFile.portals[i].closed) ? 'rgba(255, 100, 255, 1)' : 'rgba(255, 100, 255, 0.5)';
+				window.DRAWINGS.push(['line',
+					'wall',
+					color,
+					DataFile.portals[i].bounds[0].x*gridSize,
+					DataFile.portals[i].bounds[0].y*gridSize,
+					DataFile.portals[i].bounds[1].x*gridSize,
+					DataFile.portals[i].bounds[1].y*gridSize,
+					12,
+					window.CURRENT_SCENE_DATA.scale_factor,
+					])
+		}
+
+		function hexToRGB(hex, alpha) {
+		    var r = parseInt(hex.slice(1, 3), 16),
+		        g = parseInt(hex.slice(3, 5), 16),
+		        b = parseInt(hex.slice(5, 7), 16);
+
+		    if (alpha) {
+		        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+		    } else {
+		        return "rgb(" + r + ", " + g + ", " + b + ")";
+		    }
+		}
+
+		for(let i = 0; i<DataFile.lights.length; i++){
+			
+		
+			let transparency = DataFile.lights[i].intensity/100
+			let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
+
+
+			let lightColor = hexToRGB(clippedColor, transparency);
+			let options = {
+				reveal_light : 'los',
+				imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
+				hidden : true,
+				tokenStyleSelect : 'definitelyNotAToken',
+				light2 : {
+					feet: 0,
+					color: 'rgba(255, 255, 255, 0.5)'
+				},
+				left : `${DataFile.lights[i].position.x * gridSize}px`,
+				top : `${DataFile.lights[i].position.y * gridSize}px`,
+				light1 : {
+					feet:  DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq),
+					color: lightColor
+				},
+				color: random_token_color(),
+				conditions: [],
+				hp: "",
+				max_hp: "",
+				ac: "",
+				name: "",
+				aura1: {
+					feet: "0",
+					color: "rgba(255, 129, 0, 0.3)"
+				},
+				aura2: {
+					feet: "0",
+					color: "rgba(255, 255, 0, 0.1)"
+				},
+				auraVisible: false,
+				auraOwned: false,
+				auraislight: true	
+			};
+
+			let lightToken = new Token(options);
+			
+			place_token_at_map_point(lightToken, DataFile.lights[i].position.x * gridSize, DataFile.lights[i].position.y * gridSize);
+	
+		}
+		
+
+		sync_drawings();
+		window.CURRENT_SCENE_DATA = window.ScenesHandler.scene;
+		let index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
+		window.ScenesHandler.scenes[index] = window.ScenesHandler.scene;
+		window.ScenesHandler.persist_current_scene();
+		did_update_scenes();
+	}
+	
+	reader.readAsText($("#input_uvtt_file").get(0).files[0]);
+}
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
@@ -1052,6 +1192,8 @@ function edit_scene_dialog(scene_id) {
 		form.find("#dm_map_row").hide()
 	}
 	
+
+
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
