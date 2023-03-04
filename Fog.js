@@ -3076,7 +3076,7 @@ function redraw_light(){
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){
 	  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
-	  		$('#VTT').css('--darkness-filter', `${100-window.CURRENT_SCENE_DATA.darkness_filter}%`)
+	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter, 40)}%`)
 	  		$('#raycastingCanvas').css('opacity', '');
 	  	}
   		
