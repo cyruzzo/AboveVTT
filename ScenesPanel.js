@@ -2072,42 +2072,64 @@ function build_free_map_importer() {
 
 	});
 
+	container.find(".ddb-collapsible-filter__clear").click(function(e) {
+		$(e.currentTarget).parent().find(".ddb-collapsible-filter__input").val("");
+		$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+	});
+	container.find(".ddb-collapsible-filter__input").on("input change", function(e) {
+		const filterValue = e.target.value?.toLowerCase();
+		if (filterValue) {
+			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").removeClass("ddb-collapsible-filter__clear--hidden");
+			container.find("li.listing-card").each((idk, el) => {
+				const li = $(el);
+				const searchTerms = li.attr("data-collapsible-search").toLowerCase();
+				console.log(searchTerms, filterValue, searchTerms.includes(filterValue))
+				if(searchTerms.includes(filterValue)) {
+					li.removeClass("ddb-collapsible__item--hidden");
+				} else {
+					li.addClass("ddb-collapsible__item--hidden");
+				}
+			})
+		} else {
+			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").addClass("ddb-collapsible-filter__clear--hidden");
+			$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+		}
+	});
+
 	adjust_create_import_edit_container(container, true);
 }
 
 function build_tutorial_import_list_item(scene, logo) {
 	const logoUrl = parse_img(logo);
-	let description = scene.description;
+	let description = scene.description || "";
 	let tags = scene.tags || [];
-	if (typeof description !== "string" || description.length === 0) {
-		description = "";
-		// anything else we want to call out should go here.
-		// The order that they are added matters. We only show the first 3
-		if (tags.length === 0) {
-			if (scene.drawings) {
-				if (scene.drawings.find(dl=> dl[1] === "wall")) {
-					tags.push("Walls");
-				} else {
-					tags.push("Drawings");
-				}
-			}
-			if (scene.grid) tags.push("Grid Aligned");
-			if (scene.player_map_is_video) tags.push("Video Map");
-			if (scene.tokens) tags.push("Tokens");
-			if (scene.dm_map) tags.push("DM Map");
+	if (scene.drawings) {
+		if (scene.drawings.find(dl=> dl[1] === "wall")) {
+			tags.push("Walls");
+		} else {
+			tags.push("Drawings");
 		}
-		if (tags.length > 0) {
-			const tagString = tags.map(t => `&bull; ${t}`).join("<br>");
-			description = `
-				<p><strong>This Scene Has:</strong></p>
-				<p class="characters-statblock" style="font-family: Roboto Condensed,serif; font-size: 14px">${tagString}</p>
-			`;
-		}
+	}
+	if (scene.grid) tags.push("Grid Aligned");
+	if (scene.player_map_is_video && scene.player_map_is_video !== "0") tags.push("Video Map");
+	if (scene.tokens) tags.push("Tokens");
+	if (scene.dm_map) tags.push("DM Map");
+	if (typeof description !== "string" || description.length === 0 && tags.length > 0) {
+		const tagString = tags
+			.slice(0, 3) // This might be overkill, but only display the first 3 tags.
+			.map(t => `&bull; ${t}`).join("<br>");
+		description = `
+			<p><strong>This Scene Has:</strong></p>
+			<p class="characters-statblock" style="font-family: Roboto Condensed,serif; font-size: 14px">${tagString}</p>
+		`;
 	}
 	let searchTerms = `${scene.title}`;
 	if (tags.length > 0) {
 		searchTerms += "|"
 		searchTerms += tags.join("|");
+		if (scene.category) {
+			searchTerms += `|${scene.category}`;
+		}
 	}
 
 	const listItem = $(`
