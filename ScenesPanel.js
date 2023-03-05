@@ -1232,6 +1232,10 @@ function fill_importer(scene_set, start, searchState = '') {
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
 
+	area.append(build_source_book_chapter_import_section(scene_set));
+
+	return;
+
 	var ddb_extra_found=false;
 	totalPages = Math.max(1, Math.ceil(scene_set.length / 8));
 	pageNumber = 1 + Math.ceil(start / 8)
@@ -2106,31 +2110,27 @@ function build_free_map_importer() {
 
 	});
 
-	container.find(".ddb-collapsible-filter__clear").click(function(e) {
-		$(e.currentTarget).parent().find(".ddb-collapsible-filter__input").val("");
-		$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
-	});
-	container.find(".ddb-collapsible-filter__input").on("input change", function(e) {
-		const filterValue = e.target.value?.toLowerCase();
-		if (filterValue) {
-			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").removeClass("ddb-collapsible-filter__clear--hidden");
-			container.find("li.listing-card").each((idk, el) => {
-				const li = $(el);
-				const searchTerms = li.attr("data-collapsible-search").toLowerCase();
-				console.log(searchTerms, filterValue, searchTerms.includes(filterValue))
-				if(searchTerms.includes(filterValue)) {
-					li.removeClass("ddb-collapsible__item--hidden");
-				} else {
-					li.addClass("ddb-collapsible__item--hidden");
-				}
-			})
-		} else {
-			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").addClass("ddb-collapsible-filter__clear--hidden");
-			$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+	adjust_create_import_edit_container(container, true);
+}
+
+function build_source_book_chapter_import_section(sceneSet) {
+	const container = build_import_container();
+	// container.find(".j-collapsible__search").hide();
+
+	const sectionHtml = build_import_collapsible_section("test", "");
+	container.find(".no-results").before(sectionHtml);
+	sectionHtml.find(".ddb-collapsible__header").hide();
+	sectionHtml.css("border", "none");
+
+	sceneSet.forEach(scene => {
+		if (scene.uuid in DDB_EXTRAS) {
+			scene = {...scene, ...DDB_EXTRAS[scene.uuid]}
 		}
+		const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
+		sectionHtml.find("ul").append(sceneHtml);
 	});
 
-	adjust_create_import_edit_container(container, true);
+	return container;
 }
 
 function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
@@ -2146,7 +2146,7 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 	}
 	if (scene.grid) tags.push("Grid Aligned");
 	if (scene.player_map_is_video && scene.player_map_is_video !== "0") tags.push("Video Map");
-	if (scene.tokens) tags.push("Tokens");
+	if (Array.isArray(scene.tokens) && scene.tokens.length > 0) tags.push("Tokens");
 	if (scene.dm_map) tags.push("DM Map");
 	if (typeof description !== "string" || description.length === 0 && tags.length > 0) {
 		const tagString = tags
@@ -2230,9 +2230,9 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 }
 
 function build_import_container() {
-	return $(`
+	const container = $(`
 	<div class="container" style="height: 100%">
-  <div id="content" class="main content-container" style="height: 100%">
+  <div id="content" class="main content-container" style="height: 100%;overflow: auto">
     <section class="primary-content" role="main">
 
 
@@ -2260,6 +2260,32 @@ function build_import_container() {
   </div>
 </div>
 	`);
+
+	container.find(".ddb-collapsible-filter__clear").click(function(e) {
+		$(e.currentTarget).parent().find(".ddb-collapsible-filter__input").val("");
+		$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+	});
+	container.find(".ddb-collapsible-filter__input").on("input change", function(e) {
+		const filterValue = e.target.value?.toLowerCase();
+		if (filterValue) {
+			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").removeClass("ddb-collapsible-filter__clear--hidden");
+			container.find("li.listing-card").each((idk, el) => {
+				const li = $(el);
+				const searchTerms = li.attr("data-collapsible-search").toLowerCase();
+				console.log(searchTerms, filterValue, searchTerms.includes(filterValue))
+				if(searchTerms.includes(filterValue)) {
+					li.removeClass("ddb-collapsible__item--hidden");
+				} else {
+					li.addClass("ddb-collapsible__item--hidden");
+				}
+			})
+		} else {
+			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").addClass("ddb-collapsible-filter__clear--hidden");
+			$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+		}
+	});
+
+	return container;
 }
 
 function build_import_collapsible_section(sectionLabel, logoUrl) {
