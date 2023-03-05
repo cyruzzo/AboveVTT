@@ -1243,9 +1243,6 @@ class MessageBroker {
 		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
-			if(data.id == playerTokenId && window.TOKEN_OBJECTS[data.id].options.auraislight != data.auraislight){
-				auraislightchanged = true;
-			}
 			for (var property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
@@ -1264,24 +1261,6 @@ class MessageBroker {
 			if(window.DM && msg.loading){
 				window.TOKEN_OBJECTS[data.id].update_and_sync();
 			}
-			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			if(data.auraislight){
-				if(playerTokenAuraIsLight){
-						check_token_visibility();
-				}
-				else{
-					check_single_token_visibility(data.id);
-				}	
-			}
-			else{
-				if(auraislightchanged){
-					check_token_visibility();
-				}
-				else{
-					check_single_token_visibility(data.id);
-				}
-
-			}// CHECK FOG OF WAR VISIBILITY OF TOKEN
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
@@ -1387,6 +1366,10 @@ class MessageBroker {
    	 	let darknessPercent = 100 - parseInt(darknessfilter);
    	 	if(window.DM && darknessPercent < 25){
    	 		darknessPercent = 25;
+   	 		$('#raycastingCanvas').css('opacity', '0');
+   	 	}
+   	 	else if(window.DM){
+   	 		$('#raycastingCanvas').css('opacity', '');
    	 	}
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
@@ -1473,8 +1456,8 @@ class MessageBroker {
 
 
 
-		
-		
+
+		remove_loading_overlay();
 		// console.groupEnd()
 	}
 
@@ -1519,20 +1502,16 @@ class MessageBroker {
 	}
 
 	handleCharacterUpdate(msg){
-		let characterId=msg.data.characterId;
-
-		window.pcs.forEach(function(pc){
-			if(!pc.sheet.endsWith(characterId)) // we only poll for the characterId that sent this message
-				return;
-
+		const characterId = msg.data.characterId;
+		const pc = window.pcs.find(pc => pc.sheet.includes(characterId));
+		if (pc) {
 			getPlayerData(pc.sheet, function (playerData) {
 				window.PLAYER_STATS[playerData.id] = playerData;
 				window.MB.sendTokenUpdateFromPlayerData(playerData);
 				update_pclist();
 				send_player_data_to_all_peers(playerData);
 			});
-		});
-		
+		}
 	}
 	
 	inject_chat(injected_data) {

@@ -161,7 +161,7 @@ function set_window_name_and_image(callback) {
     console.warn("set_window_name_and_image has failed after 30 attempts");
     delete window.set_window_name_and_image_attempts;
     if (is_abovevtt_page()) {
-      showDebuggingAlert();
+      showError(new Error("set_window_name_and_image has failed after 30 attempts"));
     }
     return;
   }
@@ -277,8 +277,7 @@ function inject_join_button_on_character_list_page() {
       if (sheet) {
         window.open(`https://www.dndbeyond.com${sheet}?abovevtt=true`, '_blank');
       } else {
-        console.error("Failed to find the View link next to thisButton:", thisButton, ", thisButtonSiblings:", thisButtonSiblings, "clickEvent:", e);
-        showDebuggingAlert();
+        showError(new Error("Failed to find the View link"), "thisButton:", thisButton, ", thisButtonSiblings:", thisButtonSiblings, "clickEvent:", e);
       }
     });
   });

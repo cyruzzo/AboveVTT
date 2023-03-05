@@ -1488,7 +1488,7 @@ function default_scene_data() {
 		offsety: 0,
 		grid: 0,
 		snap: 0,
-		reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+		reveals: [],
 		order: Date.now()
 	};
 }
@@ -1715,7 +1715,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.groupEnd();
 		console.warn("rename_scene_folder called with an incorrect item type", item);
 		if (alertUser !== false) {
-			showDebuggingAlert();
+			showError(new Error("rename_scene_folder called with an incorrect item type"), item);
 		}
 		return;
 	}
@@ -1723,7 +1723,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.groupEnd();
 		console.warn("rename_scene_folder Not allowed to rename folder", item);
 		if (alertUser !== false) {
-			showDebuggingAlert();
+			showError(new Error("rename_scene_folder Not allowed to rename folder"), item);
 		}
 		return;
 	}

@@ -1470,8 +1470,7 @@ function display_sidebar_list_item_configuration_modal(listItem) {
       if (index >= 0) {
         edit_scene_dialog(index);
       } else {
-        console.error("Failed to find scene index for scene with id", listItem.sceneId);
-        showDebuggingAlert();
+        showError("Failed to find scene index for scene with id", listItem.sceneId);
       }
       break;
     case ItemType.Aoe:
@@ -1601,7 +1600,7 @@ function rename_folder(item, newName, alertUser = true) {
   if (!item.isTypeFolder()) {
     console.warn("rename_folder called with an incorrect item type", item);
     if (alertUser !== false) {
-      showDebuggingAlert();
+      showError("rename_folder called with an incorrect item type", item);
     }
     return undefined;
   }
@@ -1615,7 +1614,7 @@ function rename_folder(item, newName, alertUser = true) {
   } else if (item.folderPath.startsWith(RootFolder.Scenes.path)) {
     return rename_scene_folder(item, newName, alertUser);
   } else if (alertUser !== false) {
-    showDebuggingAlert();
+    showError("rename_folder failed to find folderPath", item);
   }
   return undefined;
 }

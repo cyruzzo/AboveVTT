@@ -8,6 +8,7 @@
 $(function() {
   if (is_abovevtt_page()) { // Only execute if the app is starting up
     console.log("startup calling init_splash");
+    window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
     window.addEventListener("scroll", function(event) { // this used to be in init_splash, but I'm not exactly sure wy it's needed
       event.stopImmediatePropagation();
@@ -31,13 +32,11 @@ $(function() {
         } else {
           startup_step("AboveVTT is not supported on this page!");
           // this should never happen because `is_abovevtt_page` covers all the above cases, but cover all possible cases anyway
-          throw "Invalid AboveVTT page!"
+          throw new Error(`Invalid AboveVTT page: ${window.location.href}`)
         }
       })
-      .then(remove_loading_overlay)
       .catch((error) => {
-        console.error(`Failed to start AboveVTT on ${window.location.href}`, error);
-        showDebuggingAlert();
+        showError(error, `Failed to start AboveVTT on ${window.location.href}`);
       });
   }
 });
@@ -45,25 +44,29 @@ $(function() {
 async function start_above_vtt_common() {
   console.log("start_above_vtt_common");
   // make sure we have a campaign id
-  window.STARTING = true; // TODO: clean up how this gets set to false
-  window.TOKEN_OBJECTS = {};
-  window.REVEALED = [];
+  window.CONNECTED_PLAYERS = {};
+  // TODO: replace this with a tutorial map that players can mess with whenever there isn't a map for the player
+  window.CURRENT_SCENE_DATA = default_scene_data();
+  window.CURRENTLY_SELECTED_TOKENS = [];
   window.DRAWINGS = [];
   window.PLAYER_STATS = {};
-  window.CONNECTED_PLAYERS = {};
-  window.CURRENTLY_SELECTED_TOKENS = [];
-  window.TOKEN_PASTE_BUFFER = [];
-  window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+  window.REVEALED = [];
   window.TOKEN_CUSTOMIZATIONS = [];
-  window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem('TokenSettings' + window.gameId)) || {};
-
-  startup_step("Gathering player character data");
-  gather_pcs();
+  window.TOKEN_OBJECTS = {};
+  window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
+  window.TOKEN_PASTE_BUFFER = [];
+  window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem(`TokenSettings${window.gameId}`)) || {};
 
   $("#site").append("<div id='windowContainment'></div>");
 
+  startup_step("Gathering player character data");
+  await rebuild_window_pcs();
+  window.color = color_for_player_id(my_player_id()); // shortcut that we should figure out how to not rely on
+  localStorage.removeItem(`CampaignCharacters${window.gameId}`); // clean up old pc data
+
   startup_step("Fetching config data from DDB");
-  fetch_config_json();
+  window.ddbConfigJson = await DDBApi.fetchConfigJson();
+
   startup_step("Fetching token customizations");
   fetch_token_customizations();
 
@@ -75,15 +78,15 @@ async function start_above_vtt_common() {
 
 async function start_above_vtt_for_dm() {
   if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
-    throw `start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`;
+    throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
 
-  await start_above_vtt_common();
-
-  window.PLAYER_SHEET = false;
   window.PLAYER_ID = false;
+  window.PLAYER_IMG = dmAvatarUrl;
   window.PLAYER_NAME = dm_id;
-  window.PLAYER_IMG = 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png';
+  window.PLAYER_SHEET = false;
+
+  await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
 
   startup_step("Fetching scenes from cloud");
@@ -114,13 +117,13 @@ async function start_above_vtt_for_dm() {
 
 async function start_above_vtt_for_players() {
   if (!is_abovevtt_page() || !is_characters_page() || window.DM) {
-    throw `start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`;
+    throw new Error(`start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
-
-  await start_above_vtt_common();
 
   window.PLAYER_SHEET = window.location.pathname;
   window.PLAYER_ID = getPlayerIDFromSheet(window.PLAYER_SHEET);
+
+  await start_above_vtt_common();
 
   startup_step("Setting up UI");
   await lock_character_gamelog_open();
@@ -152,9 +155,11 @@ async function start_above_vtt_for_players() {
     console.log("attempting to handle scene", activeScene);
     startup_step("Loading Scene");
     window.MB.handleScene(activeScene);
+    startup_step("Start up complete");
+  } else {
+    console.error("There isn't a player map! we need to display something!");
+    startup_step("Start up complete. Waiting for DM to send us a map");
   }
-
-  startup_step("Start up complete");
 }
 
 function startup_step(stepDescription) {
@@ -188,6 +193,7 @@ async function migrate_to_cloud_if_necessary() {
 
   // this is a fresh campaign so let's push our Tavern Scene
   startup_step("Migrating to AboveVTT cloud");
+  // TODO: replace this with the new tutorial map
   await AboveApi.migrateScenes(window.gameId, [
     {
       id: "666",
