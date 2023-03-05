@@ -901,6 +901,7 @@ input {
 #sources-import-content-container{
     width:100%;
     height:100%;
+    overflow: scroll;
 }
 #mega_importer.source_select #scenes-panel {
     display: none;

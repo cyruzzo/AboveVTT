@@ -2043,7 +2043,7 @@ function create_scene_root_container(fullPath) {
 		load_sources_iframe_for_map_import();
 	});
 	free.click(function() {
-		test_tutorial();
+		build_free_map_importer();
 	});
 	custom.click(function() {
 		create_scene_inside(fullPath);
@@ -2051,74 +2051,83 @@ function create_scene_root_container(fullPath) {
 	adjust_create_import_edit_container(container, true);
 }
 
-function build_scene_import_list_item(name, imageUrl) {
-	// This is taken straight from DDB /sources
-	// DDB sets data-collapsible-search="BR|Basic Rules|Sourcebook". We currently just use the name, but we could allow shorthand like they do. Maybe we could do "${name}|Tutorial" or "${name}|Neutral Party"
-	// Anyway, we need to update our search mechanism to grab all "li.sources-listing--item-wrapper", and hide any that don't partially match `data-collapsible-search`
-	return $(`<li class="sources-listing--item-wrapper j-collapsible__item" data-collapsible-search="${name}">
-    <a href="sources/basic-rules" class="sources-listing--item">
-        <div class="sources-listing--item--avatar" style="background-image: url('${imageUrl}');"></div>
-        <div class="sources-listing--item--title">${name}</div>
-    </a>
-	</li>`);
-}
-
-function test_tutorial() {
-
-	// const importerArea = $("#importer_area");
-	// importerArea.empty();
-	// importerArea.css({
-	// 	"overflow-y": "auto",
-	// 	"height": "100%"
-	// });
-	// $("#importer_footer").hide();
-	// $("#importer_toggles").hide();
+function build_free_map_importer() {
 
 	const container = build_import_container();
-	// importerArea.append(container);
 
-	const tutorialSection = build_import_collapsible_section("AboveVTT Tutorials", `${window.EXTENSION_PATH}assets/avtt-logo.png`);
-	container.find(".no-results").before(tutorialSection);
+	SCENE_IMPORT_DATA.forEach(section => {
+		const logoUrl = parse_img(section.logo);
+		const sectionHtml = build_import_collapsible_section(section.title, logoUrl);
+		container.find(".no-results").before(sectionHtml);
 
-	const theTavernDescription = `
-		<p>Learn the basics of AboveVTT by exploring The Tavern!<br><strong>This Tutorial Covers:</strong></p>
-		<p class="characters-statblock" style="font-family: Roboto Condensed; font-size: 14px">&bull; Tools<br>&bull; Tokens<br>&bull; Scene Creation</p>
-	`;
-	const theTavern = build_tutorial_import_list_item(
-		"The Tavern",
-		"https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
-		["tools", "tokens", "scenes"],
-		theTavernDescription
-	);
-	tutorialSection.find("ul").append(theTavern);
+		section.scenes.forEach(scene => {
+			try {
+				const sceneHtml = build_tutorial_import_list_item(scene, logoUrl);
+				sectionHtml.find("ul").append(sceneHtml);
+			} catch(error) {
+				console.warn("Failed to parse scene import data", section.title, scene, error);
+			}
+		});
+
+	});
 
 	adjust_create_import_edit_container(container, true);
 }
 
-function build_tutorial_import_list_item(name, imageUrl, additionalSearchTerms, descriptionHtml) {
-	let searchTerms = `${name}`;
-	if (Array.isArray(additionalSearchTerms) && additionalSearchTerms.length > 0) {
-		searchTerms += "|"
-		searchTerms += additionalSearchTerms.join("|");
+function build_tutorial_import_list_item(scene, logo) {
+	const logoUrl = parse_img(logo);
+	let description = scene.description;
+	let tags = scene.tags || [];
+	if (typeof description !== "string" || description.length === 0) {
+		description = "";
+		// anything else we want to call out should go here.
+		// The order that they are added matters. We only show the first 3
+		if (tags.length === 0) {
+			if (scene.drawings) {
+				if (scene.drawings.find(dl=> dl[1] === "wall")) {
+					tags.push("Walls");
+				} else {
+					tags.push("Drawings");
+				}
+			}
+			if (scene.grid) tags.push("Grid Aligned");
+			if (scene.player_map_is_video) tags.push("Video Map");
+			if (scene.tokens) tags.push("Tokens");
+			if (scene.dm_map) tags.push("DM Map");
+		}
+		if (tags.length > 0) {
+			console.error(tags)
+			const tagString = tags.map(t => `&bull; ${t}`).join("<br>");
+			description = `
+				<p><strong>This Scene Has:</strong></p>
+				<p class="characters-statblock" style="font-family: Roboto Condensed,serif; font-size: 14px">${tagString}</p>
+			`;
+		}
 	}
+	let searchTerms = `${scene.title}`;
+	if (tags.length > 0) {
+		searchTerms += "|"
+		searchTerms += tags.join("|");
+	}
+
 	const listItem = $(`
 		<li class="j-collapsible__item listing-card" data-collapsible-search="${searchTerms}">
     	<div class="listing-card__content">
-        <a href="${imageUrl}" target="_blank" class="listing-card__link">
+        <a href="${scene.player_map}" target="_blank" class="listing-card__link">
 					
-					<div class="listing-card__bg" style="background-image: url('${imageUrl}');background-size: cover;background-position: center;"></div>
+					<div class="listing-card__bg" style="background-image: url('${scene.thumb || scene.player_map}');background-size: cover;background-position: center;"></div>
 					
 					<div class="listing-card__body" style="white-space: normal">
 						<div class="listing-card__header">
-							<img class="listing-card__icon" src="${window.EXTENSION_PATH}assets/avtt-logo.png" alt="logo" />
+							<img class="listing-card__icon" src="${logoUrl}" alt="logo" />
 							<div class="listing-card__header-primary">
-								<h3 class="listing-card__title">${name}</h3>
-								<div class="listing-card__source">Tutorial</div>
+								<h3 class="listing-card__title">${scene.title}</h3>
+								<div class="listing-card__source">${scene.category || "Scene"}</div>
 							</div>
 						</div>
 					
 						<div class="listing-card__description">
-							${descriptionHtml || ""}
+							${description}
 						</div>
 					</div>
 				
@@ -2139,6 +2148,9 @@ function build_tutorial_import_list_item(name, imageUrl, additionalSearchTerms, 
 	listItem.find("a.listing-card__link").magnificPopup({
 		type: 'image'
 	});
+	if (!logoUrl) {
+		listItem.find(".listing-card__icon").hide();
+	}
 	return listItem;
 }
 
@@ -2248,5 +2260,8 @@ function build_import_collapsible_section(sectionLabel, logoUrl) {
 			content.hide();
 		}
 	});
+	if (!logoUrl) {
+		section.find(".ddb-collapsible__avatar").hide();
+	}
 	return section;
 }
