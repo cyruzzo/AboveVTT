@@ -49,7 +49,7 @@ class AboveApi {
 
   static checkForErrors(response) {
     if (typeof response.message === "string" && response.message.toLowerCase().includes("error")) {
-      throw response.message;
+      throw new Error(response.message);
     }
   }
 
@@ -113,10 +113,10 @@ class AboveApi {
   static async migrateScenes(gameId, scenes) {
     console.debug(`AboveApi.migrateScenes gameId: ${gameId}`, scenes);
     if (!Array.isArray(scenes)) {
-      throw `AboveApi.migrateScenes received the wrong data type: ${typeof scenes}`;
+      throw new Error(`AboveApi.migrateScenes received the wrong data type: ${typeof scenes}`);
     }
     if (scenes.length === 0) {
-      throw `AboveApi.migrateScenes received an empty list of scenes`;
+      throw new Error(`AboveApi.migrateScenes received an empty list of scenes`);
     }
 
     // never upload data urls

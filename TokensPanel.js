@@ -115,7 +115,8 @@ function list_item_from_monster_id(monsterId) {
 }
 
 function list_item_from_player_id(playerId) {
-    let pc = window.pcs.find(p => p.sheet === playerId);
+    // TODO: use find find_pc_by_player_id here? It would add an "unknown player" to the list. This would be useful when allowing players to guest DM when other players have a private character sheet
+    let pc = window.pcs.find(p => p.sheet.includes(playerId));
     if (pc === undefined) return undefined;
     let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
@@ -832,12 +833,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             
             break;
         case ItemType.PC:
-            let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
-            let playerData = window.PLAYER_STATS[listItem.sheet];
+            let pc = window.pcs.find(pc => pc.sheet.includes(listItem.sheet));
             if (pc === undefined) {
                 console.warn(`failed to find pc for id ${listItem.sheet}`);
                 return;
             }
+            let playerData = window.PLAYER_STATS[listItem.sheet];
             options.id = listItem.sheet;
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
@@ -845,16 +846,15 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 tokenSize = 1;
                 // TODO: handle custom sizes
             }
-                        if(tokenSize <= 0.5){
+            if (tokenSize <= 0.5) {
                 options.tokenSize = 0.5;
-            }
-            else{
+            } else {
                 options.tokenSize = tokenSize;
             }
             options.hp = playerData ? playerData.hp : '';
             options.ac = playerData ? playerData.ac : '';
             options.max_hp = playerData ? playerData.max_hp : '';
-            options.color = pc.color ? pc.color : get_token_color_by_index(window.pcs.indexOf(pc));
+            options.color = color_from_pc_object(pc);
             break;
         case ItemType.Monster:
             let hpVal;
@@ -1203,8 +1203,7 @@ function create_mytoken_folder_inside(listItem) {
             display_folder_configure_modal(newListItem);
             expand_all_folders_up_to_item(newListItem);
         } else {
-            console.error("create_mytoken_folder_inside failed to create a new folder", errorType);
-            showDebuggingAlert();
+            showError(errorType, "create_mytoken_folder_inside failed to create a new folder");
         }
     });
 }
@@ -1220,15 +1219,13 @@ function delete_mytokens_folder_and_everything_in_it(listItem) {
                 if (deletedFolder) {
                     console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
                 } else {
-                    console.error("delete_mytokens_folder_and_everything_in_it failed delete the folder with id", listItem.id, deletedFolderErrorType);
-                    showDebuggingAlert();
+                    showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
                 }
             });
         } else {
             did_change_mytokens_items();
             expand_all_folders_up_to_item(listItem);
-            console.error("delete_mytokens_within_folder failed to delete token customizations", deletedChildrenErrorType);
-            showDebuggingAlert();
+            showError(deletedChildrenErrorType, "delete_mytokens_within_folder failed to delete token customizations");
         }
     });
 }
@@ -1254,8 +1251,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
         if (didSucceed) {
             console.log("move_mytokens_to_parent_folder_and_delete_folder successfully moved all children up one level and deleted folder with id", listItem.id);
         } else {
-            console.error("move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id, errorType);
-            showDebuggingAlert();
+            showError(errorType, "move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id);
         }
         callback(didSucceed, errorType);
     });
@@ -1296,8 +1292,7 @@ function create_token_inside(listItem) {
         if (didSucceed && newItem) {
             display_token_configuration_modal(newItem);
         } else {
-            console.error("Failed to create My Token", customization, error);
-            showDebuggingAlert();
+            showError(error, "Failed to create My Token", customization);
         }
     });
 }
@@ -1368,8 +1363,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     try {
         customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id, RootFolder.Monsters.id);
     } catch (error) {
-        console.error("display_token_configuration_modal failed to create a customization object for listItem:", listItem, error);
-        showDebuggingAlert("Failed to create a token customization object.");
+        showError(error, "display_token_configuration_modal failed to create a customization object for listItem:", listItem);
         return;
     }
 
@@ -1995,33 +1989,6 @@ function open_monster_item_iframe(listItem) {
     iframe.attr("src", listItem.monsterData.url);
 }
 
-/** calls the DDB API to fetch all PCs in the campaign... It currently throws a CORS error */
-function fetch_characters() {
-
-    // TODO: figure out the CORS errors here. This exact API is called from the page we're trying to call this from, and it works for them, but not for us :(
-
-    console.log("fetch_characters starting");
-    let pcIds = window.pcs
-        .filter(pc => pc.sheet.includes("/")) // only pcs that have a valid sheet structure
-        .map(pc => parseInt(pc.sheet.split("/").pop())) // grab the id which is the last component of the path
-        .filter(id => id !== undefined); // ignore any ids that failed to parse
-    let body = JSON.stringify({"characterIds": pcIds});
-    console.log("fetch_characters", body);
-    window.ajaxQueue.addDDBRequest({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        url: `https://character-service-scds.dndbeyond.com/v1/characters`,
-        data: body,
-        success: function (responseData) {
-            console.log("fetch_characters success", responseData);
-        },
-        failure: function (errorMessage) {
-            console.log("fetch_characters failure", errorMessage);
-        }
-    });
-}
-
 /**
  * translates a DDB challenge rating identifier to a human-readable string
  * @param crId {number} the challenge rating identifier to translate
@@ -2238,16 +2205,14 @@ function register_custom_token_image_context_menu() {
                         if (listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC()) {
                             let customization = find_token_customization(listItem.type, listItem.id);
                             if (!customization) {
-                                console.error("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
-                                showDebuggingAlert();
+                                showError("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
                                 return;
                             }
                             customization.removeAlternativeImage(imgSrc);
                             persist_token_customization(customization);
                             redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                         } else {
-                            console.error("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
-                            showDebuggingAlert();
+                            showError("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
                             return;
                         }
                         selectedItem.remove();
@@ -2278,8 +2243,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             }
         }
         if (!customization) {
-            console.error("build_remove_all_images_button failed to find token customization for listItem:", listItem, ", placedToken:", placedToken);
-            showDebuggingAlert();
+            showError("build_remove_all_images_button failed to find token customization for listItem:", listItem, ", placedToken:", placedToken);
             return;
         }
         if (window.confirm(`Are you sure you want to remove all custom images for ${tokenName}?\nThis will reset the token images back to the default`)) {

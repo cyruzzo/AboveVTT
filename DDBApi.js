@@ -22,10 +22,10 @@ class DDBApi {
     return response.token;
   }
 
-  static async fetchJsonWithToken(url) {
+  static async fetchJsonWithToken(url, extraConfig = {}) {
     const token = await DDBApi.#refreshToken();
-    const config = {
-      credentials: 'include',
+    const config = {...extraConfig,
+      credentials: 'omit',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
@@ -36,9 +36,9 @@ class DDBApi {
     return await request.json();
   }
 
-  static async fetchJsonWithCredentials(url) {
+  static async fetchJsonWithCredentials(url, extraConfig = {}) {
     console.debug("DDBApi.fetchJsonWithCredentials url", url)
-    const request = await fetch(url, { credentials: 'include' });
+    const request = await fetch(url, {...extraConfig, credentials: 'include' });
     console.debug("DDBApi.fetchJsonWithCredentials request", request);
     const response = await request.json();
     console.debug("DDBApi.fetchJsonWithCredentials response", response);
@@ -46,19 +46,11 @@ class DDBApi {
   }
 
   static async postJsonWithToken(url, body) {
-    const token = await DDBApi.#refreshToken();
     const config = {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json; charset=utf-8'
-      },
       body: JSON.stringify(body)
     }
-    const request = await fetch(url, config);
-    return await request.json();
+    return await DDBApi.fetchJsonWithToken(url, config);
   }
 
   static async deleteWithToken(url) {
@@ -79,7 +71,7 @@ class DDBApi {
 
   static async fetchCharacter(id) {
     if (typeof id !== "string" || id.length <= 1) {
-      throw `Invalid id: ${id}`;
+      throw new Error(`Invalid id: ${id}`);
     }
 
     const url = `https://character-service.dndbeyond.com/character/v5/character/${id}`;
@@ -90,7 +82,7 @@ class DDBApi {
 
   static async fetchEncounter(id) {
     if (typeof id !== "string" || id.length <= 1) {
-      throw `Invalid id: ${id}`;
+      throw new Error(`Invalid id: ${id}`);
     }
 
     const url = `https://encounter-service.dndbeyond.com/v1/encounters/${id}`;
@@ -110,7 +102,7 @@ class DDBApi {
     let encounters = firstPage.data;
     const numberOfPages = firstPage.pagination.pages;
     if (isNaN(numberOfPages)) {
-      throw `Unexpected Pagination Data: ${JSON.stringify(firstPage.pagination)}`;
+      throw new Error(`Unexpected Pagination Data: ${JSON.stringify(firstPage.pagination)}`);
     } else {
       console.log(`DDBApi.fetchAllEncounters attempting to fetch pages 2 through ${numberOfPages}`);
     }
@@ -142,7 +134,7 @@ class DDBApi {
     const campaignInfo = await DDBApi.fetchCampaignInfo(campaignId);
     console.log("DDBApi.createAboveVttEncounter campaignInfo", campaignInfo);
     if (!campaignInfo.id) {
-      throw `Invalid campaignInfo ${JSON.stringify(campaignInfo)}`;
+      throw new Error(`Invalid campaignInfo ${JSON.stringify(campaignInfo)}`);
     }
 
     const url = "https://encounter-service.dndbeyond.com/v1/encounters";
@@ -176,6 +168,30 @@ class DDBApi {
     const url = `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${campaignId}`;
     const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;
+  }
+
+  static async fetchCampaignCharacterDetails(campaignId) {
+    const characters = await DDBApi.fetchCampaignCharacters(campaignId);
+    const characterIds = characters.map(c => c.id);
+    return await DDBApi.fetchCharacterDetails(characterIds);
+  }
+
+  static async fetchCharacterDetails(characterIds) {
+    if (!Array.isArray(characterIds) || characterIds.length === 0) {
+      return [];
+    }
+    const url = `https://character-service-scds.dndbeyond.com/v1/characters`;
+    const config = {
+      method: 'POST',
+      body: JSON.stringify({ "characterIds": characterIds })
+    }
+    const response = await DDBApi.fetchJsonWithToken(url, config);
+    return response.foundCharacters;
+  }
+
+  static async fetchConfigJson() {
+    const url = "https://www.dndbeyond.com/api/config/json";
+    return await DDBApi.fetchJsonWithToken(url);
   }
 
 }

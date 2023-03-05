@@ -333,19 +333,6 @@ function build_monster_stat_block(statBlock) {
 `;
 }
 
-function fetch_config_json() {
-    window.ajaxQueue.addDDBRequest({
-        url: "https://www.dndbeyond.com/api/config/json",
-        success: function (responseData) {
-            console.log("Successfully fetched config/json from DDB API");
-            window.ddbConfigJson = responseData;
-        },
-        error: function (errorMessage) {
-            console.warn("Failed to fetch config json from DDB API", errorMessage);
-        }
-    })
-}
-
 class MonsterStatBlock {
     constructor(data) {
         this.data = data;

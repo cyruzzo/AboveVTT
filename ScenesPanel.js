@@ -244,7 +244,7 @@ function edit_scene_dialog(scene_id) {
 	template_section = $("<div id='template_section'/>");
 
 
-	dialog.append(template_section);
+	// dialog.append(template_section);
 	controls = $("<div/>");
 	controls.append("Import Template From:");
 	toggle_ddb = $("<button>DnDBeyond.com</button>")
@@ -1232,6 +1232,10 @@ function fill_importer(scene_set, start, searchState = '') {
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
 
+	area.append(build_source_book_chapter_import_section(scene_set));
+
+	return;
+
 	var ddb_extra_found=false;
 	totalPages = Math.max(1, Math.ceil(scene_set.length / 8));
 	pageNumber = 1 + Math.ceil(start / 8)
@@ -1488,7 +1492,7 @@ function default_scene_data() {
 		offsety: 0,
 		grid: 0,
 		snap: 0,
-		reveals: [[0, 0, 0, 0, 2, 0]], // SPECIAL MESSAGE TO REVEAL EVERYTHING
+		reveals: [],
 		order: Date.now()
 	};
 }
@@ -1715,7 +1719,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.groupEnd();
 		console.warn("rename_scene_folder called with an incorrect item type", item);
 		if (alertUser !== false) {
-			showDebuggingAlert();
+			showError(new Error("rename_scene_folder called with an incorrect item type"), item);
 		}
 		return;
 	}
@@ -1723,7 +1727,7 @@ function rename_scene_folder(item, newName, alertUser) {
 		console.groupEnd();
 		console.warn("rename_scene_folder Not allowed to rename folder", item);
 		if (alertUser !== false) {
-			showDebuggingAlert();
+			showError(new Error("rename_scene_folder Not allowed to rename folder"), item);
 		}
 		return;
 	}
@@ -2032,93 +2036,154 @@ function floating_window_title_bar(id, title='') {
 }
 
 function create_scene_root_container(fullPath) {
-	const container = $(`<div class="create-scene-container" data-folder-path="${encode_full_path(fullPath)}"></div>`);
-	const ddb = $(`<button>DDB Maps</button>`);
-	const free = $(`<button>Free Maps</button>`);
-	const custom = $(`<button>Custom URL</button>`);
-	container.append(ddb);
-	container.append(free);
-	container.append(custom);
-	ddb.click(function () {
+	const container = build_import_container();
+	container.find(".j-collapsible__search").hide();
+
+	const sectionHtml = build_import_collapsible_section("test", "");
+	container.find(".no-results").before(sectionHtml);
+	sectionHtml.find(".ddb-collapsible__header").hide();
+	sectionHtml.css("border", "none");
+
+	const ddb = build_tutorial_import_list_item({
+		"title": "D&D Beyond",
+		"description": "Import Scenes from books you own",
+		"category": "Source Books",
+		"player_map": "https://www.dndbeyond.com/avatars/thumbnails/30581/717/1000/1000/638053634473091554.jpeg",
+	}, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png", false);
+	sectionHtml.find("ul").append(ddb);
+	ddb.find(".listing-card__callout").hide();
+	ddb.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 		load_sources_iframe_for_map_import();
 	});
-	free.click(function() {
-		test_tutorial();
+
+	const free = build_tutorial_import_list_item({
+		"title": "Above VTT",
+		"description": "Import Scenes that have been preconfigured by the AboveVTT community",
+		"category": "Scenes",
+		"player_map": "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
+	}, "https://raw.githubusercontent.com/cyruzzo/AboveVTT/main/assets/avtt-logo.png", false);
+	sectionHtml.find("ul").append(free);
+	free.find(".listing-card__callout").hide();
+	free.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+		build_free_map_importer();
 	});
-	custom.click(function() {
+
+	const custom = build_tutorial_import_list_item({
+		"title": "Custom URL",
+		"description": "Build a scene from scratch using a URL",
+		"category": "Scenes",
+		"player_map": "",
+	}, "", false);
+	sectionHtml.find("ul").append(custom);
+	custom.find(".listing-card__callout").hide();
+	custom.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 		create_scene_inside(fullPath);
 	});
+
 	adjust_create_import_edit_container(container, true);
+	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
 }
 
-function build_scene_import_list_item(name, imageUrl) {
-	// This is taken straight from DDB /sources
-	// DDB sets data-collapsible-search="BR|Basic Rules|Sourcebook". We currently just use the name, but we could allow shorthand like they do. Maybe we could do "${name}|Tutorial" or "${name}|Neutral Party"
-	// Anyway, we need to update our search mechanism to grab all "li.sources-listing--item-wrapper", and hide any that don't partially match `data-collapsible-search`
-	return $(`<li class="sources-listing--item-wrapper j-collapsible__item" data-collapsible-search="${name}">
-    <a href="sources/basic-rules" class="sources-listing--item">
-        <div class="sources-listing--item--avatar" style="background-image: url('${imageUrl}');"></div>
-        <div class="sources-listing--item--title">${name}</div>
-    </a>
-	</li>`);
-}
-
-function test_tutorial() {
-
-	// const importerArea = $("#importer_area");
-	// importerArea.empty();
-	// importerArea.css({
-	// 	"overflow-y": "auto",
-	// 	"height": "100%"
-	// });
-	// $("#importer_footer").hide();
-	// $("#importer_toggles").hide();
+function build_free_map_importer() {
 
 	const container = build_import_container();
-	// importerArea.append(container);
 
-	const tutorialSection = build_import_collapsible_section("AboveVTT Tutorials", `${window.EXTENSION_PATH}assets/avtt-logo.png`);
-	container.find(".no-results").before(tutorialSection);
+	SCENE_IMPORT_DATA.forEach(section => {
+		const logoUrl = parse_img(section.logo);
+		const sectionHtml = build_import_collapsible_section(section.title, logoUrl);
+		container.find(".no-results").before(sectionHtml);
 
-	const theTavernDescription = `
-		<p>Learn the basics of AboveVTT by exploring The Tavern!<br><strong>This Tutorial Covers:</strong></p>
-		<p class="characters-statblock" style="font-family: Roboto Condensed; font-size: 14px">&bull; Tools<br>&bull; Tokens<br>&bull; Scene Creation</p>
-	`;
-	const theTavern = build_tutorial_import_list_item(
-		"The Tavern",
-		"https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
-		["tools", "tokens", "scenes"],
-		theTavernDescription
-	);
-	tutorialSection.find("ul").append(theTavern);
+		section.scenes.forEach(scene => {
+			try {
+				const sceneHtml = build_tutorial_import_list_item(scene, logoUrl, (scene.player_map_is_video && scene.player_map_is_video !== "0"));
+				sectionHtml.find("ul").append(sceneHtml);
+			} catch(error) {
+				console.warn("Failed to parse scene import data", section.title, scene, error);
+			}
+		});
+
+	});
 
 	adjust_create_import_edit_container(container, true);
 }
 
-function build_tutorial_import_list_item(name, imageUrl, additionalSearchTerms, descriptionHtml) {
-	let searchTerms = `${name}`;
-	if (Array.isArray(additionalSearchTerms) && additionalSearchTerms.length > 0) {
-		searchTerms += "|"
-		searchTerms += additionalSearchTerms.join("|");
+function build_source_book_chapter_import_section(sceneSet) {
+	const container = build_import_container();
+	// container.find(".j-collapsible__search").hide();
+
+	const sectionHtml = build_import_collapsible_section("test", "");
+	container.find(".no-results").before(sectionHtml);
+	sectionHtml.find(".ddb-collapsible__header").hide();
+	sectionHtml.css("border", "none");
+
+	sceneSet.forEach(scene => {
+		if (scene.uuid in DDB_EXTRAS) {
+			scene = {...scene, ...DDB_EXTRAS[scene.uuid]}
+		}
+		const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
+		sectionHtml.find("ul").append(sceneHtml);
+	});
+
+	return container;
+}
+
+function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
+	const logoUrl = parse_img(logo);
+	let description = scene.description || "";
+	let tags = scene.tags || [];
+	if (scene.drawings) {
+		if (scene.drawings.find(dl=> dl[1] === "wall")) {
+			tags.push("Walls");
+		} else {
+			tags.push("Drawings");
+		}
 	}
+	if (scene.grid) tags.push("Grid Aligned");
+	if (scene.player_map_is_video && scene.player_map_is_video !== "0") tags.push("Video Map");
+	if (Array.isArray(scene.tokens) && scene.tokens.length > 0) tags.push("Tokens");
+	if (scene.dm_map) tags.push("DM Map");
+	if (typeof description !== "string" || description.length === 0 && tags.length > 0) {
+		const tagString = tags
+			.slice(0, 3) // This might be overkill, but only display the first 3 tags.
+			.map(t => `&bull; ${t}`).join("<br>");
+		description = `
+			<p><strong>This Scene Has:</strong></p>
+			<p class="characters-statblock" style="font-family: Roboto Condensed,serif; font-size: 14px">${tagString}</p>
+		`;
+	}
+	let searchTerms = `${scene.title}`;
+	if (tags.length > 0) {
+		searchTerms += "|"
+		searchTerms += tags.join("|");
+		if (scene.category) {
+			searchTerms += `|${scene.category}`;
+		}
+	}
+
 	const listItem = $(`
 		<li class="j-collapsible__item listing-card" data-collapsible-search="${searchTerms}">
     	<div class="listing-card__content">
-        <a href="${imageUrl}" target="_blank" class="listing-card__link">
+        <a href="${scene.player_map}" target="_blank" class="listing-card__link">
 					
-					<div class="listing-card__bg" style="background-image: url('${imageUrl}');background-size: cover;background-position: center;"></div>
+					<div class="listing-card__bg" style="background-image: url('${scene.thumb || scene.player_map}');background-size: cover;background-position: center;"></div>
 					
 					<div class="listing-card__body" style="white-space: normal">
 						<div class="listing-card__header">
-							<img class="listing-card__icon" src="${window.EXTENSION_PATH}assets/avtt-logo.png" alt="logo" />
+							<img class="listing-card__icon" src="${logoUrl}" alt="logo" />
 							<div class="listing-card__header-primary">
-								<h3 class="listing-card__title">${name}</h3>
-								<div class="listing-card__source">Tutorial</div>
+								<h3 class="listing-card__title">${scene.title}</h3>
+								<div class="listing-card__source">${scene.category || "Scene"}</div>
 							</div>
 						</div>
 					
 						<div class="listing-card__description">
-							${descriptionHtml || ""}
+							${description}
 						</div>
 					</div>
 				
@@ -2133,19 +2198,41 @@ function build_tutorial_import_list_item(name, imageUrl, additionalSearchTerms, 
 	listItem.find(".import-button").click(function(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		alert("build the import functionality!");
 
+		let folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+
+		const importData = {
+			...scene,
+			id: uuid(),
+			folderPath: folderPath
+		};
+		AboveApi.migrateScenes(window.gameId, [importData])
+			.then(() => {
+				window.ScenesHandler.scenes.push(importData);
+				did_update_scenes();
+				$(`.scene-item[data-scene-id='${importData.id}'] .dm_scenes_button`).click();
+				$("#sources-import-main-container").remove();
+				expand_all_folders_up_to_id(importData.id);
+			})
+			.catch(error => {
+				showError(error, "Failed to import scene", importData);
+			});
 	});
-	listItem.find("a.listing-card__link").magnificPopup({
-		type: 'image'
-	});
+	if (allowMagnific) {
+		listItem.find("a.listing-card__link").magnificPopup({
+			type: 'image'
+		});
+	}
+	if (!logoUrl) {
+		listItem.find(".listing-card__icon").hide();
+	}
 	return listItem;
 }
 
 function build_import_container() {
-	return $(`
-	<div class="container">
-  <div id="content" class="main content-container">
+	const container = $(`
+	<div class="container" style="height: 100%">
+  <div id="content" class="main content-container" style="height: 100%;overflow: auto">
     <section class="primary-content" role="main">
 
 
@@ -2173,6 +2260,32 @@ function build_import_container() {
   </div>
 </div>
 	`);
+
+	container.find(".ddb-collapsible-filter__clear").click(function(e) {
+		$(e.currentTarget).parent().find(".ddb-collapsible-filter__input").val("");
+		$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+	});
+	container.find(".ddb-collapsible-filter__input").on("input change", function(e) {
+		const filterValue = e.target.value?.toLowerCase();
+		if (filterValue) {
+			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").removeClass("ddb-collapsible-filter__clear--hidden");
+			container.find("li.listing-card").each((idk, el) => {
+				const li = $(el);
+				const searchTerms = li.attr("data-collapsible-search").toLowerCase();
+				console.log(searchTerms, filterValue, searchTerms.includes(filterValue))
+				if(searchTerms.includes(filterValue)) {
+					li.removeClass("ddb-collapsible__item--hidden");
+				} else {
+					li.addClass("ddb-collapsible__item--hidden");
+				}
+			})
+		} else {
+			$(e.currentTarget).parent().find(".ddb-collapsible-filter__clear").addClass("ddb-collapsible-filter__clear--hidden");
+			$(".ddb-collapsible__item--hidden").removeClass("ddb-collapsible__item--hidden");
+		}
+	});
+
+	return container;
 }
 
 function build_import_collapsible_section(sectionLabel, logoUrl) {
@@ -2248,5 +2361,8 @@ function build_import_collapsible_section(sectionLabel, logoUrl) {
 			content.hide();
 		}
 	});
+	if (!logoUrl) {
+		section.find(".ddb-collapsible__avatar").hide();
+	}
 	return section;
 }

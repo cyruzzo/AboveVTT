@@ -907,8 +907,7 @@ function export_file() {
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		})
 		.catch(error => {
-			console.error("export_scenes failed to fetch from the cloud", error);
-			showDebuggingAlert();
+			showError(error, "export_scenes failed to fetch from the cloud");
 		})
 		.finally(() => {
 			$(".import-loading-indicator").remove();
@@ -1031,9 +1030,8 @@ function import_readfile() {
 					alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
 					location.reload();
 				})
-				.catch((error) => {
-					console.error("cloud_migration failed", error);
-					showDebuggingAlert();
+				.catch(error => {
+					showError(error, "cloud_migration failed");
 				});
 		});
 	};

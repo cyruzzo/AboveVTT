@@ -337,7 +337,7 @@ function map_load_error_cb(e) {
  * This removes it. See `Load.js` for the injection of the overlay.
  */
 function remove_loading_overlay() {
-	console.debug("startup remove_loading_overlay")
+	console.debug("remove_loading_overlay")
 	$("#loading_overlay").animate({ "opacity": 0 }, 1000, function() {
 		$("#loading_overlay").hide();
 	});
