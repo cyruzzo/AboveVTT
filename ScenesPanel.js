@@ -2032,7 +2032,7 @@ function floating_window_title_bar(id, title='') {
 }
 
 function create_scene_root_container(fullPath) {
-	const container = $(`<div class="create-scene-container" data-folder-path="${encode_full_path(fullPath)}"></div>`);
+	const container = $(`<div class="create-scene-container"></div>`);
 	const ddb = $(`<button>DDB Maps</button>`);
 	const free = $(`<button>Free Maps</button>`);
 	const custom = $(`<button>Custom URL</button>`);
@@ -2049,6 +2049,7 @@ function create_scene_root_container(fullPath) {
 		create_scene_inside(fullPath);
 	});
 	adjust_create_import_edit_container(container, true);
+	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
 }
 
 function build_free_map_importer() {
@@ -2096,7 +2097,6 @@ function build_tutorial_import_list_item(scene, logo) {
 			if (scene.dm_map) tags.push("DM Map");
 		}
 		if (tags.length > 0) {
-			console.error(tags)
 			const tagString = tags.map(t => `&bull; ${t}`).join("<br>");
 			description = `
 				<p><strong>This Scene Has:</strong></p>
@@ -2142,8 +2142,25 @@ function build_tutorial_import_list_item(scene, logo) {
 	listItem.find(".import-button").click(function(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		alert("build the import functionality!");
 
+		let folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+
+		const importData = {
+			...scene,
+			id: uuid(),
+			folderPath: folderPath
+		};
+		AboveApi.migrateScenes(window.gameId, [importData])
+			.then(() => {
+				window.ScenesHandler.scenes.push(importData);
+				did_update_scenes();
+				$(`.scene-item[data-scene-id='${importData.id}'] .dm_scenes_button`).click();
+				$("#sources-import-main-container").remove();
+				expand_all_folders_up_to_id(importData.id);
+			})
+			.catch(error => {
+				console.error(error, "Failed to import scene", importData);
+			});
 	});
 	listItem.find("a.listing-card__link").magnificPopup({
 		type: 'image'
