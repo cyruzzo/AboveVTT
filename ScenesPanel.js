@@ -244,7 +244,7 @@ function edit_scene_dialog(scene_id) {
 	template_section = $("<div id='template_section'/>");
 
 
-	dialog.append(template_section);
+	// dialog.append(template_section);
 	controls = $("<div/>");
 	controls.append("Import Template From:");
 	toggle_ddb = $("<button>DnDBeyond.com</button>")
@@ -2032,22 +2032,56 @@ function floating_window_title_bar(id, title='') {
 }
 
 function create_scene_root_container(fullPath) {
-	const container = $(`<div class="create-scene-container"></div>`);
-	const ddb = $(`<button>DDB Maps</button>`);
-	const free = $(`<button>Free Maps</button>`);
-	const custom = $(`<button>Custom URL</button>`);
-	container.append(ddb);
-	container.append(free);
-	container.append(custom);
-	ddb.click(function () {
+	const container = build_import_container();
+	container.find(".j-collapsible__search").hide();
+
+	const sectionHtml = build_import_collapsible_section("test", "");
+	container.find(".no-results").before(sectionHtml);
+	sectionHtml.find(".ddb-collapsible__header").hide();
+	sectionHtml.css("border", "none");
+
+	const ddb = build_tutorial_import_list_item({
+		"title": "D&D Beyond",
+		"description": "Import Scenes from books you own",
+		"category": "Source Books",
+		"player_map": "https://www.dndbeyond.com/avatars/thumbnails/30581/717/1000/1000/638053634473091554.jpeg",
+	}, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png", false);
+	sectionHtml.find("ul").append(ddb);
+	ddb.find(".listing-card__callout").hide();
+	ddb.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 		load_sources_iframe_for_map_import();
 	});
-	free.click(function() {
+
+	const free = build_tutorial_import_list_item({
+		"title": "Above VTT",
+		"description": "Import Scenes that have been preconfigured by the AboveVTT community",
+		"category": "Scenes",
+		"player_map": "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
+	}, "https://raw.githubusercontent.com/cyruzzo/AboveVTT/main/assets/avtt-logo.png", false);
+	sectionHtml.find("ul").append(free);
+	free.find(".listing-card__callout").hide();
+	free.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 		build_free_map_importer();
 	});
-	custom.click(function() {
+
+	const custom = build_tutorial_import_list_item({
+		"title": "Custom URL",
+		"description": "Build a scene from scratch using a URL",
+		"category": "Scenes",
+		"player_map": "",
+	}, "", false);
+	sectionHtml.find("ul").append(custom);
+	custom.find(".listing-card__callout").hide();
+	custom.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 		create_scene_inside(fullPath);
 	});
+
 	adjust_create_import_edit_container(container, true);
 	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
 }
@@ -2063,7 +2097,7 @@ function build_free_map_importer() {
 
 		section.scenes.forEach(scene => {
 			try {
-				const sceneHtml = build_tutorial_import_list_item(scene, logoUrl);
+				const sceneHtml = build_tutorial_import_list_item(scene, logoUrl, (scene.player_map_is_video && scene.player_map_is_video !== "0"));
 				sectionHtml.find("ul").append(sceneHtml);
 			} catch(error) {
 				console.warn("Failed to parse scene import data", section.title, scene, error);
@@ -2099,7 +2133,7 @@ function build_free_map_importer() {
 	adjust_create_import_edit_container(container, true);
 }
 
-function build_tutorial_import_list_item(scene, logo) {
+function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 	const logoUrl = parse_img(logo);
 	let description = scene.description || "";
 	let tags = scene.tags || [];
@@ -2184,9 +2218,11 @@ function build_tutorial_import_list_item(scene, logo) {
 				showError(error, "Failed to import scene", importData);
 			});
 	});
-	listItem.find("a.listing-card__link").magnificPopup({
-		type: 'image'
-	});
+	if (allowMagnific) {
+		listItem.find("a.listing-card__link").magnificPopup({
+			type: 'image'
+		});
+	}
 	if (!logoUrl) {
 		listItem.find(".listing-card__icon").hide();
 	}
@@ -2195,8 +2231,8 @@ function build_tutorial_import_list_item(scene, logo) {
 
 function build_import_container() {
 	return $(`
-	<div class="container">
-  <div id="content" class="main content-container">
+	<div class="container" style="height: 100%">
+  <div id="content" class="main content-container" style="height: 100%">
     <section class="primary-content" role="main">
 
 
