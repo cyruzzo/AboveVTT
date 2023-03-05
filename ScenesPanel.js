@@ -2181,7 +2181,7 @@ function build_tutorial_import_list_item(scene, logo) {
 				expand_all_folders_up_to_id(importData.id);
 			})
 			.catch(error => {
-				console.error(error, "Failed to import scene", importData);
+				showError(error, "Failed to import scene", importData);
 			});
 	});
 	listItem.find("a.listing-card__link").magnificPopup({
