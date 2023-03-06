@@ -439,6 +439,9 @@ function edit_scene_dialog(scene_id) {
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
+
+
+
 		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
@@ -2136,10 +2139,12 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 		let folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
 
 		const importData = {
+			...default_scene_data(),
 			...scene,
 			id: uuid(),
 			folderPath: folderPath
 		};
+
 		AboveApi.migrateScenes(window.gameId, [importData])
 			.then(() => {
 				if(importData.notes != undefined){
