@@ -1020,7 +1020,7 @@ function display_sources() {
 	}
 }
 
-function display_chapters() {
+function display_chapters(selectedChapter) {
 	$("#chapter_select").empty();
 	$("#scene_select").empty();
 
@@ -1029,12 +1029,27 @@ function display_chapters() {
 		var chapter = window.ScenesHandler.sources[source_name].chapters[property];
 		$("#chapter_select").append($("<option value='" + property + "'>" + chapter.title + "</option>"))
 	}
-	$("#chapter_select").change();
 
 
-	const chapterSelectMenu = ddb_style_chapter_select(window.ScenesHandler.sources[source_name].chapters);
+	const chapterSelectMenu = ddb_style_chapter_select(source_name, window.ScenesHandler.sources[source_name].chapters);
 	$("#importer_toggles").append(chapterSelectMenu);
 	$("#chapter_select").hide();
+	if (selectedChapter) {
+		$(".quick-menu-item-link").each((idx, el) => {
+			const chapterLink = $(el);
+			if (chapterLink.attr("data-chapter") === selectedChapter) {
+				$(".current-source").removeClass("current-source");
+				chapterLink.parent().addClass("current-source");
+			}
+		});
+		if ($(".current-source").length === 1) {
+			$("#chapter_select").val(selectedChapter).change();
+		} else {
+			$("#chapter_select").change(); // couldn't find that chapter so just click the first one
+		}
+	} else {
+		$("#chapter_select").change();
+	}
 }
 
 function display_scenes() {
@@ -1054,7 +1069,7 @@ function display_scenes() {
 			$("#scene_select").change();*/
 }
 
-function ddb_style_chapter_select(chapters) {
+function ddb_style_chapter_select(source, chapters) {
 	console.log("ddb_style_chapter_select", chapters);
 	const menu = $(`
 		<div class="sidebar-scroll-menu">
@@ -1082,6 +1097,7 @@ function ddb_style_chapter_select(chapters) {
 			$("#chapter_select").val(chapterKey).change();
 			$(".current-source").removeClass("current-source");
 			$(e.currentTarget).parent().addClass("current-source");
+			scene_importer_clicked_source(source, chapterKey);
 		});
 	}
 	chapterList.find("a:first").parent().addClass("current-source");
@@ -1105,7 +1121,7 @@ function ddb_style_chapter_list_item(chapterKey, chapterTitle) {
 	`);
 }
 
-function init_ddb_importer(target, selectedSource) {
+function init_ddb_importer(target, selectedSource, selectedChapter) {
 
 	panel = $("<div id='scenes-panel' class='sidepanel-content'></div>");
 	target.append(panel);
@@ -1131,7 +1147,9 @@ function init_ddb_importer(target, selectedSource) {
 		$("#scenes_select").empty();
 		$("#import_button").attr('disabled', 'disabled');
 		var source_name = $("#source_select").val()
-		window.ScenesHandler.build_chapters(source_name, display_chapters);
+		window.ScenesHandler.build_chapters(source_name, function () {
+			display_chapters(selectedChapter);
+		});
 	});
 
 
@@ -1167,7 +1185,7 @@ function fill_importer(scene_set, start, searchState = '') {
 	return;
 }
 
-function mega_importer(DDB = false, ddbSource) {
+function mega_importer(DDB = false, ddbSource, ddbChapter) {
 	container = $("<div id='mega_importer'/>");
 	toggles = $("<div id='importer_toggles'/>");
 
@@ -1192,7 +1210,7 @@ function mega_importer(DDB = false, ddbSource) {
 		if (ddbSource) {
 			container.addClass("source_select");
 		}
-		init_ddb_importer(toggles, ddbSource);
+		init_ddb_importer(toggles, ddbSource, ddbChapter);
 	}
 	container.append(toggles);
 	area = $("<div id='importer_area'/>");
@@ -1675,13 +1693,16 @@ function move_scenes_folder(listItem, folderPath) {
 	console.groupEnd();
 }
 
-function load_sources_iframe_for_map_import() {
+function load_sources_iframe_for_map_import(hidden = false) {
 
 	const iframe = $(`<iframe id='sources-import-iframe'></iframe>`);
 
-
 	adjust_create_import_edit_container(iframe, true);
-	$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load DnDBeyond Sources'));
+	if (hidden) {
+		iframe.hide();
+	} else {
+		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load DnDBeyond Sources'));
+	}
 
 	iframe.off("load").on("load", function (event) {
 		if (!this.src) return; // it was just created. no need to do anything until it actually loads something
@@ -1708,11 +1729,17 @@ function load_sources_iframe_for_map_import() {
 			</style>`);
 		$('#sources-import-content-container').find(".sidebar-panel-loading-indicator").remove();
 
+		// give the search bar focus so we can just start typing to filter sources without having to click into it
+		sourcesBody.find(".ddb-collapsible-filter__input").focus();
+
 		// hijack the links and open our importer instead
 		sourcesBody.find("a.sources-listing--item").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();
 			const sourceAbbreviation = event.currentTarget.href.split("/").pop();
+			const image = $(event.currentTarget).find(".sources-listing--item--avatar").css("background-image").slice(4, -1).replace(/"/g, "");
+			const title = $(event.currentTarget).find(".sources-listing--item--title").text();
+			scene_importer_clicked_source(sourceAbbreviation, undefined, image, title);
 			mega_importer(true, sourceAbbreviation);
 			iframe.hide();
 		});	
@@ -1824,6 +1851,9 @@ function create_scene_root_container(fullPath) {
 		create_scene_inside(fullPath);
 	});
 
+	const recentlyVisited = build_recently_visited_scene_imports_section();
+	container.find(".no-results").before(recentlyVisited);
+
 	adjust_create_import_edit_container(container, true);
 	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
 }
@@ -1853,8 +1883,6 @@ function build_free_map_importer() {
 
 function build_source_book_chapter_import_section(sceneSet) {
 	const container = build_import_container();
-	// container.find(".j-collapsible__search").hide();
-
 	const sectionHtml = build_import_collapsible_section("test", "");
 	container.find(".no-results").before(sectionHtml);
 	sectionHtml.find(".ddb-collapsible__header").hide();
@@ -1869,6 +1897,138 @@ function build_source_book_chapter_import_section(sceneSet) {
 	});
 
 	return container;
+}
+
+function build_recently_visited_scene_imports_section() {
+	read_recently_visited_scene_importer_sources();
+	if (window.recentlyVisitedSources.length === 0) {
+		return;
+	}
+	const recentlyVisited = build_import_collapsible_section("Recently Visited", "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
+	recentlyVisited.find(".ddb-collapsible__header-callout").hide();
+	recentlyVisited.find(".ddb-collapsible__header").off("click");
+	recentlyVisited.find(".ddb-collapsible__header").css("cursor", "default");
+	let clearButton = $(`<div class="ddb-collapsible-filter__clear j-collapsible__search-clear" style="font-size: 15px;margin-left: 0;">Clear X</div>`);
+	clearButton.click(function(e) {
+		clear_recently_visited_scene_importer_sources();
+		recentlyVisited.remove();
+	});
+	recentlyVisited.find(".ddb-collapsible__label").append(clearButton);
+	recentlyVisited.css("border", "none");
+	recentlyVisited.append(`
+	<style>
+.sources-listing {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+  padding: 0;
+  margin: 0 auto;
+}
+.sources-listing--item-wrapper {
+  list-style: none;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 100%;
+      -ms-flex: 0 0 100%;
+          flex: 0 0 100%;
+  position: relative;
+}
+@media (min-width: 400px) {
+  .sources-listing--item-wrapper {
+    -webkit-flex-basis: 50%;
+        -ms-flex-preferred-size: 50%;
+            flex-basis: 50%;
+  }
+}
+@media (min-width: 600px) {
+  .sources-listing--item-wrapper {
+    -webkit-flex-basis: 33%;
+        -ms-flex-preferred-size: 33%;
+            flex-basis: 33%;
+  }
+}
+@media (min-width: 860px) {
+  .sources-listing--item-wrapper {
+    -webkit-flex-basis: 25%;
+        -ms-flex-preferred-size: 25%;
+            flex-basis: 25%;
+  }
+}
+@media (min-width: 1000px) {
+  .sources-listing--item-wrapper {
+    -webkit-flex-basis: 20%;
+        -ms-flex-preferred-size: 20%;
+            flex-basis: 20%;
+  }
+}
+.sources-listing--item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+.sources-listing--item--avatar {
+  height: 225px;
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+.sources-listing--item--title {
+  font-size: 14px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  padding: 10px;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+}
+</style>
+	`);
+	window.recentlyVisitedSources.forEach(s => {
+		const sItem = build_recently_visited_scene_imports_item(s);
+		recentlyVisited.find("ul").append(sItem);
+	});
+	return recentlyVisited;
+}
+
+function build_recently_visited_scene_imports_item(recentlyVisited) {
+	let search = `${recentlyVisited.title}|${recentlyVisited.source}`;
+	if (recentlyVisited.chapter) {
+		search += `|${recentlyVisited.chapter}`;
+	}
+	const itemHtml = $(`
+		<li class="sources-listing--item-wrapper j-collapsible__item" data-collapsible-search="${search}">
+			<a href="#" class="sources-listing--item">
+				<div class="sources-listing--item--avatar" style="background-image: url('${recentlyVisited.image}');"></div>
+				<div class="sources-listing--item--title">${recentlyVisited.title}</div>
+			</a>
+		</li>
+	`);
+
+	itemHtml.find("a").click(function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		// move it to the front of the list
+		scene_importer_clicked_source(recentlyVisited.source, recentlyVisited.chapter, recentlyVisited.image, recentlyVisited.title);
+		// display the book and chapter
+		load_sources_iframe_for_map_import(true);
+		mega_importer(true, recentlyVisited.source, recentlyVisited.chapter);
+	});
+
+	return itemHtml;
 }
 
 function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
@@ -2110,4 +2270,46 @@ function build_import_collapsible_section(sectionLabel, logoUrl) {
 		section.find(".ddb-collapsible__avatar").hide();
 	}
 	return section;
+}
+
+function scene_importer_clicked_source(source, chapter, image, title) {
+	console.log(`scene_importer_clicked_source(${source}, ${chapter}, ${image}, ${title})`);
+	if (!window.recentlyVisitedSources) {
+		read_recently_visited_scene_importer_sources();
+	}
+	const existingIndex = window.recentlyVisitedSources.findIndex(s => s.source === source);
+	if (existingIndex >= 0) {
+		const existing = window.recentlyVisitedSources.splice(existingIndex, 1)[0];
+		if (typeof chapter === "string" && chapter.length > 0) {
+			existing.chapter = chapter;
+		}
+		if (typeof image === "string" && image.length > 0) {
+			existing.image = image;
+		}
+		if (typeof title === "string" && title.length > 0) {
+			existing.title = title;
+		}
+		window.recentlyVisitedSources.unshift(existing);
+	} else {
+		window.recentlyVisitedSources.unshift({
+			source: source,
+			chapter: chapter || "",
+			title: title || "",
+			image: image || ""
+		});
+	}
+	window.recentlyVisitedSources = window.recentlyVisitedSources.slice(0, 5); // limit this list to 5 items
+	localStorage.setItem(`recentlyVisitedSources`, JSON.stringify(window.recentlyVisitedSources));
+}
+
+function clear_recently_visited_scene_importer_sources() {
+	localStorage.removeItem(`recentlyVisitedSources`);
+}
+
+function read_recently_visited_scene_importer_sources() {
+	window.recentlyVisitedSources = [];
+	const recentlyVisitedSources = localStorage.getItem(`recentlyVisitedSources`);
+	if (recentlyVisitedSources !== null) {
+		window.recentlyVisitedSources = JSON.parse(recentlyVisitedSources);
+	}
 }
