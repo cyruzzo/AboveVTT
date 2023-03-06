@@ -644,7 +644,10 @@ div.top_menu.visible,
     float: left;
     overflow: hidden;
     margin: 5px;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+#sources-import-main-container .sidebar-panel-loading-indicator{
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 
 .sortable_placeholder {
@@ -682,13 +685,15 @@ div#scene_selector,
 #prewiz,
 #wizard_popup,
 .top_menu {
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 
 #edit_dialog {
-    height: fit-content !important;
-    padding-bottom: 10px;
-    border-radius: 15px;
+    top: 5px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    position: absolute !important;
 }
 
 #edit_dialog button:not(.rc-switch){
@@ -703,7 +708,7 @@ div#scene_selector,
 }
 
 
-input[name='darkness_filter_number']{
+input[type="number"][name='darkness_filter_number']{
     width:50px;
     font-size:12px;
 }
@@ -820,13 +825,13 @@ button#gridSubdividedToggle_toggle.rc-switch-checked::after{
 /*combat UI Changes 2*/
 #combat_tracker_inside .tracker-list{
     height: calc(100% - 55px);
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 #round_number_label{
     width: calc(100% + 2px);
     left: -1px;
     position: relative;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 
 
@@ -871,30 +876,177 @@ input {
 }
 
 #mega_importer {
-    left: 200px;
-    height: 590px;
-    background: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
-    position: fixed;
-    top: 40px;
-    width: 850px;
-    border: 3px solid black;
+    width:100%;
+    height: calc(100% - 16px);
+    top: 15px;
+    z-index: 10000;
+    position: absolute;
+}
+
+#sources-import-main-container {
+    top: 86px;
+    right: 390px;
+    height: calc(100% - 170px);
+    width: calc(100% - 500px);
+    position: fixed !important;
+    z-index: 99999;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    z-index: 999999;
+    min-width: 850px;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+#sources-import-main-container .sidebar-panel-loading-indicator svg{
+    margin: 0px !important;
+    height: calc(100% - 35px);
+}
+#sources-import-main-container .sidebar-panel-loading-indicator{
+    top: 5px !important;
+    border-radius: 0px 0px 5px 5px !important;
+}
+#sources-import-iframe {
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border: none;
+    border-radius: 0px 0px 5px 5px;
 }
 
-#importer_area {
-    height: 520px !important;
+
+#sources-import-content-container{
+    width:100%;
+    height:100%;
 }
 
-#importer_area > div {
-    border: 1px solid #3d3d3d !important;
-    padding: 5px 0;
-    height: 220px !important;
+#sources-import-content-container .listing-card__body,
+#mega_importer .listing-card__body{
+    min-width: 200px;
 }
 
-#importer_footer > div {
+@media (min-width: 728px){
+    #sources-import-content-container .card-listing .listing-card,
+    #mega_importer .card-listing .listing-card {
+        width: 50%;
+
+    }
+    #sources-import-content-container .listing-card__title,
+    #mega_importer .listing-card__title{
+        font-size: 18px;
+    }
+}
+@media (min-width: 1750px){
+    #sources-import-content-container .card-listing .listing-card,
+    #mega_importer .card-listing .listing-card
+    {
+        width: 33.33333%;
+    }
+    #sources-import-content-container .listing-card__title,
+    #mega_importer .listing-card__title{
+        font-size: 25px;
+    }
+}
+
+
+
+
+#mega_importer.source_select {
+    display: flex;
+}
+#mega_importer.source_select #scenes-panel {
+    display: none;
+}
+#mega_importer.source_select #importer_toggles {
+    float: left;
+    width: unset;
+    padding: 20px;
+    height: 100%;
+    display: block;
+}
+#mega_importer.source_select #importer_toggles {
+    height: 100% !important;
+    padding: 5px 10px 0px 0px;
+}
+#mega_importer.source_select #importer_toggles .back-to-source-select {
+    background-image: url(https://www.dndbeyond.com/file-attachments/0/737/chevron-left-green.svg);
+    background-repeat: no-repeat;
+    display: inline;
+    padding: 0px 20px 0px 20px;
+    font-weight: 600;
+}
+#mega_importer.source_select #importer_toggles li.quick-menu-item {
+    padding-top: 5px;
+}
+#mega_importer.source_select #importer_toggles .quick-menu-item-label {
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    border-left: 3px solid transparent;
+}
+#mega_importer.source_select #importer_toggles .quick-menu-item-tier-1 > .quick-menu-item-label {
+    font-weight: 600;
+    font-size: 18px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #F7F6F5;
+}
+#mega_importer.source_select #importer_toggles .quick-menu-item-tier-2 > .quick-menu-item-label {
+    font-size: 15px;
+}
+#mega_importer.source_select #importer_toggles .current-source {
+    border-left-color: #47D18C;
+    padding-left: 5px;
+    backdrop-filter: brightness(0.9);
+}
+#mega_importer.source_select #importer_footer {
+    display: none;
+}
+#mega_importer.source_select .sidebar-scroll-menu {
+    overflow: auto;
+    height: 100%;
+}
+#mega_importer.source_select #importer_area {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#mega_importer.source_select #importer_toggles ~ #importer_area{
+    position: relative;
+}
+
+.floating-window-title-bar {
+    background: #242527;
+    height: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    color: #fff;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-color: gray;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    line-height: 26px;
+    text-shadow: 0px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    top: -20px;
+    position: absolute;
+    width: calc(100% + 2px);
+    left: -1px;
+    cursor: move;
+    z-index: 1;
+}
+
+
+#importer_footer > div.page-number {
     right: 16px !important;
 }
+
+#importer_footer{
+    bottom: 0px;
+    position:absolute;
+    padding:5pxc;
+}
+
+
 
 #importer_footer button:disabled:hover {
     color: #fff;
@@ -922,6 +1074,8 @@ div#scene_properties form > div {
     align-items: flex-end;
     padding: .5rem .5rem 0;
     width: 100%;
+    position: relative;
+    min-width: 200px;
 }
 
 #prewiz td {
@@ -2720,7 +2874,7 @@ audio::-webkit-media-controls-time-remaining-display{
 #help-menu {
     max-width: 90vw;
     max-height: 90vh;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
     position: absolute;
     top: 5%;
     left: 5%;
@@ -2819,7 +2973,7 @@ body {
   }
 .page-number {
     position: absolute;
-    bottom: 41px;
+    bottom: 40px;
     font-weight: bold;
 }
 .tabs-content dt {
@@ -4104,6 +4258,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 
 #text_controller_title_bar_exit,
 .text-input-title-bar-exit,
+.title-bar-exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
 #player_close_title_button,
@@ -4123,6 +4278,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #player_close_title_button:hover,
 #reload_player_frame_button:hover,
 .text-input-title-bar-exit:hover,
+.title-bar-exit:hover,
 #text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
 #token_options_title_bar_exit:hover,
@@ -4138,6 +4294,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
  
 .text-input-title-bar-exit svg,
+.text-input-title-bar-exittitle-bar-exit svg,
 #text_controller_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
@@ -4150,6 +4307,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
 
 .text-input-title-bar-exit svg g rect,
+.title-bar-exit svg g rect,
 #text_controller_title_bar_exit svg g rect,
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
@@ -4183,6 +4341,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
 
 .text-input-title-bar-exit,
+.title-bar-exit,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
@@ -4211,6 +4370,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #player_close_title_button,
 #reload_player_frame_button,
 .text-input-title-bar-exit,
+.title-bar-exit,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #token_options_title_bar_exit,
@@ -4582,7 +4742,7 @@ input.max_hp[disabled]{
 }
 
 #combat_footer{
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
     padding-top: 13px;
 }
 
