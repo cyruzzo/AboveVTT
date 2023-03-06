@@ -1279,7 +1279,6 @@ function init_scenes_panel() {
 
 	let addSceneButton = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
 	addSceneButton.on("click", function (clickEvent) {
-		// create_scene_inside(RootFolder.Scenes.path);
 		create_scene_root_container(RootFolder.Scenes.path);
 	});
 
@@ -1727,9 +1726,14 @@ function load_sources_iframe_for_map_import(hidden = false) {
 				position:sticky !important;
 			}
 			</style>`);
+
+		sourcesBody.find("#site-main > .container").css({
+			"padding-top": "20px"
+		})
+
 		$('#sources-import-content-container').find(".sidebar-panel-loading-indicator").remove();
 
-		// give the search bar focus so we can just start typing to filter sources without having to click into it
+		// give the search bar focus, so we can just start typing to filter sources without having to click into it
 		sourcesBody.find(".ddb-collapsible-filter__input").focus();
 
 		// hijack the links and open our importer instead
@@ -1742,7 +1746,9 @@ function load_sources_iframe_for_map_import(hidden = false) {
 			scene_importer_clicked_source(sourceAbbreviation, undefined, image, title);
 			mega_importer(true, sourceAbbreviation);
 			iframe.hide();
-		});	
+		});
+
+		add_scene_importer_back_button(sourcesBody);
 	});
 
 	iframe.attr("src", `/sources`);
@@ -1861,6 +1867,7 @@ function create_scene_root_container(fullPath) {
 function build_free_map_importer() {
 
 	const container = build_import_container();
+	add_scene_importer_back_button(container);
 
 	SCENE_IMPORT_DATA.forEach(section => {
 		const logoUrl = parse_img(section.logo);
@@ -1879,6 +1886,8 @@ function build_free_map_importer() {
 	});
 
 	adjust_create_import_edit_container(container, true);
+	// give the search bar focus, so we can just start typing to filter sources without having to click into it
+	container.find(".ddb-collapsible-filter__input").focus();
 }
 
 function build_source_book_chapter_import_section(sceneSet) {
@@ -1897,6 +1906,33 @@ function build_source_book_chapter_import_section(sceneSet) {
 	});
 
 	return container;
+}
+
+function add_scene_importer_back_button(container) {
+	const backButton = $(`<a class="quick-menu-item-link importer-back-button" href="#">Back</a>`);
+
+	const searchContainer = container.find(".ddb-collapsible-filter").first();
+	searchContainer.prepend(backButton);
+	searchContainer.css({ "display": "flex" });
+	backButton.click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+		const folderPath = $(`#sources-import-main-container`).attr("data-folder-path");
+		// There's only 1 level of depth so just start over
+		create_scene_root_container(decode_full_path(folderPath));
+	});
+
+	backButton.css({
+		"height": "22px",
+		"font-size": "18px",
+		"margin-top": "auto",
+		"margin-bottom": "auto",
+		"background-image": "url(https://www.dndbeyond.com/file-attachments/0/737/chevron-left-green.svg)",
+		"background-repeat": "no-repeat",
+		"display": "inline",
+		"padding": "0px 20px 0px 20px",
+		"font-weight": "600"
+	});
 }
 
 function build_recently_visited_scene_imports_section() {
