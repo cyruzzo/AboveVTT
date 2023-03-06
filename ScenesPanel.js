@@ -19,45 +19,6 @@ function consider_upscaling(target){
 		}
 }
 
-function preset_importer(target, key) {
-	target.empty();
-	let sel = $("<select/>");
-
-	for (var i = 0; i < PRESET[key].length; i++) {
-		cur = PRESET[key][i];
-		o = $("<option/>");
-		o.html(cur.title);
-		o.val(i);
-		sel.append(o);
-	}
-
-	import_button = $("<button>IMPORT</button>");
-
-	import_button.click(function() {
-		i = sel.val();
-		scene = PRESET[key][i];
-
-		if (typeof scene.player_map_is_video === 'undefined') {
-			scene.player_map_is_video = "0";
-		}
-		if (typeof scene.dm_map_is_video === 'undefined') {
-			scene.dm_map_is_video = "0";
-		}
-
-		$("#scene_properties input[name='player_map']").val(scene.player_map);
-		$("#scene_properties input[name='dm_map']").val(scene.dm_map);
-		$("#scene_properties input[name='player_map_is_video']").prop('checked', scene.player_map_is_video === "1");
-		$("#scene_properties input[name='dm_map_is_video']").prop('checked', scene.dm_map_is_video === "1");
-		$("#scene_properties input[name='title']").val(scene.title);
-		$("#scene_properties input[name='scale']").val(scene.scale);
-
-		$("#sources-import-iframe-container").remove();
-	});
-
-	target.append(sel);
-	target.append(import_button);
-}
-
 
 
 function handle_basic_form_toggle_click(event){
@@ -1188,40 +1149,9 @@ function init_ddb_importer(target, selectedSource) {
 		window.ScenesHandler.build_scenes(source_name, chapter_name, display_scenes);
 	});
 
-	/*	var scene_select=$("<select id='scene_select'/>");
-	
-		scene_select.change(function(){
-			console.log('prepare scene properties');
-			var source_name=$("#source_select").val();
-			var chapter_name=$("#chapter_select").val();
-			var scene_name=$("#scene_select").val();
-			if(scene_name)
-				$("#import_button").removeAttr('disabled');
-			else
-				$("#import_button").attr('disabled','disabled');
-			//window.ScenesHandler.display_scene_properties(source_name,chapter_name,scene_name);
-			
-		});*/
-
-
-	/*import_button=$("<button id='import_button'>IMPORT</button>");
-	import_button.attr('disabled','disabled');
-	
-	import_button.click(function(){
-		var source_name=$("#source_select").val();
-		var chapter_name=$("#chapter_select").val();
-		var scene_name=$("#scene_select").val();
-		
-		scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[scene_name];
-		$("#scene_properties input[name='player_map']").val(scene.player_map);
-		$("#scene_properties input[name='dm_map']").val(scene.dm_map);
-		$("#scene_properties input[name='title']").val(scene.title);
-	});*/
 
 	panel.append(source_select);
 	panel.append(chapter_select);
-	//panel.append($("<div/>").append(scene_select));
-	//panel.append($("<div/>").append(import_button));
 
 
 }
@@ -1235,200 +1165,6 @@ function fill_importer(scene_set, start, searchState = '') {
 	area.append(build_source_book_chapter_import_section(scene_set));
 
 	return;
-
-	var ddb_extra_found=false;
-	totalPages = Math.max(1, Math.ceil(scene_set.length / 8));
-	pageNumber = 1 + Math.ceil(start / 8)
-	for (var i = start; i < Math.min(start + 8, scene_set.length); i++) {
-		let current_scene = scene_set[i];
-
-		if (current_scene.uuid in DDB_EXTRAS) {
-			ddb_extra_found=true;
-			for (prop in DDB_EXTRAS[current_scene.uuid]) {
-				current_scene[prop] = DDB_EXTRAS[current_scene.uuid][prop];
-			}
-		}
-
-
-		entry = $("<div/>");
-		entry.css({
-			float: "left",
-			width: "180px",
-			height: "200px",
-			margin: "15px",
-			border: "2px solid black",
-			"border-radius": "5px 5px 5px 5px",
-			'text-align': 'center',
-		});
-		img = $("<img>");
-		img.css({
-			'max-width': '160px',
-			'max-height': '150px',
-
-		});
-		img.attr("src", scene_set[i].thumb);
-		imgcont = $("<div/>").css({ width: '100%', height: '150px' });
-		imgcont.append(img);
-
-		title = $("<div style='width: 180px;font-weight:bold'></div>");
-		title.text(current_scene.title);
-		entry.append(title);
-
-		entry.append(imgcont);
-		stats = $("<div/>");
-		stats.css("height", "15px");
-		stats.css("width", "100%");
-
-		if (scene_set[i].dm_map) {
-			stats.append("<b style='background: lightblue; border 1px solid back; margin: 5px;' title='Has DM Map'>DM</b>");
-		}
-
-		if ((scene_set[i].snap == "1") || ddb_extra_found) {
-			stats.append("<b style='background:gold; border 1px solid back; margin: 5px;' title='PRE-ALIGNED'>PRE-CONFIGURED!</b>");
-		}
-		entry.append(stats);
-
-		b = $("<button>Import</button>");
-
-		b.click(function() {
-			var scene = current_scene;
-			if($(`.importer_toggle[data-key="Tutorial Maps"][style*='background: red;']`).length>0){
-				window.ScenesHandler.import_completed_scene_with_drawings(scene)
-			}
-			else{
-				$("#scene_properties input[name='player_map']").val(scene.player_map);
-				$("#scene_properties input[name='dm_map']").val(scene.dm_map);
-				$("#scene_properties input[name='title']").val(scene.title);
-				$("#scene_properties input[name='scale']").val(scene.scale);
-
-				
-				scene.player_map_is_video === "1" || scene.player_map.includes("youtube") ?
-					$("#player_map_is_video_toggle").addClass('rc-switch-checked') : 
-					$("#player_map_is_video_toggle").removeClass('rc-switch-checked')
-				
-			
-				scene.dm_map_is_video === "1" ?
-					$("dm_map_is_video_toggle").addClass('rc-switch-checked') : 
-					$("dm_map_is_video_toggle").removeClass('rc-switch-checked')
-
-
-				if (typeof scene.uuid !== "undefined")
-					$("#scene_properties input[name='uuid']").val(scene.uuid);
-
-				if (typeof scene.dm_map_usable !== "undefined")
-					$("#scene_properties input[name='dm_map_usable']").val(scene.dm_map_usable);
-
-				if (typeof scene.hpps !== "undefined")
-					$("#scene_properties input[name='hpps']").val(scene.hpps);
-				if (typeof scene.grid !== "undefined")
-					$("#scene_properties input[name='grid']").val(scene.grid);
-				if (typeof scene.vpps !== "undefined")
-					$("#scene_properties input[name='vpps']").val(scene.vpps);
-				if (typeof scene.snap !== "undefined")
-					$("#scene_properties input[name='snap']").val(scene.snap);
-				if (typeof scene.fpsq !== "undefined")
-					$("#scene_properties input[name='fpsq']").val(scene.fpsq);
-				if (typeof scene.upsq !== "undefined")
-					$("#scene_properties input[name='upsq']").val(scene.upsq);
-				if (typeof scene.offsetx !== "undefined")
-					$("#scene_properties input[name='offsetx']").val(scene.offsetx);
-				if (typeof scene.offsety !== "undefined")
-					$("#scene_properties input[name='offsety']").val(scene.offsety);
-				if (typeof scene.grid_subdivided !== "undefined")
-					$("#scene_properties input[name='grid_subdivided']").val(scene.grid_subdivided);
-				if (typeof scene.scale_factor !== "undefined")
-					$("#scene_properties input[name='scale_factor']").val(scene.scale_factor);
-
-				$("#mega_importer").remove();
-			
-				validate_image_input($("input[name=player_map]")[0])
-				validate_image_input($("input[name=dm_map]")[0])
-			}
-
-			
-		});
-
-		entry.append($("<div>").append(b));
-		area.append(entry);
-	}
-
-	footer = $("#importer_footer");
-	footer.empty();
-
-	prev = $("<button>PREV</button>");
-	if (start == 0)
-		prev.attr("disabled", "disabled");
-
-	prev.click(function() {
-		fill_importer(scene_set, start - 8, searchState);
-	})
-
-	next = $("<button>NEXT</button>");
-	if (i == scene_set.length)
-		next.attr("disabled", "disabled");
-	next.click(function() {
-		fill_importer(scene_set, start + 8, searchState);
-	});
-
-	buttons = $("<div/>");
-
-	buttons.css("right", "0");
-	buttons.css("position", "absolute");
-
-	buttons.append(prev);
-	buttons.append(next);
-	buttons.addClass
-	footer.append(buttons);
-
-
-	let pageNumbersDiv = document.createElement('div');
-	pageNumbersDiv.classList.add('page-number');
-
-	let pageSelect = document.createElement('input');
-	pageSelect.classList.add('styled-number-input');
-	pageSelect.value = pageNumber;
-	pageSelect.addEventListener('change', () => {
-		const val = pageSelect.value;
-		if (val && val >= 0 && val <= totalPages && val > 0) {
-			fill_importer(scene_set, (val * 8) - 8, searchState);
-		}
-	})
-
-	let totalPagesSpan = document.createElement('span');
-	totalPagesSpan.innerText = `/ ${totalPages}`;
-	totalPagesSpan.style.marginLeft = '5px';
-	pageNumbersDiv.append(pageSelect);
-	pageNumbersDiv.append(totalPagesSpan);
-	footer.append(pageNumbersDiv);
-
-	if(scene_set.length == 0){
-		area.append(`<div style='border:none !important;'>There were no maps/handouts found in this chapter</div>`)
-	}
-
-	let mapSearchContainer = document.createElement('div');
-	let mapSearchLabel = document.createElement('span');
-	mapSearchLabel.innerText = "Search By Title: ";
-	let mapSearchElement = document.createElement('input');
-	mapSearchElement.value = searchState;
-	mapSearchElement.addEventListener('change', () => {
-		const value = mapSearchElement.value;
-		if (value) {
-			let clonedScenes = JSON.parse(JSON.stringify(scene_set));
-			let filteredScenes = clonedScenes.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
-			fill_importer(filteredScenes, start, value);
-		} else {
-			if($('#chapter_select').length > 0){
-				display_scenes();
-			}
-			else{
-				fill_importer(PRESET[$(`.importer_toggle[style*='background: red']`).attr('data-key')], 0);
-			}
-		}
-	});
-	mapSearchContainer.classList.add('mapSearch');
-	mapSearchContainer.append(mapSearchLabel);
-	mapSearchContainer.append(mapSearchElement);
-	footer.append(mapSearchContainer);
 }
 
 function mega_importer(DDB = false, ddbSource) {
@@ -2210,6 +1946,13 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 		};
 		AboveApi.migrateScenes(window.gameId, [importData])
 			.then(() => {
+				if(importData.notes != undefined){
+					for(let id in importData.notes){
+						window.JOURNAL.notes[id] = importData.notes[id];
+					}
+					delete importData.notes;
+					window.JOURNAL.persist();
+				}
 				window.ScenesHandler.scenes.push(importData);
 				did_update_scenes();
 				$(`.scene-item[data-scene-id='${importData.id}'] .dm_scenes_button`).click();
