@@ -708,7 +708,7 @@ div#scene_selector,
 }
 
 
-input[name='darkness_filter_number']{
+input[type="number"][name='darkness_filter_number']{
     width:50px;
     font-size:12px;
 }
@@ -877,14 +877,15 @@ input {
 
 #mega_importer {
     width:100%;
-    height:100%;
+    height: calc(100% - 16px);
+    top: 15px;
     z-index: 10000;
     position: absolute;
 }
 
 #sources-import-main-container {
     top: 86px;
-    left: 100px;
+    right: 390px;
     height: calc(100% - 170px);
     width: calc(100% - 500px);
     position: fixed !important;
@@ -895,8 +896,8 @@ input {
     background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 #sources-import-main-container .sidebar-panel-loading-indicator svg{
-    padding: 0px 20% !important;
-
+    margin: 0px !important;
+    height: calc(100% - 35px);
 }
 #sources-import-main-container .sidebar-panel-loading-indicator{
     top: 5px !important;
@@ -917,6 +918,38 @@ input {
     width:100%;
     height:100%;
 }
+
+#sources-import-content-container .listing-card__body,
+#mega_importer .listing-card__body{
+    min-width: 200px;
+}
+
+@media (min-width: 728px){
+    #sources-import-content-container .card-listing .listing-card,
+    #mega_importer .card-listing .listing-card {
+        width: 50%;
+
+    }
+    #sources-import-content-container .listing-card__title,
+    #mega_importer .listing-card__title{
+        font-size: 18px;
+    }
+}
+@media (min-width: 1750px){
+    #sources-import-content-container .card-listing .listing-card,
+    #mega_importer .card-listing .listing-card
+    {
+        width: 33.33333%;
+    }
+    #sources-import-content-container .listing-card__title,
+    #mega_importer .listing-card__title{
+        font-size: 25px;
+    }
+}
+
+
+
+
 #mega_importer.source_select {
     display: flex;
 }

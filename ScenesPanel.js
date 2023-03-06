@@ -267,7 +267,7 @@ function edit_scene_dialog(scene_id) {
 
 
 
-	adjust_create_import_edit_container(dialog);
+	adjust_create_import_edit_container(dialog, undefined, undefined, 1000);
 
 	var container = scene_properties;
 
@@ -1985,7 +1985,7 @@ function load_sources_iframe_for_map_import() {
 	iframe.attr("src", `/sources`);
 }
 
-function adjust_create_import_edit_container(content='', empty=true, title=''){
+function adjust_create_import_edit_container(content='', empty=true, title='', width100Minus=500){
 	if($(`#sources-import-main-container`).length>0 ){
 		let existingContainer = $('#sources-import-content-container');
 		if(empty==true) {
@@ -2022,6 +2022,8 @@ function adjust_create_import_edit_container(content='', empty=true, title=''){
 		});
 		$(document.body).append(mainContainer);
 	}
+	$(`#sources-import-main-container`).css('width', `calc(100% - ${width100Minus}px)`)
+
 }
 
 
