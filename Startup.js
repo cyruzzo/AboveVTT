@@ -17,6 +17,7 @@ $(function() {
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
       .then(() => {                   // load settings
+        undefined.mikedavetest
         window.EXPERIMENTAL_SETTINGS = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier

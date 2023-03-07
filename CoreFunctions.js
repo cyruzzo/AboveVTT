@@ -427,7 +427,7 @@ function normalize_scene_urls(scenes) {
 
 async function look_for_github_issue(searchTerm) {
   console.log("look_for_github_issue", searchTerm);
-  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
+  const request = await fetch("https://api.github.com/repos/vlaminck/AboveVTT/issues?labels=bug", { credentials: "omit" });
   const response = await request.json();
   console.log("look_for_github_issue", response);
   const filteredResponse = response.filter(issue => issue.title.includes(searchTerm) || issue.body.includes(searchTerm));
@@ -446,13 +446,13 @@ async function look_for_github_issue(searchTerm) {
 }
 
 async function fetch_github_issue_comments(issueNumber) {
-  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
+  const request = await fetch("https://api.github.com/repos/vlaminck/AboveVTT/issues?labels=bug", { credentials: "omit" });
   const response = await request.json();
   console.log(response);
   return response;
 }
 
 function open_github_issue(title, body) {
-  const url = `https://github.com/cyruzzo/AboveVTT/issues/new?labels=bug&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`
+  const url = `https://github.com/vlaminck/AboveVTT/issues/new?labels=bug&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`
   window.open(url, '_blank');
 }
