@@ -79,7 +79,7 @@ function showError(error, ...extraInfo) {
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
-        <div id="error-message-body">An unexpected error occurred. Please report this via the AboveVTT Discord.</div>
+        <div id="error-message-body">An unexpected error occurred.</div>
         <pre id="error-message-stack"></pre>
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
