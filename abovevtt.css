@@ -2000,7 +2000,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 100px;
+    top: 0;
+    max-height: 100%;
+    overflow: auto;
     left: 0;
     right: 0;
     margin: auto;
