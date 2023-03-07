@@ -5733,6 +5733,7 @@ div.ddbc-tab-options--layout-pill>button{
     height: 100%;
     position: absolute;
     z-index: 9;
+    mix-blend-mode: lighten;
 }
 .aura-element.islight{
     filter:blur(10px);
