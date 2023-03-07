@@ -79,10 +79,13 @@ function showError(error, ...extraInfo) {
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
-        <button id="close-error-button">Close</button>
-        <button id="copy-error-button">Copy Error Message</button>
         <div id="error-message-body">An unexpected error occurred. Please report this via the AboveVTT Discord.</div>
         <pre id="error-message-stack"></pre>
+        <div id="error-github-issue"></div>
+        <div class="error-message-buttons">
+            <button id="close-error-button">Close</button>
+            <button id="copy-error-button">Copy Error Message</button>
+        </div>
       </div>
     `);
     $(document.body).append(container);
@@ -111,10 +114,47 @@ function showError(error, ...extraInfo) {
     .append(stack);
 
   $("#close-error-button").on("click", removeError);
+
   $("#copy-error-button").on("click", function () {
     const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
     copy_to_clipboard("```\n"+textToCopy+"\n```");
   });
+
+  look_for_github_issue(error.message)
+    .then(issues => {
+      console.log("look_for_github_issue issues", issues);
+      if (issues.length > 0) {
+        console.log("look_for_github_issue", `appending ${issues.length} issues`);
+        const ul = $(`<ul style="list-style: inside"></ul>`);
+        $("#error-github-issue").append(`<p>Good News! We found these matching issues:</p>`);
+        $("#error-github-issue").append(ul);
+        issues.forEach(issue => {
+          const li = $(`<li><a href="${issue.html_url}" target="_blank" style="text-decoration: unset;color: -webkit-link;">${issue.title}</a></li>`);
+          ul.append(li);
+          if (issue.labels.find(l => l.name === "workaround")) {
+            li.addClass("github-issue-workaround");
+          }
+        });
+      }
+      if ($("#create-github-button").length === 0) {
+        $("#error-github-issue").append(`<div style="margin-top:20px;">Creating a Github Issue <i>(account required)</i> is very helpful. It gives the developers all the details they need to fix the bug. Alternatively, you can use the copy "Copy Error Message" button and then paste it on the AboveVTT discord or subreddit and a developer will eventually create a Github Issue for it.</div>`);
+        const githubButton = $(`<button id="create-github-button">Create Github Issue</button>`);
+        githubButton.click(function() {
+          const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
+          const errorBody = "```\n"+textToCopy+"\n```";
+          console.log("look_for_github_issue", `appending createIssueUrl`, error.message, errorBody);
+          open_github_issue(error.message, errorBody);
+        });
+        $("#above-vtt-error-message .error-message-buttons").append(githubButton);
+      }
+    })
+    .catch(githubError => {
+      console.warn("look_for_github_issue", "Failed to look for github issues", githubError);
+    })
+    .finally(() => {
+      console.log("look_for_github_issue finally");
+    })
+  ;
 }
 
 
@@ -383,4 +423,36 @@ function normalize_scene_urls(scenes) {
     dm_map: parse_img(sceneData.dm_map),
     player_map: parse_img(sceneData.player_map)
   }));
+}
+
+async function look_for_github_issue(searchTerm) {
+  console.log("look_for_github_issue", searchTerm);
+  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
+  const response = await request.json();
+  console.log("look_for_github_issue", response);
+  const filteredResponse = response.filter(issue => issue.title.includes(searchTerm) || issue.body.includes(searchTerm));
+  console.log("look_for_github_issue before sort", filteredResponse)
+  filteredResponse.sort((a, b) => {
+    if (a.labels.find(l => l.name === "workaround")) {
+      return -1;
+    }
+    if (b.labels.find(l => l.name === "workaround")) {
+      return 1;
+    }
+    return 0;
+  });
+  console.log("look_for_github_issue after sort", filteredResponse);
+  return filteredResponse;
+}
+
+async function fetch_github_issue_comments(issueNumber) {
+  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
+  const response = await request.json();
+  console.log(response);
+  return response;
+}
+
+function open_github_issue(title, body) {
+  const url = `https://github.com/cyruzzo/AboveVTT/issues/new?labels=bug&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`
+  window.open(url, '_blank');
 }

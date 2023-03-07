@@ -1997,13 +1997,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 #above-vtt-error-message {
+    display: flex;
+    flex-direction: column;
     position: fixed;
     top: 100px;
     left: 0;
     right: 0;
     margin: auto;
     width: 60%;
-    height: 60%;
     min-width: 500px;
     font-size: 16px;
     border: 5px solid #d54f4f;
@@ -2013,20 +2014,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     box-shadow: #5c7080 0px 8px 24px;
     background: #f9f9f9;
 }
-#above-vtt-error-message #error-message-body {
+#above-vtt-error-message .above-vtt-error-message-header {
     margin: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+#above-vtt-error-message #error-message-body {
 }
 #above-vtt-error-message #error-message-stack {
     padding: 20px;
     background: rgb(92, 112, 128, 10%);
     overflow: scroll;
-    position: absolute;
-    height: calc(100% - 180px);
-    width: calc(100% - 90px);
+    position: relative;
 }
 #above-vtt-error-message h2 {
     text-align: center;
-    margin-bottom: 40px;
 }
 #above-vtt-error-message button {
     float: right;
@@ -2042,6 +2044,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     align-items: center;
     text-align: center;
     text-transform: uppercase;
+}
+#above-vtt-error-message .github-issue-workaround:before {
+    content: "workaround available";
+    background-color: #C2E0C6;
+    padding: 4px;
+    border-radius: 12px;
+    margin-right: 4px;
 }
 
 #btn_add_chapter {
