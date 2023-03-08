@@ -3114,10 +3114,11 @@ function redraw_light(){
 
 
   	if(selectedIds.length == 0 || found){	
-  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true)
-  			continue; 
   		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision)
+  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined )
+  			continue; 
+  		
+  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
   			continue;
 
 
