@@ -2021,8 +2021,6 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     font-size: 24px;
     font-weight: bold;
 }
-#above-vtt-error-message #error-message-body {
-}
 #above-vtt-error-message #error-message-stack {
     padding: 20px;
     background: rgb(92, 112, 128, 10%);
