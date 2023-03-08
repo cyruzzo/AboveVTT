@@ -67,11 +67,12 @@ function is_gamelog_popout() {
 
 function removeError() {
   $("#above-vtt-error-message").remove();
+  remove_loading_overlay(); // in case there was an error starting up, remove the loading overlay, so they're not completely stuck
 }
 
 /** Displays an error to the user
  * @param {Error} error an error object to be parsed and displayed
- * @param {(string|*[])[]} extraInfo other relevant information */
+ * @param {string|*[]} extraInfo other relevant information */
 function showError(error, ...extraInfo) {
 
   let container = $("#above-vtt-error-message");
@@ -79,7 +80,6 @@ function showError(error, ...extraInfo) {
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
-        <div id="error-message-body">An unexpected error occurred.</div>
         <pre id="error-message-stack"></pre>
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
