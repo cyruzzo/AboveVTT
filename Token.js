@@ -1459,19 +1459,19 @@ class Token {
 			}
 			if(this.options.light1 == undefined){
 				this.options.light1 ={
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 1)'
 				}
 			}
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}
 			if(this.options.vision == undefined){
 				this.options.vision = {
-					feet: 0,
+					feet: 60,
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}
@@ -1519,19 +1519,19 @@ class Token {
 				tok.attr('data-group-id', this.options.groupId)
 			if(this.options.light1 == undefined){
 				this.options.light1 ={
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 1)'
 				}
 			}
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}
 			if(this.options.vision == undefined){
 				this.options.vision = {
-					feet: 0,
+					feet: 60,
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}

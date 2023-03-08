@@ -5749,7 +5749,8 @@ div.ddbc-tab-options--layout-pill>button{
     z-index: 9;
     mix-blend-mode: lighten;
 }
-.aura-element.islight{
+.aura-element.islight,
+.aura-element[id*='vision_']{
     filter:blur(10px);
     z-index: 9;
 }
