@@ -2620,8 +2620,8 @@ function deselect_all_tokens() {
 	remove_selected_token_bounding_box();
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
-	if(window.DM && darknessPercent < 25){
-   	 	darknessPercent = 25; 	
+	if(window.DM && darknessPercent < 40){
+   	 	darknessPercent = 40; 	
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
