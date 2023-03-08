@@ -51,4 +51,4 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -H "Content-Type: application/octet-stream" \
             ${{env.upload_url}}?name=AboveVTT-${{inputs.version_name}}.zip \
-            --data-binary "AboveVTT-${{inputs.version_name}}.zip"
+            --data-binary "@AboveVTT-${{inputs.version_name}}.zip"
