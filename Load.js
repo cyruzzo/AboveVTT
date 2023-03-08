@@ -64,6 +64,7 @@ window.scripts = [
 	{ src: "color-picker.js" },
 	{ src: "mousetrap.1.6.5.min.js" },
 	{ src: "peerjs.min.js" },
+	{ src: "fuse.min.js" },
 	// AboveVTT Files
 	{ src: "AboveApi.js" },
 	{ src: "DDBApi.js" },
