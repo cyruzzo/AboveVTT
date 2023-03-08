@@ -32,9 +32,6 @@ jobs:
             echo setting prerelease=true
             echo "prerelease=true" >> $GITHUB_ENV
           fi
-      - name: "build zip"
-        run: |
-          git archive -o "AboveVTT-${{inputs.version_name}}.zip" HEAD
       - name: "publish release"
         run: |
           release_json=$(curl -X POST -H 'Authorization: Bearer ${{secrets.GITHUB_TOKEN}}' https://api.github.com/repos/${GITHUB_REPOSITORY}/releases -d '{ "tag_name": "${{inputs.version_name}}", "name": "${{inputs.version_name}}", "prerelease": ${{env.prerelease}}, "generate_release_notes": true }')
@@ -44,6 +41,7 @@ jobs:
           echo "upload_url=${upload_url}" >> $GITHUB_ENV
       - name: "upload release asset"
         run: |
+          git archive -o "AboveVTT-${{inputs.version_name}}.zip" HEAD
           curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
