@@ -4492,13 +4492,15 @@ div#selectedTokensBorderRotationGrabberConnector  {
 .token-config-aura-wrapper .token-image-modal-footer-select-wrapper,
 .token-image-modal-footer-title,
 .menu-outer-aura,
-.menu-inner-aura {
+.menu-inner-aura,
+.menu-vision-aura {
     display: flex;
     align-self: center;
     line-height: 20px;
 }   
 .menu-outer-aura,
-.menu-inner-aura{
+.menu-inner-aura,
+.menu-vision-aura{
     margin: 2px 0px;
 }
 #tokenOptionsContainer div.token-image-modal-url-label-wrapper{
@@ -4525,8 +4527,9 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
 
 .menu-outer-aura h3,
-.menu-inner-aura h3{
-    min-width: 50px;
+.menu-inner-aura h3,
+.menu-vision-aura h3{
+    min-width: 51px;
     margin-top: 0px;
 }
 
