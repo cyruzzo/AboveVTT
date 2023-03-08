@@ -2343,17 +2343,17 @@ function default_options() {
 		auraOwned: false,
 		auraislight: true,
 		light1: {
-			feet: "1000",
+			feet: "0",
 			color: "rgba(255, 255, 255, 1)"
 		},
 		light2: {
-			feet: "1000",
+			feet: "0",
 			color: "rgba(255, 255, 255, 0.5)"
 		},
 		lightVisible: false,
 		lightOwned: false,
 		vision:{
-			feet: '0',
+			feet: '60',
 			color: "rgba(255, 255, 255, 0.5)"
 		}
 		
@@ -2771,7 +2771,7 @@ function setTokenLight (token, options) {
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							`;
 		const tokenId = token.attr("data-id").replaceAll("/", "");
-		if (token.parent().parent().find("#light_" + tokenId).length > 0) {
+		if (token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").length > 0) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
