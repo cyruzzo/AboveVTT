@@ -1364,8 +1364,8 @@ class MessageBroker {
 
 			let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
    	 	let darknessPercent = 100 - parseInt(darknessfilter);
-   	 	if(window.DM && darknessPercent < 25){
-   	 		darknessPercent = 25;
+   	 	if(window.DM && darknessPercent < 40){
+   	 		darknessPercent = 40;
    	 		$('#raycastingCanvas').css('opacity', '0');
    	 	}
    	 	else if(window.DM){

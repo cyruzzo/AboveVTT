@@ -306,7 +306,6 @@ class Token {
 		delete window.TOKEN_OBJECTS[id];
 		delete window.all_token_objects[id];
 		$("#aura_" + id.replaceAll("/", "")).remove();
-		$("#light_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {
 			if (sync) {
@@ -1460,13 +1459,19 @@ class Token {
 			}
 			if(this.options.light1 == undefined){
 				this.options.light1 ={
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 1)'
 				}
 			}
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
-					feet: 1000,
+					feet: 0,
+					color: 'rgba(255, 255, 255, 0.5)'
+				}
+			}
+			if(this.options.vision == undefined){
+				this.options.vision = {
+					feet: 60,
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}
@@ -1514,24 +1519,31 @@ class Token {
 				tok.attr('data-group-id', this.options.groupId)
 			if(this.options.light1 == undefined){
 				this.options.light1 ={
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 1)'
 				}
 			}
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
-					feet: 1000,
+					feet: 0,
 					color: 'rgba(255, 255, 255, 0.5)'
 				}
 			}
-			if(this.options.player_owned && this.options.reveal_light != 'never' && this.options.reveal_light != 'los'){
-				this.options.reveal_light = 'always'
+			if(this.options.vision == undefined){
+				this.options.vision = {
+					feet: 60,
+					color: 'rgba(255, 255, 255, 0.5)'
+				}
 			}
-			if(this.options.reveal_light == undefined || this.options.reveal_light == false){
-				this.options.reveal_light = 'never';
-			}
-			if(this.options.reveal_light == true){
-				this.options.reveal_light = 'los'
+
+			if(this.options.reveal_light != undefined){
+				if(this.options.reveal_light == 'always' || this.options.reveal_light == true){
+					this.options.share_vision = true;
+				}
+				else{
+					this.options.share_vision = false;
+				}
+				delete this.options.reveal_light;
 			}
 
 			let tokenImage
@@ -1710,6 +1722,13 @@ class Token {
 								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
 								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
 							}
+							el = token.parent().parent().find("#vision_" + token.attr("data-id").replaceAll("/", ""));
+							if (el.length > 0) {
+								const auraSize = parseInt(el.css("width"));
+
+								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
+								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
+							}
 
 							for (let tok of $(".token.tokenselected")){
 								let id = $(tok).attr("data-id");
@@ -1736,6 +1755,13 @@ class Token {
 										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
 									}
 									selEl = $(tok).parent().parent().find("#light_" + id.replaceAll("/", ""));
+									if (selEl.length > 0) {
+										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
+
+										selEl.css("top", `${newtop/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
+										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
+									}
+									selEl = $(tok).parent().parent().find("#vision_" + id.replaceAll("/", ""));
 									if (selEl.length > 0) {
 										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
 
@@ -1848,6 +1874,11 @@ class Token {
 									el.attr("data-left", el.css("left").replace("px", ""));
 									el.attr("data-top", el.css("top").replace("px", ""));
 								}
+								el = $("#vision_" + id.replaceAll("/", ""));
+								if (el.length > 0) {
+									el.attr("data-left", el.css("left").replace("px", ""));
+									el.attr("data-top", el.css("top").replace("px", ""));
+								}
 							}
 
 						}												
@@ -1859,6 +1890,11 @@ class Token {
 						el.attr("data-top", el.css("top").replace("px", ""));
 					}
 					el = $("#light_" + self.options.id.replaceAll("/", ""));
+					if (el.length > 0) {
+						el.attr("data-left", el.css("left").replace("px", ""));
+						el.attr("data-top", el.css("top").replace("px", ""));
+					}
+					el = $("#vision_" + self.options.id.replaceAll("/", ""));
 					if (el.length > 0) {
 						el.attr("data-left", el.css("left").replace("px", ""));
 						el.attr("data-top", el.css("top").replace("px", ""));
@@ -2006,6 +2042,15 @@ class Token {
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
+					el = ui.helper.parent().parent().find("#vision_" + ui.helper.attr("data-id").replaceAll("/", ""));
+					if (el.length > 0) {
+						let currLeft = parseFloat(el.attr("data-left"));
+						let currTop = parseFloat(el.attr("data-top"));
+						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+					}
 
 
 
@@ -2071,6 +2116,15 @@ class Token {
 									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
 								selEl = $(tok).parent().parent().find("#light_" + id.replaceAll("/", ""));
+								if (selEl.length > 0) {
+									let currLeft = parseFloat(selEl.attr("data-left"));
+									let currTop = parseFloat(selEl.attr("data-top"));
+									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+								}
+								selEl = $(tok).parent().parent().find("#vision_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
@@ -2289,15 +2343,19 @@ function default_options() {
 		auraOwned: false,
 		auraislight: true,
 		light1: {
-			feet: "1000",
+			feet: "0",
 			color: "rgba(255, 255, 255, 1)"
 		},
 		light2: {
-			feet: "1000",
+			feet: "0",
 			color: "rgba(255, 255, 255, 0.5)"
 		},
 		lightVisible: false,
 		lightOwned: false,
+		vision:{
+			feet: '60',
+			color: "rgba(255, 255, 255, 0.5)"
+		}
 		
 	};
 }
@@ -2562,8 +2620,8 @@ function deselect_all_tokens() {
 	remove_selected_token_bounding_box();
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
-	if(window.DM && darknessPercent < 25){
-   	 	darknessPercent = 25; 	
+	if(window.DM && darknessPercent < 40){
+   	 	darknessPercent = 40; 	
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
@@ -2681,6 +2739,7 @@ function setTokenLight (token, options) {
 
 	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
@@ -2696,45 +2755,55 @@ function setTokenLight (token, options) {
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							`;
+
+
+
+		const visionRadius = visionSize ? (visionSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
+		const visionBg = `radial-gradient(${options.vision.color} ${visionRadius}px, #00000000 ${visionRadius}px)`;
+		const totalVisionSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * visionSize);
+		const visionAbsPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalVisionSize) / 2;
+		const visionStyles = `width:${totalVisionSize }px;
+							height:${totalVisionSize }px;
+							left:${visionAbsPosOffset}px;
+							top:${visionAbsPosOffset}px;
+							background-image:${visionBg};
+							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							`;
 		const tokenId = token.attr("data-id").replaceAll("/", "");
-		if (token.parent().parent().find("#light_" + tokenId).length > 0) {
+		if (token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").length > 0) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
+			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
-			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}' /></div>`);
+			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}'></div><div class='aura-element' id="vision_${tokenId}" data-id='${token.attr("data-id")}' style='${visionStyles}'></div></div>`);
 			lightElement.contextmenu(function(){return false;});
 			$("#scene_map_container").prepend(lightElement);
 		}
 		if(window.DM){
-			(options.hidden && options.reveal_light == 'never') ? token.parent().parent().find("#light_" + tokenId).css("opacity", 0.5)
-			: token.parent().parent().find("#light_" + tokenId).css("opacity", 1)
+			(options.hidden && options.reveal_light == 'never') ? token.parent().parent().find("#vision_" + tokenId).css("opacity", 0.5)
+			: token.parent().parent().find("#vision_" + tokenId).css("opacity", 1)
 		}
 		else{
-			options.hidden && !options.auraislight ? token.parent().parent().find("#light_" + tokenId).hide()
-						: token.parent().parent().find("#light_" + tokenId).show()
+			options.hidden ? token.parent().parent().find("#vision_" + tokenId).hide()
+						: token.parent().parent().find("#vision_" + tokenId).show()
 		}
-		if(options.auraislight){		
-			token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
-		}
-		else{
-			token.parent().parent().find("#light_" + tokenId).toggleClass("islight", false);
-		}
-
+		token.parent().parent().find("#light_" + tokenId).show()
+		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
 		
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
-		token.parent().parent().find("#light_" + tokenId).remove();
 		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).remove();
 	}
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		
-		let lights = $("[id^='light_']");
-		for(let i = 0; i < lights.length; i++){
-			if(!lights[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light != 'always' && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.reveal_light != 'los'){
-				$(lights[i]).css("visibility", "hidden");
+		let vision = $("[id^='vision']");
+		for(let i = 0; i < vision.length; i++){
+			if(!vision[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.share_vision != true){
+				$(vision[i]).css("visibility", "hidden");
 			}		
-			if(playerTokenId == undefined && window.TOKEN_OBJECTS[$(lights[i]).attr("data-id")].options.itemType == 'pc'){
-				$(lights[i]).css("visibility", "visible");
+			if(playerTokenId == undefined && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.itemType == 'pc'){
+				$(vision[i]).css("visibility", "visible");
 			}	
 		}
 	}
