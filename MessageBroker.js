@@ -1353,7 +1353,6 @@ class MessageBroker {
 			
 
 			reset_canvas();
-			redraw_light_walls();
 			redraw_fog();
 			redraw_drawings();
 
@@ -1429,16 +1428,7 @@ class MessageBroker {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
-			redraw_light_walls();
-			let waitForWalls = function(){
-			    if(typeof window.walls !== "undefined"){
-			        redraw_fog();
-			        redraw_light();
-			    }
-			    else{
-			        setTimeout(waitForWalls, 250);
-			    }
-			}
+			redraw_fog();
 			//$("#fog_overlay").show();
 		}
 		else {
@@ -1454,7 +1444,8 @@ class MessageBroker {
 			window.DRAWINGS = [];
 		}
 
-
+		redraw_light_walls();
+		redraw_light();
 
 
 		remove_loading_overlay();
