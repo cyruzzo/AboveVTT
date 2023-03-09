@@ -36,9 +36,30 @@ const builtInTokens = [
     "square": true
   },
   {
+    "name": "Map Pin",
+    "folderPath": "/Overlays",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1083353625113399376/mappin.png",
+    "disableborder": true,
+    "square": true
+  },
+  {
     "name": "Nebula",
     "folderPath": "/Overlays",
     "image": "https://drive.google.com/file/d/1AeoKU444D3DrtjebegH0yRXNolrqw89K/view?usp=sharing",
+    "disableborder": true,
+    "square": true
+  },
+  {
+    "name": "Skull",
+    "folderPath": "/Overlays",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1083353624652038215/skull.png",
+    "disableborder": true,
+    "square": true
+  },
+  {
+    "name": "Star",
+    "folderPath": "/Overlays",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1083353624891105290/star.png",
     "disableborder": true,
     "square": true
   },
