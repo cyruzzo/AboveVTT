@@ -254,16 +254,26 @@ function find_pc_by_player_id(idOrSheet) {
 async function rebuild_window_pcs() {
   const campaignCharacters = await DDBApi.fetchCampaignCharacterDetails(window.gameId);
   window.pcs = campaignCharacters.map(characterData => {
+    // we are not making a shortcut for `color` because the logic is too complex. See color_from_pc_object for details
     return {
-      decorations: characterData.decorations,
-      id: characterData.characterId,
-      image: characterData.decorations?.avatar?.avatarUrl || defaultAvatarUrl,
-      isAssignedToPlayer: characterData.isAssignedToPlayer,
-      name: characterData.name,
-      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`,
-      userId: characterData.userId,
+      ...characterData,
+      image: characterData.decorations?.avatar?.avatarUrl || characterData.avatarUrl || defaultAvatarUrl,
+      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
     }
   });
+}
+
+async function update_window_pc(characterId) {
+  const allCharacterDetails = await DDBApi.fetchCharacterDetails([characterId]);
+  const characterData = allCharacterDetails[0];
+  const index = window.pcs.findIndex(pc => pc.id.toString() === characterId.toString());
+  const oldData = window.pcs[index];
+  window.pcs[index] = {
+    ...oldData,
+    ...characterData,
+    image: characterData.decorations?.avatar?.avatarUrl || defaultAvatarUrl,
+    sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
+  };
 }
 
 async function harvest_game_id() {

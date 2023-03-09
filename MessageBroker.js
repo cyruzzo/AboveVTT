@@ -1502,6 +1502,9 @@ class MessageBroker {
 	}
 
 	handleCharacterUpdate(msg){
+		update_window_pc(msg.data.characterId).catch(error => {
+			console.warn("handleCharacterUpdate failed to update_window_pc", msg, error);
+		});
 		const characterId = msg.data.characterId;
 		const pc = window.pcs.find(pc => pc.sheet.includes(characterId));
 		if (pc) {
