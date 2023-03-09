@@ -233,7 +233,7 @@ function avtt_settings() {
 				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
 				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
 			],
-			defaultValue: true
+			defaultValue: false
 		},
 		{
 			name: 'streamDiceRolls',
@@ -263,7 +263,7 @@ function avtt_settings() {
 				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
 				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
 			],
-			defaultValue: true
+			defaultValue: false
 		}
 	];
 
