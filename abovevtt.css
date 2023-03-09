@@ -5751,6 +5751,7 @@ div.ddbc-tab-options--layout-pill>button{
 .aura-element[id*='vision_']{
     filter:blur(10px);
     z-index: 9;
+    mix-blend-mode: lighten;
 }
 #scene_map{
     mix-blend-mode: multiply;
