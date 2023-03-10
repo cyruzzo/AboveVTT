@@ -120,16 +120,20 @@ function observe_character_sheet_changes(documentToObserve) {
     mutationList.forEach(mutation => {
       switch (mutation.type) {
         case "attributes":{
-          if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
-            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
-          }        
-        }
-        case "childList":        
-          if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
-            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID}) //hp update from inputs
+          if(is_abovevtt_page()){
+            if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
+            }        
           }
-          if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ //if 0 health update
-            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
+        }
+        case "childList":   
+          if(is_abovevtt_page()){     
+            if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID}) //hp update from inputs
+            }
+            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ //if 0 health update
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
+            }
           }
           mutation.addedNodes.forEach(node => {
             if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
@@ -142,18 +146,20 @@ function observe_character_sheet_changes(documentToObserve) {
           });
           break;
         case "characterData":
-          if($(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
-          {
-            if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
+          if(is_abovevtt_page()){
+            if($(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
             {
+              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
+              {
+                window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
+              }
+              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){ // max_hp update from buttons
+                window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
+              }
+            }
+            if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
               window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
             }
-            if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){ // max_hp update from buttons
-              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
-            }
-          }
-          if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
-            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
           }
           if (typeof mutation.target.data === "string") {
             if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
