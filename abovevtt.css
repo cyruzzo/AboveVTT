@@ -1402,12 +1402,12 @@ div#combat_button{
 }
 
 #patreons {
-	padding-top:0px;
+	padding-top:10px;
     font-size: 8px;
 
-   -webkit-column-count: 9;
-      -moz-column-count: 9;
-           column-count: 9;
+   -webkit-column-count: 10;
+      -moz-column-count: 10;
+           column-count: 10;
 
    -webkit-column-gap: 20px;
       -moz-column-gap: 20px;
@@ -1418,6 +1418,22 @@ div#combat_button{
 	font-size: 11px;
 	font-weight:bold;
 }
+
+.patron-l0{
+    font-weight:bold;
+    font-size: 11px;
+    color:red;
+}
+
+.patron-l1{
+    font-weight:bold;
+    font-size: 10px;
+}
+
+.patron-l2{
+    font-weight:bold;
+}
+
 
 .player-card {
     box-shadow: 0 8px 16px -8px rgb(0 0 0 / 40%);
@@ -2195,14 +2211,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #splash {
     position: fixed;
-    transform: translate(0%, -4%);
-    top: 50px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    top: 30px;
+    right: 340px;
     margin: auto;
-    height: 740px;
-    width: 750px;
+    height: 700px;
+    text-align:center;
     z-index: 70001;
     border: 3px solid black;
     border-radius: 8px;

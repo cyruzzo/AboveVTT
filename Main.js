@@ -1192,16 +1192,14 @@ function init_splash() {
 	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
 	s.append("");
 	s.append(`
-	<div style='display:inline-block; vertical-align:top;width:300px;'>
+	<div style='display:inline-block; vertical-align:top;width:600px;'>
 	<div style='padding-top:10px;padding-bottom:10px;'>
-		This is a <b>FREE</b> passion project <b>still in development. Some bugs are to be expected</b>If you need help or want to report a bug <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>
+		This is a <b>FREE</b> opensource project, kept alive by developers contributing their time, Patrons chipping in with their cash, and users keeping alive the community. If you need help or want to report a bug reach out the <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> the AboveVTT community on discord</a>
 	</div>
 	<div class='splashLinks'>
 		<div class="splashLinkRow">
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://youtu.be/2GZ8q-hB7pg'>Youtube Tutorial</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></div>
-		</div>
-		<div class="splashLinkRow">
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></div>
 		</div>
@@ -1211,7 +1209,6 @@ function init_splash() {
 	</div>
 	`);
 
-	s.append('<iframe width="280" height="137" src="https://www.youtube.com/embed/2GZ8q-hB7pg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
 	cont.append(s);
 
 	//cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
@@ -1225,45 +1222,29 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
 	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Jordan Cohen","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Eric Invictus","Matthew Bennett","Hekkema","Nomad CLL","Vince Hamilton","D Martinez","airdragon11","William Wallace","Josh Ervin","Lazvon","Nic Ulrich"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","myrrh88","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","ThaFreaK","Avilar","Cyril Sneer","Mark Otten","Rollin Newcomb","Kristina Ziese","Erno Tolonen","Becky Egan","Geoffrey Boyd","Matt Dugger","Joseph Ramlow","Jonathan Campbell","Richard Morgan","Bill Croasmun","hidden_traitor"];
-	l3 = ["Daniel Wall","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","CraftyHobo","CrazyPitesh","Eduardo Villela","Paul Maloney","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Robert J Correa","Cistern","its Bonez","Michael Crane","Alexander Glass","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Joseph Pecor","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Mischa","AnyxKrypt","Torben Schwank","Unix Wizard","Andrew Thomas","Ciara McCumiskey","Daniel Long","David Meier","Thomas Thurner","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Jack Posey","Stephen Morrey","Cinghiale Frollo","Shawn Morriss","Tomi Skibinski","DM Eric V","Joey Lalor","Chris Thornton","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Sky Gewant","Reid Bollinger","Konrad Scheffel","Joseph Hensley","Chris Avis","Titus France","Michael Whittington","Simon Haldon","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jim Mapes","Jeffrey Voetsch","Jay Gattis","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Jason","Chris Hagmann","Taylor Hodgson-Scott","Tim Cortis","Timothy Yuen","Cody Pederson","Benjamin Moncier","Kerry Kilgour","Guillaume Carrier","Christian Fernandez","Rob S","DrZzs","PatrickJ","Oceanman","Michael Voltz","Beyond The Edges","Dreamdancer","Josh Taylor","Alex Johansen","Dominic M.","Brad Marsh","Kim Hoffman","Katherine McKinley","Colleen Shea","Tony","Jeff Cigrand","Dodzod","Anarchist GM","Purge Thunder","David House","Garrett","UnixBomber","Magnus Tanner","Taborxi","Dracon Dragon","Steve Hutchinson","OldTedG735","Blake","David Stidolph","Claudia Carpenter","JazzFurgeson","Santiago Pacheco","Chris Neves","Brian Jones","Bill Gruetzenbach","Danielle Goldstein","MasterKELP","Ryan Adams","SCrisp","LEO R LIBBY JR","Celtic Exile","BrotherGlacius","ismael cedeno","Jeremy Blosser","taylor tullis","Matt Kircher","NDT 0117","David J Morand","Stefan Velev","John Prince","Lauren Marie","David Russell","Dan Glass","Michael Terry","Lyman Green","Aindrium","wisdom_hunter","Howard Seal","Jos van Baren","Flux1","Anthony K Schlisser","Francesco Possati","Laurinel Gramatica","Joseph Lohrum","melissa penn","Jono Major"];
-
 
 	let shortener =  (p) => p.length>17 ? p.replaceAll(" ","").replaceAll("-","") : p;
-	l1 = l1.map(shortener);
-	l2 = l2.map(shortener);
-	l3 = l3.map(shortener);
 
-	l1div = $("<div class='patreons-title'>Masters</div>");
-	l1ul = $("<ul/>");
-	patreons.append(l1div);
-	patreons.append(l1ul);
-	for (i = 0; i < l1.length; i++)
-		l1ul.append($("<li/>").text(l1[i]));
+	let patrons_list=$("<ul/>");
 
-	l2div = $("<div class='patreons-title'>Heroes</div>");
-	l2ul = $("<ul/>");
-	patreons.append(l2div);
-	patreons.append(l2ul);
-	for (i = 0; i < l2.length; i++)
-		l2ul.append($("<li/>").html(l2[i]));
+	$.ajax({
+		url:'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/patrons.json',
+		success:function(data){
+			JSON.parse(data).patrons.forEach( (el)=>{
+				const li=$("<li/>").text( shortener(el.full_name));
+				li.addClass(el.class);
+				patrons_list.append(li);
+			});
+		}
+	});
 
-	l3div = $("<div class='patreons-title'>Local Heroes</div>");
-	l3ul = $("<ul/>");
-	patreons.append(l3div);
-	patreons.append(l3ul);
-	for (i = 0; i < l3.length; i++)
-		l3ul.append($("<li/>").text(l3[i].replaceAll(" ","")));
-
-	//patreons.append(l1div).append(l2div).append(l3div)
-
+	patreons.append(patrons_list);
 	cont.append(patreons);
 	cont.click(function() {
 		$("#splash").remove();
