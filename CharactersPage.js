@@ -120,13 +120,13 @@ function observe_character_sheet_changes(documentToObserve) {
     mutationList.forEach(mutation => {
       switch (mutation.type) {
         case "attributes":{
-            if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
-              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
-            }        
+          if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
+            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
+          }        
         }
         case "childList":        
           if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
-              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID}) //hp update from inputs
+            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID}) //hp update from inputs
           }
           if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ //if 0 health update
             window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
