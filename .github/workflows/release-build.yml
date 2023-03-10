@@ -32,6 +32,12 @@ jobs:
             echo setting prerelease=true
             echo "prerelease=true" >> $GITHUB_ENV
           fi
+          
+          printf "const AVTT_ENVIRONMENT = {\n" > environment.js
+          printf '"versionSuffix": "-test",\n' >> environment.js               
+          printf '"baseUrl": "https://services.abovevtt.net"\n' >> environment.js
+          printf '};\n' >> environment.js
+          cat environment.js
       - name: "build zip"
         run: |
           git archive -o "AboveVTT-${{inputs.version_name}}.zip" HEAD

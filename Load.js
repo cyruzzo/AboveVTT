@@ -66,6 +66,7 @@ window.scripts = [
 	{ src: "peerjs.min.js" },
 	{ src: "fuse.min.js" },
 	// AboveVTT Files
+	{ src: "environment.js" },
 	{ src: "AboveApi.js" },
 	{ src: "DDBApi.js" },
 	{ src: "AOETemplates.js" },

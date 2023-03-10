@@ -56,6 +56,7 @@
 		"spectrum-2.0.8.min.css",
 		"peerjs.min.js",
 		"fuse.min.js",
+		"environment.js",
 		"AboveApi.js",
 		"DDBApi.js",
 		"AjaxQueueModule.js",
