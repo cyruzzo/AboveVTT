@@ -1668,7 +1668,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         persist_token_customization(customization);
         
     };
-    colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+    colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
     colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
     colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
