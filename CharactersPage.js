@@ -120,6 +120,34 @@ function observe_character_sheet_changes(documentToObserve) {
     mutationList.forEach(mutation => {
       switch (mutation.type) {
         case "childList":
+          if(!window.DM && ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){
+            let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
+            if(tokenID != undefined){
+              let hp = $(mutation.target).parent().parent().find(`[aria-labelledby*='ct-health-summary-current-label']`).text();
+              let max_hp = $(mutation.target).parent().parent().find(`[aria-labelledby*='ct-health-summary-max-label']`).text();
+
+              window.TOKEN_OBJECTS[tokenID].options.hp = hp;
+              window.TOKEN_OBJECTS[tokenID].options.max_hp = max_hp;
+              if(window.PLAYER_STATS[tokenID] != undefined){
+                window.PLAYER_STATS[tokenID].hp = hp;
+                window.PLAYER_STATS[tokenID].max_hp = max_hp;
+              }
+
+              
+              window.TOKEN_OBJECTS[tokenID].place_sync_persist();
+            }
+            
+          }
+          if(!window.DM && $(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){
+            let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
+            if(tokenID != undefined){
+              window.TOKEN_OBJECTS[tokenID].options.hp = '0';
+              if(window.PLAYER_STATS[tokenID] != undefined){
+                window.PLAYER_STATS[tokenID].hp = '0';
+              }
+              window.TOKEN_OBJECTS[tokenID].place_sync_persist();
+            }
+          }
           mutation.addedNodes.forEach(node => {
             if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
               try {
@@ -129,8 +157,42 @@ function observe_character_sheet_changes(documentToObserve) {
               }
             }
           });
-          break;
+          break; 
         case "characterData":
+          if(!window.DM && $(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
+          {
+            if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label'))
+            {
+              let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
+              if(tokenID != undefined){
+                window.TOKEN_OBJECTS[tokenID].options.hp = mutation.target.data;
+                if(window.PLAYER_STATS[tokenID] != undefined){
+                  window.PLAYER_STATS[tokenID].hp = mutation.target.data;
+                }
+                window.TOKEN_OBJECTS[tokenID].place_sync_persist();
+              }
+            }
+            if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){
+              let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
+              if(tokenID != undefined){
+                window.TOKEN_OBJECTS[tokenID].options.max_hp = mutation.target.data;
+                if(window.PLAYER_STATS[tokenID] != undefined){
+                  window.PLAYER_STATS[tokenID].max_hp = mutation.target.data;
+                }
+                window.TOKEN_OBJECTS[tokenID].place_sync_persist();
+              }
+            }
+          }
+          if(!window.DM && $(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){
+            let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
+            if(tokenID != undefined){
+              window.TOKEN_OBJECTS[tokenID].options.ac = mutation.target.data;
+              if(window.PLAYER_STATS[tokenID] != undefined){
+                window.PLAYER_STATS[tokenID].ac = mutation.target.data;
+              }
+              window.TOKEN_OBJECTS[tokenID].place_sync_persist();
+            }
+          }
           if (typeof mutation.target.data === "string") {
             if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
               try {
