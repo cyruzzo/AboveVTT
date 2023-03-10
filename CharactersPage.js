@@ -4,6 +4,10 @@ $(function() {
   init_characters_pages();
 });
 
+const sendCharacterUpdateEvent = mydebounce(() => {
+  window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID});
+}, 4000);
+
 function init_characters_pages() {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
@@ -115,9 +119,7 @@ function observe_character_sheet_changes(documentToObserve) {
         console.log("inject_dice_roll failed to process element", error);
       }
     });
-    const sendCharacterUpdateEvent = mydebounce(() => {
-      window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID});
-    }, 4000);
+
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       switch (mutation.type) {
@@ -133,8 +135,8 @@ function observe_character_sheet_changes(documentToObserve) {
             if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
               sendCharacterUpdateEvent(); //hp update from inputs
             }
-            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ //if 0 health update
-              sendCharacterUpdateEvent();
+            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ 
+              sendCharacterUpdateEvent(); //if 0 health update
             }
           }
           mutation.addedNodes.forEach(node => {
