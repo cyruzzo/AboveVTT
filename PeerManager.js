@@ -82,11 +82,20 @@ class PeerManager {
       });
       conn.on("error", (error) => {
         console.error("PeerManager connection error", error);
+        // should we call rebuild_peerManager() here?
       });
     });
     this.peer.on('error', function (error) {
       console.error("PeerManager peer error", error);
+      rebuild_peerManager();
     });
+  }
+
+  tearDown() {
+    this.disconnectAllPeers();
+    this.peer.disconnect();
+    this.peer.destroy();
+    this.connections = [];
   }
 
   /** handles the peerjs connection.open event */

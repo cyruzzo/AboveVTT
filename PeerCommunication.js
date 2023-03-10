@@ -237,6 +237,16 @@ function disable_peer_manager() {
   window.PeerManager.enabled = false;
 }
 
+/** when we receive catastrophic errors, we need to tear down and rebuild PeerManager */
+function rebuild_peerManager() {
+  console.log("rebuild_peerManager starting");
+  disable_peer_manager();
+  window.PeerManager.tearDown();
+  window.PeerManager = new PeerManager();
+  enable_peer_manager();
+  console.log("rebuild_peerManager finished");
+}
+
 /** Called when a new connection is opened
  * @param {string} peerId the id of the peerjs peer that we connected to
  * @param {string} playerId the id of the DDB player that we connected to */
