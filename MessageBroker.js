@@ -471,21 +471,9 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType.includes('character-update')){
-				if(window.DM) {
-					
-					if(window.characterUpdatedRecently == undefined){
-						window.characterUpdatedRecently = [];
-					}
-					if(!window.characterUpdatedRecently[msg.data.characterId]){
+				if(window.DM) {			
 						self.handleCharacterUpdate(msg);
-						window.characterUpdatedRecently[msg.data.characterId] = true;
-					}
-
-					setTimeout(function(){window.characterUpdatedRecently[msg.data.characterId] = false}, 4000) // only update once per 4 seconds per character if we receive two messages (one custom + one ddb or user spamming). Prevent spam to ddb.
-					
-
-				}
-				
+				}		
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
