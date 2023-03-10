@@ -470,8 +470,11 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
 			}
-			if(msg.eventType == "character-sheet/character-update/fulfilled"){
-				debounced_handle_character_update(msg);
+			if(msg.eventType.includes('character-update')){
+				if(window.DM) {			
+						debounced_handle_character_update(msg);
+				}		
+
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
