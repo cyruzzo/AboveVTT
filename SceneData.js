@@ -4535,7 +4535,6 @@ var PRESET = {
 	            "listItemPath": "/AboveVTT Tokens/Letters/? - Question Mark",
 	            "top": "200px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
 	                "feet": "1000"
@@ -4543,7 +4542,6 @@ var PRESET = {
 	            "id": "0d4e97ca-6592-4882-93f2-dd9692258d89",
 	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/QUESTION.png",
 	            "locked": true,
-	            "lightOwned": false,
 	            "light2": {
 	                "color": "rgba(255, 255, 255, 0.5)",
 	                "feet": "1000"
@@ -4595,7 +4593,6 @@ var PRESET = {
 	            "listItemPath": "/AboveVTT Tokens/NPCs/Drow [F]",
 	            "top": "523px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
 	                "feet": "1000"
@@ -4603,7 +4600,6 @@ var PRESET = {
 	            "id": "2dfec1cf-58a1-415e-b23c-1373ea9e2668",
 	            "imgsrc": "https://i.imgur.com/lwPqseX.png",
 	            "locked": false,
-	            "lightOwned": false,
 	            "light2": {
 	                "color": "rgba(255, 255, 255, 0.5)",
 	                "feet": "1000"
@@ -4676,7 +4672,6 @@ var PRESET = {
 	            "listItemPath": "/AboveVTT Tokens/NPCs/Commoner",
 	            "top": "672px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
 	                "feet": "10"
@@ -4684,7 +4679,6 @@ var PRESET = {
 	            "id": "36c11cd0-45b1-46bf-bd54-adb31d51ed2a",
 	            "imgsrc": "https://i.pinimg.com/236x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg",
 	            "locked": false,
-	            "lightOwned": false,
 	            "light2": {
 	                "color": "rgba(255, 255, 255, 0.5)",
 	                "feet": "10"
@@ -4753,7 +4747,6 @@ var PRESET = {
 	            "listItemPath": "/AboveVTT Tokens/Overlays/Flame 2",
 	            "top": "438px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(244.494, 175.341683781, 24.96283739999999, 1)",
 	                "feet": "10"
@@ -4761,7 +4754,6 @@ var PRESET = {
 	            "id": "669e4d9b-b8e2-43c4-b81b-29e8bfe42177",
 	            "imgsrc": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
 	            "locked": true,
-	            "lightOwned": false,
 	            "light2": {
 	                "color": "rgba(255, 156.649424, 92.61599999999999, 0.5)",
 	                "feet": "10"
@@ -10021,7 +10013,6 @@ const SCENE_IMPORT_DATA = [
 						"listItemPath": "/AboveVTT Tokens/Letters/? - Question Mark",
 						"top": "200px",
 						"hidehpbar": false,
-						"lightVisible": false,
 						"light1": {
 							"color": "rgba(255, 255, 255, 1)",
 							"feet": "1000"
@@ -10029,7 +10020,6 @@ const SCENE_IMPORT_DATA = [
 						"id": "0d4e97ca-6592-4882-93f2-dd9692258d89",
 						"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/QUESTION.png",
 						"locked": true,
-						"lightOwned": false,
 						"light2": {
 							"color": "rgba(255, 255, 255, 0.5)",
 							"feet": "1000"
@@ -10081,7 +10071,6 @@ const SCENE_IMPORT_DATA = [
 						"listItemPath": "/AboveVTT Tokens/NPCs/Drow [F]",
 						"top": "523px",
 						"hidehpbar": false,
-						"lightVisible": false,
 						"light1": {
 							"color": "rgba(255, 255, 255, 1)",
 							"feet": "1000"
@@ -10089,7 +10078,6 @@ const SCENE_IMPORT_DATA = [
 						"id": "2dfec1cf-58a1-415e-b23c-1373ea9e2668",
 						"imgsrc": "https://i.imgur.com/lwPqseX.png",
 						"locked": false,
-						"lightOwned": false,
 						"light2": {
 							"color": "rgba(255, 255, 255, 0.5)",
 							"feet": "1000"
@@ -10162,7 +10150,6 @@ const SCENE_IMPORT_DATA = [
 						"listItemPath": "/AboveVTT Tokens/NPCs/Commoner",
 						"top": "672px",
 						"hidehpbar": false,
-						"lightVisible": false,
 						"light1": {
 							"color": "rgba(255, 255, 255, 1)",
 							"feet": "10"
@@ -10170,7 +10157,6 @@ const SCENE_IMPORT_DATA = [
 						"id": "36c11cd0-45b1-46bf-bd54-adb31d51ed2a",
 						"imgsrc": "https://i.pinimg.com/236x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg",
 						"locked": false,
-						"lightOwned": false,
 						"light2": {
 							"color": "rgba(255, 255, 255, 0.5)",
 							"feet": "10"
@@ -10239,7 +10225,6 @@ const SCENE_IMPORT_DATA = [
 						"listItemPath": "/AboveVTT Tokens/Overlays/Flame 2",
 						"top": "438px",
 						"hidehpbar": false,
-						"lightVisible": false,
 						"light1": {
 							"color": "rgba(244.494, 175.341683781, 24.96283739999999, 1)",
 							"feet": "10"
@@ -10247,7 +10232,6 @@ const SCENE_IMPORT_DATA = [
 						"id": "669e4d9b-b8e2-43c4-b81b-29e8bfe42177",
 						"imgsrc": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
 						"locked": true,
-						"lightOwned": false,
 						"light2": {
 							"color": "rgba(255, 156.649424, 92.61599999999999, 0.5)",
 							"feet": "10"

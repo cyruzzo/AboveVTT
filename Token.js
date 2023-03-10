@@ -2350,8 +2350,6 @@ function default_options() {
 			feet: "0",
 			color: "rgba(255, 255, 255, 0.5)"
 		},
-		lightVisible: false,
-		lightOwned: false,
 		vision:{
 			feet: '60',
 			color: "rgba(255, 255, 255, 0.5)"

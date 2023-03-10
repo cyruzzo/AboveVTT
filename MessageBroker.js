@@ -472,8 +472,9 @@ class MessageBroker {
 			}
 			if(msg.eventType.includes('character-update')){
 				if(window.DM) {			
-						self.handleCharacterUpdate(msg);
+						debounced_handle_character_update(msg);
 				}		
+
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -1333,7 +1334,7 @@ class MessageBroker {
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 		$(".aura-element[id^='aura_'").remove();
-		$(".aura-element[id^='light_'").remove();
+		$(".aura-element-container-clip").remove();
 
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
@@ -1354,7 +1355,6 @@ class MessageBroker {
 			
 
 			reset_canvas();
-			redraw_light_walls();
 			redraw_fog();
 			redraw_drawings();
 
@@ -1430,16 +1430,7 @@ class MessageBroker {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
-			redraw_light_walls();
-			let waitForWalls = function(){
-			    if(typeof window.walls !== "undefined"){
-			        redraw_fog();
-			        redraw_light();
-			    }
-			    else{
-			        setTimeout(waitForWalls, 250);
-			    }
-			}
+			redraw_fog();
 			//$("#fog_overlay").show();
 		}
 		else {
@@ -1455,7 +1446,8 @@ class MessageBroker {
 			window.DRAWINGS = [];
 		}
 
-
+		redraw_light_walls();
+		redraw_light();
 
 
 		remove_loading_overlay();
@@ -1502,19 +1494,6 @@ class MessageBroker {
 		}
 	}
 
-	handleCharacterUpdate(msg){
-		const characterId = msg.data.characterId;
-		const pc = window.pcs.find(pc => pc.sheet.includes(characterId));
-		if (pc) {
-			getPlayerData(pc.sheet, function (playerData) {
-				window.PLAYER_STATS[playerData.id] = playerData;
-				window.MB.sendTokenUpdateFromPlayerData(playerData);
-				update_pclist();
-				send_player_data_to_all_peers(playerData);
-			});
-		}
-	}
-	
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
 
