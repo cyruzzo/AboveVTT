@@ -897,7 +897,7 @@ function edit_scene_dialog(scene_id) {
 
 			$("#VTT").css("--scene-scale", 1)
 
-			$("#edit_dialog").remove();
+			$("#sources-import-main-container").remove();
 			$("#scene_selector").removeAttr("disabled");
 			$("#scene_selector_toggle").click();
 			$("#scene_selector_toggle").hide();
