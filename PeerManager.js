@@ -373,11 +373,12 @@ class PeerManager {
   /** Checks for and cleans up stale connections */
   checkForStaleConnections() {
     try {
-
+      let attemptReconnect = false;
       // first let's clean up everything that we actually know about
       this.connections.forEach(pc => {
         if (pc.isStale) {
           window.PeerManager.disconnectAndRemoveConnection(pc);
+          attemptReconnect = true;
         }
       });
 
@@ -399,6 +400,7 @@ class PeerManager {
             } catch (error) {
               console.debug("PeerManager.checkForStaleConnections failed to destroy a closed connection", error);
             }
+            attemptReconnect = true;
           } else if (!this.findConnectionByPeerId(peerId)) {
             // We have an abandoned connection. Close it, and try to reconnect
             try {
@@ -413,11 +415,14 @@ class PeerManager {
             } catch (error) {
               console.debug("PeerManager.checkForStaleConnections failed to destroy an abandoned connection", error);
             }
+            attemptReconnect = true;
           }
         });
       }
 
-      if (this.connections.length === 0) {
+      if (attemptReconnect) {
+        this.readyToConnect();
+      } else if (this.connections.length === 0) {
         clearInterval(this.staleConnectionTimerId); // we're not connected to anything
         this.staleConnectionTimerId = undefined;
       }
