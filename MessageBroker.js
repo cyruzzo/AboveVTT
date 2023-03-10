@@ -478,8 +478,9 @@ class MessageBroker {
 					}
 					if(!window.characterUpdatedRecently[msg.data.characterId]){
 						self.handleCharacterUpdate(msg);
+						window.characterUpdatedRecently[msg.data.characterId] = true;
 					}
-					window.characterUpdatedRecently[msg.data.characterId] = true;
+
 					setTimeout(function(){window.characterUpdatedRecently[msg.data.characterId] = false}, 4000) // only update once per 4 seconds per character if we receive two messages (one custom + one ddb or user spamming). Prevent spam to ddb.
 					
 
