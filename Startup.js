@@ -224,9 +224,11 @@ async function migrate_to_cloud_if_necessary() {
 // only call this once on startup
 async function fetch_sceneList_and_scenes() {
 
+  window.ScenesHandler.scenes = await AboveApi.getSceneList();
+
   const currentSceneData = await AboveApi.getCurrentScene();
 
-  if (currentSceneData.playerscene) {
+  if (currentSceneData.playerscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.playerscene)) {
     window.PLAYER_SCENE_ID = currentSceneData.playerscene;
   } else if (window.ScenesHandler.scenes.length > 0) {
     window.PLAYER_SCENE_ID = window.ScenesHandler.scenes[0].id;
@@ -236,7 +238,7 @@ async function fetch_sceneList_and_scenes() {
 
   console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
 
-  if (currentSceneData.dmscene) {
+  if (currentSceneData.dmscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.dmscene)) {
     const activeScene = await AboveApi.getScene(currentSceneData.dmscene);
     console.log("attempting to handle scene", activeScene);
     window.MB.handleScene(activeScene);

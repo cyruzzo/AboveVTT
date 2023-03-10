@@ -474,14 +474,6 @@ function build_token_auras_inputs(tokenIds) {
 
 			<div class="token-config-aura-wrapper">
 				<div class="token-image-modal-footer-select-wrapper">
-					<div class="token-image-modal-footer-title">Preset</div>
-					<select class="token-config-aura-preset">
-						<option value="none"></option>
-						<option value="candle">Candle (5/5)</option>
-						<option value="torch">Torch / Light (20/20)</option>
-						<option value="lamp">Lamp (15/30)</option>
-						<option value="lantern">Lantern (30/30)</option>
-					</select>
 				</div>
 				<div class="menu-inner-aura">
 					<h3 style="margin-bottom:0px;">Inner Aura</h3>
@@ -714,17 +706,19 @@ function build_token_light_inputs(tokenIds) {
 	let auraLightValues = tokens.map(t => t.options.auraislight);
 	let uniqueAuraLightValues = [...new Set(auraLightValues)];
 
-	let auraRevealLightValues = tokens.map(t => t.options.reveal_light);
-	let uniqueAuraRevealLightValues = [...new Set(auraRevealLightValues)];
+	let auraRevealVisionValues = tokens.map(t => t.options.share_vision);
+	let uniqueAuraRevealVisionValues = [...new Set(auraRevealVisionValues)];
 
 	let auraIsLightEnabled = null;
 	if (uniqueAuraLightValues.length === 1) {
 		auraIsLightEnabled = uniqueAuraLightValues[0];
 	}
 
-	let auraRevealLightEnabled = null;
-	if (uniqueAuraRevealLightValues.length === 1) {
-		auraRevealLightEnabled = uniqueAuraRevealLightValues[0];
+
+
+	let auraRevealVisionEnabled = null;
+	if (uniqueAuraRevealVisionValues.length === 1) {
+		auraRevealVisionEnabled = uniqueAuraRevealVisionValues[0];
 	}
 
 	let aura1Feet = tokens.map(t => t.options.light1.feet);
@@ -735,6 +729,10 @@ function build_token_light_inputs(tokenIds) {
 	let uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : ""
 	let aura2Color = tokens.map(t => t.options.light2.color);
 	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : ""
+	let visionFeet = tokens.map(t => t.options.vision.feet);
+	let uniqueVisionFeet = visionFeet.length === 1 ? visionFeet[0] : ""
+	let visionColor = tokens.map(t => t.options.vision.color);
+	let uniqueVisionColor = visionColor.length === 1 ? visionColor[0] : ""
 
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
@@ -745,19 +743,30 @@ function build_token_light_inputs(tokenIds) {
 
 			<div class="token-config-aura-wrapper">
 				<div class="token-image-modal-footer-select-wrapper">
-					<div class="token-image-modal-footer-title">Preset</div>
+					
+				
+				<div class="token-image-modal-footer-title">Preset</div>
 					<select class="token-config-aura-preset">
 						<option value="none"></option>
 						<option value="candle">Candle (5/5)</option>
 						<option value="torch">Torch / Light (20/20)</option>
 						<option value="lamp">Lamp (15/30)</option>
 						<option value="lantern">Lantern (30/30)</option>
-						<option value="60ftdark">60ft Darkvision (60/0)</option>
-						<option value="120ftdark">120ft Darkvision (120/0)</option>
 					</select>
 				</div>
+				<div class="menu-vision-aura">
+					<h3 style="margin-bottom:0px;">Darkvision</h3>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="vision-radius" name="vision" type="text" value="${uniqueVisionFeet}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="visionColor" value="${uniqueVisionColor}" >
+					</div>
+				</div>
 				<div class="menu-inner-aura">
-					<h3 style="margin-bottom:0px;">Inner Aura</h3>
+					<h3 style="margin-bottom:0px;">Inner Light</h3>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="light-radius" name="light1" type="text" value="${uniqueAura1Feet}" style="width: 3rem" />
@@ -768,7 +777,7 @@ function build_token_light_inputs(tokenIds) {
 					</div>
 				</div>
 				<div class="menu-outer-aura">
-					<h3 style="margin-bottom:0px;">Outer Aura</h3>
+					<h3 style="margin-bottom:0px;">Outer Light</h3>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="light-radius" name="light2" type="text" value="${uniqueAura2Feet}" style="width: 3rem" />
@@ -804,28 +813,28 @@ function build_token_light_inputs(tokenIds) {
 			wrapper.find(".token-config-aura-wrapper").hide();
 		}
 	});
-	const reveallightOption = {
-		name: "reveal_light",
-		label: "Reveal light to players",
-		type: "dropdown",
+
+	const revealvisionOption = {
+		name: "share_vision",
+		label: "Share vision with all players",
+		type: "toggle",
 		options: [
-			{ value: 'never', label: "Never", description: "Token light is revealed to players." },
-			{ value: 'los', label: "When in line of sight", description: "Token light is revealed to players when in line of sight." },
-			{ value: 'always', label: "Always", description: "Token light is revealed to players always." },
+			{ value: false, label: "Disabled", description: "Token vision is not shared." },
+			{ value: true, label: "Enabled", description: "Token vision is shared with all players." },
 		],
 		defaultValue: false
 	};
-	let revealLightInput = build_dropdown_input(reveallightOption, auraRevealLightEnabled, function(name, newValue) {
+	let revealVisionInput = build_toggle_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
 			token.options[name] = newValue;
 			token.place_sync_persist();
 		});
 	});
-	
+
 	wrapper.prepend(enabledLightInput);
 
-	wrapper.find(".token-config-aura-wrapper").prepend(revealLightInput);
+	wrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
 	
 
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
@@ -835,7 +844,7 @@ function build_token_light_inputs(tokenIds) {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
 
-	let radiusInputs = wrapper.find('input.light-radius');
+	let radiusInputs = wrapper.find('input.light-radius, input.vision-radius');
 	radiusInputs.on('keyup', function(event) {
 		let newRadius = event.target.value;
 		if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {

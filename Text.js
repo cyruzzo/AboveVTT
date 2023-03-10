@@ -626,14 +626,16 @@ function draw_text(
 
     let fontSize=font.size; 
     let lineHeight=12;  
-    let textPart=text.split('\n').map(function(returnSplitText,i){ return `<tspan x="${x}" y="${font.size+i*fontSize}">${returnSplitText}</tspan>`}).join('\n');
+
+
+    
     let hiddenOpacity = (hidden) ? 0.5 : 1;
     let textSVG = $(`
         <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="opacity:${hiddenOpacity}; left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
             <title>${text}</title>
             <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
             <g style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
-            <text x="${x}" y="${font.size}" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;">${textPart}</text>
+            <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
             </g>
          </svg>
     `);
@@ -642,6 +644,44 @@ function draw_text(
     $('#text_div').append(textSVG);
 
 
+
+    let words = text.split(/(\s)/g);
+
+    let line = '';
+    let element = $(`svg#${id} text`)[0];
+    element.innerHTML = '<tspan id="PROCESSING"></tspan>';
+    let lineNumber = 0;
+    for (let n = 0; n < words.length; n++) {
+        let testLine = line + words[n] + ' ';
+        let testElem = document.getElementById('PROCESSING');
+        /*  Add line in testElement */
+        testElem.innerHTML = testLine;
+        /* Messure textElement */
+        let metrics = testElem.getBoundingClientRect();
+        testWidth = metrics.width;
+       
+        if(words[n].includes('\n')  && n > 0){
+            let splitNewLines = words[n].split(/(\n)/g);
+            for(let i = 0; i < splitNewLines.length; i++){
+                if(splitNewLines[i] == '\n'){
+                    element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+                    lineNumber++;
+
+                    line = splitNewLines[i] + ' ';
+                }
+            }
+          
+        }
+        else if (testWidth / window.ZOOM > width && n > 0) {
+            element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+            lineNumber++
+            line = words[n] + ' ';
+        } else {
+            line = testLine;
+        }
+    }
+    element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+    document.getElementById("PROCESSING").remove();
 
     textSVG.draggable({
         containment: '#text_div',

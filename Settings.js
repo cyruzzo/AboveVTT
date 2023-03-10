@@ -10,8 +10,9 @@ function token_setting_options() {
 				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with the largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
 				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with The largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
 				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` },
-				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made too appear as a object tile` }
-			
+				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made too appear as a object tile` },
+				{ value: "labelToken", label: "Map Pin Token", description: `This token will have the settings of Definitely Not a Token and have it's name always displayed` }
+				
 			],
 			defaultValue: "circle"
 		},
@@ -232,7 +233,7 @@ function avtt_settings() {
 				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
 				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
 			],
-			defaultValue: true
+			defaultValue: false
 		},
 		{
 			name: 'streamDiceRolls',
@@ -262,7 +263,7 @@ function avtt_settings() {
 				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
 				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
 			],
-			defaultValue: true
+			defaultValue: false
 		}
 	];
 
@@ -432,6 +433,32 @@ function download(data, filename, type) {
         }, 0);
     }
 }
+
+
+
+function scene_import_with_drawings(scenedata=null){  //modified cloud_migration / import tool to import a single scene with drawings, walls etc without a refresh
+	let http_api_gw="https://services.abovevtt.net";
+	let searchParams = new URLSearchParams(window.location.search);
+	if(searchParams.has("dev")){
+		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
+	}
+	let gameid = find_game_id();
+
+	if(scenedata==null)
+		scenedata=localStorage.getItem("ScenesHandler"+gameid);
+	$.ajax({
+		url:http_api_gw+"/services?action=migrate&campaign="+window.CAMPAIGN_SECRET,
+		type:"POST",
+		contentType:'application/json',
+		data: scenedata,
+		success:function(data){
+			$('#edit_dialog').remove();
+
+
+		}
+	});
+}
+
 
 function init_settings() {
 

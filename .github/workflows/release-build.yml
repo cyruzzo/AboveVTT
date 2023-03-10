@@ -1,14 +1,17 @@
 name: release-build
-run-name: ${{ github.actor }} is publishing a release build
+run-name: ${{ github.actor }} is publishing version ${{ inputs.version_name }}
 on:
   workflow_dispatch:
     inputs:
-      prerelease:
-        description: "Should this release be marked as a pre-release?"
-        required: true
-        default: true
+      release_type:
+        type: choice
+        description: "pre-release or production?"
+        options:
+          - prerelease
+          - production
+        default: prerelease
       version_name:
-        description: "Something like 0.84 or 0.84-beta2"
+        description: "Version Name"
         required: true
 jobs:
   publish-release:
@@ -18,16 +21,34 @@ jobs:
         with:
           author_name: github.actor
           author_email: github
+      - name: "set environment variables"
+        run: |
+          echo release_type: ${{inputs.release_type}}
+          echo version_name: ${{inputs.version_name}}
+          if [[ "${{inputs.release_type}}" == "production" ]]; then
+            echo setting prerelease=false
+            echo "prerelease=false" >> $GITHUB_ENV
+          else
+            echo setting prerelease=true
+            echo "prerelease=true" >> $GITHUB_ENV
+          fi
       - name: "build zip"
         run: |
           git archive -o "AboveVTT-${{inputs.version_name}}.zip" HEAD
       - name: "publish release"
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{inputs.version_name}}"
-          prerelease: ${{ inputs.prerelease }}
-          title: "${{inputs.version_name}}"
-          files: |
-            *.zip
-            LICENSE
+        run: |
+          release_json=$(curl -X POST -H 'Authorization: Bearer ${{secrets.GITHUB_TOKEN}}' https://api.github.com/repos/${GITHUB_REPOSITORY}/releases -d '{ "tag_name": "${{inputs.version_name}}", "name": "${{inputs.version_name}}", "prerelease": ${{env.prerelease}}, "generate_release_notes": true }')
+          upload_url=$(echo $release_json | grep -o '"upload_url": "[^"]*' | grep -o '[^"]*$')
+          upload_url=${upload_url%\{*}
+          echo upload_url: $upload_url
+          echo "upload_url=${upload_url}" >> $GITHUB_ENV
+      - name: "upload release asset"
+        run: |
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            ${{env.upload_url}}?name=AboveVTT-${{inputs.version_name}}.zip \
+            --data-binary "@AboveVTT-${{inputs.version_name}}.zip"

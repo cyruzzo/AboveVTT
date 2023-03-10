@@ -3076,13 +3076,13 @@ function redraw_light(){
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){
 	  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
-	  		$('#VTT').css('--darkness-filter', `${100-window.CURRENT_SCENE_DATA.darkness_filter}%`)
+	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter, 40)}%`)
 	  		$('#raycastingCanvas').css('opacity', '');
 	  	}
   		
 		for(j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
-			if(window.TOKEN_OBJECTS[tokenId].options.player_owned || tokenId.includes(window.PLAYER_ID) || window.DM || (window.TOKEN_OBJECTS[tokenId].options.itemType == "pc" && window.TOKEN_OBJECTS[tokenId].options.reveal_light == 'always'))
+			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
 		  		selectedIds.push(tokenId)
 		}	  	
 	 }
@@ -3112,25 +3112,16 @@ function redraw_light(){
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
- 	if(!found && window.DM && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always' && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'los'){
-  		$(light_auras[i]).css("visibility", "hidden");
-  	}
-  	if(selectedIds.length == 0 || found){
-  		if(selectedIds.length == 0 && !auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always')
-  			continue; 		
-  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light == 'los' && !auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always')
-  			continue; 
-  		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.reveal_light != 'always' && !window.DM)
-  			continue;
-	  	if(window.DM){
-	  		$(light_auras[i]).css("visibility", "visible");
-	  	}
 
-  		if(window.TOKEN_OBJECTS[auraId].options.reveal_light == 'always' && !window.TOKEN_OBJECTS[auraId].options.player_owned && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc'){
-  			let visibleRadius = ($(`.aura-element.islight[data-id='${auraId}']`).width()/2)+10;
-  			particleLook(context, walls, visibleRadius, undefined, undefined, undefined, false);
-  		}
+  	if(selectedIds.length == 0 || found){	
+  		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined )
+  			continue; 
+  		
+  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
+  			continue;
+
+
 		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
 
 	

@@ -74,6 +74,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		$(".VTTToken").each(function() {
 			$("#aura_" + $(this).attr("data-id").replaceAll("/", "")).remove();
 			$("#light_" + $(this).attr("data-id").replaceAll("/", "")).remove();
+			$(`.aura-element-container-clip[id='${$(this).attr("data-id")}']`).remove();
 		});
 		$(".VTTToken").remove();
 

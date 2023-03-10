@@ -4,6 +4,10 @@ $(function() {
   init_characters_pages();
 });
 
+const sendCharacterUpdateEvent = mydebounce(() => {
+  window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID});
+}, 4000);
+
 function init_characters_pages() {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
@@ -72,7 +76,7 @@ function inject_dice_roll(element) {
   let updatedInnerHtml = element.text();
   for (const command of slashCommands) {
     try {
-      const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG);
+      const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
       updatedInnerHtml = updatedInnerHtml.replace(command[0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
     } catch (error) {
       console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
@@ -85,7 +89,7 @@ function inject_dice_roll(element) {
   element.find("button.avtt-roll-formula-button").click(function(clickEvent) {
     clickEvent.stopPropagation();
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
-    const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG);
+    const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll);
   });
 }
@@ -119,7 +123,22 @@ function observe_character_sheet_changes(documentToObserve) {
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       switch (mutation.type) {
-        case "childList":
+        case "attributes":{
+          if(is_abovevtt_page()){
+            if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
+              sendCharacterUpdateEvent();
+            }        
+          }
+        }
+        case "childList":   
+          if(is_abovevtt_page()){     
+            if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
+              sendCharacterUpdateEvent(); //hp update from inputs
+            }
+            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ 
+              sendCharacterUpdateEvent(); //if 0 health update
+            }
+          }
           mutation.addedNodes.forEach(node => {
             if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
               try {
@@ -131,6 +150,21 @@ function observe_character_sheet_changes(documentToObserve) {
           });
           break;
         case "characterData":
+          if(is_abovevtt_page()){
+            if($(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
+            {
+              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
+              {
+                sendCharacterUpdateEvent();
+              }
+              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){ // max_hp update from buttons
+                sendCharacterUpdateEvent();
+              }
+            }
+            if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
+             sendCharacterUpdateEvent();
+            }
+          }
           if (typeof mutation.target.data === "string") {
             if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
               try {
@@ -148,7 +182,7 @@ function observe_character_sheet_changes(documentToObserve) {
   });
 
   const mutation_target = documentToObserve.get(0);
-  const mutation_config = { attributes: false, childList: true, characterData: true, subtree: true };
+  const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
   window.dice_roll_observer.observe(mutation_target, mutation_config);
 }
 
