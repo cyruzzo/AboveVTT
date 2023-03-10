@@ -119,34 +119,20 @@ function observe_character_sheet_changes(documentToObserve) {
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       switch (mutation.type) {
-        case "childList":
-          if(!window.DM && ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){
-            let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
-            if(tokenID != undefined){
-              let hp = $(mutation.target).parent().parent().find(`[aria-labelledby*='ct-health-summary-current-label']`).text();
-              let max_hp = $(mutation.target).parent().parent().find(`[aria-labelledby*='ct-health-summary-max-label']`).text();
-
-              window.TOKEN_OBJECTS[tokenID].options.hp = hp;
-              window.TOKEN_OBJECTS[tokenID].options.max_hp = max_hp;
-              if(window.PLAYER_STATS[tokenID] != undefined){
-                window.PLAYER_STATS[tokenID].hp = hp;
-                window.PLAYER_STATS[tokenID].max_hp = max_hp;
-              }
-
-              
-              window.TOKEN_OBJECTS[tokenID].place_sync_persist();
+        case "attributes":{
+          if(!window.DM){
+            if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
             }
-            
+          }
+        }
+        case "childList":
+          
+          if(!window.DM && ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
           }
           if(!window.DM && $(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){
-            let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
-            if(tokenID != undefined){
-              window.TOKEN_OBJECTS[tokenID].options.hp = '0';
-              if(window.PLAYER_STATS[tokenID] != undefined){
-                window.PLAYER_STATS[tokenID].hp = '0';
-              }
-              window.TOKEN_OBJECTS[tokenID].place_sync_persist();
-            }
+            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
           }
           mutation.addedNodes.forEach(node => {
             if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
@@ -163,35 +149,14 @@ function observe_character_sheet_changes(documentToObserve) {
           {
             if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label'))
             {
-              let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
-              if(tokenID != undefined){
-                window.TOKEN_OBJECTS[tokenID].options.hp = mutation.target.data;
-                if(window.PLAYER_STATS[tokenID] != undefined){
-                  window.PLAYER_STATS[tokenID].hp = mutation.target.data;
-                }
-                window.TOKEN_OBJECTS[tokenID].place_sync_persist();
-              }
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
             }
             if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){
-              let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
-              if(tokenID != undefined){
-                window.TOKEN_OBJECTS[tokenID].options.max_hp = mutation.target.data;
-                if(window.PLAYER_STATS[tokenID] != undefined){
-                  window.PLAYER_STATS[tokenID].max_hp = mutation.target.data;
-                }
-                window.TOKEN_OBJECTS[tokenID].place_sync_persist();
-              }
+              window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
             }
           }
           if(!window.DM && $(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){
-            let tokenID = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
-            if(tokenID != undefined){
-              window.TOKEN_OBJECTS[tokenID].options.ac = mutation.target.data;
-              if(window.PLAYER_STATS[tokenID] != undefined){
-                window.PLAYER_STATS[tokenID].ac = mutation.target.data;
-              }
-              window.TOKEN_OBJECTS[tokenID].place_sync_persist();
-            }
+            window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
           }
           if (typeof mutation.target.data === "string") {
             if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
@@ -210,7 +175,7 @@ function observe_character_sheet_changes(documentToObserve) {
   });
 
   const mutation_target = documentToObserve.get(0);
-  const mutation_config = { attributes: false, childList: true, characterData: true, subtree: true };
+  const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
   window.dice_roll_observer.observe(mutation_target, mutation_config);
 }
 

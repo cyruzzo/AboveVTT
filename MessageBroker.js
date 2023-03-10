@@ -347,6 +347,7 @@ class MessageBroker {
 		this.latestVersionSeen = abovevtt_version;
 
 		this.onmessage = function(event,tries=0) {
+
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -470,9 +471,13 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
 			}
-			if(msg.eventType == "character-sheet/character-update/fulfilled"){
-				if(window.DM)
+			if(msg.eventType.includes('character-update')){
+				if(window.DM && !window.characterUpdatedRecently) {
 					self.handleCharacterUpdate(msg);
+					window.characterUpdatedRecently = true;
+					setTimeout(function(){window.characterUpdatedRecently = false}, 4000) // only update once per 4 seconds if we receive two messages (one custom + one ddb or user spamming). Prevent spam to ddb.
+				}
+				
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
