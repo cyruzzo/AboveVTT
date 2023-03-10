@@ -1,33 +1,43 @@
-name: release-build
-run-name: ${{ github.actor }} is publishing version ${{ inputs.version_name }}
+name: "test issues automation"
 on:
-  workflow_dispatch:
-    inputs:
-      release_type:
-        type: choice
-        description: "beta or production?"
-        options:
-          - beta
-          - production
-        default: prerelease
-      version_name_override:
-        description: "Version Name Override (Only specify this if you need a name outside of our typical naming convention)"
-        required: false
+  push:
+    branches:
+      - "environment"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/test-issues-automation.yaml"
 jobs:
-  publish-release:
+  test-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           author_name: github.actor
           author_email: github
+      - name: "mock inputs"
+        run: |
+          cat environment.js
+          version_name_override=""
+          release_type="beta"
+          echo "release_type=${release_type}" >> $GITHUB_ENV
+      - name: "if release_type == beta"
+        if: ${{ env.release_type == 'beta' }}
+        run: |
+          echo "release_type: ${{env.release_type}}"
+      - name: "if release_type == production"
+        if: ${{ env.release_type == 'production' }}
+        run: |
+          echo "release_type: ${{env.release_type}}"
+
       - name: "Determine version_name"
         run: |
-          version_name="${{inputs.version_name_override}}"
+          version_name="${{env.version_name_override}}"
           if [[ -z "$version_name" ]]
           then
             echo "Good. No override was specified. Finding version"
-            if [[ ${{inputs.release_type}} == "production" ]]
+            if [[ ${{env.release_type}} == "production" ]]
             then
               echo "using manifest.version"
               version_name=$(cat manifest.json | jq '.version')
@@ -68,7 +78,7 @@ jobs:
       - name: "Build environment.js"
         run: |
           version_suffix=''
-          if [[ "${{inputs.release_type}}" == "beta" ]]; then
+          if [[ "${{env.release_type}}" == "beta" ]]; then
             version_suffix=${{env.version_name}}
             version_suffix=-${version_suffix#*-}
           fi
@@ -96,7 +106,7 @@ jobs:
       - name: "Publish release"
         run: |
           prerelease=true
-          if [[ "${{inputs.release_type}}" == "production" ]]; then
+          if [[ "${{env.release_type}}" == "production" ]]; then
             prerelease=false
           fi
           curl -X POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases" -d "{ \"tag_name\": \"${{env.version_name}}\", \"name\": \"${{env.version_name}}\", \"prerelease\": ${prerelease}, \"generate_release_notes\": true }" -o release.json
@@ -116,7 +126,7 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             --data-binary "@AboveVTT-${{env.version_name}}.zip"
       - name: "Fetch all issues that have been closed since the last release was published"
-        if: ${{ inputs.release_type == 'beta' }}
+        if: ${{ env.release_type == 'beta' }}
         run: |
           request_body=''
           echo "request_body $request_body"
@@ -132,7 +142,7 @@ jobs:
           echo "issue_number_array: ${issue_number_array}"
           echo "issue_number_array=${issue_number_array}" >> $GITHUB_ENV
       - name: "Fetch all issues with the in-beta label"
-        if: ${{ inputs.release_type == 'production' }}
+        if: ${{ env.release_type == 'production' }}
         run: |
           request_body='{"query":"{repository(owner:\"'
           echo "request_body $request_body"
@@ -153,7 +163,7 @@ jobs:
               echo ${row} | base64 --decode | jq -r ${1}
             }
             issue_number=$(_jq '.')
-            if [[ "${{inputs.release_type}}" == "beta" ]]
+            if [[ "${{env.release_type}}" == "beta" ]]
             then
               echo "Adding in-beta label to issue ${issue_number}"
               curl -o /dev/null --request POST --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${issue_number}/labels" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d '{"labels":["in-beta"]}'

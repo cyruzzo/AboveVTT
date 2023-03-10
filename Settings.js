@@ -464,7 +464,7 @@ function init_settings() {
 
 	let body = settingsPanel.body;
 
-	body.append(`<h2 style='margin-top:10px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='200px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}</div></h2>`);
+	body.append(`<h2 style='margin-top:10px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='200px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}</div></h2>`);
 
 	if (window.DM) {
 
@@ -528,7 +528,7 @@ function init_settings() {
 	body.append(`
 		<br />
 		<h3 class="token-image-modal-footer-title" >Above VTT Settings</h3>
-		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time so we recommend using the defaults values... (Except the dice streaming. You should probably enable that because that's just awesome!)</div>
+		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time, so we recommend using the defaults values.<br><b>WARNING! Enabling these will affect performance!</b></div>
 	`);
 	for(let i = 0; i < experimental_features.length; i++) {
 		let setting = experimental_features[i];

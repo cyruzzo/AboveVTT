@@ -30,10 +30,10 @@ class AboveApi {
   }
 
   static get config() {
-    if (window.AboveApiConfig) {
-      return window.AboveApiConfig;
-    } else if (new URLSearchParams(window.location.search).has("dev")) {
+    if (new URLSearchParams(window.location.search).has("dev")) {
       return AboveApiConfig.dev;
+    } else if (typeof AVTT_ENVIRONMENT?.baseUrl === "string" && AVTT_ENVIRONMENT.baseUrl.length > 1) {
+      return new AboveApiConfig(AVTT_ENVIRONMENT.baseUrl);
     } else {
       return AboveApiConfig.prod;
     }
