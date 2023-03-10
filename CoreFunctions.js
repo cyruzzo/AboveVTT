@@ -263,6 +263,41 @@ async function rebuild_window_pcs() {
   });
 }
 
+function debounced_handle_character_update(msg) {
+  console.debug("debounced_handle_character_update", msg);
+  const playerId = msg?.data?.characterId;
+  if (!playerId) return;
+  if (!window.PLAYER_UPDATE_FUNCTIONS) {
+    window.PLAYER_UPDATE_FUNCTIONS = {};
+  }
+  if (!window.PLAYER_UPDATE_FUNCTIONS[playerId]) {
+    window.PLAYER_UPDATE_FUNCTIONS[playerId] = mydebounce(() => {
+      update_window_pc(playerId)
+        .then(() => {
+          console.log("debounced_handle_character_update called update_window_pc", playerId);
+        })
+        .catch(error => {
+          console.warn("debounced_handle_character_update failed to update_window_pc", playerId, error);
+        });
+
+      if (window.DM) {
+        const pc = window.pcs.find(pc => pc.sheet.includes(playerId));
+        if (pc) {
+          console.log("debounced_handle_character_update is calling getPlayerData", playerId);
+          getPlayerData(pc.sheet, function (playerData) {
+            window.PLAYER_STATS[playerData.id] = playerData;
+            window.MB.sendTokenUpdateFromPlayerData(playerData);
+            update_pclist();
+            send_player_data_to_all_peers(playerData);
+          });
+        }
+      }
+    }, 4000);
+  }
+  console.debug("debounced_handle_character_update calling debounce function", playerId);
+  window.PLAYER_UPDATE_FUNCTIONS[playerId]();
+}
+
 async function update_window_pc(characterId) {
   const allCharacterDetails = await DDBApi.fetchCharacterDetails([characterId]);
   const characterData = allCharacterDetails[0];
