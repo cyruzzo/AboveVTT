@@ -132,12 +132,12 @@ function change_zoom(newZoom, x, y) {
 	console.log("zoom", newZoom, x , y)
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
-	// 200 is the size of the black area to the left and top of the map
-	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
-	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
+	// window.VTTMargin is the size of the black area to the left and top of the map
+	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - window.VTTMargin) * (1.0 / window.ZOOM));
+	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - window.VTTMargin) * (1.0 / window.ZOOM));
 	window.ZOOM = newZoom;
-	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + 200;
-	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
+	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
+	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
 	$("#tokens").get(0).style.setProperty("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
@@ -278,8 +278,8 @@ function reset_zoom() {
 		block: 'center',
 		inline: 'center'
 	});
-	if($('#hide_rightpanel').hasClass('point-right') &&  ($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor)*window.ZOOM+200 > $(window).width()-340)
-		$(window).scrollLeft(200);
+	if($('#hide_rightpanel').hasClass('point-right') &&  ($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor)*window.ZOOM+window.VTTMargin > $(window).width()-340)
+		$(window).scrollLeft($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor*window.ZOOM/2 + 170);
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
@@ -497,8 +497,8 @@ function set_pointer(data, dontscroll = false) {
 		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
 		var sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
-			scrollTop: pageY + 200,
-			scrollLeft: pageX + 200 + sidebarSize/2,
+			scrollTop: pageY + window.VTTMargin,
+			scrollLeft: pageX + window.VTTMargin + sidebarSize/2,
 		}, 500);
 	}
 }
@@ -2476,6 +2476,8 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 function init_ui() {
 	console.log("init_ui");
 
+	window.VTTMargin = 1000;
+
 	// ATTIVA GAMELOG
 	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
@@ -2573,8 +2575,8 @@ function init_ui() {
 			return;
 		e.preventDefault();
 
-		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
-		var mousey = Math.round((e.pageY - 200) * (1.0 / window.ZOOM));
+		var mousex = Math.round((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM));
+		var mousey = Math.round((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM));
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
@@ -2635,9 +2637,11 @@ function init_ui() {
 	VTT.append(rayCasting);
 	mapContainer.append(darknessLayer);
 
+
+
 	wrapper = $("<div id='VTTWRAPPER'/>");
-	wrapper.css("margin-left", "200px");
-	wrapper.css("margin-top", "200px");
+	wrapper.css("margin-left", `${window.VTTMargin}px`);
+	wrapper.css("margin-top", `${window.VTTMargin}px`);
 	wrapper.css("paddning-right", "200px");
 	wrapper.css("padding-bottom", "200px");
 	wrapper.css("position", "absolute");
