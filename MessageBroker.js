@@ -347,7 +347,6 @@ class MessageBroker {
 		this.latestVersionSeen = abovevtt_version;
 
 		this.onmessage = function(event,tries=0) {
-
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")

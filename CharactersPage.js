@@ -143,7 +143,7 @@ function observe_character_sheet_changes(documentToObserve) {
               }
             }
           });
-          break; 
+          break;
         case "characterData":
           if(!window.DM && $(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
           {

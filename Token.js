@@ -520,7 +520,7 @@ class Token {
 	 */
 	munge_token_data(){
 		if (window.PLAYER_STATS[this.options.id]) {
-			return {...window.PLAYER_STATS[this.options.id], ...this.options}
+			return {...this.options, ...window.PLAYER_STATS[this.options.id]}
 		}
 		return {...this.options}
 	}
