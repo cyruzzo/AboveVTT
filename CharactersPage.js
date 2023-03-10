@@ -120,18 +120,15 @@ function observe_character_sheet_changes(documentToObserve) {
     mutationList.forEach(mutation => {
       switch (mutation.type) {
         case "attributes":{
-          if(!window.DM){
             if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
               window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
-            }
-          }
+            }        
         }
-        case "childList":
-          
-          if(!window.DM && ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
+        case "childList":        
+          if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
               window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID}) //hp update from inputs
           }
-          if(!window.DM && $(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ //if 0 health update
+          if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ //if 0 health update
             window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
           }
           mutation.addedNodes.forEach(node => {
@@ -145,7 +142,7 @@ function observe_character_sheet_changes(documentToObserve) {
           });
           break;
         case "characterData":
-          if(!window.DM && $(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
+          if($(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
           {
             if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
             {
@@ -155,7 +152,7 @@ function observe_character_sheet_changes(documentToObserve) {
               window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
             }
           }
-          if(!window.DM && $(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
+          if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
             window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID})
           }
           if (typeof mutation.target.data === "string") {
