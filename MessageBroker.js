@@ -472,10 +472,18 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType.includes('character-update')){
-				if(window.DM && !window.characterUpdatedRecently) {
-					self.handleCharacterUpdate(msg);
-					window.characterUpdatedRecently = true;
-					setTimeout(function(){window.characterUpdatedRecently = false}, 4000) // only update once per 4 seconds if we receive two messages (one custom + one ddb or user spamming). Prevent spam to ddb.
+				if(window.DM) {
+					
+					if(window.characterUpdatedRecently == undefined){
+						window.characterUpdatedRecently = [];
+					}
+					if(!window.characterUpdatedRecently[msg.data.characterId]){
+						self.handleCharacterUpdate(msg);
+					}
+					window.characterUpdatedRecently[msg.data.characterId] = true;
+					setTimeout(function(){window.characterUpdatedRecently[msg.data.characterId] = false}, 4000) // only update once per 4 seconds per character if we receive two messages (one custom + one ddb or user spamming). Prevent spam to ddb.
+					
+
 				}
 				
 			}
