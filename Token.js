@@ -2361,9 +2361,9 @@ function default_options() {
 function center_of_view() {
 	let centerX = (window.innerWidth/2) + window.scrollX 
 	if($("#hide_rightpanel").hasClass("point-right")){
-		centerX = centerX - 170;
-	}
-	let centerY = (window.innerHeight/2) + window.scrollY
+		centerX = centerX - 190; // 190 = half gamelog + scrollbar
+	
+	let centerY = (window.innerHeight/2) + window.scrollY - 20 // 20 = scrollbar
 	return { x: centerX, y: centerY };
 }
 
