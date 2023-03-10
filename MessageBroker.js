@@ -471,8 +471,7 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType == "character-sheet/character-update/fulfilled"){
-				if(window.DM)
-					self.handleCharacterUpdate(msg);
+				debounced_handle_character_update(msg);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -1501,19 +1500,6 @@ class MessageBroker {
 		}
 	}
 
-	handleCharacterUpdate(msg){
-		const characterId = msg.data.characterId;
-		const pc = window.pcs.find(pc => pc.sheet.includes(characterId));
-		if (pc) {
-			getPlayerData(pc.sheet, function (playerData) {
-				window.PLAYER_STATS[playerData.id] = playerData;
-				window.MB.sendTokenUpdateFromPlayerData(playerData);
-				update_pclist();
-				send_player_data_to_all_peers(playerData);
-			});
-		}
-	}
-	
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
 

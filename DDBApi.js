@@ -171,19 +171,31 @@ class DDBApi {
   }
 
   static async fetchCampaignCharacterDetails(campaignId) {
-    const characters = await DDBApi.fetchCampaignCharacters(campaignId);
+    const characters = await DDBApi.fetchActiveCharacters(campaignId);
     const characterIds = characters.map(c => c.id);
-    return await DDBApi.fetchCharacterDetails(characterIds);
+    const allCharacterDetails = await DDBApi.fetchCharacterDetails(characterIds);
+    return characters.map(baseCharacterData => {
+      const characterDetails = allCharacterDetails.find(cd => cd.characterId === baseCharacterData.id);
+      // The only key collisions I could find in these objects is `race`
+      // baseCharacterData has something like `race: "Elf"` which is how it's displayed on the campaign page card
+      // characterDetails has something like `race: { name: "High Elf" }` which is displayed on the character sheet
+      // I chose to give characterDetails precedence because it is used on character sheets
+      return {
+        ...baseCharacterData,
+        ...characterDetails
+      }
+    });
   }
 
   static async fetchCharacterDetails(characterIds) {
     if (!Array.isArray(characterIds) || characterIds.length === 0) {
       return [];
     }
+    const ids = characterIds.map(ci => parseInt(ci)); // do not use strings
     const url = `https://character-service-scds.dndbeyond.com/v1/characters`;
     const config = {
       method: 'POST',
-      body: JSON.stringify({ "characterIds": characterIds })
+      body: JSON.stringify({ "characterIds": ids })
     }
     const response = await DDBApi.fetchJsonWithToken(url, config);
     return response.foundCharacters;
@@ -192,6 +204,12 @@ class DDBApi {
   static async fetchConfigJson() {
     const url = "https://www.dndbeyond.com/api/config/json";
     return await DDBApi.fetchJsonWithToken(url);
+  }
+
+  static async fetchActiveCharacters(campaignId) {
+    const url = `https://www.dndbeyond.com/api/campaign/active-characters/${campaignId}`
+    const response = await DDBApi.fetchJsonWithCredentials(url);
+    return response.data;
   }
 
 }

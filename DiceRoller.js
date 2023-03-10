@@ -189,7 +189,7 @@ class DiceRoll {
      * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
      */
     static fromSlashCommand(slashCommandText, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
-        let modifiedSlashCommand = replaceModifiersInSlashCommand(slashCommandText);
+        let modifiedSlashCommand = replaceModifiersInSlashCommand(slashCommandText, entityType, entityId);
         let slashCommand = modifiedSlashCommand.match(diceRollCommandRegex)?.[0];
         let expression = modifiedSlashCommand.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
         let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
@@ -561,18 +561,45 @@ function replace_gamelog_message_expressions(listItem) {
     }
 }
 
-function getCharacterStatModifiers() {
+function getCharacterStatModifiers(entityType, entityId) {
+    console.debug("getCharacterStatModifiers", entityType, entityId);
+    if (entityType === "character" && typeof window.pcs === "object") {
+        try {
+            const pc = window.pcs.find(pc => pc.sheet.includes(entityId));
+            if (typeof pc === "object" && typeof pc.abilities === "object" && typeof pc.proficiencyBonus === "number") {
+                const statMods = {
+                    "str": pc.abilities.find(a => a.name === "str").modifier,
+                    "dex": pc.abilities.find(a => a.name === "dex").modifier,
+                    "con": pc.abilities.find(a => a.name === "con").modifier,
+                    "int": pc.abilities.find(a => a.name === "int").modifier,
+                    "wis": pc.abilities.find(a => a.name === "wis").modifier,
+                    "cha": pc.abilities.find(a => a.name === "cha").modifier,
+                    "pb": pc.proficiencyBonus
+                };
+                console.debug("getCharacterStatModifiers built statMods from window.pcs", statMods);
+                return statMods;
+            }
+        } catch (error) {
+            console.warn("getCharacterStatModifiers failed to collect abilities from window.pcs", error);
+        }
+    }
     if (is_characters_page()) {
-        let stats = $(".ddbc-ability-summary__secondary");
-        return {
-            "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
-            "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
-            "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
-            "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
-            "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
-            "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
-            "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
-        };
+        try {
+            let stats = $(".ddbc-ability-summary__secondary");
+            const statMods = {
+                "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
+                "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
+                "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
+                "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
+                "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
+                "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
+                "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+            };
+            console.debug("getCharacterStatModifiers built statMods from character sheet html", statMods);
+            return statMods
+        } catch (error) {
+            console.warn("getCharacterStatModifiers failed to collect abilities from character sheet", error);
+        }
     }
     if (window.DM) {
         try {
@@ -580,7 +607,7 @@ function getCharacterStatModifiers() {
             if (!sheet) return undefined;
             const stats = window.PLAYER_STATS[sheet];
             if (!stats || !stats.abilities) return undefined;
-            return {
+            const statMods = {
                 "str": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "str").modifier),
                 "dex": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "dex").modifier),
                 "con": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "con").modifier),
@@ -589,11 +616,14 @@ function getCharacterStatModifiers() {
                 "cha": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "cha").modifier),
                 "pb": parseInt($($("#sheet").find("iframe").contents()).find(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
             };
+            console.debug("getCharacterStatModifiers built statMods from find_currently_open_character_sheet", statMods);
+            return statMods
         } catch (error) {
             console.warn("getCharacterStatModifiers Failed to parse player stats", error);
             return undefined;
         }
     }
+    console.log("getCharacterStatModifiers found nothing");
     return undefined;
 }
 
@@ -604,7 +634,7 @@ function getCharacterStatModifiers() {
  * @param slashCommandText {String} the string from the chat input
  * @returns {String} a new string with numbers instead of modifier if on the characters page, else returns the given slashCommand.
  */
-function replaceModifiersInSlashCommand(slashCommandText) {
+function replaceModifiersInSlashCommand(slashCommandText, entityType, entityId) {
     if (typeof slashCommandText !== "string") {
         console.warn("replaceModifiersInSlashCommand expected a string, but received", slashCommandText);
         return "";
@@ -616,7 +646,7 @@ function replaceModifiersInSlashCommand(slashCommandText) {
         return slashCommandText; // no valid expression to parse
     }
 
-    const modifiers = getCharacterStatModifiers();
+    const modifiers = getCharacterStatModifiers(entityType, entityId);
     if (modifiers === undefined) {
         // This will happen if the DM opens a character sheet before the character stats have loaded
         console.warn("getCharacterStatModifiers returned undefined. This command may not parse properly", slashCommandText);
