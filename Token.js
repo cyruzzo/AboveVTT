@@ -2208,12 +2208,7 @@ class Token {
 
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
 				draw_selected_token_bounding_box(); // update rotation bounding box
-				if(window.DM){
-			   		$("[id^='light_']").css('visibility', "visible");
-			   	}
-			   	else if(tok.options.itemType == 'pc' || token.options.player_owned){
-			   		redraw_light();
-			   	}
+	
 				
 				check_token_visibility();
 			});
