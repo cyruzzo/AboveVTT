@@ -2320,6 +2320,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #tokenOptionsContainer .to-bottom:before {
     content: "\e258" !important;
 }
+#tokenOptionsContainer .open-menu:before {
+    content: "\e9bd" !important;
+}
 
 .icon-edit:before,
 .context-menu-icon-edit:before {
@@ -4806,7 +4809,7 @@ input.max_hp[disabled]{
     position: relative;
     bottom: 2px;
 }
-
+/*
 .hideFromPlayerCombatButton:after{
     content: 'Hide/Reveal in Combat Tracker for Players';
 }
@@ -4822,7 +4825,7 @@ input.max_hp[disabled]{
 .openSheetCombatButton:after{
     content:'Open Sheet';   
 }
-
+*/
 .combatHideFromPlayerInput{
     display: none;
 }
@@ -6455,3 +6458,100 @@ button.journal-view-button.journal-button {
     border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 }
 /* end Note ddb styling*/
+
+/* start quick roll menu */
+#qrm_dialog button{
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    margin: 0 2px;
+    border-radius: 7px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    padding: 2px 8px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+}
+.qrm_name_line{
+    text-align: left;
+    color: #444d;
+    font-weight: 600;
+}
+.menu_table{
+    overflow: visible;
+    overflow-x: scroll;
+    height: calc(100% - 55px);
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+.menu_roll_input{
+    margin: 1px;
+    border-radius: 3px;
+    border-color: #ddd;
+    height:22px;
+    text-align:center;
+    font-size: 14px !important;
+    box-shadow: 1px 1px 1px 0px #00000047;
+}
+.general_input{
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    padding: 1px 1px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    margin: 1px;
+}
+.menu_hp_input{
+    border-width: 0;
+    background: none;
+    border-radius: 3px;
+    border-color: #ddd;
+    height:22px;
+    font-size: 18px !important;
+    top: 1px;
+    width: 45%;
+    display:inline-block;
+}
+
+#qrm_dialog .roll_mods_button {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    height: 40%;
+}
+.roll_mods_button:before {
+    width: 100%;
+    height: 100%;
+    min-width: 12px;
+    min-height: 12px;
+    top: 0px; 
+    margin-right: 0px;
+    left: 1px
+}
+.roll_mods_button:focus {
+    outline: none;
+    box-shadow: none;
+  }
+#adv.active_roll_mod{
+    background-image: none !important;
+    background: green;
+    border-radius: 3px !important;
+    border-color: #ddd !important;
+}
+#disadv.active_roll_mod{
+    background-image: none !important;
+    background: red;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+/* end quick roll menu */
+
+/* jquery tooltip text */
+.ui-tooltip{
+    z-index: 50001 !important;
+}
