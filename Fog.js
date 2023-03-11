@@ -660,8 +660,8 @@ function draw_wizarding_box() {
 
 	var gridCanvas = document.getElementById("grid_overlay");
 	var gridContext = gridCanvas.getContext("2d");
-	gridCanvas.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
-	gridCanvas.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
+	gridCanvas.width = $("#scene_map").width();
+	gridCanvas.height = $("#scene_map").height();
 
 	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -693,10 +693,12 @@ function draw_wizarding_box() {
 }
 function ctxScale(canvasid){
 	var canvas = document.getElementById(canvasid);
-	var ctx = canvas.getContext("2d");
-	canvas.width = $("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor;
-  	canvas.height = $("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor;
-	ctx.scale(window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.scale_factor);
+	canvas.width = $("#scene_map").width();
+  	canvas.height = $("#scene_map").height();
+	$(canvas).css({
+		'transform-origin': 'top left',
+		'transform': 'scale(var(--scene-scale))'
+	});
 }
 
 function reset_canvas() {
@@ -746,8 +748,8 @@ function reset_canvas() {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		canvas_grid.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
-		canvas_grid.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
+		canvas_grid.width = $("#scene_map").width();
+		canvas_grid.height = $("#scene_map").height();
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
