@@ -143,6 +143,17 @@ function handle_peer_event(eventData) {
 
 //#region PeerManager connect/disconnect logic
 
+function configure_peer_manager_from_settings() {
+  // configure the cursor/ruler settings first
+  const cursorSettings = get_avtt_setting_value("receiveCursorFromPeers");
+  local_peer_setting_changed(cursorSettings)
+  const rulerSettings = get_avtt_setting_value("receiveRulerFromPeers");
+  local_peer_setting_changed(rulerSettings)
+  // then enable or disable the PeerManager
+  const enabled = get_avtt_setting_value("peerStreaming");
+  local_peer_setting_changed(enabled);
+}
+
 function local_peer_setting_changed(settingName, newValue) {
   switch (settingName) {
     case "peerStreaming":
