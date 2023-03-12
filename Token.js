@@ -35,6 +35,18 @@ const availableToAoe = [
 	"revealname"
 ];
 
+const debounceLightChecks = mydebounce(() => {		
+		if(window.walls != undefined){
+			if(window.walls.length < 5){
+				redraw_light_walls();	
+			}
+		}
+		else{
+			redraw_light_walls();	
+		}
+		redraw_light();	}, 4000);
+
+
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
 	return "#" + TOKEN_COLORS[randomColorIndex];
@@ -96,7 +108,7 @@ class Token {
 		tok.stop(true, true);
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
-		redraw_light();
+		debounceLightChecks();
 	}
 
 	isLineAoe() {
@@ -1313,7 +1325,7 @@ class Token {
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
-						redraw_light();
+						debounceLightChecks();
 						if(!window.DM){
 									check_token_visibility();											
 							}
@@ -1779,7 +1791,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
-						redraw_light();
+						debounceLightChecks();
 						self.update_and_sync(event, false);
 						if (self.selected ) {
 							for (let tok of $(".token.tokenselected")){
@@ -1932,7 +1944,7 @@ class Token {
 					}
 					if(window.DM){
 				   		$("[id^='light_']").css('visibility', "visible");
-				   		redraw_light();
+				   		debounceLightChecks();
 				   	}
 					remove_selected_token_bounding_box();
 				},
@@ -2212,7 +2224,7 @@ class Token {
 			   		$("[id^='light_']").css('visibility', "visible");
 			   	}
 			   	else if(tok.options.itemType == 'pc' || token.options.player_owned){
-			   		redraw_light();
+			   		debounceLightChecks();
 			   	}
 				
 				check_token_visibility();
@@ -2230,18 +2242,8 @@ class Token {
 		// this.toggle_player_owned(token)
 		toggle_player_selectable(this, token)
 		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+		debounceLightChecks();
 		console.groupEnd()
-		if(window.walls != undefined){
-			if(window.walls.length < 5){
-				redraw_light_walls();	
-			}
-		}
-		else{
-			redraw_light_walls();	
-		}
-		
-	
-		redraw_light();	
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
@@ -2639,7 +2641,7 @@ function deselect_all_tokens() {
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
    	}
-    redraw_light();
+    debounceLightChecks();
     check_token_visibility();
 }
 
