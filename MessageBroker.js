@@ -1357,7 +1357,8 @@ class MessageBroker {
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
-
+			redraw_light_walls();
+			redraw_light();
 
 			apply_zoom_from_storage();
 			redraw_text();
@@ -1446,8 +1447,6 @@ class MessageBroker {
 			window.DRAWINGS = [];
 		}
 
-		redraw_light_walls();
-		redraw_light();
 
 
 		remove_loading_overlay();
