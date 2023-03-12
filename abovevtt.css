@@ -5735,6 +5735,13 @@ div.ddbc-tab-options--layout-pill>button{
 .url-validator.loading {
     color:blue;
     animation: spin 4s infinite linear;
+    background: none;
+    width: 24px;
+    height: 24px;
+}
+
+.url-validator.loading:before{
+    display:none;
 }
 
 @keyframes spin {
