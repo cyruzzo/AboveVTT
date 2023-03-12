@@ -1431,11 +1431,13 @@ class MessageBroker {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
+			redraw_fog();
 			//$("#fog_overlay").show();
 		}
 		else {
 			window.FOG_OF_WAR = false;
 			window.REVEALED = [];
+			reset_canvas();
 			//$("#fog_overlay").hide();
 		}
 		if (typeof data.drawings !== "undefined") {
@@ -1444,7 +1446,6 @@ class MessageBroker {
 		else {
 			window.DRAWINGS = [];
 		}
-
 
 
 
