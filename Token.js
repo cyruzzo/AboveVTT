@@ -44,7 +44,7 @@ const debounceLightChecks = mydebounce(() => {
 		else{
 			redraw_light_walls();	
 		}
-		redraw_light();	}, 4000);
+		redraw_light();	}, 100);
 
 
 function random_token_color() {
