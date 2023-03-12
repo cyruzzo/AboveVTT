@@ -2525,7 +2525,7 @@ function init_ui() {
 	rayCasting.css("top", "0");
 	rayCasting.css("left", "0");
 	rayCasting.css("position", "absolute");
-	rayCasting.css("z-index", "22");
+	rayCasting.css("z-index", "42");
 
 	// this overlay sits above other canvases, but below tempOverlay
 	// when peers stream their rulers, this canvas is where we draw them
