@@ -478,7 +478,7 @@ function normalize_scene_urls(scenes) {
 async function look_for_github_issue(...searchTerms) {
 
   // fetch issues that have been marked as bugs
-  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
+  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug&state=all", { credentials: "omit" });
   const response = await request.json();
 
   // remove any that have been marked as potential-duplicate
