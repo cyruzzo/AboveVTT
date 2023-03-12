@@ -593,12 +593,12 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid();
 	gridContext.setLineDash(dash);
-	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
-	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
-	startX = Math.round(startX)
-	startY = Math.round(startY)
-	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
-	const incrementY = vpps|| window.CURRENT_SCENE_DATA.vpps;
+	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
+	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
+	startX = Math.round(startX) / window.CURRENT_SCENE_DATA.scale_factor
+	startY = Math.round(startY) / window.CURRENT_SCENE_DATA.scale_factor
+	const incrementX = hpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor;
+	const incrementY = vpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
@@ -641,8 +641,8 @@ function draw_wizarding_box() {
 
 	var gridCanvas = document.getElementById("grid_overlay");
 	var gridContext = gridCanvas.getContext("2d");
-	gridCanvas.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
-	gridCanvas.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
+	gridCanvas.width = $("#scene_map").width();
+	gridCanvas.height = $("#scene_map").height();
 
 	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -674,10 +674,12 @@ function draw_wizarding_box() {
 }
 function ctxScale(canvasid){
 	var canvas = document.getElementById(canvasid);
-	var ctx = canvas.getContext("2d");
-	canvas.width = $("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor;
-  	canvas.height = $("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor;
-	ctx.scale(window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.scale_factor);
+	canvas.width = $("#scene_map").width();
+  	canvas.height = $("#scene_map").height();
+	$(canvas).css({
+		'transform-origin': 'top left',
+		'transform': 'scale(var(--scene-scale))'
+	});
 }
 
 function reset_canvas() {
@@ -727,8 +729,8 @@ function reset_canvas() {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		canvas_grid.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
-		canvas_grid.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
+		canvas_grid.width = $("#scene_map").width();
+		canvas_grid.height = $("#scene_map").height();
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
