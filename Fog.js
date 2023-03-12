@@ -383,8 +383,8 @@ function is_token_under_fog(tokenid){
 	let ctx2 = canvas2.getContext("2d");
 
 
-	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2));
-	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2));
+	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 	var pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
 
@@ -478,8 +478,8 @@ function do_check_token_visibility() {
 	let ctx2 = canvas2.getContext("2d");
 
 	for (var id in window.TOKEN_OBJECTS) {
-		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2));
-		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2));
+		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		let pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
 		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
