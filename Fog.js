@@ -859,8 +859,10 @@ function redraw_text() {
 		if(shape == 'text' && hidden == undefined){
 			window.DRAWINGS[drawing].push(false);
 		}
-   		if(shape == 'text')
-			draw_text(undefined, ...window.DRAWINGS[drawing]);	
+   		if(shape == 'text'){
+   			let text_clone = $.extend(true, [], window.DRAWINGS[drawing]);
+			draw_text(undefined, ...text_clone);	
+		}
 	}
 }
 
@@ -873,8 +875,8 @@ function redraw_drawings() {
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall")
 
 	for (var i = 0; i < drawings.length; i++) {
-
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
+		let drawing_clone = $.extend(true, [], drawings[i]);
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		const isFilled = fill === "filled"
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
@@ -948,7 +950,8 @@ function redraw_light_walls(clear=true){
 	}
 	$('.door-button').remove();
 	for (var i = 0; i < drawings.length; i++) {
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
+		let drawing_clone = $.extend(true, [], drawings[i]);
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;

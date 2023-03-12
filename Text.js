@@ -701,8 +701,8 @@ function draw_text(
             for(drawing in window.DRAWINGS){
                 if(window.DRAWINGS[drawing][9] != id)
                     continue;
-                window.DRAWINGS[drawing][1] = parseInt($(this).css('left'));
-                window.DRAWINGS[drawing][2] = parseInt($(this).css('top')) + parseInt(font.size);     
+                window.DRAWINGS[drawing][1] = parseInt($(this).css('left'))*adjustScale;
+                window.DRAWINGS[drawing][2] = parseInt($(this).css('top'))*adjustScale + parseInt(font.size)*adjustScale;    
             }
                         
             sync_drawings();
