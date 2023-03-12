@@ -2652,7 +2652,7 @@ function init_ui() {
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
 		}
-		enable_peer_manager();
+		configure_peer_manager_from_settings();
 	}, 5000);
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
