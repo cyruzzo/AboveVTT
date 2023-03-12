@@ -1357,7 +1357,8 @@ class MessageBroker {
 			reset_canvas();
 			redraw_fog();
 			redraw_drawings();
-
+			redraw_light_walls();
+			redraw_light();
 
 			apply_zoom_from_storage();
 			redraw_text();
@@ -1430,13 +1431,11 @@ class MessageBroker {
 			window.FOG_OF_WAR = true;
 			window.REVEALED = data.reveals;
 			reset_canvas();
-			redraw_fog();
 			//$("#fog_overlay").show();
 		}
 		else {
 			window.FOG_OF_WAR = false;
 			window.REVEALED = [];
-			reset_canvas();
 			//$("#fog_overlay").hide();
 		}
 		if (typeof data.drawings !== "undefined") {
@@ -1446,8 +1445,7 @@ class MessageBroker {
 			window.DRAWINGS = [];
 		}
 
-		redraw_light_walls();
-		redraw_light();
+
 
 
 		remove_loading_overlay();

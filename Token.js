@@ -2231,7 +2231,17 @@ class Token {
 		toggle_player_selectable(this, token)
 		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 		console.groupEnd()
-
+		if(window.walls != undefined){
+			if(window.walls.length < 5){
+				redraw_light_walls();	
+			}
+		}
+		else{
+			redraw_light_walls();	
+		}
+		
+	
+		redraw_light();	
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
