@@ -708,7 +708,8 @@ div#scene_selector,
 }
 
 
-input[type="number"][name='darkness_filter_number']{
+input[type="number"][name='darkness_filter_number'],
+input[type="number"][name='gridStrokeNumberInput']{
     width:50px;
     font-size:12px;
 }
