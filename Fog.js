@@ -402,7 +402,7 @@ function is_token_under_light_aura(tokenid){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	let visibleLightAuras = $(".aura-element.islight:not([style*='visibility: hidden'])");
+	let visibleLightAuras = $(".aura-element-container-clip .aura-element:not([style*='visibility: hidden'])");
 	
 	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
 		let bounds = {
@@ -428,31 +428,21 @@ function check_single_token_visibility(id){
 		return;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-			var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-			var selector = "div[data-id='" + id + "']";
-			let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
+			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+			let selector = "div.token[data-id='" + id + "']";
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			let playerAuraIsVisible =  (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
+			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
-
+			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 				$(selector).hide();
-				if($(auraSelector).hasClass('islight') && window.TOKEN_OBJECTS[id].options.reveal_light == 'never'){
-					$(auraSelector).hide();
-				}
-				else{
-					$(auraSelector).show();
-				}
+				$(auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 				$(selector).css('opacity', 1);
 				$(selector).show();
 				$(auraSelector).show();
 				//console.log('SHOW '+id);
-			}
-			else if($(auraSelector).hasClass('islight')){
-				$(auraSelector).show();
 			}
 }
 
@@ -492,22 +482,17 @@ function do_check_token_visibility() {
 		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2));
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
 		let pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
+		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+		var selector = "div.token[data-id='" + id + "']";
 
-		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-		var selector = "div[data-id='" + id + "']";
-		let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 			
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenHasVision) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
 			$(selector).hide();
-			if($(auraSelector).hasClass('islight') && window.TOKEN_OBJECTS[id].options.reveal_light == 'never'){
-				$(auraSelector).hide();
-			}
-			else{
-				$(auraSelector).show();
-			}
+			$(auraSelector).hide();
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).css('opacity', 1);
@@ -515,10 +500,6 @@ function do_check_token_visibility() {
 			$(auraSelector).show();
 			//console.log('SHOW '+id);
 		}
-		else if($(auraSelector).hasClass('islight')){
-			$(auraSelector).show();
-		}
-		$(".aura-element[id='light_" + auraSelectorId + "'] ~ .aura-element[id='light_" + auraSelectorId + "']").remove();
 	}
 	console.log("finished");
 }
@@ -766,7 +747,9 @@ function reset_canvas() {
 	else {
 		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
 	}
+	redraw_light_walls();
 	redraw_light();
+
 }
 
 function redraw_fog() {

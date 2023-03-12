@@ -1017,7 +1017,6 @@ class Token {
 			} else {
 				tok.css("opacity", 1); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 			}
-			tok.show();
 		}
 	}
 
@@ -2223,7 +2222,7 @@ class Token {
 				if(window.DM){
 			   		$("[id^='light_']").css('visibility', "visible");
 			   	}
-			   	else if(tok.options.itemType == 'pc' || token.options.player_owned){
+			   	else if(window.TOKEN_OBJECTS[tokID].options.itemType == 'pc' || window.TOKEN_OBJECTS[tokID].options.shared_vision){
 			   		debounceLightChecks();
 			   	}
 				
@@ -2351,12 +2350,10 @@ function default_options() {
 			feet: "0",
 			color: "rgba(255, 255, 0, 0.1)"
 		},
-		auraVisible: false,
-		auraOwned: false,
-		auraislight: true,
+		auraislight: true, // this is actually light/vision is enabled now.
 		light1: {
 			feet: "0",
-			color: "rgba(255, 255, 255, 1)"
+			color: "rgba(255, 255, 255, 1)" 
 		},
 		light2: {
 			feet: "0",
@@ -2693,6 +2690,8 @@ function setTokenAuras (token, options) {
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
 		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
+		const tokenId = token.attr("data-id").replaceAll("/", "");
+		const showAura = (token.parent().parent().find("#aura_" + tokenId).length > 0) ? token.parent().parent().find("#aura_" + tokenId).css('display') : '';
 		const auraStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							left:${absPosOffset}px;
@@ -2700,8 +2699,8 @@ function setTokenAuras (token, options) {
 							background-image:${auraBg};
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							display:${showAura}
 							`;
-		const tokenId = token.attr("data-id").replaceAll("/", "");
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
 		} else {
@@ -2714,7 +2713,7 @@ function setTokenAuras (token, options) {
 			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			options.hidden ? token.parent().parent().find("#aura_" + tokenId).hide()
+			(options.hidden || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
 
@@ -2723,25 +2722,6 @@ function setTokenAuras (token, options) {
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
-	}
-	if(!window.DM){
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		if(playerTokenId != undefined){
-			if(window.TOKEN_OBJECTS[playerTokenId].options.auraowned){
-				let auras = $("[id^='aura_']");
-				for(let i = 0; i < auras.length; i++){
-					if(!auras[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.reveal_light != 'los' && window.TOKEN_OBJECTS[$(auras[i]).attr("data-id")].options.reveal_light != 'always'){
-						$(auras[i]).css("visibility", "hidden");
-					}
-				}
-			}
-			else{
-				let auras = $("[id^='aura_']");
-				for(let i = 0; i < auras.length; i++){
-						$(auras[i]).css("visibility", "visible");	
-				}
-			}
-		}
 	}
 }
 function setTokenLight (token, options) {
@@ -2755,7 +2735,7 @@ function setTokenLight (token, options) {
 		const totallight = innerlightSize + outerlightSize;
 		const lightRadius = innerlightSize ? (innerlightSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
 		const lightBg = `radial-gradient(${options.light1.color} ${lightRadius}px, ${options.light2.color} ${lightRadius}px);`;
-		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totallight);
+		const totalSize = (totallight == 0) ? 0 : parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor + (2 * totallight);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
@@ -2807,7 +2787,7 @@ function setTokenLight (token, options) {
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		
-		let vision = $("[id^='vision']");
+		let vision = $("[id*='vision_']");
 		for(let i = 0; i < vision.length; i++){
 			if(!vision[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.share_vision != true){
 				$(vision[i]).css("visibility", "hidden");

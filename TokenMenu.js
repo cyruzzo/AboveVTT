@@ -437,24 +437,13 @@ function build_token_auras_inputs(tokenIds) {
 	let auraVisibleValues = tokens.map(t => t.options.auraVisible);
 	let uniqueAuraVisibleValues = [...new Set(auraVisibleValues)];
 
-	let hideAuraFromPlayers = tokens.map(t => t.options.hideaurafog);
-	let uniqueHideAuraFromPlayers = [...new Set(hideAuraFromPlayers)];
 	
-	let auraOwnedValues = tokens.map(t => t.options.auraowned);
-	let uniqueAuraOwnedValues = [...new Set(auraOwnedValues)];
 
 	let auraIsEnabled = null;
 	if (uniqueAuraVisibleValues.length === 1) {
 		auraIsEnabled = uniqueAuraVisibleValues[0];
 	}
-	let hideAuraIsEnabled = null;
-	if (uniqueHideAuraFromPlayers.length === 1) {
-		hideAuraIsEnabled = uniqueHideAuraFromPlayers[0];
-	}
-	let auraOnlyForOwnedTokenEnabled = null;
-	if (uniqueAuraOwnedValues.length === 1) {
-		auraOnlyForOwnedTokenEnabled = uniqueAuraOwnedValues[0];
-	}
+	
 
 	let aura1Feet = tokens.map(t => t.options.aura1.feet);
 	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
@@ -524,51 +513,7 @@ function build_token_auras_inputs(tokenIds) {
 		}
 	});
 	wrapper.prepend(enabledAurasInput);	
-
-	const auraOnlyForOwnedToken = {
-		name: "auraowned",
-		label: "Only show owned tokens aura",
-		type: "toggle",
-		options: [
-			{ value: true, label: "Owned tokens Aura", description: "Only showing to the player their own token aura and other tokens with 'Player Accessible Stats' auras" },
-			{ value: false, label: "All Auras", description: "Showing all token Auras" }
-		],
-		defaultValue: false
-	};
-	let auraOwnedInput = build_toggle_input(auraOnlyForOwnedToken, auraOnlyForOwnedTokenEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
-		tokens.forEach(token => {
-			token.options[name] = newValue;
-			token.place_sync_persist();
-		});
-		check_token_visibility();
-	});
-	if(allTokensArePlayer && window.DM)
-		wrapper.find(".token-config-aura-wrapper").prepend(auraOwnedInput);
 	
-
-	const hideAuraInFogOption = {
-		name: "hideaurafog",
-		label: "Hide aura when hidden in fog",
-		type: "toggle",
-		options: [
-			{ value: true, label: "Hidden", description: "The token's aura outside fog is hidden from players when the token is in fog." },
-			{ value: false, label: "Visible", description: "The token's aura outside fog is visible to players when the token is in fog." }
-		],
-		defaultValue: false
-	};
-	let hideAuraInFog = build_toggle_input(hideAuraInFogOption, hideAuraIsEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
-		tokens.forEach(token => {
-			token.options[name] = newValue;
-			token.place_sync_persist();
-		});
-	});
-	if(window.DM) {
-		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInFog);
-	}
-	
-
 	wrapper.find("h3.token-image-modal-footer-title").after(enabledAurasInput);
 	if (auraIsEnabled) {
 		wrapper.find(".token-config-aura-wrapper").show();
