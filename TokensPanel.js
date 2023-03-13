@@ -1513,6 +1513,166 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         borderColorWrapper.hide();
     }
 
+    if(customization.tokenOptions.vision == undefined){
+        customization.tokenOptions.vision = {
+            feet: 60,
+            color: 'rgba(255, 255, 255, 0.5)'
+        }
+    }
+    if(customization.tokenOptions.light1 == undefined){
+        customization.tokenOptions.light1 = {
+            feet: 0,
+            color: 'rgba(255, 255, 255, 0.8)'
+        }
+    }
+     if(customization.tokenOptions.light2 == undefined){
+        customization.tokenOptions.light2 = {
+            feet: 0,
+            color: 'rgba(255, 255, 255, 0.5)'
+        }
+    }
+
+
+    let uniqueVisionFeet = customization.tokenOptions.vision.feet;
+    let uniqueVisionColor = customization.tokenOptions.vision.color;
+    let uniqueLight1Feet = customization.tokenOptions.light1.feet;
+    let uniqueLight2Feet = customization.tokenOptions.light2.feet;
+    let uniqueLight1Color = customization.tokenOptions.light1.color;
+    let uniqueLight2Color = customization.tokenOptions.light2.color;
+
+    const lightOption = {
+    name: "auraislight",
+    label: "Enable Token Vision/Light",
+    type: "toggle",
+    options: [
+        { value: true, label: "Enable", description: "Token has light/vision." },
+        { value: false, label: "Disable", description: "Token has no light/vision." }
+    ],
+    defaultValue: false
+    };
+    let auraIsLightEnabled = (customization.tokenOptions.auraislight != undefined) ? customization.tokenOptions.auraislight : true;
+    let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
+        console.log(`${name} setting is now ${newValue}`);
+        customization.setTokenOption("auraislight", newValue);
+        persist_token_customization(customization);
+        if (newValue) {
+            inputWrapper.find(".token-config-aura-wrapper").show();
+        } else {
+            inputWrapper.find(".token-config-aura-wrapper").hide();
+        }
+    });
+   
+    inputWrapper.append(enabledLightInput);
+
+
+    let lightInputs = `<div class="token-config-aura-wrapper"><div class="menu-vision-aura">
+                    <h3 style="margin-bottom:0px;">Darkvision</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="vision-radius" name="vision" type="text" value="${uniqueVisionFeet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="visionColor" value="${uniqueVisionColor}" >
+                    </div>
+                </div>
+                <div class="menu-inner-aura">
+                    <h3 style="margin-bottom:0px;">Inner Light</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="light-radius" name="light1" type="text" value="${uniqueLight1Feet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="light1Color" value="${uniqueLight1Color}" >
+                    </div>
+                </div>
+                <div class="menu-outer-aura">
+                    <h3 style="margin-bottom:0px;">Outer Light</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="light-radius" name="light2" type="text" value="${uniqueLight2Feet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="light2Color" value="${uniqueLight2Color}" >
+                    </div>
+                </div></div>`;
+
+    inputWrapper.append(lightInputs);
+
+
+
+    const revealvisionOption = {
+        name: "share_vision",
+        label: "Share vision with all players",
+        type: "toggle",
+        options: [
+            { value: false, label: "Disabled", description: "Token vision is not shared." },
+            { value: true, label: "Enabled", description: "Token vision is shared with all players." },
+        ],
+        defaultValue: false
+    };
+    let auraRevealVisionEnabled = (customization.tokenOptions.share_vision != undefined) ? customization.tokenOptions.share_vision : false;
+    let revealVisionInput = build_toggle_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
+        console.log(`${name} setting is now ${newValue}`);
+        customization.setTokenOption("share_vision", newValue);
+        persist_token_customization(customization);
+    });
+
+
+
+    inputWrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
+    
+
+    inputWrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
+    if (auraIsLightEnabled) {
+        inputWrapper.find(".token-config-aura-wrapper").show();
+    } else {
+        inputWrapper.find(".token-config-aura-wrapper").hide();
+    }
+
+    let radiusInputs = inputWrapper.find('input.light-radius, input.vision-radius');
+    radiusInputs.on('keyup', function(event) {
+        let newRadius = event.target.value;
+        if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {
+            customization.tokenOptions[event.target.name]['feet'] = newRadius;
+            persist_token_customization(customization);
+        }
+    });
+    radiusInputs.on('focusout', function(event) {
+        let newRadius = event.target.value;
+        if (newRadius !== undefined && newRadius.length > 0) {
+            customization.tokenOptions[event.target.name]['feet'] = newRadius;
+            persist_token_customization(customization);
+        }
+    });
+
+    let colorPickers = inputWrapper.find('input.spectrum');
+    colorPickers.spectrum({
+        type: "color",
+        showInput: true,
+        showInitial: true,
+        containerClassName: 'prevent-sidebar-modal-close',
+        clickoutFiresChange: true,
+        appendTo: "parent"
+    });
+
+    inputWrapper.find("input[name='light1Color']").spectrum("set", uniqueLight1Color);
+    inputWrapper.find("input[name='light2Color']").spectrum("set", uniqueLight2Color);
+    const colorPickerChange = function(e, tinycolor) {
+        let auraName = e.target.name.replace("Color", "");
+        let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        console.log(auraName, e, tinycolor);
+        customization.tokenOptions[auraName]['color'] = color;
+        persist_token_customization(customization);
+        
+    };
+    colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+    colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+    colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
     // token options override
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
         customization.setTokenOption(name, value);

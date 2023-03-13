@@ -5938,7 +5938,16 @@ div.note[id^="ui-id"] .mce-btn button {
     top: unset;
     left: 12px;
 }
-
+.sidebar-panel-footer .token-config-aura-wrapper h3 ~ .token-image-modal-footer-select-wrapper .token-image-modal-footer-title{
+    font-size:9px;
+    min-width:50px;
+    margin-top:0px
+    
+}
+.sidebar-panel-footer .token-config-aura-wrapper h3{
+    font-size:12px;
+    min-width:65px;
+}
 .peerCursorPosition {
     height: 16px;
     width: 16px;
