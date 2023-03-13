@@ -2016,8 +2016,8 @@ class Token {
 					
 						if(intersect != false && !window.DM){	
 							
-							tokenX = (parseInt(self.orig_left) > intersect.x) ? intersect.x : intersect.x - self.options.size;		
-							tokenY = (parseInt(self.orig_top) > intersect.y) ? intersect.y : intersect.y - self.options.size;	
+							tokenX = (parseInt(self.orig_left) > intersect.x) ? (should_snap_to_grid()) ? intersect.x + self.options.size : intersect.x : intersect.x - self.options.size;		
+							tokenY = (parseInt(self.orig_top) > intersect.y) ? (should_snap_to_grid()) ? intersect.y + self.options.size : intersect.y : intersect.y - self.options.size;	
 						}
 						
 					}
