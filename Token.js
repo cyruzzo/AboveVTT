@@ -2713,7 +2713,7 @@ function setTokenAuras (token, options) {
 			: token.parent().parent().find("#aura_" + tokenId).css("opacity", 1)
 		}
 		else{
-			(options.hidden || options.hideaura || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
+			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
 

@@ -527,9 +527,10 @@ function build_token_auras_inputs(tokenIds) {
 	} else {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
+	const hideAuraLabel = (allTokensArePlayer) ? 'Hide Aura from other Players' : 'Hide Aura from Players';
 	const hideAura = {
 		name: "hideaura",
-		label: "Hide aura from players",
+		label: hideAuraLabel,
 		type: "toggle",
 		options: [
 			{ value: true, label: "Hidden", description: "The token's aura is hidden from players." },
@@ -544,7 +545,7 @@ function build_token_auras_inputs(tokenIds) {
 			token.place_sync_persist();
 		});
 	});
-	if(window.DM) {
+	if(window.DM || (tokens.length == 1 && (window.TOKEN_OBJECTS[tokens[0].options.id].options.player_owned || allTokensArePlayer))){
 		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInput);
 	}
 	let radiusInputs = wrapper.find('input.aura-radius');
