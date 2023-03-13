@@ -736,10 +736,12 @@ input[type="number"][name='gridStrokeNumberInput']{
 }
 label[for='grid_line_width'] {
     font-size: 10px;
-    position: relative;
+    position: absolute;
     font-weight: bold;
     top: -7px;
     left: -83px;
+    top: -5px;
+    left: 71px;
     color: #555;
 }
 
@@ -753,7 +755,9 @@ input[name='gridStrokeNumberInput'] {
     position: relative;
     top: 3px;
     left: -57px;
-    width: 50px;
+    position: absolute;
+    top: 8px;
+    left: 170px;
 }
 
 .isvideotogglelabel {
