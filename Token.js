@@ -2435,8 +2435,8 @@ function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
 }
 
 function convert_point_from_map_to_view(mapX, mapY) {
-	let pageX = mapX / (1 / window.ZOOM) ;
-	let pageY = mapY / (1 / window.ZOOM) ;
+	let pageX = mapX / (1 / window.ZOOM) + window.VTTMargin;
+	let pageY = mapY / (1 / window.ZOOM) + window.VTTMargin;
 	return { x: pageX, y: pageY };
 }
 
