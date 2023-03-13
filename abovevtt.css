@@ -6593,4 +6593,6 @@ button.journal-view-button.journal-button {
 /* jquery tooltip text */
 .ui-tooltip{
     z-index: 50001 !important;
+    min-width: 100px;
+    max-width: 200px;
 }
