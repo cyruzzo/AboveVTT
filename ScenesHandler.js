@@ -161,6 +161,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
 		load_scenemap(map_url, map_is_video, null, null, function() {
+			window.CURRENT_SCENE_DATA.scale_factor = 1;
+			scene.scale_factor = 1;
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
 			var max_length = get_canvas_max_length();
@@ -194,7 +196,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					found_data_tokens=true;
 			}
 
-			self.sync();
 
 			get_pclist_player_data(); // UPDATE PLAYER TOKENS DATA
 

@@ -167,7 +167,7 @@ class WaypointManagerClass {
 
 		// Add in scene offset
 		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
-		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety;
+		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety/window.CURRENT_SCENE_DATA.scale_factor;
 
 		return { x: snapPointXStart, y: snapPointYStart }
 	}
@@ -595,8 +595,8 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	gridContext.setLineDash(dash);
 	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
 	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
-	startX = Math.round(startX) / window.CURRENT_SCENE_DATA.scale_factor
-	startY = Math.round(startY) / window.CURRENT_SCENE_DATA.scale_factor
+	startX = Math.round(startX)
+	startY = Math.round(startY) 
 	const incrementX = hpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor;
 	const incrementY = vpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;

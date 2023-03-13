@@ -460,7 +460,6 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
 		window.ScenesHandler.persist_current_scene();
-		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
 		$("#exitWizard").remove();
 		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
@@ -491,7 +490,6 @@ function edit_scene_dialog(scene_id) {
 				$("#wizard_popup").remove();
 			});
 			window.ScenesHandler.persist_current_scene();
-			window.ScenesHandler.reload();
 			$("#raycastingCanvas").css('visibility', 'visible');
 			$("#darkness_layer").css('visibility', 'visible');
 		});
@@ -507,7 +505,6 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.upsq = "ft";
 			consider_upscaling(window.ScenesHandler.scene);
 			window.ScenesHandler.persist_current_scene();
-			window.ScenesHandler.reload();
 			$("#exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
@@ -534,7 +531,6 @@ function edit_scene_dialog(scene_id) {
 		});
 		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
-		window.ScenesHandler.reload();
 		$("#raycastingCanvas").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	}
@@ -556,7 +552,6 @@ function edit_scene_dialog(scene_id) {
 		});
 		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
-		window.ScenesHandler.reload();
 		$("#raycastingCanvas").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	}
