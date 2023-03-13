@@ -187,7 +187,6 @@ function token_context_menu_expanded(tokenIds, e) {
 		
 		body.append(combatButton);
 
-
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
 		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
 		hiddenMenuButton.off().on("click", function(clickEvent){
@@ -235,13 +234,31 @@ function token_context_menu_expanded(tokenIds, e) {
 			clickedItem.removeClass("single-active all-active some-active active-condition");
 			clickedItem.addClass(determine_grouped_classname(tokenIds));
 		});
-
-
-
 		body.append(groupTokens);
 	}
 
-
+	// Start Quick Group Roll
+	if (window.DM) {
+		let quickRollMenu = $("<button class='material-icons open-menu'>Add/Remove from Quick Rolls</button>")
+		body.append(quickRollMenu);
+		quickRollMenu.on("click", function(clickEvent){
+			if ($('#quick_roll_area').length == 0){
+				close_token_context_menu()
+				open_quick_roll_menu(e)
+			}
+			tokens.forEach(token => {
+				$(token).each(function(){
+					if (window.TOKEN_OBJECTS[token.options.id].in_qrm == true) {
+						remove_from_quick_roll_menu(token)
+					}
+					else {
+						add_to_quick_roll_menu(token)
+					}
+				})
+			})
+		})
+	}
+	// End Quick Group Roll 
 	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
 
@@ -292,7 +309,6 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 	}
 
-	
 	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){ 
 		$(".maxHpMenuInput").prop('disabled', false);
 		$(".acMenuInput").prop('disabled', false);
@@ -1670,3 +1686,688 @@ function updateScaleInputs(newScale, maxScale) {
 	imageScaleInputNumber.attr('max', maxScale);
 	imageScaleInputRange.attr('max', maxScale);
 }
+
+
+//Start Quick Roll Menu//
+
+function open_quick_roll_menu(e){
+	//opens a roll menu for group rolls 
+	console.log("Opening Roll menu")
+	$("#qrm_dialog").remove();
+
+	qrm = $("<div id='qrm_dialog'></div>");
+	qrm.css('background', "#f9f9f9");
+	qrm.css('width', '410px');
+	qrm.css('top', e.clientY+'px');
+	qrm.css('left', e.clientX+'px');
+	qrm.css('height', '250px');
+	qrm.css('z-index', 49001);
+	qrm.css('border', 'solid 2px gray');
+	qrm.css('display', 'flex');
+	qrm.css('margin', '1px 1px')
+	qrm.css('flex-direction', 'column');
+	qrm.css('position', 'fixed')
+	qrm.css('border-style', 'solid');
+    qrm.css('border-color', '#ddd'); 
+
+	$("#site").append(qrm);
+	qrm.empty();	
+	
+	qrm.addClass("moveableWindow");
+
+	const qrm_title_bar=$("<div id='quick_roll_title_bar' class='text-input-title-bar restored'> Quick Roll Menu </div>")
+	qrm_title_bar.css('padding', '1px 3px');
+	qrm_title_bar.css('position', 'sticky');
+	const qrm_title_bar_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
+	const qrm_title_bar_exit=$('<div id="quick_roll_title_bar_exit" class="title-bar-exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
+	qrm_area=$("<table id='quick_roll_area'/>");
+	
+	const qrm_list_wrapper = $(`<div class="menu_table"></div>`);
+	qrm_list_wrapper.mouseover(function(){
+		$(this).css('--scrollY', $(this).scrollTop());
+	});
+	qrm_title_bar_exit.click(function(){
+		$("#qrm_clear_all").click();
+		$("#qrm_dialog").remove();
+	});
+	qrm_title_bar_popout.click(function() {
+		qrm.hide();
+		let name = "Quick Roll Menu";
+		popoutWindow(name, $("#qrm_dialog"), $("#qrm_dialog").width(),  $("#qrm_dialog").height()-25);//subtract titlebar height
+		qrm_update_popout();
+	})
+	qrm_title_bar.append(qrm_title_bar_popout);
+	qrm_title_bar.append(qrm_title_bar_exit);
+	$("#qrm_dialog").append(qrm_title_bar);
+	qrm_list_wrapper.append(qrm_area);
+
+	$(qrm_title_bar).dblclick(function(){
+		if($(qrm_title_bar).hasClass("restored")){
+			$(qrm_title_bar).data("prev-height", $("#qrm_dialog").height());
+			$(qrm_title_bar).data("prev-width", $("#qrm_dialog").width());
+			$(qrm_title_bar).data("prev-top", $("#qrm_dialog").css("top"));
+			$(qrm_title_bar).data("prev-left", $("#qrm_dialog").css("left"));
+			$("#qrm_dialog").css("top", $(qrm_title_bar).data("prev-minimized-top"));
+			$("#qrm_dialog").css("left", $(qrm_title_bar).data("prev-minimized-left"));
+			$("#qrm_dialog").height(25);
+			$("#qrm_dialog").width(200);
+			$("#qrm_dialog").css("visibility", "hidden");
+			$(qrm_title_bar).css("visibility", "visible");
+			$(qrm_title_bar).addClass("minimized");
+			$(qrm_title_bar).removeClass("restored");
+		}
+		else if($(qrm_title_bar).hasClass("minimized")){
+			$(qrm_title_bar).data("prev-minimized-top", $("#qrm_dialog").css("top"));
+			$(qrm_title_bar).data("prev-minimized-left", $("#qrm_dialog").css("left"));
+			$("#qrm_dialog").height($(qrm_title_bar).data("prev-height"));
+			$("#qrm_dialog").width($(qrm_title_bar).data("prev-width"));
+			$("#qrm_dialog").css("top", $(qrm_title_bar).data("prev-top"));
+			$("#qrm_dialog").css("left", $(qrm_title_bar).data("prev-left"));
+			$(qrm_title_bar).addClass("restored");
+			$(qrm_title_bar).removeClass("minimized");
+			$("#qrm_dialog").css("visibility", "visible");
+		}
+	});
+	qrm_title_dc_input = $('<input class="general_input" id="qrm_save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
+	qrm_title_dc_input.tooltip({show: { duration: 2000 }});
+	qrm_title_dc_input.attr('style', 'width: 24% !important');
+
+	save_type_dropdown = $('<select class="general_input" id="qrm_save_dropdown" onchange="save_type_change(this)" title="Select the type of saving throw to be made. ">Save Type</select>')
+	save_type_dropdown.append($('<option value="1">Dexterity</option>')) 
+	save_type_dropdown.append($('<option value="4">Wisdom</option>'))
+	save_type_dropdown.append($('<option value="2">Constitution</option>'))
+	save_type_dropdown.append($('<option value="0">Strength</option>'))
+	save_type_dropdown.append($('<option value="3">Intelligence</option>'))
+	save_type_dropdown.append($('<option value="5">Charisma</option>'))
+	save_type_dropdown.tooltip({show: { duration: 2000 }})
+	save_type_dropdown.attr('style', 'width: 25% !important');
+	damage_input  = $('<input class="general_input" id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
+	damage_input.tooltip({show: { duration: 2000 }})
+	damage_input.attr('style', 'width: 24% !important');
+
+	half_damage_input = $('<input class="general_input" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
+	half_damage_input.tooltip({show: { duration: 2000 }})
+	half_damage_input.attr('style', 'width: 24% !important');
+
+	damage_input.change(function(){
+		_dmg = $('#damage_failed_save').val();
+		if (_dmg.includes('d')) {
+			var expression = _dmg
+			var roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			//reassign to the input 
+			_dmg = roll.total
+			$('#damage_failed_save').val(_dmg);
+		}
+		else {
+			_dmg.replace(/[^\d.-]/g, '')
+		}
+		$("#half_damage_save").val(Math.floor(_dmg/2));
+		qrm_update_popout();
+	});
+
+	//Roll Button 
+	qrm_roll=$("<button id='qrm_roll_button'>ROLL</button>");
+	qrm_roll.click(function() {
+		$('#qrm_apply_damage').show()
+		$("#quick_roll_area").children('tr').children('td').find('#roll_bonus').each(function (){
+			let modifier = $(this).val().toLowerCase();
+			dice = '1d20'
+			if (modifier.includes("a") == true) {
+				modifier = modifier.replace(/[^\d.-]/g, '');
+				dice = '2d20kh1 +';
+			}
+			else if (modifier.includes("d") == true) {
+				modifier = modifier.replace(/[^\d.-]/g, '');
+				dice = '2d20kl1 +';
+			}
+			var expression = dice + modifier;
+			var roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			//reassign to the input 
+			result = $(this).parent().children('#qrm_roll_result')
+		
+			// Append success or fail to the value... not sure this is best, there are a few ways but this is simple
+			//display a Save success or failure.
+			save_dc = $("#qrm_save_dc").val()
+			if (save_dc != ""){
+				if (parseInt(roll.total) >= parseInt(save_dc)){
+					result.val(roll.total + ' Success!')
+					result.css('background', 'green')
+				}
+				else {
+					result.val(roll.total + ' Fail!')
+					result.css('background', 'red')}
+			}
+			else {//if not defined apply full damage.
+				result.val(roll.total + ' Auto-Fail')
+				result.css('background', 'yellow')
+			}
+		});
+		setTimeout(qrm_update_popout,500);
+	});
+
+	//Clear Button
+	qrm_clear = $("<button id='qrm_clear_all' >CLEAR </button>");
+	qrm_clear.css('right', '5px');
+	qrm_clear.css('position','absolute');
+	qrm_clear.click(function() {
+		$("#quick_roll_area").children('tr').each(function (){
+			$(this).find('#qrm_remove').click()
+		});
+		qrm_update_popout();
+	});
+
+	//Update HP button 
+	update_hp = $("<button id='qrm_apply_damage'> Apply Damage/Healing </button>");
+	update_hp.click(function() {
+		$("#quick_roll_area").children('tr').each(function (){
+			let result = $(this).find('#qrm_roll_result').val();
+			let token = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+			damage_failed_save = $('#damage_failed_save').val()
+			half_damage_save_success = $('#half_damage_save').val()
+
+			damage_failed_save = damage_failed_save.replace(/[^\d.-]/g, '');
+			half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
+
+			if (result.includes('Fail')){
+				damage = damage_failed_save
+			}
+			else {
+				damage = half_damage_save_success
+			}
+
+			if(token.options.monster > 0){
+				_hp = $(this).find('#qrm_hp');
+				_max_hp = $(this).find('#qrm_maxhp')
+				//Lets not allow healing over maxhp
+				//Unless we are at max_hp then assume they want the temp hp? IDK about this.
+				if (_hp.val() < _max_hp.val() && _hp.val() - damage > _max_hp.val()){
+					_hp.val(max_hp.val());
+				}
+				else{
+					_hp.val(token.options.hp - damage);
+				}
+				_hp.trigger('change');
+			}
+			else {
+				// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
+				if (damage > 0){
+					dmg_heal_text = token.options.name + " takes " + damage +" damage (adjust manually)";
+				}
+				else{
+					dmg_heal_text = token.options.name + " heals for " + damage +" (adjust manually)";
+				}
+					var msgdata = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: dmg_heal_text,
+				};
+				window.MB.inject_chat(msgdata);
+			}
+			token.update_and_sync();
+			qrm_update_popout();
+		});
+	});
+
+	qrm_footer = $("<div id='roll_menu_footer' class='footer-input-wrapper tfoot'/>");
+	qrm_footer.css('bottom', '0');
+	qrm_footer.css('position','sticky');
+	qrm_footer.css('background', "#f9f9f9");
+	
+	qrm_footer.append(damage_input)
+	qrm_footer.append(half_damage_input)
+	qrm_footer.append(qrm_title_dc_input)
+	qrm_footer.append(save_type_dropdown)
+	qrm_footer.append(qrm_roll);
+	qrm_footer.append(update_hp);
+	qrm_footer.append(qrm_clear);
+	update_hp.hide()
+
+	//header
+	qrm.append(qrm_title_bar);
+	//body
+	qrm.append(qrm_list_wrapper);
+	//footer
+	qrm.append(qrm_footer);
+	
+	qrm.css('opacity', '0.0');
+	qrm.animate({
+		opacity: '1.0'
+	}, 1000);
+	
+	qrm.draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	qrm.resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 215,
+		minHeight: 200
+	});
+	$("#qrm_dialog").mousedown(function() {
+		frame_z_index_when_click($(this));
+	});
+}
+
+function add_to_quick_roll_menu(token){
+	//Adds a specific target to the quick roll menu
+
+	window.TOKEN_OBJECTS[token.options.id].in_qrm = true
+
+	if(token.options.name == "Not in the current map")
+		return;
+	if (token.isAoe()) {
+		return; // don't add aoe to combat tracker
+	}
+
+	qrm_entry=$("<tr/>");
+	qrm_entry.attr("data-target", token.options.id);	
+	qrm_entry.attr("data-name", token.options.name);
+	qrm_entry.tooltip({show: { duration: 2000 }});
+	
+	img=$(`<img width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title=${token.options.name}>`);
+	img.attr('src',token.options.imgsrc);
+	img.css('border','3px solid '+token.options.color);
+	img.css('margin', '2px 2px');
+	if (token.options.hidden == true){
+		img.css('opacity','0.5');
+	}
+	img.tooltip({
+		show: { duration: 2000 },
+		position: { my: "left+15 center", at: "right center" }
+	});
+	qrm_entry.append($("<td/>").append(img));
+	
+	//qrm_entry_name_hp_bonus = $("<td style='width:60%;'/>")
+	qrm_entry_name = $("<td style='display:block; width:100%; overflow:hidden;'/>")
+	qrm_entry_row = $("<td style='display:block; width:100%;'/>")
+	qrm_entry_row_rolls = $("<td style='display:inline-flex; width:40%;'/>")
+	qrm_entry_row_hp = $("<td style='display:inline-flex; width:25%; white-space: nowrap;'/>")
+	qrm_entry_row_buttons = $("<td style='display:inline-flex; width:35%;'/>")
+
+	name_line = $("<div class='qrm_name_line'>"+token.options.name+"</div>")
+
+	if(token.options.monster > 0)
+		qrm_entry.attr('data-monster',token.options.monster);
+
+	let roll_box=$("<input id=roll_bonus class='menu_roll_input' maxlength=4 style='text-align: center; font-size:12px; width:35%;' title='Use +/- for custom bonus, add A or D for Adv/Disadv'>");
+	roll_box.tooltip({show: { duration: 2000 }});
+
+	let roll_result=$("<input id=qrm_roll_result class='menu_roll_input' style='text-align: center; font-size:12px; margin:2px; width:55%;' title='Result of roll'>");
+	roll_result.tooltip({show: { duration: 2000 }});
+
+	let roll_mods=$('<div class="roll_mods_group"></div>');
+	roll_mods.tooltip({show: { duration: 2000 }});
+
+	roll_mod_adv = $('<button title="Advantage to roll" id="adv" name="roll_mod" value="OFF" class="roll_mods_button icon-advantage markers-icon" />')
+	roll_mod_adv.tooltip({show: { duration: 2000 }})
+	roll_mod_adv.click(function(){
+		let roll_bonus_target=$(this).parent().parent().children('#roll_bonus');
+		roll_bonus_target.val(roll_bonus_target.val().replaceAll(/[ad]/gi, ''))
+		
+		let disadv_button = $(this).parent().children('#disadv');
+		disadv_button.value = "OFF"
+		disadv_button.removeClass('active_roll_mod')
+		
+		if(this.value == "ON"){
+			this.value = "OFF";
+			$(this).removeClass('active_roll_mod')
+		}
+	  	else if(this.value == "OFF"){
+			this.value = "ON";
+			roll_bonus_target.val(roll_bonus_target.val() + 'a')
+			$(this).addClass('active_roll_mod')
+		}
+	});
+	roll_mod_disadv = $('<button  title="Disadvantage to roll" id="disadv" name="roll_mod" value="OFF" class="roll_mods_button icon-disadvantage markers-icon" />')
+	roll_mod_disadv.tooltip({show: { duration: 2000 }})
+	roll_mod_disadv.click(function(){
+		let roll_bonus_target=$(this).parent().parent().children('#roll_bonus');
+		roll_bonus_target.val(roll_bonus_target.val().replaceAll(/[ad]/gi, ''))
+		
+		let adv_button = $(this).parent().children('#adv');
+		adv_button.value = "OFF"
+		adv_button.removeClass('active_roll_mod')
+
+		if(this.value == "ON"){
+			this.value = "OFF";
+			$(this).removeClass('active_roll_mod')
+		}
+	  	else if(this.value == "OFF"){
+			this.value = "ON";
+			roll_bonus_target.val(roll_bonus_target.val() + 'd')
+			$(this).addClass('active_roll_mod')
+		}
+	});
+	roll_mods.append(roll_mod_adv)
+	roll_mods.append(roll_mod_disadv)
+
+	roll_bonus = qrm_fetch_stat(token);
+	roll_box.val(roll_bonus)
+
+	var hp_input = $("<input id='qrm_hp' class='menu_hp_input'>");
+	hp_input.css('text-align', 'right');
+	
+	if(token.isPlayer()){
+		hp_input.prop("disabled", true);
+	}
+	hp_input.val(token.options.hp);
+
+	if(hp_input.val() === '0'){
+		qrm_entry.toggleClass("ct_dead", true);
+	}
+	else{
+		qrm_entry.toggleClass("ct_dead", false);
+	}
+
+	var divider = $("<div style='display:inline-block;'>/</>");
+		
+	var maxhp_input = $("<input id='qrm_maxhp' class='menu_hp_input'>");
+	maxhp_input.css('text-align', 'left');
+
+	if(token.isPlayer()){
+		maxhp_input.prop("disabled", true);
+	}
+	maxhp_input.val(token.options.max_hp);
+
+	if (!token.isPlayer()) {
+		hp_input.change(function(e) {
+			var selector = "div[data-id='" + token.options.id + "']";
+			var old = $("#tokens").find(selector);
+		
+			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
+				hp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(hp_input.val())));
+			}
+
+			old.find(".hp").val(hp_input.val().trim());	
+
+			if(window.all_token_objects[token.options.id] != undefined){
+				window.all_token_objects[token.options.id].options.hp = hp_input.val();
+			}			
+			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
+				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+			}			
+			qrm_update_popout();
+		});
+		hp_input.click(function(e) {
+			$(e.target).select();
+		});
+		maxhp_input.change(function(e) {
+			var selector = "div[data-id='" + token.options.id + "']";
+			var old = $("#tokens").find(selector);
+
+			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
+				maxhp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(maxhp_input.val())));
+			}
+
+			old.find(".max_hp").val(maxhp_input.val().trim());
+			if(window.all_token_objects[token.options.id] != undefined){
+				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
+			}
+			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
+				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+			}			
+			qrm_update_popout();
+		});
+		maxhp_input.click(function(e) {
+			$(e.target).select();
+		});
+	}
+	else {
+		hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
+		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
+	}
+
+	qrm_entry_buttons = $("<td style='height:100%; text-align: right; width:100%; top: 1px; position: relative; white-space:nowrap'>");
+	
+	find=$('<button class="findTokenCombatButton" title="Find Token" style="display:inline-block; font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
+	find.tooltip({show: { duration: 2000 }})
+	find.click(function(){
+		var target=$(this).parent().parent().parent().parent().attr('data-target');
+		if(target in window.TOKEN_OBJECTS){
+			window.TOKEN_OBJECTS[target].highlight();	     
+		}
+		else if(target in window.all_token_objects){
+			place_token_in_center_of_view(window.all_token_objects[target].options);
+		  	$(`#quick_roll_area tr[data-target='${target}'] .findSVG`).remove();
+           	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
+            $(`#quick_roll_area tr[data-target='${target}'] .findTokenCombatButton`).append(findSVG);
+		}
+	});
+	qrm_entry_buttons.append(find);
+
+	remove_from_list=$('<button title="Remove from menu" id="qrm_remove" class="removeTokenCombatButton" style="display:inline-block; font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
+	remove_from_list.tooltip({show: { duration: 2000 }})
+	remove_from_list.click(
+		function() {
+			console.log('Removing from list')
+			var target=$(this).parent().parent().parent().parent().attr('data-target');
+			if(target in window.TOKEN_OBJECTS){
+				remove_from_quick_roll_menu(window.TOKEN_OBJECTS[target]);	     
+			}
+		}
+	);
+	qrm_entry_buttons.append(remove_from_list);
+	
+	if(token.isMonster()){
+		stat_block=$('<button title="Open Monster Stat Block" class="openSheetCombatButton" style="display:inline-block; font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		
+		stat_block.click(function(){
+			load_monster_stat(token.options.monster, token.options.id);
+		});
+		if(!token.isMonster()){
+				stat_block.css("visibility", "hidden");
+		}
+	}	
+	else if (token.isPlayer()) {
+		stat_block=$('<button title="Open Player Stat Block" class="openSheetCombatButton" style="display:inline-block; font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block.click(function(){
+			open_player_sheet(token.options.id);
+		});
+	}
+	qrm_entry_buttons.append(stat_block)
+	stat_block.tooltip({show: { duration: 2000 }})
+
+	qrm_entry_name.append(name_line);
+	
+	qrm_entry_row_rolls.append(roll_box);
+	qrm_entry_row_rolls.append(roll_result);
+	qrm_entry_row_rolls.append(roll_mods);
+	
+	qrm_entry_row_hp.append(hp_input);
+	qrm_entry_row_hp.append(divider);
+	qrm_entry_row_hp.append(maxhp_input);
+
+	qrm_entry_row.append(qrm_entry_row_rolls)
+	qrm_entry_row.append(qrm_entry_row_hp)
+
+	
+	qrm_entry_row_buttons.append(qrm_entry_buttons)
+	qrm_entry_row.append(qrm_entry_row_buttons)
+
+	qrm_entry.append(qrm_entry_name);
+	qrm_entry.append(qrm_entry_row);
+	
+	qrm_update_popout();
+	$("#quick_roll_area").append(qrm_entry)
+}
+
+function save_type_change(dropdown){
+	console.log("Save type is: "+ dropdown.value );
+	$('#quick_roll_area').children('tr').each(function () {
+		let x = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+		roll_bonus = qrm_fetch_stat(x)
+		$(this).find('#roll_bonus').val(roll_bonus)
+	});
+}
+
+function qrm_fetch_stat(token) {
+	//if its a monster it needs to be calulated.
+	if(token.options.monster > 0){
+		var stat = cached_monster_items[token.options.monster].monsterData;
+
+		if(typeof(stat) != 'undefined'){
+			save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
+			
+			//modifier = Math.floor((stat.stats.find(obj => {return obj.statId === save_dropdown_value}).value - 10) / 2.0);
+			modifier = Math.floor((stat.stats[save_dropdown_value].value - 10) / 2.0);
+			save_dropdown_value += 1;// need +1 offset for saves (not normal ability scores as above) as they are stored differently
+			
+			let x = stat.savingThrows.find(obj => {return obj.statId === save_dropdown_value});
+			
+			if (typeof(x) != 'undefined'){
+				//add proficiency bonus if proficent 
+				saving_throw_bonus = convert_CR_to_proficiency(stat.challengeRatingId);
+				if (x.bonusModifier != null){
+					saving_throw_bonus += x.bonusModifier;
+				}
+			}
+			else {
+				saving_throw_bonus = 0; 
+			}
+			roll_bonus = modifier + saving_throw_bonus;
+			if (roll_bonus >= 0){
+				roll_bonus = "+"+roll_bonus;
+			}
+		}
+		console.log(roll_bonus);
+	}
+	else if (token.isPlayer) {
+		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
+		//This relies of player data being loaded, which may take a few seconds after the page opens
+		//if its a player character they have the save stored
+		player_stats = window.PLAYER_STATS[token.options.id]
+		roll_bonus = player_stats.abilities[save_dropdown_value]['save']
+
+		if (roll_bonus >= 0){
+			roll_bonus = "+"+roll_bonus;
+		}
+	}
+	else{
+		//if its an custom token, give no bonus. But still allow a roll (if it has stats) 
+		//if has stats
+		roll_bonus = "+"+0;	
+	}
+	qrm_update_popout()
+	return roll_bonus
+}
+	
+function remove_from_quick_roll_menu(token) {
+	let id = token.options.id;
+	if ($("#quick_roll_area tr[data-target='" + id + "']").length > 0) {
+		$("#quick_roll_area tr[data-target='" + id + "']").remove(); // delete token from qrm if there
+	}
+	window.TOKEN_OBJECTS[token.options.id].in_qrm = undefined;
+	qrm_update_popout()
+}
+
+function convert_CR_to_proficiency(challenge_rating){
+	//Apparently proficinecy bonus isn't stored in the monster data, unless i just missed it. 
+	//And this should be significantly faster than having to reread the statblock.
+	CR = challenge_rating;
+	switch (true) {
+		case CR >= 34://CR 29
+			prof = 9;
+			break;
+		case CR >= 30://CR 25 
+			prof = 8;
+			break;
+		case CR >= 25://CR 21
+			prof = 7;
+			break;
+		case CR >= 21://CR 17
+			prof = 6;
+			break;
+		case CR >= 17://CR 13
+			prof = 5;
+			break;
+		case CR >= 13://CR 9 
+			prof = 4;
+			break;
+		case CR >= 9://CR 5
+			prof = 3;
+			break;
+		case CR <= 8://CR <4 
+			prof = 2;
+			break;
+	}
+	return prof;
+}
+
+function qrm_update_popout(){
+	
+	if(childWindows['Quick Roll Menu']){
+		//$(childWindows['Quick Roll Menu'].document).find("body").empty("");
+		updatePopoutWindow("Quick Roll Menu", $("#qrm_dialog"));
+		removeFromPopoutWindow("Quick Roll Menu", "#quick_roll_title_bar");
+		$(childWindows['Quick Roll Menu'].document).find("#qrm_dialog").css({
+			'display': 'block',
+			'top': '0',
+			'left': '0',
+			'right': '0',
+			'bottom': '0',
+			'width': '100%',
+			'height': '100%'
+		});
+		console.log('update_popout');
+		console.log($(childWindows['Quick Roll Menu'].document).find('#damage_failed_save'));
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_hp').change(function(e) {
+			let id = $(this).parent().parent().attr("data-target");			
+			$(`tr[data-target='${id}'] #qrm_hp`).val($(this).val());
+			$(`tr[data-target='${id}'] #qrm_hp`).trigger("change");
+			qrm_update_popout();
+		});	
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_maxhp').change(function(e) {
+			let id = $(this).parent().parent().attr("data-target");
+			$(`tr[data-target='${id}'] #qrm_maxhp`).val($(this).val());
+			$(`tr[data-target='${id}'] #qrm_maxhp`).trigger("change");
+			qrm_update_popout();
+		});	
+		$(childWindows['Quick Roll Menu'].document).find('#damage_failed_save').change(function(e) {
+			let id = $(this).parent().parent().attr("data-target");
+			$(`tr[data-target='${id}'] #damage_failed_save`).val($(this).val());
+			$(`tr[data-target='${id}'] #damage_failed_save`).trigger("change");
+			qrm_update_popout();
+		});	
+		$(childWindows['Quick Roll Menu'].document).find('#half_damage_save').change(function(e) {
+			let id = $(this).parent().parent().attr("data-target");
+			$(`tr[data-target='${id}'] #half_damage_save`).val($(this).val());
+			$(`tr[data-target='${id}'] #half_damage_save`).trigger("change");
+			qrm_update_popout();
+		});	
+		$(childWindows['Quick Roll Menu'].document).find('#roll_bonus').change(function(e) {
+			let id = $(this).parent().parent().attr("data-target");
+			$(`tr[data-target='${id}'] #roll_bonus`).val($(this).val());
+			$(`tr[data-target='${id}'] #roll_bonus`).trigger("change");
+			qrm_update_popout();
+		});	
+		$(childWindows['Quick Roll Menu'].document).find('#roll_result').change(function(e) {
+			let id = $(this).parent().parent().attr("data-target");
+			$(`tr[data-target='${id}'] #roll_result`).val($(this).val());
+			$(`tr[data-target='${id}'] #roll_result`).trigger("change");
+			qrm_update_popout();
+		});	
+	}
+}
+
+//end Quick Roll Menu//

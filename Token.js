@@ -756,6 +756,8 @@ class Token {
 		}
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
+		/* UPDATE QUICK ROLL MENU */
+		this.update_quick_roll()
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
@@ -790,6 +792,22 @@ class Token {
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
 		ct_update_popout();
+	}
+	update_quick_roll(){
+		/* UPDATE QUICK ROLL */
+
+		if ($("#qrm_dialog")){
+			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_hp").val(this.options.hp);
+			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_maxhp").val(this.options.max_hp);
+			
+			if($("#quick_roll_area tr[data-target='" + this.options.id + "'] .qrm_hp").val() === '0'){
+				$("#quick_roll_area tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
+			}
+			else{
+				$("#quick_roll_area tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", false);
+			}
+		}	
+		qrm_update_popout();
 	}
 
 	build_hp() {
