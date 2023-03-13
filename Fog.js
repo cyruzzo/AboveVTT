@@ -434,26 +434,6 @@ function check_single_token_visibility(id){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-<<<<<<< Updated upstream
-			if (!window.TOKEN_OBJECTS[id].options.revealInFog && is_token_under_fog(id)) {
-				$(selector).hide();
-				$(auraSelector).hide();
-			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-				if(playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)){
-					$(selector).find('img').css('pointer-events', 'none');	
-					$(selector).css('pointer-events', 'none');	
-				}
-				else{
-					$(selector).find('img').css('pointer-events', '');
-					$(selector).css('pointer-events', '');	
-				}
-				$(selector).css('opacity', 1);
-				$(selector).show();
-				$(auraSelector).show();
-				//console.log('SHOW '+id);
-			}
-=======
 	let inLineOfSight = false;
 	for(var i = 2; i < pixeldata2.length;i+=4){
 		if(pixeldata2[i] == 255){
@@ -471,7 +451,7 @@ function check_single_token_visibility(id){
 		$(auraSelector).show();
 		//console.log('SHOW '+id);
 	}
->>>>>>> Stashed changes
+
 }
 
 
@@ -517,22 +497,7 @@ function do_check_token_visibility() {
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-<<<<<<< Updated upstream
-			
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && pixeldata[3] == 255) {
-			$(selector).hide();
-			$(auraSelector).hide();
-		}
-		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-			if((pixeldata2[2] == 0 && playerTokenHasVision) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0))){
-				$(selector).find('img').css('pointer-events', 'none');	
-				$(selector).css('pointer-events', 'none');	
-			}
-			else{
-				$(selector).find('img').css('pointer-events', '');
-				$(selector).css('pointer-events', '');	
-			}
-=======
+
 		let inLineOfSight = false;
 		for(var i = 2; i < pixeldata2.length;i+=4){
 			if(pixeldata2[i] == 255){
@@ -540,12 +505,11 @@ function do_check_token_visibility() {
 				break;
 			}
 		}
-		if ((!inLineOfSight && playerTokenHasVision) || (playerTokenHasVision && !is_token_under_light_aura(id)) || (!window.TOKEN_OBJECTS[id].options.revealInFog && pixeldata[3] == 255)) {
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && ((!inLineOfSight && playerTokenHasVision) || (playerTokenHasVision && !is_token_under_light_aura(id)) ||  pixeldata[3] == 255)) {
 			$(selector).hide();
 			$(auraSelector).hide();
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {	
->>>>>>> Stashed changes
 			$(selector).css('opacity', 1);
 			$(selector).show();
 			$(auraSelector).show();
