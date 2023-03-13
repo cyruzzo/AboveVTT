@@ -6590,9 +6590,3 @@ button.journal-view-button.journal-button {
 }
 /* end quick roll menu */
 
-/* jquery tooltip text */
-.ui-tooltip{
-    z-index: 50001 !important;
-    min-width: 100px;
-    max-width: 200px;
-}

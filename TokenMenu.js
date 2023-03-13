@@ -1769,9 +1769,9 @@ function open_quick_roll_menu(e){
 			$("#qrm_dialog").css("visibility", "visible");
 		}
 	});
-	qrm_title_dc_input = $('<input class="general_input" id="qrm_save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
-	qrm_title_dc_input.tooltip({show: { duration: 1000 }});
-	qrm_title_dc_input.attr('style', 'width: 24% !important');
+	qrm_dc_input = $('<input class="general_input" id="qrm_save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
+	//qrm_dc_input.tooltip({show: { duration: 1000 }});
+	qrm_dc_input.attr('style', 'width: 24% !important');
 
 	save_type_dropdown = $('<select class="general_input" id="qrm_save_dropdown" onchange="save_type_change(this)" title="Select the type of saving throw to be made. ">Save Type</select>')
 	save_type_dropdown.append($('<option value="1">Dexterity</option>')) 
@@ -1780,14 +1780,14 @@ function open_quick_roll_menu(e){
 	save_type_dropdown.append($('<option value="0">Strength</option>'))
 	save_type_dropdown.append($('<option value="3">Intelligence</option>'))
 	save_type_dropdown.append($('<option value="5">Charisma</option>'))
-	save_type_dropdown.tooltip({show: { duration: 1000 }})
+	//save_type_dropdown.tooltip({show: { duration: 1000 }})
 	save_type_dropdown.attr('style', 'width: 25% !important');
 	damage_input  = $('<input class="general_input" id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
-	damage_input.tooltip({show: { duration: 1000 }})
+	//damage_input.tooltip({show: { duration: 1000 }})
 	damage_input.attr('style', 'width: 24% !important');
 
 	half_damage_input = $('<input class="general_input" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
-	half_damage_input.tooltip({show: { duration: 1000 }})
+	//half_damage_input.tooltip({show: { duration: 1000 }})
 	half_damage_input.attr('style', 'width: 24% !important');
 
 	damage_input.change(function(){
@@ -1918,7 +1918,7 @@ function open_quick_roll_menu(e){
 	
 	qrm_footer.append(damage_input)
 	qrm_footer.append(half_damage_input)
-	qrm_footer.append(qrm_title_dc_input)
+	qrm_footer.append(qrm_dc_input)
 	qrm_footer.append(save_type_dropdown)
 	qrm_footer.append(qrm_roll);
 	qrm_footer.append(update_hp);
@@ -1982,7 +1982,7 @@ function add_to_quick_roll_menu(token){
 	qrm_entry=$("<tr/>");
 	qrm_entry.attr("data-target", token.options.id);	
 	qrm_entry.attr("data-name", token.options.name);
-	qrm_entry.tooltip({show: { duration: 1000 }});
+	//qrm_entry.tooltip({show: { duration: 1000 }});
 	
 	img=$(`<img width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title=${token.options.name}>`);
 	img.attr('src',token.options.imgsrc);
@@ -1991,10 +1991,7 @@ function add_to_quick_roll_menu(token){
 	if (token.options.hidden == true){
 		img.css('opacity','0.5');
 	}
-	img.tooltip({
-		show: { duration: 1000 },
-		position: { my: "left+15 center", at: "right center" }
-	});
+	//img.tooltip({show: { duration: 1000 },position: { my: "left+15 center", at: "right center" }});
 	qrm_entry.append($("<td/>").append(img));
 	
 	//qrm_entry_name_hp_bonus = $("<td style='width:60%;'/>")
@@ -2009,17 +2006,17 @@ function add_to_quick_roll_menu(token){
 	if(token.options.monster > 0)
 		qrm_entry.attr('data-monster',token.options.monster);
 
-	let roll_box=$("<input id=roll_bonus class='menu_roll_input' maxlength=4 style='text-align: center; font-size:12px; width:35%;' title='Use +/- for custom bonus, add A or D for Adv/Disadv'>");
-	roll_box.tooltip({show: { duration: 1000 }});
+	let roll_box=$("<input id='roll_bonus' class='menu_roll_input' maxlength=4 style='text-align: center; font-size:12px; width:35%;' title='Use +/- for custom bonus, add A or D for Adv/Disadv'>");
+	//roll_box.tooltip({show: { duration: 1000 }});
 
-	let roll_result=$("<input id=qrm_roll_result class='menu_roll_input' style='text-align: center; font-size:12px; margin:2px; width:55%;' title='Result of roll'>");
-	roll_result.tooltip({show: { duration: 1000 }});
+	let roll_result=$("<input id='qrm_roll_result' class='menu_roll_input' style='text-align: center; font-size:12px; margin:2px; width:55%;' title='Result of roll'>");
+	//roll_result.tooltip({show: { duration: 1000 }});
 
 	let roll_mods=$('<div class="roll_mods_group"></div>');
-	roll_mods.tooltip({show: { duration: 1000 }});
+	//roll_mods.tooltip({show: { duration: 1000 }});
 
 	roll_mod_adv = $('<button title="Advantage to roll" id="adv" name="roll_mod" value="OFF" class="roll_mods_button icon-advantage markers-icon" />')
-	roll_mod_adv.tooltip({show: { duration: 1000 }})
+	//roll_mod_adv.tooltip({show: { duration: 1000 }})
 	roll_mod_adv.click(function(){
 		let roll_bonus_target=$(this).parent().parent().children('#roll_bonus');
 		roll_bonus_target.val(roll_bonus_target.val().replaceAll(/[ad]/gi, ''))
@@ -2038,8 +2035,8 @@ function add_to_quick_roll_menu(token){
 			$(this).addClass('active_roll_mod')
 		}
 	});
-	roll_mod_disadv = $('<button  title="Disadvantage to roll" id="disadv" name="roll_mod" value="OFF" class="roll_mods_button icon-disadvantage markers-icon" />')
-	roll_mod_disadv.tooltip({show: { duration: 1000 }})
+	roll_mod_disadv = $('<button title="Disadvantage to roll" id="disadv" name="roll_mod" value="OFF" class="roll_mods_button icon-disadvantage markers-icon" />')
+	//roll_mod_disadv.tooltip({show: { duration: 1000 }})
 	roll_mod_disadv.click(function(){
 		let roll_bonus_target=$(this).parent().parent().children('#roll_bonus');
 		roll_bonus_target.val(roll_bonus_target.val().replaceAll(/[ad]/gi, ''))
@@ -2141,8 +2138,8 @@ function add_to_quick_roll_menu(token){
 
 	qrm_entry_buttons = $("<td style='height:100%; text-align: right; width:100%; top: 1px; position: relative; white-space:nowrap'>");
 	
-	find=$('<button class="findTokenCombatButton" title="Find Token" style="display:inline-block; font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
-	find.tooltip({show: { duration: 1000 }})
+	find=$('<button class="qrm_buttons_bar" title="Find Token" style="display:inline-block;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
+	//find.tooltip({show: { duration: 1000 }})
 	find.click(function(){
 		var target=$(this).parent().parent().parent().parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
@@ -2157,8 +2154,8 @@ function add_to_quick_roll_menu(token){
 	});
 	qrm_entry_buttons.append(find);
 
-	remove_from_list=$('<button title="Remove from menu" id="qrm_remove" class="removeTokenCombatButton" style="display:inline-block; font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
-	remove_from_list.tooltip({show: { duration: 1000 }})
+	remove_from_list=$('<button title="Remove from menu" id="qrm_remove" class="qrm_buttons_bar" style="display:inline-block;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
+	//remove_from_list.tooltip({show: { duration: 1000 }})
 	remove_from_list.click(
 		function() {
 			console.log('Removing from list')
@@ -2171,7 +2168,7 @@ function add_to_quick_roll_menu(token){
 	qrm_entry_buttons.append(remove_from_list);
 	
 	if(token.isMonster()){
-		stat_block=$('<button title="Open Monster Stat Block" class="openSheetCombatButton" style="display:inline-block; font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat_block.click(function(){
 			load_monster_stat(token.options.monster, token.options.id);
@@ -2181,13 +2178,13 @@ function add_to_quick_roll_menu(token){
 		}
 	}	
 	else if (token.isPlayer()) {
-		stat_block=$('<button title="Open Player Stat Block" class="openSheetCombatButton" style="display:inline-block; font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block=$('<button title="Open Player Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		stat_block.click(function(){
 			open_player_sheet(token.options.id);
 		});
 	}
 	qrm_entry_buttons.append(stat_block)
-	stat_block.tooltip({show: { duration: 1000 }})
+	//stat_block.tooltip({show: { duration: 1000 }})
 
 	qrm_entry_name.append(name_line);
 	
