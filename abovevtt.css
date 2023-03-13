@@ -4877,6 +4877,8 @@ input.max_hp[disabled]{
     opacity: 1;
     color: #fff;
     pointer-events: none;
+    right: 8px;
+    border-radius: 5px;
 }
 
 .import-loading-indicator,
