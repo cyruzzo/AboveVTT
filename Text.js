@@ -691,8 +691,8 @@ function draw_text(
         },
         drag: function(event,ui)
         {
-            ui.position.top = Math.round((ui.position.top - 200) / window.ZOOM );
-            ui.position.left = Math.round((ui.position.left - 200) / window.ZOOM );
+            ui.position.top = Math.round((ui.position.top - window.VTTMargin) / window.ZOOM );
+            ui.position.left = Math.round((ui.position.left - window.VTTMargin) / window.ZOOM );
 
         },  
         stop: function (event, ui) {
