@@ -1515,19 +1515,19 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     if(customization.tokenOptions.vision == undefined){
         customization.tokenOptions.vision = {
-            feet: 60,
+            feet: '60',
             color: 'rgba(255, 255, 255, 0.5)'
         }
     }
     if(customization.tokenOptions.light1 == undefined){
         customization.tokenOptions.light1 = {
-            feet: 0,
+            feet: '0',
             color: 'rgba(255, 255, 255, 0.8)'
         }
     }
      if(customization.tokenOptions.light2 == undefined){
         customization.tokenOptions.light2 = {
-            feet: 0,
+            feet: '0',
             color: 'rgba(255, 255, 255, 0.5)'
         }
     }
