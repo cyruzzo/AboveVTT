@@ -2887,7 +2887,7 @@ function init_zoom_buttons() {
 		cursor_ruler_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">left_click</span></div>`);
 		zoom_section.append(cursor_ruler_toggle);
 		if (!get_avtt_setting_value("peerStreaming")) {
-			cursor_ruler_toggle.hide();
+			cursor_ruler_toggle.css("visibility", "collapse");
 		}
 
 		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
