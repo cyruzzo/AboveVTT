@@ -443,7 +443,14 @@ function build_token_auras_inputs(tokenIds) {
 	if (uniqueAuraVisibleValues.length === 1) {
 		auraIsEnabled = uniqueAuraVisibleValues[0];
 	}
+
+	let hideAuraFromPlayers = tokens.map(t => t.options.hideaura);
+	let uniqueHideAuraFromPlayers = [...new Set(hideAuraFromPlayers)];
 	
+	let hideAuraIsEnabled = null;
+	if (uniqueHideAuraFromPlayers.length === 1) {
+		hideAuraIsEnabled = uniqueHideAuraFromPlayers[0];
+	}
 
 	let aura1Feet = tokens.map(t => t.options.aura1.feet);
 	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
@@ -520,7 +527,26 @@ function build_token_auras_inputs(tokenIds) {
 	} else {
 		wrapper.find(".token-config-aura-wrapper").hide();
 	}
-
+	const hideAura = {
+		name: "hideaura",
+		label: "Hide aura from players",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Hidden", description: "The token's aura is hidden from players." },
+			{ value: false, label: "Visible", description: "The token's aura is visible to players." }
+		],
+		defaultValue: false
+	};
+	const hideAuraInput = build_toggle_input(hideAura, hideAuraIsEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+	});
+	if(window.DM) {
+		wrapper.find(".token-config-aura-wrapper").prepend(hideAuraInput);
+	}
 	let radiusInputs = wrapper.find('input.aura-radius');
 	radiusInputs.on('keyup', function(event) {
 		let newRadius = event.target.value;

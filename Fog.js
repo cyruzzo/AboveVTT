@@ -441,7 +441,8 @@ function check_single_token_visibility(id){
 			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 				$(selector).css('opacity', 1);
 				$(selector).show();
-				$(auraSelector).show();
+				if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
+					$(auraSelector).show();
 				//console.log('SHOW '+id);
 			}
 }
@@ -497,7 +498,8 @@ function do_check_token_visibility() {
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).css('opacity', 1);
 			$(selector).show();
-			$(auraSelector).show();
+			if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
+				$(auraSelector).show();
 			//console.log('SHOW '+id);
 		}
 	}
