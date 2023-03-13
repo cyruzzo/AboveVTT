@@ -2031,6 +2031,12 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
  * as well as any other selected buttons/required options, such as color/line width, or font family/fontsize
  */
 function get_draw_data(button, menu){
+	if($("#prewiz").length > 0 || $("#wizard_popup").length>0){
+		return {
+			shape:'rect',
+			function:'select'
+		}
+	}
 	if (!$(button).hasClass("menu-option") && !$(button).hasClass("menu-button")){
 		console.groupEnd()
 		return {
