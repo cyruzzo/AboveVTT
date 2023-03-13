@@ -1580,7 +1580,7 @@ class MessageBroker {
 
 		const jsmessage=JSON.stringify(message);
 		if(jsmessage.length > (128000)){
-			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
+			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. You may have too many walls - try to be less detailed on curves, use x's instead of circling pillars, etc. You may have some tokens with embedded images (urls that start with 'data:') that take up too much space. Please reduce the number of walls/delete the tokens with 'data:' urls and refresh the scene");
 			return;
 		}
 
