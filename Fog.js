@@ -428,12 +428,13 @@ function check_single_token_visibility(id){
 		return;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-			let selector = "div.token[data-id='" + id + "']";
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+	let selector = "div.token[data-id='" + id + "']";
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
+<<<<<<< Updated upstream
 			if (!window.TOKEN_OBJECTS[id].options.revealInFog && is_token_under_fog(id)) {
 				$(selector).hide();
 				$(auraSelector).hide();
@@ -452,6 +453,25 @@ function check_single_token_visibility(id){
 				$(auraSelector).show();
 				//console.log('SHOW '+id);
 			}
+=======
+	let inLineOfSight = false;
+	for(var i = 2; i < pixeldata2.length;i+=4){
+		if(pixeldata2[i] == 255){
+			inLineOfSight = true;
+			break;
+		}
+	}
+	if ((!inLineOfSight && playerTokenHasVision) || (playerTokenHasVision && !is_token_under_light_aura(id)) || (!window.TOKEN_OBJECTS[id].options.revealInFog && pixeldata[3] == 255)) {
+		$(selector).hide();
+		$(auraSelector).hide();
+	}
+	else if (!window.TOKEN_OBJECTS[id].options.hidden) {	
+		$(selector).css('opacity', 1);
+		$(selector).show();
+		$(auraSelector).show();
+		//console.log('SHOW '+id);
+	}
+>>>>>>> Stashed changes
 }
 
 
@@ -489,7 +509,7 @@ function do_check_token_visibility() {
 		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2));
 		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2));
 		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-		let pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
+		let pixeldata2 = ctx2.getImageData(left + 30 - (window.TOKEN_OBJECTS[id].sizeWidth() / 2 / window.CURRENT_SCENE_DATA.scale_factor), top + 30 - (window.TOKEN_OBJECTS[id].sizeHeight() / 2 / window.CURRENT_SCENE_DATA.scale_factor), window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor-30, window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor-30).data;
 		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 		var selector = "div.token[data-id='" + id + "']";
@@ -497,6 +517,7 @@ function do_check_token_visibility() {
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+<<<<<<< Updated upstream
 			
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && pixeldata[3] == 255) {
 			$(selector).hide();
@@ -511,6 +532,20 @@ function do_check_token_visibility() {
 				$(selector).find('img').css('pointer-events', '');
 				$(selector).css('pointer-events', '');	
 			}
+=======
+		let inLineOfSight = false;
+		for(var i = 2; i < pixeldata2.length;i+=4){
+			if(pixeldata2[i] == 255){
+				inLineOfSight = true;
+				break;
+			}
+		}
+		if ((!inLineOfSight && playerTokenHasVision) || (playerTokenHasVision && !is_token_under_light_aura(id)) || (!window.TOKEN_OBJECTS[id].options.revealInFog && pixeldata[3] == 255)) {
+			$(selector).hide();
+			$(auraSelector).hide();
+		}
+		else if (!window.TOKEN_OBJECTS[id].options.hidden) {	
+>>>>>>> Stashed changes
 			$(selector).css('opacity', 1);
 			$(selector).show();
 			$(auraSelector).show();
