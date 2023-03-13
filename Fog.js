@@ -1049,8 +1049,8 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function get_event_cursor_position(event){
-	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
-	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+	const pointX = Math.round(((event.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
+	const pointY = Math.round(((event.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 	return [pointX, pointY]
 }
 
@@ -1267,10 +1267,10 @@ function drawing_mousemove(e) {
 			if(window.DRAWFUNCTION == "draw_text")
 			{
 				drawRect(context,
-					Math.round(((window.BEGIN_MOUSEX - 200 + window.scrollX))) * (1.0 / window.ZOOM),
-					Math.round(((window.BEGIN_MOUSEY - 200 + window.scrollY))) * (1.0 / window.ZOOM),
-					((e.clientX - 200 + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - 200 + window.scrollX) * (1.0 / window.ZOOM)),
-					((e.clientY - 200 + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - 200 + window.scrollY) * (1.0 / window.ZOOM)),
+					Math.round(((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX))) * (1.0 / window.ZOOM),
+					Math.round(((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY))) * (1.0 / window.ZOOM),
+					((e.clientX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)),
+					((e.clientY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)),
 					window.DRAWCOLOR,
 					isFilled,
 					window.LINEWIDTH);
@@ -1613,10 +1613,10 @@ function drawing_mouseup(e) {
 				let textImageRect = $("#text_div svg[id='" + curr+ "'] text")[0].getBoundingClientRect();	
 
 				
-				var texttop = (parseInt(textImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
-				var textleft = (parseInt(textImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
-				var textright = (parseInt(textImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
-				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+				var texttop = (parseInt(textImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+				var textleft = (parseInt(textImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				var textright = (parseInt(textImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 				let scaledRemainderTop = (textbottom-texttop-textImageRect.height)/2;
 				let scaledRemainderLeft = (textright-textleft-textImageRect.width)/2;
 
@@ -1894,10 +1894,10 @@ function drawing_mouseup(e) {
 
 			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
 			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
-			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 			let scaledRemainderTop = (tokbottom-toktop-size)/2;
 			let scaledRemainderLeft = (tokright-tokleft-size)/2;
 			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){

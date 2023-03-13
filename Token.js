@@ -460,8 +460,8 @@ class Token {
 			
 			if(!dontscroll){
 			$("html,body").animate({
-				scrollTop: pageY + 200,
-				scrollLeft: pageX + 200
+				scrollTop: pageY + window.VTTMargin,
+				scrollLeft: pageX + window.VTTMargin
 			}, 500);
 			}
 
@@ -2322,8 +2322,8 @@ function dragging_right_click_mouseup(event) {
 	if (window.DRAGGING && event.button == 2) {
 		event.preventDefault();
 		event.stopPropagation();
-		var mousex = (event.pageX - 200) * (1.0 / window.ZOOM);
-		var mousey = (event.pageY - 200) * (1.0 / window.ZOOM);
+		var mousex = (event.pageX - window.VTTMargin) * (1.0 / window.ZOOM);
+		var mousey = (event.pageY - window.VTTMargin) * (1.0 / window.ZOOM);
 		WaypointManager.checkNewWaypoint(mousex, mousey);
 	}
 }
@@ -2370,9 +2370,9 @@ function default_options() {
 function center_of_view() {
 	let centerX = (window.innerWidth/2) + window.scrollX 
 	if($("#hide_rightpanel").hasClass("point-right")){
-		centerX = centerX - 170;
-	}
-	let centerY = (window.innerHeight/2) + window.scrollY
+		centerX = centerX - 190; // 190 = half gamelog + scrollbar
+	
+	let centerY = (window.innerHeight/2) + window.scrollY - 20 // 20 = scrollbar
 	return { x: centerX, y: centerY };
 }
 
@@ -2404,8 +2404,8 @@ function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
 	// adjust for map offset and zoom
 	const startX = window.CURRENT_SCENE_DATA.offsetx;
 	const startY = window.CURRENT_SCENE_DATA.offsety;
-	let mapX = ((pageX - 200) * (1.0 / window.ZOOM)) - startX;
-	let mapY = ((pageY - 200) * (1.0 / window.ZOOM)) - startY;
+	let mapX = ((pageX - window.VTTMargin) * (1.0 / window.ZOOM)) - startX;
+	let mapY = ((pageY - window.VTTMargin) * (1.0 / window.ZOOM)) - startY;
 	if (forceNoSnap === true) {
 		return { x: mapX, y: mapY };
 	}
@@ -2417,8 +2417,8 @@ function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
 }
 
 function convert_point_from_map_to_view(mapX, mapY) {
-	let pageX = mapX / (1 / window.ZOOM) + 200;
-	let pageY = mapY / (1 / window.ZOOM) + 200;
+	let pageX = mapX / (1 / window.ZOOM) ;
+	let pageY = mapY / (1 / window.ZOOM) ;
 	return { x: pageX, y: pageY };
 }
 

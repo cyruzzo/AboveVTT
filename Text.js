@@ -470,8 +470,8 @@ function handle_draw_text_submit(event) {
     );
     // textbox doesn't have left or top so use the wrapper
     // with 25 being the bar height
-    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-200+window.scrollX))) * (1.0 / window.ZOOM);
-    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-200+window.scrollY)) + 25) * (1.0 / window.ZOOM);
+    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-window.VTTMargin+window.scrollX))) * (1.0 / window.ZOOM);
+    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-window.VTTMargin+window.scrollY)) + 25) * (1.0 / window.ZOOM);
     const rectColor = $(textBox).css("background-color")
 
     const text = textBox.val();
