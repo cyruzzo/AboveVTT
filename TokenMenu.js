@@ -606,7 +606,6 @@ function build_token_auras_inputs(tokenIds) {
 				token.options[auraName]['color'] = color;
 				token.place_sync_persist();
 			});
-			$(e.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
 		} else {
 			tokens.forEach(token => {
 				let selector = "div[data-id='" + token.options.id + "']";
