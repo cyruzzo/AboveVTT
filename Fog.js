@@ -1960,8 +1960,8 @@ function drawing_contextmenu(e) {
 				window.DRAWCOLOR,
 				window.DRAWTYPE === "fill",
 				window.LINEWIDTH,
-				Math.round(((e.pageX - 200) * (1.0 / window.ZOOM))),
-				Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)))
+				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
 		}
 		else{
