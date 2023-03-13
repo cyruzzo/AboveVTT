@@ -1259,7 +1259,7 @@ function drawing_mousemove(e) {
 		// }
 
 		if (window.DRAWSHAPE == "rect") {
-			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall"){
+			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
 				redraw_light_walls(false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
@@ -1634,7 +1634,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" ){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION == "wall-eraser-one"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -1709,9 +1709,13 @@ function drawing_mouseup(e) {
 			
 
 			fullyInside = (yInside &&  xInside)
+	
+
 
 			if(left != false || right != false || top != false || bottom != false || fullyInside){
-
+				if(window.DRAWFUNCTION == "wall-eraser-one" ){
+					fullyInside = true;
+				}
 				for(j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
 						window.DRAWINGS.splice(j, 1);
@@ -2737,8 +2741,15 @@ function init_walls_menu(buttons){
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-eraser-one" data-unique-with="draw">
+				 	Erase Line
+			</button>
+		</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-eraser" data-unique-with="draw">
-				 	Erase 
+				 	Erase Area
 			</button>
 		</div>`);
 	wall_menu.append(
