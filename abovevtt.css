@@ -4828,7 +4828,7 @@ input.max_hp[disabled]{
     position: relative;
     bottom: 2px;
 }
-/*
+
 .hideFromPlayerCombatButton:after{
     content: 'Hide/Reveal in Combat Tracker for Players';
 }
@@ -4844,7 +4844,7 @@ input.max_hp[disabled]{
 .openSheetCombatButton:after{
     content:'Open Sheet';   
 }
-*/
+
 .combatHideFromPlayerInput{
     display: none;
 }
