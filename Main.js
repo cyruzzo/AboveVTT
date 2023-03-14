@@ -278,8 +278,8 @@ function reset_zoom() {
 		block: 'center',
 		inline: 'center'
 	});
-	if($('#hide_rightpanel').hasClass('point-right') &&  ($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor)*window.ZOOM+window.VTTMargin > $(window).width()-340)
-		$(window).scrollLeft($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor*window.ZOOM/2 + 220); //220 = half gamelog + scrollbars
+	if($('#hide_rightpanel').hasClass('point-right'))
+		$(window).scrollLeft(window.scrollX + 170); // 170 half of game log
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
