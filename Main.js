@@ -3048,8 +3048,16 @@ function init_help_menu() {
 							<dd>Fog menu</dd>
 						<dl>
 						<dl>
+							<dt>W</dt>
+							<dd>Wall tool</dd>
+						<dl>
+						<dl>
 							<dt>D</dt>
 							<dd>Draw tool</dd>
+						<dl>
+						<dl>
+							<dt>T</dt>
+							<dd>Text tool</dd>
 						<dl>
 						<dl>
 							<dt>A</dt>
@@ -3086,6 +3094,10 @@ function init_help_menu() {
 						<dl>
 							<dt>SHIFT+Click</dt>
 							<dd>Select multiple tokens</dd>
+						<dl>
+						<dl>
+							<dt>Hold SHIFT while drawing walls</dt>
+							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
 						<dl>
 						<dl>
 							<dt>UP/DOWN arrows</dt>
