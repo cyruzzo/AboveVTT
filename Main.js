@@ -2561,17 +2561,12 @@ function init_ui() {
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
-		let dataName = window.PLAYER_NAME.replace(/\"/g,'\\"')
-
-		let borderColor = $(`.token[data-name="`+dataName+`"]`).attr(`data-border-color`)
-		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
-
 		data = {
 			x: mousex,
 			y: mousey,
 			from: window.PLAYER_NAME,
 			dm: window.DM,
-			color: pingColor,
+			color: color_for_player_id(my_player_id()),
 			center_on_ping: $('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')
 		}
 
