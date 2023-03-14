@@ -3083,8 +3083,8 @@ function redraw_light(){
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){
 	  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
-	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter, 40)}%`)
-	  		$('#raycastingCanvas').css('opacity', '');
+	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter, 20)}%`)
+	  		$('#raycastingCanvas').css('opacity', '0');
 	  	}
   		
 		for(j = 0; j < selectedTokens.length; j++){
@@ -3099,7 +3099,7 @@ function redraw_light(){
 
   	let auraId = $(light_auras[i]).attr('data-id');
 
-  	found = selectedIds.some(r=> r == auraId) || window.TOKEN_OBJECTS[auraId].options.reveal_light == 'always';
+  	found = selectedIds.some(r=> r == auraId);
 
 
 
@@ -3120,6 +3120,7 @@ function redraw_light(){
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
 
+	$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
   	if(selectedIds.length == 0 || found){	
   		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
   		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined )
@@ -3128,9 +3129,12 @@ function redraw_light(){
   		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
   			continue;
 
+  		
+  		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible');
+  		
 
-		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
-
+  		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+  	
 	
 	}    // draws rays
 
