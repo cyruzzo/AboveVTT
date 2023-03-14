@@ -1,5 +1,5 @@
 name: release-build
-run-name: ${{ github.actor }} is publishing version ${{ inputs.version_name }}
+run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
 on:
   workflow_dispatch:
     inputs:
