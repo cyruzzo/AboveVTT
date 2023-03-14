@@ -2020,17 +2020,17 @@ function add_to_quick_roll_menu(token){
 	roll_mod_adv.click(function(){
 		let roll_bonus_target=$(this).parent().parent().children('#roll_bonus');
 		roll_bonus_target.val(roll_bonus_target.val().replaceAll(/[ad]/gi, ''))
-		
+	
 		let disadv_button = $(this).parent().children('#disadv');
-		disadv_button.value = "OFF"
-		disadv_button.removeClass('active_roll_mod')
+		$(disadv_button).val("OFF")
+		$(disadv_button).removeClass('active_roll_mod')
 		
-		if(this.value == "ON"){
-			this.value = "OFF";
+		if($(this).val() == "ON"){
+			$(this).val("OFF");
 			$(this).removeClass('active_roll_mod')
 		}
-	  	else if(this.value == "OFF"){
-			this.value = "ON";
+	  	else if($(this).val() == "OFF"){
+			$(this).val("ON");
 			roll_bonus_target.val(roll_bonus_target.val() + 'a')
 			$(this).addClass('active_roll_mod')
 		}
@@ -2040,17 +2040,17 @@ function add_to_quick_roll_menu(token){
 	roll_mod_disadv.click(function(){
 		let roll_bonus_target=$(this).parent().parent().children('#roll_bonus');
 		roll_bonus_target.val(roll_bonus_target.val().replaceAll(/[ad]/gi, ''))
-		
-		let adv_button = $(this).parent().children('#adv');
-		adv_button.value = "OFF"
-		adv_button.removeClass('active_roll_mod')
 
-		if(this.value == "ON"){
-			this.value = "OFF";
+		let adv_button = $(this).parent().children('#adv');
+		$(adv_button).val("OFF")
+		$(adv_button).removeClass('active_roll_mod')
+
+		if($(this).val() == "ON"){
+			$(this).val("OFF");
 			$(this).removeClass('active_roll_mod')
 		}
-	  	else if(this.value == "OFF"){
-			this.value = "ON";
+	  	else if($(this).val() == "OFF"){
+			$(this).val("ON");
 			roll_bonus_target.val(roll_bonus_target.val() + 'd')
 			$(this).addClass('active_roll_mod')
 		}
@@ -2167,7 +2167,7 @@ function add_to_quick_roll_menu(token){
 	);
 	qrm_entry_buttons.append(remove_from_list);
 	
-	if(token.isMonster()){
+	if(token.isMonster() == true){
 		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat_block.click(function(){
@@ -2177,11 +2177,18 @@ function add_to_quick_roll_menu(token){
 				stat_block.css("visibility", "hidden");
 		}
 	}	
-	else if (token.isPlayer()) {
+	else if (token.isPlayer() == true) {
 		stat_block=$('<button title="Open Player Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		stat_block.click(function(){
 			open_player_sheet(token.options.id);
 		});
+	}
+	else{
+		stat_block=$('<button title="No Stat Block for custom tokens" disabled="true" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		//can add the below if people don't like the disabled button
+		//stat_block.click(function(){
+		//	alert('Sorry, this appears to be a custom token, there was no stat block to fetch.');
+		//});
 	}
 	qrm_entry_buttons.append(stat_block)
 	//stat_block.tooltip({show: { duration: 1000 }})
@@ -2250,7 +2257,7 @@ function qrm_fetch_stat(token) {
 		}
 		console.log(roll_bonus);
 	}
-	else if (token.isPlayer) {
+	else if (token.isPlayer == true) {
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
 		//This relies of player data being loaded, which may take a few seconds after the page opens
 		//if its a player character they have the save stored
