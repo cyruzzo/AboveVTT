@@ -70,6 +70,8 @@ Mousetrap.bind('s', function () {       //video fullscreen toggle
 
 
 Mousetrap.bind('v', function () {       //video fullscreen toggle 
+    if(shiftHeld)
+        return;
     $('#jitsi_switch').click()
 });
 
