@@ -5840,7 +5840,33 @@ div.note[id^="ui-id"] {
     width: 100% !important;
     padding: 0px !important;
     max-height: calc(100% - 33px) !important;
+
+}
+.body-rpgcharacter-sheet div.note[id^="ui-id"] {
+    height:100% !important;
     overflow: auto;
+}
+.tooltip-body-description-text.note-text img{
+    max-width: 100%;
+    height: auto;
+}
+.glc-game-log .note-text::-webkit-scrollbar{
+    width: 3px;
+}
+.glc-game-log .note-text::-webkit-scrollbar-track {
+    background: transparent;
+}
+.glc-game-log .note-text::-webkit-scrollbar-thumb{
+    background-color: #232d3166;
+    border-radius: 6px;
+    border: none;
+}
+.glc-game-log .tooltip-body-description-text.note-text > * {
+    max-width: calc(100% - 2px);
+}
+
+.glc-game-log .note-text{
+    overflow:overlay;
 }
 
 div.note[id^="ui-id"] .mce-listbox button{
