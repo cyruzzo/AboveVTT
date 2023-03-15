@@ -3057,7 +3057,7 @@ function detectWallCollision(x1, y1, x2, y2){
 	return false;
 }
 
-function redraw_light(){
+function redraw_light(checkVision=false){
 
 
 	let canvas = document.getElementById("raycastingCanvas");
@@ -3082,10 +3082,12 @@ function redraw_light(){
 	let selectedIds = [];
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){
-	  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
-	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter, 20)}%`)
-	  		$('#raycastingCanvas').css('opacity', '0');
+	
+		if(checkVision){
+	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter)}%`)
+	  		$('#raycastingCanvas').css('opacity', '1');
 	  	}
+	  	
   		
 		for(j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
@@ -3119,19 +3121,27 @@ function redraw_light(){
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
+	
+	if(checkVision){
+		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
+	}
+	
+	if(window.DM && !checkVision){
+		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 
+	}
 
-	$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
-  	if(selectedIds.length == 0 || found){	
+  	if(selectedIds.length == 0 || found || !checkVision){	
   		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined )
+  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
   			continue; 
   		
   		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
   			continue;
 
-  		
-  		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible');
-  		
+		
+		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
+		
+  	
 
   		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
   	
