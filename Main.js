@@ -1,5 +1,3 @@
-var abovevtt_version = '0.74'; // TODO: use window.AVTT_VERSION instead?
-
 /**
  * Before the page refreshes perform the innards
  * @param {Event} event
@@ -1958,8 +1956,8 @@ function close_player_sheet()
  * Notifie about player joining the game.
  */
 function notify_player_join() {
-	var playerdata = {
-		abovevtt_version: abovevtt_version,
+	const playerdata = {
+		abovevtt_version: window.AVTT_VERSION,
 		player_id: window.PLAYER_ID
 	};
 
@@ -1986,7 +1984,8 @@ function check_versions_match() {
 			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
 		}
 
-		alert(alertMsg);
+		// alert(alertMsg); // we can re-enable this later if we want to, but it's been off for dozens of versions, so we probably don't need it.
+		console.warn(alertMsg);
 	}
 
 	return latestVersionSeen;
@@ -1998,7 +1997,7 @@ function check_versions_match() {
  * @returns {Boolean}
  */
 function is_supported_version(versionString) {
-	return abovevtt_version >= versionString;
+	return window.AVTT_VERSION >= versionString;
 }
 
 /**
