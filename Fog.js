@@ -3137,7 +3137,6 @@ function redraw_light(checkVision=false){
   		
   		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
   			continue;
-V
 
 		
 		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
