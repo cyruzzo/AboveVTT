@@ -352,7 +352,7 @@ class Token {
 	moveUp() {	
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
-		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop));
+		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(intersect== false){
 			this.move(newTop, this.options.left)	
 		}
@@ -360,7 +360,7 @@ class Token {
 	moveDown() {
 		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
-		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop));
+		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(intersect== false){
 			this.move(newTop, this.options.left)	
 		}
@@ -1976,11 +1976,13 @@ class Token {
 					var zoom = window.ZOOM;
 
 					var original = ui.originalPosition;
-					let tokenX = Math.round((event.pageX - click.x + original.left) / zoom);
-					let tokenY = Math.round((event.pageY - click.y + original.top) / zoom);
+					let tokenX = (event.pageX - click.x + original.left) / zoom;
+					let tokenY = (event.pageY - click.y + original.top) / zoom;
 					if (should_snap_to_grid()) {
 						tokenX += (window.CURRENT_SCENE_DATA.hpps / 2);
 						tokenY += (window.CURRENT_SCENE_DATA.vpps / 2);
+						self.orig_left += (window.CURRENT_SCENE_DATA.vpps / 2);
+						self.orig_top+= (window.CURRENT_SCENE_DATA.vpps / 2);
 					}
 					let selectedCoords= {
 						left: $('#scene_map_container').width(),
@@ -1989,8 +1991,10 @@ class Token {
 						right:0,
 					};
 					let selectedTokens = $('.tokenselected');
-			
 					
+					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
+
+					let closestWallDist = Infinity;
 					let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
 					for(i=0; i<walls.length; i++){
 
@@ -2008,25 +2012,50 @@ class Token {
 							}			
 						}]
 						
-	
-
-
-					
-						let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenX+parseInt(self.options.size)/2, tokenY+parseInt(self.options.size)/2);
-					
-						if(intersect != false && !window.DM){	
-							
-							tokenX = (parseInt(self.orig_left) > intersect.x) ? (should_snap_to_grid()) ? intersect.x + self.options.size : intersect.x : intersect.x - self.options.size;		
-							tokenY = (parseInt(self.orig_top) > intersect.y) ? (should_snap_to_grid()) ? intersect.y + self.options.size : intersect.y : intersect.y - self.options.size;	
-						}
+						const intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenPosition.x+parseInt(self.options.size)/2, tokenPosition.y+parseInt(self.options.size)/2);
 						
+
+						if(intersect != false && !window.DM){	
+									
+			
+						
+							const distance = Vector.dist({x: intersect.x, y: intersect.y}, {x: parseInt(self.orig_left), y:parseInt(self.orig_top)}) 
+							if(distance < closestWallDist){
+								closestWallDist = distance;
+								tokenPosition.x = intersect.x - parseInt(self.options.size)/2;		
+								tokenPosition.y = intersect.y - parseInt(self.options.size)/2;	
+
+								const intersectLeft = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenPosition.x, tokenPosition.y+parseInt(self.options.size)/2);
+							
+								const intersectRight = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenPosition.x+parseInt(self.options.size), tokenPosition.y+parseInt(self.options.size)/2);
+								
+								const intersectTop = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenPosition.x+parseInt(self.options.size)/2, tokenPosition.y);
+								
+								const intersectBottom = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(self.orig_left)+parseInt(self.options.size)/2, parseInt(self.orig_top)+parseInt(self.options.size)/2, tokenPosition.x+parseInt(self.options.size)/2, tokenPosition.y+parseInt(self.options.size));
+								
+								const modifier = (should_snap_to_grid()) ? parseInt(self.options.size) : 5
+
+								if(intersectLeft != false){
+									tokenPosition.x += modifier;
+								}
+								if(intersectRight != false){
+									tokenPosition.x -= modifier/2;
+								}
+								if(intersectTop != false){
+									tokenPosition.y += modifier/2;
+								}
+								if(intersectBottom != false){
+									tokenPosition.y -= modifier;
+								}
+							}							
+						}									
 					}
 
-					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
-
+					tokenPosition = snap_point_to_grid(tokenPosition.x, tokenPosition.y);
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
 					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
+
 
 					ui.position = {
 						left: tokenPosition.x,
@@ -2105,7 +2134,9 @@ class Token {
 								var curr = window.TOKEN_OBJECTS[id];
 								tokenX = offsetLeft + parseInt(curr.orig_left);
 								tokenY = offsetTop + parseInt(curr.orig_top);
-								let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+								
+								let closestWallDist = Infinity;
+								let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
 								for(i=0; i<walls.length; i++){
 
 									let wallInitialScale = walls[8];
@@ -2121,13 +2152,44 @@ class Token {
 											y: walls[i][6]/adjustedScale
 										}			
 									}]
-										
-									let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size)/2, tokenY+parseInt(curr.options.size)/2);
-													
+									
+									const intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size)/2, tokenY+parseInt(curr.options.size)/2);
+						
+
 									if(intersect != false && !window.DM){	
-										tokenX = (parseInt(curr.orig_left) > intersect.x) ? intersect.x : intersect.x - curr.options.size;		
-										tokenY = (parseInt(curr.orig_top) > intersect.y) ? intersect.y : intersect.y - curr.options.size;
-									}
+												
+						
+									
+										let distance = Vector.dist({x: intersect.x, y: intersect.y}, {x: parseInt(curr.orig_left), y:parseInt(curr.orig_top)}) 
+										if(distance < closestWallDist){
+											closestWallDist = distance;
+											tokenX = intersect.x - parseInt(curr.options.size)/2;		
+											tokenY = intersect.y - parseInt(curr.options.size)/2;	
+
+											const intersectLeft = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX, tokenY+parseInt(curr.options.size)/2);
+										
+											const intersectRight = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size), tokenY+parseInt(curr.options.size)/2);
+											
+											const intersectTop = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size)/2, tokenY);
+											
+											const intersectBottom = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, parseInt(curr.orig_left)+parseInt(curr.options.size)/2, parseInt(curr.orig_top)+parseInt(curr.options.size)/2, tokenX+parseInt(curr.options.size)/2, tokenY+parseInt(curr.options.size));
+														
+											const modifier = (should_snap_to_grid()) ? parseInt(curr.options.size) : 5
+
+											if(intersectLeft != false){
+												tokenX += modifier;
+											}
+											if(intersectRight != false){
+												tokenX -= modifier/2;
+											}
+											if(intersectTop != false){
+												tokenY += modifier/2;
+											}
+											if(intersectBottom != false){
+												tokenY -= modifier;
+											}
+										}							
+									}									
 								}
 						
 								$(tok).css('left', tokenX + "px");

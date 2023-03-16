@@ -3016,7 +3016,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
     let intersectionX = x1 + (uA * (x2-x1));
     let intersectionY = y1 + (uA * (y2-y1));
 
-    return {x: Math.floor(intersectionX), y: Math.floor(intersectionY)};
+    return {x: intersectionX, y: intersectionY};
   }
   return false;
 }
