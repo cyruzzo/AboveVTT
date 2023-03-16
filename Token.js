@@ -1224,9 +1224,12 @@ class Token {
 					                });
 					                send_html_to_gamelog(noteHover);
 					            });
+					            let flyoutLeft = e.clientX+20
+					            if(flyoutLeft + 400 > window.innerWidth){
+					            	flyoutLeft = window.innerWidth - 420
+					            }
 					            flyout.css({
-					            	left: flyoutLocation.x - scrollX+20,
-					            	top: flyoutLocation.y - scrollY,
+					            	left: flyoutLeft,
 					            	width: '400px'
 					            })
 
