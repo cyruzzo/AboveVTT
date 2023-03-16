@@ -355,7 +355,7 @@ class MessageBroker {
 
 		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
-		this.latestVersionSeen = abovevtt_version;
+		this.latestVersionSeen = window.AVTT_VERSION;
 
 		this.onmessage = function(event,tries=0) {
 			if (event.data == "pong")

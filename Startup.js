@@ -87,7 +87,7 @@ async function start_above_vtt_for_dm() {
   window.PLAYER_SHEET = false;
 
   await start_above_vtt_common();
-  window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
+  window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 
   startup_step("Fetching scenes from cloud");
   window.ScenesHandler = new ScenesHandler();
