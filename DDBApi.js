@@ -192,7 +192,7 @@ class DDBApi {
       return [];
     }
     const ids = characterIds.map(ci => parseInt(ci)); // do not use strings
-    const url = `https://character-service-scds.dndbeyond.com/v1/characters`;
+    const url = `https://character-service-scds.dndbeyond.com/v2/characters`;
     const config = {
       method: 'POST',
       body: JSON.stringify({ "characterIds": ids })
