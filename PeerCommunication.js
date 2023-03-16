@@ -109,8 +109,7 @@ class PeerEvent {
       message: PeerEventType.preferencesChange,
       peerId: window.PeerManager.peer.id,
       playerId: my_player_id(),
-      color: window.color, // TODO: stop using window.color
-      image: window.PLAYER_IMG,
+      color: window.color,
       receiveCursorFromPeers: get_avtt_setting_value("receiveCursorFromPeers"),
       receiveRulerFromPeers: get_avtt_setting_value("receiveRulerFromPeers")
     };
@@ -144,14 +143,15 @@ function handle_peer_event(eventData) {
 //#region PeerManager connect/disconnect logic
 
 function configure_peer_manager_from_settings() {
+  console.log("configure_peer_manager_from_settings")
   // configure the cursor/ruler settings first
   const cursorSettings = get_avtt_setting_value("receiveCursorFromPeers");
-  local_peer_setting_changed(cursorSettings)
+  local_peer_setting_changed("receiveCursorFromPeers", cursorSettings)
   const rulerSettings = get_avtt_setting_value("receiveRulerFromPeers");
-  local_peer_setting_changed(rulerSettings)
+  local_peer_setting_changed("receiveRulerFromPeers", rulerSettings)
   // then enable or disable the PeerManager
   const enabled = get_avtt_setting_value("peerStreaming");
-  local_peer_setting_changed(enabled);
+  local_peer_setting_changed("peerStreaming", enabled);
 }
 
 function local_peer_setting_changed(settingName, newValue) {
@@ -303,6 +303,8 @@ function peer_disconnected(peerId, playerId) {
 
 //#region game logic
 
+let peer_animation_timout = 20;
+
 /** Set this to true to avoid sending cursor events and ruler events at the same time
  * Don't forget to unpause it */
 let pauseCursorEventListener = false;
@@ -392,25 +394,6 @@ function peer_changed_preferences(eventData) {
   }
 
   update_player_online_indicator(eventData.playerId, true, eventData.color);
-
-  // TODO: do we need to re-fetch character data to get the updated theme?
-  // we should probably just send the theme object, and update window.pcs with that
-
-  if (window.DM) {
-    const pc = find_pc_by_player_id(eventData.playerId);
-    const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
-    if (tokenObject) {
-      tokenObject.options.color = eventData.color;
-      $(`#combat_area tr[data-target='${tokenObject.options.id}'] img[class*='Avatar']`).css("border-color", eventData.color);
-      if (typeof eventData.image === "string" && eventData.image.length > 0 && tokenObject.options.alternativeImages && tokenObject.options.alternativeImages.indexOf(tokenObject.options.imgsrc) < 0) {
-        // the token is not using a custom image so update it with whatever the player has set
-        tokenObject.options.imgsrc = eventData.image
-      }
-
-      tokenObject.place_sync_persist();
-    }
-    console.log("token-border-color tokenObject", tokenObject);
-  }
 }
 
 /** updates the online indicator in the tokens panel, and call {@link update_old_player_card} to update the online indicator in the players panel if necessary
@@ -418,7 +401,6 @@ function peer_changed_preferences(eventData) {
  * @param {boolean} isConnected true if the player is connected, else false
  * @param {string} peerColor a valid CSS color string that represents the player, defaults to gray which indicates offline */
 function update_player_online_indicator(playerId, isConnected, peerColor) {
-  // TODO: refactor how color is sent and used
   const color = peerColor ? peerColor : "gray";
   const pc = find_pc_by_player_id(playerId);
   console.debug("update_player_online_indicator", playerId, isConnected, color, pc);
@@ -525,19 +507,19 @@ function init_peer_fade_function(playerId) {
 }
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
-const sendRulerPositionToPeers = mydebounce( () => {
+const sendRulerPositionToPeers = throttle( () => {
   noisy_log("sendRulerPositionToPeers");
   window.PeerManager.send(PeerEvent.cursor(undefined, undefined, undefined, true));
-}, 0);
+}, peer_animation_timout);
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
-const sendTokenPositionToPeers = mydebounce( (tokenX, tokenY, tokenId, includeRuler) => {
+const sendTokenPositionToPeers = throttle( (tokenX, tokenY, tokenId, includeRuler) => {
   noisy_log("sendTokenPositionToPeers", tokenX, tokenY, tokenId, includeRuler);
   window.PeerManager.send(PeerEvent.cursor(tokenX, tokenY, tokenId, includeRuler));
-}, 0);
+}, peer_animation_timout);
 
 /** a debounced function that will send {@link PeerEvent.cursor} event to all peers */
-const sendCursorPositionToPeers = mydebounce( (mouseMoveEvent) => {
+const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
   try {
     if (pauseCursorEventListener) return;
     if (is_player_sheet_open()) {
@@ -551,7 +533,7 @@ const sendCursorPositionToPeers = mydebounce( (mouseMoveEvent) => {
   } catch (error) {
     console.log("Failed to sendCursorPositionToPeers", error);
   }
-}, 0);
+}, peer_animation_timout);
 
 /** called when we receive a {@link PeerEvent.cursor} event */
 function handle_peer_cursor_event(eventData) {
@@ -641,11 +623,12 @@ function update_peer_cursor(eventData) {
     $("#VTT").append(cursorPosition);
     cursorPosition.css("transform", "scale(" + 1/window.ZOOM + ")");
   }
-  cursorPosition.css({
+  cursorPosition.stop();
+  cursorPosition.animate({
     top: eventData.y,
     left: eventData.x,
     background: eventData.color
-  });
+  }, peer_animation_timout, "linear");
   cursorPosition.fadeIn();
 }
 

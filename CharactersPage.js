@@ -5,6 +5,7 @@ $(function() {
 });
 
 const sendCharacterUpdateEvent = mydebounce(() => {
+  console.log("sendCharacterUpdateEvent")
   window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID});
 }, 4000);
 
@@ -327,8 +328,13 @@ function observe_character_theme_change() {
         mutation.addedNodes.forEach(node => {
           // console.log("theme_observer node", node);
           if (node.innerHTML && node.innerHTML.includes("--dice-color")) {
-            // console.log("theme_observer is calling find_and_set_player_color");
-            find_and_set_player_color();
+            // console.log("theme_observer is calling find_and_set_player_color", mutation, node);
+            const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
+            if (newColor) {
+              update_window_color(newColor);
+              sendCharacterUpdateEvent();
+              window.PeerManager.send(PeerEvent.preferencesChange());
+            }
           }
         });
       }
@@ -345,10 +351,17 @@ function observe_character_image_change() {
         // This should be just fine, but catch any parsing errors just in case
         const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
         window.PLAYER_IMG = updatedUrl;
-        window.PeerManager.send(PeerEvent.preferencesChange());
+        sendCharacterUpdateEvent();
       } catch { }
     });
   });
   window.character_image_observer.observe(document.querySelector(".ddbc-character-avatar__portrait"), { attributeFilter: ["style"] });
 }
 
+function update_window_color(colorValue) {
+  let pc = find_pc_by_player_id(my_player_id());
+  if (pc?.decorations?.characterTheme?.themeColor) {
+    pc.decorations.characterTheme.themeColor = colorValue;
+    find_and_set_player_color();
+  }
+}

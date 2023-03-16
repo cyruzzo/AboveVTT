@@ -275,11 +275,27 @@ function debounced_handle_character_update(msg) {
       update_window_pc(playerId)
         .then(() => {
           console.log("debounced_handle_character_update called update_window_pc", playerId);
+          const pc = find_pc_by_player_id(playerId);
+          if (window.DM && pc) {
+            const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
+            if (tokenObject) {
+              const color = color_from_pc_object(pc);
+              tokenObject.options.color = color;
+              $(`#combat_area tr[data-target='${tokenObject.options.id}'] img[class*='Avatar']`).css("border-color", color);
+              const alternativeImages = tokenObject.options.alternativeImages || [];
+              if (typeof pc.image === "string" && pc.image.length > 0 && alternativeImages && alternativeImages.indexOf(tokenObject.options.imgsrc) < 0) {
+                // the token is not using a custom image so update it with whatever the player has set
+                tokenObject.options.imgsrc = pc.image;
+              }
+              tokenObject.place_sync_persist();
+            }
+          }
         })
         .catch(error => {
           console.warn("debounced_handle_character_update failed to update_window_pc", playerId, error);
         });
 
+      // old way of updating character data that's still being used
       if (window.DM) {
         const pc = window.pcs.find(pc => pc.sheet.includes(playerId));
         if (pc) {

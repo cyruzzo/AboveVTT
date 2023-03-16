@@ -210,7 +210,7 @@ function find_and_set_player_color() {
 
 function change_player_color(color) {
 	const playerId = my_player_id();
-	// window.color = color; // TODO: stop using window.color
+	window.color = color;
 	WaypointManager.drawStyle.color = color;
 	// window.PeerManager.send(PeerEvent.preferencesChange());
 	const peerConnected = is_peer_connected(playerId);
