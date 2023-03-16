@@ -325,9 +325,10 @@ function debounced_handle_character_update(msg) {
 }
 
 async function update_window_pc(characterId) {
+  const index = window.pcs.findIndex(pc => pc.id.toString() === characterId.toString());
+  if (index < 0) return; // We haven't even finished fetching all window.pcs yet. No need to update this one yet.
   const allCharacterDetails = await DDBApi.fetchCharacterDetails([characterId]);
   const characterData = allCharacterDetails[0];
-  const index = window.pcs.findIndex(pc => pc.id.toString() === characterId.toString());
   const oldData = window.pcs[index];
   window.pcs[index] = {
     ...oldData,
