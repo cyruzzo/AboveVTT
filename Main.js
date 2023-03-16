@@ -3080,6 +3080,10 @@ function init_help_menu() {
 							<dd>Hide buttons from screen (spectator mode)</dd>
 						<dl>
 						<dl>
+							<dt>SHIFT+V</dt>
+							<dd>Check token vision.</dd>
+						<dl>
+						<dl>
 							<dt>SHIFT+Click</dt>
 							<dd>Select multiple tokens</dd>
 						<dl>

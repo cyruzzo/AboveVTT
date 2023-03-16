@@ -69,8 +69,15 @@ Mousetrap.bind('s', function () {       //video fullscreen toggle
 });
 
 
-Mousetrap.bind('v', function () {       //video fullscreen toggle
+Mousetrap.bind('v', function () {       //video fullscreen toggle 
+    if(shiftHeld)
+        return;
+
     $('#jitsi_switch').click()
+});
+
+Mousetrap.bind('shift+v', function () {       //check token vision
+    redraw_light(true);
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
