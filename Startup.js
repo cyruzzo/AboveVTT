@@ -41,6 +41,24 @@ $(function() {
   }
 });
 
+function load_external_script(scriptUrl) {
+  return new Promise(function (resolve, reject) {
+    let script = document.createElement('script');
+    script.src = scriptUrl;
+    script.type = 'text/javascript';
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = function () {
+      reject(new Error(`Failed to load external script ${scriptUrl}`));
+    };
+    script.addEventListener('error', function () {
+      reject(new Error(`Failed to load external script ${scriptUrl}`));
+    });
+    script.addEventListener('load', resolve);
+    document.head.appendChild(script);
+  })
+}
+
 async function start_above_vtt_common() {
   console.log("start_above_vtt_common");
   // make sure we have a campaign id
@@ -57,6 +75,7 @@ async function start_above_vtt_common() {
   window.TOKEN_PASTE_BUFFER = [];
   window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem(`TokenSettings${window.gameId}`)) || {};
 
+  await load_external_script("https://www.youtube.com/iframe_api");
   $("#site").append("<div id='windowContainment'></div>");
 
   startup_step("Gathering player character data");

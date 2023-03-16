@@ -117,17 +117,23 @@ function showError(error, ...extraInfo) {
 
   $("#copy-error-button").on("click", function () {
     const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
-    copy_to_clipboard("```\n"+textToCopy+"\n```");
+    const environment = JSON.stringify({
+      avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
+      browser: get_browser(),
+    });
+    copy_to_clipboard("**Error:**\n```\n" + textToCopy + "\n```\n**Environment:**\n```\n" + environment + "\n```\n");
   });
 
   look_for_github_issue(error.message, ...extraStrings)
-    .then(add_issues_to_error_message)
+    .then((issues) => {
+      add_issues_to_error_message(issues, error.message);
+    })
     .catch(githubError => {
       console.error("look_for_github_issue", "Failed to look for github issues", githubError);
     })
 }
 
-function add_issues_to_error_message(issues) {
+function add_issues_to_error_message(issues, errorMessage) {
   if (issues.length > 0) {
 
     let ul = $("#error-issues-list");
@@ -154,9 +160,13 @@ function add_issues_to_error_message(issues) {
     const githubButton = $(`<button id="create-github-button">Create Github Issue</button>`);
     githubButton.click(function() {
       const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
-      const errorBody = "```\n"+textToCopy+"\n```";
-      console.log("look_for_github_issue", `appending createIssueUrl`, error.message, errorBody);
-      open_github_issue(error.message, errorBody);
+      const environment = JSON.stringify({
+        avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
+        browser: get_browser(),
+      });
+      const errorBody = "**Error:**\n```\n" + textToCopy + "\n```\n**Environment:**\n```\n" + environment + "\n```\n";
+      console.log("look_for_github_issue", `appending createIssueUrl`, errorMessage, errorBody);
+      open_github_issue(errorMessage, errorBody);
     });
     $("#above-vtt-error-message .error-message-buttons").append(githubButton);
   }
@@ -498,7 +508,7 @@ async function look_for_github_issue(...searchTerms) {
   const response = await request.json();
 
   // remove any that have been marked as potential-duplicate
-  const filteredIssues = response.filter(issue => !issue.labels.find(l => l.name === "potential-duplicate")).reverse();
+  const filteredIssues = response.filter(issue => !issue.labels.find(l => l.name === "potential-duplicate" || l.name === "released")).reverse();
 
   // instantiate fuse to fuzzy match parts of the github issues that we just downloaded
   const fuse = new Fuse(filteredIssues, {

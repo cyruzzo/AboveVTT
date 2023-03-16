@@ -2472,12 +2472,6 @@ function init_ui() {
 
 	inject_chat_buttons();
 
-	//s = $("<script src='https://meet.jit.si/external_api.js'></script>");
-	//$("#site").append(s);
-
-	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
-	$("#site").append(s);
-
 	$("#site").append(`
 		<script type="text/javascript" src="/content/1-0-2027-0/js/libs/lightbox2/dist/js/lightbox.min.js"></script>
         <link rel="stylesheet" href="/content/1-0-2027-0/js/libs/lightbox2/dist/css/lightbox.min.css">
