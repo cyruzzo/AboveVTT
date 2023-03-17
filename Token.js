@@ -942,19 +942,23 @@ class Token {
 		if (parseFloat(this.options.elev) > 0) {
 			elev.append(
 			$(`
-			<svg width="${bar_height + 5}px" height="${bar_height + 5}px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-			<path fill="#fff" stroke="#000" stroke-width="0.5" d="M18,17 L18,18 C18,21 16,22 13,22 L11,22 C8,22 6,21 6,18 L6,17 C3.23857625,17 1,14.7614237 1,12 C1,9.23857625 3.23857625,7 6,7 L12,7 M6,7 L6,6 C6,3 8,2 11,2 L13,2 C16,2 18,3 18,6 L18,7 C20.7614237,7 23,9.23857625 23,12 C23,14.7614237 20.7614237,17 18,17 L12,17"/>
-			<svg fill="#FFF" width="29px" height="19.5px" viewBox="-60 -205 750 750" xmlns="http://www.w3.org/2000/svg"><path stroke-width="1500" d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"></path> </svg>
-			<text style="position:absolute;top:4px;left:8px;font-size:12px;color:#000;transform:translate(${this.options.elev > 9 ? 5.5 + 'px': 8.5 + 'px'},16px);">${this.options.elev}</text>
+			<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"width="${bar_height + 10}px" height="${bar_height + 10}px" viewBox="0 0 12 12" version="1.1" id="svg9" sodipodi:docname="Cloud_(fixed_width).svg" inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+			  <defs id="defs13"/>
+			  <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview11" showgrid="false" inkscape:zoom="41.7193" inkscape:cx="3.7543605" inkscape:cy="7.3293954" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="svg9"/>
+			  <path style="opacity:1;fill:#fff;fill-opacity:1;stroke:#020000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers" d="M 6.9014354,2.6799347 C 6.0612858,2.6944777 5.3005052,3.1744944 4.9326856,3.9221221 l -0.0044,0.00879 C 4.8347246,3.9105641 4.7397197,3.8973421 4.6441114,3.8913601 3.6580232,3.8369761 2.7983013,4.5487128 2.6782913,5.5188014 l -0.02637,0.010254 c -0.815669,-0.082231 -1.547762,0.4967997 -1.646485,1.3022461 -0.09854,0.8060438 0.473532,1.541652 1.286133,1.6538085 0.101483,0.013222 0.255109,0.013942 0.255109,0.013942 L 8.984441,8.49975 V 8.49682 C 9.9364542,8.478592 10.726709,7.763601 10.830143,6.8269035 10.941123,5.8069376 10.202664,4.8882705 9.173405,4.7658721 H 9.165985 C 9.12106,3.9596309 8.6352575,3.2418777 7.898991,2.8938019 7.5876151,2.7472589 7.2461776,2.6740579 6.9014324,2.6799347 Z" id="path905-36" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccccccccccccc"/>
+			<text x='3px' y='8px' style="font-weight:bold;font-size:4px;color:#000;">${this.options.elev}</text>
+			
 			</svg>
-			`));
+						`));
 		} else if (parseFloat(this.options.elev) < 0) {
 			elev.append(
 			$(`
-			<svg width="${bar_height + 5}px" height="${bar_height + 5}px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-			<path fill="#fff" stroke="#000" stroke-width="0.5" d="M18,17 L18,18 C18,21 16,22 13,22 L11,22 C8,22 6,21 6,18 L6,17 C3.23857625,17 1,14.7614237 1,12 C1,9.23857625 3.23857625,7 6,7 L12,7 M6,7 L6,6 C6,3 8,2 11,2 L13,2 C16,2 18,3 18,6 L18,7 C20.7614237,7 23,9.23857625 23,12 C23,14.7614237 20.7614237,17 18,17 L12,17"/>
-			<svg fill="#FFF" width="29px" height="19.5px" viewBox="-60 -205 750 750" xmlns="http://www.w3.org/2000/svg"><path stroke-width="1500" d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"></path> </svg>
-			<text style="position:absolute;top:4px;left:5px;font-size:12px;color:#000;transform:translate(${this.options.elev < -9 ? 1.5 + 'px': 6 + 'px'},16px);">${this.options.elev}</text>
+			<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"width="${bar_height + 10}px" height="${bar_height + 10}px" viewBox="0 0 12 12" version="1.1" id="svg9" sodipodi:docname="Cloud_(fixed_width).svg" inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+			  <defs id="defs13"/>
+			  <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview11" showgrid="false" inkscape:zoom="41.7193" inkscape:cx="3.7543605" inkscape:cy="7.3293954" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="svg9"/>
+			  <path style="opacity:1;fill:#fff;fill-opacity:1;stroke:#020000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers" d="M 6.9014354,2.6799347 C 6.0612858,2.6944777 5.3005052,3.1744944 4.9326856,3.9221221 l -0.0044,0.00879 C 4.8347246,3.9105641 4.7397197,3.8973421 4.6441114,3.8913601 3.6580232,3.8369761 2.7983013,4.5487128 2.6782913,5.5188014 l -0.02637,0.010254 c -0.815669,-0.082231 -1.547762,0.4967997 -1.646485,1.3022461 -0.09854,0.8060438 0.473532,1.541652 1.286133,1.6538085 0.101483,0.013222 0.255109,0.013942 0.255109,0.013942 L 8.984441,8.49975 V 8.49682 C 9.9364542,8.478592 10.726709,7.763601 10.830143,6.8269035 10.941123,5.8069376 10.202664,4.8882705 9.173405,4.7658721 H 9.165985 C 9.12106,3.9596309 8.6352575,3.2418777 7.898991,2.8938019 7.5876151,2.7472589 7.2461776,2.6740579 6.9014324,2.6799347 Z" id="path905-36" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccccccccccccc"/>
+			<text x='3px' y='8px' style="font-weight:bold;font-size:4px;color:#000;">${this.options.elev}</text>
+			
 			</svg>
 			`)
 		);}
@@ -996,13 +1000,12 @@ class Token {
 			if (!this.options.elev) { // even if we are supposed to show it, only show them if they have something to show.
 				token.find(".elev").hide();
 			} else {
-				token.find(".ac").show();
+				token.find(".elev").show();
 			}
 		}
 		else{
 			token.find(".hpbar").css("visibility", "hidden");
 			token.find(".ac").hide();
-			token.find(".elev").hide();
 		}
 	}
 
