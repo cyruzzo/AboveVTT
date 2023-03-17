@@ -1579,9 +1579,17 @@ class Token {
 		                color: 'rgba(255, 255, 255, 0.5)'
 		            }
 		        }
-		        else if(this.isMonster() && window.monsterListItems.filter((d) => this.options.monster == d.id).length == 1){
+		        else if(this.isMonster()){
 		            let darkvision = 0;
-		            let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];
+		            let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];	
+		            if(!monsterSidebarListItem){
+						for(i in encounter_monster_items){
+						    if(encounter_monster_items[i].some((d) => this.options.monster == d.id)){
+						        monsterSidebarListItem = encounter_monster_items[i].filter((d) => this.options.monster == d.id)[0]
+						        break;
+						    }
+						}
+					}
 		            if(monsterSidebarListItem.monsterData.senses.length > 0)
 		            {
 		                for(i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
