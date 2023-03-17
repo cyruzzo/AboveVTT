@@ -4099,6 +4099,11 @@ div.sidebar__pane-content div.tooltip::after {
     background: none !important;
 }
 
+.elev svg{
+    left: -7px;
+    position: absolute;
+}
+
 button.avtt-roll-button {
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
