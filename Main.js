@@ -1704,6 +1704,13 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			.ct-character-sheet-mobile__header{
 				top: 0px !important; 
 			}
+			#mega-menu-target,
+			.site-bar,
+			.page-header,
+			.homebrew-comments,
+			.mega-menu__fallback{
+				display:none;
+			}
 
 			@media (min-width: 1200px){
 				html body#site.body-rpgcharacter-sheet{
@@ -1713,11 +1720,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			</style>
 		`);
 		console.log("removing headers");
-		$(event.target).contents().find("#mega-menu-target").remove();
-		$(event.target).contents().find(".site-bar").remove();
-		$(event.target).contents().find(".page-header").remove();
-		$(event.target).contents().find(".homebrew-comments").remove();
-		$(event.target).contents().find(".mega-menu__fallback").remove();
+
 
 		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
 			let addedElement = $(addedEvent.target);
