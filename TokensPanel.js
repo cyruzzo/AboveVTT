@@ -1514,9 +1514,45 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     }
 
     if(customization.tokenOptions.vision == undefined){
-        customization.tokenOptions.vision = {
-            feet: '60',
-            color: 'rgba(255, 255, 255, 0.5)'
+        if(listItem.isTypePC()){
+            let pcData = window.pcs.filter((d) => listItem.id.includes(d.id))[0];
+            let darkvision = 0;
+            if(pcData.senses.length > 0)
+            {
+                for(i=0; i < pcData.senses.length; i++){
+                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
+                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
+                    if(range > darkvision)
+                        darkvision = range;
+                }
+            }
+            customization.tokenOptions.vision = {
+                feet: darkvision.toString(),
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
+        }
+        else if(listItem.isTypeMonster()){
+            let darkvision = 0;
+            if(listItem.monsterData.senses.length > 0)
+            {
+                for(i=0; i < listItem.monsterData.senses.length; i++){
+                    const ftPosition = listItem.monsterData.senses[i].notes.indexOf('ft.')
+                    const range = parseInt(listItem.monsterData.senses[i].notes.slice(0, ftPosition));
+                    if(range > darkvision)
+                        darkvision = range;
+                }
+            }
+
+            customization.tokenOptions.vision = {
+                feet: darkvision.toString(),
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
+        }
+        else{
+            customization.tokenOptions.vision = {
+                feet: '60',
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
         }
     }
     if(customization.tokenOptions.light1 == undefined){
@@ -1525,7 +1561,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             color: 'rgba(255, 255, 255, 0.8)'
         }
     }
-     if(customization.tokenOptions.light2 == undefined){
+    if(customization.tokenOptions.light2 == undefined){
         customization.tokenOptions.light2 = {
             feet: '0',
             color: 'rgba(255, 255, 255, 0.5)'

@@ -1562,9 +1562,47 @@ class Token {
 				}
 			}
 			if(this.options.vision == undefined){
-				this.options.vision = {
-					feet: 60,
-					color: 'rgba(255, 255, 255, 0.5)'
+				if(this.isPlayer()){
+		            let pcData = window.pcs.filter((d) => this.options.id.includes(d.id))[0];
+		            let darkvision = 0;
+		            if(pcData.senses.length > 0)
+		            {
+		                for(i=0; i < pcData.senses.length; i++){
+		                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
+		                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
+		                    if(range > darkvision)
+		                        darkvision = range;
+		                }
+		            }
+		            this.options.vision = {
+		                feet: darkvision.toString(),
+		                color: 'rgba(255, 255, 255, 0.5)'
+		            }
+		        }
+		        else if(this.isMonster() && window.monsterListItems.filter((d) => this.options.monster == d.id).length == 1){
+		            let darkvision = 0;
+		            let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];
+		            if(monsterSidebarListItem.monsterData.senses.length > 0)
+		            {
+		                for(i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
+		                    const ftPosition = monsterSidebarListItem.monsterData.senses[i].notes.indexOf('ft.')
+		                    const range = parseInt(monsterSidebarListItem.monsterData.senses[i].notes.slice(0, ftPosition));
+		                    if(range > darkvision)
+		                        darkvision = range;
+		                }
+		            }
+
+		            this.options.vision = {
+		                feet: darkvision.toString(),
+		                color: 'rgba(255, 255, 255, 0.5)'
+		            }
+		        }
+				else{
+					this.options.vision = {
+						feet: 60,
+						color: 'rgba(255, 255, 255, 0.5)'
+					}
+				
 				}
 			}
 
@@ -2441,12 +2479,7 @@ function default_options() {
 		light2: {
 			feet: "0",
 			color: "rgba(255, 255, 255, 0.5)"
-		},
-		vision:{
-			feet: '60',
-			color: "rgba(255, 255, 255, 0.5)"
-		}
-		
+		}		
 	};
 }
 
