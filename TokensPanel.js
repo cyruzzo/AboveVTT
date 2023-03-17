@@ -1515,7 +1515,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
     if(customization.tokenOptions.vision == undefined){
         if(listItem.isTypePC()){
-            let pcData = window.pcs.filter((d) => listItem.id.includes(d.id))[0];
+            let pcData = find_pc_by_player_id(listItem.id);
             let darkvision = 0;
             if(pcData.senses.length > 0)
             {

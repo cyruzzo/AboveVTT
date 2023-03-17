@@ -1563,7 +1563,7 @@ class Token {
 			}
 			if(this.options.vision == undefined){
 				if(this.isPlayer()){
-		            let pcData = window.pcs.filter((d) => this.options.id.includes(d.id))[0];
+		            let pcData = find_pc_by_player_id(this.options.id);
 		            let darkvision = 0;
 		            if(pcData.senses.length > 0)
 		            {
