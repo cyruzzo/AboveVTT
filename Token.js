@@ -1568,15 +1568,16 @@ class Token {
 				if(this.isPlayer()){
 		            let pcData = find_pc_by_player_id(this.options.id);
 		            let darkvision = 0;
-		            if(pcData.senses.length > 0)
-		            {
-		                for(i=0; i < pcData.senses.length; i++){
-		                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
-		                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
-		                    if(range > darkvision)
-		                        darkvision = range;
-		                }
-		            }
+		            if(pcData.id != 0){
+			            if(pcData.senses.length > 0) {
+			                for(i=0; i < pcData.senses.length; i++){
+			                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
+			                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
+			                    if(range > darkvision)
+			                        darkvision = range;
+			                }
+			            }
+			        }
 		            this.options.vision = {
 		                feet: darkvision.toString(),
 		                color: 'rgba(255, 255, 255, 0.5)'
@@ -1584,25 +1585,28 @@ class Token {
 		        }
 		        else if(this.isMonster()){
 		            let darkvision = 0;
-		            let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];	
-		            if(!monsterSidebarListItem){
-						for(i in encounter_monster_items){
-						    if(encounter_monster_items[i].some((d) => this.options.monster == d.id)){
-						        monsterSidebarListItem = encounter_monster_items[i].filter((d) => this.options.monster == d.id)[0]
-						        break;
-						    }
+		            if(window.monsterListItems){
+		            	let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];	
+		            	if(!monsterSidebarListItem){
+							for(i in encounter_monster_items){
+							    if(encounter_monster_items[i].some((d) => this.options.monster == d.id)){
+							        monsterSidebarListItem = encounter_monster_items[i].filter((d) => this.options.monster == d.id)[0]
+							        break;
+							    }
+							}
 						}
-					}
-		            if(monsterSidebarListItem.monsterData.senses.length > 0)
-		            {
-		                for(i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
-		                    const ftPosition = monsterSidebarListItem.monsterData.senses[i].notes.indexOf('ft.')
-		                    const range = parseInt(monsterSidebarListItem.monsterData.senses[i].notes.slice(0, ftPosition));
-		                    if(range > darkvision)
-		                        darkvision = range;
-		                }
-		            }
-
+		                   
+						if(monsterSidebarListItem){
+				            if(monsterSidebarListItem.monsterData.senses.length > 0){
+				                for(i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
+				                    const ftPosition = monsterSidebarListItem.monsterData.senses[i].notes.indexOf('ft.')
+				                    const range = parseInt(monsterSidebarListItem.monsterData.senses[i].notes.slice(0, ftPosition));
+				                    if(range > darkvision)
+				                        darkvision = range;
+				                }
+				            }
+			       		}
+		       		} 
 		            this.options.vision = {
 		                feet: darkvision.toString(),
 		                color: 'rgba(255, 255, 255, 0.5)'
