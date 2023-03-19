@@ -634,8 +634,8 @@ function edit_scene_dialog(scene_id) {
 			var pageX = Math.round(parseInt(aligner1.css('left')) * window.ZOOM - ($(window).width() / 2));
 			var pageY = Math.round(parseInt(aligner1.css('top')) * window.ZOOM - ($(window).height() / 2));
 			$("html,body").animate({
-				scrollTop: pageY + 200,
-				scrollLeft: pageX + 200,
+				scrollTop: pageY + window.VTTMargin,
+				scrollLeft: pageX + window.VTTMargin
 			}, 500);
 
 			let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
@@ -711,7 +711,6 @@ function edit_scene_dialog(scene_id) {
 			aligner2.draggable({
 				stop: regrid,
 				start: function(event) {
-					reset_canvas(); redraw_fog();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
 					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
@@ -770,8 +769,6 @@ function edit_scene_dialog(scene_id) {
 			aligner1.draggable({
 				stop: regrid,
 				start: function(event) {
-					reset_canvas();
-					redraw_fog();
 					click1.x = event.clientX;
 					click1.y = event.clientY;
 					$("#aligner1").attr('original-top', parseInt($(event.target).css("top")));
@@ -886,7 +883,7 @@ function edit_scene_dialog(scene_id) {
 				scene[key] = formData[key];
 			}
 
-			window.ScenesHandler.persist_scene(scene_id,true);
+			window.ScenesHandler.persist_scene(scene_id);
 			window.ScenesHandler.switch_scene(scene_id);
 			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
 
@@ -1244,7 +1241,7 @@ function default_scene_data() {
 		offsety: 0,
 		grid: 0,
 		snap: 0,
-		reveals: [],
+		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now()
 	};
 }
