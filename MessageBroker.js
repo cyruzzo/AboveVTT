@@ -1347,6 +1347,23 @@ class MessageBroker {
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
 
+		if (data.fog_of_war == 1) {
+			window.FOG_OF_WAR = true;
+			window.REVEALED = data.reveals;
+		}
+		else {
+			window.FOG_OF_WAR = false;
+			window.REVEALED = [];
+		}
+		if (typeof data.drawings !== "undefined") {
+			window.DRAWINGS = data.drawings;
+
+		}
+		else {
+			window.DRAWINGS = [];
+		}
+
+
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			console.group("load_scenemap callback")
 			if(!window.CURRENT_SCENE_DATA.scale_factor)
@@ -1362,28 +1379,13 @@ class MessageBroker {
 			$("#VTT").css("--scene-scale", scaleFactor)
 			
 
-			reset_canvas();
-			redraw_fog();
-			redraw_drawings();
-			redraw_light_walls();
-			redraw_light();
 
 			apply_zoom_from_storage();
-			redraw_text();
+			reset_canvas();
 
 
-			let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-   	 	let darknessPercent = 100 - parseInt(darknessfilter);
-   	 	if(window.DM && darknessPercent < 40){
-   	 		darknessPercent = 40;
-   	 		$('#raycastingCanvas').css('opacity', '0');
-   	 	}
-   	 	else if(window.DM){
-   	 		$('#raycastingCanvas').css('opacity', '');
-   	 	}
-   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
-			set_default_vttwrapper_size()
+			set_default_vttwrapper_size();
 			
 			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 			if(!window.DM && data.dm_map_usable=="1"){
@@ -1407,12 +1409,12 @@ class MessageBroker {
 				});
 			}
 
-				$("#combat_area").empty();
-				ct_load({
-					loading: true,
-					current: $("#combat_area [data-current]").attr('data-target')
-				});
-				redraw_light();
+			$("#combat_area").empty();
+			ct_load({
+				loading: true,
+				current: $("#combat_area [data-current]").attr('data-target')
+			});
+
 
 
 			if(window.DM)
@@ -1433,29 +1435,7 @@ class MessageBroker {
 			}
 			console.groupEnd()
 		});
-
-
-		if (data.fog_of_war == 1) {
-			window.FOG_OF_WAR = true;
-			window.REVEALED = data.reveals;
-			reset_canvas();
-			redraw_fog();
-			//$("#fog_overlay").show();
-		}
-		else {
-			window.FOG_OF_WAR = false;
-			window.REVEALED = [];
-			reset_canvas();
-			//$("#fog_overlay").hide();
-		}
-		if (typeof data.drawings !== "undefined") {
-			window.DRAWINGS = data.drawings;
-		}
-		else {
-			window.DRAWINGS = [];
-		}
-
-
+		
 
 		remove_loading_overlay();
 		// console.groupEnd()

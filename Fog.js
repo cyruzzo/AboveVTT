@@ -693,7 +693,7 @@ function reset_canvas() {
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
-
+	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
 	ctxScale('raycastingCanvas');
@@ -708,18 +708,25 @@ function reset_canvas() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
+	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+ 	let darknessPercent = 100 - parseInt(darknessfilter);
+ 	if(window.DM && darknessPercent < 40){
+ 		darknessPercent = 40;
+ 		$('#raycastingCanvas').css('opacity', '0');
+ 	}
+ 	else if(window.DM){
+ 		$('#raycastingCanvas').css('opacity', '');
+ 	}
+ 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
 
-	ctxScale('fog_overlay');
-	if (window.DM) {
-		ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-	}
-	else {
-		ctx.fillStyle = "rgb(0, 0, 0)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-	}
 
+	redraw_fog();
+	redraw_drawings();
+	redraw_light_walls();
+	redraw_light();
+	redraw_text();
+	
 
 	var canvas_grid = document.getElementById("grid_overlay");
 	var ctx_grid = canvas_grid.getContext("2d");
@@ -751,8 +758,6 @@ function reset_canvas() {
 	else {
 		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
 	}
-	redraw_light_walls();
-	redraw_light();
 
 }
 

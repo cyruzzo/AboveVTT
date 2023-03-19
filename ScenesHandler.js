@@ -132,7 +132,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		if (self.scene.fog_of_war == 1) {
 			window.FOG_OF_WAR = true;
 			//$("#fog_overlay").show();
-			window.REVEALED = [].concat(self.scene.reveals);
+			window.REVEALED = [[0, 0, 0, 0, 2, 0]].concat(self.scene.reveals);
 		}
 		else {
 			window.FOG_OF_WAR = false;
@@ -182,9 +182,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 			$("#scene_map").off("load");
 			reset_canvas();
-			redraw_fog();
-			redraw_drawings();
-			redraw_text();
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()
