@@ -78,7 +78,9 @@ class DDBApi {
         'Content-Type': 'application/json'
       }
     }
-    return await fetch(url, config).then(DDBApi.lookForErrors);
+    // Explicitly not calling `lookForErrors` here because we don't actually care if this succeeds.
+    // We're just trying to clean up anything that we can
+    return await fetch(url, config);
   }
 
 
