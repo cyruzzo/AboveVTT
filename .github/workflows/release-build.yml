@@ -167,28 +167,27 @@ jobs:
             curl -o /dev/null --request POST --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${issue_number}/comments" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "{\"body\":\"# Included in ${{env.version_name}}\"}"
           done
       - name: "Generate Discord changelog message"
+        if: ${{ inputs.release_type == 'beta' }}
         run: |
           changelog=$(cat release.json | jq '.body' | xargs echo)
           echo $changelog > changelog.txt
-
-          echo "**${version_name}**" > discord_message.txt
-
+          discord_message="**${version_name}**"
           while read -r line; do
             if [[ $line = '##'* ]]
             then
               line=${line#*##}
-              echo '\n\n**' >> discord_message.txt
-              echo $line >> discord_message.txt
-              echo '**' >> discord_message.txt
+              discord_message+='\n**'
+              discord_message+=$line
+              discord_message+='**\n'
             elif [[ $line = *' in http'* ]]
             then
-              echo ${line%in http*} >> discord_message.txt
+              discord_message+=${line%in http*}
+              discord_message+='\n'
             else
-              echo $line >> discord_message.txt
+              discord_message+=$line
             fi
           done < changelog.txt
-
-          printf "" >> discord_message.txt
-          echo "**Download**: https://github.com/${GITHUB_REPOSITORY}/releases/download/${version_name}/AboveVTT-${version_name}.zip" >> discord_message.txt
-
-          cat discord_message.txt
+          discord_message+="\n**Download**: https://github.com/${GITHUB_REPOSITORY}/releases/download/${version_name}/AboveVTT-${version_name}.zip"
+          echo $discord_message
+          message_body="{\"content\":\"${discord_message}\",\"flags\":4}"
+          curl --request POST --url "${{secrets.DISCORD_BETA_DOWNLOADS_WEBHOOK}}" --header 'Content-Type: application/json' -d "${message_body}"
