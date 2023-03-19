@@ -2931,6 +2931,54 @@ function init_zoom_buttons() {
 		zoom_section.append(pause_players);
 	}
 
+
+	selected_token_vision = $(`<div id='selected_token_vision' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Selected Token Vision'> 
+	<div class="ddbc-tab-options__header-heading">
+			<svg version="1.1" id="selectedEyeSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" x="0px" y="0px"
+				 viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
+			<style type="text/css">
+				.st0{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;}
+				.st1{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;stroke-dasharray:70,70;}
+			</style>
+			<g>
+				<path d="M681.9,382.8l-59.7-58.3C563,266.7,484.1,235,399.9,235s-163,31.8-222.2,89.5L118,382.8c-13.3,14.5-5.1,30,0,34.5
+					l59.7,58.3c59.1,57.7,138,89.5,222.2,89.5s163-31.8,222.2-89.5l59.7-58.3C686.6,412.8,695.7,397.9,681.9,382.8L681.9,382.8z
+					 M399.9,482.4c-45.5,0-82.4-37-82.4-82.4s37-82.4,82.4-82.4s82.4,37,82.4,82.4S445.4,482.4,399.9,482.4z M169.4,400l42.1-41.1
+					c31.9-31.2,70.6-53.4,113-65.4c-33.3,23.7-55,62.6-55,106.4s21.7,82.8,55,106.4c-42.4-12-81.1-34.2-113-65.3L169.4,400L169.4,400z
+					 M588.5,441.1c-31.9,31-70.6,53.2-113,65.3c33.3-23.7,55-62.6,55-106.4c0-43.9-21.7-82.8-55-106.4c42.4,12,81.1,34.2,113,65.4
+					l42,41.1L588.5,441.1L588.5,441.1z"/>
+			</g>
+			<g>
+				<g>
+					<polyline class="st0" points="750,715 750,750 715,750 		"/>
+					<line class="st1" x1="645" y1="750" x2="120" y2="750"/>
+					<polyline class="st0" points="85,750 50,750 50,715 		"/>
+					<line class="st1" x1="50" y1="645" x2="50" y2="120"/>
+					<polyline class="st0" points="50,85 50,50 85,50 		"/>
+					<line class="st1" x1="155" y1="50" x2="680" y2="50"/>
+					<polyline class="st0" points="715,50 750,50 750,85 		"/>
+					<line class="st1" x1="750" y1="155" x2="750" y2="680"/>
+				</g>
+			</g>
+			</svg>
+	</div></div>
+	`);
+
+	selected_token_vision.click(function(){
+		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+			window.SelectedTokenVision = false;
+		} else {
+			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+			window.SelectedTokenVision = true;
+		}
+		redraw_light();
+		
+	});
+
+	zoom_section.append(selected_token_vision);
+
+
 	zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
@@ -2954,9 +3002,9 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-208px");
+		zoom_section.css("left","-236px");
 	} else {
-		zoom_section.css("left","-170px");
+		zoom_section.css("left","-198px");
 	}
 }
 
@@ -3084,7 +3132,7 @@ function init_help_menu() {
 						<dl>
 						<dl>
 							<dt>SHIFT+V</dt>
-							<dd>Check token vision.</dd>
+							<dd>Temporary check token vision.</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+Click</dt>
