@@ -290,8 +290,11 @@ class MessageBroker {
 								if (img[0]) {
 									img[0].onload = () => {
 										if (img[0].naturalWidth > 0) {
-											li.find('.chat-link')[0].style.display = 'none';
-											img[0].style.display = 'block';
+											li.find('.chat-link').css('display', 'none');
+											img.css({
+												'display': 'block',
+												'width': '100%'
+											});
 										}
 									}
 								}
