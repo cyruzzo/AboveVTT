@@ -173,8 +173,12 @@ jobs:
           echo $changelog > changelog.txt
           discord_message="**${version_name}**"
           while read -r line; do
-            if [[ $line = '##'* ]]
+            if [[ $line = '<!--'* ]] || [[ $line = *"What's Changed"* ]] || [[ $line = *"Full Changelog"* ]]
             then
+              echo "skipping $line"
+            elif [[ $line = '##'* ]]
+            then
+              line=${line#*###}
               line=${line#*##}
               discord_message+='\n**'
               discord_message+=$line
