@@ -2015,10 +2015,7 @@ class Token {
 							
 							WaypointManager.setCanvas(canvas);
 					}
-					if(window.DM){
-				   		$("[id^='light_']").css('visibility', "visible");
-				   		debounceLightChecks();
-				   	}
+
 					remove_selected_token_bounding_box();
 				},
 
@@ -2768,6 +2765,9 @@ function deselect_all_tokens() {
    	}
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
+   	}
+   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+   		window.SelectedTokenVision = false;
    	}
     debounceLightChecks();
     check_token_visibility();

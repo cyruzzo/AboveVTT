@@ -77,7 +77,8 @@ Mousetrap.bind('v', function () {       //video fullscreen toggle
 });
 
 Mousetrap.bind('shift+v', function () {       //check token vision
-    redraw_light(true);
+   window.SelectedTokenVision = true;
+   redraw_light();
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
