@@ -46,6 +46,11 @@ const debounceLightChecks = mydebounce(() => {
 		}
 		redraw_light();	}, 100);
 
+const throttleLightChecks = throttle(()=>{
+	redraw_light();
+	check_token_visibility();
+}, 1000/60) // 60fps
+
 
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
@@ -2278,7 +2283,12 @@ class Token {
 								}
 							}
 						}													
+					
 					}
+					if(get_avtt_setting_value("liveLightRedraw")){
+						throttleLightChecks();
+					}
+					
 
 				}
 			});

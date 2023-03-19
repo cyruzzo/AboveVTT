@@ -264,6 +264,16 @@ function avtt_settings() {
 				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
 			],
 			defaultValue: false
+		},
+		{
+			name: "liveLightRedraw",
+			label: "Update token line of sight as it moves",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Token line of sight will update as it moves", description: `If you are experiencing performance issues you may want to disable this.` },
+				{ value: false, label: "Token line of sight will only update on drop", description: `If you are experiencing performance issues you may want to disable this.` }
+			],
+			defaultValue: false
 		}
 	];
 
