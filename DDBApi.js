@@ -15,11 +15,25 @@ class DDBApi {
     const url = `https://auth-service.dndbeyond.com/v1/cobalt-token`;
     const config = { method: 'POST', credentials: 'include' };
     console.log("DDBApi is refreshing auth token");
-    const request = await fetch(url, config);
+    const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
     MYCOBALT_TOKEN = response.token;
     MYCOBALT_TOKEN_EXPIRATION = Date.now() + (response.ttl * 1000) - 10000;
     return response.token;
+  }
+
+  static async lookForErrors(response) {
+    if (response.status < 400) {
+      return response;
+    }
+    // We have an error so let's try to parse it
+    console.debug("DDBApi.lookForErrors", response);
+    const responseJson = await response.json()
+      .catch(parsingError => console.error("DDBApi.lookForErrors Failed to parse json", response, parsingError));
+    const type = responseJson?.type || `Unknown Error ${response.status}`;
+    const messages = responseJson?.errors?.message?.join("; ") || "";
+    console.error(`DDB API Error: ${type} ${messages}`);
+    throw new Error(`DDB API Error: ${type} ${messages}`);
   }
 
   static async fetchJsonWithToken(url, extraConfig = {}) {
@@ -32,13 +46,13 @@ class DDBApi {
         'Content-Type': 'application/json'
       }
     }
-    const request = await fetch(url, config);
+    const request = await fetch(url, config).then(DDBApi.lookForErrors)
     return await request.json();
   }
 
   static async fetchJsonWithCredentials(url, extraConfig = {}) {
     console.debug("DDBApi.fetchJsonWithCredentials url", url)
-    const request = await fetch(url, {...extraConfig, credentials: 'include' });
+    const request = await fetch(url, {...extraConfig, credentials: 'include' }).then(DDBApi.lookForErrors);
     console.debug("DDBApi.fetchJsonWithCredentials request", request);
     const response = await request.json();
     console.debug("DDBApi.fetchJsonWithCredentials response", response);
@@ -64,7 +78,7 @@ class DDBApi {
         'Content-Type': 'application/json'
       }
     }
-    return await fetch(url, config);
+    return await fetch(url, config).then(DDBApi.lookForErrors);
   }
 
 

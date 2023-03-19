@@ -110,6 +110,7 @@ function showError(error, ...extraInfo) {
 
   $("#error-message-stack")
     .append(extraStrings.join(`<br />`))
+    .append(`<br />${error.message}`) // this is duplicative on Chrome, but not anywhere else. I'd rather have duplicate info on Chrome than missing info in other browsers.
     .append(`<br />`)
     .append(stack);
 
