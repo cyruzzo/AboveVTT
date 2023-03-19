@@ -1241,7 +1241,7 @@ function default_scene_data() {
 		offsety: 0,
 		grid: 0,
 		snap: 0,
-		reveals: [],
+		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now()
 	};
 }
