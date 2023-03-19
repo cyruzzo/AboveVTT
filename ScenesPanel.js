@@ -445,7 +445,9 @@ function edit_scene_dialog(scene_id) {
 		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
-		$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
+		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
+		}
 		did_update_scenes();
 	});
 
