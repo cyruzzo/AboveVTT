@@ -151,7 +151,7 @@ function observe_character_sheet_changes(documentToObserve) {
               }
               sendCharacterUpdateEvent(); //hp update from inputs - need to get temp hp still
             }
-            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ 
+            if($(mutation.target).hasClass('ct-health-summary__deathsaves') || $(mutation.target).hasClass('ct-health-summary__deathsaves-mark')){ 
               window.UpdatedCharacterSheetData.hitPointInfo = {
                current: 0
               }

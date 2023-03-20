@@ -492,24 +492,24 @@ class MessageBroker {
 						pc[0][data] = pcData[data];						
 					}
 
-					if(pcData.hitPointInfo?.current){
+					if(pcData.hitPointInfo?.current != undefined){
 							window.PLAYER_STATS[pc[0].sheet].hp =  pcData.hitPointInfo.current;
 					}
-					if(pcData.hitPointInfo?.maximum){
+					if(pcData.hitPointInfo?.maximum != undefined){
 							window.PLAYER_STATS[pc[0].sheet].max_hp =  pcData.hitPointInfo.maximum;
 					}
 				
-					if(pcData.deathSaveInfo?.failCount){
+					if(pcData.deathSaveInfo?.failCount != undefined){
 							window.PLAYER_STATS[pc[0].sheet].fails = pcData.deathSaveInfo.failCount;
 					}
 				
-					if(pcData.deathSaveInfo?.successCount){
+					if(pcData.deathSaveInfo?.successCount != undefined){
 							window.PLAYER_STATS[pc[0].sheet].successes = pcData.deathSaveInfo.successCount;
 					}
-					if(pcData.armorClass){
+					if(pcData.armorClass != undefined){
 							window.PLAYER_STATS[pc[0].sheet].ac = pcData.armorClass;
 					}
-					if(pcData.conditions){
+					if(pcData.conditions != undefined){
 							window.PLAYER_STATS[pc[0].sheet].conditions = pcData.conditions;
 					}
 				
