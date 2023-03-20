@@ -484,8 +484,34 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
 			}
-			if(msg.eventType.includes('character-update')){
-					debounced_handle_character_update(msg);
+			if(msg.eventType == ('custom/myVTT/character-update')){
+					let pcId = msg.data.characterId;
+					let pcData = msg.data.pcData;
+					let pc = window.pcs.filter((d) => d.id == pcId)
+					for(let data in pcData){	
+						pc[0][data] = pcData[data];						
+					}
+
+					if(pcData.hitPointInfo?.current){
+							window.PLAYER_STATS[pc[0].sheet].hp =  pcData.hitPointInfo.current;
+					}
+					if(pcData.hitPointInfo?.maximum){
+							window.PLAYER_STATS[pc[0].sheet].max_hp =  pcData.hitPointInfo.maximum;
+					}
+				
+					if(pcData.deathSaveInfo?.failCount){
+							window.PLAYER_STATS[pc[0].sheet].fails = pcData.deathSaveInfo.failCount;
+					}
+				
+					if(pcData.deathSaveInfo?.successCount){
+							window.PLAYER_STATS[pc[0].sheet].successes = pcData.deathSaveInfo.successCount;
+					}
+					if(pcData.armorClass){
+							window.PLAYER_STATS[pc[0].sheet].ac = pcData.armorClass;
+					}
+				
+				
+					self.handlePlayerData(window.PLAYER_STATS[pc[0].sheet]);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {

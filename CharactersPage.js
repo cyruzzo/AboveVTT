@@ -6,8 +6,9 @@ $(function() {
 
 const sendCharacterUpdateEvent = mydebounce(() => {
   console.log("sendCharacterUpdateEvent")
-  window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID});
-}, 4000);
+  window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID, pcData: window.UpdatedCharacterSheetData});
+  window.UpdatedCharacterSheetData = {};
+}, 1500);
 
 function init_characters_pages() {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
@@ -120,13 +121,14 @@ function observe_character_sheet_changes(documentToObserve) {
         console.log("inject_dice_roll failed to process element", error);
       }
     });
-
+    window.UpdatedCharacterSheetData = {};
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       switch (mutation.type) {
         case "attributes":{
           if(is_abovevtt_page()){
             if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
+              window.UpdatedCharacterSheetData.ac = $(`.ddbc-armor-class-box__value`).text();
               sendCharacterUpdateEvent();
             }        
           }
@@ -134,9 +136,22 @@ function observe_character_sheet_changes(documentToObserve) {
         case "childList":   
           if(is_abovevtt_page()){     
             if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
-              sendCharacterUpdateEvent(); //hp update from inputs
+             
+              window.UpdatedCharacterSheetData.hitPointInfo = {
+               current: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text(),
+               maximum: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()
+              }
+              sendCharacterUpdateEvent(); //hp update from inputs - need to get temp hp still
             }
             if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ 
+              window.UpdatedCharacterSheetData.hitPointInfo = {
+               current: 0
+              }
+              window.UpdatedCharacterSheetData.deathSaveInfo = {
+                failCount:$('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length,
+                successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length
+              }
+              window.UpdatedCharacterSheetData.hp = 0;
               sendCharacterUpdateEvent(); //if 0 health update
             }
           }
