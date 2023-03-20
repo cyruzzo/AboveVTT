@@ -105,7 +105,7 @@ function observe_character_sheet_changes(documentToObserve) {
   if (window.dice_roll_observer) {
     window.dice_roll_observer.disconnect();
   }
-
+  window.UpdatedCharacterSheetData = {};
   window.dice_roll_observer = new MutationObserver(function(mutationList, observer) {
 
     // console.log("dice_roll_observer", mutationList);
@@ -121,14 +121,22 @@ function observe_character_sheet_changes(documentToObserve) {
         console.log("inject_dice_roll failed to process element", error);
       }
     });
-    window.UpdatedCharacterSheetData = {};
+
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       switch (mutation.type) {
         case "attributes":{
           if(is_abovevtt_page()){
             if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
-              window.UpdatedCharacterSheetData.ac = $(`.ddbc-armor-class-box__value`).text();
+              
+              let conditionsSet = [];
+              $(`.ct-condition-manage-pane__condition`).each(function(){
+                if($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length>0){
+                  conditionsSet.push($(this).find('.ct-condition-manage-pane__condition-name').text());
+                }
+              })
+
+              window.UpdatedCharacterSheetData.conditions = conditionsSet;
               sendCharacterUpdateEvent();
             }        
           }
@@ -171,14 +179,23 @@ function observe_character_sheet_changes(documentToObserve) {
             {
               if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
               {
+                window.UpdatedCharacterSheetData.hitPointInfo = {
+                 current: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text(),
+                 maximum: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()
+                }
                 sendCharacterUpdateEvent();
               }
               if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){ // max_hp update from buttons
+                window.UpdatedCharacterSheetData.hitPointInfo = {
+                 current: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text(),
+                 maximum: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()
+                }
                 sendCharacterUpdateEvent();
               }
             }
             if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
-             sendCharacterUpdateEvent();
+              window.UpdatedCharacterSheetData.armorClass = $(`.ddbc-armor-class-box__value`).text();
+              sendCharacterUpdateEvent();
             }
           }
           if (typeof mutation.target.data === "string") {

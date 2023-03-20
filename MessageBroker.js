@@ -509,6 +509,9 @@ class MessageBroker {
 					if(pcData.armorClass){
 							window.PLAYER_STATS[pc[0].sheet].ac = pcData.armorClass;
 					}
+					if(pcData.conditions){
+							window.PLAYER_STATS[pc[0].sheet].conditions = pcData.conditions;
+					}
 				
 				
 					self.handlePlayerData(window.PLAYER_STATS[pc[0].sheet]);
