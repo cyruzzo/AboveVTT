@@ -1074,7 +1074,7 @@ class MessageBroker {
 	acToPlayerData(data) {
 		if (!window.DM)
 			return;
-		for(id in window.TOKEN_OBJECTS){
+		for(let id in window.TOKEN_OBJECTS){
 			if(id.endsWith(data.id)){
 				window.TOKEN_OBJECTS[id].options.ac = data.ac;
 				window.TOKEN_OBJECTS[id].place();
