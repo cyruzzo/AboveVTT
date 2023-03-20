@@ -4,11 +4,35 @@ $(function() {
   init_characters_pages();
 });
 
+let recentCharacterUpdates = {};
+
 const sendCharacterUpdateEvent = mydebounce(() => {
   console.log("sendCharacterUpdateEvent")
-  window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID, pcData: window.UpdatedCharacterSheetData});
-  window.UpdatedCharacterSheetData = {};
+  window.MB.sendMessage("custom/myVTT/character-update", {
+    characterId: window.PLAYER_ID,
+    pcData: {...recentCharacterUpdates}
+  });
+  recentCharacterUpdates = {};
 }, 1500);
+
+/** @param changes {object} the changes that were observed. EX: {hp: 20} */
+function character_sheet_changed(changes) {
+  if (is_abovevtt_page()) { // remove this if we add the MessageBroker when avtt isn't running
+    console.log("character_sheet_changed", changes);
+    recentCharacterUpdates = {...recentCharacterUpdates, ...changes};
+    sendCharacterUpdateEvent();
+  }
+}
+
+function send_character_hp() {
+  character_sheet_changed({
+    hitPointInfo: {
+      current: parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()),
+      maximum: parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()),
+      temp: parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0
+    }
+  });
+}
 
 function init_characters_pages() {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
@@ -102,18 +126,17 @@ function inject_dice_roll(element) {
  *     updates window.PLAYER_NAME when the character name changes.
  * @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else */
 function observe_character_sheet_changes(documentToObserve) {
-  if (window.dice_roll_observer) {
-    window.dice_roll_observer.disconnect();
+  if (window.character_sheet_observer) {
+    window.character_sheet_observer.disconnect();
   }
-  window.UpdatedCharacterSheetData = {};
-  window.dice_roll_observer = new MutationObserver(function(mutationList, observer) {
+  window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
 
-    // console.log("dice_roll_observer", mutationList);
+    // console.log("character_sheet_observer", mutationList);
 
     // initial injection of our buttons
     const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
     notes.each(function() {
-      // console.log("dice_roll_observer iterating", mutationList);
+      // console.log("character_sheet_observer iterating", mutationList);
       try {
         inject_dice_roll($(this));
         $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once
@@ -124,99 +147,89 @@ function observe_character_sheet_changes(documentToObserve) {
 
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
-      switch (mutation.type) {
-        case "attributes":{
-          if(is_abovevtt_page()){
-            if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
-              
-              let conditionsSet = [];
-              $(`.ct-condition-manage-pane__condition`).each(function(){
-                if($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length>0){
-                  conditionsSet.push($(this).find('.ct-condition-manage-pane__condition-name').text());
+      try {
+        const mutationParent = $(mutation.target).parent();
+        switch (mutation.type) {
+          case "attributes":
+            if (is_abovevtt_page()) {
+              if (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')) { // conditions update from sidebar
+                let conditionsSet = [];
+                $(`.ct-condition-manage-pane__condition`).each(function () {
+                  if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
+                    conditionsSet.push($(this).find('.ct-condition-manage-pane__condition-name').text());
+                  }
+                });
+                character_sheet_changed({conditions: conditionsSet});
+              }
+            }
+            break;
+          case "childList":
+            if (is_abovevtt_page()) {
+              if ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) {
+                send_character_hp();
+              } else if (($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))) {
+                send_character_hp();
+              } else if ($(mutation.target).hasClass('ct-health-summary__deathsaves') || $(mutation.target).hasClass('ct-health-summary__deathsaves-mark')) {
+                character_sheet_changed({
+                  hitPointInfo: {
+                    current: 0,
+                    temp: 0
+                  },
+                  deathSaveInfo: {
+                    failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length,
+                    successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length
+                  }
+                });
+              }
+            }
+            mutation.addedNodes.forEach(node => {
+              if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
+                try {
+                  inject_dice_roll($(mutation.target));
+                } catch (error) {
+                  console.log("inject_dice_roll failed to process element", error);
                 }
-              })
-
-              window.UpdatedCharacterSheetData.conditions = conditionsSet;
-              sendCharacterUpdateEvent();
-            }        
-          }
+              }
+            });
+            break;
+          case "characterData":
+            if (is_abovevtt_page()) {
+              if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content')) {
+                let labelledBy = mutationParent.attr('aria-labelledby');
+                if (
+                  labelledBy.includes('ct-health-summary-current-label') ||
+                  labelledBy.includes('ct-health-summary-max-label') ||
+                  labelledBy.includes('ct-health-summary-temp-label')
+                ) {
+                  send_character_hp();
+                }
+              } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
+                character_sheet_changed({armorClass: parseInt($(`.ddbc-armor-class-box__value`).text())});
+              }
+            }
+            if (typeof mutation.target.data === "string") {
+              if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
+                try {
+                  inject_dice_roll($(mutation.target));
+                } catch (error) {
+                  console.log("inject_dice_roll failed to process element", error);
+                }
+              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p")) {
+                window.PLAYER_NAME = mutation.target.data;
+                character_sheet_changed({name: mutation.target.data});
+              }
+            }
+            break;
         }
-        case "childList":   
-          if(is_abovevtt_page()){     
-            if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
-             
-              window.UpdatedCharacterSheetData.hitPointInfo = {
-               current: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text(),
-               maximum: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()
-              }
-              sendCharacterUpdateEvent(); //hp update from inputs - need to get temp hp still
-            }
-            if($(mutation.target).hasClass('ct-health-summary__deathsaves') || $(mutation.target).hasClass('ct-health-summary__deathsaves-mark')){ 
-              window.UpdatedCharacterSheetData.hitPointInfo = {
-               current: 0
-              }
-              window.UpdatedCharacterSheetData.deathSaveInfo = {
-                failCount:$('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length,
-                successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length
-              }
-              window.UpdatedCharacterSheetData.hp = 0;
-              sendCharacterUpdateEvent(); //if 0 health update
-            }
-          }
-          mutation.addedNodes.forEach(node => {
-            if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
-              try {
-                inject_dice_roll($(mutation.target));
-              } catch (error) {
-                console.log("inject_dice_roll failed to process element", error);
-              }
-            }
-          });
-          break;
-        case "characterData":
-          if(is_abovevtt_page()){
-            if($(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
-            {
-              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
-              {
-                window.UpdatedCharacterSheetData.hitPointInfo = {
-                 current: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text(),
-                 maximum: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()
-                }
-                sendCharacterUpdateEvent();
-              }
-              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){ // max_hp update from buttons
-                window.UpdatedCharacterSheetData.hitPointInfo = {
-                 current: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text(),
-                 maximum: $(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()
-                }
-                sendCharacterUpdateEvent();
-              }
-            }
-            if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
-              window.UpdatedCharacterSheetData.armorClass = $(`.ddbc-armor-class-box__value`).text();
-              sendCharacterUpdateEvent();
-            }
-          }
-          if (typeof mutation.target.data === "string") {
-            if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
-              try {
-                inject_dice_roll($(mutation.target));
-              } catch (error) {
-                console.log("inject_dice_roll failed to process element", error);
-              }
-            } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p")) {
-              window.PLAYER_NAME = mutation.target.data;
-            }
-          }
-          break;
+      } catch (error) {
+        console.warn("character_sheet_observer failed to parse mutation", error, mutation);
       }
     });
   });
 
   const mutation_target = documentToObserve.get(0);
   const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-  window.dice_roll_observer.observe(mutation_target, mutation_config);
+  window.character_sheet_observer.observe(mutation_target, mutation_config);
 }
 
 /** Attempts to read the player name and image from the page every.
@@ -364,8 +377,8 @@ function observe_character_theme_change() {
             const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);
-              sendCharacterUpdateEvent();
               window.PeerManager.send(PeerEvent.preferencesChange());
+              character_sheet_changed({color: newColor});
             }
           }
         });
@@ -383,7 +396,7 @@ function observe_character_image_change() {
         // This should be just fine, but catch any parsing errors just in case
         const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
         window.PLAYER_IMG = updatedUrl;
-        sendCharacterUpdateEvent();
+        character_sheet_changed({image: updatedUrl});
       } catch { }
     });
   });

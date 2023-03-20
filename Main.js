@@ -1949,9 +1949,9 @@ function close_player_sheet()
 		}
 		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
 	}
-	if (window.dice_roll_observer) {
-		window.dice_roll_observer.disconnect();
-		delete window.dice_roll_observer;
+	if (window.character_sheet_observer) {
+		window.character_sheet_observer.disconnect();
+		delete window.character_sheet_observer;
 	}
 }
 

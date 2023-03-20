@@ -1119,7 +1119,7 @@ class Token {
 				conditionCount++;
 			}
 
-			for (i = 0; i < this.options.custom_conditions.length; i++) {
+			for (let i = 0; i < this.options.custom_conditions.length; i++) {
 				//convert from old colored conditions
 				if(this.options.custom_conditions[i].name == undefined){
 					if(this.options.custom_conditions[i].includes('Inspiration')){
