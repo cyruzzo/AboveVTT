@@ -2071,8 +2071,9 @@ class Token {
 				
 					let canvas = document.getElementById("raycastingCanvas");
 					let ctx = canvas.getContext("2d");
-
-					if(!window.DM){
+					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+					let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+					if(!window.DM && playerTokenAuraIsLight){
 						const left = (tokenPosition.x + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 						const top = (tokenPosition.y + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
@@ -2082,7 +2083,7 @@ class Token {
 							window.oldTokenPosition[self.options.id] = ui.position;				
 						}
 						else{
-							ui.position = window.oldTokenPosition[self.options.id];
+							ui.position = (window.oldTokenPosition[self.options.id] != undefined) ? window.oldTokenPosition[self.options.id] : {left: ui.originalPosition.left/zoom, top: ui.originalPosition.top/zoom};
 						}
 
 					}
@@ -2163,7 +2164,7 @@ class Token {
 								$(tok).css('left', tokenX + "px");
 								$(tok).css('top', tokenY + "px");
 
-								if(!window.DM){
+								if(!window.DM && playerTokenAuraIsLight){
 									const left = (tokenX + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 									const top = (tokenY + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
@@ -2176,11 +2177,14 @@ class Token {
 										};				
 									}
 									else{
+										window.oldTokenPosition[curr.options.id] = (window.oldTokenPosition[curr.options.id] != undefined) ? window.oldTokenPosition[curr.options.id] : {left: parseInt(curr.orig_left), top: parseInt(curr.orig_top)};
+									
 										$(tok).css('left', window.oldTokenPosition[curr.options.id].left + "px");
 										$(tok).css('top', window.oldTokenPosition[curr.options.id].top + "px");
 									}
 								}
 								
+		
 													
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
