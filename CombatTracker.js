@@ -192,7 +192,7 @@ function init_combat_tracker(){
 	
 	clear=$("<button>CLEAR</button>");
 	clear.click(function(){
-		for(id in window.all_token_objects)
+		for(let id in window.all_token_objects)
 		{	
 			if(window.all_token_objects[id].options.ct_show == undefined)
 				continue;
@@ -799,7 +799,7 @@ function ct_load(data=null){
 
 	if(!data.loading){	
 		$("#combat_area tr[data-current]").removeAttr("data-current");
-		for(i=0;i<data.length;i++){
+		for(let i=0;i<data.length;i++){
 			if (data[i]['data-target'] === 'round'){
 				window.ROUND_NUMBER = data[i]['round_number'];
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
@@ -893,7 +893,7 @@ function ct_load(data=null){
 	data=$.parseJSON(localStorage.getItem(itemkey));
 	if(data !== undefined && data !== null){
 		if(!(data[0]['already-loaded'])){
-			for(i in data){
+			for(let i in data){
 				if (data[i]['data-target'] === 'round'){
 					window.ROUND_NUMBER = data[i]['round_number'];
 					document.getElementById('round_number').value = window.ROUND_NUMBER;

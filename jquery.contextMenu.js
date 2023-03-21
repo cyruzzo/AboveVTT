@@ -67,7 +67,7 @@
         $.cleanData = (function (orig) {
             return function (elems) {
                 var events, elem, i;
-                for (i = 0; elems[i] != null; i++) {
+                for (let i = 0; elems[i] != null; i++) {
                     elem = elems[i];
                     try {
                         // Only trigger remove when necessary to save time

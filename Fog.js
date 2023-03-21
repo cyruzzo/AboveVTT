@@ -1651,7 +1651,7 @@ function drawing_mouseup(e) {
 		};
 		
 	
-		for(i=0; i<walls.length; i++){
+		for(let i=0; i<walls.length; i++){
 
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -1897,7 +1897,7 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
-		for (id in window.TOKEN_OBJECTS) {
+		for (let id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 
 
@@ -3036,7 +3036,7 @@ function detectWallCollision(x1, y1, x2, y2){
 
 	
 	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
-	for(i=0; i<walls.length; i++){
+	for(let i=0; i<walls.length; i++){
 
 		let wallInitialScale = walls[8];
 		let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -3102,7 +3102,7 @@ function redraw_light(){
 	 }
 
 
-  for(i = 0; i < light_auras.length; i++){  	
+  for(let i = 0; i < light_auras.length; i++){
 
   	let auraId = $(light_auras[i]).attr('data-id');
 
