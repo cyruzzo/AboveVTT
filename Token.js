@@ -2761,7 +2761,7 @@ function deselect_all_tokens() {
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
    	else if(window.DM){
-   		$('#raycastingCanvas').css('opacity', '');
+			$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	}
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
