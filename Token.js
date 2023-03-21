@@ -1570,7 +1570,7 @@ class Token {
 		            let darkvision = 0;
 		            if(pcData.id != 0){
 			            if(pcData.senses.length > 0) {
-			                for(i=0; i < pcData.senses.length; i++){
+			                for(let i=0; i < pcData.senses.length; i++){
 			                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
 			                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
 			                    if(range > darkvision)
@@ -1588,7 +1588,7 @@ class Token {
 		            if(window.monsterListItems){
 		            	let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];	
 		            	if(!monsterSidebarListItem){
-							for(i in encounter_monster_items){
+							for(let i in encounter_monster_items){
 							    if(encounter_monster_items[i].some((d) => this.options.monster == d.id)){
 							        monsterSidebarListItem = encounter_monster_items[i].filter((d) => this.options.monster == d.id)[0]
 							        break;
@@ -1598,7 +1598,7 @@ class Token {
 		                   
 						if(monsterSidebarListItem){
 				            if(monsterSidebarListItem.monsterData.senses.length > 0){
-				                for(i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
+				                for(let i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
 				                    const ftPosition = monsterSidebarListItem.monsterData.senses[i].notes.indexOf('ft.')
 				                    const range = parseInt(monsterSidebarListItem.monsterData.senses[i].notes.slice(0, ftPosition));
 				                    if(range > darkvision)
@@ -2049,7 +2049,7 @@ class Token {
 
 					let closestWallDist = Infinity;
 					let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
-					for(i=0; i<walls.length; i++){
+					for(let i=0; i<walls.length; i++){
 
 						let wallInitialScale = walls[8];
 						let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -2105,6 +2105,8 @@ class Token {
 					}
 
 					tokenPosition = snap_point_to_grid(tokenPosition.x, tokenPosition.y);
+
+
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
 					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
@@ -2190,7 +2192,7 @@ class Token {
 								
 								let closestWallDist = Infinity;
 								let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
-								for(i=0; i<walls.length; i++){
+								for(let i=0; i<walls.length; i++){
 
 									let wallInitialScale = walls[8];
 									let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -2514,14 +2516,13 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false) {
 		// adjust to the nearest square coordinate
 		const startX = window.CURRENT_SCENE_DATA.offsetx;
 		const startY = window.CURRENT_SCENE_DATA.offsety;
-
 		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
 		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
 		const currentGridX = Math.floor((mapX - startX) / gridWidth);
 		const currentGridY = Math.floor((mapY - startY) / gridHeight);
 		return {
-			x: (currentGridX * gridWidth) + startX,
-			y: (currentGridY * gridHeight) + startY
+			x: Math.ceil((currentGridX * gridWidth) + startX),
+			y: Math.ceil((currentGridY * gridHeight) + startY)
 		}
 	} else {
 		return { x: mapX, y: mapY };
@@ -2745,7 +2746,7 @@ function token_menu() {
 
 function deselect_all_tokens() {
 	window.MULTIPLE_TOKEN_SELECTED = false;
-	for (id in window.TOKEN_OBJECTS) {
+	for (let id in window.TOKEN_OBJECTS) {
 		var curr = window.TOKEN_OBJECTS[id];
 		if (curr.selected) {
 			curr.selected = false;
@@ -3163,7 +3164,7 @@ function do_draw_selected_token_bounding_box() {
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
-	for (id in window.TOKEN_OBJECTS) {
+	for (let id in window.TOKEN_OBJECTS) {
 		let selector = "div[data-id='" + id + "']";
 		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
 		if (window.TOKEN_OBJECTS[id].selected) {
@@ -3447,7 +3448,7 @@ function copy_selected_tokens() {
 	if (!window.DM) return;
 	window.TOKEN_PASTE_BUFFER = [];
 	let redrawBoundingBox = false;
-	for (id in window.TOKEN_OBJECTS) {
+	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) { 
 			if (token.isPlayer()) {
@@ -3504,7 +3505,7 @@ function paste_selected_tokens() {
 function delete_selected_tokens() {
 	// move all the tokens into a separate list so the DM can "undo" the deletion
 	let tokensToDelete = [];
-	for (id in window.TOKEN_OBJECTS) {
+	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) {
 			if (window.DM || token.options.deleteableByPlayers == true) {				
@@ -3528,7 +3529,7 @@ function delete_selected_tokens() {
 function undo_delete_tokens() {
 	console.log("undo_delete_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 	if (!window.DM) return;
-	for (id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
+	for (let id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
 		let options = window.TOKEN_OBJECTS_RECENTLY_DELETED[id];
 		window.ScenesHandler.create_update_token(options);
 	}

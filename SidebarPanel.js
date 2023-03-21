@@ -217,7 +217,7 @@ class SidebarPanel {
             alert("You cannot use urls starting with data:");
           } else {
             let imageUrlSplit = imageUrl.split(', ');
-            for(i = 0; i < imageUrlSplit.length; i++){
+            for(let i = 0; i < imageUrlSplit.length; i++){
               imageUrlEntered(parse_img(imageUrlSplit[i]));
             }      
           }
