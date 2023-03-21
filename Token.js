@@ -2760,8 +2760,9 @@ function deselect_all_tokens() {
    	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
-   	else if(window.DM){
-			$('#VTT').css('--darkness-filter', darknessPercent + "%");
+	else if(window.DM){
+   		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+   		$('#raycastingCanvas').css('opacity', '');
    	}
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
