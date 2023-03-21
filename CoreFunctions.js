@@ -33,6 +33,14 @@ const async_sleep = m => new Promise(r => setTimeout(r, m));
 
 const charactersPageRegex = /\/characters\/\d+/;
 
+function mydebounce(func, timeout = 800){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+
 /** @return {boolean} true if the current page url includes "/characters/<someId>"  */
 function is_characters_page() {
   return window.location.pathname.match(charactersPageRegex)?.[0] !== undefined;

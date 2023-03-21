@@ -1,12 +1,5 @@
 // this shouln't be here...
 
-function mydebounce(func, timeout = 800){
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => { func.apply(this, args); }, timeout);
-  };
-}
 
 function throttle(func, timeFrame = 800) {
 	var lastTime = 0;

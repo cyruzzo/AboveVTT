@@ -6,22 +6,31 @@ $(function() {
 
 let recentCharacterUpdates = {};
 
+const tabCommunicationChannel = new BroadcastChannel('tabCommunication');
+
+
 const sendCharacterUpdateEvent = mydebounce(() => {
   console.log("sendCharacterUpdateEvent")
-  window.MB.sendMessage("custom/myVTT/character-update", {
-    characterId: window.PLAYER_ID,
-    pcData: {...recentCharacterUpdates}
-  });
+  if (is_abovevtt_page()) {
+    window.MB.sendMessage("custom/myVTT/character-update", {
+      characterId: window.PLAYER_ID,
+      pcData: {...recentCharacterUpdates}
+    });
+  }
+  else{
+    tabCommunicationChannel.postMessage({
+      characterId: window.location.href.split('/').slice(-1)[0],
+      pcData: {...recentCharacterUpdates}
+    });
+  }
   recentCharacterUpdates = {};
 }, 1500);
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
-  if (is_abovevtt_page()) { // remove this if we add the MessageBroker when avtt isn't running
     console.log("character_sheet_changed", changes);
     recentCharacterUpdates = {...recentCharacterUpdates, ...changes};
     sendCharacterUpdateEvent();
-  }
 }
 
 function send_character_hp() {
@@ -129,6 +138,14 @@ function observe_character_sheet_changes(documentToObserve) {
   if (window.character_sheet_observer) {
     window.character_sheet_observer.disconnect();
   }
+  if (is_abovevtt_page()) {
+    tabCommunicationChannel.addEventListener ('message', (event) => {
+         window.MB.sendMessage("custom/myVTT/character-update", {
+          characterId: event.data.characterId,
+          pcData: event.data.pcData
+        });
+    });
+  }
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
 
     // console.log("character_sheet_observer", mutationList);
@@ -151,7 +168,6 @@ function observe_character_sheet_changes(documentToObserve) {
         const mutationParent = $(mutation.target).parent();
         switch (mutation.type) {
           case "attributes":
-            if (is_abovevtt_page()) {
               if (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')) { // conditions update from sidebar
                 let conditionsSet = [];
                 $(`.ct-condition-manage-pane__condition`).each(function () {
@@ -161,10 +177,8 @@ function observe_character_sheet_changes(documentToObserve) {
                 });
                 character_sheet_changed({conditions: conditionsSet});
               }
-            }
             break;
           case "childList":
-            if (is_abovevtt_page()) {
               if ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) {
                 send_character_hp();
               } else if (($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))) {
@@ -181,7 +195,6 @@ function observe_character_sheet_changes(documentToObserve) {
                   }
                 });
               }
-            }
             mutation.addedNodes.forEach(node => {
               if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
@@ -193,7 +206,7 @@ function observe_character_sheet_changes(documentToObserve) {
             });
             break;
           case "characterData":
-            if (is_abovevtt_page()) {
+
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content')) {
                 let labelledBy = mutationParent.attr('aria-labelledby');
                 if (
@@ -206,7 +219,6 @@ function observe_character_sheet_changes(documentToObserve) {
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
                 character_sheet_changed({armorClass: parseInt($(`.ddbc-armor-class-box__value`).text())});
               }
-            }
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
