@@ -2165,8 +2165,8 @@ class Token {
 								$(tok).css('top', tokenY + "px");
 
 								if(!window.DM && playerTokenAuraIsLight){
-									const left = (tokenX + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-									const top = (tokenY + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+									const left = (tokenX + (curr.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+									const top = (tokenY + (curr.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 									if (pixeldata[2] != 0)
