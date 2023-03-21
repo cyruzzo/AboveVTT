@@ -2586,7 +2586,6 @@ function init_ui() {
 
 	window.ZOOM = 1.0;
 	VTT = $("<div id='VTT' style='position:absolute; top:0px;left:0px;transform: scale(1.0);'/>");
-	VTT.css('--darkness-filter', "100%");
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
