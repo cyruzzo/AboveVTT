@@ -1312,6 +1312,9 @@ class MessageBroker {
 			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
 		}*/
 
+		window.DRAWINGS = [];
+		reset_canvas();
+
 		window.TOKEN_OBJECTS = {};
 		let data = msg.data;
 		let self=this;
