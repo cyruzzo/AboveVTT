@@ -322,6 +322,20 @@ function avtt_settings() {
 		);
 	}
 
+	if (AVTT_ENVIRONMENT.versionSuffix) {
+		// This is either a local or a beta build, so allow this helpful debugging tool
+		settings.push({
+			name: "aggressiveErrorMessages",
+			label: "Alert Every Concerning Log",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Show", description: `This will show an error dialog for every error or warning log that AboveVTT encounters.` },
+				{ value: false, label: "Don't Show", description: `Only show an error dialog when AboveVTT explicitly coded for it.` }
+			],
+			defaultValue: false
+		});
+	}
+
 	return settings;
 }
 
@@ -329,6 +343,9 @@ function get_avtt_setting_default_value(name) {
 	return avtt_settings().find(s => s.name === name)?.defaultValue;
 }
 function get_avtt_setting_value(name) {
+	if (name === "aggressiveErrorMessages" && is_release_build()) {
+		return false; // never allow this in a release build
+	}
 	switch (name) {
 		case "iframeStatBlocks": return should_use_iframes_for_monsters();
 		default:

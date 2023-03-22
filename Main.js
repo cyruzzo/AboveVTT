@@ -16,7 +16,10 @@ window.onbeforeunload = function(event)
  * @return {String} a sanitized and possibly modified url to help with loading maps */
 function parse_img(url) {
 	let retval = url;
-	if (typeof retval !== "string" || retval.trim().startsWith("data:")) {
+	if (typeof retval !== "string") {
+		console.log("parse_img is converting", url, "to an empty string");
+		retval = "";
+	} else if (retval.trim().startsWith("data:")) {
 		console.warn("parse_img is removing a data url because those are not allowed");
 		retval = "";
 	} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {

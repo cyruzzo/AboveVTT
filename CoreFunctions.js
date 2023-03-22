@@ -48,6 +48,9 @@ function monitor_console_logs() {
         if (console.concerningLogs.length > 100) {
           console.concerningLogs.length = 100;
         }
+        if (get_avtt_setting_value("aggressiveErrorMessages")) {
+          showError(new Error(`${log.type} ${log.message}`), ...log.value);
+        }
       } else {
         console.otherLogs.unshift(log);
         if (console.otherLogs.length > 100) {
@@ -128,6 +131,16 @@ function process_monitored_logs() {
   return processedLogs.join('\n');
 }
 
+function is_release_build() {
+  return (!is_beta_build() && !is_local_build());
+}
+function is_beta_build() {
+  return AVTT_ENVIRONMENT.versionSuffix?.includes("beta");
+}
+function is_local_build() {
+  return AVTT_ENVIRONMENT.versionSuffix?.includes("local");
+}
+
 /** @return {boolean} true if the current page url includes "/characters/<someId>"  */
 function is_characters_page() {
   return window.location.pathname.match(charactersPageRegex)?.[0] !== undefined;
@@ -174,9 +187,9 @@ function showErrorMessage(error, ...extraInfo) {
   removeError();
   window.logSnapshot = process_monitored_logs(false);
 
-  console.error(...extraInfo, error);
+  console.log("showErrorMessage", ...extraInfo, error);
   if (error?.constructor?.name !== "Error") {
-    error = new Error(error);
+    error = new Error(error?.toString());
   }
   const stack = error.stack || new Error().stack;
 
@@ -217,6 +230,10 @@ function showErrorMessage(error, ...extraInfo) {
   $("#copy-error-button").on("click", function () {
     copy_to_clipboard(build_external_error_message());
   });
+
+  if (get_avtt_setting_value("aggressiveErrorMessages")) {
+    $("#error-message-stack").show();
+  }
 }
 
 /** Displays an error to the user, and looks for matching github issues
