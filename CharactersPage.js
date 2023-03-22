@@ -6,7 +6,7 @@ $(function() {
 
 let recentCharacterUpdates = {};
 
-const tabCommunicationChannel = new BroadcastChannel('tabCommunication');
+const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication');
 
 
 const sendCharacterUpdateEvent = mydebounce(() => {
@@ -168,13 +168,22 @@ function observe_character_sheet_changes(documentToObserve) {
         const mutationParent = $(mutation.target).parent();
         switch (mutation.type) {
           case "attributes":
-              if (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')) { // conditions update from sidebar
+              if ((mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')) || ($(mutation.target).hasClass('ddbc-number-bar__option--interactive') && $(mutation.target).parents('.ct-condition-manage-pane__condition--special').length>0)) { // conditions update from sidebar
                 let conditionsSet = [];
                 $(`.ct-condition-manage-pane__condition`).each(function () {
                   if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
-                    conditionsSet.push($(this).find('.ct-condition-manage-pane__condition-name').text());
+                    conditionsSet.push({
+                      name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                      level: null
+                    });
                   }
                 });
+                $(`.ct-condition-manage-pane__condition--special`).each (function () {
+                  conditionsSet.push({
+                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                    level: $(this).find('.ddbc-number-bar__option--implied').length
+                  });
+                })
                 character_sheet_changed({conditions: conditionsSet});
               }
             break;
@@ -194,6 +203,11 @@ function observe_character_sheet_changes(documentToObserve) {
                     successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length
                   }
                 });
+              }
+              else if($(mutation.target).hasClass('ct-inspiration__status')) {
+                character_sheet_changed({
+                  inspiration: ($('ct-inspiration__status--active').length>1)
+                })
               }
             mutation.addedNodes.forEach(node => {
               if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {

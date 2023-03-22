@@ -1,5 +1,12 @@
 // this shouln't be here...
-
+ 
+function mydebounce(func, timeout = 800){   // This had to be in both core and here to get this to work due to load orders. I might look at this more later
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
 
 function throttle(func, timeFrame = 800) {
 	var lastTime = 0;
@@ -502,8 +509,23 @@ class MessageBroker {
 					if(pcData.armorClass != undefined){
 							window.PLAYER_STATS[pc[0].sheet].ac = pcData.armorClass;
 					}
+					if(pcData.inspiration != undefined){
+							window.PLAYER_STATS[pc[0].sheet].inspiration = pcData.inspiration;
+					}
 					if(pcData.conditions != undefined){
-							window.PLAYER_STATS[pc[0].sheet].conditions = pcData.conditions;
+						let conditions = [];
+       			let exhaustionlevel = 0;
+		        for (var i = 0; i < pcData.conditions.length; i++) {
+		            let condition = pcData.conditions[i];
+		            let conditionString = condition.name;
+		            if (condition.level) {
+		                conditionString += " (Level " + condition.level + ")";
+		                exhaustionlevel = condition.level;
+		            }
+		            conditions.push(conditionString);
+		        }
+							window.PLAYER_STATS[pc[0].sheet].conditions = conditions;
+							window.PLAYER_STATS[pc[0].sheet].exhaustion = exhaustionlevel;
 					}
 				
 				
