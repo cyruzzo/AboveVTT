@@ -1,0 +1,36 @@
+name: label-prs
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  add-label-based-on-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name : Add label to PR based on title
+        run: |
+          echo "github.event.pull_request.title=${{ github.event.pull_request.title }}"
+          echo "github.event.pull_request.number=${{ github.event.pull_request.number }}"
+          title=${{ github.event.pull_request.title }}
+          echo "title=${title}"
+          echo "lower=${title,,}"
+          echo "upper=${title^^}"
+          label_to_add=''
+          if [[ "${title,,}" == fix* ]]
+          then
+            label_to_add='bug'
+          elif [[ "${title,,}" == feat* ]]
+          then
+            label_to_add='enhancement'
+          elif [[ "${title,,}" == beta* ]]
+          then
+            label_to_add='beta-regression'
+          elif [[ "${title,,}" == internal* ]]
+          then
+            label_to_add='internal'
+          fi
+          
+          if [[ ! -z "$label_to_add" ]]
+          then
+            curl -o /dev/null --request POST --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{github.event.pull_request.number}}/labels" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "{\"labels\":[\"${label_to_add}\"]}"
+          fi
