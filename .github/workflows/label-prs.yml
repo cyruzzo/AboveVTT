@@ -26,6 +26,9 @@ jobs:
           elif [[ "${title}" == internal* ]]
           then
             label_to_add='internal'
+          elif [[ "${title}" == chore* ]]
+          then
+            label_to_add='chore'
           fi
           
           if [[ ! -z "$label_to_add" ]]
