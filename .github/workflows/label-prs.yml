@@ -11,21 +11,19 @@ jobs:
         run: |
           echo "github.event.pull_request.title=${{ github.event.pull_request.title }}"
           echo "github.event.pull_request.number=${{ github.event.pull_request.number }}"
-          title=${{ github.event.pull_request.title }}
+          title=$(echo "${{ github.event.pull_request.title }}" | tr "[:upper:]" "[:lower:]") 
           echo "title=${title}"
-          echo "lower=${title,,}"
-          echo "upper=${title^^}"
           label_to_add=''
-          if [[ "${title,,}" == fix* ]]
+          if [[ "${title}" == fix* ]]
           then
             label_to_add='bug'
-          elif [[ "${title,,}" == feat* ]]
+          elif [[ "${title}" == feat* ]]
           then
             label_to_add='enhancement'
-          elif [[ "${title,,}" == beta* ]]
+          elif [[ "${title}" == beta* ]]
           then
             label_to_add='beta-regression'
-          elif [[ "${title,,}" == internal* ]]
+          elif [[ "${title}" == internal* ]]
           then
             label_to_add='internal'
           fi
