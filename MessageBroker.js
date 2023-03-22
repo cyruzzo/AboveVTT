@@ -1118,7 +1118,7 @@ class MessageBroker {
 	acToPlayerData(data) {
 		if (!window.DM)
 			return;
-		for(id in window.TOKEN_OBJECTS){
+		for(let id in window.TOKEN_OBJECTS){
 			if(id.endsWith(data.id)){
 				window.TOKEN_OBJECTS[id].options.ac = data.ac;
 				window.TOKEN_OBJECTS[id].place();
@@ -1355,6 +1355,9 @@ class MessageBroker {
 		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
 			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
 		}*/
+
+		window.DRAWINGS = [];
+		reset_canvas();
 
 		window.TOKEN_OBJECTS = {};
 		let data = msg.data;

@@ -3448,7 +3448,7 @@ function show_player_sheet() {
 	if (window.innerWidth < 1024) {
 		hide_sidebar();
 	}
-	for(id in window.TOKEN_OBJECTS){
+	for(let id in window.TOKEN_OBJECTS){
 		if(id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[id].options.ac != $(".ddbc-armor-class-box__value").html()){
 			window.MB.sendMessage("custom/myVTT/actoplayerdata",{
 				id: window.PLAYER_ID,

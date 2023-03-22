@@ -1519,7 +1519,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             let darkvision = 0;
             if(pcData.senses.length > 0)
             {
-                for(i=0; i < pcData.senses.length; i++){
+                for(let i=0; i < pcData.senses.length; i++){
                     const ftPosition = pcData.senses[i].distance.indexOf('ft.');
                     const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
                     if(range > darkvision)
@@ -1535,7 +1535,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             let darkvision = 0;
             if(listItem.monsterData.senses.length > 0)
             {
-                for(i=0; i < listItem.monsterData.senses.length; i++){
+                for(let i=0; i < listItem.monsterData.senses.length; i++){
                     const ftPosition = listItem.monsterData.senses[i].notes.indexOf('ft.')
                     const range = parseInt(listItem.monsterData.senses[i].notes.slice(0, ftPosition));
                     if(range > darkvision)
