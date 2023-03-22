@@ -92,7 +92,7 @@ class DDBApi {
 
     const url = `https://character-service.dndbeyond.com/character/v5/character/${id}`;
     const response = await DDBApi.fetchJsonWithToken(url);
-    console.log("DDBApi.fetchCharacter response", response);
+    console.debug("DDBApi.fetchCharacter response", response);
     return response.data;
   }
 
@@ -103,7 +103,7 @@ class DDBApi {
 
     const url = `https://encounter-service.dndbeyond.com/v1/encounters/${id}`;
     const response = await DDBApi.fetchJsonWithCredentials(url);
-    console.log("DDBApi.fetchEncounter response", response);
+    console.debug("DDBApi.fetchEncounter response", response);
     return response.data;
   }
 
@@ -124,7 +124,7 @@ class DDBApi {
     }
     for (let i = 2; i <= numberOfPages; i++) {
       const response = await DDBApi.fetchJsonWithToken(`${url}?page=${i}`)
-      console.log(`DDBApi.fetchAllEncounters page ${i} response: `, response);
+      console.debug(`DDBApi.fetchAllEncounters page ${i} response: `, response);
       encounters = encounters.concat(response.data);
       console.log(`DDBApi.fetchAllEncounters successfully fetched page ${i}`);
     }
@@ -132,11 +132,11 @@ class DDBApi {
   }
 
   static async deleteAboveVttEncounters(encounters) {
-    console.log("DDBApi.deleteAboveVttEncounters all encounters:", encounters);
+    console.log("DDBApi.deleteAboveVttEncounters starting");
     // make sure we don't delete the encounter that we're actively on
     const avttId = is_encounters_page() ? window.location.pathname.split("/").pop() : undefined;
     const avttEncounters = encounters.filter(e => e.id !== avttId && e.name === DEFAULT_AVTT_ENCOUNTER_DATA.name);
-    console.log(`DDBApi.deleteAboveVttEncounters avttId: ${avttId}, avttEncounters:`, avttEncounters);
+    console.debug(`DDBApi.deleteAboveVttEncounters avttId: ${avttId}, avttEncounters:`, avttEncounters);
     for (const encounter of avttEncounters) {
       console.log("DDBApi.deleteAboveVttEncounters attempting to delete encounter with id:", encounter.id);
       const response = await DDBApi.deleteWithToken(`https://encounter-service.dndbeyond.com/v1/encounters/${encounter.id}`);
@@ -155,9 +155,9 @@ class DDBApi {
 
     const url = "https://encounter-service.dndbeyond.com/v1/encounters";
     const encounterData = {...DEFAULT_AVTT_ENCOUNTER_DATA, campaign: campaignInfo};
-    console.log("DDBApi.createAboveVttEncounter attempting to create encounter with data", encounterData);
+    console.debug("DDBApi.createAboveVttEncounter attempting to create encounter with data", encounterData);
     const response = await DDBApi.postJsonWithToken(url, encounterData);
-    console.log("DDBApi.createAboveVttEncounter response", response);
+    console.debug("DDBApi.createAboveVttEncounter response", response);
     return response.data;
   }
 
