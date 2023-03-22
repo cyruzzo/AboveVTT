@@ -430,7 +430,7 @@ function observe_character_image_change() {
 }
 
 function update_window_color(colorValue) {
-  let pc = find_pc_by_player_id(my_player_id());
+  let pc = find_pc_by_player_id(my_player_id(), false);
   if (pc?.decorations?.characterTheme?.themeColor) {
     pc.decorations.characterTheme.themeColor = colorValue;
     find_and_set_player_color();

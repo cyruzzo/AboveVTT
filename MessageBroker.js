@@ -485,51 +485,7 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType == ('custom/myVTT/character-update')){
-					let pcId = msg.data.characterId;
-					let pcData = msg.data.pcData;
-					let pc = window.pcs.filter((d) => d.id == pcId)
-					for(let data in pcData){	
-						pc[0][data] = pcData[data];						
-					}
-
-					if(pcData.hitPointInfo?.current != undefined){
-							window.PLAYER_STATS[pc[0].sheet].hp =  pcData.hitPointInfo.current;
-					}
-					if(pcData.hitPointInfo?.maximum != undefined){
-							window.PLAYER_STATS[pc[0].sheet].max_hp =  pcData.hitPointInfo.maximum;
-					}
-				
-					if(pcData.deathSaveInfo?.failCount != undefined){
-							window.PLAYER_STATS[pc[0].sheet].fails = pcData.deathSaveInfo.failCount;
-					}
-				
-					if(pcData.deathSaveInfo?.successCount != undefined){
-							window.PLAYER_STATS[pc[0].sheet].successes = pcData.deathSaveInfo.successCount;
-					}
-					if(pcData.armorClass != undefined){
-							window.PLAYER_STATS[pc[0].sheet].ac = pcData.armorClass;
-					}
-					if(pcData.inspiration != undefined){
-							window.PLAYER_STATS[pc[0].sheet].inspiration = pcData.inspiration;
-					}
-					if(pcData.conditions != undefined){
-						let conditions = [];
-       			let exhaustionlevel = 0;
-		        for (var i = 0; i < pcData.conditions.length; i++) {
-		            let condition = pcData.conditions[i];
-		            let conditionString = condition.name;
-		            if (condition.level) {
-		                conditionString += " (Level " + condition.level + ")";
-		                exhaustionlevel = condition.level;
-		            }
-		            conditions.push(conditionString);
-		        }
-							window.PLAYER_STATS[pc[0].sheet].conditions = conditions;
-							window.PLAYER_STATS[pc[0].sheet].exhaustion = exhaustionlevel;
-					}
-				
-				
-					self.handlePlayerData(window.PLAYER_STATS[pc[0].sheet]);
+					update_pc_with_data(msg.data.characterId, msg.data.pcData);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -1106,13 +1062,11 @@ class MessageBroker {
 		if (!window.DM)
 			return;
 
-		window.PLAYER_STATS[data.id] = data;
 		this.sendTokenUpdateFromPlayerData(data);
 
 		// update combat tracker:
 
 		update_pclist();
-		send_player_data_to_all_peers(data);
 	}
 
 	acToPlayerData(data) {
@@ -1123,26 +1077,24 @@ class MessageBroker {
 				window.TOKEN_OBJECTS[id].options.ac = data.ac;
 				window.TOKEN_OBJECTS[id].place();
 				window.TOKEN_OBJECTS[id].update_and_sync();
-				if(id in window.PLAYER_STATS) {
-					window.PLAYER_STATS[id].ac = data.ac;
-					send_player_data_to_all_peers(window.PLAYER_STATS[id]);
-				}
 			}
 		}	
 	}
-	
+
 	sendTokenUpdateFromPlayerData(data) {
+		console.log("is sendTokenUpdateFromPlayerData still needed?")
+		return;
 		console.group("sendTokenUpdateFromPlayerData")
 		if (data.id in window.TOKEN_OBJECTS) {
 			var cur = window.TOKEN_OBJECTS[data.id];
 
 			// test for any change
-			if ((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
+			if ((cur.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
 				(cur.options.max_hp != data.max_hp) ||
 				(cur.options.ac != data.ac) ||
 				(cur.options.temp_hp != data.temp_hp) ||
 				(cur.options.inspiration != data.inspiration) ||
-				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
+				(!areArraysEqualSets(cur.conditions, data.conditions)))
 			{			
 				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
 					var msgdata = {
@@ -1467,13 +1419,10 @@ class MessageBroker {
 
 
 
-			if(window.DM)
-				get_pclist_player_data();
-			else{
+			if(!window.DM) {
 			 	window.MB.sendMessage('custom/myVTT/syncmeup');
+				check_token_visibility();
 			}
-			if(!window.DM)
-					check_token_visibility();
 
 
 			if (window.EncounterHandler !== undefined) {
@@ -1509,7 +1458,7 @@ class MessageBroker {
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			// also sync the journal
-			window.JOURNAL.sync();
+			window.JOURNAL?.sync();
 			window.MB.sendMessage("custom/myVTT/pausePlayer",{
 				paused: $('#pause_players').hasClass('paused')
 			});

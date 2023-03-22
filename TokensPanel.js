@@ -663,79 +663,77 @@ function update_pc_token_rows() {
             row.find("button.token-row-add").attr("title", `Add Token to Scene`);
         }
 
-        let playerData = window.PLAYER_STATS[listItem.sheet];
-        if (playerData !== undefined) {
-            playerData.abilities.forEach(a => {
-                let abilityValue = row.find(`[data-ability='${a.abilityAbbr}']`);
+        const playerId = getPlayerIDFromSheet(listItem.sheet);
+        const pc = find_pc_by_player_id(playerId, false);
+
+        if (pc !== undefined) {
+            const color = color_from_pc_object(pc);
+            pc.abilities.forEach(a => {
+                let abilityValue = row.find(`[data-ability='${a.name}']`);
                 abilityValue.find(".ability_modifier").text(a.modifier);
                 abilityValue.find(".ability_score").text(a.score);
-
             });
-            row.find(".pp-value").text(playerData.pp);
-            row.find(".pinv-value").text(playerData.pinv);
-            row.find(".pins-value").text(playerData.pins);
-            row.find(".walking-value").text(playerData.walking);
-            row.find(".ac-value").text(playerData.ac);
-            row.find(".hp-value").text(playerData.hp);
-            row.find(".max-hp-value").text(playerData.max_hp);
-            row.find(".fly-value").text(playerData.fly);
-            row.find(".climb-value").text(playerData.climb);
-            row.find(".swim-value").text(playerData.swim);
-            if(playerData.climb == '0ft.'){
+            row.find(".pp-value").text(pc.passivePerception);
+            row.find(".pinv-value").text(pc.passiveInvestigation);
+            row.find(".pins-value").text(pc.passiveInsight);
+            row.find(".walking-value").text(speed_from_pc_object(pc));
+            row.find(".ac-value").text(pc.armorClass);
+            row.find(".hp-value").text(pc.hitPointInfo.current || 0);
+            row.find(".max-hp-value").text(pc.hitPointInfo.maximum || 0);
+            let flyingSpeed = speed_from_pc_object(pc, "Flying");
+            row.find(".fly-value").text(flyingSpeed);
+            let climbingSpeed = speed_from_pc_object(pc, "Climbing");
+            row.find(".climb-value").text(climbingSpeed);
+            let swimmingSpeed = speed_from_pc_object(pc, "Swimming");
+            row.find(".swim-value").text(swimmingSpeed);
+            if(climbingSpeed > 0) {
+                row.find(".subtitle-attibute[title='Climb Speed']").show()
+            } else {
                 row.find(".subtitle-attibute[title='Climb Speed']").hide()
             }
-            else{
-                 row.find(".subtitle-attibute[title='Climb Speed']").show()
+            if(flyingSpeed > 0) {
+                row.find(".subtitle-attibute[title='Fly Speed']").show()
+            } else{
+                row.find(".subtitle-attibute[title='Fly Speed']").hide()
             }
-            if(playerData.fly == '0ft.'){
-                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
+            if(flyingSpeed > 0) {
+                row.find(".subtitle-attibute[title='Swim Speed']").show()
+            } else {
+                row.find(".subtitle-attibute[title='Swim Speed']").hide()
             }
-            else{
-                 row.find(".subtitle-attibute[title='Fly Speed']").show()
-            }
-            if(playerData.swim == '0ft.'){
-                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
-            }
-            else{
-                 row.find(".subtitle-attibute[title='Swim Speed']").show()
-            }
-            
-            row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
-            row.css("--player-border-color",  playerData.theme.themeColor);
+
+            row.find(".player-card-footer").css("--player-border-color",  color);
+            row.css("--player-border-color",  color);
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
-            if(playerData.hp == 0){
+            if(pc.hp > 0){
+                row.find(".subtitle-attibute.hp-attribute").show();
+                row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
+            } else{
                 row.find(".hp-attribute.death-saves.ct-health-summary__data").show();
                 row.find(".subtitle-attibute.hp-attribute").hide();
                 row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--inactive', true);
                 row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--active', false);
-                for(let i = 0; i <= playerData.fails; i++){
+                for(let i = 0; i <= pc.deathSaveInfo.failCount; i++){
                     row.find(`.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
                 }
-                 for(let i = 0; i <= playerData.successes; i++){
+                for(let i = 0; i <= pc.deathSaveInfo.successCount; i++){
                     row.find(`.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
                 }
             }
-            else{
-                row.find(".subtitle-attibute.hp-attribute").show();
-                 row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
-            }
 
-            for(let i = 0; i <= playerData.exhaustion; i++){
+            const exhaustionLevel = pc.conditions.find(c => c.name === "Exhaustion")?.level || 0;
+            for(let i = 0; i <= exhaustionLevel; i++){
                  row.find(`.subtitle-attibute .exhaustion-pip:nth-of-type(${i})`).toggleClass("filled", true);
             }
-            if (playerData.inspiration) {
+            if (pc.inspiration) {
                 row.find(".inspiration").show();
             } else {
                 row.find(".inspiration").hide();
             }
-        }
 
-        const playerId = getPlayerIDFromSheet(listItem.sheet);
-        const pc = find_pc_by_player_id(playerId);
-        if (pc && pc.color) {
-            update_player_online_indicator(playerId, pc.p2pConnected, pc.color);
-            row.css("--player-border-color",  pc.color);
+            update_player_online_indicator(playerId, pc.p2pConnected, color);
+            row.css("--player-border-color",  color);
         }
     });
 }
@@ -838,7 +836,6 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 console.warn(`failed to find pc for id ${listItem.sheet}`);
                 return;
             }
-            let playerData = window.PLAYER_STATS[listItem.sheet];
             options.id = listItem.sheet;
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
@@ -851,9 +848,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             } else {
                 options.tokenSize = tokenSize;
             }
-            options.hp = playerData ? playerData.hp : '';
-            options.ac = playerData ? playerData.ac : '';
-            options.max_hp = playerData ? playerData.max_hp : '';
+            options.hp = pc.hitPointInfo?.current || 0;
+            options.ac = pc.armorClass;
+            options.max_hp = pc.hitPointInfo?.maximum || 0;
             options.color = color_from_pc_object(pc);
             break;
         case ItemType.Monster:

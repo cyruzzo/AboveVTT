@@ -193,9 +193,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					found_data_tokens=true;
 			}
 
-
-			get_pclist_player_data(); // UPDATE PLAYER TOKENS DATA
-
 			if(found_data_tokens){
 				alert('WARNING. This scene contains token with data: urls as images. Please only use http:// or https:// urls for images');
 			}

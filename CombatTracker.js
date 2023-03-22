@@ -506,7 +506,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(token.isPlayer()){
 		hp_input.prop("disabled", true);
 	}
-	hp_input.val(token.options.hp);
+	hp_input.val(token.hp);
 	hp.append(hp_input);
 	if(hp_input.val() === '0'){
 		entry.toggleClass("ct_dead", true);
@@ -547,7 +547,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			var old = $("#tokens").find(selector);
 		
 			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(hp_input.val())));
+				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
 			}
 
 			old.find(".hp").val(hp_input.val().trim());	
@@ -569,7 +569,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			var old = $("#tokens").find(selector);
 
 			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(maxhp_input.val())));
+				maxhp_input.val(Math.max(0, token.hp + parseInt(maxhp_input.val())));
 			}
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
