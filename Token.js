@@ -2049,15 +2049,6 @@ class Token {
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
 
-
-								
-
-
-
-					tokenPosition = snap_point_to_grid(tokenPosition.x, tokenPosition.y);
-
-
-
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
 					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
