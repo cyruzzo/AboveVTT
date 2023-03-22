@@ -10,7 +10,7 @@ $(function() {
     console.log("startup calling init_splash");
     window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
-    window.addEventListener("scroll", function(event) { // this used to be in init_splash, but I'm not exactly sure wy it's needed
+    window.addEventListener("scroll", function(event) { // ddb has an scroll event listener on the character sheet where they add/remove classes and throttle the sheet scroll causing right click drag of the map to not be smooth
       event.stopImmediatePropagation();
     }, true);
     startup_step("Gathering basic campaign info");
