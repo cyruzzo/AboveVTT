@@ -182,7 +182,7 @@ async function start_above_vtt_for_players() {
 }
 
 function startup_step(stepDescription) {
-  console.log("startup_step", stepDescription);
+  console.log(`startup_step ${stepDescription}`);
   $("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(stepDescription);
 }
 

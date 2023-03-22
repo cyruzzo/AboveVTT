@@ -3056,6 +3056,7 @@ function init_help_menu() {
 					<ul>
 						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
 						<li><a href="#tab2">FAQ</a></li>
+						<li><a href="#tab3">Get Help</a></li>
 					</ul>
 				</div>
 
@@ -3152,6 +3153,16 @@ function init_help_menu() {
 						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true"></iframe>
 					</div>
 
+					<div id="tab3">
+						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
+						<ul id="help-error-container">
+							<li><a href="https://github.com/cyruzzo/AboveVTT/issues?q=is%3Aissue+label%3Abug" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check Github</a> (Use the search/filter bar at the top of the screen)</li>
+							<li><a href="https://discord.gg/rPUxwrt6" target="_blank" style="text-decoration:underline;color:-webkit-link;">Join the Discord</a> The Discord community is very active. Search for your issue, and if you don't find anything, ask in the #support room.</li>
+							<li><a href="https://www.reddit.com/r/AboveVTT/" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check the subreddit</a> The Subreddit is less active, but there's a lot of good info there.</li>
+						</ul>
+						<button id="help-error-container-copy-logs-button">Copy logs to clipboard</button><span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 16px;position: relative;">line_start_arrow_notch</span>Use this button to share logs with developers!
+					</div>
+
 				</section>
 			</div>
 		</div>
@@ -3170,10 +3181,17 @@ function init_help_menu() {
 
 	$('#help-menu-outside').on('click', function() {
 		$('#help-container').fadeOut(200);
+		delete window.logSnapshot;
 	});
 
 	$("#help_button").click(function(e) {
+		// if a user is opening the help menu to grab logs, we want to capture logs as close to the event as possible.
+		window.logSnapshot = process_monitored_logs();
 		$('#help-container').fadeIn(200);
+	});
+
+	$("#help-error-container-copy-logs-button").on('click', function() {
+		copy_to_clipboard(window.logSnapshot);
 	});
 }
 
