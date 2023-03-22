@@ -386,10 +386,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				dm_map_is_video: "0",
 				scale: "100",
 				dm_map_usable: "0",
-				fog_of_war: "0",
 				thumb: thumb,
 				tokens: {},
-				reveals: [],
 			});		
 		}
 
@@ -437,9 +435,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					thumb: thumb,
 					scale: "100",
 					dm_map_usable: "0",
-					fog_of_war: "0",
 					tokens: {},
-					reveals: [],
 				});
 			});
 
@@ -483,10 +479,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						dm_map_is_video: "0",
 						scale: "100",
 						dm_map_usable: "0",
-						fog_of_war: "0",
 						thumb: thumb,
 						tokens: {},
-						reveals: [],
 					});
 				});
 			} else if (compendiumWithoutSubtitle.length > 0) {
@@ -525,10 +519,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						dm_map_is_video: "0",
 						scale: "100",
 						dm_map_usable: "0",
-						fog_of_war: "0",
 						thumb: thumb,
 						tokens: {},
-						reveals: [],
 					});
 
 				});
