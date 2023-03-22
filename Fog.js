@@ -3072,6 +3072,12 @@ function redraw_light(){
 	let offsetX = canvas.offsetLeft;
 	let offsetY = canvas.offsetTop;
 
+	let offscreenCanvasMask = document.createElement('canvas');
+	let offscreenContext = offscreenCanvasMask.getContext('2d');
+
+	offscreenCanvasMask.width = canvas.width;
+	offscreenCanvasMask.height = canvas.height;
+
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
@@ -3151,12 +3157,11 @@ function redraw_light(){
   	
 
   		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
-  	
-	
-	}    // draws rays
-
-
+  		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+	}    // draws rays	
   }
+
+  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`)
 }
 
 

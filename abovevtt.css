@@ -5781,6 +5781,8 @@ div.ddbc-tab-options--layout-pill>button{
     position: absolute;
     z-index: 9;
     mix-blend-mode: lighten;
+    -webkit-mask-image: var(--vision-mask);
+    -webkit-mask-size: cover;
 }
 .aura-element.islight,
 .aura-element[id*='vision_']{
