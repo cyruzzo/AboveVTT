@@ -2937,8 +2937,8 @@ function init_zoom_buttons() {
 			<svg version="1.1" id="selectedEyeSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" x="0px" y="0px"
 				 viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
 			<style type="text/css">
-				.st0{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;}
-				.st1{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;stroke-dasharray:70,70;}
+				#selected_token_vision .st0{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;}
+				#selected_token_vision .st1{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;stroke-dasharray:70,70;}
 			</style>
 			<g>
 				<path d="M681.9,382.8l-59.7-58.3C563,266.7,484.1,235,399.9,235s-163,31.8-222.2,89.5L118,382.8c-13.3,14.5-5.1,30,0,34.5
