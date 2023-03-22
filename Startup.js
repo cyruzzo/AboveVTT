@@ -18,6 +18,10 @@ $(function() {
       .then(set_game_id)              // set it to window.gameId
       .then(() => {                   // load settings
         window.EXPERIMENTAL_SETTINGS = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
+        if (is_release_build()) {
+          // in case someone left this on during beta testing, we should not allow it here
+          set_avtt_setting_value("aggressiveErrorMessages", false);
+        }
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
@@ -182,7 +186,7 @@ async function start_above_vtt_for_players() {
 }
 
 function startup_step(stepDescription) {
-  console.log("startup_step", stepDescription);
+  console.log(`startup_step ${stepDescription}`);
   $("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(stepDescription);
 }
 

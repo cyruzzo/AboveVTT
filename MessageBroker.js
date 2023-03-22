@@ -201,7 +201,7 @@ class MessageBroker {
 		var userid = this.userid;
 		var gameid = this.gameid;
 
-		console.log("STARTING MB WITH TOKEN=" + token);
+		console.log("STARTING MB WITH TOKEN");
 
 		this.ws = new WebSocket(url + "?gameId=" + gameid + "&userId=" + userid + "&stt=" + token);
 

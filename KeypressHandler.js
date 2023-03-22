@@ -141,6 +141,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         close_sidebar_modal();
     }
     remove_tooltip();
+    removeError();
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open

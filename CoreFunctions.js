@@ -11,6 +11,7 @@
  * If you need to add things for when the CharacterPage is running, do that in CharacterPage.js
  * If you need to add things for all of the above situations, do that here */
 $(function() {
+  monitor_console_logs();
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -33,12 +34,120 @@ const async_sleep = m => new Promise(r => setTimeout(r, m));
 
 const charactersPageRegex = /\/characters\/\d+/;
 
+
 function mydebounce(func, timeout = 800){
   let timer;
   return (...args) => {
     clearTimeout(timer);
     timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };
+
+function monitor_console_logs() {
+  // slightly modified version of https://stackoverflow.com/a/67449524
+  if (console.concerningLogs === undefined) {
+    console.concerningLogs = [];
+    console.otherLogs = [];
+    function TS() {
+      return (new Date).toISOString();
+    }
+    function addLog(log) {
+      if (log.type !== 'log' && log.type !== 'debug') { // we don't currently track debug, but just in case we add them
+        console.concerningLogs.unshift(log);
+        if (console.concerningLogs.length > 100) {
+          console.concerningLogs.length = 100;
+        }
+        if (get_avtt_setting_value("aggressiveErrorMessages")) {
+          showError(new Error(`${log.type} ${log.message}`), ...log.value);
+        }
+      } else {
+        console.otherLogs.unshift(log);
+        if (console.otherLogs.length > 100) {
+          console.otherLogs.length = 100;
+        }
+      }
+    }
+    window.addEventListener('error', function(event) {
+      addLog({
+        type: "exception",
+        timeStamp: TS(),
+        value: [event.message, `${event.filename}:${event.lineno}:${event.colno}`, event.error?.stack]
+      });
+      return false;
+    });
+    window.addEventListener('onunhandledrejection', function(event) {
+      addLog({
+        type: "exception",
+        timeStamp: TS(),
+        value: [event.message, `${event.filename}:${event.lineno}:${event.colno}`, event.error?.stack]
+      });
+      return false;
+    });
+    window.onerror = function (error, url, line, colno) {
+      addLog({
+        type: "exception",
+        timeStamp: TS(),
+        value: [error, `${url}:${line}:${colno}`]
+      });
+      return false;
+    }
+    window.onunhandledrejection = function (event) {
+      addLog({
+        type: "promiseRejection",
+        timeStamp: TS(),
+        value: [event.message, `${event.filename}: ${event.lineno}:${event.colno}`, event.error?.stack]
+      });
+    }
+
+    function hookLogType(logType) {
+      const original = console[logType].bind(console);
+      return function() {
+        addLog({
+          type: logType,
+          timeStamp: TS(),
+          value: Array.from(arguments)
+        });
+        // Function.prototype.apply.call(console.log, console, arguments);
+        original.apply(console, arguments);
+      }
+    }
+
+    // we don't care about debug logs right now
+    ['log', 'error', 'warn'].forEach(logType=> {
+      console[logType] = hookLogType(logType)
+    });
+  }
+}
+
+function process_monitored_logs() {
+  const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);
+  let processedLogs = [];
+  logs.forEach(log => {
+    let messageString = `\n${log.type.toUpperCase()} ${log.timeStamp}`;
+    // processedLogs.push(prefix);
+    log.value.forEach((value, index) => {
+      const logItem = log.value[index];
+      let logString = '\n';
+      if (typeof logItem === "object") {
+        logString += `      ${JSON.stringify(logItem)}`;
+      } else {
+        logString += `      ${logItem}`;
+      }
+      messageString += logString.replaceAll(MYCOBALT_TOKEN, '[REDACTED]').replaceAll(window.CAMPAIGN_SECRET, '[REDACTED]');
+    })
+    processedLogs.push(messageString);
+  });
+  return processedLogs.join('\n');
+}
+
+function is_release_build() {
+  return (!is_beta_build() && !is_local_build());
+}
+function is_beta_build() {
+  return AVTT_ENVIRONMENT.versionSuffix?.includes("beta");
+}
+function is_local_build() {
+  return AVTT_ENVIRONMENT.versionSuffix?.includes("local");
+
 }
 
 /** @return {boolean} true if the current page url includes "/characters/<someId>"  */
@@ -76,23 +185,43 @@ function is_gamelog_popout() {
 function removeError() {
   $("#above-vtt-error-message").remove();
   remove_loading_overlay(); // in case there was an error starting up, remove the loading overlay, so they're not completely stuck
+  delete window.logSnapshot;
 }
 
-/** Displays an error to the user
+/** Displays an error to the user. Only use this if you don't want to look for matching github issues
+ * @see showError
  * @param {Error} error an error object to be parsed and displayed
  * @param {string|*[]} extraInfo other relevant information */
-function showError(error, ...extraInfo) {
+function showErrorMessage(error, ...extraInfo) {
+  removeError();
+  window.logSnapshot = process_monitored_logs(false);
+
+  console.log("showErrorMessage", ...extraInfo, error);
+  if (error?.constructor?.name !== "Error") {
+    error = new Error(error?.toString());
+  }
+  const stack = error.stack || new Error().stack;
+
+  const extraStrings = extraInfo.map(ei => {
+    if (typeof ei === "object") {
+      return JSON.stringify(ei);
+    } else {
+      return ei?.toString();
+    }
+  }).join('<br />');
 
   let container = $("#above-vtt-error-message");
   if (container.length === 0) {
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
-        <pre id="error-message-stack"></pre>
+        <h3 id="error-message">${error.message}</h3>
+        <div id="error-message-details">${extraStrings}</div>
+        <pre id="error-message-stack" style="display: none">${error.message}<br/>${extraStrings}</pre>
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
-            <button id="close-error-button">Close</button>
-            <button id="copy-error-button">Copy Error Message</button>
+          <button id="close-error-button">Close</button>
+          <button id="copy-error-button">Copy logs to clipboard</button>
         </div>
       </div>
     `);
@@ -101,45 +230,63 @@ function showError(error, ...extraInfo) {
     $("#error-message-stack").append("<br /><br />---------- Another Error Occurred ----------<br /><br />");
   }
 
-  console.error(...extraInfo, error);
-  if (error?.constructor?.name !== "Error") {
-    error = new Error(error);
-  }
-  const stack = error.stack || new Error().stack;
-  const extraStrings = extraInfo.map(ei => {
-    if (typeof ei === "object") {
-      return JSON.stringify(ei);
-    } else {
-      return ei?.toString();
-    }
-  });
-
-  console.log(`extraString`, extraStrings)
-
   $("#error-message-stack")
-    .append(extraStrings.join(`<br />`))
-    .append(`<br />${error.message}`) // this is duplicative on Chrome, but not anywhere else. I'd rather have duplicate info on Chrome than missing info in other browsers.
-    .append(`<br />`)
+    .append('<br />')
     .append(stack);
 
   $("#close-error-button").on("click", removeError);
 
   $("#copy-error-button").on("click", function () {
-    const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
-    const environment = JSON.stringify({
-      avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
-      browser: get_browser(),
-    });
-    copy_to_clipboard("**Error:**\n```\n" + textToCopy + "\n```\n**Environment:**\n```\n" + environment + "\n```\n");
+    copy_to_clipboard(build_external_error_message());
   });
 
-  look_for_github_issue(error.message, ...extraStrings)
+  if (get_avtt_setting_value("aggressiveErrorMessages")) {
+    $("#error-message-stack").show();
+  }
+}
+
+/** Displays an error to the user, and looks for matching github issues
+ * @param {Error} error an error object to be parsed and displayed
+ * @param {string|*[]} extraInfo other relevant information */
+function showError(error, ...extraInfo) {
+  if (error?.constructor?.name !== "Error") {
+    error = new Error(error);
+  }
+
+  showErrorMessage(error, ...extraInfo);
+
+  $("#above-vtt-error-message .error-message-buttons").append(`<div style="float: right;top:-22px;position:relative;">Use this button to share logs with developers!<span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 14px;position: relative;">line_end_arrow_notch</span></div>`);
+
+  look_for_github_issue(error.message, ...extraInfo)
     .then((issues) => {
       add_issues_to_error_message(issues, error.message);
     })
     .catch(githubError => {
       console.error("look_for_github_issue", "Failed to look for github issues", githubError);
-    })
+    });
+}
+
+function build_external_error_message(limited = false) {
+  const codeBookend = "\n```\n";
+
+  const error = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
+  const formattedError = `**Error:**${codeBookend}${error}${codeBookend}`;
+
+  const environment = JSON.stringify({
+    avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
+    browser: get_browser(),
+  });
+  const formattedEnvironment = `**Environment:**${codeBookend}${environment}${codeBookend}`;
+
+  const formattedConsoleLogs = `**Other Logs:**${codeBookend}${window.logSnapshot}`; // exclude the closing codeBookend, so we can cleanly slice the full message
+
+  const fullMessage = formattedError + formattedEnvironment + formattedConsoleLogs;
+
+  if (limited) {
+    return fullMessage.slice(0, 2000) + codeBookend;
+  }
+
+  return fullMessage + codeBookend;
 }
 
 function add_issues_to_error_message(issues, errorMessage) {
@@ -148,12 +295,12 @@ function add_issues_to_error_message(issues, errorMessage) {
     let ul = $("#error-issues-list");
     if (ul.length === 0) {
       ul = $(`<ul id="error-issues-list" style="list-style: inside"></ul>`);
-      $("#error-github-issue").append(`<p class="error-good-news">Good News! We found some similar issues. Check them out to see if there's a known workaround for the error you just encountered.</p>`);
+      $("#error-github-issue").append(`<p class="error-good-news">We found some issues that might be similar. Check them out to see if there's a known workaround for the error you just encountered.</p>`);
       $("#error-github-issue").append(ul);
     }
 
     issues.forEach(issue => {
-      const li = $(`<li><a href="${issue.html_url}" target="_blank" style="text-decoration: unset;color: -webkit-link;">${issue.title}</a></li>`);
+      const li = $(`<li><a href="${issue.html_url}" target="_blank">${issue.title}</a></li>`);
       ul.append(li);
       if (issue.labels.find(l => l.name === "workaround")) {
         li.addClass("github-issue-workaround");
@@ -166,14 +313,14 @@ function add_issues_to_error_message(issues, errorMessage) {
   // If this gets spammed, we can change the logic to only include this if issues.length === 0
   if ($("#create-github-button").length === 0) {
     $("#error-github-issue").append(`<div style="margin-top:20px;">Creating a Github Issue <i>(account required)</i> is very helpful. It gives the developers all the details they need to fix the bug. Alternatively, you can use the copy "Copy Error Message" button and then paste it on the AboveVTT discord or subreddit and a developer will eventually create a Github Issue for it.</div>`);
-    const githubButton = $(`<button id="create-github-button">Create Github Issue</button>`);
+    const githubButton = $(`<button id="create-github-button" style="float: left">Create Github Issue</button>`);
     githubButton.click(function() {
       const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
       const environment = JSON.stringify({
         avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
         browser: get_browser(),
       });
-      const errorBody = "**Error:**\n```\n" + textToCopy + "\n```\n**Environment:**\n```\n" + environment + "\n```\n";
+      const errorBody = build_external_error_message(true);
       console.log("look_for_github_issue", `appending createIssueUrl`, errorMessage, errorBody);
       open_github_issue(errorMessage, errorBody);
     });
@@ -513,6 +660,15 @@ function normalize_scene_urls(scenes) {
 
 async function look_for_github_issue(...searchTerms) {
 
+  const searchTermStrings = searchTerms.map(ei => {
+    if (typeof ei === "object") {
+      return JSON.stringify(ei);
+    } else {
+      return ei?.toString();
+    }
+  });
+
+
   // fetch issues that have been marked as bugs
   const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug&state=all", { credentials: "omit" });
   const response = await request.json();
@@ -522,11 +678,12 @@ async function look_for_github_issue(...searchTerms) {
 
   // instantiate fuse to fuzzy match parts of the github issues that we just downloaded
   const fuse = new Fuse(filteredIssues, {
+    threshold: 0.4,         // we want the matches to be a little closer. Default is 0.6, and the lower the threshold the smaller the variance that's allowed
     includeScore: true,     // we want to know the match score, so we can sort by it after we've merged multiple arrays of search results
     keys: ['title', 'body'] // look at the title and body of each item
   });
 
-  return searchTerms
+  return searchTermStrings
     .flatMap(st => {
       // iterate over every search term and collect matching results
       return fuse.search(st)

@@ -2073,6 +2073,15 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     border-radius: 12px;
     margin-right: 4px;
 }
+#above-vtt-error-message .error-good-news {
+    margin: 15px 0 5px 0;
+}
+#above-vtt-error-message .error-message-buttons {
+    margin-top: 15px;
+}
+#above-vtt-error-message a {
+    text-decoration: underline;
+}
 
 #btn_add_chapter {
     background: none;
