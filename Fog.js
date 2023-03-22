@@ -3089,7 +3089,9 @@ function redraw_light(){
 	if(selectedTokens.length>0){
 	
 		if(window.SelectedTokenVision){
-	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter)}%`)
+			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
+				$('#VTT').css('--darkness-filter', `0%`)
+			}
 	  		$('#raycastingCanvas').css('opacity', '1');
 	  	}
 	  	

@@ -5799,7 +5799,7 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 #raycastingCanvas{
-    opacity: max(calc(100% - var(--darkness-filter)), var(--walls-up-shadow-percent));
+    opacity: min(var(--darkness-filter), var(--walls-up-shadow-percent));
 }
 
 
