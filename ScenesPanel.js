@@ -1244,7 +1244,8 @@ function default_scene_data() {
 		grid: 0,
 		snap: 0,
 		reveals: [[0, 0, 0, 0, 2, 0, 1]],
-		order: Date.now()
+		order: Date.now(),
+		darkness_filter: '0'
 	};
 }
 
