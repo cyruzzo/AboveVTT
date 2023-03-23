@@ -484,7 +484,8 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
     return generic_pc_object(true);
   }
   if (!window.pcs) {
-    console.error("window.pcs is undefined");
+    if(is_abovevtt_page())
+      console.error("window.pcs is undefined");
     return useDefault ? generic_pc_object(false) : undefined;
   }
   const pc = window.pcs.find(pc => pc.sheet.includes(idOrSheet));

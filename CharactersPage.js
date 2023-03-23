@@ -52,6 +52,9 @@ function read_current_hp() {
     const hpValue = parseInt($(`.ct-status-summary-mobile__hp-current`).text()) || 0;
     if (hpValue && $(`.ct-status-summary-mobile__hp--has-temp`).length) {
       // DDB doesn't display the temp value on mobile layouts so set this to 1 less, so we can at least show that there is temp hp. See `read_temp_hp` for the other side of this
+      if($('.ct-health-manager__health-item--temp').length){
+        return hpValue - parseInt($('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); /// if hp side panel is open check this for temp hp
+      }
       return hpValue - 1;
     }
     return hpValue;
@@ -64,6 +67,9 @@ function read_temp_hp() {
     return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
   }
   if ($(`.ct-status-summary-mobile__hp--has-temp`).length) {
+    if($('.ct-health-manager__health-item--temp').length){
+        return parseInt(('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); // if hp side panel is open check this for temp hp
+      }
     // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
     return 1;
   }
@@ -224,13 +230,17 @@ function observe_character_sheet_changes(documentToObserve) {
                   }
                 });
                 $(`.ct-condition-manage-pane__condition--special`).each (function () {
-                  conditionsSet.push({
-                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-                    level: $(this).find('.ddbc-number-bar__option--implied').length
-                  });
+                  if($('.ddbc-number-bar__option--active').length > 0){
+                     conditionsSet.push({
+                      name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                      level: $(this).find('.ddbc-number-bar__option--implied').length
+                    });
+                  }     
                 })
                 character_sheet_changed({conditions: conditionsSet});
-              } else if(mutationTarget.hasClass("ct-health-summary__deathsaves-mark")) {
+              } else if(mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
+                       mutationTarget.hasClass("ct-health-manager__input")
+                ) {
                 send_character_hp();
               }
 
@@ -262,15 +272,10 @@ function observe_character_sheet_changes(documentToObserve) {
             break;
           case "characterData":
 
-              if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content')) {
-                let labelledBy = mutationParent.attr('aria-labelledby');
-                if (
-                  labelledBy?.includes('ct-health-summary-current-label') ||
-                  labelledBy?.includes('ct-health-summary-max-label') ||
-                  labelledBy?.includes('ct-health-summary-temp-label')
-                ) {
-                  send_character_hp();
-                }
+              if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
+                mutationTarget.parent().hasClass("ct-health-manager__health-item-value") 
+              ) {
+                send_character_hp();          
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
                 character_sheet_changed({armorClass: parseInt($(`.ddbc-armor-class-box__value`).text())});
               }

@@ -1747,7 +1747,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			.page-header,
 			.homebrew-comments,
 			.mega-menu__fallback{
-				display:none;
+				display:none !important;
 			}
 
 			@media (min-width: 1200px){
