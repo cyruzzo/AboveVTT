@@ -33,11 +33,20 @@ function character_sheet_changed(changes) {
 }
 
 function send_character_hp() {
+  const pc = find_pc_by_player_id(find_currently_open_character_sheet()); // in case we're in an iframe on the DM screen
+  let hitPointInfo = pc?.hitPointInfo || { current: 0, temp: 0, maximum: 0 };
+  hitPointInfo.current = parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
+  hitPointInfo.temp = parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
+  const max = parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || 0;
+  if (max) {
+    // If the user is making death saves, the max hp isn't on screen. In this scenario, we don't want to overwrite it, we want to keep whatever was there before
+    hitPointInfo.maximum = max;
+  }
   character_sheet_changed({
-    hitPointInfo: {
-      current: parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()),
-      maximum: parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()),
-      temp: parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0
+    hitPointInfo: hitPointInfo,
+    deathSaveInfo: {
+      failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
+      successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
     }
   });
 }
@@ -157,10 +166,12 @@ function observe_character_sheet_changes(documentToObserve) {
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       try {
-        const mutationParent = $(mutation.target).parent();
+        console.debug("character_sheet_observer mutation", mutation);
+        let mutationTarget = $(mutation.target);
+        const mutationParent = mutationTarget.parent();
         switch (mutation.type) {
           case "attributes":
-              if ((mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')) || ($(mutation.target).hasClass('ddbc-number-bar__option--interactive') && $(mutation.target).parents('.ct-condition-manage-pane__condition--special').length>0)) { // conditions update from sidebar
+              if ((mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && mutationTarget.hasClass('ddbc-toggle-field')) || (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)) { // conditions update from sidebar
                 let conditionsSet = [];
                 $(`.ct-condition-manage-pane__condition`).each(function () {
                   if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
@@ -177,34 +188,30 @@ function observe_character_sheet_changes(documentToObserve) {
                   });
                 })
                 character_sheet_changed({conditions: conditionsSet});
+              } else if(mutationTarget.hasClass("ct-health-summary__deathsaves-mark")) {
+                send_character_hp();
               }
+
             break;
           case "childList":
-              if ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) {
+              if (
+                $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
+                ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
+                ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
+                mutationTarget.hasClass('ct-health-summary__deathsaves') ||
+                mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
+              ) {
                 send_character_hp();
-              } else if (($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))) {
-                send_character_hp();
-              } else if ($(mutation.target).hasClass('ct-health-summary__deathsaves') || $(mutation.target).hasClass('ct-health-summary__deathsaves-mark')) {
-                character_sheet_changed({
-                  hitPointInfo: {
-                    current: 0,
-                    temp: 0
-                  },
-                  deathSaveInfo: {
-                    failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length,
-                    successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length
-                  }
-                });
               }
-              else if($(mutation.target).hasClass('ct-inspiration__status')) {
+              else if(mutationTarget.hasClass('ct-inspiration__status')) {
                 character_sheet_changed({
-                  inspiration: ($('ct-inspiration__status--active').length>1)
-                })
+                  inspiration: mutationTarget.hasClass('ct-inspiration__status--active')
+                });
               }
             mutation.addedNodes.forEach(node => {
               if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
-                  inject_dice_roll($(mutation.target));
+                  inject_dice_roll(mutationTarget);
                 } catch (error) {
                   console.log("inject_dice_roll failed to process element", error);
                 }
@@ -216,9 +223,9 @@ function observe_character_sheet_changes(documentToObserve) {
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content')) {
                 let labelledBy = mutationParent.attr('aria-labelledby');
                 if (
-                  labelledBy.includes('ct-health-summary-current-label') ||
-                  labelledBy.includes('ct-health-summary-max-label') ||
-                  labelledBy.includes('ct-health-summary-temp-label')
+                  labelledBy?.includes('ct-health-summary-current-label') ||
+                  labelledBy?.includes('ct-health-summary-max-label') ||
+                  labelledBy?.includes('ct-health-summary-temp-label')
                 ) {
                   send_character_hp();
                 }
@@ -228,7 +235,7 @@ function observe_character_sheet_changes(documentToObserve) {
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
-                  inject_dice_roll($(mutation.target));
+                  inject_dice_roll(mutationTarget);
                 } catch (error) {
                   console.log("inject_dice_roll failed to process element", error);
                 }

@@ -690,13 +690,6 @@ class MessageBroker {
 					}
 			}
 
-			if (msg.eventType == "custom/myVTT/playerdata") {
-				self.handlePlayerData(msg.data);
-			}
-			if (msg.eventType == "custom/myVTT/actoplayerdata") {
-				self.acToPlayerData(msg.data);
-			}
-
 			if (msg.eventType == "dice/roll/pending"){
 				// check for injected_data!
 				if(msg.data.injected_data){
@@ -1058,68 +1051,6 @@ class MessageBroker {
 		ct_load(data);
 	}
 
-	handlePlayerData(data) {
-		if (!window.DM)
-			return;
-
-		this.sendTokenUpdateFromPlayerData(data);
-
-		// update combat tracker:
-
-		update_pclist();
-	}
-
-	acToPlayerData(data) {
-		if (!window.DM)
-			return;
-		for(let id in window.TOKEN_OBJECTS){
-			if(id.endsWith(data.id)){
-				window.TOKEN_OBJECTS[id].options.ac = data.ac;
-				window.TOKEN_OBJECTS[id].place();
-				window.TOKEN_OBJECTS[id].update_and_sync();
-			}
-		}	
-	}
-
-	sendTokenUpdateFromPlayerData(data) {
-		console.log("is sendTokenUpdateFromPlayerData still needed?")
-		return;
-		// console.group("sendTokenUpdateFromPlayerData")
-		// if (data.id in window.TOKEN_OBJECTS) {
-		// 	var cur = window.TOKEN_OBJECTS[data.id];
-		//
-		// 	// test for any change
-		// 	if ((cur.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
-		// 		(cur.options.max_hp != data.max_hp) ||
-		// 		(cur.options.ac != data.ac) ||
-		// 		(cur.options.temp_hp != data.temp_hp) ||
-		// 		(cur.options.inspiration != data.inspiration) ||
-		// 		(!areArraysEqualSets(cur.conditions, data.conditions)))
-		// 	{
-		// 		if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
-		// 			var msgdata = {
-		// 				player: cur.options.name,
-		// 				img: cur.options.imgsrc,
-		// 				text: "<b>Check for concentration!!</b>",
-		// 			};
-		//
-		// 			// window.MB.inject_chat(msgdata);
-		// 		}
-		// 		cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
-		//
-		//
-		// 		cur.options.max_hp = data.max_hp;
-		// 		cur.options.ac = data.ac;
-		// 		cur.options.conditions = data.conditions;
-		// 		cur.options.inspiration = data.inspiration;
-		// 		cur.options.temp_hp = data.temp_hp;
-		// 		cur.place();
-		// 		window.MB.sendMessage('custom/myVTT/token', cur.options);
-		// 	}
-		// }
-		// console.groupEnd()
-	}
-
 	encode_message_text(text) {
 		if (is_supported_version('0.66')) {
 			// This is used when the "Send to Gamelog" button sends HTML over the websocket.
@@ -1302,11 +1233,6 @@ class MessageBroker {
 
 	handleScene(msg) {
 		console.debug("handlescene", msg);
-
-		// DISABLED THANKS TO POLLING
-		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
-			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-		}*/
 
 		window.DRAWINGS = [];
 		reset_canvas();

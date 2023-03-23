@@ -497,57 +497,6 @@ async function rebuild_window_pcs() {
   });
 }
 
-function debounced_handle_character_update(msg) {
-  console.debug("debounced_handle_character_update", msg);
-  const playerId = msg?.data?.characterId;
-  if (!playerId) return;
-  if (!window.PLAYER_UPDATE_FUNCTIONS) {
-    window.PLAYER_UPDATE_FUNCTIONS = {};
-  }
-  if (!window.PLAYER_UPDATE_FUNCTIONS[playerId]) {
-    window.PLAYER_UPDATE_FUNCTIONS[playerId] = mydebounce(() => {
-      update_window_pc(playerId)
-        .then(() => {
-          console.log("debounced_handle_character_update called update_window_pc", playerId);
-          const pc = find_pc_by_player_id(playerId, false);
-          if (window.DM && pc) {
-            const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
-            if (tokenObject) {
-              const color = color_from_pc_object(pc);
-              tokenObject.options.color = color;
-              $(`#combat_area tr[data-target='${tokenObject.options.id}'] img[class*='Avatar']`).css("border-color", color);
-              const alternativeImages = tokenObject.options.alternativeImages || [];
-              if (typeof pc.image === "string" && pc.image.length > 0 && alternativeImages && alternativeImages.indexOf(tokenObject.options.imgsrc) < 0) {
-                // the token is not using a custom image so update it with whatever the player has set
-                tokenObject.options.imgsrc = pc.image;
-              }
-              tokenObject.place_sync_persist();
-            }
-          }
-        })
-        .catch(error => {
-          console.warn("debounced_handle_character_update failed to update_window_pc", playerId, error);
-        });
-    }, 4000);
-  }
-  console.debug("debounced_handle_character_update calling debounce function", playerId);
-  window.PLAYER_UPDATE_FUNCTIONS[playerId]();
-}
-
-async function update_window_pc(characterId) {
-  const index = window.pcs.findIndex(pc => pc.id.toString() === characterId.toString());
-  if (index < 0) return; // We haven't even finished fetching all window.pcs yet. No need to update this one yet.
-  const allCharacterDetails = await DDBApi.fetchCharacterDetails([characterId]);
-  const characterData = allCharacterDetails[0];
-  const oldData = window.pcs[index];
-  window.pcs[index] = {
-    ...oldData,
-    ...characterData,
-    image: characterData.decorations?.avatar?.avatarUrl || defaultAvatarUrl,
-    sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
-  };
-}
-
 function update_pc_with_data(playerId, data) {
   if (data.constructor !== Object) {
     console.warn("update_pc_with_data was given invalid data", playerId, data);
@@ -570,6 +519,7 @@ function update_pc_with_data(playerId, data) {
     };
     token.place_sync_persist(); // not sure if this is overkill
   }
+  update_pc_token_rows();
 }
 
 async function harvest_game_id() {

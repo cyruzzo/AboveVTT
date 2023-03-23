@@ -706,7 +706,7 @@ function update_pc_token_rows() {
             row.css("--player-border-color",  color);
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
-            if(pc.hp > 0){
+            if(pc.hitPointInfo.current > 0) {
                 row.find(".subtitle-attibute.hp-attribute").show();
                 row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
             } else{
