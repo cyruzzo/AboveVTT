@@ -35,6 +35,10 @@ const availableToAoe = [
 	"revealname"
 ];
 
+
+
+
+
 const debounceLightChecks = mydebounce(() => {		
 		if(window.walls != undefined){
 			if(window.walls.length < 5){
@@ -44,7 +48,10 @@ const debounceLightChecks = mydebounce(() => {
 		else{
 			redraw_light_walls();	
 		}
-		redraw_light();	}, 100);
+		redraw_light();
+		if(!window.DM)
+			check_token_visibility();
+}, 100);
 
 
 function random_token_color() {
@@ -1349,9 +1356,6 @@ class Token {
 					}, { duration: animationDuration, queue: true, complete: function() {
 						draw_selected_token_bounding_box();
 						debounceLightChecks();
-						if(!window.DM){
-									check_token_visibility();											
-							}
 						}
 						
 					});
