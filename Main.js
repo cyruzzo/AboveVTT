@@ -1447,7 +1447,7 @@ function init_sheet() {
 			toggle_player_sheet();
 		});
 		var sheet_resize_button = $("<div id='sheet_resize_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Resize character sheet'><div class='ddbc-tab-options__header-heading'>Toggle Sheet Size</div></div>");
-		sheet_resize_button.css({ "position": "absolute", "top": "-3px", "left": "-285px", "z-index": "999" });
+		sheet_resize_button.css({ "position": "absolute", "top": "-3px", "left": "-314px", "z-index": "999" });
 		sheet_resize_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_resize_button);
 		// $(".ct-character-sheet__inner").append(sheet_resize_button);
