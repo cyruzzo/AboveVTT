@@ -3156,12 +3156,12 @@ function redraw_light(){
 		
   	
 
-  		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
-  		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true);
-	}    // draws rays	
+  		
+  		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+	}    	
   }
-
-  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`)
+  context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
 }
 
 
