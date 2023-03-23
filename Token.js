@@ -2654,7 +2654,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	window.ScenesHandler.create_update_token(options);
 
 	if (is_player_id(options.id)) {
-		window.MB.handlePlayerData(pc);
+		update_pc_token_rows();
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
 
