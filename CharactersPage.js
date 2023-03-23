@@ -44,6 +44,41 @@ function send_character_hp() {
   });
 }
 
+
+function send_abilities(){
+
+  let scoreOnTop = $('.ddbc-ability-summary__primary .ddbc-signed-number--large').length == 0;
+  
+  let abilitiesObject = [
+      {name: 'str', save: 0, score: 0, label: 'Strength', modifier: 0},
+      {name: 'dex', save: 0, score: 0, label: 'Dexterity', modifier: 0},
+      {name: 'con', save: 0, score: 0, label: 'Constitution', modifier: 0},
+      {name: 'int', save: 0, score: 0, label: 'Intelligence', modifier: 0},
+      {name: 'wis', save: 0, score: 0, label: 'Wisdom', modifier: 0},
+      {name: 'cha', save: 0, score: 0, label: 'Charisma', modifier: 0}
+    ];
+ 
+
+  for(let i = 0; i < 6; i++){
+     if(scoreOnTop){
+        abilitiesObject[i].score = parseInt($($(`.ddbc-ability-summary__primary button`)[i]).text());
+     }
+     else{
+        abilitiesObject[i].score =  parseInt($($(`.ddbc-ability-summary__secondary`)[i]).text());
+     }
+
+    abilitiesObject[i].modifier = parseInt($($(`.ddbc-signed-number--large`)[i]).attr('aria-label').replace(/\s/g, ''));
+
+    abilitiesObject[i].save = parseInt($($(`.ddbc-saving-throws-summary__ability-modifier .ddbc-signed-number`)[i]).attr('aria-label').replace(/\s/g, ''));
+  }
+
+
+
+   character_sheet_changed({abilities: abilitiesObject});
+}
+
+
+
 function read_current_hp() {
   if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).length) {
     return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
@@ -281,6 +316,11 @@ function observe_character_sheet_changes(documentToObserve) {
               }
               else if ($(mutationTarget[0].nextElementSibling).hasClass('ct-armor-manage-pane__heading-extra')) {
                 character_sheet_changed({armorClass: parseInt(mutationTarget[0].data)});
+              }
+              else if(mutationTarget.parents('.ddbc-ability-summary').length>0 || 
+                mutationTarget.parents('.ddbc-saving-throws-summary__ability-modifier').length>0
+              ){
+                send_abilities();
               }
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
