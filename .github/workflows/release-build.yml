@@ -169,7 +169,8 @@ jobs:
       - name: "Generate Discord changelog message"
         if: ${{ inputs.release_type == 'beta' }}
         run: |
-          changelog=$(cat release.json | jq '.body' | xargs echo)
+          changelog=$(cat release.json | jq '.body')
+          changelog=${changelog:1:-1}
           echo $changelog > changelog.txt
           discord_message="**${version_name}**"
           while read -r line; do
