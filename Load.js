@@ -72,7 +72,6 @@ window.scripts = [
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
-	{ src: "DnDBeyond/DDBCharacterData.js" },
 	{ src: "EncounterHandler.js" },
 	{ src: "Fog.js" },
 	{ src: "Jitsi.js" },

@@ -79,6 +79,110 @@ class Token {
 		this.prepareWalkableArea();
 	}
 
+	/** @return {number} the total of this token's HP and temp HP */
+	get hp() {
+		return this.baseHp + this.tempHp;
+	}
+	set hp(newValue) {
+		this.baseHp = newValue;
+	}
+
+	/** @return {number} the percentage of this token's base HP divided by it's max hp */
+	get hpPercentage() {
+		// If we choose to include tempHp in this calculation, we need to make sure functions like token_health_aura can handle percentages that are greater than 100%
+		return Math.round((this.baseHp / this.maxHp) * 100)
+	}
+
+	/** @return {number} the value of this token's HP without adding temp HP */
+	get baseHp() {
+		if (!isNaN(this.options.hitPointInfo?.current)) {
+			return parseInt(this.options.hitPointInfo.current);
+		} else if (!isNaN((this.options.hp))) {
+			return parseInt(this.options.hp);
+		}
+		return 0;
+	}
+	set baseHp(newValue) {
+		if (this.options.hitPointInfo) {
+			this.options.hitPointInfo.current = newValue;
+		} else {
+			this.options.hitPointInfo = {
+				maximum: this.maxHp,
+				current: newValue,
+				temp: this.tempHp
+			};
+		}
+	}
+
+	/** @return {number} the value of this token's temp HP */
+	get tempHp() {
+		if (!isNaN(this.options.hitPointInfo?.temp)) {
+			return parseInt(this.options.hitPointInfo.temp);
+		} else if (!isNaN(this.options.temp_hp)) {
+			return parseInt(this.options.temp_hp);
+		}
+		return 0;
+	}
+	set tempHp(newValue) {
+		if (this.options.hitPointInfo) {
+			this.options.hitPointInfo.temp = newValue;
+		} else {
+			this.options.hitPointInfo = {
+				maximum: this.maxHp,
+				current: this.baseHp,
+				temp: newValue
+			};
+		}
+	}
+
+	/** @return {number} the value of this token's max HP */
+	get maxHp() {
+		if (!isNaN(this.options.hitPointInfo?.maximum)) {
+			return parseInt(this.options.hitPointInfo.maximum);
+		} else if (!isNaN((this.options.max_hp))) {
+			return parseInt(this.options.max_hp);
+		}
+		return 0;
+	}
+	set maxHp(newValue) {
+		if (this.options.hitPointInfo) {
+			this.options.hitPointInfo.maximum = newValue;
+		} else {
+			this.options.hitPointInfo = {
+				maximum: newValue,
+				current: this.baseHp,
+				temp: this.tempHp
+			};
+		}
+	}
+
+	/** @return {number} the value of this token's AC */
+	get ac() {
+		if (!isNaN(this.options.armorClass)) {
+			return parseInt(this.options.armorClass);
+		} else if (!isNaN(this.options.ac)) {
+			return parseInt(this.options.ac);
+		}
+		return 0;
+	}
+	set ac(newValue) {
+		this.options.armorClass = newValue;
+	}
+
+	/** @return {string[]} the names of the conditions currently active on the token */
+	get conditions() {
+		return this.options.conditions.map(c => {
+			if (typeof c === "string") {
+				return c;
+			} else if (c.constructor === Object) {
+				if (c.level) {
+					return `${c.name} (Level ${c.level})`;
+				}
+				return c.name;
+			}
+		});
+	}
+
 	defaultAoeOptions() {
 		if (this.isAoe()) {
 			// look at build_aoe_token_options and set defaults here
@@ -202,7 +306,7 @@ class Token {
 	}
 
 	hasCondition(conditionName) {
-		return this.options.conditions.includes(conditionName) || this.options.custom_conditions.some(e => e.name === conditionName);
+		return this.conditions.includes(conditionName) || this.options.custom_conditions.some(e => e.name === conditionName);
 	}
 	addCondition(conditionName, text='') {
 	    if (this.hasCondition(conditionName)) {
@@ -218,7 +322,7 @@ class Token {
 	                whisper: this.options.name
 	            });
 	        } else {
-	            this.options.conditions.push(conditionName);
+	            this.options.conditions.push({ name: conditionName });
 	        }
 	    } else {
 	    	let condition = {
@@ -232,14 +336,20 @@ class Token {
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			if (this.isPlayer()) {
-	            window.MB.inject_chat({
-	                player: window.PLAYER_NAME,
-	                img: window.PLAYER_IMG,
-	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
-	                whisper: this.options.name
-	            });
-	        } else {
-			array_remove_index_by_value(this.options.conditions, conditionName);
+				window.MB.inject_chat({
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
+					whisper: this.options.name
+				});
+			} else {
+				this.options.conditions = this.options.conditions.filter(c => {
+					if (typeof c === "string") {
+						return c !== conditionName;
+					} else {
+						return c?.name !== conditionName;
+					}
+				});
 			}
 		} else {
 			array_remove_index_by_value(this.options.custom_conditions, conditionName);
@@ -508,33 +618,22 @@ class Token {
 	 */
 	update_dead_cross(token){
 		console.group("update_dead_cross")
-		let tokenData = this.munge_token_data()
-		if(tokenData.max_hp > 0){
+
+		if(this.maxHp > 0) {
 			// add a cross if it doesn't exist
 			if(token.find(".dead").length === 0) 
 				token.prepend(`<div class="dead" hidden></div>`);
 			// update cross scale
 			const deadCross = token.find('.dead')
-			deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(tokenData.size) / 10}px;`)
+			deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / 10}px;`)
 			// check token death
-			if (tokenData.max_hp > 0 && parseInt(tokenData.hp) === 0) {
-				deadCross.show()
-			} else {
+			if (this.hp > 0) {
 				deadCross.hide()
+			} else {
+				deadCross.show()
 			}
 		}
 		console.groupEnd()
-	}
-
-	/**
-	 * Some details come from the token, some from DDB especially for players. So munge the objects together
-	 * @return object containing this tokens data and possibly the players data if it's a player token
-	 */
-	munge_token_data(){
-		if (window.PLAYER_STATS[this.options.id]) {
-			return {...this.options, ...window.PLAYER_STATS[this.options.id]}
-		}
-		return {...this.options}
 	}
 
 	/**
@@ -544,7 +643,6 @@ class Token {
 	update_health_aura(token){
 		console.group("update_health_aura")
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
-		let tokenData = this.munge_token_data()
 		if($(`.token[data-id='${this.options.id}']>.hpvisualbar`).length<1){
 			let hpvisualbar = $(`<div class='hpvisualbar'></div>`);
 			$(`.token[data-id='${this.options.id}']`).append(hpvisualbar);
@@ -572,28 +670,15 @@ class Token {
 			}
 		}
 
-
-		if (tokenData.max_hp > 0) {
-			if(window.PLAYER_STATS[this.options.id] || !tokenData.temp_hp) {	
-				var tokenHpAuraColor = token_health_aura(
-					Math.round((tokenData.hp / tokenData.max_hp) * 100)
-				);	
-				token.css('--hp-percentage', Math.round((tokenData.hp / tokenData.max_hp) * 100) + "%");
-			}
-			else{
-				var tokenHpAuraColor = token_health_aura(
-					Math.round(((tokenData.hp - tokenData.temp_hp) / tokenData.max_hp) * 100)
-				);	
-				token.css('--hp-percentage', Math.round(((tokenData.hp - tokenData.temp_hp) / tokenData.max_hp) * 100) + "%");
-			}
+		if (this.maxHp > 0) {
+			token.css('--hp-percentage', `${this.hpPercentage}%`);
 		}
 
-
-
+		const tokenHpAuraColor = token_health_aura(this.hpPercentage);
 		let tokenWidth = this.sizeWidth();
 		let tokenHeight = this.sizeHeight();
 			
-		if(tokenData.disableaura || !tokenData.hp || !tokenData.max_hp) {
+		if(this.options.disableaura || !this.hp || !this.maxHp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
 		} 
@@ -603,14 +688,14 @@ class Token {
 				tokenHeight = tokenHeight - 6;
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
-			if(tokenData.temp_hp) {
+			if(this.tempHp) {
 				token.css('--token-temp-hp', "#4444ffbd");
 			}
 			else {
 				token.css('--token-temp-hp', "transparent");
 			}
 		}
-		if(tokenData.disableborder) {
+		if(this.options.disableborder) {
 			token.css('--token-border-color', 'transparent');
 			$("token:before").css('--token-border-color', 'transparent');
 		} 
@@ -623,12 +708,12 @@ class Token {
 			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
 		}
-		if(!tokenData.enablepercenthpbar){
+		if(!this.options.enablepercenthpbar){
 			token.css('--token-hpbar-display', 'none');
 		}
 		else {
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
-			if(tokenData.temp_hp) {
+			if(this.tempHp) {
 				token.css('--token-temp-hpbar', "#4444ffbd");
 			}
 			else {
@@ -669,7 +754,7 @@ class Token {
 			'max-height': tokenHeight + 'px',
 		});
 
-		if(window.DM && typeof this.options.hp != "undefined" && this.options.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
+		if(window.DM && this.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
 			var msgdata = {
 				player: this.options.name,
@@ -687,10 +772,10 @@ class Token {
 	 * @returns scale of token
 	 */
 	get_token_scale(){
-		let tokenData = this.munge_token_data()
-		if (!(tokenData.max_hp) > 0 || (tokenData.disableaura))
-			return 1
-		return (((tokenData.size - 15) * 100) / tokenData.size) / 100;
+		if (this.maxHp <= 0 || this.options.disableaura) {
+			return 1;
+		}
+		return (((this.options.size - 15) * 100) / this.options.size) / 100;
 	}
 
 	update_from_page() {
@@ -718,14 +803,14 @@ class Token {
 		// AND stats aren't disabled and has hp bar
 		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && !this.options.disablestat && old.has(".hp").length > 0) {
 			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
-				old.find(".hp").val(Math.max(0, parseInt(this.options.hp) + parseInt(old.find(".hp").val())));
+				old.find(".hp").val(Math.max(0, this.hp + parseInt(old.find(".hp").val())));
 			}
 			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
-				old.find(".max_hp").val(Math.max(0, parseInt(this.options.max_hp) + parseInt(old.find(".max_hp").val())));
+				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-			this.options.hp = old.find(".hp").val();
-			this.options.max_hp = old.find(".max_hp").val();
+			this.hp = old.find(".hp").val();
+			this.maxHp = old.find(".max_hp").val();
 			
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
@@ -761,11 +846,11 @@ class Token {
 	}
 	update_combat_tracker(){
 		/* UPDATE COMBAT TRACKER */
-		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").val(this.options.hp);
-		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.options.max_hp);
+		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").val(this.hp);
+		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.maxHp);
 
 
-		if((!window.DM && this.options.hidestat == true && this.options.name != window.PLAYER_NAME) || this.options.disablestat == true || (!(this.options.id.startsWith("/profile")) && !window.DM && !this.options.player_owned)) {
+		if((!window.DM && this.options.hidestat == true && this.options.name != window.PLAYER_NAME) || this.options.disablestat == true || (!this.isPlayer() && !window.DM && !this.options.player_owned)) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'hidden');
@@ -797,8 +882,8 @@ class Token {
 		/* UPDATE QUICK ROLL */
 
 		if ($("#qrm_dialog")){
-			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_hp").val(this.options.hp);
-			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_maxhp").val(this.options.max_hp);
+			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_hp").val(this.hp);
+			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_maxhp").val(this.maxHp);
 			
 			if($("#quick_roll_area tr[data-target='" + this.options.id + "'] .qrm_hp").val() === '0'){
 				$("#quick_roll_area tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
@@ -840,14 +925,14 @@ class Token {
 		var input_width = Math.floor(this.sizeWidth() * 0.3);
 
 		var hp_input = $("<input class='hp'>").css('width', input_width)
-		hp_input.val(this.options.hp);
+		hp_input.val(this.hp);
 
 		var maxhp_input = $("<input class='max_hp'>").css('width', input_width);
-		maxhp_input.val(this.options.max_hp);
+		maxhp_input.val(this.maxHp);
 
 		if (this.options.disableaura){
 			console.log("building hp bar", this.options)
-			this.options.temp_hp && this.options.temp_hp > 0 ?
+			this.tempHp && this.tempHp > 0 ?
 				hpbar.css('background', '#77a2ff')
 				: hpbar.css('background', '');
 		}
@@ -864,10 +949,10 @@ class Token {
 				self.update_and_sync(e);
 				let tokenID = $(this).parent().parent().attr("data-id");
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].options.hp = hp_input.val();
+					window.all_token_objects[tokenID].hp = hp_input.val();
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].options.hp = hp_input.val();	
+					window.TOKEN_OBJECTS[tokenID].hp = hp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
 				setTimeout(ct_persist(), 500);
@@ -879,10 +964,10 @@ class Token {
 				maxhp_input.val(maxhp_input.val().trim());
 				self.update_and_sync(e);
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].options.max_hp = maxhp_input.val();
+					window.all_token_objects[tokenID].maxHp = maxhp_input.val();
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].options.max_hp = maxhp_input.val();	
+					window.TOKEN_OBJECTS[tokenID].maxHp = maxhp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
 				setTimeout(ct_persist(), 500);
@@ -987,7 +1072,7 @@ class Token {
 
 
 		if(showthem){
-			if (!this.options.max_hp && !this.options.hp) { // even if we are supposed to show them, only show them if they have something to show.
+			if (!this.maxHp && !this.hp) { // even if we are supposed to show them, only show them if they have something to show.
 				token.find(".hpbar").css("visibility", "hidden");
 			} else {
 				token.find(".hpbar").css("visibility", "visible");
@@ -1084,14 +1169,14 @@ class Token {
 			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 		}
 		
-		
-		const conditionsTotal = this.options.conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player));
+		const conditions = this.conditions;
+		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player));
 
 		if (conditionsTotal > 0) {
 			let conditionCount = 0;
 			
-			for (let i = 0; i < this.options.conditions.length; i++) {
-				const conditionName = this.options.conditions[i];
+			for (let i = 0; i < conditions.length; i++) {
+				const conditionName = conditions[i];
 				const isExhaustion = conditionName.startsWith("Exhaustion");
 				const conditionSymbolName = isExhaustion ? 'exhaustion' : conditionName.toLowerCase();
 				const conditionContainer = $("<div class='dnd-condition condition-container' />");
@@ -1566,17 +1651,15 @@ class Token {
 			}
 			if(this.options.vision == undefined){
 				if(this.isPlayer()){
-		            let pcData = find_pc_by_player_id(this.options.id);
+		            let pcData = find_pc_by_player_id(this.options.id, false);
 		            let darkvision = 0;
-		            if(pcData.id != 0){
-			            if(pcData.senses.length > 0) {
+		            if(pcData && pcData.senses.length > 0) {
 			                for(let i=0; i < pcData.senses.length; i++){
 			                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
 			                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
 			                    if(range > darkvision)
 			                        darkvision = range;
 			                }
-			            }
 			        }
 		            this.options.vision = {
 		                feet: darkvision.toString(),
@@ -2391,19 +2474,17 @@ function dragging_right_click_mouseup(event) {
 	}
 }
 
-// Named function to bind/unbind contextmenu
-function return_false() {
-
-	return false;
-}
-
 function default_options() {
 	return {
 		color: random_token_color(),
 		conditions: [],
-		hp: "",
-		max_hp: "",
-		ac: "",
+		custom_conditions: [],
+		hitPointInfo: {
+			maximum: 0,
+			current: 0,
+			temp: 0
+		},
+		armorClass: 0,
 		name: "",
 		aura1: {
 			feet: "0",
@@ -2502,11 +2583,16 @@ function place_token_at_map_point(tokenObject, x, y) {
 		return;
 	}
 
+	const pc = find_pc_by_player_id(tokenObject.id, false) || {};
+
 	let options = {
 		...default_options(),
 		...window.TOKEN_SETTINGS,
-		...tokenObject
+		...tokenObject,
+		...pc,
+		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
 	};
+
 	// aoe tokens have classes instead of images
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
 		options.imgsrc = parse_img(options.imgsrc);
@@ -2562,9 +2648,9 @@ function place_token_at_map_point(tokenObject, x, y) {
 
 	// place the token
 	window.ScenesHandler.create_update_token(options);
-	if (options.id in window.PLAYER_STATS) {
-		window.MB.handlePlayerData(window.PLAYER_STATS[options.id]);
-		send_player_data_to_all_peers(window.PLAYER_STATS[options.id]);
+
+	if (is_player_id(options.id)) {
+		window.MB.handlePlayerData(pc);
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
 

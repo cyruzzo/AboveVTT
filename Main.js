@@ -1837,9 +1837,21 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			};
 
 			if (!window.DM) {
+
+
+
+
+
+
+				// TODO: STOP DOING THIS? We have observers that do this, but I don't know if those are running in these iframes yet
+
+
+
+
+
+
 				window.PLAYERDATA = playerdata;
 				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-				send_player_data_to_all_peers(playerdata);
 			}
 			else {
 				window.MB.handlePlayerData(playerdata);
@@ -1885,34 +1897,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		});
 
 		observer.observe(mutation_target, mutation_config);
-
-	//artificer infusions still require this as it is not included in ac values captured elsewhere
-		const waitToSync = (timeElapsed = 0) => {
-			setTimeout(() => {
-				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
-				if (ac_element.length > 0) {
-					if (tokenid in window.TOKEN_OBJECTS){
-						let totalAc = $(event.target).contents().find(".ddbc-armor-class-box__value").html();
-						if(window.TOKEN_OBJECTS[tokenID].options.ac != totalAc)
-						{
-							window.TOKEN_OBJECTS[tokenid].options.ac = totalAc
-							window.TOKEN_OBJECTS[tokenid].place();
-							window.TOKEN_OBJECTS[tokenid].update_and_sync();
-							if(tokenid in window.PLAYER_STATS) {
-								window.PLAYER_STATS[tokenid].ac = totalAc;
-								send_player_data_to_all_peers(window.PLAYER_STATS[tokenid])
-							}
-						}
-
-					}
-				} else {
-					if (timeElapsed < 15000) {
-						waitToSync(timeElapsed + 500);
-					}
-				}
-			}, 500);
-		};
-		waitToSync();
 
 		setTimeout(function() {
 			$("#sheet").find("iframe").each(function() {
@@ -2789,12 +2773,6 @@ function init_ui() {
 		let el=$("<"+old.prop('nodeName')+">");
 		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
 		$("#site").append(el);
-		setTimeout(function(){
-			console.log(2);
-			retriveRules();
-			loadModules(initalModules);
-		},10000);
-		setTimeout(get_pclist_player_data,25000);
 	}
 
 }
@@ -3468,14 +3446,6 @@ function show_player_sheet() {
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").addClass("ddbc-tab-options__header-heading--is-active");
 	if (window.innerWidth < 1024) {
 		hide_sidebar();
-	}
-	for(let id in window.TOKEN_OBJECTS){
-		if(id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[id].options.ac != $(".ddbc-armor-class-box__value").html()){
-			window.MB.sendMessage("custom/myVTT/actoplayerdata",{
-				id: window.PLAYER_ID,
-				ac: $(".ddbc-armor-class-box__value").html()
-			});
-		}
 	}
 }
 

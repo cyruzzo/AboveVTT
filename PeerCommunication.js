@@ -33,7 +33,6 @@ function is_peer_connected(playerId) {
 class PeerEventType {
   static hello = "hello";
   static goodbye = "goodbye";
-  static playerData = "playerData";
   static cursor = "cursor";
   static preferencesChange = "preferencesChange"; // we send the current color in cursor events, but we don't want to add extra processing of those events because they're very numerous
 }
@@ -61,16 +60,6 @@ class PeerEvent {
       message: PeerEventType.goodbye,
       peerId: window.PeerManager.peer.id,
       playerId: my_player_id()
-    };
-  }
-
-  /** A message that shares player data with all peers. This data is used to populate the players panel
-   * This message is sent from the DM to all players any time window.PLAYER_STATS is updated
-   * @param {object} playerData the data or that player see window.PLAYER_STATS for more details on the structure */
-  static playerData(playerData) {
-    return {
-      message: PeerEventType.playerData,
-      playerData: playerData
     };
   }
 
@@ -128,7 +117,6 @@ function handle_peer_event(eventData) {
       case PeerEventType.cursor:            handle_peer_cursor_event(eventData); break;
       case PeerEventType.goodbye:           peer_said_goodbye(eventData); break;
       case PeerEventType.hello:             peer_said_hello(eventData); break;
-      case PeerEventType.playerData:        update_player_data_from_peer(eventData.playerData); break;
       case PeerEventType.preferencesChange: peer_changed_preferences(eventData); break;
       default: console.debug("handle_peer_event is ignoring event", eventData); // using console.debug because we don't want to spam the console with warning or errors.
     }
@@ -274,13 +262,6 @@ function peer_connected(peerId, playerId) {
     // let them know our preferences
     window.PeerManager.sendToPeer(peerId, PeerEvent.preferencesChange());
 
-    // send them any player data that we have
-    if (window.DM) {
-      for (const id in window.PLAYER_STATS) {
-        send_player_data_to(peerId, window.PLAYER_STATS[id]);
-      }
-    }
-
     init_peer_fade_function(playerId);
 
   } catch (error) {
@@ -404,7 +385,7 @@ function peer_changed_preferences(eventData) {
  * @param {string} peerColor a valid CSS color string that represents the player, defaults to gray which indicates offline */
 function update_player_online_indicator(playerId, isConnected, peerColor) {
   const color = peerColor ? peerColor : "gray";
-  const pc = find_pc_by_player_id(playerId);
+  const pc = find_pc_by_player_id(playerId, false);
   console.debug("update_player_online_indicator", playerId, isConnected, color, pc);
   if (pc) {
     if (window.DM) {
@@ -658,32 +639,6 @@ function fade_peer_ruler(playerId) {
     console.debug("fade_peer_ruler is missing a fade function", playerId, typeof playerId, error);
     init_peer_fade_function(playerId);
   }
-}
-
-/** Sends a {@link PeerEvent.playerData} event to a specific peer
- * @param {string} peerId the id of the peerjs peer to send to
- * @param {object} playerData the player data to send */
-function send_player_data_to(peerId, playerData) {
-  if (typeof playerData === "object") {
-    window.PeerManager.send(PeerEvent.playerData(playerData));
-  }
-}
-
-/** Sends a {@link PeerEvent.playerData} event to all connected peers
- * @param {object} playerData the player data to send */
-function send_player_data_to_all_peers(playerData) {
-  if (typeof playerData === "object") {
-    window.PeerManager.send(PeerEvent.playerData(playerData));
-  }
-}
-
-/** called when we receive a {@link PeerEvent.playerData} event */
-function update_player_data_from_peer(playerData) {
-  if (!window.PLAYER_STATS) {
-    window.PLAYER_STATS = {};
-  }
-  window.PLAYER_STATS[playerData.id] = playerData;
-  refreshTokensSidebarList();
 }
 
 /** a debounced function that updates the tokens panel.

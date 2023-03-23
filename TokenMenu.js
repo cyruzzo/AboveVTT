@@ -953,9 +953,9 @@ function build_menu_stat_inputs(tokenIds) {
 	let elev = '';
 
 	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || window.DM)){
-		hp = (typeof tokens[0].options.hp !== 'undefined') ? tokens[0].options.hp : '';
-		max_hp = (typeof tokens[0].options.max_hp !==  'undefined') ? tokens[0].options.max_hp : '';
-		ac = (typeof tokens[0].options.ac !== 'undefined') ? tokens[0].options.ac : '';
+		hp = tokens[0].hp;
+		max_hp = tokens[0].maxHp;
+		ac = tokens[0].ac;
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
 	}
 	else{
@@ -984,9 +984,9 @@ function build_menu_stat_inputs(tokenIds) {
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newHP = parseInt(token.options.hp) + parseInt(newValue);
+					newHP = token.hp + parseInt(newValue);
 				}
-				token.options.hp = newHP;
+				token.hp = newHP;
 				token.place_sync_persist();
 				$(".hpMenuInput").val(newHP);
 			});
@@ -998,9 +998,9 @@ function build_menu_stat_inputs(tokenIds) {
 
 		tokens.forEach(token => {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newHP = parseInt(token.options.hp) + parseInt(newValue);
+				newHP = token.hp + parseInt(newValue);
 			}
-			token.options.hp = newHP;
+			token.hp = newHP;
 			token.place_sync_persist();
 			$(".hpMenuInput").val(newHP);
 		});
@@ -1013,9 +1013,9 @@ function build_menu_stat_inputs(tokenIds) {
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newMaxHP = parseInt(token.options.max_hp) + parseInt(newValue);
+					newMaxHP = token.maxHp + parseInt(newValue);
 				}
-				token.options.max_hp = newMaxHP;
+				token.maxHp = newMaxHP;
 				token.place_sync_persist();
 				$(".maxHpMenuInput").val(newMaxHP);
 			});
@@ -1027,9 +1027,9 @@ function build_menu_stat_inputs(tokenIds) {
 
 		tokens.forEach(token => {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newMaxHP = parseInt(token.options.max_hp) + parseInt(newValue);
+				newMaxHP = token.maxHp + parseInt(newValue);
 			}
-			token.options.max_hp = newMaxHP;
+			token.maxHp = newMaxHP;
 			token.place_sync_persist();
 			$(".maxHpMenuInput").val(newMaxHP);
 		});
@@ -1886,7 +1886,7 @@ function open_quick_roll_menu(e){
 					_hp.val(max_hp.val());
 				}
 				else{
-					_hp.val(token.options.hp - damage);
+					_hp.val(token.hp - damage);
 				}
 				_hp.trigger('change');
 			}
@@ -2066,7 +2066,7 @@ function add_to_quick_roll_menu(token){
 	if(token.isPlayer()){
 		hp_input.prop("disabled", true);
 	}
-	hp_input.val(token.options.hp);
+	hp_input.val(token.hp);
 
 	if(hp_input.val() === '0'){
 		qrm_entry.toggleClass("ct_dead", true);
@@ -2083,7 +2083,7 @@ function add_to_quick_roll_menu(token){
 	if(token.isPlayer()){
 		maxhp_input.prop("disabled", true);
 	}
-	maxhp_input.val(token.options.max_hp);
+	maxhp_input.val(token.maxHp);
 
 	if (!token.isPlayer()) {
 		hp_input.change(function(e) {
@@ -2091,16 +2091,16 @@ function add_to_quick_roll_menu(token){
 			var old = $("#tokens").find(selector);
 		
 			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(hp_input.val())));
+				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
 			}
 
 			old.find(".hp").val(hp_input.val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.hp = hp_input.val();
+				window.all_token_objects[token.options.id].hp = hp_input.val();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2113,15 +2113,15 @@ function add_to_quick_roll_menu(token){
 			var old = $("#tokens").find(selector);
 
 			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(maxhp_input.val())));
+				maxhp_input.val(Math.max(0, token.hp + parseInt(maxhp_input.val())));
 			}
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2260,8 +2260,8 @@ function qrm_fetch_stat(token) {
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
 		//This relies of player data being loaded, which may take a few seconds after the page opens
 		//if its a player character they have the save stored
-		player_stats = window.PLAYER_STATS[token.options.id]
-		roll_bonus = player_stats.abilities[save_dropdown_value]['save']
+		const pc = find_pc_by_player_id(token.options.id);
+		roll_bonus = pc.abilities[save_dropdown_value]['save']
 
 		if (roll_bonus >= 0){
 			roll_bonus = "+"+roll_bonus;
