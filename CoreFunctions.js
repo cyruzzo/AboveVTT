@@ -11,7 +11,8 @@
  * If you need to add things for when the CharacterPage is running, do that in CharacterPage.js
  * If you need to add things for all of the above situations, do that here */
 $(function() {
-  monitor_console_logs();
+  if(window.self == window.top)
+    monitor_console_logs();
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -28,12 +29,26 @@ $(function() {
   }
 
   window.diceRoller = new DiceRoller();
+  if (is_abovevtt_page()) {
+    tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(!window.DM){
+         window.MB.sendMessage("custom/myVTT/character-update", {
+          characterId: event.data.characterId,
+          pcData: event.data.pcData
+        });
+      }
+      else{
+        update_pc_with_data(event.data.characterId, event.data.pcData);
+      }   
+    })
+  }
 });
 
 const async_sleep = m => new Promise(r => setTimeout(r, m));
 
 const charactersPageRegex = /\/characters\/\d+/;
 
+const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication');
 
 function mydebounce(func, timeout = 800){
   let timer;

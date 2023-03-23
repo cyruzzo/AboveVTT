@@ -1669,6 +1669,41 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		observe_character_sheet_changes($(event.target).contents());
 
+
+		let scripts = [
+		    // External Dependencies
+		    { src: "jquery-3.6.0.min.js" },
+		    // AboveVTT Files
+		    { src: "DiceContextMenu/DiceContextMenu.js" },
+		    { src: "DiceRoller.js" },
+		    { src: "DDBApi.js" },
+		    // AboveVTT files that execute when loaded
+		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
+		    { src: "CharactersPage.js" } // Make sure CharactersPage executes last
+		]
+
+		// Too many of our scripts depend on each other.
+		// This ensures that they are loaded sequentially to avoid any race conditions.
+		let injectScript = function () {
+		    if (scripts.length === 0) {
+		        delete scripts;
+		        return;
+		    }
+		    let nextScript = scripts.shift();
+		    let s = $(event.target)[0].contentDocument.createElement('script');
+		    s.src = `${window.EXTENSION_PATH}${nextScript.src}`;
+		    if (nextScript.type !== undefined) {
+		        s.setAttribute('type', nextScript.type);
+		    }
+		    console.log(`attempting to append ${nextScript.src}`);
+		    s.onload = function() {
+		        console.log(`finished injecting ${nextScript.src}`);
+		        injectScript();
+		    };
+		    ($(event.target)[0].contentDocument.head || $(event.target)[0].contentDocument.documentElement).appendChild(s);
+		}
+		injectScript();
+
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {

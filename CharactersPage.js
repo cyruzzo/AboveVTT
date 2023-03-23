@@ -6,23 +6,22 @@ $(function() {
 
 let recentCharacterUpdates = {};
 
-const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication');
 
 
 const sendCharacterUpdateEvent = mydebounce(() => {
   console.log("sendCharacterUpdateEvent")
-  if (is_abovevtt_page()) {
+  if (is_abovevtt_page() && !window.DM) {
     window.MB.sendMessage("custom/myVTT/character-update", {
       characterId: window.PLAYER_ID,
       pcData: {...recentCharacterUpdates}
     });
   }
-  else{
+  else if(!window.DM){
     tabCommunicationChannel.postMessage({
       characterId: window.location.href.split('/').slice(-1)[0],
       pcData: {...recentCharacterUpdates}
     });
-  }
+  } 
   recentCharacterUpdates = {};
 }, 1500);
 
@@ -138,14 +137,7 @@ function observe_character_sheet_changes(documentToObserve) {
   if (window.character_sheet_observer) {
     window.character_sheet_observer.disconnect();
   }
-  if (is_abovevtt_page()) {
-    tabCommunicationChannel.addEventListener ('message', (event) => {
-         window.MB.sendMessage("custom/myVTT/character-update", {
-          characterId: event.data.characterId,
-          pcData: event.data.pcData
-        });
-    });
-  }
+
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
 
     // console.log("character_sheet_observer", mutationList);
