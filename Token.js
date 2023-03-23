@@ -112,6 +112,7 @@ class Token {
 				temp: this.tempHp
 			};
 		}
+		this.options.hp = newValue; // backwards compatibility
 	}
 
 	/** @return {number} the value of this token's temp HP */
@@ -133,6 +134,7 @@ class Token {
 				temp: newValue
 			};
 		}
+		this.options.temp_hp = newValue; // backwards compatibility
 	}
 
 	/** @return {number} the value of this token's max HP */
@@ -154,6 +156,7 @@ class Token {
 				temp: this.tempHp
 			};
 		}
+		this.options.max_hp = newValue; // backwards compatibility
 	}
 
 	/** @return {number} the value of this token's AC */
@@ -167,6 +170,7 @@ class Token {
 	}
 	set ac(newValue) {
 		this.options.armorClass = newValue;
+		this.options.ac = newValue; // backwards compatibility
 	}
 
 	/** @return {string[]} the names of the conditions currently active on the token */
@@ -176,11 +180,11 @@ class Token {
 				return c;
 			} else if (c.constructor === Object) {
 				if (c.level) {
-					return `${c.name} (Level ${c.level})`;
+					return c.level > 0 ? `${c.name} (Level ${c.level})` : undefined; // only return levels greater than 0. This is probably only Exhaustion
 				}
 				return c.name;
 			}
-		});
+		}).filter(c => c); // remove undefined and empty strings
 	}
 
 	defaultAoeOptions() {
@@ -329,7 +333,7 @@ class Token {
 	    		'name': conditionName,
 	    		'text': text
 	    	}
-	        this.options.custom_conditions.push(condition);
+				this.options.custom_conditions.push(condition);
 	    }
 	}
 	

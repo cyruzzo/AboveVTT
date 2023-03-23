@@ -555,6 +555,7 @@ function update_pc_with_data(playerId, data) {
     };
     token.place_sync_persist(); // not sure if this is overkill
   }
+  update_pc_token_rows();
 }
 
 async function harvest_game_id() {
