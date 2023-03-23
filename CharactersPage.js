@@ -274,7 +274,8 @@ function observe_character_sheet_changes(documentToObserve) {
                 })
                 character_sheet_changed({conditions: conditionsSet});
               } else if(mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
-                       mutationTarget.hasClass("ct-health-manager__input")
+                        mutationTarget.hasClass("ct-health-manager__input") ||
+                        mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
                 ) {
                 send_character_hp();
               }
