@@ -1003,8 +1003,9 @@ class Token {
 	}
 
 	build_ac() {
-		var bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
-		var ac = $("<div class='ac'/>");
+		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
+		let acValue = (this.options.armorClass != undefined) ? this.options.armorClass : this.options.ac
+		let ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");
 		ac.css('right', "-1px");
 		ac.css('width', bar_height + "px");
@@ -1016,7 +1017,7 @@ class Token {
 				<g xmlns="http://www.w3.org/2000/svg" transform="translate(6 0)">
 					<path d="M51.991,7.982c-14.628,0-21.169-7.566-21.232-7.64c-0.38-0.456-1.156-0.456-1.536,0c-0.064,0.076-6.537,7.64-21.232,7.64   c-0.552,0-1,0.448-1,1v19.085c0,10.433,4.69,20.348,12.546,26.521c3.167,2.489,6.588,4.29,10.169,5.352   c0.093,0.028,0.189,0.042,0.285,0.042s0.191-0.014,0.285-0.042c3.581-1.063,7.002-2.863,10.169-5.352   c7.856-6.174,12.546-16.088,12.546-26.521V8.982C52.991,8.43,52.544,7.982,51.991,7.982z "></path>
 					<path d="M50.991,28.067   c0,9.824-4.404,19.151-11.782,24.949c-2.883,2.266-5.983,3.92-9.218,4.921c-3.235-1-6.335-2.655-9.218-4.921   C13.395,47.219,8.991,37.891,8.991,28.067V9.971c12.242-0.272,18.865-5.497,21-7.545c2.135,2.049,8.758,7.273,21,7.545V28.067z" style="fill:white;"></path>
-					<text style="font-size:34px;color:#000;" transform="translate(${this.options.ac > 9 ? 9 : 20},40)">${this.options.ac}</text>
+					<text style="font-size:34px;color:#000;" transform="translate(${acValue> 9 ? 9 : 20},40)">${acValue}</text>
 				</g>
 			</svg>
 
@@ -1026,8 +1027,8 @@ class Token {
 	}
 
 	build_elev() {
-		var bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
-		var elev = $("<div class='elev'/>");
+		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
+		let elev = $("<div class='elev'/>");
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
 		elev.css("position", "absolute");
 		elev.css('right', bar_width * 4.35 + "px");
@@ -1083,12 +1084,12 @@ class Token {
 
 
 		if(showthem){
-			if (!this.maxHp && !this.hp) { // even if we are supposed to show them, only show them if they have something to show.
+			if (!this.maxHp && !this.hp && !this.options.hitPointInfo?.current && !this.options.hitPointInfo?.maximum) { // even if we are supposed to show them, only show them if they have something to show.
 				token.find(".hpbar").css("visibility", "hidden");
 			} else {
 				token.find(".hpbar").css("visibility", "visible");
 			}
-			if (!this.options.ac) { // even if we are supposed to show it, only show them if they have something to show.
+			if (!this.options.ac && !this.options.armorClass) { // even if we are supposed to show it, only show them if they have something to show.
 				token.find(".ac").hide();
 			} else {
 				token.find(".ac").show();

@@ -632,7 +632,7 @@ function build_example_token(options) {
 			break;
 	}
 	mergedOptions.hitPointInfo = {
-		hp: hpnum,
+		current: hpnum,
 		maximum: hpnum,
 		temp: 0
 	}

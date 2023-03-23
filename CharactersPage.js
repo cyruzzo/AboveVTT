@@ -273,11 +273,14 @@ function observe_character_sheet_changes(documentToObserve) {
           case "characterData":
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
-                mutationTarget.parent().hasClass("ct-health-manager__health-item-value") 
+                mutationParent.hasClass("ct-health-manager__health-item-value") 
               ) {
                 send_character_hp();          
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
                 character_sheet_changed({armorClass: parseInt($(`.ddbc-armor-class-box__value`).text())});
+              }
+              else if ($(mutationTarget[0].nextElementSibling).hasClass('ct-armor-manage-pane__heading-extra')) {
+                character_sheet_changed({armorClass: parseInt(mutationTarget[0].data)});
               }
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
