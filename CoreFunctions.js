@@ -11,7 +11,7 @@
  * If you need to add things for when the CharacterPage is running, do that in CharacterPage.js
  * If you need to add things for all of the above situations, do that here */
 $(function() {
-  if(window.self == window.top)
+  if(is_abovevtt_page())
     monitor_console_logs();
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
@@ -57,7 +57,19 @@ function mydebounce(func, timeout = 800){
     timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };
 }
-
+function find_currently_open_character_sheet() {
+  if (is_characters_page()) {
+    return window.location.pathname;
+  }
+  let sheet;
+  $("#sheet").find("iframe").each(function () {
+    const src = $(this).clone().attr("src");
+    if (src != "") {
+      sheet = src;
+    }
+  })
+  return sheet;
+}
 function monitor_console_logs() {
   // slightly modified version of https://stackoverflow.com/a/67449524
   if (console.concerningLogs === undefined) {

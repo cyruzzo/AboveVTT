@@ -343,7 +343,7 @@ function set_window_name_and_image(callback) {
  * If AboveVTT is not running, the button will be a join button
  * If AboveVTT is running, the button will be an exit button */
 function inject_join_exit_abovevtt_button() {
-  if (!is_characters_page()) return;                        // wrong page, dude
+  if (!is_characters_page() || window.self != window.top) return; // wrong page, dude
   if ($(".ddbc-campaign-summary").length === 0) return;     // we don't have any campaign data
   if ($("#avtt-character-join-button").length > 0) return;  // we already injected a button
 

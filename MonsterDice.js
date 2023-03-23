@@ -303,19 +303,7 @@ function scan_player_creature_pane(target) {
 	console.groupEnd()
 }
 
-function find_currently_open_character_sheet() {
-	if (is_characters_page()) {
-		return window.location.pathname;
-	}
-	let sheet;
-	$("#sheet").find("iframe").each(function () {
-		const src = $(this).clone().attr("src");
-		if (src != "") {
-			sheet = src;
-		}
-	})
-	return sheet;
-}
+
 
 /**
  * When a roll button is right-clicked, this builds and displays a contextmenu, then handles everything related to that contextmenu
