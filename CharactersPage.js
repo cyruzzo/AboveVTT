@@ -33,22 +33,64 @@ function character_sheet_changed(changes) {
 }
 
 function send_character_hp() {
-  const pc = find_pc_by_player_id(find_currently_open_character_sheet()); // in case we're in an iframe on the DM screen
-  let hitPointInfo = pc?.hitPointInfo || { current: 0, temp: 0, maximum: 0 };
-  hitPointInfo.current = parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
-  hitPointInfo.temp = parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
-  const max = parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || 0;
-  if (max) {
-    // If the user is making death saves, the max hp isn't on screen. In this scenario, we don't want to overwrite it, we want to keep whatever was there before
-    hitPointInfo.maximum = max;
-  }
+  const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
   character_sheet_changed({
-    hitPointInfo: hitPointInfo,
-    deathSaveInfo: {
-      failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
-      successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
-    }
+    hitPointInfo: {
+      current: read_current_hp(),
+      maximum: read_max_hp(pc?.hitPointInfo?.maximum),
+      temp: read_temp_hp()
+    },
+    deathSaveInfo: read_death_save_info()
   });
+}
+
+function read_current_hp() {
+  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).length) {
+    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
+  }
+  if ($(`.ct-status-summary-mobile__hp-current`).length) {
+    const hpValue = parseInt($(`.ct-status-summary-mobile__hp-current`).text()) || 0;
+    if (hpValue && $(`.ct-status-summary-mobile__hp--has-temp`).length) {
+      // DDB doesn't display the temp value on mobile layouts so set this to 1 less, so we can at least show that there is temp hp. See `read_temp_hp` for the other side of this
+      return hpValue - 1;
+    }
+    return hpValue;
+  }
+  return 0;
+}
+
+function read_temp_hp() {
+  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).length) {
+    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
+  }
+  if ($(`.ct-status-summary-mobile__hp--has-temp`).length) {
+    // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
+    return 1;
+  }
+  return 0;
+}
+
+function read_max_hp(currentMaxValue = 0) {
+  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).length) {
+    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || currentMaxValue;
+  }
+  if ($(".ct-status-summary-mobile__hp-max").length) {
+    return parseInt($(".ct-status-summary-mobile__hp-max").text()) || currentMaxValue;
+  }
+  return currentMaxValue;
+}
+
+function read_death_save_info() {
+  if ($(".ct-status-summary-mobile__deathsaves-marks").length) {
+    return {
+      failCount: $('.ct-status-summary-mobile__deathsaves--fail .ct-status-summary-mobile__deathsaves-mark--active').length || 0,
+      successCount: $('.ct-status-summary-mobile__deathsaves--success .ct-status-summary-mobile__deathsaves-mark--active').length || 0
+    };
+  }
+  return {
+    failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
+    successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
+  };
 }
 
 function init_characters_pages() {
