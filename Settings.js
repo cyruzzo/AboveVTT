@@ -488,7 +488,7 @@ function init_settings() {
 		body.append(`
 			<h3 class="token-image-modal-footer-title">Import / Export</h3>
 			<div class="sidebar-panel-header-explanation">
-				<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
+				<p><b>WARNING</b>: The import / export feature is experimental. Use at your own risk. A future version will include an import/export wizard.</p>
 				<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
 				Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
 				<div class="sidebar-panel-footer-horizontal-wrapper">

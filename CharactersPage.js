@@ -452,7 +452,8 @@ function observe_character_theme_change() {
             const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);
-              window.PeerManager.send(PeerEvent.preferencesChange());
+              if(window.PeerManager != undefined)
+                window.PeerManager.send(PeerEvent.preferencesChange());
               character_sheet_changed({color: newColor});
             }
           }
@@ -471,7 +472,8 @@ function observe_character_image_change() {
         // This should be just fine, but catch any parsing errors just in case
         const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
         window.PLAYER_IMG = updatedUrl;
-        character_sheet_changed({image: updatedUrl});
+        character_sheet_changed({image: updatedUrl,
+                                avatarUrl: updatedUrl});
       } catch { }
     });
   });
