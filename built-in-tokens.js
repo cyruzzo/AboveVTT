@@ -1056,6 +1056,301 @@ const builtInTokens = [
     "name": "Elf 10",
     "folderPath": "/Midjourney Elves",
     "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144167345078353/Elven_Token_10.png"
+  },
+  {
+    "name": "Fighter 1",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144423864504453/Fighter_Token_12.png"
+  },
+  {
+    "name": "Fighter 2",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144424095186994/Fighter_Token_13.png"
+  },
+  {
+    "name": "Fighter 3",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144424359444611/Fighter_Token_14.png"
+  },
+  {
+    "name": "Fighter 4",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144424627863673/Fighter_Token_15.png"
+  },
+  {
+    "name": "Fighter 5",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144424913092739/Fighter_Token_16.png"
+  },
+  {
+    "name": "Fighter 6",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144425135378583/Fighter_Token_17.png"
+  },
+  {
+    "name": "Fighter 7",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144425357672539/Fighter_Token_18.png"
+  },
+  {
+    "name": "Fighter 8",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144425567404093/Fighter_Token_19.png"
+  },
+  {
+    "name": "Fighter 9",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144425810661416/Fighter_Token_20.png"
+  },
+  {
+    "name": "Fighter 10",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144426041344071/Fighter_Token_21.png"
+  },
+  {
+    "name": "Fighter 11",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144515883356252/Fighter_Token_35.png"
+  },
+  {
+    "name": "Fighter 12",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144516231467091/Fighter_Token_36.png"
+  },
+  {
+    "name": "Fighter 13",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144516587986984/Fighter_Token_37.png"
+  },
+  {
+    "name": "Fighter 14",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144516902572153/Fighter_Token_38.png"
+  },
+  {
+    "name": "Fighter 15",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144517359734834/Fighter_Token_39.png"
+  },
+  {
+    "name": "Fighter 16",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144517967912990/Fighter_Token_40.png"
+  },
+  {
+    "name": "Fighter 17",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144518450270208/Fighter_Token_41.png"
+  },
+  {
+    "name": "Fighter 18",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144518949376030/Fighter_Token_42.png"
+  },
+  {
+    "name": "Fighter 19",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144519612080168/Fighter_Token_43.png"
+  },
+  {
+    "name": "Fighter 20",
+    "folderPath": "/Midjourney Fighters",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144520174129183/Fighter_Token_44.png"
+  },
+  {
+    "name": "Goblin 1",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144926312775780/Goblin_Token_1.png"
+  },
+  {
+    "name": "Goblin 2",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144926581207090/Goblin_Token_2.png"
+  },
+  {
+    "name": "Goblin 3",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144927017402449/Goblin_Token_3.png"
+  },
+  {
+    "name": "Goblin 4",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144927298437150/Goblin_Token_4.png"
+  },
+  {
+    "name": "Goblin 5",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144927600410634/Goblin_Token_5.png"
+  },
+  {
+    "name": "Goblin 6",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144927902416996/Goblin_Token_6.png"
+  },
+  {
+    "name": "Goblin 7",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144928225374300/Goblin_Token_7.png"
+  },
+  {
+    "name": "Goblin 8",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144928506380368/Goblin_Token_8.png"
+  },
+  {
+    "name": "Goblin 9",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144928753860628/Goblin_Token_9.png"
+  },
+  {
+    "name": "Goblin 10",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088144928984543252/Goblin_Token_10.png"
+  },
+  {
+    "name": "Goblin 11",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145089794162738/Goblin_Token_37.png"
+  },
+  {
+    "name": "Goblin 12",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145090049998920/Goblin_Token_38.png"
+  },
+  {
+    "name": "Goblin 13",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145090381365248/Goblin_Token_39.png"
+  },
+  {
+    "name": "Goblin 14",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145090670764102/Goblin_Token_40.png"
+  },
+  {
+    "name": "Goblin 15",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145090914025492/Goblin_Token_41.png"
+  },
+  {
+    "name": "Goblin 16",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145091224412201/Goblin_Token_42.png"
+  },
+  {
+    "name": "Goblin 17",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145091518005338/Goblin_Token_43.png"
+  },
+  {
+    "name": "Goblin 18",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145091857760347/Goblin_Token_44.png"
+  },
+  {
+    "name": "Goblin 19",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145092105216103/Goblin_Token_45.png"
+  },
+  {
+    "name": "Goblin 20",
+    "folderPath": "/Midjourney Goblin",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145092382031952/Goblin_Token_46.png"
+  },
+  {
+    "name": "Guards 1",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145286775455805/Guards_Token_9.png"
+  },
+  {
+    "name": "Guards 2",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145287077433415/Guards_Token_10.png"
+  },
+  {
+    "name": "Guards 3",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145290378354809/Guards_Token_11.png"
+  },
+  {
+    "name": "Guards 4",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145290730684517/Guards_Token_12.png"
+  },
+  {
+    "name": "Guards 5",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145291045249155/Guards_Token_13.png"
+  },
+  {
+    "name": "Guards 6",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145291372412949/Guards_Token_14.png"
+  },
+  {
+    "name": "Guards 7",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145291628257470/Guards_Token_15.png"
+  },
+  {
+    "name": "Guards 8",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145291867340830/Guards_Token_16.png"
+  },
+  {
+    "name": "Guards 9",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145292131569824/Guards_Token_17.png"
+  },
+  {
+    "name": "Guards 10",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088145292404203550/Guards_Token_18.png"
+  },
+  {
+    "name": "Guards 11",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146010670379050/Guards_Token_21.png"
+  },
+  {
+    "name": "Guards 12",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146010892669008/Guards_Token_22.png"
+  },
+  {
+    "name": "Guards 13",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146011131760640/Guards_Token_23.png"
+  },
+  {
+    "name": "Guards 14",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146015409942639/Guards_Token_24.png"
+  },
+  {
+    "name": "Guards 15",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146015632232518/Guards_Token_25.png"
+  },
+  {
+    "name": "Guards 16",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146015858741278/Guards_Token_26.png"
+  },
+  {
+    "name": "Guards 17",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146016093614230/Guards_Token_27.png"
+  },
+  {
+    "name": "Guards 18",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146016315904060/Guards_Token_28.png"
+  },
+  {
+    "name": "Guards 19",
+    "folderPath": "/Midjourney Guards",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088146016542412871/Guards_Token_29.png"
   }
 
 ];
