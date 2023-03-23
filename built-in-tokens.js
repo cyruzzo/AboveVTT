@@ -803,11 +803,6 @@ const builtInTokens = [
     "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088143275665395793/Demon_Token_33.png"
   },
   {
-    "name": "Demon 20",
-    "folderPath": "/Midjourney Demons",
-    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088143275665395793/Demon_Token_33.png"
-  },
-  {
     "name": "Dragon 1",
     "folderPath": "/Midjourney Dragons",
     "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1088143452308525056/Dragon_Token_9.png"
