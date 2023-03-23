@@ -2686,13 +2686,12 @@ function deselect_all_tokens() {
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
 	if(window.DM && darknessPercent < 40){
    	 	darknessPercent = 40; 	
-   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
-	else if(window.DM){
-   		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+	else{
    		$('#raycastingCanvas').css('opacity', '');
    	}
+   		$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
    	}

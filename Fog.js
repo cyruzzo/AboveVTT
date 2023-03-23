@@ -3072,6 +3072,12 @@ function redraw_light(){
 	let offsetX = canvas.offsetLeft;
 	let offsetY = canvas.offsetTop;
 
+	let offscreenCanvasMask = document.createElement('canvas');
+	let offscreenContext = offscreenCanvasMask.getContext('2d');
+
+	offscreenCanvasMask.width = canvas.width;
+	offscreenCanvasMask.height = canvas.height;
+
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
@@ -3089,7 +3095,9 @@ function redraw_light(){
 	if(selectedTokens.length>0){
 	
 		if(window.SelectedTokenVision){
-	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter)}%`)
+			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
+				$('#VTT').css('--darkness-filter', `0%`)
+			}
 	  		$('#raycastingCanvas').css('opacity', '1');
 	  	}
 	  	
@@ -3148,13 +3156,12 @@ function redraw_light(){
 		
   	
 
-  		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
-  	
-	
-	}    // draws rays
-
-
+  		
+  		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+	}    	
   }
+  context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
 }
 
 
