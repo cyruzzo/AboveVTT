@@ -83,6 +83,9 @@ class Token {
 	get hp() {
 		return this.baseHp + this.tempHp;
 	}
+	set hp(newValue) {
+		this.baseHp = newValue;
+	}
 
 	/** @return {number} the percentage of this token's base HP divided by it's max hp */
 	get hpPercentage() {
@@ -99,6 +102,17 @@ class Token {
 		}
 		return 0;
 	}
+	set baseHp(newValue) {
+		if (this.options.hitPointInfo) {
+			this.options.hitPointInfo.current = newValue;
+		} else {
+			this.options.hitPointInfo = {
+				maximum: this.maxHp,
+				current: newValue,
+				temp: this.tempHp
+			};
+		}
+	}
 
 	/** @return {number} the value of this token's temp HP */
 	get tempHp() {
@@ -108,6 +122,17 @@ class Token {
 			return parseInt(this.options.temp_hp);
 		}
 		return 0;
+	}
+	set tempHp(newValue) {
+		if (this.options.hitPointInfo) {
+			this.options.hitPointInfo.temp = newValue;
+		} else {
+			this.options.hitPointInfo = {
+				maximum: this.maxHp,
+				current: this.baseHp,
+				temp: newValue
+			};
+		}
 	}
 
 	/** @return {number} the value of this token's max HP */
@@ -119,6 +144,17 @@ class Token {
 		}
 		return 0;
 	}
+	set maxHp(newValue) {
+		if (this.options.hitPointInfo) {
+			this.options.hitPointInfo.maximum = newValue;
+		} else {
+			this.options.hitPointInfo = {
+				maximum: newValue,
+				current: this.baseHp,
+				temp: this.tempHp
+			};
+		}
+	}
 
 	/** @return {number} the value of this token's AC */
 	get ac() {
@@ -128,6 +164,9 @@ class Token {
 			return parseInt(this.options.ac);
 		}
 		return 0;
+	}
+	set ac(newValue) {
+		this.options.armorClass = newValue;
 	}
 
 	/** @return {string[]} the names of the conditions currently active on the token */
@@ -674,7 +713,7 @@ class Token {
 		}
 		else {
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
-			if(this.options.temp_hp) {
+			if(this.tempHp) {
 				token.css('--token-temp-hpbar', "#4444ffbd");
 			}
 			else {
@@ -770,8 +809,8 @@ class Token {
 				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-			this.options.hp = old.find(".hp").val();
-			this.options.max_hp = old.find(".max_hp").val();
+			this.hp = old.find(".hp").val();
+			this.maxHp = old.find(".max_hp").val();
 			
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
@@ -910,10 +949,10 @@ class Token {
 				self.update_and_sync(e);
 				let tokenID = $(this).parent().parent().attr("data-id");
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].options.hp = hp_input.val();
+					window.all_token_objects[tokenID].hp = hp_input.val();
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].options.hp = hp_input.val();	
+					window.TOKEN_OBJECTS[tokenID].hp = hp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
 				setTimeout(ct_persist(), 500);
@@ -925,10 +964,10 @@ class Token {
 				maxhp_input.val(maxhp_input.val().trim());
 				self.update_and_sync(e);
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].options.max_hp = maxhp_input.val();
+					window.all_token_objects[tokenID].maxHp = maxhp_input.val();
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].options.max_hp = maxhp_input.val();	
+					window.TOKEN_OBJECTS[tokenID].maxHp = maxhp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
 				setTimeout(ct_persist(), 500);
@@ -2435,19 +2474,17 @@ function dragging_right_click_mouseup(event) {
 	}
 }
 
-// Named function to bind/unbind contextmenu
-function return_false() {
-
-	return false;
-}
-
 function default_options() {
 	return {
 		color: random_token_color(),
 		conditions: [],
-		hp: "",
-		max_hp: "",
-		ac: "",
+		custom_conditions: [],
+		hitPointInfo: {
+			maximum: 0,
+			current: 0,
+			temp: 0
+		},
+		armorClass: 0,
 		name: "",
 		aura1: {
 			feet: "0",

@@ -848,9 +848,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             } else {
                 options.tokenSize = tokenSize;
             }
-            options.hp = pc.hitPointInfo?.current || 0;
-            options.ac = pc.armorClass;
-            options.max_hp = pc.hitPointInfo?.maximum || 0;
+            options.hitPointInfo = pc.hitPointInfo || {
+                current: 0,
+                maximum: 0,
+                temp: 0
+            };
+            options.armorClass = pc.armorClass;
             options.color = color_from_pc_object(pc);
             break;
         case ItemType.Monster:
@@ -868,15 +871,18 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     hpVal = listItem.monsterData.averageHitPoints;
                     break;
             }
-            options.hp = hpVal;
-            options.max_hp = hpVal;
+            options.hitPointInfo = {
+                current: hpVal,
+                maximum: hpVal,
+                temp: 0
+            };
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 options.sizeId = listItem.monsterData.sizeId;
                 // TODO: handle custom sizes
             }
-            options.ac = listItem.monsterData.armorClass;
+            options.armorClass = listItem.monsterData.armorClass;
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
             let placedCount = 1;

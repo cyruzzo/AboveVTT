@@ -986,7 +986,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newHP = token.hp + parseInt(newValue);
 				}
-				token.options.hp = newHP;
+				token.hp = newHP;
 				token.place_sync_persist();
 				$(".hpMenuInput").val(newHP);
 			});
@@ -1000,7 +1000,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newHP = token.hp + parseInt(newValue);
 			}
-			token.options.hp = newHP;
+			token.hp = newHP;
 			token.place_sync_persist();
 			$(".hpMenuInput").val(newHP);
 		});
@@ -1013,9 +1013,9 @@ function build_menu_stat_inputs(tokenIds) {
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-					newMaxHP = parseInt(token.options.max_hp) + parseInt(newValue);
+					newMaxHP = token.maxHp + parseInt(newValue);
 				}
-				token.options.max_hp = newMaxHP;
+				token.maxHp = newMaxHP;
 				token.place_sync_persist();
 				$(".maxHpMenuInput").val(newMaxHP);
 			});
@@ -1027,9 +1027,9 @@ function build_menu_stat_inputs(tokenIds) {
 
 		tokens.forEach(token => {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
-				newMaxHP = parseInt(token.options.max_hp) + parseInt(newValue);
+				newMaxHP = token.maxHp + parseInt(newValue);
 			}
-			token.options.max_hp = newMaxHP;
+			token.maxHp = newMaxHP;
 			token.place_sync_persist();
 			$(".maxHpMenuInput").val(newMaxHP);
 		});
@@ -2097,10 +2097,10 @@ function add_to_quick_roll_menu(token){
 			old.find(".hp").val(hp_input.val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.hp = hp_input.val();
+				window.all_token_objects[token.options.id].hp = hp_input.val();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2118,10 +2118,10 @@ function add_to_quick_roll_menu(token){
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();

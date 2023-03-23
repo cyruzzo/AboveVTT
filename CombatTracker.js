@@ -519,12 +519,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		
 	var divider = $("<div style='display:inline-block;float:left'>/</>");
 		
-	max_hp=$("<div class='max_hp'/>");
+	let max_hp=$("<div class='max_hp'/>");
 	var maxhp_input = $("<input class='max_hp'>");
 	if(token.isPlayer()){
 		maxhp_input.prop("disabled", true);
 	}
-	maxhp_input.val(token.options.max_hp);
+	maxhp_input.val(token.maxHp);
 	max_hp.append(maxhp_input);
 	max_hp.css('font-size','11px');
 	//max_hp.css('width','20px');
@@ -553,10 +553,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			old.find(".hp").val(hp_input.val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.hp = hp_input.val();
+				window.all_token_objects[token.options.id].hp = hp_input.val();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			setTimeout(ct_persist(), 500);
@@ -574,10 +574,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			setTimeout(ct_persist(), 500);
@@ -817,8 +817,8 @@ function ct_load(data=null){
 
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
-						window.TOKEN_OBJECTS[data[i]['data-target']].options.hp = window.all_token_objects[data[i]['data-target']].options.hp;
-						window.TOKEN_OBJECTS[data[i]['data-target']].options.max_hp = window.all_token_objects[data[i]['data-target']].options.max_hp;
+						window.TOKEN_OBJECTS[data[i]['data-target']].hp = window.all_token_objects[data[i]['data-target']].hp;
+						window.TOKEN_OBJECTS[data[i]['data-target']].maxHp = window.all_token_objects[data[i]['data-target']].maxHp;
 					}
 				}
 

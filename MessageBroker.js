@@ -1084,40 +1084,40 @@ class MessageBroker {
 	sendTokenUpdateFromPlayerData(data) {
 		console.log("is sendTokenUpdateFromPlayerData still needed?")
 		return;
-		console.group("sendTokenUpdateFromPlayerData")
-		if (data.id in window.TOKEN_OBJECTS) {
-			var cur = window.TOKEN_OBJECTS[data.id];
-
-			// test for any change
-			if ((cur.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
-				(cur.options.max_hp != data.max_hp) ||
-				(cur.options.ac != data.ac) ||
-				(cur.options.temp_hp != data.temp_hp) ||
-				(cur.options.inspiration != data.inspiration) ||
-				(!areArraysEqualSets(cur.conditions, data.conditions)))
-			{			
-				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
-					var msgdata = {
-						player: cur.options.name,
-						img: cur.options.imgsrc,
-						text: "<b>Check for concentration!!</b>",
-					};
-
-					// window.MB.inject_chat(msgdata);
-				}
-				cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
-
-
-				cur.options.max_hp = data.max_hp;
-				cur.options.ac = data.ac;
-				cur.options.conditions = data.conditions;
-				cur.options.inspiration = data.inspiration;
-				cur.options.temp_hp = data.temp_hp;
-				cur.place();
-				window.MB.sendMessage('custom/myVTT/token', cur.options);
-			}
-		}
-		console.groupEnd()
+		// console.group("sendTokenUpdateFromPlayerData")
+		// if (data.id in window.TOKEN_OBJECTS) {
+		// 	var cur = window.TOKEN_OBJECTS[data.id];
+		//
+		// 	// test for any change
+		// 	if ((cur.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
+		// 		(cur.options.max_hp != data.max_hp) ||
+		// 		(cur.options.ac != data.ac) ||
+		// 		(cur.options.temp_hp != data.temp_hp) ||
+		// 		(cur.options.inspiration != data.inspiration) ||
+		// 		(!areArraysEqualSets(cur.conditions, data.conditions)))
+		// 	{
+		// 		if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
+		// 			var msgdata = {
+		// 				player: cur.options.name,
+		// 				img: cur.options.imgsrc,
+		// 				text: "<b>Check for concentration!!</b>",
+		// 			};
+		//
+		// 			// window.MB.inject_chat(msgdata);
+		// 		}
+		// 		cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
+		//
+		//
+		// 		cur.options.max_hp = data.max_hp;
+		// 		cur.options.ac = data.ac;
+		// 		cur.options.conditions = data.conditions;
+		// 		cur.options.inspiration = data.inspiration;
+		// 		cur.options.temp_hp = data.temp_hp;
+		// 		cur.place();
+		// 		window.MB.sendMessage('custom/myVTT/token', cur.options);
+		// 	}
+		// }
+		// console.groupEnd()
 	}
 
 	encode_message_text(text) {

@@ -1837,6 +1837,19 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			};
 
 			if (!window.DM) {
+
+
+
+
+
+
+				// TODO: STOP DOING THIS? We have observers that do this, but I don't know if those are running in these iframes yet
+
+
+
+
+
+
 				window.PLAYERDATA = playerdata;
 				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
 			}

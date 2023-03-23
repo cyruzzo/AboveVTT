@@ -631,13 +631,16 @@ function build_example_token(options) {
 			hpnum = 10;
 			break;
 	}
-	mergedOptions.hp = hpnum;
-	mergedOptions.max_hp = hpnum;
+	mergedOptions.hitPointInfo = {
+		hp: hpnum,
+		maximum: hpnum,
+		temp: 0
+	}
 	mergedOptions.id = `exampleToken-${uuid()}`;
 	mergedOptions.size = 90;
 	// mergedOptions.gridHeight = 1;
 	// mergedOptions.gridWidth = 1;
-	mergedOptions.ac = 10;
+	mergedOptions.armorClass = 10;
 
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
 	let token = new Token(mergedOptions);
