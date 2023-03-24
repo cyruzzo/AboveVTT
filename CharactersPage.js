@@ -77,7 +77,35 @@ function send_abilities(){
    character_sheet_changed({abilities: abilitiesObject});
 }
 
-
+function send_senses() {
+  // this seems to be the same for both desktop and mobile layouts which is nice for once
+  try {
+    let changeData = {};
+    const passiveSenses = $(".ct-senses__callouts .ct-senses__callout");
+    const perception = parseInt($(passiveSenses[0]).find(".ct-senses__callout-value").text());
+    if (perception) changeData.passivePerception = perception;
+    const investigation = parseInt($(passiveSenses[1]).find(".ct-senses__callout-value").text());
+    if (investigation) changeData.passiveInvestigation = investigation;
+    const insight = parseInt($(passiveSenses[2]).find(".ct-senses__callout-value").text());
+    if (insight) changeData.passiveInsight = insight;
+    const senses = $(".ct-senses__summary").text().split(",").map(sense => {
+      try {
+        const name = sense.trim().split(" ")[0].trim();
+        const distance = sense.trim().substring(name.length).trim();
+        return { name: name, distance: distance };
+      } catch (senseError) {
+        console.debug("Failed to parse sense", sense, senseError);
+        return undefined;
+      }
+    }).filter(s => s); // filter out any undefined
+    if (senses.length > 0) {
+      changeData.senses = senses;
+    }
+    character_sheet_changed(changeData);
+  } catch (error) {
+    console.debug("Failed to send senses", error);
+  }
+}
 
 function read_current_hp() {
   if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).length) {
@@ -278,24 +306,30 @@ function observe_character_sheet_changes(documentToObserve) {
                         mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
                 ) {
                 send_character_hp();
+              } else if (mutationTarget.hasClass("ct-subsection--senses")) {
+                send_senses();
               }
 
             break;
           case "childList":
-              if (
-                $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
-                ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
-                ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
-                mutationTarget.hasClass('ct-health-summary__deathsaves') ||
-                mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
-              ) {
-                send_character_hp();
-              }
-              else if(mutationTarget.hasClass('ct-inspiration__status')) {
-                character_sheet_changed({
-                  inspiration: mutationTarget.hasClass('ct-inspiration__status--active')
-                });
-              }
+            if (
+              $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
+              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
+              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
+              mutationTarget.hasClass('ct-health-summary__deathsaves') ||
+              mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
+            ) {
+              send_character_hp();
+            }
+            else if(mutationTarget.hasClass('ct-inspiration__status')) {
+              character_sheet_changed({
+                inspiration: mutationTarget.hasClass('ct-inspiration__status--active')
+              });
+            } else if (mutationTarget.hasClass("ct-sense-manage-pane__senses")) {
+              send_senses();
+            }
+
+            // TODO: check for class or something. We don't need to do this on every mutation
             mutation.addedNodes.forEach(node => {
               if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
