@@ -107,6 +107,38 @@ function send_senses() {
   }
 }
 
+function send_movement_speeds(speedManagePage = $(".ct-speed-manage-pane")) {
+  console.log("send_movement_speeds", speedManagePage);
+  if (speedManagePage.find(".ct-speed-manage-pane__speeds").length > 0) {
+    // the sidebar is open, let's grab them all
+    let speeds = [];
+    speedManagePage.find(".ct-speed-manage-pane__speed").each(function() {
+      const container = $(this);
+      const name = container.find(".ct-speed-manage-pane__speed-label").text();
+      const distance = parseInt(container.find(".ddbc-distance-number__number").text());
+      speeds.push({name: name, distance: distance});
+    });
+    if (speeds.length) {
+      character_sheet_changed({speeds: speeds});
+      return;
+    }
+  }
+
+  // just update the primary speed
+  const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
+  if (pc && pc.speeds) {
+    let speeds = pc.speeds;
+    const name = $(".ct-speed-box__heading").text();
+    const distance = parseInt($(".ct-speed-box__box-value .ddbc-distance-number .ddbc-distance-number__number").text());
+    const index = speeds.findIndex(s => s.name === name);
+    speeds[index].distance = distance;
+    character_sheet_changed({speeds: speeds});
+  } else {
+    // we don't want to overwrite everything with only the primary speed
+    console.warn("not collecting speed because we don't have a pc to get defaults from");
+  }
+}
+
 function read_current_hp() {
   if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).length) {
     return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
@@ -333,6 +365,8 @@ function observe_character_sheet_changes(documentToObserve) {
               });
             } else if (mutationTarget.hasClass("ct-sense-manage-pane__senses")) {
               send_senses();
+            } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
+              send_movement_speeds(mutationTarget);
             }
 
             // TODO: check for class or something. We don't need to do this on every mutation
@@ -345,6 +379,14 @@ function observe_character_sheet_changes(documentToObserve) {
                 }
               }
             });
+            if (mutationTarget.hasClass("ct-sidebar__pane-content")) {
+              mutation.removedNodes.forEach(node => {
+                if ($(node).hasClass("ct-speed-manage-pane")) {
+                  // they just closed the movement speed sidebar panel so
+                  send_movement_speeds($(node));
+                }
+              });
+            }
             break;
           case "characterData":
 
