@@ -1098,7 +1098,8 @@ class Token {
 			let conditionCount = 0;
 			
 			for (let i = 0; i < this.options.conditions.length; i++) {
-				const conditionName = this.options.conditions[i];
+				const condition = this.options.conditions[i];
+				const conditionName = (typeof condition === "string" ? condition : condition?.name) || "";
 				const isExhaustion = conditionName.startsWith("Exhaustion");
 				const conditionSymbolName = isExhaustion ? 'exhaustion' : conditionName.toLowerCase();
 				const conditionContainer = $("<div class='dnd-condition condition-container' />");
