@@ -1,18 +1,13 @@
 name: label-prs
 on:
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronized]
 
 jobs:
   add-label-based-on-title:
-    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.changes.title != '' }}
+    # if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.changes.title != '' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
       - name: find labels to remove and/or add
         run: |
           find_label() {
@@ -37,10 +32,11 @@ jobs:
             echo $label_to_output
           }
 
-          label_to_remove=$(find_label "${{ github.event.changes.title.from }}")
-          echo "label_to_remove: $label_to_remove"
           label_to_add=$(find_label "${{ github.event.pull_request.title }}")
           echo "label_to_add: $label_to_add"
+
+          label_to_remove=$(find_label "${{ github.event.changes.title.from }}")
+          echo "label_to_remove: $label_to_remove"
           
           if [[ $label_to_remove == $label_to_add ]]
           then
