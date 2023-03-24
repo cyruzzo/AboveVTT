@@ -675,6 +675,7 @@ async function look_for_github_issue(...searchTerms) {
   });
 
   return searchTermStrings
+    .filter(st => st) // filter out undefined, and empty strings
     .flatMap(st => {
       // iterate over every search term and collect matching results
       return fuse.search(st)
