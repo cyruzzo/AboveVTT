@@ -282,33 +282,39 @@ function observe_character_sheet_changes(documentToObserve) {
         const mutationParent = mutationTarget.parent();
         switch (mutation.type) {
           case "attributes":
-              if ((mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && mutationTarget.hasClass('ddbc-toggle-field')) || (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)) { // conditions update from sidebar
-                let conditionsSet = [];
-                $(`.ct-condition-manage-pane__condition`).each(function () {
-                  if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
-                    conditionsSet.push({
-                      name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-                      level: null
-                    });
-                  }
-                });
-                $(`.ct-condition-manage-pane__condition--special`).each (function () {
-                  if($('.ddbc-number-bar__option--active').length > 0){
-                     conditionsSet.push({
-                      name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-                      level: $(this).find('.ddbc-number-bar__option--implied').length
-                    });
-                  }     
-                })
-                character_sheet_changed({conditions: conditionsSet});
-              } else if(mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
-                        mutationTarget.hasClass("ct-health-manager__input") ||
-                        mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
-                ) {
-                send_character_hp();
-              } else if (mutationTarget.hasClass("ct-subsection--senses")) {
-                send_senses();
-              }
+            if (
+              (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && mutationTarget.hasClass('ddbc-toggle-field')) ||
+              (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)
+            ) { // conditions update from sidebar
+              let conditionsSet = [];
+              $(`.ct-condition-manage-pane__condition`).each(function () {
+                if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
+                  conditionsSet.push({
+                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                    level: null
+                  });
+                }
+              });
+              $(`.ct-condition-manage-pane__condition--special`).each (function () {
+                if($('.ddbc-number-bar__option--active').length > 0){
+                   conditionsSet.push({
+                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                    level: $(this).find('.ddbc-number-bar__option--implied').length
+                  });
+                }
+              })
+              character_sheet_changed({conditions: conditionsSet});
+            } else if(
+              mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
+              mutationTarget.hasClass("ct-health-manager__input") ||
+              mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
+            ) {
+              send_character_hp();
+            } else if (mutationTarget.hasClass("ct-subsection--senses")) {
+              send_senses();
+            } else if (mutationTarget.hasClass("ct-status-summary-mobile__button--interactive") && mutationTarget.text() === "Inspiration") {
+              character_sheet_changed({inspiration: mutationTarget.hasClass("ct-status-summary-mobile__button--active")});
+            }
 
             break;
           case "childList":
