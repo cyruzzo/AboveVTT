@@ -3074,6 +3074,12 @@ function redraw_light(){
 	let offsetX = canvas.offsetLeft;
 	let offsetY = canvas.offsetTop;
 
+	if(canvasWidth == 0 || canvasHeight == 0){
+		console.warn("Draw light attempted before map load");
+		return; // prevent error if redraw is called before map initialized
+	}
+
+
 	let offscreenCanvasMask = document.createElement('canvas');
 	let offscreenContext = offscreenCanvasMask.getContext('2d');
 
