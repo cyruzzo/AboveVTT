@@ -1054,7 +1054,6 @@ class MessageBroker {
 	}
 
   handleCT(data){
-  	$("#combat_area").empty();
 		ct_load(data);
 	}
 
@@ -1235,23 +1234,21 @@ class MessageBroker {
 			} else {
 				data.size = window.CURRENT_SCENE_DATA.hpps;
 			}
-			if (window.all_token_objects != undefined) {
-				if (data.id in window.all_token_objects) {
-					for (var property in window.all_token_objects[data.id].options) {		
-						if(property == "left" || property == "top" || property == "hidden")
-							continue;
-						if(msg.loading){
-							data[property] = window.all_token_objects[data.id].options[property];
-						}
-						else if(property in data){
-						 window.all_token_objects[data.id].options[property] = data[property]; 
-						}
+			if (data.id in window.all_token_objects) {
+				for (var property in window.all_token_objects[data.id].options) {		
+					if(property == "left" || property == "top" || property == "hidden")
+						continue;
+					if(msg.loading){
+						data[property] = window.all_token_objects[data.id].options[property];
 					}
-
-
-					if (!data.hidden)
-						delete window.all_token_objects[data.id].options.hidden;
+					else if(property in data){
+					 window.all_token_objects[data.id].options[property] = data[property]; 
+					}
 				}
+
+
+				if (!data.hidden)
+					delete window.all_token_objects[data.id].options.hidden;
 			}
 		}
 			
@@ -1263,6 +1260,9 @@ class MessageBroker {
 			}
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
+			}
+			if(data.current == undefined){
+				delete window.TOKEN_OBJECTS[data.id].options.current;
 			}
 			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
@@ -1283,6 +1283,9 @@ class MessageBroker {
 			}
 			let t = new Token(data);
 			window.TOKEN_OBJECTS[data.id] = t;
+			if(window.all_token_objects[data.id] == undefined){
+				window.all_token_objects[data.id] = t;
+			}
 			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			};
@@ -1415,7 +1418,7 @@ class MessageBroker {
 				});
 			}
 
-			$("#combat_area").empty();
+
 			ct_load({
 				loading: true,
 				current: $("#combat_area [data-current]").attr('data-target')
