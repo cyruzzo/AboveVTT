@@ -258,22 +258,22 @@ class MessageBroker {
 			self.chat_decipher_task=setInterval(function(){
 				console.log("deciphering");
 				let pend_length = self.chat_pending_messages.length;
-				for(var i=0;i<pend_length;i++){
-					var current=self.chat_pending_messages.shift();
+				for(let i=0;i<pend_length;i++){
+					let current=self.chat_pending_messages.shift();
 					
-					var injection_id=current.data.rolls[0].rollType;
-					var injection_data=current.data.injected_data;
+					let injection_id=current.data.rolls[0].rollType;
+					let injection_data=current.data.injected_data;
 					console.log(`injection_id = ${injection_id}`);
 					console.log(`injection_data = ${injection_data}`);
 					
-					var found=false;
+					let found=false;
 					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
 						if($(this).text()==injection_id){
 							found=true;
 							let li = $(this).closest("li");
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+							let newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
