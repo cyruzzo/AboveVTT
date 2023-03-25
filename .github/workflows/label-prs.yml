@@ -8,6 +8,8 @@ jobs:
   add-label-based-on-title:
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.changes.title != '' }}
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - name: Dump GitHub context
         env:
