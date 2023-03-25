@@ -2042,8 +2042,6 @@ class Token {
 					if (should_snap_to_grid()) {
 						tokenX += (window.CURRENT_SCENE_DATA.hpps / 2);
 						tokenY += (window.CURRENT_SCENE_DATA.vpps / 2);
-						self.orig_left += (window.CURRENT_SCENE_DATA.vpps / 2);
-						self.orig_top+= (window.CURRENT_SCENE_DATA.vpps / 2);
 					}
 					let selectedCoords= {
 						left: $('#scene_map_container').width(),
