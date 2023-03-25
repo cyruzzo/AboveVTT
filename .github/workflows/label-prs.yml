@@ -53,7 +53,7 @@ jobs:
               echo "add_url=${add_url}"
               add_body="{\"labels\":[\"${label_to_add}\"]}"
               echo "add_body=${add_body}"
-              curl --request POST --url "${add_url}" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "add_body=${add_body}"
+              curl --request POST --url "${add_url}" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "${add_body}"
             fi
             if [[ ! -z "$label_to_remove" ]]
             then
