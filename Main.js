@@ -3919,4 +3919,3 @@ function adjust_site_bar() {
 		});
 	}
 }
-
