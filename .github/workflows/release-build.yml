@@ -169,12 +169,21 @@ jobs:
       - name: "Generate Discord changelog message"
         if: ${{ inputs.release_type == 'beta' }}
         run: |
-          changelog=$(cat release.json | jq -r '.body')
-          changelog=${changelog:1:-1}
-          echo $changelog > changelog.txt
+          cat release.json
+          str=$(cat release.json | jq '.body')
+          echo $str
           discord_message="**${version_name}**"
-          while read -r line; do
-            if [[ $line = '<!--'* ]] || [[ $line = *"What's Changed"* ]] || [[ $line = *"Full Changelog"* ]]
+          while [[ $str ]]; do            # iterate as long as we have input
+            if [[ $str = *'\n'* ]]; then  # if there's a '\n' sequence later...
+              line=${str%%'\n'*}          #   put everything before it into 'line'
+              rest=${str#*'\n'}           #   and put everything after it in 'rest'
+            else                          # if there's no '\n' later...
+              line=$str                   #   then put the whole rest of the string in 'line'
+              rest=''                     #   and there is no 'rest'
+            fi
+            str=$rest
+            echo "Processing line: $line"
+            if [[ $line = '<!--'* ]] || [[ $line = '"<!--'* ]] || [[ $line = *"What's Changed"* ]] || [[ $line = *"Full Changelog"* ]]
             then
               echo "skipping $line"
             elif [[ $line = '##'* ]]
@@ -191,7 +200,7 @@ jobs:
             else
               discord_message+=$line
             fi
-          done < changelog.txt
+          done
           discord_message+="\n**Download**: https://github.com/${GITHUB_REPOSITORY}/releases/download/${version_name}/AboveVTT-${version_name}.zip"
           echo $discord_message
           message_body="{\"content\":\"${discord_message}\",\"flags\":4}"
