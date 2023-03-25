@@ -654,7 +654,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				stat.css("visibility", "hidden");
 			}
 
-			ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px; class='hideInPlayerCombatCheck' target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
+			ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px;" class='hideInPlayerCombatCheck' target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
 
 			eye_button = $('<button class="hideFromPlayerCombatButton" style="font-size:10px;"></button>');
 
