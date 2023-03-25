@@ -408,10 +408,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if (typeof(token.options.ct_show) == 'undefined'){
 		if(token.options.hidden) {
 			token.options.ct_show = false;
-			if(typeof window.all_token_objects != 'undefined') {
-				window.all_token_objects[token.options.id].options.ct_show = false;
-				window.all_token_objects[token.options.id].update_and_sync();
-			}
+	
+			window.all_token_objects[token.options.id].options.ct_show = false;
+			window.all_token_objects[token.options.id].update_and_sync();
+			
 		}
 		else {		
 			if(typeof window.all_token_objects[token.options.id].options.ct_show != 'undefined') {
@@ -445,15 +445,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	init.css('width','20px');
 	init.css('-webkit-appearance','none');
 	if(window.DM && typeof(token.options.init) == 'undefined'){
-		if(typeof window.all_token_objects != 'undefined') {
-			if(typeof window.all_token_objects[token.options.id] != 'undefined')	{
-				if (typeof window.all_token_objects[token.options.id].options.init != 'undefined'){
-			 		token.options.init = window.all_token_objects[token.options.id].options.init;
-			 		window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-					init.val(token.options.init);
-				}
-			}
-		}
+
+
+		if (typeof window.all_token_objects[token.options.id].options.init != 'undefined'){
+	 		token.options.init = window.all_token_objects[token.options.id].options.init;
+	 		window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
+			init.val(token.options.init);
+		}	
 		else{
 			init.val(0);
 		}
@@ -467,13 +465,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	}
 	if(window.DM){
 		init.change(function(){
-				if(typeof window.all_token_objects != 'undefined') 
-				{
-					window.all_token_objects[token.options.id].options.init = init.val()
-					window.all_token_objects[token.options.id].sync = function(e) {				
-						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
-					}
+				 
+				
+				window.all_token_objects[token.options.id].options.init = init.val()
+				window.all_token_objects[token.options.id].sync = function(e) {				
+					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
 				}
+			
 				token.options.init = init.val();
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
@@ -654,7 +652,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				stat.css("visibility", "hidden");
 			}
 
-			ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px; class='hideInPlayerCombatCheck' target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
+			ct_show_checkbox = $(`<input id="`+token.options.id+`hideCombatTrackerInput"type='checkbox' class="combatHideFromPlayerInput" style="font-size:10px;" "class='hideInPlayerCombatCheck' target_id='`+token.options.id+`' checked='`+token.options.ct_show+`'/>`);
 
 			eye_button = $('<button class="hideFromPlayerCombatButton" style="font-size:10px;"></button>');
 
@@ -795,6 +793,7 @@ function ct_update_popout(){
 function ct_load(data=null){
 	// any time the combat tracker changes, we need to make sure we adjust our cursor streaming for anyone that only wants streaming during "combatTurn"
 	// make sure we do this before the `data` object gets changed below
+	$("#combat_area").empty();
 	update_peer_communication_with_combat_tracker_data(data);
 
 	if(!data.loading){	
