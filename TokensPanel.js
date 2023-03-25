@@ -840,6 +840,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             let playerData = window.PLAYER_STATS[listItem.sheet];
             options.id = listItem.sheet;
+            if(window.all_token_objects[options.id] != undefined){
+                options = {...options, ...window.all_token_objects[options.id].options}
+            }
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
