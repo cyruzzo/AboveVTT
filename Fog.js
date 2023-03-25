@@ -790,13 +790,13 @@ function redraw_fog() {
 		if (d[5] == 0) { //REVEAL
 
 			if (d[4] == 0) { // REVEAL SQUARE
-				for(adjusted = 0; adjusted < 4; adjusted++){
+				for(let adjusted = 0; adjusted < 4; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
-				for(adjusted = 0; adjusted < 3; adjusted++){
+				for(let adjusted = 0; adjusted < 3; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
@@ -810,7 +810,7 @@ function redraw_fog() {
 				clearPolygon(ctx, d[0], d[6]);
 			}
 			if (d[4] == 4) {
-				for(adjusted = 0; adjusted < 2; adjusted++){
+				for(let adjusted = 0; adjusted < 2; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// REVEAL BUCKET				
@@ -819,7 +819,7 @@ function redraw_fog() {
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
-				for(adjusted = 0; adjusted < 4; adjusted++){
+				for(let adjusted = 0; adjusted < 4; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
@@ -827,7 +827,7 @@ function redraw_fog() {
 				ctx.fillRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
-				for(adjusted = 0; adjusted < 3; adjusted++){
+				for(let adjusted = 0; adjusted < 3; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
@@ -840,7 +840,7 @@ function redraw_fog() {
 			
 			}
 			if (d[4] == 4) {
-				for(adjusted = 0; adjusted < 2; adjusted++){
+				for(let adjusted = 0; adjusted < 2; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// HIDE BUCKET
@@ -857,7 +857,7 @@ function redraw_fog() {
 function redraw_text() {
 
 	$('#text_div').empty();
-	for(drawing in window.DRAWINGS){
+	for(let drawing in window.DRAWINGS){
 		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale, hidden] = window.DRAWINGS[drawing]
 
 		if(shape == 'text' && textid == undefined){
@@ -1579,7 +1579,7 @@ function drawing_mouseup(e) {
 			if ( e.button == 2) {
 				return;
 			}
-			for(walls in window.StoredWalls){
+			for(let walls in window.StoredWalls){
 					data = ['line',
 						"wall",
 						window.DRAWCOLOR,
@@ -1725,7 +1725,7 @@ function drawing_mouseup(e) {
 				if(window.DRAWFUNCTION == "wall-eraser-one" ){
 					fullyInside = true;
 				}
-				for(j = 0; j < window.DRAWINGS.length; j++){
+				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
 						window.DRAWINGS.splice(j, 1);
 						break;
@@ -3104,7 +3104,7 @@ function redraw_light(){
 	  	}
 	  	
   		
-		for(j = 0; j < selectedTokens.length; j++){
+		for(let j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
 		  		selectedIds.push(tokenId)
