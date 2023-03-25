@@ -845,7 +845,7 @@ function ct_load(data=null){
 			$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
 	}
 	else{
-		for(tokenID in window.all_token_objects){
+		for(let tokenID in window.all_token_objects){
 			if(window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{
 				ct_add_token(window.all_token_objects[tokenID],false,true);
