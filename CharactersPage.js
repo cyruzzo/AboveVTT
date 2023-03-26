@@ -9,20 +9,22 @@ let recentCharacterUpdates = {};
 
 
 const sendCharacterUpdateEvent = mydebounce(() => {
+  if (window.DM) return;
   console.log("sendCharacterUpdateEvent")
-  if (is_abovevtt_page() && !window.DM) {
+  const pcData = {...recentCharacterUpdates};
+  recentCharacterUpdates = {};
+  if (is_abovevtt_page()) {
     window.MB.sendMessage("custom/myVTT/character-update", {
       characterId: window.PLAYER_ID,
-      pcData: {...recentCharacterUpdates}
+      pcData: pcData
     });
-  }
-  else if(!window.DM){
+  } else {
     tabCommunicationChannel.postMessage({
       characterId: window.location.href.split('/').slice(-1)[0],
-      pcData: {...recentCharacterUpdates}
+      pcData: pcData
     });
-  } 
-  recentCharacterUpdates = {};
+  }
+  update_pc_with_data(window.PLAYER_ID, pcData);
 }, 1500);
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */

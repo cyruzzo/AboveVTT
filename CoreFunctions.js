@@ -449,7 +449,7 @@ function hp_from_pc_object(pc) {
   return hpValue;
 }
 function max_hp_from_pc_object(pc) {
-  if (!isNaN((pc.hitPointInfo?.maximum))) {
+  if (!isNaN((pc?.hitPointInfo?.maximum))) {
     return parseInt(pc.hitPointInfo.maximum);
   }
   return 1; // this is wrong, but we want to avoid any NaN results from division
@@ -464,7 +464,7 @@ function hp_aura_box_shadow_from_pc_object(pc) {
   return `${auraValue} 0px 0px 11px 3px`;
 }
 function speed_from_pc_object(pc, speedName = "Walking") {
-  return pc.speeds.find(s => s.name === speedName)?.distance || 0;
+  return pc?.speeds?.find(s => s.name === speedName)?.distance || 0;
 }
 
 /** @return {string} The id of the player as a string, {@link dm_id} for the dm */
