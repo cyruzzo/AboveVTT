@@ -47,50 +47,50 @@ function send_character_hp() {
 }
 
 
-function send_abilities(){
+function read_abilities(container = $(document)) {
+  const scoreOnTop = container.find('.ddbc-ability-summary__primary .ddbc-signed-number--large').length === 0;
 
-  let scoreOnTop = $('.ddbc-ability-summary__primary .ddbc-signed-number--large').length == 0;
-  
   let abilitiesObject = [
-      {name: 'str', save: 0, score: 0, label: 'Strength', modifier: 0},
-      {name: 'dex', save: 0, score: 0, label: 'Dexterity', modifier: 0},
-      {name: 'con', save: 0, score: 0, label: 'Constitution', modifier: 0},
-      {name: 'int', save: 0, score: 0, label: 'Intelligence', modifier: 0},
-      {name: 'wis', save: 0, score: 0, label: 'Wisdom', modifier: 0},
-      {name: 'cha', save: 0, score: 0, label: 'Charisma', modifier: 0}
-    ];
- 
+    {name: 'str', save: 0, score: 0, label: 'Strength', modifier: 0},
+    {name: 'dex', save: 0, score: 0, label: 'Dexterity', modifier: 0},
+    {name: 'con', save: 0, score: 0, label: 'Constitution', modifier: 0},
+    {name: 'int', save: 0, score: 0, label: 'Intelligence', modifier: 0},
+    {name: 'wis', save: 0, score: 0, label: 'Wisdom', modifier: 0},
+    {name: 'cha', save: 0, score: 0, label: 'Charisma', modifier: 0}
+  ];
 
   for(let i = 0; i < 6; i++){
-     if(scoreOnTop){
-        abilitiesObject[i].score = parseInt($($(`.ddbc-ability-summary__primary button`)[i]).text());
-     }
-     else{
-        abilitiesObject[i].score =  parseInt($($(`.ddbc-ability-summary__secondary`)[i]).text());
-     }
+    if(scoreOnTop){
+      abilitiesObject[i].score = parseInt($( container.find(`.ddbc-ability-summary__primary button`)[i] ).text());
+    }
+    else{
+      abilitiesObject[i].score =  parseInt($( container.find(`.ddbc-ability-summary__secondary`)[i] ).text());
+    }
 
-    abilitiesObject[i].modifier = parseInt($($(`.ddbc-signed-number--large`)[i]).attr('aria-label').replace(/\s/g, ''));
+    abilitiesObject[i].modifier = parseInt($( container.find(`.ddbc-signed-number--large`)[i] ).attr('aria-label').replace(/\s/g, ''));
 
-    abilitiesObject[i].save = parseInt($($(`.ddbc-saving-throws-summary__ability-modifier .ddbc-signed-number`)[i]).attr('aria-label').replace(/\s/g, ''));
+    abilitiesObject[i].save = parseInt($( container.find(`.ddbc-saving-throws-summary__ability-modifier .ddbc-signed-number`)[i] ).attr('aria-label').replace(/\s/g, ''));
   }
 
-
-
-   character_sheet_changed({abilities: abilitiesObject});
+  return abilitiesObject;
 }
 
-function send_senses() {
+function send_abilities() {
+   character_sheet_changed({abilities: read_abilities()});
+}
+
+function read_senses(container = $(document)) {
   // this seems to be the same for both desktop and mobile layouts which is nice for once
   try {
     let changeData = {};
-    const passiveSenses = $(".ct-senses__callouts .ct-senses__callout");
+    const passiveSenses = container.find(".ct-senses__callouts .ct-senses__callout");
     const perception = parseInt($(passiveSenses[0]).find(".ct-senses__callout-value").text());
     if (perception) changeData.passivePerception = perception;
     const investigation = parseInt($(passiveSenses[1]).find(".ct-senses__callout-value").text());
     if (investigation) changeData.passiveInvestigation = investigation;
     const insight = parseInt($(passiveSenses[2]).find(".ct-senses__callout-value").text());
     if (insight) changeData.passiveInsight = insight;
-    const senses = $(".ct-senses__summary").text().split(",").map(sense => {
+    const senses = container.find(".ct-senses__summary").text().split(",").map(sense => {
       try {
         const name = sense.trim().split(" ")[0].trim();
         const distance = sense.trim().substring(name.length).trim();
@@ -103,17 +103,46 @@ function send_senses() {
     if (senses.length > 0) {
       changeData.senses = senses;
     }
-    character_sheet_changed(changeData);
+    return changeData;
   } catch (error) {
     console.debug("Failed to send senses", error);
+    return undefined;
   }
 }
 
-function send_movement_speeds(speedManagePage = $(".ct-speed-manage-pane")) {
-  console.log("send_movement_speeds", speedManagePage);
+function send_senses() {
+  const changeData = read_senses();
+  if (changeData) {
+    character_sheet_changed(changeData);
+  }
+}
+
+function read_conditions(container = $(document)) {
+  let conditionsSet = [];
+  container.find(`.ct-condition-manage-pane__condition`).each(function () {
+    if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
+      conditionsSet.push({
+        name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+        level: null
+      });
+    }
+  });
+  container.find(`.ct-condition-manage-pane__condition--special`).each (function () {
+    if(container.find('.ddbc-number-bar__option--active').length > 0){
+      conditionsSet.push({
+        name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+        level: $(this).find('.ddbc-number-bar__option--implied').length
+      });
+    }
+  })
+  return conditionsSet;
+}
+
+function read_speeds(container = $(document), speedManagePage) {
+  speedManagePage = speedManagePage || container.find(".ct-speed-manage-pane");
+  let speeds = [];
   if (speedManagePage.find(".ct-speed-manage-pane__speeds").length > 0) {
     // the sidebar is open, let's grab them all
-    let speeds = [];
     speedManagePage.find(".ct-speed-manage-pane__speed").each(function() {
       const container = $(this);
       const name = container.find(".ct-speed-manage-pane__speed-label").text();
@@ -121,36 +150,47 @@ function send_movement_speeds(speedManagePage = $(".ct-speed-manage-pane")) {
       speeds.push({name: name, distance: distance});
     });
     if (speeds.length) {
-      character_sheet_changed({speeds: speeds});
-      return;
+      return speeds;
     }
   }
 
   // just update the primary speed
+  const name = container.find(".ct-speed-box__heading").text();
+  const distance = parseInt( container.find(".ct-speed-box__box-value .ddbc-distance-number .ddbc-distance-number__number").text() ) || 0;
+  return [ { name: name, distance: distance } ];
+}
+
+function send_movement_speeds(container, speedManagePage) {
+  let speeds = read_speeds(container, speedManagePage);
+  if (!speeds) {
+    return;
+  }
   const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
   if (pc && pc.speeds) {
-    let speeds = pc.speeds;
-    const name = $(".ct-speed-box__heading").text();
-    const distance = parseInt($(".ct-speed-box__box-value .ddbc-distance-number .ddbc-distance-number__number").text());
-    const index = speeds.findIndex(s => s.name === name);
-    speeds[index].distance = distance;
+    pc.speeds.forEach(pcSpeed => {
+      const updatedSpeedIndex = speeds.findIndex(us => us.name === pcSpeed.name);
+      if (updatedSpeedIndex < 0) { // couldn't read this speed so inject the pc.speeds value
+        speeds.push(pcSpeed);
+      }
+    })
+  }
+  if (speeds.length > 0) {
     character_sheet_changed({speeds: speeds});
-  } else {
-    // we don't want to overwrite everything with only the primary speed
-    console.warn("not collecting speed because we don't have a pc to get defaults from");
   }
 }
 
-function read_current_hp() {
-  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).length) {
-    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
+function read_current_hp(container = $(document)) {
+  let element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
+  if (element.length) {
+    return parseInt(element.text()) || 0;
   }
-  if ($(`.ct-status-summary-mobile__hp-current`).length) {
-    const hpValue = parseInt($(`.ct-status-summary-mobile__hp-current`).text()) || 0;
-    if (hpValue && $(`.ct-status-summary-mobile__hp--has-temp`).length) {
+  element = container.find(`.ct-status-summary-mobile__hp-current`);
+  if (element.length) {
+    const hpValue = parseInt(element.text()) || 0;
+    if (hpValue && container.find(`.ct-status-summary-mobile__hp--has-temp`).length) {
       // DDB doesn't display the temp value on mobile layouts so set this to 1 less, so we can at least show that there is temp hp. See `read_temp_hp` for the other side of this
-      if($('.ct-health-manager__health-item--temp').length){
-        return hpValue - parseInt($('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); /// if hp side panel is open check this for temp hp
+      if(container.find('.ct-health-manager__health-item--temp').length){
+        return hpValue - parseInt(container.find('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); /// if hp side panel is open check this for temp hp
       }
       return hpValue - 1;
     }
@@ -159,12 +199,13 @@ function read_current_hp() {
   return 0;
 }
 
-function read_temp_hp() {
-  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).length) {
-    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
+function read_temp_hp(container = $(document)) {
+
+  if (container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).length) {
+    return parseInt(container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
   }
-  if ($(`.ct-status-summary-mobile__hp--has-temp`).length) {
-    if($('.ct-health-manager__health-item--temp').length){
+  if (container.find(`.ct-status-summary-mobile__hp--has-temp`).length) {
+    if(container.find('.ct-health-manager__health-item--temp').length){
         return parseInt(('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); // if hp side panel is open check this for temp hp
       }
     // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
@@ -173,33 +214,43 @@ function read_temp_hp() {
   return 0;
 }
 
-function read_max_hp(currentMaxValue = 0) {
-  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).length) {
-    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || currentMaxValue;
+function read_max_hp(currentMaxValue = 0, container = $(document)) {
+  if (container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).length) {
+    return parseInt(container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || currentMaxValue;
   }
-  if ($(".ct-status-summary-mobile__hp-max").length) {
-    return parseInt($(".ct-status-summary-mobile__hp-max").text()) || currentMaxValue;
+  if (container.find(".ct-status-summary-mobile__hp-max").length) {
+    return parseInt(container.find(".ct-status-summary-mobile__hp-max").text()) || currentMaxValue;
   }
   return currentMaxValue;
 }
 
-function read_death_save_info() {
-  if ($(".ct-status-summary-mobile__deathsaves-marks").length) {
+function read_death_save_info(container = $(document)) {
+  if (container.find(".ct-status-summary-mobile__deathsaves-marks").length) {
     return {
-      failCount: $('.ct-status-summary-mobile__deathsaves--fail .ct-status-summary-mobile__deathsaves-mark--active').length || 0,
-      successCount: $('.ct-status-summary-mobile__deathsaves--success .ct-status-summary-mobile__deathsaves-mark--active').length || 0
+      failCount: container.find('.ct-status-summary-mobile__deathsaves--fail .ct-status-summary-mobile__deathsaves-mark--active').length || 0,
+      successCount: container.find('.ct-status-summary-mobile__deathsaves--success .ct-status-summary-mobile__deathsaves-mark--active').length || 0
     };
   }
   return {
-    failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
-    successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
+    failCount: container.find('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
+    successCount: container.find('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
   };
 }
 
-function init_characters_pages() {
+function read_inspiration(container = $(document)) {
+  if (container.find(".ct-inspiration__status--active").length) {
+    return true;
+  }
+  if (container.find(".ct-status-summary-mobile__inspiration .ct-status-summary-mobile__button--active").length) {
+    return true
+  }
+  return false;
+}
+
+function init_characters_pages(container = $(document)) {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
-    window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
+    window.EXTENSION_PATH = container.find("#extensionpath").attr('data-path');
   }
 
   // it's ok to call both of these, because they will do any clean up they might need and then return early
@@ -320,23 +371,7 @@ function observe_character_sheet_changes(documentToObserve) {
               (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && mutationTarget.hasClass('ddbc-toggle-field')) ||
               (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)
             ) { // conditions update from sidebar
-              let conditionsSet = [];
-              $(`.ct-condition-manage-pane__condition`).each(function () {
-                if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
-                  conditionsSet.push({
-                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-                    level: null
-                  });
-                }
-              });
-              $(`.ct-condition-manage-pane__condition--special`).each (function () {
-                if($('.ddbc-number-bar__option--active').length > 0){
-                   conditionsSet.push({
-                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-                    level: $(this).find('.ddbc-number-bar__option--implied').length
-                  });
-                }
-              })
+              const conditionsSet = read_conditions(documentToObserve);
               character_sheet_changed({conditions: conditionsSet});
             } else if(
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
@@ -368,7 +403,7 @@ function observe_character_sheet_changes(documentToObserve) {
             } else if (mutationTarget.hasClass("ct-sense-manage-pane__senses")) {
               send_senses();
             } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
-              send_movement_speeds(mutationTarget);
+              send_movement_speeds(documentToObserve, mutationTarget);
             }
 
             // TODO: check for class or something. We don't need to do this on every mutation
@@ -385,7 +420,7 @@ function observe_character_sheet_changes(documentToObserve) {
               mutation.removedNodes.forEach(node => {
                 if ($(node).hasClass("ct-speed-manage-pane")) {
                   // they just closed the movement speed sidebar panel so
-                  send_movement_speeds($(node));
+                  send_movement_speeds(documentToObserve, $(node));
                 }
               });
             }
@@ -397,7 +432,7 @@ function observe_character_sheet_changes(documentToObserve) {
               ) {
                 send_character_hp();          
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
-                character_sheet_changed({armorClass: parseInt($(`.ddbc-armor-class-box__value`).text())});
+                character_sheet_changed({armorClass: parseInt(documentToObserve.find(`.ddbc-armor-class-box__value`).text())});
               }
               else if ($(mutationTarget[0].nextElementSibling).hasClass('ct-armor-manage-pane__heading-extra')) {
                 character_sheet_changed({armorClass: parseInt(mutationTarget[0].data)});
@@ -611,4 +646,54 @@ function update_window_color(colorValue) {
     pc.decorations.characterTheme.themeColor = colorValue;
     find_and_set_player_color();
   }
+}
+
+function read_pc_object_from_character_sheet(playerId, container = $(document)) {
+  if (!is_abovevtt_page()) {
+    // window.CAMPAIGN_INFO is defined in Startup.js
+    console.warn("read_pc_object_from_character_sheet is currently only supported when AVTT is running");
+    return undefined
+  }
+  if (!playerId || !container || container.length === 0) {
+    console.warn("read_pc_object_from_character_sheet expected a playerId and container, but received", playerId, container);
+    return undefined;
+  }
+  let pc = find_pc_by_player_id(playerId, true); // allow a default object here. We're about to overwrite most of it anyway
+
+  try {
+    pc.abilities = read_abilities(container);
+    pc.armorClass = parseInt(container.find(`.ddbc-armor-class-box__value`).text()) || parseInt(container.find(".ct-combat-mobile__extra--ac .ct-combat-mobile__extra-value").text()) || 0;
+    pc.campaign = window.CAMPAIGN_INFO;
+    pc.characterId = playerId;
+    pc.conditions = read_conditions(container);
+    pc.deathSaveInfo = read_death_save_info(container);
+    // TODO: figure out how to read decorations
+    pc.hitPointInfo = {
+      current: read_current_hp(container),
+      maximum: read_max_hp(pc?.hitPointInfo?.maximum, container),
+      temp: read_temp_hp(container)
+    };
+    // TODO: immunities?
+    // TODO: initiativeBonus?
+    pc.inspiration = read_inspiration(container);
+    pc.name = container.find(".ddb-character-app-sn0l9p").text();
+    const pb = parseInt(container.find(".ct-proficiency-bonus-box__value").text());
+    if (pb) {
+      pc.proficiencyBonus = pb;
+    }
+    let readSpeeds = read_speeds(container) || [];
+    if (readSpeeds) {
+      pc.speeds?.forEach(pcSpeed => {
+        const updatedSpeedIndex = readSpeeds.findIndex(us => us.name === pcSpeed.name);
+        if (updatedSpeedIndex < 0) { // couldn't read this speed so inject the pc.speeds value
+          readSpeeds.push(pcSpeed);
+        }
+      })
+    }
+    pc = {...pc, ...read_senses(container)};
+  } catch (error) {
+    console.error("read_pc_object_from_character_sheet caught an error", error);
+  }
+  update_pc_with_data(playerId, pc);
+  return pc;
 }

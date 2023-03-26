@@ -520,6 +520,7 @@ function update_pc_with_data(playerId, data) {
     console.warn("update_pc_with_data could not find pc with id", playerId);
     return;
   }
+  console.debug(`update_pc_with_data is updating ${playerId} with`, data);
   const pc = window.pcs[index];
   const updatedPc = {...pc, ...data};
   window.pcs[index] = updatedPc
