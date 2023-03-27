@@ -1866,7 +1866,8 @@ function close_player_sheet()
 function notify_player_join() {
 	const playerdata = {
 		abovevtt_version: window.AVTT_VERSION,
-		player_id: window.PLAYER_ID
+		player_id: window.PLAYER_ID,
+		pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
 	};
 
 	console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);

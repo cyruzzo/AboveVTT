@@ -1135,6 +1135,7 @@ function build_sidebar_list_row(listItem) {
       const pc = find_pc_by_player_id(listItem.sheet, false);
       if (pc === undefined) {
         subtitle.text("loading character details");
+        break;
       }
       const color = color_from_pc_object(pc);
       const hpValue = hp_from_pc_object(pc);

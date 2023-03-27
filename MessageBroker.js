@@ -650,7 +650,7 @@ class MessageBroker {
 						if (window.CONNECTED_PLAYERS[msg.data.player_id] === "undefined" ||
 						window.CONNECTED_PLAYERS[msg.data.player_id] != msg.data.abovevtt_version) {
 							window.CONNECTED_PLAYERS[msg.data.player_id] = msg.data.abovevtt_version;
-							
+
 							if (msg.data.abovevtt_version != self.latestVersionSeen) {
 								self.latestVersionSeen = check_versions_match();
 							}
@@ -660,7 +660,25 @@ class MessageBroker {
 						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
 					}
 					window.JOURNAL.sync();
-				}	
+				}
+
+				if (msg.data && msg.data.player_id && msg.data.pc) {
+					// a player just joined and gave us their pc data, so let's update our window.pcs with what they gave us
+					update_pc_with_data(msg.data.player_id, msg.data.pc);
+				}
+				if (is_characters_page()) {
+					// a player just joined so send them our pc data
+					window.MB.sendMessage("custom/myVTT/pcsync", {
+						player_id: window.PLAYER_ID,
+						pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
+					});
+				}
+			}
+			if(msg.eventType==="custom/myVTT/pcsync"){
+				// a player just sent us their pc data, so let's update our window.pcs with what they gave us
+				if (msg.data && msg.data.player_id && msg.data.pc) {
+					update_pc_with_data(msg.data.player_id, msg.data.pc);
+				}
 			}
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
 				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
