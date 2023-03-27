@@ -258,22 +258,22 @@ class MessageBroker {
 			self.chat_decipher_task=setInterval(function(){
 				console.log("deciphering");
 				let pend_length = self.chat_pending_messages.length;
-				for(var i=0;i<pend_length;i++){
-					var current=self.chat_pending_messages.shift();
+				for(let i=0;i<pend_length;i++){
+					let current=self.chat_pending_messages.shift();
 					
-					var injection_id=current.data.rolls[0].rollType;
-					var injection_data=current.data.injected_data;
+					let injection_id=current.data.rolls[0].rollType;
+					let injection_data=current.data.injected_data;
 					console.log(`injection_id = ${injection_id}`);
 					console.log(`injection_data = ${injection_data}`);
 					
-					var found=false;
+					let found=false;
 					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
 						if($(this).text()==injection_id){
 							found=true;
 							let li = $(this).closest("li");
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+							let newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
@@ -1065,7 +1065,6 @@ class MessageBroker {
 	}
 
   handleCT(data){
-  	$("#combat_area").empty();
 		ct_load(data);
 	}
 
@@ -1180,23 +1179,21 @@ class MessageBroker {
 			} else {
 				data.size = window.CURRENT_SCENE_DATA.hpps;
 			}
-			if (window.all_token_objects != undefined) {
-				if (data.id in window.all_token_objects) {
-					for (var property in window.all_token_objects[data.id].options) {		
-						if(property == "left" || property == "top" || property == "hidden")
-							continue;
-						if(msg.loading){
-							data[property] = window.all_token_objects[data.id].options[property];
-						}
-						else if(property in data){
-						 window.all_token_objects[data.id].options[property] = data[property]; 
-						}
+			if (data.id in window.all_token_objects) {
+				for (var property in window.all_token_objects[data.id].options) {		
+					if(property == "left" || property == "top" || property == "hidden")
+						continue;
+					if(msg.loading){
+						data[property] = window.all_token_objects[data.id].options[property];
 					}
-
-
-					if (!data.hidden)
-						delete window.all_token_objects[data.id].options.hidden;
+					else if(property in data){
+					 window.all_token_objects[data.id].options[property] = data[property]; 
+					}
 				}
+
+
+				if (!data.hidden)
+					delete window.all_token_objects[data.id].options.hidden;
 			}
 		}
 			
@@ -1208,6 +1205,9 @@ class MessageBroker {
 			}
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
+			}
+			if(data.current == undefined){
+				delete window.TOKEN_OBJECTS[data.id].options.current;
 			}
 			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
@@ -1228,6 +1228,9 @@ class MessageBroker {
 			}
 			let t = new Token(data);
 			window.TOKEN_OBJECTS[data.id] = t;
+			if(window.all_token_objects[data.id] == undefined){
+				window.all_token_objects[data.id] = t;
+			}
 			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			};
@@ -1355,7 +1358,7 @@ class MessageBroker {
 				});
 			}
 
-			$("#combat_area").empty();
+
 			ct_load({
 				loading: true,
 				current: $("#combat_area [data-current]").attr('data-target')

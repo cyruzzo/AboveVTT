@@ -181,30 +181,20 @@ class DDBApi {
   }
 
   static async fetchCampaignCharacters(campaignId) {
+    // This is what the campaign page calls to fetch characters
     const url = `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${campaignId}`;
     const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;
   }
 
   static async fetchCampaignCharacterDetails(campaignId) {
-    const characters = await DDBApi.fetchActiveCharacters(campaignId);
-    const characterIds = characters.map(c => c.id);
-    const allCharacterDetails = await DDBApi.fetchCharacterDetails(characterIds);
-    return characters.map(baseCharacterData => {
-      const characterDetails = allCharacterDetails.find(cd => cd.characterId === baseCharacterData.id);
-      // The only key collisions I could find in these objects is `race`
-      // baseCharacterData has something like `race: "Elf"` which is how it's displayed on the campaign page card
-      // characterDetails has something like `race: { name: "High Elf" }` which is displayed on the character sheet
-      // I chose to give characterDetails precedence because it is used on character sheets
-      return {
-        ...baseCharacterData,
-        ...characterDetails
-      }
-    });
+    const characterIds = await DDBApi.fetchCampaignCharacterIds(campaignId);
+    return await DDBApi.fetchCharacterDetails(characterIds);
   }
 
   static async fetchCharacterDetails(characterIds) {
     if (!Array.isArray(characterIds) || characterIds.length === 0) {
+      console.warn("DDBApi.fetchCharacterDetails expected an array of ids, but received: ", characterIds);
       return [];
     }
     const ids = characterIds.map(ci => parseInt(ci)); // do not use strings
@@ -223,9 +213,32 @@ class DDBApi {
   }
 
   static async fetchActiveCharacters(campaignId) {
+    // This is what the encounter page called at one point, but seems to use fetchCampaignCharacters now
     const url = `https://www.dndbeyond.com/api/campaign/active-characters/${campaignId}`
     const response = await DDBApi.fetchJsonWithCredentials(url);
     return response.data;
+  }
+
+  static async fetchCampaignCharacterIds(campaignId) {
+    let characterIds = [];
+    try {
+      // This is what the campaign page calls
+      const activeCharacters = await DDBApi.fetchActiveCharacters(campaignId);
+      characterIds = activeCharacters.map(c => c.id);
+    } catch (error) {
+      console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+    }
+    try {
+      const activeShortCharacters = await DDBApi.fetchCampaignCharacters(campaignId);
+      activeShortCharacters.forEach(c => {
+        if (!characterIds.includes(c.id)) {
+          characterIds.push(c.id);
+        }
+      });
+    } catch (error) {
+      console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+    }
+    return characterIds;
   }
 
 }

@@ -11,8 +11,10 @@
  * If you need to add things for when the CharacterPage is running, do that in CharacterPage.js
  * If you need to add things for all of the above situations, do that here */
 $(function() {
-  if(is_abovevtt_page())
+  window.EXPERIMENTAL_SETTINGS = {};
+  if (is_abovevtt_page()) {
     monitor_console_logs();
+  }
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -39,7 +41,7 @@ $(function() {
       }
       else{
         update_pc_with_data(event.data.characterId, event.data.pcData);
-      }   
+      }
     })
   }
 });
@@ -179,7 +181,6 @@ function is_beta_build() {
 }
 function is_local_build() {
   return AVTT_ENVIRONMENT.versionSuffix?.includes("local");
-
 }
 
 /** @return {boolean} true if the current page url includes "/characters/<someId>"  */
