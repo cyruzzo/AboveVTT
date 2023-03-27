@@ -965,7 +965,7 @@ function import_readfile() {
 			DataFile=$.parseJSON(atob(reader.result));
 		}
 
-		for(k in DataFile.soundpads){
+		for(let k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
 		$("#sounds-panel").remove();
@@ -1014,12 +1014,12 @@ function import_readfile() {
 				tokendata.tokens={};
 			}
 			if (DataFile.tokendata.folders) {
-				for(k in DataFile.tokendata.folders){
+				for(let k in DataFile.tokendata.folders){
 					tokendata.folders[k]=DataFile.tokendata.folders[k];
 				}
 			}
 			if (DataFile.tokendata.tokens) {
-				for(k in DataFile.tokendata.tokens){
+				for(let k in DataFile.tokendata.tokens){
 					tokendata.tokens[k]=DataFile.tokendata.tokens[k];
 				}
 			}

@@ -34,6 +34,7 @@ if (!isVttGamePage) {
         { src: "DiceContextMenu/DiceContextMenu.js" },
         { src: "DiceRoller.js" },
         { src: "DDBApi.js" },
+        { src: "MessageBroker.js" },
         // AboveVTT files that execute when loaded
         { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
         { src: "CharactersPage.js" } // Make sure CharactersPage executes last

@@ -397,7 +397,7 @@ function init_audio(){
 		selector_section=$("<div/>");
 		soundpad_selector=$("<select id='soundpad_selector'/>");
 		soundpad_selector.append("<option value=''>-</option>");
-		for(k in window.SOUNDPADS){
+		for(let k in window.SOUNDPADS){
 			soundpad_selector.append($("<option/>").attr('value',k).html(k));
 		}
 		selector_section.append("Load Soundpad:");

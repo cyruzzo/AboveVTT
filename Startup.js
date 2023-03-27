@@ -77,6 +77,7 @@ async function start_above_vtt_common() {
   window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
   window.TOKEN_PASTE_BUFFER = [];
   window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem(`TokenSettings${window.gameId}`)) || {};
+  window.all_token_objects = {};
 
   await load_external_script("https://www.youtube.com/iframe_api");
   $("#site").append("<div id='windowContainment'></div>");

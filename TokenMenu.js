@@ -9,7 +9,7 @@ function convert_path(path){
 	var pieces=path.split("/");
 	var current=tokendata;
 
-	for(var i=0;i<pieces.length;i++){
+	for(let i=0;i<pieces.length;i++){
 		if(!current || pieces[i]=="")
 			continue;
 		current=current.folders[pieces[i]];
@@ -444,7 +444,7 @@ function build_token_auras_inputs(tokenIds) {
 	})
 
 	let allTokensArePlayer = true;
-	for(token in tokens){
+	for(let token in tokens){
 		if(!window.TOKEN_OBJECTS[tokens[token].options.id].isPlayer()){
 			allTokensArePlayer=false;
 			break;
@@ -683,7 +683,7 @@ function build_token_light_inputs(tokenIds) {
 	})
 
 	let allTokensArePlayer = true;
-	for(token in tokens){
+	for(let token in tokens){
 		if(!window.TOKEN_OBJECTS[tokens[token].options.id].isPlayer()){
 			allTokensArePlayer=false;
 			break;
