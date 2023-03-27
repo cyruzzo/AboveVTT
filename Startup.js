@@ -71,7 +71,6 @@ async function start_above_vtt_common() {
   window.CURRENT_SCENE_DATA = default_scene_data();
   window.CURRENTLY_SELECTED_TOKENS = [];
   window.DRAWINGS = [];
-  window.PLAYER_STATS = {};
   window.REVEALED = [];
   window.TOKEN_CUSTOMIZATIONS = [];
   window.TOKEN_OBJECTS = {};

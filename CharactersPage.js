@@ -4,10 +4,195 @@ $(function() {
   init_characters_pages();
 });
 
+let recentCharacterUpdates = {};
+
+
+
 const sendCharacterUpdateEvent = mydebounce(() => {
   console.log("sendCharacterUpdateEvent")
-  window.MB.sendMessage("custom/myVTT/character-update", {characterId: window.PLAYER_ID});
-}, 4000);
+  if (is_abovevtt_page() && !window.DM) {
+    window.MB.sendMessage("custom/myVTT/character-update", {
+      characterId: window.PLAYER_ID,
+      pcData: {...recentCharacterUpdates}
+    });
+  }
+  else if(!window.DM){
+    tabCommunicationChannel.postMessage({
+      characterId: window.location.href.split('/').slice(-1)[0],
+      pcData: {...recentCharacterUpdates}
+    });
+  } 
+  recentCharacterUpdates = {};
+}, 1500);
+
+/** @param changes {object} the changes that were observed. EX: {hp: 20} */
+function character_sheet_changed(changes) {
+    console.log("character_sheet_changed", changes);
+    recentCharacterUpdates = {...recentCharacterUpdates, ...changes};
+    sendCharacterUpdateEvent();
+}
+
+function send_character_hp() {
+  const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
+  character_sheet_changed({
+    hitPointInfo: {
+      current: read_current_hp(),
+      maximum: read_max_hp(pc?.hitPointInfo?.maximum),
+      temp: read_temp_hp()
+    },
+    deathSaveInfo: read_death_save_info()
+  });
+}
+
+
+function send_abilities(){
+
+  let scoreOnTop = $('.ddbc-ability-summary__primary .ddbc-signed-number--large').length == 0;
+  
+  let abilitiesObject = [
+      {name: 'str', save: 0, score: 0, label: 'Strength', modifier: 0},
+      {name: 'dex', save: 0, score: 0, label: 'Dexterity', modifier: 0},
+      {name: 'con', save: 0, score: 0, label: 'Constitution', modifier: 0},
+      {name: 'int', save: 0, score: 0, label: 'Intelligence', modifier: 0},
+      {name: 'wis', save: 0, score: 0, label: 'Wisdom', modifier: 0},
+      {name: 'cha', save: 0, score: 0, label: 'Charisma', modifier: 0}
+    ];
+ 
+
+  for(let i = 0; i < 6; i++){
+     if(scoreOnTop){
+        abilitiesObject[i].score = parseInt($($(`.ddbc-ability-summary__primary button`)[i]).text());
+     }
+     else{
+        abilitiesObject[i].score =  parseInt($($(`.ddbc-ability-summary__secondary`)[i]).text());
+     }
+
+    abilitiesObject[i].modifier = parseInt($($(`.ddbc-signed-number--large`)[i]).attr('aria-label').replace(/\s/g, ''));
+
+    abilitiesObject[i].save = parseInt($($(`.ddbc-saving-throws-summary__ability-modifier .ddbc-signed-number`)[i]).attr('aria-label').replace(/\s/g, ''));
+  }
+
+
+
+   character_sheet_changed({abilities: abilitiesObject});
+}
+
+function send_senses() {
+  // this seems to be the same for both desktop and mobile layouts which is nice for once
+  try {
+    let changeData = {};
+    const passiveSenses = $(".ct-senses__callouts .ct-senses__callout");
+    const perception = parseInt($(passiveSenses[0]).find(".ct-senses__callout-value").text());
+    if (perception) changeData.passivePerception = perception;
+    const investigation = parseInt($(passiveSenses[1]).find(".ct-senses__callout-value").text());
+    if (investigation) changeData.passiveInvestigation = investigation;
+    const insight = parseInt($(passiveSenses[2]).find(".ct-senses__callout-value").text());
+    if (insight) changeData.passiveInsight = insight;
+    const senses = $(".ct-senses__summary").text().split(",").map(sense => {
+      try {
+        const name = sense.trim().split(" ")[0].trim();
+        const distance = sense.trim().substring(name.length).trim();
+        return { name: name, distance: distance };
+      } catch (senseError) {
+        console.debug("Failed to parse sense", sense, senseError);
+        return undefined;
+      }
+    }).filter(s => s); // filter out any undefined
+    if (senses.length > 0) {
+      changeData.senses = senses;
+    }
+    character_sheet_changed(changeData);
+  } catch (error) {
+    console.debug("Failed to send senses", error);
+  }
+}
+
+function send_movement_speeds(speedManagePage = $(".ct-speed-manage-pane")) {
+  console.log("send_movement_speeds", speedManagePage);
+  if (speedManagePage.find(".ct-speed-manage-pane__speeds").length > 0) {
+    // the sidebar is open, let's grab them all
+    let speeds = [];
+    speedManagePage.find(".ct-speed-manage-pane__speed").each(function() {
+      const container = $(this);
+      const name = container.find(".ct-speed-manage-pane__speed-label").text();
+      const distance = parseInt(container.find(".ddbc-distance-number__number").text());
+      speeds.push({name: name, distance: distance});
+    });
+    if (speeds.length) {
+      character_sheet_changed({speeds: speeds});
+      return;
+    }
+  }
+
+  // just update the primary speed
+  const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
+  if (pc && pc.speeds) {
+    let speeds = pc.speeds;
+    const name = $(".ct-speed-box__heading").text();
+    const distance = parseInt($(".ct-speed-box__box-value .ddbc-distance-number .ddbc-distance-number__number").text());
+    const index = speeds.findIndex(s => s.name === name);
+    speeds[index].distance = distance;
+    character_sheet_changed({speeds: speeds});
+  } else {
+    // we don't want to overwrite everything with only the primary speed
+    console.warn("not collecting speed because we don't have a pc to get defaults from");
+  }
+}
+
+function read_current_hp() {
+  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).length) {
+    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`).text()) || 0;
+  }
+  if ($(`.ct-status-summary-mobile__hp-current`).length) {
+    const hpValue = parseInt($(`.ct-status-summary-mobile__hp-current`).text()) || 0;
+    if (hpValue && $(`.ct-status-summary-mobile__hp--has-temp`).length) {
+      // DDB doesn't display the temp value on mobile layouts so set this to 1 less, so we can at least show that there is temp hp. See `read_temp_hp` for the other side of this
+      if($('.ct-health-manager__health-item--temp').length){
+        return hpValue - parseInt($('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); /// if hp side panel is open check this for temp hp
+      }
+      return hpValue - 1;
+    }
+    return hpValue;
+  }
+  return 0;
+}
+
+function read_temp_hp() {
+  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).length) {
+    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
+  }
+  if ($(`.ct-status-summary-mobile__hp--has-temp`).length) {
+    if($('.ct-health-manager__health-item--temp').length){
+        return parseInt(('.ct-health-manager__health-item--temp .ct-health-manager__input').val()); // if hp side panel is open check this for temp hp
+      }
+    // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
+    return 1;
+  }
+  return 0;
+}
+
+function read_max_hp(currentMaxValue = 0) {
+  if ($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).length) {
+    return parseInt($(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || currentMaxValue;
+  }
+  if ($(".ct-status-summary-mobile__hp-max").length) {
+    return parseInt($(".ct-status-summary-mobile__hp-max").text()) || currentMaxValue;
+  }
+  return currentMaxValue;
+}
+
+function read_death_save_info() {
+  if ($(".ct-status-summary-mobile__deathsaves-marks").length) {
+    return {
+      failCount: $('.ct-status-summary-mobile__deathsaves--fail .ct-status-summary-mobile__deathsaves-mark--active').length || 0,
+      successCount: $('.ct-status-summary-mobile__deathsaves--success .ct-status-summary-mobile__deathsaves-mark--active').length || 0
+    };
+  }
+  return {
+    failCount: $('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
+    successCount: $('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
+  };
+}
 
 function init_characters_pages() {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
@@ -101,18 +286,18 @@ function inject_dice_roll(element) {
  *     updates window.PLAYER_NAME when the character name changes.
  * @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else */
 function observe_character_sheet_changes(documentToObserve) {
-  if (window.dice_roll_observer) {
-    window.dice_roll_observer.disconnect();
+  if (window.character_sheet_observer) {
+    window.character_sheet_observer.disconnect();
   }
 
-  window.dice_roll_observer = new MutationObserver(function(mutationList, observer) {
+  window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
 
-    // console.log("dice_roll_observer", mutationList);
+    // console.log("character_sheet_observer", mutationList);
 
     // initial injection of our buttons
     const notes = documentToObserve.find(".ddbc-note-components__component:not('.above-vtt-dice-visited')");
     notes.each(function() {
-      // console.log("dice_roll_observer iterating", mutationList);
+      // console.log("character_sheet_observer iterating", mutationList);
       try {
         inject_dice_roll($(this));
         $(this).addClass("above-vtt-dice-visited"); // make sure we only parse this element once
@@ -123,68 +308,126 @@ function observe_character_sheet_changes(documentToObserve) {
 
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
-      switch (mutation.type) {
-        case "attributes":{
-          if(is_abovevtt_page()){
-            if($(mutation.target).parent().hasClass('ct-condition-manage-pane__condition-toggle') && $(mutation.target).hasClass('ddbc-toggle-field')){ // conditions update from sidebar
-              sendCharacterUpdateEvent();
-            }        
-          }
+      try {
+        console.debug("character_sheet_observer mutation", mutation);
+        let mutationTarget = $(mutation.target);
+        const mutationParent = mutationTarget.parent();
+        switch (mutation.type) {
+          case "attributes":
+            if (
+              (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && mutationTarget.hasClass('ddbc-toggle-field')) ||
+              (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)
+            ) { // conditions update from sidebar
+              let conditionsSet = [];
+              $(`.ct-condition-manage-pane__condition`).each(function () {
+                if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
+                  conditionsSet.push({
+                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                    level: null
+                  });
+                }
+              });
+              $(`.ct-condition-manage-pane__condition--special`).each (function () {
+                if($('.ddbc-number-bar__option--active').length > 0){
+                   conditionsSet.push({
+                    name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
+                    level: $(this).find('.ddbc-number-bar__option--implied').length
+                  });
+                }
+              })
+              character_sheet_changed({conditions: conditionsSet});
+            } else if(
+              mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
+              mutationTarget.hasClass("ct-health-manager__input") ||
+              mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
+            ) {
+              send_character_hp();
+            } else if (mutationTarget.hasClass("ct-subsection--senses")) {
+              send_senses();
+            } else if (mutationTarget.hasClass("ct-status-summary-mobile__button--interactive") && mutationTarget.text() === "Inspiration") {
+              character_sheet_changed({inspiration: mutationTarget.hasClass("ct-status-summary-mobile__button--active")});
+            }
+
+            break;
+          case "childList":
+            if (
+              $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
+              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
+              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
+              mutationTarget.hasClass('ct-health-summary__deathsaves') ||
+              mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
+            ) {
+              send_character_hp();
+            }
+            else if(mutationTarget.hasClass('ct-inspiration__status')) {
+              character_sheet_changed({
+                inspiration: mutationTarget.hasClass('ct-inspiration__status--active')
+              });
+            } else if (mutationTarget.hasClass("ct-sense-manage-pane__senses")) {
+              send_senses();
+            } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
+              send_movement_speeds(mutationTarget);
+            }
+
+            // TODO: check for class or something. We don't need to do this on every mutation
+            mutation.addedNodes.forEach(node => {
+              if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
+                try {
+                  inject_dice_roll(mutationTarget);
+                } catch (error) {
+                  console.log("inject_dice_roll failed to process element", error);
+                }
+              }
+            });
+            if (mutationTarget.hasClass("ct-sidebar__pane-content")) {
+              mutation.removedNodes.forEach(node => {
+                if ($(node).hasClass("ct-speed-manage-pane")) {
+                  // they just closed the movement speed sidebar panel so
+                  send_movement_speeds($(node));
+                }
+              });
+            }
+            break;
+          case "characterData":
+
+              if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
+                mutationParent.hasClass("ct-health-manager__health-item-value") 
+              ) {
+                send_character_hp();          
+              } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
+                character_sheet_changed({armorClass: parseInt($(`.ddbc-armor-class-box__value`).text())});
+              }
+              else if ($(mutationTarget[0].nextElementSibling).hasClass('ct-armor-manage-pane__heading-extra')) {
+                character_sheet_changed({armorClass: parseInt(mutationTarget[0].data)});
+              }
+              else if(mutationTarget.parents('.ddbc-ability-summary').length>0 || 
+                mutationTarget.parents('.ddbc-saving-throws-summary__ability-modifier').length>0
+              ){
+                send_abilities();
+              }
+            if (typeof mutation.target.data === "string") {
+              if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
+                try {
+                  inject_dice_roll(mutationTarget);
+                } catch (error) {
+                  console.log("inject_dice_roll failed to process element", error);
+                }
+              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p")) {
+                window.PLAYER_NAME = mutation.target.data;
+                character_sheet_changed({name: mutation.target.data});
+              }
+            }
+            break;
         }
-        case "childList":   
-          if(is_abovevtt_page()){     
-            if(($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && $(mutation.target).hasClass('ct-health-summary__hp-item-content')) || ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && $(mutation.target).hasClass('ct-health-summary__hp-item'))){ 
-              sendCharacterUpdateEvent(); //hp update from inputs
-            }
-            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-group') && $(mutation.target).hasClass('ct-health-summary__deathsaves')){ 
-              sendCharacterUpdateEvent(); //if 0 health update
-            }
-          }
-          mutation.addedNodes.forEach(node => {
-            if (typeof node.data === "string" && node.data.match(multiDiceRollCommandRegex)?.[0]) {
-              try {
-                inject_dice_roll($(mutation.target));
-              } catch (error) {
-                console.log("inject_dice_roll failed to process element", error);
-              }
-            }
-          });
-          break;
-        case "characterData":
-          if(is_abovevtt_page()){
-            if($(mutation.target).parent().parent().hasClass('ct-health-summary__hp-item-content'))
-            {
-              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-current-label')) // hp update from buttons
-              {
-                sendCharacterUpdateEvent();
-              }
-              if($(mutation.target).parent().attr('aria-labelledby').includes('ct-health-summary-max-label')){ // max_hp update from buttons
-                sendCharacterUpdateEvent();
-              }
-            }
-            if($(mutation.target).parent().hasClass('ddbc-armor-class-box__value')){ // ac update from sidebar
-             sendCharacterUpdateEvent();
-            }
-          }
-          if (typeof mutation.target.data === "string") {
-            if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
-              try {
-                inject_dice_roll($(mutation.target));
-              } catch (error) {
-                console.log("inject_dice_roll failed to process element", error);
-              }
-            } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p")) {
-              window.PLAYER_NAME = mutation.target.data;
-            }
-          }
-          break;
+      } catch (error) {
+        console.warn("character_sheet_observer failed to parse mutation", error, mutation);
       }
     });
   });
 
   const mutation_target = documentToObserve.get(0);
   const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-  window.dice_roll_observer.observe(mutation_target, mutation_config);
+  window.character_sheet_observer.observe(mutation_target, mutation_config);
 }
 
 /** Attempts to read the player name and image from the page every.
@@ -231,7 +474,7 @@ function set_window_name_and_image(callback) {
  * If AboveVTT is not running, the button will be a join button
  * If AboveVTT is running, the button will be an exit button */
 function inject_join_exit_abovevtt_button() {
-  if (!is_characters_page()) return;                        // wrong page, dude
+  if (!is_characters_page() || window.self != window.top) return; // wrong page, dude
   if ($(".ddbc-campaign-summary").length === 0) return;     // we don't have any campaign data
   if ($("#avtt-character-join-button").length > 0) return;  // we already injected a button
 
@@ -332,8 +575,9 @@ function observe_character_theme_change() {
             const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
               update_window_color(newColor);
-              sendCharacterUpdateEvent();
-              window.PeerManager.send(PeerEvent.preferencesChange());
+              if(window.PeerManager != undefined)
+                window.PeerManager.send(PeerEvent.preferencesChange());
+              character_sheet_changed({color: newColor});
             }
           }
         });
@@ -351,7 +595,8 @@ function observe_character_image_change() {
         // This should be just fine, but catch any parsing errors just in case
         const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
         window.PLAYER_IMG = updatedUrl;
-        sendCharacterUpdateEvent();
+        character_sheet_changed({image: updatedUrl,
+                                avatarUrl: updatedUrl});
       } catch { }
     });
   });
@@ -359,7 +604,7 @@ function observe_character_image_change() {
 }
 
 function update_window_color(colorValue) {
-  let pc = find_pc_by_player_id(my_player_id());
+  let pc = find_pc_by_player_id(my_player_id(), false);
   if (pc?.decorations?.characterTheme?.themeColor) {
     pc.decorations.characterTheme.themeColor = colorValue;
     find_and_set_player_color();

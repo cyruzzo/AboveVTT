@@ -563,27 +563,26 @@ function replace_gamelog_message_expressions(listItem) {
 
 function getCharacterStatModifiers(entityType, entityId) {
     console.debug("getCharacterStatModifiers", entityType, entityId);
-    // stats values in window.pcs is not accurate. They are the base values, and still need to be adjusted using the rest of the data in the DDBApi response
-    // if (entityType === "character" && typeof window.pcs === "object") {
-    //     try {
-    //         const pc = window.pcs.find(pc => pc.sheet.includes(entityId));
-    //         if (typeof pc === "object" && typeof pc.abilities === "object" && typeof pc.proficiencyBonus === "number") {
-    //             const statMods = {
-    //                 "str": pc.abilities.find(a => a.name === "str").modifier,
-    //                 "dex": pc.abilities.find(a => a.name === "dex").modifier,
-    //                 "con": pc.abilities.find(a => a.name === "con").modifier,
-    //                 "int": pc.abilities.find(a => a.name === "int").modifier,
-    //                 "wis": pc.abilities.find(a => a.name === "wis").modifier,
-    //                 "cha": pc.abilities.find(a => a.name === "cha").modifier,
-    //                 "pb": pc.proficiencyBonus
-    //             };
-    //             console.debug("getCharacterStatModifiers built statMods from window.pcs", statMods);
-    //             return statMods;
-    //         }
-    //     } catch (error) {
-    //         console.warn("getCharacterStatModifiers failed to collect abilities from window.pcs", error);
-    //     }
-    // }
+    if (entityType === "character" && typeof window.pcs === "object") {
+        try {
+            const pc = window.pcs.find(pc => pc.sheet.includes(entityId));
+            if (typeof pc === "object" && typeof pc.abilities === "object" && typeof pc.proficiencyBonus === "number") {
+                const statMods = {
+                    "str": pc.abilities.find(a => a.name === "str").modifier,
+                    "dex": pc.abilities.find(a => a.name === "dex").modifier,
+                    "con": pc.abilities.find(a => a.name === "con").modifier,
+                    "int": pc.abilities.find(a => a.name === "int").modifier,
+                    "wis": pc.abilities.find(a => a.name === "wis").modifier,
+                    "cha": pc.abilities.find(a => a.name === "cha").modifier,
+                    "pb": pc.proficiencyBonus
+                };
+                console.debug("getCharacterStatModifiers built statMods from window.pcs", statMods);
+                return statMods;
+            }
+        } catch (error) {
+            console.warn("getCharacterStatModifiers failed to collect abilities from window.pcs", error);
+        }
+    }
     if (is_characters_page()) {
         try {
             let stats = $(".ddbc-ability-summary__secondary");
@@ -600,28 +599,6 @@ function getCharacterStatModifiers(entityType, entityId) {
             return statMods
         } catch (error) {
             console.warn("getCharacterStatModifiers failed to collect abilities from character sheet", error);
-        }
-    }
-    if (window.DM) {
-        try {
-            const sheet = find_currently_open_character_sheet();
-            if (!sheet) return undefined;
-            const stats = window.PLAYER_STATS[sheet];
-            if (!stats || !stats.abilities) return undefined;
-            const statMods = {
-                "str": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "str").modifier),
-                "dex": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "dex").modifier),
-                "con": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "con").modifier),
-                "int": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "int").modifier),
-                "wis": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "wis").modifier),
-                "cha": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "cha").modifier),
-                "pb": parseInt($($("#sheet").find("iframe").contents()).find(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
-            };
-            console.debug("getCharacterStatModifiers built statMods from find_currently_open_character_sheet", statMods);
-            return statMods
-        } catch (error) {
-            console.warn("getCharacterStatModifiers Failed to parse player stats", error);
-            return undefined;
         }
     }
     console.log("getCharacterStatModifiers found nothing");

@@ -31,12 +31,47 @@ $(function() {
   }
 
   window.diceRoller = new DiceRoller();
+  if (is_abovevtt_page()) {
+    tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(!window.DM){
+         window.MB.sendMessage("custom/myVTT/character-update", {
+          characterId: event.data.characterId,
+          pcData: event.data.pcData
+        });
+      }
+      else{
+        update_pc_with_data(event.data.characterId, event.data.pcData);
+      }   
+    })
+  }
 });
 
 const async_sleep = m => new Promise(r => setTimeout(r, m));
 
 const charactersPageRegex = /\/characters\/\d+/;
 
+const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication');
+
+function mydebounce(func, timeout = 800){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+function find_currently_open_character_sheet() {
+  if (is_characters_page()) {
+    return window.location.pathname;
+  }
+  let sheet;
+  $("#sheet").find("iframe").each(function () {
+    const src = $(this).clone().attr("src");
+    if (src != "") {
+      sheet = src;
+    }
+  })
+  return sheet;
+}
 function monitor_console_logs() {
   // slightly modified version of https://stackoverflow.com/a/67449524
   if (console.concerningLogs === undefined) {
@@ -120,14 +155,18 @@ function process_monitored_logs() {
     let messageString = `\n${log.type.toUpperCase()} ${log.timeStamp}`;
     // processedLogs.push(prefix);
     log.value.forEach((value, index) => {
-      const logItem = log.value[index];
-      let logString = '\n';
-      if (typeof logItem === "object") {
-        logString += `      ${JSON.stringify(logItem)}`;
-      } else {
-        logString += `      ${logItem}`;
+      try {
+        const logItem = log.value[index];
+        let logString = '\n';
+        if (typeof logItem === "object") {
+          logString += `      ${JSON.stringify(logItem)}`;
+        } else {
+          logString += `      ${logItem}`;
+        }
+        messageString += logString.replaceAll(MYCOBALT_TOKEN, '[REDACTED]').replaceAll(window.CAMPAIGN_SECRET, '[REDACTED]');
+      } catch (err) {
+        console.debug("failed to process log value", err);
       }
-      messageString += logString.replaceAll(MYCOBALT_TOKEN, '[REDACTED]').replaceAll(window.CAMPAIGN_SECRET, '[REDACTED]');
     })
     processedLogs.push(messageString);
   });
@@ -142,6 +181,7 @@ function is_beta_build() {
 }
 function is_local_build() {
   return AVTT_ENVIRONMENT.versionSuffix?.includes("local");
+
 }
 
 /** @return {boolean} true if the current page url includes "/characters/<someId>"  */
@@ -256,7 +296,7 @@ function showError(error, ...extraInfo) {
       add_issues_to_error_message(issues, error.message);
     })
     .catch(githubError => {
-      console.error("look_for_github_issue", "Failed to look for github issues", githubError);
+      console.log("look_for_github_issue", "Failed to look for github issues", githubError);
     });
 }
 
@@ -334,31 +374,43 @@ const defaultAvatarUrl = "https://www.dndbeyond.com/content/1-0-2416-0/skins/wat
 /** an object that mimics window.pcs, but specific to the DM */
 function generic_pc_object(isDM) {
   let pc = {
-    "decorations": {
-      "backdrop": { // barbarian because :shrug:
-        "largeBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/473/636453122224164304.jpeg",
-        "smallBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/472/636453122223383028.jpeg",
-        "backdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/471/636453122222914252.jpeg",
-        "thumbnailBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/474/636453122224476777.jpeg"
+    decorations: {
+      backdrop: { // barbarian because :shrug:
+        largeBackdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/473/636453122224164304.jpeg",
+        smallBackdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/472/636453122223383028.jpeg",
+        backdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/471/636453122222914252.jpeg",
+        thumbnailBackdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/474/636453122224476777.jpeg"
       },
-      "characterTheme": {
-        "name": "DDB Red",
-        "isDarkMode": false,
-        "isDefault": true,
-        "backgroundColor": "#FEFEFE",
-        "themeColor": "#C53131"
+      characterTheme: {
+        name: "DDB Red",
+        isDarkMode: false,
+        isDefault: true,
+        backgroundColor: "#FEFEFE",
+        themeColor: "#C53131"
       },
-      "avatar": {
-        "avatarUrl": defaultAvatarUrl,
-        "frameUrl": null
+      avatar: {
+        avatarUrl: defaultAvatarUrl,
+        frameUrl: null
       }
     },
-    "id": 0,
-    "image": defaultAvatarUrl,
-    "isAssignedToPlayer": false,
-    "name": "Unknown Character",
-    "sheet": "",
-    "userId": 0
+    id: 0,
+    image: defaultAvatarUrl,
+    isAssignedToPlayer: false,
+    name: "Unknown Character",
+    sheet: "",
+    userId: 0,
+    passivePerception: 8,
+    passiveInvestigation: 8,
+    passiveInsight: 8,
+    armorClass: 8,
+    abilities: [
+      {name: "str", save: 0, score: 10, label: "Strength", modifier: 0},
+      {name: "dex", save: 0, score: 10, label: "Dexterity", modifier: 0},
+      {name: "con", save: 0, score: 10, label: "Constitution", modifier: 0},
+      {name: "int", save: 0, score: 10, label: "Intelligence", modifier: 0},
+      {name: "wis", save: 0, score: 10, label: "Wisdom", modifier: 0},
+      {name: "cha", save: 0, score: 10, label: "Charisma", modifier: 0}
+    ]
   };
   if (isDM) {
     pc.image = dmAvatarUrl;
@@ -388,6 +440,35 @@ function color_from_pc_object(pc) {
   }
 }
 
+function hp_from_pc_object(pc) {
+  let hpValue = 0;
+  if (!isNaN((pc?.hitPointInfo?.current))) {
+    hpValue += parseInt(pc.hitPointInfo.current);
+  }
+  if (!isNaN((pc?.hitPointInfo?.temp))) {
+    hpValue += parseInt(pc.hitPointInfo.temp);
+  }
+  return hpValue;
+}
+function max_hp_from_pc_object(pc) {
+  if (!isNaN((pc.hitPointInfo?.maximum))) {
+    return parseInt(pc.hitPointInfo.maximum);
+  }
+  return 1; // this is wrong, but we want to avoid any NaN results from division
+}
+function hp_aura_color_from_pc_object(pc) {
+  const hpValue = hp_from_pc_object(pc);
+  const maxHp = max_hp_from_pc_object(pc);
+  return token_health_aura(Math.round((hpValue / maxHp) * 100));
+}
+function hp_aura_box_shadow_from_pc_object(pc) {
+  const auraValue = hp_aura_color_from_pc_object(pc);
+  return `${auraValue} 0px 0px 11px 3px`;
+}
+function speed_from_pc_object(pc, speedName = "Walking") {
+  return pc.speeds.find(s => s.name === speedName)?.distance || 0;
+}
+
 /** @return {string} The id of the player as a string, {@link dm_id} for the dm */
 function my_player_id() {
   if (window.DM) {
@@ -398,17 +479,25 @@ function my_player_id() {
 }
 
 /** @param {string} idOrSheet the playerId or pc.sheet of the pc you're looking for
+ * @param {boolean} useDefault whether to return a generic default object if the pc object is not found
  * @return {object} The window.pcs object that matches the idOrSheet */
-function find_pc_by_player_id(idOrSheet) {
+function find_pc_by_player_id(idOrSheet, useDefault = true) {
   if (idOrSheet === dm_id) {
     return generic_pc_object(true);
   }
   if (!window.pcs) {
-    console.error("window.pcs is undefined");
-    return generic_pc_object(false);
+    if(is_abovevtt_page())
+      console.error("window.pcs is undefined");
+    return useDefault ? generic_pc_object(false) : undefined;
   }
   const pc = window.pcs.find(pc => pc.sheet.includes(idOrSheet));
-  return pc || generic_pc_object(false);
+  if (pc) {
+    return pc;
+  }
+  if (useDefault) {
+    return generic_pc_object(false);
+  }
+  return undefined;
 }
 
 async function rebuild_window_pcs() {
@@ -423,69 +512,29 @@ async function rebuild_window_pcs() {
   });
 }
 
-function debounced_handle_character_update(msg) {
-  console.debug("debounced_handle_character_update", msg);
-  const playerId = msg?.data?.characterId;
-  if (!playerId) return;
-  if (!window.PLAYER_UPDATE_FUNCTIONS) {
-    window.PLAYER_UPDATE_FUNCTIONS = {};
+function update_pc_with_data(playerId, data) {
+  if (data.constructor !== Object) {
+    console.warn("update_pc_with_data was given invalid data", playerId, data);
+    return;
   }
-  if (!window.PLAYER_UPDATE_FUNCTIONS[playerId]) {
-    window.PLAYER_UPDATE_FUNCTIONS[playerId] = mydebounce(() => {
-      update_window_pc(playerId)
-        .then(() => {
-          console.log("debounced_handle_character_update called update_window_pc", playerId);
-          const pc = find_pc_by_player_id(playerId);
-          if (window.DM && pc) {
-            const tokenObject = window.TOKEN_OBJECTS[pc.sheet];
-            if (tokenObject) {
-              const color = color_from_pc_object(pc);
-              tokenObject.options.color = color;
-              $(`#combat_area tr[data-target='${tokenObject.options.id}'] img[class*='Avatar']`).css("border-color", color);
-              const alternativeImages = tokenObject.options.alternativeImages || [];
-              if (typeof pc.image === "string" && pc.image.length > 0 && alternativeImages && alternativeImages.indexOf(tokenObject.options.imgsrc) < 0) {
-                // the token is not using a custom image so update it with whatever the player has set
-                tokenObject.options.imgsrc = pc.image;
-              }
-              tokenObject.place_sync_persist();
-            }
-          }
-        })
-        .catch(error => {
-          console.warn("debounced_handle_character_update failed to update_window_pc", playerId, error);
-        });
-
-      // old way of updating character data that's still being used
-      if (window.DM) {
-        const pc = window.pcs.find(pc => pc.sheet.includes(playerId));
-        if (pc) {
-          console.log("debounced_handle_character_update is calling getPlayerData", playerId);
-          getPlayerData(pc.sheet, function (playerData) {
-            window.PLAYER_STATS[playerData.id] = playerData;
-            window.MB.sendTokenUpdateFromPlayerData(playerData);
-            update_pclist();
-            send_player_data_to_all_peers(playerData);
-          });
-        }
-      }
-    }, 4000);
+  const index = window.pcs.findIndex(pc => pc.sheet.includes(playerId));
+  if (index < 0) {
+    console.warn("update_pc_with_data could not find pc with id", playerId);
+    return;
   }
-  console.debug("debounced_handle_character_update calling debounce function", playerId);
-  window.PLAYER_UPDATE_FUNCTIONS[playerId]();
-}
-
-async function update_window_pc(characterId) {
-  const index = window.pcs.findIndex(pc => pc.id.toString() === characterId.toString());
-  if (index < 0) return; // We haven't even finished fetching all window.pcs yet. No need to update this one yet.
-  const allCharacterDetails = await DDBApi.fetchCharacterDetails([characterId]);
-  const characterData = allCharacterDetails[0];
-  const oldData = window.pcs[index];
-  window.pcs[index] = {
-    ...oldData,
-    ...characterData,
-    image: characterData.decorations?.avatar?.avatarUrl || defaultAvatarUrl,
-    sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
-  };
+  const pc = window.pcs[index];
+  const updatedPc = {...pc, ...data};
+  window.pcs[index] = updatedPc
+  let token = window.TOKEN_OBJECTS[pc.sheet];
+  if (token) {
+    token.options = {
+      ...token.options,
+      ...updatedPc,
+      id: pc.sheet // updatedPc.id is DDB characterId, but we use the sheet as an id for tokens
+    };
+    token.place_sync_persist(); // not sure if this is overkill
+  }
+  update_pc_token_rows();
 }
 
 async function harvest_game_id() {
@@ -653,6 +702,12 @@ function normalize_scene_urls(scenes) {
 }
 
 async function look_for_github_issue(...searchTerms) {
+  // fetch issues that have been marked as bugs
+  if (!window.githubBugs) {
+    window.githubBugs = []; // don't fetch the same list every single time or we could get rate-limited when things go really bad
+    const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug&state=all", { credentials: "omit" });
+    window.githubBugs = await request.json();
+  }
 
   const searchTermStrings = searchTerms.map(ei => {
     if (typeof ei === "object") {
@@ -662,13 +717,8 @@ async function look_for_github_issue(...searchTerms) {
     }
   });
 
-
-  // fetch issues that have been marked as bugs
-  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug&state=all", { credentials: "omit" });
-  const response = await request.json();
-
   // remove any that have been marked as potential-duplicate
-  const filteredIssues = response.filter(issue => !issue.labels.find(l => l.name === "potential-duplicate" || l.name === "released")).reverse();
+  const filteredIssues = window.githubBugs.filter(issue => !issue.labels.find(l => l.name === "potential-duplicate" || l.name === "released")).reverse();
 
   // instantiate fuse to fuzzy match parts of the github issues that we just downloaded
   const fuse = new Fuse(filteredIssues, {
@@ -711,4 +761,29 @@ async function fetch_github_issue_comments(issueNumber) {
 function open_github_issue(title, body) {
   const url = `https://github.com/cyruzzo/AboveVTT/issues/new?labels=bug&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`
   window.open(url, '_blank');
+}
+
+function areArraysEqualSets(a1, a2) {
+  // canbax, https://stackoverflow.com/a/55614659
+  const superSet = {};
+  for (const i of a1) {
+    const e = i + typeof i;
+    superSet[e] = 1;
+  }
+
+  for (const i of a2) {
+    const e = i + typeof i;
+    if (!superSet[e]) {
+      return false;
+    }
+    superSet[e] = 2;
+  }
+
+  for (let e in superSet) {
+    if (superSet[e] === 1) {
+      return false;
+    }
+  }
+
+  return true;
 }

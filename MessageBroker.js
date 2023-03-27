@@ -1,6 +1,6 @@
 // this shouln't be here...
-
-function mydebounce(func, timeout = 800){
+ 
+function mydebounce(func, timeout = 800){   // This had to be in both core and here to get this to work due to load orders. I might look at this more later
   let timer;
   return (...args) => {
     clearTimeout(timer);
@@ -484,8 +484,8 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
 			}
-			if(msg.eventType.includes('character-update')){
-					debounced_handle_character_update(msg);
+			if(msg.eventType == ('custom/myVTT/character-update')){
+					update_pc_with_data(msg.data.characterId, msg.data.pcData);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -688,13 +688,6 @@ class MessageBroker {
 					else{
 						$("#scene_map").prop("volume", msg.data.volume/100);
 					}
-			}
-
-			if (msg.eventType == "custom/myVTT/playerdata") {
-				self.handlePlayerData(msg.data);
-			}
-			if (msg.eventType == "custom/myVTT/actoplayerdata") {
-				self.acToPlayerData(msg.data);
 			}
 
 			if (msg.eventType == "dice/roll/pending"){
@@ -1057,72 +1050,6 @@ class MessageBroker {
 		ct_load(data);
 	}
 
-	handlePlayerData(data) {
-		if (!window.DM)
-			return;
-
-		window.PLAYER_STATS[data.id] = data;
-		this.sendTokenUpdateFromPlayerData(data);
-
-		// update combat tracker:
-
-		update_pclist();
-		send_player_data_to_all_peers(data);
-	}
-
-	acToPlayerData(data) {
-		if (!window.DM)
-			return;
-		for(let id in window.TOKEN_OBJECTS){
-			if(id.endsWith(data.id)){
-				window.TOKEN_OBJECTS[id].options.ac = data.ac;
-				window.TOKEN_OBJECTS[id].place();
-				window.TOKEN_OBJECTS[id].update_and_sync();
-				if(id in window.PLAYER_STATS) {
-					window.PLAYER_STATS[id].ac = data.ac;
-					send_player_data_to_all_peers(window.PLAYER_STATS[id]);
-				}
-			}
-		}	
-	}
-	
-	sendTokenUpdateFromPlayerData(data) {
-		console.group("sendTokenUpdateFromPlayerData")
-		if (data.id in window.TOKEN_OBJECTS) {
-			var cur = window.TOKEN_OBJECTS[data.id];
-
-			// test for any change
-			if ((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
-				(cur.options.max_hp != data.max_hp) ||
-				(cur.options.ac != data.ac) ||
-				(cur.options.temp_hp != data.temp_hp) ||
-				(cur.options.inspiration != data.inspiration) ||
-				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
-			{			
-				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
-					var msgdata = {
-						player: cur.options.name,
-						img: cur.options.imgsrc,
-						text: "<b>Check for concentration!!</b>",
-					};
-
-					// window.MB.inject_chat(msgdata);
-				}
-				cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
-
-
-				cur.options.max_hp = data.max_hp;
-				cur.options.ac = data.ac;
-				cur.options.conditions = data.conditions;
-				cur.options.inspiration = data.inspiration;
-				cur.options.temp_hp = data.temp_hp;
-				cur.place();
-				window.MB.sendMessage('custom/myVTT/token', cur.options);
-			}
-		}
-		console.groupEnd()
-	}
-
 	encode_message_text(text) {
 		if (is_supported_version('0.66')) {
 			// This is used when the "Send to Gamelog" button sends HTML over the websocket.
@@ -1310,11 +1237,6 @@ class MessageBroker {
 	handleScene(msg) {
 		console.debug("handlescene", msg);
 
-		// DISABLED THANKS TO POLLING
-		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
-			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-		}*/
-
 		window.DRAWINGS = [];
 		reset_canvas();
 
@@ -1426,13 +1348,10 @@ class MessageBroker {
 
 
 
-			if(window.DM)
-				get_pclist_player_data();
-			else{
+			if(!window.DM) {
 			 	window.MB.sendMessage('custom/myVTT/syncmeup');
+				check_token_visibility();
 			}
-			if(!window.DM)
-					check_token_visibility();
 
 
 			if (window.EncounterHandler !== undefined) {
@@ -1468,7 +1387,7 @@ class MessageBroker {
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			// also sync the journal
-			window.JOURNAL.sync();
+			window.JOURNAL?.sync();
 			window.MB.sendMessage("custom/myVTT/pausePlayer",{
 				paused: $('#pause_players').hasClass('paused')
 			});

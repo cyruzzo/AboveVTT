@@ -64,7 +64,6 @@
 		"CampaignPage.js",
 		"Startup.js",
 		"CharactersPage.js",
-		"DnDBeyond/DDBCharacterData.js",
 		"EncounterHandler.js",
 		"SidebarPanel.js",
 		"Journal.js",
