@@ -402,9 +402,16 @@ function is_token_under_light_aura(tokenid){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	let visibleLightAuras = $(".aura-element-container-clip .aura-element:not([style*='visibility: hidden'])");
 	
+	let visionIdsToCheck =[];
+
+	let visibleLightAuras = $(".aura-element-container-clip .aura-element:not([style*='visibility: hidden'])");
+	let visibleLightAurasParent = visibleLightAuras.parent();
+
 	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
+		let auraId = $(visibleLightAuras[auraIndex]).attr('data-id');
+		if(window.lightAuraClipPolygon[auraId] == undefined)
+			continue;
 		let bounds = {
 			left: parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')), 
 			top:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')),
@@ -413,13 +420,16 @@ function is_token_under_light_aura(tokenid){
 		};
 		let auraSize = $(visibleLightAuras[auraIndex]).width();
 		if(horizontalMiddle > bounds.left && horizontalMiddle < bounds.right && verticalMiddle > bounds.top && verticalMiddle < bounds.bottom){
-			return true;
-		}
-	}
-		
-	
-	return false;
+				
 
+			let pixeldata = window.lightAuraClipPolygon[auraId].canvas.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+
+			pixeldata = pixeldata.filter(function(color, index) {return (index + 1) % 4 != 0});
+			if(pixeldata.some(color => color == 255))
+				return true;	
+		}		
+	}
+	return  false;
 }
 
 function check_single_token_visibility(id){
@@ -721,7 +731,7 @@ function reset_canvas() {
  	}
  	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
-
+ 	delete window.lightAuraClipPolygon;
 
 	redraw_fog();
 	redraw_drawings();
@@ -3136,9 +3146,12 @@ function redraw_light(){
 	particleLook(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
 
 	let path = "";
+	if(window.lightAuraClipPolygon == undefined)
+		window.lightAuraClipPolygon = {};
+	
 	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 	for( let i = 0; i < lightPolygon.length; i++ ){
-			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
@@ -3151,6 +3164,8 @@ function redraw_light(){
 		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 
 	}
 
+	clipped_light(auraId, lightPolygon);
+	
   	if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
   		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
   		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
@@ -3166,12 +3181,59 @@ function redraw_light(){
 
   		
   		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+		
+  		
 	}    	
   }
   context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
   $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
 }
 
+
+function clipped_light(auraId, maskPolygon){
+	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
+	if(window.DM)
+		return;
+	
+	let lightRadius =(parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)+parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID)) ? darkvisionRadius : 0;
+	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
+	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
+	if(window.lightAuraClipPolygon[auraId] != undefined){
+		if(circleRadius == 0){
+			delete window.lightAuraClipPolygon[auraId];
+			return; // remove 0 range light and return
+		}
+		if(window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
+	}
+	else if(circleRadius == 0){
+		return; // don't make an object for 0 range light
+	}
+	let lightCanvas = document.createElement('canvas');
+	let lightAuraClipPolygonCtx = lightCanvas.getContext('2d');
+	lightCanvas.width = $("#raycastingCanvas").width();
+	lightCanvas.height =  $("#raycastingCanvas").height();
+
+	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
+	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
+
+	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
+
+	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius, 'rgba(255, 255, 255, 1)', true, 0)
+	
+
+	window.lightAuraClipPolygon[auraId] = {
+		canvas: lightCanvas,
+		light: lightRadius,
+		darkvision: darkvisionRadius,
+		middle: {
+			x: horizontalTokenMiddle,
+			y: verticalTokenMiddle
+		} 
+	}
+}
 
 
 
