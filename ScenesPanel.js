@@ -585,7 +585,9 @@ function edit_scene_dialog(scene_id) {
 		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
-		$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
+		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
+		}
 		did_update_scenes();
 	});
 
@@ -600,7 +602,6 @@ function edit_scene_dialog(scene_id) {
 		window.ScenesHandler.scene.grid_subdivided = "0";
 		consider_upscaling(window.ScenesHandler.scene);
 		window.ScenesHandler.persist_current_scene();
-		window.ScenesHandler.reload();
 		$("#wizard_popup").empty().append("You're good to go!!");
 		$("#exitWizard").remove();
 		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
@@ -631,7 +632,6 @@ function edit_scene_dialog(scene_id) {
 				$("#wizard_popup").remove();
 			});
 			window.ScenesHandler.persist_current_scene();
-			window.ScenesHandler.reload();
 			$("#raycastingCanvas").css('visibility', 'visible');
 			$("#darkness_layer").css('visibility', 'visible');
 		});
@@ -647,7 +647,6 @@ function edit_scene_dialog(scene_id) {
 			window.ScenesHandler.scene.upsq = "ft";
 			consider_upscaling(window.ScenesHandler.scene);
 			window.ScenesHandler.persist_current_scene();
-			window.ScenesHandler.reload();
 			$("#exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
@@ -674,7 +673,6 @@ function edit_scene_dialog(scene_id) {
 		});
 		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
-		window.ScenesHandler.reload();
 		$("#raycastingCanvas").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	}
@@ -696,7 +694,6 @@ function edit_scene_dialog(scene_id) {
 		});
 		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
-		window.ScenesHandler.reload();
 		$("#raycastingCanvas").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	}
@@ -779,8 +776,8 @@ function edit_scene_dialog(scene_id) {
 			var pageX = Math.round(parseInt(aligner1.css('left')) * window.ZOOM - ($(window).width() / 2));
 			var pageY = Math.round(parseInt(aligner1.css('top')) * window.ZOOM - ($(window).height() / 2));
 			$("html,body").animate({
-				scrollTop: pageY + 200,
-				scrollLeft: pageX + 200,
+				scrollTop: pageY + window.VTTMargin,
+				scrollLeft: pageX + window.VTTMargin
 			}, 500);
 
 			let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
@@ -856,7 +853,6 @@ function edit_scene_dialog(scene_id) {
 			aligner2.draggable({
 				stop: regrid,
 				start: function(event) {
-					reset_canvas(); redraw_fog();
 					click2.x = event.clientX;
 					click2.y = event.clientY;
 					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
@@ -915,8 +911,6 @@ function edit_scene_dialog(scene_id) {
 			aligner1.draggable({
 				stop: regrid,
 				start: function(event) {
-					reset_canvas();
-					redraw_fog();
 					click1.x = event.clientX;
 					click1.y = event.clientY;
 					$("#aligner1").attr('original-top', parseInt($(event.target).css("top")));
@@ -1031,13 +1025,13 @@ function edit_scene_dialog(scene_id) {
 				scene[key] = formData[key];
 			}
 
-			window.ScenesHandler.persist_scene(scene_id,true);
+			window.ScenesHandler.persist_scene(scene_id);
 			window.ScenesHandler.switch_scene(scene_id);
 			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
 
 			$("#VTT").css("--scene-scale", 1)
 
-			$("#edit_dialog").remove();
+			$("#sources-import-main-container").remove();
 			$("#scene_selector").removeAttr("disabled");
 			$("#scene_selector_toggle").click();
 			$("#scene_selector_toggle").hide();
@@ -1391,8 +1385,9 @@ function default_scene_data() {
 		offsety: 0,
 		grid: 0,
 		snap: 0,
-		reveals: [],
-		order: Date.now()
+		reveals: [[0, 0, 0, 0, 2, 0, 1]],
+		order: Date.now(),
+		darkness_filter: '0'
 	};
 }
 

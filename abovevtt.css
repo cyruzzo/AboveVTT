@@ -708,7 +708,8 @@ div#scene_selector,
 }
 
 
-input[type="number"][name='darkness_filter_number']{
+input[type="number"][name='darkness_filter_number'],
+input[type="number"][name='gridStrokeNumberInput']{
     width:50px;
     font-size:12px;
 }
@@ -735,10 +736,12 @@ input[type="number"][name='darkness_filter_number']{
 }
 label[for='grid_line_width'] {
     font-size: 10px;
-    position: relative;
+    position: absolute;
     font-weight: bold;
     top: -7px;
     left: -83px;
+    top: -5px;
+    left: 71px;
     color: #555;
 }
 
@@ -752,7 +755,9 @@ input[name='gridStrokeNumberInput'] {
     position: relative;
     top: 3px;
     left: -57px;
-    width: 50px;
+    position: absolute;
+    top: 8px;
+    left: 170px;
 }
 
 .isvideotogglelabel {
@@ -1402,12 +1407,12 @@ div#combat_button{
 }
 
 #patreons {
-	padding-top:0px;
+	padding-top:10px;
     font-size: 8px;
 
-   -webkit-column-count: 9;
-      -moz-column-count: 9;
-           column-count: 9;
+   -webkit-column-count: 10;
+      -moz-column-count: 10;
+           column-count: 10;
 
    -webkit-column-gap: 20px;
       -moz-column-gap: 20px;
@@ -1418,6 +1423,22 @@ div#combat_button{
 	font-size: 11px;
 	font-weight:bold;
 }
+
+.patron-l0{
+    font-weight:bold;
+    font-size: 11px;
+    color:red;
+}
+
+.patron-l1{
+    font-weight:bold;
+    font-size: 10px;
+}
+
+.patron-l2{
+    font-weight:bold;
+}
+
 
 .player-card {
     box-shadow: 0 8px 16px -8px rgb(0 0 0 / 40%);
@@ -2052,6 +2073,15 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     border-radius: 12px;
     margin-right: 4px;
 }
+#above-vtt-error-message .error-good-news {
+    margin: 15px 0 5px 0;
+}
+#above-vtt-error-message .error-message-buttons {
+    margin-top: 15px;
+}
+#above-vtt-error-message a {
+    text-decoration: underline;
+}
 
 #btn_add_chapter {
     background: none;
@@ -2195,14 +2225,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #splash {
     position: fixed;
-    transform: translate(0%, -4%);
-    top: 50px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    top: 30px;
+    right: 340px;
     margin: auto;
-    height: 740px;
-    width: 750px;
+    height: 700px;
+    text-align:center;
     z-index: 70001;
     border: 3px solid black;
     border-radius: 8px;
@@ -2317,6 +2344,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 #tokenOptionsContainer .to-bottom:before {
     content: "\e258" !important;
+}
+#tokenOptionsContainer .open-menu:before {
+    content: "\e9bd" !important;
 }
 
 .icon-edit:before,
@@ -4078,6 +4108,11 @@ div.sidebar__pane-content div.tooltip::after {
     background: none !important;
 }
 
+.elev svg{
+    left: -7px;
+    position: absolute;
+}
+
 button.avtt-roll-button {
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
@@ -4863,6 +4898,8 @@ input.max_hp[disabled]{
     opacity: 1;
     color: #fff;
     pointer-events: none;
+    right: 8px;
+    border-radius: 5px;
 }
 
 .import-loading-indicator,
@@ -5727,6 +5764,13 @@ div.ddbc-tab-options--layout-pill>button{
 .url-validator.loading {
     color:blue;
     animation: spin 4s infinite linear;
+    background: none;
+    width: 24px;
+    height: 24px;
+}
+
+.url-validator.loading:before{
+    display:none;
 }
 
 @keyframes spin {
@@ -5751,6 +5795,8 @@ div.ddbc-tab-options--layout-pill>button{
     position: absolute;
     z-index: 9;
     mix-blend-mode: lighten;
+    -webkit-mask-image: var(--vision-mask);
+    -webkit-mask-size: cover;
 }
 .aura-element.islight,
 .aura-element[id*='vision_']{
@@ -5769,7 +5815,7 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 #raycastingCanvas{
-    opacity: max(calc(100% - var(--darkness-filter)), var(--walls-up-shadow-percent));
+    opacity: min(var(--darkness-filter), var(--walls-up-shadow-percent));
 }
 
 
@@ -5815,7 +5861,33 @@ div.note[id^="ui-id"] {
     width: 100% !important;
     padding: 0px !important;
     max-height: calc(100% - 33px) !important;
+
+}
+.body-rpgcharacter-sheet div.note[id^="ui-id"] {
+    height:100% !important;
     overflow: auto;
+}
+.tooltip-body-description-text.note-text img{
+    max-width: 100%;
+    height: auto;
+}
+.glc-game-log .note-text::-webkit-scrollbar{
+    width: 3px;
+}
+.glc-game-log .note-text::-webkit-scrollbar-track {
+    background: transparent;
+}
+.glc-game-log .note-text::-webkit-scrollbar-thumb{
+    background-color: #232d3166;
+    border-radius: 6px;
+    border: none;
+}
+.glc-game-log .tooltip-body-description-text.note-text > * {
+    max-width: calc(100% - 2px);
+}
+
+.glc-game-log .note-text{
+    overflow:overlay;
 }
 
 div.note[id^="ui-id"] .mce-listbox button{
@@ -5918,7 +5990,16 @@ div.note[id^="ui-id"] .mce-btn button {
     top: unset;
     left: 12px;
 }
-
+.sidebar-panel-footer .token-config-aura-wrapper h3 ~ .token-image-modal-footer-select-wrapper .token-image-modal-footer-title{
+    font-size:9px;
+    min-width:50px;
+    margin-top:0px
+    
+}
+.sidebar-panel-footer .token-config-aura-wrapper h3{
+    font-size:12px;
+    min-width:65px;
+}
 .peerCursorPosition {
     height: 16px;
     width: 16px;
@@ -6463,3 +6544,96 @@ button.journal-view-button.journal-button {
     border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 }
 /* end Note ddb styling*/
+
+/* start quick roll menu */
+#qrm_dialog button{
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    margin: 0 2px;
+    border-radius: 7px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    padding: 2px 8px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+}
+.qrm_name_line{
+    text-align: left;
+    color: #444d;
+    font-weight: 600;
+}
+.menu_table{
+    overflow: visible;
+    overflow-x: scroll;
+    height: calc(100% - 55px);
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+.menu_roll_input{
+    margin: 1px;
+    border-radius: 3px;
+    border-color: #ddd;
+    height:22px;
+    text-align:center;
+    font-size: 14px !important;
+    box-shadow: 1px 1px 1px 0px #00000047;
+}
+.general_input{
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    padding: 1px 1px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    margin: 1px;
+}
+.menu_hp_input{
+    border-width: 0;
+    background: none;
+    border-radius: 3px;
+    border-color: #ddd;
+    height:22px;
+    font-size: 18px !important;
+    top: 1px;
+    width: 45%;
+    display:inline-block;
+}
+
+#qrm_dialog .roll_mods_button {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    height: 40%;
+}
+.roll_mods_button:before {
+    width: 100%;
+    height: 100%;
+    min-width: 12px;
+    min-height: 12px;
+    top: 0px; 
+    margin-right: 0px;
+    left: 1px
+}
+.roll_mods_button:focus {
+    outline: none;
+    box-shadow: none;
+  }
+#adv.active_roll_mod{
+    background-image: none !important;
+    background: green;
+    border-radius: 3px !important;
+    border-color: #ddd !important;
+}
+#disadv.active_roll_mod{
+    background-image: none !important;
+    background: red;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+/* end quick roll menu */
+

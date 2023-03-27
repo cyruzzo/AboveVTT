@@ -1,5 +1,3 @@
-var abovevtt_version = '0.74'; // TODO: use window.AVTT_VERSION instead?
-
 /**
  * Before the page refreshes perform the innards
  * @param {Event} event
@@ -18,7 +16,10 @@ window.onbeforeunload = function(event)
  * @return {String} a sanitized and possibly modified url to help with loading maps */
 function parse_img(url) {
 	let retval = url;
-	if (typeof retval !== "string" || retval.trim().startsWith("data:")) {
+	if (typeof retval !== "string") {
+		console.log("parse_img is converting", url, "to an empty string");
+		retval = "";
+	} else if (retval.trim().startsWith("data:")) {
 		console.warn("parse_img is removing a data url because those are not allowed");
 		retval = "";
 	} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
@@ -132,12 +133,12 @@ function change_zoom(newZoom, x, y) {
 	console.log("zoom", newZoom, x , y)
 	var zoomCenterX = x || $(window).width() / 2
 	var zoomCenterY = y || $(window).height() / 2
-	// 200 is the size of the black area to the left and top of the map
-	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - 200) * (1.0 / window.ZOOM));
-	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - 200) * (1.0 / window.ZOOM));
+	// window.VTTMargin is the size of the black area to the left and top of the map
+	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - window.VTTMargin) * (1.0 / window.ZOOM));
+	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - window.VTTMargin) * (1.0 / window.ZOOM));
 	window.ZOOM = newZoom;
-	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + 200;
-	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + 200;
+	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
+	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
 	$("#tokens").get(0).style.setProperty("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
@@ -278,8 +279,8 @@ function reset_zoom() {
 		block: 'center',
 		inline: 'center'
 	});
-	if($('#hide_rightpanel').hasClass('point-right') &&  ($("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor)*window.ZOOM+200 > $(window).width()-340)
-		$(window).scrollLeft(200);
+	if($('#hide_rightpanel').hasClass('point-right'))
+		$(window).scrollLeft(window.scrollX + 170); // 170 half of game log
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
@@ -497,8 +498,8 @@ function set_pointer(data, dontscroll = false) {
 		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
 		var sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
-			scrollTop: pageY + 200,
-			scrollLeft: pageX + 200 + sidebarSize/2,
+			scrollTop: pageY + window.VTTMargin,
+			scrollLeft: pageX + window.VTTMargin + sidebarSize/2,
 		}, 500);
 	}
 }
@@ -1185,23 +1186,21 @@ function init_splash() {
 	cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
-	cont.append(`<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}</div></h1>`);
+	cont.append(`<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}</div></h1>`);
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
 	s = $("<div/>");
 	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
 	s.append("");
 	s.append(`
-	<div style='display:inline-block; vertical-align:top;width:300px;'>
+	<div style='display:inline-block; vertical-align:top;width:600px;'>
 	<div style='padding-top:10px;padding-bottom:10px;'>
-		This is a <b>FREE</b> passion project <b>still in development. Some bugs are to be expected</b>If you need help or want to report a bug <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>
+		This is a <b>FREE</b> opensource project, kept alive by developers contributing their time, Patrons chipping in with their cash, and users keeping alive the community. If you need help or want to report a bug reach out the <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> the AboveVTT community on discord</a>
 	</div>
 	<div class='splashLinks'>
 		<div class="splashLinkRow">
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://youtu.be/2GZ8q-hB7pg'>Youtube Tutorial</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'>Discord Server</a></div>
-		</div>
-		<div class="splashLinkRow">
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://github.com/cyruzzo/AboveVTT'>GitHub</a></div>
 			<div><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></div>
 		</div>
@@ -1211,7 +1210,6 @@ function init_splash() {
 	</div>
 	`);
 
-	s.append('<iframe width="280" height="137" src="https://www.youtube.com/embed/2GZ8q-hB7pg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
 	cont.append(s);
 
 	//cont.append("<b>WARNING!</b>This is still a developement version, but a lot of brave adventurers are already playing on this. If you do play a session (or want to talk in general about this project)<a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> join the Discord Server</a>");
@@ -1225,45 +1223,29 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
 	patreons = $("<div id='patreons'/>");
 
-	l1 = ["Jordan Cohen","ZorkFox","Josh Downing","John Curran","Nathan Wilhelm","The Dread Pirate Mittens","Eric Invictus","Matthew Bennett","Hekkema","Nomad CLL","Vince Hamilton","D Martinez","airdragon11","William Wallace","Josh Ervin","Lazvon","Nic Ulrich"];
-	l2 = ["Iain Russell","Lukas Edelmann","Oliver","Phillip Geurtz","Virginia Lancianese","Daniel Levitus","TheDigifire","Ryan Purcell","Kris Scott","Brendan Shane","myrrh88","Adam Connor","Kim Dargeou","Scott Moore","Starving Actor","Kurt Piersol","Joaquin Atwood-Ward","Rooster","Michael Palm","Robert Henry","Cynthia Complese","Wilko Rauert","Blaine Landowski","Cameron Patterson 康可","Kyle Kroeker","Rodrigo Carril","E Lee Broyles","Ronen Gregory","Ben S","Steven Sheeley","ThaFreaK","Avilar","Cyril Sneer","Mark Otten","Rollin Newcomb","Kristina Ziese","Erno Tolonen","Becky Egan","Geoffrey Boyd","Matt Dugger","Joseph Ramlow","Jonathan Campbell","Richard Morgan","Bill Croasmun","hidden_traitor"];
-	l3 = ["Daniel Wall","Amata (she_her)","Alexander Engel","Fini Plays","nategonz","Jason Osterbind","Adam Nothnagel","Miguel  Garcia Jr.","Kat","Cobalt Blue","CraftyHobo","CrazyPitesh","Eduardo Villela","Paul Maloney","Chris Cannon","Johan Surac","Chris Sells","Sarah (ExpQuest)","Robert J Correa","Cistern","its Bonez","Michael Crane","Alexander Glass","Blake Thomas","Cheeky Sausage Games","Jerry Jones","Kevin Young","aDingoAteMyBaby","Rennie","Victor Martinez","Michael Gisby","Arish Rustomji","Kat Wells","Michael Augusteijn","Jake Tiffany","LegalMegumin","Nicholas Phillips","Patrick Wolfer","Mage","Robert Sanderson","Michael Huffman","Rennan Whittington","Joseph Pecor","Erik Wilson","Luke Young","Scott Ganz","Brian Gabin","Mischa","AnyxKrypt","Torben Schwank","Unix Wizard","Andrew Thomas","Ciara McCumiskey","Daniel Long","David Meier","Thomas Thurner","Paul V Roundy IV","Jay Holt","Don Whitaker","Craig Liliefisher","Gabriel Alves","Sylvain Gaudreau","Ben","Aaron Wilker","Roger Villeneuve","Alan Pollard","Oliver Kent","David Bonderoff","Sparty92","Raffi Minassian","Jon","Vlad Batory","glenn boardman","Nickolas Olmanson","Duncan Clyborne","Daisy Gonzalez","Rick Anderson","Jack Posey","Stephen Morrey","Cinghiale Frollo","Shawn Morriss","Tomi Skibinski","DM Eric V","Joey Lalor","Chris Thornton","Stumpt","Gabby Alexander","John Ramsburg","David Feig","xinara7","Kallas Thenos","Rob Parr","Jeff Jackson","Nunya Bidness","Christopher Davis","Marshall Súileabáin","Sky Gewant","Reid Bollinger","Konrad Scheffel","Joseph Hensley","Chris Avis","Titus France","Michael Whittington","Simon Haldon","Garry Pettigrew","Brandin Steiner","Simone Anedda","Julian Bailey","Troy Hillier","Quinton Cooper","Angelus Drake","Richart Nopé","SalsaBeard","Eric Weberg","BridgeWatch","Taking a cigarette","Santiago Mosqueda","Gareth Welch","Daniel Cass","Luis Teixeira","shadowd","Jim Mapes","Jeffrey Voetsch","Jay Gattis","Trent McNeeley","Christopher","Ray Wise","Claudia Hall","Will Haning","Jason","Chris Hagmann","Taylor Hodgson-Scott","Tim Cortis","Timothy Yuen","Cody Pederson","Benjamin Moncier","Kerry Kilgour","Guillaume Carrier","Christian Fernandez","Rob S","DrZzs","PatrickJ","Oceanman","Michael Voltz","Beyond The Edges","Dreamdancer","Josh Taylor","Alex Johansen","Dominic M.","Brad Marsh","Kim Hoffman","Katherine McKinley","Colleen Shea","Tony","Jeff Cigrand","Dodzod","Anarchist GM","Purge Thunder","David House","Garrett","UnixBomber","Magnus Tanner","Taborxi","Dracon Dragon","Steve Hutchinson","OldTedG735","Blake","David Stidolph","Claudia Carpenter","JazzFurgeson","Santiago Pacheco","Chris Neves","Brian Jones","Bill Gruetzenbach","Danielle Goldstein","MasterKELP","Ryan Adams","SCrisp","LEO R LIBBY JR","Celtic Exile","BrotherGlacius","ismael cedeno","Jeremy Blosser","taylor tullis","Matt Kircher","NDT 0117","David J Morand","Stefan Velev","John Prince","Lauren Marie","David Russell","Dan Glass","Michael Terry","Lyman Green","Aindrium","wisdom_hunter","Howard Seal","Jos van Baren","Flux1","Anthony K Schlisser","Francesco Possati","Laurinel Gramatica","Joseph Lohrum","melissa penn","Jono Major"];
-
 
 	let shortener =  (p) => p.length>17 ? p.replaceAll(" ","").replaceAll("-","") : p;
-	l1 = l1.map(shortener);
-	l2 = l2.map(shortener);
-	l3 = l3.map(shortener);
 
-	l1div = $("<div class='patreons-title'>Masters</div>");
-	l1ul = $("<ul/>");
-	patreons.append(l1div);
-	patreons.append(l1ul);
-	for (i = 0; i < l1.length; i++)
-		l1ul.append($("<li/>").text(l1[i]));
+	let patrons_list=$("<ul/>");
 
-	l2div = $("<div class='patreons-title'>Heroes</div>");
-	l2ul = $("<ul/>");
-	patreons.append(l2div);
-	patreons.append(l2ul);
-	for (i = 0; i < l2.length; i++)
-		l2ul.append($("<li/>").html(l2[i]));
+	$.ajax({
+		url:'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/patrons.json',
+		success:function(data){
+			JSON.parse(data).patrons.forEach( (el)=>{
+				const li=$("<li/>").text( shortener(el.full_name));
+				li.addClass(el.class);
+				patrons_list.append(li);
+			});
+		}
+	});
 
-	l3div = $("<div class='patreons-title'>Local Heroes</div>");
-	l3ul = $("<ul/>");
-	patreons.append(l3div);
-	patreons.append(l3ul);
-	for (i = 0; i < l3.length; i++)
-		l3ul.append($("<li/>").text(l3[i].replaceAll(" ","")));
-
-	//patreons.append(l1div).append(l2div).append(l3div)
-
+	patreons.append(patrons_list);
 	cont.append(patreons);
 	cont.click(function() {
 		$("#splash").remove();
@@ -1468,7 +1450,7 @@ function init_sheet() {
 			toggle_player_sheet();
 		});
 		var sheet_resize_button = $("<div id='sheet_resize_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Resize character sheet'><div class='ddbc-tab-options__header-heading'>Toggle Sheet Size</div></div>");
-		sheet_resize_button.css({ "position": "absolute", "top": "-3px", "left": "-285px", "z-index": "999" });
+		sheet_resize_button.css({ "position": "absolute", "top": "-3px", "left": "-314px", "z-index": "999" });
 		sheet_resize_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_resize_button);
 		// $(".ct-character-sheet__inner").append(sheet_resize_button);
@@ -1687,6 +1669,41 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		observe_character_sheet_changes($(event.target).contents());
 
+
+		let scripts = [
+		    // External Dependencies
+		    { src: "jquery-3.6.0.min.js" },
+		    // AboveVTT Files
+		    { src: "DiceContextMenu/DiceContextMenu.js" },
+		    { src: "DiceRoller.js" },
+		    { src: "DDBApi.js" },
+		    // AboveVTT files that execute when loaded
+		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
+		    { src: "CharactersPage.js" } // Make sure CharactersPage executes last
+		]
+
+		// Too many of our scripts depend on each other.
+		// This ensures that they are loaded sequentially to avoid any race conditions.
+		let injectScript = function () {
+		    if (scripts.length === 0) {
+		        delete scripts;
+		        return;
+		    }
+		    let nextScript = scripts.shift();
+		    let s = $(event.target)[0].contentDocument.createElement('script');
+		    s.src = `${window.EXTENSION_PATH}${nextScript.src}`;
+		    if (nextScript.type !== undefined) {
+		        s.setAttribute('type', nextScript.type);
+		    }
+		    console.log(`attempting to append ${nextScript.src}`);
+		    s.onload = function() {
+		        console.log(`finished injecting ${nextScript.src}`);
+		        injectScript();
+		    };
+		    ($(event.target)[0].contentDocument.head || $(event.target)[0].contentDocument.documentElement).appendChild(s);
+		}
+		injectScript();
+
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {
@@ -1725,6 +1742,13 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			.ct-character-sheet-mobile__header{
 				top: 0px !important; 
 			}
+			#mega-menu-target,
+			.site-bar,
+			.page-header,
+			.homebrew-comments,
+			.mega-menu__fallback{
+				display:none !important;
+			}
 
 			@media (min-width: 1200px){
 				html body#site.body-rpgcharacter-sheet{
@@ -1734,11 +1758,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			</style>
 		`);
 		console.log("removing headers");
-		$(event.target).contents().find("#mega-menu-target").remove();
-		$(event.target).contents().find(".site-bar").remove();
-		$(event.target).contents().find(".page-header").remove();
-		$(event.target).contents().find(".homebrew-comments").remove();
-		$(event.target).contents().find(".mega-menu__fallback").remove();
+
 
 		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
 			let addedElement = $(addedEvent.target);
@@ -1778,111 +1798,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		}
 
-		// CHARACTER
-		let tokenid = $(event.target).attr('src');
-		var synchp = function() {
-			var hp_element = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(1) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-current");
-
-			if (hp_element.length > 0) {
-				var current_hp = hp_element.html();
-				var max_hp = $(event.target).contents().find(".ct-health-summary__hp-group--primary > div:nth-child(3) .ct-health-summary__hp-number,ct-status-summary-mobile__hp-max").html();
-			}
-			else {
-				var current_hp = 0;
-				if (!window.DM && window.PLAYERDATA && window.PLAYERDATA.max_hp > 0)
-					max_hp = window.PLAYERDATA.max_hp;
-				else
-					max_hp = 0;
-			}
-
-			var temp_hp = 0;
-			var temp_hp_element = $(event.target).contents().find(".ct-health-summary__hp-item--temp > .ct-health-summary__hp-item-content > .ct-health-summary__hp-number ");
-			if (temp_hp_element.length > 0) {
-				temp_hp = temp_hp_element.html();
-			}
-
-
-			var pp = $(event.target).contents().find(".ct-senses > .ct-senses__callouts:first-child .ct-senses__callout-value");
-
-			let conditions = [];
-			var conds_tag = $(event.target).contents().find(".ct-conditions-summary .ddbc-condition__name");
-
-			conds_tag.each(function(el, idx) {
-				conditions.push($(this).text());
-			});
-
-			abilities = [];
-
-			const isScore = (val) => {
-				return val.indexOf('+') >= 0 || val.indexOf('-') >= 0;
-			}
-
-			$(event.target).contents().find('.ct-quick-info__ability,.ct-main-mobile__ability').each(function() {
-				let abilityScores;
-				if (isScore($(this).find('.ddbc-ability-summary__secondary').text())) {
-					abilityScores = {
-						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-						score: $(this).find('.ddbc-ability-summary__primary button').text()
-					}
-				} else {
-					abilityScores = {
-						abilityName: $(this).find('.ddbc-ability-summary__label').text(),
-						abilityAbbr: $(this).find('.ddbc-ability-summary__abbr').text(),
-						modifier: `${$(this).find('.ddbc-signed-number__sign').text()}${$(this).find('.ddbc-signed-number__number').text()}`,
-						score: $(this).find('.ddbc-ability-summary__secondary').text()
-					};
-				}
-				abilities.push(abilityScores);
-			});
-
-
-			var playerdata = {
-				id: tokenid,
-				hp: current_hp,
-				max_hp: max_hp,
-				temp_hp: temp_hp,
-				ac: $(event.target).contents().find(".ddbc-armor-class-box__value").html(),
-				pp: pp.html(),
-				conditions: conditions,
-				abilities,
-				walking: `${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__number").text()}${$(event.target).contents().find(".ct-quick-info__box--speed .ddbc-distance-number__label").text()}`,
-				inspiration: $(event.target).contents().find('.ct-inspiration__status--active').length
-			};
-
-			if (!window.DM) {
-				window.PLAYERDATA = playerdata;
-				window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-				send_player_data_to_all_peers(playerdata);
-			}
-			else {
-				window.MB.handlePlayerData(playerdata);
-			}
-
-			// FIX DDB BUG ON Z-INDEX FOR RIGHT CLICK CONTEXT MENU FOR ROLLING (piggybacking on synchp)
-			if($(event.target).contents().find(".ct-sidebar").length > 0)
-				$(event.target).contents().find(".ct-sidebar").zIndex(11);
-		};
-
-		// DETECT CHANGES ON HEALTH, WAIT 1 SECOND AND LOCK TO AVOID TRIGGERING IT TOO MUCH AND CAUSING ISSUES
-
-
-		// DISABLED SINCE WE NOW READ JSON DATA FOR THE CHARACTER.
-		/*
-		$(event.target).contents().find("#site").on("DOMSubtreeModified", ".ct-quick-info__health,.ct-combat__statuses-group--conditions,"+
-			".ct-inspiration__status,.ct-combat__summary-group--ac,.ct-speed-box__box-value", function() {
-			if (window.WAITING_FOR_SYNCHP)
-				return;
-			else {
-				window.WAITING_FOR_SYNCHP = true;
-				setTimeout(function() {
-					window.WAITING_FOR_SYNCHP = false;
-					synchp();
-				}, 1000);
-			}
-		});
-		*/
 		var mutation_target = $(event.target).contents().get(0);
 		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
 
@@ -1900,34 +1815,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		});
 
 		observer.observe(mutation_target, mutation_config);
-
-	//artificer infusions still require this as it is not included in ac values captured elsewhere
-		const waitToSync = (timeElapsed = 0) => {
-			setTimeout(() => {
-				var ac_element = $(event.target).contents().find(".ct-combat .ddbc-armor-class-box,ct-combat-mobile__extra--ac");
-				if (ac_element.length > 0) {
-					if (tokenid in window.TOKEN_OBJECTS){
-						let totalAc = $(event.target).contents().find(".ddbc-armor-class-box__value").html();
-						if(window.TOKEN_OBJECTS[tokenID].options.ac != totalAc)
-						{
-							window.TOKEN_OBJECTS[tokenid].options.ac = totalAc
-							window.TOKEN_OBJECTS[tokenid].place();
-							window.TOKEN_OBJECTS[tokenid].update_and_sync();
-							if(tokenid in window.PLAYER_STATS) {
-								window.PLAYER_STATS[tokenid].ac = totalAc;
-								send_player_data_to_all_peers(window.PLAYER_STATS[tokenid])
-							}
-						}
-
-					}
-				} else {
-					if (timeElapsed < 15000) {
-						waitToSync(timeElapsed + 500);
-					}
-				}
-			}, 500);
-		};
-		waitToSync();
 
 		setTimeout(function() {
 			$("#sheet").find("iframe").each(function() {
@@ -1967,9 +1854,9 @@ function close_player_sheet()
 		}
 		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
 	}
-	if (window.dice_roll_observer) {
-		window.dice_roll_observer.disconnect();
-		delete window.dice_roll_observer;
+	if (window.character_sheet_observer) {
+		window.character_sheet_observer.disconnect();
+		delete window.character_sheet_observer;
 	}
 }
 
@@ -1977,9 +1864,10 @@ function close_player_sheet()
  * Notifie about player joining the game.
  */
 function notify_player_join() {
-	var playerdata = {
-		abovevtt_version: abovevtt_version,
-		player_id: window.PLAYER_ID
+	const playerdata = {
+		abovevtt_version: window.AVTT_VERSION,
+		player_id: window.PLAYER_ID,
+		pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
 	};
 
 	console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
@@ -2005,7 +1893,8 @@ function check_versions_match() {
 			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
 		}
 
-		alert(alertMsg);
+		// alert(alertMsg); // we can re-enable this later if we want to, but it's been off for dozens of versions, so we probably don't need it.
+		console.warn(alertMsg);
 	}
 
 	return latestVersionSeen;
@@ -2017,7 +1906,7 @@ function check_versions_match() {
  * @returns {Boolean}
  */
 function is_supported_version(versionString) {
-	return abovevtt_version >= versionString;
+	return window.AVTT_VERSION >= versionString;
 }
 
 /**
@@ -2476,6 +2365,8 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 function init_ui() {
 	console.log("init_ui");
 
+	window.VTTMargin = 1000;
+
 	// ATTIVA GAMELOG
 	$(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
 	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // lock it open immediately. This is safe to call multiple times
@@ -2489,12 +2380,6 @@ function init_ui() {
 	$("body").css("overflow", "scroll");
 
 	inject_chat_buttons();
-
-	//s = $("<script src='https://meet.jit.si/external_api.js'></script>");
-	//$("#site").append(s);
-
-	s = $("<script src='https://www.youtube.com/iframe_api'></script>");
-	$("#site").append(s);
 
 	$("#site").append(`
 		<script type="text/javascript" src="/content/1-0-2027-0/js/libs/lightbox2/dist/js/lightbox.min.js"></script>
@@ -2573,22 +2458,17 @@ function init_ui() {
 			return;
 		e.preventDefault();
 
-		var mousex = Math.round((e.pageX - 200) * (1.0 / window.ZOOM));
-		var mousey = Math.round((e.pageY - 200) * (1.0 / window.ZOOM));
+		var mousex = Math.round((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM));
+		var mousey = Math.round((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM));
 
 		console.log("mousex " + mousex + " mousey " + mousey);
-
-		let dataName = window.PLAYER_NAME.replace(/\"/g,'\\"')
-
-		let borderColor = $(`.token[data-name="`+dataName+`"]`).attr(`data-border-color`)
-		let pingColor = (typeof borderColor === 'undefined') ? "#000e #fffe #000e #fffe" : borderColor;
 
 		data = {
 			x: mousex,
 			y: mousey,
 			from: window.PLAYER_NAME,
 			dm: window.DM,
-			color: pingColor,
+			color: color_for_player_id(my_player_id()),
 			center_on_ping: $('#ping_center .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')
 		}
 
@@ -2635,9 +2515,11 @@ function init_ui() {
 	VTT.append(rayCasting);
 	mapContainer.append(darknessLayer);
 
+
+
 	wrapper = $("<div id='VTTWRAPPER'/>");
-	wrapper.css("margin-left", "200px");
-	wrapper.css("margin-top", "200px");
+	wrapper.css("margin-left", `${window.VTTMargin}px`);
+	wrapper.css("margin-top", `${window.VTTMargin}px`);
 	wrapper.css("paddning-right", "200px");
 	wrapper.css("padding-bottom", "200px");
 	wrapper.css("position", "absolute");
@@ -2671,7 +2553,7 @@ function init_ui() {
 			init_player_sheet(window.PLAYER_SHEET);
 			report_connection();
 		}
-		enable_peer_manager();
+		configure_peer_manager_from_settings();
 	}, 5000);
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
@@ -2810,12 +2692,6 @@ function init_ui() {
 		let el=$("<"+old.prop('nodeName')+">");
 		el.attr("src",s.replace(/mega.*bundle/,'character-tools/vendors~characterTools.bundle.dec3c041829e401e5940.min'));
 		$("#site").append(el);
-		setTimeout(function(){
-			console.log(2);
-			retriveRules();
-			loadModules(initalModules);
-		},10000);
-		setTimeout(get_pclist_player_data,25000);
 	}
 
 }
@@ -2902,7 +2778,7 @@ function init_zoom_buttons() {
 		cursor_ruler_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">left_click</span></div>`);
 		zoom_section.append(cursor_ruler_toggle);
 		if (!get_avtt_setting_value("peerStreaming")) {
-			cursor_ruler_toggle.hide();
+			cursor_ruler_toggle.css("visibility", "collapse");
 		}
 
 		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
@@ -2955,6 +2831,54 @@ function init_zoom_buttons() {
 		zoom_section.append(pause_players);
 	}
 
+
+	selected_token_vision = $(`<div id='selected_token_vision' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Selected Token Vision'> 
+	<div class="ddbc-tab-options__header-heading">
+			<svg version="1.1" id="selectedEyeSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" x="0px" y="0px"
+				 viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
+			<style type="text/css">
+				#selected_token_vision .st0{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;}
+				#selected_token_vision .st1{fill:none;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-miterlimit:10;stroke-dasharray:70,70;}
+			</style>
+			<g>
+				<path d="M681.9,382.8l-59.7-58.3C563,266.7,484.1,235,399.9,235s-163,31.8-222.2,89.5L118,382.8c-13.3,14.5-5.1,30,0,34.5
+					l59.7,58.3c59.1,57.7,138,89.5,222.2,89.5s163-31.8,222.2-89.5l59.7-58.3C686.6,412.8,695.7,397.9,681.9,382.8L681.9,382.8z
+					 M399.9,482.4c-45.5,0-82.4-37-82.4-82.4s37-82.4,82.4-82.4s82.4,37,82.4,82.4S445.4,482.4,399.9,482.4z M169.4,400l42.1-41.1
+					c31.9-31.2,70.6-53.4,113-65.4c-33.3,23.7-55,62.6-55,106.4s21.7,82.8,55,106.4c-42.4-12-81.1-34.2-113-65.3L169.4,400L169.4,400z
+					 M588.5,441.1c-31.9,31-70.6,53.2-113,65.3c33.3-23.7,55-62.6,55-106.4c0-43.9-21.7-82.8-55-106.4c42.4,12,81.1,34.2,113,65.4
+					l42,41.1L588.5,441.1L588.5,441.1z"/>
+			</g>
+			<g>
+				<g>
+					<polyline class="st0" points="750,715 750,750 715,750 		"/>
+					<line class="st1" x1="645" y1="750" x2="120" y2="750"/>
+					<polyline class="st0" points="85,750 50,750 50,715 		"/>
+					<line class="st1" x1="50" y1="645" x2="50" y2="120"/>
+					<polyline class="st0" points="50,85 50,50 85,50 		"/>
+					<line class="st1" x1="155" y1="50" x2="680" y2="50"/>
+					<polyline class="st0" points="715,50 750,50 750,85 		"/>
+					<line class="st1" x1="750" y1="155" x2="750" y2="680"/>
+				</g>
+			</g>
+			</svg>
+	</div></div>
+	`);
+
+	selected_token_vision.click(function(){
+		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+			window.SelectedTokenVision = false;
+		} else {
+			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+			window.SelectedTokenVision = true;
+		}
+		redraw_light();
+		
+	});
+
+	zoom_section.append(selected_token_vision);
+
+
 	zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
@@ -2978,9 +2902,9 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-208px");
+		zoom_section.css("left","-236px");
 	} else {
-		zoom_section.css("left","-170px");
+		zoom_section.css("left","-198px");
 	}
 }
 
@@ -3032,6 +2956,7 @@ function init_help_menu() {
 					<ul>
 						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
 						<li><a href="#tab2">FAQ</a></li>
+						<li><a href="#tab3">Get Help</a></li>
 					</ul>
 				</div>
 
@@ -3063,8 +2988,16 @@ function init_help_menu() {
 							<dd>Fog menu</dd>
 						<dl>
 						<dl>
+							<dt>W</dt>
+							<dd>Wall tool</dd>
+						<dl>
+						<dl>
 							<dt>D</dt>
 							<dd>Draw tool</dd>
+						<dl>
+						<dl>
+							<dt>T</dt>
+							<dd>Text tool</dd>
 						<dl>
 						<dl>
 							<dt>A</dt>
@@ -3099,8 +3032,16 @@ function init_help_menu() {
 							<dd>Hide buttons from screen (spectator mode)</dd>
 						<dl>
 						<dl>
+							<dt>SHIFT+V</dt>
+							<dd>Temporary check token vision.</dd>
+						<dl>
+						<dl>
 							<dt>SHIFT+Click</dt>
 							<dd>Select multiple tokens</dd>
+						<dl>
+						<dl>
+							<dt>Hold SHIFT while drawing walls</dt>
+							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
 						<dl>
 						<dl>
 							<dt>UP/DOWN arrows</dt>
@@ -3110,6 +3051,16 @@ function init_help_menu() {
 
 					<div id="tab2">
 						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true"></iframe>
+					</div>
+
+					<div id="tab3">
+						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
+						<ul id="help-error-container">
+							<li><a href="https://github.com/cyruzzo/AboveVTT/issues?q=is%3Aissue+label%3Abug" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check Github</a> (Use the search/filter bar at the top of the screen)</li>
+							<li><a href="https://discord.gg/rPUxwrt6" target="_blank" style="text-decoration:underline;color:-webkit-link;">Join the Discord</a> The Discord community is very active. Search for your issue, and if you don't find anything, ask in the #support room.</li>
+							<li><a href="https://www.reddit.com/r/AboveVTT/" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check the subreddit</a> The Subreddit is less active, but there's a lot of good info there.</li>
+						</ul>
+						<button id="help-error-container-copy-logs-button">Copy logs to clipboard</button><span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 16px;position: relative;">line_start_arrow_notch</span>Use this button to share logs with developers!
 					</div>
 
 				</section>
@@ -3130,10 +3081,17 @@ function init_help_menu() {
 
 	$('#help-menu-outside').on('click', function() {
 		$('#help-container').fadeOut(200);
+		delete window.logSnapshot;
 	});
 
 	$("#help_button").click(function(e) {
+		// if a user is opening the help menu to grab logs, we want to capture logs as close to the event as possible.
+		window.logSnapshot = process_monitored_logs();
 		$('#help-container').fadeIn(200);
+	});
+
+	$("#help-error-container-copy-logs-button").on('click', function() {
+		copy_to_clipboard(window.logSnapshot);
 	});
 }
 
@@ -3407,14 +3365,6 @@ function show_player_sheet() {
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").addClass("ddbc-tab-options__header-heading--is-active");
 	if (window.innerWidth < 1024) {
 		hide_sidebar();
-	}
-	for(id in window.TOKEN_OBJECTS){
-		if(id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[id].options.ac != $(".ddbc-armor-class-box__value").html()){
-			window.MB.sendMessage("custom/myVTT/actoplayerdata",{
-				id: window.PLAYER_ID,
-				ac: $(".ddbc-armor-class-box__value").html()
-			});
-		}
 	}
 }
 

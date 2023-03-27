@@ -1,11 +1,22 @@
 // this shouln't be here...
-
-function mydebounce(func, timeout = 800){
+ 
+function mydebounce(func, timeout = 800){   // This had to be in both core and here to get this to work due to load orders. I might look at this more later
   let timer;
   return (...args) => {
     clearTimeout(timer);
     timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };
+}
+
+function throttle(func, timeFrame = 800) {
+	var lastTime = 0;
+	return function (...args) {
+		var now = new Date();
+		if (now - lastTime >= timeFrame) {
+			func(...args);
+			lastTime = now;
+		}
+	};
 }
 
 function clearFrame(){
@@ -190,7 +201,7 @@ class MessageBroker {
 		var userid = this.userid;
 		var gameid = this.gameid;
 
-		console.log("STARTING MB WITH TOKEN=" + token);
+		console.log("STARTING MB WITH TOKEN");
 
 		this.ws = new WebSocket(url + "?gameId=" + gameid + "&userId=" + userid + "&stt=" + token);
 
@@ -247,22 +258,22 @@ class MessageBroker {
 			self.chat_decipher_task=setInterval(function(){
 				console.log("deciphering");
 				let pend_length = self.chat_pending_messages.length;
-				for(var i=0;i<pend_length;i++){
-					var current=self.chat_pending_messages.shift();
+				for(let i=0;i<pend_length;i++){
+					let current=self.chat_pending_messages.shift();
 					
-					var injection_id=current.data.rolls[0].rollType;
-					var injection_data=current.data.injected_data;
+					let injection_id=current.data.rolls[0].rollType;
+					let injection_data=current.data.injected_data;
 					console.log(`injection_id = ${injection_id}`);
 					console.log(`injection_data = ${injection_data}`);
 					
-					var found=false;
+					let found=false;
 					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
 						if($(this).text()==injection_id){
 							found=true;
 							let li = $(this).closest("li");
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let oldheight=li.height();
-							var newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+							let newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
@@ -279,8 +290,11 @@ class MessageBroker {
 								if (img[0]) {
 									img[0].onload = () => {
 										if (img[0].naturalWidth > 0) {
-											li.find('.chat-link')[0].style.display = 'none';
-											img[0].style.display = 'block';
+											li.find('.chat-link').css('display', 'none');
+											img.css({
+												'display': 'block',
+												'width': '100%'
+											});
 										}
 									}
 								}
@@ -344,7 +358,7 @@ class MessageBroker {
 
 		this.origRequestAnimFrame = null;
 		this.lastAlertTS = 0;
-		this.latestVersionSeen = abovevtt_version;
+		this.latestVersionSeen = window.AVTT_VERSION;
 
 		this.onmessage = function(event,tries=0) {
 			if (event.data == "pong")
@@ -470,11 +484,8 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
 			}
-			if(msg.eventType.includes('character-update')){
-				if(window.DM) {			
-						debounced_handle_character_update(msg);
-				}		
-
+			if(msg.eventType == ('custom/myVTT/character-update')){
+					update_pc_with_data(msg.data.characterId, msg.data.pcData);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -639,7 +650,7 @@ class MessageBroker {
 						if (window.CONNECTED_PLAYERS[msg.data.player_id] === "undefined" ||
 						window.CONNECTED_PLAYERS[msg.data.player_id] != msg.data.abovevtt_version) {
 							window.CONNECTED_PLAYERS[msg.data.player_id] = msg.data.abovevtt_version;
-							
+
 							if (msg.data.abovevtt_version != self.latestVersionSeen) {
 								self.latestVersionSeen = check_versions_match();
 							}
@@ -649,7 +660,25 @@ class MessageBroker {
 						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
 					}
 					window.JOURNAL.sync();
-				}	
+				}
+
+				if (msg.data && msg.data.player_id && msg.data.pc) {
+					// a player just joined and gave us their pc data, so let's update our window.pcs with what they gave us
+					update_pc_with_data(msg.data.player_id, msg.data.pc);
+				}
+				if (is_characters_page()) {
+					// a player just joined so send them our pc data
+					window.MB.sendMessage("custom/myVTT/pcsync", {
+						player_id: window.PLAYER_ID,
+						pc: read_pc_object_from_character_sheet(window.PLAYER_ID)
+					});
+				}
+			}
+			if(msg.eventType==="custom/myVTT/pcsync"){
+				// a player just sent us their pc data, so let's update our window.pcs with what they gave us
+				if (msg.data && msg.data.player_id && msg.data.pc) {
+					update_pc_with_data(msg.data.player_id, msg.data.pc);
+				}
 			}
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
 				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
@@ -677,13 +706,6 @@ class MessageBroker {
 					else{
 						$("#scene_map").prop("volume", msg.data.volume/100);
 					}
-			}
-
-			if (msg.eventType == "custom/myVTT/playerdata") {
-				self.handlePlayerData(msg.data);
-			}
-			if (msg.eventType == "custom/myVTT/actoplayerdata") {
-				self.acToPlayerData(msg.data);
 			}
 
 			if (msg.eventType == "dice/roll/pending"){
@@ -1043,74 +1065,7 @@ class MessageBroker {
 	}
 
   handleCT(data){
-  	$("#combat_area").empty();
 		ct_load(data);
-	}
-
-	handlePlayerData(data) {
-		if (!window.DM)
-			return;
-
-		window.PLAYER_STATS[data.id] = data;
-		this.sendTokenUpdateFromPlayerData(data);
-
-		// update combat tracker:
-
-		update_pclist();
-		send_player_data_to_all_peers(data);
-	}
-
-	acToPlayerData(data) {
-		if (!window.DM)
-			return;
-		for(id in window.TOKEN_OBJECTS){
-			if(id.endsWith(data.id)){
-				window.TOKEN_OBJECTS[id].options.ac = data.ac;
-				window.TOKEN_OBJECTS[id].place();
-				window.TOKEN_OBJECTS[id].update_and_sync();
-				if(id in window.PLAYER_STATS) {
-					window.PLAYER_STATS[id].ac = data.ac;
-					send_player_data_to_all_peers(window.PLAYER_STATS[id]);
-				}
-			}
-		}	
-	}
-	
-	sendTokenUpdateFromPlayerData(data) {
-		console.group("sendTokenUpdateFromPlayerData")
-		if (data.id in window.TOKEN_OBJECTS) {
-			var cur = window.TOKEN_OBJECTS[data.id];
-
-			// test for any change
-			if ((cur.options.hp != (data.hp + (data.temp_hp ? data.temp_hp : 0))) ||
-				(cur.options.max_hp != data.max_hp) ||
-				(cur.options.ac != data.ac) ||
-				(cur.options.temp_hp != data.temp_hp) ||
-				(cur.options.inspiration != data.inspiration) ||
-				(!areArraysEqualSets(cur.options.conditions, data.conditions)))
-			{			
-				if (typeof cur.options.hp != "undefined" && cur.options.hp > data.hp && cur.options.custom_conditions.includes("Concentration(Reminder)")) {
-					var msgdata = {
-						player: cur.options.name,
-						img: cur.options.imgsrc,
-						text: "<b>Check for concentration!!</b>",
-					};
-
-					// window.MB.inject_chat(msgdata);
-				}
-				cur.options.hp = +data.hp + (data.temp_hp ? +data.temp_hp : 0);
-
-
-				cur.options.max_hp = data.max_hp;
-				cur.options.ac = data.ac;
-				cur.options.conditions = data.conditions;
-				cur.options.inspiration = data.inspiration;
-				cur.options.temp_hp = data.temp_hp;
-				cur.place();
-				window.MB.sendMessage('custom/myVTT/token', cur.options);
-			}
-		}
-		console.groupEnd()
 	}
 
 	encode_message_text(text) {
@@ -1224,23 +1179,21 @@ class MessageBroker {
 			} else {
 				data.size = window.CURRENT_SCENE_DATA.hpps;
 			}
-			if (window.all_token_objects != undefined) {
-				if (data.id in window.all_token_objects) {
-					for (var property in window.all_token_objects[data.id].options) {		
-						if(property == "left" || property == "top" || property == "hidden")
-							continue;
-						if(msg.loading){
-							data[property] = window.all_token_objects[data.id].options[property];
-						}
-						else if(property in data){
-						 window.all_token_objects[data.id].options[property] = data[property]; 
-						}
+			if (data.id in window.all_token_objects) {
+				for (var property in window.all_token_objects[data.id].options) {		
+					if(property == "left" || property == "top" || property == "hidden")
+						continue;
+					if(msg.loading){
+						data[property] = window.all_token_objects[data.id].options[property];
 					}
-
-
-					if (!data.hidden)
-						delete window.all_token_objects[data.id].options.hidden;
+					else if(property in data){
+					 window.all_token_objects[data.id].options[property] = data[property]; 
+					}
 				}
+
+
+				if (!data.hidden)
+					delete window.all_token_objects[data.id].options.hidden;
 			}
 		}
 			
@@ -1252,6 +1205,9 @@ class MessageBroker {
 			}
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
+			}
+			if(data.current == undefined){
+				delete window.TOKEN_OBJECTS[data.id].options.current;
 			}
 			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
@@ -1272,6 +1228,9 @@ class MessageBroker {
 			}
 			let t = new Token(data);
 			window.TOKEN_OBJECTS[data.id] = t;
+			if(window.all_token_objects[data.id] == undefined){
+				window.all_token_objects[data.id] = t;
+			}
 			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			};
@@ -1296,10 +1255,8 @@ class MessageBroker {
 	handleScene(msg) {
 		console.debug("handlescene", msg);
 
-		// DISABLED THANKS TO POLLING
-		/*if ((!window.DM) && (typeof window.PLAYERDATA !== "undefined")) {
-			window.MB.sendMessage('custom/myVTT/playerdata', window.PLAYERDATA);
-		}*/
+		window.DRAWINGS = [];
+		reset_canvas();
 
 		window.TOKEN_OBJECTS = {};
 		let data = msg.data;
@@ -1339,6 +1296,23 @@ class MessageBroker {
 		var old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
 
+		if (data.fog_of_war == 1) {
+			window.FOG_OF_WAR = true;
+			window.REVEALED = data.reveals;
+		}
+		else {
+			window.FOG_OF_WAR = false;
+			window.REVEALED = [];
+		}
+		if (typeof data.drawings !== "undefined") {
+			window.DRAWINGS = data.drawings;
+
+		}
+		else {
+			window.DRAWINGS = [];
+		}
+
+
 		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
 			console.group("load_scenemap callback")
 			if(!window.CURRENT_SCENE_DATA.scale_factor)
@@ -1354,27 +1328,13 @@ class MessageBroker {
 			$("#VTT").css("--scene-scale", scaleFactor)
 			
 
-			reset_canvas();
-			redraw_fog();
-			redraw_drawings();
-
 
 			apply_zoom_from_storage();
-			redraw_text();
+			reset_canvas();
 
 
-			let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-   	 	let darknessPercent = 100 - parseInt(darknessfilter);
-   	 	if(window.DM && darknessPercent < 40){
-   	 		darknessPercent = 40;
-   	 		$('#raycastingCanvas').css('opacity', '0');
-   	 	}
-   	 	else if(window.DM){
-   	 		$('#raycastingCanvas').css('opacity', '');
-   	 	}
-   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
-			set_default_vttwrapper_size()
+			set_default_vttwrapper_size();
 			
 			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 			if(!window.DM && data.dm_map_usable=="1"){
@@ -1398,21 +1358,18 @@ class MessageBroker {
 				});
 			}
 
-				$("#combat_area").empty();
-				ct_load({
-					loading: true,
-					current: $("#combat_area [data-current]").attr('data-target')
-				});
-				redraw_light();
+
+			ct_load({
+				loading: true,
+				current: $("#combat_area [data-current]").attr('data-target')
+			});
 
 
-			if(window.DM)
-				get_pclist_player_data();
-			else{
+
+			if(!window.DM) {
 			 	window.MB.sendMessage('custom/myVTT/syncmeup');
+				check_token_visibility();
 			}
-			if(!window.DM)
-					check_token_visibility();
 
 
 			if (window.EncounterHandler !== undefined) {
@@ -1424,31 +1381,7 @@ class MessageBroker {
 			}
 			console.groupEnd()
 		});
-
-
-		if (data.fog_of_war == 1) {
-			window.FOG_OF_WAR = true;
-			window.REVEALED = data.reveals;
-			reset_canvas();
-			redraw_fog();
-			//$("#fog_overlay").show();
-		}
-		else {
-			window.FOG_OF_WAR = false;
-			window.REVEALED = [];
-			reset_canvas();
-			//$("#fog_overlay").hide();
-		}
-		if (typeof data.drawings !== "undefined") {
-			window.DRAWINGS = data.drawings;
-		}
-		else {
-			window.DRAWINGS = [];
-		}
-
-		redraw_light_walls();
-		redraw_light();
-
+		
 
 		remove_loading_overlay();
 		// console.groupEnd()
@@ -1472,7 +1405,7 @@ class MessageBroker {
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
 			// also sync the journal
-			window.JOURNAL.sync();
+			window.JOURNAL?.sync();
 			window.MB.sendMessage("custom/myVTT/pausePlayer",{
 				paused: $('#pause_players').hasClass('paused')
 			});
@@ -1581,7 +1514,7 @@ class MessageBroker {
 
 		const jsmessage=JSON.stringify(message);
 		if(jsmessage.length > (128000)){
-			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. PROBABLY SOMETHING IS WRONG WITH YOUR SCENE. You may have some tokens with embedded images that takes up too much space. Please delete them and refresh the scene");
+			alert("YOU REACHED THE MAXIMUM MESSAGE SIZE. You may have too many walls - try to be less detailed on curves, use x's instead of circling pillars, etc. You may have some tokens with embedded images (urls that start with 'data:') that take up too much space. Please reduce the number of walls/delete the tokens with 'data:' urls and refresh the scene");
 			return;
 		}
 

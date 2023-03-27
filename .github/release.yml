@@ -1,0 +1,18 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - internal
+      - chore
+  categories:
+    - title: New Features 🎉
+      labels:
+        - enhancement
+    - title: Bug Fixes 🛠
+      labels:
+        - bug
+        - beta-regression
+    - title: Other Changes
+      labels:
+        - "*"

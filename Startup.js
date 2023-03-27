@@ -10,7 +10,7 @@ $(function() {
     console.log("startup calling init_splash");
     window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
-    window.addEventListener("scroll", function(event) { // this used to be in init_splash, but I'm not exactly sure wy it's needed
+    window.addEventListener("scroll", function(event) { // ddb has an scroll event listener on the character sheet where they add/remove classes and throttle the sheet scroll causing right click drag of the map to not be smooth
       event.stopImmediatePropagation();
     }, true);
     startup_step("Gathering basic campaign info");
@@ -18,6 +18,10 @@ $(function() {
       .then(set_game_id)              // set it to window.gameId
       .then(() => {                   // load settings
         window.EXPERIMENTAL_SETTINGS = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
+        if (is_release_build()) {
+          // in case someone left this on during beta testing, we should not allow it here
+          set_avtt_setting_value("aggressiveErrorMessages", false);
+        }
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
@@ -41,6 +45,24 @@ $(function() {
   }
 });
 
+function load_external_script(scriptUrl) {
+  return new Promise(function (resolve, reject) {
+    let script = document.createElement('script');
+    script.src = scriptUrl;
+    script.type = 'text/javascript';
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = function () {
+      reject(new Error(`Failed to load external script ${scriptUrl}`));
+    };
+    script.addEventListener('error', function () {
+      reject(new Error(`Failed to load external script ${scriptUrl}`));
+    });
+    script.addEventListener('load', resolve);
+    document.head.appendChild(script);
+  })
+}
+
 async function start_above_vtt_common() {
   console.log("start_above_vtt_common");
   // make sure we have a campaign id
@@ -49,14 +71,16 @@ async function start_above_vtt_common() {
   window.CURRENT_SCENE_DATA = default_scene_data();
   window.CURRENTLY_SELECTED_TOKENS = [];
   window.DRAWINGS = [];
-  window.PLAYER_STATS = {};
   window.REVEALED = [];
   window.TOKEN_CUSTOMIZATIONS = [];
   window.TOKEN_OBJECTS = {};
   window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
   window.TOKEN_PASTE_BUFFER = [];
   window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem(`TokenSettings${window.gameId}`)) || {};
+  window.all_token_objects = {};
+  window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
 
+  await load_external_script("https://www.youtube.com/iframe_api");
   $("#site").append("<div id='windowContainment'></div>");
 
   startup_step("Gathering player character data");
@@ -87,7 +111,7 @@ async function start_above_vtt_for_dm() {
   window.PLAYER_SHEET = false;
 
   await start_above_vtt_common();
-  window.CONNECTED_PLAYERS['0'] = abovevtt_version; // ID==0 is DM
+  window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 
   startup_step("Fetching scenes from cloud");
   window.ScenesHandler = new ScenesHandler();
@@ -163,7 +187,7 @@ async function start_above_vtt_for_players() {
 }
 
 function startup_step(stepDescription) {
-  console.log("startup_step", stepDescription);
+  console.log(`startup_step ${stepDescription}`);
   $("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(stepDescription);
 }
 

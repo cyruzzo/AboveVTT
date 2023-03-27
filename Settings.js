@@ -322,6 +322,20 @@ function avtt_settings() {
 		);
 	}
 
+	if (AVTT_ENVIRONMENT.versionSuffix) {
+		// This is either a local or a beta build, so allow this helpful debugging tool
+		settings.push({
+			name: "aggressiveErrorMessages",
+			label: "Alert Every Concerning Log",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Show", description: `This will show an error dialog for every error or warning log that AboveVTT encounters.` },
+				{ value: false, label: "Don't Show", description: `Only show an error dialog when AboveVTT explicitly coded for it.` }
+			],
+			defaultValue: false
+		});
+	}
+
 	return settings;
 }
 
@@ -329,6 +343,9 @@ function get_avtt_setting_default_value(name) {
 	return avtt_settings().find(s => s.name === name)?.defaultValue;
 }
 function get_avtt_setting_value(name) {
+	if (name === "aggressiveErrorMessages" && is_release_build()) {
+		return false; // never allow this in a release build
+	}
 	switch (name) {
 		case "iframeStatBlocks": return should_use_iframes_for_monsters();
 		default:
@@ -464,14 +481,14 @@ function init_settings() {
 
 	let body = settingsPanel.body;
 
-	body.append(`<h2 style='margin-top:10px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='200px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}</div></h2>`);
+	body.append(`<h2 style='margin-top:10px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='200px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}</div></h2>`);
 
 	if (window.DM) {
 
 		body.append(`
 			<h3 class="token-image-modal-footer-title">Import / Export</h3>
 			<div class="sidebar-panel-header-explanation">
-				<p><b>WARNING</b>: The import / export feature is expirimental. Use at your own risk. A future version will include an import/export wizard.</p>
+				<p><b>WARNING</b>: The import / export feature is experimental. Use at your own risk. A future version will include an import/export wizard.</p>
 				<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
 				Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
 				<div class="sidebar-panel-footer-horizontal-wrapper">
@@ -528,7 +545,7 @@ function init_settings() {
 	body.append(`
 		<br />
 		<h3 class="token-image-modal-footer-title" >Above VTT Settings</h3>
-		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time so we recommend using the defaults values... (Except the dice streaming. You should probably enable that because that's just awesome!)</div>
+		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time, so we recommend using the defaults values.<br><b>WARNING! Enabling these will affect performance!</b></div>
 	`);
 	for(let i = 0; i < experimental_features.length; i++) {
 		let setting = experimental_features[i];
@@ -614,13 +631,16 @@ function build_example_token(options) {
 			hpnum = 10;
 			break;
 	}
-	mergedOptions.hp = hpnum;
-	mergedOptions.max_hp = hpnum;
+	mergedOptions.hitPointInfo = {
+		current: hpnum,
+		maximum: hpnum,
+		temp: 0
+	}
 	mergedOptions.id = `exampleToken-${uuid()}`;
 	mergedOptions.size = 90;
 	// mergedOptions.gridHeight = 1;
 	// mergedOptions.gridWidth = 1;
-	mergedOptions.ac = 10;
+	mergedOptions.armorClass = 10;
 
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
 	let token = new Token(mergedOptions);
@@ -945,7 +965,7 @@ function import_readfile() {
 			DataFile=$.parseJSON(atob(reader.result));
 		}
 
-		for(k in DataFile.soundpads){
+		for(let k in DataFile.soundpads){
 			window.SOUNDPADS[k]=DataFile.soundpads[k];
 		}
 		$("#sounds-panel").remove();
@@ -994,12 +1014,12 @@ function import_readfile() {
 				tokendata.tokens={};
 			}
 			if (DataFile.tokendata.folders) {
-				for(k in DataFile.tokendata.folders){
+				for(let k in DataFile.tokendata.folders){
 					tokendata.folders[k]=DataFile.tokendata.folders[k];
 				}
 			}
 			if (DataFile.tokendata.tokens) {
-				for(k in DataFile.tokendata.tokens){
+				for(let k in DataFile.tokendata.tokens){
 					tokendata.tokens[k]=DataFile.tokendata.tokens[k];
 				}
 			}

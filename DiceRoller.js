@@ -601,28 +601,6 @@ function getCharacterStatModifiers(entityType, entityId) {
             console.warn("getCharacterStatModifiers failed to collect abilities from character sheet", error);
         }
     }
-    if (window.DM) {
-        try {
-            const sheet = find_currently_open_character_sheet();
-            if (!sheet) return undefined;
-            const stats = window.PLAYER_STATS[sheet];
-            if (!stats || !stats.abilities) return undefined;
-            const statMods = {
-                "str": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "str").modifier),
-                "dex": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "dex").modifier),
-                "con": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "con").modifier),
-                "int": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "int").modifier),
-                "wis": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "wis").modifier),
-                "cha": parseInt(stats.abilities.find(stat => stat.abilityAbbr === "cha").modifier),
-                "pb": parseInt($($("#sheet").find("iframe").contents()).find(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
-            };
-            console.debug("getCharacterStatModifiers built statMods from find_currently_open_character_sheet", statMods);
-            return statMods
-        } catch (error) {
-            console.warn("getCharacterStatModifiers Failed to parse player stats", error);
-            return undefined;
-        }
-    }
     console.log("getCharacterStatModifiers found nothing");
     return undefined;
 }

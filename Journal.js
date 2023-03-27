@@ -150,7 +150,7 @@ class JournalManager{
 		           	let sender_index = sender.attr('data-index');
 		           	let new_folder_index = ui.item.parent().closest('.folder').attr('data-index');
 		          	const old_index = self.chapters[sender_index].notes.findIndex(function(note) {
-						return self.notes[note].title == ui.item.find(".sidebar-list-item-row-details-title").text();
+						return note == ui.item.attr('data-id');
 					});
 					// Find the new index of the dragged element
 					const new_index = ui.item.index();
@@ -167,7 +167,7 @@ class JournalManager{
 					// Find the old index of the dragged element
 					if(sender==undefined){
 						const old_index = self.chapters[i].notes.findIndex(function(note) {
-							return self.notes[note].title == ui.item.find(".sidebar-list-item-row-details-title").text();
+							return note == ui.item.attr('data-id')
 						});
 						// Find the new index of the dragged element
 						const new_index = ui.item.index();
@@ -337,8 +337,8 @@ class JournalManager{
 				if( (! window.DM) && (! self.notes[note_id].player) )
 					continue;
 				
-				let entry=$("<div class='sidebar-list-item-row-item sidebar-list-item-row'></div>");
-				let entry_title=$("<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title'></div>");
+				let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
+				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title'></div>`);
 
 				entry_title.text(self.notes[note_id].title);
 				entry_title.click(function(){
@@ -536,7 +536,7 @@ class JournalManager{
 			}
 		});
 		if(!window.DM)
-			$("[role='dialog']").css("height", "calc(100vh - 35px)")	
+			$("[role='dialog']").css("height", "calc(100vh - 80px)")	
 		note.parent().mousedown(function() {
 			frame_z_index_when_click($(this));
 		});		

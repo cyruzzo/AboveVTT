@@ -66,12 +66,12 @@ window.scripts = [
 	{ src: "peerjs.min.js" },
 	{ src: "fuse.min.js" },
 	// AboveVTT Files
+	{ src: "environment.js" },
 	{ src: "AboveApi.js" },
 	{ src: "DDBApi.js" },
 	{ src: "AOETemplates.js" },
 	{ src: "Text.js" },
 	{ src: "CombatTracker.js" },
-	{ src: "DnDBeyond/DDBCharacterData.js" },
 	{ src: "EncounterHandler.js" },
 	{ src: "Fog.js" },
 	{ src: "Jitsi.js" },

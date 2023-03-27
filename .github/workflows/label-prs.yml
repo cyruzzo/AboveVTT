@@ -1,0 +1,51 @@
+name: label-prs
+run-name: "Adjusting labels on PR: ${{ github.event.pull_request.title }}"
+on:
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  add-label-based-on-title:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
+      - name: find labels to remove and/or add
+        run: |
+          find_label() {
+            local lowercase_title=$(echo "$1" | tr "[:upper:]" "[:lower:]") 
+            local label_to_output=''
+            if [[ "${lowercase_title}" == fix* ]]
+            then
+              label_to_output='bug'
+            elif [[ "${lowercase_title}" == feat* ]]
+            then
+              label_to_output='enhancement'
+            elif [[ "${lowercase_title}" == beta* ]]
+            then
+              label_to_output='beta-regression'
+            elif [[ "${lowercase_title}" == internal* ]]
+            then
+              label_to_output='internal'
+            elif [[ "${lowercase_title}" == chore* ]]
+            then
+              label_to_output='chore'
+            fi
+            echo $label_to_output
+          }
+
+          label_to_add=$(find_label "${{ github.event.pull_request.title }}")
+          echo "label_to_add: ${label_to_add}"
+          
+          if [[ ! -z "$label_to_add" ]]
+          then
+            add_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{github.event.pull_request.number}}/labels"
+            echo "add_url=${add_url}"
+            add_body="{\"labels\":[\"${label_to_add}\"]}"
+            echo "add_body=${add_body}"
+            curl --request POST --url "${add_url}" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "${add_body}"
+          fi

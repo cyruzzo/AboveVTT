@@ -69,8 +69,16 @@ Mousetrap.bind('s', function () {       //video fullscreen toggle
 });
 
 
-Mousetrap.bind('v', function () {       //video fullscreen toggle
+Mousetrap.bind('v', function () {       //video fullscreen toggle 
+    if(shiftHeld)
+        return;
+
     $('#jitsi_switch').click()
+});
+
+Mousetrap.bind('shift+v', function () {       //check token vision
+   window.SelectedTokenVision = true;
+   redraw_light();
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
@@ -133,6 +141,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         close_sidebar_modal();
     }
     remove_tooltip();
+    removeError();
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open

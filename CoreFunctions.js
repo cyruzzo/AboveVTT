@@ -11,6 +11,10 @@
  * If you need to add things for when the CharacterPage is running, do that in CharacterPage.js
  * If you need to add things for all of the above situations, do that here */
 $(function() {
+  window.EXPERIMENTAL_SETTINGS = {};
+  if (is_abovevtt_page()) {
+    monitor_console_logs();
+  }
   window.EXTENSION_PATH = $("#extensionpath").attr('data-path');
   window.AVTT_VERSION = $("#avttversion").attr('data-version');
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>');
@@ -27,11 +31,157 @@ $(function() {
   }
 
   window.diceRoller = new DiceRoller();
+  if (is_abovevtt_page()) {
+    tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(!window.DM){
+         window.MB.sendMessage("custom/myVTT/character-update", {
+          characterId: event.data.characterId,
+          pcData: event.data.pcData
+        });
+      }
+      else{
+        update_pc_with_data(event.data.characterId, event.data.pcData);
+      }
+    })
+  }
 });
 
 const async_sleep = m => new Promise(r => setTimeout(r, m));
 
 const charactersPageRegex = /\/characters\/\d+/;
+
+const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication');
+
+function mydebounce(func, timeout = 800){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+function find_currently_open_character_sheet() {
+  if (is_characters_page()) {
+    return window.location.pathname;
+  }
+  let sheet;
+  $("#sheet").find("iframe").each(function () {
+    const src = $(this).clone().attr("src");
+    if (src != "") {
+      sheet = src;
+    }
+  })
+  return sheet;
+}
+function monitor_console_logs() {
+  // slightly modified version of https://stackoverflow.com/a/67449524
+  if (console.concerningLogs === undefined) {
+    console.concerningLogs = [];
+    console.otherLogs = [];
+    function TS() {
+      return (new Date).toISOString();
+    }
+    function addLog(log) {
+      if (log.type !== 'log' && log.type !== 'debug') { // we don't currently track debug, but just in case we add them
+        console.concerningLogs.unshift(log);
+        if (console.concerningLogs.length > 100) {
+          console.concerningLogs.length = 100;
+        }
+        if (get_avtt_setting_value("aggressiveErrorMessages")) {
+          showError(new Error(`${log.type} ${log.message}`), ...log.value);
+        }
+      } else {
+        console.otherLogs.unshift(log);
+        if (console.otherLogs.length > 100) {
+          console.otherLogs.length = 100;
+        }
+      }
+    }
+    window.addEventListener('error', function(event) {
+      addLog({
+        type: "exception",
+        timeStamp: TS(),
+        value: [event.message, `${event.filename}:${event.lineno}:${event.colno}`, event.error?.stack]
+      });
+      return false;
+    });
+    window.addEventListener('onunhandledrejection', function(event) {
+      addLog({
+        type: "exception",
+        timeStamp: TS(),
+        value: [event.message, `${event.filename}:${event.lineno}:${event.colno}`, event.error?.stack]
+      });
+      return false;
+    });
+    window.onerror = function (error, url, line, colno) {
+      addLog({
+        type: "exception",
+        timeStamp: TS(),
+        value: [error, `${url}:${line}:${colno}`]
+      });
+      return false;
+    }
+    window.onunhandledrejection = function (event) {
+      addLog({
+        type: "promiseRejection",
+        timeStamp: TS(),
+        value: [event.message, `${event.filename}: ${event.lineno}:${event.colno}`, event.error?.stack]
+      });
+    }
+
+    function hookLogType(logType) {
+      const original = console[logType].bind(console);
+      return function() {
+        addLog({
+          type: logType,
+          timeStamp: TS(),
+          value: Array.from(arguments)
+        });
+        // Function.prototype.apply.call(console.log, console, arguments);
+        original.apply(console, arguments);
+      }
+    }
+
+    // we don't care about debug logs right now
+    ['log', 'error', 'warn'].forEach(logType=> {
+      console[logType] = hookLogType(logType)
+    });
+  }
+}
+
+function process_monitored_logs() {
+  const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);
+  let processedLogs = [];
+  logs.forEach(log => {
+    let messageString = `\n${log.type.toUpperCase()} ${log.timeStamp}`;
+    // processedLogs.push(prefix);
+    log.value.forEach((value, index) => {
+      try {
+        const logItem = log.value[index];
+        let logString = '\n';
+        if (typeof logItem === "object") {
+          logString += `      ${JSON.stringify(logItem)}`;
+        } else {
+          logString += `      ${logItem}`;
+        }
+        messageString += logString.replaceAll(MYCOBALT_TOKEN, '[REDACTED]').replaceAll(window.CAMPAIGN_SECRET, '[REDACTED]');
+      } catch (err) {
+        console.debug("failed to process log value", err);
+      }
+    })
+    processedLogs.push(messageString);
+  });
+  return processedLogs.join('\n');
+}
+
+function is_release_build() {
+  return (!is_beta_build() && !is_local_build());
+}
+function is_beta_build() {
+  return AVTT_ENVIRONMENT.versionSuffix?.includes("beta");
+}
+function is_local_build() {
+  return AVTT_ENVIRONMENT.versionSuffix?.includes("local");
+}
 
 /** @return {boolean} true if the current page url includes "/characters/<someId>"  */
 function is_characters_page() {
@@ -68,23 +218,43 @@ function is_gamelog_popout() {
 function removeError() {
   $("#above-vtt-error-message").remove();
   remove_loading_overlay(); // in case there was an error starting up, remove the loading overlay, so they're not completely stuck
+  delete window.logSnapshot;
 }
 
-/** Displays an error to the user
+/** Displays an error to the user. Only use this if you don't want to look for matching github issues
+ * @see showError
  * @param {Error} error an error object to be parsed and displayed
  * @param {string|*[]} extraInfo other relevant information */
-function showError(error, ...extraInfo) {
+function showErrorMessage(error, ...extraInfo) {
+  removeError();
+  window.logSnapshot = process_monitored_logs(false);
+
+  console.log("showErrorMessage", ...extraInfo, error);
+  if (error?.constructor?.name !== "Error") {
+    error = new Error(error?.toString());
+  }
+  const stack = error.stack || new Error().stack;
+
+  const extraStrings = extraInfo.map(ei => {
+    if (typeof ei === "object") {
+      return JSON.stringify(ei);
+    } else {
+      return ei?.toString();
+    }
+  }).join('<br />');
 
   let container = $("#above-vtt-error-message");
   if (container.length === 0) {
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
-        <pre id="error-message-stack"></pre>
+        <h3 id="error-message">${error.message}</h3>
+        <div id="error-message-details">${extraStrings}</div>
+        <pre id="error-message-stack" style="display: none">${error.message}<br/>${extraStrings}</pre>
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
-            <button id="close-error-button">Close</button>
-            <button id="copy-error-button">Copy Error Message</button>
+          <button id="close-error-button">Close</button>
+          <button id="copy-error-button">Copy logs to clipboard</button>
         </div>
       </div>
     `);
@@ -93,52 +263,77 @@ function showError(error, ...extraInfo) {
     $("#error-message-stack").append("<br /><br />---------- Another Error Occurred ----------<br /><br />");
   }
 
-  console.error(...extraInfo, error);
-  if (error?.constructor?.name !== "Error") {
-    error = new Error(error);
-  }
-  const stack = error.stack || new Error().stack;
-  const extraStrings = extraInfo.map(ei => {
-    if (typeof ei === "object") {
-      return JSON.stringify(ei);
-    } else {
-      return ei?.toString();
-    }
-  });
-
-  console.log(`extraString`, extraStrings)
-
   $("#error-message-stack")
-    .append(extraStrings.join(`<br />`))
-    .append(`<br />`)
+    .append('<br />')
     .append(stack);
 
   $("#close-error-button").on("click", removeError);
 
   $("#copy-error-button").on("click", function () {
-    const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
-    copy_to_clipboard("```\n"+textToCopy+"\n```");
+    copy_to_clipboard(build_external_error_message());
   });
 
-  look_for_github_issue(error.message, ...extraStrings)
-    .then(add_issues_to_error_message)
-    .catch(githubError => {
-      console.error("look_for_github_issue", "Failed to look for github issues", githubError);
-    })
+  if (get_avtt_setting_value("aggressiveErrorMessages")) {
+    $("#error-message-stack").show();
+  }
 }
 
-function add_issues_to_error_message(issues) {
+/** Displays an error to the user, and looks for matching github issues
+ * @param {Error} error an error object to be parsed and displayed
+ * @param {string|*[]} extraInfo other relevant information */
+function showError(error, ...extraInfo) {
+  if (error?.constructor?.name !== "Error") {
+    error = new Error(error);
+  }
+
+  showErrorMessage(error, ...extraInfo);
+
+  $("#above-vtt-error-message .error-message-buttons").append(`<div style="float: right;top:-22px;position:relative;">Use this button to share logs with developers!<span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 14px;position: relative;">line_end_arrow_notch</span></div>`);
+
+  look_for_github_issue(error.message, ...extraInfo)
+    .then((issues) => {
+      add_issues_to_error_message(issues, error.message);
+    })
+    .catch(githubError => {
+      console.log("look_for_github_issue", "Failed to look for github issues", githubError);
+    });
+}
+
+function build_external_error_message(limited = false) {
+  const codeBookend = "\n```\n";
+
+  const error = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
+  const formattedError = `**Error:**${codeBookend}${error}${codeBookend}`;
+
+  const environment = JSON.stringify({
+    avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
+    browser: get_browser(),
+  });
+  const formattedEnvironment = `**Environment:**${codeBookend}${environment}${codeBookend}`;
+
+  const formattedConsoleLogs = `**Other Logs:**${codeBookend}${window.logSnapshot}`; // exclude the closing codeBookend, so we can cleanly slice the full message
+
+  const fullMessage = formattedError + formattedEnvironment + formattedConsoleLogs;
+
+  if (limited) {
+    return fullMessage.slice(0, 2000) + codeBookend;
+  }
+
+  return fullMessage + codeBookend;
+}
+
+function add_issues_to_error_message(issues, errorMessage) {
   if (issues.length > 0) {
 
     let ul = $("#error-issues-list");
     if (ul.length === 0) {
       ul = $(`<ul id="error-issues-list" style="list-style: inside"></ul>`);
-      $("#error-github-issue").append(`<p class="error-good-news">Good News! We found some similar issues. Check them out to see if there's a known workaround for the error you just encountered.</p>`);
+      $("#error-github-issue").append(`<p class="error-good-news">We found some issues that might be similar. Check them out to see if there's a known workaround for the error you just encountered.</p>`);
       $("#error-github-issue").append(ul);
     }
 
     issues.forEach(issue => {
-      const li = $(`<li><a href="${issue.html_url}" target="_blank" style="text-decoration: unset;color: -webkit-link;">${issue.title}</a></li>`);
+      const li = $(`<li><a href="${issue.html_url}" target="_blank">${issue.title}</a></li>`);
       ul.append(li);
       if (issue.labels.find(l => l.name === "workaround")) {
         li.addClass("github-issue-workaround");
@@ -151,12 +346,16 @@ function add_issues_to_error_message(issues) {
   // If this gets spammed, we can change the logic to only include this if issues.length === 0
   if ($("#create-github-button").length === 0) {
     $("#error-github-issue").append(`<div style="margin-top:20px;">Creating a Github Issue <i>(account required)</i> is very helpful. It gives the developers all the details they need to fix the bug. Alternatively, you can use the copy "Copy Error Message" button and then paste it on the AboveVTT discord or subreddit and a developer will eventually create a Github Issue for it.</div>`);
-    const githubButton = $(`<button id="create-github-button">Create Github Issue</button>`);
+    const githubButton = $(`<button id="create-github-button" style="float: left">Create Github Issue</button>`);
     githubButton.click(function() {
       const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
-      const errorBody = "```\n"+textToCopy+"\n```";
-      console.log("look_for_github_issue", `appending createIssueUrl`, error.message, errorBody);
-      open_github_issue(error.message, errorBody);
+      const environment = JSON.stringify({
+        avttVersion: `${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}`,
+        browser: get_browser(),
+      });
+      const errorBody = build_external_error_message(true);
+      console.log("look_for_github_issue", `appending createIssueUrl`, errorMessage, errorBody);
+      open_github_issue(errorMessage, errorBody);
     });
     $("#above-vtt-error-message .error-message-buttons").append(githubButton);
   }
@@ -174,31 +373,43 @@ const defaultAvatarUrl = "https://www.dndbeyond.com/content/1-0-2416-0/skins/wat
 /** an object that mimics window.pcs, but specific to the DM */
 function generic_pc_object(isDM) {
   let pc = {
-    "decorations": {
-      "backdrop": { // barbarian because :shrug:
-        "largeBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/473/636453122224164304.jpeg",
-        "smallBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/472/636453122223383028.jpeg",
-        "backdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/471/636453122222914252.jpeg",
-        "thumbnailBackdropAvatarUrl":"https://www.dndbeyond.com/avatars/61/474/636453122224476777.jpeg"
+    decorations: {
+      backdrop: { // barbarian because :shrug:
+        largeBackdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/473/636453122224164304.jpeg",
+        smallBackdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/472/636453122223383028.jpeg",
+        backdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/471/636453122222914252.jpeg",
+        thumbnailBackdropAvatarUrl: "https://www.dndbeyond.com/avatars/61/474/636453122224476777.jpeg"
       },
-      "characterTheme": {
-        "name": "DDB Red",
-        "isDarkMode": false,
-        "isDefault": true,
-        "backgroundColor": "#FEFEFE",
-        "themeColor": "#C53131"
+      characterTheme: {
+        name: "DDB Red",
+        isDarkMode: false,
+        isDefault: true,
+        backgroundColor: "#FEFEFE",
+        themeColor: "#C53131"
       },
-      "avatar": {
-        "avatarUrl": defaultAvatarUrl,
-        "frameUrl": null
+      avatar: {
+        avatarUrl: defaultAvatarUrl,
+        frameUrl: null
       }
     },
-    "id": 0,
-    "image": defaultAvatarUrl,
-    "isAssignedToPlayer": false,
-    "name": "Unknown Character",
-    "sheet": "",
-    "userId": 0
+    id: 0,
+    image: defaultAvatarUrl,
+    isAssignedToPlayer: false,
+    name: "Unknown Character",
+    sheet: "",
+    userId: 0,
+    passivePerception: 8,
+    passiveInvestigation: 8,
+    passiveInsight: 8,
+    armorClass: 8,
+    abilities: [
+      {name: "str", save: 0, score: 10, label: "Strength", modifier: 0},
+      {name: "dex", save: 0, score: 10, label: "Dexterity", modifier: 0},
+      {name: "con", save: 0, score: 10, label: "Constitution", modifier: 0},
+      {name: "int", save: 0, score: 10, label: "Intelligence", modifier: 0},
+      {name: "wis", save: 0, score: 10, label: "Wisdom", modifier: 0},
+      {name: "cha", save: 0, score: 10, label: "Charisma", modifier: 0}
+    ]
   };
   if (isDM) {
     pc.image = dmAvatarUrl;
@@ -228,6 +439,35 @@ function color_from_pc_object(pc) {
   }
 }
 
+function hp_from_pc_object(pc) {
+  let hpValue = 0;
+  if (!isNaN((pc?.hitPointInfo?.current))) {
+    hpValue += parseInt(pc.hitPointInfo.current);
+  }
+  if (!isNaN((pc?.hitPointInfo?.temp))) {
+    hpValue += parseInt(pc.hitPointInfo.temp);
+  }
+  return hpValue;
+}
+function max_hp_from_pc_object(pc) {
+  if (!isNaN((pc?.hitPointInfo?.maximum))) {
+    return parseInt(pc.hitPointInfo.maximum);
+  }
+  return 1; // this is wrong, but we want to avoid any NaN results from division
+}
+function hp_aura_color_from_pc_object(pc) {
+  const hpValue = hp_from_pc_object(pc);
+  const maxHp = max_hp_from_pc_object(pc);
+  return token_health_aura(Math.round((hpValue / maxHp) * 100));
+}
+function hp_aura_box_shadow_from_pc_object(pc) {
+  const auraValue = hp_aura_color_from_pc_object(pc);
+  return `${auraValue} 0px 0px 11px 3px`;
+}
+function speed_from_pc_object(pc, speedName = "Walking") {
+  return pc?.speeds?.find(s => s.name === speedName)?.distance || 0;
+}
+
 /** @return {string} The id of the player as a string, {@link dm_id} for the dm */
 function my_player_id() {
   if (window.DM) {
@@ -238,17 +478,25 @@ function my_player_id() {
 }
 
 /** @param {string} idOrSheet the playerId or pc.sheet of the pc you're looking for
+ * @param {boolean} useDefault whether to return a generic default object if the pc object is not found
  * @return {object} The window.pcs object that matches the idOrSheet */
-function find_pc_by_player_id(idOrSheet) {
+function find_pc_by_player_id(idOrSheet, useDefault = true) {
   if (idOrSheet === dm_id) {
     return generic_pc_object(true);
   }
   if (!window.pcs) {
-    console.error("window.pcs is undefined");
-    return generic_pc_object(false);
+    if(is_abovevtt_page())
+      console.error("window.pcs is undefined");
+    return useDefault ? generic_pc_object(false) : undefined;
   }
   const pc = window.pcs.find(pc => pc.sheet.includes(idOrSheet));
-  return pc || generic_pc_object(false);
+  if (pc) {
+    return pc;
+  }
+  if (useDefault) {
+    return generic_pc_object(false);
+  }
+  return undefined;
 }
 
 async function rebuild_window_pcs() {
@@ -263,52 +511,30 @@ async function rebuild_window_pcs() {
   });
 }
 
-function debounced_handle_character_update(msg) {
-  console.debug("debounced_handle_character_update", msg);
-  const playerId = msg?.data?.characterId;
-  if (!playerId) return;
-  if (!window.PLAYER_UPDATE_FUNCTIONS) {
-    window.PLAYER_UPDATE_FUNCTIONS = {};
+function update_pc_with_data(playerId, data) {
+  if (data.constructor !== Object) {
+    console.warn("update_pc_with_data was given invalid data", playerId, data);
+    return;
   }
-  if (!window.PLAYER_UPDATE_FUNCTIONS[playerId]) {
-    window.PLAYER_UPDATE_FUNCTIONS[playerId] = mydebounce(() => {
-      update_window_pc(playerId)
-        .then(() => {
-          console.log("debounced_handle_character_update called update_window_pc", playerId);
-        })
-        .catch(error => {
-          console.warn("debounced_handle_character_update failed to update_window_pc", playerId, error);
-        });
-
-      if (window.DM) {
-        const pc = window.pcs.find(pc => pc.sheet.includes(playerId));
-        if (pc) {
-          console.log("debounced_handle_character_update is calling getPlayerData", playerId);
-          getPlayerData(pc.sheet, function (playerData) {
-            window.PLAYER_STATS[playerData.id] = playerData;
-            window.MB.sendTokenUpdateFromPlayerData(playerData);
-            update_pclist();
-            send_player_data_to_all_peers(playerData);
-          });
-        }
-      }
-    }, 4000);
+  const index = window.pcs.findIndex(pc => pc.sheet.includes(playerId));
+  if (index < 0) {
+    console.warn("update_pc_with_data could not find pc with id", playerId);
+    return;
   }
-  console.debug("debounced_handle_character_update calling debounce function", playerId);
-  window.PLAYER_UPDATE_FUNCTIONS[playerId]();
-}
-
-async function update_window_pc(characterId) {
-  const allCharacterDetails = await DDBApi.fetchCharacterDetails([characterId]);
-  const characterData = allCharacterDetails[0];
-  const index = window.pcs.findIndex(pc => pc.id.toString() === characterId.toString());
-  const oldData = window.pcs[index];
-  window.pcs[index] = {
-    ...oldData,
-    ...characterData,
-    image: characterData.decorations?.avatar?.avatarUrl || defaultAvatarUrl,
-    sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
-  };
+  console.debug(`update_pc_with_data is updating ${playerId} with`, data);
+  const pc = window.pcs[index];
+  const updatedPc = {...pc, ...data};
+  window.pcs[index] = updatedPc
+  let token = window.TOKEN_OBJECTS[pc.sheet];
+  if (token) {
+    token.options = {
+      ...token.options,
+      ...updatedPc,
+      id: pc.sheet // updatedPc.id is DDB characterId, but we use the sheet as an id for tokens
+    };
+    token.place_sync_persist(); // not sure if this is overkill
+  }
+  update_pc_token_rows();
 }
 
 async function harvest_game_id() {
@@ -476,21 +702,33 @@ function normalize_scene_urls(scenes) {
 }
 
 async function look_for_github_issue(...searchTerms) {
-
   // fetch issues that have been marked as bugs
-  const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
-  const response = await request.json();
+  if (!window.githubBugs) {
+    window.githubBugs = []; // don't fetch the same list every single time or we could get rate-limited when things go really bad
+    const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug&state=all", { credentials: "omit" });
+    window.githubBugs = await request.json();
+  }
+
+  const searchTermStrings = searchTerms.map(ei => {
+    if (typeof ei === "object") {
+      return JSON.stringify(ei);
+    } else {
+      return ei?.toString();
+    }
+  });
 
   // remove any that have been marked as potential-duplicate
-  const filteredIssues = response.filter(issue => !issue.labels.find(l => l.name === "potential-duplicate")).reverse();
+  const filteredIssues = window.githubBugs.filter(issue => !issue.labels.find(l => l.name === "potential-duplicate" || l.name === "released")).reverse();
 
   // instantiate fuse to fuzzy match parts of the github issues that we just downloaded
   const fuse = new Fuse(filteredIssues, {
+    threshold: 0.4,         // we want the matches to be a little closer. Default is 0.6, and the lower the threshold the smaller the variance that's allowed
     includeScore: true,     // we want to know the match score, so we can sort by it after we've merged multiple arrays of search results
     keys: ['title', 'body'] // look at the title and body of each item
   });
 
-  return searchTerms
+  return searchTermStrings
+    .filter(st => st) // filter out undefined, and empty strings
     .flatMap(st => {
       // iterate over every search term and collect matching results
       return fuse.search(st)
@@ -523,4 +761,29 @@ async function fetch_github_issue_comments(issueNumber) {
 function open_github_issue(title, body) {
   const url = `https://github.com/cyruzzo/AboveVTT/issues/new?labels=bug&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`
   window.open(url, '_blank');
+}
+
+function areArraysEqualSets(a1, a2) {
+  // canbax, https://stackoverflow.com/a/55614659
+  const superSet = {};
+  for (const i of a1) {
+    const e = i + typeof i;
+    superSet[e] = 1;
+  }
+
+  for (const i of a2) {
+    const e = i + typeof i;
+    if (!superSet[e]) {
+      return false;
+    }
+    superSet[e] = 2;
+  }
+
+  for (let e in superSet) {
+    if (superSet[e] === 1) {
+      return false;
+    }
+  }
+
+  return true;
 }

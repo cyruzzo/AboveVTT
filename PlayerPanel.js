@@ -12,19 +12,13 @@ function update_pclist() {
 	playersPanel.body.empty();
 
 	const pcObjects = [...window.pcs, generic_pc_object(true)]; // add a pc object for the DM
-	pcObjects.forEach(function(item, index) {
-
-		const pc = item;
-		const pcSheet = pc.sheet === undefined ? '' : pc.sheet;
+	pcObjects.forEach(pc => {
 		const color = color_from_pc_object(pc);
-
-		let playerData;
-		if (pc.sheet in window.PLAYER_STATS) {
-			playerData = window.PLAYER_STATS[pcSheet];
-		}
-
+		const hpValue = hp_from_pc_object(pc);
+		const maxHp = max_hp_from_pc_object(pc);
+		const boxShadow = hp_aura_box_shadow_from_pc_object(pc);
 		const newPlayerTemplate = `
-			<div class="player-card" data-player-id="${pcSheet}">
+			<div class="player-card" data-player-id="${pc.sheet}">
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
 					<div class="player-actions">
@@ -32,53 +26,9 @@ function update_pclist() {
 					</div>
 				</div>
 				<div class="player-card-content">
-					<div class="player-token" style="box-shadow: ${
-						playerData ? `${token_health_aura(
-							Math.round((playerData.hp / playerData.max_hp) * 100)
-						)} 0px 0px 11px 3px` : 'none'
-					};">
+					<div class="player-token">
 						<img width="70" height="70" src="${pc.image}" style="border: 3px solid ${color}" />
-						${
-							playerData ? `
-								<div class="player-token-hp">${playerData.hp} / ${playerData.max_hp}</div>
-								<div class="player-token-ac">${playerData.ac}</div>
-							` : ''
-						}
 					</div>
-					${
-						playerData ? `
-							<div class="player-info">
-								<div class="player-attributes">
-									<div class="player-attribute">
-										<img src="${window.EXTENSION_PATH + "assets/eye.png"}" title="Passive Perception" />
-										<span>${playerData.pp}</span>
-									</div>
-									${
-										playerData.walking ? `
-											<div class="player-attribute">
-												<img src="${window.EXTENSION_PATH + "assets/walking.png"}" title="Walking Speed" />
-												<span>${playerData.walking}</span>
-											</div>
-											<div class="player-attribute">
-												<img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration" />
-												<span>${playerData.inspiration ? 'Yes' : 'No'}</span>
-											</div>
-										` : ""
-									}
-								</div>
-								<div class="player-conditions">
-									<div class="player-card-title"><b>Conditions:</b></div>
-									<div>
-										${
-											playerData.conditions.map(c => `<span title="${
-												CONDITIONS[c] ? [c, ...CONDITIONS[c]].join(`\n`) : [c, ...CONDITIONS.Exhaustion].join(`\n`)
-											}">${c}</span>`).join(', ')
-										}
-									</div>
-								</div>
-							</div>
-						` : ``
-					}
 				</div>
 			</div>
 		`;
@@ -210,7 +160,7 @@ function find_and_set_player_color() {
 
 function change_player_color(color) {
 	const playerId = my_player_id();
-	// window.color = color; // TODO: stop using window.color
+	window.color = color;
 	WaypointManager.drawStyle.color = color;
 	// window.PeerManager.send(PeerEvent.preferencesChange());
 	const peerConnected = is_peer_connected(playerId);

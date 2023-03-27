@@ -470,8 +470,8 @@ function handle_draw_text_submit(event) {
     );
     // textbox doesn't have left or top so use the wrapper
     // with 25 being the bar height
-    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-200+window.scrollX))) * (1.0 / window.ZOOM);
-    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-200+window.scrollY)) + 25) * (1.0 / window.ZOOM);
+    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-window.VTTMargin+window.scrollX))) * (1.0 / window.ZOOM);
+    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-window.VTTMargin+window.scrollY)) + 25) * (1.0 / window.ZOOM);
     const rectColor = $(textBox).css("background-color")
 
     const text = textBox.val();
@@ -691,18 +691,18 @@ function draw_text(
         },
         drag: function(event,ui)
         {
-            ui.position.top = Math.round((ui.position.top - 200) / window.ZOOM );
-            ui.position.left = Math.round((ui.position.left - 200) / window.ZOOM );
+            ui.position.top = Math.round((ui.position.top - window.VTTMargin) / window.ZOOM );
+            ui.position.left = Math.round((ui.position.left - window.VTTMargin) / window.ZOOM );
 
         },  
         stop: function (event, ui) {
             $('.iframeResizeCover').remove();
             
-            for(drawing in window.DRAWINGS){
+            for(let drawing in window.DRAWINGS){
                 if(window.DRAWINGS[drawing][9] != id)
                     continue;
-                window.DRAWINGS[drawing][1] = parseInt($(this).css('left'));
-                window.DRAWINGS[drawing][2] = parseInt($(this).css('top')) + parseInt(font.size);     
+                window.DRAWINGS[drawing][1] = parseInt($(this).css('left'))*adjustScale;
+                window.DRAWINGS[drawing][2] = parseInt($(this).css('top'))*adjustScale + parseInt(font.size)*adjustScale;    
             }
                         
             sync_drawings();
@@ -712,7 +712,7 @@ function draw_text(
 
     textSVG.on('contextmenu', function(e){
         $(this).remove();
-        for(drawing in window.DRAWINGS){
+        for(let drawing in window.DRAWINGS){
             if(window.DRAWINGS[drawing][9] == this.id){
                 if(!window.DRAWINGS[drawing][11]){
                     window.DRAWINGS[drawing][11] = true;

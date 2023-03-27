@@ -132,7 +132,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		if (self.scene.fog_of_war == 1) {
 			window.FOG_OF_WAR = true;
 			//$("#fog_overlay").show();
-			window.REVEALED = [].concat(self.scene.reveals);
+			window.REVEALED = [[0, 0, 0, 0, 2, 0]].concat(self.scene.reveals);
 		}
 		else {
 			window.FOG_OF_WAR = false;
@@ -161,6 +161,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
 		load_scenemap(map_url, map_is_video, null, null, function() {
+			window.CURRENT_SCENE_DATA.scale_factor = 1;
+			scene.scale_factor = 1;
 			var owidth = $("#scene_map").width();
 			var oheight = $("#scene_map").height();
 			var max_length = get_canvas_max_length();
@@ -180,9 +182,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 			$("#scene_map").off("load");
 			reset_canvas();
-			redraw_fog();
-			redraw_drawings();
-			redraw_text();
 			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 
 			set_default_vttwrapper_size()
@@ -193,10 +192,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				if(scene.tokens[property].imgsrc.startsWith("data:"))
 					found_data_tokens=true;
 			}
-
-			self.sync();
-
-			get_pclist_player_data(); // UPDATE PLAYER TOKENS DATA
 
 			if(found_data_tokens){
 				alert('WARNING. This scene contains token with data: urls as images. Please only use http:// or https:// urls for images');
@@ -388,10 +383,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				dm_map_is_video: "0",
 				scale: "100",
 				dm_map_usable: "0",
-				fog_of_war: "0",
 				thumb: thumb,
 				tokens: {},
-				reveals: [],
 			});		
 		}
 
@@ -439,9 +432,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					thumb: thumb,
 					scale: "100",
 					dm_map_usable: "0",
-					fog_of_war: "0",
 					tokens: {},
-					reveals: [],
 				});
 			});
 
@@ -485,10 +476,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						dm_map_is_video: "0",
 						scale: "100",
 						dm_map_usable: "0",
-						fog_of_war: "0",
 						thumb: thumb,
 						tokens: {},
-						reveals: [],
 					});
 				});
 			} else if (compendiumWithoutSubtitle.length > 0) {
@@ -527,10 +516,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						dm_map_is_video: "0",
 						scale: "100",
 						dm_map_usable: "0",
-						fog_of_war: "0",
 						thumb: thumb,
 						tokens: {},
-						reveals: [],
 					});
 
 				});

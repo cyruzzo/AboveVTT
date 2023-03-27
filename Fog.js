@@ -167,7 +167,7 @@ class WaypointManagerClass {
 
 		// Add in scene offset
 		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
-		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety;
+		snapPointYStart += window.window.CURRENT_SCENE_DATA.offsety/window.CURRENT_SCENE_DATA.scale_factor;
 
 		return { x: snapPointXStart, y: snapPointYStart }
 	}
@@ -377,22 +377,22 @@ class WaypointManagerClass {
 function is_token_under_fog(tokenid){
 	if(window.DM)
 		return false;
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
+	let canvas = document.getElementById("fog_overlay");
+	let ctx = canvas.getContext("2d");
 	let canvas2 = document.getElementById("raycastingCanvas");
 	let ctx2 = canvas2.getContext("2d");
 
 
-	var left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2));
-	var top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2));
-	var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-	var pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
-
+	let left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	let top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	let pixeldata = ctx.getImageData(left, top, 1, 1).data;
+	let pixeldata2 = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+		
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
 
-
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight)))
+	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenAuraIsLight && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))))
 		return true;
 	else
 		return false;
@@ -402,9 +402,16 @@ function is_token_under_light_aura(tokenid){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	let visibleLightAuras = $(".aura-element.islight:not([style*='visibility: hidden'])");
 	
+	let visionIdsToCheck =[];
+
+	let visibleLightAuras = $(".aura-element-container-clip .aura-element:not([style*='visibility: hidden'])");
+	let visibleLightAurasParent = visibleLightAuras.parent();
+
 	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
+		let auraId = $(visibleLightAuras[auraIndex]).attr('data-id');
+		if(window.lightAuraClipPolygon[auraId] == undefined)
+			continue;
 		let bounds = {
 			left: parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')), 
 			top:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')),
@@ -413,13 +420,16 @@ function is_token_under_light_aura(tokenid){
 		};
 		let auraSize = $(visibleLightAuras[auraIndex]).width();
 		if(horizontalMiddle > bounds.left && horizontalMiddle < bounds.right && verticalMiddle > bounds.top && verticalMiddle < bounds.bottom){
-			return true;
-		}
-	}
-		
-	
-	return false;
+				
 
+			let pixeldata = window.lightAuraClipPolygon[auraId].canvas.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+
+			pixeldata = pixeldata.filter(function(color, index) {return (index + 1) % 4 != 0});
+			if(pixeldata.some(color => color == 255))
+				return true;	
+		}		
+	}
+	return  false;
 }
 
 function check_single_token_visibility(id){
@@ -428,31 +438,22 @@ function check_single_token_visibility(id){
 		return;
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
-			var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-			var selector = "div[data-id='" + id + "']";
-			let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
+			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+			let selector = "div.token[data-id='" + id + "']";
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			let playerAuraIsVisible =  (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraVisible;
+			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
-
+			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
 				$(selector).hide();
-				if($(auraSelector).hasClass('islight') && window.TOKEN_OBJECTS[id].options.reveal_light == 'never'){
-					$(auraSelector).hide();
-				}
-				else{
-					$(auraSelector).show();
-				}
+				$(auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 				$(selector).css('opacity', 1);
 				$(selector).show();
-				$(auraSelector).show();
+				if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
+					$(auraSelector).show();
 				//console.log('SHOW '+id);
-			}
-			else if($(auraSelector).hasClass('islight')){
-				$(auraSelector).show();
 			}
 }
 
@@ -482,43 +483,37 @@ function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
-	let canvas2 = document.getElementById("raycastingCanvas");3
+	let canvas = document.getElementById("fog_overlay");
+	let ctx = canvas.getContext("2d");
+	let canvas2 = document.getElementById("raycastingCanvas");
 	let ctx2 = canvas2.getContext("2d");
 
-	for (var id in window.TOKEN_OBJECTS) {
-		var left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2));
-		var top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2));
-		var pixeldata = ctx.getImageData(left, top, 1, 1).data;
-		let pixeldata2 = ctx2.getImageData(left, top, 1, 1).data;
+	for (let id in window.TOKEN_OBJECTS) {
+		let left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+		let top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+		let pixeldata = ctx.getImageData(left, top, 1, 1).data;
+		let pixeldata2 = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+		let selector = "div.token[data-id='" + id + "']";
 
-		var auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-		var selector = "div[data-id='" + id + "']";
-		let auraSelector = ".aura-element[id='light_" + auraSelectorId + "']";
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (pixeldata2[2] == 0 && playerTokenAuraIsLight) || (playerTokenAuraIsLight && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
+		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+
+		pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
+		
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
 			$(selector).hide();
-			if($(auraSelector).hasClass('islight') && window.TOKEN_OBJECTS[id].options.reveal_light == 'never'){
-				$(auraSelector).hide();
-			}
-			else{
-				$(auraSelector).show();
-			}
+			$(auraSelector).hide();
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 			$(selector).css('opacity', 1);
 			$(selector).show();
-			$(auraSelector).show();
+			if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
+				$(auraSelector).show();
 			//console.log('SHOW '+id);
 		}
-		else if($(auraSelector).hasClass('islight')){
-			$(auraSelector).show();
-		}
-		$(".aura-element[id='light_" + auraSelectorId + "'] ~ .aura-element[id='light_" + auraSelectorId + "']").remove();
 	}
 	console.log("finished");
 }
@@ -612,12 +607,12 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid();
 	gridContext.setLineDash(dash);
-	let startX = offsetX || window.CURRENT_SCENE_DATA.offsetx;
-	let startY = offsetY || window.CURRENT_SCENE_DATA.offsety;
+	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
+	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
 	startX = Math.round(startX)
-	startY = Math.round(startY)
-	const incrementX = hpps || window.CURRENT_SCENE_DATA.hpps;
-	const incrementY = vpps|| window.CURRENT_SCENE_DATA.vpps;
+	startY = Math.round(startY) 
+	const incrementX = hpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor;
+	const incrementY = vpps / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor;
 	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
 	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
 	let isSubdivided = subdivide === "1" || window.CURRENT_SCENE_DATA.grid_subdivided === "1"
@@ -660,8 +655,8 @@ function draw_wizarding_box() {
 
 	var gridCanvas = document.getElementById("grid_overlay");
 	var gridContext = gridCanvas.getContext("2d");
-	gridCanvas.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
-	gridCanvas.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
+	gridCanvas.width = $("#scene_map").width();
+	gridCanvas.height = $("#scene_map").height();
 
 	startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -693,10 +688,12 @@ function draw_wizarding_box() {
 }
 function ctxScale(canvasid){
 	var canvas = document.getElementById(canvasid);
-	var ctx = canvas.getContext("2d");
-	canvas.width = $("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor;
-  	canvas.height = $("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor;
-	ctx.scale(window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.scale_factor);
+	canvas.width = $("#scene_map").width();
+  	canvas.height = $("#scene_map").height();
+	$(canvas).css({
+		'transform-origin': 'top left',
+		'transform': 'scale(var(--scene-scale))'
+	});
 }
 
 function reset_canvas() {
@@ -708,7 +705,7 @@ function reset_canvas() {
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
-
+	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
 	ctxScale('raycastingCanvas');
@@ -723,18 +720,25 @@ function reset_canvas() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
+	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+ 	let darknessPercent = 100 - parseInt(darknessfilter);
+ 	if(window.DM && darknessPercent < 40){
+ 		darknessPercent = 40;
+ 		$('#raycastingCanvas').css('opacity', '0');
+ 	}
+ 	else if(window.DM){
+ 		$('#raycastingCanvas').css('opacity', '');
+ 	}
+ 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
+ 	delete window.lightAuraClipPolygon;
 
-	ctxScale('fog_overlay');
-	if (window.DM) {
-		ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-	}
-	else {
-		ctx.fillStyle = "rgb(0, 0, 0)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-	}
-
+	redraw_fog();
+	redraw_drawings();
+	redraw_light_walls();
+	redraw_light();
+	redraw_text();
+	
 
 	var canvas_grid = document.getElementById("grid_overlay");
 	var ctx_grid = canvas_grid.getContext("2d");
@@ -746,8 +750,8 @@ function reset_canvas() {
 		else{
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		canvas_grid.width = $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor;
-		canvas_grid.height = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
+		canvas_grid.width = $("#scene_map").width();
+		canvas_grid.height = $("#scene_map").height();
 
 		startX = Math.round(window.CURRENT_SCENE_DATA.offsetx);
 		startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
@@ -766,7 +770,7 @@ function reset_canvas() {
 	else {
 		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
 	}
-	redraw_light();
+
 }
 
 function redraw_fog() {
@@ -796,13 +800,13 @@ function redraw_fog() {
 		if (d[5] == 0) { //REVEAL
 
 			if (d[4] == 0) { // REVEAL SQUARE
-				for(adjusted = 0; adjusted < 4; adjusted++){
+				for(let adjusted = 0; adjusted < 4; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
-				for(adjusted = 0; adjusted < 3; adjusted++){
+				for(let adjusted = 0; adjusted < 3; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
@@ -816,7 +820,7 @@ function redraw_fog() {
 				clearPolygon(ctx, d[0], d[6]);
 			}
 			if (d[4] == 4) {
-				for(adjusted = 0; adjusted < 2; adjusted++){
+				for(let adjusted = 0; adjusted < 2; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// REVEAL BUCKET				
@@ -825,7 +829,7 @@ function redraw_fog() {
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
-				for(adjusted = 0; adjusted < 4; adjusted++){
+				for(let adjusted = 0; adjusted < 4; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
@@ -833,7 +837,7 @@ function redraw_fog() {
 				ctx.fillRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
-				for(adjusted = 0; adjusted < 3; adjusted++){
+				for(let adjusted = 0; adjusted < 3; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 				}
 				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
@@ -846,7 +850,7 @@ function redraw_fog() {
 			
 			}
 			if (d[4] == 4) {
-				for(adjusted = 0; adjusted < 2; adjusted++){
+				for(let adjusted = 0; adjusted < 2; adjusted++){
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// HIDE BUCKET
@@ -863,7 +867,7 @@ function redraw_fog() {
 function redraw_text() {
 
 	$('#text_div').empty();
-	for(drawing in window.DRAWINGS){
+	for(let drawing in window.DRAWINGS){
 		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale, hidden] = window.DRAWINGS[drawing]
 
 		if(shape == 'text' && textid == undefined){
@@ -876,8 +880,10 @@ function redraw_text() {
 		if(shape == 'text' && hidden == undefined){
 			window.DRAWINGS[drawing].push(false);
 		}
-   		if(shape == 'text')
-			draw_text(undefined, ...window.DRAWINGS[drawing]);	
+   		if(shape == 'text'){
+   			let text_clone = $.extend(true, [], window.DRAWINGS[drawing]);
+			draw_text(undefined, ...text_clone);	
+		}
 	}
 }
 
@@ -890,8 +896,8 @@ function redraw_drawings() {
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall")
 
 	for (var i = 0; i < drawings.length; i++) {
-
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
+		let drawing_clone = $.extend(true, [], drawings[i]);
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		const isFilled = fill === "filled"
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
@@ -965,7 +971,8 @@ function redraw_light_walls(clear=true){
 	}
 	$('.door-button').remove();
 	for (var i = 0; i < drawings.length; i++) {
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawings[i];
+		let drawing_clone = $.extend(true, [], drawings[i]);
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
@@ -1059,8 +1066,8 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function get_event_cursor_position(event){
-	const pointX = Math.round(((event.pageX - 200) * (1.0 / window.ZOOM)));
-	const pointY = Math.round(((event.pageY - 200) * (1.0 / window.ZOOM)));
+	const pointX = Math.round(((event.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
+	const pointY = Math.round(((event.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 	return [pointX, pointY]
 }
 
@@ -1271,16 +1278,16 @@ function drawing_mousemove(e) {
 		// }
 
 		if (window.DRAWSHAPE == "rect") {
-			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall"){
+			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
 				redraw_light_walls(false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
 			{
 				drawRect(context,
-					Math.round(((window.BEGIN_MOUSEX - 200 + window.scrollX))) * (1.0 / window.ZOOM),
-					Math.round(((window.BEGIN_MOUSEY - 200 + window.scrollY))) * (1.0 / window.ZOOM),
-					((e.clientX - 200 + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - 200 + window.scrollX) * (1.0 / window.ZOOM)),
-					((e.clientY - 200 + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - 200 + window.scrollY) * (1.0 / window.ZOOM)),
+					Math.round(((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX))) * (1.0 / window.ZOOM),
+					Math.round(((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY))) * (1.0 / window.ZOOM),
+					((e.clientX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)),
+					((e.clientY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)),
 					window.DRAWCOLOR,
 					isFilled,
 					window.LINEWIDTH);
@@ -1582,7 +1589,7 @@ function drawing_mouseup(e) {
 			if ( e.button == 2) {
 				return;
 			}
-			for(walls in window.StoredWalls){
+			for(let walls in window.StoredWalls){
 					data = ['line',
 						"wall",
 						window.DRAWCOLOR,
@@ -1623,10 +1630,10 @@ function drawing_mouseup(e) {
 				let textImageRect = $("#text_div svg[id='" + curr+ "'] text")[0].getBoundingClientRect();	
 
 				
-				var texttop = (parseInt(textImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
-				var textleft = (parseInt(textImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
-				var textright = (parseInt(textImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
-				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+				var texttop = (parseInt(textImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+				var textleft = (parseInt(textImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				var textright = (parseInt(textImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 				let scaledRemainderTop = (textbottom-texttop-textImageRect.height)/2;
 				let scaledRemainderLeft = (textright-textleft-textImageRect.width)/2;
 
@@ -1646,7 +1653,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" ){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION == "wall-eraser-one"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -1656,7 +1663,7 @@ function drawing_mouseup(e) {
 		};
 		
 	
-		for(i=0; i<walls.length; i++){
+		for(let i=0; i<walls.length; i++){
 
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -1721,10 +1728,14 @@ function drawing_mouseup(e) {
 			
 
 			fullyInside = (yInside &&  xInside)
+	
+
 
 			if(left != false || right != false || top != false || bottom != false || fullyInside){
-
-				for(j = 0; j < window.DRAWINGS.length; j++){
+				if(window.DRAWFUNCTION == "wall-eraser-one" ){
+					fullyInside = true;
+				}
+				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
 						window.DRAWINGS.splice(j, 1);
 						break;
@@ -1898,16 +1909,16 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
 		var c = 0;
-		for (id in window.TOKEN_OBJECTS) {
+		for (let id in window.TOKEN_OBJECTS) {
 			var curr = window.TOKEN_OBJECTS[id];
 
 
 			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
 			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - 200) * (1.0 / window.ZOOM);
-			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - 200) * (1.0 / window.ZOOM);
-			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - 200) * (1.0 / window.ZOOM);
+			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 			let scaledRemainderTop = (tokbottom-toktop-size)/2;
 			let scaledRemainderLeft = (tokright-tokleft-size)/2;
 			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
@@ -1966,8 +1977,8 @@ function drawing_contextmenu(e) {
 				window.DRAWCOLOR,
 				window.DRAWTYPE === "fill",
 				window.LINEWIDTH,
-				Math.round(((e.pageX - 200) * (1.0 / window.ZOOM))),
-				Math.round(((e.pageY - 200) * (1.0 / window.ZOOM)))
+				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
 		}
 		else{
@@ -2043,6 +2054,12 @@ function deselect_all_top_buttons(buttonSelectedClasses) {
  * as well as any other selected buttons/required options, such as color/line width, or font family/fontsize
  */
 function get_draw_data(button, menu){
+	if($("#prewiz").length > 0 || $("#wizard_popup").length>0){
+		return {
+			shape:'rect',
+			function:'select'
+		}
+	}
 	if (!$(button).hasClass("menu-option") && !$(button).hasClass("menu-button")){
 		console.groupEnd()
 		return {
@@ -2749,8 +2766,15 @@ function init_walls_menu(buttons){
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-eraser-one" data-unique-with="draw">
+				 	Erase Line
+			</button>
+		</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-eraser" data-unique-with="draw">
-				 	Erase 
+				 	Erase Area
 			</button>
 		</div>`);
 	wall_menu.append(
@@ -3009,7 +3033,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
     let intersectionX = x1 + (uA * (x2-x1));
     let intersectionY = y1 + (uA * (y2-y1));
 
-    return {x: Math.floor(intersectionX), y: Math.floor(intersectionY)};
+    return {x: intersectionX, y: intersectionY};
   }
   return false;
 }
@@ -3024,7 +3048,7 @@ function detectWallCollision(x1, y1, x2, y2){
 
 	
 	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
-	for(i=0; i<walls.length; i++){
+	for(let i=0; i<walls.length; i++){
 
 		let wallInitialScale = walls[8];
 		let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -3060,6 +3084,18 @@ function redraw_light(){
 	let offsetX = canvas.offsetLeft;
 	let offsetY = canvas.offsetTop;
 
+	if(canvasWidth == 0 || canvasHeight == 0){
+		console.warn("Draw light attempted before map load");
+		return; // prevent error if redraw is called before map initialized
+	}
+
+
+	let offscreenCanvasMask = document.createElement('canvas');
+	let offscreenContext = offscreenCanvasMask.getContext('2d');
+
+	offscreenCanvasMask.width = canvas.width;
+	offscreenCanvasMask.height = canvas.height;
+
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
@@ -3075,12 +3111,16 @@ function redraw_light(){
 	let selectedIds = [];
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){
-	  	if(window.DM && window.CURRENT_SCENE_DATA.darkness_filter >= 75){
-	  		$('#VTT').css('--darkness-filter', `${Math.max(100-window.CURRENT_SCENE_DATA.darkness_filter, 40)}%`)
-	  		$('#raycastingCanvas').css('opacity', '');
+	
+		if(window.SelectedTokenVision){
+			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
+				$('#VTT').css('--darkness-filter', `0%`)
+			}
+	  		$('#raycastingCanvas').css('opacity', '1');
 	  	}
+	  	
   		
-		for(j = 0; j < selectedTokens.length; j++){
+		for(let j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
 		  		selectedIds.push(tokenId)
@@ -3088,11 +3128,11 @@ function redraw_light(){
 	 }
 
 
-  for(i = 0; i < light_auras.length; i++){  	
+  for(let i = 0; i < light_auras.length; i++){
 
   	let auraId = $(light_auras[i]).attr('data-id');
 
-  	found = selectedIds.some(r=> r == auraId) || window.TOKEN_OBJECTS[auraId].options.reveal_light == 'always';
+  	found = selectedIds.some(r=> r == auraId);
 
 
 
@@ -3106,31 +3146,94 @@ function redraw_light(){
 	particleLook(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
 
 	let path = "";
+	if(window.lightAuraClipPolygon == undefined)
+		window.lightAuraClipPolygon = {};
+	
 	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 	for( let i = 0; i < lightPolygon.length; i++ ){
-			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
 	}
 	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 
+	
+	if(window.SelectedTokenVision){
+		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
+	}
+	
+	if(window.DM && !window.SelectedTokenVision){
+		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 
+	}
 
-  	if(selectedIds.length == 0 || found){	
+	clipped_light(auraId, lightPolygon);
+	
+  	if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
   		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined )
+  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
   			continue; 
   		
   		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
   			continue;
 
+		
+		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
+		
+  	
 
-		drawPolygon(context, lightPolygon, 'rgba(255, 255, 255, 1)', true);
-
-	
-	}    // draws rays
-
-
+  		
+  		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+		
+  		
+	}    	
   }
+  context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
 }
 
+
+function clipped_light(auraId, maskPolygon){
+	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
+	if(window.DM)
+		return;
+	
+	let lightRadius =(parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)+parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID)) ? darkvisionRadius : 0;
+	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
+	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
+	if(window.lightAuraClipPolygon[auraId] != undefined){
+		if(circleRadius == 0){
+			delete window.lightAuraClipPolygon[auraId];
+			return; // remove 0 range light and return
+		}
+		if(window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
+	}
+	else if(circleRadius == 0){
+		return; // don't make an object for 0 range light
+	}
+	let lightCanvas = document.createElement('canvas');
+	let lightAuraClipPolygonCtx = lightCanvas.getContext('2d');
+	lightCanvas.width = $("#raycastingCanvas").width();
+	lightCanvas.height =  $("#raycastingCanvas").height();
+
+	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
+	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
+
+	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
+
+	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius, 'rgba(255, 255, 255, 1)', true, 0)
+	
+
+	window.lightAuraClipPolygon[auraId] = {
+		canvas: lightCanvas,
+		light: lightRadius,
+		darkvision: darkvisionRadius,
+		middle: {
+			x: horizontalTokenMiddle,
+			y: verticalTokenMiddle
+		} 
+	}
+}
 
 
 
