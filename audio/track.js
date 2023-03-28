@@ -47,6 +47,33 @@ class Track {
 class TrackLibrary extends Library {
     constructor() {
         super(new Track());
+         if (localStorage.getItem("Soundpads") != null) { // import old sound pad tracks. I'm not deleting this local storage in case we make folders/playlists and can use the data there.
+            window.SOUNDPADS = $.parseJSON(localStorage.getItem("Soundpads"));
+            const newTracks = [];
+            const updateTracks = new Map();
+
+            for(let pad in  window.SOUNDPADS){
+                for(let folder in window.SOUNDPADS[pad]){
+                    for(let i in window.SOUNDPADS[pad][folder]){
+                        let t = window.SOUNDPADS[pad][folder][i];
+                        const track = new Track(t.name, t.src);
+                        const existingTrack = this.find(track.name, track.src);
+                        if ( typeof existingTrack === 'undefined' ) {
+                            newTracks.push(track);
+                        } else {
+                            updateTracks.set(existingTrack[0], track);
+                        }
+                    }
+                }
+            }
+            console.log('Importing new tracks')
+            console.table(newTracks)
+            this.create(...newTracks);
+
+            console.log('Importing exiting tracks')
+            console.table(Object.fromEntries(updateTracks))
+            this.batchUpdate(updateTracks);
+        }
     }
 
     /**
@@ -96,5 +123,6 @@ class TrackLibrary extends Library {
 }
 
 const trackLibrary = new TrackLibrary();
+
 
 export { Track, trackLibrary };

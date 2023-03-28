@@ -212,6 +212,7 @@ class Mixer extends EventTarget {
      */
     state() {
         let mixerState = MixerState.assign(JSON.parse(localStorage.getItem(this._localStorageKey) ?? "{}"));
+
         if(window.DM){
             for(let id in mixerState.channels){
                 mixerState.channels[id].currentTime = this._players[id]?.currentTime;
