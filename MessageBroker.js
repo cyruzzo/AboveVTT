@@ -1405,6 +1405,11 @@ class MessageBroker {
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
 			}
+			else if(window.MIXER){
+	        const state = window.MIXER.remoteState();
+          console.log('pushing mixer state to players', state);
+          window.MB.sendMessage('custom/myVTT/mixer', state);
+			}
 			// also sync the journal
 			window.JOURNAL?.sync();
 			window.MB.sendMessage("custom/myVTT/pausePlayer",{

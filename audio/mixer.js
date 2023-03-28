@@ -161,8 +161,7 @@ class Mixer extends EventTarget {
      */
     syncPlayers(play = true) {
         const state = this.state();
-
-        // create and update players
+ 
         Object.entries(state.channels).forEach(([id, channel]) => {
             let player = this._players[id]
 
@@ -176,6 +175,10 @@ class Mixer extends EventTarget {
             // sync player
             player.volume = state.volume * channel.volume;
             player.loop = channel.loop;
+            if(channel.currentTime != undefined){
+                player.currentTime = channel.currentTime;
+            }
+            
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {
@@ -208,7 +211,13 @@ class Mixer extends EventTarget {
      * @returns {MixerState}
      */
     state() {
-        return MixerState.assign(JSON.parse(localStorage.getItem(this._localStorageKey) ?? "{}"));
+        let mixerState = MixerState.assign(JSON.parse(localStorage.getItem(this._localStorageKey) ?? "{}"));
+        if(window.DM){
+            for(let id in mixerState.channels){
+                mixerState.channels[id].currentTime = this._players[id]?.currentTime;
+            } 
+        }    
+        return mixerState;
     }
 
     // volume
