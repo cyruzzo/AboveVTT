@@ -683,6 +683,10 @@ class MessageBroker {
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
 				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
 					$("#combat_next_button").click();				
+
+			}
+			if(msg.eventType=="custom/myVTT/mixer"){
+				handle_mixer_event(msg.data);
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad, msg.data.playing);
@@ -698,14 +702,11 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-					$("#youtube_volume").val(msg.data.volume);
+				if(window.YTPLAYER){
+					window.YTPLAYER.volume = msg.data.volume;
 					if(window.YTPLAYER)
-					{
-						window.YTPLAYER.setVolume(msg.data.volume);
-					}
-					else{
-						$("#scene_map").prop("volume", msg.data.volume/100);
-					}
+						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
+				}
 			}
 
 			if (msg.eventType == "dice/roll/pending"){
@@ -1403,6 +1404,11 @@ class MessageBroker {
 					playing: audioPlaying
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
+			}
+			else if(window.MIXER){
+	        const state = window.MIXER.remoteState();
+          console.log('pushing mixer state to players', state);
+          window.MB.sendMessage('custom/myVTT/mixer', state);
 			}
 			// also sync the journal
 			window.JOURNAL?.sync();

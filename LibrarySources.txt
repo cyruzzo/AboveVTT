@@ -25,6 +25,10 @@ sha1sum mousetrap-1.6.5/mousetrap.min.js
 wget https://raw.githubusercontent.com/hypergig/jitsi-external-api/49e66044f1e6e5e6d4afcf16cdb09c26a5172dea/external_api.js
 sha1sum external_api.js
 
+# jquery csv
+wget https://raw.githubusercontent.com/evanplaice/jquery-csv/main/src/jquery.csv.js
+sha1sum jquery.csv.js
+
 # move files to correct locations
 
 # jquery 3.6.0
