@@ -1,5 +1,4 @@
 import { log } from "./helpers.js";
-import { mixer } from "./mixer.js";
 
 /**
  * Registers an on change mixer event handler that sends mixer state over the message broker
@@ -7,7 +6,7 @@ import { mixer } from "./mixer.js";
 function init() {
     if (window.DM) {
         log('binding mixer to message bus');
-        mixer.onChange((e) => {
+        window.MIXER.onChange((e) => {
             const state = e.target.remoteState();
             log('pushing mixer state to players', state);
             window.MB.sendMessage('custom/myVTT/mixer', state);
@@ -22,7 +21,7 @@ function init() {
 function handle_mixer_event(data) {
     if (!window.DM) {
         log("remote mixer update received", data);
-        mixer.remoteUpdate(data);
+        window.MIXER.remoteUpdate(data);
     }
 }
 

@@ -2,7 +2,7 @@
  * This is not injected on the Character sheet unless abovevtt=true is in the query
  * So if you need anything to execute on the Character sheet when abovevtt is not running, do that in CharacterPage.js
  */
-
+import { init_audio_mixer } from './audio/index.js'
 
 /** The first time the window loads, start doing all the things */
 $(function() {
@@ -41,7 +41,7 @@ $(function() {
       })
       .catch((error) => {
         showError(error, `Failed to start AboveVTT on ${window.location.href}`);
-      });
+      });  
   }
 });
 
@@ -98,6 +98,7 @@ async function start_above_vtt_common() {
   window.StatHandler = new StatHandler();
   window.PeerManager = new PeerManager();
   window.MB = new MessageBroker();
+  init_audio_mixer();
 }
 
 async function start_above_vtt_for_dm() {

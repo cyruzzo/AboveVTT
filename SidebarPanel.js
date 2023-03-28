@@ -28,8 +28,7 @@ function init_sidebar_tabs() {
   $("#sounds-panel").remove();
   soundsPanel = new SidebarPanel("sounds-panel", false);
   sidebarContent.append(soundsPanel.build());
-  init_audio();
-  
+  window.draw_audio_sidepanel();
 
   $("#journal-panel").remove();
   journalPanel = new SidebarPanel("journal-panel", false);

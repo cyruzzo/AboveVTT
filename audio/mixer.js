@@ -502,6 +502,16 @@ class Mixer extends EventTarget {
     }
 }
 
-const mixer = new Mixer();
+function mixer(){
+    if(window.MIXER){
+        return window.MIXER
+    }
+    else{
+        const mixer = new Mixer();
+        return mixer; 
+    }
+
+}
+
 
 export { Channel, mixer, MixerState };

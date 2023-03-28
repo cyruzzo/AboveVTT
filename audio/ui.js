@@ -1,5 +1,5 @@
 import { trackLibrary } from './track.js';
-import { mixer, Channel } from './mixer.js';
+import { Channel } from './mixer.js';
 import { log } from './helpers.js';
 
 /**
@@ -11,7 +11,7 @@ function masterVolumeSlider() {
     div.textContent = "Master Volume";
     div.className = "audio-row";
     div.id = "master-volume"
-    div.append(mixer.masterVolumeSlider());
+    div.append(window.MIXER.masterVolumeSlider());
 
     return div;
 }
@@ -62,10 +62,10 @@ function init_mixer() {
             text_calc.remove();
             channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
 
-            //item.append(mixer.channelVolumeSlider(id), mixer.channelProgressBar(id));
+            //item.append(window.MIXER.channelVolumeSlider(id), window.MIXER.channelProgressBar(id));
             let remove = $('<button class="channel-remove-button"">X</button>');
             remove.off().on("click", function(){
-                mixer.deleteChannel(id);
+                window.MIXER.deleteChannel(id);
             });
             // repeat button
             let loop = $('<button class="channel-loop-button""></button>');
@@ -105,7 +105,7 @@ function init_mixer() {
                     channel_play_pause.toggleClass('playing', true);
                     channel_play_pause.toggleClass('pressed', true);
                     channel.paused = false;
-                    mixer.updateChannel(id, channel);
+                    window.MIXER.updateChannel(id, channel);
                 }
                 else {
                     pause_svg.css('display', 'none');
@@ -113,7 +113,7 @@ function init_mixer() {
                     channel_play_pause.toggleClass('playing', false);
                     channel_play_pause.toggleClass('pressed', false);
                     channel.paused = true;
-                    mixer.updateChannel(id, channel);
+                    window.MIXER.updateChannel(id, channel);
                 }
             });
 
@@ -127,21 +127,21 @@ function init_mixer() {
                 if(channel.loop) {
                     loop.toggleClass('pressed', false);
                     channel.loop = false;
-                    mixer.updateChannel(id, channel);
+                    window.MIXER.updateChannel(id, channel);
                 }
                 else {
                     loop.toggleClass('pressed', true);
                     channel.loop = true;
-                    mixer.updateChannel(id, channel);
+                    window.MIXER.updateChannel(id, channel);
                 }
             });
-            $(item).append(channelNameDiv, mixer.channelVolumeSlider(id), channel_play_pause, loop, remove, mixer.channelProgressBar(id));
+            $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
 
             mixerChannels.append(item);
         });
     }
-    drawChannelList(mixer.channels())
-    mixer.onChannelListChange((e) => drawChannelList(e.target.channels()));
+    drawChannelList(window.MIXER.channels())
+    window.MIXER.onChannelListChange((e) => drawChannelList(e.target.channels()));
 
     // clear button
 
@@ -150,13 +150,13 @@ function init_mixer() {
     let clear = $('<button class="mixer-clear-button"></button>');
     let clear_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3 16V14H10V16ZM3 12V10H14V12ZM3 8V6H14V8ZM14.4 22 13 20.6 15.6 18 13 15.4 14.4 14 17 16.6 19.6 14 21 15.4 18.4 18 21 20.6 19.6 22 17 19.4Z"/></svg>`);
     clear.append(clear_svg);
-    clear.on('click', function(){mixer.clear()});
+    clear.on('click', function(){window.MIXER.clear()});
 
     // play/pause button
     let playPause = $('<button class="mixer-play-pause-button" style="font-size:10px;"></button>');
     let mixer_playlist_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M2.5 8V6H14.5V8ZM2.5 12V10H14.5V12ZM2.5 16V14H10.5V16ZM15.5 21V13L21.5 17Z"/></svg>');
     let pause_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M14 19V5H18V19ZM6 19V5H10V19Z"/></svg>');
-    if(mixer.paused) {
+    if(window.MIXER.paused) {
         mixer_playlist_svg.css('display', 'block');
         pause_svg.css('display', 'none');
         playPause.toggleClass('playing', false);
@@ -175,8 +175,8 @@ function init_mixer() {
     playPause.append(pause_svg);
 
     playPause.on('click', function(){
-        mixer.togglePaused();
-        if(mixer.paused) {
+        window.MIXER.togglePaused();
+        if(window.MIXER.paused) {
             mixer_playlist_svg.css('display', 'block');
             pause_svg.css('display', 'none');
             playPause.toggleClass('playing', false);
@@ -267,7 +267,7 @@ function init_trackLibrary() {
                 const channel = new Channel(track.name, track.src);
                 channel.paused = false;
                 channel.loop = true;
-                mixer.addChannel(channel);
+                window.MIXER.addChannel(channel);
             });
 
             $(item).append(track_remove_button, track_play_button); 

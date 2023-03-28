@@ -1,4 +1,3 @@
-import { mixer } from "./mixer.js";
 import init_ui from './ui.js';
 import { init as init_mb } from './mb.js';
 import { log } from './helpers.js';
@@ -10,7 +9,7 @@ import { log } from './helpers.js';
 function start_mixer() {
     const handler = () => {
         log("user interaction detected, starting mixer");
-        mixer.syncPlayers();
+        window.MIXER.syncPlayers();
         window.removeEventListener('mousedown', handler);
     }
     log('registering mixer start handler');

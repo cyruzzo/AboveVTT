@@ -79,7 +79,6 @@ window.scripts = [
 	{ src: "Journal.js" },
 	{ src: "KeypressHandler.js" },
 	{ src: "MessageBroker.js" },
-	{ src: "audio/index.js", type: "module" },
 	{ src: "MonsterDice.js" },
 	{ src: "PlayerPanel.js" },
 	{ src: "SceneData.js" },
@@ -105,8 +104,10 @@ window.scripts = [
 	{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
 	{ src: "CampaignPage.js" },
 	{ src: "CharactersPage.js" },
+	{ src: "audio/index.js", type: "module" },
 	// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
-	{ src: "Startup.js" }
+	{ src: "Startup.js", type: "module" }
+
 ]
 
 // Too many of our scripts depend on each other.
