@@ -1079,20 +1079,20 @@ function init_controls() {
 		sidebarControls.append(b2);
 	}
 
-	if (window.DM) {
-		b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
-		let b6ImageDiv = $('<div></div>');
-		let b6ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b6Image = `${window.EXTENSION_PATH}assets/icons/speaker.svg`;
-		b6ImageDiv.css({
-			"mask": `url(${b6Image}) no-repeat center / contain`,
-			"-webkit-mask": `url(${b6Image}) no-repeat center / contain`
-		});
-		b6ImageDivWrapper.append(b6ImageDiv);
-		b6.append(b6ImageDivWrapper);
-		b6.click(switch_control);
-		sidebarControls.append(b6);
-	}
+	
+	b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
+	let b6ImageDiv = $('<div></div>');
+	let b6ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+	let b6Image = `${window.EXTENSION_PATH}assets/icons/speaker.svg`;
+	b6ImageDiv.css({
+		"mask": `url(${b6Image}) no-repeat center / contain`,
+		"-webkit-mask": `url(${b6Image}) no-repeat center / contain`
+	});
+	b6ImageDivWrapper.append(b6ImageDiv);
+	b6.append(b6ImageDivWrapper);
+	b6.click(switch_control);
+	sidebarControls.append(b6);
+	
 
 	b4 = $("<div id='switch_journal' class='tab-btn hasTooltip button-icon blue-tab' data-name='Journal' data-target='#journal-panel'></div>");
 	let b4ImageDiv = $('<div></div>');

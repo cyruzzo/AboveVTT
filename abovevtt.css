@@ -4150,7 +4150,49 @@ button.avtt-roll-formula-button {
 
 .MuiModal-root,
 div#selectedTokensBorder,
-div#selectedTokensBorderRotationGrabberConnector  {
+div#selectedTokensBorderRotationGrabberConnector,
+#sounds-panel .volume-control {
+    width: 50%;
+    float: right;
+}
+
+#sounds-panel .channel-progress-bar-total {
+    width: 100%;
+    position: relative;
+    height: 1px;
+    bottom: 4px;
+    left: 0px;
+    background: lightgray;
+}
+
+#sounds-panel .channel-progress-bar-progress {
+    width: 0%;
+    position: relative;
+    height: 1px;
+    bottom: 0px;
+    left: 0px;
+    background: #0075FF;
+}
+
+#sounds-panel .sidebar-panel-header {
+    padding: 4px;
+    border-bottom: 1px solid #2b2b2b;
+}
+
+#sounds-panel .audio-row  {
+    height: 25px;
+}
+
+#track-list li:hover {
+    background-color:lightskyblue;
+}
+
+#track-list button {
+    float: right;
+    height: 100%;
+}
+
+.MuiModal-root{
     pointer-events: none;
 }
 
@@ -5781,6 +5823,7 @@ div.ddbc-tab-options--layout-pill>button{
     display: none !important;
 }
 
+
 [id^="streamer-"].hidden {
     display: none;
 }
@@ -5966,6 +6009,7 @@ div.note[id^="ui-id"] .mce-btn button {
 .sidebar-list-item-row.ui-draggable-dragging {
     z-index: 100000;
 }
+
 
 .player-card.peerConnected .player-card-content::before,
 .sidebar-list-item-row.player-row.peerConnected::before {
@@ -6631,4 +6675,242 @@ button.journal-view-button.journal-button {
     border-color: #ddd;
 }
 /* end quick roll menu */
+
+/*Audio Mixer Start*/
+li.audio-row:hover .channel-progress-bar-total .channel-progress-bar-progress,
+li.audio-row:hover .channel-progress-bar-total
+{
+    height:5px !important;
+}
+.channel-progress-bar-total,
+.channel-progress-bar-progress{
+    transition: 150ms height linear 500ms;
+}
+#sounds-panel .channel-progress-bar-progress{
+    background: #1b9af0 !important;
+}
+
+
+#sounds-panel .channel-progress-bar-total{
+    width: 35%;
+}
+#sounds-panel .volume-control{
+    width: 40%;
+}
+.audio-row input{
+    top: 4px;
+    position:relative;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 7px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+
+}
+#mixer-channels .volume-control{
+    left: 0;
+    width: calc(40% + 2px)
+}
+#mixer-channels .audio-row input{
+    top: 8px;
+}
+#mixer-channels .audio-row{
+    margin-left: 5px;
+}
+.audio-row input::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+
+.audio-row input::-moz-range-thumb {
+-moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+#sounds-panel .sidebar-panel-header {
+    background: #ebf1f5;
+    color: #000;
+}
+#sounds-panel .sidebar-panel-header button{
+    border-radius: 5px;
+}
+#sounds-panel .sidebar-panel-header button{
+    box-shadow: inset 1px 1px 4px -2px #a0a0a0e3, 2px 2px 2px -1px #000000a3, 0px 1px 1px 0px #0006;
+}
+#sounds-panel .sidebar-panel-header button svg{
+    transform: scale(0.8);
+}
+#sounds-panel .sidebar-panel-header button:active,
+#sounds-panel .sidebar-panel-header button.pressed:active{
+    box-shadow: inset 2px 1px 3px -1px #000, inset 1px 2px 3px -1px #000;
+    border: 1px solid tranparent;
+}
+
+#sounds-panel .sidebar-panel-header svg path{
+    fill: #000;
+}
+div#sounds-panel {
+    overflow-y: visible;
+}
+
+
+button.channel-loop-button{
+    left: 20px;
+}
+
+.channelNameOverflow {
+    width: 100px;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 16px;
+}
+.channelNameOverflow:hover .channelName {
+    margin-left: var(--name-width-overflow);
+}
+
+.channelName{
+    transition: margin 800ms ease-in 250ms;
+    text-overflow: ellipsis;
+    display: inline;
+}
+
+.mixer-play-pause-button,
+.track-play-pause-button,
+.mixer-clear-button,
+.channel-play-pause-button,
+.channel-loop-button,
+.track-remove-button,
+.add-track-ok-button,
+.add-track-cancel-button,
+.channel-remove-button {
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    color: rgb(111, 116, 120);
+    padding: 0px 0px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #000000;
+    opacity: 0.8;
+    outline: none;
+    background: rgb(235, 241, 245);
+    transform: scale(0.8);
+}
+.mixer-play-pause-button:focus,
+.track-play-pause-button:focus,
+.mixer-clear-button:focus,
+.channel-play-pause-button:focus,
+.channel-loop-button:focus,
+.track-remove-button:focus,
+.add-track-ok-button:focus,
+.add-track-cancel-button:focus,
+.channel-remove-button:focus {
+    outline: none;
+}
+
+.mixer-play-pause-button:hover,
+.track-play-pause-button:hover,
+.mixer-clear-button:hover,
+.channel-play-pause-button:hover,
+.channel-loop-button:hover,
+.track-remove-button:hover,
+.add-track-ok-button:hover,
+.add-track-cancel-button:hover,
+.channel-remove-button:hover  {
+    cursor: pointer;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+}
+
+.mixer-play-pause-button:active,
+.mixer-clear-button:active,
+.track-play-pause-button:active,
+.channel-play-pause-button:active,
+.channel-loop-button:active,
+.track-remove-button:active,
+.add-track-ok-button:active,
+.add-track-cancel-button:active,
+.channel-remove-button:active {
+    background-color: rgb(245, 248, 250);
+    box-shadow: inset #000 1px 1px 3px 1px;
+    transform: translate(1px, 2px) scale(0.8);
+}
+.channel-play-pause-button,
+.channel-loop-button,
+.channel-remove-button{
+    float:  right;
+}
+.channel-remove-button{
+    color: #000;
+    font-size: 18px;
+}
+input.trackName.trackInput {
+    width: 100px;
+}
+
+div#importTrackFields input {
+    width: 100px;
+    margin: 0px 5px 0px 0px;
+}
+.add-track-ok-button,
+.add-track-cancel-button{
+    left: 4px;
+    position: relative;
+}
+
+div#importTrackFields input.trackSrc {
+    width: 145px;
+}
+div#importTrackFields {
+    height: 0px;
+    overflow: hidden;
+    margin: 5px 0px;
+    transition: height ease 250ms;
+}
+#sounds-panel .sidebar-panel-header button.pressed {
+    background: #7dc8fd66 !important;
+    border: none;
+    box-shadow: inset #000 1px 1px 3px 0px;
+    transform: translate(0px, 1px) scale(0.8);
+}
+.mixer-clear-button{
+    position: absolute;
+    top: 54px;
+    right: 190px;
+}
+
+.mixer-play-pause-button{
+    position: absolute;
+    top: 54px;
+    left: 174px;
+}
+
+.mixer-play-pause-button.playing{
+
+}
+
+
 

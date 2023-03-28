@@ -42,6 +42,7 @@
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
 		"jquery.contextMenu.css",
+		"jquery.csv.js",
 		"abovevtt.css",
 		"color-picker.min.css",
 		"magnific-popup.css",
@@ -68,7 +69,6 @@
 		"SidebarPanel.js",
 		"Journal.js",
 		"Settings.js",
-		"SoundPad.js",
 		"color-picker.js",
 		"Text.js",
 		"AOETemplates.js",
@@ -100,3 +100,4 @@
 		"PeerCommunication.js"
 	]
 }
+
