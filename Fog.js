@@ -745,6 +745,7 @@ function reset_canvas() {
  	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
  	delete window.lightAuraClipPolygon;
+ 	delete window.lineOfSightPolygons;
 
 	redraw_fog();
 	redraw_drawings();
