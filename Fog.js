@@ -3201,8 +3201,7 @@ function redraw_light(){
   		
 	}    	
   }
-  context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas, would like to find a better performing way to do this or move it to a service worker if/when we can.
+	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 }
 
 

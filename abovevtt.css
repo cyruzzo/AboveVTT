@@ -5833,8 +5833,6 @@ div.ddbc-tab-options--layout-pill>button{
     position: absolute;
     z-index: 9;
     mix-blend-mode: lighten;
-    -webkit-mask-image: var(--vision-mask);
-    -webkit-mask-size: cover;
 }
 .aura-element.islight,
 .aura-element[id*='vision_']{
@@ -5853,9 +5851,13 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 #raycastingCanvas{
-    opacity: min(var(--darkness-filter), var(--walls-up-shadow-percent));
+    opacity: 1;
 }
-
+#light_container{
+    mix-blend-mode: lighten;
+    background: #000;
+    z-index: 10;
+}
 
 #text_div{
     pointer-events:none;
