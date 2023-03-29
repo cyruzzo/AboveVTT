@@ -925,7 +925,7 @@ function export_file() {
 			DataFile.notes = window.JOURNAL.notes;
 			DataFile.journalchapters = window.JOURNAL.chapters;
 			DataFile.soundpads = window.SOUNDPADS;
-			DataFile.MIXER = window.MIXER;
+			DataFile.mixerstate = window.MIXER.state();
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		})
 		.catch(error => {
@@ -975,8 +975,8 @@ function import_readfile() {
         localStorage.setItem("Soundpads", JSON.stringify(window.SOUNDPADS));
 		$("#sounds-panel").remove();
 
-		if(DataFile.MIXER != undefined){
-			window.MIXER._write(DataFile.MIXER);
+		if(DataFile.mixerstate != undefined){
+			window.MIXER._write(DataFile.mixerstate);
 		}
 
 
