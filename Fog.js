@@ -481,9 +481,10 @@ function check_token_visibility(){
 
 function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
-	if (window.DM || $("#fog_overlay").is(":hidden"))
-		return;
 	let canvas = document.getElementById("fog_overlay");
+
+	if (canvas.style.diplay == "none")
+		return;
 	let ctx = canvas.getContext("2d");
 	let canvas2 = document.getElementById("raycastingCanvas");
 	let ctx2 = canvas2.getContext("2d");
@@ -504,12 +505,11 @@ function do_check_token_visibility() {
 		pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
 		
 		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
-			$(selector).hide();
-			$(auraSelector).hide();
+			$(selector, auraSelector).hide();
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-			$(selector).css('opacity', 1);
-			$(selector).show();
+			let selectors = []
+			$(selector).css({'opacity': 1, 'display': 'block'});
 			if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
 				$(auraSelector).show();
 			//console.log('SHOW '+id);
@@ -697,11 +697,11 @@ function ctxScale(canvasid){
 }
 
 function reset_canvas() {
-	$('#darkness_layer').css("width", $("#scene_map").width());
-	$('#darkness_layer').css("height", $("#scene_map").height());
+	let sceneMapWidth = $("#scene_map").width();
+	let sceneMapHeight = $("#scene_map").height();
 
-	$("#scene_map_container").css("width", $("#scene_map").width())
-	$("#scene_map_container").css("height", $("#scene_map").height())
+	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
+	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
@@ -710,8 +710,7 @@ function reset_canvas() {
 	ctxScale('draw_overlay');
 	ctxScale('raycastingCanvas');
 
-	$("#text_div").css("width", $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor);
-	$("#text_div").css("height", $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
+	$("#text_div").css({"width": sceneMapWidth * window.CURRENT_SCENE_DATA.scale_factor,  "height": sceneMapHeight * window.CURRENT_SCENE_DATA.scale_factor});
 
 	var canvas = document.getElementById("fog_overlay");
 	var ctx = canvas.getContext("2d");
@@ -945,19 +944,23 @@ function redraw_light_walls(clear=true){
 	if(clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	
-	canvas = document.getElementById("raycastingCanvas");
-	ctx = canvas.getContext("2d");
+	//canvas = document.getElementById("raycastingCanvas");
+	ctx = document.getElementById("raycastingCanvas").getContext("2d");
 
 
 
 	window.walls =[];
-	let wall5 = new Boundary(new Vector(0, 0), new Vector($('#scene_map_container').width(), 0));
+	let sceneMapContainer = $('#scene_map_container');
+	let sceneMapHeight = sceneMapContainer.width();
+	let sceneMapWidth =  sceneMapContainer.height();
+
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapHeight, 0));
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, $('#scene_map_container').height()));
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapWidth));
 	window.walls.push(wall6);
-	let wall7 = new Boundary(new Vector($('#scene_map_container').width(), 0), new Vector($('#scene_map_container').width(), $('#scene_map_container').height()));
+	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall7);
-	let wall8 = new Boundary(new Vector(0, $('#scene_map_container').height()), new Vector($('#scene_map_container').width(), $('#scene_map_container').height()));
+	let wall8 = new Boundary(new Vector(0, sceneMapHeight), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall8);
 
 	const drawings = window.DRAWINGS.filter(d => d[1] == "wall");
@@ -981,8 +984,6 @@ function redraw_light_walls(clear=true){
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
-			canvas = document.getElementById("temp_overlay");
-			ctx = canvas.getContext("2d");
 			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
 		}
 
@@ -3075,31 +3076,26 @@ function detectWallCollision(x1, y1, x2, y2){
 }
 
 function redraw_light(){
-
-
 	let canvas = document.getElementById("raycastingCanvas");
-	let context = canvas.getContext("2d");
 	let canvasWidth = canvas.width;
 	let canvasHeight = canvas.height;
-	let offsetX = canvas.offsetLeft;
-	let offsetY = canvas.offsetTop;
 
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
 		return; // prevent error if redraw is called before map initialized
 	}
 
-
-	let offscreenCanvasMask = document.createElement('canvas');
-	let offscreenContext = offscreenCanvasMask.getContext('2d');
-
-	offscreenCanvasMask.width = canvas.width;
-	offscreenCanvasMask.height = canvas.height;
-
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
 
+	let context = canvas.getContext("2d");
+	
+	let offscreenCanvasMask = document.createElement('canvas');
+	let offscreenContext = offscreenCanvasMask.getContext('2d');
+
+	offscreenCanvasMask.width = canvasWidth;
+	offscreenCanvasMask.height = canvasHeight;
 
 	context.clearRect(0,0,canvasWidth,canvasHeight);
 
@@ -3133,8 +3129,6 @@ function redraw_light(){
   	let auraId = $(light_auras[i]).attr('data-id');
 
   	found = selectedIds.some(r=> r == auraId);
-
-
 
 	let tokenPos = {
 		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
@@ -3176,17 +3170,12 @@ function redraw_light(){
 
 		
 		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
-		
-  	
 
-  		
   		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
-		
-  		
 	}    	
   }
   context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
+  $('#VTT').css('--vision-mask', `url('${offscreenContext.putImageData(offscreenContext.getImageData(0, 0, canvasWidth, canvasHeight), 0, 0)}')`) // make image ask of offscreen canvas
 }
 
 
