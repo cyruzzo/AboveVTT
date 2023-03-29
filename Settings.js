@@ -981,7 +981,6 @@ function import_readfile() {
 		}
 		if(DataFile.tracklibrary != undefined){
 			let trackMap = new Map(DataFile.tracklibrary);
-
 			window.TRACK_LIBRARY._write(trackMap);
 		}
 
