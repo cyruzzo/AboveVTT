@@ -99,6 +99,7 @@ function init_mixer() {
             channel_play_pause.append(pause_svg);
 
             channel_play_pause.on('click', function(){
+                const channel = window.MIXER.state().channels[id]
                 if(channel.paused) {
                     play_svg.css('display', 'none');
                     pause_svg.css('display', 'block');
