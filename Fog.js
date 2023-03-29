@@ -3141,21 +3141,37 @@ function redraw_light(){
 		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
 	}
 	
+	if(window.lineOfSightPolygons == undefined){
+		window.lineOfSightPolygons = {};
+	}
+	if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
+		window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
+		window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
+		lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
+	}
+	else{
+		particleUpdate(tokenPos.x, tokenPos.y); // moves particle
+		particleLook(context, walls, 100000, undefined, undefined, undefined, false);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+		window.lineOfSightPolygons[auraId] = {
+			polygon: lightPolygon,
+			x: tokenPos.x,
+			y: tokenPos.y,
+			numberofwalls: walls.length
+		}
+		let path = "";
 
-	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-	particleLook(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
+		let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+		for( let i = 0; i < lightPolygon.length; i++ ){
+			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+		}
+		$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+	}
 
-	let path = "";
+
 	if(window.lightAuraClipPolygon == undefined)
 		window.lightAuraClipPolygon = {};
-	
-	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-	for( let i = 0; i < lightPolygon.length; i++ ){
-		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
-	}
-	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+		
 
-	
 	if(window.SelectedTokenVision){
 		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
 	}
@@ -3186,7 +3202,7 @@ function redraw_light(){
 	}    	
   }
   context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
+  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas, would like to find a better performing way to do this or move it to a service worker if/when we can.
 }
 
 
