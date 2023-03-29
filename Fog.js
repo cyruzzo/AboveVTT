@@ -378,9 +378,9 @@ function is_token_under_fog(tokenid){
 	if(window.DM)
 		return false;
 	let canvas = document.getElementById("fog_overlay");
-	let ctx = canvas.getContext("2d");
+	let ctx = canvas.getContext("2d", {willReadFrequently: true});
 	let canvas2 = document.getElementById("raycastingCanvas");
-	let ctx2 = canvas2.getContext("2d");
+	let ctx2 = canvas2.getContext("2d", {willReadFrequently: true});
 
 
 	let left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
@@ -436,25 +436,23 @@ function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
-			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-			let selector = "div.token[data-id='" + id + "']";
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
-				$(selector).hide();
-				$(auraSelector).hide();
-			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-				$(selector).css('opacity', 1);
-				$(selector).show();
-				if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
-					$(auraSelector).show();
-				//console.log('SHOW '+id);
-			}
+	let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+	let selector = "div.token[data-id='" + id + "']";
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+
+	if (!window.TOKEN_OBJECTS[id].options.revealInFog && ((playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)) || is_token_under_fog(id))) {
+		$(selector, auraSelector).hide();
+	}
+	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
+		$(selector).css('opacity', 1);
+		$(selector).show();
+		if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
+			$(auraSelector).show();
+		//console.log('SHOW '+id);
+	}
 }
 
 
@@ -464,17 +462,17 @@ function check_single_token_visibility(id){
 function check_token_visibility(){
 	if(window.DM)
 		return;
-	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() > 0)){
+	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() > 0)){
 		return;
 	}
-	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
-		setTimeout(do_check_token_visibility(),1);
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() <  -1000)){
+		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now();
+		setTimeout(do_check_token_visibility(), 1);
 		return;
 	}
 	else {
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
-		setTimeout(do_check_token_visibility,1000);
+		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now() + 1000;
+		setTimeout(do_check_token_visibility, 1000);
 		return;
 	}
 }
@@ -734,7 +732,7 @@ function reset_canvas() {
 
 	redraw_fog();
 	redraw_drawings();
-	redraw_light_walls();
+	redraw_light_walls(canvas, ctx);
 	redraw_light();
 	redraw_text();
 	
@@ -935,18 +933,14 @@ function redraw_drawings() {
 		}
 	}
 }
-function redraw_light_walls(clear=true){
+function redraw_light_walls(canvas, ctx, clear=true){
 
-	let canvas = document.getElementById("temp_overlay");
-	let ctx = canvas.getContext("2d");
+	canvas ??= document.getElementById("temp_overlay");
+	ctx ??= canvas.getContext("2d");
 	ctx.setLineDash([]);
 		
 	if(clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-	
-	//canvas = document.getElementById("raycastingCanvas");
-	ctx = document.getElementById("raycastingCanvas").getContext("2d");
-
 
 
 	window.walls =[];
@@ -984,7 +978,8 @@ function redraw_light_walls(clear=true){
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
-			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
+			let raycastingContext = document.getElementById("raycastingCanvas").getContext("2d");
+			drawLine(raycastingContext, x, y, width, height, color, lineWidth, scale);		
 		}
 
 		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)")){
@@ -1280,7 +1275,7 @@ function drawing_mousemove(e) {
 
 		if (window.DRAWSHAPE == "rect") {
 			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
-				redraw_light_walls(false);
+				redraw_light_walls(canvas, context, false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
 			{
@@ -1360,7 +1355,7 @@ function drawing_mousemove(e) {
 			}
 			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
-				redraw_light_walls(false);
+				redraw_light_walls(canvas, context, false);
 				if(window.StoredWalls != undefined){
 					for(let wall in window.StoredWalls){
 						drawLine(context,
@@ -2359,7 +2354,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
 	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
 	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType); 
-	redraw_light_walls();
+	redraw_light_walls(ctx);
 }
 
 
@@ -3039,15 +3034,6 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
   return false;
 }
 function detectWallCollision(x1, y1, x2, y2){
-	let selectedCoords= {
-		left: $('#scene_map_container').width(),
-		top:$('#scene_map_container').height(),
-		bottom: 0,
-		right:0,
-	};
-	let selectedTokens = $('.tokenselected');
-
-	
 	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
 	for(let i=0; i<walls.length; i++){
 
