@@ -926,6 +926,7 @@ function export_file() {
 			DataFile.journalchapters = window.JOURNAL.chapters;
 			DataFile.soundpads = window.SOUNDPADS;
 			DataFile.mixerstate = window.MIXER.state();
+			DataFile.tracklibrary = window.TRACK_LIBRARY.map();
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		})
 		.catch(error => {
@@ -977,6 +978,9 @@ function import_readfile() {
 
 		if(DataFile.mixerstate != undefined){
 			window.MIXER._write(DataFile.mixerstate);
+		}
+		if(DataFile.tracklibrary != undefined){
+			window.TRACK_LIBRARY.batchUpdate(DataFile.tracklibrary)
 		}
 
 
