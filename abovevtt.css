@@ -5854,9 +5854,10 @@ div.ddbc-tab-options--layout-pill>button{
     opacity: 1;
 }
 #light_container{
-    mix-blend-mode: lighten;
+    mix-blend-mode:lighten;
     background: #000;
     z-index: 10;
+    opacity: 1;
 }
 
 #text_div{

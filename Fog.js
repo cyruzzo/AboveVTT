@@ -732,6 +732,16 @@ function reset_canvas() {
  	else if(window.DM){
  		$('#raycastingCanvas').css('opacity', '');
  	}
+ 	if(darknessfilter == 0){
+ 		$('#light_container').css('mix-blend-mode', 'unset');
+ 		$('#light_container').css('background', '#0000');
+ 		$('#light_container').css('opacity', '0.3');
+ 	}
+ 	else{
+ 		$('#light_container').css('mix-blend-mode', '');
+ 		$('#light_container').css('background', '');
+ 		$('#light_container').css('opacity', '');
+ 	}
  	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
  	delete window.lightAuraClipPolygon;
