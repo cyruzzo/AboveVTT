@@ -925,6 +925,8 @@ function export_file() {
 			DataFile.notes = window.JOURNAL.notes;
 			DataFile.journalchapters = window.JOURNAL.chapters;
 			DataFile.soundpads = window.SOUNDPADS;
+			DataFile.mixerstate = window.MIXER.state();
+			DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
 		})
 		.catch(error => {
@@ -965,11 +967,23 @@ function import_readfile() {
 			DataFile=$.parseJSON(atob(reader.result));
 		}
 
-		for(let k in DataFile.soundpads){
-			window.SOUNDPADS[k]=DataFile.soundpads[k];
+		if(window.SOUNDPADS == undefined){
+			window.SOUNDPADS = {};
 		}
-		$("#sounds-panel").remove();
-		persist_soundpad();
+		for(let k in DataFile.soundpads){
+			window.SOUNDPADS[k]=DataFile.soundpads[k]; // leaving this as soundpad data until we decide if we are using the folder/dropdown data
+		}
+        localStorage.setItem("Soundpads", JSON.stringify(window.SOUNDPADS));
+
+
+		if(DataFile.mixerstate != undefined){
+			window.MIXER._write(DataFile.mixerstate);
+		}
+		if(DataFile.tracklibrary != undefined){
+			let trackMap = new Map(DataFile.tracklibrary);
+			window.TRACK_LIBRARY._write(trackMap);
+		}
+
 
 		let customizations = window.TOKEN_CUSTOMIZATIONS;
 		if (DataFile.tokencustomizations !== undefined) {
