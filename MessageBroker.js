@@ -1565,7 +1565,7 @@ class MessageBroker {
 	}
 
 	sendPing() {
-		self = this;
+		let self = this;
 		if (this.ws.readyState == this.ws.OPEN) {
 			this.ws.send("{\"data\": \"ping\"}");
 		}
@@ -1577,7 +1577,7 @@ class MessageBroker {
 	}
 
 	sendAbovePing(){
-		self = this;
+		let self = this;
 		if(this.abovews.readyState == this.abovews.OPEN){
 			this.abovews.send(JSON.stringify({action:"keepalive",eventType:"custom/myVTT/keepalive"}));
 		}
