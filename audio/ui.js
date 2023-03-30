@@ -99,6 +99,7 @@ function init_mixer() {
             channel_play_pause.append(pause_svg);
 
             channel_play_pause.on('click', function(){
+                const channel = window.MIXER.state().channels[id]
                 if(channel.paused) {
                     play_svg.css('display', 'none');
                     pause_svg.css('display', 'block');
@@ -266,11 +267,22 @@ function init_trackLibrary() {
             track_play_button.on('click', function(){
                 const channel = new Channel(track.name, track.src);
                 channel.paused = false;
-                channel.loop = true;
+                channel.loop = false;
+                window.MIXER.addChannel(channel);
+            });
+            let track_add_button = $('<button class="track-add-to-mixer"></button>');          
+            let add_svg = $('<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>');               
+            track_add_button.append(add_svg);
+            track_add_button.on('click', function(){
+                const channel = new Channel(track.name, track.src);
+                channel.paused = true;
+                channel.loop = false;
                 window.MIXER.addChannel(channel);
             });
 
-            $(item).append(track_remove_button, track_play_button); 
+
+
+            $(item).append(track_remove_button, track_play_button, track_add_button); 
             trackList.append(item);
         });
     });
