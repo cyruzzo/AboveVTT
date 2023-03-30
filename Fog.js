@@ -403,13 +403,13 @@ function is_token_under_light_aura(tokenid){
 	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	
-	let visionIdsToCheck =[];
 
 	let visibleLightAuras = $(".aura-element-container-clip .aura-element:not([style*='visibility: hidden'])");
-	let visibleLightAurasParent = visibleLightAuras.parent();
 
 	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
 		let auraId = $(visibleLightAuras[auraIndex]).attr('data-id');
+		if(window.lightAuraClipPolygon == undefined)
+			continue;
 		if(window.lightAuraClipPolygon[auraId] == undefined)
 			continue;
 		let bounds = {
@@ -687,7 +687,7 @@ function draw_wizarding_box() {
 
 }
 function ctxScale(canvasid){
-	var canvas = document.getElementById(canvasid);
+	let canvas = document.getElementById(canvasid);
 	canvas.width = $("#scene_map").width();
   	canvas.height = $("#scene_map").height();
 	$(canvas).css({
@@ -708,13 +708,16 @@ function reset_canvas() {
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
-	ctxScale('raycastingCanvas');
+
+	let canvas = document.getElementById('raycastingCanvas');
+	canvas.width = $("#scene_map").width();
+  	canvas.height = $("#scene_map").height();
 
 	$("#text_div").css("width", $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor);
 	$("#text_div").css("height", $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
 
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
+	canvas = document.getElementById("fog_overlay");
+	let ctx = canvas.getContext("2d");
 
 	if (!window.FOG_OF_WAR) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -729,9 +732,20 @@ function reset_canvas() {
  	else if(window.DM){
  		$('#raycastingCanvas').css('opacity', '');
  	}
+ 	if(darknessfilter == 0){
+ 		$('#light_container').css('mix-blend-mode', 'unset');
+ 		$('#light_container').css('background', '#0000');
+ 		$('#light_container').css('opacity', '0.3');
+ 	}
+ 	else{
+ 		$('#light_container').css('mix-blend-mode', '');
+ 		$('#light_container').css('background', '');
+ 		$('#light_container').css('opacity', '');
+ 	}
  	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
  	delete window.lightAuraClipPolygon;
+ 	delete window.lineOfSightPolygons;
 
 	redraw_fog();
 	redraw_drawings();
@@ -3141,21 +3155,37 @@ function redraw_light(){
 		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
 	}
 	
+	if(window.lineOfSightPolygons == undefined){
+		window.lineOfSightPolygons = {};
+	}
+	if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
+		window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
+		window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
+		lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
+	}
+	else{
+		particleUpdate(tokenPos.x, tokenPos.y); // moves particle
+		particleLook(context, walls, 100000, undefined, undefined, undefined, false);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+		window.lineOfSightPolygons[auraId] = {
+			polygon: lightPolygon,
+			x: tokenPos.x,
+			y: tokenPos.y,
+			numberofwalls: walls.length
+		}
+		let path = "";
 
-	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-	particleLook(context, walls, 100000, undefined, undefined, undefined, false); // draws rays for clip paths
+		let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+		for( let i = 0; i < lightPolygon.length; i++ ){
+			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+		}
+		$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+	}
 
-	let path = "";
+
 	if(window.lightAuraClipPolygon == undefined)
 		window.lightAuraClipPolygon = {};
-	
-	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-	for( let i = 0; i < lightPolygon.length; i++ ){
-		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
-	}
-	$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+		
 
-	
 	if(window.SelectedTokenVision){
 		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
 	}
@@ -3185,8 +3215,7 @@ function redraw_light(){
   		
 	}    	
   }
-  context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-  $('#VTT').css('--vision-mask', `url('${offscreenCanvasMask.toDataURL('image/png', 0)}')`) // make image ask of offscreen canvas
+	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 }
 
 
