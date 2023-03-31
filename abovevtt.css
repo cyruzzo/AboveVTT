@@ -2266,7 +2266,6 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
-    filter:blur(2px);
 }
 
 #conditions-flyout li,
@@ -5836,7 +5835,6 @@ div.ddbc-tab-options--layout-pill>button{
 }
 .aura-element.islight,
 .aura-element[id*='vision_']{
-    filter:blur(10px);
     z-index: 9;
     mix-blend-mode: lighten;
 }
@@ -5858,6 +5856,7 @@ div.ddbc-tab-options--layout-pill>button{
     background: #000;
     z-index: 10;
     opacity: 1;
+    filter:blur(10px);
 }
 
 #text_div{
