@@ -6598,7 +6598,7 @@ button.journal-view-button.journal-button {
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
     font-size: 12px;
-    overflow: auto;
+    overflow: hidden;
 }
 .qrm_name_line{
     text-align: left;
