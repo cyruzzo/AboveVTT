@@ -6616,8 +6616,9 @@ button.journal-view-button.journal-button {
     border-radius: 3px;
     border-color: #ddd;
     height:22px;
-    font-size: 14px !important;
+    font-size: 12px !important;
     box-shadow: 1px 1px 1px 0px #00000047;
+    text-transform: uppercase;
 }
 .general_input{
     border-width: 2px;
@@ -6632,7 +6633,8 @@ button.journal-view-button.journal-button {
     border: 1px solid lightgray;
     font-size: 12px;
     margin: 1px;
-    top: -1px;
+    top: 0px;
+    text-transform: uppercase;
 }
 .menu_hp_input{
     border-width: 0;
@@ -6728,6 +6730,7 @@ button.journal-view-button.journal-button {
     padding-right: 100px !important;
     max-width: 175px;
     white-space: nowrap;
+    text-transform: uppercase;
 }
 .icon-avatar{
     width: 22px;

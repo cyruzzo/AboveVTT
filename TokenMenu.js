@@ -257,6 +257,9 @@ function token_context_menu_expanded(tokenIds, e) {
 					}
 				})
 			})
+			if(childWindows['Quick Roll Menu']){
+				qrm_update_popout();
+			}
 		})
 	}
 	// End Quick Group Roll 
@@ -1732,10 +1735,47 @@ function open_quick_roll_menu(e){
 	qrm_title_bar_popout.click(function() {
 		$("#qrm_dialog").hide();
 		let name = "Quick Roll Menu";
+		//destory the iconselectmenu, since it won't work in the popout
+		$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").iconselectmenu( "destroy" );
+		$("#qrm_dialog #quick_roll_footer select#qrm_apply_conditions").iconselectmenu( "destroy" );
 		$('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').find(`option[value='${$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").val()}']`).attr('selected', 'selected');
 		$('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').find(`option[value='${$("#qrm_dialog #quick_roll_footer select#qrm_apply_conditions").val()}']`).attr('selected', 'selected');	
 		popoutWindow(name, $("#qrm_dialog"), $("#qrm_dialog").width(),  $("#qrm_dialog").height()-25);//subtract titlebar height
 		qrm_update_popout();
+		//reinit the iconselectmenu
+		$( function() {
+			$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+			_renderItem: function( ul, item ) {
+				var li = $( `<li class='icon-avatar' >` )
+				wrapper = $( "<div>", { text: item.label } );
+				$( "<li>", {
+				style: 'background-image: ' + item.element.attr( "data-style" ),
+				"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
+				return li.append( wrapper ).appendTo( ul );
+			}
+			});
+			$("#qrm_save_dropdown")
+			.iconselectmenu({ change: function( event, ui ) { save_type_change(this); }})
+				.addClass( "ui-menu-icons" );
+		});
+		//reinit the iconselectmenu
+		$( function() {
+			$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+			_renderItem: function( ul, item ) {
+				var li = $( `<li class='icon-avatar' >` )
+				wrapper = $( "<div>", { text: item.label } );
+				$( "<li>", {
+				style: item.element.attr( "data-style" ),
+				"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
+				return li.append( wrapper ).appendTo( ul );
+			}
+			});
+			$("#qrm_apply_conditions")
+			.iconselectmenu()
+			.iconselectmenu( "menuWidget")
+				.addClass( "ui-menu-icons" );
+	});
+
 	})
 	qrm_title_bar.append(qrm_title_bar_popout);
 	qrm_title_bar.append(qrm_title_bar_exit);
@@ -1775,15 +1815,30 @@ function open_quick_roll_menu(e){
 
 	// Lets add the selectmenu image to each of these save types too... use the images from character sheet for save.
 	let save_type_dropdown = $('<select class="general_input" id="qrm_save_dropdown" title="Select the type of saving throw to be made. ">Save Type</select>')
-	save_type_dropdown.append($(`<option value="1" data-name="dex" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/dexterity.svg)'>Dexterity</option>`)) 
-	save_type_dropdown.append($(`<option value="4" data-name="wis" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/wisdom.svg)'>Wisdom</option>`))
-	save_type_dropdown.append($(`<option value="2" data-name="con" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/constitution.svg)'>Constitution</option>`))
-	save_type_dropdown.append($(`<option value="0" data-name="str" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/strength.svg)'>Strength</option>`))
-	save_type_dropdown.append($(`<option value="3" data-name="int" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/intelligence.svg)'>Intelligence</option>`))
-	save_type_dropdown.append($(`<option value="5" data-name="cha" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/charisma.svg)'>Charisma</option>`))
+	save_type_dropdown.append($(`<option value="1" data-name="dex" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/dexterity.svg)'>DEXTERITY</option>`)) 
+	save_type_dropdown.append($(`<option value="4" data-name="wis" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/wisdom.svg)'>WISDOM</option>`))
+	save_type_dropdown.append($(`<option value="2" data-name="con" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/constitution.svg)'>CONSTITUTION</option>`))
+	save_type_dropdown.append($(`<option value="0" data-name="str" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/strength.svg)'>STRENGTH</option>`))
+	save_type_dropdown.append($(`<option value="3" data-name="int" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/intelligence.svg)'>INTELLIGENCE</option>`))
+	save_type_dropdown.append($(`<option value="5" data-name="cha" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/charisma.svg)'>CHARISMA</option>`))
 	//save_type_dropdown.tooltip({show: { duration: 1000 }})
 	save_type_dropdown.attr('style', 'width: 22% !important');
 
+	$( function() {
+		$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+		_renderItem: function( ul, item ) {
+			var li = $( `<li class='icon-avatar' >` )
+			wrapper = $( "<div>", { text: item.label } );
+			$( "<li>", {
+			style: 'background-image: ' + item.element.attr( "data-style" ),
+			"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
+			return li.append( wrapper ).appendTo( ul );
+		}
+		});
+		$("#qrm_save_dropdown")
+		.iconselectmenu({ change: function( event, ui ) { save_type_change(this); }})
+    		.addClass( "ui-menu-icons" );
+	});
 
 	let damage_input  = $('<input class="menu_roll_input" id="hp_adjustment_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
 	//damage_input.tooltip({show: { duration: 1000 }})
@@ -1867,7 +1922,6 @@ function open_quick_roll_menu(e){
 		qrm_update_popout();
 	});
 
-
 	//Update HP buttons	
 	let qrm_hp_adjustment_wrapper=$('<div id="qrm_adjustment_wrapper" class="adjustments_wrapper"></div>');
 
@@ -1914,9 +1968,9 @@ function open_quick_roll_menu(e){
 
 	//Allow applying condtions with damage/healing after a failed save
 	apply_conditions = $('<select class="general_input" id="qrm_apply_conditions" title="Select a conditions to be applied on failed save."> Apply Conditions </select>');
-	apply_conditions.append($(`<option value='conditions' data-style="background-image: none !important;">Conditions</option>`))
+	apply_conditions.append($(`<option value='conditions' data-style="background-image: none !important;">CONDITIONS</option>`))
 	apply_conditions.append($(`<option value='remove_all' data-class="dropdown-remove" >Remove All</option>`))
-	
+
 	STANDARD_CONDITIONS.forEach(conditionName => {
 		let cond_name = conditionName.toLowerCase().replaceAll("(", "-").replaceAll(")", "").replaceAll(" ", "-")
 		apply_conditions.append($(`<option value=${conditionName} data-name="${cond_name}" data-style="background-image: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/${cond_name}.svg)";>${cond_name}</option>`));
@@ -1931,10 +1985,24 @@ function open_quick_roll_menu(e){
 			apply_conditions.append(cond);
 		}
 	});
-	
-
-	
-	let apply_adjustments = $('<button title="Apply Damage/Healing and Conditions on failed save" id="qrm_apply_adjustments" class="general_input"> Apply </button>')
+		
+	$( function() {
+			$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+			_renderItem: function( ul, item ) {
+				var li = $( `<li class='icon-avatar' >` )
+				wrapper = $( "<div>", { text: item.label } );
+				$( "<li>", {
+				style: item.element.attr( "data-style" ),
+				"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
+				return li.append( wrapper ).appendTo( ul );
+			}
+			});
+			$("#qrm_apply_conditions")
+			.iconselectmenu()
+			.iconselectmenu( "menuWidget")
+				.addClass( "ui-menu-icons" );
+	});
+	let apply_adjustments = $('<button title="Apply Damage/Healing and Conditions on failed save" id="qrm_apply_adjustments" class="general_input"> APPLY </button>')
 	apply_adjustments.click(function() {
 		qrm_apply_hp_adjustment($('#qrm_healing').val());
 	});
