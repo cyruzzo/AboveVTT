@@ -2266,7 +2266,6 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
-    filter:blur(2px);
 }
 
 #conditions-flyout li,
@@ -5833,12 +5832,9 @@ div.ddbc-tab-options--layout-pill>button{
     position: absolute;
     z-index: 9;
     mix-blend-mode: lighten;
-    -webkit-mask-image: var(--vision-mask);
-    -webkit-mask-size: cover;
 }
 .aura-element.islight,
 .aura-element[id*='vision_']{
-    filter:blur(10px);
     z-index: 9;
     mix-blend-mode: lighten;
 }
@@ -5853,9 +5849,15 @@ div.ddbc-tab-options--layout-pill>button{
 
 }
 #raycastingCanvas{
-    opacity: min(var(--darkness-filter), var(--walls-up-shadow-percent));
+    opacity: 1;
 }
-
+#light_container{
+    mix-blend-mode:lighten;
+    background: #000;
+    z-index: 10;
+    opacity: 1;
+    filter:blur(10px);
+}
 
 #text_div{
     pointer-events:none;
@@ -6803,7 +6805,8 @@ button.channel-loop-button{
 .track-remove-button,
 .add-track-ok-button,
 .add-track-cancel-button,
-.channel-remove-button {
+.channel-remove-button,
+.track-add-to-mixer {
     box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
     border: 1px solid transparent;
     box-sizing: border-box;
@@ -6827,7 +6830,8 @@ button.channel-loop-button{
 .track-remove-button:focus,
 .add-track-ok-button:focus,
 .add-track-cancel-button:focus,
-.channel-remove-button:focus {
+.channel-remove-button:focus,
+.track-add-to-mixer:focus {
     outline: none;
 }
 
@@ -6839,7 +6843,8 @@ button.channel-loop-button{
 .track-remove-button:hover,
 .add-track-ok-button:hover,
 .add-track-cancel-button:hover,
-.channel-remove-button:hover  {
+.channel-remove-button:hover,
+.track-add-to-mixer:hover  {
     cursor: pointer;
     background: rgb(245, 248, 250);
     border: 1px solid rgb(206, 217, 224);
@@ -6853,11 +6858,20 @@ button.channel-loop-button{
 .track-remove-button:active,
 .add-track-ok-button:active,
 .add-track-cancel-button:active,
-.channel-remove-button:active {
+.channel-remove-button:active,
+.track-add-to-mixer:active {
     background-color: rgb(245, 248, 250);
     box-shadow: inset #000 1px 1px 3px 1px;
     transform: translate(1px, 2px) scale(0.8);
 }
+.track-add-to-mixer{
+   fill:#000;
+   padding: 5px 4px 5px 4px; 
+}
+.track-add-to-mixer svg path{
+    fill:#000;
+}
+
 .channel-play-pause-button,
 .channel-loop-button,
 .channel-remove-button{

@@ -435,6 +435,7 @@ class Mixer extends EventTarget {
     channelProgressBar(id) {
         const progress = document.createElement("div");
         progress.className = "channel-progress-bar-progress";
+        progress.setAttribute('data-id', id)
 
         const total = document.createElement("div");
         total.setAttribute('data-id', id);
@@ -445,7 +446,17 @@ class Mixer extends EventTarget {
         if (!player) {
             throw `failed to player for channel ${id}`
         }
-        player.ontimeupdate = (e) => progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
+        player.ontimeupdate = (e) => {
+            progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
+           
+        
+            if(e.target.currentTime == e.target.duration && e.target.loop == false && $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).length>0){
+                const id = progress.getAttribute('data-id')
+                e.target.currentTime = 0;
+                $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
+                $(progress).css('width', '');
+            }
+        }
 
         return total
     }

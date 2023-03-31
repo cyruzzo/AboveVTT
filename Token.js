@@ -838,19 +838,6 @@ class Token {
 		if (self.sync != null)
 			self.sync(e);
 
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-		if(self.options.auraislight){
-			if(playerTokenAuraIsLight){
-					check_token_visibility()
-			}
-			else{
-				check_single_token_visibility(self.options.id);
-			}	
-		}
-		else{
-			check_single_token_visibility(self.options.id);
-		}
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 		/* UPDATE QUICK ROLL MENU */
@@ -2382,7 +2369,6 @@ class Token {
 			   		debounceLightChecks();
 			   	}
 				
-				check_token_visibility();
 			});
 			
 			console.groupEnd()
@@ -2795,7 +2781,6 @@ function deselect_all_tokens() {
    		window.SelectedTokenVision = false;
    	}
     debounceLightChecks();
-    check_token_visibility();
 }
 
 function token_health_aura(hpPercentage) {
@@ -2923,7 +2908,7 @@ function setTokenLight (token, options) {
 		} else {
 			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}'></div><div class='aura-element' id="vision_${tokenId}" data-id='${token.attr("data-id")}' style='${visionStyles}'></div></div>`);
 			lightElement.contextmenu(function(){return false;});
-			$("#scene_map_container").prepend(lightElement);
+			$("#light_container").prepend(lightElement);
 		}
 		if(window.DM){
 			(options.hidden && options.reveal_light == 'never') ? token.parent().parent().find("#vision_" + tokenId).css("opacity", 0.5)

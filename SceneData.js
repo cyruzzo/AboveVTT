@@ -3,7 +3,7 @@ function export_free() {
 	console.log("----" + window.CURRENT_SCENE_DATA.title + "-----");
 
 
-	data = "";
+	let data = "";
 	data += "\t\tsnap: \"" + window.CURRENT_SCENE_DATA.snap + "\",\n";
 	data += "\t\thpps: \"" + window.CURRENT_SCENE_DATA.hpps + "\",\n";
 	data += "\t\tvpps: \"" + window.CURRENT_SCENE_DATA.vpps + "\",\n";
@@ -17,7 +17,7 @@ function export_free() {
 
 function export_ddb() {
 
-	data = "\t\"" + window.CURRENT_SCENE_DATA.uuid + "\": {\n";
+	let data = "\t\"" + window.CURRENT_SCENE_DATA.uuid + "\": {\n";
 	data += "\t\tdm_map_usable: \"" + window.CURRENT_SCENE_DATA.dm_map_usable + "\",\n";
 	data += "\t\tsnap: \"" + window.CURRENT_SCENE_DATA.snap + "\",\n";
 	data += "\t\thpps: \"" + window.CURRENT_SCENE_DATA.hpps + "\",\n";

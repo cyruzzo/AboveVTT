@@ -81,6 +81,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		for (var i in window.TOKEN_OBJECTS) {
 			delete window.TOKEN_OBJECTS[i];
 		}
+		window.lineOfSightPolygons = {};
 
 		if (scene.grid_subdivided == "1")
 			scene.grid = "1";
