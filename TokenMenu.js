@@ -1687,7 +1687,6 @@ function updateScaleInputs(newScale, maxScale) {
 	imageScaleInputRange.attr('max', maxScale);
 }
 
-
 //Start Quick Roll Menu//
 
 function open_quick_roll_menu(e){
@@ -1695,7 +1694,7 @@ function open_quick_roll_menu(e){
 	console.log("Opening Roll menu")
 	$("#qrm_dialog").remove();
 
-	qrm = $("<div id='qrm_dialog'></div>");
+	let qrm = $("<div id='qrm_dialog'></div>");
 	qrm.css('background', "#f9f9f9");
 	qrm.css('width', '410px');
 	qrm.css('top', e.clientY+'px');
@@ -1733,7 +1732,14 @@ function open_quick_roll_menu(e){
 	qrm_title_bar_popout.click(function() {
 		qrm.hide();
 		let name = "Quick Roll Menu";
+		//We need to delete and reset the select menu here. The iconselectmenu doesn't clone right. so we need to delete and reinit. 
+		$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").iconselectmenu( "destroy" );
+		$("#qrm_dialog #quick_roll_footer select#qrm_apply_conditions").iconselectmenu( "destroy" );
 		popoutWindow(name, $("#qrm_dialog"), $("#qrm_dialog").width(),  $("#qrm_dialog").height()-25);//subtract titlebar height
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').prop('selectedIndex',0);
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').addClass( "ui-menu-icons" );
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').prop('selectedIndex',0);
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').addClass( "ui-menu-icons" );
 		qrm_update_popout();
 	})
 	qrm_title_bar.append(qrm_title_bar_popout);
@@ -1768,36 +1774,54 @@ function open_quick_roll_menu(e){
 			$("#qrm_dialog").css("visibility", "visible");
 		}
 	});
-	qrm_dc_input = $('<input class="general_input" id="qrm_save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
+	let qrm_dc_input = $('<input class="menu_roll_input" id="qrm_save_dc" placeholder="Save DC" name="save_dc" title="Enter the value for the DC of the saving throw."></input>')
 	//qrm_dc_input.tooltip({show: { duration: 1000 }});
-	qrm_dc_input.attr('style', 'width: 24% !important');
+	qrm_dc_input.attr('style', 'width: 25% !important');
 
-	save_type_dropdown = $('<select class="general_input" id="qrm_save_dropdown" onchange="save_type_change(this)" title="Select the type of saving throw to be made. ">Save Type</select>')
-	save_type_dropdown.append($('<option value="1">Dexterity</option>')) 
-	save_type_dropdown.append($('<option value="4">Wisdom</option>'))
-	save_type_dropdown.append($('<option value="2">Constitution</option>'))
-	save_type_dropdown.append($('<option value="0">Strength</option>'))
-	save_type_dropdown.append($('<option value="3">Intelligence</option>'))
-	save_type_dropdown.append($('<option value="5">Charisma</option>'))
+	// Lets add the selectmenu image to each of these save types too... use the images from character sheet for save.
+	let save_type_dropdown = $('<select class="general_input" id="qrm_save_dropdown" title="Select the type of saving throw to be made. ">Save Type</select>')
+	save_type_dropdown.append($(`<option value="1" data-name="dex" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/dexterity.svg)'>Dexterity</option>`)) 
+	save_type_dropdown.append($(`<option value="4" data-name="wis" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/wisdom.svg)'>Wisdom</option>`))
+	save_type_dropdown.append($(`<option value="2" data-name="con" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/constitution.svg)'>Constitution</option>`))
+	save_type_dropdown.append($(`<option value="0" data-name="str" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/strength.svg)'>Strength</option>`))
+	save_type_dropdown.append($(`<option value="3" data-name="int" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/intelligence.svg)'>Intelligence</option>`))
+	save_type_dropdown.append($(`<option value="5" data-name="cha" data-style='url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/abilities/charisma.svg)'>Charisma</option>`))
 	//save_type_dropdown.tooltip({show: { duration: 1000 }})
 	save_type_dropdown.attr('style', 'width: 25% !important');
-	damage_input  = $('<input class="general_input" id="damage_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
-	//damage_input.tooltip({show: { duration: 1000 }})
-	damage_input.attr('style', 'width: 24% !important');
 
-	half_damage_input = $('<input class="general_input" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
+	$( function() {
+		$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+		_renderItem: function( ul, item ) {
+			var li = $( `<li class='icon-avatar' >` )
+			wrapper = $( "<div>", { text: item.label } );
+			$( "<li>", {
+			style: 'background-image: ' + item.element.attr( "data-style" ),
+			"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
+			return li.append( wrapper ).appendTo( ul );
+		}
+		});
+		$("#qrm_save_dropdown")
+		.iconselectmenu({ change: function( event, ui ) { save_type_change(this); }})
+    		.addClass( "ui-menu-icons" );
+	});
+
+	let damage_input  = $('<input class="menu_roll_input" id="hp_adjustment_failed_save" placeholder="Damage/Roll" title="Enter the integer value for damage or the roll to be made i.e. 8d6"></input>')
+	//damage_input.tooltip({show: { duration: 1000 }})
+	damage_input.attr('style', 'width: 25% !important');
+
+	let half_damage_input = $('<input class="menu_roll_input" id="half_damage_save" placeholder="Success Damage" title="Enter the integer value for half damage, or autopopulate from damage entry as half rounded down.""></input>')
 	//half_damage_input.tooltip({show: { duration: 1000 }})
-	half_damage_input.attr('style', 'width: 24% !important');
+	half_damage_input.attr('style', 'width: 25% !important');
 
 	damage_input.change(function(){
-		_dmg = $('#damage_failed_save').val();
+		_dmg = $('#hp_adjustment_failed_save').val();
 		if (_dmg.includes('d')) {
 			var expression = _dmg
 			var roll = new rpgDiceRoller.DiceRoll(expression);
 			console.log(expression + "->" + roll.total);
 			//reassign to the input 
 			_dmg = roll.total
-			$('#damage_failed_save').val(_dmg);
+			$('#hp_adjustment_failed_save').val(_dmg);
 		}
 		else {
 			_dmg.replace(/[^\d.-]/g, '')
@@ -1807,9 +1831,11 @@ function open_quick_roll_menu(e){
 	});
 
 	//Roll Button 
-	qrm_roll=$("<button id='qrm_roll_button'>ROLL</button>");
+	let qrm_roll=$("<button id='qrm_roll_button' >ROLL</button>");
+	qrm_roll.css('width', '13%');
 	qrm_roll.click(function() {
 		$('#qrm_apply_damage').show()
+		$('#qrm_apply_healing').show()
 		$("#quick_roll_area").children('tr').children('td').find('#roll_bonus').each(function (){
 			let modifier = $(this).val().toLowerCase();
 			dice = '1d20'
@@ -1848,9 +1874,12 @@ function open_quick_roll_menu(e){
 	});
 
 	//Clear Button
-	qrm_clear = $("<button id='qrm_clear_all' >CLEAR </button>");
-	qrm_clear.css('right', '5px');
+	let qrm_clear = $("<button id='qrm_clear_all' >CLEAR </button>");
+	qrm_clear.css('width', '15%');
+	qrm_clear.css('bottom', '5px');
+	qrm_clear.css('right', '5px')
 	qrm_clear.css('position','absolute');
+
 	qrm_clear.click(function() {
 		$("#quick_roll_area").children('tr').each(function (){
 			$(this).find('#qrm_remove').click()
@@ -1858,59 +1887,94 @@ function open_quick_roll_menu(e){
 		qrm_update_popout();
 	});
 
-	//Update HP button 
-	update_hp = $("<button id='qrm_apply_damage'> Apply Damage/Healing </button>");
-	update_hp.click(function() {
-		$("#quick_roll_area").children('tr').each(function (){
-			let result = $(this).find('#qrm_roll_result').val();
-			let token = window.TOKEN_OBJECTS[$(this).attr('data-target')]
-			damage_failed_save = $('#damage_failed_save').val()
-			half_damage_save_success = $('#half_damage_save').val()
 
-			damage_failed_save = damage_failed_save.replace(/[^\d.-]/g, '');
-			half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
+	//Update HP buttons	
+	let qrm_hp_adjustment_wrapper=$('<div id="qrm_adjustment_wrapper" class="adjustments_wrapper"></div>');
 
-			if (result.includes('Fail')){
-				damage = damage_failed_save
-			}
-			else {
-				damage = half_damage_save_success
-			}
+	let damage_hp = $('<button title="Apply Roll as Damage" id="qrm_damage" value="ON" class="damage_heal_button active_roll_mod" >DAMAGE</button>')
+	damage_hp.click(function() {
+	
+		console.log($(this).val())
+		console.log($(this))
+		//toggle off the other button
+		$(heal_hp).val("OFF")
+		$(heal_hp).removeClass('active_roll_mod')
+		
+		if($(this).val() == "ON"){
+			$(this).val("OFF");
+			$(this).removeClass('active_roll_mod')
+		}
+	  	else if($(this).val() == "OFF"){
+			$(this).val("ON");
+			$(this).addClass('active_roll_mod')
+		}
+	});
+	let heal_hp = $('<button title="Apply Roll as Healing" id="qrm_healing" value="OFF" class="damage_heal_button">HEAL</button>')
+	heal_hp.click(function(){
+		
+		console.log('EHRE')
+		console.log($(this).val())
+		console.log($(this))
+		//toggle off the other button
+		$(damage_hp).val("OFF")
+		$(damage_hp).removeClass('active_roll_mod')
 
-			if(token.options.monster > 0){
-				_hp = $(this).find('#qrm_hp');
-				_max_hp = $(this).find('#qrm_maxhp')
-				//Lets not allow healing over maxhp
-				//Unless we are at max_hp then assume they want the temp hp? IDK about this.
-				if (_hp.val() < _max_hp.val() && _hp.val() - damage > _max_hp.val()){
-					_hp.val(max_hp.val());
-				}
-				else{
-					_hp.val(token.hp - damage);
-				}
-				_hp.trigger('change');
-			}
-			else {
-				// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
-				if (damage > 0){
-					dmg_heal_text = token.options.name + " takes " + damage +" damage (adjust manually)";
-				}
-				else{
-					dmg_heal_text = token.options.name + " heals for " + damage +" (adjust manually)";
-				}
-					var msgdata = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: dmg_heal_text,
-				};
-				window.MB.inject_chat(msgdata);
-			}
-			token.update_and_sync();
-			qrm_update_popout();
-		});
+		if($(this).val() == "ON"){
+			$(this).val("OFF");
+			$(this).removeClass('active_roll_mod')
+		}
+	  	else if($(this).val() == "OFF"){
+			$(this).val("ON");
+			$(this).addClass('active_roll_mod')
+		}
 	});
 
-	qrm_footer = $("<div id='quick_roll_footer' class='footer-input-wrapper tfoot'/>");
+	qrm_hp_adjustment_wrapper.append(heal_hp)
+	qrm_hp_adjustment_wrapper.append(damage_hp)
+
+	//Allow applying condtions with damage/healing after a failed save
+	apply_conditions = $('<select class="general_input" id="qrm_apply_conditions" title="Select a conditions to be applied on failed save."> Apply Conditions </select>');
+	apply_conditions.append($(`<option value='conditions' data-style="background-image: none !important;">Conditions</option>`))
+	apply_conditions.append($(`<option value='remove_all' data-class="dropdown-remove" >Remove All</option>`))
+	
+	STANDARD_CONDITIONS.forEach(conditionName => {
+		let cond_name = conditionName.toLowerCase().replaceAll("(", "-").replaceAll(")", "").replaceAll(" ", "-")
+		apply_conditions.append($(`<option value=${conditionName} data-name="${cond_name}" data-style="background-image: url(https://www.dndbeyond.com/content/1-0-1849-0/skins/waterdeep/images/icons/conditions/${cond_name}.svg)";>${cond_name}</option>`));
+	});
+	CUSTOM_CONDITIONS.forEach(conditionName => {
+		let cond_name = conditionName.toLowerCase().replaceAll("(", "-").replaceAll(")", "").replaceAll(" ", "-")
+		if (cond_name.includes('#')){
+			apply_conditions.append($(`<option value=${conditionName} data-style="background-color: ${cond_name}; background-image: none;";>Custom Condition</option>`));
+		}
+		else{
+			let cond = $(`<option  value=${conditionName} data-name="${cond_name}" data-class="dropdown-${cond_name}";>${cond_name}</option>`)
+			apply_conditions.append(cond);
+		}
+	});
+	
+	$( function() {
+		$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+		_renderItem: function( ul, item ) {
+			var li = $( `<li class='icon-avatar' >` )
+			wrapper = $( "<div>", { text: item.label } );
+			$( "<li>", {
+			style: item.element.attr( "data-style" ),
+			"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
+			return li.append( wrapper ).appendTo( ul );
+		}
+		});
+		$("#qrm_apply_conditions")
+		.iconselectmenu()
+    	.iconselectmenu( "menuWidget")
+    		.addClass( "ui-menu-icons" );
+	});
+	
+	let apply_adjustments = $('<button title="Apply Damage/Healing and Conditions on failed save" id="qrm_apply_adjustments" class="general_input"> Apply </button>')
+	apply_adjustments.click(function() {
+		qrm_apply_hp_adjustment(healing=$('#qrm_healing').val());
+	});
+
+	let qrm_footer = $("<div id='quick_roll_footer' class='footer-input-wrapper tfoot'/>");
 	qrm_footer.css('bottom', '0');
 	qrm_footer.css('position','sticky');
 	qrm_footer.css('background', "#f9f9f9");
@@ -1920,9 +1984,15 @@ function open_quick_roll_menu(e){
 	qrm_footer.append(qrm_dc_input)
 	qrm_footer.append(save_type_dropdown)
 	qrm_footer.append(qrm_roll);
-	qrm_footer.append(update_hp);
+	qrm_footer.append(apply_conditions);
+	
+	qrm_footer.append(qrm_hp_adjustment_wrapper);
+	qrm_footer.append(apply_adjustments)
+	//qrm_footer.append(heal_hp);
+	//qrm_footer.append(damage_hp);
 	qrm_footer.append(qrm_clear);
-	update_hp.hide()
+	//damage_hp.hide()
+	//heal_hp.hide()
 
 	//header
 	qrm.append(qrm_title_bar);
@@ -2065,8 +2135,9 @@ function add_to_quick_roll_menu(token){
 	
 	if(token.isPlayer()){
 		hp_input.prop("disabled", true);
+		hp_input.css('color', 'gray')
 	}
-	hp_input.val(token.hp);
+	hp_input.val(token.options.hp);
 
 	if(hp_input.val() === '0'){
 		qrm_entry.toggleClass("ct_dead", true);
@@ -2082,8 +2153,9 @@ function add_to_quick_roll_menu(token){
 
 	if(token.isPlayer()){
 		maxhp_input.prop("disabled", true);
+		maxhp_input.css('color', 'gray')
 	}
-	maxhp_input.val(token.maxHp);
+	maxhp_input.val(token.options.max_hp);
 
 	if (!token.isPlayer()) {
 		hp_input.change(function(e) {
@@ -2091,16 +2163,16 @@ function add_to_quick_roll_menu(token){
 			var old = $("#tokens").find(selector);
 		
 			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
+				hp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(hp_input.val())));
 			}
 
 			old.find(".hp").val(hp_input.val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = hp_input.val();
+				window.all_token_objects[token.options.id].options.hp = hp_input.val();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();
+				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2113,15 +2185,15 @@ function add_to_quick_roll_menu(token){
 			var old = $("#tokens").find(selector);
 
 			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, token.hp + parseInt(maxhp_input.val())));
+				maxhp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(maxhp_input.val())));
 			}
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
+				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();
+				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2260,8 +2332,8 @@ function qrm_fetch_stat(token) {
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
 		//This relies of player data being loaded, which may take a few seconds after the page opens
 		//if its a player character they have the save stored
-		const pc = find_pc_by_player_id(token.options.id);
-		roll_bonus = pc.abilities[save_dropdown_value]['save']
+		player_stats = window.PLAYER_STATS[token.options.id]
+		roll_bonus = player_stats.abilities[save_dropdown_value]['save']
 
 		if (roll_bonus >= 0){
 			roll_bonus = "+"+roll_bonus;
@@ -2324,6 +2396,7 @@ function qrm_update_popout(){
 		//$(childWindows['Quick Roll Menu'].document).find("body").empty("");
 		updatePopoutWindow("Quick Roll Menu", $("#qrm_dialog"));
 		removeFromPopoutWindow("Quick Roll Menu", "#quick_roll_title_bar");
+		removeFromPopoutWindow("Quick Roll Menu", $("#qrm_dialog #quick_roll_footer #qrm_save_dropdown"));
 		$(childWindows['Quick Roll Menu'].document).find("#qrm_dialog").css({
 			'display': 'block',
 			'top': '0',
@@ -2358,9 +2431,9 @@ function qrm_update_popout(){
 			$(`tr[data-target='${id}'] #roll_result`).trigger("change");
 			qrm_update_popout();
 		});	
-		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer input#damage_failed_save').change(function(e) {
-			$("#qrm_dialog #quick_roll_footer input#damage_failed_save").val($(this).val());
-			$("#qrm_dialog #quick_roll_footer input#damage_failed_save").trigger("change");
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer input#hp_adjustment_failed_save').change(function(e) {
+			$("#qrm_dialog #quick_roll_footer input#hp_adjustment_failed_save").val($(this).val());
+			$("#qrm_dialog #quick_roll_footer input#hp_adjustment_failed_save").trigger("change");
 			qrm_update_popout();
 		});	
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer input#half_damage_save').change(function(e) {
@@ -2373,12 +2446,97 @@ function qrm_update_popout(){
 			$('#qrm_dialog #quick_roll_footer input#qrm_save_dc').trigger("change");
 			qrm_update_popout();
 		});
+		//so we could redefine the iconselectmenu function here...but it doesn't work right and fixing it starts to get messy ...
+			
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').change(function(e) {
 			$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").val($(this).val());
 			$('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').trigger("change");
 			qrm_update_popout();
-		});	
+		});			
+		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').change(function(e) {
+			$("#qrm_dialog #quick_roll_footer select#qrm_apply_conditions").val($(this).val());
+			$('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').trigger("change");
+			qrm_update_popout();
+		});
+		
 	}
+}
+
+function qrm_apply_hp_adjustment(healing=false){
+	$("#quick_roll_area").children('tr').each(function (){
+		let result = $(this).find('#qrm_roll_result').val();
+		if (result == ''){
+			//could swap this to an alert if people really think its needed...
+			console.log('No roll was performed on this token, but Apply was selected. Rerolling for ALL tokens.')
+			$('#qrm_roll_button').click()
+		}
+		
+		let token = window.TOKEN_OBJECTS[$(this).attr('data-target')]
+		hp_adjustment_failed_save = $('#hp_adjustment_failed_save').val()
+		half_damage_save_success = $('#half_damage_save').val()
+
+		hp_adjustment_failed_save = hp_adjustment_failed_save.replace(/[^\d.-]/g, '');
+		half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
+
+		if (result.includes('Fail')){
+			damage = hp_adjustment_failed_save || 0
+			let conditions = $('#qrm_apply_conditions')
+			let conditionName = conditions.val()
+			if(conditionName == 'conditions'){
+				//Do nothing
+			} 
+			else if(conditionName == "remove_all"){
+				//guess this is fine, we update the token immediately. Probably a better way to clear though
+				token.options.conditions = []
+				token.options.custom_conditions = []
+			}
+			else{
+				if(!token.hasCondition(conditionName)){
+					token.addCondition(conditionName, conditionName);
+				}
+			}	
+		}
+		else {
+			damage = half_damage_save_success || 0
+		}
+		if (healing == true){
+			damage = -damage
+		}
+		
+		if(token.options.monster > 0){
+			_hp = $(this).find('#qrm_hp');
+			_max_hp = $(this).find('#qrm_maxhp')
+			//Lets not allow healing over maxhp
+			//Unless we are at max_hp then assume they want the temp hp? IDK about this.
+			if (_hp.val() < _max_hp.val() && _hp.val() - damage > _max_hp.val()){
+				_hp.val(max_hp.val());
+			}
+			else{
+				_hp.val(token.options.hp - damage);
+			}
+			_hp.trigger('change');
+		}
+		else {
+			// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
+			if (damage >= 0){
+				dmg_heal_text = token.options.name + " takes " + damage +" damage (adjust manually)";
+			}
+			else{
+				dmg_heal_text = token.options.name + " heals for " + damage +" (adjust manually)";
+			}
+				var msgdata = {
+				player: window.PLAYER_NAME,
+				img: window.PLAYER_IMG,
+				text: dmg_heal_text,
+			};
+			window.MB.inject_chat(msgdata);
+		}
+		//token.place_sync_persist();	
+		// bit of overlap with place_sync_persist nad update_and_sync, so probably break it up, just to only sync once.
+		token.place()
+		token.update_and_sync();
+		qrm_update_popout();
+	});
 }
 
 //end Quick Roll Menu//
