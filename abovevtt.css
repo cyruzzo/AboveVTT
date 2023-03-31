@@ -6718,6 +6718,9 @@ button.journal-view-button.journal-button {
     width: 140px;
     overflow: auto !important;
 }
+#qrm_apply_conditions-button{
+    width: 26% !important;
+}
 .ui-front {
     z-index: 50010 !important;
 }

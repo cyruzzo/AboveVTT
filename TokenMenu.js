@@ -1735,46 +1735,19 @@ function open_quick_roll_menu(e){
 	qrm_title_bar_popout.click(function() {
 		$("#qrm_dialog").hide();
 		let name = "Quick Roll Menu";
-		//destory the iconselectmenu, since it won't work in the popout
-		$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").iconselectmenu( "destroy" );
-		$("#qrm_dialog #quick_roll_footer select#qrm_apply_conditions").iconselectmenu( "destroy" );
+
 		$('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').find(`option[value='${$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").val()}']`).attr('selected', 'selected');
 		$('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').find(`option[value='${$("#qrm_dialog #quick_roll_footer select#qrm_apply_conditions").val()}']`).attr('selected', 'selected');	
 		popoutWindow(name, $("#qrm_dialog"), $("#qrm_dialog").width(),  $("#qrm_dialog").height()-25);//subtract titlebar height
 		qrm_update_popout();
-		//reinit the iconselectmenu
-		$( function() {
-			$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
-			_renderItem: function( ul, item ) {
-				var li = $( `<li class='icon-avatar' >` )
-				wrapper = $( "<div>", { text: item.label } );
-				$( "<li>", {
-				style: 'background-image: ' + item.element.attr( "data-style" ),
-				"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
-				return li.append( wrapper ).appendTo( ul );
-			}
-			});
-			$("#qrm_save_dropdown")
-			.iconselectmenu({ change: function( event, ui ) { save_type_change(this); }})
-				.addClass( "ui-menu-icons" );
+		
+		//clear the popout on close
+		$(window.childWindows[name]).on('unload', function(){
+			$("#qrm_clear_all").click();
+			$("#qrm_dialog").remove();
+			$(window.childWindows[name]).off();
 		});
-		//reinit the iconselectmenu
-		$( function() {
-			$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
-			_renderItem: function( ul, item ) {
-				var li = $( `<li class='icon-avatar' >` )
-				wrapper = $( "<div>", { text: item.label } );
-				$( "<li>", {
-				style: item.element.attr( "data-style" ),
-				"class": "ui-icon " + item.element.attr( "data-class" )}).appendTo(wrapper);
-				return li.append( wrapper ).appendTo( ul );
-			}
-			});
-			$("#qrm_apply_conditions")
-			.iconselectmenu()
-			.iconselectmenu( "menuWidget")
-				.addClass( "ui-menu-icons" );
-	});
+
 
 	})
 	qrm_title_bar.append(qrm_title_bar_popout);
@@ -1968,6 +1941,7 @@ function open_quick_roll_menu(e){
 
 	//Allow applying condtions with damage/healing after a failed save
 	apply_conditions = $('<select class="general_input" id="qrm_apply_conditions" title="Select a conditions to be applied on failed save."> Apply Conditions </select>');
+	apply_conditions.attr('style', 'width: 26% !important');
 	apply_conditions.append($(`<option value='conditions' data-style="background-image: none !important;">CONDITIONS</option>`))
 	apply_conditions.append($(`<option value='remove_all' data-class="dropdown-remove" >Remove All</option>`))
 
@@ -2002,6 +1976,8 @@ function open_quick_roll_menu(e){
 			.iconselectmenu( "menuWidget")
 				.addClass( "ui-menu-icons" );
 	});
+	apply_conditions.attr('style', 'width: 26% !important');
+
 	let apply_adjustments = $('<button title="Apply Damage/Healing and Conditions on failed save" id="qrm_apply_adjustments" class="general_input"> APPLY </button>')
 	apply_adjustments.click(function() {
 		qrm_apply_hp_adjustment($('#qrm_healing').val());
@@ -2439,7 +2415,12 @@ function qrm_update_popout(){
 	if(childWindows['Quick Roll Menu']){
 		updatePopoutWindow("Quick Roll Menu", $("#qrm_dialog"));
 		removeFromPopoutWindow("Quick Roll Menu", "#quick_roll_title_bar");
-	
+
+		//remove the iconselectmenu, since it won't work in the popout
+		removeFromPopoutWindow("Quick Roll Menu", "#qrm_save_dropdown-button");
+        removeFromPopoutWindow("Quick Roll Menu", "#qrm_apply_conditions-button")
+        $(childWindows['Quick Roll Menu'].document).find(".general_input").css('display', '');
+
 		$(childWindows['Quick Roll Menu'].document).find("#qrm_dialog").css({
 			'display': 'block',
 			'top': '0',
