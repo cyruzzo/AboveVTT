@@ -390,9 +390,9 @@ function is_token_under_fog(tokenid){
 		
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-	pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
+	pixeldata2 = pixeldata2.some(function(color, index) {return (index) % 4 == 0 && color == 255});
 
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenAuraIsLight && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))))
+	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2 && playerTokenAuraIsLight && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))))
 		return true;
 	else
 		return false;
@@ -424,8 +424,9 @@ function is_token_under_light_aura(tokenid){
 
 			let pixeldata = window.lightAuraClipPolygon[auraId].canvas.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 
-			pixeldata = pixeldata.filter(function(color, index) {return (index + 1) % 4 != 0});
-			if(pixeldata.some(color => color == 255))
+			pixeldata = pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255});
+
+			if(pixeldata)
 				return true;	
 		}		
 	}
@@ -501,9 +502,9 @@ function do_check_token_visibility() {
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-		pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
+		pixeldata2 = pixeldata2.some(function(color, index) {return (index) % 4 == 0 && color == 255});
 		
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2 && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
 			$(selector).hide();
 			$(auraSelector).hide();
 		}
