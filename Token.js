@@ -956,7 +956,7 @@ class Token {
 				}
 				setTimeout(ct_persist(), 500);
 			});
-			hp_input.click(function(e) {
+			hp_input.on('click', function(e) {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
@@ -971,7 +971,7 @@ class Token {
 				}
 				setTimeout(ct_persist(), 500);
 			});
-			maxhp_input.click(function(e) {
+			maxhp_input.on('click', function(e) {
 				$(e.target).select();
 			});
 		}
@@ -1190,7 +1190,7 @@ class Token {
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
-				conditionContainer.dblclick(() => {
+				conditionContainer.on('dblclick', () => {
 					const data = {
 						player: window.PLAYER_NAME,
 						img: window.PLAYER_IMG,
@@ -2325,7 +2325,7 @@ class Token {
 				tok.removeClass("ui-state-disabled");
 			}
 
-			tok.find(".token-image").dblclick(function(e) {
+			tok.find(".token-image").on('dblclick', function(e) {
 				self.highlight(true); // dont scroll
 				var data = {
 					id: self.options.id
@@ -2333,7 +2333,7 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
-			tok.find(".token-image").click(function() {
+			tok.find(".token-image").on('click', function() {
 				let parentToken = $(this).parent(".VTTToken");
 				if (parentToken.hasClass("pause_click")) {
 					return;

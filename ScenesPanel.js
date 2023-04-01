@@ -1378,7 +1378,7 @@ function redraw_scene_list(searchTerm) {
 	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
 	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
 	let list = $(`<div id="${path_to_html_id(RootFolder.Scenes.path)}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
-	scenesPanel.body.empty();
+	scenesPanel.body.find('#_Scenes').remove();
 	scenesPanel.body.append(list);
 	set_full_path(list, RootFolder.Scenes.path);
 

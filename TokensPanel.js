@@ -448,7 +448,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
     console.group("redraw_token_list");
     update_token_folders_remembered_state();
     let list = $(`<div class="custom-token-list"></div>`);
-    tokensPanel.body.empty();
+    tokensPanel.body.find('.custom-token-list').remove();
     tokensPanel.body.append(list);
 
     let nameFilter = "";
