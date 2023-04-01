@@ -500,9 +500,10 @@ function do_check_token_visibility() {
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-		pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
+		//Combining some and filter cut down about 140ms for average sized picture
+		let someFilter = function(color, index) {if ((index + 1) % 4 != 0 && color == 255) return true;};
 		
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(someFilter) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
 			$(selector, auraSelector).hide();
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -746,7 +747,7 @@ function reset_canvas() {
 
 	redraw_fog();
 	redraw_drawings();
-	redraw_light_walls(canvas, ctx);
+	redraw_light_walls();
 	redraw_light();
 	redraw_text();
 	
@@ -947,10 +948,10 @@ function redraw_drawings() {
 		}
 	}
 }
-function redraw_light_walls(canvas, ctx, clear=true){
+function redraw_light_walls(clear=true){
 
-	canvas ??= document.getElementById("temp_overlay");
-	ctx ??= canvas.getContext("2d");
+	let canvas = document.getElementById("temp_overlay");
+	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
 		
 	if(clear)
@@ -992,8 +993,7 @@ function redraw_light_walls(canvas, ctx, clear=true){
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
-			let raycastingContext = document.getElementById("raycastingCanvas").getContext("2d");
-			drawLine(raycastingContext, x, y, width, height, color, lineWidth, scale);		
+			drawLine(canvas, x, y, width, height, color, lineWidth, scale);		
 		}
 
 		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)")){
@@ -1289,7 +1289,7 @@ function drawing_mousemove(e) {
 
 		if (window.DRAWSHAPE == "rect") {
 			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
-				redraw_light_walls(canvas, context, false);
+				redraw_light_walls(false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
 			{
@@ -1369,7 +1369,7 @@ function drawing_mousemove(e) {
 			}
 			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
-				redraw_light_walls(canvas, context, false);
+				redraw_light_walls(false);
 				if(window.StoredWalls != undefined){
 					for(let wall in window.StoredWalls){
 						drawLine(context,
@@ -2368,7 +2368,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
 	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
 	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType); 
-	redraw_light_walls(ctx);
+	redraw_light_walls();
 }
 
 

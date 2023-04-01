@@ -247,6 +247,7 @@ function read_inspiration(container = $(document)) {
   return false;
 }
 
+// Good canidate for service worker
 function init_characters_pages(container = $(document)) {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
