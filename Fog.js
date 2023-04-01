@@ -440,7 +440,7 @@ function check_single_token_visibility(id){
 	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 	if (!window.TOKEN_OBJECTS[id].options.revealInFog && ((playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)) || is_token_under_fog(id))) {
-		$(selector, auraSelector).hide();
+		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
 		$(selector).css('opacity', 1);
