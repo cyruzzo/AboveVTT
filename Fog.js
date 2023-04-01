@@ -989,7 +989,7 @@ function redraw_light_walls(clear=true){
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
-			drawLine(canvas, x, y, width, height, color, lineWidth, scale);		
+			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 
 		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)")){
