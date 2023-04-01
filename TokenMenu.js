@@ -1846,6 +1846,10 @@ function open_quick_roll_menu(e){
 		$('#qrm_apply_healing').show()
 		$("#quick_roll_area").children('tr').children('td').find('#roll_bonus').each(function (){
 			let modifier = $(this).val().toLowerCase();
+			// Add a + if the user doesn't add anything. 
+			if (!modifier.includes('+') && !modifier.includes('-')){
+				modifier = '+' + modifier
+			}
 			dice = '1d20'
 			if (modifier.includes("a") == true) {
 				modifier = modifier.replace(/[^\d.-]/g, '');
@@ -2432,25 +2436,26 @@ function qrm_update_popout(){
 		});
 		console.log('Update QRM popout');
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#qrm_hp').change(function(e) {
-			let id = $(this).parent().parent().attr("data-target");			
+			let id = $(this).parent().parent().parent().attr("data-target");			
 			$(`tr[data-target='${id}'] #qrm_hp`).val($(this).val());
 			$(`tr[data-target='${id}'] #qrm_hp`).trigger("change");
 			qrm_update_popout();
 		});	
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#qrm_maxhp').change(function(e) {
-			let id = $(this).parent().parent().attr("data-target");
+			let id = $(this).parent().parent().parent().attr("data-target");
 			$(`tr[data-target='${id}'] #qrm_maxhp`).val($(this).val());
 			$(`tr[data-target='${id}'] #qrm_maxhp`).trigger("change");
 			qrm_update_popout();
 		});	
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#roll_bonus').change(function(e) {
-			let id = $(this).parent().parent().attr("data-target");
+			let id = $(this).parent().parent().parent().attr("data-target");
+			console.log($(`tr[data-target='${id}'] #roll_bonus`))
 			$(`tr[data-target='${id}'] #roll_bonus`).val($(this).val());
 			$(`tr[data-target='${id}'] #roll_bonus`).trigger("change");
 			qrm_update_popout();
 		});	
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_area input#roll_result').change(function(e) {
-			let id = $(this).parent().parent().attr("data-target");
+			let id = $(this).parent().parent().parent().attr("data-target");
 			$(`tr[data-target='${id}'] #roll_result`).val($(this).val());
 			$(`tr[data-target='${id}'] #roll_result`).trigger("change");
 			qrm_update_popout();
