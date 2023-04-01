@@ -2480,6 +2480,7 @@ function qrm_update_popout(){
 			$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").find(`option[value='${$(this).val()}']`).attr('selected', 'selected');
 			$("#qrm_dialog #quick_roll_footer select#qrm_save_dropdown").val($(this).val());
 			$('#qrm_dialog #quick_roll_footer select#qrm_save_dropdown').trigger("change");
+			save_type_change($("#qrm_save_dropdown"))
 			qrm_update_popout();
 		});			
 		$(childWindows['Quick Roll Menu'].document).find('#qrm_dialog #quick_roll_footer select#qrm_apply_conditions').change(function(e) {
