@@ -999,7 +999,7 @@ class MessageBroker {
 					
 					$("#tokens .VTTToken").each(
 						function(){
-							var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+							let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 							if(converted==entityid){
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
@@ -1010,7 +1010,7 @@ class MessageBroker {
 					
 
 					$("#combat_area tr").each(function() {
-						var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+						let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 						console.log(converted);
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
@@ -1294,7 +1294,7 @@ class MessageBroker {
 		$(".aura-element[id^='aura_'").remove();
 		$(".aura-element-container-clip").remove();
 
-		var old_src = $("#scene_map").attr('src');
+		let old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
 
 		if (data.fog_of_war == 1) {
