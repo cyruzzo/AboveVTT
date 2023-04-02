@@ -378,9 +378,9 @@ function is_token_under_fog(tokenid){
 	if(window.DM)
 		return false;
 	let canvas = document.getElementById("fog_overlay");
-	let ctx = canvas.getContext("2d");
+	let ctx = canvas.getContext("2d", {willReadFrequently: true});
 	let canvas2 = document.getElementById("raycastingCanvas");
-	let ctx2 = canvas2.getContext("2d");
+	let ctx2 = canvas2.getContext("2d", {willReadFrequently: true});
 
 
 	let left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
@@ -390,16 +390,15 @@ function is_token_under_fog(tokenid){
 		
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-	pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
+	let someFilter = function(color, index) {return (index) % 4 == 0 && color == 255};
 
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenAuraIsLight && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))))
+	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(someFilter) && playerTokenAuraIsLight && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))))
 		return true;
 	else
 		return false;
 }
 
 function is_token_under_light_aura(tokenid){
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	
@@ -418,15 +417,12 @@ function is_token_under_light_aura(tokenid){
 			right:  parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')) + $(visibleLightAuras[auraIndex]).width(),
 			bottom:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')) + $(visibleLightAuras[auraIndex]).width()
 		};
-		let auraSize = $(visibleLightAuras[auraIndex]).width();
+
 		if(horizontalMiddle > bounds.left && horizontalMiddle < bounds.right && verticalMiddle > bounds.top && verticalMiddle < bounds.bottom){
 				
 
 			let pixeldata = window.lightAuraClipPolygon[auraId].canvas.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-
-			pixeldata = pixeldata.filter(function(color, index) {return (index + 1) % 4 != 0});
-			if(pixeldata.some(color => color == 255))
-				return true;	
+			return pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255});
 		}		
 	}
 	return  false;
@@ -436,25 +432,23 @@ function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
-			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-			let selector = "div.token[data-id='" + id + "']";
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-			if (!window.TOKEN_OBJECTS[id].options.revealInFog && (is_token_under_fog(id) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)))) {
-				$(selector).hide();
-				$(auraSelector).hide();
-			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-				$(selector).css('opacity', 1);
-				$(selector).show();
-				if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
-					$(auraSelector).show();
-				//console.log('SHOW '+id);
-			}
+	let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+	let selector = "div.token[data-id='" + id + "']";
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+
+	if (!window.TOKEN_OBJECTS[id].options.revealInFog && ((playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)) || is_token_under_fog(id))) {
+		$(selector + "," + auraSelector).hide();
+	}
+	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
+		$(selector).css('opacity', 1);
+		$(selector).show();
+		if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
+			$(auraSelector).show();
+		//console.log('SHOW '+id);
+	}
 }
 
 
@@ -464,26 +458,27 @@ function check_single_token_visibility(id){
 function check_token_visibility(){
 	if(window.DM)
 		return;
-	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() > 0)){
+	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() > 0)){
 		return;
 	}
-	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY -Date.now() <  -1000)){
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now();
-		setTimeout(do_check_token_visibility(),1);
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() <  -1000)){
+		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now();
+		setTimeout(do_check_token_visibility(), 1);
 		return;
 	}
 	else {
-		window.NEXT_CHECK_TOKEN_VISIBILITY=Date.now()+1000;
-		setTimeout(do_check_token_visibility,1000);
+		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now() + 1000;
+		setTimeout(do_check_token_visibility, 1000);
 		return;
 	}
 }
 
 function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
-	if (window.DM || $("#fog_overlay").is(":hidden"))
-		return;
 	let canvas = document.getElementById("fog_overlay");
+
+	if (canvas.style.diplay == "none")
+		return;
 	let ctx = canvas.getContext("2d");
 	let canvas2 = document.getElementById("raycastingCanvas");
 	let ctx2 = canvas2.getContext("2d");
@@ -501,15 +496,15 @@ function do_check_token_visibility() {
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-		pixeldata2 = pixeldata2.filter(function(color, index) {return (index + 1) % 4 != 0});
+		//Combining some and filter cut down about 140ms for average sized picture
+		let someFilter = function(color, index) {return (index) % 4 == 0 && color == 255};
 		
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(color => color == 255) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
-			$(selector).hide();
-			$(auraSelector).hide();
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(someFilter) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
+			$(selector, auraSelector).hide();
 		}
 		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-			$(selector).css('opacity', 1);
-			$(selector).show();
+			let selectors = []
+			$(selector).css({'opacity': 1, 'display': 'block'});
 			if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
 				$(auraSelector).show();
 			//console.log('SHOW '+id);
@@ -697,11 +692,11 @@ function ctxScale(canvasid){
 }
 
 function reset_canvas() {
-	$('#darkness_layer').css("width", $("#scene_map").width());
-	$('#darkness_layer').css("height", $("#scene_map").height());
+	let sceneMapWidth = $("#scene_map").width();
+	let sceneMapHeight = $("#scene_map").height();
 
-	$("#scene_map_container").css("width", $("#scene_map").width())
-	$("#scene_map_container").css("height", $("#scene_map").height())
+	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
+	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
@@ -713,8 +708,7 @@ function reset_canvas() {
 	canvas.width = $("#scene_map").width();
   	canvas.height = $("#scene_map").height();
 
-	$("#text_div").css("width", $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor);
-	$("#text_div").css("height", $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor);
+	$("#text_div").css({"width": sceneMapWidth * window.CURRENT_SCENE_DATA.scale_factor,  "height": sceneMapHeight * window.CURRENT_SCENE_DATA.scale_factor});
 
 	canvas = document.getElementById("fog_overlay");
 	let ctx = canvas.getContext("2d");
@@ -958,20 +952,20 @@ function redraw_light_walls(clear=true){
 		
 	if(clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-	
-	canvas = document.getElementById("raycastingCanvas");
-	ctx = canvas.getContext("2d");
-
 
 
 	window.walls =[];
-	let wall5 = new Boundary(new Vector(0, 0), new Vector($('#scene_map_container').width(), 0));
+	let sceneMapContainer = $('#scene_map_container');
+	let sceneMapHeight = sceneMapContainer.width();
+	let sceneMapWidth =  sceneMapContainer.height();
+
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapHeight, 0));
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, $('#scene_map_container').height()));
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapWidth));
 	window.walls.push(wall6);
-	let wall7 = new Boundary(new Vector($('#scene_map_container').width(), 0), new Vector($('#scene_map_container').width(), $('#scene_map_container').height()));
+	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall7);
-	let wall8 = new Boundary(new Vector(0, $('#scene_map_container').height()), new Vector($('#scene_map_container').width(), $('#scene_map_container').height()));
+	let wall8 = new Boundary(new Vector(0, sceneMapHeight), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall8);
 
 	const drawings = window.DRAWINGS.filter(d => d[1] == "wall");
@@ -995,9 +989,7 @@ function redraw_light_walls(clear=true){
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
-			canvas = document.getElementById("temp_overlay");
-			ctx = canvas.getContext("2d");
-			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
+			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 
 		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)")){
@@ -3052,15 +3044,6 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
   return false;
 }
 function detectWallCollision(x1, y1, x2, y2){
-	let selectedCoords= {
-		left: $('#scene_map_container').width(),
-		top:$('#scene_map_container').height(),
-		bottom: 0,
-		right:0,
-	};
-	let selectedTokens = $('.tokenselected');
-
-	
 	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
 	for(let i=0; i<walls.length; i++){
 
@@ -3089,31 +3072,26 @@ function detectWallCollision(x1, y1, x2, y2){
 }
 
 function redraw_light(){
-
-
 	let canvas = document.getElementById("raycastingCanvas");
-	let context = canvas.getContext("2d");
 	let canvasWidth = canvas.width;
 	let canvasHeight = canvas.height;
-	let offsetX = canvas.offsetLeft;
-	let offsetY = canvas.offsetTop;
 
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
 		return; // prevent error if redraw is called before map initialized
 	}
 
-
-	let offscreenCanvasMask = document.createElement('canvas');
-	let offscreenContext = offscreenCanvasMask.getContext('2d');
-
-	offscreenCanvasMask.width = canvas.width;
-	offscreenCanvasMask.height = canvas.height;
-
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
 
+	let context = canvas.getContext("2d");
+	
+	let offscreenCanvasMask = document.createElement('canvas');
+	let offscreenContext = offscreenCanvasMask.getContext('2d');
+
+	offscreenCanvasMask.width = canvasWidth;
+	offscreenCanvasMask.height = canvasHeight;
 
 	context.clearRect(0,0,canvasWidth,canvasHeight);
 
@@ -3147,8 +3125,6 @@ function redraw_light(){
   	let auraId = $(light_auras[i]).attr('data-id');
 
   	found = selectedIds.some(r=> r == auraId);
-
-
 
 	let tokenPos = {
 		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
@@ -3206,13 +3182,8 @@ function redraw_light(){
 
 		
 		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
-		
-  	
 
-  		
   		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
-		
-  		
 	}    	
   }
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
