@@ -6594,10 +6594,11 @@ button.journal-view-button.journal-button {
     margin: 0 2px;
     border-radius: 7px;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
-    padding: 2px 8px;
+    padding: 2px 4px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
     font-size: 12px;
+    overflow: hidden;
 }
 .qrm_name_line{
     text-align: left;
@@ -6615,9 +6616,9 @@ button.journal-view-button.journal-button {
     border-radius: 3px;
     border-color: #ddd;
     height:22px;
-    text-align:center;
-    font-size: 14px !important;
+    font-size: 12px !important;
     box-shadow: 1px 1px 1px 0px #00000047;
+    text-transform: uppercase;
 }
 .general_input{
     border-width: 2px;
@@ -6632,6 +6633,8 @@ button.journal-view-button.journal-button {
     border: 1px solid lightgray;
     font-size: 12px;
     margin: 1px;
+    top: 0px;
+    text-transform: uppercase;
 }
 .menu_hp_input{
     border-width: 0;
@@ -6663,18 +6666,138 @@ button.journal-view-button.journal-button {
 .roll_mods_button:focus {
     outline: none;
     box-shadow: none;
-  }
-#adv.active_roll_mod{
+}
+#qrm_healing.active_roll_mod, #adv.active_roll_mod{
     background-image: none !important;
     background: green;
     border-radius: 3px !important;
     border-color: #ddd !important;
 }
-#disadv.active_roll_mod{
+#qrm_damage.active_roll_mod, #disadv.active_roll_mod{
     background-image: none !important;
     background: red;
     border-radius: 3px;
     border-color: #ddd;
+}
+#qrm_heal.active_roll_mod{
+    background-image: none !important;
+    background: green;
+    border-radius: 3px !important;
+    border-color: #ddd !important;
+}
+#qrm_damage.active_roll_mod{
+    background-image: none !important;
+    background: red;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+.adjustments_wrapper{
+    top: 5px;
+    position: relative;
+    display: inline-block;
+}
+.damage_heal_button{
+    display: block;
+    height: 50% !important;
+    font-size: 8px !important;
+    text-align: center;
+    overflow: unset!important;
+    padding: 0px!important;
+    width: 50px;
+    margin: 1px !important;
+}
+.ui-selectmenu-menu .ui-menu-item-wrapper .ui-menu-item {
+    height: 24px;
+    width: 24px;
+    top: 0.1em;
+    overflow: auto;
+    position: relative;
+}
+.ui-selectmenu-menu .ui-menu {
+    max-height: calc(50vh - 20px);
+    width: 140px;
+    overflow: auto !important;
+}
+#qrm_apply_conditions-button{
+    width: 26% !important;
+}
+.ui-front {
+    z-index: 50010 !important;
+}
+.ui-selectmenu-text{
+    top: 1px;
+    position: relative;
+}
+.ui-menu .ui-menu-item-wrapper{
+    display: inline-block;
+    padding-right: 100px !important;
+    max-width: 175px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+.icon-avatar{
+    width: 22px;
+    height: 22px;
+}
+.ui-selectmenu-button.ui-button{
+    width: 22% !important;
+    padding: 2px 2px !important;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    margin: 1px;
+    top: -1px;
+}
+.ui-menu .ui-icon{
+    background-image: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.dropdown-advantage {
+    background-image: url(assets/conditons/advantage.png) !important;
+}
+.dropdown-baned {
+    background-image: url(assets/conditons/baned.png) !important;
+}
+.dropdown-bardic {
+    background-image: url(assets/conditons/bardic_inspiration.png) !important;
+}
+.dropdown-blessed{
+    background-image: url(assets/conditons/blessed.png) !important;
+}
+.dropdown-bloodied {
+    background-image: url(assets/conditons/bloodied.png) !important;
+}
+.dropdown-concentration-reminder {
+    background-image: url(assets/conditons/concentration\(reminder\).png) !important;
+}
+.dropdown-disadvantage {
+    background-image: url(assets/conditons/disadvantage.png) !important;
+}
+.dropdown-flamed {
+    background-image: url(assets/conditons/flamed.png) !important;
+}
+.dropdown-flying {
+    background-image: url(assets/conditons/flying.png) !important;
+}
+.dropdown-hasted {
+    background-image: url(assets/conditons/hasted.png) !important;
+}
+.dropdown-bardic-inspiration {
+    background-image: url(assets/conditons/bardic_inspiration.png) !important;
+}
+.dropdown-rage {
+    background-image: url(assets/conditons/rage.png) !important;
+}
+.dropdown-remove {
+    background-image: url(assets/icons/delete.svg) !important;
 }
 /* end quick roll menu */
 
