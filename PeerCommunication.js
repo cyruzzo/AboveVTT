@@ -449,7 +449,11 @@ function init_peer_fade_functions() {
     window.PEER_FADE_RULER_FUNCTIONS = {};
   }
   if (window.pcs) {
-    window.pcs.forEach(pc => init_peer_fade_function(pc.id.toString()));
+    window.pcs.forEach(pc => {
+      if (pc.characterId) {
+        init_peer_fade_function(pc.characterId.toString())
+      }
+    });
   }
 }
 
