@@ -319,7 +319,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             }
             let m = monsterSearchResponse.data[i];
             let item = SidebarListItem.Monster(m)
-            if(!item.monsterData.isReleased && item.monsterData.homebrewStatus != 1){
+            if(get_avtt_setting_value("ownedMonstersOnly") && !item.monsterData.isReleased && item.monsterData.homebrewStatus != 1){
                 continue;   
             }
             window.monsterListItems.push(item);

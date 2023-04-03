@@ -264,6 +264,16 @@ function avtt_settings() {
 				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
 			],
 			defaultValue: false
+		},
+		{
+			name: "ownedMonstersOnly",
+			label: "Only show owned DDB Monsters",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Owned", description: `Only show owned and homebrew DDB monsters` },
+				{ value: false, label: "All", description: `Show all DDB monsters.` }
+			],
+			defaultValue: false
 		}
 	];
 
@@ -392,6 +402,9 @@ function set_avtt_setting_value(name, newValue) {
 		case "receiveCursorFromPeers":
 		case "receiveRulerFromPeers":
 			local_peer_setting_changed(name, newValue);
+			break;
+		case "ownedMonstersOnly":
+			filter_token_list("");
 			break;
 	}
 }
