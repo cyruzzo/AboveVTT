@@ -312,7 +312,7 @@ function edit_scene_dialog(scene_id) {
 						darknessFilterRange)
 	);
 	form.append(form_row('disableSceneVision',
-			'Disable token vision/light on this scene',
+			'Disable token vision/light',
 			form_toggle("disableSceneVision",null, false,  function(event) {
 				handle_basic_form_toggle_click(event);
 			})
