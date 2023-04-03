@@ -743,10 +743,10 @@ function reset_canvas() {
  	delete window.lightAuraClipPolygon;
  	delete window.lineOfSightPolygons;
 
-	redraw_fog();
 	redraw_drawings();
 	redraw_light_walls();
 	redraw_light();
+	redraw_fog();
 	redraw_text();
 	
 
@@ -3043,35 +3043,23 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
   }
   return false;
 }
-function detectWallCollision(x1, y1, x2, y2){
-	let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line") && !d[2].includes('rgba(255, 100, 255, 0.5)')));
-	for(let i=0; i<walls.length; i++){
 
-		let wallInitialScale = walls[8];
-		let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-		let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;			
-		let wallLine = [{
-			a: {
-				x: walls[i][3]/adjustedScale,
-				y: walls[i][4]/adjustedScale
-			},
-			b: {
-				x: walls[i][5]/adjustedScale,
-				y: walls[i][6]/adjustedScale
-			}			
-		}]
-
-		let intersect = lineLine(wallLine[0].a.x, wallLine[0].a.y, wallLine[0].b.x, wallLine[0].b.y, x1, y1, x2, y2);
-	
-		if(intersect != false){					
-			return intersect;	
-		}
-		
+//Checks if a pixel is in line of current line of sight
+function detectInLos(x, y) {
+	let canvas = document.getElementById("raycastingCanvas");
+	let ctx = canvas.getContext("2d");
+	const pixeldata = ctx.getImageData(x, y, 1, 1).data;
+	if (pixeldata[2] == 0)
+	{	
+		return false;			
 	}
-	return false;
+	else{
+		return true;
+	}
 }
 
 function redraw_light(){
+
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
 	let canvasHeight = canvas.height;
@@ -3094,6 +3082,12 @@ function redraw_light(){
 	offscreenCanvasMask.height = canvasHeight;
 
 	context.clearRect(0,0,canvasWidth,canvasHeight);
+
+	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
+		context.fillStyle = "white";
+		context.fillRect(0,0,canvasWidth,canvasHeight);
+		return;
+	}
 
 	context.fillStyle = "black";
 	context.fillRect(0,0,canvasWidth,canvasHeight);

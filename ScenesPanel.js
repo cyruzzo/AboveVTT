@@ -311,6 +311,13 @@ function edit_scene_dialog(scene_id) {
 						'Darkness filter',
 						darknessFilterRange)
 	);
+	form.append(form_row('disableSceneVision',
+			'Disable token vision/light',
+			form_toggle("disableSceneVision",null, false,  function(event) {
+				handle_basic_form_toggle_click(event);
+			})
+		)
+	);
 	form.find('#darknessFilter_row').attr('title', `This will darken the map by the percentage indicated. This filter interacts with light auras. Any light aura on the map will reveal the darkness. Fully opaque white light will completely eliminate the darkness in it's area.`)
 	darknessFilterRange.after(darknessNumberInput);
 	form.append(form_row('snapToGrid', 'Snap to Grid',form_toggle("snap", null, false, function(event) {

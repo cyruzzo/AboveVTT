@@ -359,7 +359,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			flyout.append(build_token_light_inputs(tokenIds));
 		})
 	});
-	if(window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()))){
+	if(window.CURRENT_SCENE_DATA.disableSceneVision != true && (window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer())))){
 		if (!someTokensAreAoe) {
 			body.append(lightRow);
 		}

@@ -469,16 +469,16 @@ class Token {
 	moveUp() {	
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
-		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
-		if(intersect== false){
+		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
+		if(inLos){
 			this.move(newTop, this.options.left)	
 		}
 	}
 	moveDown() {
 		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
-		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
-		if(intersect== false){
+		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
+		if(inLos){
 			this.move(newTop, this.options.left)	
 		}
 
@@ -486,16 +486,16 @@ class Token {
 	moveLeft() {
 		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
-		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
-		if(intersect== false){
+		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
+		if(inLos){
 			this.move(this.options.top, newLeft)	
 		}
 	}
 	moveRight() {
 		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
-		let intersect = detectWallCollision(parseFloat(this.options.left)+halfWidth, parseFloat(this.options.top)+halfWidth, parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
-		if(intersect== false){
+		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
+		if(inLos){
 			this.move(this.options.top, newLeft)	
 		}
 	}
@@ -2861,7 +2861,7 @@ function setTokenAuras (token, options) {
 	}
 }
 function setTokenLight (token, options) {
-	if (!options.light1) return;
+	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
 
 	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
