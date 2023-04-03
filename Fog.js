@@ -956,8 +956,8 @@ function redraw_light_walls(clear=true){
 
 	window.walls =[];
 	let sceneMapContainer = $('#scene_map_container');
-	let sceneMapHeight = sceneMapContainer.width();
-	let sceneMapWidth =  sceneMapContainer.height();
+	let sceneMapHeight = sceneMapContainer.height();
+	let sceneMapWidth = sceneMapContainer.width();
 
 	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapHeight, 0));
 	window.walls.push(wall5);
