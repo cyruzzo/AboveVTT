@@ -1,0 +1,207 @@
+name: release-build
+run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        type: choice
+        description: "beta or production?"
+        options:
+          - beta
+          - production
+        default: prerelease
+      version_name_override:
+        description: "Version Name Override (Only specify this if you need a name outside of our typical naming convention)"
+        required: false
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          author_name: github.actor
+          author_email: github
+      - name: "Determine version_name"
+        run: |
+          version_name="${{inputs.version_name_override}}"
+          if [[ -z "$version_name" ]]
+          then
+            echo "Good. No override was specified. Finding version"
+            if [[ ${{inputs.release_type}} == "production" ]]
+            then
+              echo "using manifest.version"
+              version_name=$(cat manifest.json | jq '.version')
+            else
+              previous_release_body='{"query":"{repository(owner: \"'
+              previous_release_body+="${GITHUB_REPOSITORY_OWNER}"
+              previous_release_body+='\", name: \"AboveVTT\"){releases(first:1,orderBy:{field:CREATED_AT,direction:DESC}){edges{node{name publishedAt}}}}}"}'
+              previous_release_response=$(curl --request POST \
+                --url https://api.github.com/graphql \
+                --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+                --header 'Content-Type: application/json' \
+                --data "$previous_release_body")
+              previous_version=$(echo $previous_release_response | jq '.data.repository.releases.edges[0].node.name' | xargs echo)
+              previous_release_timestamp=$(echo $previous_release_response | jq '.data.repository.releases.edges[0].node.publishedAt' | xargs echo)
+              echo "previous_release_timestamp: ${previous_release_timestamp}"
+              echo "previous_release_timestamp=${previous_release_timestamp}" >> $GITHUB_ENV
+          
+              version_name=''
+              echo "previous_version: $previous_version"
+              if [[ "${previous_version}" == *"-beta"* ]]
+              then
+                echo "incrementing previous_version"
+                [[ "${previous_version}" =~ (.*[^0-9])([0-9]+)$ ]] && version_name="${BASH_REMATCH[1]}$((BASH_REMATCH[2] + 1))";
+              else
+                version_name=$(cat manifest.json | jq '.version' | xargs echo)
+                version_name+="-beta1"
+              fi
+              echo "version_name: $version_name"
+            fi
+          fi
+          if [[ -z "$version_name" ]]
+          then
+            echo "Failed to determine version_name"
+            exit 1
+          fi
+          echo "version_name: ${version_name}"
+          echo "version_name=${version_name}" >> $GITHUB_ENV
+      - name: "Build environment.js"
+        run: |
+          version_suffix=''
+          if [[ "${{inputs.release_type}}" == "beta" ]]; then
+            version_suffix=${{env.version_name}}
+            version_suffix=-${version_suffix#*-}
+          fi
+          AVTT_ENVIRONMENT=$(jq --null-input \
+            --arg version_suffix "$version_suffix" \
+            '{"versionSuffix": $version_suffix, "baseUrl": "https://services.abovevtt.net"}'
+          )
+          echo "about to cat environment.js" 
+          cat environment.js
+          echo "did cat environment.js" 
+          echo "let AVTT_ENVIRONMENT = ${AVTT_ENVIRONMENT};" > environment.js
+          echo "about to cat environment.js" 
+          cat environment.js
+          echo "did cat environment.js"
+          git config user.email "bot@github.com"
+          git config user.name "workflow bot"
+          git add environment.js
+          git commit -m "update environment.js" environment.js
+      - name: "Build zip"
+        run: |
+          echo "about to cat environment.js" 
+          cat environment.js
+          echo "did cat environment.js"
+          git archive -o "AboveVTT-${{env.version_name}}.zip" HEAD
+      - name: "Publish release"
+        run: |
+          prerelease=true
+          if [[ "${{inputs.release_type}}" == "production" ]]; then
+            prerelease=false
+          fi
+          curl -X POST -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases" -d "{ \"tag_name\": \"${{env.version_name}}\", \"name\": \"${{env.version_name}}\", \"prerelease\": ${prerelease}, \"generate_release_notes\": true }" -o release.json
+          cat release.json
+          upload_url=$(cat release.json | jq '.upload_url' | xargs echo)
+          upload_url=${upload_url%\{*}
+          echo upload_url: $upload_url
+          echo "upload_url=${upload_url}" >> $GITHUB_ENV
+      - name: "Upload release asset"
+        run: |
+          curl -L \
+            -X POST \
+            --url "${{env.upload_url}}?name=AboveVTT-${{env.version_name}}.zip" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@AboveVTT-${{env.version_name}}.zip"
+      - name: "Fetch all issues that have been closed since the last release was published"
+        if: ${{ inputs.release_type == 'beta' }}
+        run: |
+          request_body=''
+          echo "request_body $request_body"
+          request_body='{"query":"{search(first: 100 query: \"repo:'
+          echo "request_body $request_body"
+          request_body+="${GITHUB_REPOSITORY} is:issue closed:>${{env.previous_release_timestamp}}"
+          echo "request_body $request_body"
+          request_body+='\" type: ISSUE) {nodes {... on Issue {number title closedAt}}}}"}'
+          echo "request_body $request_body"
+          issues_response=$(curl --request POST --url https://api.github.com/graphql --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' --data "$request_body")
+          echo "issues_response: $issues_response"
+          issue_number_array=$(echo "$issues_response" | jq -c '.data.search.nodes | map([.number][0])')
+          echo "issue_number_array: ${issue_number_array}"
+          echo "issue_number_array=${issue_number_array}" >> $GITHUB_ENV
+      - name: "Fetch all issues with the in-beta label"
+        if: ${{ inputs.release_type == 'production' }}
+        run: |
+          request_body='{"query":"{repository(owner:\"'
+          echo "request_body $request_body"
+          request_body+="${GITHUB_REPOSITORY_OWNER}"
+          echo "request_body $request_body"
+          request_body+='\",name:\"AboveVTT\"){issues(first:100,labels:\"in-beta\"){edges{node{number}}}}}"}'
+          echo "request_body $request_body"
+          issues_response=$(curl --request POST --url https://api.github.com/graphql --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' --data "$request_body")
+          echo "issues_response $issues_response"
+          issue_number_array=$(echo "$issues_response" | jq -c '.data.repository.issues.edges | map([.node.number][0])')
+          echo "issue_number_array=${issue_number_array}"
+          echo "issue_number_array=${issue_number_array}" >> $GITHUB_ENV
+      - name: 'Add labels and comment to issues'
+        run: |
+          echo "issue_number_array: ${{env.issue_number_array}}"
+          for row in $(echo "${{env.issue_number_array}}" | jq -r '.[] | @base64'); do
+            _jq() {
+              echo ${row} | base64 --decode | jq -r ${1}
+            }
+            issue_number=$(_jq '.')
+            if [[ "${{inputs.release_type}}" == "beta" ]]
+            then
+              echo "Adding in-beta label to issue ${issue_number}"
+              curl -o /dev/null --request POST --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${issue_number}/labels" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d '{"labels":["in-beta"]}'
+            else
+              echo "Removing in-beta label from issue ${issue_number}"
+              curl -o /dev/null --request DELETE --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${issue_number}/labels/in-beta" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}"
+              echo "Adding released label to issue ${issue_number}"
+              curl -o /dev/null --request POST --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${issue_number}/labels" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d '{"labels":["released"]}'
+            fi
+            echo "Adding comment to issue ${issue_number}"
+            curl -o /dev/null --request POST --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${issue_number}/comments" --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --header 'Content-Type: application/json' -d "{\"body\":\"# Included in ${{env.version_name}}\"}"
+          done
+      - name: "Generate Discord changelog message"
+        if: ${{ inputs.release_type == 'beta' }}
+        run: |
+          cat release.json
+          str=$(cat release.json | jq '.body')
+          echo $str
+          discord_message="**${version_name}**"
+          while [[ $str ]]; do            # iterate as long as we have input
+            if [[ $str = *'\n'* ]]; then  # if there's a '\n' sequence later...
+              line=${str%%'\n'*}          #   put everything before it into 'line'
+              rest=${str#*'\n'}           #   and put everything after it in 'rest'
+            else                          # if there's no '\n' later...
+              line=$str                   #   then put the whole rest of the string in 'line'
+              rest=''                     #   and there is no 'rest'
+            fi
+            str=$rest
+            echo "Processing line: $line"
+            if [[ $line = '<!--'* ]] || [[ $line = '"<!--'* ]] || [[ $line = *"What's Changed"* ]] || [[ $line = *"Full Changelog"* ]]
+            then
+              echo "skipping $line"
+            elif [[ $line = '##'* ]]
+            then
+              line=${line#*###}
+              line=${line#*##}
+              discord_message+='\n**'
+              discord_message+=$line
+              discord_message+='**\n'
+            elif [[ $line = *' in http'* ]]
+            then
+              discord_message+=${line%in http*}
+              discord_message+='\n'
+            else
+              discord_message+=$line
+            fi
+          done
+          discord_message+="\n**Download**: https://github.com/${GITHUB_REPOSITORY}/releases/download/${version_name}/AboveVTT-${version_name}.zip"
+          echo $discord_message
+          message_body="{\"content\":\"${discord_message}\",\"flags\":4}"
+          curl --request POST --url "${{secrets.DISCORD_BETA_DOWNLOADS_WEBHOOK}}" --header 'Content-Type: application/json' -d "${message_body}"

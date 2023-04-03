@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "AboveVTT",
 	"description": "Integrated VTT for D&DBeyond",
-	"version": "0.81",
+	"version": "0.90",
 	"content_scripts": [
 		{
 			"matches": [
@@ -37,11 +37,13 @@
 	"web_accessible_resources": [
 		"jquery-3.6.0.min.js",
 		"assets/*",
+		"audio/*",
 		"images/*",
 		"ajaxQueue/*",
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
 		"jquery.contextMenu.css",
+		"jquery.csv.js",
 		"abovevtt.css",
 		"color-picker.min.css",
 		"magnific-popup.css",
@@ -54,13 +56,20 @@
 		"purify.min.js",
 		"spectrum-2.0.8.min.js",
 		"spectrum-2.0.8.min.css",
+		"peerjs.min.js",
+		"fuse.min.js",
+		"environment.js",
+		"AboveApi.js",
+		"DDBApi.js",
 		"AjaxQueueModule.js",
-		"DnDBeyond/DDBCharacterData.js",
+		"CoreFunctions.js",
+		"CampaignPage.js",
+		"Startup.js",
+		"CharactersPage.js",
 		"EncounterHandler.js",
 		"SidebarPanel.js",
 		"Journal.js",
 		"Settings.js",
-		"SoundPad.js",
 		"color-picker.js",
 		"Text.js",
 		"AOETemplates.js",
@@ -87,6 +96,9 @@
 		"DiceRoller.js",
 		"ChatObserver.js",
 		"Main.js",
-		"MonsterStatBlock.js"
+		"MonsterStatBlock.js",
+		"PeerManager.js",
+		"PeerCommunication.js"
 	]
 }
+

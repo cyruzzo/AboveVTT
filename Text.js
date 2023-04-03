@@ -52,6 +52,7 @@ function apply_settings_to_boxes(){
         "background-color": window.TEXTDATA.text_background_color,
         "font-family": window.TEXTDATA.text_font,
         "font-size": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
+        "line-height": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
         "font-weight": window.TEXTDATA.text_bold ? "bold" : "normal",
         "font-style": window.TEXTDATA.text_italic ? "italic" : "normal",
         "text-decoration": window.TEXTDATA.text_underline ? "underline" : "none",
@@ -201,6 +202,15 @@ function create_text_controller() {
             </button>
         </div>
     `);
+      flexDiv.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <button id='hide_text' title="hide text" style="height:20px" data-toggle="true" data-key="hide" data-value="hide" class='drawbutton text-option ddbc-tab-options__header-heading menu-option'>
+                    <span class="material-icons">
+                        visibility_off
+                    </span>
+            </button>
+        </div>
+    `);
 
     let colorPickers = flexDiv.find("input.spectrum");
     colorPickers.spectrum({
@@ -319,7 +329,7 @@ function create_text_controller() {
  * @param {Number} height height of text area
  * @returns a div which has the title bar with submit/close buttons and a text area
  */
-function create_moveable_text_box(x,y,width, height) {
+function create_moveable_text_box(x,y,width, height, text = undefined) {
     const textInputInside = $(`<div class="text-input-inside"/>`);
     textInputInside.css({
         "position": "fixed",
@@ -400,9 +410,11 @@ function create_moveable_text_box(x,y,width, height) {
         title="Input your text, this is an approximation of your final text"
         type="text" autocomplete="off"/>`
     );
+    if(text != undefined)
+        input.val(text)
     textInputInside.append(input)
     $(input).css({
-        "white-space": "nowrap",
+        "white-space": "pre-wrap",
         "overflow": "hidden"
     });
     
@@ -431,6 +443,7 @@ function handle_auto_resize(e){
     width,
     height,
     linewidth,
+    editTextID = undefined
 ]) {
     create_text_controller()
     create_moveable_text_box(x,y,width, height);
@@ -438,7 +451,7 @@ function handle_auto_resize(e){
 
 
 /**
- * Bakes the text and rectangle into the text_overlay canvas layer
+ * Bakes the text into the text_div layer
  * @param {Event} event 
  * @returns 
  */
@@ -457,8 +470,8 @@ function handle_draw_text_submit(event) {
     );
     // textbox doesn't have left or top so use the wrapper
     // with 25 being the bar height
-    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-200+window.scrollX))) * (1.0 / window.ZOOM);
-    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-200+window.scrollY)) + 25) * (1.0 / window.ZOOM);
+    const rectX = Math.round(((parseInt($(textBox).parent().css("left"))-window.VTTMargin+window.scrollX))) * (1.0 / window.ZOOM);
+    const rectY = Math.round(((parseInt($(textBox).parent().css("top"))-window.VTTMargin+window.scrollY)) + 25) * (1.0 / window.ZOOM);
     const rectColor = $(textBox).css("background-color")
 
     const text = textBox.val();
@@ -480,23 +493,10 @@ function handle_draw_text_submit(event) {
         size: parseInt($(textBox).css("-webkit-text-stroke-width")) / window.ZOOM,
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
-    // only draw a rect if it's not fully transparent
-    let data = [];
-    if (!is_rgba_fully_transparent(rectColor)) {
-        data = [
-            "text-rect",
-            "filled",
-            rectColor,
-            rectX,
-            rectY,
-            width,
-            height,
-            window.LINEWIDTH,
-        ];
-        window.DRAWINGS.push(data);
-    }
+    const hidden = $('#text_controller_inside #hide_text.button-enabled').length>0;
     // data should match params in draw_text
     // push the starting position of y south based on the font size
+    let textid = uuid();
     data = ["text",
         rectX,
         rectY + font.size,
@@ -504,15 +504,17 @@ function handle_draw_text_submit(event) {
         height,
         text,
         font,
-        stroke
+        stroke,
+        rectColor,
+        textid,
+        window.CURRENT_SCENE_DATA.scale_factor,
+        hidden
     ];
     // bake this data and redraw all text
     window.DRAWINGS.push(data);
     $(".text-input-title-bar-exit").click();
-    redraw_text()
-    window.ScenesHandler.persist();
-    if (window.CLOUD) sync_drawings();
-    else window.MB.sendMessage("custom/myVTT/drawing", data);
+    redraw_text();
+    sync_drawings();
 
 }
 
@@ -566,7 +568,7 @@ function get_x_start_and_width_of_text(x, width, text, font, stroke) {
 
 /**
  * Draw the text to the text overlay using the data in window.DRAWINGS
- * @param {*} context html canvas context for text_overlay
+ * @param {*} This is no longer used will clean up later - was text canvas ctx but canvas is no longer used
  * @param {String} type aka shape, not used
  * @param {Number} startingX starting position text background
  * @param {Number} startingY starting positon text background
@@ -575,6 +577,7 @@ function get_x_start_and_width_of_text(x, width, text, font, stroke) {
  * @param {String} text the value to be drawn
  * @param {Object} font font styling object
  * @param {Object} stroke stroke styling object
+ * @param {String} text unique id
  */
 function draw_text(
     context,
@@ -586,68 +589,167 @@ function draw_text(
     text,
     font,
     stroke,
+    rectColor = 'transparent',
+    id = '',
+    scale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor,
+    hidden = false
 ) {
-    context.font = `${font.weight} ${font.style} ${font.size}px ${font.font}`;
-    context.strokeStyle = stroke.color;
-    context.lineWidth = stroke.size;
-    context.fillStyle = font.color;
 
-    const lines = text.split(/\r?\n/);
-    // these values are modified per line depending on the line width
-    // and the alignment used
-    let x = startingX;
-    let y = startingY;
-    // draw stroke text first
+    if($(`svg[id='${id}']`).length>0)
+        return;
+    if(rectColor == null)
+        rectColor = 'transparent';
+    if(!window.DM && hidden)
+        return;
+
+    divideScale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor;
+
+    let adjustScale = (scale/divideScale);   
+
+    font.size = font.size / adjustScale
+    stroke.size = stroke.size / adjustScale
+    width = width / adjustScale 
+    height = height / adjustScale 
+    startingX = startingX / adjustScale 
+    startingY = startingY / adjustScale
+
+    let shadowStyle ='';
     if (font.shadow && font.shadow !== "none"){
         const shadowRegex = /(rgb\(.*\))\s(\d+px)\s(\d+px)\s(\d+px)/
         const [_, shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur ] = font.shadow.match(shadowRegex)
-        context.filter = `drop-shadow(${shadowOffsetX} ${shadowOffsetY} ${shadowBlur} ${shadowColor})`
+        shadowStyle = `drop-shadow(${shadowOffsetX} ${shadowOffsetY} ${shadowBlur} ${shadowColor})`
     }
     
-    lines.forEach((line) => {
-        const [textX, textWidth] = get_x_start_and_width_of_text(
-            x,
-            width,
-            line,
-            font,
-            stroke
-        );
+    let x = (font.align == 'right') ? '100%' : ((font.align=='center') ? '50%' : '0');
+    let anchor = (font.align == 'right') ? 'end' : ((font.align=='center') ? 'middle' : 'start');
+    let underline = (font.underline == true) ? 'underline' : 'none';
 
-        // const textMetrics = context.measureText(line)
+    let fontSize=font.size; 
+    let lineHeight=12;  
 
-        context.strokeText(line, textX, y);
-        // underlining isn't perfect
-        if (font.underline) {
-            drawLine(
-                context,
-                textX,
-                y + font.size / 10,
-                textX + textWidth,
-                y + font.size / 10,
-                stroke.color,
-                font.size / 10
-            );
+
+    
+    let hiddenOpacity = (hidden) ? 0.5 : 1;
+    let textSVG = $(`
+        <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="opacity:${hiddenOpacity}; left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
+            <title>${text}</title>
+            <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
+            <g style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
+            <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
+            </g>
+         </svg>
+    `);
+
+ 
+    $('#text_div').append(textSVG);
+
+
+
+    let words = text.split(/(\s)/g);
+
+    let line = '';
+    let element = $(`svg#${id} text`)[0];
+    element.innerHTML = '<tspan id="PROCESSING"></tspan>';
+    let lineNumber = 0;
+    for (let n = 0; n < words.length; n++) {
+        let testLine = line + words[n] + ' ';
+        let testElem = document.getElementById('PROCESSING');
+        /*  Add line in testElement */
+        testElem.innerHTML = testLine;
+        /* Messure textElement */
+        let metrics = testElem.getBoundingClientRect();
+        testWidth = metrics.width;
+       
+        if(words[n].includes('\n')  && n > 0){
+            let splitNewLines = words[n].split(/(\n)/g);
+            for(let i = 0; i < splitNewLines.length; i++){
+                if(splitNewLines[i] == '\n'){
+                    element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+                    lineNumber++;
+
+                    line = splitNewLines[i] + ' ';
+                }
+            }
+          
         }
+        else if (testWidth / window.ZOOM > width && n > 0) {
+            element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+            lineNumber++
+            line = words[n] + ' ';
+        } else {
+            line = testLine;
+        }
+    }
+    element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+    document.getElementById("PROCESSING").remove();
 
-        y += font.size;
+    textSVG.draggable({
+        containment: '#text_div',
+        start: function () {
+            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+        },
+        drag: function(event,ui)
+        {
+            ui.position.top = Math.round((ui.position.top - window.VTTMargin) / window.ZOOM );
+            ui.position.left = Math.round((ui.position.left - window.VTTMargin) / window.ZOOM );
+
+        },  
+        stop: function (event, ui) {
+            $('.iframeResizeCover').remove();
+            
+            for(let drawing in window.DRAWINGS){
+                if(window.DRAWINGS[drawing][9] != id)
+                    continue;
+                window.DRAWINGS[drawing][1] = parseInt($(this).css('left'))*adjustScale;
+                window.DRAWINGS[drawing][2] = parseInt($(this).css('top'))*adjustScale + parseInt(font.size)*adjustScale;    
+            }
+                        
+            sync_drawings();
+        }
     });
-    // loop the lines again as large stroke size will overlap the fill text
-    // so add fill text in last
-    x = startingX;
-    y = startingY;
-  
-    context.filter = "none"
-    lines.forEach((line) => {
 
-        const [textX, textWidth] = get_x_start_and_width_of_text(
-            x,
-            width,
-            line,
-            font,
-            stroke
-        );
-        context.fillText(line, textX, y);
-        y += font.size;
+
+    textSVG.on('contextmenu', function(e){
+        $(this).remove();
+        for(let drawing in window.DRAWINGS){
+            if(window.DRAWINGS[drawing][9] == this.id){
+                if(!window.DRAWINGS[drawing][11]){
+                    window.DRAWINGS[drawing][11] = true;
+                }
+                else{
+                    window.DRAWINGS[drawing][11] = false;
+                }
+            }
+        }
+        redraw_text();
+        sync_drawings();
+        return false;
+    });
+    textSVG.on('dblclick', function(){
+
+        create_text_controller();
+
+        window.TEXTDATA = [];
+        window.TEXTDATA.text_alignment = font.align;
+        window.TEXTDATA.text_color = font.color;
+        window.TEXTDATA.text_background_color = rectColor;
+        window.TEXTDATA.text_font = font.font;
+        window.TEXTDATA.text_size = font.size;
+        window.TEXTDATA.text_bold = (font.style == 'bold') ? true : false;
+        window.TEXTDATA.text_italic = (font.style == 'italic') ? true : false;
+        window.TEXTDATA.text_underline = font.underline;
+        window.TEXTDATA.stroke_color = stroke.color;
+        window.TEXTDATA.stroke_size = stroke.size;
+        window.TEXTDATA.text_shadow = (font.shadow != 'none') ? true : false;
+        apply_settings_to_boxes();
+
+        let bounds = $(this)[0].getBoundingClientRect();
+        create_moveable_text_box(bounds.left, bounds.top-25, bounds.width, bounds.height+25, text)
+        
+       window.DRAWINGS = window.DRAWINGS.filter((d) => d[9] != $(this)[0].id);
+        $(this).remove();
+        sync_drawings();
     });
 }
 
@@ -667,10 +769,17 @@ function init_text_button(buttons) {
     textMenu = $(
         "<div id='text_menu' class='top_menu' style='position:fixed; top:25px; width:75px'></div>"
     );
-
+     textMenu.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+                <button id='text_select' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active'
+                   data-unique-with="control" data-function="edit_text">
+                        Move/Edit
+                </button>
+            </div>`
+    );
     textMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
-                <button id='text_draw' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active'
+                <button id='text_draw' class='drawbutton menu-option draw-option ddbc-tab-options__header-heading'
                     data-shape='rect' data-unique-with="control" data-function="draw_text">
                         Draw
                 </button>
@@ -706,6 +815,7 @@ function init_text_button(buttons) {
             window.DRAWINGS = window.DRAWINGS.filter(
                 (d) => !d[0].includes("text")
             );
+            $("#text_div svg").empty();
             redraw_text();
             sync_drawings()
         }

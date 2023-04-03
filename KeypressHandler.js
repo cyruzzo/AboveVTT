@@ -69,8 +69,16 @@ Mousetrap.bind('s', function () {       //video fullscreen toggle
 });
 
 
-Mousetrap.bind('v', function () {       //video fullscreen toggle
+Mousetrap.bind('v', function () {       //video fullscreen toggle 
+    if(shiftHeld)
+        return;
+
     $('#jitsi_switch').click()
+});
+
+Mousetrap.bind('shift+v', function () {       //check token vision
+   window.SelectedTokenVision = true;
+   redraw_light();
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
@@ -101,9 +109,20 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
     $('#hide_rightpanel').click()
 });
 
+Mousetrap.bind('w', function () {
+    $('#wall_button').click()
+});
+
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();
-    $('#select-button').click();
+
+    if(!$("#wall_button").hasClass("button-enabled")){
+        $('#select-button').click();
+    }
+    else{
+        redraw_light_walls();
+    }
+
     close_token_context_menu();
     $(".draggable-token-creation").addClass("drag-cancelled");
     $(".draggable-sidebar-item-reorder").addClass("drag-cancelled");
@@ -122,6 +141,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
         close_sidebar_modal();
     }
     remove_tooltip();
+    removeError();
 });
 
 //menu specific shortcuts, select the nth element of menu when it's open
@@ -297,6 +317,9 @@ window.addEventListener("keydown", async (event) => {
     const arrowKeys = [ 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown' ];
     if (event.shiftKey && arrowKeys.includes(event.key) ) {
         rotationKeyPresses.push(event.key)
+    }
+    if((event.ctrlKey || event.metaKey) && event.key == 'a' && event.target.tagName == 'INPUT'){
+        event.target.select();
     }
 });
 window.addEventListener("keyup", async (event) => {

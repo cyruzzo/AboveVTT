@@ -72,7 +72,7 @@ function rollback_from_my_tokens() {
     console.warn("rollback_from_my_tokens is no longer supported");
     return;
 
-    console.groupCollapsed("rollback_from_my_tokens");
+    console.group("rollback_from_my_tokens");
     tokendata.didMigrateToMyToken = false;
     mytokens = [];
     mytokensfolders = [];
@@ -115,7 +115,8 @@ function list_item_from_monster_id(monsterId) {
 }
 
 function list_item_from_player_id(playerId) {
-    let pc = window.pcs.find(p => p.sheet = playerId);
+    // TODO: use find find_pc_by_player_id here? It would add an "unknown player" to the list. This would be useful when allowing players to guest DM when other players have a private character sheet
+    let pc = window.pcs.find(p => p.sheet.includes(playerId));
     if (pc === undefined) return undefined;
     let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
     return find_sidebar_list_item_from_path(fullPath);
@@ -158,7 +159,7 @@ function find_builtin_token(fullPath) {
         console.warn("find_builtin_token was called with the wrong token type.", fullPath, "should start with", RootFolder.AboveVTT.path);
         return undefined;
     }
-    console.groupCollapsed("find_builtin_token");
+    console.group("find_builtin_token");
     let found = builtInTokens.find(t => {
         let dirtyPath = `${RootFolder.AboveVTT.path}${t.folderPath}/${t.name}`;
         let fullTokenPath = sanitize_folder_path(dirtyPath);
@@ -197,7 +198,8 @@ function backfill_mytoken_folders() {
  * token sources are window.pcs, mytokens, mytokensfolders, and builtInTokens
  */
 function rebuild_token_items_list() {
-    console.groupCollapsed("rebuild_token_items_list");
+    if (!window.DM) return;
+    console.group("rebuild_token_items_list");
     try {
 
 
@@ -407,7 +409,7 @@ function init_tokens_panel() {
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
     add_expand_collapse_buttons_to_header(tokensPanel);
-    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOOSE YOUR LIBRARY</div>");
+    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
     searchInput.off("input").on("input", mydebounce(() => {
@@ -451,14 +453,15 @@ function redraw_token_list_item(item){
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
 function redraw_token_list(searchTerm, enableDraggable = true) {
+    if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
         return;
     }
-    console.groupCollapsed("redraw_token_list");
+    console.group("redraw_token_list");
     update_token_folders_remembered_state();
     let list = $(`<div class="custom-token-list"></div>`);
-    tokensPanel.body.empty();
+    tokensPanel.body.find('.custom-token-list').remove();
     tokensPanel.body.append(list);
 
     let nameFilter = "";
@@ -673,71 +676,77 @@ function update_pc_token_rows() {
             row.find("button.token-row-add").attr("title", `Add Token to Scene`);
         }
 
-        let playerData = window.PLAYER_STATS[listItem.sheet];
-        if (playerData !== undefined) {
-            playerData.abilities.forEach(a => {
-                let abilityValue = row.find(`[data-ability='${a.abilityAbbr}']`);
+        const playerId = getPlayerIDFromSheet(listItem.sheet);
+        const pc = find_pc_by_player_id(playerId, false);
+
+        if (pc !== undefined) {
+            const color = color_from_pc_object(pc);
+            pc.abilities.forEach(a => {
+                let abilityValue = row.find(`[data-ability='${a.name}']`);
                 abilityValue.find(".ability_modifier").text(a.modifier);
                 abilityValue.find(".ability_score").text(a.score);
-
             });
-            row.find(".pp-value").text(playerData.pp);
-            row.find(".pinv-value").text(playerData.pinv);
-            row.find(".pins-value").text(playerData.pins);
-            row.find(".walking-value").text(playerData.walking);
-            row.find(".ac-value").text(playerData.ac);
-            row.find(".hp-value").text(playerData.hp);
-            row.find(".max-hp-value").text(playerData.max_hp);
-            row.find(".fly-value").text(playerData.fly);
-            row.find(".climb-value").text(playerData.climb);
-            row.find(".swim-value").text(playerData.swim);
-            if(playerData.climb == '0ft.'){
+            row.find(".pp-value").text(pc.passivePerception);
+            row.find(".pinv-value").text(pc.passiveInvestigation);
+            row.find(".pins-value").text(pc.passiveInsight);
+            row.find(".walking-value").text(speed_from_pc_object(pc));
+            row.find(".ac-value").text(pc.armorClass);
+            row.find(".hp-value").text(pc.hitPointInfo.current || 0);
+            row.find(".max-hp-value").text(pc.hitPointInfo.maximum || 0);
+            let flyingSpeed = speed_from_pc_object(pc, "Flying");
+            row.find(".fly-value").text(flyingSpeed);
+            let climbingSpeed = speed_from_pc_object(pc, "Climbing");
+            row.find(".climb-value").text(climbingSpeed);
+            let swimmingSpeed = speed_from_pc_object(pc, "Swimming");
+            row.find(".swim-value").text(swimmingSpeed);
+            if(climbingSpeed > 0) {
+                row.find(".subtitle-attibute[title='Climb Speed']").show()
+            } else {
                 row.find(".subtitle-attibute[title='Climb Speed']").hide()
             }
-            else{
-                 row.find(".subtitle-attibute[title='Climb Speed']").show()
+            if(flyingSpeed > 0) {
+                row.find(".subtitle-attibute[title='Fly Speed']").show()
+            } else{
+                row.find(".subtitle-attibute[title='Fly Speed']").hide()
             }
-            if(playerData.fly == '0ft.'){
-                 row.find(".subtitle-attibute[title='Fly Speed']").hide()
+            if(flyingSpeed > 0) {
+                row.find(".subtitle-attibute[title='Swim Speed']").show()
+            } else {
+                row.find(".subtitle-attibute[title='Swim Speed']").hide()
             }
-            else{
-                 row.find(".subtitle-attibute[title='Fly Speed']").show()
-            }
-            if(playerData.swim == '0ft.'){
-                 row.find(".subtitle-attibute[title='Swim Speed']").hide()
-            }
-            else{
-                 row.find(".subtitle-attibute[title='Swim Speed']").show()
-            }
-            
-            row.find(".player-card-footer").css("--player-border-color",  playerData.theme.themeColor);
+
+            row.find(".player-card-footer").css("--player-border-color",  color);
+            row.css("--player-border-color",  color);
 
             row.find(".subtitle-attibute .exhaustion-pip").toggleClass("filled", false);
-            if(playerData.hp == 0){
+            if(pc.hitPointInfo.current > 0) {
+                row.find(".subtitle-attibute.hp-attribute").show();
+                row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
+            } else{
                 row.find(".hp-attribute.death-saves.ct-health-summary__data").show();
                 row.find(".subtitle-attibute.hp-attribute").hide();
                 row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--inactive', true);
                 row.find(`.ct-health-summary__deathsaves-mark`).toggleClass('ct-health-summary__deathsaves-mark--active', false);
-                for(let i = 0; i <= playerData.fails; i++){
+                for(let i = 0; i <= pc.deathSaveInfo.failCount; i++){
                     row.find(`.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
                 }
-                 for(let i = 0; i <= playerData.successes; i++){
+                for(let i = 0; i <= pc.deathSaveInfo.successCount; i++){
                     row.find(`.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark:nth-of-type(${i})`).toggleClass("ct-health-summary__deathsaves-mark--active", true);
                 }
             }
-            else{
-                row.find(".subtitle-attibute.hp-attribute").show();
-                 row.find(".hp-attribute.death-saves.ct-health-summary__data").hide();
-            }
 
-            for(let i = 0; i <= playerData.exhaustion; i++){
+            const exhaustionLevel = pc.conditions.find(c => c.name === "Exhaustion")?.level || 0;
+            for(let i = 0; i <= exhaustionLevel; i++){
                  row.find(`.subtitle-attibute .exhaustion-pip:nth-of-type(${i})`).toggleClass("filled", true);
             }
-            if (playerData.inspiration) {
+            if (pc.inspiration) {
                 row.find(".inspiration").show();
             } else {
                 row.find(".inspiration").hide();
             }
+
+            update_player_online_indicator(playerId, pc.p2pConnected, color);
+            row.css("--player-border-color",  color);
         }
     });
 }
@@ -835,29 +844,33 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             
             break;
         case ItemType.PC:
-            let pc = window.pcs.find(pc => pc.sheet === listItem.sheet);
-            let playerData = window.PLAYER_STATS[listItem.sheet];
+            let pc = window.pcs.find(pc => pc.sheet.includes(listItem.sheet));
             if (pc === undefined) {
                 console.warn(`failed to find pc for id ${listItem.sheet}`);
                 return;
             }
             options.id = listItem.sheet;
+            if(window.all_token_objects[options.id] != undefined){
+                options = {...options, ...window.all_token_objects[options.id].options}
+            }
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 tokenSize = 1;
                 // TODO: handle custom sizes
             }
-                        if(tokenSize <= 0.5){
+            if (tokenSize <= 0.5) {
                 options.tokenSize = 0.5;
-            }
-            else{
+            } else {
                 options.tokenSize = tokenSize;
             }
-            options.hp = playerData ? playerData.hp : '';
-            options.ac = playerData ? playerData.ac : '';
-            options.max_hp = playerData ? playerData.max_hp : '';
-            options.color = "#" + get_player_token_border_color(pc.sheet);
+            options.hitPointInfo = pc.hitPointInfo || {
+                current: 0,
+                maximum: 0,
+                temp: 0
+            };
+            options.armorClass = pc.armorClass;
+            options.color = color_from_pc_object(pc);
             break;
         case ItemType.Monster:
             let hpVal;
@@ -874,15 +887,18 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     hpVal = listItem.monsterData.averageHitPoints;
                     break;
             }
-            options.hp = hpVal;
-            options.max_hp = hpVal;
+            options.hitPointInfo = {
+                current: hpVal,
+                maximum: hpVal,
+                temp: 0
+            };
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
             if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
                 options.sizeId = listItem.monsterData.sizeId;
                 // TODO: handle custom sizes
             }
-            options.ac = listItem.monsterData.armorClass;
+            options.armorClass = listItem.monsterData.armorClass;
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
             let placedCount = 1;
@@ -1206,8 +1222,7 @@ function create_mytoken_folder_inside(listItem) {
             display_folder_configure_modal(newListItem);
             expand_all_folders_up_to_item(newListItem);
         } else {
-            console.error("create_mytoken_folder_inside failed to create a new folder", errorType);
-            showDebuggingAlert();
+            showError(errorType, "create_mytoken_folder_inside failed to create a new folder");
         }
     });
 }
@@ -1223,15 +1238,13 @@ function delete_mytokens_folder_and_everything_in_it(listItem) {
                 if (deletedFolder) {
                     console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
                 } else {
-                    console.error("delete_mytokens_folder_and_everything_in_it failed delete the folder with id", listItem.id, deletedFolderErrorType);
-                    showDebuggingAlert();
+                    showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
                 }
             });
         } else {
             did_change_mytokens_items();
             expand_all_folders_up_to_item(listItem);
-            console.error("delete_mytokens_within_folder failed to delete token customizations", deletedChildrenErrorType);
-            showDebuggingAlert();
+            showError(deletedChildrenErrorType, "delete_mytokens_within_folder failed to delete token customizations");
         }
     });
 }
@@ -1257,8 +1270,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
         if (didSucceed) {
             console.log("move_mytokens_to_parent_folder_and_delete_folder successfully moved all children up one level and deleted folder with id", listItem.id);
         } else {
-            console.error("move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id, errorType);
-            showDebuggingAlert();
+            showError(errorType, "move_mytokens_to_parent_folder_and_delete_folder failed to move all items out of", listItem.id);
         }
         callback(didSucceed, errorType);
     });
@@ -1299,8 +1311,7 @@ function create_token_inside(listItem) {
         if (didSucceed && newItem) {
             display_token_configuration_modal(newItem);
         } else {
-            console.error("Failed to create My Token", customization, error);
-            showDebuggingAlert();
+            showError(error, "Failed to create My Token", customization);
         }
     });
 }
@@ -1371,8 +1382,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     try {
         customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id, RootFolder.Monsters.id);
     } catch (error) {
-        console.error("display_token_configuration_modal failed to create a customization object for listItem:", listItem, error);
-        showDebuggingAlert("Failed to create a token customization object.");
+        showError(error, "display_token_configuration_modal failed to create a customization object for listItem:", listItem);
         return;
     }
 
@@ -1521,6 +1531,202 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     if (!specificBorderColorValue) {
         borderColorWrapper.hide();
     }
+
+    if(customization.tokenOptions.vision == undefined){
+        if(listItem.isTypePC()){
+            let pcData = find_pc_by_player_id(listItem.id);
+            let darkvision = 0;
+            if(pcData.senses.length > 0)
+            {
+                for(let i=0; i < pcData.senses.length; i++){
+                    const ftPosition = pcData.senses[i].distance.indexOf('ft.');
+                    const range = parseInt(pcData.senses[i].distance.slice(0, ftPosition));
+                    if(range > darkvision)
+                        darkvision = range;
+                }
+            }
+            customization.tokenOptions.vision = {
+                feet: darkvision.toString(),
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
+        }
+        else if(listItem.isTypeMonster()){
+            let darkvision = 0;
+            if(listItem.monsterData.senses.length > 0)
+            {
+                for(let i=0; i < listItem.monsterData.senses.length; i++){
+                    const ftPosition = listItem.monsterData.senses[i].notes.indexOf('ft.')
+                    const range = parseInt(listItem.monsterData.senses[i].notes.slice(0, ftPosition));
+                    if(range > darkvision)
+                        darkvision = range;
+                }
+            }
+
+            customization.tokenOptions.vision = {
+                feet: darkvision.toString(),
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
+        }
+        else{
+            customization.tokenOptions.vision = {
+                feet: '60',
+                color: 'rgba(255, 255, 255, 0.5)'
+            }
+        }
+    }
+    if(customization.tokenOptions.light1 == undefined){
+        customization.tokenOptions.light1 = {
+            feet: '0',
+            color: 'rgba(255, 255, 255, 0.8)'
+        }
+    }
+    if(customization.tokenOptions.light2 == undefined){
+        customization.tokenOptions.light2 = {
+            feet: '0',
+            color: 'rgba(255, 255, 255, 0.5)'
+        }
+    }
+
+
+    let uniqueVisionFeet = customization.tokenOptions.vision.feet;
+    let uniqueVisionColor = customization.tokenOptions.vision.color;
+    let uniqueLight1Feet = customization.tokenOptions.light1.feet;
+    let uniqueLight2Feet = customization.tokenOptions.light2.feet;
+    let uniqueLight1Color = customization.tokenOptions.light1.color;
+    let uniqueLight2Color = customization.tokenOptions.light2.color;
+
+    const lightOption = {
+    name: "auraislight",
+    label: "Enable Token Vision/Light",
+    type: "toggle",
+    options: [
+        { value: true, label: "Enable", description: "Token has light/vision." },
+        { value: false, label: "Disable", description: "Token has no light/vision." }
+    ],
+    defaultValue: false
+    };
+    let auraIsLightEnabled = (customization.tokenOptions.auraislight != undefined) ? customization.tokenOptions.auraislight : true;
+    let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
+        console.log(`${name} setting is now ${newValue}`);
+        customization.setTokenOption("auraislight", newValue);
+        persist_token_customization(customization);
+        if (newValue) {
+            inputWrapper.find(".token-config-aura-wrapper").show();
+        } else {
+            inputWrapper.find(".token-config-aura-wrapper").hide();
+        }
+    });
+   
+    inputWrapper.append(enabledLightInput);
+
+
+    let lightInputs = `<div class="token-config-aura-wrapper"><div class="menu-vision-aura">
+                    <h3 style="margin-bottom:0px;">Darkvision</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="vision-radius" name="vision" type="text" value="${uniqueVisionFeet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="visionColor" value="${uniqueVisionColor}" >
+                    </div>
+                </div>
+                <div class="menu-inner-aura">
+                    <h3 style="margin-bottom:0px;">Inner Light</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="light-radius" name="light1" type="text" value="${uniqueLight1Feet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="light1Color" value="${uniqueLight1Color}" >
+                    </div>
+                </div>
+                <div class="menu-outer-aura">
+                    <h3 style="margin-bottom:0px;">Outer Light</h3>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                        <input class="light-radius" name="light2" type="text" value="${uniqueLight2Feet}" style="width: 3rem" />
+                    </div>
+                    <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                        <div class="token-image-modal-footer-title">Color</div>
+                        <input class="spectrum" name="light2Color" value="${uniqueLight2Color}" >
+                    </div>
+                </div></div>`;
+
+    inputWrapper.append(lightInputs);
+
+
+
+    const revealvisionOption = {
+        name: "share_vision",
+        label: "Share vision with all players",
+        type: "toggle",
+        options: [
+            { value: false, label: "Disabled", description: "Token vision is not shared." },
+            { value: true, label: "Enabled", description: "Token vision is shared with all players." },
+        ],
+        defaultValue: false
+    };
+    let auraRevealVisionEnabled = (customization.tokenOptions.share_vision != undefined) ? customization.tokenOptions.share_vision : false;
+    let revealVisionInput = build_toggle_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
+        console.log(`${name} setting is now ${newValue}`);
+        customization.setTokenOption("share_vision", newValue);
+        persist_token_customization(customization);
+    });
+
+
+
+    inputWrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
+    
+
+    inputWrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
+    if (auraIsLightEnabled) {
+        inputWrapper.find(".token-config-aura-wrapper").show();
+    } else {
+        inputWrapper.find(".token-config-aura-wrapper").hide();
+    }
+
+    let radiusInputs = inputWrapper.find('input.light-radius, input.vision-radius');
+    radiusInputs.on('keyup', function(event) {
+        let newRadius = event.target.value;
+        if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {
+            customization.tokenOptions[event.target.name]['feet'] = newRadius;
+            persist_token_customization(customization);
+        }
+    });
+    radiusInputs.on('focusout', function(event) {
+        let newRadius = event.target.value;
+        if (newRadius !== undefined && newRadius.length > 0) {
+            customization.tokenOptions[event.target.name]['feet'] = newRadius;
+            persist_token_customization(customization);
+        }
+    });
+
+    let colorPickers = inputWrapper.find('input.spectrum');
+    colorPickers.spectrum({
+        type: "color",
+        showInput: true,
+        showInitial: true,
+        containerClassName: 'prevent-sidebar-modal-close',
+        clickoutFiresChange: true,
+        appendTo: "parent"
+    });
+
+    inputWrapper.find("input[name='light1Color']").spectrum("set", uniqueLight1Color);
+    inputWrapper.find("input[name='light2Color']").spectrum("set", uniqueLight2Color);
+    const colorPickerChange = function(e, tinycolor) {
+        let auraName = e.target.name.replace("Color", "");
+        let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        console.log(auraName, e, tinycolor);
+        customization.tokenOptions[auraName]['color'] = color;
+        persist_token_customization(customization);
+        
+    };
+    colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+    colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+    colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
 
     // token options override
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
@@ -1760,10 +1966,9 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
 
 /** writes mytokens and mytokensfolders to localStorage */
 function persist_my_tokens() {
-    console.warn("persist_my_tokens no longer supported");
-    // localStorage.setItem("MyTokens", JSON.stringify(mytokens));
-    // localStorage.setItem("MyTokensFolders", JSON.stringify(mytokensfolders));
-    // persist_folders_remembered_state();
+    // this hasn't been a thing for a long time so let's clean up old data if it exists
+    localStorage.removeItem("MyTokens");
+    localStorage.removeItem("MyTokensFolders");
 }
 
 function persist_folders_remembered_state() {
@@ -1831,7 +2036,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
     window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
-        clickedItem.activelyFetchingMonsters = true;
+        clickedItem.activelyFetchingMonsters = false;
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
             console.warn("Failed to fetch encounter monsters", errorType);
@@ -1997,33 +2202,6 @@ function open_monster_item_iframe(listItem) {
 
 
     iframe.attr("src", listItem.monsterData.url);
-}
-
-/** calls the DDB API to fetch all PCs in the campaign... It currently throws a CORS error */
-function fetch_characters() {
-
-    // TODO: figure out the CORS errors here. This exact API is called from the page we're trying to call this from, and it works for them, but not for us :(
-
-    console.log("fetch_characters starting");
-    let pcIds = window.pcs
-        .filter(pc => pc.sheet.includes("/")) // only pcs that have a valid sheet structure
-        .map(pc => parseInt(pc.sheet.split("/").pop())) // grab the id which is the last component of the path
-        .filter(id => id !== undefined); // ignore any ids that failed to parse
-    let body = JSON.stringify({"characterIds": pcIds});
-    console.log("fetch_characters", body);
-    window.ajaxQueue.addDDBRequest({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        url: `https://character-service-scds.dndbeyond.com/v1/characters`,
-        data: body,
-        success: function (responseData) {
-            console.log("fetch_characters success", responseData);
-        },
-        failure: function (errorMessage) {
-            console.log("fetch_characters failure", errorMessage);
-        }
-    });
 }
 
 /**
@@ -2242,16 +2420,14 @@ function register_custom_token_image_context_menu() {
                         if (listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC()) {
                             let customization = find_token_customization(listItem.type, listItem.id);
                             if (!customization) {
-                                console.error("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
-                                showDebuggingAlert();
+                                showError("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
                                 return;
                             }
                             customization.removeAlternativeImage(imgSrc);
                             persist_token_customization(customization);
                             redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                         } else {
-                            console.error("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
-                            showDebuggingAlert();
+                            showError("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
                             return;
                         }
                         selectedItem.remove();
@@ -2282,8 +2458,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             }
         }
         if (!customization) {
-            console.error("build_remove_all_images_button failed to find token customization for listItem:", listItem, ", placedToken:", placedToken);
-            showDebuggingAlert();
+            showError("build_remove_all_images_button failed to find token customization for listItem:", listItem, ", placedToken:", placedToken);
             return;
         }
         if (window.confirm(`Are you sure you want to remove all custom images for ${tokenName}?\nThis will reset the token images back to the default`)) {
@@ -2371,11 +2546,8 @@ function display_change_image_modal(placedToken) {
     inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can change the image for all tokens of this type by clicking the gear button on the token row in the Tokens tab.</div>`));
 }
 
-const fetch_and_cache_scene_monster_items = mydebounce( (clearCache = false) => {
+const fetch_and_cache_scene_monster_items = mydebounce( () => {
     console.log("fetch_and_cache_scene_monster_items");
-    if (clearCache) {
-        cached_monster_items = {};
-    }
     let monsterIds = [];
     for (let id in window.TOKEN_OBJECTS) {
         let token = window.TOKEN_OBJECTS[id];

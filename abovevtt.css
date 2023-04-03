@@ -32,6 +32,45 @@ body > button,
     font-size: 12px;
 }
 
+#loading_overlay {
+    position: fixed;
+    top: -2%;
+    left: -2%;
+    width: 104%;
+    height: 104%;
+    z-index: 70000;
+    background-color: #26282a;
+}
+#loading_overlay_bg {
+    background-position: center;
+    background-size: cover;
+    filter: blur(4px);
+    width: 100%;
+    height: 100%;
+    background-color: #26282a;
+    opacity: 0.5;
+}
+#loading_overlay_bg.dm {
+    background-image: url(https://media-waterdeep.cursecdn.com/attachments/0/267/dmg1k.jpg)
+}
+#loading_overlay_bg.player {
+    background-image: url(https://media-waterdeep.cursecdn.com/attachments/0/264/phb1k.jpg)
+}
+
+.joindm {
+    position: relative;
+}
+
+
+.above_delete {
+    width: 400px;
+}
+.above_delete2 {
+    width: 400px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+}
+
 #cpick{
     display: block;
     margin-left: 27px;
@@ -274,6 +313,21 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #sheet.thin {
     width: 420px;
 }
+.door-button{
+    backdrop-filter: blur(6px); 
+    border-radius: calc(5px / var(--window-zoom));
+    width: calc(20px / var(--window-zoom)); 
+    height: calc(20px / var(--window-zoom));  
+    cursor: pointer; 
+    border: calc(1px / var(--window-zoom)) solid #000;
+    position:absolute;
+    left: calc(var(--mid-x) - (10px / var(--window-zoom)));
+    top: calc(var(--mid-y) - (10px / var(--window-zoom)));
+}
+.door-button span{
+    font-size: calc(19px / var(--window-zoom)); 
+    filter: drop-shadow(0px 0px calc(1px / var(--window-zoom)) white);
+}
 
 
 /*for resizable and moveable monsters and sheets in DM view*/
@@ -342,9 +396,28 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     overflow-y: auto;
     overflow-x: hidden;
 }
-#resizeDragMon .avtt-stat-block-container .detail-content {
+#resizeDragMon .avtt-stat-block-container .details-more-info {
     background: #fff;
     width: 100%;
+}
+#resizeDragMon .avtt-stat-block-container .ability-block__stat{
+    width:  16.666666667%;
+}
+
+#resizeDragMon .avtt-stat-block-container .ability-block__data{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#resizeDragMon .avtt-stat-block-container .mon-stat-block .tooltip-hover{
+    color: inherit !important;
+    font-weight: inherit !important;
+    -webkit-text-decoration: underline solid #47d18c;
+    text-decoration: underline solid #47d18c;
+}
+#resizeDragMon .avtt-stat-block-container .ddbc-creature-block__header{
+    margin-top: 10px;
 }
 #site.body-rpgcharacter #resizeDragMon .avtt-stat-block-container .detail-content > .mon-stat-block {
     padding-top: 0;
@@ -387,6 +460,25 @@ a.ddbeb-button {
 .ui-resizable-handle {
     z-index: 50100 !important;
 }
+
+#horizontalMinorAdjustmentInput,
+#verticalMinorAdjustmentInput
+{
+    width:100%;
+}
+#horizontalMinorAdjustment,
+#verticalMinorAdjustment
+{
+    position:relative;
+}
+
+#wizard_popup button#resetMinorVerticalAdjustmentRange,
+#wizard_popup button#resetMinorHorizontalAdjustmentRange {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display:inline-block;
+}
 .iframeResizeCover {
     z-index:9999999;
     position:absolute;
@@ -399,6 +491,24 @@ a.ddbeb-button {
     left:-100px;
 }
 
+#exitWizard{
+    z-index: 50;
+    position: fixed;
+    top: 4px;
+    font-size: 20px;
+    line-height: 17px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    background-color: #c53131;
+    background-image: none;
+    border: none;
+}
+
+.body-rpgcharacter-sheet #fog_overlay {
+    filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
+
+}
 
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
@@ -415,7 +525,7 @@ a.ddbeb-button {
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
-    bottom: -5px;  
+    bottom: -35px;
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
@@ -534,7 +644,10 @@ div.top_menu.visible,
     float: left;
     overflow: hidden;
     margin: 5px;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+#sources-import-main-container .sidebar-panel-loading-indicator{
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 
 .sortable_placeholder {
@@ -572,13 +685,121 @@ div#scene_selector,
 #prewiz,
 #wizard_popup,
 .top_menu {
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 
 #edit_dialog {
-    height: fit-content !important;
-    padding-bottom: 10px;
-    border-radius: 15px;
+    top: 5px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    position: absolute !important;
+}
+
+#edit_dialog button:not(.rc-switch){
+    background:none;
+    border-radius:5px;
+
+}
+#edit_dialog input[type='text']{
+    border-radius:5px;
+    border: 1px solid #ddd;
+    box-shadow:none;
+}
+
+
+input[type="number"][name='darkness_filter_number'],
+input[type="number"][name='gridStrokeNumberInput']{
+    width:50px;
+    font-size:12px;
+}
+#edit_dialog input::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 4px;
+  height: 12px;
+  background: #1b9af0;
+  cursor: pointer;
+  border-radius:7px;
+}
+
+#edit_dialog input[type='range']{
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    height:8px !important;
+    width:110px !important;
+    border-radius:5px;
+}
+
+#edit_dialog input{
+    outline:none;
+}
+label[for='grid_line_width'] {
+    font-size: 10px;
+    position: absolute;
+    font-weight: bold;
+    top: -7px;
+    left: -83px;
+    top: -5px;
+    left: 71px;
+    color: #555;
+}
+
+input#grid_line_width {
+    position: relative !important;
+    top: 5px !important;
+    left: 7px;
+}
+
+input[name='gridStrokeNumberInput'] {
+    position: relative;
+    top: 3px;
+    left: -57px;
+    position: absolute;
+    top: 8px;
+    left: 170px;
+}
+
+.isvideotogglelabel {
+    display: inline-block;
+    position: absolute;
+    width: 80px;
+    right: -20px;
+    font-size: 11px;
+    top: 6px;
+    font-size: 9px;
+}
+
+button#player_map_is_video_toggle,
+button#dm_map_is_video_toggle,
+button#gridSubdividedToggle_toggle {
+    height: 12px;
+    top: -6px;
+    color: #555;
+}
+button#gridSubdividedToggle_toggle{
+    top:0px;
+    width:60px;
+}
+
+button#player_map_is_video_toggle::after,
+button#dm_map_is_video_toggle::after,
+button#gridSubdividedToggle_toggle::after
+ {
+    height: 7px;
+    width: 7px;
+}
+
+button#player_map_is_video_toggle.rc-switch-checked::after,
+button#dm_map_is_video_toggle.rc-switch-checked::after {
+    left: 33px;
+}
+button#gridSubdividedToggle_toggle.rc-switch-checked::after{
+    left:50px;
+}
+
+#show_grid_controls{
+    position:relative;
 }
 
 #combat_tracker_inside {
@@ -609,13 +830,13 @@ div#scene_selector,
 /*combat UI Changes 2*/
 #combat_tracker_inside .tracker-list{
     height: calc(100% - 55px);
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 #round_number_label{
     width: calc(100% + 2px);
     left: -1px;
     position: relative;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
 
 
@@ -660,30 +881,177 @@ input {
 }
 
 #mega_importer {
-    left: 200px;
-    height: 590px;
-    background: url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png');
-    position: fixed;
-    top: 40px;
-    width: 850px;
-    border: 3px solid black;
+    width:100%;
+    height: calc(100% - 16px);
+    top: 15px;
+    z-index: 10000;
+    position: absolute;
+}
+
+#sources-import-main-container {
+    top: 86px;
+    right: 390px;
+    height: calc(100% - 170px);
+    width: calc(100% - 500px);
+    position: fixed !important;
+    z-index: 99999;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    z-index: 999999;
+    min-width: 850px;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+#sources-import-main-container .sidebar-panel-loading-indicator svg{
+    margin: 0px !important;
+    height: calc(100% - 35px);
+}
+#sources-import-main-container .sidebar-panel-loading-indicator{
+    top: 5px !important;
+    border-radius: 0px 0px 5px 5px !important;
+}
+#sources-import-iframe {
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border: none;
+    border-radius: 0px 0px 5px 5px;
 }
 
-#importer_area {
-    height: 520px !important;
+
+#sources-import-content-container{
+    width:100%;
+    height:100%;
 }
 
-#importer_area > div {
-    border: 1px solid #3d3d3d !important;
-    padding: 5px 0;
-    height: 220px !important;
+#sources-import-content-container .listing-card__body,
+#mega_importer .listing-card__body{
+    min-width: 200px;
 }
 
-#importer_footer > div {
+@media (min-width: 728px){
+    #sources-import-content-container .card-listing .listing-card,
+    #mega_importer .card-listing .listing-card {
+        width: 50%;
+
+    }
+    #sources-import-content-container .listing-card__title,
+    #mega_importer .listing-card__title{
+        font-size: 18px;
+    }
+}
+@media (min-width: 1750px){
+    #sources-import-content-container .card-listing .listing-card,
+    #mega_importer .card-listing .listing-card
+    {
+        width: 33.33333%;
+    }
+    #sources-import-content-container .listing-card__title,
+    #mega_importer .listing-card__title{
+        font-size: 25px;
+    }
+}
+
+
+
+
+#mega_importer.source_select {
+    display: flex;
+}
+#mega_importer.source_select #scenes-panel {
+    display: none;
+}
+#mega_importer.source_select #importer_toggles {
+    float: left;
+    width: unset;
+    padding: 20px;
+    height: 100%;
+    display: block;
+}
+#mega_importer.source_select #importer_toggles {
+    height: 100% !important;
+    padding: 5px 10px 0px 0px;
+}
+#mega_importer.source_select #importer_toggles .back-to-source-select {
+    background-image: url(https://www.dndbeyond.com/file-attachments/0/737/chevron-left-green.svg);
+    background-repeat: no-repeat;
+    display: inline;
+    padding: 0px 20px 0px 20px;
+    font-weight: 600;
+}
+#mega_importer.source_select #importer_toggles li.quick-menu-item {
+    padding-top: 5px;
+}
+#mega_importer.source_select #importer_toggles .quick-menu-item-label {
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    border-left: 3px solid transparent;
+}
+#mega_importer.source_select #importer_toggles .quick-menu-item-tier-1 > .quick-menu-item-label {
+    font-weight: 600;
+    font-size: 18px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #F7F6F5;
+}
+#mega_importer.source_select #importer_toggles .quick-menu-item-tier-2 > .quick-menu-item-label {
+    font-size: 15px;
+}
+#mega_importer.source_select #importer_toggles .current-source {
+    border-left-color: #47D18C;
+    padding-left: 5px;
+    backdrop-filter: brightness(0.9);
+}
+#mega_importer.source_select #importer_footer {
+    display: none;
+}
+#mega_importer.source_select .sidebar-scroll-menu {
+    overflow: auto;
+    height: 100%;
+}
+#mega_importer.source_select #importer_area {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#mega_importer.source_select #importer_toggles ~ #importer_area{
+    position: relative;
+}
+
+.floating-window-title-bar {
+    background: #242527;
+    height: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    color: #fff;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-color: gray;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    line-height: 26px;
+    text-shadow: 0px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    top: -20px;
+    position: absolute;
+    width: calc(100% + 2px);
+    left: -1px;
+    cursor: move;
+    z-index: 1;
+}
+
+
+#importer_footer > div.page-number {
     right: 16px !important;
 }
+
+#importer_footer{
+    bottom: 0px;
+    position:absolute;
+    padding:5pxc;
+}
+
+
 
 #importer_footer button:disabled:hover {
     color: #fff;
@@ -711,6 +1079,8 @@ div#scene_properties form > div {
     align-items: flex-end;
     padding: .5rem .5rem 0;
     width: 100%;
+    position: relative;
+    min-width: 200px;
 }
 
 #prewiz td {
@@ -872,6 +1242,27 @@ div#scene_properties form > div {
     transition: visibility 0s ease-in-out 0s;
 }
 
+.labelToken.hasTooltip:after,
+.labelToken.hasTooltip:hover:after{
+    content: attr(data-name);
+    opacity: 1;
+    background: none;
+    color: #fff;
+    transition: none;
+    visibility: visible;
+    font-size: var(--font-size-zoom);
+    bottom: calc(-1 * (var(--font-size-zoom) + var(--font-size-zoom) / 1.5));
+    pointer-events: none;
+    --positive-shadow: calc(1px / var(--window-zoom));
+    --negative-shadow: calc(-1px / var(--window-zoom));
+    font-weight: bold;
+    text-shadow: 0px 0px 0px #000,
+        var(--negative-shadow) var(--negative-shadow) 0px #000,  
+        var(--positive-shadow) var(--negative-shadow) 0px  #000,
+        var(--negative-shadow)  var(--positive-shadow) 0px  #000,
+        var(--positive-shadow)  var(--positive-shadow) 0px  #000,
+        0px 0px 5px #000;
+}
 .dead {
     position: absolute;
     overflow: hidden;
@@ -1016,12 +1407,12 @@ div#combat_button{
 }
 
 #patreons {
-	padding-top:0px;
+	padding-top:10px;
     font-size: 8px;
 
-   -webkit-column-count: 9;
-      -moz-column-count: 9;
-           column-count: 9;
+   -webkit-column-count: 10;
+      -moz-column-count: 10;
+           column-count: 10;
 
    -webkit-column-gap: 20px;
       -moz-column-gap: 20px;
@@ -1032,6 +1423,22 @@ div#combat_button{
 	font-size: 11px;
 	font-weight:bold;
 }
+
+.patron-l0{
+    font-weight:bold;
+    font-size: 11px;
+    color:red;
+}
+
+.patron-l1{
+    font-weight:bold;
+    font-size: 10px;
+}
+
+.patron-l2{
+    font-weight:bold;
+}
+
 
 .player-card {
     box-shadow: 0 8px 16px -8px rgb(0 0 0 / 40%);
@@ -1213,17 +1620,18 @@ div#combat_button{
     pointer-events: auto;
 }
 
-.tokenselected::before{
+.tokenselected::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: -7px;
+    left: -7px;
+    right: -7px;
+    bottom: -7px;
     border-radius: 0px;
     padding: 5px;
     border: 5px #c0f3fff5 solid;
     z-index: 0;
+    border-radius: 5px;
     pointer-events: none;
 }
 
@@ -1280,6 +1688,11 @@ div#combat_button{
 .hpbar:hover{
     transform: translateX(-50%) scale(min(max(1, 0.5/var(--window-zoom)), 3));
     transition: 250ms transform linear 500ms;
+}
+
+.hpbar.greater-than-10-wide:focus-within,
+.hpbar.greater-than-10-wide:hover{
+    transform: translateX(-50%);
 }
 .hpbar.medium:focus-within,
 .hpbar.medium:hover{
@@ -1444,7 +1857,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 .ct-sidebar__controls .tab-btn.notification,
 .sidebar__controls .tab-btn.notification {
-    background-color: red;
+    background-color: var(--player-border-color, #e40712);;
 }
 .ct-sidebar__controls .tab-btn.notification svg,
 .sidebar__controls .tab-btn.notification svg {
@@ -1596,9 +2009,214 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 .panel-warning {
-	background:red;
-    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+	background:#f7a7a3;
+    box-shadow: 0 0 15px 5px #ccc;
+    border-left: 5px solid #e90c00;
+    padding: 8px;
+    margin: 8px;
 }
+
+#above-vtt-error-message {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    max-height: 100%;
+    overflow: auto;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 60%;
+    min-width: 500px;
+    font-size: 16px;
+    border: 5px solid #d54f4f;
+    border-radius: 5px;
+    padding: 10px 50px;
+    z-index: 1000000000000;
+    box-shadow: #5c7080 0px 8px 24px;
+    background: #f9f9f9;
+}
+#above-vtt-error-message .above-vtt-error-message-header {
+    margin: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+#above-vtt-error-message #error-message-stack {
+    padding: 20px;
+    background: rgb(92, 112, 128, 10%);
+    overflow: scroll;
+    position: relative;
+}
+#above-vtt-error-message h2 {
+    text-align: center;
+}
+#above-vtt-error-message button {
+    float: right;
+    background-color: #fff;
+    border: 1px solid #7f7f7f;
+    border-radius: 3px;
+    padding: 5px 16px 5px 16px;
+    font-family: "Roboto Condensed","Arial Narrow","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-style: normal;
+    font-size: 13px;
+    line-height: 15px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    text-transform: uppercase;
+}
+#above-vtt-error-message .github-issue-workaround:before {
+    content: "workaround available";
+    background-color: #C2E0C6;
+    padding: 4px;
+    border-radius: 12px;
+    margin-right: 4px;
+}
+#above-vtt-error-message .error-good-news {
+    margin: 15px 0 5px 0;
+}
+#above-vtt-error-message .error-message-buttons {
+    margin-top: 15px;
+}
+#above-vtt-error-message a {
+    text-decoration: underline;
+}
+
+#btn_add_chapter {
+    background: none;
+    border: 1px solid #7f7f7f;
+    border-radius: 5px;
+    color: #7f7f7f;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 8px 0 8px auto;
+    padding: 8px;
+    cursor: pointer;
+}
+
+#btn_add_chapter:hover {
+    background: #7f7f7f;
+    color: #fff
+}
+
+.input-add-chapter {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-bottom: 1px solid #7f7f7f;
+}
+
+.input-add-chapter:focus {
+    outline: none;
+}
+
+.row-add-chapter {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center; 
+}
+
+.row-chapter {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    height:30px;
+}
+.note-list .sidebar-list-item-row-item {
+    margin-left:2px;
+    width:calc(100% - 1px);
+}
+.journal-chapter-title:hover {
+    text-decoration: underline;
+}
+
+.body-rpgcharacter-sheet .note-list button{
+    display: none;
+}
+.body-rpgcharacter-sheet #journal-panel .folder-item-list {
+    padding:0px;
+}
+.body-rpgcharacter-sheet #journal-panel .note-list{
+    padding: 0px 2px 0px 2px;
+}
+
+.btn-chapter-icon {
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #f2f6f8;
+    border-left: 1px solid #d8e1e8;
+    margin: -4px 0px -4px 0px;
+    position:relative;
+    right:-3px;
+}
+.note-list .sidebar-list-item-row{
+    height:36px;
+}
+
+.row-chapter .btn-chapter-icon {
+    height:36px;
+    margin:0px 1px 0px 0px;
+    right:0px;
+}
+
+.btn-chapter-icon:focus {
+    outline: none;
+}
+
+.btn-chapter-icon > img {
+    width: 20px;
+    height: 20px;
+}
+
+/* If the journal-chapter is collapsed, hide its children and make its background white */
+.collapsed {
+    background-color: #fff;
+}
+
+.journal-chapter {
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #d8e1e8;
+}
+
+#journal-panel .folder.collapsed > .note-list {
+    display: none;
+}
+
+.journal-chapter-title {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Roboto;
+    overflow: hidden;
+}
+
+.row-notes-entry {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+
+#journal-panel .ui-sortable:not(.ui-sortable-disabled) .note-list .sidebar-list-item-row-item{
+    height:26px;
+}
+#journal-panel .ui-sortable:not(.ui-sortable-disabled) .row-chapter{
+    height:15px;
+}
+#journal-panel .ui-sortable:not(.ui-sortable-disabled) button{
+    display:none;
+}
+
 
 .ct-sidebar__controls button,
 .sidebar__controls button{
@@ -1607,14 +2225,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #splash {
     position: fixed;
-    transform: translate(0%, -4%);
-    top: 50px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    top: 30px;
+    right: 340px;
     margin: auto;
-    height: 740px;
-    width: 750px;
+    height: 700px;
+    text-align:center;
     z-index: 70001;
     border: 3px solid black;
     border-radius: 8px;
@@ -1647,6 +2262,10 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 .context-menu-item.context-menu-input {
     padding: 0.3em !important;
+}
+
+#raycastingCanvas{
+    mix-blend-mode:multiply;
 }
 
 #conditions-flyout li,
@@ -1725,6 +2344,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #tokenOptionsContainer .to-bottom:before {
     content: "\e258" !important;
 }
+#tokenOptionsContainer .open-menu:before {
+    content: "\e9bd" !important;
+}
 
 .icon-edit:before,
 .context-menu-icon-edit:before {
@@ -1747,6 +2369,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .icon-person:before,
 .context-menu-icon-person:before {
     content: "\e7fd" !important;
+}
+.add-link:before,
+.context-menu-add-link:before {
+    content: "\e178" !important;
+}
+.link-off:before,
+.context-menu-link-off:before {
+    content: "\e16f" !important;
 }
 .icon-note-delete:before{
     content: "\e16c" !important;
@@ -1776,7 +2406,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     border: 1px solid white;
     justify-content: space-between;
 }
-
+.note .mce-toolbar-grp.mce-container.mce-panel.mce-first.mce-stack-layout-item[role='group']{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
 .icon-condition,
 .context-menu-icon-condition {
     margin: 4px;
@@ -1796,13 +2430,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .markers-icon:after,
 .icon-condition:after,
 .context-menu-icon-hidden:after,
-.context-menu-icon-condition:after {
+.context-menu-icon-condition:after,
+.context-menu-icon-grouped:after {
     float: right;
     margin-right: 0px;
     font-family: "Material Icons", sans-serif;
     font-size: 20px;
     margin-top: -5px;
     margin-bottom: -10px;
+}
+.context-menu-icon-hidden:after,
+.context-menu-icon-condition:after,
+.context-menu-icon-grouped:after{
+    margin-top: 0px;
+    position:absolute;
+    right:8px;
 }
 #tokenOptionsContainer button.context-menu-icon-hidden:after {
     margin-top: -2px;
@@ -1811,18 +2453,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .markers-icon.single-active:after,
 .icon-condition.single-active:after,
 .context-menu-icon-hidden.single-active:after,
+.context-menu-icon-grouped.single-active:after,
 .context-menu-icon-condition.single-active:after {
     content: "\e876";
 }
 .markers-icon.all-active:after,
 .icon-condition.all-active:after,
 .context-menu-icon-hidden.all-active:after,
+.context-menu-icon-grouped.all-active:after,
 .context-menu-icon-condition.all-active:after {
     content: "\e6b1";
 }
 .markers-icon.some-active:after,
 .icon-condition.some-active:after,
 .context-menu-icon-hidden.some-active:after,
+.context-menu-icon-grouped.some-active:after,
 .context-menu-icon-condition.some-active:after {
     content: "\f1c2";
 }
@@ -2205,26 +2850,31 @@ audio::-webkit-media-controls-time-remaining-display{
 	top: -2px;
 }
 
-.journal-chapter-title{
-    font-weight: bold;
-    background: #dddddd;
-    min-height: 30px;
+.journal-note-entry{
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0 8px 8px;
+    background: #fff;
+    border-radius: 3px;
 }
 
-.journal-note-entry{
-	width:100%;
-	height: 20px;
-	margin-top:3px;
-	margin-bottom:3px;
+.journal-note-entry:last-child {
+    background: transparent;
 }
 
 .journal-entry-buttons{
-	float:right;
+	margin-left: auto;
 	height: 20px;
 }
 .journal-note-entry-title{
-	float:left;
-	height: 20px;
+	flex: 1;
+    padding: 8px;
+}
+
+.journal-note-entry-title:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .visibility-container{
@@ -2283,7 +2933,7 @@ audio::-webkit-media-controls-time-remaining-display{
 #help-menu {
     max-width: 90vw;
     max-height: 90vh;
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
     position: absolute;
     top: 5%;
     left: 5%;
@@ -2382,7 +3032,7 @@ body {
   }
 .page-number {
     position: absolute;
-    bottom: 41px;
+    bottom: 40px;
     font-weight: bold;
 }
 .tabs-content dt {
@@ -2798,6 +3448,7 @@ div#importer_area>div>div:first-of-type {
     display: flex;
     width: 100%;
     padding-right: 4px;
+    padding-left: 4px;
 }
 .sidebar-list-item-row-img {
     display: flex;
@@ -2899,6 +3550,27 @@ div#importer_area>div>div:first-of-type {
     height: 21px;
 }
 
+.note-text ul{
+    list-style-type: disc;
+}
+.note-text li>ul{
+    list-style-type: circle;
+}
+.note-text li>ul ul{
+    list-style-type: square;
+}
+.note-text ol{
+    list-style-type: decimal;
+}
+.note-text>ol,
+.note-text>ul{
+    display: block;
+    margin-block-start: 1em;
+}
+.note-text ol,
+.note-text ul{
+    padding-inline-start: 40px;
+}
 
 .sidebar-list-item-row.player-row {
     height: 120px;
@@ -3095,7 +3767,7 @@ div#importer_area>div>div:first-of-type {
 #playersFolder .player-card-info {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     align-content: center;
     align-items: center;
@@ -3337,6 +4009,9 @@ span.exhaustion-pip.last{
     outline: 2px solid #000;
 }
 
+#grid_toggle:not(.rc-switch-checked) ~ *{
+    display:none !important;
+}
 .sidebar-hover-text-flyout {
     display: block;
     max-width: 400px;
@@ -3432,6 +4107,11 @@ div.sidebar__pane-content div.tooltip::after {
     background: none !important;
 }
 
+.elev svg{
+    left: -7px;
+    position: absolute;
+}
+
 button.avtt-roll-button {
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
@@ -3445,7 +4125,13 @@ button.avtt-roll-button {
     line-height: 18px;
     letter-spacing: 1px;
     padding: 1px 4px 0;
-}			
+}
+button.avtt-roll-formula-button {
+    font-size: 14px;
+    cursor: default;
+    color: #394B59;
+    padding: 9px;
+}
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
@@ -3463,7 +4149,49 @@ button.avtt-roll-button {
 
 .MuiModal-root,
 div#selectedTokensBorder,
-div#selectedTokensBorderRotationGrabberConnector  {
+div#selectedTokensBorderRotationGrabberConnector,
+#sounds-panel .volume-control {
+    width: 50%;
+    float: right;
+}
+
+#sounds-panel .channel-progress-bar-total {
+    width: 100%;
+    position: relative;
+    height: 1px;
+    bottom: 4px;
+    left: 0px;
+    background: lightgray;
+}
+
+#sounds-panel .channel-progress-bar-progress {
+    width: 0%;
+    position: relative;
+    height: 1px;
+    bottom: 0px;
+    left: 0px;
+    background: #0075FF;
+}
+
+#sounds-panel .sidebar-panel-header {
+    padding: 4px;
+    border-bottom: 1px solid #2b2b2b;
+}
+
+#sounds-panel .audio-row  {
+    height: 25px;
+}
+
+#track-list li:hover {
+    background-color:lightskyblue;
+}
+
+#track-list button {
+    float: right;
+    height: 100%;
+}
+
+.MuiModal-root{
     pointer-events: none;
 }
 
@@ -3636,6 +4364,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 
 #text_controller_title_bar_exit,
 .text-input-title-bar-exit,
+.title-bar-exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
 #player_close_title_button,
@@ -3655,6 +4384,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #player_close_title_button:hover,
 #reload_player_frame_button:hover,
 .text-input-title-bar-exit:hover,
+.title-bar-exit:hover,
 #text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
 #token_options_title_bar_exit:hover,
@@ -3670,6 +4400,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
  
 .text-input-title-bar-exit svg,
+.text-input-title-bar-exittitle-bar-exit svg,
 #text_controller_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
@@ -3682,6 +4413,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
 
 .text-input-title-bar-exit svg g rect,
+.title-bar-exit svg g rect,
 #text_controller_title_bar_exit svg g rect,
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
@@ -3715,6 +4447,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
 
 .text-input-title-bar-exit,
+.title-bar-exit,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
@@ -3743,6 +4476,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #player_close_title_button,
 #reload_player_frame_button,
 .text-input-title-bar-exit,
+.title-bar-exit,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #token_options_title_bar_exit,
@@ -3798,6 +4532,28 @@ div#selectedTokensBorderRotationGrabberConnector  {
     top: 3px;
     position: relative;
 }
+#combat_tracker_inside #endplayerturn{
+    pointer-events: none;
+    background: #ddd;
+    color: #888;
+    opacity: 0.5;
+    padding:0px;
+}
+.body-rpgcharacter-sheet #combat_tracker_inside #combat_footer{
+    padding-top:5px;
+}
+#combat_tracker_inside #endplayerturn.enabled,
+#combat_tracker_inside #endplayerturn.enabled:hover{
+    pointer-events:all;
+    color:#fff;
+    background: #c53131;
+    opacity: 1;
+}
+#combat_tracker_inside #endplayerturn.enabled:active{
+    transform: translate(-1px, 1px);
+    box-shadow: inset 1px 1px 4px 0px #0008;
+}
+
 #tokenOptionsPopup{
     position: fixed;
     z-index: 59000;
@@ -3821,13 +4577,15 @@ div#selectedTokensBorderRotationGrabberConnector  {
 .token-config-aura-wrapper .token-image-modal-footer-select-wrapper,
 .token-image-modal-footer-title,
 .menu-outer-aura,
-.menu-inner-aura {
+.menu-inner-aura,
+.menu-vision-aura {
     display: flex;
     align-self: center;
     line-height: 20px;
 }   
 .menu-outer-aura,
-.menu-inner-aura{
+.menu-inner-aura,
+.menu-vision-aura{
     margin: 2px 0px;
 }
 #tokenOptionsContainer div.token-image-modal-url-label-wrapper{
@@ -3854,8 +4612,9 @@ div#selectedTokensBorderRotationGrabberConnector  {
 }
 
 .menu-outer-aura h3,
-.menu-inner-aura h3{
-    min-width: 50px;
+.menu-inner-aura h3,
+.menu-vision-aura h3{
+    min-width: 51px;
     margin-top: 0px;
 }
 
@@ -4026,7 +4785,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
     height: 30px;  
 }
 
-.VTTToken img ~ .hpbar:after {
+.VTTToken img.freeform ~ .hpbar:after {
     display: var(--token-hpbar-display);
     transition: none;
     position: absolute;
@@ -4092,7 +4851,7 @@ input.max_hp[disabled]{
 }
 
 #combat_footer{
-    background: #f9f9f9 url(../images/background_texture.png) repeat !important;  
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
     padding-top: 13px;
 }
 
@@ -4180,6 +4939,68 @@ input.max_hp[disabled]{
     opacity: 1;
     color: #fff;
     pointer-events: none;
+    right: 8px;
+    border-radius: 5px;
+}
+
+.import-loading-indicator,
+.paused-indicator,
+.dm-paused-indicator{
+    position: fixed;
+    z-index: 100000;
+    left: calc(50% - 170px);
+    top: 50px;
+    text-align: center;
+    border-radius:20px;
+    border:1px solid #000;
+    box-shadow: 0px 0px 2px 2px #0008;
+    background: #fff6;
+    height: 112px;
+    width: 200px;
+    backdrop-filter: blur(6px);
+}
+.import-loading-indicator .loading-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+.import-loading-indicator .beholder-dm-screen{
+    top: -20px;
+}
+.import-loading-indicator .loading-status-indicator__subtext.complete {
+    overflow: visible;
+    white-space: nowrap;
+    transform: translate(-50%);
+}
+
+.paused-indicator,
+.dm-paused-indicator{
+    top: unset;
+    bottom: 50px;
+    height: 130px;
+}
+.paused-indicator .paused-status-indicator__subtext,
+.dm-paused-indicator .paused-status-indicator__subtext{
+    overflow: visible;
+    white-space: nowrap;
+    font-size:14px;
+    position:relative;
+    z-index:200;
+    color:#ddd;
+    top: 70px;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.paused-indicator g.beholder-dm-screen__screen path,
+.dm-paused-indicator g.beholder-dm-screen__screen path,  
+.import-loading-indicator g.beholder-dm-screen__screen path {
+    fill: #201911;
+    stroke: #0c0a08;
 }
 
 /*one button*/
@@ -4280,24 +5101,34 @@ input.max_hp[disabled]{
     outline: none;
 }
 
+[class$='NotRoot'] [class*='-MessageCarrot']{
+    display:none;
+}
+[class$='NotRoot'] [class$='-MessageRoot']{
+    transform: scale(0.8) translateX(-50%);
+    left: calc(50% - 170px) !important;
+    position:fixed;
+    top:10px !important;;
+    transform-origin: center;
+}
+
 /*end combat tracker face lift*/
 .token>.base{
-    position: absolute;
-    top: 0;
-    left: 0;
     background: #0000001c;
+    backdrop-filter: blur(3px) brightness(0.7);
+    z-index: -1;
+    border: inset 5px var(--token-border-color, #ffffff44);
+}
+
+.token>.base,
+.token>.base ~ .hpvisualbar{
     width: 90%;
     height: 90%;
     position: absolute;
     top: 0;
     left: 0;
     margin: 5% 0 0 5%;
-    backdrop-filter: blur(3px) brightness(0.7);
-    z-index: -1;
-    --border-width: max(5px, calc(5px / var(--window-zoom)));
-    border: inset var(--border-width) var(--token-border-color, #ffffff44);
 }
-
 
 .VTTToken .base{
     filter: drop-shadow(0.5px 0px 1px #000b);
@@ -4306,7 +5137,7 @@ input.max_hp[disabled]{
     border-width: max(2px, calc(2px / var(--window-zoom)));
 }
 
-.base.circle:before {
+.base.circle:before{
     content: "";
     top: -5px;
     left: -5px;
@@ -4318,7 +5149,7 @@ input.max_hp[disabled]{
     position: absolute;
     display: block;
 }
-.base.large-or-smaller-base.circle:before {
+.base.large-or-smaller-base.circle:before{
     top: -2px;
     left: -2px;
     right: -2px;
@@ -4598,7 +5429,8 @@ input.max_hp[disabled]{
 }
 
 .flyout-from-menu-item:hover ~ .context-menu-flyout,
-.context-menu-flyout:hover {
+.context-menu-flyout:hover,
+.context-menu-flyout:focus-within {
     visibility: visible;
     transition-delay: 0ms;
 }
@@ -4625,6 +5457,7 @@ input.max_hp[disabled]{
     z-index: unset !important; /*important to override dndbeyond's index.scss*/
 }
 
+
 .dm_scenes_button.selected,
 .player_scenes_button.selected,
 .dm_scenes_button.selected:hover,
@@ -4639,6 +5472,68 @@ input.max_hp[disabled]{
 
 #tokens {
     z-index: 40;
+}
+
+.VTTToken:not(.freeform) .hpvisualbar:before{
+    display: var(--token-hpbar-display);
+    transition: none;
+    position: absolute;
+    visibility: visible;
+    z-index: -1;
+    filter: blur(1px);
+    content:'';
+    --mask-size:calc(98% - 2px / var(--window-zoom));
+}
+.VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --mask-size:calc(98% - 7px / var(--window-zoom));
+    transform: scale(var(--token-scale)) rotate(var(--token-rotation));
+    height: calc(100% + 5px / min(1, var(--window-zoom)));
+    width: calc(100% + 5px / min(1, var(--window-zoom)));
+    top: min(-2.5px, calc(-2.5px / var(--window-zoom)));
+    left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
+    right: 0px;
+    background-color: #0b0b0ddd;
+    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
+    clip-path: circle();
+    -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+    mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+}
+
+.VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 95%), linear-gradient(to top, #0000 var(--mask-size), #000 95%), linear-gradient(to bottom, #0000 var(--mask-size), #000 95%), linear-gradient(to right, #0000 var(--mask-size), #000 95%);
+    clip-path:none;
+}
+
+.VTTToken .base ~ .hpvisualbar:before {
+    background-size: 100%;
+    background-color: transparent;
+    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%);
+    clip-path: circle();
+    -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+    mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+    box-shadow:none;
+    z-index: -1;
+}
+
+.VTTToken .base.square ~ .hpvisualbar:before {
+    --mask-size: calc(95% - 2px / var(--window-zoom));
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 100%), linear-gradient(to top, #0000 var(--mask-size), #000 100%), linear-gradient(to bottom, #0000 var(--mask-size), #000 100%), linear-gradient(to right, #0000 var(--mask-size), #000 100%);
+    clip-path: none;
+}
+.VTTToken .base ~ .hpvisualbar:before {
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+}
+.VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+}
+.hpvisualbar{
+    pointer-events: none;
 }
 
 .stream-dice-button {
@@ -4768,6 +5663,28 @@ input.max_hp[disabled]{
     background-position: center;
 }
 
+.markers-icon>input[type='text']{
+    position: absolute;
+    width: 85%;
+    left: 0;
+}
+
+.custom-condition-text{
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    fill: #fff;
+    stroke: #000;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    text-shadow: 1px 1px 2px #000;
+    pointer-events:none;
+}
+.custom-condition.text{
+    pointer-events:auto;
+}
+
 .button-loading::after {
     content: "";
     position: absolute;
@@ -4883,6 +5800,13 @@ div.ddbc-tab-options--layout-pill>button{
 .url-validator.loading {
     color:blue;
     animation: spin 4s infinite linear;
+    background: none;
+    width: 24px;
+    height: 24px;
+}
+
+.url-validator.loading:before{
+    display:none;
 }
 
 @keyframes spin {
@@ -4898,50 +5822,74 @@ div.ddbc-tab-options--layout-pill>button{
     display: none !important;
 }
 
+
 [id^="streamer-"].hidden {
     display: none;
 }
-
-.aura-element.islight{
-    animation: aurafx-flicker 15s infinite alternate ease-in-out;
-    opacity: 0.5 !important;
+.aura-element-container-clip{
+    width: 100%;
+    height: 100%;
+    position: absolute;
     z-index: 9;
+    mix-blend-mode: lighten;
+}
+.aura-element.islight,
+.aura-element[id*='vision_']{
+    z-index: 9;
+    mix-blend-mode: lighten;
 }
 #scene_map{
     mix-blend-mode: multiply;
+    background:#000;
 }
 #darkness_layer{
     z-index: 8;
     background: #fff;
     filter: brightness(var(--darkness-filter));
+
+}
+#raycastingCanvas{
+    opacity: 1;
+}
+#light_container{
+    mix-blend-mode:lighten;
+    background: #000;
+    z-index: 10;
+    opacity: 1;
+    filter:blur(10px);
 }
 
+#text_div{
+    pointer-events:none;
+}
+
+#text_div svg text{
+    pointer-events:all;
+    cursor: move;
+}
+
+#scene_map_container{
+    overflow: clip;
+    transition: opacity 1.5s linear 0s;
+    opacity:1;
+}
+#scene_map_container.map-loading{
+    opacity: 0;
+    transition: none;
+}
+
+#peer_overlay {
+    pointer-events: none;
+}
+
+#scene_map_container{
+    transform: scale(var(--scene-scale));
+    transform-origin: top left;
+}
 
 @keyframes aurafx-flicker{
-    0%  {filter: blur(10px);transform:scale(1);}
-    10% {filter: blur(15px);transform:scale(1.005);}
-    20% {filter: blur(10px);transform:scale(0.995);}
-    30% {filter: blur(10px);transform:scale(1);}
-    40% {filter: blur(15px);transform:scale(0.995);}
-    50% {filter: blur(20px);transform:scale(1.005);}
-    60% {filter: blur(15px);transform:scale(0.995);}
-    70% {filter: blur(12px);transform:scale(1);}
-    80% {filter: blur(15px);transform:scale(0.995);}
-    90% {filter: blur(10px);transform:scale(1.005);}
-    100%{filter: blur(15px);transform:scale(1);}
-}
-@keyframes aurafx-flicker-no-blur{
-    0%  {transform:scale(1);}
-    10% {transform:scale(1.005);}
-    20% {transform:scale(0.995);}
-    30% {transform:scale(1);}
-    40% {transform:scale(0.995);}
-    50% {transform:scale(1.005);}
-    60% {transform:scale(0.995);}
-    70% {transform:scale(1);}
-    80% {transform:scale(0.995);}
-    90% {transform:scale(1.005);}
-    100%{transform:scale(1);}
+    0%  {filter: blur(10px);}
+    100%{filter: blur(15px);}
 }
 
 .aurafx-flicker{
@@ -4953,7 +5901,33 @@ div.note[id^="ui-id"] {
     width: 100% !important;
     padding: 0px !important;
     max-height: calc(100% - 33px) !important;
+
+}
+.body-rpgcharacter-sheet div.note[id^="ui-id"] {
+    height:100% !important;
     overflow: auto;
+}
+.tooltip-body-description-text.note-text img{
+    max-width: 100%;
+    height: auto;
+}
+.glc-game-log .note-text::-webkit-scrollbar{
+    width: 3px;
+}
+.glc-game-log .note-text::-webkit-scrollbar-track {
+    background: transparent;
+}
+.glc-game-log .note-text::-webkit-scrollbar-thumb{
+    background-color: #232d3166;
+    border-radius: 6px;
+    border: none;
+}
+.glc-game-log .tooltip-body-description-text.note-text > * {
+    max-width: calc(100% - 2px);
+}
+
+.glc-game-log .note-text{
+    overflow:overlay;
 }
 
 div.note[id^="ui-id"] .mce-listbox button{
@@ -4996,6 +5970,23 @@ div.note[id^="ui-id"] .mce-btn button {
     background-color: #fff;
 }
 
+.body-rpgcharacter-sheet #VTT.paused *{
+    pointer-events: none !important;
+}
+
+#pause_players.paused #player-pause-svg,
+#pause_players #player-play-svg{
+    display: none;
+}
+#pause_players #player-pause-svg,
+#pause_players.paused #player-play-svg{
+    display: block;
+}
+
+#pause_players svg{
+    padding:0;
+}
+
 .token-row-drag-handle {
     display: block;
     width: 30px;
@@ -5020,3 +6011,1043 @@ div.note[id^="ui-id"] .mce-btn button {
 .sidebar-list-item-row.ui-draggable-dragging {
     z-index: 100000;
 }
+
+
+.player-card.peerConnected .player-card-content::before,
+.sidebar-list-item-row.player-row.peerConnected::before {
+    content: "";
+    height: 16px;
+    width: 16px;
+    border-radius: 8px;
+    background: var(--player-border-color, gray);;
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    border: 1px solid #f2f2f2; /* white border to help it stand out against dark backgrounds */
+    box-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; /* black shadow border to help it stand out against light backgrounds */
+}
+.player-card.peerConnected .player-card-content:before {
+    top: unset;
+    left: 12px;
+}
+.sidebar-panel-footer .token-config-aura-wrapper h3 ~ .token-image-modal-footer-select-wrapper .token-image-modal-footer-title{
+    font-size:9px;
+    min-width:50px;
+    margin-top:0px
+    
+}
+.sidebar-panel-footer .token-config-aura-wrapper h3{
+    font-size:12px;
+    min-width:65px;
+}
+.peerCursorPosition {
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    background: rgb(182, 6, 14); /* default DDB color */
+    z-index: 19; /* fog is at z-index 20. Let's keep it below that so we don't show the DM messing around in the dark */
+    border-radius: 8px;
+    opacity: 0.7;
+    border: 1px solid #f2f2f2; /* white border to help it stand out against dark backgrounds */
+    box-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; /* black shadow border to help it stand out against light backgrounds */
+}
+
+
+.styled-number-input,
+#manual_grid_data input {
+    height: 15px;
+    font-size: 13px;
+    font-weight: bold;
+    font-family: Roboto,Open Sans,Helvetica,sans-serif;
+    text-decoration: underline;
+    background: none;
+    border-width: 0;
+    text-align: right;
+    width: 30px;
+    border-radius: 2px;
+}
+
+.styled-number-input:focus,
+#manual_grid_data input:focus {
+    text-decoration: none;
+    border-width: 1px;
+}
+
+#manual_grid_data input,
+input[name='darkness_filter_number'],
+input[name='gridStrokeNumberInput']{
+     text-decoration: none;
+     font-weight:normal;
+     border: 1px solid #ddd;
+}
+input[name='upsq'] {
+    padding-right: 17px;
+}
+
+.ct-decorate-pane__shop .ddbc-collapsible--opened .ddbc-collapsible__header,
+.ct-container-manager .ddbc-collapsible--opened > .ddbc-collapsible__header,
+.ct-equipment-manage-pane .ddbc-collapsible--opened:not(.ddbc-collapsible--minimal) > .ddbc-collapsible__header {
+    top: 0px;
+    z-index: 9;
+}
+.ct-decorate-pane__current-selections {
+    position: relative;
+}
+
+/*Start note ddb styling*/
+button.journal-view-button.journal-button {
+    top: 5px;
+    right: 27px;
+    padding: 2px;
+}
+:root .note-text{
+    --theme-page-fg-color: #242527;
+}
+/* END - Default text color */
+* .note-text{
+    font-family: Roboto, Helvetica, sans-serif;
+}
+
+.note-text .Basic-Text-Frame {
+    clear: both;
+    border: 1px solid #d4d0ce;
+    background: white;
+    padding: 15px
+}
+
+@media(min-width: 768px) {
+    .note-text .Basic-Text-Frame {
+        -webkit-column-count:2;
+        column-count: 2
+    }
+}
+
+.note-text .Basic-Text-Frame-2 {
+    border: 1px solid #d4d0ce;
+    background: white;
+    padding: 15px
+}
+
+@media(min-width: 768px) {
+    .note-text .Basic-Text-Frame-2 {
+        float:right;
+        margin: 30px 0 15px 20px;
+        width: 410px
+    }
+}
+
+.note-text .Basic-Text-Frame-2 .compendium-image-center {
+    margin-bottom: 20px;
+    display: block
+}
+
+.note-text .Basic-Text-Frame-3 {
+    border: 1px solid #d4d0ce;
+    background: white;
+    padding: 15px
+}
+
+@media(min-width: 768px) {
+    .note-text .Basic-Text-Frame-3 {
+        float:left;
+        margin: 30px 20px 15px 0;
+        width: 410px
+    }
+}
+
+.note-text .Basic-Text-Frame-3 .compendium-image-center {
+    margin-bottom: 20px;
+    display: block
+}
+
+.note-text .Basic-Text-Frame,
+.note-text .Basic-Text-Frame-2,
+.note-text .Basic-Text-Frame-3 {
+    position: relative;
+    box-shadow: 0 0 5px #979AA4
+}
+
+.note-text .Basic-Text-Frame::before,
+.note-text .Basic-Text-Frame::after,
+.note-text .Basic-Text-Frame-2::before,
+.note-text .Basic-Text-Frame-2::after,
+.note-text .Basic-Text-Frame-3::before,
+.note-text .Basic-Text-Frame-3::after {
+    content: '';
+    background-image: url("../images/MMStatBar_lrg.jpg");
+    background-size: 100% 100%;
+    background-position: center;
+    height: 4px;
+    display: inline-block;
+    position: absolute
+}
+
+.note-text .Basic-Text-Frame::before,
+.note-text .Basic-Text-Frame-2::before,
+.note-text .Basic-Text-Frame-3::before {
+    left: -3px;
+    top: -3px;
+    right: -3px
+}
+
+.note-text .Basic-Text-Frame::after,
+.note-text .Basic-Text-Frame-2::after,
+.note-text .Basic-Text-Frame-3::after {
+    left: -3px;
+    bottom: -3px;
+    right: -3px
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Title {
+    font-size: 18px!important;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    line-height: 1.4!important;
+    margin-bottom: 0!important;
+    display: inline;
+    margin-right: 8px
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Metadata {
+    font-style: italic;
+    font-size: 14px!important;
+    line-height: 1.4!important;
+    margin-bottom: 8px!important
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Metadata::after {
+    content: "";
+    display: block;
+    border-bottom: 2px solid #bc0f0f;
+    padding-top: 5px
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Bar-Object-Space,
+.note-text .Stat-Block-Styles_Stat-Block-Bar-Object-Space-Last {
+    display: none
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Data,
+.note-text .Stat-Block-Styles_Stat-Block-Data-Last,
+.note-text .Stat-Block-Styles_Stat-Block-Body,
+.note-text .Stat-Block-Styles_Stat-Block-Hanging,
+.note-text .Stat-Block-Styles_Stat-Block-Hanging-Last,
+.note-text .Stat-Block-Styles_Stat-Block-Body-Last--apply-before-heading- {
+    font-size: 14px!important;
+    line-height: 1.4!important;
+    margin-bottom: 10px!important
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Heading,
+.note-text .Stat-Block-Styles_Stat-Block-Heading--after-last-bar- {
+    font-size: 16px!important;
+    font-weight: bold;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Heading::after,
+.note-text .Stat-Block-Styles_Stat-Block-Heading--after-last-bar-::after {
+    content: "";
+    display: block;
+    border-bottom: 1px solid #bc0f0f;
+    padding-top: 2px
+}
+
+.note-text .Stat-Block-Styles_Stat-Block-Data-Last {
+    border-bottom: 2px solid #bc0f0f;
+    padding-bottom: 10px
+}
+
+.note-text .stat-block-ability-scores {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    border-top: 2px solid #bc0f0f;
+    border-bottom: 2px solid #bc0f0f;
+    margin: 10px 0
+}
+
+.note-text .stat-block-ability-scores-stat {
+    width: 33.33333%;
+    padding: 10px 5px;
+    text-align: center
+}
+/* START - New quote box implementation */
+[class*='MessageContainer'] .tooltip-body{
+    padding: 0px;
+}
+
+
+.note-text .text--quote-box {
+    display: block !important;
+    background-color: var(--compendium-quote-box-color, #FAF8EC) !important; /*Fallback: if the variable isn't declared, it'll default to pale yellow*/
+    padding: 20px 25px 15px 25px !important;
+    position: relative !important;
+    width: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+    border-left: 1px solid !important;
+    border-right: 1px solid !important;
+    border-color: var(--compendium-quote-box-border, #620000) !important; /*Fallback: if the variable isn't declared, it'll default to dark red*/
+    border-top: 0;
+    border-bottom: 0;
+    color: var(--theme-page-fg-color, #242527) !important;
+    margin: 40px 20px !important;
+    line-height: 1.6 !important;
+    font-size: 14px !important;
+}
+.note-text .text--quote-box::before {
+    top: -4px !important;
+}
+.note-text .text--quote-box::before, 
+.note-text .text--quote-box::after {
+    content: '';
+    border-radius: 50%;
+    background-position: left !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    height: 8px !important;
+    width: 8px !important;
+    left: -4px !important;
+    position: absolute !important;
+    background-color: var(--compendium-quote-box-corner, #620000);
+}
+ .note-text .text--quote-box::after {
+    bottom: -4px !important;
+}
+ .note-text .text--quote-box p:first-of-type::before {
+    top: -4px !important;
+}
+ .note-text .text--quote-box p:first-of-type::before,  
+ .note-text .text--quote-box p:last-of-type::after {
+    content: '';
+    border-radius: 50%;
+    background-position: right !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    height: 8px !important;
+    width: 8px !important;
+    right: -4px !important;
+    position: absolute !important;
+    background-color: var(--compendium-quote-box-corner, #620000);
+}
+ .note-text .text--quote-box p:last-of-type::after {
+    bottom: -4px !important;
+}
+ .note-text .text--quote-box p:last-of-type {
+    margin-bottom: 5px !important;
+}
+/* END - New quote box implementation */
+
+/* START - New rules sidebar implementation */
+.note-text .text--rules-sidebar {
+    display: block !important;
+    background-color: var(--compendium-rules-sidebar-color, #DAE4C1) !important; /*Fallback: if the variable isn't declared, it'll default to pale-green*/
+    position: relative !important;
+    width: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+    margin: 30px 5px !important;
+    line-height: 1.6 !important;
+    font-size: 14px !important;
+    padding: 25px 28px 15px 30px !important;
+    border-radius: 0 !important;
+    border-top: 3px solid #231f20 !important;
+    border-bottom: 3px solid #231f20 !important;
+    border-left: 1.5px solid  #b3b3b3 !important;
+    border-right: 1.5px solid  #b3b3b3 !important;
+    color: var(--theme-page-fg-color, #242527) !important;
+    filter: drop-shadow(0px 5px 8px #ccc);
+}
+
+.note-text .text--rules-sidebar p:first-of-type {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.note-text .text--rules-sidebar .action-tooltip, 
+.note-text .text--rules-sidebar .condition-tooltip, 
+.note-text .text--rules-sidebar .item-tooltip, 
+.note-text .text--rules-sidebar .rule-tooltip, 
+.note-text .text--rules-sidebar .sense-tooltip, 
+.note-text .text--rules-sidebar .skill-tooltip,
+.note-text .text--rules-sidebar .weapon-properties-tooltip,
+.note-text .text--rules-sidebar .action-tooltip {
+    color: #129b54 !important;
+}
+
+.note-text .text--rules-sidebar::before {
+    top: -13px !important;
+    right: 0.1px !important;
+    left: 0.1px !important;
+}
+
+.note-text .text--rules-sidebar::before {
+    content: '';
+    background-image: url("https://media.dndbeyond.com/compendium-images/components/--right-rules.svg"),url("https://media.dndbeyond.com/compendium-images/components/--left-rules.svg") !important;
+    background-position: left, right !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    height: 11px !important;
+    position: absolute !important;
+    z-index: -1;
+}
+
+.note-text .text--rules-sidebar::after {
+    bottom: -13px !important;
+    right: -0.1px !important;
+    left: 0.1px !important;
+}
+.note-text .text--rules-sidebar::after {
+    content: '';
+    background-image: url("https://media.dndbeyond.com/compendium-images/components/--right-rules.svg"),url("https://media.dndbeyond.com/compendium-images/components/--left-rules.svg") !important;
+    background-position: left, right !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    height: 11px !important;
+    position: absolute !important;
+    z-index: -1;
+    transform: scaleY(-1);
+}
+/* END - New rules sidebar implementation */
+
+/* START - CSS header variables */
+.note-text h1::after {
+    background-color: var(--h1-underline, var(--header-underline, #47D18C));
+}
+.note-text h2::after {
+    background-color: var(--h2-underline, var(--header-underline, #47D18C));
+}
+.note-text h3::after {
+    background-color: var(--h3-underline, var(--header-underline, #47D18C));
+}
+/* END -  CSS header variables */
+
+/* START - Underlines compendium links */
+.note-text a:not(.ddb-lightbox-outer, h3 > a):hover,
+.note-text a:not(.ddb-lightbox-outer, h3 > a):focus {
+    text-decoration: underline;
+}
+/* END - Underlines Compendium links */
+
+
+/** TEMP new .text--quote-box type for compendium content - needs to be added to compiled **/
+
+.note-text .text--quote-box.compendium-indented-callout-.text--quote-box {
+    background: transparent !important;
+    font-size: 16px !important;
+    border-left: 4px solid #e0dcdc !important;
+    border-right: none !important;
+    padding: 10px 20px !important;
+    margin: 30px 0 !important;
+}
+
+.note-text .text--quote-box.compendium-indented-callout-.text--quote-box::before {
+    content: none !important;
+}
+
+.note-text .text--quote-box.compendium-indented-callout-.text--quote-box::after {
+    content: none !important;
+}  
+
+/** END TEMP new .text--quote-box type **/
+
+
+.note-text h6 {
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+
+
+.note-text h1 {
+    font-size: 32px!important;
+    font-weight: 400!important
+}
+
+.note-text h2 {
+    font-size: 26px!important;
+    font-weight: 400!important;
+    clear: both
+}
+
+.note-text h3 {
+    font-size: 22px!important;
+    font-weight: 400!important;
+    clear: both
+}
+
+.note-text h4 {
+    font-size: 18px!important;
+    font-weight: 700!important
+}
+
+.note-text h5 {
+    font-size: 16px!important;
+    font-weight: 700!important
+}
+
+
+.note-text .rules-text a {
+    color: #129b54!important;
+    transition: .3s
+}
+
+.note-text .rules-text p:first-child {
+    font-size: 16px
+}
+
+
+.note-text .stat-block-background {
+    background-repeat: no-repeat;
+    -webkit-box-shadow: 0 5px 8px 0 #aaa;
+    -moz-box-shadow: 0 5px 8px 0 #aaa;
+    box-shadow: 0 5px 8px 0 #aaa;
+    background-position: top!important;
+    background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important
+}
+
+.note-text .stat-block-background:after,
+.note-text .stat-block-background:before {
+    background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important
+}
+
+
+.note-text .block-torn-paper,
+.note-text .epigraph,
+.note-text .epigraph--with-author {
+    overflow: auto;
+    background: var(--theme-quote-bg-color,#fff);
+    color: var(--theme-quote-fg-color,#242527);
+    margin: 40px 0;
+    line-height: 1.6;
+    font-size: 14px;
+    border: solid transparent;
+    border-width: 20px 10px;
+    border-image-source: var(--theme-quote-border,url(https://media.dndbeyond.com/ddb-compendium-client/5f1f1d66d16be68cf09d6ca172f8df92.png));
+    border-image-repeat: repeat;
+    border-image-slice: 20 10 20 10 fill;
+    padding: 10px;
+    position: relative
+}
+
+.note-text .epigraph--with-author p:last-child {
+    font-style: italic;
+    text-align: right
+}
+
+.note-text .rules-text {
+    overflow: auto;
+    display: block;
+    margin: 30px 0;
+    line-height: 1.6;
+    font-size: 14px;
+    color: var(--theme-rules-text-fg-color,#242527);
+    border-color: transparent;
+    border-style: solid;
+    border-width: 15px 20px;
+    border-image-repeat: repeat;
+    border-image-slice: 21 30 21 30 fill;
+    background-color: transparent;
+    padding: 20px 10px 10px;
+    position: relative;
+    border-image-source: var(--theme-rules-text-border,url(https://media.dndbeyond.com/ddb-compendium-client/463d4668370589a1a73886611645df7e.png));
+    -webkit-filter: drop-shadow(0 5px 8px #ccc);
+    filter: drop-shadow(0 5px 8px #ccc)
+}
+
+.note-text .rules-text p:first-child {
+    text-transform: uppercase;
+    font-weight: 700
+}
+
+.note-text .read-aloud-text {
+    overflow: auto;
+    display: block;
+    margin: 30px 0;
+    line-height: 1.6;
+    font-size: 14px;
+    color: var(--theme-read-aloud-fg-color,#242527);
+    border: 8px solid transparent;
+    border-image-repeat: repeat;
+    border-image-slice: 8 8 8 8 fill;
+    background-color: transparent;
+    padding: 20px 20px 10px!important;
+    position: relative;
+    border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
+}
+/* end Note ddb styling*/
+
+/* start quick roll menu */
+#qrm_dialog button{
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    margin: 0 2px;
+    border-radius: 7px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    padding: 2px 4px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    overflow: hidden;
+}
+.qrm_name_line{
+    text-align: left;
+    color: #444d;
+    font-weight: 600;
+}
+.menu_table{
+    overflow: visible;
+    overflow-x: scroll;
+    height: calc(100% - 55px);
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+.menu_roll_input{
+    margin: 1px;
+    border-radius: 3px;
+    border-color: #ddd;
+    height:22px;
+    font-size: 12px !important;
+    box-shadow: 1px 1px 1px 0px #00000047;
+    text-transform: uppercase;
+}
+.general_input{
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    padding: 1px 1px;
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    margin: 1px;
+    top: 0px;
+    text-transform: uppercase;
+}
+.menu_hp_input{
+    border-width: 0;
+    background: none;
+    border-radius: 3px;
+    border-color: #ddd;
+    height:22px;
+    font-size: 18px !important;
+    top: 1px;
+    width: 45%;
+    display:inline-block;
+}
+
+#qrm_dialog .roll_mods_button {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    height: 40%;
+}
+.roll_mods_button:before {
+    width: 100%;
+    height: 100%;
+    min-width: 12px;
+    min-height: 12px;
+    top: 0px; 
+    margin-right: 0px;
+    left: 1px
+}
+.roll_mods_button:focus {
+    outline: none;
+    box-shadow: none;
+}
+#qrm_healing.active_roll_mod, #adv.active_roll_mod{
+    background-image: none !important;
+    background: green;
+    border-radius: 3px !important;
+    border-color: #ddd !important;
+}
+#qrm_damage.active_roll_mod, #disadv.active_roll_mod{
+    background-image: none !important;
+    background: red;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+#qrm_heal.active_roll_mod{
+    background-image: none !important;
+    background: green;
+    border-radius: 3px !important;
+    border-color: #ddd !important;
+}
+#qrm_damage.active_roll_mod{
+    background-image: none !important;
+    background: red;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+.adjustments_wrapper{
+    top: 5px;
+    position: relative;
+    display: inline-block;
+}
+.damage_heal_button{
+    display: block;
+    height: 50% !important;
+    font-size: 8px !important;
+    text-align: center;
+    overflow: unset!important;
+    padding: 0px!important;
+    width: 50px;
+    margin: 1px !important;
+}
+.ui-selectmenu-menu .ui-menu-item-wrapper .ui-menu-item {
+    height: 24px;
+    width: 24px;
+    top: 0.1em;
+    overflow: auto;
+    position: relative;
+}
+.ui-selectmenu-menu .ui-menu {
+    max-height: calc(50vh - 20px);
+    width: 140px;
+    overflow: auto !important;
+}
+#qrm_apply_conditions-button{
+    width: 26% !important;
+}
+.ui-front {
+    z-index: 50010 !important;
+}
+.ui-selectmenu-text{
+    top: 1px;
+    position: relative;
+}
+.ui-menu .ui-menu-item-wrapper{
+    display: inline-block;
+    padding-right: 100px !important;
+    max-width: 175px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+.icon-avatar{
+    width: 22px;
+    height: 22px;
+}
+.ui-selectmenu-button.ui-button{
+    width: 22% !important;
+    padding: 2px 2px !important;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    margin: 1px;
+    top: -1px;
+}
+.ui-menu .ui-icon{
+    background-image: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.dropdown-advantage {
+    background-image: url(assets/conditons/advantage.png) !important;
+}
+.dropdown-baned {
+    background-image: url(assets/conditons/baned.png) !important;
+}
+.dropdown-bardic {
+    background-image: url(assets/conditons/bardic_inspiration.png) !important;
+}
+.dropdown-blessed{
+    background-image: url(assets/conditons/blessed.png) !important;
+}
+.dropdown-bloodied {
+    background-image: url(assets/conditons/bloodied.png) !important;
+}
+.dropdown-concentration-reminder {
+    background-image: url(assets/conditons/concentration\(reminder\).png) !important;
+}
+.dropdown-disadvantage {
+    background-image: url(assets/conditons/disadvantage.png) !important;
+}
+.dropdown-flamed {
+    background-image: url(assets/conditons/flamed.png) !important;
+}
+.dropdown-flying {
+    background-image: url(assets/conditons/flying.png) !important;
+}
+.dropdown-hasted {
+    background-image: url(assets/conditons/hasted.png) !important;
+}
+.dropdown-bardic-inspiration {
+    background-image: url(assets/conditons/bardic_inspiration.png) !important;
+}
+.dropdown-rage {
+    background-image: url(assets/conditons/rage.png) !important;
+}
+.dropdown-remove {
+    background-image: url(assets/icons/delete.svg) !important;
+}
+/* end quick roll menu */
+
+/*Audio Mixer Start*/
+li.audio-row:hover .channel-progress-bar-total .channel-progress-bar-progress,
+li.audio-row:hover .channel-progress-bar-total
+{
+    height:5px !important;
+}
+.channel-progress-bar-total,
+.channel-progress-bar-progress{
+    transition: 150ms height linear 500ms;
+}
+#sounds-panel .channel-progress-bar-progress{
+    background: #1b9af0 !important;
+}
+
+
+#sounds-panel .channel-progress-bar-total{
+    width: 35%;
+}
+#sounds-panel .volume-control{
+    width: 40%;
+}
+.audio-row input{
+    top: 4px;
+    position:relative;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 7px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+
+}
+#mixer-channels .volume-control{
+    left: 0;
+    width: calc(40% + 2px)
+}
+#mixer-channels .audio-row input{
+    top: 8px;
+}
+#mixer-channels .audio-row{
+    margin-left: 5px;
+}
+.audio-row input::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+
+.audio-row input::-moz-range-thumb {
+-moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+#sounds-panel .sidebar-panel-header {
+    background: #ebf1f5;
+    color: #000;
+}
+#sounds-panel .sidebar-panel-header button{
+    border-radius: 5px;
+}
+#sounds-panel .sidebar-panel-header button{
+    box-shadow: inset 1px 1px 4px -2px #a0a0a0e3, 2px 2px 2px -1px #000000a3, 0px 1px 1px 0px #0006;
+}
+#sounds-panel .sidebar-panel-header button svg{
+    transform: scale(0.8);
+}
+#sounds-panel .sidebar-panel-header button:active,
+#sounds-panel .sidebar-panel-header button.pressed:active{
+    box-shadow: inset 2px 1px 3px -1px #000, inset 1px 2px 3px -1px #000;
+    border: 1px solid tranparent;
+}
+
+#sounds-panel .sidebar-panel-header svg path{
+    fill: #000;
+}
+div#sounds-panel {
+    overflow-y: visible;
+}
+
+
+button.channel-loop-button{
+    left: 20px;
+}
+
+.channelNameOverflow {
+    width: 100px;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 16px;
+}
+.channelNameOverflow:hover .channelName {
+    margin-left: var(--name-width-overflow);
+}
+
+.channelName{
+    transition: margin 800ms ease-in 250ms;
+    text-overflow: ellipsis;
+    display: inline;
+}
+
+.mixer-play-pause-button,
+.track-play-pause-button,
+.mixer-clear-button,
+.channel-play-pause-button,
+.channel-loop-button,
+.track-remove-button,
+.add-track-ok-button,
+.add-track-cancel-button,
+.channel-remove-button,
+.track-add-to-mixer {
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    color: rgb(111, 116, 120);
+    padding: 0px 0px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #000000;
+    opacity: 0.8;
+    outline: none;
+    background: rgb(235, 241, 245);
+    transform: scale(0.8);
+}
+.mixer-play-pause-button:focus,
+.track-play-pause-button:focus,
+.mixer-clear-button:focus,
+.channel-play-pause-button:focus,
+.channel-loop-button:focus,
+.track-remove-button:focus,
+.add-track-ok-button:focus,
+.add-track-cancel-button:focus,
+.channel-remove-button:focus,
+.track-add-to-mixer:focus {
+    outline: none;
+}
+
+.mixer-play-pause-button:hover,
+.track-play-pause-button:hover,
+.mixer-clear-button:hover,
+.channel-play-pause-button:hover,
+.channel-loop-button:hover,
+.track-remove-button:hover,
+.add-track-ok-button:hover,
+.add-track-cancel-button:hover,
+.channel-remove-button:hover,
+.track-add-to-mixer:hover  {
+    cursor: pointer;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+}
+
+.mixer-play-pause-button:active,
+.mixer-clear-button:active,
+.track-play-pause-button:active,
+.channel-play-pause-button:active,
+.channel-loop-button:active,
+.track-remove-button:active,
+.add-track-ok-button:active,
+.add-track-cancel-button:active,
+.channel-remove-button:active,
+.track-add-to-mixer:active {
+    background-color: rgb(245, 248, 250);
+    box-shadow: inset #000 1px 1px 3px 1px;
+    transform: translate(1px, 2px) scale(0.8);
+}
+.track-add-to-mixer{
+   fill:#000;
+   padding: 5px 4px 5px 4px; 
+}
+.track-add-to-mixer svg path{
+    fill:#000;
+}
+
+.channel-play-pause-button,
+.channel-loop-button,
+.channel-remove-button{
+    float:  right;
+}
+.channel-remove-button{
+    color: #000;
+    font-size: 18px;
+}
+input.trackName.trackInput {
+    width: 100px;
+}
+
+div#importTrackFields input {
+    width: 100px;
+    margin: 0px 5px 0px 0px;
+}
+.add-track-ok-button,
+.add-track-cancel-button{
+    left: 4px;
+    position: relative;
+}
+
+div#importTrackFields input.trackSrc {
+    width: 145px;
+}
+div#importTrackFields {
+    height: 0px;
+    overflow: hidden;
+    margin: 5px 0px;
+    transition: height ease 250ms;
+}
+#sounds-panel .sidebar-panel-header button.pressed {
+    background: #7dc8fd66 !important;
+    border: none;
+    box-shadow: inset #000 1px 1px 3px 0px;
+    transform: translate(0px, 1px) scale(0.8);
+}
+.mixer-clear-button{
+    position: absolute;
+    top: 54px;
+    right: 190px;
+}
+
+.mixer-play-pause-button{
+    position: absolute;
+    top: 54px;
+    left: 174px;
+}
+
+.mixer-play-pause-button.playing{
+
+}
+
+
+

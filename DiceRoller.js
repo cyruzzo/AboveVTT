@@ -1,29 +1,11 @@
+/** DiceRoller.js - DDB dice rolling functions */
 
-$(function() {
-    window.diceRoller = new DiceRoller();
-
-    // TODO: remove this once PR #394 is merged
-    if (!window.ajaxQueue.addDDBRequest) {
-        window.ajaxQueue.addDDBRequest = function(options) {
-            get_cobalt_token(function (token) {
-                let previousBeforeSend = options.beforeSend;
-                options.beforeSend = function (xhr) {
-                    if (previousBeforeSend) {
-                        previousBeforeSend(xhr);
-                    }
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                };
-                options.xhrFields = {
-                    withCredentials: true
-                };
-                $.ajax(options);
-            });
-        }
-    }
-});
-
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+)|\d+d(?:100|20|12|10|8|6|4)/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const validExpressionRegex = /^[dkhl\s\d+\-]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const validExpressionRegex = /^[dkhlro<=>\s\d+\-\(\)]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
+const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/; // matches only the slash command. EG: `/r 1d20` would only match `/r`
+const multiDiceRollCommandRegex = /\/(r|roll|save|hit|dmg|skill|heal) [^\/]*/g; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
+const allowedExpressionCharactersRegex = /^(\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|\+|-|\d+|\s+|STR|str|DEX|dex|CON|con|INT|int|WIS|wis|CHA|cha|PB|pb)*/; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. It is also explicitly declaring the modifiers as case-sensitive because we can't search the entire thing as case-insensitive because the `d` in 1d20 needs to be lowercase.
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -61,7 +43,7 @@ class DiceRoll {
         }
         try {
             let alteredRollType = newRollType.trim().toLowerCase().replace("-", " ");
-            const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
+            const validRollTypes = ["to hit", "damage", "save", "check", "heal", "reroll"];
             if (validRollTypes.includes(alteredRollType)) {
                 this.#diceRollType = alteredRollType;
             } else {
@@ -98,6 +80,10 @@ class DiceRoll {
             return true; // more than 1 expression messes with the parsing that DDB does
         }
 
+        if (this.expression.includes("ro")) {
+            return true; // reroll requires us to roll double the amount of dice, but then strip half the results based on the specified reroll rule
+        }
+
         if (this.expression.indexOf(this.diceExpressions[0]) !== 0) {
             return true; // 1-1d4 messes with the parsing that DDB does, but 1d4-1 is just fine
         }
@@ -113,7 +99,7 @@ class DiceRoll {
             return true;
         }
 
-        // not sure what else to look for yet, but this appears to be something like "1d20", "1d20-1", "1d20kh1+3". all of which are correctly parsed by DDB
+        // not sure what else to look for yet, but this appears to be something like "1d20", "1d20-1", "2d20kh1+3". all of which are correctly parsed by DDB
         return false;
     }
 
@@ -141,14 +127,14 @@ class DiceRoll {
         let parsedExpression = expression.replaceAll(/\s+/g, ""); // remove all spaces
         if (!parsedExpression.match(validExpressionRegex)) {
             console.warn("Not parsing expression because it contains an invalid character", expression);
-            throw "Invalid Expression";
+            throw new Error("Invalid Expression");
         }
 
         // find all dice expressions in the expression. converts "1d20+1d4" to ["1d20", "1d4"]
         let separateDiceExpressions = parsedExpression.match(allDiceRegex)
         if (!separateDiceExpressions) {
             console.warn("Not parsing expression because there are no valid dice expressions within it", expression);
-            throw "Invalid Expression";
+            throw new Error("Invalid Expression");
         }
 
         this.#fullExpression = parsedExpression;
@@ -181,6 +167,10 @@ class DiceRoll {
         this.#individualDiceExpressions.forEach(diceExpression => {
             let diceType = diceExpression.match(/d\d+/g);
             let numberOfDice = parseInt(diceExpression.split("d")[0]);
+            if (diceExpression.includes("ro")) {
+                console.debug("diceExpression: ", diceExpression, ", includes reroll so we're doubling the number of dice for", diceType, ", numberOfDice before doubling: ", numberOfDice);
+                numberOfDice = numberOfDice * 2;
+            }
             console.debug("diceExpression: ", diceExpression, ", diceType: ", diceType, ", numberOfDice: ", numberOfDice);
             if (this.#separatedDiceToRoll[diceType] === undefined) {
                 this.#separatedDiceToRoll[diceType] = numberOfDice;
@@ -188,6 +178,38 @@ class DiceRoll {
                 this.#separatedDiceToRoll[diceType] += numberOfDice;
             }
         });
+    }
+
+    /**
+     * @param slashCommandText {string} the slash command to parse and roll. EG: "/hit 2d20kh1+4 Shortsword". This is the only required value
+     * @param name {string|undefined} the name of the creature/player associated with this roll. This is displayed above the roll box in the gamelog. The character sheet defaults to the PC.name, the encounters page defaults to ""
+     * @param avatarUrl {string|undefined} the url for the image to be displayed in the gamelog. This is displayed to the left of the roll box in the gamelog. The character sheet defaults to the PC.avatar, the encounters page defaults to ""
+     * @param entityType {string|undefined} the type of entity associated with this roll. EG: "character", "monster", "user" etc. Generic rolls from the character sheet defaults to "character", generic rolls from the encounters page defaults to "user"
+     * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
+     * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
+     */
+    static fromSlashCommand(slashCommandText, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
+        let modifiedSlashCommand = replaceModifiersInSlashCommand(slashCommandText, entityType, entityId);
+        let slashCommand = modifiedSlashCommand.match(diceRollCommandRegex)?.[0];
+        let expression = modifiedSlashCommand.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+        let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+        console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
+        let rollType = undefined;
+        if (slashCommand.startsWith("/r")) {
+            // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
+            [action, rollType] = action.split(":") || [undefined, undefined];
+        } else if (slashCommand.startsWith("/hit")) {
+            rollType = "to hit";
+        } else if (slashCommand.startsWith("/dmg")) {
+            rollType = "damage";
+        } else if (slashCommand.startsWith("/skill")) {
+            rollType = "check";
+        } else if (slashCommand.startsWith("/save")) {
+            rollType = "save";
+        } else if (slashCommand.startsWith("/heal")) {
+            rollType = "heal";
+        }
+        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride);
     }
 }
 
@@ -335,6 +357,7 @@ class DiceRoller {
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
         if (!this.#waitingForRoll) {
+            // TODO: update DM rolls with dmAvatarUrl
             console.debug("not capturing: ", message);
             this.ddbDispatch(message);
         } else if (message.eventType === "dice/roll/pending") {
@@ -371,16 +394,22 @@ class DiceRoller {
                 // all the values are in the same order as the DDB expression so iterate over the expression, and pull out the values that correspond
                 let matchedValues = {}; // { d20: [1, 18], ... }
                 let rolledExpressions = r.diceNotationStr.match(allDiceRegex);
+                console.debug("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
+                    console.debug("diceExpression: ", diceExpression);
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     if (matchedValues[diceType] === undefined) {
                         matchedValues[diceType] = [];
                     }
+                    if (diceExpression.includes("ro")) {
+                        // we've doubled the dice in case we needed to reroll, so grab twice as many dice as expected
+                        numberOfDice = numberOfDice * 2;
+                    }
                     matchedValues[diceType] = matchedValues[diceType].concat(valuesToMatch.slice(0, numberOfDice));
                     valuesToMatch = valuesToMatch.slice(numberOfDice);
-                })
+                });
                 console.debug("matchedValues: ", JSON.stringify(matchedValues));
 
                 // 2. replace each dice expression in #pendingDiceRoll.expression with the corresponding dice roll results
@@ -391,9 +420,35 @@ class DiceRoller {
                 this.#pendingDiceRoll.diceExpressions.forEach(diceExpression => {
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
+                    const includesReroll = diceExpression.includes("ro");
+                    if (includesReroll) {
+                        // we've doubled the dice in case we needed to reroll so grab twice as many dice as expected
+                        numberOfDice = numberOfDice * 2;
+                    }
                     let calculationValues = matchedValues[diceType].slice(0, numberOfDice);
                     matchedValues[diceType] = matchedValues[diceType].slice(numberOfDice);
                     console.debug(diceExpression, "calculationValues: ", calculationValues);
+
+                    if (includesReroll) {
+                        // we have twice as many dice values as we need, so we need to figure out which dice values to drop.
+                        // the values are in-order, so we will only keep the front half of the array.
+                        // evaluate each of the calculationValues against the reroll rule.
+                        // any value that evaluates to false, gets dropped. This allows the reroll dice to "shift" into the front half of the array.
+                        // cut the matchedValues down to the expected size. This will drop any reroll dice that we didn't use
+                        const half = Math.ceil(calculationValues.length / 2);
+                        let rolledValues = calculationValues.slice(0, half)
+                        let rerolledValues = calculationValues.slice(half)
+                        const rerollModifier = diceExpression.match(/ro(<|<=|>|>=|=)\d+/);
+                        calculationValues = rolledValues.map(value => {
+                            const rerollExpression = rerollModifier[0].replace('ro', value).replace(/(?<!(<|>))=(?!(<|>))/, "==");
+                            console.debug("rerollExpression", rerollExpression)
+                            if (eval(rerollExpression)) {
+                                return rerolledValues.shift();
+                            } else {
+                                return value;
+                            }
+                        });
+                    }
 
                     if (diceExpression.includes("kh")) {
                         // "keep highest" was used so figure out how many to keep
@@ -504,4 +559,94 @@ function replace_gamelog_message_expressions(listItem) {
             console.log("injected avttExpressionResult", avttExpressionResult);
         }
     }
+}
+
+function getCharacterStatModifiers(entityType, entityId) {
+    console.debug("getCharacterStatModifiers", entityType, entityId);
+    if (entityType === "character" && typeof window.pcs === "object") {
+        try {
+            const pc = window.pcs.find(pc => pc.sheet.includes(entityId));
+            if (typeof pc === "object" && typeof pc.abilities === "object" && typeof pc.proficiencyBonus === "number") {
+                const statMods = {
+                    "str": pc.abilities.find(a => a.name === "str").modifier,
+                    "dex": pc.abilities.find(a => a.name === "dex").modifier,
+                    "con": pc.abilities.find(a => a.name === "con").modifier,
+                    "int": pc.abilities.find(a => a.name === "int").modifier,
+                    "wis": pc.abilities.find(a => a.name === "wis").modifier,
+                    "cha": pc.abilities.find(a => a.name === "cha").modifier,
+                    "pb": pc.proficiencyBonus
+                };
+                console.debug("getCharacterStatModifiers built statMods from window.pcs", statMods);
+                return statMods;
+            }
+        } catch (error) {
+            console.warn("getCharacterStatModifiers failed to collect abilities from window.pcs", error);
+        }
+    }
+    if (is_characters_page()) {
+        try {
+            let stats = $(".ddbc-ability-summary__secondary");
+            const statMods = {
+                "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
+                "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
+                "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
+                "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
+                "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
+                "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
+                "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+            };
+            console.debug("getCharacterStatModifiers built statMods from character sheet html", statMods);
+            return statMods
+        } catch (error) {
+            console.warn("getCharacterStatModifiers failed to collect abilities from character sheet", error);
+        }
+    }
+    console.log("getCharacterStatModifiers found nothing");
+    return undefined;
+}
+
+/**
+ * Takes the raw strong from the chat input, and returns a new string with all the modifier keys replaced with numbers.
+ * This only works on the character page. If this is called from a different page, it will immediately return the given slashCommand.
+ * @example passing "1d20+dex+pb" would return "1d20+3+2" for a player that has a +2 dex mod and a proficiency bonus of 2
+ * @param slashCommandText {String} the string from the chat input
+ * @returns {String} a new string with numbers instead of modifier if on the characters page, else returns the given slashCommand.
+ */
+function replaceModifiersInSlashCommand(slashCommandText, entityType, entityId) {
+    if (typeof slashCommandText !== "string") {
+        console.warn("replaceModifiersInSlashCommand expected a string, but received", slashCommandText);
+        return "";
+    }
+
+    const expression = slashCommandText.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+
+    if (expression === undefined || expression === "") {
+        return slashCommandText; // no valid expression to parse
+    }
+
+    const modifiers = getCharacterStatModifiers(entityType, entityId);
+    if (modifiers === undefined) {
+        // This will happen if the DM opens a character sheet before the character stats have loaded
+        console.warn("getCharacterStatModifiers returned undefined. This command may not parse properly", slashCommandText);
+        return slashCommandText; // missing required info
+    }
+
+    let modifiedExpression = `${expression}`; // make sure we use a copy of the string instead of altering the variable that was passed in
+    const modifiersToReplace = expression.matchAll(validModifierSubstitutions);
+    const validModifierPrefix = /(\s*[+|-]\s*)$/; // we only want to substitute valid parts of the expression. For example: We only want to replace the first `dex` in this string "/r 1d20 + dex dex-based attack"
+    for (const match of modifiersToReplace) {
+        const mod = match[0];
+        const expressionUpToThisPoint = match.input.substring(0, match.index);
+        if (validModifierPrefix.test(expressionUpToThisPoint)) {
+            // everything up to and including this match is valid. let's replace this modifier with the appropriate value.
+            modifiedExpression = modifiedExpression.replace(mod, modifiers[mod.toLowerCase()]); // explicitly only replacing the first match. We do not want to replaceAll here.
+        } else {
+            break; // we got to a point in the expression that is no longer valid. Stop substituting
+        }
+    }
+
+    const modifiedCommand = slashCommandText.replaceAll(expression, modifiedExpression);
+
+    console.log("replaceModifiersInSlashCommand changed", slashCommandText, "to", modifiedCommand);
+    return modifiedCommand;
 }

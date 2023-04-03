@@ -257,12 +257,13 @@ function scan_player_creature_pane(target) {
 
 	const creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
 	const creatureName = target.find(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
-	const creatureAvatar = window.pc?.image;
+	let pcSheet = find_currently_open_character_sheet();
+	const pc = find_pc_by_player_id(pcSheet);
+	let creatureAvatar = window.pc?.image;
  	try {
  		// not all creatures have an avatar for some reason
  		creatureAvatar = target.find(".ct-sidebar__header .ct-sidebar__header-preview-image").css("background-image").slice(4, -1).replace(/"/g, "");
  	} catch { }
-	const pc = window.pcs.find(t => t.sheet.includes(find_currently_open_character_sheet()));
 	const displayName = `${pc.name} (${creatureName} ${creatureType})`;
 	
 	const clickHandler = function(clickEvent) {
@@ -302,19 +303,7 @@ function scan_player_creature_pane(target) {
 	console.groupEnd()
 }
 
-function find_currently_open_character_sheet() {
-	if (is_characters_page()) {
-		return window.location.pathname;
-	}
-	let sheet;
-	$("#sheet").find("iframe").each(function () {
-		const src = $(this).clone().attr("src");
-		if (src != "") {
-			sheet = src;
-		}
-	})
-	return sheet;
-}
+
 
 /**
  * When a roll button is right-clicked, this builds and displays a contextmenu, then handles everything related to that contextmenu

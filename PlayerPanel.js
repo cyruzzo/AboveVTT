@@ -1,29 +1,24 @@
 
 function update_pclist() {
 
-	gather_pcs();
-	update_pc_token_rows(); // this updates the tokensPanel rows for the DM
+	console.log("update_pclist pcs", window.pcs);
 
 	if (window.DM) {
-		// only the players build out the tokensPanel. The DM uses TokensPanel
+		// only the players build out the playersPanel. The DM uses tokensPanel
+		update_pc_token_rows(); // this updates the tokensPanel rows for the DM
 		return;
 	}
 
 	playersPanel.body.empty();
 
-	window.pcs.forEach(function(item, index) {
-
-		pc = item;
-		let pcSheet = pc.sheet === undefined ? '' : pc.sheet;
-		color = "#" + get_player_token_border_color(pcSheet);
-
-		let playerData;
-		if (pc.sheet in window.PLAYER_STATS) {
-			playerData = window.PLAYER_STATS[pcSheet];
-		}
-
+	const pcObjects = [...window.pcs, generic_pc_object(true)]; // add a pc object for the DM
+	pcObjects.forEach(pc => {
+		const color = color_from_pc_object(pc);
+		const hpValue = hp_from_pc_object(pc);
+		const maxHp = max_hp_from_pc_object(pc);
+		const boxShadow = hp_aura_box_shadow_from_pc_object(pc);
 		const newPlayerTemplate = `
-			<div class="player-card" data-player-id="${pcSheet}">
+			<div class="player-card" data-player-id="${pc.sheet}">
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
 					<div class="player-actions">
@@ -31,58 +26,37 @@ function update_pclist() {
 					</div>
 				</div>
 				<div class="player-card-content">
-					<div class="player-token" style="box-shadow: ${
-						playerData ? `${token_health_aura(
-							Math.round((playerData.hp / playerData.max_hp) * 100)
-						)} 0px 0px 11px 3px` : 'none'
-					};">
+					<div class="player-token">
 						<img width="70" height="70" src="${pc.image}" style="border: 3px solid ${color}" />
-						${
-							playerData ? `
-								<div class="player-token-hp">${playerData.hp} / ${playerData.max_hp}</div>
-								<div class="player-token-ac">${playerData.ac}</div>
-							` : ''
-						}
 					</div>
-					${
-						playerData ? `
-							<div class="player-info">
-								<div class="player-attributes">
-									<div class="player-attribute">
-										<img src="${window.EXTENSION_PATH + "assets/eye.png"}" title="Passive Perception" />
-										<span>${playerData.pp}</span>
-									</div>
-									${
-										playerData.walking ? `
-											<div class="player-attribute">
-												<img src="${window.EXTENSION_PATH + "assets/walking.png"}" title="Walking Speed" />
-												<span>${playerData.walking}</span>
-											</div>
-											<div class="player-attribute">
-												<img src="${window.EXTENSION_PATH}assets/inspiration.svg" title="Inspiration" />
-												<span>${playerData.inspiration ? 'Yes' : 'No'}</span>
-											</div>
-										` : ""
-									}
-								</div>
-								<div class="player-conditions">
-									<div class="player-card-title"><b>Conditions:</b></div>
-									<div>
-										${
-											playerData.conditions.map(c => `<span title="${
-												CONDITIONS[c] ? [c, ...CONDITIONS[c]].join(`\n`) : [c, ...CONDITIONS.Exhaustion].join(`\n`)
-											}">${c}</span>`).join(', ')
-										}
-									</div>
-								</div>
-							</div>
-						` : ``
-					}
 				</div>
 			</div>
 		`;
 		let newplayer=$(newPlayerTemplate);
 		playersPanel.body.append(newplayer);
+		playersPanel.body.find(`.player-card`).each(function() {
+			const card = $(this);
+			if (card.attr("data-player-id").includes(my_player_id())) {
+				card.find(".whisper-btn").remove();
+				if (card.find(".change-theme-button").length === 0) {
+					const changeThemeButton = $(`<button class="change-theme-button">Change Theme</button>`);
+					card.find(".player-actions").append(changeThemeButton);
+					changeThemeButton.click(function (e) {
+						$(".ddbc-character-avatar__portrait").click(); // open the character details sidebar
+						$(".ct-character-manage-pane__decorate-button").click(); // open the "change sheet appearance" sidebar
+						$(".ct-decorate-pane__grid > .ct-decorate-pane__grid-item:nth-child(3)").click(); // expand the "theme" section
+					});
+				}
+			}
+		});
+		const peerConnected = is_peer_connected(pc.id);
+		if (peerConnected) {
+			if (pc.sheet.includes(my_player_id())) {
+				update_player_online_indicator(my_player_id(), peerConnected, color);
+			} else {
+				update_player_online_indicator(getPlayerIDFromSheet(pc.sheet), peerConnected, color);
+			}
+		}
 	});
 
 	$(".whisper-btn").on("click",function(){
@@ -90,57 +64,6 @@ function update_pclist() {
 		$("#chat-text").val("/whisper ["+$(this).attr('data-to')+ "] ");
 		$("#chat-text").focus();
 	});
-}
-
-// Low res thumbnails have the form https://www.dndbeyond.com/avatars/thumbnails/17/212/60/60/636377840850178381.jpeg
-// Higher res of the same character can be found at  https://www.dndbeyond.com/avatars/17/212/636377840850178381.jpeg
-// This is a slightly hacky method of getting the higher resolution image from the url of the thumbnail.
-function get_higher_res_url(thumbnailUrl) {
-	const thumbnailUrlMatcher = /avatars\/thumbnails\/\d+\/\d+\/\d\d\/\d\d\//;
-	if (!thumbnailUrl.match(thumbnailUrlMatcher)) return thumbnailUrl;
-	return thumbnailUrl.replace(/\/thumbnails(\/\d+\/\d+\/)\d+\/\d+\//, '$1');
-}
-
-function gather_pcs() {
-	let campaignId = get_campaign_id();
-	if (is_encounters_page() || is_characters_page()) {
-		// they aren't on this page, but we've added them to localStorage to handle this scenario
-		window.pcs = $.parseJSON(localStorage.getItem(`CampaignCharacters${campaignId}`));
-		console.log(`reading "CampaignCharacters-${campaignId}", ${JSON.stringify(window.pcs)}`);
-		return;
-	}
-
-	window.pcs = [];
-	$(".ddb-campaigns-detail-body-listing-active").find(".ddb-campaigns-character-card").each(function(idx) {
-		let tmp = $(this).find(".ddb-campaigns-character-card-header-upper-character-info-primary");
-		let name = tmp.html();
-		tmp = $(this).find(".user-selected-avatar");
-		if (tmp.length > 0) {
-			const lowResUrl = tmp.css("background-image").slice(5, -2); // url("x") TO -> x
-			image = get_higher_res_url(lowResUrl)
-		} else {
-			image = "/content/1-0-1436-0/skins/waterdeep/images/characters/default-avatar.png";
-		}
-		let sheet = $(this).find(".ddb-campaigns-character-card-footer-links-item-view").attr("href");
-		let pc = {
-			name: name,
-			image: image,
-			sheet: sheet === undefined ? "" : sheet,
-			data: {}
-		};
-		console.log("trovato sheet " + sheet);
-		window.pcs.push(pc);
-	});
-	
-	if(!window.DM){
-		window.pcs.push({
-			name: 'THE DM',
-			image: 'https://media-waterdeep.cursecdn.com/attachments/thumbnails/0/14/240/160/avatar_2.png',
-			sheet: "", // MessageBroker calls `endsWith` on this so make sure it has something to read
-			data: {}
-		});
-	}
-	localStorage.setItem(`CampaignCharacters${campaignId}`, JSON.stringify(window.pcs));
 }
 
 // deprecated, but still necessary for migrations
@@ -206,10 +129,40 @@ function random_image_for_player_token(playerId) {
 	return images[randomIndex];
 }
 
-function get_player_token_border_color(playerId) {
-	let index = window.pcs.findIndex(pc => pc.sheet == playerId);
+function get_token_color_by_index(index) {
 	if (index >= 0 && index < TOKEN_COLORS.length) {
-		return TOKEN_COLORS[index];
+		return "#" + TOKEN_COLORS[index];
 	}
-	return TOKEN_COLORS[0];
+	return "#" + TOKEN_COLORS[Math.floor(Math.random() * TOKEN_COLORS.length)];
+}
+
+function find_and_set_player_color() {
+	const playerId = my_player_id();
+
+	if (playerId === dm_id) {
+		// DM just uses the default DDB theme
+		const dmPc = generic_pc_object(true);
+		change_player_color(dmPc.decorations.characterTheme.themeColor);
+		return;
+	}
+
+	const pc = window.pcs.find(pc => pc.sheet.includes(playerId));
+	if (pc && pc.decorations?.characterTheme?.themeColor) {
+		// we were able to fetch the theme from DDB so use it
+		change_player_color(pc.decorations.characterTheme.themeColor);
+		return;
+	}
+
+	const index = window.pcs.findIndex(pc => pc.sheet.includes(idOrSheet));
+	const colorByIndex = get_token_color_by_index(index);
+	change_player_color(colorByIndex);
+}
+
+function change_player_color(color) {
+	const playerId = my_player_id();
+	window.color = color;
+	WaypointManager.drawStyle.color = color;
+	// window.PeerManager.send(PeerEvent.preferencesChange());
+	const peerConnected = is_peer_connected(playerId);
+	update_player_online_indicator(playerId, peerConnected, color);
 }
