@@ -422,7 +422,9 @@ function is_token_under_light_aura(tokenid){
 				
 
 			let pixeldata = window.lightAuraClipPolygon[auraId].canvas.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-			return pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255});
+			
+			if(pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255}))
+				return true;
 		}		
 	}
 	return  false;
@@ -2984,9 +2986,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    	}
 	    	lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
-	    else if(closest){
-	    	lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    }
+
 	    prevClosestPoint = closest;
 	    prevClosestWall = closestWall;
 	}
