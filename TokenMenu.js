@@ -359,7 +359,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			flyout.append(build_token_light_inputs(tokenIds));
 		})
 	});
-	if(tokens[0].options.disableLight != true && (window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer())))){
+	if(window.CURRENT_SCENE_DATA.disableSceneVision != true && (window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer())))){
 		if (!someTokensAreAoe) {
 			body.append(lightRow);
 		}
@@ -1490,7 +1490,7 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype' || setting.hideinContextOnly) {
+		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype') {
 			continue;
 		}
 

@@ -209,17 +209,6 @@ function token_setting_options() {
 				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value." }
 			],
 			defaultValue: "average"
-		},
-		{
-			name: "disableLight",
-			label: "Disable all token vision/light",
-			type: 'toggle',
-			options: [
-				{ value: true, label: 'All token light/vision is disabled', description: "The token will not have light/vision" },
-				{ value: false, label: 'token light/vision is enabled', description: "The token will  have light/vision" }
-			],
-			defaultValue: false,
-			hideinContextOnly: true
 		}
 	];
 }
