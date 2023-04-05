@@ -252,6 +252,7 @@ function build_close_button() {
  * @param input {string} the text input to build a wrapper for. eg: `<input type="text" name="someUniqueName" title="this is an input" placeholder="https://..." />`
  * @param sideButton {string|undefined} the button to the right of the label, undefined if you don't want a button. eg: `<button>Add</button>`
  * @param inputSubmitCallback {function|undefined} the function to be called when the user presses enter, or clicks the button. function(inputValue, input, event) { ... }
+ * @param submitOnFocusout {boolean|undefined} whether to call inputSubmitCallback when the input loses focus
  * @returns {*|jQuery|HTMLElement}
  */
 function build_text_input_wrapper(titleText, input, sideButton, inputSubmitCallback, submitOnFocusout = true) {
@@ -496,22 +497,23 @@ class SidebarListItem {
 
   /**
    * Creates a Folder list item.
+   * @param id {string} a unique identifier for the backing item
    * @param folderPath {string} the path that the folder is in (not including the name of this folder)
    * @param name {string} the name of the folder
    * @param collapsed {boolean} whether or not the folder is open or closed.
    * @param parentId {string|undefined} a string id of the folder this item is in
+   * @param folderType {string} the ItemType that this folder contains
    * @returns {SidebarListItem} the list item this creates
-   * @constructor
    */
-  static Folder(id, folderPath, name, collapsed, parentId) {
-  // static Folder(folderPath, name, collapsed, subtitle = undefined) {
-    console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}`);
+  static Folder(id, folderPath, name, collapsed, parentId, folderType) {
+    console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}, folderType: ${folderType}`);
     let item = new SidebarListItem(id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath, parentId);
     if (collapsed === true || collapsed === false) {
       item.collapsed = collapsed;
     } else {
       item.collapsed = true;
     }
+    item.folderType = folderType
     return item;
   }
 
@@ -614,9 +616,9 @@ class SidebarListItem {
     if ((typeof sceneData.title == 'string') && sceneData.title.length > 0) {
       name = sceneData.title;
     }
-    let scenePath = sceneData.folderPath || "";
-    let folderPath = sanitize_folder_path(`${RootFolder.Scenes.path}/${scenePath}`);
-    let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, path_to_html_id(folderPath));
+    let folderPath = folder_path_of_scene(sceneData);
+    let parentId = sceneData.parentId || RootFolder.Scenes.id;
+    let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, parentId);
     console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
     item.sceneId = sceneData.id;
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
@@ -681,6 +683,12 @@ class SidebarListItem {
   /** @returns {boolean} whether or not this item represents a Folder */
   isTypeFolder() { return this.type === ItemType.Folder }
 
+  /** @returns {boolean} whether or not this item represents a Folder meant for holding Scenes */
+  isTypeSceneFolder() { return this.type === ItemType.Folder && this.folderType === ItemType.Scene }
+
+  /** @returns {boolean} whether or not this item represents a Folder meant for holding Scenes */
+  isTypeMyTokenFolder() { return this.type === ItemType.Folder && this.folderType === ItemType.MyToken }
+
   /** @returns {boolean} whether or not this item represents a "My Token" */
   isTypeMyToken() { return this.type === ItemType.MyToken }
 
@@ -721,7 +729,13 @@ class SidebarListItem {
   canEdit() {
     switch (this.type) {
       case ItemType.Folder:
-        return this.folderPath.startsWith(RootFolder.MyTokens.path) || this.folderPath.startsWith(RootFolder.Scenes.path);
+        switch (this.folderType) {
+          case ItemType.MyToken:
+          case ItemType.Scene:
+            return true;
+          default:
+            return false;
+        }
       case ItemType.MyToken:
       case ItemType.PC:
       case ItemType.Monster:
@@ -739,8 +753,13 @@ class SidebarListItem {
   canDelete() {
     switch (this.type) {
       case ItemType.Folder:
-        // TODO: allow deleting scenes folders
-        return this.folderPath.startsWith(RootFolder.MyTokens.path) || this.folderPath.startsWith(RootFolder.Scenes.path);
+        switch (this.folderType) {
+          case ItemType.MyToken:
+          case ItemType.Scene:
+            return true;
+          default:
+            return false;
+        }
       case ItemType.MyToken:
       case ItemType.Scene:
         return true;
@@ -827,14 +846,16 @@ function find_sidebar_list_item(html) {
   if (encounterId !== undefined && encounterId !== null && encounterId !== "") {
     foundItem = window.tokenListItems.find(item => item.isTypeEncounter() && item.encounterId === encounterId);
     if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
 
   let sceneId = html.attr("data-scene-id");
   if (typeof sceneId === "string" && sceneId.length > 0) {
-    foundItem = window.sceneListItems.find(item => item.sceneId == sceneId);
+    foundItem = window.sceneListItems.find(item => item.id === sceneId);
     if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -843,14 +864,32 @@ function find_sidebar_list_item(html) {
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
     if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
 
-  let htmlId = html.attr("id");
+  let htmlId = html.attr("data-id") || html.attr("id");
   if (typeof htmlId === "string" && htmlId.length > 0) {
     foundItem = window.tokenListItems.find(li => li.id === htmlId);
     if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
+      return foundItem;
+    }
+    foundItem = window.sceneListItems.find(li => li.id === htmlId);
+    if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
+      return foundItem;
+    }
+    foundItem = window.sceneListFolders.find(li => li.id === htmlId);
+    if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
+      return foundItem;
+    }
+    // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
+    foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
+    if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
       return foundItem;
     }
   }
@@ -871,10 +910,13 @@ function find_sidebar_list_item_from_path(fullPath) {
   let foundItem;
   if (fullPath.startsWith(RootFolder.Scenes.path)) {
     foundItem = window.sceneListItems?.find(matchingPath);
+    console.log('find_sidebar_list_item_from_path sceneListItems', foundItem);
     if (foundItem === undefined) {
       foundItem = window.sceneListFolders?.find(matchingPath);
+      console.log('find_sidebar_list_item_from_path sceneListFolders', foundItem);
     }
     if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item_from_path', foundItem);
       return foundItem;
     }
   }
@@ -893,6 +935,7 @@ function find_sidebar_list_item_from_path(fullPath) {
   if (foundItem === undefined) {
     console.warn(`find_sidebar_list_item found nothing at path: ${fullPath}`);
   }
+  console.log('find_sidebar_list_item_from_path', foundItem);
   return foundItem;
 }
 
@@ -940,6 +983,25 @@ function harvest_full_path(htmlRow) {
 function set_full_path(html, fullPath) {
   if (html === undefined) return;
   return html.attr("data-full-path", encode_full_path(fullPath)).addClass("list-item-identifier");
+}
+
+/**
+ * sets the id of an item on an html element
+ * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
+ * @param listItem {SidebarListItem} the item to set the id with
+ */
+function set_list_item_identifier(html, listItem) {
+  if (html === undefined || listItem === undefined) return;
+  if (listItem.isTypeScene() || listItem.isTypeSceneFolder()) {
+    html.attr("data-scene-id", listItem.id).addClass("list-item-identifier");
+  } else if (listItem.isTypeEncounter()) {
+    html.attr("data-encounter-id", listItem.id).addClass("list-item-identifier");
+  } else if (listItem.isTypeMonster()) {
+    html.attr("data-monster", listItem.id).addClass("list-item-identifier");
+  }
+  html.attr("data-id", listItem.id).addClass("list-item-identifier");
+  html.attr("data-full-path", encode_full_path(listItem.fullPath())).addClass("list-item-identifier");
+  console.log(`set_list_item_identifier`, html, listItem.fullPath(), listItem.id);
 }
 
 function path_to_html_id(path, name) {
@@ -1004,9 +1066,10 @@ function matches_full_path(html, fullPath) {
  * @returns {*|jQuery|HTMLElement} that represents a row in the list of items in the sidebar
  */
 function build_sidebar_list_row(listItem) {
+  console.log('build_sidebar_list_row', listItem.name);
 
   let row = $(`<div id="${listItem.id}" class="sidebar-list-item-row" title="${listItem.name}"></div>`);
-  set_full_path(row, listItem.fullPath());
+  set_list_item_identifier(row, listItem);
 
   let rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
   row.append(rowItem);
@@ -1020,11 +1083,7 @@ function build_sidebar_list_row(listItem) {
   }
   else{
     // possibly change the background-image-size so it looks nicer as a small image
-    let img = $(
-      `<div data-img="true"; 
-      class="aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}">
-       </div>
-      `)
+    let img = $(`<div data-img="true" class="aoe-token-tileable aoe-style-${listItem.style} aoe-shape-${listItem.shape}"></div>`);
     imgHolder.append(img);
   }
 
@@ -1055,7 +1114,7 @@ function build_sidebar_list_row(listItem) {
       if (listItem.collapsed === true) {
         row.addClass("collapsed");
       }
-      if (listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
+      if (listItem.folderType === ItemType.MyToken) {
         // add buttons for creating subfolders and tokens
         let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
         rowItem.append(addFolder);
@@ -1084,7 +1143,7 @@ function build_sidebar_list_row(listItem) {
             }
           });
         }
-      } else if (listItem.fullPath().startsWith(RootFolder.Scenes.path)) {
+      } else if (listItem.folderType === ItemType.Scene) {
         // add buttons for creating subfolders and scenes
         let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
         rowItem.append(addFolder);
@@ -1102,7 +1161,7 @@ function build_sidebar_list_row(listItem) {
           // create_scene_inside(clickedItem.fullPath());
           create_scene_root_container(clickedItem.fullPath());
         });
-      } else if (listItem.fullPath() === RootFolder.Monsters.path) {
+      } else if (listItem.folderType === ItemType.Monster) {
         // add monster filter button on the root monsters folder
         let filterMonsters = $(`<button class="token-row-button monster-filter-button" title="Filter Monsters"><span class="material-icons">filter_alt</span></button>`);
         if (Object.keys(monster_search_filters).length > 0) {
@@ -1263,7 +1322,6 @@ function build_sidebar_list_row(listItem) {
       row.css("cursor", "default");
       break;
     case ItemType.Scene:
-      row.attr("data-scene-id", listItem.sceneId);
       row.addClass("scene-item");
       imgHolder.remove(); // we don't want the overhead of full images loading in. Clicking the row displays a preview of the image
       row.css("cursor", "pointer");
@@ -1434,7 +1492,7 @@ function display_sidebar_list_item_configuration_modal(listItem) {
       window.open(`https://www.dndbeyond.com/encounters/${listItem.encounterId}/edit`, '_blank');
       break;
     case ItemType.Folder:
-      if (listItem.folderPath.startsWith(RootFolder.MyTokens.path) || listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
+      if (listItem.canEdit()) {
         display_folder_configure_modal(listItem);
       } else {
         console.warn("Only allowed to folders within the My Tokens folder and Scenes");
@@ -1443,7 +1501,7 @@ function display_sidebar_list_item_configuration_modal(listItem) {
       break;
     case ItemType.BuiltinToken:
     case ItemType.DDBToken:
-      display_builtin_token_details_modal(listItem);
+      display_builtin_token_details_modal(listItem, undefined);
       break;
     case ItemType.MyToken:
     case ItemType.PC:
@@ -1472,10 +1530,10 @@ function create_folder_inside(listItem) {
     return;
   }
 
-  if (listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
+  if (listItem.folderType === ItemType.MyToken) {
     create_mytoken_folder_inside(listItem);
-  } else if (listItem.fullPath().startsWith(RootFolder.Scenes.path)) {
-    create_scene_folder_inside(listItem.fullPath());
+  } else if (listItem.folderType === ItemType.Scene) {
+    create_scene_folder_inside(listItem);
   } else {
     console.warn("create_folder_inside called with an incorrect item type", listItem);
   }
@@ -1490,16 +1548,11 @@ function display_folder_configure_modal(listItem) {
     console.warn("display_folder_configure_modal was called with an incorrect type", listItem);
     return;
   }
+  console.log('display_folder_configure_modal', listItem);
 
   let sidebarId = "folder-configuration-modal";
   let sidebarModal = new SidebarPanel(sidebarId, true);
-  let listItemFullPath = listItem.fullPath();
-  let itemType;
-  if (listItemFullPath.startsWith(RootFolder.Scenes.path)) {
-    itemType = ItemType.Scene;
-  } else if (listItemFullPath.startsWith(RootFolder.MyTokens.path)) {
-    itemType = ItemType.MyToken;
-  }
+  let itemType = listItem.folderType;
 
   display_sidebar_modal(sidebarModal);
 
@@ -1507,27 +1560,33 @@ function display_folder_configure_modal(listItem) {
 
   const renameFolder = function(newFolderName, input, event) {
     let oldPath = harvest_full_path(input);
+    console.log(`renameFolder oldPath: ${oldPath}, newFolderName: ${newFolderName}`);
     if (oldPath.endsWith(`/${newFolderName}`)) {
       // It did not change. Nothing to do here.
       return undefined;
     }
     let foundItem = find_sidebar_list_item(input);
+    console.log(`before renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}`);
     let updatedFullPath = rename_folder(foundItem, newFolderName, true);
+    console.log(`after  renameFolder foundItem id: ${foundItem.id}, name: ${foundItem.name}, folderPath: ${foundItem.folderPath}, updatedFullPath: ${updatedFullPath}`);
     if (updatedFullPath) {
       // the name has been changed. Update the input so we know it has been changed later
       set_full_path(input, updatedFullPath);
+      console.log('inside updatedFullPath');
       if (itemType === ItemType.Scene) {
+        console.log('updatedFullPath should be updating scenes here');
+        did_update_scenes();
+      } else {
+        console.log('updatedFullPath should NOT be updating scenes here');
         rebuild_token_items_list();
-        redraw_scene_list();
-        expand_all_folders_up_to_id(path_to_html_id(updatedFullPath));
-      } else if (itemType === ItemType.Scene) {
-        rebuild_scene_items_list();
         redraw_token_list();
-        expand_all_folders_up_to_id(foundItem.id);
       }
+      expand_all_folders_up_to_id(foundItem.id);
       sidebarModal.updateHeader(newFolderName, updatedFullPath, "Edit or delete this folder.");
+      console.log('returning updatedFullPath');
       return updatedFullPath;
     } else {
+      console.log('else updatedFullPath');
       // there was a naming conflict, and the user has been alerted. select the entire text so they can easily change it
       input.select();
       return false;
@@ -1535,8 +1594,8 @@ function display_folder_configure_modal(listItem) {
   }
 
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
-  set_full_path(folderNameInput, listItemFullPath);
-  sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder));
+  set_list_item_identifier(folderNameInput, listItem);
+  sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder, false));
 
   if (itemType === ItemType.MyToken) {
     let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
@@ -1551,16 +1610,18 @@ function display_folder_configure_modal(listItem) {
   let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
   saveButton.on("click", function (clickEvent) {
     let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
+    console.log(`saveButton nameInput`, nameInput);
     let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
     if (renameResult !== false) {
       close_sidebar_modal();
-      expand_all_folders_up_to_item(listItem); // TODO: make sure this does the right thing. We may need to find the updated listItem
+      expand_all_folders_up_to_id(listItem?.id);
+      // did_update_scenes();
     }
   });
   sidebarModal.body.append(saveButton);
 
   let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
-  set_full_path(deleteFolderAndMoveChildrenButton, listItemFullPath);
+  set_list_item_identifier(deleteFolderAndMoveChildrenButton, listItem);
   sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
   deleteFolderAndMoveChildrenButton.on("click", function(event) {
     let foundItem = find_sidebar_list_item($(event.currentTarget));
@@ -1569,7 +1630,7 @@ function display_folder_configure_modal(listItem) {
     expand_all_folders_up_to_item(foundItem);
   });
   let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
-  set_full_path(deleteFolderAndChildrenButton, listItemFullPath);
+  set_list_item_identifier(deleteFolderAndChildrenButton, listItem);
   sidebarModal.footer.append(deleteFolderAndChildrenButton);
   deleteFolderAndChildrenButton.on("click", function(event) {
     let foundItem = find_sidebar_list_item($(event.currentTarget));
@@ -1582,10 +1643,10 @@ function display_folder_configure_modal(listItem) {
 }
 
 function rename_folder(item, newName, alertUser = true) {
-  if (!item.isTypeFolder()) {
+  if (!item || !item.isTypeFolder()) {
     console.warn("rename_folder called with an incorrect item type", item);
     if (alertUser !== false) {
-      showError("rename_folder called with an incorrect item type", item);
+      showError("Failed to rename folder", item);
     }
     return undefined;
   }
@@ -1596,10 +1657,10 @@ function rename_folder(item, newName, alertUser = true) {
     persist_token_customization(customization);
     did_change_mytokens_items();
     return customization.fullPath();
-  } else if (item.folderPath.startsWith(RootFolder.Scenes.path)) {
+  } else if (item.isTypeSceneFolder()) {
     return rename_scene_folder(item, newName, alertUser);
   } else if (alertUser !== false) {
-    showError("rename_folder failed to find folderPath", item);
+    showError("Failed to find folder path", item);
   }
   return undefined;
 }
@@ -1672,9 +1733,9 @@ function delete_folder_and_delete_children(listItem) {
     return;
   }
 
-  if (listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
+  if (listItem.folderType === ItemType.MyToken) {
     delete_mytokens_folder_and_everything_in_it(listItem);
-  } else if (listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
+  } else if (listItem.folderType === ItemType.Scene) {
     delete_scenes_within_folder(listItem);
     delete_scenes_folder(listItem);
     did_update_scenes();
@@ -1699,12 +1760,12 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     return;
   }
 
-  if (listItem.folderPath.startsWith(RootFolder.MyTokens.path)) {
+  if (listItem.folderType === ItemType.MyToken) {
     move_mytokens_to_parent_folder_and_delete_folder(listItem, function (didSucceed, errorType) {
       did_change_mytokens_items();
       expand_all_folders_up_to_id(listItem.parentId);
     });
-  } else if (listItem.folderPath.startsWith(RootFolder.Scenes.path)) {
+  } else if (listItem.folderType === ItemType.Scene) {
     move_scenes_to_parent_folder(listItem);
     delete_scenes_folder(listItem);
     did_update_scenes();
@@ -2004,12 +2065,12 @@ function move_item_into_folder_item(listItem, folderItem) {
     persist_token_customization(customization);
     rebuild_token_items_list();
     enable_draggable_change_folder(ItemType.MyToken);
-  } else if (listItem.isTypeScene() || (listItem.isTypeFolder() && listItem.folderPath.startsWith(RootFolder.Scenes.path))) {
-    if (listItem.isTypeScene()) {
-      move_scene_to_folder(listItem, folderItem.fullPath());
-    } else if (listItem.isTypeFolder()) {
-      move_scenes_folder(listItem, folderItem.fullPath());
-    }
+  } else if (listItem.isTypeScene()) {
+    move_scene_to_folder(listItem, folderItem.fullPath());
+    did_update_scenes();
+    enable_draggable_change_folder(ItemType.Scene);
+  } else if (listItem.isTypeSceneFolder()) {
+    move_scenes_folder(listItem, folderItem.fullPath());
     did_update_scenes();
     enable_draggable_change_folder(ItemType.Scene);
   } else {

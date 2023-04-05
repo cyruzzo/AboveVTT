@@ -137,6 +137,11 @@ async function start_above_vtt_for_dm() {
   startup_step("Fetching scenes from AboveVTT servers");
   await fetch_sceneList_and_scenes();
 
+  startup_step("Migrating scene folders");
+  await migrate_scene_folders();
+
+  did_update_scenes();
+
   startup_step("Start up complete");
 }
 
@@ -273,7 +278,5 @@ async function fetch_sceneList_and_scenes() {
     window.MB.handleScene(activeScene);
   }
 
-  console.log("fetch_sceneList_and_scenes calling did_update_scenes");
-  did_update_scenes();
   console.log("fetch_sceneList_and_scenes done");
 }
