@@ -2439,10 +2439,12 @@ function toggle_player_selectable(tokenInstance, token){
 	if (tokenInstance.options.locked && !window.DM){
 		tokenImage?.css("cursor","default");
 		tokenImage?.css("pointer-events","none");
+		token.css("pointer-events", "none");
 	}
 	else{
 		tokenImage?.css("cursor","move");
 		tokenImage?.css("pointer-events","auto");
+		token.css("pointer-events", "");
 	}
 }
 
