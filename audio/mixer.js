@@ -200,7 +200,15 @@ class Mixer extends EventTarget {
      * @private
      * @param {MixerState} state
      */
-    _write(state) {
+    _write(state, setPlaylist = false) {
+        if(!setPlaylist){
+            let selectedPlaylistID = this.selectedPlaylist();
+            if(selectedPlaylistID != undefined){
+                state.playlists[selectedPlaylistID].channels = state.channels;
+                state.playlists[selectedPlaylistID].volume = state.volume;
+                state.playlists[selectedPlaylistID].paused = state.paused;
+            }
+        }
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
         this.syncPlayers();
         this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
@@ -277,6 +285,70 @@ class Mixer extends EventTarget {
     togglePaused() {
         this.paused ? this.play() : this.pause();
     }
+    // playlists
+      /**
+     * Returns the current channels in the mixer
+     * @returns {Object.<string, Playlist>}
+     */
+    playlists() {
+        return this.state().playlists;
+    }
+    selectedPlaylist() {
+        return (this.state().selected) ? this.state().selected : undefined;
+    }
+    /**
+     * Add a channel in the mixer
+     * @param {Playlist} channel
+     */
+    addPlaylist(Name) {
+        const state = this.state();
+        let playlistId = uuid();
+        if(state.playlists == undefined)
+            state.playlists={};
+        state.playlists[playlistId] = {
+            channels: {},
+            volume: 0.5,
+            paused: true
+        };
+        state.playlists[playlistId].name = Name;
+        state.selected = playlistId;
+        this.setPlaylist(playlistId, state)
+    }
+
+    setPlaylist(id, state=this.state()){
+        state.selected = id;
+        state.channels = state.playlists[id].channels;
+        state.volume = state.playlists[id].volume;
+        state.paused = state.playlists[id].paused;
+        this._write(state, true);
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+    }
+
+    /**
+     * Return a specific channel from the mixer
+     * @param {string} id
+     * @returns {playlist}
+     */
+    readPlaylist(id) {
+        const state = this.state();
+        if (!(state.playlists[id])) {
+            throw `playlists ${id} does not exist in mixer`;
+        }
+        return state.playlists[id];
+    }
+
+    /**
+     * Delete a channel from the mixer
+     * @param {string} id
+     */
+    deletePlaylist(id) {
+        const state = this.state();
+        if($('#mixerPlaylists [selected="selected"]').prev().length>0){
+            delete state.playlists[id];
+            this.setPlaylist($('#mixerPlaylists [selected="selected"]').prev().val(), state)
+        }
+    }
+
 
     // channels
 
@@ -458,6 +530,16 @@ class Mixer extends EventTarget {
             }
         }
 
+        $(total).off().on('click', function(e){
+            let progressRect = this.getBoundingClientRect();
+            let percentClick = (e.clientX - progressRect.left) / $(this).width();
+
+            const channel = window.MIXER.readChannel(id);
+            player.currentTime = player.duration * percentClick;
+            channel.currentTime = player.currentTime;
+
+            window.MIXER.updateChannel(id, channel);
+        });
         return total
     }
 

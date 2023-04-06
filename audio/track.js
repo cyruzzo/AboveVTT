@@ -76,6 +76,17 @@ class TrackLibrary extends Library {
         }
     }
 
+    filterTrackLibrary(searchFilter = ''){
+        let tracks = $('#track-list .audio-row');
+      
+        tracks.show();           
+        if(searchFilter != ''){
+            let filterArray = searchFilter.split(" ");
+            let regex = new RegExp( filterArray.join( "|" ), "i");
+            tracks.filter(item => !regex.test(tracks[item].textContent)).hide();
+        }
+
+    }
     /**
      *
      * @param {string} name
