@@ -525,6 +525,7 @@ class Token {
 		this.options.top = top + 'px';
 		this.options.left = left + 'px';
 		this.place(100);
+		this.update_and_sync();
 	}
 
 	snap_to_closest_square() {
@@ -815,7 +816,6 @@ class Token {
 				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-			this.hp = old.find(".hp").val();
 			this.maxHp = old.find(".max_hp").val();
 			
 			this.update_dead_cross(old)
