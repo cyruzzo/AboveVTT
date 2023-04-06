@@ -441,8 +441,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		img.css('opacity','0.5');
 	}
 	entry.append($("<td/>").append(img));
-	let init=$("<input class='init' maxlength=2 style='font-size:12px;'>");
-	init.css('width','20px');
+	let init=$("<input class='init' maxlength=2'>");
 	init.css('-webkit-appearance','none');
 	if(window.DM && typeof(token.options.init) == 'undefined'){
 
@@ -464,20 +463,18 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		init.attr("disabled","disabled");
 	}
 	if(window.DM){
-		init.change(function(){
-				 
-				
+		init.change(function(){	
 				window.all_token_objects[token.options.id].options.init = init.val()
 				window.all_token_objects[token.options.id].sync = function(e) {				
 					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
 				}
 			
 				token.options.init = init.val();
-				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
+				if(window.TOKEN_OBJECTS[token.options.id]){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
-				setTimeout(ct_reorder(), 500);
+				setTimeout(ct_reorder(window.DM), 500);
 			}
 		);
 	}
