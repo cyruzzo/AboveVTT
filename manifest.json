@@ -39,6 +39,7 @@
 		"assets/*",
 		"audio/*",
 		"images/*",
+		"font/*",
 		"ajaxQueue/*",
 		"jquery-ui.min.css",
 		"jquery.ui.theme.min.css",
