@@ -703,9 +703,7 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-				if(window.YTPLAYER){
-					window.YTPLAYER.volume = msg.data.volume;
-					if(window.YTPLAYER)
+				if(window.YTPLAYER.setVolume){
 						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
 				}
 			}
@@ -1408,6 +1406,14 @@ class MessageBroker {
 	        const state = window.MIXER.remoteState();
           console.log('pushing mixer state to players', state);
           window.MB.sendMessage('custom/myVTT/mixer', state);
+          if (window.YTPLAYER) {
+          		window.YTPLAYER.volume = $("#youtube_volume").val();
+              window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+              data={
+                  volume: window.YTPLAYER.volume
+              };
+              window.MB.sendMessage("custom/myVTT/changeyoutube",data);
+          }
 			}
 			// also sync the journal
 			window.JOURNAL?.sync();
