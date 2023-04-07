@@ -967,8 +967,6 @@ class MessageBroker {
 				window.STREAMPEERS[msg.data.from] = peer;					
 			}
 
-
-
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
@@ -1009,11 +1007,9 @@ class MessageBroker {
 							}
 						}
 					);
-					
 
 					$("#combat_area tr").each(function() {
 						let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-						console.log(converted);
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
 							window.all_token_objects[$(this).attr('data-target')].options.init = total;
