@@ -40,6 +40,8 @@ const availableToAoe = [
 
 
 const debounceLightChecks = mydebounce(() => {		
+		if(window.DRAGGING)
+			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
@@ -1941,7 +1943,8 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
-						debounceLightChecks();
+						setTimeout(debounceLightChecks, 500)
+
 						self.update_and_sync(event, false);
 						if (self.selected ) {
 							for (let tok of $(".token.tokenselected")){
