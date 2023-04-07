@@ -402,6 +402,15 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
         minHeight: 55
     });
 
+    document.querySelectorAll('.menu-button')
+    .forEach(occurence => {
+        let id = occurence.id;
+        if (id && (!id.includes("text") || id === "text_button"))
+        occurence.addEventListener('click', function() {
+            document.getElementById("text_controller_inside")?.remove();
+        }, { once: true});
+      });
+
     $(textInputInside).mousedown(function () {
         frame_z_index_when_click($(this));
     });
@@ -523,7 +532,10 @@ function handle_draw_text_submit(event) {
  * @param {Event} e 
  */
 function handle_key_press(e) {
-    if (e.key == "Escape") $(this).parent().remove();
+    if (e.key == "Escape") {
+        $(this).parent().remove();
+        document.getElementById("text_controller_inside")?.remove();
+    }
 }
 
 /**
@@ -761,7 +773,6 @@ function draw_text(
  * @param {$} buttons the buttons in which this text button is appended to
  */
 function init_text_button(buttons) {
-    
     textButton = $(
         "<button style='display:inline;width:75px' id='text_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>T</u>ext</button>"
     );
@@ -817,7 +828,8 @@ function init_text_button(buttons) {
             );
             $("#text_div svg").empty();
             redraw_text();
-            sync_drawings()
+            sync_drawings();
+            document.getElementById("text_controller_inside")?.remove();
         }
     });
 
