@@ -171,7 +171,17 @@ class Mixer extends EventTarget {
                 player.preload = "auto";
                 this._players[id] = player;
             }
-
+            const url = player.src;
+            if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+                const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+                console.log("parse drive audio is converting", url, "to", parsed);
+                player.src = parsed;
+            }
+            else if (url.includes("dropbox.com") && url.includes("?dl=")) {
+                const parsed = url.split("?dl=")[0] + "?raw=1";
+                console.log("parse dropbox audio is converting", url, "to", parsed);
+                player.src = parsed;
+            }
             // sync player
             player.volume = state.volume * channel.volume;
             player.loop = channel.loop;
