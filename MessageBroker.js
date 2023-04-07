@@ -681,7 +681,8 @@ class MessageBroker {
 				}
 			}
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
-				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
+				let tokenId = $("#combat_area tr[data-current=1]").attr('data-target');
+				if(tokenId.endsWith(`characters/${msg.data.from}`) || window.all_token_objects[tokenId].options.player_owned)
 					$("#combat_next_button").click();				
 
 			}
