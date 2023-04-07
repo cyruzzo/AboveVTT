@@ -470,7 +470,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				}
 			
 				token.options.init = init.val();
-				if(!window.TOKEN_OBJECTS[token.options.id]){
+				if(!!window.TOKEN_OBJECTS[token.options.id]){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
