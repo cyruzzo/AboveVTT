@@ -102,6 +102,9 @@ Mousetrap.bind('space', function (e) {     //collapse/show character sheet
     if(!window.DM) {
         $('#sheet_button').click()
     }
+    else{
+        $('#pause_players').click()
+    }
 });
 
 
