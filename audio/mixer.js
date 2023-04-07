@@ -300,16 +300,26 @@ class Mixer extends EventTarget {
      * Add a channel in the mixer
      * @param {Playlist} channel
      */
-    addPlaylist(Name) {
+    addPlaylist(Name, useState) {
         const state = this.state();
         let playlistId = uuid();
         if(state.playlists == undefined)
             state.playlists={};
-        state.playlists[playlistId] = {
-            channels: {},
-            volume: 0.5,
-            paused: true
-        };
+        if(!useState){
+            state.playlists[playlistId] = {
+                channels: {},
+                volume: 0.5,
+                paused: true
+            };
+        }
+        else{
+            state.playlists[playlistId] = {
+                channels: state.channels,
+                volume: state.volume,
+                paused: state.paused
+            };
+        }
+       
         state.playlists[playlistId].name = Name;
         state.selected = playlistId;
         this.setPlaylist(playlistId, state)

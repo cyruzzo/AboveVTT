@@ -32,7 +32,7 @@ function init_mixer() {
     mixerChannels.id = 'mixer-channels';
 
     if(window.MIXER.state().playlists == undefined ){
-        window.MIXER.addPlaylist("Default");
+        window.MIXER.addPlaylist("Default", true);
     }          
     let playlists = window.MIXER.playlists();
     let playlistInput = $(`<select id='mixerPlaylists'></select>`);
@@ -200,7 +200,7 @@ function init_mixer() {
     let addPlaylistButton = $('<button id="add-playlist">Add Playlist</button>');
    
     const playlistFields = $("<div id='playlistFields'></div>")
-    const playlistName = $(`<input class='trackName trackInput' placeholder='Track Name'/>`)
+    const playlistName = $(`<input class='trackName trackInput' placeholder='Playlist Name'/>`)
     const okButton = $('<button class="add-track-ok-button">OK</button>');  
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
     addPlaylistButton.off().on("click", function(){
