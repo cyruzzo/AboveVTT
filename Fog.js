@@ -734,7 +734,7 @@ function reset_canvas() {
  			'background':  '#0000',
  			'opacity': '0.3'
  		});
- 	else{
+ 	} else{
  		$('#light_container').css({
  			'mix-blend-mode': '',
  			'background': '',
@@ -1028,7 +1028,7 @@ function redraw_light_walls(clear=true){
  			'background': '#0000',
  			'opacity': '0.3'
  		});
- 	else{
+ 	} else{
  		$('#light_container').css({
  			'mix-blend-mode': '',
  			'background': '',
