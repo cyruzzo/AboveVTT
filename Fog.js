@@ -3064,7 +3064,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function detectInLos(x, y) {
 	let canvas = document.getElementById("raycastingCanvas");
 	let ctx = canvas.getContext("2d");
-	const pixeldata = ctx.getImageData(x, y, 1, 1).data;
+	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 	if (pixeldata[2] == 0)
 	{	
 		return false;			
