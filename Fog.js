@@ -465,53 +465,74 @@ function check_token_visibility(){
 	}
 	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() <  -1000)){
 		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now();
-		setTimeout(do_check_token_visibility(), 1);
+		do_check_token_visibility();
 		return;
 	}
 	else {
 		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now() + 1000;
-		setTimeout(do_check_token_visibility, 1000);
+		do_check_token_visibility;
 		return;
 	}
 }
 
-function do_check_token_visibility() {
+async function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	let canvas = document.getElementById("fog_overlay");
 
 	if (canvas.style.diplay == "none")
 		return;
-	let ctx = canvas.getContext("2d");
+	let ctx = canvas.getContext("2d",  { willReadFrequently: true });
 	let canvas2 = document.getElementById("raycastingCanvas");
-	let ctx2 = canvas2.getContext("2d");
+	let ctx2 = canvas2.getContext("2d",  { willReadFrequently: true });
 
+	let promises = [];
 	for (let id in window.TOKEN_OBJECTS) {
+	if (id.includes(window.PLAYER_ID)) {
+		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+		$(auraSelector).show();
+	};
+	 promises.push(new Promise(_ => setTimeout(_ => {
 		let left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 		let top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 		let pixeldata = ctx.getImageData(left, top, 1, 1).data;
-		let pixeldata2 = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-		let selector = "div.token[data-id='" + id + "']";
+		let tokenSelector = "div.token[data-id='" + id + "']";
 
 
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 		//Combining some and filter cut down about 140ms for average sized picture
-		let someFilter = function(color, index) {return (index) % 4 == 0 && color == 255};
-		
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(someFilter) && playerTokenHasVision && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4)) || (playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0  && (!is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0)))) {
-			$(selector + "," + auraSelector).hide();
+		let someFilter = function(ctx) {
+			let pixelData = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+			//return (index) % 4 == 0 && color == 255
+			for (let i = 0; i < pixelData.length; i+=4) {
+				if (pixelData[i] === 255) {
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		if (!window.TOKEN_OBJECTS[id].options.revealInFog 
+			&& (pixeldata[3] == 255
+				|| playerTokenHasVision 
+				&& ((window.CURRENT_SCENE_DATA.darkness_filter > 0  && !is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0))
+					|| ((window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4) && !someFilter(ctx2)))) {
+			$(tokenSelector + "," + auraSelector).hide();
 		}
-		else if (!window.TOKEN_OBJECTS[id].options.hidden) {
-			let selectors = []
-			$(selector).css({'opacity': 1, 'display': 'block'});
+		else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
+			$(tokenSelector).css({'opacity': 1, 'display': 'block'});
 			if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
 				$(auraSelector).show();
 			//console.log('SHOW '+id);
 		}
-	}
+	}, 700)));}
+
+	await Promise.all(promises);
 	console.log("finished");
 }
 
@@ -3063,7 +3084,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 //Checks if a pixel is in line of current line of sight
 function detectInLos(x, y) {
 	let canvas = document.getElementById("raycastingCanvas");
-	let ctx = canvas.getContext("2d");
+	let ctx = canvas.getContext("2d", { willReadFrequently: true });
 	const pixeldata = ctx.getImageData(x, y, 1, 1).data;
 	if (pixeldata[2] == 0)
 	{	
@@ -3074,7 +3095,7 @@ function detectInLos(x, y) {
 	}
 }
 
-function redraw_light(){
+async function redraw_light(){
 
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
@@ -3113,7 +3134,6 @@ function redraw_light(){
 	let selectedIds = [];
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){
-	
 		if(window.SelectedTokenVision){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
 				$('#VTT').css('--darkness-filter', `0%`)
@@ -3128,7 +3148,6 @@ function redraw_light(){
 		  		selectedIds.push(tokenId)
 		}	  	
 	 }
-
 
   for(let i = 0; i < light_auras.length; i++){
 
@@ -3196,7 +3215,7 @@ function redraw_light(){
   		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 	}    	
   }
-	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	await scheduler.postTask(() => context.drawImage(offscreenCanvasMask, 0, 0), {priority: "user-visible"}); // draw to visible canvas only once so we render this once
 }
 
 

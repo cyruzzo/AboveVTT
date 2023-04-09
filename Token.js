@@ -39,15 +39,19 @@ const availableToAoe = [
 
 
 
-const debounceLightChecks = mydebounce(() => {		
+const debounceLightChecks = mydebounce(async () => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
-		redraw_light();
+		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
+		let promise = [scheduler.postTask(redraw_light, {priority: "user-visible"})];
 		if(!window.DM)
-			check_token_visibility();
+			//promise.push(new Promise(_ => setTimeout(check_token_visibility(), 1000)));
+			promise.push(scheduler.postTask(check_token_visibility, {priority: "user-visible"}));
+		
+		await Promise.all(promise);
 }, 250);
 
 
@@ -1380,7 +1384,7 @@ class Token {
 		console.groupEnd()
 	}
 
-	place(animationDuration) {
+	async place(animationDuration) {
 		
 		if(!window.CURRENT_SCENE_DATA){
 			// No scene loaded!
@@ -1429,9 +1433,10 @@ class Token {
 					{
 						left: this.options.left,
 						top: this.options.top,
-					}, { duration: animationDuration, queue: true, complete: function() {
-						draw_selected_token_bounding_box();
-						debounceLightChecks();
+					}, { duration: animationDuration, queue: true, complete: async function() {
+						let taskA = scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
+						let taskB = scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
+						await Promise.all([taskA, taskB]);
 						}
 						
 					});
@@ -2104,7 +2109,7 @@ class Token {
 				 * @param {Event} event mouse event
 				 * @param {Object} ui UI-object
 				 */
-				drag: function(event, ui) {
+				drag: async function(event, ui) {
 					event.stopImmediatePropagation();
 					
 					let zoom = window.ZOOM;
@@ -2138,13 +2143,14 @@ class Token {
 				
 				
 					let canvas = document.getElementById("raycastingCanvas");
-					let ctx = canvas.getContext("2d");
+					let ctx = canvas.getContext("2d", { willReadFrequently: true });
 					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 					let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 					if(!window.DM && playerTokenAuraIsLight){
 						const left = (tokenPosition.x + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 						const top = (tokenPosition.y + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
+						const pixeldata = JSON.parse(sessionStorage.getItem("pixelData")) ?? ctx.getImageData(left, top, 1, 1).data;
+						sessionStorage.setItem("pixelData", JSON.stringify(pixeldata));
 
 						if (pixeldata[2] != 0)
 						{	
@@ -2213,11 +2219,6 @@ class Token {
 						// try to move other tokens by the same amount
 						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
 						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-
-						
-
-						
-					
 
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
@@ -2372,14 +2373,15 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
-		this.build_stats(token)
-		this.toggle_stats(token)
-		this.update_health_aura(token)
-		this.update_dead_cross(token)
-		// this.toggle_player_owned(token)
-		toggle_player_selectable(this, token)
-		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-		debounceLightChecks();
+		let promises = [];
+		promises.push(new Promise(() => setTimeout(this.build_stats(token), 100)));
+		promises.push(new Promise(() => setTimeout(this.toggle_stats(token), 100)));
+		promises.push(new Promise(() => setTimeout(this.update_health_aura(token), 100)));
+		promises.push(new Promise(() => setTimeout(this.update_dead_cross(token), 100)));
+		promises.push(new Promise(() => setTimeout(toggle_player_selectable(this, token), 100)));
+		promises.push(new Promise(() => setTimeout(debounceLightChecks(), 100)));
+
+		Promise.all(promises);
 		console.groupEnd()
 	}
 
