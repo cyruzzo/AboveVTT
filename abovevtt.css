@@ -5854,7 +5854,7 @@ div.ddbc-tab-options--layout-pill>button{
 #light_container{
     mix-blend-mode:lighten;
     background: #000;
-    z-index: 10;
+    z-index: 9;
     opacity: 1;
     filter:blur(calc(10px / var(--scene-scale)));
 }
