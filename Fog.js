@@ -731,7 +731,7 @@ function reset_canvas() {
  	if(darknessfilter == 0 && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
- 			'background':  '#0000',
+ 			'background':  '#FFF',
  			'opacity': '0.3'
  		});
  	} else{
@@ -1025,7 +1025,7 @@ function redraw_light_walls(clear=true){
  	if(darknessfilter == 0 && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
- 			'background': '#0000',
+ 			'background': '#FFF',
  			'opacity': '0.3'
  		});
  	} else{
