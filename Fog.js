@@ -964,9 +964,9 @@ function redraw_light_walls(clear=true){
 	let sceneMapHeight = sceneMapContainer.height();
 	let sceneMapWidth = sceneMapContainer.width();
 
-	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapHeight, 0));
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0));
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapWidth));
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight));
 	window.walls.push(wall6);
 	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall7);
@@ -3119,7 +3119,15 @@ function redraw_light(){
 				$('#VTT').css('--darkness-filter', `0%`)
 			}
 	  		$('#raycastingCanvas').css('opacity', '1');
+	  		
+		 	$('#light_container').css({
+	 			'opacity': '1'
+	 		});
+
+		 	
 	  	}
+	  	
+	  
 	  	
   		
 		for(let j = 0; j < selectedTokens.length; j++){
@@ -3127,7 +3135,20 @@ function redraw_light(){
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
 		  		selectedIds.push(tokenId)
 		}	  	
-	 }
+	}
+	else {
+  		if(window.CURRENT_SCENE_DATA.darkness_filter == 0 && window.walls.length>4){
+		 	$('#light_container').css({
+	 			'opacity': '0.3'
+		 	});
+		 	 
+	  	}
+	  	else{
+	  		$('#light_container').css({
+	 			'opacity': ''
+	 		});
+  		}
+  	}
 
 
   for(let i = 0; i < light_auras.length; i++){
