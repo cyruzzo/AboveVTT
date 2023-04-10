@@ -555,10 +555,12 @@ class Mixer extends EventTarget {
             let percentClick = (e.clientX - progressRect.left) / $(this).width();
 
             const channel = window.MIXER.readChannel(id);
-            player.currentTime = player.duration * percentClick;
-            channel.currentTime = player.currentTime;
-
-            window.MIXER.updateChannel(id, channel);
+            if(!isNaN(player.duration)){
+                player.currentTime = player.duration * percentClick;
+                channel.currentTime = player.currentTime;
+                window.MIXER.updateChannel(id, channel);
+            }
+       
         });
         return total
     }

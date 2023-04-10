@@ -862,7 +862,7 @@ function ct_load(data=null){
 				window.TOKEN_OBJECTS[data.current].update_and_sync();
 			}
 			if(window.all_token_objects[data.current] != undefined){
-				if(window.all_token_objects[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"') || window.all_token_objects[data[i]['data-target']].options.player_owned){
+				if(window.all_token_objects[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"') || window.all_token_objects[data.current].options.player_owned){
 					$("#endplayerturn").toggleClass('enabled', true);
 					$("#endplayerturn").prop('disabled', false);
 				}

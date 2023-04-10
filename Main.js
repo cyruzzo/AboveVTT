@@ -382,7 +382,13 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			playerVars: { 'autoplay': 1, 'controls': 0 },
 			events: {
 				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
-				'onReady': function(e) { window.YTPLAYER.setVolume($("#youtube_volume").val()); }
+				'onReady': function(e) { 
+					let ytvolume= $("#youtube_volume").val();
+					if(ytvolume)
+						window.YTPLAYER.setVolume(ytvolume); 
+					else
+						window.YTPLAYER.setVolume(50);
+				}			
 			}
 		});
 

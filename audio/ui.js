@@ -59,8 +59,9 @@ function init_mixer() {
         $(youtube_section).append(channelNameDiv, youtube_volume);
         $(mixerChannels).append(youtube_section);
         youtube_volume.on("change", function() {
-            window.YTPLAYER.volume = $("#youtube_volume").val();
+
             if (window.YTPLAYER) {
+                window.YTPLAYER.volume = $("#youtube_volume").val();
                 window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
                 data={
                     volume: window.YTPLAYER.volume
