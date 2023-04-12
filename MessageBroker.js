@@ -484,7 +484,7 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/audioPlayingSyncMe") {
 				self.handleAudioPlayingSync(msg);
 			}
-			if(msg.eventType == ('custom/myVTT/character-update')){
+			if (msg.eventType.includes('character-update')) {
 					update_pc_with_data(msg.data.characterId, msg.data.pcData);
 			}
 

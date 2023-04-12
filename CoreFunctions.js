@@ -523,19 +523,33 @@ function update_pc_with_data(playerId, data) {
   }
   console.debug(`update_pc_with_data is updating ${playerId} with`, data);
   const pc = window.pcs[index];
-  const updatedPc = {...pc, ...data};
-  window.pcs[index] = updatedPc
-  let token = window.TOKEN_OBJECTS[pc.sheet];
-  if (token) {
-    token.options = {
-      ...token.options,
-      ...updatedPc,
-      id: pc.sheet // updatedPc.id is DDB characterId, but we use the sheet as an id for tokens
-    };
-    token.place_sync_persist(); // not sure if this is overkill
+  window.pcs[index] = {...pc, ...data}
+  if (window.DM) {
+    if (!window.PC_TOKENS_NEEDING_UPDATES) {
+      window.PC_TOKENS_NEEDING_UPDATES = [];
+    }
+    window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
+    debounce_pc_token_update();
   }
-  update_pc_token_rows();
 }
+
+const debounce_pc_token_update = mydebounce(() => {
+  if (window.DM) {
+    window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
+      let token = window.TOKEN_OBJECTS[playerId];
+      const pc = find_pc_by_player_id(playerId, false);
+      if (token && pc) {
+        token.options = {
+          ...token.options,
+          ...pc,
+          id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+        };
+        token.place_sync_persist(); // not sure if this is overkill
+      }
+      update_pc_token_rows();
+    });
+  }
+});
 
 async function harvest_game_id() {
   if (is_campaign_page()) {
