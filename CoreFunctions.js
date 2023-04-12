@@ -536,8 +536,9 @@ function update_pc_with_data(playerId, data) {
 const debounce_pc_token_update = mydebounce(() => {
   if (window.DM) {
     window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
-      let token = window.TOKEN_OBJECTS[playerId];
+     
       const pc = find_pc_by_player_id(playerId, false);
+      let token = window.TOKEN_OBJECTS[pc.sheet];
       if (token && pc) {
         token.options = {
           ...token.options,
@@ -548,6 +549,7 @@ const debounce_pc_token_update = mydebounce(() => {
       }
       update_pc_token_rows();
     });
+    window.PC_TOKENS_NEEDING_UPDATES = [];
   }
 });
 
