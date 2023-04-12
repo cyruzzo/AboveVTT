@@ -18,13 +18,13 @@ const sendCharacterUpdateEvent = mydebounce(() => {
       characterId: window.PLAYER_ID,
       pcData: pcData
     });
+    update_pc_with_data(window.PLAYER_ID, pcData);
   } else {
     tabCommunicationChannel.postMessage({
       characterId: window.location.href.split('/').slice(-1)[0],
       pcData: pcData
     });
   }
-  update_pc_with_data(window.PLAYER_ID, pcData);
 }, 1500);
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
