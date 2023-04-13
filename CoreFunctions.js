@@ -506,8 +506,9 @@ async function rebuild_window_pcs() {
     return {
       ...characterData,
       image: characterData.decorations?.avatar?.avatarUrl || characterData.avatarUrl || defaultAvatarUrl,
-      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
-    }
+      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`,
+      lastSynchronized: Date.now()
+    };
   });
 }
 
@@ -523,7 +524,11 @@ function update_pc_with_data(playerId, data) {
   }
   console.debug(`update_pc_with_data is updating ${playerId} with`, data);
   const pc = window.pcs[index];
-  window.pcs[index] = {...pc, ...data}
+  window.pcs[index] = {
+    ...pc,
+    ...data,
+    lastSynchronized: Date.now()
+  }
   if (window.DM) {
     if (!window.PC_TOKENS_NEEDING_UPDATES) {
       window.PC_TOKENS_NEEDING_UPDATES = [];
@@ -552,6 +557,45 @@ const debounce_pc_token_update = mydebounce(() => {
     });
     window.PC_TOKENS_NEEDING_UPDATES = [];
   }
+});
+
+function update_pc_with_api_call(playerId) {
+  if (!playerId) {
+    console.log('update_pc_with_api_call was called without a playerId');
+    return;
+  }
+  if (window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
+    console.log(`update_pc_with_api_call isn't adding ${playerId} because we're already waiting for debounce_pc_token_update to handle it`);
+    return;
+  }
+  if (!window.PC_NEEDS_API_CALL) {
+    window.PC_NEEDS_API_CALL = {};
+  }
+  if (Object.keys(window.PC_NEEDS_API_CALL).includes(playerId)) {
+    console.log(`update_pc_with_api_call is already waiting planning to call the API to fetch ${playerId}. Nothing to do right now.`);
+    return;
+  }
+  window.PC_NEEDS_API_CALL[playerId] = Date.now();
+  debounce_fetch_character_from_api();
+}
+
+const debounce_fetch_character_from_api = mydebounce(() => {
+  const idsAndDates = { ...window.PC_NEEDS_API_CALL }; // make a copy so we can refer to it later
+  window.PC_NEEDS_API_CALL = {}; // clear it out in case we get new updates while the API call is active
+  const characterIds = Object.keys(idsAndDates);
+  console.log('debounce_fetch_character_from_api is about to call DDBApi before update_pc_with_data for ', characterIds);
+  DDBApi.fetchCharacterDetails(characterIds).then((characterDataCollection) => {
+    characterDataCollection.forEach((characterData) => {
+      // check if we've synchronized this player data while the API call was active because we don't want to update the PC with stale data
+      const lastSynchronized = find_pc_by_player_id(characterData.characterId, false)?.lastSynchronized;
+      if (!lastSynchronized || lastSynchronized < idsAndDates[characterData.characterId]) {
+        console.log('debounce_fetch_character_from_api is about to call update_pc_with_data with', characterData.characterId, characterData);
+        update_pc_with_data(characterData.characterId, characterData);
+      } else {
+        console.log(`debounce_fetch_character_from_api is not calling update_pc_with_data for ${characterData.characterId} because ${lastSynchronized} < ${idsAndDates[characterData.characterId]}`);
+      }
+    });
+  });
 });
 
 async function harvest_game_id() {
