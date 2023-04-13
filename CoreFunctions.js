@@ -554,10 +554,6 @@ const debounce_pc_token_update = mydebounce(() => {
   }
 });
 
-const test_debounce = mydebounce((someVar) => {
-  console.log('someVar', someVar);
-})
-
 async function harvest_game_id() {
   if (is_campaign_page()) {
     const fromPath = window.location.pathname.split("/").pop();
