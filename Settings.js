@@ -977,7 +977,7 @@ function import_readfile() {
 
 
 		if(DataFile.mixerstate != undefined){
-			window.MIXER._write(DataFile.mixerstate);
+			window.MIXER._write(DataFile.mixerstate, true);
 		}
 		if(DataFile.tracklibrary != undefined){
 			let trackMap = new Map(DataFile.tracklibrary);
