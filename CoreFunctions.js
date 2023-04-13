@@ -528,7 +528,9 @@ function update_pc_with_data(playerId, data) {
     if (!window.PC_TOKENS_NEEDING_UPDATES) {
       window.PC_TOKENS_NEEDING_UPDATES = [];
     }
-    window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
+    if (!window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
+      window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
+    }
     debounce_pc_token_update();
   }
 }
@@ -536,10 +538,9 @@ function update_pc_with_data(playerId, data) {
 const debounce_pc_token_update = mydebounce(() => {
   if (window.DM) {
     window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
-     
       const pc = find_pc_by_player_id(playerId, false);
-      let token = window.TOKEN_OBJECTS[pc.sheet];
-      if (token && pc) {
+      let token = window.TOKEN_OBJECTS[pc?.sheet];
+      if (token) {
         token.options = {
           ...token.options,
           ...pc,
@@ -552,6 +553,10 @@ const debounce_pc_token_update = mydebounce(() => {
     window.PC_TOKENS_NEEDING_UPDATES = [];
   }
 });
+
+const test_debounce = mydebounce((someVar) => {
+  console.log('someVar', someVar);
+})
 
 async function harvest_game_id() {
   if (is_campaign_page()) {
