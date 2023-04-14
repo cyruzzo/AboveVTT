@@ -1233,9 +1233,9 @@ class MessageBroker {
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;
 			}
-			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+			t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
-			};
+			}, 500);
 			t.place();
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
