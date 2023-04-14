@@ -485,7 +485,11 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType == ('custom/myVTT/character-update')){
-					update_pc_with_data(msg.data.characterId, msg.data.pcData);
+				update_pc_with_data(msg.data.characterId, msg.data.pcData);
+			}
+			if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
+				console.log('update_pc character-sheet/character-update/fulfilled', msg);
+				update_pc_with_api_call(msg.data?.characterId);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
