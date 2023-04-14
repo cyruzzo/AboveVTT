@@ -33,6 +33,8 @@ $(function() {
   window.diceRoller = new DiceRoller();
   if (is_abovevtt_page()) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(!find_pc_by_player_id(event.data.characterId, false))
+        return;
       if(!window.DM){
          window.MB.sendMessage("custom/myVTT/character-update", {
           characterId: event.data.characterId,
