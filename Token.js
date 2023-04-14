@@ -48,7 +48,7 @@ const debounceLightChecks = mydebounce(() => {
 		redraw_light();
 		if(!window.DM)
 			check_token_visibility();
-}, 250);
+}, 500);
 
 
 function random_token_color() {
@@ -1942,7 +1942,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
-						setTimeout(debounceLightChecks, 500)
+						setTimeout(debounceLightChecks, 250)
 
 						self.update_and_sync(event, false);
 						if (self.selected ) {
