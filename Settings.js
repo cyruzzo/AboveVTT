@@ -907,6 +907,29 @@ function persist_experimental_settings(settings) {
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
+function export_current_scene(){
+	build_import_loading_indicator('Preparing Export File');
+	let DataFile = {
+		version: 2,
+		scenes: [window.CURRENT_SCENE_DATA],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+
+	for(tokenID in window.TOKEN_OBJECTS){
+		for(noteID in window.JOURNAL.notes){
+			if(tokenID == noteID){
+				DataFile.notes[tokenID] = window.JOURNAL.notes[noteID];
+			}
+		}
+	}
+
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+	$(".import-loading-indicator").remove();
+}
+
 function export_file() {
 	build_import_loading_indicator('Preparing Export File');
 	let DataFile = {
@@ -1051,8 +1074,21 @@ function import_readfile() {
 
 		persist_all_token_customizations(customizations, function () {
 			if(DataFile.notes){
-				window.JOURNAL.notes=DataFile.notes;
-				window.JOURNAL.chapters=DataFile.journalchapters;
+				for(let id in DataFile.notes){
+					window.JOURNAL.notes[id]=DataFile.notes[id];
+				}
+				for(let i=0; i < DataFile.journalchapters.length; i++){
+					let chapterIndex = window.JOURNAL.chapters.findIndex(d => d.title == DataFile.journalchapters[i].title)
+					if(chapterIndex != -1){
+						for(let j = 0; j < DataFile.journalchapters[i].notes.length; j++){
+							if(!window.JOURNAL.chapters[chapterIndex].notes.includes(DataFile.journalchapters[i].notes[j]))
+								window.JOURNAL.chapters[chapterIndex].notes.push(DataFile.journalchapters[i].notes[j]);
+						}						
+					}	
+					else{
+						window.JOURNAL.chapters.push(DataFile.journalchapters[i])
+					}
+				}
 				window.JOURNAL.persist();
 				window.JOURNAL.build_journal();
 			} else {
