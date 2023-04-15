@@ -181,8 +181,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				});
 			}
 
-			ct_reorder();
-			ct_persist();
+			debounceCombatReorder();
 		});
 		
 		body.append(combatButton);

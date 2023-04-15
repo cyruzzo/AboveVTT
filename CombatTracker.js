@@ -1,4 +1,15 @@
 
+const debounceCombatReorder = combatmydebounce(() => {ct_reorder(window.DM)}, 250); //250ms so this still feels reactive
+const debounceCombatPersist = combatmydebounce(() => {ct_persist()}, 500); //500 ms since doesn't have visible effect on the screen the change takes place.
+
+function combatmydebounce(func, timeout = 800){ // we need to figure out where to put the original debounce somewhere we can access it earlier.
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+
 function init_combat_tracker(){
 	window.ROUND_NUMBER =1;
 	
@@ -133,14 +144,14 @@ function init_combat_tracker(){
 			delete window.TOKEN_OBJECTS[tokenID].options.current;
 		}
 		window.TOKEN_OBJECTS[tokenID].update_and_sync();
-		ct_persist();
+		debounceCombatPersist();
 		ct_update_popout();
 	});
 
 	rn.find("#round_number").change(function (data) {
 		if(!isNaN(data.currentTarget.value)){
 			window.ROUND_NUMBER = Math.round(data.currentTarget.value);
-			ct_persist();
+			debounceCombatPersist();
 		}
 		ct_update_popout();
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
@@ -183,8 +194,7 @@ function init_combat_tracker(){
 			});
 		});
 		
-		setTimeout(ct_reorder,500); // quick hack to save and resync only one time
-		setTimeout(ct_update_popout,600);
+		debounceCombatReorder()
 
 		ct_update_popout();
 		$("#combat_area tr").first().attr('data-current','1');
@@ -212,7 +222,7 @@ function init_combat_tracker(){
 		}
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
-		ct_persist();
+		debounceCombatPersist();
 	});
 	
 	next=$("<button id='combat_next_button'>NEXT</button>");
@@ -259,7 +269,7 @@ function init_combat_tracker(){
 			}
 		}
 		
-		ct_persist();
+		debounceCombatPersist();
 		ct_update_popout();
 		if(window.childWindows['Combat Tracker'] != undefined)
 			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
@@ -300,7 +310,7 @@ function init_combat_tracker(){
 			}
 		}
 		
-		ct_persist();
+		debounceCombatPersist();
 		ct_update_popout();
 		if(window.childWindows['Combat Tracker'] != undefined)
 			$(window.childWindows['Combat Tracker'].document).find("tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });
@@ -384,7 +394,7 @@ function ct_reorder(persist=true) {
 	$("#combat_area").append(items);
 	ct_update_popout();
 	if(persist)
-		ct_persist();
+		debounceCombatPersist();
 }
 
 
@@ -474,7 +484,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
-				setTimeout(ct_reorder(window.DM), 500);
+				debounceCombatReorder();
 			}
 		);
 	}
@@ -489,7 +499,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){			
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
-				setTimeout(ct_reorder(), 500);
+				debounceCombatReorder();
 			});
 	}
 	
@@ -554,7 +564,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
-			setTimeout(ct_persist(), 500);
 		});
 		hp_input.click(function(e) {
 			$(e.target).select();
@@ -575,7 +584,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
-			setTimeout(ct_persist(), 500);
 		});
 		maxhp_input.click(function(e) {
 			$(e.target).select();
@@ -685,7 +693,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}	
 				ct_update_popout();
-				ct_persist();
+				debounceCombatPersist();
 			});
 
 			
@@ -711,7 +719,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
   	ct_update_popout();
 
 	if(window.DM && persist == true){
-		setTimeout(ct_reorder(), 500);
+		debounceCombatReorder();
 	}
 	
 }
@@ -912,12 +920,9 @@ function ct_load(data=null){
 	}
 
 	
-	if(window.DM){
-		ct_reorder();
-	}
-	else{
-		ct_update_popout();
-	}
+
+	debounceCombatReorder()
+
 
 }
 
@@ -934,6 +939,6 @@ function ct_remove_token(token,persist=true) {
 	}
 	ct_update_popout()
 	if (persist) {
-		ct_persist();
+		debounceCombatPersist();
 	}
 }

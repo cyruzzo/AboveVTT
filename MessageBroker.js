@@ -1019,7 +1019,7 @@ class MessageBroker {
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 						}
 					});
-					setTimeout(ct_reorder(), 500);
+					debounceCombatReorder();
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
@@ -1217,10 +1217,6 @@ class MessageBroker {
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
 			}
 			window.TOKEN_OBJECTS[data.id].place();
-
-			if(window.DM && msg.loading){
-				window.TOKEN_OBJECTS[data.id].update_and_sync();
-			}
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
