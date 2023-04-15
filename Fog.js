@@ -647,6 +647,78 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	}
 	gridContext.stroke();
 }
+function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true){
+	const gridCanvas = document.getElementById("grid_overlay");
+	const gridContext = gridCanvas.getContext("2d");
+
+	clear_grid();
+	gridContext.setLineDash(dash);
+	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
+	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
+	startX = Math.round(startX)
+	startY = Math.round(startY) 
+	const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
+	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
+
+
+
+	let hexWidth = Math.floor(hexSize * Math.cos(Math.PI / 6));
+	let hexHeight = Math.floor(hexSize * Math.sin(Math.PI / 6));
+
+	let numRows = Math.floor(gridCanvas.height / hexHeight);
+	let numCols = Math.floor(gridCanvas.width / hexWidth);
+
+	if(columns){
+		for (let r = 0; r < numRows; r++) {
+		  for (let c = 0; c < numCols; c++) {
+			let x = c * hexSize*1.5 + startX;
+			let y = Math.floor(r * hexHeight * (Math.PI+0.5)  + (c % 2) * hexHeight*2) + startY;
+		    drawHexagon(x, y);
+		  }
+		}
+	}
+	else{
+		let hexWidth = hexSize * Math.sqrt(3) / 2;
+		let hexHeight = hexSize;
+
+		for (let r = 0; r < numRows; r++) {
+		  for (let c = 0; c < numCols; c++) {
+		   	let x = c * hexWidth + startX;
+		    let y = r * hexHeight * 3 + (c % 2) * hexHeight *1.5 + startY;
+		    drawHexagon(x, y);
+		  }
+		}
+	}
+	function drawHexagon(x, y) {
+		if(columns){
+		  gridContext.beginPath();
+		  gridContext.moveTo(x + hexSize, y);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.cos(angle);
+		    let dy = hexSize * Math.sin(angle);
+		    gridContext.lineTo(x + dx, y + dy);
+		  }
+		  gridContext.closePath();
+		  gridContext.stroke();
+		}
+		else{
+		  gridContext.beginPath();
+		  gridContext.moveTo(x, y + hexSize);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.sin(angle);
+		    let dy = hexSize * Math.cos(angle);
+		    gridContext.lineTo(x + dx, y + dy);
+		  }
+		  gridContext.closePath();
+		  gridContext.stroke();
+		}
+	}
+	
+	
+}
 
 function draw_wizarding_box() {
 
