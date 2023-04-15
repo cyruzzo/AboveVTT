@@ -844,3 +844,125 @@ function areArraysEqualSets(a1, a2) {
 
   return true;
 }
+
+
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false) {
+  console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
+  const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
+  if (existing.length > 0) {
+    return existing;
+  }
+
+  const container = $(`<div class="resize_drag_window" id="${id}"></div>`);
+  container.css({
+    "left": "10%",
+    "top": "10%",
+    "max-width": "100%",
+    "max-height": "100%",
+    "position": "fixed",
+    "height": "80%",
+    "width": "80%",
+    "z-index": "10000",
+    "display": "none"
+  });
+
+  $("#site").append(container);
+
+  if (addLoadingIndicator) {
+    container.append(build_combat_tracker_loading_indicator(`Loading ${titleBarText}`));
+    const loadingIndicator = container.find(".sidebar-panel-loading-indicator");
+    loadingIndicator.css("top", "25px");
+    loadingIndicator.css("height", "calc(100% - 25px)");
+  }
+
+  container.show("slow")
+  container.resize(function(e) {
+    e.stopPropagation();
+  });
+
+  const titleBar = $("<div class='title_bar restored'></div>");
+  container.append(titleBar);
+
+  /*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+  const close_title_button = $(`<div class="title_bar_close_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>`);
+  titleBar.append(close_title_button);
+  close_title_button.on("click", function (event) {
+    close_and_cleanup_generic_draggable_window($(event.currentTarget).closest('.resize_drag_window').attr('id'));
+  });
+
+  if (addPopoutButton) {
+    container.append(`<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
+  }
+
+  container.addClass("moveableWindow");
+
+  container.resizable({
+    addClasses: false,
+    handles: "all",
+    containment: "#windowContainment",
+    start: function (event, ui) {
+      $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
+    },
+    stop: function (event, ui) {
+      $('.iframeResizeCover').remove();
+    },
+    minWidth: 200,
+    minHeight: 200
+  });
+
+  container.on('mousedown', function(event) {
+    frame_z_index_when_click($(event.currentTarget));
+  });
+
+  container.draggable({
+    addClasses: false,
+    scroll: false,
+    containment: "#windowContainment",
+    start: function(event, ui) {
+      $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
+    },
+    stop: function(event, ui) {
+      $('.iframeResizeCover').remove();
+    }
+  });
+
+  titleBar.on('dblclick', function(event) {
+    const titleBar = $(event.currentTarget);
+    if (titleBar.hasClass("restored")) {
+      titleBar.data("prev-height", titleBar.height());
+      titleBar.data("prev-width", titleBar.width() - 3);
+      titleBar.data("prev-top", titleBar.css("top"));
+      titleBar.data("prev-left", titleBar.css("left"));
+      titleBar.css("top", titleBar.data("prev-minimized-top"));
+      titleBar.css("left", titleBar.data("prev-minimized-left"));
+      titleBar.height(23);
+      titleBar.width(200);
+      titleBar.addClass("minimized");
+      titleBar.removeClass("restored");
+      titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
+    } else if(titleBar.hasClass("minimized")) {
+      titleBar.data("prev-minimized-top", titleBar.css("top"));
+      titleBar.data("prev-minimized-left", titleBar.css("left"));
+      titleBar.height(titleBar.data("prev-height"));
+      titleBar.width(titleBar.data("prev-width"));
+      titleBar.css("top", titleBar.data("prev-top"));
+      titleBar.css("left", titleBar.data("prev-left"));
+      titleBar.addClass("restored");
+      titleBar.removeClass("minimized");
+      titleBar.find(".title_bar_text").remove();
+    }
+  });
+
+  return container;
+}
+
+function close_and_cleanup_generic_draggable_window(id) {
+  const container = id.startsWith("#") ? $(id) : $(`#${id}`);
+  container.off('dblclick');
+  container.off('mousedown');
+  container.draggable('destroy');
+  container.resizable('destroy');
+  container.find('.title_bar_close_button').off('click');
+  container.find('.popout-button').off('click');
+  container.remove();
+}
