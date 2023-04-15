@@ -103,16 +103,16 @@ function token_context_menu_expanded(tokenIds, e) {
 	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
 	const someTokensAreAoe = (uniqueAoeList.includes(true));
 
-	$("#tokenOptionsPopup").remove();
-	let tokenOptionsClickCloseDiv = $("<div id='tokenOptionsClickCloseDiv'></div>");
-	tokenOptionsClickCloseDiv.off().on("click", function(){
-		$("#tokenOptionsPopup").remove();
-		$('.context-menu-list').trigger('contextmenu:hide')
-		tokenOptionsClickCloseDiv.remove();
-		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
-		$("#tokenOptionsContainer .sp-container").remove();
-		$(`.context-menu-flyout`).remove(); 
-	});
+	//$("#tokenOptionsPopup").remove();
+	// let tokenOptionsClickCloseDiv = $("<div id='tokenOptionsClickCloseDiv'></div>");
+	// tokenOptionsClickCloseDiv.off().on("click", function(event){
+	// 	$("#tokenOptionsPopup").remove();
+	// 	$('.context-menu-list').trigger('contextmenu:hide')
+	// 	tokenOptionsClickCloseDiv.remove();
+	// 	$("#tokenOptionsContainer .sp-container").spectrum("destroy");
+	// 	$("#tokenOptionsContainer .sp-container").remove();
+	// 	$(`.context-menu-flyout`).remove(); 
+	// });
 
 	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
 
@@ -121,7 +121,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	moveableTokenOptions.append(body);
 
 	$('body').append(moveableTokenOptions);
-	$('body').append(tokenOptionsClickCloseDiv);
+	//$('body').append(tokenOptionsClickCloseDiv);
 
 	// stat block / character sheet
 
@@ -1121,13 +1121,14 @@ function build_notes_flyout_menu(tokenIds) {
 		}
 
 		editNoteButton.off().on("click", function(){
+			close_token_context_menu();
 			if (!(id in window.JOURNAL.notes)) {
 				window.JOURNAL.notes[id] = {
 					title: window.TOKEN_OBJECTS[id].options.name,
 					text: '',
 					plain: '',
 					player: false
-				}
+				};
 			}
 			window.JOURNAL.edit_note(id);
 		});		

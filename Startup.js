@@ -138,7 +138,7 @@ async function start_above_vtt_for_dm() {
 
   startup_step("Fetching scenes from AboveVTT servers");
   await fetch_sceneList_and_scenes();
-
+  await scheduler.postTask(() => token_menu(), {priority: "background"});
   startup_step("Start up complete");
 }
 

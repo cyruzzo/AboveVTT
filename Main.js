@@ -2575,7 +2575,6 @@ function init_ui() {
 	init_zoom_buttons();
 	init_combat_tracker();
 
-	token_menu();
 	load_custom_monster_image_mapping();
 
 
