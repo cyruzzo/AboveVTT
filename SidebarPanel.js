@@ -620,7 +620,6 @@ class SidebarListItem {
     let parentId = sceneData.parentId || RootFolder.Scenes.id;
     let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, parentId);
     console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
-    item.sceneId = sceneData.id;
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
     return item;
   }
@@ -1328,27 +1327,27 @@ function build_sidebar_list_row(listItem) {
       row.attr("title", `${listItem.name}\nclick to preview`);
       let switch_dm = $(`<button class='dm_scenes_button token-row-button' title="Move DM To This Scene"></button>`);
       switch_dm.append(svg_dm());
-      if(window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id === listItem.sceneId){
+      if(window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id === listItem.id){
         switch_dm.addClass("selected-scene");
       }
       switch_dm.on("click", function(clickEvent) {
         clickEvent.stopPropagation();
         $("#scenes-panel .dm_scenes_button.selected-scene").removeClass("selected-scene");
         $(clickEvent.currentTarget).addClass("selected-scene");
-        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.sceneId, switch_dm: true });
+        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id, switch_dm: true });
         add_zoom_to_storage();
       });
       let switch_players = $(`<button class='player_scenes_button token-row-button' title="Move Players To This Scene"></button>`);
       switch_players.append(svg_everyone());
-      if(window.PLAYER_SCENE_ID === listItem.sceneId){
+      if(window.PLAYER_SCENE_ID === listItem.id){
         switch_players.addClass("selected-scene");
       }
       switch_players.on("click", function(clickEvent) {
         clickEvent.stopPropagation();
-        window.PLAYER_SCENE_ID = listItem.sceneId;
+        window.PLAYER_SCENE_ID = listItem.id;
         $("#scenes-panel .player_scenes_button.selected-scene").removeClass("selected-scene");
         $(clickEvent.currentTarget).addClass("selected-scene");
-        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.sceneId });
+        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id });
         add_zoom_to_storage()
       });
       rowItem.append(switch_dm);
@@ -1509,11 +1508,11 @@ function display_sidebar_list_item_configuration_modal(listItem) {
       display_token_configuration_modal(listItem);
       break;
     case ItemType.Scene:
-      let index = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.sceneId);
+      let index = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.id);
       if (index >= 0) {
         edit_scene_dialog(index);
       } else {
-        showError("Failed to find scene index for scene with id", listItem.sceneId);
+        showError("Failed to find scene index for scene with id", listItem.id);
       }
       break;
     case ItemType.Aoe:
@@ -1685,7 +1684,7 @@ function delete_item(listItem) {
       break;
     case ItemType.Scene:
       if (confirm(`Are you sure that you want to delete the scene named "${listItem.name}"?`)) {
-        window.ScenesHandler.delete_scene(listItem.sceneId);
+        window.ScenesHandler.delete_scene(listItem.id);
       }
       break;
     case ItemType.PC:
@@ -1715,6 +1714,13 @@ function expand_all_folders_up_to_item(listItem) {
 function expand_all_folders_up_to_id(id) {
   if (typeof id !== "string" || id.length === 0) return;
   let element = $(`#${id}`)
+  if (element.length === 0) {
+    element = $(`[data-id="${id}"]`);
+  }
+  if (element.length === 0) {
+    console.warn(`expand_all_folders_up_to_id failed to find a folder with id ${id}`);
+    return;
+  }
   element.parents(".collapsed").removeClass("collapsed");
   element.removeClass("collapsed");
 }
@@ -1736,8 +1742,7 @@ function delete_folder_and_delete_children(listItem) {
   if (listItem.folderType === ItemType.MyToken) {
     delete_mytokens_folder_and_everything_in_it(listItem);
   } else if (listItem.folderType === ItemType.Scene) {
-    delete_scenes_within_folder(listItem);
-    delete_scenes_folder(listItem);
+    delete_folder_and_all_scenes_within_it(listItem);
     did_update_scenes();
     expand_all_folders_up_to_item(listItem);
   } else {
@@ -1769,7 +1774,7 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     move_scenes_to_parent_folder(listItem);
     delete_scenes_folder(listItem);
     did_update_scenes();
-    expand_all_folders_up_to_item(listItem);
+    expand_all_folders_up_to_id(listItem.parentId);
   } else {
     console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
   }
@@ -1931,11 +1936,7 @@ function enable_draggable_change_folder(listItemType) {
       if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === path_to_html_id(RootFolder.Scenes.path)) {
         // they dropped it on the header so find the root folder
         if (listItemType === ItemType.Scene) {
-          if (draggedItem.isTypeFolder()) {
-            move_scenes_folder(draggedItem, RootFolder.Scenes.path);
-          } else {
-            move_scene_to_folder(draggedItem, RootFolder.Scenes.path);
-          }
+          move_scene_to_folder(draggedItem, RootFolder.Scenes.id);
           did_update_scenes();
           enable_draggable_change_folder(ItemType.Scene);
         } else if (listItemType === ItemType.MyToken) {
@@ -2065,12 +2066,8 @@ function move_item_into_folder_item(listItem, folderItem) {
     persist_token_customization(customization);
     rebuild_token_items_list();
     enable_draggable_change_folder(ItemType.MyToken);
-  } else if (listItem.isTypeScene()) {
-    move_scene_to_folder(listItem, folderItem.fullPath());
-    did_update_scenes();
-    enable_draggable_change_folder(ItemType.Scene);
-  } else if (listItem.isTypeSceneFolder()) {
-    move_scenes_folder(listItem, folderItem.fullPath());
+  } else if (listItem.isTypeScene() || listItem.isTypeSceneFolder()) {
+    move_scene_to_folder(listItem, folderItem.id);
     did_update_scenes();
     enable_draggable_change_folder(ItemType.Scene);
   } else {

@@ -1621,7 +1621,7 @@ function expand_folders_to_active_scenes() {
 	if (!window.DM || !window.CURRENT_SCENE_DATA || !window.sceneListItems || !window.PLAYER_SCENE_ID) {
 		return;
 	}
-	let dmSceneItem = window.sceneListItems.find(i => i.sceneId === window.CURRENT_SCENE_DATA.id);
+	let dmSceneItem = window.sceneListItems.find(i => i.id === window.CURRENT_SCENE_DATA.id);
 	if (dmSceneItem) {
 		expand_all_folders_up_to_item(dmSceneItem);
 	}
@@ -1631,93 +1631,48 @@ function expand_folders_to_active_scenes() {
 	}
 }
 
-function delete_scenes_within_folder(listItem) {
-	console.group(`delete_scenes_within_folder`);
-	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
+function delete_folder_and_all_scenes_within_it(listItem) {
+	console.group(`delete_folder_and_all_scenes_within_it`);
 
-	console.log("about to delete all scenes within", adjustedPath);
+	const scenesToDelete = find_descendants_of_scene_id(listItem.id);
+
 	console.debug("before deleting from scenes", window.ScenesHandler.scenes);
-	window.ScenesHandler.scenes
-		.filter(scene => scene.folderPath?.startsWith(adjustedPath))
-		.forEach(scene => window.ScenesHandler.delete_scene(scene.id, false));
+	scenesToDelete.forEach(scene => {
+		window.ScenesHandler.delete_scene(scene.id, false);
+	});
 	console.debug("after deleting from scenes", window.ScenesHandler.scenes);
-
-	console.log("about to delete all folders within", adjustedPath);
-	console.debug("before deleting from window.sceneListFolders", window.sceneListFolders);
-	window.sceneListFolders = window.sceneListFolders.filter(folder => !folder.folderPath.startsWith(adjustedPath))
-	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
-
 	console.groupEnd();
 }
 
 function move_scenes_to_parent_folder(listItem) {
 	console.group(`move_scenes_to_parent_folder`);
-	let adjustedPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
-	let oneLevelUp = sanitize_folder_path(listItem.folderPath.replace(RootFolder.Scenes.path, ""));
-
 	console.debug("before moving scenes", window.ScenesHandler.scenes);
-	window.ScenesHandler.scenes
-		.filter(scene => scene.folderPath?.startsWith(adjustedPath))
-		.forEach(scene => {
-			scene.folderPath = oneLevelUp;
-			let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === scene.id);
+	window.ScenesHandler.scenes.forEach((scene, sceneIndex) => {
+		if (scene.parentId === listItem.id) {
+			// this is a direct child of the listItem we're about to delete. let's move it up one level
+			scene.parentId = listItem.parentId || RootFolder.Scenes.id;
 			window.ScenesHandler.persist_scene(sceneIndex);
-		});
+		}
+	});
 	console.debug("after moving scenes", window.ScenesHandler.scenes);
-
-	console.log("about to move all folders within", adjustedPath);
-	console.debug("before moving window.sceneListFolders", window.sceneListFolders);
-	window.sceneListFolders
-		.filter(folder => folder.folderPath.startsWith(adjustedPath) && folder.fullPath() !== listItem.fullPath()) // all subfolders, but don't move the folder we're moving out of
-		.forEach(folder => folder.folderPath = sanitize_folder_path(folder.folderPath.replace(adjustedPath, oneLevelUp)))
-	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
-
 	console.groupEnd();
 }
 
 function delete_scenes_folder(listItem) {
 	console.debug("before moving window.sceneListFolders", window.sceneListFolders);
-	window.sceneListFolders = window.sceneListFolders.filter(folder => folder.fullPath() !== listItem.fullPath())
+	window.ScenesHandler.delete_scene(listItem.id, false);
 	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
 }
 
-function move_scene_to_folder(listItem, folderPath) {
-	let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.sceneId);
-	let scene = window.ScenesHandler.scenes[sceneIndex];
-	scene.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
+function move_scene_to_folder(listItem, parentId) {
+	let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === listItem.id);
+	if (sceneIndex < 0) {
+		console.error(`move_scene_to_folder couldn't find a scene with id ${listItem.id}`, listItem);
+		showError(new Error(`Could not find a scene to move`));
+		return;
+	}
+	window.ScenesHandler.scenes[sceneIndex].parentId = parentId;
 	window.ScenesHandler.persist_scene(sceneIndex);
-}
-
-function move_scenes_folder(listItem, folderPath) {
-	console.group(`move_scenes_folder`);
-	let fromPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
-
-	// move the actual item
-	listItem.folderPath = sanitize_folder_path(folderPath.replace(RootFolder.Scenes.path, ""));
-	listItem.id = path_to_html_id(listItem.fullPath());
-	listItem.parentId = path_to_html_id(listItem.folderPath);
-	let toPath = sanitize_folder_path(listItem.fullPath().replace(RootFolder.Scenes.path, ""));
-
-	// move subfolders. This isn't exactly necessary since we'll just rebuild the list anyway, but any empty folders need to be updated
-	window.sceneListFolders.forEach(f => {
-		if (f.folderPath.startsWith(fromPath)) {
-			f.folderPath = f.folderPath.replace(fromPath, toPath);
-			f.id = path_to_html_id(f.fullPath());
-			f.parentId = path_to_html_id(f.folderPath);
-		}
-	});
-
-	// move all scenes within the folder
-	window.ScenesHandler.scenes.forEach((scene, sceneIndex) => {
-		if (scene.folderPath?.startsWith(fromPath)) {
-			console.debug("before moving scene", scene);
-			scene.folderPath = scene.folderPath.replace(fromPath, toPath);
-			console.debug("after moving scene", scene);
-			window.ScenesHandler.persist_scene(sceneIndex);
-		}
-	});
-
-	console.groupEnd();
 }
 
 function load_sources_iframe_for_map_import(hidden = false) {

@@ -615,7 +615,26 @@ function find_ancestors_of_scene(scene, found = []) {
 	if (parent) {
 		return find_ancestors_of_scene(parent, found)
 	} else {
-		// TODO: anything special or parentId === RootFolder.Scene.id?
+		// TODO: anything special for parentId === RootFolder.Scene.id?
 		return found;
 	}
+}
+
+function find_descendants_of_scene_id(sceneId) {
+	const scene = window.ScenesHandler.scenes.find(s => s.id === sceneId);
+	return find_descendants_of_scene(scene);
+}
+
+function find_descendants_of_scene(scene, found = []) {
+	if (!scene) {
+		return found;
+	}
+	found.push(scene);
+	window.ScenesHandler.scenes.forEach(s => {
+		if (s.parentId === scene.id) {
+			// this is a child, so process it
+			found = find_descendants_of_scene(s, found);
+		}
+	});
+	return found;
 }
