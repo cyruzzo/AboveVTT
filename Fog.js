@@ -672,10 +672,16 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 	if(columns){
 		for (let r = 0; r < numRows; r++) {
 		  for (let c = 0; c < numCols; c++) {
-			let x = c * hexSize*1.5 + startX;
-			let y = Math.floor(r * hexHeight * (Math.PI+0.5)  + (c % 2) * hexHeight*2) + startY;
+			let x = c * hexSize*1.5 + startX - hexSize/1.5;
+			let y = Math.floor(r * hexHeight * (Math.PI+0.5)  + (c % 2) * hexHeight*2) + startY - hexHeight/2;
 		    drawHexagon(x, y);
 		  }
+		}
+		window.verticalHexGrid = true; //switch to current scene settings when available
+		delete window.horizontalHexGrid;
+		window.hexGridSize = {
+			width: hexSize*1.5,
+			height: hexHeight * (Math.PI+0.5)
 		}
 	}
 	else{
@@ -684,12 +690,19 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 
 		for (let r = 0; r < numRows; r++) {
 		  for (let c = 0; c < numCols; c++) {
-		   	let x = c * hexWidth + startX;
-		    let y = r * hexHeight * 3 + (c % 2) * hexHeight *1.5 + startY;
+		   	let x = c * hexWidth + startX - hexWidth/7;
+		    let y = r * hexHeight * 3 + (c % 2) * hexHeight *1.5 + startY - hexHeight/1.4;
 		    drawHexagon(x, y);
 		  }
 		}
+		window.horizontalHexGrid = true; //switch to current scene settings when available
+		delete window.verticalHexGrid;
+		window.hexGridSize = {
+			width: hexWidth*2,
+			height: hexHeight * 1.5
+		}
 	}
+
 	function drawHexagon(x, y) {
 		if(columns){
 		  gridContext.beginPath();

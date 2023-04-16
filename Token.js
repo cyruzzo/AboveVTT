@@ -1854,10 +1854,14 @@ class Token {
 
 							const selectedOldTop = parseInt($(event.target).css("top"));
 							const selectedOldleft = parseInt($(event.target).css("left"));
-							
 
-							const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
-							const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
+
+
+							
+							let token_position = snap_point_to_grid(selectedOldleft, selectedOldTop);
+
+							const selectedNewtop =  token_position.y;
+							const selectedNewleft = token_position.x;
 
 							console.log("Snapping from "+selectedOldleft+ " "+selectedOldTop + " -> "+selectedNewleft + " "+selectedNewtop);
 							console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
@@ -1899,9 +1903,11 @@ class Token {
 
 									const oldtop = parseInt($(tok).css("top"));
 									const oldleft = parseInt($(tok).css("left"));
+									
+									let new_position = snap_point_to_grid(oldleft, oldtop);
 
-									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									const newtop = new_position.x;
+									const newleft = new_position.y;
 
 									$(tok).css("top", newtop + "px");
 									$(tok).css("left", newleft + "px");
@@ -2515,10 +2521,16 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false) {
 		// adjust to the nearest square coordinate
 		const startX = window.CURRENT_SCENE_DATA.offsetx;
 		const startY = window.CURRENT_SCENE_DATA.offsety;
-		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
-		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
-		const currentGridX = Math.floor((mapX - startX) / gridWidth);
-		const currentGridY = Math.floor((mapY - startY) / gridHeight);
+		const gridWidth = (window.verticalHexGrid || window.horizontalHexGrid) ? window.hexGridSize.width : window.CURRENT_SCENE_DATA.hpps;
+		const gridHeight = (window.verticalHexGrid || window.horizontalHexGrid) ? window.hexGridSize.height : window.CURRENT_SCENE_DATA.vpps;
+		let currentGridX = Math.floor((mapX - startX) / gridWidth);
+		let currentGridY = Math.floor((mapY - startY) / gridHeight);
+		if(window.verticalHexGrid && currentGridX % 2 == 1){ //replace with current scene when setting exists
+			currentGridY += 0.5;
+		}
+		else if(window.horizontalHexGrid && currentGridY % 2 == 1){//replace with current scene when setting exists
+			currentGridX += 0.5;
+		}
 		return {
 			x: Math.ceil((currentGridX * gridWidth) + startX),
 			y: Math.ceil((currentGridY * gridHeight) + startY)
