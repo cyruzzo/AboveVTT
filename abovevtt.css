@@ -5854,9 +5854,9 @@ div.ddbc-tab-options--layout-pill>button{
 #light_container{
     mix-blend-mode:lighten;
     background: #000;
-    z-index: 10;
+    z-index: 9;
     opacity: 1;
-    filter:blur(10px);
+    filter:blur(calc(10px / var(--scene-scale)));
 }
 
 #text_div{
@@ -6919,6 +6919,28 @@ button.channel-loop-button{
     text-overflow: ellipsis;
     display: inline;
 }
+#mixerPlaylists{
+    width: 100px;
+    margin: 0px 0px 0px 5px;
+}
+#mixerPlaylists ~ button#add-playlist, 
+#mixerPlaylists ~ button#remove-playlist {
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: fit-content;
+    font-size: 12px;
+    height: 16px;
+    margin: 0px 4px;
+    color: rgb(111, 116, 120);
+    padding: 0px 3px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #000000;
+    opacity: 0.8;
+    outline: none;
+    background: rgb(235, 241, 245);
+}   
 
 .mixer-play-pause-button,
 .track-play-pause-button,
@@ -6987,6 +7009,13 @@ button.channel-loop-button{
     box-shadow: inset #000 1px 1px 3px 1px;
     transform: translate(1px, 2px) scale(0.8);
 }
+
+#mixerPlaylists ~ button#add-playlist:active, 
+#mixerPlaylists ~ button#remove-playlist:active{
+    background-color: rgb(245, 248, 250);
+    box-shadow: inset #000 1px 1px 3px 1px;
+    transform: translate(1px, 2px);
+} 
 .track-add-to-mixer{
    fill:#000;
    padding: 5px 4px 5px 4px; 
@@ -7008,7 +7037,8 @@ input.trackName.trackInput {
     width: 100px;
 }
 
-div#importTrackFields input {
+div#importTrackFields input,
+div#editTrackFields input {
     width: 100px;
     margin: 0px 5px 0px 0px;
 }
@@ -7018,10 +7048,16 @@ div#importTrackFields input {
     position: relative;
 }
 
-div#importTrackFields input.trackSrc {
+div#importTrackFields input.trackSrc,
+div#editTrackFields input.trackSrc  {
     width: 145px;
 }
-div#importTrackFields {
+div#editTrackFields button{
+    float: initial;
+    height: 24px;
+}
+div#importTrackFields,
+div#playlistFields {
     height: 0px;
     overflow: hidden;
     margin: 5px 0px;
@@ -7035,18 +7071,12 @@ div#importTrackFields {
 }
 .mixer-clear-button{
     position: absolute;
-    top: 54px;
-    right: 190px;
+    left: 126px;
 }
 
 .mixer-play-pause-button{
     position: absolute;
-    top: 54px;
     left: 174px;
-}
-
-.mixer-play-pause-button.playing{
-
 }
 
 

@@ -728,15 +728,18 @@ function reset_canvas() {
  	else if(window.DM){
  		$('#raycastingCanvas').css('opacity', '');
  	}
- 	if(darknessfilter == 0){
- 		$('#light_container').css('mix-blend-mode', 'unset');
- 		$('#light_container').css('background', '#0000');
- 		$('#light_container').css('opacity', '0.3');
- 	}
- 	else{
- 		$('#light_container').css('mix-blend-mode', '');
- 		$('#light_container').css('background', '');
- 		$('#light_container').css('opacity', '');
+ 	if(darknessfilter == 0 && window.walls.length>4){
+ 		$('#light_container').css({
+ 			'mix-blend-mode': 'unset',
+ 			'background':  '#FFF',
+ 			'opacity': '0.3'
+ 		});
+ 	} else{
+ 		$('#light_container').css({
+ 			'mix-blend-mode': '',
+ 			'background': '',
+ 			'opacity': ''
+ 		});
  	}
  	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
@@ -961,9 +964,9 @@ function redraw_light_walls(clear=true){
 	let sceneMapHeight = sceneMapContainer.height();
 	let sceneMapWidth = sceneMapContainer.width();
 
-	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapHeight, 0));
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0));
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapWidth));
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight));
 	window.walls.push(wall6);
 	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall7);
@@ -1017,8 +1020,21 @@ function redraw_light_walls(clear=true){
 		}
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
 		window.walls.push(drawnWall);
-
 	}
+	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+ 	if(darknessfilter == 0 && window.walls.length>4){
+ 		$('#light_container').css({
+ 			'mix-blend-mode': 'unset',
+ 			'background': '#FFF',
+ 			'opacity': '0.3'
+ 		});
+ 	} else{
+ 		$('#light_container').css({
+ 			'mix-blend-mode': '',
+ 			'background': '',
+ 			'opacity': ''
+ 		});
+ 	}
 }
 function open_close_door(x1, y1, x2, y2){
 	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && (d[2] == "rgba(255, 100, 255, 1)" || d[2] == "rgba(255, 100, 255, 0.5)")  && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
@@ -3048,7 +3064,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function detectInLos(x, y) {
 	let canvas = document.getElementById("raycastingCanvas");
 	let ctx = canvas.getContext("2d");
-	const pixeldata = ctx.getImageData(x, y, 1, 1).data;
+	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 	if (pixeldata[2] == 0)
 	{	
 		return false;			
@@ -3103,7 +3119,15 @@ function redraw_light(){
 				$('#VTT').css('--darkness-filter', `0%`)
 			}
 	  		$('#raycastingCanvas').css('opacity', '1');
+	  		
+		 	$('#light_container').css({
+	 			'opacity': '1'
+	 		});
+
+		 	
 	  	}
+	  	
+	  
 	  	
   		
 		for(let j = 0; j < selectedTokens.length; j++){
@@ -3111,7 +3135,20 @@ function redraw_light(){
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
 		  		selectedIds.push(tokenId)
 		}	  	
-	 }
+	}
+	else {
+  		if(window.CURRENT_SCENE_DATA.darkness_filter == 0 && window.walls.length>4){
+		 	$('#light_container').css({
+	 			'opacity': '0.3'
+		 	});
+		 	 
+	  	}
+	  	else{
+	  		$('#light_container').css({
+	 			'opacity': ''
+	 		});
+  		}
+  	}
 
 
   for(let i = 0; i < light_auras.length; i++){

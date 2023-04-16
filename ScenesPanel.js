@@ -474,7 +474,7 @@ function edit_scene_dialog(scene_id) {
 		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
-		$("#raycastingCanvas").css('visibility', 'visible');
+		$("#light_container").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	};
 
@@ -499,7 +499,7 @@ function edit_scene_dialog(scene_id) {
 				$("#wizard_popup").remove();
 			});
 			window.ScenesHandler.persist_current_scene();
-			$("#raycastingCanvas").css('visibility', 'visible');
+			$("#light_container").css('visibility', 'visible');
 			$("#darkness_layer").css('visibility', 'visible');
 		});
 
@@ -519,7 +519,7 @@ function edit_scene_dialog(scene_id) {
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
 			});
-			$("#raycastingCanvas").css('visibility', 'visible');
+			$("#light_container").css('visibility', 'visible');
 			$("#darkness_layer").css('visibility', 'visible');
 		});
 	}
@@ -540,7 +540,7 @@ function edit_scene_dialog(scene_id) {
 		});
 		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
-		$("#raycastingCanvas").css('visibility', 'visible');
+		$("#light_container").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	}
 
@@ -561,7 +561,7 @@ function edit_scene_dialog(scene_id) {
 		});
 		window.ScenesHandler.persist_current_scene();
 		$("#exitWizard").remove();
-		$("#raycastingCanvas").css('visibility', 'visible');
+		$("#light_container").css('visibility', 'visible');
 		$("#darkness_layer").css('visibility', 'visible');
 	}
 
@@ -849,7 +849,7 @@ function edit_scene_dialog(scene_id) {
 
 
 			$("body").append(wizard_popup);
-			$("#raycastingCanvas").css('visibility', 'hidden');
+			$("#light_container").css('visibility', 'hidden');
 			$("#darkness_layer").css('visibility', 'hidden');
 			wizard_popup.draggable({
 				addClasses: false,
@@ -957,7 +957,7 @@ function edit_scene_dialog(scene_id) {
 				window.CURRENT_SCENE_DATA = copiedSceneData;
 
 				window.ScenesHandler.persist_current_scene();
-				$("#raycastingCanvas").css('visibility', 'visible');
+				$("#light_container").css('visibility', 'visible');
 				$("#darkness_layer").css('visibility', 'visible');
 				$("#tokens").show();
 			});

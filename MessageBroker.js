@@ -485,7 +485,11 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType == ('custom/myVTT/character-update')){
-					update_pc_with_data(msg.data.characterId, msg.data.pcData);
+				update_pc_with_data(msg.data.characterId, msg.data.pcData);
+			}
+			if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
+				console.log('update_pc character-sheet/character-update/fulfilled', msg);
+				update_pc_with_api_call(msg.data?.characterId);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -681,7 +685,8 @@ class MessageBroker {
 				}
 			}
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
-				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
+				let tokenId = $("#combat_area tr[data-current=1]").attr('data-target');
+				if(tokenId.endsWith(`characters/${msg.data.from}`) || window.all_token_objects[tokenId].options.player_owned)
 					$("#combat_next_button").click();				
 
 			}
@@ -702,9 +707,7 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-				if(window.YTPLAYER){
-					window.YTPLAYER.volume = msg.data.volume;
-					if(window.YTPLAYER)
+				if(window.YTPLAYER.setVolume){
 						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
 				}
 			}
@@ -966,8 +969,6 @@ class MessageBroker {
 				window.STREAMPEERS[msg.data.from] = peer;					
 			}
 
-
-
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
@@ -1002,23 +1003,23 @@ class MessageBroker {
 							let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 							if(converted==entityid){
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+								window.all_token_objects[$(this).attr('data-id')].options.init = total;
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
 							}
 						}
 					);
-					
 
 					$("#combat_area tr").each(function() {
 						let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-						console.log(converted);
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
+							window.all_token_objects[$(this).attr('data-target')].options.init = total;
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 						}
 					});
-					setTimeout(ct_reorder(), 500);
+					debounceCombatReorder();
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
@@ -1216,10 +1217,6 @@ class MessageBroker {
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
 			}
 			window.TOKEN_OBJECTS[data.id].place();
-
-			if(window.DM && msg.loading){
-				window.TOKEN_OBJECTS[data.id].update_and_sync();
-			}
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
@@ -1232,9 +1229,9 @@ class MessageBroker {
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;
 			}
-			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+			t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
-			};
+			}, 500);
 			t.place();
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
@@ -1409,6 +1406,14 @@ class MessageBroker {
 	        const state = window.MIXER.remoteState();
           console.log('pushing mixer state to players', state);
           window.MB.sendMessage('custom/myVTT/mixer', state);
+          if (window.YTPLAYER) {
+          		window.YTPLAYER.volume = $("#youtube_volume").val();
+              window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+              data={
+                  volume: window.YTPLAYER.volume
+              };
+              window.MB.sendMessage("custom/myVTT/changeyoutube",data);
+          }
 			}
 			// also sync the journal
 			window.JOURNAL?.sync();

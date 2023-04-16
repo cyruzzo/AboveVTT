@@ -6,6 +6,12 @@ import { log } from './helpers.js';
  *
  * @returns {HTMLDivElement}
  */
+
+const debounceSearch = mydebounce((searchFilter) => {      
+        window.TRACK_LIBRARY.filterTrackLibrary(searchFilter)
+}, 500);
+
+
 function masterVolumeSlider() {
     const div = document.createElement("div");
     div.textContent = "Master Volume";
@@ -13,20 +19,39 @@ function masterVolumeSlider() {
     div.id = "master-volume"
     div.append(window.MIXER.masterVolumeSlider());
 
-    return div;
+    return div; 
 }
 
 function init_mixer() {
     // header
     const header = document.createElement("h3");
     header.textContent = "Mixer";
-
+    $(header).css('display', 'inline');
     // mixer channels
     const mixerChannels = document.createElement("ul");
     mixerChannels.id = 'mixer-channels';
 
+    if(window.MIXER.state().playlists == undefined ){
+        window.MIXER.addPlaylist("Default", true);
+    }          
+    let playlists = window.MIXER.playlists();
+    let playlistInput = $(`<select id='mixerPlaylists'></select>`);
+
     /** @param {Object.<string, Channel>} */
     const drawChannelList = (channels) => {
+        playlistInput.find('option').remove();
+        playlists = window.MIXER.playlists();
+       
+        Object.entries(playlists).forEach(([id, state]) => {
+            if(id == 'selected')
+                return;
+            let option = $(`<option value='${id}'>${state.name}</option>`);
+            if(window.MIXER.selectedPlaylist() == id)
+                option.attr('selected', 'selected');
+            else
+                option.removeAttr('selected');
+            playlistInput.append(option);
+        });
         mixerChannels.innerHTML = "";
         let youtube_section= $("<li class='audio-row'></li>");;    
         let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>Animated Map Audio</div>`)
@@ -34,8 +59,9 @@ function init_mixer() {
         $(youtube_section).append(channelNameDiv, youtube_volume);
         $(mixerChannels).append(youtube_section);
         youtube_volume.on("change", function() {
-            window.YTPLAYER.volume = $("#youtube_volume").val();
+
             if (window.YTPLAYER) {
+                window.YTPLAYER.volume = $("#youtube_volume").val();
                 window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
                 data={
                     volume: window.YTPLAYER.volume
@@ -136,17 +162,67 @@ function init_mixer() {
                     window.MIXER.updateChannel(id, channel);
                 }
             });
+
+            let playPauseMixer = $('.mixer-play-pause-button');
+            let mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
+            let mixer_pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
+            if(window.MIXER.paused) {
+                mixer_playlist_svg.css('display', 'block');
+                mixer_pause_svg.css('display', 'none');
+                playPauseMixer.toggleClass('playing', false);
+                playPauseMixer.toggleClass('pressed', false);
+                $('head').append(`<style id="mixer-paused" />#sounds-panel button.pressed.playing{background: #ffd03b45 !important;}</style>`);
+            }
+            else {
+                mixer_pause_svg.css('display', 'block');
+                mixer_playlist_svg.css('display', 'none');
+                playPauseMixer.toggleClass('playing', true);
+                playPauseMixer.toggleClass('pressed', true);
+                $('style#mixer-paused').remove();
+            }    
             $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
 
             mixerChannels.append(item);
         });
     }
-    drawChannelList(window.MIXER.channels())
-    window.MIXER.onChannelListChange((e) => drawChannelList(e.target.channels()));
+
+
+
+    playlistInput.off().on('change', function(e){
+        window.MIXER.setPlaylist(e.target.value); 
+    });
+
+
+    drawChannelList(window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).channels)
+    window.MIXER.onChannelListChange((e) => drawChannelList(window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).channels));
 
     // clear button
 
+    let addPlaylistButton = $('<button id="add-playlist">Add Playlist</button>');
+   
+    const playlistFields = $("<div id='playlistFields'></div>")
+    const playlistName = $(`<input class='trackName trackInput' placeholder='Playlist Name'/>`)
+    const okButton = $('<button class="add-track-ok-button">OK</button>');  
+    const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+    addPlaylistButton.off().on("click", function(){
+        playlistFields.css("height", "25px");
+    });
+    cancelButton.off().on("click", function(){
+        playlistFields.css("height", "0px");
+    });
+    okButton.off().on("click", function(){
+        playlistFields.css("height", "0px");
+        if(playlistName.val() != ''){
+            window.MIXER.addPlaylist(playlistName.val());
+        }
+        playlistName.val('');
+    });
+    playlistFields.append(playlistName, okButton, cancelButton);
+    let removePlaylistButton = $('<button id="remove-playlist">Remove Playlist</button>');
 
+    removePlaylistButton.off().on('click', function(e){
+        window.MIXER.deletePlaylist(window.MIXER.selectedPlaylist());
+    });
 
     let clear = $('<button class="mixer-clear-button"></button>');
     let clear_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3 16V14H10V16ZM3 12V10H14V12ZM3 8V6H14V8ZM14.4 22 13 20.6 15.6 18 13 15.4 14.4 14 17 16.6 19.6 14 21 15.4 18.4 18 21 20.6 19.6 22 17 19.4Z"/></svg>`);
@@ -193,8 +269,9 @@ function init_mixer() {
              $('style#mixer-paused').remove();
         }
     });
-        
-    $("#sounds-panel .sidebar-panel-header").append(header, masterVolumeSlider(), mixerChannels, clear, playPause);
+
+    $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
+    $('#master-volume').append(clear, playPause);
 }
 
 function init_trackLibrary() {
@@ -202,6 +279,10 @@ function init_trackLibrary() {
     const header = document.createElement("h3");
     header.textContent = "Track Library";
 
+    const searchTrackLibary = $(`<input type='text' placeholder='Search' style='margin-bottom: 5px; width: 100%;'></input>`)
+    searchTrackLibary.off().on('change keydown blur', (e) => {
+         debounceSearch(e.target.value);
+    });
     // import csv button
     const importCSV = document.createElement('button');
     importCSV.textContent = "Import CSV";
@@ -246,17 +327,18 @@ function init_trackLibrary() {
     trackLibrary.onchange((e) => {
         trackList.innerHTML = "";
         /** @type {typeof trackLibrary}  */
-        const tl = e.target;
-        tl.map().forEach((track, id) => {
+        const tl = e.target
+        const sortedTL = new Map([...tl.map().entries()]
+            .filter(a => a[1].src!=undefined)
+            .sort((a, b) => a[1].name.toUpperCase().localeCompare(b[1].name.toUpperCase()))); //sort Track Library alphabetically
+        sortedTL.forEach((track, id) => {
             const item = document.createElement("li");
             item.textContent = track.name;
             item.className = "audio-row";
             item.setAttribute("data-id", id);
-            let track_remove_button = $('<button class="track-remove-button">X</button>');  
-            track_remove_button.off().on("click", function(){
-                trackLibrary.deleteTrack(id);
-                item.remove();
-            });
+            item.setAttribute("data-src", track.src);
+            
+        
             // play button
             let track_play_button = $('<button class="track-play-pause-button"></button>');          
             let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
@@ -282,15 +364,75 @@ function init_trackLibrary() {
 
 
 
-            $(item).append(track_remove_button, track_play_button, track_add_button); 
+            $(item).append(track_play_button, track_add_button); 
             trackList.append(item);
         });
     });
 
+    $.contextMenu({
+        selector: ".audio-row",
+        build: function(element, e) {
 
+            let menuItems = {};
+
+            const rowHtml = $(element);
+            const trackID = rowHtml.attr('data-id');
+            const trackSrc = rowHtml.attr('data-src');
+            const trackName = rowHtml.text();
+
+            if (trackID === undefined) {
+                console.warn("register_token_row_context_menu failed to find row item", element, e)
+                menuItems["unexpected-error"] = {
+                    name: "An unexpected error occurred",
+                    disabled: true
+                };
+                return { items: menuItems };
+            }
+            menuItems["edit"] = {
+                name: "Edit",
+                callback: function() {
+                    const importTrackFields = $("<div id='editTrackFields'></div>")
+                    const trackNameInput = $(`<input class='trackName trackInput' placeholder='Track Name'/>`)
+                    const trackSrcInput = $(`<input class='trackSrc trackInput' placeholder='https://.../example.mp3'/>`)
+                    const okButton = $('<button class="add-track-ok-button">OK</button>');  
+                    const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+                    trackNameInput.val(trackName);
+                    trackSrcInput.val(trackSrc);
+                    
+                    cancelButton.off().on("click", function(){
+                      trackLibrary.deleteTrack(trackID);
+                      trackLibrary.addTrack(trackName, trackSrc);
+                      importTrackFields.remove();
+                    });
+                    okButton.off().on("click", function(){
+                        trackLibrary.deleteTrack(trackID);
+                        trackLibrary.addTrack(trackNameInput.val(), trackSrcInput.val());
+                        importTrackFields.remove();
+                    });
+                    importTrackFields.append(trackNameInput, trackSrcInput, okButton, cancelButton);
+                    rowHtml.after(importTrackFields);
+                    rowHtml.remove();
+                }
+            };
+    
+            menuItems["border"] = "---";
+
+            // not a built in folder or token, add an option to delete
+            menuItems["delete"] = {
+                name: "Delete",
+                callback: function() {
+                    trackLibrary.deleteTrack(trackID);
+                    rowHtml.remove();
+                }
+            };
+     
+
+            return { items: menuItems };
+        }
+    });
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, importCSV, addTrack, importTrackFields, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, importCSV, addTrack, importTrackFields, trackList);
 }
 
 function init() {

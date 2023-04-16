@@ -40,13 +40,15 @@ const availableToAoe = [
 
 
 const debounceLightChecks = mydebounce(() => {		
+		if(window.DRAGGING)
+			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		redraw_light();
 		if(!window.DM)
 			check_token_visibility();
-}, 250);
+}, 500);
 
 
 function random_token_color() {
@@ -404,8 +406,7 @@ class Token {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 		}
 		this.place_sync_persist()
-		this.update_and_sync()
-		ct_persist();
+		debounceCombatPersist();
 	}
 	show() {
 		this.update_from_page();
@@ -418,8 +419,7 @@ class Token {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
 		}
 		this.place_sync_persist()
-		this.update_and_sync()
-		ct_persist();
+		debounceCombatPersist();
 	}
 	delete(persist=true,sync=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
@@ -459,8 +459,8 @@ class Token {
 		}
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
-		var selector = "div[data-id='" + this.options.id + "']";
-		var tokenElement = $("#tokens").find(selector);
+		let selector = "div[data-id='" + this.options.id + "']";
+		let tokenElement = $("#tokens").find(selector);
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
@@ -565,14 +565,14 @@ class Token {
 			return;
 
 		self.doing_highlight = true;
-		var selector = "div[data-id='" + this.options.id + "']";
-		var old = $("#tokens").find(selector);
+		let selector = "div[data-id='" + this.options.id + "']";
+		let old = $("#tokens").find(selector);
 
 
-		var old_op = old.css('opacity');
+		let old_op = old.css('opacity');
 		if (old.is(":visible")) {
-			var pageX = Math.round(parseInt(this.options.left) * window.ZOOM - ($(window).width() / 2));
-			var pageY = Math.round(parseInt(this.options.top) * window.ZOOM - ($(window).height() / 2));
+			let pageX = Math.round(parseInt(this.options.left) * window.ZOOM - ($(window).width() / 2));
+			let pageY = Math.round(parseInt(this.options.top) * window.ZOOM - ($(window).height() / 2));
 			console.log(this.options.left + " " + this.options.top + "->" + pageX + " " + pageY);
 			
 			if(!dontscroll){
@@ -597,7 +597,7 @@ class Token {
 
 
 	notify(text) {
-		var n = $("<div/>");
+		let n = $("<div/>");
 		n.html(text);
 		n.css('position', 'absolute');
 		n.css('top', parseInt(this.options.top)); // anything to do with sizeHeight() here?
@@ -763,7 +763,7 @@ class Token {
 
 		if(window.DM && this.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
-			var msgdata = {
+			let msgdata = {
 				player: this.options.name,
 				img: this.options.imgsrc,
 				text: "<b>Check for concentration!!</b>",
@@ -787,8 +787,8 @@ class Token {
 
 	update_from_page() {
 		console.group("update_from_page")
-		var selector = "div[data-id='" + this.options.id + "']";
-		var old = $("#tokens").find(selector);
+		let selector = "div[data-id='" + this.options.id + "']";
+		let old = $("#tokens").find(selector);
 
 		if(old.is(':animated')){	
 			this.stopAnimation(); // stop the animation and jump to the end.	
@@ -816,7 +816,6 @@ class Token {
 				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
 			}
 			$("input").blur();
-			this.hp = old.find(".hp").val();
 			this.maxHp = old.find(".max_hp").val();
 			
 			this.update_dead_cross(old)
@@ -890,12 +889,12 @@ class Token {
 	}
 
 	build_hp() {
-		var self = this;
-		var bar_height = this.sizeHeight() * 0.2;
+		let self = this;
+		let bar_height = this.sizeHeight() * 0.2;
 
 
 		bar_height = Math.ceil(bar_height);
-		var hpbar = $("<div class='hpbar'/>");
+		let hpbar = $("<div class='hpbar'/>");
 		hpbar.css("position", 'absolute');
 		hpbar.css('height', bar_height);
 		hpbar.css('top', Math.floor(this.sizeHeight() - bar_height));
@@ -912,16 +911,16 @@ class Token {
 			hpbar.toggleClass('smaller-than-medium', true);
 		
 
-		var fs = Math.floor(bar_height / 1.2) + "px";
+		let fs = Math.floor(bar_height / 1.2) + "px";
 
 		hpbar.css("--font-size",fs);
 
-		var input_width = Math.floor(this.sizeWidth() * 0.3);
+		let input_width = Math.floor(this.sizeWidth() * 0.3);
 
-		var hp_input = $("<input class='hp'>").css('width', input_width)
+		let hp_input = $("<input class='hp'>").css('width', input_width)
 		hp_input.val(this.hp);
 
-		var maxhp_input = $("<input class='max_hp'>").css('width', input_width);
+		let maxhp_input = $("<input class='max_hp'>").css('width', input_width);
 		maxhp_input.val(this.maxHp);
 
 		if (this.options.disableaura){
@@ -931,7 +930,7 @@ class Token {
 				: hpbar.css('background', '');
 		}
 
-		var divider = $("<div>/</>");
+		let divider = $("<div>/</>");
 
 
 		hpbar.append(hp_input);
@@ -949,7 +948,6 @@ class Token {
 					window.TOKEN_OBJECTS[tokenID].hp = hp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
-				setTimeout(ct_persist(), 500);
 			});
 			hp_input.on('click', function(e) {
 				$(e.target).select();
@@ -964,7 +962,6 @@ class Token {
 					window.TOKEN_OBJECTS[tokenID].maxHp = maxhp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
-				setTimeout(ct_persist(), 500);
 			});
 			maxhp_input.on('click', function(e) {
 				$(e.target).select();
@@ -1393,9 +1390,9 @@ class Token {
 			animationDuration = 1000;
 		}
 		console.log("cerco id" + this.options.id);
-		var selector = "div[data-id='" + this.options.id + "']";
-		var old = $("#tokens").find(selector);
-		var self = this;
+		let selector = "div[data-id='" + this.options.id + "']";
+		let old = $("#tokens").find(selector);
+		let self = this;
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 
@@ -1445,8 +1442,8 @@ class Token {
 			old.css("--token-scale", imageScale);
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
-			var selector = "tr[data-target='"+this.options.id+"']";
-			var entry = $("#combat_area").find(selector);
+			let selector = "tr[data-target='"+this.options.id+"']";
+			let entry = $("#combat_area").find(selector);
 			if((!(this.options.name) || !(this.options.revealname)) && !window.DM) {
 				old.toggleClass('hasTooltip', false);
 				entry.toggleClass('hasTooltip', false);
@@ -1474,17 +1471,17 @@ class Token {
 					width: this.sizeWidth(),
 					height: this.sizeHeight()
 				}, { duration: 1000, queue: false });
-				var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
+				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				old.css("z-index", "calc(5000 + var(--z-index-diff))");
 				old.css("--z-index-diff", zindexdiff);
 
-				var bar_height = Math.floor(this.sizeHeight() * 0.2);
+				let bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 				if (bar_height > 60)
 					bar_height = 60;
 
-				var fs = Math.floor(bar_height / 1.3) + "px";
+				let fs = Math.floor(bar_height / 1.3) + "px";
 				old.css("font-size",fs);
 			}
 
@@ -1613,14 +1610,14 @@ class Token {
 		}
 		else { // adding a new token
 			// console.group("new token")
-			var tok = $("<div/>");
+			let tok = $("<div/>");
 			
-			var bar_height = Math.floor(this.sizeHeight() * 0.2);
+			let bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 			if (bar_height > 60)
 				bar_height = 60;
 
-			var fs = Math.floor(bar_height / 1.3) + "px";
+			let fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
 			
 			if(this.options.gridSquares != undefined){
@@ -1749,7 +1746,7 @@ class Token {
 
 
 
-			var zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
+			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
@@ -1894,7 +1891,7 @@ class Token {
 
 							for (let tok of $(".token.tokenselected")){
 								let id = $(tok).attr("data-id");
-								var curr = window.TOKEN_OBJECTS[id];
+								let curr = window.TOKEN_OBJECTS[id];
 								$("[data-id='"+id+"']").removeClass("pause_click");
 								console.log($("[data-id='"+id+"']"));
 
@@ -1941,15 +1938,16 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
-						debounceLightChecks();
+						setTimeout(debounceLightChecks, 250)
+
 						self.update_and_sync(event, false);
 						if (self.selected ) {
 							for (let tok of $(".token.tokenselected")){
 								let id = $(tok).attr("data-id");
 								if (id == self.options.id)
 									continue;
-								var curr = window.TOKEN_OBJECTS[id];
-								var ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
+								let curr = window.TOKEN_OBJECTS[id];
+								let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
 								$("[data-id='"+id+"']").removeClass("pause_click");
 
 								curr.update_and_sync(ev);
@@ -2023,7 +2021,7 @@ class Token {
 								window.TOKEN_OBJECTS[id].stopAnimation();
 							}
 							if (id != self.options.id) {
-								var curr = window.TOKEN_OBJECTS[id];
+								let curr = window.TOKEN_OBJECTS[id];
 								curr.orig_top = curr.options.top;
 								curr.orig_left = curr.options.left;
 
@@ -2105,9 +2103,9 @@ class Token {
 				drag: function(event, ui) {
 					event.stopImmediatePropagation();
 					
-					var zoom = window.ZOOM;
+					let zoom = window.ZOOM;
 
-					var original = ui.originalPosition;
+					let original = ui.originalPosition;
 					let tokenX = (event.pageX - click.x + original.left) / zoom;
 					let tokenY = (event.pageY - click.y + original.top) / zoom;
 					if (should_snap_to_grid()) {
@@ -2209,8 +2207,8 @@ class Token {
 					if (self.selected && $(".token.tokenselected").length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						var offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
-						var offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
+						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
 						
 
@@ -2223,7 +2221,7 @@ class Token {
 
 
 								//console.log("sposto!");
-								var curr = window.TOKEN_OBJECTS[id];
+								let curr = window.TOKEN_OBJECTS[id];
 								tokenX = offsetLeft + parseInt(curr.orig_left);
 								tokenY = offsetTop + parseInt(curr.orig_top);
 								
@@ -2322,7 +2320,7 @@ class Token {
 
 			tok.find(".token-image").on('dblclick', function(e) {
 				self.highlight(true); // dont scroll
-				var data = {
+				let data = {
 					id: self.options.id
 				};
 				window.MB.sendMessage('custom/myVTT/highlight', data);
@@ -2348,9 +2346,8 @@ class Token {
 
 				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
 
-				for (var id in window.TOKEN_OBJECTS) {
-					var curr = window.TOKEN_OBJECTS[id];
-					if (curr.selected == true) {
+				for (let id in window.TOKEN_OBJECTS) {
+					if (id.selected == true) {
 						count++;
 					}			
 				}
@@ -2416,7 +2413,7 @@ class Token {
 			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps)
 		};
 
-		// Shorten variable to improve readability
+		// Shorten letiable to improve readability
 		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
 
 		this.walkableArea = {
@@ -2439,10 +2436,12 @@ function toggle_player_selectable(tokenInstance, token){
 	if (tokenInstance.options.locked && !window.DM){
 		tokenImage?.css("cursor","default");
 		tokenImage?.css("pointer-events","none");
+		token.css("pointer-events", "none");
 	}
 	else{
 		tokenImage?.css("cursor","move");
 		tokenImage?.css("pointer-events","auto");
+		token.css("pointer-events", "");
 	}
 }
 
@@ -2459,8 +2458,8 @@ function dragging_right_click_mouseup(event) {
 	if (window.DRAGGING && event.button == 2) {
 		event.preventDefault();
 		event.stopPropagation();
-		var mousex = (event.pageX - window.VTTMargin) * (1.0 / window.ZOOM);
-		var mousey = (event.pageY - window.VTTMargin) * (1.0 / window.ZOOM);
+		let mousex = (event.pageX - window.VTTMargin) * (1.0 / window.ZOOM);
+		let mousey = (event.pageY - window.VTTMargin) * (1.0 / window.ZOOM);
 		WaypointManager.checkNewWaypoint(mousex, mousey);
 	}
 }
@@ -2656,7 +2655,7 @@ function array_remove_index_by_value(arr, item) {
 	  arr.splice(index, 1)
 	}
 	else{
-		for (var i = arr.length; i--;) {
+		for (let i = arr.length; i--;) {
 			if (arr[i] === item) { arr.splice(i, 1); }
 		}
 	}
@@ -2752,7 +2751,7 @@ function token_menu() {
 function deselect_all_tokens() {
 	window.MULTIPLE_TOKEN_SELECTED = false;
 	for (let id in window.TOKEN_OBJECTS) {
-		var curr = window.TOKEN_OBJECTS[id];
+		let curr = window.TOKEN_OBJECTS[id];
 		if (curr.selected) {
 			curr.selected = false;
 			curr.place();
@@ -2781,11 +2780,11 @@ function deselect_all_tokens() {
 function token_health_aura(hpPercentage) {
 	//PERC TO RGB------------
 	const percentToHEX = function (percent) {
-		var HEX;
+		let HEX;
 		if (percent > 100) HEX = "#0000FF";
 		else {
 			if (percent === 100) percent = 99;
-			var r, g, b = 0;
+			let r, g, b = 0;
 			if (percent < 50) {
 				g = Math.floor(255 * (percent / 50));
 				r = 255;
@@ -2801,14 +2800,14 @@ function token_health_aura(hpPercentage) {
 	//HEX TO RGB------------
 	const hexToRGB = function (hex) {
 		// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-		var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+		let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 		hex = hex.replace(shorthandRegex, function (m, r, g, b) {
 			return r + r + g + g + b + b;
 		});
 
 		const pHex = (n) => parseInt(n, 16);
 
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
 	}
 	return hexToRGB(percentToHEX(hpPercentage));
@@ -3102,7 +3101,7 @@ function save_custom_monster_image_mapping() {
 }
 
 function copy_to_clipboard(text) {
-	var $temp = $("<textarea>");
+	let $temp = $("<textarea>");
 	$("body").append($temp);
 	$temp.val(text).select();
 	document.execCommand("copy");
@@ -3181,10 +3180,10 @@ function do_draw_selected_token_bounding_box() {
 	}
 
 	// find the farthest edges of our tokens
-	var top = undefined;
-	var bottom = undefined;
-	var right = undefined;
-	var left = undefined;
+	let top = undefined;
+	let bottom = undefined;
+	let right = undefined;
+	let left = undefined;
 	for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 		let id = window.CURRENTLY_SELECTED_TOKENS[i];
 		let token = window.TOKEN_OBJECTS[id];
@@ -3236,7 +3235,7 @@ function do_draw_selected_token_bounding_box() {
 
 
 	// draw the bounding box
-	var boundingBox = $("<div id='selectedTokensBorder' />");
+	let boundingBox = $("<div id='selectedTokensBorder' />");
 	boundingBox.css("position", "absolute");
 	boundingBox.css('top', `${top}px`);
 	boundingBox.css('left', `${left}px`);
@@ -3248,7 +3247,7 @@ function do_draw_selected_token_bounding_box() {
 	$("#tokens").append(boundingBox);
 
 	// draw eye grabber holder connector
-	var connector = $("<div id='selectedTokensBorderRotationGrabberConnector' />");
+	let connector = $("<div id='selectedTokensBorderRotationGrabberConnector' />");
 	connector.css("position", "absolute");
 	connector.css('top', `${top - grabberDistance}px`);
 	connector.css('left', `${centerHorizontal}px`);
@@ -3259,7 +3258,7 @@ function do_draw_selected_token_bounding_box() {
 	$("#tokens").append(connector);
 
 	// draw eye grabber holder
-	var holder = $("<div id='rotationGrabberHolder' />");
+	let holder = $("<div id='rotationGrabberHolder' />");
 	holder.css("position", "absolute");
 	holder.css('top', `${top - grabberDistance - grabberSize}px`);
 	holder.css('left', `${centerHorizontal - Math.ceil(grabberSize / 2) + 1}px`); // not exactly sure why we need the + 1 here
@@ -3271,7 +3270,7 @@ function do_draw_selected_token_bounding_box() {
 	$("#tokens").append(holder);
 
 	// draw the grabber with an eye symbol in it
-	var grabber = $('<div id="rotationGrabber"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve"><metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata><g><path d="M500,685c-103.7,0-187.8-84-187.8-187.9c0-103.7,84.1-187.8,187.8-187.8c103.8,0,187.9,84.1,187.9,187.8C687.9,601,603.8,685,500,685z M990,500c0,0-245.9-265.5-490-265.5C255.9,234.5,10,500,10,500s245.9,265.4,490,265.4c130.4,0,261.2-75.7,354.9-146.2 M500,405.1c-50.8,0-92,41.3-92,92.1c0,50.7,41.3,92.1,92,92.1c50.8,0,92.1-41.3,92.1-92.1C592.1,446.4,550.8,405.1,500,405.1z"/></g></svg></div>')
+	let grabber = $('<div id="rotationGrabber"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve"><metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata><g><path d="M500,685c-103.7,0-187.8-84-187.8-187.9c0-103.7,84.1-187.8,187.8-187.8c103.8,0,187.9,84.1,187.9,187.8C687.9,601,603.8,685,500,685z M990,500c0,0-245.9-265.5-490-265.5C255.9,234.5,10,500,10,500s245.9,265.4,490,265.4c130.4,0,261.2-75.7,354.9-146.2 M500,405.1c-50.8,0-92,41.3-92,92.1c0,50.7,41.3,92.1,92,92.1c50.8,0,92.1-41.3,92.1-92.1C592.1,446.4,550.8,405.1,500,405.1z"/></g></svg></div>')
 	grabber.css("position", "absolute");
 	grabber.css('top', `${grabberTop}px`);
 	grabber.css('left', `${grabberLeft}px`);
@@ -3285,7 +3284,7 @@ function do_draw_selected_token_bounding_box() {
 	$("#tokens").append(grabber);
 
 	// draw the grabber with an eye symbol in it
-	var grabber2 = $('<div id="groupRotationGrabber"><svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 96 960 960" width="100%" style="display:block;"><path d="M479.956 651Q449 651 427 628.956q-22-22.045-22-53Q405 545 427.044 523q22.045-22 53-22Q511 501 533 523.044q22 22.045 22 53Q555 607 532.956 629q-22.045 22-53 22ZM480 936q-150 0-255-105.5T120 575h60q0 125 87.5 213T480 876q125.357 0 212.679-87.321Q780 701.357 780 576t-87.321-212.679Q605.357 276 480 276q-69 0-129 30.5T246 389h104v60H142V241h60v106q53-62 125.216-96.5T480 216q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840 576q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480 936Z"/></svg></div>')
+	let grabber2 = $('<div id="groupRotationGrabber"><svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 96 960 960" width="100%" style="display:block;"><path d="M479.956 651Q449 651 427 628.956q-22-22.045-22-53Q405 545 427.044 523q22.045-22 53-22Q511 501 533 523.044q22 22.045 22 53Q555 607 532.956 629q-22.045 22-53 22ZM480 936q-150 0-255-105.5T120 575h60q0 125 87.5 213T480 876q125.357 0 212.679-87.321Q780 701.357 780 576t-87.321-212.679Q605.357 276 480 276q-69 0-129 30.5T246 389h104v60H142V241h60v106q53-62 125.216-96.5T480 216q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840 576q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480 936Z"/></svg></div>')
 	grabber2.css("position", "absolute");
 	grabber2.css('top', `${grabberTop}px`);
 	grabber2.css('left', `${right}px`);
@@ -3322,8 +3321,8 @@ function do_draw_selected_token_bounding_box() {
 		},
 		drag: function(event, ui) {
 			// adjust based on zoom level
-			var zoom = window.ZOOM;
-			var original = ui.originalPosition;
+			let zoom = window.ZOOM;
+			let original = ui.originalPosition;
 			ui.position = {
 				left: Math.round((event.clientX - click.x + original.left) / zoom),
 				top: Math.round((event.clientY - click.y + original.top) / zoom)
@@ -3396,8 +3395,8 @@ function do_draw_selected_token_bounding_box() {
 		},
 		drag: function(event, ui) {
 			// adjust based on zoom level
-			var zoom = window.ZOOM;
-			var original = ui.originalPosition;
+			let zoom = window.ZOOM;
+			let original = ui.originalPosition;
 			ui.position = {
 				left: Math.round((event.clientX - click.x + original.left) / zoom),
 				top: Math.round((event.clientY - click.y + original.top) / zoom)
@@ -3527,7 +3526,6 @@ function delete_selected_tokens() {
 			tokensToDelete[i].delete(); // don't persist on each token delete, we'll do that next
 		}
 	draw_selected_token_bounding_box(); // redraw the selection box
-	ct_persist();
 }
 
 function undo_delete_tokens() {
