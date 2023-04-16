@@ -5991,6 +5991,15 @@ div.note[id^="ui-id"] .mce-btn button {
     background-color: #fff;
 }
 
+
+#journal-panel .reorder-button{
+    display: inline;
+}
+#ddb-source-journal-import{
+    display:inline;
+    float:right;
+    width:175px;
+}
 .body-rpgcharacter-sheet #VTT.paused *{
     pointer-events: none !important;
 }
@@ -6301,6 +6310,8 @@ button.journal-view-button.journal-button {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
+    width: 265px;
+    overflow-wrap: anywhere;
 }
 
 
