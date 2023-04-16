@@ -6301,6 +6301,8 @@ button.journal-view-button.journal-button {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
+    width: 265px;
+    overflow-wrap: anywhere;
 }
 
 

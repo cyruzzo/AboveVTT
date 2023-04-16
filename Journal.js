@@ -551,6 +551,10 @@ class JournalManager{
 			$(window.childWindows[self.notes[id].title].document).find(".note").attr("style", "overflow:visible; max-height: none !important; height: auto; min-height: 100%;");
 			$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
 		});
+		note.off('click').on('click', '.int_source_link', function(event){
+			event.preventDefault();
+			render_source_chapter_in_iframe(event.target.href);
+		});
 	}
 	
 	note_visibility(id,visibility){
@@ -663,12 +667,15 @@ class JournalManager{
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
 			toolbar1: 'undo styleselect | hr | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
 			image_class_list: [
-				{title: 'None', value: ''},
 				{title: 'Magnify', value: 'magnify'},
 			],
 			external_plugins: {
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
 			},
+			link_class_list: [
+			   {title: 'External Link', value: 'ext_link'},
+			   {title: 'DNDBeyond Source Link', value: 'int_source_link'}
+			],
 			relative_urls : false,
 			remove_script_host : false,
 			convert_urls : true,
