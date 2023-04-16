@@ -929,10 +929,6 @@ input {
     min-width: 200px;
 }
 
-#sources-import-content-container .card-listing li.listing-card {
-    width: 33%;
-}
-
 @media (min-width: 728px){
     #sources-import-content-container .card-listing .listing-card,
     #mega_importer .card-listing .listing-card {

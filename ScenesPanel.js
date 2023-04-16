@@ -1826,6 +1826,7 @@ function create_scene_root_container(fullPath) {
 		"category": "Source Books",
 		"player_map": "https://www.dndbeyond.com/avatars/thumbnails/30581/717/1000/1000/638053634473091554.jpeg",
 	}, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png", false);
+	ddb.css("width", "33%");
 	sectionHtml.find("ul").append(ddb);
 	ddb.find(".listing-card__callout").hide();
 	ddb.find("a.listing-card__link").click(function (e) {
@@ -1840,6 +1841,7 @@ function create_scene_root_container(fullPath) {
 		"category": "Scenes",
 		"player_map": "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
 	}, "https://raw.githubusercontent.com/cyruzzo/AboveVTT/main/assets/avtt-logo.png", false);
+	free.css("width", "33%");
 	sectionHtml.find("ul").append(free);
 	free.find(".listing-card__callout").hide();
 	free.find("a.listing-card__link").click(function (e) {
@@ -1854,6 +1856,7 @@ function create_scene_root_container(fullPath) {
 		"category": "Scenes",
 		"player_map": "",
 	}, "", false);
+	custom.css("width", "33%");
 	sectionHtml.find("ul").append(custom);
 	custom.find(".listing-card__callout").hide();
 	custom.find("a.listing-card__link").click(function (e) {
