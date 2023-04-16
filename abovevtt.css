@@ -5991,6 +5991,15 @@ div.note[id^="ui-id"] .mce-btn button {
     background-color: #fff;
 }
 
+
+#journal-panel .reorder-button{
+    display: inline;
+}
+#ddb-source-journal-import{
+    display:inline;
+    float:right;
+    width:175px;
+}
 .body-rpgcharacter-sheet #VTT.paused *{
     pointer-events: none !important;
 }

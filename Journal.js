@@ -340,11 +340,18 @@ class JournalManager{
 				let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
 				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title'></div>`);
 
-				entry_title.text(self.notes[note_id].title);
-				entry_title.click(function(){
-					self.display_note(note_id);
-				});
 
+				entry_title.text(self.notes[note_id].title);
+				if(!self.notes[note_id].ddbsource){
+					entry_title.click(function(){
+						self.display_note(note_id);
+					});
+				}
+				else{
+					entry_title.click(function(){
+						render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
+					});
+				}
 				let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
 				
 				rename_btn.click(function(){
@@ -413,10 +420,13 @@ class JournalManager{
 
 				entry.append(entry_title);
 
-				if(window.DM)
-					entry.append(edit_btn);
-					entry.append(rename_btn);
+				if(window.DM){
+					if(!self.notes[note_id].ddbsource){
+						entry.append(edit_btn);
+						entry.append(rename_btn);		
+					}
 					entry.append(delete_btn);
+				}
 
 				note_list.append(entry);
 			}
@@ -454,8 +464,40 @@ class JournalManager{
 				
 			}
 		});
+		let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
+		window.ScenesHandler.build_adventures(function(){
+			for(let source in window.ScenesHandler.sources){
+				let sourcetitle = window.ScenesHandler.sources[source].title;
+				chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
+			}
+		});
+		chapterImport.on('change', function(){
+			let source = this.value;
+			self.chapters.push({
+				title: window.ScenesHandler.sources[source].title,
+				collapsed: false,
+				notes: [],
+			});
+			window.ScenesHandler.build_chapters(source, function(){
+				for(let chapter in window.ScenesHandler.sources[source].chapters){
+					let new_noteid=uuid();
+					let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+					self.notes[new_noteid]={
+						title: new_note_title,
+						text: "",
+						player: false,
+						plain: "",
+						ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+					};
+					self.chapters[self.chapters.length-1].notes.push(new_noteid);
+				}
+				self.persist();
+				self.build_journal();
+			});
+
+		})
 		if(window.DM)
-			$('#journal-panel .sidebar-panel-body').prepend(sort_button);
+			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
 	}
 	
 	
