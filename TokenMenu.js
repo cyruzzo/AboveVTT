@@ -181,8 +181,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				});
 			}
 
-			ct_reorder();
-			ct_persist();
+			debounceCombatReorder();
 		});
 		
 		body.append(combatButton);
@@ -2161,7 +2160,7 @@ function add_to_quick_roll_menu(token){
 		hp_input.prop("disabled", true);
 		hp_input.css('color', 'gray')
 	}
-	hp_input.val(token.options.hp);
+	hp_input.val(token.hp);
 
 	if(hp_input.val() === '0'){
 		qrm_entry.toggleClass("ct_dead", true);
@@ -2179,7 +2178,7 @@ function add_to_quick_roll_menu(token){
 		maxhp_input.prop("disabled", true);
 		maxhp_input.css('color', 'gray')
 	}
-	maxhp_input.val(token.options.max_hp);
+	maxhp_input.val(token.maxHp);
 
 	if (!token.isPlayer()) {
 		hp_input.change(function(e) {
@@ -2187,16 +2186,16 @@ function add_to_quick_roll_menu(token){
 			var old = $("#tokens").find(selector);
 		
 			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(hp_input.val())));
+				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
 			}
 
 			old.find(".hp").val(hp_input.val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.hp = hp_input.val();
+				window.all_token_objects[token.options.id].hp = hp_input.val();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.hp = hp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();	
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2209,15 +2208,15 @@ function add_to_quick_roll_menu(token){
 			var old = $("#tokens").find(selector);
 
 			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, parseInt(token.options.hp) + parseInt(maxhp_input.val())));
+				maxhp_input.val(Math.max(0, parseInt(token.hp) + parseInt(maxhp_input.val())));
 			}
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.max_hp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].options.max_hp = maxhp_input.val();	
+				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();	
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 			qrm_update_popout();
@@ -2593,7 +2592,7 @@ function qrm_apply_hp_adjustment(healing=false){
 				_hp.val(_max_hp_val);
 			}
 			else{
-				_hp.val(token.options.hp - damage);
+				_hp.val(token.hp - damage);
 			}
 			_hp.trigger('change');
 		}

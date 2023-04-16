@@ -409,8 +409,7 @@ class Token {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.openEye").css('display', 'none');
 		}
 		this.place_sync_persist()
-		this.update_and_sync()
-		ct_persist();
+		debounceCombatPersist();
 	}
 	show() {
 		this.update_from_page();
@@ -423,8 +422,7 @@ class Token {
 			$("#"+this.options.id+"hideCombatTrackerInput ~ button svg.closedEye").css('display', 'none');
 		}
 		this.place_sync_persist()
-		this.update_and_sync()
-		ct_persist();
+		debounceCombatPersist();
 	}
 	delete(persist=true,sync=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
@@ -949,7 +947,6 @@ class Token {
 					window.TOKEN_OBJECTS[tokenID].hp = hp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
-				setTimeout(ct_persist(), 500);
 			});
 			hp_input.on('click', function(e) {
 				$(e.target).select();
@@ -964,7 +961,6 @@ class Token {
 					window.TOKEN_OBJECTS[tokenID].maxHp = maxhp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
-				setTimeout(ct_persist(), 500);
 			});
 			maxhp_input.on('click', function(e) {
 				$(e.target).select();
@@ -1941,7 +1937,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
-						setTimeout(debounceLightChecks, 500)
+						setTimeout(debounceLightChecks, 250)
 
 						self.update_and_sync(event, false);
 						if (self.selected ) {
@@ -3527,7 +3523,6 @@ function delete_selected_tokens() {
 			tokensToDelete[i].delete(); // don't persist on each token delete, we'll do that next
 		}
 	draw_selected_token_bounding_box(); // redraw the selection box
-	ct_persist();
 }
 
 function undo_delete_tokens() {

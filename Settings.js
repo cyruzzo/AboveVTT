@@ -10,7 +10,7 @@ function token_setting_options() {
 				{ value: "virtualMiniCircle", label: "Virtual Mini w/ Round Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with the largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
 				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with The largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
 				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` },
-				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made too appear as a object tile` },
+				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made to appear as a object tile` },
 				{ value: "labelToken", label: "Map Pin Token", description: `This token will have the settings of Definitely Not a Token and have it's name always displayed` }
 				
 			],
@@ -907,6 +907,29 @@ function persist_experimental_settings(settings) {
 	localStorage.setItem("ExperimentalSettings" + gameid, JSON.stringify(settings));
 }
 
+function export_current_scene(){
+	build_import_loading_indicator('Preparing Export File');
+	let DataFile = {
+		version: 2,
+		scenes: [window.CURRENT_SCENE_DATA],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+
+	for(tokenID in window.TOKEN_OBJECTS){
+		for(noteID in window.JOURNAL.notes){
+			if(tokenID == noteID){
+				DataFile.notes[tokenID] = window.JOURNAL.notes[noteID];
+			}
+		}
+	}
+
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+	$(".import-loading-indicator").remove();
+}
+
 function export_file() {
 	build_import_loading_indicator('Preparing Export File');
 	let DataFile = {
@@ -977,7 +1000,7 @@ function import_readfile() {
 
 
 		if(DataFile.mixerstate != undefined){
-			window.MIXER._write(DataFile.mixerstate);
+			window.MIXER._write(DataFile.mixerstate, true);
 		}
 		if(DataFile.tracklibrary != undefined){
 			let trackMap = new Map(DataFile.tracklibrary);
@@ -1051,8 +1074,21 @@ function import_readfile() {
 
 		persist_all_token_customizations(customizations, function () {
 			if(DataFile.notes){
-				window.JOURNAL.notes=DataFile.notes;
-				window.JOURNAL.chapters=DataFile.journalchapters;
+				for(let id in DataFile.notes){
+					window.JOURNAL.notes[id]=DataFile.notes[id];
+				}
+				for(let i=0; i < DataFile.journalchapters.length; i++){
+					let chapterIndex = window.JOURNAL.chapters.findIndex(d => d.title == DataFile.journalchapters[i].title)
+					if(chapterIndex != -1){
+						for(let j = 0; j < DataFile.journalchapters[i].notes.length; j++){
+							if(!window.JOURNAL.chapters[chapterIndex].notes.includes(DataFile.journalchapters[i].notes[j]))
+								window.JOURNAL.chapters[chapterIndex].notes.push(DataFile.journalchapters[i].notes[j]);
+						}						
+					}	
+					else{
+						window.JOURNAL.chapters.push(DataFile.journalchapters[i])
+					}
+				}
 				window.JOURNAL.persist();
 				window.JOURNAL.build_journal();
 			} else {

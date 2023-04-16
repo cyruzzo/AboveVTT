@@ -747,7 +747,7 @@ function reset_canvas() {
  	if(darknessfilter == 0 && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
- 			'background':  '#0000',
+ 			'background':  '#FFF',
  			'opacity': '0.3'
  		});
  	} else{
@@ -980,9 +980,9 @@ function redraw_light_walls(clear=true){
 	let sceneMapHeight = sceneMapContainer.height();
 	let sceneMapWidth = sceneMapContainer.width();
 
-	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapHeight, 0));
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0));
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapWidth));
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight));
 	window.walls.push(wall6);
 	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight));
 	window.walls.push(wall7);
@@ -1041,7 +1041,7 @@ function redraw_light_walls(clear=true){
  	if(darknessfilter == 0 && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
- 			'background': '#0000',
+ 			'background': '#FFF',
  			'opacity': '0.3'
  		});
  	} else{
@@ -3080,7 +3080,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function detectInLos(x, y) {
 	let canvas = document.getElementById("raycastingCanvas");
 	let ctx = canvas.getContext("2d", { willReadFrequently: true });
-	const pixeldata = ctx.getImageData(x, y, 1, 1).data;
+	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 	if (pixeldata[2] == 0)
 	{	
 		return false;			
@@ -3133,7 +3133,15 @@ async function redraw_light(){
 				$('#VTT').css('--darkness-filter', `0%`)
 			}
 	  		$('#raycastingCanvas').css('opacity', '1');
+	  		
+		 	$('#light_container').css({
+	 			'opacity': '1'
+	 		});
+
+		 	
 	  	}
+	  	
+	  
 	  	
   		
 		for(let j = 0; j < selectedTokens.length; j++){
@@ -3141,7 +3149,21 @@ async function redraw_light(){
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
 		  		selectedIds.push(tokenId)
 		}	  	
-	 }
+	}
+	else {
+  		if(window.CURRENT_SCENE_DATA.darkness_filter == 0 && window.walls.length>4){
+		 	$('#light_container').css({
+	 			'opacity': '0.3'
+		 	});
+		 	 
+	  	}
+	  	else{
+	  		$('#light_container').css({
+	 			'opacity': ''
+	 		});
+  		}
+  	}
+
 
 	let promises = []
 	for(let i = 0; i < light_auras.length; i++){
