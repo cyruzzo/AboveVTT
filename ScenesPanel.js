@@ -1284,7 +1284,7 @@ function init_scenes_panel() {
 
 	let addSceneButton = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
 	addSceneButton.on("click", function (clickEvent) {
-		create_scene_root_container(RootFolder.Scenes.path);
+		create_scene_root_container(RootFolder.Scenes.path, RootFolder.Scenes.id);
 	});
 
 	let addFolderButton = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
@@ -1294,7 +1294,15 @@ function init_scenes_panel() {
 		if (numberOfNewFolders > 0) {
 			newFolderName = `${newFolderName} ${numberOfNewFolders}`
 		}
-		let newFolderItem = SidebarListItem.Folder(path_to_html_id(RootFolder.Scenes.path, newFolderName), RootFolder.Scenes.path, newFolderName, true, RootFolder.Scenes.id, ItemType.Scene);
+		const folderId = uuid();
+		window.ScenesHandler.scenes.push({
+			id: folderId,
+			title: newFolderName,
+			itemType: ItemType.Folder,
+			parentId: RootFolder.Scenes.id,
+			folderPath: RootFolder.Scenes.path
+		});
+		let newFolderItem = SidebarListItem.Folder(folderId, RootFolder.Scenes.path, newFolderName, true, RootFolder.Scenes.id, ItemType.Scene);
 		window.sceneListFolders.push(newFolderItem);
 		display_folder_configure_modal(newFolderItem);
 		did_update_scenes();
@@ -1510,16 +1518,17 @@ function redraw_scene_list(searchTerm) {
 	console.groupEnd();
 }
 
-function create_scene_inside(fullPath) {
+function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
 
 	let newSceneName = "New Scene";
-	let newSceneCount = window.sceneListItems.filter(item => item.folderPath === fullPath && item.name.startsWith(newSceneName)).length;
+	let newSceneCount = window.sceneListItems.filter(item => item.parentId === parentId && item.name.startsWith(newSceneName)).length;
 	if (newSceneCount > 0) {
 		newSceneName = `${newSceneName} ${newSceneCount}`;
 	}
 
 	let sceneData = default_scene_data();
 	sceneData.title = newSceneName;
+	sceneData.parentId = parentId;
 	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
 
 	window.ScenesHandler.scenes.push(sceneData);
@@ -1793,7 +1802,7 @@ function floating_window_title_bar(id, title='') {
   `);
 }
 
-function create_scene_root_container(fullPath) {
+function create_scene_root_container(fullPath, parentId) {
 	const container = build_import_container();
 	container.find(".j-collapsible__search").hide();
 
@@ -1841,7 +1850,7 @@ function create_scene_root_container(fullPath) {
 	custom.find("a.listing-card__link").click(function (e) {
 		e.stopPropagation();
 		e.preventDefault();
-		create_scene_inside(fullPath);
+		create_scene_inside(parentId, fullPath);
 	});
 
 	const recentlyVisited = build_recently_visited_scene_imports_section();
@@ -1849,6 +1858,7 @@ function create_scene_root_container(fullPath) {
 
 	adjust_create_import_edit_container(container, true);
 	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
+	$(`#sources-import-main-container`).attr("data-parent-id", parentId);
 }
 
 function build_free_map_importer() {
@@ -1905,8 +1915,9 @@ function add_scene_importer_back_button(container) {
 		e.stopPropagation();
 		e.preventDefault();
 		const folderPath = $(`#sources-import-main-container`).attr("data-folder-path");
+		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
 		// There's only 1 level of depth so just start over
-		create_scene_root_container(decode_full_path(folderPath));
+		create_scene_root_container(decode_full_path(folderPath), parentId);
 	});
 
 	backButton.css({
@@ -2120,13 +2131,15 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 		e.stopPropagation();
 		e.preventDefault();
 
-		let folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
 
 		const importData = {
 			...default_scene_data(),
 			...scene,
 			id: uuid(),
-			folderPath: folderPath
+			folderPath: folderPath,
+			parentId: parentId
 		};
 
 		AboveApi.migrateScenes(window.gameId, [importData])

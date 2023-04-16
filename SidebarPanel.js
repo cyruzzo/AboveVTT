@@ -1157,8 +1157,7 @@ function build_sidebar_list_row(listItem) {
         addScene.on("click", function (clickEvent) {
           let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
           let clickedItem = find_sidebar_list_item(clickedRow);
-          // create_scene_inside(clickedItem.fullPath());
-          create_scene_root_container(clickedItem.fullPath());
+          create_scene_root_container(clickedItem.fullPath(), listItem.id);
         });
       } else if (listItem.folderType === ItemType.Monster) {
         // add monster filter button on the root monsters folder
