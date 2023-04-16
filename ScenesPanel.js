@@ -1370,28 +1370,31 @@ async function migrate_scene_folders() {
 	let newFolders = []
 
 	// create folders for any path that doesn't exist
-	var pathsWithoutFolders = [];
+	let pathsWithoutFolders = [];
 	scenesNeedingMigration
 		.filter(s => s.folderPath && folders.find(f => f.folderPath === s.folderPath) === undefined)
 		.map(s => s.folderPath)
 		.sort()
 		.forEach(folderPath => {
 			if (!pathsWithoutFolders.includes(folderPath)) { // make sure we don't make duplicate folders
+				console.debug(`migrate_scene_folders scenesNeedingMigration parsing ${folderPath}`);
 				pathsWithoutFolders.push(folderPath);
 			}
 			// now make sure we get nested folders that only have folders in them
 			const backfillPathParts = folderPath.split("/");
 			while (backfillPathParts.length > 0) {
-				backfillPathParts.pop()
+				const lastPathPart = backfillPathParts.pop();
+				console.debug(`migrate_scene_folders dropping lastPathPart ${lastPathPart}`);
 				const backfillPath = sanitize_folder_path(backfillPathParts.join("/"));
 				if (!pathsWithoutFolders.includes(backfillPath)) { // make sure we don't make duplicate folders
+					console.debug(`migrate_scene_folders adding backfillPath ${backfillPath}`);
 					pathsWithoutFolders.push(backfillPath);
 				}
 			}
 		});
 
+	console.debug(`migrate_scene_folders pathsWithoutFolders before filter ${pathsWithoutFolders}`);
 	pathsWithoutFolders = pathsWithoutFolders.filter(fp => fp && fp !== '' && fp !== "/").sort();
-
 	console.log("migrate_scene_folders pathsWithoutFolders", pathsWithoutFolders);
 
 	pathsWithoutFolders.forEach(folderPath => {
@@ -1404,7 +1407,8 @@ async function migrate_scene_folders() {
 				id: uuid(),
 				title: folderName,
 				itemType: ItemType.Folder,
-				parentId: parentId
+				parentId: parentId,
+				folderPath: folderPath
 			});
 		});
 
