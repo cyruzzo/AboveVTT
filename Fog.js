@@ -457,20 +457,20 @@ function check_single_token_visibility(id){
 // if it was not executed in the last 1 second, execute it immediately and asynchronously
 // if it's already scheduled to be executed, return
 // otherwise, schedule it to execute in 1 second
-function check_token_visibility(){
+async function check_token_visibility(){
 	if(window.DM)
 		return;
 	else if(window.NEXT_CHECK_TOKEN_VISIBILITY  && (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() > 0)){
 		return;
 	}
-	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() <  -1000)){
+	else if(!window.NEXT_CHECK_TOKEN_VISIBILITY  || (window.NEXT_CHECK_TOKEN_VISIBILITY - Date.now() < -1000)){
 		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now();
-		do_check_token_visibility();
+		await do_check_token_visibility();
 		return;
 	}
 	else {
 		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now() + 1000;
-		do_check_token_visibility;
+		setTimeout(async () => do_check_token_visibility(), 1000);
 		return;
 	}
 }
@@ -487,50 +487,45 @@ async function do_check_token_visibility() {
 
 	let promises = [];
 	for (let id in window.TOKEN_OBJECTS) {
-	if (id.includes(window.PLAYER_ID)) {
-		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-		$(auraSelector).show();
-	};
-	 promises.push(new Promise(_ => setTimeout(_ => {
-		let left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-		let top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-		let pixeldata = ctx.getImageData(left, top, 1, 1).data;
-		let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
-		let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-		let tokenSelector = "div.token[data-id='" + id + "']";
+		promises.push(new Promise(function() {
+			let left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+			let top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+			let pixelData = ctx.getImageData(left, top, 1, 1).data;
+			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+			let tokenSelector = "div.token[data-id='" + id + "']";
 
 
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-		//Combining some and filter cut down about 140ms for average sized picture
-		let someFilter = function(ctx) {
-			let pixelData = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-			//return (index) % 4 == 0 && color == 255
-			for (let i = 0; i < pixelData.length; i+=4) {
-				if (pixelData[i] === 255) {
-					return true;
+			//Combining some and filter cut down about 140ms for average sized picture
+			let someFilter = function(ctx) {
+				let pixelData = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+				//return (index) % 4 == 0 && color == 255
+				for (let i = 0; i < pixelData.length; i += 4) {
+					if (pixelData[i] === 255) {
+						return true;
+					}
 				}
+
+				return false;
+			};
+
+			if (!window.TOKEN_OBJECTS[id].options.revealInFog 
+				&& (pixelData[3] == 255
+					|| playerTokenHasVision 
+					&& ((window.CURRENT_SCENE_DATA.darkness_filter > 0  && !is_token_under_light_aura(id) && pixelData[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0))
+						|| ((window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4) && !someFilter(ctx2)))) {
+				$(tokenSelector + "," + auraSelector).hide();
 			}
-
-			return false;
-		};
-
-		if (!window.TOKEN_OBJECTS[id].options.revealInFog 
-			&& (pixeldata[3] == 255
-				|| playerTokenHasVision 
-				&& ((window.CURRENT_SCENE_DATA.darkness_filter > 0  && !is_token_under_light_aura(id) && pixeldata[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0))
-					|| ((window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4) && !someFilter(ctx2)))) {
-			$(tokenSelector + "," + auraSelector).hide();
-		}
-		else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
-			$(tokenSelector).css({'opacity': 1, 'display': 'block'});
-			if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
-				$(auraSelector).show();
-			//console.log('SHOW '+id);
-		}
-	}, 700)));}
+			else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
+				$(tokenSelector).css({'opacity': 1, 'display': 'block'});
+				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
+					$(auraSelector).show();
+			}
+		}));
+	}
 
 	await Promise.all(promises);
 	console.log("finished");
@@ -973,7 +968,7 @@ function redraw_drawings() {
 function redraw_light_walls(clear=true){
 
 	let canvas = document.getElementById("temp_overlay");
-	let ctx = canvas.getContext("2d");
+	let ctx = canvas.getContext("2d", {willReadFrequently: true});
 	ctx.setLineDash([]);
 		
 	if(clear)
@@ -3096,7 +3091,6 @@ function detectInLos(x, y) {
 }
 
 async function redraw_light(){
-
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
 	let canvasHeight = canvas.height;
@@ -3113,7 +3107,7 @@ async function redraw_light(){
 	let context = canvas.getContext("2d");
 	
 	let offscreenCanvasMask = document.createElement('canvas');
-	let offscreenContext = offscreenCanvasMask.getContext('2d');
+	let offscreenContext = offscreenCanvasMask.getContext('2d', {willReadFrequently: true});
 
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
@@ -3149,73 +3143,72 @@ async function redraw_light(){
 		}	  	
 	 }
 
-  for(let i = 0; i < light_auras.length; i++){
+	let promises = []
+	for(let i = 0; i < light_auras.length; i++){
+		promises.push(new Promise(() => {
+			let auraId = $(light_auras[i]).attr('data-id');
 
-  	let auraId = $(light_auras[i]).attr('data-id');
+			found = selectedIds.some(r=> r == auraId);
 
-  	found = selectedIds.some(r=> r == auraId);
+			let tokenPos = {
+				x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
+				y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
+			}
+			
+			if(window.lineOfSightPolygons == undefined){
+				window.lineOfSightPolygons = {};
+			}
+			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
+				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
+				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
+				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
+			}
+			else{
+				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
+				particleLook(context, walls, 100000, undefined, undefined, undefined, false);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+				window.lineOfSightPolygons[auraId] = {
+					polygon: lightPolygon,
+					x: tokenPos.x,
+					y: tokenPos.y,
+					numberofwalls: walls.length
+				}
+				let path = "";
 
-	let tokenPos = {
-		x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
-		y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
+				let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+				for( let i = 0; i < lightPolygon.length; i++ ){
+					path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+				}
+				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+			}
+
+
+			if(window.lightAuraClipPolygon == undefined)
+				window.lightAuraClipPolygon = {};
+				
+
+			if(window.SelectedTokenVision){
+				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
+			}
+			
+			if(window.DM && !window.SelectedTokenVision){
+				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 
+			}
+
+			clipped_light(auraId, lightPolygon);
+			
+			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
+				let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+				
+				if(!(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
+					&& !(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined))
+
+					$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
+					drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+			}
+		})); 	
 	}
-	
-	if(window.lineOfSightPolygons == undefined){
-		window.lineOfSightPolygons = {};
-	}
-	if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
-		window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
-		window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
-		lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
-	}
-	else{
-		particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-		particleLook(context, walls, 100000, undefined, undefined, undefined, false);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
-		window.lineOfSightPolygons[auraId] = {
-			polygon: lightPolygon,
-			x: tokenPos.x,
-			y: tokenPos.y,
-			numberofwalls: walls.length
-		}
-		let path = "";
-
-		let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-		for( let i = 0; i < lightPolygon.length; i++ ){
-			path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
-		}
-		$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
-	}
-
-
-	if(window.lightAuraClipPolygon == undefined)
-		window.lightAuraClipPolygon = {};
-		
-
-	if(window.SelectedTokenVision){
-		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
-	}
-	
-	if(window.DM && !window.SelectedTokenVision){
-		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 
-	}
-
-	clipped_light(auraId, lightPolygon);
-	
-  	if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
-  		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-  		if(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
-  			continue; 
-  		
-  		if(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
-  			continue;
-
-		
-		$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
-
-  		drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
-	}    	
-  }
-	await scheduler.postTask(() => context.drawImage(offscreenCanvasMask, 0, 0), {priority: "user-visible"}); // draw to visible canvas only once so we render this once
+	Promise.all(promises);
+	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 }
 
 

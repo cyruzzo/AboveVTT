@@ -2867,7 +2867,7 @@ function init_zoom_buttons() {
 	</div></div>
 	`);
 
-	selected_token_vision.click(function(){
+	selected_token_vision.click(async function(){
 		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
 			window.SelectedTokenVision = false;
@@ -2875,8 +2875,7 @@ function init_zoom_buttons() {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 			window.SelectedTokenVision = true;
 		}
-		redraw_light();
-		
+		await redraw_light();	
 	});
 
 	zoom_section.append(selected_token_vision);
