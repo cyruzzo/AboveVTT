@@ -1462,7 +1462,7 @@ function redraw_scene_list(searchTerm) {
 	// this is similar to the structure of a SidebarListItem.Folder row.
 	// since we don't have root folders like the tokensPanel does, we want to treat the entire list like a subfolder
 	// this will allow us to reuse all the folder traversing functions that the tokensPanel uses
-	let list = $(`<div id="${RootFolder.Scenes.id}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
+	let list = $(`<div id="${RootFolder.Scenes.id}" data-id="${RootFolder.Scenes.id}" class="folder not-collapsible"><div class="folder-item-list" style="padding: 0;"></div></div>`);
 	$('#scenesFolder').remove();
 	scenesPanel.body.append(list);
 	set_full_path(list, RootFolder.Scenes.path);

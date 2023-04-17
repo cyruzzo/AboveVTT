@@ -1932,7 +1932,7 @@ function enable_draggable_change_folder(listItemType) {
       let draggedRow = $(ui.helper);
       let draggedItem = find_sidebar_list_item(draggedRow);
       let droppedFolder = $(dropEvent.target);
-      if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === path_to_html_id(RootFolder.Scenes.path)) {
+      if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === RootFolder.Scenes.id) {
         // they dropped it on the header so find the root folder
         if (listItemType === ItemType.Scene) {
           move_scene_to_folder(draggedItem, RootFolder.Scenes.id);
