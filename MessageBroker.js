@@ -360,7 +360,7 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = window.AVTT_VERSION;
 
-		this.onmessage = function(event,tries=0) {
+		this.onmessage = async function(event,tries=0) {
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -509,7 +509,7 @@ class MessageBroker {
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
-				redraw_light();
+				await redraw_light();
 				check_token_visibility();
 			}
 
@@ -518,7 +518,7 @@ class MessageBroker {
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
-				redraw_light();
+				await redraw_light();
 				check_token_visibility();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!

@@ -2266,6 +2266,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
+    opacity: 1;
 }
 
 #conditions-flyout li,
@@ -5847,9 +5848,6 @@ div.ddbc-tab-options--layout-pill>button{
     background: #fff;
     filter: brightness(var(--darkness-filter));
 
-}
-#raycastingCanvas{
-    opacity: 1;
 }
 #light_container{
     mix-blend-mode:lighten;

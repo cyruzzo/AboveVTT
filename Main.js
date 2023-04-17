@@ -2437,10 +2437,7 @@ function init_ui() {
 
 
 	const rayCasting = $("<canvas id='raycastingCanvas'></canvas>");
-	rayCasting.css("top", "0");
-	rayCasting.css("left", "0");
-	rayCasting.css("position", "absolute");
-	rayCasting.css("z-index", "22");
+	rayCasting.css({"top": "0", "left": "0", "position": "absolute", "z-index": "22"});
 
 	// this overlay sits above other canvases, but below tempOverlay
 	// when peers stream their rulers, this canvas is where we draw them
@@ -2876,7 +2873,7 @@ function init_zoom_buttons() {
 	</div></div>
 	`);
 
-	selected_token_vision.click(function(){
+	selected_token_vision.click(async function(){
 		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
 			window.SelectedTokenVision = false;
@@ -2884,8 +2881,7 @@ function init_zoom_buttons() {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 			window.SelectedTokenVision = true;
 		}
-		redraw_light();
-		
+		await redraw_light();	
 	});
 
 	zoom_section.append(selected_token_vision);

@@ -39,15 +39,18 @@ const availableToAoe = [
 
 
 
-const debounceLightChecks = mydebounce(() => {		
+const debounceLightChecks = mydebounce(async () => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
-		redraw_light();
+		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
+		let promise = [redraw_light()];
 		if(!window.DM)
-			check_token_visibility();
+			promise.push(check_token_visibility());
+		
+		await Promise.all(promise);
 }, 500);
 
 
@@ -464,39 +467,38 @@ class Token {
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
-
 	}
-	moveUp() {	
+	async moveUp() {	
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
-			this.move(newTop, this.options.left)	
+			await this.move(newTop, this.options.left)	
 		}
 	}
-	moveDown() {
+	async moveDown() {
 		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
-			this.move(newTop, this.options.left)	
+			await this.move(newTop, this.options.left)	
 		}
 
 	}
-	moveLeft() {
+	async moveLeft() {
 		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
 		if(inLos){
-			this.move(this.options.top, newLeft)	
+			await this.move(this.options.top, newLeft)	
 		}
 	}
-	moveRight() {
+	async moveRight() {
 		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
 		if(inLos){
-			this.move(this.options.top, newLeft)	
+			await this.move(this.options.top, newLeft)	
 		}
 	}
 
@@ -506,7 +508,7 @@ class Token {
 	 * @param {String|Number} left position from the left
 	 * @returns void
 	 */
-	move(top, left) {
+	async move(top, left) {
 		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 
@@ -524,8 +526,8 @@ class Token {
 
 		this.options.top = top + 'px';
 		this.options.left = left + 'px';
-		this.place(100);
-		this.update_and_sync();
+		await new Promise(() => this.place(100));
+		await new Promise(() => this.update_and_sync());
 	}
 
 	snap_to_closest_square() {
@@ -533,7 +535,7 @@ class Token {
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 		// shamelessly copied from the draggable code later in this file
 		// this should be a XOR... (A AND !B) OR (!A AND B)
-		let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);		
+		let shallwesnap = (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);		
 		if (shallwesnap) {
 			// calculate offset in real coordinates
 			const startX = window.CURRENT_SCENE_DATA.offsetx;
@@ -624,8 +626,6 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	update_dead_cross(token){
-		console.group("update_dead_cross")
-
 		if(this.maxHp > 0) {
 			// add a cross if it doesn't exist
 			if(token.find(".dead").length === 0) 
@@ -640,7 +640,6 @@ class Token {
 				deadCross.show()
 			}
 		}
-		console.groupEnd()
 	}
 
 	/**
@@ -1376,7 +1375,7 @@ class Token {
 		console.groupEnd()
 	}
 
-	place(animationDuration) {
+	async place(animationDuration) {
 		
 		if(!window.CURRENT_SCENE_DATA){
 			// No scene loaded!
@@ -1425,9 +1424,9 @@ class Token {
 					{
 						left: this.options.left,
 						top: this.options.top,
-					}, { duration: animationDuration, queue: true, complete: function() {
-						draw_selected_token_bounding_box();
-						debounceLightChecks();
+					}, { duration: animationDuration, queue: true, complete: async function() {
+						await scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
+						await scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
 						}
 						
 					});
@@ -2100,7 +2099,7 @@ class Token {
 				 * @param {Event} event mouse event
 				 * @param {Object} ui UI-object
 				 */
-				drag: function(event, ui) {
+				drag: async function(event, ui) {
 					event.stopImmediatePropagation();
 					
 					let zoom = window.ZOOM;
@@ -2134,7 +2133,7 @@ class Token {
 				
 				
 					let canvas = document.getElementById("raycastingCanvas");
-					let ctx = canvas.getContext("2d");
+					let ctx = canvas.getContext("2d", { willReadFrequently: true });
 					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 					let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 					if(!window.DM && playerTokenAuraIsLight){
@@ -2209,11 +2208,6 @@ class Token {
 						// try to move other tokens by the same amount
 						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
 						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-
-						
-
-						
-					
 
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
@@ -2368,14 +2362,15 @@ class Token {
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
 		let token = $("#tokens").find(selector);
-		this.build_stats(token)
-		this.toggle_stats(token)
-		this.update_health_aura(token)
-		this.update_dead_cross(token)
-		// this.toggle_player_owned(token)
-		toggle_player_selectable(this, token)
-		//check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
-		debounceLightChecks();
+
+		Promise.all([
+			new Promise(() => this.build_stats(token)),
+			new Promise(() => this.toggle_stats(token)),
+			new Promise(() => this.update_health_aura(token)),
+			new Promise(() => this.update_dead_cross(token)),
+			new Promise(() => toggle_player_selectable(this, token)),
+			new Promise(debounceLightChecks),
+		]);
 		console.groupEnd()
 	}
 
@@ -3144,36 +3139,38 @@ function rotate_selected_tokens(newRotation, persist = false) {
 // if it was not executed in the last second, execute it immediately
 // if it's already scheduled to be executed, return
 // otherwise, schedule it to execute in 300ms
-function draw_selected_token_bounding_box(){
+async function draw_selected_token_bounding_box(){
 	if(window.NEXT_DRAWBOX  && (window.NEXT_DRAWBOX -Date.now() > 0)){
 		return;
 	}
 	else if(!window.NEXT_DRAWBOX  || (window.NEXT_DRAWBOX -Date.now() <  -1000)){
 		window.NEXT_DRAWBOX=Date.now();
-		do_draw_selected_token_bounding_box();
+		await do_draw_selected_token_bounding_box();
 		return;
 	}
 	else {
 		window.NEXT_DRAWBOX=Date.now()+300;
-		setTimeout(do_draw_selected_token_bounding_box,300);
+		await do_draw_selected_token_bounding_box;
 		return;
 	}
 }
 
 
 /// draws a rectangle around every selected token, and adds a rotation grabber
-function do_draw_selected_token_bounding_box() {
-	console.log("do_draw_selected_token_bounding_box");
+async function do_draw_selected_token_bounding_box() {
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
+	let promises = []
 	for (let id in window.TOKEN_OBJECTS) {
 		let selector = "div[data-id='" + id + "']";
-		toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))
+		promises.push(new Promise(() => toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector))));
 		if (window.TOKEN_OBJECTS[id].selected) {
 			window.CURRENTLY_SELECTED_TOKENS.push(id);
 		}
 	}
+
+	await Promise.all(promises);
 
 	if (window.CURRENTLY_SELECTED_TOKENS == undefined || window.CURRENTLY_SELECTED_TOKENS.length == 0) {
 		return;
