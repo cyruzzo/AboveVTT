@@ -431,7 +431,7 @@ class Token {
 		}
 		ct_remove_token(this, false);
 		let id = this.options.id;
-		let selector = "div[data-id='" + id + "']";
+		let selector = "#tokens div[data-id='" + id + "']";
 		$(selector).remove();
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
