@@ -487,7 +487,7 @@ function set_window_name_and_image(callback) {
   window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
   try {
     // This should be just fine, but catch any parsing errors just in case
-    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, ""));
+    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || defaultAvatarUrl;
   } catch {}
 
   if (typeof window.PLAYER_NAME !== "string" || window.PLAYER_NAME.length <= 1 || typeof window.PLAYER_IMG !== "string" || window.PLAYER_IMG.length <= 1) {
