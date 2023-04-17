@@ -479,7 +479,14 @@ function set_window_name_and_image(callback) {
     if (is_abovevtt_page()) {
       showErrorMessage(
         new Error("set_window_name_and_image has failed after 30 attempts"),
-        `A known workaround for this is to <a href="${window.location.href.replace(window.location.search, '')}/builder/home/basic">edit your character</a>, change the avatar image, enable homebrew, and make your character public.`,
+        "This can happen if your character is not finished yet. Please make sure your character is finished. If your character is finished, try the following",
+        ``,
+        `Navigate to the <a href="${window.location.href.replace(window.location.search, '')}/builder/home/basic" target="_blank">Edit Character</a> page`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;1. change the avatar image`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;2. enable homebrew`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;3. make your character public`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;4. make sure your character is finished, and save your character`,
+        '',
         "After you save your character, you can change the avatar image back to what it was before."
       );
     }
