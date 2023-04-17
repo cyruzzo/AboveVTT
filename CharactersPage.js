@@ -474,10 +474,21 @@ function observe_character_sheet_changes(documentToObserve) {
 function set_window_name_and_image(callback) {
   if (!is_characters_page()) return;
   if (window.set_window_name_and_image_attempts > 30) {
-    console.warn("set_window_name_and_image has failed after 30 attempts");
+    console.warn(`set_window_name_and_image has failed after 30 attempts. window.PLAYER_NAME: ${window.PLAYER_NAME}, window.PLAYER_IMG: ${window.PLAYER_IMG}`);
     delete window.set_window_name_and_image_attempts;
     if (is_abovevtt_page()) {
-      showError(new Error("set_window_name_and_image has failed after 30 attempts"));
+      showErrorMessage(
+        new Error("set_window_name_and_image has failed after 30 attempts"),
+        "This can happen if your character is not finished yet. Please make sure your character is finished. If your character is finished, try the following",
+        ``,
+        `Navigate to the <a href="${window.location.href.replace(window.location.search, '')}/builder/home/basic" target="_blank">Edit Character</a> page`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;1. change the avatar image`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;2. enable homebrew`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;3. make your character public`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;4. make sure your character is finished, and save your character`,
+        '',
+        "After you save your character, you can change the avatar image back to what it was before."
+      );
     }
     return;
   }
@@ -487,7 +498,7 @@ function set_window_name_and_image(callback) {
   window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
   try {
     // This should be just fine, but catch any parsing errors just in case
-    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, ""));
+    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || defaultAvatarUrl;
   } catch {}
 
   if (typeof window.PLAYER_NAME !== "string" || window.PLAYER_NAME.length <= 1 || typeof window.PLAYER_IMG !== "string" || window.PLAYER_IMG.length <= 1) {
