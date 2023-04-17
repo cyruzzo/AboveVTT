@@ -464,40 +464,42 @@ class JournalManager{
 				
 			}
 		});
-		let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
-		window.ScenesHandler.build_adventures(function(){
-			for(let source in window.ScenesHandler.sources){
-				let sourcetitle = window.ScenesHandler.sources[source].title;
-				chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
-			}
-		});
-		chapterImport.on('change', function(){
-			let source = this.value;
-			self.chapters.push({
-				title: window.ScenesHandler.sources[source].title,
-				collapsed: false,
-				notes: [],
-			});
-			window.ScenesHandler.build_chapters(source, function(){
-				for(let chapter in window.ScenesHandler.sources[source].chapters){
-					let new_noteid=uuid();
-					let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
-					self.notes[new_noteid]={
-						title: new_note_title,
-						text: "",
-						player: false,
-						plain: "",
-						ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
-					};
-					self.chapters[self.chapters.length-1].notes.push(new_noteid);
+		if(window.DM){
+			let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
+			window.ScenesHandler.build_adventures(function(){
+				for(let source in window.ScenesHandler.sources){
+					let sourcetitle = window.ScenesHandler.sources[source].title;
+					chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
 				}
-				self.persist();
-				self.build_journal();
 			});
+			chapterImport.on('change', function(){
+				let source = this.value;
+				self.chapters.push({
+					title: window.ScenesHandler.sources[source].title,
+					collapsed: false,
+					notes: [],
+				});
+				window.ScenesHandler.build_chapters(source, function(){
+					for(let chapter in window.ScenesHandler.sources[source].chapters){
+						let new_noteid=uuid();
+						let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+						self.notes[new_noteid]={
+							title: new_note_title,
+							text: "",
+							player: false,
+							plain: "",
+							ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+						};
+						self.chapters[self.chapters.length-1].notes.push(new_noteid);
+					}
+					self.persist();
+					self.build_journal();
+				});
 
-		})
-		if(window.DM)
+			})
+
 			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
+		}
 	}
 	
 	
