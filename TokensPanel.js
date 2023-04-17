@@ -214,7 +214,7 @@ function rebuild_token_items_list() {
     window.TOKEN_CUSTOMIZATIONS
         .filter(tc => tc.tokenType === ItemType.Folder && tc.fullPath().startsWith(RootFolder.MyTokens.path))
         .forEach(tc => {
-            tokenItems.push(SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId))
+            tokenItems.push(SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId, ItemType.MyToken))
         })
 
     // My Tokens
@@ -238,7 +238,8 @@ function rebuild_token_items_list() {
                 builtinFolderPath,
                 folderName,
                 true,
-            builtinFolderPath === RootFolder.AboveVTT.path ? RootFolder.AboveVTT.id : path_to_html_id(builtinFolderPath)
+            builtinFolderPath === RootFolder.AboveVTT.path ? RootFolder.AboveVTT.id : path_to_html_id(builtinFolderPath),
+              ItemType.BuiltinToken
             )
         );
     }
@@ -372,13 +373,13 @@ function init_tokens_panel() {
     console.log("init_tokens_panel");
 
     tokens_rootfolders = [
-        SidebarListItem.Folder(RootFolder.Players.id, RootFolder.Root.path, RootFolder.Players.name, false, path_to_html_id(RootFolder.Root.path)),
-        SidebarListItem.Folder(RootFolder.Monsters.id, RootFolder.Root.path, RootFolder.Monsters.name, false, path_to_html_id(RootFolder.Root.path)),
-        SidebarListItem.Folder(RootFolder.MyTokens.id, RootFolder.Root.path, RootFolder.MyTokens.name, false, path_to_html_id(RootFolder.Root.path)),
-        SidebarListItem.Folder(RootFolder.AboveVTT.id, RootFolder.Root.path, RootFolder.AboveVTT.name, false, path_to_html_id(RootFolder.Root.path)),
-        SidebarListItem.Folder(RootFolder.DDB.id, RootFolder.Root.path, RootFolder.DDB.name, false, path_to_html_id(RootFolder.Root.path)),
-        SidebarListItem.Folder(RootFolder.Encounters.id, RootFolder.Root.path, RootFolder.Encounters.name, false, path_to_html_id(RootFolder.Root.path)),
-        SidebarListItem.Folder(RootFolder.Aoe.id, RootFolder.Root.path, RootFolder.Aoe.name, false, path_to_html_id(RootFolder.Root.path))
+        SidebarListItem.Folder(RootFolder.Players.id, RootFolder.Root.path, RootFolder.Players.name, false, path_to_html_id(RootFolder.Root.path), ItemType.PC),
+        SidebarListItem.Folder(RootFolder.Monsters.id, RootFolder.Root.path, RootFolder.Monsters.name, false, path_to_html_id(RootFolder.Root.path), ItemType.Monster),
+        SidebarListItem.Folder(RootFolder.MyTokens.id, RootFolder.Root.path, RootFolder.MyTokens.name, false, path_to_html_id(RootFolder.Root.path), ItemType.MyToken),
+        SidebarListItem.Folder(RootFolder.AboveVTT.id, RootFolder.Root.path, RootFolder.AboveVTT.name, false, path_to_html_id(RootFolder.Root.path), ItemType.BuiltinToken),
+        SidebarListItem.Folder(RootFolder.DDB.id, RootFolder.Root.path, RootFolder.DDB.name, false, path_to_html_id(RootFolder.Root.path), ItemType.DDBToken),
+        SidebarListItem.Folder(RootFolder.Encounters.id, RootFolder.Root.path, RootFolder.Encounters.name, false, path_to_html_id(RootFolder.Root.path), ItemType.Encounter),
+        SidebarListItem.Folder(RootFolder.Aoe.id, RootFolder.Root.path, RootFolder.Aoe.name, false, path_to_html_id(RootFolder.Root.path), ItemType.Aoe)
     ];
 
     aoe_items = [
@@ -1823,7 +1824,7 @@ function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
     if (placedToken?.isMonster()) {
         tokenDiv.attr("data-monster", placedToken.options.monster);
     }
-    set_full_path(tokenDiv, listItem?.fullPath());
+    set_list_item_identifier(tokenDiv, listItem);
     enable_draggable_token_creation(tokenDiv, parsedImage);
     return tokenDiv;
 }
@@ -1959,7 +1960,7 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
         let imgsrc = item.find("img.token-image").attr("src");
         let tokenDiv = build_alternative_image_for_modal(imgsrc, options, placedToken, listItem);
         item.replaceWith(tokenDiv);
-        set_full_path(tokenDiv, listItem.fullPath());
+        set_list_item_identifier(tokenDiv, listItem);
         enable_draggable_token_creation(tokenDiv, imgsrc);
     }
 }
