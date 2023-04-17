@@ -340,11 +340,18 @@ class JournalManager{
 				let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
 				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title'></div>`);
 
-				entry_title.text(self.notes[note_id].title);
-				entry_title.click(function(){
-					self.display_note(note_id);
-				});
 
+				entry_title.text(self.notes[note_id].title);
+				if(!self.notes[note_id].ddbsource){
+					entry_title.click(function(){
+						self.display_note(note_id);
+					});
+				}
+				else{
+					entry_title.click(function(){
+						render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
+					});
+				}
 				let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
 				
 				rename_btn.click(function(){
@@ -413,10 +420,13 @@ class JournalManager{
 
 				entry.append(entry_title);
 
-				if(window.DM)
-					entry.append(edit_btn);
-					entry.append(rename_btn);
+				if(window.DM){
+					if(!self.notes[note_id].ddbsource){
+						entry.append(edit_btn);
+						entry.append(rename_btn);		
+					}
 					entry.append(delete_btn);
+				}
 
 				note_list.append(entry);
 			}
@@ -454,8 +464,40 @@ class JournalManager{
 				
 			}
 		});
+		let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
+		window.ScenesHandler.build_adventures(function(){
+			for(let source in window.ScenesHandler.sources){
+				let sourcetitle = window.ScenesHandler.sources[source].title;
+				chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
+			}
+		});
+		chapterImport.on('change', function(){
+			let source = this.value;
+			self.chapters.push({
+				title: window.ScenesHandler.sources[source].title,
+				collapsed: false,
+				notes: [],
+			});
+			window.ScenesHandler.build_chapters(source, function(){
+				for(let chapter in window.ScenesHandler.sources[source].chapters){
+					let new_noteid=uuid();
+					let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+					self.notes[new_noteid]={
+						title: new_note_title,
+						text: "",
+						player: false,
+						plain: "",
+						ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+					};
+					self.chapters[self.chapters.length-1].notes.push(new_noteid);
+				}
+				self.persist();
+				self.build_journal();
+			});
+
+		})
 		if(window.DM)
-			$('#journal-panel .sidebar-panel-body').prepend(sort_button);
+			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
 	}
 	
 	
@@ -550,6 +592,10 @@ class JournalManager{
 			removeFromPopoutWindow(self.notes[id].title, ".ui-resizable-handle");
 			$(window.childWindows[self.notes[id].title].document).find(".note").attr("style", "overflow:visible; max-height: none !important; height: auto; min-height: 100%;");
 			$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
+		});
+		note.off('click').on('click', '.int_source_link', function(event){
+			event.preventDefault();
+			render_source_chapter_in_iframe(event.target.href);
 		});
 	}
 	
@@ -663,12 +709,15 @@ class JournalManager{
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
 			toolbar1: 'undo styleselect | hr | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
 			image_class_list: [
-				{title: 'None', value: ''},
 				{title: 'Magnify', value: 'magnify'},
 			],
 			external_plugins: {
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
 			},
+			link_class_list: [
+			   {title: 'External Link', value: 'ext_link'},
+			   {title: 'DNDBeyond Source Link', value: 'int_source_link'}
+			],
 			relative_urls : false,
 			remove_script_host : false,
 			convert_urls : true,
@@ -1177,3 +1226,88 @@ function init_journal(gameid){
 	
 }
 
+function render_source_chapter_in_iframe(url) {
+	if (typeof url !== "string" || !url.startsWith('https://www.dndbeyond.com/sources/')) {
+		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
+		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
+	}
+	const chapterHash = url.split("#")?.[1];
+	const iframeId = 'sourceChapterIframe';
+	const containerId = `${iframeId}_resizeDrag`;
+	const container = find_or_create_generic_draggable_window(containerId, 'Source Book');
+
+	let iframe = $(`#${iframeId}`);
+	if (iframe.length > 0) {
+
+		// TODO: any clean up tasks before redirecting?
+
+		if (chapterHash) {
+			iframe.attr("data-chapter-hash", chapterHash);
+		} else {
+			iframe.attr("data-chapter-hash", '');
+		}
+
+		iframe.attr('src', url);
+		return;
+
+	} else {
+		iframe = $(`<iframe id=${iframeId}>`);
+		if (chapterHash) {
+			iframe.attr("data-chapter-hash", chapterHash);
+		} else {
+			iframe.attr("data-chapter-hash", '');
+		}
+		iframe.css({
+			"display": "block",
+			"width": "100%",
+			"height": "100%",
+			"position": "absolute",
+			"top": "0",
+			"left": "0"
+		});
+		container.append(iframe);
+	}
+
+	iframe.on("load", function(event) {
+		console.log(`render_source_chapter_in_iframe is loading ${this.src}`, $(event.target), this);
+		if (!this.src) {
+			// it was just created. no need to do anything until it actually loads something
+			return;
+		}
+		const iframeContents = $(event.target).contents();
+
+		iframeContents.find(".site-bar").hide();
+		iframeContents.find("#site-main > header").hide();
+		iframeContents.find("#mega-menu-target").hide();
+		iframeContents.find(".ad-container").hide();
+		iframeContents.find("#site > footer").hide();
+
+		const hash = $(event.target).attr('data-chapter-hash');
+		if (hash) {
+			const headerId = `#${hash}`;
+			const sectionHeader = iframeContents.find(headerId);
+			const tagName = sectionHeader.prop("tagName");
+			let boundaryTags = [];
+			// we are explicitly allowing everything to fall through to the next statement
+			// because we want everything that matches tagName and above
+			// for example, if tagName is H3, we want our boundaryTags to include H3, H2, and H1
+			switch (tagName) {
+				case "H4": boundaryTags.push("H4");
+				case "H3": boundaryTags.push("H3");
+				case "H2": boundaryTags.push("H2");
+				case "H1": boundaryTags.push("H1");
+			}
+
+			sectionHeader.prevAll().remove();
+			boundaryTags.forEach((tag, idx) => {
+				const nextHeader = sectionHeader.nextAll(`${tag}:first`);
+				nextHeader.nextAll().remove();
+				nextHeader.remove();
+			});
+		}
+
+		$(this).siblings('.sidebar-panel-loading-indicator').remove();
+	});
+
+	iframe.attr('src', url);
+}

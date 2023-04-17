@@ -354,6 +354,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index:  49000;
 }
 
+.resizeDragWindow,
 #resizeDragMon {
     display: flex;
     left: 271px;
@@ -368,8 +369,9 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index: 49000;
     border-radius: 3px;   
     border: 1px solid gray;
-}  
+}
 
+.resizeDragWindow.hideDragWindow,
 #resizeDragMon.hideMon{
     visibility: hidden;
 }
@@ -4276,6 +4278,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 
 #text_controller_title_bar,
 .text-input-title-bar,
+.resize_drag_window .title_bar,
 #combat_tracker_title_bar {
     width: 100%;
     background: #242527;
@@ -4341,6 +4344,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     position: relative;
 }
 
+.resize_drag_window .title_bar:after,
 #text_controller_title_bar:after,
 .text-input-title-bar:after,
 #combat_tracker_title_bar:after {
@@ -4363,6 +4367,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     color: #fff;
 }
 
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit,
 .text-input-title-bar-exit,
 .title-bar-exit,
@@ -4386,6 +4391,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 #reload_player_frame_button:hover,
 .text-input-title-bar-exit:hover,
 .title-bar-exit:hover,
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
 #token_options_title_bar_exit:hover,
@@ -4402,6 +4408,7 @@ div#selectedTokensBorderRotationGrabberConnector,
  
 .text-input-title-bar-exit svg,
 .text-input-title-bar-exittitle-bar-exit svg,
+.resize_drag_window .title_bar .title_bar_close_button svg,
 #text_controller_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
@@ -4415,6 +4422,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 
 .text-input-title-bar-exit svg g rect,
 .title-bar-exit svg g rect,
+.resize_drag_window .title_bar .title_bar_close_button svg g rect,
 #text_controller_title_bar_exit svg g rect,
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
@@ -4449,6 +4457,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 
 .text-input-title-bar-exit,
 .title-bar-exit,
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
@@ -4478,6 +4487,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 #reload_player_frame_button,
 .text-input-title-bar-exit,
 .title-bar-exit,
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #token_options_title_bar_exit,
@@ -4652,6 +4662,8 @@ div#selectedTokensBorderRotationGrabberConnector,
     height: 10px;
 }
 
+.resize_drag_window .ui-resizable-s,
+.resize_drag_window .ui-resizable-sw,
 #resizeDragMon .ui-resizable-s,
 #resizeDragMon .ui-resizable-sw,
 #sheet .ui-resizable-s,
@@ -4659,6 +4671,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     bottom: -7px;  
 }
 
+.resize_drag_window .ui-resizable-se,
 #resizeDragMon .ui-resizable-se,
 #sheet .ui-resizable-se{
     height: 10px;
@@ -4666,6 +4679,8 @@ div#selectedTokensBorderRotationGrabberConnector,
     right: -7px;
     bottom: -10px;
 }
+.resize_drag_window .ui-resizable-e,
+.resize_drag_window .ui-resizable-w,
 #resizeDragMon .ui-resizable-e,
 #resizeDragMon .ui-resizable-w,
 #sheet .ui-resizable-e,
@@ -5058,7 +5073,9 @@ input.max_hp[disabled]{
     transition: filter 350ms linear;
 }
 
-.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title), 
+.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title, .title_bar_text),
+.resize_drag_window .title_bar:after,
+.resize_drag_window .title_bar.minimized ~ *,
 #combat_tracker_title_bar.minimized:after,
 #combat_tracker_title_bar.minimized ~ *{
     display: none !important;
@@ -5066,6 +5083,9 @@ input.max_hp[disabled]{
 
 #text_controller_title_bar.minimized,
 #combat_tracker_title_bar.minimized,
+#combat_tracker_title_bar.minimized,
+.resize_drag_window .title_bar.minimized,
+.resize_drag_window.minimized,
 #resizeDragMon.minimized,
 #sheet.minimized,
 .minimized{
@@ -5092,6 +5112,7 @@ input.max_hp[disabled]{
 .minimized #text_controller_title,
 .minimized .monster_title,
 .minimized .player_title,
+.minimized .title_bar_text,
 .minimized #ct_text_title{
     white-space: nowrap;
     overflow: hidden;
@@ -5968,6 +5989,15 @@ div.note[id^="ui-id"] .mce-btn button {
     background-color: #fff;
 }
 
+
+#journal-panel .reorder-button{
+    display: inline;
+}
+#ddb-source-journal-import{
+    display:inline;
+    float:right;
+    width:175px;
+}
 .body-rpgcharacter-sheet #VTT.paused *{
     pointer-events: none !important;
 }
@@ -6278,6 +6308,8 @@ button.journal-view-button.journal-button {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
+    width: 265px;
+    overflow-wrap: anywhere;
 }
 
 

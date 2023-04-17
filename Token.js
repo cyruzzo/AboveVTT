@@ -1323,8 +1323,12 @@ class Token {
 					            });
 					            flyout.append(buttonFooter);
 					            buttonFooter.append(sendToGamelogButton);
-
-					      
+					            flyout.find("a").attr("target","_blank");
+					      		flyout.off('click').on('click', '.int_source_link', function(event){
+									event.preventDefault();
+									render_source_chapter_in_iframe(event.target.href);
+								});
+								
 
 					            flyout.hover(function (hoverEvent) {
 					                if (hoverEvent.type === "mouseenter") {
