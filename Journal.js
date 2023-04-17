@@ -465,7 +465,7 @@ class JournalManager{
 			}
 		});
 		let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
-		window.ScenesHandler.build_adventures(function(){
+		window.ScenesHandler?.build_adventures(function(){
 			for(let source in window.ScenesHandler.sources){
 				let sourcetitle = window.ScenesHandler.sources[source].title;
 				chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
