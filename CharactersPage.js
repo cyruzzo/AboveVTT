@@ -474,10 +474,14 @@ function observe_character_sheet_changes(documentToObserve) {
 function set_window_name_and_image(callback) {
   if (!is_characters_page()) return;
   if (window.set_window_name_and_image_attempts > 30) {
-    console.warn("set_window_name_and_image has failed after 30 attempts");
+    console.warn(`set_window_name_and_image has failed after 30 attempts. window.PLAYER_NAME: ${window.PLAYER_NAME}, window.PLAYER_IMG: ${window.PLAYER_IMG}`);
     delete window.set_window_name_and_image_attempts;
     if (is_abovevtt_page()) {
-      showError(new Error("set_window_name_and_image has failed after 30 attempts"));
+      showErrorMessage(
+        new Error("set_window_name_and_image has failed after 30 attempts"),
+        `A known workaround for this is to <a href="${window.location.href.replace(window.location.search, '')}/builder/home/basic">edit your character</a>, change the avatar image, enable homebrew, and make your character public.`,
+        "After you save your character, you can change the avatar image back to what it was before."
+      );
     }
     return;
   }
