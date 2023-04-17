@@ -871,8 +871,10 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
   if (addLoadingIndicator) {
     container.append(build_combat_tracker_loading_indicator(`Loading ${titleBarText}`));
     const loadingIndicator = container.find(".sidebar-panel-loading-indicator");
-    loadingIndicator.css("top", "25px");
-    loadingIndicator.css("height", "calc(100% - 25px)");
+    loadingIndicator.css({
+      "top": "25px",
+      "height": "calc(100% - 25px)"
+    });
   }
 
   container.show("slow")
