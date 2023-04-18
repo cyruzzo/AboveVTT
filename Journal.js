@@ -1262,9 +1262,9 @@ function render_source_chapter_in_iframe(url) {
 		iframe.css({
 			"display": "block",
 			"width": "100%",
-			"height": "100%",
+			"height": "calc(100% - 15px)",
 			"position": "absolute",
-			"top": "0",
+			"top": "15px",
 			"left": "0"
 		});
 		container.append(iframe);
