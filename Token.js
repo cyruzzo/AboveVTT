@@ -526,8 +526,8 @@ class Token {
 
 		this.options.top = top + 'px';
 		this.options.left = left + 'px';
-		await new Promise(() => this.place(100));
-		await new Promise(() => this.update_and_sync());
+		await this.place(100)
+		this.update_and_sync();
 	}
 
 	snap_to_closest_square() {
@@ -2757,6 +2757,7 @@ function deselect_all_tokens() {
 		}
 	}
 	remove_selected_token_bounding_box();
+	window.CURRENTLY_SELECTED_TOKENS = [];
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
 	if(window.DM && darknessPercent < 40){
@@ -3154,7 +3155,7 @@ async function draw_selected_token_bounding_box(){
 	}
 	else {
 		window.NEXT_DRAWBOX=Date.now()+300;
-		await do_draw_selected_token_bounding_box;
+		await do_draw_selected_token_bounding_box();
 		return;
 	}
 }
