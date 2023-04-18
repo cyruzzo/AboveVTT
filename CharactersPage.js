@@ -34,16 +34,29 @@ function character_sheet_changed(changes) {
     sendCharacterUpdateEvent();
 }
 
-function send_character_hp() {
+function send_character_hp(maxhp) {
   const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
-  character_sheet_changed({
-    hitPointInfo: {
-      current: read_current_hp(),
-      maximum: read_max_hp(pc?.hitPointInfo?.maximum),
-      temp: read_temp_hp()
-    },
-    deathSaveInfo: read_death_save_info()
-  });
+  if(maxhp > 0){ //the player just died and we are sending removed node max hp data
+    character_sheet_changed({
+      hitPointInfo: {
+        current: 0,
+        maximum: maxhp,
+        temp: 0
+      },
+      deathSaveInfo: read_death_save_info()
+    });
+  }
+  else{
+    character_sheet_changed({
+      hitPointInfo: {
+        current: read_current_hp(),
+        maximum: read_max_hp(pc?.hitPointInfo?.maximum),
+        temp: read_temp_hp()
+      },
+      deathSaveInfo: read_death_save_info()
+    });
+  }
+
 }
 
 
@@ -180,7 +193,12 @@ function send_movement_speeds(container, speedManagePage) {
 }
 
 function read_current_hp(container = $(document)) {
-  let element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
+ 
+  let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--cur .ct-health-manager__health-item-value`)
+  if(element.length){
+    return parseInt(element.text())
+  }
+  element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
   if (element.length) {
     return parseInt(element.text()) || 0;
   }
@@ -200,9 +218,13 @@ function read_current_hp(container = $(document)) {
 }
 
 function read_temp_hp(container = $(document)) {
-
-  if (container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).length) {
-    return parseInt(container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
+  let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--temp .ct-health-manager__health-item-value input.ct-health-manager__input`)
+  if(element.length){
+    return parseInt(element.val())
+  }
+  element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`)
+  if (element.length) {
+    return parseInt(element.text()) || 0;
   }
   if (container.find(`.ct-status-summary-mobile__hp--has-temp`).length) {
     if(container.find('.ct-health-manager__health-item--temp').length){
@@ -215,11 +237,17 @@ function read_temp_hp(container = $(document)) {
 }
 
 function read_max_hp(currentMaxValue = 0, container = $(document)) {
-  if (container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).length) {
-    return parseInt(container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || currentMaxValue;
+  let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--max .ct-health-manager__health-item-value .ct-health-manager__health-max-current`)
+  if(element.length){
+    return parseInt(element.text())
   }
-  if (container.find(".ct-status-summary-mobile__hp-max").length) {
-    return parseInt(container.find(".ct-status-summary-mobile__hp-max").text()) || currentMaxValue;
+  element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`);
+  if (element.length) {
+    return parseInt(element.text()) || currentMaxValue;
+  }
+  element = container.find(".ct-status-summary-mobile__hp-max");
+  if (element.length) {
+    return parseInt(element.text()) || currentMaxValue;
   }
   return currentMaxValue;
 }
@@ -388,7 +416,10 @@ function observe_character_sheet_changes(documentToObserve) {
 
             break;
           case "childList":
-            if (
+            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-content').children('input').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+              let maxhp = parseInt($(mutation.removedNodes[0]).find(`input`).attr('max'));
+              send_character_hp(maxhp);
+            }else if (
               $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
               ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
               ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
