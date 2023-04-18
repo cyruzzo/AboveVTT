@@ -1580,13 +1580,13 @@ class Token {
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
 					feet: 0,
-					color: 'rgba(255, 255, 255, 0.5)'
+					color: 'rgba(142, 142, 142, 1)'
 				}
 			}
 			if(this.options.vision == undefined){
 				this.options.vision = {
 					feet: 60,
-					color: 'rgba(255, 255, 255, 0.5)'
+					color: 'rgba(142, 142, 142, 1)'
 				}
 			}
 			if((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked){
@@ -1640,7 +1640,7 @@ class Token {
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
 					feet: 0,
-					color: 'rgba(255, 255, 255, 0.5)'
+					color: 'rgba(142, 142, 142, 1)'
 				}
 			}
 			if(this.options.vision == undefined){
@@ -1657,7 +1657,7 @@ class Token {
 			        }
 		            this.options.vision = {
 		                feet: darkvision.toString(),
-		                color: 'rgba(255, 255, 255, 0.5)'
+		                color: 'rgba(142, 142, 142, 1)'
 		            }
 		        }
 		        else if(this.isMonster()){
@@ -1686,13 +1686,13 @@ class Token {
 		       		} 
 		            this.options.vision = {
 		                feet: darkvision.toString(),
-		                color: 'rgba(255, 255, 255, 0.5)'
+		                color: 'rgba(142, 142, 142, 1)'
 		            }
 		        }
 				else{
 					this.options.vision = {
 						feet: 60,
-						color: 'rgba(255, 255, 255, 0.5)'
+						color: 'rgba(142, 142, 142, 1)'
 					}
 				
 				}
