@@ -924,8 +924,8 @@ function build_token_light_inputs(tokenIds) {
 		wrapper.find("input[name='light1']").val(feet1);
 		wrapper.find("input[name='light2']").val(feet2);
 
-		let color1 = "rgba(255, 255, 255, 0.8)";
-		let color2 = "rgba(255, 255, 255, 0.4)";
+		let color1 = "rgba(255, 255, 255, 1)";
+		let color2 = "rgba(142, 142, 142, 1)";
 		wrapper.find("input[name='light1Color']").spectrum("set", color1);
 		wrapper.find("input[name='light2Color']").spectrum("set", color2);
 

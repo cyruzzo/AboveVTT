@@ -1548,7 +1548,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             }
             customization.tokenOptions.vision = {
                 feet: darkvision.toString(),
-                color: 'rgba(255, 255, 255, 0.5)'
+                color: 'rgba(142, 142, 142, 1)'
             }
         }
         else if(listItem.isTypeMonster()){
@@ -1565,26 +1565,26 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
             customization.tokenOptions.vision = {
                 feet: darkvision.toString(),
-                color: 'rgba(255, 255, 255, 0.5)'
+                color: 'rgba(142, 142, 142, 1)'
             }
         }
         else{
             customization.tokenOptions.vision = {
                 feet: '60',
-                color: 'rgba(255, 255, 255, 0.5)'
+                color: 'rgba(142, 142, 142, 1)'
             }
         }
     }
     if(customization.tokenOptions.light1 == undefined){
         customization.tokenOptions.light1 = {
             feet: '0',
-            color: 'rgba(255, 255, 255, 0.8)'
+            color: 'rgba(255, 255, 255, 1)'
         }
     }
     if(customization.tokenOptions.light2 == undefined){
         customization.tokenOptions.light2 = {
             feet: '0',
-            color: 'rgba(255, 255, 255, 0.5)'
+            color: 'rgba(142, 142, 142, 1)'
         }
     }
 
