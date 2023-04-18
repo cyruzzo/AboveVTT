@@ -375,6 +375,10 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 #resizeDragMon.hideMon{
     visibility: hidden;
 }
+.resize_drag_window{
+    background: url(https://www.dndbeyond.com/attachments/0/84/background_texture.png) #f9f9f9;
+}
+
 
 #sheet iframe {
     width: 100%;

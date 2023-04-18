@@ -1229,7 +1229,7 @@ function init_journal(gameid){
 }
 
 function render_source_chapter_in_iframe(url) {
-	if (typeof url !== "string" || !url.startsWith('https://www.dndbeyond.com/sources/')) {
+	if (typeof url !== "string" || (!url.startsWith('https://www.dndbeyond.com/sources/') && !url.startsWith('/sources/'))) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
 	}
@@ -1262,9 +1262,9 @@ function render_source_chapter_in_iframe(url) {
 		iframe.css({
 			"display": "block",
 			"width": "100%",
-			"height": "100%",
+			"height": "calc(100% - 15px)",
 			"position": "absolute",
-			"top": "0",
+			"top": "15px",
 			"left": "0"
 		});
 		container.append(iframe);
@@ -1276,6 +1276,7 @@ function render_source_chapter_in_iframe(url) {
 			// it was just created. no need to do anything until it actually loads something
 			return;
 		}
+		$(event.target).contents().find("body[class*='marketplace']").replaceWith($("<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>"));
 		const iframeContents = $(event.target).contents();
 
 		iframeContents.find(".site-bar").hide();

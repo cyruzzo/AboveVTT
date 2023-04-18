@@ -3221,11 +3221,16 @@ async function redraw_light(){
 			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
 				let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 				
-				if(!(playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
-					&& !(!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined))
+				let hideVisionWhenNoPlayerToken = (playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
+				if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.
+					return; //we don't want to draw this tokens vision no need for further checks - go next token.
+				
+				let hideVisionWhenPlayerTokenExists = (!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
+				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
+					return; //we don't want to draw this tokens vision - go next token.
 
-					$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
-					drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
+				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			}
 		})); 	
 	}
