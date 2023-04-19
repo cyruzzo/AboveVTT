@@ -1432,17 +1432,23 @@ class Token {
 					// this token is being moved quickly, speed up the animation
 					animationDuration = 100;
 				}
-				
-				old.animate(
-					{
-						left: this.options.left,
-						top: this.options.top,
-					}, { duration: animationDuration, queue: true, complete: async function() {
-						await scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
-						await scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
+
+			old.animate(
+				{
+					left: this.options.left,
+					top: this.options.top,
+				}, { duration: animationDuration, queue: true, complete: async function() {
+					const browser = get_browser();
+						if (browser.mozilla || browser.safari) {
+							draw_selected_token_bounding_box().then(() => {}); // execute it asynchronously
+							debounceLightChecks();
+						} else {
+							// scheduler is not supported in all browsers
+							await scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
+							await scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
 						}
-						
-					});
+					}
+				});
 				
 
 

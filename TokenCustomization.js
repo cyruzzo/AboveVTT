@@ -607,27 +607,6 @@ function persist_all_token_customizations(customizations, callback) {
     localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
     window.TOKEN_CUSTOMIZATIONS = customizations;
     callback(true);
-
-    return; // TODO: remove everything above, and just do this instead
-
-    let http_api_gw="https://services.abovevtt.net";
-    let searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has("dev")){
-        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-    }
-
-    window.ajaxQueue.addRequest({
-        url: `${http_api_gw}/services?action=setTokenCustomizations&userId=todo`, // TODO: figure this out
-        success: function (response) {
-            console.log(`persist_all_token_customizations succeeded`, response);
-            window.TOKEN_CUSTOMIZATIONS = customizations;
-            callback(true);
-        },
-        error: function (errorMessage) {
-            console.warn(`persist_all_token_customizations failed`, errorMessage);
-            callback(false, errorMessage?.responseJSON?.type);
-        }
-    })
 }
 
 function persist_token_customization(customization, callback) {
@@ -690,26 +669,6 @@ function fetch_token_customizations(callback) {
         console.error("fetch_token_customizations failed", error);
         callback(false);
     }
-
-    return; // TODO: remove everything above, and just do this instead
-
-    let http_api_gw="https://services.abovevtt.net";
-    let searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has("dev")){
-        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-    }
-
-    window.ajaxQueue.addRequest({
-        url: `${http_api_gw}/services?action=getTokenCustomizations&userId=todo`, // TODO: figure this out
-        success: function (response) {
-            console.warn(`persist_token_customizations succeeded`, response);
-            callback(response); // TODO: grabe the actual list of objects from the response
-        },
-        error: function (errorMessage) {
-            console.warn(`persist_token_customizations failed`, errorMessage);
-            callback(false, errorMessage?.responseJSON?.type);
-        }
-    });
 }
 
 // deletes everything within a folder
@@ -726,31 +685,6 @@ function delete_token_customization_by_parent_id(parentId, callback) {
     window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId !== parentId);
 
     persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
-
-    return; // TODO: remove everything above, and just do this instead
-
-    let http_api_gw="https://services.abovevtt.net";
-    let searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has("dev")){
-        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-    }
-
-    window.ajaxQueue.addRequest({
-        url: `${http_api_gw}/services?action=deleteTokenCustomizations&parentId=${parentId}&userId=todo`, // TODO: figure this out
-        type: "DELETE",
-        success: function (response) {
-            console.warn(`delete_token_customization succeeded`, response);
-            let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === customization.tokenType && tc.id === customization.id);
-            if (index >= 0) {
-                window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
-            }
-            callback(true);
-        },
-        error: function (errorMessage) {
-            console.warn(`delete_token_customization failed`, errorMessage);
-            callback(false, errorMessage?.responseJSON?.type);
-        }
-    });
 }
 
 function delete_token_customization_by_type_and_id(itemType, id, callback) {
@@ -762,32 +696,6 @@ function delete_token_customization_by_type_and_id(itemType, id, callback) {
         window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
     }
     persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
-
-    return; // TODO: remove everything above, and just do this instead
-
-    let http_api_gw="https://services.abovevtt.net";
-    let searchParams = new URLSearchParams(window.location.search);
-    if(searchParams.has("dev")){
-        http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-    }
-
-    window.ajaxQueue.addRequest({
-        url: `${http_api_gw}/services?action=deleteTokenCustomization&id=${id}&tokenType=${itemType}&userId=todo`, // TODO: figure this out
-        type: "DELETE",
-        success: function (response) {
-            console.warn(`delete_token_customization succeeded`, response);
-            let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === customization.tokenType && tc.id === customization.id);
-            if (index >= 0) {
-                window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
-            }
-            callback(true);
-        },
-        error: function (errorMessage) {
-            console.warn(`delete_token_customization failed`, errorMessage);
-            callback(false, errorMessage?.responseJSON?.type);
-        }
-    });
-
 }
 
 function find_customization_for_placed_token(placedToken) {
