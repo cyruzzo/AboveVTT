@@ -469,7 +469,7 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
 	async moveUp() {	
-		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);	
 		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
@@ -479,7 +479,7 @@ class Token {
 		}
 	}
 	async moveDown() {
-		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
 		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
@@ -490,7 +490,7 @@ class Token {
 
 	}
 	async moveLeft() {
-		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
 		let addhpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
@@ -500,7 +500,7 @@ class Token {
 		}
 	}
 	async moveRight() {
-		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);			
 		let addhpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
@@ -1880,8 +1880,8 @@ class Token {
 							console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
 
 							if(should_snap_to_grid()){
-								let tinyToken = (window.TOKEN_OBJECTS[this.dataset.id].options.size < window.CURRENT_SCENE_DATA.hpps);			
-								let tokenPosition = snap_point_to_grid(selectedOldleft - startX, selectedOldTop - startY, undefined, tinyToken);
+								let tinyToken = (Math.round(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares*2)/2 < 1);		
+								let tokenPosition = snap_point_to_grid(selectedOldleft, selectedOldTop, undefined, tinyToken);
 								$(event.target).css("top", tokenPosition.y + "px");
 								$(event.target).css("left", tokenPosition.x + "px");
 							}
@@ -1929,8 +1929,8 @@ class Token {
 									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
 									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
 									if(should_snap_to_grid()){
-										let tinyToken = curr.options.size < window.CURRENT_SCENE_DATA.hpps;
-										let tokenPosition = snap_point_to_grid(oldleft - startX, oldtop - startY, undefined, tinyToken);
+										let tinyToken = (Math.round(curr.options.gridSquares*2)/2 < 1);	
+										let tokenPosition = snap_point_to_grid(oldleft, oldtop, undefined, tinyToken);
 
 										$(tok).css("top", tokenPosition.y + "px");
 										$(tok).css("left", tokenPosition.x + "px");
@@ -2142,7 +2142,7 @@ class Token {
 					let original = ui.originalPosition;
 					let tokenX = (event.pageX - click.x + original.left) / zoom;
 					let tokenY = (event.pageY - click.y + original.top) / zoom;
-					let tinyToken = (window.TOKEN_OBJECTS[this.dataset.id].options.size < window.CURRENT_SCENE_DATA.hpps);
+					let tinyToken = (Math.round(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares*2)/2 < 1);
 
 					if (should_snap_to_grid()) {
 						tokenX += !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
@@ -2256,7 +2256,7 @@ class Token {
 								tokenX = offsetLeft + parseInt(curr.orig_left);
 								tokenY = offsetTop + parseInt(curr.orig_top);
 								if(should_snap_to_grid()){
-									let tinyToken = curr.options.size < window.CURRENT_SCENE_DATA.hpps;
+									let tinyToken = (Math.round(curr.options.gridSquares*2)/2 < 1);
 									let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 
 									tokenY =  tokenPosition.y;
