@@ -197,8 +197,8 @@ function token_context_menu_expanded(tokenIds, e) {
 				} else {
 					token.show();
 				}
-				token.place_sync_persist();
 			});
+
 			clickedItem.removeClass("single-active all-active some-active active-condition");
 			clickedItem.addClass(determine_hidden_classname(tokenIds));
 		});
@@ -988,7 +988,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newHP = token.hp + parseInt(newValue);
 				}
-				token.hp = newHP;
+				token.hp = newHP - token.tempHp;
 				token.place_sync_persist();
 				$(".hpMenuInput").val(newHP);
 			});
@@ -1002,7 +1002,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newHP = token.hp + parseInt(newValue);
 			}
-			token.hp = newHP;
+			token.hp = newHP - token.tempHp;
 			token.place_sync_persist();
 			$(".hpMenuInput").val(newHP);
 		});
