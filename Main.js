@@ -3329,6 +3329,7 @@ function get_browser() {
 		chrome: M[0] == "Chrome",
 		msie: M[0] == "Internet Explorer",
 		opera: M[0] == "Opera",
+		safari: M[0] == "Safari"
 	};
 }
 

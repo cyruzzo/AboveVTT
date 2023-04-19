@@ -416,13 +416,14 @@ function observe_character_sheet_changes(documentToObserve) {
 
             break;
           case "childList":
-            if($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-content').children('input').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
-              let maxhp = parseInt($(mutation.removedNodes[0]).find(`input`).attr('max'));
+            const firstRemoved = $(mutation.removedNodes[0]);
+            if(firstRemoved.hasClass('ct-health-summary__hp-item-content') && firstRemoved.children('input').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+              let maxhp = parseInt(firstRemoved.find(`input`).attr('max'));
               send_character_hp(maxhp);
             }else if (
-              $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
-              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
-              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
+              ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||
+              (firstRemoved.hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
+              (firstRemoved.hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
               mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
             ) {
