@@ -573,7 +573,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			var old = $("#tokens").find(selector);
 
 			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, token.hp + parseInt(maxhp_input.val())));
+				maxhp_input.val(Math.max(0, token.maxHp + parseInt(maxhp_input.val())));
 			}
 
 			old.find(".max_hp").val(maxhp_input.val().trim());
@@ -823,8 +823,9 @@ function ct_load(data=null){
 
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
 					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
-						window.TOKEN_OBJECTS[data[i]['data-target']].hp = window.all_token_objects[data[i]['data-target']].hp;
+						window.TOKEN_OBJECTS[data[i]['data-target']].hp = window.all_token_objects[data[i]['data-target']].baseHp;
 						window.TOKEN_OBJECTS[data[i]['data-target']].maxHp = window.all_token_objects[data[i]['data-target']].maxHp;
+						window.TOKEN_OBJECTS[data[i]['data-target']].tempHp = window.all_token_objects[data[i]['data-target']].tempHp;
 					}
 				}
 
