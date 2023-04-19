@@ -1204,19 +1204,26 @@ class MessageBroker {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
+				window.all_token_objects[data.id].options[property] = data[property];
 			}
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
+				delete window.all_token_objects[data.id].options.ct_show;
 			}
 			if(data.current == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.current;
+				delete window.all_token_objects[data.id].options.current;
 			}
-			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
+			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id){
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
+				delete window.all_token_objects[data.id].options.hidden;
+			}
 			if(data.groupId == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
+				delete window.all_token_objects[data.id].options.groupId;
 			}
 			window.TOKEN_OBJECTS[data.id].place();
+
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN

@@ -552,6 +552,14 @@ const debounce_pc_token_update = mydebounce(() => {
         };
         token.place_sync_persist(); // not sure if this is overkill
       }
+      token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
+      if(token){
+        token.options = {
+          ...token.options,
+          ...pc,
+          id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+        };
+      }
       update_pc_token_rows();
     });
     window.PC_TOKENS_NEEDING_UPDATES = [];

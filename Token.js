@@ -814,8 +814,9 @@ class Token {
 			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
 				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
 			}
-			$("input").blur();
-			this.maxHp = old.find(".max_hp").val();
+
+			this.hp = parseInt(old.find(".hp").val()) - this.tempHp;
+			this.maxHp = parseInt(old.find(".max_hp").val());
 			
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
