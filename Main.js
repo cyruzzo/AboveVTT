@@ -188,8 +188,8 @@ function add_zoom_to_storage() {
 function set_default_vttwrapper_size() {
 	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
 	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").width(($("#scene_map").width()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
+	$("#black_layer").height(($("#scene_map").height()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
 }
 
 /**
@@ -2545,8 +2545,8 @@ function init_ui() {
 	$("body").append(wrapper);
 
 	black_layer = $("<div id='black_layer'/>");
-	black_layer.width(window.width);
-	black_layer.height(window.height);
+	black_layer.width(window.width+window.VTTMargin);
+	black_layer.height(window.height+window.VTTMargin);
 	black_layer.css("position", "absolute");
 	black_layer.css("top", "0px");
 	black_layer.css("left", "0px");
