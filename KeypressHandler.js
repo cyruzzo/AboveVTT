@@ -196,8 +196,9 @@ Mousetrap.bind('down', async function (e) {
 });
 
 
-Mousetrap.bind('left', async function () {
+Mousetrap.bind('left', async function (e) {
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        e.preventDefault();
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
@@ -207,8 +208,9 @@ Mousetrap.bind('left', async function () {
     }
 });
 
-Mousetrap.bind('right', async function () {
+Mousetrap.bind('right', async function (e) {
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        e.preventDefault();
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];

@@ -469,7 +469,9 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
 	async moveUp() {	
-		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
+		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
@@ -477,7 +479,9 @@ class Token {
 		}
 	}
 	async moveDown() {
-		let newTop = `${parseFloat(this.options.top) + parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
+		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
@@ -486,7 +490,9 @@ class Token {
 
 	}
 	async moveLeft() {
-		let newLeft = `${parseFloat(this.options.left) - parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
+		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let addhpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let newLeft = `${parseFloat(this.options.left) - addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
 		if(inLos){
@@ -494,7 +500,9 @@ class Token {
 		}
 	}
 	async moveRight() {
-		let newLeft = `${parseFloat(this.options.left) + parseFloat(window.CURRENT_SCENE_DATA.hpps)}px`;
+		let tinyToken = (this.options.size < window.CURRENT_SCENE_DATA.hpps);			
+		let addhpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let newLeft = `${parseFloat(this.options.left) + addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
 		if(inLos){
@@ -1857,16 +1865,23 @@ class Token {
 
 							const selectedOldTop = parseInt($(event.target).css("top"));
 							const selectedOldleft = parseInt($(event.target).css("left"));
-							
 
 							const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
-							const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
+							const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;				
 
 							console.log("Snapping from "+selectedOldleft+ " "+selectedOldTop + " -> "+selectedNewleft + " "+selectedNewtop);
 							console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
 
-							$(event.target).css("top", selectedNewtop + "px");
-							$(event.target).css("left", selectedNewleft + "px");
+							if(should_snap_to_grid()){
+								let tinyToken = (window.TOKEN_OBJECTS[this.dataset.id].options.size < window.CURRENT_SCENE_DATA.hpps);			
+								let tokenPosition = snap_point_to_grid(selectedOldleft - startX, selectedOldTop - startY, undefined, tinyToken);
+								$(event.target).css("top", tokenPosition.y + "px");
+								$(event.target).css("left", tokenPosition.x + "px");
+							}
+							else{
+								$(event.target).css("top", selectedNewtop + "px");
+								$(event.target).css("left", selectedNewleft + "px");
+							}
 
 							///GET
 							const token = $(event.target);
@@ -1903,11 +1918,20 @@ class Token {
 									const oldtop = parseInt($(tok).css("top"));
 									const oldleft = parseInt($(tok).css("left"));
 
+
 									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
 									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
+									if(should_snap_to_grid()){
+										let tinyToken = curr.options.size < window.CURRENT_SCENE_DATA.hpps;
+										let tokenPosition = snap_point_to_grid(oldleft - startX, oldtop - startY, undefined, tinyToken);
 
-									$(tok).css("top", newtop + "px");
-									$(tok).css("left", newleft + "px");
+										$(tok).css("top", tokenPosition.y + "px");
+										$(tok).css("left", tokenPosition.x + "px");
+									}
+									else{
+										$(tok).css("top", newtop + "px");
+										$(tok).css("left", newleft + "px");
+									}
 
 									let selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 									if (selEl.length > 0) {
@@ -2111,9 +2135,11 @@ class Token {
 					let original = ui.originalPosition;
 					let tokenX = (event.pageX - click.x + original.left) / zoom;
 					let tokenY = (event.pageY - click.y + original.top) / zoom;
+					let tinyToken = (window.TOKEN_OBJECTS[this.dataset.id].options.size < window.CURRENT_SCENE_DATA.hpps);
+
 					if (should_snap_to_grid()) {
-						tokenX += (window.CURRENT_SCENE_DATA.hpps / 2);
-						tokenY += (window.CURRENT_SCENE_DATA.vpps / 2);
+						tokenX += !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
+						tokenY += !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
 					}
 					let selectedCoords= {
 						left: $('#scene_map_container').width(),
@@ -2123,7 +2149,7 @@ class Token {
 					};
 					let selectedTokens = $('.tokenselected');
 					
-					let tokenPosition = snap_point_to_grid(tokenX, tokenY);
+					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 
 					// Constrain token within scene
 					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
@@ -2222,7 +2248,14 @@ class Token {
 								let curr = window.TOKEN_OBJECTS[id];
 								tokenX = offsetLeft + parseInt(curr.orig_left);
 								tokenY = offsetTop + parseInt(curr.orig_top);
-								
+								if(should_snap_to_grid()){
+									let tinyToken = curr.options.size < window.CURRENT_SCENE_DATA.hpps;
+									let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
+
+									tokenY =  tokenPosition.y;
+									tokenX = tokenPosition.x;
+								}
+
 								$(tok).css('left', tokenX + "px");
 								$(tok).css('top', tokenY + "px");
 
@@ -2509,13 +2542,13 @@ function should_snap_to_grid() {
 		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 }
 
-function snap_point_to_grid(mapX, mapY, forceSnap = false) {
+function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 	if (forceSnap || should_snap_to_grid()) {
 		// adjust to the nearest square coordinate
 		const startX = window.CURRENT_SCENE_DATA.offsetx;
 		const startY = window.CURRENT_SCENE_DATA.offsety;
-		const gridWidth = window.CURRENT_SCENE_DATA.hpps;
-		const gridHeight = window.CURRENT_SCENE_DATA.vpps;
+		const gridWidth = (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;
+		const gridHeight = (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;
 		const currentGridX = Math.floor((mapX - startX) / gridWidth);
 		const currentGridY = Math.floor((mapY - startY) / gridHeight);
 		return {
