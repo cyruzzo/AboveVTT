@@ -1046,7 +1046,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newAC = parseInt(token.options.ac) + parseInt(newValue);
 				}
-				token.options.ac = newAC;
+				token.ac = newAC;
 				token.place_sync_persist();
 				$(".acMenuInput").val(newAC);
 			});
@@ -1060,7 +1060,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newAC = parseInt(token.options.ac) + parseInt(newValue);
 			}
-			token.options.ac = newAC;
+			token.ac = newAC;
 			token.place_sync_persist();
 			$(".acMenuInput").val(newAC);
 		});
