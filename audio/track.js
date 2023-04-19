@@ -32,6 +32,13 @@ class Track {
     }
 
     /**
+     * @param {Array} tags
+     */
+    setTags(tags) {
+        this.tags = tags;
+    }
+
+    /**
      * @param {*} obj
      * @returns {Track}
      */
@@ -57,6 +64,7 @@ class TrackLibrary extends Library {
                     for(let i in window.SOUNDPADS[pad][folder]){
                         let t = window.SOUNDPADS[pad][folder][i];
                         const track = new Track(t.name, t.src);
+                        track.setTags = [folder];
                         const existingTrack = this.find(track.name, track.src);
                         if ( typeof existingTrack === 'undefined' ) {
                             newTracks.push(track);
@@ -73,6 +81,7 @@ class TrackLibrary extends Library {
             console.log('Importing exiting tracks')
             console.table(Object.fromEntries(updateTracks))
             this.batchUpdate(updateTracks);
+            localStorage.removeItem("Soundpads");
         }
     }
 
@@ -83,7 +92,10 @@ class TrackLibrary extends Library {
         if(searchFilter != ''){
             let filterArray = searchFilter.split(" ");
             let regex = new RegExp( filterArray.join( "|" ), "i");
-            tracks.filter(item => !regex.test(tracks[item].textContent)).hide();
+            tracks.filter(item => !regex.test(tracks[item].textContent) && 
+                !this.find(tracks[item].textContent, tracks[item].dataset.src)[1].tags
+                    .some(function(tag) { return regex.test(tag); }))
+                        .hide();
         }
 
     }
