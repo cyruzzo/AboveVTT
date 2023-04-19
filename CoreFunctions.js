@@ -573,13 +573,18 @@ function update_pc_with_api_call(playerId) {
   }
   if (window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
     console.log(`update_pc_with_api_call isn't adding ${playerId} because we're already waiting for debounce_pc_token_update to handle it`);
-    return;
-  }
-  if (Object.keys(window.PC_NEEDS_API_CALL).includes(playerId)) {
+  } else if (Object.keys(window.PC_NEEDS_API_CALL).includes(playerId)) {
     console.log(`update_pc_with_api_call is already waiting planning to call the API to fetch ${playerId}. Nothing to do right now.`);
-    return;
+  } else {
+    const pc = find_pc_by_player_id(playerId, false);
+    const twoSecondsAgo = new Date(Date.now() - 2000).getTime();
+    if (pc && pc.lastSynchronized && pc.lastSynchronized > twoSecondsAgo) {
+      console.log(`update_pc_with_api_call is not adding ${playerId} to window.PC_NEEDS_API_CALL because it has been updated within the last 2 seconds`);
+    } else {
+      console.log(`update_pc_with_api_call is adding ${playerId} to window.PC_NEEDS_API_CALL`);
+      window.PC_NEEDS_API_CALL[playerId] = Date.now();
+    }
   }
-  window.PC_NEEDS_API_CALL[playerId] = Date.now();
   debounce_fetch_character_from_api();
 }
 
@@ -600,7 +605,7 @@ const debounce_fetch_character_from_api = mydebounce(() => {
       }
     });
   });
-});
+}, 5000); // wait 5 seconds before making API calls. We don't want to make these calls unless we absolutely have to
 
 async function harvest_game_id() {
   if (is_campaign_page()) {
