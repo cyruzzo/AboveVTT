@@ -1992,6 +1992,8 @@ class Token {
 						window.toggleSnap=false;
 
 						pauseCursorEventListener = false;
+						delete window.playerTokenAuraIsLight;
+						delete window.dragSelectedTokens;
 					},
 
 				start: function (event) {
@@ -2012,6 +2014,7 @@ class Token {
 							$("#tokens [data-id='" + id + "']").toggleClass("tokenselected", false)
 						}
 					}
+					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 					self.selected = true;
 					$("#tokens [data-id='" + self.options.id + "']").toggleClass("tokenselected", true);
@@ -2042,12 +2045,13 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 
-					$(`.token[data-group-id='${self.options.groupId}']`).toggleClass('tokenselected', true);
+					$(`.token[data-group-id='${self.options.groupId}']`).toggleClass('tokenselected', true); // set grouped tokens as selected
 				
+					window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
+					window.dragSelectedTokens = $(".token.tokenselected"); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 					
-					
-					if (self.selected && $(".token.tokenselected").length>1) {
-						for (let tok of $(".token.tokenselected")){
+					if (self.selected && window.dragSelectedTokens.length>1) {
+						for (let tok of window.dragSelectedTokens){
 							let id = $(tok).attr("data-id");
 							window.TOKEN_OBJECTS[id].selected = true;
 							$(tok).addClass("pause_click");
@@ -2148,13 +2152,6 @@ class Token {
 						tokenX += !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
 						tokenY += !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
 					}
-					let selectedCoords= {
-						left: $('#scene_map_container').width(),
-						top:$('#scene_map_container').height(),
-						bottom: 0,
-						right:0,
-					};
-					let selectedTokens = $('.tokenselected');
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 
@@ -2171,13 +2168,15 @@ class Token {
 				
 					let canvas = document.getElementById("raycastingCanvas");
 					let ctx = canvas.getContext("2d", { willReadFrequently: true });
-					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-					let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-					if(!window.DM && playerTokenAuraIsLight){
+
+					if(!window.DM && window.playerTokenAuraIsLight){
 						const left = (tokenPosition.x + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
-							throw new Error(`One of these values is not a number: Size: ${self.options.size}, Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`);
+							showErrorMessage(
+							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
+							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
+							)
 						}
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
@@ -2243,13 +2242,13 @@ class Token {
 
 
 
-					if (self.selected && $(".token.tokenselected").length>1) {
+					if (self.selected && window.dragSelectedTokens.length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
 						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
 						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						for (let tok of $(".token.tokenselected")){
+						for (let tok of window.dragSelectedTokens){
 							let id = $(tok).attr("data-id");
 							if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 
@@ -2269,13 +2268,15 @@ class Token {
 								$(tok).css('left', tokenX + "px");
 								$(tok).css('top', tokenY + "px");
 
-								if(!window.DM && playerTokenAuraIsLight){
+								if(!window.DM && window.playerTokenAuraIsLight){
 									const left = (tokenX + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 									const top = (tokenY + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 									if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
-										throw new Error(`One of these values is not a number: Size: ${curr.options.size}, Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenX}, y: ${tokenY}`);
-									}
-									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
+										showErrorMessage(
+										  Error(`One of these values is not a number: Size: ${curr.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
+										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
+										)
+									}									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 									if (pixeldata[2] != 0)
 									{	
