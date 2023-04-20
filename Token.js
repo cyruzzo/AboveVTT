@@ -3191,7 +3191,6 @@ function rotate_selected_tokens(newRotation, persist = false) {
 
 const debounceDrawSelectedToken = mydebounce(() => {
 		do_draw_selected_token_bounding_box();
-		console.debug('running draw')
 	}, 100);
 
 function draw_selected_token_bounding_box(){
