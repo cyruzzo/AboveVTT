@@ -2174,8 +2174,11 @@ class Token {
 					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 					let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 					if(!window.DM && playerTokenAuraIsLight){
-						const left = (tokenPosition.x + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-						const top = (tokenPosition.y + (self.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+						const left = (tokenPosition.x + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
+							throw new Error(`One of these values is not a number: Size: ${self.options.size}, Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`);
+						}
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 						if (pixeldata[2] != 0)
@@ -2267,8 +2270,11 @@ class Token {
 								$(tok).css('top', tokenY + "px");
 
 								if(!window.DM && playerTokenAuraIsLight){
-									const left = (tokenX + (curr.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-									const top = (tokenY + (curr.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+									const left = (tokenX + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+									const top = (tokenY + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+									if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
+										throw new Error(`One of these values is not a number: Size: ${curr.options.size}, Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenX}, y: ${tokenY}`);
+									}
 									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 									if (pixeldata[2] != 0)
