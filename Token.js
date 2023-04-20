@@ -1914,10 +1914,9 @@ class Token {
 								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
 							}
 
-							for (let tok of $(".token.tokenselected")){
+							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
 								let curr = window.TOKEN_OBJECTS[id];
-								$("[data-id='"+id+"']").removeClass("pause_click");
 								console.log($("[data-id='"+id+"']"));
 
 								if (id != self.options.id) {
@@ -1962,7 +1961,6 @@ class Token {
 										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
 									}
 								}
-								
 							}
 						}					
 				
@@ -1976,14 +1974,12 @@ class Token {
 
 						self.update_and_sync(event, false);
 						if (self.selected ) {
-							for (let tok of $(".token.tokenselected")){
+							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
 								if (id == self.options.id)
 									continue;
 								let curr = window.TOKEN_OBJECTS[id];
 								let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-								$("[data-id='"+id+"']").removeClass("pause_click");
-
 								curr.update_and_sync(ev);
 							}												
 						}
@@ -1992,10 +1988,14 @@ class Token {
 						window.toggleSnap=false;
 
 						pauseCursorEventListener = false;
-						delete window.playerTokenAuraIsLight;
-						delete window.dragSelectedTokens;
+						setTimeout(() => {
+							if(!window.DRAGGING){
+								window.dragSelectedTokens.removeClass("pause_click")
+								delete window.playerTokenAuraIsLight;
+								delete window.dragSelectedTokens;
+							}
+						}, 200)
 					},
-
 				start: function (event) {
 					event.stopImmediatePropagation();
 					pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
@@ -3191,7 +3191,6 @@ function rotate_selected_tokens(newRotation, persist = false) {
 
 const debounceDrawSelectedToken = mydebounce(() => {
 		do_draw_selected_token_bounding_box();
-		console.debug('running draw')
 	}, 100);
 
 function draw_selected_token_bounding_box(){
