@@ -2537,7 +2537,7 @@ function default_options() {
 		},
 		light2: {
 			feet: "0",
-			color: "rgba(255, 255, 255, 0.5)"
+			color: "rgba(142, 142, 142, 1)"
 		}		
 	};
 }
