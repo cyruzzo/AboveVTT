@@ -3112,7 +3112,6 @@ async function redraw_light(){
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
 
-	context.clearRect(0,0,canvasWidth,canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -3120,8 +3119,8 @@ async function redraw_light(){
 		return;
 	}
 
-	context.fillStyle = "black";
-	context.fillRect(0,0,canvasWidth,canvasHeight);
+	offscreenContext.fillStyle = "black";
+	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
 	let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
