@@ -520,7 +520,7 @@ async function do_check_token_visibility() {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
-				$(tokenSelector).css({'opacity': 1, 'display': 'block'});
+				$(tokenSelector).css({'opacity': 1, 'display': 'flex'});
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					$(auraSelector).show();
 			}
