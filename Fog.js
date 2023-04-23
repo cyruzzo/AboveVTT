@@ -3112,7 +3112,6 @@ async function redraw_light(){
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
 
-	context.clearRect(0,0,canvasWidth,canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -3120,8 +3119,8 @@ async function redraw_light(){
 		return;
 	}
 
-	context.fillStyle = "black";
-	context.fillRect(0,0,canvasWidth,canvasHeight);
+	offscreenContext.fillStyle = "black";
+	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
 	let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
@@ -3167,7 +3166,7 @@ async function redraw_light(){
 
 	let promises = []
 	for(let i = 0; i < light_auras.length; i++){
-		promises.push(new Promise(() => {
+		promises.push(new Promise((resolve) => {
 			let auraId = $(light_auras[i]).attr('data-id');
 
 			found = selectedIds.some(r=> r == auraId);
@@ -3232,9 +3231,10 @@ async function redraw_light(){
 				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			}
+			resolve();
 		})); 	
 	}
-	Promise.all(promises);
+	await Promise.all(promises);
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 }
 
