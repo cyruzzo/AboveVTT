@@ -2368,7 +2368,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 /**
  * Initializes the user interface.
  */
-function init_ui() {
+async function init_ui() {
 	console.log("init_ui");
 
 	window.VTTMargin = 1000;
@@ -2574,6 +2574,7 @@ function init_ui() {
 	init_buttons();
 	init_zoom_buttons();
 	init_combat_tracker();
+	await scheduler.postTask(() => token_menu(), {priority: "background"});
 
 	load_custom_monster_image_mapping();
 
