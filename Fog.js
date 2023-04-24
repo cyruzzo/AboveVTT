@@ -1461,7 +1461,7 @@ function drawing_mousemove(e) {
  * @param {Event} e
  * @returns
  */
-function drawing_mouseup(e) {
+async function drawing_mouseup(e) {
 	if(!window.MOUSEDOWN)
 		return;
 	// ignore this if we're dragging a token
@@ -1645,7 +1645,7 @@ function drawing_mouseup(e) {
 			window.wallToStore = [];
 			window.MOUSEDOWN = false;
 			redraw_light_walls();
-			redraw_light();
+			await redraw_light();
 		}
 
 		
@@ -1931,7 +1931,7 @@ function drawing_mouseup(e) {
  		
 
 		redraw_light_walls();
-		redraw_light();
+		await redraw_light();
 		sync_drawings();
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
@@ -2824,14 +2824,14 @@ function init_walls_menu(buttons){
 			</button>
 		</div>`);
 
-	wall_menu.find("#delete_walls").click(function() {
+	wall_menu.find("#delete_walls").click(async function() {
 		r = confirm("DELETE ALL WALLS (cannot be undone!)");
 		if (r === true) {
 			// keep only non wall
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "wall");
 
 			redraw_light_walls();
-			redraw_light();
+			await redraw_light();
 			sync_drawings();
 		}
 	});

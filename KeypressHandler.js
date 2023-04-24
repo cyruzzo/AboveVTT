@@ -76,9 +76,9 @@ Mousetrap.bind('v', function () {       //video fullscreen toggle
     $('#jitsi_switch').click()
 });
 
-Mousetrap.bind('shift+v', function () {       //check token vision
+Mousetrap.bind('shift+v', async function () {       //check token vision
    window.SelectedTokenVision = true;
-   redraw_light();
+   await redraw_light();
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
