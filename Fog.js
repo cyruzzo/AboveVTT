@@ -3112,7 +3112,6 @@ async function redraw_light(){
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
 
-	context.clearRect(0,0,canvasWidth,canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -3120,8 +3119,8 @@ async function redraw_light(){
 		return;
 	}
 
-	context.fillStyle = "black";
-	context.fillRect(0,0,canvasWidth,canvasHeight);
+	offscreenContext.fillStyle = "black";
+	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
 	let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
@@ -3166,15 +3165,19 @@ async function redraw_light(){
 
 
 	let promises = []
+	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+
 	for(let i = 0; i < light_auras.length; i++){
-		promises.push(new Promise(() => {
-			let auraId = $(light_auras[i]).attr('data-id');
+		promises.push(new Promise((resolve) => {
+			let currentLightAura = $(light_auras[i]);
+			let auraId = currentLightAura.attr('data-id');
 
 			found = selectedIds.some(r=> r == auraId);
 
 			let tokenPos = {
-				x: (parseInt($(light_auras[i]).css('left'))+(parseInt($(light_auras[i]).css('width'))/2)),
-				y: (parseInt($(light_auras[i]).css('top'))+(parseInt($(light_auras[i]).css('height'))/2))
+				x: (parseInt(currentLightAura.css('left'))+(parseInt(currentLightAura.css('width'))/2)),
+				y: (parseInt(currentLightAura.css('top'))+(parseInt(currentLightAura.css('height'))/2))
 			}
 			
 			if(window.lineOfSightPolygons == undefined){
@@ -3194,9 +3197,8 @@ async function redraw_light(){
 					y: tokenPos.y,
 					numberofwalls: walls.length
 				}
-				let path = "";
 
-				let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+				let path = "";
 				for( let i = 0; i < lightPolygon.length; i++ ){
 					path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
 				}
@@ -3208,33 +3210,34 @@ async function redraw_light(){
 				window.lightAuraClipPolygon = {};
 				
 
+			let tokenVisionAura = $(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`);
+
 			if(window.SelectedTokenVision){
-				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'hidden');
+				tokenVisionAura.css('visibility', 'hidden');
 			}
-			
-			if(window.DM && !window.SelectedTokenVision){
-				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 
+			else if(window.DM && !window.SelectedTokenVision){
+				tokenVisionAura.css('visibility', 'visible'); 
 			}
 
 			clipped_light(auraId, lightPolygon);
 			
 			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
-				let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 				
 				let hideVisionWhenNoPlayerToken = (playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
-				if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.
-					return; //we don't want to draw this tokens vision no need for further checks - go next token.
+				if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
+					return resolve();//we don't want to draw this tokens vision no need for further checks - go next token.
 				
 				let hideVisionWhenPlayerTokenExists = (!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
-					return; //we don't want to draw this tokens vision - go next token.
+					return resolve(); //we don't want to draw this tokens vision - go next token.
 
-				$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).css('visibility', 'visible'); 		
+				tokenVisionAura.css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			}
+			resolve();
 		})); 	
 	}
-	Promise.all(promises);
+	await Promise.all(promises);
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 }
 
