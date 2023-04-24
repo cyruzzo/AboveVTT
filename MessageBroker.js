@@ -360,7 +360,7 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = window.AVTT_VERSION;
 
-		this.onmessage = function(event,tries=0) {
+		this.onmessage = async function(event,tries=0) {
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -509,7 +509,7 @@ class MessageBroker {
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
-				redraw_light();
+				await redraw_light();
 				check_token_visibility();
 			}
 
@@ -518,7 +518,7 @@ class MessageBroker {
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
-				redraw_light();
+				await redraw_light();
 				check_token_visibility();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
@@ -1204,19 +1204,26 @@ class MessageBroker {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
+				window.all_token_objects[data.id].options[property] = data[property];
 			}
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
+				delete window.all_token_objects[data.id].options.ct_show;
 			}
 			if(data.current == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.current;
+				delete window.all_token_objects[data.id].options.current;
 			}
-			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
+			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id){
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
+				delete window.all_token_objects[data.id].options.hidden;
+			}
 			if(data.groupId == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
+				delete window.all_token_objects[data.id].options.groupId;
 			}
 			window.TOKEN_OBJECTS[data.id].place();
+
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN

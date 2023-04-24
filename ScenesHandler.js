@@ -592,3 +592,49 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.current_scene_id = null;
 	}
 }
+
+function folder_path_of_scene(scene) {
+	const parent = find_parent_of_scene(scene);
+	if (parent) {
+		const ancestors = find_ancestors_of_scene(parent);
+		let ancestorPath = ancestors.reverse().map(s => s.title).join("/")
+		if (!ancestorPath.startsWith(RootFolder.Scenes.path)) {
+			ancestorPath = `${RootFolder.Scenes.path}/${ancestorPath}`;
+		}
+		return sanitize_folder_path(ancestorPath);
+	} else {
+		return RootFolder.Scenes.path;
+	}
+}
+function find_parent_of_scene(scene) {
+	return window.ScenesHandler.scenes.find(s => s.id === scene.parentId);
+}
+function find_ancestors_of_scene(scene, found = []) {
+	found.push(scene);
+	let parent = find_parent_of_scene(scene);
+	if (parent) {
+		return find_ancestors_of_scene(parent, found)
+	} else {
+		// TODO: anything special for parentId === RootFolder.Scene.id?
+		return found;
+	}
+}
+
+function find_descendants_of_scene_id(sceneId) {
+	const scene = window.ScenesHandler.scenes.find(s => s.id === sceneId);
+	return find_descendants_of_scene(scene);
+}
+
+function find_descendants_of_scene(scene, found = []) {
+	if (!scene) {
+		return found;
+	}
+	found.push(scene);
+	window.ScenesHandler.scenes.forEach(s => {
+		if (s.parentId === scene.id) {
+			// this is a child, so process it
+			found = find_descendants_of_scene(s, found);
+		}
+	});
+	return found;
+}

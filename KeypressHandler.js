@@ -158,7 +158,7 @@ Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
     handle_menu_number_press(e)
 });
 
-Mousetrap.bind('up', function (e) {
+Mousetrap.bind('up', async function (e) {
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
     if (visibleMenuId){
         // prevent scrolling the window
@@ -170,13 +170,13 @@ Mousetrap.bind('up', function (e) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
-            token.moveUp();
+            await token.moveUp();
         }
         return false;
     }
 });
 
-Mousetrap.bind('down', function (e) {
+Mousetrap.bind('down', async function (e) {
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
     if (visibleMenuId){
         // prevent scrolling the window
@@ -189,30 +189,32 @@ Mousetrap.bind('down', function (e) {
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
-            token.moveDown();
+            await token.moveDown();
         }
         return false;
     }
 });
 
 
-Mousetrap.bind('left', function () {
+Mousetrap.bind('left', async function (e) {
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        e.preventDefault();
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
-            token.moveLeft();
+            await token.moveLeft();
         }
         return false;
     }
 });
 
-Mousetrap.bind('right', function () {
+Mousetrap.bind('right', async function (e) {
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
+        e.preventDefault();
         for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
             let id = window.CURRENTLY_SELECTED_TOKENS[i];
             let token = window.TOKEN_OBJECTS[id];
-            token.moveRight();
+            await token.moveRight();
         }
         return false;
     }

@@ -188,8 +188,8 @@ function add_zoom_to_storage() {
 function set_default_vttwrapper_size() {
 	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
 	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").width(($("#scene_map").width()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
+	$("#black_layer").height(($("#scene_map").height()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
 }
 
 /**
@@ -1134,6 +1134,10 @@ function init_controls() {
 		sidebarControls.addClass("player");
 	}
 	addGamelogPopoutButton()
+	$('ol[class*="GameLogEntries"]').off('click').on('click', '.int_source_link', function(event){
+		event.preventDefault();
+		render_source_chapter_in_iframe(event.target.href);
+	});
 }
 
 const MAX_ZOOM_STEP = 20
@@ -2437,10 +2441,7 @@ async function init_ui() {
 
 
 	const rayCasting = $("<canvas id='raycastingCanvas'></canvas>");
-	rayCasting.css("top", "0");
-	rayCasting.css("left", "0");
-	rayCasting.css("position", "absolute");
-	rayCasting.css("z-index", "22");
+	rayCasting.css({"top": "0", "left": "0", "position": "absolute", "z-index": "22"});
 
 	// this overlay sits above other canvases, but below tempOverlay
 	// when peers stream their rulers, this canvas is where we draw them
@@ -2544,8 +2545,8 @@ async function init_ui() {
 	$("body").append(wrapper);
 
 	black_layer = $("<div id='black_layer'/>");
-	black_layer.width(window.width);
-	black_layer.height(window.height);
+	black_layer.width(window.width+window.VTTMargin);
+	black_layer.height(window.height+window.VTTMargin);
 	black_layer.css("position", "absolute");
 	black_layer.css("top", "0px");
 	black_layer.css("left", "0px");
@@ -2876,7 +2877,7 @@ function init_zoom_buttons() {
 	</div></div>
 	`);
 
-	selected_token_vision.click(function(){
+	selected_token_vision.click(async function(){
 		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
 			window.SelectedTokenVision = false;
@@ -2884,8 +2885,7 @@ function init_zoom_buttons() {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 			window.SelectedTokenVision = true;
 		}
-		redraw_light();
-		
+		await redraw_light();	
 	});
 
 	zoom_section.append(selected_token_vision);
@@ -3329,6 +3329,7 @@ function get_browser() {
 		chrome: M[0] == "Chrome",
 		msie: M[0] == "Internet Explorer",
 		opera: M[0] == "Opera",
+		safari: M[0] == "Safari"
 	};
 }
 

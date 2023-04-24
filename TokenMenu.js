@@ -197,8 +197,8 @@ function token_context_menu_expanded(tokenIds, e) {
 				} else {
 					token.show();
 				}
-				token.place_sync_persist();
 			});
+
 			clickedItem.removeClass("single-active all-active some-active active-condition");
 			clickedItem.addClass(determine_hidden_classname(tokenIds));
 		});
@@ -924,8 +924,8 @@ function build_token_light_inputs(tokenIds) {
 		wrapper.find("input[name='light1']").val(feet1);
 		wrapper.find("input[name='light2']").val(feet2);
 
-		let color1 = "rgba(255, 255, 255, 0.8)";
-		let color2 = "rgba(255, 255, 255, 0.4)";
+		let color1 = "rgba(255, 255, 255, 1)";
+		let color2 = "rgba(142, 142, 142, 1)";
 		wrapper.find("input[name='light1Color']").spectrum("set", color1);
 		wrapper.find("input[name='light2Color']").spectrum("set", color2);
 
@@ -988,7 +988,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newHP = token.hp + parseInt(newValue);
 				}
-				token.hp = newHP;
+				token.hp = newHP - token.tempHp;
 				token.place_sync_persist();
 				$(".hpMenuInput").val(newHP);
 			});
@@ -1002,7 +1002,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newHP = token.hp + parseInt(newValue);
 			}
-			token.hp = newHP;
+			token.hp = newHP - token.tempHp;
 			token.place_sync_persist();
 			$(".hpMenuInput").val(newHP);
 		});
@@ -1046,7 +1046,7 @@ function build_menu_stat_inputs(tokenIds) {
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newAC = parseInt(token.options.ac) + parseInt(newValue);
 				}
-				token.options.ac = newAC;
+				token.ac = newAC;
 				token.place_sync_persist();
 				$(".acMenuInput").val(newAC);
 			});
@@ -1060,7 +1060,7 @@ function build_menu_stat_inputs(tokenIds) {
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newAC = parseInt(token.options.ac) + parseInt(newValue);
 			}
-			token.options.ac = newAC;
+			token.ac = newAC;
 			token.place_sync_persist();
 			$(".acMenuInput").val(newAC);
 		});
