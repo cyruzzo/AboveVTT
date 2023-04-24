@@ -1451,6 +1451,7 @@ async function migrate_scene_folders() {
 	if (scenesToMigrate.length > 0) {
 		console.log("migrate_scene_folders is migrating scenes", scenesToMigrate);
 		for (const scene of scenesToMigrate) {
+			console.log('migrate_scene_folders is sending update_scene', scene)
 			window.MB.sendMessage("custom/myVTT/update_scene", scene);
 			await async_sleep(1000); // give it a second before moving on, so we don't flood the
 		}
