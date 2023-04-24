@@ -1252,7 +1252,9 @@ function default_scene_data() {
 		snap: 0,
 		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now(),
-		darkness_filter: '0'
+		darkness_filter: '0',
+		itemType: ItemType.Scene,
+		parentId: RootFolder.Scenes.id
 	};
 }
 
@@ -1434,16 +1436,25 @@ async function migrate_scene_folders() {
 		});
 
 	// now let's actually migrate everything
-	let scenesToMigrate = scenesNeedingMigration.concat(newFolders);
+	let itemsToMigrate = scenesNeedingMigration.concat(newFolders);
+	let foldersToMigrate = itemsToMigrate.filter(i => i.itemType === ItemType.Folder);
+	let scenesToMigrate = itemsToMigrate.filter(i => i.itemType === ItemType.Scene);
+
+	if (foldersToMigrate.length > 0) {
+		console.log("migrate_scene_folders is migrating folders", foldersToMigrate);
+		await AboveApi.migrateScenes(window.gameId, foldersToMigrate);
+		await async_sleep(2000); // give the DB 2 seconds to persist the new data before fetching it again
+		window.ScenesHandler.scenes = await AboveApi.getSceneList();
+	}
+
 
 	if (scenesToMigrate.length > 0) {
 		console.log("migrate_scene_folders is migrating scenes", scenesToMigrate);
-		await AboveApi.migrateScenes(window.gameId, scenesToMigrate);
-		await async_sleep(2000); // give the DB 2 seconds to persist the new data before fetching it again
+		for (const scene of scenesToMigrate) {
+			window.MB.sendMessage("custom/myVTT/update_scene", scene);
+			await async_sleep(1000); // give it a second before moving on, so we don't flood the
+		}
 		window.ScenesHandler.scenes = await AboveApi.getSceneList();
-	} else {
-		// nothing to migrate
-		console.log("migrate_scene_folders does not need to migrate");
 	}
 }
 
