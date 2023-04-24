@@ -495,13 +495,13 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/reveal") {
 				window.REVEALED.push(msg.data);
 				redraw_fog();
-				check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
+				await check_token_visibility(); // CHECK FOG OF WAR VISIBILITY OF TOKEN
 			}
 
 			if(msg.eventType== "custom/myVTT/fogdata"){ // WE RESEND ALL THE FOG EVERYTIME NOW
 				window.REVEALED=msg.data;
 				redraw_fog();
-				check_token_visibility();
+				await check_token_visibility();
 			}
 
 			if (msg.eventType == "custom/myVTT/drawing") {
@@ -510,7 +510,7 @@ class MessageBroker {
 				redraw_text();
 				redraw_light_walls();
 				await redraw_light();
-				check_token_visibility();
+				await check_token_visibility();
 			}
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
@@ -519,7 +519,7 @@ class MessageBroker {
 				redraw_text();
 				redraw_light_walls();
 				await redraw_light();
-				check_token_visibility();
+				await check_token_visibility();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){
@@ -1167,7 +1167,7 @@ class MessageBroker {
 	}
 
 
-	handleToken(msg) {
+	async handleToken(msg) {
 		var data = msg.data;
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let auraislightchanged = false;
@@ -1245,7 +1245,7 @@ class MessageBroker {
 			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 			if(data.auraislight){
 				if(playerTokenAuraIsLight){
-						check_token_visibility();
+					await check_token_visibility();
 				}
 				else{
 					check_single_token_visibility(data.id);
@@ -1318,7 +1318,7 @@ class MessageBroker {
 		}
 
 
-		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
+		load_scenemap(data.map, data.is_video, data.width, data.height, async function() {
 			console.group("load_scenemap callback")
 			if(!window.CURRENT_SCENE_DATA.scale_factor)
 				window.CURRENT_SCENE_DATA.scale_factor = 1;
@@ -1373,7 +1373,7 @@ class MessageBroker {
 
 			if(!window.DM) {
 			 	window.MB.sendMessage('custom/myVTT/syncmeup');
-				check_token_visibility();
+				await check_token_visibility();
 			}
 
 

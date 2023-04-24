@@ -470,7 +470,7 @@ async function check_token_visibility(){
 	}
 	else {
 		window.NEXT_CHECK_TOKEN_VISIBILITY = Date.now() + 1000;
-		setTimeout(async () => do_check_token_visibility(), 1000);
+		await do_check_token_visibility();
 		return;
 	}
 }
@@ -1089,7 +1089,7 @@ function stop_drawing() {
 	var target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
 	target.off('mousedown', drawing_mousedown);
-	target.off('mouseup', drawing_mouseup);
+	target.off('mouseup', async () => drawing_mouseup());
 	target.off('mousemove', drawing_mousemove);
 	target.off('contextmenu', drawing_contextmenu);
 	window.StoredWalls = [];

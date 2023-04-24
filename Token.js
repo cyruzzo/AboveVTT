@@ -42,7 +42,8 @@ const availableToAoe = [
 const debounceLightChecks = mydebounce(async () => {		
 		if(window.DRAGGING)
 			return;
-		if(window.walls?.length < 5){
+		console.log(!window.walls || window.walls.length < 5);
+		if(!window.walls || window.walls.length < 5){
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
