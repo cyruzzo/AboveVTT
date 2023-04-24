@@ -1420,7 +1420,7 @@ async function migrate_scene_folders() {
 			});
 		});
 
-	scenesNeedingMigration
+	/*scenesNeedingMigration
 		.forEach(unmigratedScene => {
 			unmigratedScene.itemType = ItemType.Scene;
 			const parentFolder = folders.concat(newFolders).find(f => f.folderPath === unmigratedScene.folderPath);
@@ -1444,7 +1444,7 @@ async function migrate_scene_folders() {
 	} else {
 		// nothing to migrate
 		console.log("migrate_scene_folders does not need to migrate");
-	}
+	}*/
 }
 
 /**
@@ -1529,7 +1529,7 @@ function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
 	let sceneData = default_scene_data();
 	sceneData.title = newSceneName;
 	sceneData.parentId = parentId;
-	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
+	sceneData.itemType = ItemType.Scene;
 
 	window.ScenesHandler.scenes.push(sceneData);
 	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
