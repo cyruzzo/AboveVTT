@@ -137,7 +137,16 @@ function validate_image_input(element){
 	}
 	
 }
-function jsonCallback(data){
+function jsonCallback(data){ //hosted uvtt files
+	/* example call with uvtt wraped in jsonCallback() eg jsonCallback({'foo' : 'bar'})
+	$.ajax({
+		type: "GET",
+	    dataType: 'jsonp',
+		url: "https://drive.google.com/uc?id=1Ekb7DZZ2HGclT3XSwSf2ZwUNb_t94m7v",
+		success: function(response){ console.log(response) },
+		error: function(response){ console.log(response) }
+	})
+	*/
 	var DataFile=null;
 	try{
 		DataFile=data;
@@ -205,42 +214,30 @@ function jsonCallback(data){
 	for(let i = 0; i<DataFile.lights.length; i++){
 		
 	
-		let transparency = DataFile.lights[i].intensity/100
+		let transparency = DataFile.lights[i].intensity/100;
 		let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
 
 
 		let lightColor = hexToRGB(clippedColor, transparency);
 		let options = {
-			reveal_light : 'los',
 			imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
 			hidden : true,
 			tokenStyleSelect : 'definitelyNotAToken',
+			light1 : {
+				feet:  `${DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq)}`,
+				color: lightColor
+			},
 			light2 : {
-				feet: 0,
+				feet: '0',
+				color: 'rgba(255, 255, 255, 0.5)'
+			},
+			vision : {
+				feet: '0',
 				color: 'rgba(255, 255, 255, 0.5)'
 			},
 			left : `${DataFile.lights[i].position.x * gridSize}px`,
 			top : `${DataFile.lights[i].position.y * gridSize}px`,
-			light1 : {
-				feet:  DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq),
-				color: lightColor
-			},
-			color: random_token_color(),
-			conditions: [],
-			hp: "",
-			max_hp: "",
-			ac: "",
-			name: "",
-			aura1: {
-				feet: "0",
-				color: "rgba(255, 129, 0, 0.3)"
-			},
-			aura2: {
-				feet: "0",
-				color: "rgba(255, 255, 0, 0.1)"
-			},
-			auraVisible: false,
-			auraOwned: false,
+
 			auraislight: true	
 		};
 
@@ -263,16 +260,6 @@ function open_uvtt_file(){
 	$('#input_uvtt_file').trigger('click');
 }
 function import_uvtt_scene(){
-	/* to figure out later - hosted uvtt files
-	$.ajax({
-		type: "GET",
-	    jsonpCallback: 'jsonCallback',
-	    contentType: "application/json",
-	    dataType: 'jsonp',
-		url: url,
-		success: function(response){ console.log(response) },
-		error: function((response){ console.log(response) }
-	})*/
 
 	var reader = new FileReader();
 	reader.onload = function() {
@@ -343,49 +330,37 @@ function import_uvtt_scene(){
 		for(let i = 0; i<DataFile.lights.length; i++){
 			
 		
-			let transparency = DataFile.lights[i].intensity/100
+			let transparency = DataFile.lights[i].intensity/100;
 			let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
 
 
 			let lightColor = hexToRGB(clippedColor, transparency);
 			let options = {
-				reveal_light : 'los',
 				imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
 				hidden : true,
 				tokenStyleSelect : 'definitelyNotAToken',
+				light1 : {
+					feet:  `${DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq)}`,
+					color: lightColor
+				},
 				light2 : {
-					feet: 0,
+					feet: '0',
+					color: 'rgba(255, 255, 255, 0.5)'
+				},
+				vision : {
+					feet: '0',
 					color: 'rgba(255, 255, 255, 0.5)'
 				},
 				left : `${DataFile.lights[i].position.x * gridSize}px`,
 				top : `${DataFile.lights[i].position.y * gridSize}px`,
-				light1 : {
-					feet:  DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq),
-					color: lightColor
-				},
-				color: random_token_color(),
-				conditions: [],
-				hp: "",
-				max_hp: "",
-				ac: "",
-				name: "",
-				aura1: {
-					feet: "0",
-					color: "rgba(255, 129, 0, 0.3)"
-				},
-				aura2: {
-					feet: "0",
-					color: "rgba(255, 255, 0, 0.1)"
-				},
-				auraVisible: false,
-				auraOwned: false,
+
 				auraislight: true	
 			};
 
 			let lightToken = new Token(options);
 			
 			place_token_at_map_point(lightToken, DataFile.lights[i].position.x * gridSize, DataFile.lights[i].position.y * gridSize);
-	
+
 		}
 		
 
