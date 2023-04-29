@@ -151,6 +151,7 @@ function init_mixer() {
                 loop.toggleClass('pressed', false);
             }
             loop.on('click', function(){
+                const channel = window.MIXER.state().channels[id]
                 if(channel.loop) {
                     loop.toggleClass('pressed', false);
                     channel.loop = false;
