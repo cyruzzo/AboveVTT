@@ -139,6 +139,7 @@ function validate_image_input(element){
 }
 function jsonCallback(data){ //hosted uvtt files
 	/* example call with uvtt wraped in jsonCallback() eg jsonCallback({'foo' : 'bar'})
+
 	$.ajax({
 		type: "GET",
 	    dataType: 'jsonp',
@@ -146,6 +147,13 @@ function jsonCallback(data){ //hosted uvtt files
 		success: function(response){ console.log(response) },
 		error: function(response){ console.log(response) }
 	})
+
+	To Do:
+	Setup the callback to import a full scene rather than draw and add to the current scene.
+
+	On subsequent/player loads we just grab the map and not add all the walls, lights etc. 
+	Probably needs better file type detection. 
+	Will work more on it if we think this is the route to go.
 	*/
 	var DataFile=null;
 	try{
