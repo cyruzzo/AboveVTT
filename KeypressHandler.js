@@ -1,7 +1,9 @@
 var altHeld = false;
 var ctrlHeld = false;
 var shiftHeld = false;
-var toggleSnap=false;
+var toggleSnap = false;
+var cursor_x = -1;
+var cursor_y = -1;
 
 function unhide_interface() {
     if ($('#hide_interface_button').hasClass('unhidden')) {
@@ -279,11 +281,17 @@ Mousetrap.bind('command+c', function(e) {
 
 Mousetrap.bind('ctrl+v', function(e) {
     if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
-    paste_selected_tokens();
+    paste_selected_tokens(window.cursor_x, window.cursor_y);
 });
 Mousetrap.bind('command+v', function(e) {
-    paste_selected_tokens();
+    paste_selected_tokens(e.clientX - e.target.getBoundingClientRect(), e.clientY - e.target.getBoundingClientRect());
 });
+
+document.onmousemove = function(event)
+{
+ window.cursor_x = event.pageX;
+ window.cursor_y = event.pageY;
+}
 
 Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
