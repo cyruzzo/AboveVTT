@@ -188,8 +188,8 @@ function add_zoom_to_storage() {
 function set_default_vttwrapper_size() {
 	$("#VTTWRAPPER").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
 	$("#VTTWRAPPER").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 1400);
-	$("#black_layer").width($("#scene_map").width() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
-	$("#black_layer").height($("#scene_map").height() * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000);
+	$("#black_layer").width(($("#scene_map").width()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
+	$("#black_layer").height(($("#scene_map").height()) * window.CURRENT_SCENE_DATA.scale_factor * window.ZOOM + 2000 + window.VTTMargin );
 }
 
 /**
@@ -382,7 +382,13 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 			playerVars: { 'autoplay': 1, 'controls': 0 },
 			events: {
 				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
-				'onReady': function(e) { window.YTPLAYER.setVolume($("#youtube_volume").val()); }
+				'onReady': function(e) { 
+					let ytvolume= $("#youtube_volume").val();
+					if(ytvolume)
+						window.YTPLAYER.setVolume(ytvolume); 
+					else
+						window.YTPLAYER.setVolume(50);
+				}			
 			}
 		});
 
@@ -1079,20 +1085,20 @@ function init_controls() {
 		sidebarControls.append(b2);
 	}
 
-	if (window.DM) {
-		b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
-		let b6ImageDiv = $('<div></div>');
-		let b6ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
-		let b6Image = `${window.EXTENSION_PATH}assets/icons/speaker.svg`;
-		b6ImageDiv.css({
-			"mask": `url(${b6Image}) no-repeat center / contain`,
-			"-webkit-mask": `url(${b6Image}) no-repeat center / contain`
-		});
-		b6ImageDivWrapper.append(b6ImageDiv);
-		b6.append(b6ImageDivWrapper);
-		b6.click(switch_control);
-		sidebarControls.append(b6);
-	}
+	
+	b6 = $("<div id='switch_sounds' class='tab-btn hasTooltip button-icon blue-tab' data-name='Sounds' data-target='#sounds-panel'></div>");
+	let b6ImageDiv = $('<div></div>');
+	let b6ImageDivWrapper = $('<div class="sidebar-tab-image" style="width:100%;height:100%;"></div>');
+	let b6Image = `${window.EXTENSION_PATH}assets/icons/speaker.svg`;
+	b6ImageDiv.css({
+		"mask": `url(${b6Image}) no-repeat center / contain`,
+		"-webkit-mask": `url(${b6Image}) no-repeat center / contain`
+	});
+	b6ImageDivWrapper.append(b6ImageDiv);
+	b6.append(b6ImageDivWrapper);
+	b6.click(switch_control);
+	sidebarControls.append(b6);
+	
 
 	b4 = $("<div id='switch_journal' class='tab-btn hasTooltip button-icon blue-tab' data-name='Journal' data-target='#journal-panel'></div>");
 	let b4ImageDiv = $('<div></div>');
@@ -1128,6 +1134,10 @@ function init_controls() {
 		sidebarControls.addClass("player");
 	}
 	addGamelogPopoutButton()
+	$('ol[class*="GameLogEntries"]').off('click').on('click', '.int_source_link', function(event){
+		event.preventDefault();
+		render_source_chapter_in_iframe(event.target.href);
+	});
 }
 
 const MAX_ZOOM_STEP = 20
@@ -1223,7 +1233,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber</b></div>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
@@ -2397,7 +2407,12 @@ function init_ui() {
 	mapContainer.css("left", "0");
 	mapContainer.css("position", "absolute");
 
-
+	lightContainer = $("<div id='light_container'/>");
+	lightContainer.css("top", "0");
+	lightContainer.css("left", "0");
+	lightContainer.css("bottom", "0");
+	lightContainer.css("right", "0");
+	lightContainer.css("position", "absolute");
 
 	const drawOverlay = $("<canvas id='draw_overlay'></canvas>");
 	drawOverlay.css("position", "absolute");
@@ -2426,10 +2441,7 @@ function init_ui() {
 
 
 	const rayCasting = $("<canvas id='raycastingCanvas'></canvas>");
-	rayCasting.css("top", "0");
-	rayCasting.css("left", "0");
-	rayCasting.css("position", "absolute");
-	rayCasting.css("z-index", "22");
+	rayCasting.css({"top": "0", "left": "0", "position": "absolute", "z-index": "22"});
 
 	// this overlay sits above other canvases, but below tempOverlay
 	// when peers stream their rulers, this canvas is where we draw them
@@ -2512,7 +2524,8 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
-	VTT.append(rayCasting);
+	lightContainer.append(rayCasting);
+	mapContainer.append(lightContainer);
 	mapContainer.append(darknessLayer);
 
 
@@ -2532,8 +2545,8 @@ function init_ui() {
 	$("body").append(wrapper);
 
 	black_layer = $("<div id='black_layer'/>");
-	black_layer.width(window.width);
-	black_layer.height(window.height);
+	black_layer.width(window.width+window.VTTMargin);
+	black_layer.height(window.height+window.VTTMargin);
 	black_layer.css("position", "absolute");
 	black_layer.css("top", "0px");
 	black_layer.css("left", "0px");
@@ -2864,7 +2877,7 @@ function init_zoom_buttons() {
 	</div></div>
 	`);
 
-	selected_token_vision.click(function(){
+	selected_token_vision.click(async function(){
 		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
 			window.SelectedTokenVision = false;
@@ -2872,8 +2885,7 @@ function init_zoom_buttons() {
 			$('#selected_token_vision .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 			window.SelectedTokenVision = true;
 		}
-		redraw_light();
-		
+		await redraw_light();	
 	});
 
 	zoom_section.append(selected_token_vision);
@@ -3317,6 +3329,7 @@ function get_browser() {
 		chrome: M[0] == "Chrome",
 		msie: M[0] == "Internet Explorer",
 		opera: M[0] == "Opera",
+		safari: M[0] == "Safari"
 	};
 }
 

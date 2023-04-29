@@ -2,7 +2,7 @@
  * This is not injected on the Character sheet unless abovevtt=true is in the query
  * So if you need anything to execute on the Character sheet when abovevtt is not running, do that in CharacterPage.js
  */
-
+import { init_audio_mixer } from './audio/index.js'
 
 /** The first time the window loads, start doing all the things */
 $(function() {
@@ -41,7 +41,7 @@ $(function() {
       })
       .catch((error) => {
         showError(error, `Failed to start AboveVTT on ${window.location.href}`);
-      });
+      });  
   }
 });
 
@@ -79,6 +79,8 @@ async function start_above_vtt_common() {
   window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem(`TokenSettings${window.gameId}`)) || {};
   window.all_token_objects = {};
   window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
+  window.PC_TOKENS_NEEDING_UPDATES = [];
+  window.PC_NEEDS_API_CALL = {};
 
   await load_external_script("https://www.youtube.com/iframe_api");
   $("#site").append("<div id='windowContainment'></div>");
@@ -98,6 +100,7 @@ async function start_above_vtt_common() {
   window.StatHandler = new StatHandler();
   window.PeerManager = new PeerManager();
   window.MB = new MessageBroker();
+  init_audio_mixer();
 }
 
 async function start_above_vtt_for_dm() {
@@ -134,7 +137,19 @@ async function start_above_vtt_for_dm() {
   init_ui();
 
   startup_step("Fetching scenes from AboveVTT servers");
-  await fetch_sceneList_and_scenes();
+  let activeScene = await fetch_sceneList_and_scenes();
+
+  startup_step("Migrating scene folders");
+  await migrate_scene_folders();
+
+  if (activeScene) {
+    window.MB.handleScene(activeScene);
+  }
+  if (window.PLAYER_SCENE_ID) {
+    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.PLAYER_SCENE_ID });
+  }
+
+  did_update_scenes();
 
   startup_step("Start up complete");
 }
@@ -257,22 +272,22 @@ async function fetch_sceneList_and_scenes() {
   } else if (window.ScenesHandler.scenes.length > 0) {
     window.PLAYER_SCENE_ID = window.ScenesHandler.scenes[0].id;
     console.log("fetch_sceneList_and_scenes sending custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
-    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
+    // window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
   }
 
   console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
 
+  let activeScene = undefined;
   if (currentSceneData.dmscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.dmscene)) {
-    const activeScene = await AboveApi.getScene(currentSceneData.dmscene);
+    activeScene = await AboveApi.getScene(currentSceneData.dmscene);
     console.log("attempting to handle scene", activeScene);
-    window.MB.handleScene(activeScene);
+    // window.MB.handleScene(activeScene);
   } else if (window.ScenesHandler.scenes.length > 0) {
-    const activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
+    activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
     console.log("attempting to handle scene", activeScene);
     window.MB.handleScene(activeScene);
   }
 
-  console.log("fetch_sceneList_and_scenes calling did_update_scenes");
-  did_update_scenes();
   console.log("fetch_sceneList_and_scenes done");
+  return activeScene;
 }

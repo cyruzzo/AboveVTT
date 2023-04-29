@@ -33,6 +33,8 @@ $(function() {
   window.diceRoller = new DiceRoller();
   if (is_abovevtt_page()) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(!find_pc_by_player_id(event.data.characterId, false))
+        return;
       if(!window.DM){
          window.MB.sendMessage("custom/myVTT/character-update", {
           characterId: event.data.characterId,
@@ -56,7 +58,7 @@ function mydebounce(func, timeout = 800){
   let timer;
   return (...args) => {
     clearTimeout(timer);
-    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    timer = setTimeout(async () => {await func.apply(this, args); }, timeout);
   };
 }
 function find_currently_open_character_sheet() {
@@ -506,8 +508,9 @@ async function rebuild_window_pcs() {
     return {
       ...characterData,
       image: characterData.decorations?.avatar?.avatarUrl || characterData.avatarUrl || defaultAvatarUrl,
-      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`
-    }
+      sheet: `/profile/${characterData.userId}/characters/${characterData.characterId}`,
+      lastSynchronized: Date.now()
+    };
   });
 }
 
@@ -523,19 +526,86 @@ function update_pc_with_data(playerId, data) {
   }
   console.debug(`update_pc_with_data is updating ${playerId} with`, data);
   const pc = window.pcs[index];
-  const updatedPc = {...pc, ...data};
-  window.pcs[index] = updatedPc
-  let token = window.TOKEN_OBJECTS[pc.sheet];
-  if (token) {
-    token.options = {
-      ...token.options,
-      ...updatedPc,
-      id: pc.sheet // updatedPc.id is DDB characterId, but we use the sheet as an id for tokens
-    };
-    token.place_sync_persist(); // not sure if this is overkill
+  window.pcs[index] = {
+    ...pc,
+    ...data,
+    lastSynchronized: Date.now()
   }
-  update_pc_token_rows();
+  if (window.DM) {
+    if (!window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
+      window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
+    }
+    debounce_pc_token_update();
+  }
 }
+
+const debounce_pc_token_update = mydebounce(() => {
+  if (window.DM) {
+    window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
+      const pc = find_pc_by_player_id(playerId, false);
+      let token = window.TOKEN_OBJECTS[pc?.sheet];
+      if (token) {
+        token.options = {
+          ...token.options,
+          ...pc,
+          id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+        };
+        token.place_sync_persist(); // not sure if this is overkill
+      }
+      token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
+      if(token){
+        token.options = {
+          ...token.options,
+          ...pc,
+          id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+        };
+      }
+      update_pc_token_rows();
+    });
+    window.PC_TOKENS_NEEDING_UPDATES = [];
+  }
+});
+
+function update_pc_with_api_call(playerId) {
+  if (!playerId) {
+    console.log('update_pc_with_api_call was called without a playerId');
+    return;
+  }
+  if (window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
+    console.log(`update_pc_with_api_call isn't adding ${playerId} because we're already waiting for debounce_pc_token_update to handle it`);
+  } else if (Object.keys(window.PC_NEEDS_API_CALL).includes(playerId)) {
+    console.log(`update_pc_with_api_call is already waiting planning to call the API to fetch ${playerId}. Nothing to do right now.`);
+  } else {
+    const pc = find_pc_by_player_id(playerId, false);
+    const twoSecondsAgo = new Date(Date.now() - 2000).getTime();
+    if (pc && pc.lastSynchronized && pc.lastSynchronized > twoSecondsAgo) {
+      console.log(`update_pc_with_api_call is not adding ${playerId} to window.PC_NEEDS_API_CALL because it has been updated within the last 2 seconds`);
+    } else {
+      console.log(`update_pc_with_api_call is adding ${playerId} to window.PC_NEEDS_API_CALL`);
+      window.PC_NEEDS_API_CALL[playerId] = Date.now();
+    }
+  }
+  debounce_fetch_character_from_api();
+}
+
+const debounce_fetch_character_from_api = mydebounce(() => {
+  const idsAndDates = { ...window.PC_NEEDS_API_CALL }; // make a copy so we can refer to it later
+  window.PC_NEEDS_API_CALL = {}; // clear it out in case we get new updates while the API call is active
+  const characterIds = Object.keys(idsAndDates);
+  console.log('debounce_fetch_character_from_api is about to call DDBApi before update_pc_with_data for ', characterIds);
+  DDBApi.fetchCharacterDetails(characterIds).then((characterDataCollection) => {
+    characterDataCollection.forEach((characterData) => {
+      // check if we've synchronized this player data while the API call was active because we don't want to update the PC with stale data
+      const lastSynchronized = find_pc_by_player_id(characterData.characterId, false)?.lastSynchronized;
+      if (!lastSynchronized || lastSynchronized < idsAndDates[characterData.characterId]) {
+        console.log('debounce_fetch_character_from_api is about to call update_pc_with_data with', characterData.characterId, characterData);
+        update_pc_with_data(characterData.characterId, characterData);
+      } else {
+        console.log(`debounce_fetch_character_from_api is not calling update_pc_with_data for ${characterData.characterId} because ${lastSynchronized} < ${idsAndDates[characterData.characterId]}`);
+      }
+    });
+  });
+}, 5000); // wait 5 seconds before making API calls. We don't want to make these calls unless we absolutely have to
 
 async function harvest_game_id() {
   if (is_campaign_page()) {
@@ -786,4 +856,128 @@ function areArraysEqualSets(a1, a2) {
   }
 
   return true;
+}
+
+
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false) {
+  console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
+  const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
+  if (existing.length > 0) {
+    return existing;
+  }
+
+  const container = $(`<div class="resize_drag_window" id="${id}"></div>`);
+  container.css({
+    "left": "10%",
+    "top": "10%",
+    "max-width": "100%",
+    "max-height": "100%",
+    "position": "fixed",
+    "height": "80%",
+    "width": "80%",
+    "z-index": "10000",
+    "display": "none"
+  });
+
+  $("#site").append(container);
+
+  if (addLoadingIndicator) {
+    container.append(build_combat_tracker_loading_indicator(`Loading ${titleBarText}`));
+    const loadingIndicator = container.find(".sidebar-panel-loading-indicator");
+    loadingIndicator.css({
+      "top": "25px",
+      "height": "calc(100% - 25px)"
+    });
+  }
+
+  container.show("slow")
+  container.resize(function(e) {
+    e.stopPropagation();
+  });
+
+  const titleBar = $("<div class='title_bar restored'></div>");
+  container.append(titleBar);
+
+  /*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+  const close_title_button = $(`<div class="title_bar_close_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>`);
+  titleBar.append(close_title_button);
+  close_title_button.on("click", function (event) {
+    close_and_cleanup_generic_draggable_window($(event.currentTarget).closest('.resize_drag_window').attr('id'));
+  });
+
+  if (addPopoutButton) {
+    container.append(`<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
+  }
+
+  container.addClass("moveableWindow");
+
+  container.resizable({
+    addClasses: false,
+    handles: "all",
+    containment: "#windowContainment",
+    start: function (event, ui) {
+      $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
+    },
+    stop: function (event, ui) {
+      $('.iframeResizeCover').remove();
+    },
+    minWidth: 200,
+    minHeight: 200
+  });
+
+  container.on('mousedown', function(event) {
+    frame_z_index_when_click($(event.currentTarget));
+  });
+
+  container.draggable({
+    addClasses: false,
+    scroll: false,
+    containment: "#windowContainment",
+    start: function(event, ui) {
+      $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
+    },
+    stop: function(event, ui) {
+      $('.iframeResizeCover').remove();
+    }
+  });
+
+  titleBar.on('dblclick', function(event) {
+    const titleBar = $(event.currentTarget);
+    if (titleBar.hasClass("restored")) {
+      titleBar.data("prev-height", titleBar.height());
+      titleBar.data("prev-width", titleBar.width() - 3);
+      titleBar.data("prev-top", titleBar.css("top"));
+      titleBar.data("prev-left", titleBar.css("left"));
+      titleBar.css("top", titleBar.data("prev-minimized-top"));
+      titleBar.css("left", titleBar.data("prev-minimized-left"));
+      titleBar.height(23);
+      titleBar.width(200);
+      titleBar.addClass("minimized");
+      titleBar.removeClass("restored");
+      titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
+    } else if(titleBar.hasClass("minimized")) {
+      titleBar.data("prev-minimized-top", titleBar.css("top"));
+      titleBar.data("prev-minimized-left", titleBar.css("left"));
+      titleBar.height(titleBar.data("prev-height"));
+      titleBar.width(titleBar.data("prev-width"));
+      titleBar.css("top", titleBar.data("prev-top"));
+      titleBar.css("left", titleBar.data("prev-left"));
+      titleBar.addClass("restored");
+      titleBar.removeClass("minimized");
+      titleBar.find(".title_bar_text").remove();
+    }
+  });
+
+  return container;
+}
+
+function close_and_cleanup_generic_draggable_window(id) {
+  const container = id.startsWith("#") ? $(id) : $(`#${id}`);
+  container.off('dblclick');
+  container.off('mousedown');
+  container.draggable('destroy');
+  container.resizable('destroy');
+  container.find('.title_bar_close_button').off('click');
+  container.find('.popout-button').off('click');
+  container.remove();
 }

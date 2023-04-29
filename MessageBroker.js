@@ -360,7 +360,7 @@ class MessageBroker {
 		this.lastAlertTS = 0;
 		this.latestVersionSeen = window.AVTT_VERSION;
 
-		this.onmessage = function(event,tries=0) {
+		this.onmessage = async function(event,tries=0) {
 			if (event.data == "pong")
 				return;
 			if (event.data == "ping")
@@ -485,7 +485,11 @@ class MessageBroker {
 				self.handleAudioPlayingSync(msg);
 			}
 			if(msg.eventType == ('custom/myVTT/character-update')){
-					update_pc_with_data(msg.data.characterId, msg.data.pcData);
+				update_pc_with_data(msg.data.characterId, msg.data.pcData);
+			}
+			if(msg.eventType == ('character-sheet/character-update/fulfilled')) {
+				console.log('update_pc character-sheet/character-update/fulfilled', msg);
+				update_pc_with_api_call(msg.data?.characterId);
 			}
 
 			if (msg.eventType == "custom/myVTT/reveal") {
@@ -505,7 +509,7 @@ class MessageBroker {
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
-				redraw_light();
+				await redraw_light();
 				check_token_visibility();
 			}
 
@@ -514,7 +518,7 @@ class MessageBroker {
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
-				redraw_light();
+				await redraw_light();
 				check_token_visibility();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
@@ -681,8 +685,13 @@ class MessageBroker {
 				}
 			}
 			if(msg.eventType == "custom/myVTT/endplayerturn" && window.DM){
-				if($("#combat_area tr[data-current=1]").attr('data-target').endsWith(`characters/${msg.data.from}`))
+				let tokenId = $("#combat_area tr[data-current=1]").attr('data-target');
+				if(tokenId.endsWith(`characters/${msg.data.from}`) || window.all_token_objects[tokenId].options.player_owned)
 					$("#combat_next_button").click();				
+
+			}
+			if(msg.eventType=="custom/myVTT/mixer"){
+				handle_mixer_event(msg.data);
 			}
 			if(msg.eventType=="custom/myVTT/soundpad"){
 				build_soundpad(msg.data.soundpad, msg.data.playing);
@@ -698,14 +707,9 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-					$("#youtube_volume").val(msg.data.volume);
-					if(window.YTPLAYER)
-					{
-						window.YTPLAYER.setVolume(msg.data.volume);
-					}
-					else{
-						$("#scene_map").prop("volume", msg.data.volume/100);
-					}
+				if(window.YTPLAYER.setVolume){
+						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
+				}
 			}
 
 			if (msg.eventType == "dice/roll/pending"){
@@ -965,8 +969,6 @@ class MessageBroker {
 				window.STREAMPEERS[msg.data.from] = peer;					
 			}
 
-
-
 			if(msg.eventType == "custom/myVTT/okseethem"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
@@ -998,26 +1000,26 @@ class MessageBroker {
 					
 					$("#tokens .VTTToken").each(
 						function(){
-							var converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+							let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 							if(converted==entityid){
 								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+								window.all_token_objects[$(this).attr('data-id')].options.init = total;
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
 								window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
 							}
 						}
 					);
-					
 
 					$("#combat_area tr").each(function() {
-						var converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-						console.log(converted);
+						let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
 						if (converted == entityid) {
 							$(this).find(".init").val(total);
+							window.all_token_objects[$(this).attr('data-target')].options.init = total;
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 						}
 					});
-					setTimeout(ct_reorder(), 500);
+					debounceCombatReorder();
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
@@ -1202,23 +1204,26 @@ class MessageBroker {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
 					continue;				
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
+				window.all_token_objects[data.id].options[property] = data[property];
 			}
 			if(data.ct_show == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.ct_show;
+				delete window.all_token_objects[data.id].options.ct_show;
 			}
 			if(data.current == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.current;
+				delete window.all_token_objects[data.id].options.current;
 			}
-			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id)
+			if (!data.hidden && msg.sceneId == window.CURRENT_SCENE_DATA.id){
 				delete window.TOKEN_OBJECTS[data.id].options.hidden;
+				delete window.all_token_objects[data.id].options.hidden;
+			}
 			if(data.groupId == undefined){
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
+				delete window.all_token_objects[data.id].options.groupId;
 			}
 			window.TOKEN_OBJECTS[data.id].place();
 
-			if(window.DM && msg.loading){
-				window.TOKEN_OBJECTS[data.id].update_and_sync();
-			}
 		}	
 		else if(data.left){
 			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
@@ -1231,9 +1236,9 @@ class MessageBroker {
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;
 			}
-			t.sync = function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+			t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
-			};
+			}, 500);
 			t.place();
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
@@ -1293,7 +1298,7 @@ class MessageBroker {
 		$(".aura-element[id^='aura_'").remove();
 		$(".aura-element-container-clip").remove();
 
-		var old_src = $("#scene_map").attr('src');
+		let old_src = $("#scene_map").attr('src');
 		$("#scene_map").attr('src', data.map);
 
 		if (data.fog_of_war == 1) {
@@ -1403,6 +1408,19 @@ class MessageBroker {
 					playing: audioPlaying
 				}
 				window.MB.sendMessage("custom/myVTT/soundpad", data); // refresh soundpad
+			}
+			else if(window.MIXER){
+	        const state = window.MIXER.remoteState();
+          console.log('pushing mixer state to players', state);
+          window.MB.sendMessage('custom/myVTT/mixer', state);
+          if (window.YTPLAYER) {
+          		window.YTPLAYER.volume = $("#youtube_volume").val();
+              window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+              data={
+                  volume: window.YTPLAYER.volume
+              };
+              window.MB.sendMessage("custom/myVTT/changeyoutube",data);
+          }
 			}
 			// also sync the journal
 			window.JOURNAL?.sync();
@@ -1559,7 +1577,7 @@ class MessageBroker {
 	}
 
 	sendPing() {
-		self = this;
+		let self = this;
 		if (this.ws.readyState == this.ws.OPEN) {
 			this.ws.send("{\"data\": \"ping\"}");
 		}
@@ -1571,7 +1589,7 @@ class MessageBroker {
 	}
 
 	sendAbovePing(){
-		self = this;
+		let self = this;
 		if(this.abovews.readyState == this.abovews.OPEN){
 			this.abovews.send(JSON.stringify({action:"keepalive",eventType:"custom/myVTT/keepalive"}));
 		}

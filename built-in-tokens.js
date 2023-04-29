@@ -1091,7 +1091,8 @@ const builtInTokens = [
         "name": letter,
         "folderPath": "/Letters",
         "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/${letter}.png`,
-        "disableborder": true
+        "disableborder": true,
+        "auraislight": false
       })
     });
 [...Array(99).keys()]
@@ -1101,18 +1102,21 @@ const builtInTokens = [
         "name": `${number}`.padStart(2, "0"),
         "folderPath": "/Numbers",
         "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/${number}.png`,
-        "disableborder": true
+        "disableborder": true,
+        "auraislight": false
       })
     });
 builtInTokens.push({
   "name": `! - Exclamation Mark`,
   "folderPath": "/Letters",
   "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png`,
-  "disableborder": true
+  "disableborder": true,
+  "auraislight": false
 })
 builtInTokens.push({
   "name": `? - Question Mark`,
   "folderPath": "/Letters",
   "image": `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/QUESTION.png`,
-  "disableborder": true
+  "disableborder": true,
+  "auraislight": false
 })

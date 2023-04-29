@@ -18,13 +18,13 @@ const sendCharacterUpdateEvent = mydebounce(() => {
       characterId: window.PLAYER_ID,
       pcData: pcData
     });
+    update_pc_with_data(window.PLAYER_ID, pcData);
   } else {
     tabCommunicationChannel.postMessage({
       characterId: window.location.href.split('/').slice(-1)[0],
       pcData: pcData
     });
   }
-  update_pc_with_data(window.PLAYER_ID, pcData);
 }, 1500);
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
@@ -34,16 +34,29 @@ function character_sheet_changed(changes) {
     sendCharacterUpdateEvent();
 }
 
-function send_character_hp() {
+function send_character_hp(maxhp) {
   const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
-  character_sheet_changed({
-    hitPointInfo: {
-      current: read_current_hp(),
-      maximum: read_max_hp(pc?.hitPointInfo?.maximum),
-      temp: read_temp_hp()
-    },
-    deathSaveInfo: read_death_save_info()
-  });
+  if(maxhp > 0){ //the player just died and we are sending removed node max hp data
+    character_sheet_changed({
+      hitPointInfo: {
+        current: 0,
+        maximum: maxhp,
+        temp: 0
+      },
+      deathSaveInfo: read_death_save_info()
+    });
+  }
+  else{
+    character_sheet_changed({
+      hitPointInfo: {
+        current: read_current_hp(),
+        maximum: read_max_hp(pc?.hitPointInfo?.maximum),
+        temp: read_temp_hp()
+      },
+      deathSaveInfo: read_death_save_info()
+    });
+  }
+
 }
 
 
@@ -180,7 +193,12 @@ function send_movement_speeds(container, speedManagePage) {
 }
 
 function read_current_hp(container = $(document)) {
-  let element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
+ 
+  let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--cur .ct-health-manager__health-item-value`)
+  if(element.length){
+    return parseInt(element.text())
+  }
+  element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
   if (element.length) {
     return parseInt(element.text()) || 0;
   }
@@ -200,9 +218,13 @@ function read_current_hp(container = $(document)) {
 }
 
 function read_temp_hp(container = $(document)) {
-
-  if (container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).length) {
-    return parseInt(container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`).text()) || 0;
+  let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--temp .ct-health-manager__health-item-value input.ct-health-manager__input`)
+  if(element.length){
+    return parseInt(element.val())
+  }
+  element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`)
+  if (element.length) {
+    return parseInt(element.text()) || 0;
   }
   if (container.find(`.ct-status-summary-mobile__hp--has-temp`).length) {
     if(container.find('.ct-health-manager__health-item--temp').length){
@@ -215,11 +237,17 @@ function read_temp_hp(container = $(document)) {
 }
 
 function read_max_hp(currentMaxValue = 0, container = $(document)) {
-  if (container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).length) {
-    return parseInt(container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`).text()) || currentMaxValue;
+  let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--max .ct-health-manager__health-item-value .ct-health-manager__health-max-current`)
+  if(element.length){
+    return parseInt(element.text())
   }
-  if (container.find(".ct-status-summary-mobile__hp-max").length) {
-    return parseInt(container.find(".ct-status-summary-mobile__hp-max").text()) || currentMaxValue;
+  element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-max-label']`);
+  if (element.length) {
+    return parseInt(element.text()) || currentMaxValue;
+  }
+  element = container.find(".ct-status-summary-mobile__hp-max");
+  if (element.length) {
+    return parseInt(element.text()) || currentMaxValue;
   }
   return currentMaxValue;
 }
@@ -247,6 +275,7 @@ function read_inspiration(container = $(document)) {
   return false;
 }
 
+// Good canidate for service worker
 function init_characters_pages(container = $(document)) {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
@@ -387,10 +416,14 @@ function observe_character_sheet_changes(documentToObserve) {
 
             break;
           case "childList":
-            if (
-              $(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number') ||
-              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
-              ($(mutation.removedNodes[0]).hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
+            const firstRemoved = $(mutation.removedNodes[0]);
+            if(firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number`).text());
+              send_character_hp(maxhp);
+            }else if (
+              ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||
+              (firstRemoved.hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
+              (firstRemoved.hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
               mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
             ) {
@@ -473,10 +506,21 @@ function observe_character_sheet_changes(documentToObserve) {
 function set_window_name_and_image(callback) {
   if (!is_characters_page()) return;
   if (window.set_window_name_and_image_attempts > 30) {
-    console.warn("set_window_name_and_image has failed after 30 attempts");
+    console.warn(`set_window_name_and_image has failed after 30 attempts. window.PLAYER_NAME: ${window.PLAYER_NAME}, window.PLAYER_IMG: ${window.PLAYER_IMG}`);
     delete window.set_window_name_and_image_attempts;
     if (is_abovevtt_page()) {
-      showError(new Error("set_window_name_and_image has failed after 30 attempts"));
+      showErrorMessage(
+        new Error("set_window_name_and_image has failed after 30 attempts"),
+        "This can happen if your character is not finished yet. Please make sure your character is finished. If your character is finished, try the following",
+        ``,
+        `Navigate to the <a href="${window.location.href.replace(window.location.search, '')}/builder/home/basic" target="_blank">Edit Character</a> page`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;1. change the avatar image`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;2. enable homebrew`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;3. make your character public`,
+        `&nbsp;&nbsp;&nbsp;&nbsp;4. make sure your character is finished, and save your character`,
+        '',
+        "After you save your character, you can change the avatar image back to what it was before."
+      );
     }
     return;
   }
@@ -486,7 +530,7 @@ function set_window_name_and_image(callback) {
   window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
   try {
     // This should be just fine, but catch any parsing errors just in case
-    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, ""));
+    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || defaultAvatarUrl;
   } catch {}
 
   if (typeof window.PLAYER_NAME !== "string" || window.PLAYER_NAME.length <= 1 || typeof window.PLAYER_IMG !== "string" || window.PLAYER_IMG.length <= 1) {

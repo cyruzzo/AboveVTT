@@ -354,6 +354,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index:  49000;
 }
 
+.resizeDragWindow,
 #resizeDragMon {
     display: flex;
     left: 271px;
@@ -368,11 +369,16 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     z-index: 49000;
     border-radius: 3px;   
     border: 1px solid gray;
-}  
+}
 
+.resizeDragWindow.hideDragWindow,
 #resizeDragMon.hideMon{
     visibility: hidden;
 }
+.resize_drag_window{
+    background: url(https://www.dndbeyond.com/attachments/0/84/background_texture.png) #f9f9f9;
+}
+
 
 #sheet iframe {
     width: 100%;
@@ -2266,7 +2272,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
-    filter:blur(2px);
+    opacity: 1;
 }
 
 #conditions-flyout li,
@@ -4150,7 +4156,49 @@ button.avtt-roll-formula-button {
 
 .MuiModal-root,
 div#selectedTokensBorder,
-div#selectedTokensBorderRotationGrabberConnector  {
+div#selectedTokensBorderRotationGrabberConnector,
+#sounds-panel .volume-control {
+    width: 50%;
+    float: right;
+}
+
+#sounds-panel .channel-progress-bar-total {
+    width: 100%;
+    position: relative;
+    height: 1px;
+    bottom: 4px;
+    left: 0px;
+    background: lightgray;
+}
+
+#sounds-panel .channel-progress-bar-progress {
+    width: 0%;
+    position: relative;
+    height: 1px;
+    bottom: 0px;
+    left: 0px;
+    background: #0075FF;
+}
+
+#sounds-panel .sidebar-panel-header {
+    padding: 4px;
+    border-bottom: 1px solid #2b2b2b;
+}
+
+#sounds-panel .audio-row  {
+    height: 25px;
+}
+
+#track-list li:hover {
+    background-color:lightskyblue;
+}
+
+#track-list button {
+    float: right;
+    height: 100%;
+}
+
+.MuiModal-root{
     pointer-events: none;
 }
 
@@ -4234,6 +4282,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 
 #text_controller_title_bar,
 .text-input-title-bar,
+.resize_drag_window .title_bar,
 #combat_tracker_title_bar {
     width: 100%;
     background: #242527;
@@ -4299,6 +4348,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
     position: relative;
 }
 
+.resize_drag_window .title_bar:after,
 #text_controller_title_bar:after,
 .text-input-title-bar:after,
 #combat_tracker_title_bar:after {
@@ -4321,6 +4371,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
     color: #fff;
 }
 
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit,
 .text-input-title-bar-exit,
 .title-bar-exit,
@@ -4344,6 +4395,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #reload_player_frame_button:hover,
 .text-input-title-bar-exit:hover,
 .title-bar-exit:hover,
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
 #token_options_title_bar_exit:hover,
@@ -4360,6 +4412,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
  
 .text-input-title-bar-exit svg,
 .text-input-title-bar-exittitle-bar-exit svg,
+.resize_drag_window .title_bar .title_bar_close_button svg,
 #text_controller_title_bar_exit svg,
 #combat_tracker_title_bar_exit svg,
 #monster_close_title_button svg,
@@ -4373,6 +4426,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 
 .text-input-title-bar-exit svg g rect,
 .title-bar-exit svg g rect,
+.resize_drag_window .title_bar .title_bar_close_button svg g rect,
 #text_controller_title_bar_exit svg g rect,
 #combat_tracker_title_bar_exit svg g rect,
 #monster_close_title_button svg g rect,
@@ -4407,6 +4461,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 
 .text-input-title-bar-exit,
 .title-bar-exit,
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #monster_close_title_button,
@@ -4436,6 +4491,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
 #reload_player_frame_button,
 .text-input-title-bar-exit,
 .title-bar-exit,
+.resize_drag_window .title_bar .title_bar_close_button,
 #text_controller_title_bar_exit,
 #combat_tracker_title_bar_exit,
 #token_options_title_bar_exit,
@@ -4610,6 +4666,8 @@ div#selectedTokensBorderRotationGrabberConnector  {
     height: 10px;
 }
 
+.resize_drag_window .ui-resizable-s,
+.resize_drag_window .ui-resizable-sw,
 #resizeDragMon .ui-resizable-s,
 #resizeDragMon .ui-resizable-sw,
 #sheet .ui-resizable-s,
@@ -4617,6 +4675,7 @@ div#selectedTokensBorderRotationGrabberConnector  {
     bottom: -7px;  
 }
 
+.resize_drag_window .ui-resizable-se,
 #resizeDragMon .ui-resizable-se,
 #sheet .ui-resizable-se{
     height: 10px;
@@ -4624,6 +4683,8 @@ div#selectedTokensBorderRotationGrabberConnector  {
     right: -7px;
     bottom: -10px;
 }
+.resize_drag_window .ui-resizable-e,
+.resize_drag_window .ui-resizable-w,
 #resizeDragMon .ui-resizable-e,
 #resizeDragMon .ui-resizable-w,
 #sheet .ui-resizable-e,
@@ -5016,7 +5077,9 @@ input.max_hp[disabled]{
     transition: filter 350ms linear;
 }
 
-.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title), 
+.minimized > *:not(#ct_text_title, .player_title, .monster_title, #text_controller_title, .title_bar_text),
+.resize_drag_window .title_bar:after,
+.resize_drag_window .title_bar.minimized ~ *,
 #combat_tracker_title_bar.minimized:after,
 #combat_tracker_title_bar.minimized ~ *{
     display: none !important;
@@ -5024,6 +5087,9 @@ input.max_hp[disabled]{
 
 #text_controller_title_bar.minimized,
 #combat_tracker_title_bar.minimized,
+#combat_tracker_title_bar.minimized,
+.resize_drag_window .title_bar.minimized,
+.resize_drag_window.minimized,
 #resizeDragMon.minimized,
 #sheet.minimized,
 .minimized{
@@ -5050,6 +5116,7 @@ input.max_hp[disabled]{
 .minimized #text_controller_title,
 .minimized .monster_title,
 .minimized .player_title,
+.minimized .title_bar_text,
 .minimized #ct_text_title{
     white-space: nowrap;
     overflow: hidden;
@@ -5786,6 +5853,7 @@ div.ddbc-tab-options--layout-pill>button{
     display: none !important;
 }
 
+
 [id^="streamer-"].hidden {
     display: none;
 }
@@ -5795,12 +5863,9 @@ div.ddbc-tab-options--layout-pill>button{
     position: absolute;
     z-index: 9;
     mix-blend-mode: lighten;
-    -webkit-mask-image: var(--vision-mask);
-    -webkit-mask-size: cover;
 }
 .aura-element.islight,
 .aura-element[id*='vision_']{
-    filter:blur(10px);
     z-index: 9;
     mix-blend-mode: lighten;
 }
@@ -5814,10 +5879,13 @@ div.ddbc-tab-options--layout-pill>button{
     filter: brightness(var(--darkness-filter));
 
 }
-#raycastingCanvas{
-    opacity: min(var(--darkness-filter), var(--walls-up-shadow-percent));
+#light_container{
+    mix-blend-mode:lighten;
+    background: #000;
+    z-index: 9;
+    opacity: 1;
+    filter:blur(calc(10px / var(--scene-scale)));
 }
-
 
 #text_div{
     pointer-events:none;
@@ -5930,6 +5998,15 @@ div.note[id^="ui-id"] .mce-btn button {
     background-color: #fff;
 }
 
+
+#journal-panel .reorder-button{
+    display: inline;
+}
+#ddb-source-journal-import{
+    display:inline;
+    float:right;
+    width:175px;
+}
 .body-rpgcharacter-sheet #VTT.paused *{
     pointer-events: none !important;
 }
@@ -5971,6 +6048,7 @@ div.note[id^="ui-id"] .mce-btn button {
 .sidebar-list-item-row.ui-draggable-dragging {
     z-index: 100000;
 }
+
 
 .player-card.peerConnected .player-card-content::before,
 .sidebar-list-item-row.player-row.peerConnected::before {
@@ -6239,6 +6317,8 @@ button.journal-view-button.journal-button {
 /* START - New quote box implementation */
 [class*='MessageContainer'] .tooltip-body{
     padding: 0px;
+    width: 265px;
+    overflow-wrap: anywhere;
 }
 
 
@@ -6553,10 +6633,11 @@ button.journal-view-button.journal-button {
     margin: 0 2px;
     border-radius: 7px;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
-    padding: 2px 8px;
+    padding: 2px 4px;
     transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
     border: 1px solid lightgray;
     font-size: 12px;
+    overflow: hidden;
 }
 .qrm_name_line{
     text-align: left;
@@ -6574,9 +6655,9 @@ button.journal-view-button.journal-button {
     border-radius: 3px;
     border-color: #ddd;
     height:22px;
-    text-align:center;
-    font-size: 14px !important;
+    font-size: 12px !important;
     box-shadow: 1px 1px 1px 0px #00000047;
+    text-transform: uppercase;
 }
 .general_input{
     border-width: 2px;
@@ -6591,6 +6672,8 @@ button.journal-view-button.journal-button {
     border: 1px solid lightgray;
     font-size: 12px;
     margin: 1px;
+    top: 0px;
+    text-transform: uppercase;
 }
 .menu_hp_input{
     border-width: 0;
@@ -6622,18 +6705,418 @@ button.journal-view-button.journal-button {
 .roll_mods_button:focus {
     outline: none;
     box-shadow: none;
-  }
-#adv.active_roll_mod{
+}
+#qrm_healing.active_roll_mod, #adv.active_roll_mod{
     background-image: none !important;
     background: green;
     border-radius: 3px !important;
     border-color: #ddd !important;
 }
-#disadv.active_roll_mod{
+#qrm_damage.active_roll_mod, #disadv.active_roll_mod{
     background-image: none !important;
     background: red;
     border-radius: 3px;
     border-color: #ddd;
 }
+#qrm_heal.active_roll_mod{
+    background-image: none !important;
+    background: green;
+    border-radius: 3px !important;
+    border-color: #ddd !important;
+}
+#qrm_damage.active_roll_mod{
+    background-image: none !important;
+    background: red;
+    border-radius: 3px;
+    border-color: #ddd;
+}
+.adjustments_wrapper{
+    top: 5px;
+    position: relative;
+    display: inline-block;
+}
+.damage_heal_button{
+    display: block;
+    height: 50% !important;
+    font-size: 8px !important;
+    text-align: center;
+    overflow: unset!important;
+    padding: 0px!important;
+    width: 50px;
+    margin: 1px !important;
+}
+.ui-selectmenu-menu .ui-menu-item-wrapper .ui-menu-item {
+    height: 24px;
+    width: 24px;
+    top: 0.1em;
+    overflow: auto;
+    position: relative;
+}
+.ui-selectmenu-menu .ui-menu {
+    max-height: calc(50vh - 20px);
+    width: 140px;
+    overflow: auto !important;
+}
+#qrm_apply_conditions-button{
+    width: 26% !important;
+}
+.ui-front {
+    z-index: 50010 !important;
+}
+.ui-selectmenu-text{
+    top: 1px;
+    position: relative;
+}
+.ui-menu .ui-menu-item-wrapper{
+    display: inline-block;
+    padding-right: 100px !important;
+    max-width: 175px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+.icon-avatar{
+    width: 22px;
+    height: 22px;
+}
+.ui-selectmenu-button.ui-button{
+    width: 22% !important;
+    padding: 2px 2px !important;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
+    color: #3d3d3d;
+    height: 22px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%), 0 1px 2px rgb(0 0 0 / 5%);
+    transition: color 0.3s ease-in-out, background 0.3s ease-in-out, background-color 0.3s ease-in-out, background-image 0.1s ease-in-out;
+    border: 1px solid lightgray;
+    font-size: 12px;
+    margin: 1px;
+    top: -1px;
+}
+.ui-menu .ui-icon{
+    background-image: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.dropdown-advantage {
+    background-image: url(assets/conditons/advantage.png) !important;
+}
+.dropdown-baned {
+    background-image: url(assets/conditons/baned.png) !important;
+}
+.dropdown-bardic {
+    background-image: url(assets/conditons/bardic_inspiration.png) !important;
+}
+.dropdown-blessed{
+    background-image: url(assets/conditons/blessed.png) !important;
+}
+.dropdown-bloodied {
+    background-image: url(assets/conditons/bloodied.png) !important;
+}
+.dropdown-concentration-reminder {
+    background-image: url(assets/conditons/concentration\(reminder\).png) !important;
+}
+.dropdown-disadvantage {
+    background-image: url(assets/conditons/disadvantage.png) !important;
+}
+.dropdown-flamed {
+    background-image: url(assets/conditons/flamed.png) !important;
+}
+.dropdown-flying {
+    background-image: url(assets/conditons/flying.png) !important;
+}
+.dropdown-hasted {
+    background-image: url(assets/conditons/hasted.png) !important;
+}
+.dropdown-bardic-inspiration {
+    background-image: url(assets/conditons/bardic_inspiration.png) !important;
+}
+.dropdown-rage {
+    background-image: url(assets/conditons/rage.png) !important;
+}
+.dropdown-remove {
+    background-image: url(assets/icons/delete.svg) !important;
+}
 /* end quick roll menu */
+
+/*Audio Mixer Start*/
+li.audio-row:hover .channel-progress-bar-total .channel-progress-bar-progress,
+li.audio-row:hover .channel-progress-bar-total
+{
+    height:5px !important;
+}
+.channel-progress-bar-total,
+.channel-progress-bar-progress{
+    transition: 150ms height linear 500ms;
+}
+#sounds-panel .channel-progress-bar-progress{
+    background: #1b9af0 !important;
+}
+
+
+#sounds-panel .channel-progress-bar-total{
+    width: 35%;
+}
+#sounds-panel .volume-control{
+    width: 40%;
+}
+.audio-row input{
+    top: 4px;
+    position:relative;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 7px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+
+}
+#mixer-channels .volume-control{
+    left: 0;
+    width: calc(40% + 2px)
+}
+#mixer-channels .audio-row input{
+    top: 8px;
+}
+#mixer-channels .audio-row{
+    margin-left: 5px;
+}
+.audio-row input::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+
+.audio-row input::-moz-range-thumb {
+-moz-appearance: none;
+    appearance: none;
+    width: 4px;
+    height: 13px;
+    background: #899197;
+    background-color: #899197;
+    border-radius:5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 0px #000;
+    border:1px solid #fff9;
+    border-width: 1px 0px 0px 1px;
+}
+#sounds-panel .sidebar-panel-header {
+    background: #ebf1f5;
+    color: #000;
+}
+#sounds-panel .sidebar-panel-header button{
+    border-radius: 5px;
+}
+#sounds-panel .sidebar-panel-header button{
+    box-shadow: inset 1px 1px 4px -2px #a0a0a0e3, 2px 2px 2px -1px #000000a3, 0px 1px 1px 0px #0006;
+}
+#sounds-panel .sidebar-panel-header button svg{
+    transform: scale(0.8);
+}
+#sounds-panel .sidebar-panel-header button:active,
+#sounds-panel .sidebar-panel-header button.pressed:active{
+    box-shadow: inset 2px 1px 3px -1px #000, inset 1px 2px 3px -1px #000;
+    border: 1px solid tranparent;
+}
+
+#sounds-panel .sidebar-panel-header svg path{
+    fill: #000;
+}
+div#sounds-panel {
+    overflow-y: visible;
+}
+
+
+button.channel-loop-button{
+    left: 20px;
+}
+
+.channelNameOverflow {
+    width: 100px;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 16px;
+}
+.channelNameOverflow:hover .channelName {
+    margin-left: var(--name-width-overflow);
+}
+
+.channelName{
+    transition: margin 800ms ease-in 250ms;
+    text-overflow: ellipsis;
+    display: inline;
+}
+#mixerPlaylists{
+    width: 100px;
+    margin: 0px 0px 0px 5px;
+}
+#mixerPlaylists ~ button#add-playlist, 
+#mixerPlaylists ~ button#remove-playlist {
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: fit-content;
+    font-size: 12px;
+    height: 16px;
+    margin: 0px 4px;
+    color: rgb(111, 116, 120);
+    padding: 0px 3px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #000000;
+    opacity: 0.8;
+    outline: none;
+    background: rgb(235, 241, 245);
+}   
+
+.mixer-play-pause-button,
+.track-play-pause-button,
+.mixer-clear-button,
+.channel-play-pause-button,
+.channel-loop-button,
+.track-remove-button,
+.add-track-ok-button,
+.add-track-cancel-button,
+.channel-remove-button,
+.track-add-to-mixer {
+    box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    color: rgb(111, 116, 120);
+    padding: 0px 0px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: #000000;
+    opacity: 0.8;
+    outline: none;
+    background: rgb(235, 241, 245);
+    transform: scale(0.8);
+}
+.mixer-play-pause-button:focus,
+.track-play-pause-button:focus,
+.mixer-clear-button:focus,
+.channel-play-pause-button:focus,
+.channel-loop-button:focus,
+.track-remove-button:focus,
+.add-track-ok-button:focus,
+.add-track-cancel-button:focus,
+.channel-remove-button:focus,
+.track-add-to-mixer:focus {
+    outline: none;
+}
+
+.mixer-play-pause-button:hover,
+.track-play-pause-button:hover,
+.mixer-clear-button:hover,
+.channel-play-pause-button:hover,
+.channel-loop-button:hover,
+.track-remove-button:hover,
+.add-track-ok-button:hover,
+.add-track-cancel-button:hover,
+.channel-remove-button:hover,
+.track-add-to-mixer:hover  {
+    cursor: pointer;
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+}
+
+.mixer-play-pause-button:active,
+.mixer-clear-button:active,
+.track-play-pause-button:active,
+.channel-play-pause-button:active,
+.channel-loop-button:active,
+.track-remove-button:active,
+.add-track-ok-button:active,
+.add-track-cancel-button:active,
+.channel-remove-button:active,
+.track-add-to-mixer:active {
+    background-color: rgb(245, 248, 250);
+    box-shadow: inset #000 1px 1px 3px 1px;
+    transform: translate(1px, 2px) scale(0.8);
+}
+
+#mixerPlaylists ~ button#add-playlist:active, 
+#mixerPlaylists ~ button#remove-playlist:active{
+    background-color: rgb(245, 248, 250);
+    box-shadow: inset #000 1px 1px 3px 1px;
+    transform: translate(1px, 2px);
+} 
+.track-add-to-mixer{
+   fill:#000;
+   padding: 5px 4px 5px 4px; 
+}
+.track-add-to-mixer svg path{
+    fill:#000;
+}
+
+.channel-play-pause-button,
+.channel-loop-button,
+.channel-remove-button{
+    float:  right;
+}
+.channel-remove-button{
+    color: #000;
+    font-size: 18px;
+}
+input.trackName.trackInput {
+    width: 100px;
+}
+
+div#importTrackFields input,
+div#editTrackFields input {
+    width: 100px;
+    margin: 0px 5px 0px 0px;
+}
+.add-track-ok-button,
+.add-track-cancel-button{
+    left: 4px;
+    position: relative;
+}
+
+div#importTrackFields input.trackSrc,
+div#editTrackFields input.trackSrc  {
+    width: 145px;
+}
+div#editTrackFields button{
+    float: initial;
+    height: 24px;
+}
+div#importTrackFields,
+div#playlistFields {
+    height: 0px;
+    overflow: hidden;
+    margin: 5px 0px;
+    transition: height ease 250ms;
+}
+#sounds-panel .sidebar-panel-header button.pressed {
+    background: #7dc8fd66 !important;
+    border: none;
+    box-shadow: inset #000 1px 1px 3px 0px;
+    transform: translate(0px, 1px) scale(0.8);
+}
+.mixer-clear-button{
+    position: absolute;
+    left: 126px;
+}
+
+.mixer-play-pause-button{
+    position: absolute;
+    left: 174px;
+}
+
+
 

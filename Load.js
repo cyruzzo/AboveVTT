@@ -51,6 +51,7 @@ window.scripts = [
 	// External Dependencies
 	{ src: "jquery-3.6.0.min.js" },
 	{ src: "jquery-ui.min.js" },
+	{ src: "jquery.csv.js" },
 	//{ src: "jquery.ui.widget.min.js" },
 	//{ src: "jquery.ui.mouse.min.js" },
 	{ src: "jquery.ui.touch-punch.js" },
@@ -85,7 +86,6 @@ window.scripts = [
 	{ src: "ScenesPanel.js" },
 	{ src: "Settings.js" },
 	{ src: "SidebarPanel.js" },
-	{ src: "SoundPad.js" },
 	{ src: "StatHandler.js" },
 	{ src: "Token.js" },
 	{ src: "TokenMenu.js" },
@@ -104,11 +104,13 @@ window.scripts = [
 	{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
 	{ src: "CampaignPage.js" },
 	{ src: "CharactersPage.js" },
+	{ src: "audio/index.js", type: "module" },
 	// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
-	{ src: "Startup.js" }
+	{ src: "Startup.js", type: "module" }
+
 ]
 
-// Too many of our scripts depend on each other. 
+// Too many of our scripts depend on each other.
 // This ensures that they are loaded sequentially to avoid any race conditions.
 function injectScript() {
 	if (scripts.length === 0) {
