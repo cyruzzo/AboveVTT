@@ -2618,20 +2618,6 @@ function place_token_at_map_point(tokenObject, x, y) {
 		window.TOKEN_OBJECTS[tokenObject.id].highlight();
 		return;
 	}
-	let options = {};
-	if(tokenObject.options == undefined){
-		options = {
-			...default_options(),
-			...window.TOKEN_SETTINGS,
-			...tokenObject
-		};
-	}else{
-		options = {
-			...tokenObject.options,
-			...window.TOKEN_SETTINGS,
-			...tokenObject
-		};
-	}
 
 
 	const pc = find_pc_by_player_id(tokenObject.id, false) || {};
@@ -2639,7 +2625,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	let options = {
 		...default_options(),
 		...window.TOKEN_SETTINGS,
-		...tokenObject,
+		...tokenObject.options,
 		...pc,
 		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
 	};
