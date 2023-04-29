@@ -2164,7 +2164,7 @@ class Token {
 						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
-							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, pagex: ${event.pageX}, clickx: ${click.x}, originalleft: ${original.left}, pageY: ${event.pageY}, clickY: ${click.y}, original.top: ${original.top}, zoom: ${zoom}`),
+							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, pagex: ${event.pageX}, clickx: ${click.x}, originalleft: ${original.left}, pageY: ${event.pageY}, clickY: ${click.y}, original.top: ${original.top}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
