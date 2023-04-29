@@ -3545,10 +3545,9 @@ function paste_selected_tokens(x, y) {
 			window.TOKEN_OBJECTS[id].selected = false;
 			window.TOKEN_OBJECTS[id].place_sync_persist();
 		}
-		window.TOKEN_OBJECTS[newId].selected = true;
-		window.TOKEN_OBJECTS[newId].place_sync_persist();
+
 		if (id in window.JOURNAL.notes) {
-			window.JOURNAL.notes[newId] = window.JOURNAL.notes[id];
+			window.JOURNAL.notes[newId] = structuredClone(window.JOURNAL.notes[id]);
 			let copiedNote = window.JOURNAL.notes[newId];
 			copiedNote.title = window.TOKEN_OBJECTS[id].options.name;
 			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
@@ -3557,6 +3556,9 @@ function paste_selected_tokens(x, y) {
 				note:copiedNote
 			});
 		}
+
+		window.TOKEN_OBJECTS[newId].selected = true;
+		window.TOKEN_OBJECTS[newId].place_sync_persist();
 	}
 	// copy the newly selected tokens in case they paste again, we want them pasted in reference to the newly created tokens
 	copy_selected_tokens();
