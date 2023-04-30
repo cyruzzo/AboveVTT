@@ -148,18 +148,23 @@ function jsonCallback(data){ //hosted uvtt files
 		success: function(response){ console.log(response) },
 		error: function(response){ console.log(response) }
 	})
-
+"https://www.googleapis.com/drive/v3/files/1OJ5kY5JYa7z3V3Te5ERVKLYwl0EnFCO7?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I"
 	*/
 	window.currentUvttSceneData = data;
 }
 
 async function getUvttData(url){
-	return $.ajax({
-      	type: "GET",
-	    dataType: 'jsonp',
-	    jsonCallback: 'jsonCallback',
-		url: url,
-    }).then(response => response.data);
+	let api_url = url;
+	let jsonData = {};
+	if(url.startsWith('https://drive.google.com')){
+		let parsed_url = parse_img(url);
+		let fileid = parsed_url.split('=')[1];
+		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`
+	}
+	await $.getJSON(api_url, function(data){
+		jsonData = data;
+	});
+	return jsonData;
 }
 
 function open_uvtt_file(){
@@ -189,29 +194,127 @@ function import_uvtt_scene(){
 
 async function import_uvtt_scene_to_new_scene(url){
 	//to do
-	try{
-		await getUvttData(url);
-	}
-	catch{
+	let sceneData = await getUvttData(url);
 
-	}
+	console.log(sceneData.resolution) // test code to make sure correct file is loaded
+	let aboveSceneData = create_full_scene_from_uvtt(sceneData, url); // this sets up scene data for import
+	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
-	console.log(window.currentUvttSceneData.resolution) // test code to make sure correct file is loaded
-	//import full scene here
-}
-async function load_uvtt_scene_map(url){
-	//to do
-	try{
-		await getUvttData(url);
-	}
-	catch{
-
-	}
-
-	console.log(window.currentUvttSceneData.resolution)// test code to make sure correct file is loaded
-	//set scene map here
+	window.ScenesHandler.scenes.push(aboveSceneData);
+	did_update_scenes();
+	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+	$("#sources-import-main-container").remove();
+	expand_all_folders_up_to_id(aboveSceneData.id);
 }
 
+
+async function get_map_from_uvtt_file(url){
+	let sceneData = await getUvttData(url);
+
+	return `data:image/png;base64,${sceneData.image}`
+}
+
+function create_full_scene_from_uvtt(data, url){ //this sets up scene data for import
+
+	DataFile = data;
+	let gridSize = DataFile.resolution.pixels_per_grid;
+
+	let sceneDrawings = []
+	for(let i = 0; i<DataFile.line_of_sight.length; i++){
+		for(let j = 1; j<DataFile.line_of_sight[i].length; j++){
+			sceneDrawings.push(['line',
+				'wall',
+				"rgba(0, 255, 0, 1)",
+				DataFile.line_of_sight[i][j-1].x*gridSize,
+				DataFile.line_of_sight[i][j-1].y*gridSize,
+				DataFile.line_of_sight[i][j].x*gridSize,
+				DataFile.line_of_sight[i][j].y*gridSize,
+				6,
+				1,
+			])
+		}
+	}
+	for(let i = 0; i<DataFile.portals.length; i++){
+		let color = (DataFile.portals[i].closed) ? 'rgba(255, 100, 255, 1)' : 'rgba(255, 100, 255, 0.5)';
+		sceneDrawings.push(['line',
+			'wall',
+			color,
+			DataFile.portals[i].bounds[0].x*gridSize,
+			DataFile.portals[i].bounds[0].y*gridSize,
+			DataFile.portals[i].bounds[1].x*gridSize,
+			DataFile.portals[i].bounds[1].y*gridSize,
+			12,
+			1,
+		])
+	}
+
+
+	function hexToRGB(hex, alpha) {
+	    var r = parseInt(hex.slice(1, 3), 16),
+	        g = parseInt(hex.slice(3, 5), 16),
+	        b = parseInt(hex.slice(5, 7), 16);
+
+	    if (alpha) {
+	        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+	    } else {
+	        return "rgb(" + r + ", " + g + ", " + b + ")";
+	    }
+	}
+
+	let sceneTokens = {};
+	for(let i = 0; i<DataFile.lights.length; i++){
+
+	
+		let transparency = DataFile.lights[i].intensity/100;
+		let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
+
+
+		let lightColor = hexToRGB(clippedColor, transparency);
+		let options = {
+			...default_options(),
+			id: uuid(),
+			imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
+			hidden : true,
+			tokenStyleSelect : 'definitelyNotAToken',
+			light1 : {
+				feet:  `${DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq)}`,
+				color: lightColor
+			},
+			light2 : {
+				feet: '0',
+				color: 'rgba(255, 255, 255, 0.5)'
+			},
+			vision : {
+				feet: '0',
+				color: 'rgba(255, 255, 255, 0.5)'
+			},
+			left : `${DataFile.lights[i].position.x * gridSize - gridSize/4}px`,
+			top : `${DataFile.lights[i].position.y * gridSize - gridSize/4}px`,
+			gridSquares: 0.5,
+			size: gridSize/2,
+			auraislight: true	
+		};
+		
+		sceneTokens[options.id] = options;
+	}
+
+ 	let sceneData = {
+ 		...default_scene_data(),
+ 		'player_map': url,
+	 	'hpps': gridSize,
+		'vpps': gridSize,
+		'height': gridSize * DataFile.resolution.map_size.y,
+		'width': gridSize * DataFile.resolution.map_size.x,
+		'offsetx': DataFile.resolution.map_origin.x * gridSize,
+		'offsety': DataFile.resolution.map_origin.y * gridSize,
+		'scale_factor': 1,
+		'drawings': sceneDrawings,
+		'tokens': sceneTokens,
+		'UVTTFile': 1 
+	};
+
+	return sceneData;
+}
 
 function load_data_into_current_scene(data){
 	var DataFile=null;
@@ -304,7 +407,7 @@ function load_data_into_current_scene(data){
 			},
 			left : `${DataFile.lights[i].position.x * gridSize}px`,
 			top : `${DataFile.lights[i].position.y * gridSize}px`,
-
+			size: gridSize/2,
 			auraislight: true	
 		};
 

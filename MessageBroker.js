@@ -1257,7 +1257,7 @@ class MessageBroker {
 		}
 }
 
-	handleScene(msg) {
+	async handleScene(msg) {
 		console.debug("handlescene", msg);
 
 		window.DRAWINGS = [];
@@ -1299,7 +1299,14 @@ class MessageBroker {
 		$(".aura-element-container-clip").remove();
 
 		let old_src = $("#scene_map").attr('src');
-		$("#scene_map").attr('src', data.map);
+		if(data.UVTTFile == 1){
+				let uvttMap = await get_map_from_uvtt_file(data.player_map);
+				$("#scene_map").attr('src', uvttMap); 
+		}
+		else{
+			$("#scene_map").attr('src', data.map);
+		}
+
 
 		if (data.fog_of_war == 1) {
 			window.FOG_OF_WAR = true;
@@ -1318,7 +1325,7 @@ class MessageBroker {
 		}
 
 
-		load_scenemap(data.map, data.is_video, data.width, data.height, function() {
+		load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 			console.group("load_scenemap callback")
 			if(!window.CURRENT_SCENE_DATA.scale_factor)
 				window.CURRENT_SCENE_DATA.scale_factor = 1;
@@ -1351,7 +1358,13 @@ class MessageBroker {
 					$("#scene_map").css('opacity', 1)
 					$("#darkness_layer").show();
 				});
-				$("#scene_map").attr("src",data.player_map);		
+				if(data.UVTTFile == 1){
+					let uvttMap = await get_map_from_uvtt_file(data.player_map);
+					$("#scene_map").attr('src', uvttMap); 
+				}
+				else{
+					$("#scene_map").attr('src', data.player_map);
+				}		
 			}
 			console.log("LOADING TOKENS!");
 

@@ -2625,7 +2625,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	let options = {
 		...default_options(),
 		...window.TOKEN_SETTINGS,
-		...tokenObject.options,
+		...tokenObject,
 		...pc,
 		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
 	};
