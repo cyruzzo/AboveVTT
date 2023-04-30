@@ -2782,33 +2782,55 @@ function determine_hidden_classname(tokenIds) {
 }
 
 function token_menu() {
-	let tokens = document.getElementsByClassName("token VTTToken");
-
-	for (let token of tokens) {
-		token.addEventListener("contextmenu", function(event) {
+	$("#tokens").on("contextmenu", ".VTTToken", function(event) {
 			event.preventDefault();
 			event.stopPropagation();
-			remove_token_options_popup();
-			if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
+
+			let existingPopup = document.getElementById("tokenOptionsPopup");
+			if (existingPopup) {
+				remove_token_options_popup();
+			}
+
+			let target = $(event.currentTarget);
+			if(target.children('.token-image').css('pointer-events') == 'none' && !window.DM)
 				return;
-			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+			if (target.hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 			} else {
 				token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
 			}
 
-			window.addEventListener('click', remove_token_options_popup, {once: true});
-		});
-	}
+			window.addEventListener('click', remove_token_options_popup);
+	});
 }
 
-function remove_token_options_popup() {
-	$("#tokenOptionsPopup").remove();
-	$('.context-menu-list').trigger('contextmenu:hide')
-	//tokenOptionsClickCloseDiv.remove();
-	$("#tokenOptionsContainer .sp-container").spectrum("destroy");
-	$("#tokenOptionsContainer .sp-container").remove();
-	$(`.context-menu-flyout`).remove(); 
+function remove_token_options_popup(event = null) {
+	if (!event) {
+		$("#tokenOptionsPopup").remove();
+		$('.context-menu-list').trigger('contextmenu:hide')
+		//tokenOptionsClickCloseDiv.remove();
+		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
+		$("#tokenOptionsContainer .sp-container").remove();
+		$(`.context-menu-flyout`).remove();
+		window.removeEventListener('click', remove_token_options_popup);
+	}
+
+	let target = event.target;
+	let clickedMenuInput = () => target.matches(".elevMenuInput");
+	let clickedMenuFlyoutButton = () => target.matches(".token-image-modal-footer-title");
+	let clickedConditions = () => !!target.parentNode.closest("#conditions-flyout");
+	let didNotClickAdjustmentsAndTokenImage = () => !!target.parentNode.closest("#adjustments-flyout") && !target.matches("#changeTokenImage");
+	let didNotClickLight = () => !!target.parentNode.closest("#light-flyout");
+	let didNotClickOptions = () => !!target.parentNode.closest("#options-flyout");
+	if (!(clickedMenuInput() || clickedMenuFlyoutButton() || clickedConditions() || didNotClickAdjustmentsAndTokenImage() || didNotClickLight() || didNotClickOptions())) {
+		$("#tokenOptionsPopup").remove();
+		$('.context-menu-list').trigger('contextmenu:hide')
+		//tokenOptionsClickCloseDiv.remove();
+		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
+		$("#tokenOptionsContainer .sp-container").remove();
+		$(`.context-menu-flyout`).remove();
+		window.removeEventListener('click', remove_token_options_popup);
+	}
 }
 
 function deselect_all_tokens() {

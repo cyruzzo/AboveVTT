@@ -134,7 +134,7 @@ async function start_above_vtt_for_dm() {
   $("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
   $("div.dice-toolbar").css({"bottom": "35px"});
   $("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
-  await init_ui();
+  init_ui();
 
   startup_step("Fetching scenes from AboveVTT servers");
   let activeScene = await fetch_sceneList_and_scenes();
@@ -167,7 +167,7 @@ async function start_above_vtt_for_players() {
   startup_step("Setting up UI");
   await lock_character_gamelog_open();
   init_character_page_sidebar();
-  await init_ui();
+  init_ui();
   reposition_player_sheet();
   hide_player_sheet();
   $("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet

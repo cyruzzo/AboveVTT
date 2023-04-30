@@ -77,7 +77,8 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 }
 
 function close_token_context_menu() {
-	$("#tokenOptionsClickCloseDiv").click();
+	if ($("#tokenOptionsClickCloseDiv").length)
+		$("#tokenOptionsClickCloseDiv").click();
 }
 
 /**
