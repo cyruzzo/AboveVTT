@@ -135,26 +135,85 @@ function validate_image_input(element){
 	} catch (_) {
 		display_not_valid("Image not found")
 	}
-	
+
 }
+
 function jsonCallback(data){ //hosted uvtt files
 	/* example call with uvtt wraped in jsonCallback() eg jsonCallback({'foo' : 'bar'})
 
 	$.ajax({
 		type: "GET",
 	    dataType: 'jsonp',
-		url: "https://drive.google.com/uc?id=1Ekb7DZZ2HGclT3XSwSf2ZwUNb_t94m7v",
+		url: "https://drive.google.com/uc?id=1OJ5kY5JYa7z3V3Te5ERVKLYwl0EnFCO7",
 		success: function(response){ console.log(response) },
 		error: function(response){ console.log(response) }
 	})
 
-	To Do:
-	Setup the callback to import a full scene rather than draw and add to the current scene.
-
-	On subsequent/player loads we just grab the map and not add all the walls, lights etc. 
-	Probably needs better file type detection. 
-	Will work more on it if we think this is the route to go.
 	*/
+	window.currentUvttSceneData = data;
+}
+
+async function getUvttData(url){
+	return $.ajax({
+      	type: "GET",
+	    dataType: 'jsonp',
+	    jsonCallback: 'jsonCallback',
+		url: url,
+    }).then(response => response.data);
+}
+
+function open_uvtt_file(){
+	$('#input_uvtt_file').trigger('click');
+}
+function import_uvtt_scene(){
+
+	var reader = new FileReader();
+	reader.onload = function() {
+		// DECODE
+		var DataFile=null;
+		try{
+			DataFile=$.parseJSON(reader.result);
+
+		}
+		catch{
+			console.error('UVTT FILE NOT SUPPORTED')
+		}
+		DataFile=$.parseJSON(reader.result);
+		load_data_into_current_scene(DataFile)
+	}
+	
+	reader.readAsText($("#input_uvtt_file").get(0).files[0]);
+}function open_uvtt_file(){
+	$('#input_uvtt_file').trigger('click');
+}
+
+async function import_uvtt_scene_to_new_scene(url){
+	//to do
+	try{
+		await getUvttData(url);
+	}
+	catch{
+
+	}
+
+	console.log(window.currentUvttSceneData.resolution) // test code to make sure correct file is loaded
+	//import full scene here
+}
+async function load_uvtt_scene_map(url){
+	//to do
+	try{
+		await getUvttData(url);
+	}
+	catch{
+
+	}
+
+	console.log(window.currentUvttSceneData.resolution)// test code to make sure correct file is loaded
+	//set scene map here
+}
+
+
+function load_data_into_current_scene(data){
 	var DataFile=null;
 	try{
 		DataFile=data;
@@ -263,124 +322,6 @@ function jsonCallback(data){ //hosted uvtt files
 	window.ScenesHandler.persist_current_scene();
 	did_update_scenes();
 	window.uvttMap = `data:image/png;base64,${data.image}`
-}
-function open_uvtt_file(){
-	$('#input_uvtt_file').trigger('click');
-}
-function import_uvtt_scene(){
-
-	var reader = new FileReader();
-	reader.onload = function() {
-		// DECODE
-		var DataFile=null;
-		try{
-			DataFile=$.parseJSON(reader.result);
-
-		}
-		catch{
-			console.error('UVTT FILE NOT SUPPORTED')
-		}
-		DataFile=$.parseJSON(reader.result);
-		let gridSize = DataFile.resolution.pixels_per_grid;
-		window.ScenesHandler.scene.hpps = gridSize;
-		window.ScenesHandler.scene.vpps = gridSize;
-		window.ScenesHandler.scene.height = gridSize * DataFile.resolution.map_size.y;
-		window.ScenesHandler.scene.width = gridSize * DataFile.resolution.map_size.x;
-		window.ScenesHandler.scene.offsetx = DataFile.resolution.map_origin.x * gridSize;
-		window.ScenesHandler.scene.offsety = DataFile.resolution.map_origin.y * gridSize;
-
-		
-		window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "wall");
-
-		for(let i = 0; i<DataFile.line_of_sight.length; i++){
-			for(let j = 1; j<DataFile.line_of_sight[i].length; j++){
-				window.DRAWINGS.push(['line',
-					'wall',
-					"rgba(0, 255, 0, 1)",
-					DataFile.line_of_sight[i][j-1].x*gridSize,
-					DataFile.line_of_sight[i][j-1].y*gridSize,
-					DataFile.line_of_sight[i][j].x*gridSize,
-					DataFile.line_of_sight[i][j].y*gridSize,
-					6,
-					window.CURRENT_SCENE_DATA.scale_factor,
-					])
-			}
-		}
-	
-
-
-		for(let i = 0; i<DataFile.portals.length; i++){
-			let color = (DataFile.portals[i].closed) ? 'rgba(255, 100, 255, 1)' : 'rgba(255, 100, 255, 0.5)';
-				window.DRAWINGS.push(['line',
-					'wall',
-					color,
-					DataFile.portals[i].bounds[0].x*gridSize,
-					DataFile.portals[i].bounds[0].y*gridSize,
-					DataFile.portals[i].bounds[1].x*gridSize,
-					DataFile.portals[i].bounds[1].y*gridSize,
-					12,
-					window.CURRENT_SCENE_DATA.scale_factor,
-					])
-		}
-
-		function hexToRGB(hex, alpha) {
-		    var r = parseInt(hex.slice(1, 3), 16),
-		        g = parseInt(hex.slice(3, 5), 16),
-		        b = parseInt(hex.slice(5, 7), 16);
-
-		    if (alpha) {
-		        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-		    } else {
-		        return "rgb(" + r + ", " + g + ", " + b + ")";
-		    }
-		}
-
-		for(let i = 0; i<DataFile.lights.length; i++){
-			
-		
-			let transparency = DataFile.lights[i].intensity/100;
-			let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
-
-
-			let lightColor = hexToRGB(clippedColor, transparency);
-			let options = {
-				imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
-				hidden : true,
-				tokenStyleSelect : 'definitelyNotAToken',
-				light1 : {
-					feet:  `${DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq)}`,
-					color: lightColor
-				},
-				light2 : {
-					feet: '0',
-					color: 'rgba(255, 255, 255, 0.5)'
-				},
-				vision : {
-					feet: '0',
-					color: 'rgba(255, 255, 255, 0.5)'
-				},
-				left : `${DataFile.lights[i].position.x * gridSize}px`,
-				top : `${DataFile.lights[i].position.y * gridSize}px`,
-
-				auraislight: true	
-			};
-
-			let lightToken = new Token(options);
-			
-			place_token_at_map_point(lightToken, DataFile.lights[i].position.x * gridSize, DataFile.lights[i].position.y * gridSize);
-
-		}
-		
-
-		sync_drawings();
-		window.CURRENT_SCENE_DATA = window.ScenesHandler.scene;
-		let index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
-		window.ScenesHandler.scenes[index] = window.ScenesHandler.scene;
-		window.ScenesHandler.persist_current_scene();
-		did_update_scenes();
-	}
-	
-	reader.readAsText($("#input_uvtt_file").get(0).files[0]);
 }
 
 function edit_scene_dialog(scene_id) {
