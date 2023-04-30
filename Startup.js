@@ -137,10 +137,17 @@ async function start_above_vtt_for_dm() {
   await init_ui();
 
   startup_step("Fetching scenes from AboveVTT servers");
-  await fetch_sceneList_and_scenes();
+  let activeScene = await fetch_sceneList_and_scenes();
 
   startup_step("Migrating scene folders");
   await migrate_scene_folders();
+
+  if (activeScene) {
+    window.MB.handleScene(activeScene);
+  }
+  if (window.PLAYER_SCENE_ID) {
+    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.PLAYER_SCENE_ID });
+  }
 
   did_update_scenes();
 
@@ -265,20 +272,22 @@ async function fetch_sceneList_and_scenes() {
   } else if (window.ScenesHandler.scenes.length > 0) {
     window.PLAYER_SCENE_ID = window.ScenesHandler.scenes[0].id;
     console.log("fetch_sceneList_and_scenes sending custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
-    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
+    // window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
   }
 
   console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
 
+  let activeScene = undefined;
   if (currentSceneData.dmscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.dmscene)) {
-    const activeScene = await AboveApi.getScene(currentSceneData.dmscene);
+    activeScene = await AboveApi.getScene(currentSceneData.dmscene);
     console.log("attempting to handle scene", activeScene);
-    window.MB.handleScene(activeScene);
+    // window.MB.handleScene(activeScene);
   } else if (window.ScenesHandler.scenes.length > 0) {
-    const activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
+    activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
     console.log("attempting to handle scene", activeScene);
     window.MB.handleScene(activeScene);
   }
 
   console.log("fetch_sceneList_and_scenes done");
+  return activeScene;
 }

@@ -1252,7 +1252,9 @@ function default_scene_data() {
 		snap: 0,
 		reveals: [[0, 0, 0, 0, 2, 0, 1]],
 		order: Date.now(),
-		darkness_filter: '0'
+		darkness_filter: '0',
+		itemType: ItemType.Scene,
+		parentId: RootFolder.Scenes.id
 	};
 }
 
@@ -1365,6 +1367,8 @@ function rebuild_scene_items_list() {
 
 async function migrate_scene_folders() {
 
+	console.log(`migrate_scene_folders MB`, window.MB)
+
 	// collect scenes that need to be migrated
 	const scenesNeedingMigration = window.ScenesHandler.scenes.filter(s => s.itemType === undefined); // scenes that have been migrated have an itemType
 	if (!scenesNeedingMigration) {
@@ -1434,17 +1438,28 @@ async function migrate_scene_folders() {
 		});
 
 	// now let's actually migrate everything
-	let scenesToMigrate = scenesNeedingMigration.concat(newFolders);
-
+	let itemsToMigrate = scenesNeedingMigration.concat(newFolders);
+	let foldersToMigrate = itemsToMigrate.filter(i => i.itemType === ItemType.Folder);
+	let scenesToMigrate = itemsToMigrate.filter(i => i.itemType === ItemType.Scene);
 	if (scenesToMigrate.length > 0) {
 		console.log("migrate_scene_folders is migrating scenes", scenesToMigrate);
-		await AboveApi.migrateScenes(window.gameId, scenesToMigrate);
+		for (const scene of scenesToMigrate) {
+			console.log('migrate_scene_folders is sending update_scene', scene)
+			// startup_step is not defined at this point?
+			$("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(`Migrating scene ${scene.title}`);
+			window.MB.sendMessage("custom/myVTT/update_scene", scene);
+			await async_sleep(1000); // give it a second before moving on, so we don't flood the message broker or server
+		}
+	}
+
+	if (foldersToMigrate.length > 0) {
+		console.log("migrate_scene_folders is migrating folders", foldersToMigrate);
+		await AboveApi.migrateScenes(window.gameId, foldersToMigrate);
+		$("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(`Uploading scene folders`);
 		await async_sleep(2000); // give the DB 2 seconds to persist the new data before fetching it again
 		window.ScenesHandler.scenes = await AboveApi.getSceneList();
-	} else {
-		// nothing to migrate
-		console.log("migrate_scene_folders does not need to migrate");
 	}
+
 }
 
 /**
