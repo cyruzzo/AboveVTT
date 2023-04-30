@@ -278,7 +278,6 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 	return sceneData;
 }
 
-
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 
@@ -1145,8 +1144,6 @@ function edit_scene_dialog(scene_id) {
 		form.find("#dm_map_row").hide()
 	}
 	
-
-
 	container.animate({
 		opacity: '1.0'
 	}, 1000);
