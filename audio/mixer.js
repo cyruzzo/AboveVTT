@@ -211,7 +211,7 @@ class Mixer extends EventTarget {
      * @param {MixerState} state
      */
     _write(state, setPlaylist = false) {
-        if(!setPlaylist){
+        if(!setPlaylist && window.DM){
             let selectedPlaylistID = this.selectedPlaylist();
             if(selectedPlaylistID != undefined){
                 state.playlists[selectedPlaylistID].channels = state.channels;
