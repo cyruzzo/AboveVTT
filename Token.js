@@ -1847,7 +1847,9 @@ class Token {
 				x: 0,
 				y: 0
 			};
-			let selectedOrigCoords = {};
+
+			let canvas = document.getElementById("raycastingCanvas");
+			let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 			tok.draggable({
 				handle: "img, [data-img]",
@@ -2022,19 +2024,9 @@ class Token {
 						self.stopAnimation();
 					}
 
-					selectedOrigCoords = {
-						left: $('#scene_map_container').width(),
-						top:$('#scene_map_container').height(),
-						bottom: 0,
-						right:0,
-					};
+
 					let selectedTokens = $('.tokenselected');
-					for(let i = 0; i < selectedTokens.length; i++){
-						selectedOrigCoords.left = (parseInt($(selectedTokens[i]).css('left')) < selectedOrigCoords.left) ? parseInt($(selectedTokens[i]).css('left')) : selectedOrigCoords.left;
-						selectedOrigCoords.top = (parseInt($(selectedTokens[i]).css('top')) < selectedOrigCoords.top) ? parseInt($(selectedTokens[i]).css('top')) : selectedOrigCoords.top;
-						selectedOrigCoords.bottom = (parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() > selectedOrigCoords.bottom) ? parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() : selectedOrigCoords.bottom;
-						selectedOrigCoords.right = (parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() > selectedOrigCoords.right) ? parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() : selectedOrigCoords.right;
-					}				
+			
 					
 					// for dragging behind iframes so tokens don't "jump" when you move past it
 					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
@@ -2166,15 +2158,13 @@ class Token {
 					};
 				
 				
-					let canvas = document.getElementById("raycastingCanvas");
-					let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 					if(!window.DM && window.playerTokenAuraIsLight){
 						const left = (tokenPosition.x + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
-							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
+							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, pagex: ${event.pageX}, clickx: ${click.x}, originalleft: ${original.left}, pageY: ${event.pageY}, clickY: ${click.y}, original.top: ${original.top}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
