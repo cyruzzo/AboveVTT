@@ -437,6 +437,10 @@ class Token {
 		delete window.TOKEN_OBJECTS[id];
 		if(!is_player_id(this.options.id))
 			delete window.all_token_objects[id];
+		if (id in window.JOURNAL.notes) {
+			delete window.JOURNAL.notes[id];
+			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+		}
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {
@@ -2802,9 +2806,9 @@ function deselect_all_tokens() {
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
 	else{
-   		$('#raycastingCanvas').css('opacity', '');
-   	}
-   		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+		$('#raycastingCanvas').css('opacity', '');
+	}
+	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
    	}
@@ -3504,7 +3508,7 @@ function copy_selected_tokens() {
 	}
 }
 
-function paste_selected_tokens() {
+function paste_selected_tokens(x, y) {
 	if (!window.DM) return;
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
@@ -3522,7 +3526,7 @@ function paste_selected_tokens() {
 		options.ct_show = undefined;
 		options.selected = true;
 		let center = center_of_view() 
-		let mapView = convert_point_from_view_to_map(center.x, center.y, false);
+		let mapView = convert_point_from_view_to_map(x, y, false);
 		options.top = `${mapView.y - Math.round(token.sizeHeight() / 2)}px`;
 		options.left = `${mapView.x - Math.round(token.sizeWidth() / 2) + token.sizeWidth()  * i + 5 - (token.sizeWidth() * ((window.TOKEN_PASTE_BUFFER.length/2)-1))}px`;
 		window.ScenesHandler.create_update_token(options);
@@ -3531,6 +3535,18 @@ function paste_selected_tokens() {
 			window.TOKEN_OBJECTS[id].selected = false;
 			window.TOKEN_OBJECTS[id].place_sync_persist();
 		}
+
+		if (id in window.JOURNAL.notes) {
+			window.JOURNAL.notes[newId] = structuredClone(window.JOURNAL.notes[id]);
+			let copiedNote = window.JOURNAL.notes[newId];
+			copiedNote.title = window.TOKEN_OBJECTS[id].options.name;
+			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+			window.MB.sendMessage('custom/myVTT/note',{
+				id: newId,
+				note:copiedNote
+			});
+		}
+
 		window.TOKEN_OBJECTS[newId].selected = true;
 		window.TOKEN_OBJECTS[newId].place_sync_persist();
 	}
