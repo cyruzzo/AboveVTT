@@ -160,8 +160,13 @@ class MessageBroker {
 
 		this.loadingAboveWS=true;
 		
-		this.abovews.onerror = function() {
+		this.abovews.onerror = function(errorEvent) {
 			self.loadingAboveWS = false;
+			try {
+				console.error("MB.onerror", errorEvent);
+			} catch (err) { // this is probably overkill, but just in case
+				console.error("MB.onerror failed to log event", err);
+			}
 		};
 
 		this.abovews.onmessage=this.onmessage;
@@ -366,7 +371,13 @@ class MessageBroker {
 			if (event.data == "ping")
 				return;
 
-			var msg = $.parseJSON(event.data);
+			var msg = {};
+			try {
+				msg = JSON.parse(event.data);
+			} catch (parsingError) {
+				console.error("MB.onmessage failed to handle", event, parsingError);
+				return;
+			}
 			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending")
 				return;
 			console.log(msg.eventType);
