@@ -147,6 +147,10 @@ async function getUvttData(url){
 		let fileid = parsed_url.split('=')[1];
 		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
 	}
+	else if(url.includes('dropbox.com')){		
+		let splitUrl = url.split('dropbox.com');
+		api_url = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+	}
 
 	await $.getJSON(api_url, function(data){
 		jsonData = data;
