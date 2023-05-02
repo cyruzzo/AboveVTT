@@ -2023,7 +2023,7 @@ function create_scene_root_container(fullPath, parentId) {
 	});
 
 	const UVTT = build_tutorial_import_list_item({
-		"title": "Import from Universal Virtual Tabletop Fle",
+		"title": "Import from Universal Virtual Tabletop File",
 		"description": "Build a scene using a UVTT file",
 		"category": "Scenes",
 		"player_map": "",
