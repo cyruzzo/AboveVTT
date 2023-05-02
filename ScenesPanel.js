@@ -158,12 +158,19 @@ async function getUvttData(url){
 	return jsonData;
 }
 
-async function import_uvtt_scene_to_new_scene(url){
+async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId){
 	//to do
 	let sceneData = await getUvttData(url);
 
 	console.log(sceneData.resolution) // test code to make sure correct file is loaded
-	let aboveSceneData = create_full_scene_from_uvtt(sceneData, url); // this sets up scene data for import
+	let aboveSceneData = {
+		...create_full_scene_from_uvtt(sceneData, url),
+		title: title,
+		folderPath: folderPath,
+		parentId: parentId
+	} // this sets up scene data for import
+	
+
 	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
 	window.ScenesHandler.scenes.push(aboveSceneData);
@@ -247,7 +254,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 				color: lightColor
 			},
 			light2 : {
-				feet: '0',
+				feet: '15',
 				color: 'rgba(255, 255, 255, 0.5)'
 			},
 			vision : {
@@ -1976,7 +1983,7 @@ function create_scene_root_container(fullPath, parentId) {
 		"category": "Source Books",
 		"player_map": "https://www.dndbeyond.com/avatars/thumbnails/30581/717/1000/1000/638053634473091554.jpeg",
 	}, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png", false);
-	ddb.css("width", "33%");
+	ddb.css("width", "25%");
 	sectionHtml.find("ul").append(ddb);
 	ddb.find(".listing-card__callout").hide();
 	ddb.find("a.listing-card__link").click(function (e) {
@@ -1991,7 +1998,7 @@ function create_scene_root_container(fullPath, parentId) {
 		"category": "Scenes",
 		"player_map": "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
 	}, "https://raw.githubusercontent.com/cyruzzo/AboveVTT/main/assets/avtt-logo.png", false);
-	free.css("width", "33%");
+	free.css("width", "25%");
 	sectionHtml.find("ul").append(free);
 	free.find(".listing-card__callout").hide();
 	free.find("a.listing-card__link").click(function (e) {
@@ -2006,7 +2013,7 @@ function create_scene_root_container(fullPath, parentId) {
 		"category": "Scenes",
 		"player_map": "",
 	}, "", false);
-	custom.css("width", "33%");
+	custom.css("width", "25%");
 	sectionHtml.find("ul").append(custom);
 	custom.find(".listing-card__callout").hide();
 	custom.find("a.listing-card__link").click(function (e) {
@@ -2015,6 +2022,22 @@ function create_scene_root_container(fullPath, parentId) {
 		create_scene_inside(parentId, fullPath);
 	});
 
+	const UVTT = build_tutorial_import_list_item({
+		"title": "Import from Universal Virtual Tabletop Fle",
+		"description": "Build a scene using a UVTT file",
+		"category": "Scenes",
+		"player_map": "",
+	}, "", false);
+	UVTT.css("width", "25%");
+	sectionHtml.find("ul").append(UVTT);
+	UVTT.find(".listing-card__callout").hide();
+	UVTT.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+		build_UVTT_import_window();
+	});
+
+
 	const recentlyVisited = build_recently_visited_scene_imports_section();
 	container.find(".no-results").before(recentlyVisited);
 
@@ -2022,7 +2045,76 @@ function create_scene_root_container(fullPath, parentId) {
 	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
 	$(`#sources-import-main-container`).attr("data-parent-id", parentId);
 }
+function build_UVTT_import_window() {
+	const container = build_UVTT_import_container();
+	add_scene_importer_back_button(container);
+	adjust_create_import_edit_container(container, true);
+}
+function build_UVTT_import_container(){
+	const container = $(`
+		<div class="container" style="height: 100%">
+		  <div id="content" class="main content-container" style="height: 100%;overflow: auto">
+		    <section class="primary-content" role="main">
 
+
+		      <div class="static-container">
+
+		        <div class="ddb-collapsible-filter j-collapsible__search">
+		        
+		        </div>
+
+					
+		        
+
+		        
+		      </div>
+		      <div id='uvtt instructions'>Note: Currently Dropbox and Google Drive public links are supported. In Google Drive this means making sure 'anyone with the link' can view it. Other hosting sites may work but due to the type of file many will not, discord for example does not work.</div>
+
+		    </section>
+		  </div>
+		</div>
+	`);
+	function form_row(name, title, placeholder='', inputOverride=undefined) {
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
+		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+	
+		let rowInput = $(`<input type="text" name=${name} placeholder='${placeholder}' style='width:100%' autocomplete="off" value=""}" />`);
+			 	
+		if(inputOverride){
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
+	
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
+	form.append(form_row('title', 'Scene Title'));
+	form.append(form_row('player_map', 'UVTT File link'));
+	const submitButton = $("<button type='button'>Save</button>");
+	submitButton.click(function() {
+		console.log("Saving scene changes")
+
+		const formData = get_edit_form_data();
+		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
+		container.append(build_combat_tracker_loading_indicator('One moment while we load the UVTT File'));
+		$("#scene_selector").removeAttr("disabled");
+		$("#scene_selector_toggle").click();
+		import_uvtt_scene_to_new_scene(formData['player_map'], formData['title'], folderPath, parentId)
+	});
+	form.append(submitButton);
+
+
+	const staticontainer = container.find('.static-container');
+	staticontainer.append(form);
+	return container;
+}
 function build_free_map_importer() {
 
 	const container = build_import_container();

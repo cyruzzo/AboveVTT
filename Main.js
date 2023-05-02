@@ -418,7 +418,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		$("#scene_map_container").toggleClass('video', false);
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
 
-		if(UVTTFile){
+		if(UVTTFile == 1){
 			url = await get_map_from_uvtt_file(url);
 			newmap.attr('src', url); 
 		}
