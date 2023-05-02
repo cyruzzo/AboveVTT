@@ -2094,8 +2094,8 @@ function build_UVTT_import_container(){
 	
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
-	form.append(form_row('title', 'Scene Title'));
-	form.append(form_row('player_map', 'UVTT File link'));
+	form.append(form_row('title', 'Scene Title', 'New Scene'));
+	form.append(form_row('player_map', 'UVTT File link', 'URL for .dd2vtt, .uvtt, .df2vtt or other universal vtt file.'));
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(function() {
 		console.log("Saving scene changes")
