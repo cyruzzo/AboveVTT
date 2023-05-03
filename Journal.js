@@ -504,6 +504,7 @@ class JournalManager{
 	
 	
 	display_note(id){
+		this.close_all_notes();
 		let self=this;
 		let note=$("<div class='note'></div>");
 		
@@ -611,11 +612,7 @@ class JournalManager{
 	}
 	
 	close_all_notes(){
-		$("textarea[data-note-id]").each(function(){
-			let taid=$(this).attr('id')
-			tinyMCE.get(taid).execCommand('mceSave');
-			$(this).closest(".note").dialog("close");
-		});
+		$(".ui-dialog-titlebar-close").click();
 	}
 
 	edit_note(id){

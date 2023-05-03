@@ -2783,24 +2783,24 @@ function determine_hidden_classname(tokenIds) {
 
 function token_menu() {
 	$("#tokens").on("contextmenu", ".VTTToken", function(event) {
-			event.preventDefault();
-			event.stopPropagation();
+		event.preventDefault();
+		event.stopPropagation();
 
-			let existingPopup = document.getElementById("tokenOptionsPopup");
-			if (existingPopup) {
-				remove_token_options_popup();
-			}
+		let existingPopup = document.getElementById("tokenOptionsPopup");
+		if (existingPopup) {
+			remove_token_options_popup();
+		}
 
-			let target = $(event.currentTarget);
-			if(target.children('.token-image').css('pointer-events') == 'none' && !window.DM)
-				return;
-			if (target.hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
-				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
-			} else {
-				token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
-			}
+		let target = $(event.currentTarget);
+		if(target.children('.token-image').css('pointer-events') == 'none' && !window.DM)
+			return;
+		if (target.hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+			token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
+		} else {
+			token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
+		}
 
-			window.addEventListener('click', remove_token_options_popup);
+		window.addEventListener('click', remove_token_options_popup);
 	});
 }
 
