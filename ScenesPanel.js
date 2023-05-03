@@ -135,7 +135,158 @@ function validate_image_input(element){
 	} catch (_) {
 		display_not_valid("Image not found")
 	}
+
+}
+
+
+async function getUvttData(url){
+	let api_url = url;
+	let jsonData = {};
+	if(url.startsWith('https://drive.google.com')){
+		let parsed_url = parse_img(url);
+		let fileid = parsed_url.split('=')[1];
+		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+	}
+	else if(url.includes('dropbox.com')){		
+		let splitUrl = url.split('dropbox.com');
+		api_url = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+	}
+
+	await $.getJSON(api_url, function(data){
+		jsonData = data;
+	});
+	return jsonData;
+}
+
+async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId){
+	//to do
+	let sceneData = await getUvttData(url);
+
+	console.log(sceneData.resolution) // test code to make sure correct file is loaded
+	let aboveSceneData = {
+		...create_full_scene_from_uvtt(sceneData, url),
+		title: title,
+		folderPath: folderPath,
+		parentId: parentId
+	} // this sets up scene data for import
 	
+
+	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
+
+	window.ScenesHandler.scenes.push(aboveSceneData);
+	did_update_scenes();
+	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+	$("#sources-import-main-container").remove();
+	expand_all_folders_up_to_id(aboveSceneData.id);
+}
+
+
+async function get_map_from_uvtt_file(url){
+	let sceneData = await getUvttData(url);
+
+	return `data:image/png;base64,${sceneData.image}`
+}
+
+function create_full_scene_from_uvtt(data, url){ //this sets up scene data for import
+
+	DataFile = data;
+	let gridSize = DataFile.resolution.pixels_per_grid;
+
+	let sceneDrawings = []
+	for(let i = 0; i<DataFile.line_of_sight.length; i++){
+		for(let j = 1; j<DataFile.line_of_sight[i].length; j++){
+			sceneDrawings.push(['line',
+				'wall',
+				"rgba(0, 255, 0, 1)",
+				DataFile.line_of_sight[i][j-1].x*gridSize,
+				DataFile.line_of_sight[i][j-1].y*gridSize,
+				DataFile.line_of_sight[i][j].x*gridSize,
+				DataFile.line_of_sight[i][j].y*gridSize,
+				6,
+				1,
+			])
+		}
+	}
+	for(let i = 0; i<DataFile.portals.length; i++){
+		let color = (DataFile.portals[i].closed) ? 'rgba(255, 100, 255, 1)' : 'rgba(255, 100, 255, 0.5)';
+		sceneDrawings.push(['line',
+			'wall',
+			color,
+			DataFile.portals[i].bounds[0].x*gridSize,
+			DataFile.portals[i].bounds[0].y*gridSize,
+			DataFile.portals[i].bounds[1].x*gridSize,
+			DataFile.portals[i].bounds[1].y*gridSize,
+			12,
+			1,
+		])
+	}
+
+
+	function hexToRGB(hex, alpha) {
+	    var r = parseInt(hex.slice(1, 3), 16),
+	        g = parseInt(hex.slice(3, 5), 16),
+	        b = parseInt(hex.slice(5, 7), 16);
+
+	    if (alpha) {
+	        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+	    } else {
+	        return "rgb(" + r + ", " + g + ", " + b + ")";
+	    }
+	}
+
+	let sceneTokens = {};
+	for(let i = 0; i<DataFile.lights.length; i++){
+
+	
+		let transparency = DataFile.lights[i].intensity/100;
+		let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
+
+
+		let lightColor = hexToRGB(clippedColor, transparency);
+		let options = {
+			...default_options(),
+			id: uuid(),
+			imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
+			hidden : true,
+			tokenStyleSelect : 'definitelyNotAToken',
+			light1 : {
+				feet:  `${DataFile.lights[i].range * parseInt(window.CURRENT_SCENE_DATA.fpsq)}`,
+				color: lightColor
+			},
+			light2 : {
+				feet: '15',
+				color: 'rgba(255, 255, 255, 0.5)'
+			},
+			vision : {
+				feet: '0',
+				color: 'rgba(255, 255, 255, 0.5)'
+			},
+			left : `${DataFile.lights[i].position.x * gridSize - gridSize/4}px`,
+			top : `${DataFile.lights[i].position.y * gridSize - gridSize/4}px`,
+			gridSquares: 0.5,
+			size: gridSize/2,
+			auraislight: true	
+		};
+		
+		sceneTokens[options.id] = options;
+	}
+
+ 	let sceneData = {
+ 		...default_scene_data(),
+ 		'player_map': url,
+	 	'hpps': gridSize,
+		'vpps': gridSize,
+		'height': gridSize * DataFile.resolution.map_size.y,
+		'width': gridSize * DataFile.resolution.map_size.x,
+		'offsetx': DataFile.resolution.map_origin.x * gridSize,
+		'offsety': DataFile.resolution.map_origin.y * gridSize,
+		'scale_factor': 1,
+		'drawings': sceneDrawings,
+		'tokens': sceneTokens,
+		'UVTTFile': 1 
+	};
+
+	return sceneData;
 }
 
 function edit_scene_dialog(scene_id) {
@@ -1832,7 +1983,7 @@ function create_scene_root_container(fullPath, parentId) {
 		"category": "Source Books",
 		"player_map": "https://www.dndbeyond.com/avatars/thumbnails/30581/717/1000/1000/638053634473091554.jpeg",
 	}, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png", false);
-	ddb.css("width", "33%");
+	ddb.css("width", "25%");
 	sectionHtml.find("ul").append(ddb);
 	ddb.find(".listing-card__callout").hide();
 	ddb.find("a.listing-card__link").click(function (e) {
@@ -1847,7 +1998,7 @@ function create_scene_root_container(fullPath, parentId) {
 		"category": "Scenes",
 		"player_map": "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
 	}, "https://raw.githubusercontent.com/cyruzzo/AboveVTT/main/assets/avtt-logo.png", false);
-	free.css("width", "33%");
+	free.css("width", "25%");
 	sectionHtml.find("ul").append(free);
 	free.find(".listing-card__callout").hide();
 	free.find("a.listing-card__link").click(function (e) {
@@ -1862,7 +2013,7 @@ function create_scene_root_container(fullPath, parentId) {
 		"category": "Scenes",
 		"player_map": "",
 	}, "", false);
-	custom.css("width", "33%");
+	custom.css("width", "25%");
 	sectionHtml.find("ul").append(custom);
 	custom.find(".listing-card__callout").hide();
 	custom.find("a.listing-card__link").click(function (e) {
@@ -1871,6 +2022,22 @@ function create_scene_root_container(fullPath, parentId) {
 		create_scene_inside(parentId, fullPath);
 	});
 
+	const UVTT = build_tutorial_import_list_item({
+		"title": "Import from Universal Virtual Tabletop File",
+		"description": "Build a scene using a UVTT file",
+		"category": "Scenes",
+		"player_map": "",
+	}, "", false);
+	UVTT.css("width", "25%");
+	sectionHtml.find("ul").append(UVTT);
+	UVTT.find(".listing-card__callout").hide();
+	UVTT.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+		build_UVTT_import_window();
+	});
+
+
 	const recentlyVisited = build_recently_visited_scene_imports_section();
 	container.find(".no-results").before(recentlyVisited);
 
@@ -1878,7 +2045,76 @@ function create_scene_root_container(fullPath, parentId) {
 	$(`#sources-import-main-container`).attr("data-folder-path", encode_full_path(fullPath));
 	$(`#sources-import-main-container`).attr("data-parent-id", parentId);
 }
+function build_UVTT_import_window() {
+	const container = build_UVTT_import_container();
+	add_scene_importer_back_button(container);
+	adjust_create_import_edit_container(container, true);
+}
+function build_UVTT_import_container(){
+	const container = $(`
+		<div class="container" style="height: 100%">
+		  <div id="content" class="main content-container" style="height: 100%;overflow: auto">
+		    <section class="primary-content" role="main">
 
+
+		      <div class="static-container">
+
+		        <div class="ddb-collapsible-filter j-collapsible__search">
+		        
+		        </div>
+
+					
+		        
+
+		        
+		      </div>
+		      <div id='uvtt instructions'>Note: Currently Dropbox and Google Drive public links are supported. In Google Drive this means making sure 'anyone with the link' can view it. Other hosting sites may work but due to the type of file many will not, discord for example does not work.</div>
+
+		    </section>
+		  </div>
+		</div>
+	`);
+	function form_row(name, title, placeholder='', inputOverride=undefined) {
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
+		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+	
+		let rowInput = $(`<input type="text" name=${name} placeholder='${placeholder}' style='width:100%' autocomplete="off" value=""}" />`);
+			 	
+		if(inputOverride){
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
+	
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
+	form.append(form_row('title', 'Scene Title', 'New Scene'));
+	form.append(form_row('player_map', 'UVTT File link', 'URL for .dd2vtt, .uvtt, .df2vtt or other universal vtt file.'));
+	const submitButton = $("<button type='button'>Save</button>");
+	submitButton.click(function() {
+		console.log("Saving scene changes")
+
+		const formData = get_edit_form_data();
+		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
+		container.append(build_combat_tracker_loading_indicator('One moment while we load the UVTT File'));
+		$("#scene_selector").removeAttr("disabled");
+		$("#scene_selector_toggle").click();
+		import_uvtt_scene_to_new_scene(formData['player_map'], formData['title'], folderPath, parentId)
+	});
+	form.append(submitButton);
+
+
+	const staticontainer = container.find('.static-container');
+	staticontainer.append(form);
+	return container;
+}
 function build_free_map_importer() {
 
 	const container = build_import_container();
