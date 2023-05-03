@@ -437,6 +437,10 @@ class Token {
 		delete window.TOKEN_OBJECTS[id];
 		if(!is_player_id(this.options.id))
 			delete window.all_token_objects[id];
+		if (id in window.JOURNAL.notes) {
+			delete window.JOURNAL.notes[id];
+			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+		}
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {
@@ -1845,7 +1849,9 @@ class Token {
 				x: 0,
 				y: 0
 			};
-			let selectedOrigCoords = {};
+
+			let canvas = document.getElementById("raycastingCanvas");
+			let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 			tok.draggable({
 				handle: "img, [data-img]",
@@ -2021,20 +2027,10 @@ class Token {
 						self.stopAnimation();
 					}
 
-					selectedOrigCoords = {
-						left: $('#scene_map_container').width(),
-						top:$('#scene_map_container').height(),
-						bottom: 0,
-						right:0,
-					};
-					let selectedTokens = $('.tokenselected');
-					for(let i = 0; i < selectedTokens.length; i++){
-						selectedOrigCoords.left = (parseInt($(selectedTokens[i]).css('left')) < selectedOrigCoords.left) ? parseInt($(selectedTokens[i]).css('left')) : selectedOrigCoords.left;
-						selectedOrigCoords.top = (parseInt($(selectedTokens[i]).css('top')) < selectedOrigCoords.top) ? parseInt($(selectedTokens[i]).css('top')) : selectedOrigCoords.top;
-						selectedOrigCoords.bottom = (parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() > selectedOrigCoords.bottom) ? parseInt($(selectedTokens[i]).css('top'))+$(selectedTokens[i]).height() : selectedOrigCoords.bottom;
-						selectedOrigCoords.right = (parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() > selectedOrigCoords.right) ? parseInt($(selectedTokens[i]).css('left'))+$(selectedTokens[i]).width() : selectedOrigCoords.right;
-					}
 
+					let selectedTokens = $('.tokenselected');
+			
+					
 					// for dragging behind iframes so tokens don't "jump" when you move past it
 					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
@@ -2163,17 +2159,15 @@ class Token {
 						left: tokenPosition.x,
 						top: tokenPosition.y
 					};
-
-
-					let canvas = document.getElementById("raycastingCanvas");
-					let ctx = canvas.getContext("2d", { willReadFrequently: true });
+				
+				
 
 					if(!window.DM && window.playerTokenAuraIsLight){
 						const left = (tokenPosition.x + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
-							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
+							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, pagex: ${event.pageX}, clickx: ${click.x}, originalleft: ${original.left}, pageY: ${event.pageY}, clickY: ${click.y}, original.top: ${original.top}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
@@ -2851,9 +2845,9 @@ function deselect_all_tokens() {
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
 	else{
-   		$('#raycastingCanvas').css('opacity', '');
-   	}
-   		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+		$('#raycastingCanvas').css('opacity', '');
+	}
+	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	if(window.DM){
    		$("[id^='light_']").css('visibility', "visible");
    	}
@@ -3553,7 +3547,7 @@ function copy_selected_tokens() {
 	}
 }
 
-function paste_selected_tokens() {
+function paste_selected_tokens(x, y) {
 	if (!window.DM) return;
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
@@ -3580,6 +3574,18 @@ function paste_selected_tokens() {
 			window.TOKEN_OBJECTS[id].selected = false;
 			window.TOKEN_OBJECTS[id].place_sync_persist();
 		}
+
+		if (id in window.JOURNAL.notes) {
+			window.JOURNAL.notes[newId] = structuredClone(window.JOURNAL.notes[id]);
+			let copiedNote = window.JOURNAL.notes[newId];
+			copiedNote.title = window.TOKEN_OBJECTS[id].options.name;
+			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+			window.MB.sendMessage('custom/myVTT/note',{
+				id: newId,
+				note:copiedNote
+			});
+		}
+
 		window.TOKEN_OBJECTS[newId].selected = true;
 		window.TOKEN_OBJECTS[newId].place_sync_persist();
 	}

@@ -192,7 +192,12 @@ class Mixer extends EventTarget {
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {
-                player.play();
+                player.addEventListener("canplaythrough", (event) => {
+                  /* the audio is now playable; play it if permissions allow */
+                    if(!(state.paused || channel.paused))
+                        player.play();
+                }, { once: true });
+                
             }
         });
 
@@ -211,7 +216,7 @@ class Mixer extends EventTarget {
      * @param {MixerState} state
      */
     _write(state, setPlaylist = false) {
-        if(!setPlaylist){
+        if(!setPlaylist && window.DM){
             let selectedPlaylistID = this.selectedPlaylist();
             if(selectedPlaylistID != undefined){
                 state.playlists[selectedPlaylistID].channels = state.channels;

@@ -5734,7 +5734,12 @@ input.max_hp[disabled]{
     }
 }
 
-
+.token img[src*='/assets/lightbulb.png'] {
+    background:#ffffff80;
+    border-radius:20px !important;
+    border:5px solid #000 !important;
+    opacity:0.5;
+}
 .body-rpgcampaign .ddb-campaigns-invite-primary {
     filter: blur(6px);
     transition: 0ms filter 200ms;

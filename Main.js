@@ -353,7 +353,7 @@ function remove_loading_overlay() {
  * @param {Number} height of the map
  * @param {Function} callback trigged after map is loaded
  */
-function load_scenemap(url, is_video = false, width = null, height = null, callback = null) {
+async function load_scenemap(url, is_video = false, width = null, height = null, UVTTFile = false, callback = null) {
 
 	$("#scene_map_container").toggleClass('map-loading', true);
 
@@ -417,7 +417,15 @@ function load_scenemap(url, is_video = false, width = null, height = null, callb
 	else if (is_video === "0" || !is_video) {
 		$("#scene_map_container").toggleClass('video', false);
 		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
-		newmap.attr("src", url);
+
+		if(UVTTFile == 1){
+			url = await get_map_from_uvtt_file(url);
+			newmap.attr('src', url); 
+		}
+		else{
+			newmap.attr("src", url);
+		}
+
 
 		newmap.on("error", map_load_error_cb);
 		if (width != null) {
