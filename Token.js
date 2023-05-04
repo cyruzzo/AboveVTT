@@ -472,18 +472,18 @@ class Token {
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
-	moveUp() {	
+	async moveUp() {	
 		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
-			this.move(newTop, this.options.left)	
+			await this.move(newTop, this.options.left)	
 		}
 	}
 	async moveDown() {
-		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);	
 		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
+		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
@@ -2241,12 +2241,7 @@ class Token {
 						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
 						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 
-						
-
-						
-					
-
-						for (let tok of $(".token.tokenselected")){
+						for (let tok of window.dragSelectedTokens){
 							let id = $(tok).attr("data-id");
 							if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
 
@@ -2802,24 +2797,24 @@ function remove_token_options_popup(event = null) {
 	if (!event) {
 		$("#tokenOptionsPopup").remove();
 		$('.context-menu-list').trigger('contextmenu:hide')
-		//tokenOptionsClickCloseDiv.remove();
 		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
 		$("#tokenOptionsContainer .sp-container").remove();
 		$(`.context-menu-flyout`).remove();
 		window.removeEventListener('click', remove_token_options_popup);
+		return;
 	}
 
 	let target = event.target;
-	let clickedMenuInput = () => target.matches(".elevMenuInput");
+	let clickedMenuInput = () => target.matches(".menu-input");
 	let clickedMenuFlyoutButton = () => target.matches(".token-image-modal-footer-title");
 	let clickedConditions = () => !!target.parentNode.closest("#conditions-flyout");
 	let didNotClickAdjustmentsAndTokenImage = () => !!target.parentNode.closest("#adjustments-flyout") && !target.matches("#changeTokenImage");
 	let didNotClickLight = () => !!target.parentNode.closest("#light-flyout");
 	let didNotClickOptions = () => !!target.parentNode.closest("#options-flyout");
-	if (!(clickedMenuInput() || clickedMenuFlyoutButton() || clickedConditions() || didNotClickAdjustmentsAndTokenImage() || didNotClickLight() || didNotClickOptions())) {
+	let didNotClickAura =() => !!target.parentNode.closest("#auras-flyout");
+	if (!(clickedMenuInput() || clickedMenuFlyoutButton() || clickedConditions() || didNotClickAdjustmentsAndTokenImage() || didNotClickLight() || didNotClickOptions() || didNotClickAura())) {
 		$("#tokenOptionsPopup").remove();
 		$('.context-menu-list').trigger('contextmenu:hide')
-		//tokenOptionsClickCloseDiv.remove();
 		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
 		$("#tokenOptionsContainer .sp-container").remove();
 		$(`.context-menu-flyout`).remove();
