@@ -588,26 +588,6 @@ function inject_join_exit_abovevtt_button() {
       window.location.href = `${window.location.origin}${window.location.pathname}?abovevtt=true`;
     }
   });
-
-
-  var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      console.log("test");
-      if (mutation.attributeName == "class") {
-        // here you can play with it now :)
-        console.log("test");
-        if (mutation.target.classList.contains('.ct-character-header-desktop__button')) {
-          let button = document.getElementById("avtt-character-join-button");
-          let color = $(".ct-character-header-desktop__button")[0].css("border-color") ?? "black";
-          button.css({
-            "color": "white",
-            "background": color
-          });
-        } 
-      }
-    });
-  });
-  observer.observe($(".ct-character-header-desktop__button").get(0), {attributes: true});
 }
 
 function inject_join_button_on_character_list_page() {
