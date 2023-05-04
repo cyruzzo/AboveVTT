@@ -559,32 +559,26 @@ function inject_join_exit_abovevtt_button() {
   if ($(".ddbc-campaign-summary").length === 0) return;     // we don't have any campaign data
   if ($("#avtt-character-join-button").length > 0) return;  // we already injected a button
 
+  $(".ct-character-sheet-desktop > .ct-character-header-desktop").css({display: "inline-flex"})
   const desktopPosition = $(".ct-character-sheet-desktop > .ct-character-header-desktop > .ct-character-header-desktop__group--gap");
   const tabletPosition = $(".ct-character-sheet-tablet .ct-main-tablet > .ct-main-tablet__campaign");
   const mobilePosition = $(".ct-character-sheet-mobile .ct-main-mobile > .ct-main-mobile__campaign");
 
   const buttonText = is_abovevtt_page() ? "Exit AboveVTT" : "Join AboveVTT";
   const button = $(`<a id="avtt-character-join-button" class="ct-character-header-desktop__button" style="float:right;"><img style="height:18px;" src="${window.EXTENSION_PATH + "assets/avtt-logo.png"}" title="AboveVTT Logo" />${buttonText}</a>`);
+  let color = $(".ddbc-campaign-summary").css("border-color") ?? "black";
+  button.css({
+    "color": "white",
+    "background": color
+  });
+  button.hover(() => button.css({"filter": "brightness(85%)"}), () => button.css({"filter": "brightness(100%)"}));
 
   if (desktopPosition.length > 0) {
     desktopPosition.append(button);
-    button.css({
-      "color": "white"
-    });
   } else if (tabletPosition.length > 0) {
     tabletPosition.prepend(button);
-    if (tabletPosition.hasClass("ct-main-tablet__campaign--dark-mode")) {
-      button.css({"color": "white", "background": "rgba(16,22,26,.859)"});
-    } else {
-      button.css({"background": "white"});
-    }
   } else if (mobilePosition.length > 0) {
     mobilePosition.prepend(button);
-    if (mobilePosition.hasClass("ct-main-mobile__campaign--dark-mode")) {
-      button.css({"color": "white", "background": "rgba(16,22,26,.859)"});
-    } else {
-      button.css({"background": "white"});
-    }
   }
 
   button.click(function(event) {
@@ -594,6 +588,26 @@ function inject_join_exit_abovevtt_button() {
       window.location.href = `${window.location.origin}${window.location.pathname}?abovevtt=true`;
     }
   });
+
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      console.log("test");
+      if (mutation.attributeName == "class") {
+        // here you can play with it now :)
+        console.log("test");
+        if (mutation.target.classList.contains('.ct-character-header-desktop__button')) {
+          let button = document.getElementById("avtt-character-join-button");
+          let color = $(".ct-character-header-desktop__button")[0].css("border-color") ?? "black";
+          button.css({
+            "color": "white",
+            "background": color
+          });
+        } 
+      }
+    });
+  });
+  observer.observe($(".ct-character-header-desktop__button").get(0), {attributes: true});
 }
 
 function inject_join_button_on_character_list_page() {
@@ -655,6 +669,13 @@ function observe_character_theme_change() {
             // console.log("theme_observer is calling find_and_set_player_color", mutation, node);
             const newColor = node.innerHTML.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0];
             if (newColor) {
+              let button = $("#avtt-character-join-button");
+              //$(".ct-character-sheet-desktop > .ct-character-header-desktop > .ct-character-header-desktop__group--gap");
+              let color = $(".ct-character-header-desktop__button").css("border-color") ?? "black";
+              button.css({
+                "color": "white",
+                "background": color
+              });
               update_window_color(newColor);
               if(window.PeerManager != undefined)
                 window.PeerManager.send(PeerEvent.preferencesChange());
