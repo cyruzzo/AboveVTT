@@ -449,8 +449,15 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		if (width != null) {
 			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
 		}
+		let videoVolume = 0.5;
+		if(window.DM){
+			videoVolume = $("#youtube_volume").val()/100 * $("#master-volume input").val();
+		}
+		else{
+			videoVolume = 0.5 * $("#master-volume input").val()
+		}
 
-		var newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop onloadstart="this.volume=${$("#youtube_volume").val()/100}" id="scene_map" src="${url}" />`);
+		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.5' onloadstart="this.volume=${videoVolume}" id="scene_map" src="${url}" />`);
 		newmap.on("loadeddata", callback);
 		newmap.on("error", map_load_error_cb);
 

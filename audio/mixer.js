@@ -484,6 +484,11 @@ class Mixer extends EventTarget {
         this.volume = e.target.value;
         if(window.YTPLAYER != undefined)
             window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+        if(window.DM)
+            $('video#scene_map')[0].volume = $("#youtube_volume").val()/100 * $("#master-volume input").val();
+        else{
+            $('video#scene_map')[0].volume = $('video#scene_map').attr('data-volume') * $("#master-volume input").val();
+        }
     }
 
     /**
