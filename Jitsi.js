@@ -50,9 +50,7 @@ function init_jitsi(tileLayout) {
 			SHOW_CHROME_EXTENSION_BANNER: false,
 			TOOLBAR_TIMEOUT: 500,
 		},
-
 	};
-
 	window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
 	init_layout(tileLayout);
 }
@@ -110,7 +108,7 @@ function init_jitsi_box() {
 				north_east
 			</span>
 		</button>
-		<div id="jitsi_container" class='filmstrip' style="width: 100%; height: 100%;"></div>
+		<div id="jitsi_container" style="width: 100%; height: 100%;"></div>
 		</div>`
 	);
 
