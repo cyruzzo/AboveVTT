@@ -1,24 +1,24 @@
 #largeVideoBackgroundContainer,
 .stage-participant-label,
 #largeVideoElementsContainer{
-	display:none !important;
+	display:none;
 }
 
-.filmstrip{
-	width: 100% !important;	
+#layout_wrapper .filmstrip{
+	width: 100%;	
     max-width: 100% !important;
 }
 body.desktop-browser,
 body.desktop-browser>div>div {
-    background: none !important;
+    background: none;
 }
-.dragHandleContainer{
-	display:none !important;
+#layout_wrapper .dragHandleContainer{
+	display:none ;
 }
-#filmstripLocalVideo {
-    position:relative !important;
-    display:inline !important;
-    width:unset !important;
+#layout_wrapper #filmstripLocalVideo {
+    position:relative;
+    display:inline;
+    width:unset;
 }
 .filmstrip__videos.remote-videos {
     position:relative !important;
@@ -30,38 +30,38 @@ body.desktop-browser>div>div {
 #localVideoWrapper .flipVideoX{
 	transform: none;
 }
-.filmstrip__videos.remote-videos div{
-    opacity: 1 !important;
+#layout_wrapper .filmstrip__videos.remote-videos div{
+    opacity: 1;
 }
-div#remoteVideos {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: center !important;
-    align-items: center !important;
-    align-content: center !important;
+#layout_wrapper div#remoteVideos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
-.videocontainer{
+#layout_wrapper .videocontainer{
 	position: relative !important;
 	height: 130px !important;
 	min-height: 130px !important;
 	min-width: 130px !important;
-	width: 200px !important;
+	width: 230px !important;
 	left: unset !important;
 	top: unset !important;
 }
-.filmstrip__videos.remote-videos>div{
-    position: relative !important;
+#layout_wrapper .filmstrip__videos.remote-videos>div{
+    position: relative;
 }
-.display-avatar-only{
+#layout_wrapper .display-avatar-only{
 	background: #000d !important;
 }
-div#largeVideoContainer {
+#layout_wrapper  div#largeVideoContainer {
     background: none !important;
 }
 
-.leftwatermark {
-    width:40px !important;
+#layout_wrapper .leftwatermark {
+    width:40px ;
     opacity:0.5;
-    top:-5px !important;
-    left:100px !important;
+    top:-5px ;
+    left:100px ;
 }

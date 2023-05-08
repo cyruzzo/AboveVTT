@@ -49,6 +49,7 @@ function init_jitsi(tileLayout) {
 			INITIAL_TOOLBAR_TIMEOUT: 500,
 			SHOW_CHROME_EXTENSION_BANNER: false,
 			TOOLBAR_TIMEOUT: 500,
+			bottom_layout: !tileLayout 
 		},
 	};
 	window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
@@ -173,6 +174,10 @@ function init_jitsi_box() {
 function jitsi_modal() {
 	$("#meet").css("position", "fixed").css("top", "100px").css("height", "80%").css("left", "50px").css("width", "75%");
 	window.tile_desired = true;
+	let currentSrc = $("#jitsi_container iframe")[0].src;
+	let url = new URL(currentSrc);
+	url.searchParams.set('bottom_layout', false);
+	$("#jitsi_container iframe")[0].src = url.href;
 	window.jitsiAPI.executeCommand(`setTileView`, true);
 	$("span", $("#jitsi_switch")).text("fullscreen_exit");
 	$("#jitsi_switch").attr("data-name", "Exit fullscreen (v)");
@@ -181,9 +186,14 @@ function jitsi_modal() {
 function jitsi_bottom() {
 	$("#meet").css("position", "fixed").css("top", "").css("height", "120px").css("left", "50px").css("width", "75%").css("bottom", "10px");
 	window.tile_desired = false;
+	let currentSrc = $("#jitsi_container iframe")[0].src;
+	let url = new URL(currentSrc);
+	url.searchParams.set('bottom_layout', true);
+	$("#jitsi_container iframe")[0].src = url.href;
 	window.jitsiAPI.executeCommand(`setTileView`, false);
 	$("span", $("#jitsi_switch")).text("fullscreen");
 	$("#jitsi_switch").attr("data-name", "Fullscreen (v)");
+
 }
 
 function jitsi_switch() {
