@@ -26,7 +26,12 @@
 			"js": [
 				"LoadCharacterPage.js"
 			]
-		}
+		},
+	   	{
+	      "matches":    ["https://8x8.vc/aboveVTT*"],
+	      "css":        ["jitsifix.css"],
+	      "all_frames": true
+	   	}
 	],
 	"permissions": [
 		"*://*.dndbeyond.com/*"
@@ -46,6 +51,7 @@
 		"jquery.contextMenu.css",
 		"jquery.csv.js",
 		"abovevtt.css",
+		"jitsifix.css",
 		"color-picker.min.css",
 		"magnific-popup.css",
 		"jquery-ui.min.js",

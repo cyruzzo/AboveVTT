@@ -41,6 +41,7 @@ function init_jitsi(tileLayout) {
 				"tileview",
 				"videoquality"
 			],
+			disableDeepLinking: true,
 		},
 		interfaceConfigOverwrite: {
 			DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
@@ -48,9 +49,10 @@ function init_jitsi(tileLayout) {
 			INITIAL_TOOLBAR_TIMEOUT: 500,
 			SHOW_CHROME_EXTENSION_BANNER: false,
 			TOOLBAR_TIMEOUT: 500,
-			VERTICAL_FILMSTRIP: false
 		},
+
 	};
+
 	window.jitsiAPI = new JitsiMeetExternalAPI(domain, options);
 	init_layout(tileLayout);
 }
@@ -108,7 +110,7 @@ function init_jitsi_box() {
 				north_east
 			</span>
 		</button>
-		<div id="jitsi_container" style="width: 100%; height: 100%;"></div>
+		<div id="jitsi_container" class='filmstrip' style="width: 100%; height: 100%;"></div>
 		</div>`
 	);
 
