@@ -995,7 +995,8 @@ class Token {
 	}
 
 	build_ac() {
-		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
+		let bar_height = this.sizeHeight() * 0.2;
+		bar_height = Math.ceil(bar_height);
 		let acValue = (this.options.armorClass != undefined) ? this.options.armorClass : this.options.ac
 		let ac = $("<div class='ac'/>");
 		ac.css("position", "absolute");

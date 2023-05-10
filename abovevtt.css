@@ -1655,6 +1655,10 @@ div#combat_button{
     position: absolute;
 }
 
+.token>.ac{
+    pointer-events: none;
+}
+
 .color-reminder {
     display: inline-block;
     width:85%;
