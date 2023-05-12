@@ -182,13 +182,15 @@ class Mixer extends EventTarget {
                 console.log("parse dropbox audio is converting", url, "to", parsed);
                 player.src = parsed;
             }
+            if(player.readyState != 4){
+                player.load();  
+            }
             // sync player
             player.volume = state.volume * channel.volume;
             player.loop = channel.loop;
             if(channel.currentTime != undefined){
                 player.currentTime = channel.currentTime;
             }
-            
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {
