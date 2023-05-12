@@ -718,9 +718,11 @@ class MessageBroker {
 				audio_changesettings(msg.data.channel,msg.data.volume,msg.data.loop);
 			}
 			if(msg.eventType=="custom/myVTT/changeyoutube"){
-				if(window.YTPLAYER.setVolume){
+				if(window.YTPLAYER?.setVolume){
 						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
 				}
+				$('video#scene_map')[0].volume = msg.data.volume/100*$("#master-volume input").val();
+				$('video#scene_map').attr('data-volume', msg.data.volume/100)
 			}
 
 			if (msg.eventType == "dice/roll/pending"){
