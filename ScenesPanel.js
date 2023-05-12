@@ -190,7 +190,14 @@ async function get_map_from_uvtt_file(url){
 function create_full_scene_from_uvtt(data, url){ //this sets up scene data for import
 
 	DataFile = data;
-	let gridSize = DataFile.resolution.pixels_per_grid;
+	/*
+	Even though grid size is provided in the UVTT we set it manually to prevent performance issues.
+	This should help in the majority of cases for now.
+	For larger maps we can consider dropping this to 25 and scaling up instead. 
+	Similar to the grid wizard function consider_upscaling() but inverse where we look at the total size to determine grid size and scale.
+	Possibly when DataFile.resolution.map_size is > 100 on one side (this would mean 5000px for 50px squares - we often start to get reports of performance issues around this size)
+	*/
+	let gridSize = 50; 
 
 	let sceneDrawings = []
 	for(let i = 0; i<DataFile.line_of_sight.length; i++){
@@ -223,7 +230,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 
 
 	function hexToRGB(hex, alpha) {
-	    var r = parseInt(hex.slice(1, 3), 16),
+	    let r = parseInt(hex.slice(1, 3), 16),
 	        g = parseInt(hex.slice(3, 5), 16),
 	        b = parseInt(hex.slice(5, 7), 16);
 
@@ -237,12 +244,14 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 	let sceneTokens = {};
 	for(let i = 0; i<DataFile.lights.length; i++){
 
-	
-		let transparency = DataFile.lights[i].intensity/100;
+		let hexTransparency = parseInt(DataFile.lights[i].color.substring(DataFile.lights[i].color.length - 2, DataFile.lights[i].color.length), 16)/255;
+		let intensity = (DataFile.lights[i].intensity <= 1) ? DataFile.lights[i].intensity : DataFile.lights[i].intensity/100;
 		let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
 
+		if(hexTransparency > 0)
+			intensity = intensity*hexTransparency;
 
-		let lightColor = hexToRGB(clippedColor, transparency);
+		let lightColor = hexToRGB(clippedColor, intensity);
 		let options = {
 			...default_options(),
 			id: uuid(),
@@ -254,7 +263,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 				color: lightColor
 			},
 			light2 : {
-				feet: '15',
+				feet: '0',
 				color: 'rgba(255, 255, 255, 0.5)'
 			},
 			vision : {
