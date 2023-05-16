@@ -2375,7 +2375,8 @@ function drawPolygon (
 	mouseX = null,
 	mouseY = null,
 	scale = window.CURRENT_SCENE_DATA.scale_factor,
-	replacefog = false
+	replacefog = false,
+	islight = false
 ) {
 	ctx.save();
 	ctx.beginPath();
@@ -2403,13 +2404,19 @@ function drawPolygon (
 	else if(fill){
 		ctx.fillStyle = style;
 		ctx.fill();
-		if(replacefog && window.DM)
-		{
-			ctx.strokeStyle = 'rgba(0,0,0,0.1)';
-			ctx.stroke();
+		if(!islight){
+			if(replacefog && window.DM)
+			{
+				ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+				ctx.stroke();
+			}
+			else if(replacefog){
+				ctx.strokeStyle = 'rgba(0,0,0,1)';
+				ctx.stroke();
+			}
 		}
-		else if(replacefog){
-			ctx.strokeStyle = 'rgba(0,0,0,1)';
+		else{
+			ctx.strokeStyle = style;
 			ctx.stroke();
 		}
 		
@@ -3102,9 +3109,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				clearPolygon(ctx, lightPolygon);
 			}
 			else{
-				if(!islight)
+				if(!islight){
 					clearPolygon(ctx, lightPolygon, undefined, true);
-				drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
+					drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
+				}
+				drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, undefined, true);
 			}
 		}
 	}
