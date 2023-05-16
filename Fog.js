@@ -429,6 +429,18 @@ function is_token_under_light_aura(tokenid){
 	}
 	return  false;
 }
+function is_token_under_light_overlay(tokenid){
+	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
+		
+
+	let pixeldata = $('#light_overlay')[0].getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+	
+	if(pixeldata.some(function(color, index) {return (index) % 4 == 0 && color > 0}))
+		return true;
+		
+	return  false;
+}
 
 function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
@@ -440,8 +452,13 @@ function check_single_token_visibility(id){
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-
-	if (!window.TOKEN_OBJECTS[id].options.revealInFog && ((playerTokenHasVision && window.CURRENT_SCENE_DATA.darkness_filter > 0 && !is_token_under_light_aura(id)) || is_token_under_fog(id))) {
+	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
+	
+	const inFog = is_token_under_fog(id); // this token is in fog
+	
+	const notInLight = (playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
+	
+	if (hideThisTokenInFogOrDarkness && ( inFog || notInLight )) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -511,12 +528,15 @@ async function do_check_token_visibility() {
 
 				return false;
 			};
-
-			if (!window.TOKEN_OBJECTS[id].options.revealInFog 
-				&& (pixelData[3] == 255
-					|| playerTokenHasVision 
-					&& ((window.CURRENT_SCENE_DATA.darkness_filter > 0  && !is_token_under_light_aura(id) && pixelData[2] == 0 && window.CURRENT_SCENE_DATA.darkness_filter > 0))
-						|| ((window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4) && !someFilter(ctx2)))) {
+			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
+			
+			const inFog = (pixelData[3] == 255); // this token is in fog
+			
+			const fullyOutOfLoS = (!someFilter(ctx2) && playerTokenHasVision); //somefilter checks for a white pixel - if one exists the token isn't out of line of sight. We also check the player token is using vision.
+			
+			const notInLight = (playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
+			
+			if (hideThisTokenInFogOrDarkness && ( inFog || fullyOutOfLoS || notInLight )) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
@@ -721,6 +741,7 @@ function reset_canvas() {
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
+	ctxScale('light_overlay');
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
@@ -921,18 +942,25 @@ function redraw_drawings() {
 	let canvas = document.getElementById("draw_overlay");
 	let ctx = canvas.getContext("2d");
 
+	let lightCanvas = document.getElementById("light_overlay");
+	let lightCtx = lightCanvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall")
 
 	for (var i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
-		const isFilled = fill === "filled"
+		let isFilled = fill === "filled" || fill === "light";
+		let targetCtx = ctx;
+		if(fill == "light"){
+			targetCtx = lightCtx;
+		}
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone"){
+		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
 			x = x / adjustedScale;
 			y = y / adjustedScale;
 			height = height / adjustedScale;
@@ -941,27 +969,30 @@ function redraw_drawings() {
 
 
 		if (shape == "eraser") {
-			ctx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		if (shape == "rect") {
-			drawRect(ctx,x, y, width, height, color, isFilled, lineWidth);
+			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "arc") {
 			const radius = width
-			drawCircle(ctx,x, y, radius, color, isFilled, lineWidth);
+			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
 		}
 		if (shape == "cone") {
-			drawCone(ctx, x, y, width, height, color, isFilled, lineWidth);
+			drawCone(targetCtx, x, y, width, height, color, isFilled, lineWidth);
 		}
 		if (shape == "line") {
-			drawLine(ctx,x, y, width, height, color, lineWidth, scale);		
+			drawLine(targetCtx,x, y, width, height, color, lineWidth, scale);		
 		}
 		if (shape == "polygon") {
-			drawPolygon(ctx,x, color, isFilled, lineWidth, undefined, undefined, scale);
+			drawPolygon(targetCtx,x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if (shape == "brush") {
-			drawBrushstroke(ctx, x, color, lineWidth, scale);
+			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
+		}
+		if(shape == "paint-bucket"){
+			bucketFill(targetCtx, x, y, color, 1, true);
 		}
 	}
 }
@@ -1009,7 +1040,7 @@ function redraw_light_walls(clear=true){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || ($('#fog_button').hasClass('button-enabled') && $('[data-shape="paint-bucket"]').hasClass('button-enabled')))) {
+		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 
@@ -1144,10 +1175,14 @@ function drawing_mousedown(e) {
 
 	// some functions don't have selectable features
 	// such as colour / filltype so set them here
-	if(window.DRAWFUNCTION === "reveal" || window.DRAWFUNCTION === "eraser"){
+	if(window.DRAWFUNCTION === "reveal"){
 		// semi transparent red
 		window.DRAWCOLOR = "rgba(255, 0, 0, 0.5)"
 		window.DRAWTYPE = "filled"
+	}
+	if(window.DRAWFUNCTION === "eraser"){
+		if(window.DRAWTYPE == "border")
+			window.DRAWTYPE = "filled"
 	}
 	else if (window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "draw_text"){
 		// semi transparent black
@@ -1298,7 +1333,7 @@ function drawing_mousemove(e) {
 	const canvas = document.getElementById("temp_overlay");
 	const context = canvas.getContext("2d");
 
-	const isFilled = window.DRAWTYPE === "filled"
+	const isFilled = window.DRAWTYPE === "filled" || window.DRAWTYPE === "light";
 	const mouseMoveFps = Math.round((1000.0 / 24.0));
 
 
@@ -1522,7 +1557,7 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
-		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door')){
+		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' )){
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
@@ -1558,6 +1593,8 @@ function drawing_mouseup(e) {
 				data[5] = null
 				data[6] = null
 				break;
+			case "paint-bucket":
+				data[0] = "paint-bucket"
 			default:
 				break;
 		}
@@ -2390,14 +2427,14 @@ function clear_temp_canvas(){
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0){
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
 	let fog = true;
 	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
-	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType); 
+	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType, true, islight); 
 	redraw_light_walls();
 }
 
@@ -2599,7 +2636,7 @@ function init_fog_menu(buttons){
 		</div>`)
 	fog_menu.css("position", "fixed");
 	fog_menu.css("top", "25px");
-	fog_menu.css("width", "75px");
+	fog_menu.css("width", "90px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
 	fog_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
@@ -2646,8 +2683,8 @@ function init_draw_menu(buttons){
 				data-shape='line' data-function="draw" data-unique-with="draw">
 					Line
 			</button>
-		</div>`);
-	draw_menu.append(
+			</div>`);
+		draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='brush' data-function="draw" data-unique-with="draw">
@@ -2661,8 +2698,16 @@ function init_draw_menu(buttons){
 				 	Polygon
 			</button>
 		</div>`);
-
-
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
+				 	Bucket Fill
+			</button>
+		</div>`);
+	draw_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
+		redraw_light_walls();
+	});
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
             id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#e66465'}'/>
@@ -2702,12 +2747,21 @@ function init_draw_menu(buttons){
 				FILLED
 			</button>
 		</div>`);
+	if(window.DM){
+		draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
+				data-key="fill" data-value='light' data-unique-with="fill">
+				LIGHT
+			</button>
+		</div>`);
+	}
 
 	draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
 	draw_menu.append(`
 		<div>
-			<input id='draw_line_width' data-required="draw_line_width" type='range' style='width:90%' min='1'
-			max='60' value='6' class='drawWidthSlider'>
+			<input id='draw_line_width' data-required="draw_line_width" type='number' style='width:90%' min='1'
+			value='6' class='drawWidthSlider'>
 		</div>`
 	);
 
@@ -2730,7 +2784,13 @@ function init_draw_menu(buttons){
 		draw_menu.append(
 			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
-					CLEAR
+					CLEAR DRAW
+				</button>
+			</div>`);
+		draw_menu.append(
+			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_light'>
+					CLEAR LIGHT
 				</button>
 			</div>`);
 	}
@@ -2740,7 +2800,16 @@ function init_draw_menu(buttons){
 		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
 		if (r === true) {
 			// keep only text
-			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall'));
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall') || d[1].includes('light') );
+			redraw_drawings()
+			sync_drawings()
+		}
+	});
+	draw_menu.find("#delete_light").click(function() {
+		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
+		if (r === true) {
+			// keep only text
+			window.DRAWINGS = window.DRAWINGS.filter(d => !d[1].includes('light') );
 			redraw_drawings()
 			sync_drawings()
 		}
@@ -2762,7 +2831,7 @@ function init_draw_menu(buttons){
 
 	draw_menu.css("position", "fixed");
 	draw_menu.css("top", "50px");
-	draw_menu.css("width", "75px");
+	draw_menu.css("width", "90px");
 	draw_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 
 	$("body").append(draw_menu);
@@ -2839,7 +2908,7 @@ function init_walls_menu(buttons){
 
 	wall_menu.css("position", "fixed");
 	wall_menu.css("top", "50px");
-	wall_menu.css("width", "75px");
+	wall_menu.css("width", "90px");
 	wall_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 
 	$("body").append(wall_menu);
@@ -2978,7 +3047,7 @@ function particleUpdate(x, y) {
 	window.PARTICLE.pos.y = y;
 };
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false) {
 	lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	let prevClosestWall = null;
     let prevClosestPoint = null;
@@ -3033,7 +3102,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				clearPolygon(ctx, lightPolygon);
 			}
 			else{
-				clearPolygon(ctx, lightPolygon, undefined, true);
+				if(!islight)
+					clearPolygon(ctx, lightPolygon, undefined, true);
 				drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 			}
 		}
@@ -3091,6 +3161,7 @@ function detectInLos(x, y) {
 }
 
 async function redraw_light(){
+	redraw_drawings();
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
 	let canvasHeight = canvas.height;

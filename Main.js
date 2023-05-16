@@ -2435,6 +2435,12 @@ function init_ui() {
 	drawOverlay.css("left", "0");
 	drawOverlay.css("z-index", "18");
 
+	const lightOverlay = $("<canvas id='light_overlay'></canvas>");
+	lightOverlay.css("position", "absolute");
+	lightOverlay.css("top", "0");
+	lightOverlay.css("left", "0");
+	lightOverlay.css("z-index", "20");
+
 	const textDiv = $("<div id='text_div'></div>");
 	textDiv.css("position", "absolute");
 	textDiv.css("top", "0");
@@ -2540,6 +2546,7 @@ function init_ui() {
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	lightContainer.append(rayCasting);
+	lightContainer.append(lightOverlay);
 	mapContainer.append(lightContainer);
 	mapContainer.append(darknessLayer);
 
