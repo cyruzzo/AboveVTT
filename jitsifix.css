@@ -49,6 +49,12 @@ body.desktop-browser>div>div {
 	left: unset !important;
 	top: unset !important;
 }
+.jss27{
+    background: none !important;
+}
+.stage-participant-label{
+    display:none !important;
+}
 #layout_wrapper .filmstrip__videos.remote-videos>div{
     position: relative;
 }
