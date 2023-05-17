@@ -1171,20 +1171,12 @@ function init_mouse_zoom() {
 /**
  * Start sending google analytics heartbeat events.
  */
-function ga_heartbeat() {
-	ga('AboveVTT.send', 'event', 'keepalive', 'keepalive');
-	setTimeout(ga_heartbeat, 5 * 60 * 1000);
-}
 
 /**
  * Creates and displays splash screen
  * Also starts Google Analytics heartbeat.
  */
 function init_splash() {
-	ga('create', 'UA-189308357-3', 'auto', 'AboveVTT');
-	ga('AboveVTT.send', 'pageview');
-
-	setTimeout(ga_heartbeat, 5 * 60 * 1000);
 
 	if (!get_avtt_setting_value("alwaysShowSplash") && localStorage.getItem("AboveVttLastUsedVersion") === window.AVTT_VERSION) {
 		// the user only wants to see the splash screen when there's a new version, and this is not a new version
