@@ -876,6 +876,10 @@ function redraw_fog() {
 				// REVEAL BUCKET				
 				bucketFill(ctx, adjustedArray[0], adjustedArray[1]);
 			}
+			if (d[4] == 5) {
+				//HIDE 3 POINT RECT
+				clear3PointRect(ctx, d[0], d[6]);		
+			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
@@ -905,6 +909,10 @@ function redraw_fog() {
 				}
 				// HIDE BUCKET
 				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1);			
+			}
+			if (d[4] == 5) {
+				//HIDE 3 POINT RECT
+				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);		
 			}
 		}
 	}
@@ -994,9 +1002,12 @@ function redraw_drawings() {
 		if(shape == "paint-bucket"){
 			bucketFill(targetCtx, x, y, color, 1, true);
 		}
+		if(shape == "3pointRect"){
+		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		}
 	}
 }
-function redraw_light_walls(clear=true){
+function  redraw_light_walls(clear=true){
 
 	let canvas = document.getElementById("temp_overlay");
 	let ctx = canvas.getContext("2d", {willReadFrequently: true});
@@ -1065,8 +1076,24 @@ function redraw_light_walls(clear=true){
 		if(color == "rgba(255, 100, 255, 0.5)"){
 			continue;
 		}
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
-		window.walls.push(drawnWall);
+		if(shape != "3pointRect"){
+			let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
+			window.walls.push(drawnWall);
+		}
+		else{
+			if($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled')){
+			 	draw3PointRect(ctx, x, color, false, lineWidth);
+			}	
+			x[3] = calculateFourthPoint(x[0], x[1], x[2]);
+			for(let point = 0; point<x.length-1; point++){
+				let drawnWall = new Boundary(new Vector(x[point].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[point].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(x[point+1].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[point+1].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor));
+				window.walls.push(drawnWall);
+			}
+			let drawnWall = new Boundary(new Vector(x[3].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[3].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(x[0].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[0].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor));
+			window.walls.push(drawnWall);
+			
+		}
+
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	if(darknessfilter == 0 && window.walls.length>4){
@@ -1280,7 +1307,35 @@ function drawing_mousedown(e) {
 			window.DRAWTYPE === "filled" ? 1 : window.LINEWIDTH,
 		);
 		drawClosingArea(context, window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0]);
-
+	}
+	else if (window.DRAWSHAPE === "3pointRect"){
+		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
+			if (window.BEGIN_MOUSEX.length == 2) {
+				window.BEGIN_MOUSEX.push(pointX);
+				window.BEGIN_MOUSEY.push(pointY);
+				save3PointRect(e);
+				if(window.DRAWFUNCTION == 'wall')
+					redraw_light_walls(false);
+				return;
+			} else {
+				window.BEGIN_MOUSEX.push(pointX);
+				window.BEGIN_MOUSEY.push(pointY);
+			}
+		} else {
+			window.BEGIN_MOUSEX = [pointX];
+			window.BEGIN_MOUSEY = [pointY];
+		}
+		clear_temp_canvas()
+		draw3PointRect(context,
+			joinPointsArray(
+				window.BEGIN_MOUSEX,
+				window.BEGIN_MOUSEY
+			),
+			window.DRAWCOLOR,
+			window.DRAWTYPE === "filled",
+			false,
+			window.DRAWTYPE === "filled" ? 1 : window.LINEWIDTH,
+		);
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		window.BEGIN_MOUSEX = e.clientX;
@@ -1468,26 +1523,44 @@ function drawing_mousemove(e) {
 			}
 		}
 	}
-	else {
-		if (window.DRAWSHAPE === "polygon" &&
-			window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
-			clear_temp_canvas()
-			WaypointManager.setCanvas(canvas);
-			WaypointManager.cancelFadeout()
-			drawPolygon( context,
-				joinPointsArray(
-					window.BEGIN_MOUSEX,
-					window.BEGIN_MOUSEY
-				),
-				window.DRAWCOLOR,
-				isFilled,
-				isFilled ? 1 : window.LINEWIDTH,
-				mouseX,
-				mouseY
-			);
-			drawClosingArea(context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
-		}
+	else if (window.DRAWSHAPE === "polygon" &&
+		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
+		clear_temp_canvas()
+		WaypointManager.setCanvas(canvas);
+		WaypointManager.cancelFadeout()
+		drawPolygon( context,
+			joinPointsArray(
+				window.BEGIN_MOUSEX,
+				window.BEGIN_MOUSEY
+			),
+			window.DRAWCOLOR,
+			isFilled,
+			isFilled ? 1 : window.LINEWIDTH,
+			mouseX,
+			mouseY
+		);
+		drawClosingArea(context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 	}
+	else if (window.DRAWSHAPE === "3pointRect" &&
+		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
+		clear_temp_canvas()
+		if(window.DRAWFUNCTION =='wall')
+			redraw_light_walls(false);
+		WaypointManager.setCanvas(canvas);
+		WaypointManager.cancelFadeout()
+		draw3PointRect( context,
+			joinPointsArray(
+				window.BEGIN_MOUSEX,
+				window.BEGIN_MOUSEY
+			),
+			window.DRAWCOLOR,
+			isFilled,
+			isFilled ? 1 : window.LINEWIDTH,
+			mouseX,
+			mouseY
+		);
+	}
+	
 }
 
 /**
@@ -1503,7 +1576,7 @@ function drawing_mouseup(e) {
 	if ($(".ui-draggable-dragging").length > 0){
 		return
 	}
-	if ((shiftHeld || e.button != 0) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door")){
+	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || e.button != 0) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door"))){
 		return;
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
@@ -2062,6 +2135,36 @@ function drawing_contextmenu(e) {
 			// cancel polygon if on last point
 			clear_temp_canvas();
 		}
+	}	
+	else if (window.DRAWSHAPE === "3pointRect") {
+		window.BEGIN_MOUSEX.pop();
+		window.BEGIN_MOUSEY.pop();
+		if(window.BEGIN_MOUSEX.length > 0){
+			var canvas = document.getElementById("temp_overlay");
+			var ctx = canvas.getContext("2d");
+
+			if (window.DRAWFUNCTION === "draw") {
+				redraw_drawings();
+			} else {
+				redraw_fog();
+			}
+			draw3PointRect(
+				ctx,
+				joinPointsArray(
+					window.BEGIN_MOUSEX,
+					window.BEGIN_MOUSEY
+				),
+				window.DRAWCOLOR,
+				window.DRAWTYPE === "fill",
+				window.LINEWIDTH,
+				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
+			);
+		}
+		else{
+			// cancel polygon if on last point
+			clear_temp_canvas();
+		}
 	}
 	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
@@ -2427,7 +2530,85 @@ function drawPolygon (
 	}
 
 }
+function draw3PointRect(
+	ctx,
+	points,
+	style = 'rgba(255,0,0,0.6)',
+	fill = true,
+	lineWidth,
+	mouseX = null,
+	mouseY = null,
+	scale = window.CURRENT_SCENE_DATA.scale_factor,
+	replacefog = false,
+	islight = false
+) {
+	ctx.save();
+	ctx.beginPath();
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.lineWidth = lineWidth;
+		
+	points.forEach((vertice) => {
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	})
 
+	if (mouseX !== null && mouseY !== null) {
+		ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	}
+
+	
+	// draw a line between first 2 points
+	if (points.length < 2){
+		ctx.strokeStyle = style;
+		ctx.stroke();
+	}
+	// any more we use the filltype to decide how the polygon is drawn
+	else if(fill){
+		if(!points[2]){
+			points[2] = {x: mouseX, y: mouseY}
+			ctx.lineTo(points[2].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[2].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		}
+
+		let point4 = calculateFourthPoint(points[0], points[1], points[2]);
+
+		ctx.lineTo(point4.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, point4.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.closePath();
+		ctx.fillStyle = style;
+		ctx.fill();
+		if(!islight){
+			if(replacefog && window.DM)
+			{
+				ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+				ctx.stroke();
+			}
+			else if(replacefog){
+				ctx.strokeStyle = 'rgba(0,0,0,1)';
+				ctx.stroke();
+			}
+		}
+
+		
+	}
+	else{
+		if(!points[2]){
+			points[2] = {x: mouseX, y: mouseY}
+			ctx.lineTo(points[2].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[2].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		}
+		let point4 = calculateFourthPoint(points[0], points[1], points[2]);
+		ctx.lineTo(point4.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, point4.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.closePath();
+		ctx.strokeStyle = style;
+		ctx.stroke();
+	}
+}
+function calculateFourthPoint(point1, point2, point3) {
+    var length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+    var angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
+    var dx = Math.cos(angle) * length;
+    var dy = Math.sin(angle) * length;
+    return { x: point3.x - dx, y: point3.y - dy };
+}
 function clear_temp_canvas(){
 	const canvas = document.getElementById("temp_overlay");
 	const context = canvas.getContext("2d");
@@ -2445,7 +2626,63 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 	redraw_light_walls();
 }
 
+function save3PointRect(e){
+	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
+	let data;
+	if (window.DRAWFUNCTION === "hide" || window.DRAWFUNCTION === "reveal"){
+		data = [
+			polygonPoints,
+			null,
+			null,
+			null,
+			5,
+			fog_type_to_int(), 
+			window.CURRENT_SCENE_DATA.scale_factor
+		];
+		window.REVEALED.push(data);
+		redraw_fog();
+	}
+	else if(window.DRAWFUNCTION === "wall"){
 
+		data = ['3pointRect',
+			"wall",
+			window.DRAWCOLOR,
+			polygonPoints,
+			null,
+			null,
+			null,
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor];
+		window.DRAWINGS.push(data);
+		window.MOUSEDOWN = false;
+		redraw_light_walls();
+		redraw_light();
+	}
+	else{
+		data = [
+			'3pointRect',
+			window.DRAWTYPE,
+			window.DRAWCOLOR,
+			polygonPoints,
+			null,
+			null,
+			null,
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor
+		];
+		window.DRAWINGS.push(data);
+		redraw_drawings();
+	}
+	clear_temp_canvas()
+
+	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "wall") {
+		sync_drawings();
+	} else {
+		sync_fog();
+	}
+	window.BEGIN_MOUSEX = [];
+	window.BEGIN_MOUSEY = [];
+}
 function savePolygon(e) {
 	const polygonPoints = joinPointsArray(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
 	let data;
@@ -2498,7 +2735,29 @@ function isPointWithinDistance(points1, points2) {
 	return Math.abs(points1.x - points2.x) <= POLYGON_CLOSE_DISTANCE
 			&& Math.abs(points1.y - points2.y) <= POLYGON_CLOSE_DISTANCE;
 }
+function clear3PointRect (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor, layeredFog = false) {
 
+	/*
+	 * globalCompositeOperation does not accept alpha transparency,
+	 * need to set it to opaque color.
+	 */
+	ctx.fillStyle = "#000";
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.beginPath();
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+	ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	points.forEach((vertice) => {
+		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	})
+	let point4 = calculateFourthPoint(points[0], points[1], points[2]);
+	ctx.lineTo(point4.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, point4.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	ctx.closePath();
+	ctx.fill();
+	if(!layeredFog)
+		ctx.stroke();
+	ctx.restore();
+	ctx.globalCompositeOperation = "source-over";
+}
 function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_factor, layeredFog = false) {
 
 	/*
@@ -2559,6 +2818,13 @@ function init_fog_menu(buttons){
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_square_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='3pointRect' data-function="reveal" data-unique-with="fog" >
+					3p Rect
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_circle_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='arc' data-function="reveal" data-unique-with="fog" >
 					Circle
@@ -2598,6 +2864,13 @@ function init_fog_menu(buttons){
 			<button id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='rect' data-function="hide" data-unique-with="fog" >
 					Square
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='fog_square_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
+				data-shape='3pointRect' data-function="hide" data-unique-with="fog" >
+					3p Rect
 			</button>
 		</div>`);
 	fog_menu.append(
@@ -2668,6 +2941,13 @@ function init_draw_menu(buttons){
 			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
 				data-shape="rect" data-function="draw" data-unique-with="draw">
 					Rectangle
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape="3pointRect" data-function="draw" data-unique-with="draw">
+					3p Rect
 			</button>
 		</div>`);
 	draw_menu.append(
@@ -2863,6 +3143,13 @@ function init_walls_menu(buttons){
 			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall" data-unique-with="draw">
 					Rect Wall
+			</button>
+		</div>`);
+		wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='3pointRect' data-function="wall" data-unique-with="draw">
+					3p Rect
 			</button>
 		</div>`);
 		wall_menu.append(
