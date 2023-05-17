@@ -436,8 +436,11 @@ function is_token_under_light_overlay(tokenid){
 
 	let pixeldata = $('#light_overlay')[0].getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 	
-	if(pixeldata.some(function(color, index) {return (index) % 4 == 0 && color > 0}))
-		return true;
+	for(let i=0; i<pixeldata.length; i+=4){
+		if(pixeldata[i]>0 || pixeldata[i+1]>0 || pixeldata[i+2]>0)
+			return true;
+	}
+		
 		
 	return  false;
 }
