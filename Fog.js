@@ -1079,24 +1079,8 @@ function  redraw_light_walls(clear=true){
 		if(color == "rgba(255, 100, 255, 0.5)"){
 			continue;
 		}
-		if(shape != "3pointRect"){
-			let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
-			window.walls.push(drawnWall);
-		}
-		else{
-			if($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled')){
-			 	draw3PointRect(ctx, x, color, false, lineWidth);
-			}	
-			x[3] = calculateFourthPoint(x[0], x[1], x[2]);
-			for(let point = 0; point<x.length-1; point++){
-				let drawnWall = new Boundary(new Vector(x[point].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[point].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(x[point+1].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[point+1].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor));
-				window.walls.push(drawnWall);
-			}
-			let drawnWall = new Boundary(new Vector(x[3].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[3].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(x[0].x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, x[0].y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor));
-			window.walls.push(drawnWall);
-			
-		}
-
+		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
+		window.walls.push(drawnWall);
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	if(!parseInt(darknessfilter) && window.walls.length>4){
@@ -2647,16 +2631,32 @@ function save3PointRect(e){
 	}
 	else if(window.DRAWFUNCTION === "wall"){
 
-		data = ['3pointRect',
-			"wall",
-			window.DRAWCOLOR,
-			polygonPoints,
-			null,
-			null,
-			null,
-			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor];
-		window.DRAWINGS.push(data);
+		polygonPoints[3] = calculateFourthPoint(polygonPoints[0], polygonPoints[1], polygonPoints[2]);
+		for(let point = 0; point<polygonPoints.length; point++){
+			if(point<3){
+				data = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				polygonPoints[point].x,
+				polygonPoints[point].y,
+				polygonPoints[point+1].x,
+				polygonPoints[point+1].y,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			}
+			else{
+			data = ['line',
+				"wall",
+				window.DRAWCOLOR,
+				polygonPoints[point].x,
+				polygonPoints[point].y,
+				polygonPoints[0].x,
+				polygonPoints[0].y,
+				window.LINEWIDTH,
+				window.CURRENT_SCENE_DATA.scale_factor];
+			}
+			window.DRAWINGS.push(data);
+		}
 		window.MOUSEDOWN = false;
 		redraw_light_walls();
 		redraw_light();
