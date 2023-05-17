@@ -878,7 +878,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT
-				clear3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);		
+				clear3PointRect(ctx, d[0], d[6]);		
 			}
 		}
 		if (d[5] == 1) { // HIDE
@@ -2750,6 +2750,7 @@ function clear3PointRect (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_f
 		ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	})
 	let point4 = calculateFourthPoint(points[0], points[1], points[2]);
+	ctx.lineTo(point4.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, point4.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.closePath();
 	ctx.fill();
 	if(!layeredFog)
