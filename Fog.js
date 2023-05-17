@@ -741,9 +741,12 @@ function reset_canvas() {
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
-	ctxScale('light_overlay');
 
 	let canvas = document.getElementById('raycastingCanvas');
+	canvas.width = $("#scene_map").width();
+  	canvas.height = $("#scene_map").height();
+
+  	canvas = document.getElementById('light_overlay');
 	canvas.width = $("#scene_map").width();
   	canvas.height = $("#scene_map").height();
 
@@ -765,7 +768,7 @@ function reset_canvas() {
  	else if(window.DM){
  		$('#raycastingCanvas').css('opacity', '');
  	}
- 	if(darknessfilter == 0 && window.walls.length>4){
+ 	if(!parseInt(darknessfilter) && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
  			'background':  '#FFF',
@@ -1096,7 +1099,7 @@ function  redraw_light_walls(clear=true){
 
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
- 	if(darknessfilter == 0 && window.walls.length>4){
+ 	if(!parseInt(darknessfilter) && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
  			'background': '#FFF',
@@ -3517,7 +3520,7 @@ async function redraw_light(){
 		}	  	
 	}
 	else {
-  		if(window.CURRENT_SCENE_DATA.darkness_filter == 0 && window.walls.length>4){
+  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
 		 	$('#light_container').css({
 	 			'opacity': '0.3'
 		 	});
@@ -3586,7 +3589,7 @@ async function redraw_light(){
 				tokenVisionAura.css('visibility', 'visible'); 
 			}
 
-			clipped_light(auraId, lightPolygon);
+			clipped_light(auraId, lightPolygon, playerTokenId);
 			
 			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
 				
@@ -3609,14 +3612,14 @@ async function redraw_light(){
 }
 
 
-function clipped_light(auraId, maskPolygon){
+function clipped_light(auraId, maskPolygon, playerTokenId){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM)
 		return;
 	
 	let lightRadius =(parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)+parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
 	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
-	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID)) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined)) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	if(window.lightAuraClipPolygon[auraId] != undefined){
