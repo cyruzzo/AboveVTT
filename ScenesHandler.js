@@ -161,7 +161,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
-		load_scenemap(map_url, map_is_video, null, null, function() {
+		load_scenemap(map_url, map_is_video, null, null, window.CURRENT_SCENE_DATA.UVTTFile, function() {
 			window.CURRENT_SCENE_DATA.scale_factor = 1;
 			scene.scale_factor = 1;
 			var owidth = $("#scene_map").width();
