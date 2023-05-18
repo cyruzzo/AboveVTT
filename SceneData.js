@@ -53945,12 +53945,450 @@ var DDB_EXTRAS =
 	    ],
 	    "fpsq": "5",
 	    "tokens": {
+	        "0d48fcf2-a5fd-4dbf-bf7e-8169dfb69b60": {
+	            "itemType": "builtinToken",
+	            "color": "#800000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/04",
+	            "top": "1801px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "0d48fcf2-a5fd-4dbf-bf7e-8169dfb69b60",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_04",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "2752px",
+	            "name": "E4. Dusty Foyer",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "1b1679e6-4d59-4573-8309-724b9604867a": {
+	            "itemType": "builtinToken",
+	            "color": "#000020",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Letters",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Letters/O",
+	            "top": "1926.67px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "1b1679e6-4d59-4573-8309-724b9604867a",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/O.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/O.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Letters_O",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "617.533px",
+	            "name": "O",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "21a9a7e6-b42d-46bb-a3d8-c456cffe2450": {
+	            "itemType": "builtinToken",
+	            "color": "#C00000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/08",
+	            "top": "1053.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "21a9a7e6-b42d-46bb-a3d8-c456cffe2450",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_08",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "3856.27px",
+	            "name": "E8. Priests’ Bedchamber",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "2eb2502c-b7fa-4ac3-a309-e2313ab31319": {
+	            "itemType": "builtinToken",
+	            "color": "#00E5FF",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/05",
+	            "top": "1804px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "2eb2502c-b7fa-4ac3-a309-e2313ab31319",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_05",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "3196px",
+	            "name": "E5. Temple",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "39f06d2b-3f3b-4000-9f5e-5a9fb598f623": {
+	            "itemType": "builtinToken",
+	            "color": "#E0E0E0",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/03",
+	            "top": "1752px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "39f06d2b-3f3b-4000-9f5e-5a9fb598f623",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_03",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "2368.2px",
+	            "name": "E3. Courtyard and Temple Facade",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": true,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "5067dad7-06da-4cc6-91c1-31a5b0d8f4b4": {
+	            "itemType": "builtinToken",
+	            "color": "#A0A000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/11",
+	            "top": "1926.67px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "5067dad7-06da-4cc6-91c1-31a5b0d8f4b4",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/11.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/11.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_11",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "4906.67px",
+	            "name": "E11. Hall of Greed",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "52487438-635a-4afb-bcc1-67946f1a75d3": {
+	            "itemType": "builtinToken",
+	            "color": "#5F0404",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Letters",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Letters/F",
+	            "top": "1801.18px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "52487438-635a-4afb-bcc1-67946f1a75d3",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/F.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/F.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Letters_F",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "2576.48px",
+	            "name": "Temple Features",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": true,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
 	        "53e65a75-9a70-421a-aa4d-ea8e5e0165ac": {
 	            "auraVisible": false,
+	            "sizeId": 5,
+	            "itemType": "monster",
 	            "disablestat": false,
+	            "color": "#1E50DC",
+	            "hidestat": false,
 	            "gridSquares": 2,
 	            "custom_conditions": [],
 	            "hp": "45",
+	            "max_hp": "45",
+	            "legacyaspectratio": true,
+	            "restrictPlayerMove": false,
+	            "listItemPath": "/Monsters/Ochre Jelly",
+	            "top": "2014px",
+	            "hidehpbar": false,
+	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
 	                "feet": "1000"
@@ -53968,13 +54406,17 @@ var DDB_EXTRAS =
 	                "color": "rgba(255, 255, 0, 0.1)",
 	                "feet": "0"
 	            },
+	            "stat": 16967,
 	            "aura1": {
 	                "color": "rgba(255, 129, 0, 0.3)",
 	                "feet": "0"
 	            },
 	            "tokenStyleSelect": "circle",
 	            "revealname": false,
+	            "lockRestrictDrop": "none",
+	            "player_owned": false,
 	            "tokenBaseStyleSelect": "default",
+	            "monster": 16967,
 	            "itemId": 16967,
 	            "square": false,
 	            "vision": {
@@ -53984,30 +54426,76 @@ var DDB_EXTRAS =
 	            "healthauratype": "aura",
 	            "size": 175.06666666666666,
 	            "left": "3156px",
+	            "auraOwned": false,
 	            "name": "Ochre Jelly 3",
+	            "zindexdiff": 9,
 	            "defaultmaxhptype": "average",
 	            "disableborder": false,
 	            "auraislight": true,
+	            "disableaura": false,
 	            "conditions": [],
 	            "enablepercenthpbar": false,
-	            "sizeId": 5,
-	            "itemType": "monster",
-	            "color": "#1E50DC",
+	            "revealInFog": false
+	        },
+	        "632dd8fc-eb09-458e-ac24-e35c3349c1a9": {
+	            "itemType": "builtinToken",
+	            "color": "#808080",
+	            "disablestat": true,
 	            "hidestat": false,
-	            "max_hp": "45",
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
 	            "legacyaspectratio": true,
-	            "restrictPlayerMove": false,
-	            "listItemPath": "/Monsters/Ochre Jelly",
-	            "top": "2014px",
+	            "folderPath": "/Letters",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Letters/T",
+	            "top": "2538px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
-	            "stat": 16967,
-	            "lockRestrictDrop": "none",
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "632dd8fc-eb09-458e-ac24-e35c3349c1a9",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/T.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/T.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
 	            "player_owned": false,
-	            "monster": 16967,
-	            "auraOwned": false,
-	            "zindexdiff": 9,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Letters_T",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "880.133px",
+	            "name": "Arrival",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
 	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "6de4c70d-895f-4d56-b326-7ce1951a3f14": {
@@ -54077,18 +54565,90 @@ var DDB_EXTRAS =
 	            "disableaura": false,
 	            "revealInFog": false
 	        },
+	        "6e28cddc-6130-4c23-b85d-cc0a4dbb9a63": {
+	            "itemType": "builtinToken",
+	            "color": "#0000C0",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/06",
+	            "top": "2538px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "6e28cddc-6130-4c23-b85d-cc0a4dbb9a63",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_06",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "3768.73px",
+	            "name": "E6. Partially Collapsed Room",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
 	        "7f031304-0b89-41f4-bcad-f41017b40363": {
 	            "auraVisible": false,
+	            "sizeId": 4,
+	            "itemType": "monster",
 	            "disablestat": true,
+	            "color": "#600060",
+	            "hidestat": false,
 	            "gridSquares": 1,
 	            "custom_conditions": [],
 	            "hp": 4,
+	            "max_hp": 4,
+	            "legacyaspectratio": true,
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/Monsters/Commoner",
+	            "top": "2014px",
+	            "hidehpbar": false,
+	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
 	                "feet": "1000"
 	            },
 	            "id": "7f031304-0b89-41f4-bcad-f41017b40363",
-	            "imgsrc": "https://www.pngitem.com/pimgs/m/189-1893722_d-d-female-dwarf-hd-png-download.png",
+	            "imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 	            "locked": false,
 	            "lightOwned": false,
 	            "light2": {
@@ -54100,13 +54660,17 @@ var DDB_EXTRAS =
 	                "color": "rgba(255, 255, 0, 0.1)",
 	                "feet": "0"
 	            },
+	            "stat": 16829,
 	            "aura1": {
 	                "color": "rgba(255, 129, 0, 0.3)",
 	                "feet": "0"
 	            },
 	            "tokenStyleSelect": "circle",
 	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
 	            "tokenBaseStyleSelect": "default",
+	            "monster": 16829,
 	            "itemId": 16829,
 	            "square": false,
 	            "vision": {
@@ -54116,30 +54680,76 @@ var DDB_EXTRAS =
 	            "healthauratype": "bar",
 	            "size": 87.53333333333333,
 	            "left": "2018.07px",
-	            "name": "Dazlyn Grayshard",
+	            "auraOwned": false,
+	            "name": "Commoner",
+	            "zindexdiff": 17,
 	            "defaultmaxhptype": "average",
 	            "disableborder": false,
 	            "auraislight": true,
+	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
-	            "sizeId": 4,
-	            "itemType": "monster",
-	            "color": "#600060",
+	            "revealInFog": false
+	        },
+	        "9c0a7a3f-e2e9-4b19-ac3e-478dd550aa30": {
+	            "itemType": "builtinToken",
+	            "color": "#A00000",
+	            "disablestat": true,
 	            "hidestat": false,
-	            "max_hp": 4,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
 	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
 	            "restrictPlayerMove": true,
-	            "listItemPath": "/Monsters/Commoner",
-	            "top": "2014px",
+	            "listItemPath": "/AboveVTT Tokens/Numbers/02",
+	            "top": "1577.33px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
-	            "stat": 16829,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "9c0a7a3f-e2e9-4b19-ac3e-478dd550aa30",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
 	            "lockRestrictDrop": "restrict",
 	            "player_owned": false,
-	            "monster": 16829,
-	            "auraOwned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_02",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "1405.33px",
+	            "name": "E2. Ruined Settlement",
 	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
 	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
 	            "revealInFog": false
 	        },
 	        "a10e3fac-cc53-4e1b-9a50-6000eaa945c4": {
@@ -54208,18 +54818,90 @@ var DDB_EXTRAS =
 	            "disableaura": false,
 	            "revealInFog": false
 	        },
+	        "ac503dcc-6119-4ca5-a0c1-abfa72b0221d": {
+	            "itemType": "builtinToken",
+	            "color": "#FF7433",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/01",
+	            "top": "2276px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "ac503dcc-6119-4ca5-a0c1-abfa72b0221d",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_01",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "880.133px",
+	            "name": "E1. Canyon",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
 	        "bee33336-07d6-4c7f-8184-dcfef51fb3f1": {
 	            "auraVisible": false,
+	            "sizeId": 4,
+	            "itemType": "monster",
 	            "disablestat": true,
+	            "color": "#FF7433",
+	            "hidestat": false,
 	            "gridSquares": 1,
 	            "custom_conditions": [],
 	            "hp": 4,
+	            "max_hp": 4,
+	            "legacyaspectratio": true,
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/Monsters/Commoner",
+	            "top": "1926.67px",
+	            "hidehpbar": false,
+	            "lightVisible": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
 	                "feet": "1000"
 	            },
 	            "id": "bee33336-07d6-4c7f-8184-dcfef51fb3f1",
-	            "imgsrc": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/6586a2f2-ae23-4a66-95c1-8b600d7c525c/dfczavv-b0020e6a-a6a6-491f-b504-c62ff854c90f.png/v1/fill/w_1024,h_1449,q_80,strp/gorgrun_the_axe___fantasy_dwarf_portrait_by_tofusenshi_dfczavv-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTQ0OSIsInBhdGgiOiJcL2ZcLzY1ODZhMmYyLWFlMjMtNGE2Ni05NWMxLThiNjAwZDdjNTI1Y1wvZGZjemF2di1iMDAyMGU2YS1hNmE2LTQ5MWYtYjUwNC1jNjJmZjg1NGM5MGYucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.hSgDQ2mblDQ_byF5RjnN8J7PfvyHXoeDMtSizR4gStU",
+	            "imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 	            "locked": false,
 	            "lightOwned": false,
 	            "light2": {
@@ -54231,13 +54913,17 @@ var DDB_EXTRAS =
 	                "color": "rgba(255, 255, 0, 0.1)",
 	                "feet": "0"
 	            },
+	            "stat": 16829,
 	            "aura1": {
 	                "color": "rgba(255, 129, 0, 0.3)",
 	                "feet": "0"
 	            },
 	            "tokenStyleSelect": "circle",
 	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
 	            "tokenBaseStyleSelect": "default",
+	            "monster": 16829,
 	            "itemId": 16829,
 	            "square": false,
 	            "vision": {
@@ -54247,33 +54933,202 @@ var DDB_EXTRAS =
 	            "healthauratype": "bar",
 	            "size": 87.53333333333333,
 	            "left": "2018.07px",
-	            "name": "Norbus Ironrune",
+	            "auraOwned": false,
+	            "name": "Commoner 2",
+	            "zindexdiff": 17,
 	            "defaultmaxhptype": "average",
 	            "disableborder": false,
 	            "auraislight": true,
+	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
-	            "sizeId": 4,
-	            "itemType": "monster",
-	            "color": "#FF7433",
+	            "revealInFog": false
+	        },
+	        "ccee6f35-a762-4ef5-a839-f06317209594": {
+	            "itemType": "builtinToken",
+	            "color": "#200020",
+	            "disablestat": true,
 	            "hidestat": false,
-	            "max_hp": 4,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
 	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
 	            "restrictPlayerMove": true,
-	            "listItemPath": "/Monsters/Commoner",
+	            "listItemPath": "/AboveVTT Tokens/Numbers/10",
 	            "top": "1926.67px",
 	            "hidehpbar": false,
-	            "lightVisible": false,
-	            "stat": 16829,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "ccee6f35-a762-4ef5-a839-f06317209594",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/10.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/10.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
 	            "lockRestrictDrop": "restrict",
 	            "player_owned": false,
-	            "monster": 16829,
-	            "auraOwned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_10",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "4118.87px",
+	            "name": "E10. Partially Collapsed Room",
 	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
 	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "cd9cdd96-8af0-42e1-8872-8d3234a59b80": {
+	            "itemType": "builtinToken",
+	            "color": "#FF7433",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/07",
+	            "top": "1402.67px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "cd9cdd96-8af0-42e1-8872-8d3234a59b80",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_07",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "3681.2px",
+	            "name": "E7. Secret Tunnel",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "f7beb76d-12bd-4941-a22c-2d2136ad2e70": {
+	            "itemType": "builtinToken",
+	            "color": "#00E0E0",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/09",
+	            "top": "1490px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "f7beb76d-12bd-4941-a22c-2d2136ad2e70",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "60"
+	            },
+	            "itemId": "_AboveVTT_Tokens_Numbers_09",
+	            "square": false,
+	            "healthauratype": "bar",
+	            "size": 88,
+	            "left": "4118.87px",
+	            "name": "E9. Vestry",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": true,
+	            "conditions": [],
+	            "enablepercenthpbar": true,
 	            "revealInFog": false
 	        }
 	    },
+	    "id": "ca20a3db-c767-4f9c-874c-f588d50c03da",
 	    "darkness_filter": "68",
 	    "grid_line_width": "0.5",
 	    "order": 1678581776689,
@@ -54291,7 +55146,105 @@ var DDB_EXTRAS =
 	    "snap": "1",
 	    "map": "https://www.dndbeyond.com/attachments/5/757/map-de-dm.jpg",
 	    "width": 2888,
-	    "height": 1838
+	    "height": 1838,
+	    "notes": {
+	        "0d48fcf2-a5fd-4dbf-bf7e-8169dfb69b60": {
+	            "title": "E4. Dusty Foyer",
+	            "text": "<p>Spikes hammered into the floor hold open two sets of double doors. A once-secret door to the north stands open, with a room beyond it holding nothing but rubble.</p>",
+	            "plain": "Spikes hammered into the floor hold open two sets of double doors. A once-secret door to the north stands open, with a room beyond it holding nothing but rubble.",
+	            "player": false
+	        },
+	        "1b1679e6-4d59-4573-8309-724b9604867a": {
+	            "title": "O",
+	            "text": "<h2 id=\"WhenOrcsAttack\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"332d9aa2-6009-4fea-8900-3ae8be67a600\">When Orcs Attack</h2>\n<p data-content-chunk-id=\"40bd5810-f6bb-4669-a578-dfc279609a70\"><a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16972-orc\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16972-tooltip?disable-webm=1&amp;disable-webm=1\">Orcs</a> arrive at <a href=\"https://www.dndbeyond.com/sources/doip/dwarven-excavation#E1Canyon\" data-content-chunk-id=\"28348e78-236b-4715-b3e9-0c5aebab3775\">area E1</a> as the characters conclude their business with the dwarves. The number of orcs is equal to the number of characters in the party, including sidekicks. Driven from their territory by Cryovain, the orcs are looking for a new lair and fight to the death.</p>",
+	            "plain": "When Orcs AttackOrcs arrive at area E1 as the characters conclude their business with the dwarves. The number of orcs is equal to the number of characters in the party, including sidekicks. Driven from their territory by Cryovain, the orcs are looking for a new lair and fight to the death.",
+	            "player": false
+	        },
+	        "21a9a7e6-b42d-46bb-a3d8-c456cffe2450": {
+	            "title": "E8. Priests’ Bedchamber",
+	            "text": "<p>Three stone bed frames stand against the east wall.</p>",
+	            "plain": "Three stone bed frames stand against the east wall.",
+	            "player": false
+	        },
+	        "2eb2502c-b7fa-4ac3-a309-e2313ab31319": {
+	            "title": "E5. Temple",
+	            "text": "<p data-content-chunk-id=\"95b865d6-c9d3-4859-a899-c69adc8e79b9\">This area contains five secret doors, including one that opens up into one of the stone pillars holding up the ceiling. A bloodstained limestone altar stands at the far end of the room. Dazlyn and Norbus got this far into the temple before an <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16967-ochre-jelly\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16967-tooltip?disable-webm=1&amp;disable-webm=1\">ochre jelly</a> scared them off. It clings to the ceiling above the altar. If the party includes two or more characters (not counting sidekicks), a second ochre jelly clings to the south wall.</p>\n<p data-content-chunk-id=\"56bb8b2f-0b5a-42f7-a169-a43223d5d9e6\"><em><strong>Treasure.</strong></em> The secret door in the pillar conceals a cavity packed with dwarf skulls that tumble out when the door is opened. At the bottom of the cavity is an unlocked stone coffer containing 15 gemstones worth 10 gp each.</p>",
+	            "plain": "This area contains five secret doors, including one that opens up into one of the stone pillars holding up the ceiling. A bloodstained limestone altar stands at the far end of the room. Dazlyn and Norbus got this far into the temple before an ochre jelly scared them off. It clings to the ceiling above the altar. If the party includes two or more characters (not counting sidekicks), a second ochre jelly clings to the south wall.Treasure. The secret door in the pillar conceals a cavity packed with dwarf skulls that tumble out when the door is opened. At the bottom of the cavity is an unlocked stone coffer containing 15 gemstones worth 10 gp each.",
+	            "player": false
+	        },
+	        "39f06d2b-3f3b-4000-9f5e-5a9fb598f623": {
+	            "title": "E3. Courtyard and Temple Facade",
+	            "text": "<p data-content-chunk-id=\"4bfd4798-e38d-4a8b-9432-8ce4b7b6866a\">Describe this location as follows:</p>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"2c463937-39ec-467d-9bf3-7f3165169b07\">A partially collapsed, ten-foot-high wall separates this courtyard from the settlement west of it. Three heaps of rubble are piled high in this area. Hewn from the canyon&rsquo;s back wall, a thirty-foot-high temple facade features steps rising to a stone platform. Cut into this facade is a ten-foot-high open doorway flanked by crumbling, life-sized granite statues of cloaked dwarves. Evil grins can be seen on their weatherworn faces.</p>\n</aside>\n<p data-content-chunk-id=\"e1ccea9e-5b15-45fc-b782-7e5ef66c3b8d\">If they haven&rsquo;t been encountered yet, Dazlyn and Norbus are eating rations behind the easternmost rubble pile while keeping an eye on the temple entrance (<a href=\"https://www.dndbeyond.com/sources/doip/dwarven-excavation#E4DustyFoyer\" data-content-chunk-id=\"a79a2703-d073-4c06-8235-92f8ad0fdb6f\">area E4</a>). Each is a shield dwarf <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16829-commoner\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16829-tooltip?disable-webm=1&amp;disable-webm=1\">commoner</a> who speaks Common and Dwarvish, and who has <a class=\"tooltip-hover sense-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/monsters#Darkvision\" data-tooltip-href=\"//www.dndbeyond.com/senses/2-tooltip?disable-webm=1&amp;disable-webm=1\">darkvision</a> out to a range of 60 feet. Dazlyn is forthright and honest to a fault. Norbus is gruff and excessively cautious. They banter like an old married couple.</p>\n<p data-content-chunk-id=\"69bb210e-53fe-4e68-a1ff-c493ea1116f3\">Each dwarf has ten days of <a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/rations-1-day\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/75-tooltip?disable-webm=1&amp;disable-webm=1\">rations</a>, a <a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/waterskin\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/92-tooltip?disable-webm=1&amp;disable-webm=1\">waterskin</a>, mining tools, and one of two matching <a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5402-sending-stones\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5402-tooltip?disable-webm=1&amp;disable-webm=1\">sending stones</a>. The dwarves offer these magic items to anyone willing to kill the <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16967-ochre-jelly\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16967-tooltip?disable-webm=1&amp;disable-webm=1\">ochre jellies</a> in <a href=\"https://www.dndbeyond.com/sources/doip/dwarven-excavation#E5Temple\" data-content-chunk-id=\"11d82566-4543-4088-ab27-4b9f64b83a4c\">area E5</a>, search the temple for other obvious threats, and make it safe. Eager to resume their excavation, the dwarves offer to split what they find with characters who help them.</p>",
+	            "plain": "Describe this location as follows:A partially collapsed, ten-foot-high wall separates this courtyard from the settlement west of it. Three heaps of rubble are piled high in this area. Hewn from the canyon’s back wall, a thirty-foot-high temple facade features steps rising to a stone platform. Cut into this facade is a ten-foot-high open doorway flanked by crumbling, life-sized granite statues of cloaked dwarves. Evil grins can be seen on their weatherworn faces.If they haven’t been encountered yet, Dazlyn and Norbus are eating rations behind the easternmost rubble pile while keeping an eye on the temple entrance (area E4). Each is a shield dwarf commoner who speaks Common and Dwarvish, and who has darkvision out to a range of 60 feet. Dazlyn is forthright and honest to a fault. Norbus is gruff and excessively cautious. They banter like an old married couple.Each dwarf has ten days of rations, a waterskin, mining tools, and one of two matching sending stones. The dwarves offer these magic items to anyone willing to kill the ochre jellies in area E5, search the temple for other obvious threats, and make it safe. Eager to resume their excavation, the dwarves offer to split what they find with characters who help them.",
+	            "player": false
+	        },
+	        "5067dad7-06da-4cc6-91c1-31a5b0d8f4b4": {
+	            "title": "E11. Hall of Greed",
+	            "text": "<p data-content-chunk-id=\"b2af7b02-9967-4898-b3e6-b3aeadeabff4\">To reach this room, the characters must clear away the rubble that seals it off, which takes a single character 40 hours. Multiple characters working together can reduce the time proportionately.</p>\n<p data-content-chunk-id=\"5991ffe5-6cd2-49d4-9b5e-ff8a78a0c8db\">An alcove in the south wall holds the rubble of a shattered statue. An alcove to the north holds a statue of a dwarf with horns, which stares greedily at a glowing green gem in its hands. If the gem is taken, it turns to dust and the statue explodes. Any creature within 10 feet of the exploding statue must make a DC 15 Dexterity saving throw, taking 22 (4d10) piercing damage on a failed save, or half as much damage on a successful one.</p>",
+	            "plain": "To reach this room, the characters must clear away the rubble that seals it off, which takes a single character 40 hours. Multiple characters working together can reduce the time proportionately.An alcove in the south wall holds the rubble of a shattered statue. An alcove to the north holds a statue of a dwarf with horns, which stares greedily at a glowing green gem in its hands. If the gem is taken, it turns to dust and the statue explodes. Any creature within 10 feet of the exploding statue must make a DC 15 Dexterity saving throw, taking 22 (4d10) piercing damage on a failed save, or half as much damage on a successful one.",
+	            "player": false
+	        },
+	        "52487438-635a-4afb-bcc1-67946f1a75d3": {
+	            "title": "Temple Features",
+	            "text": "<aside id=\"TempleFeatures\" class=\"text--rules-sidebar\">\n<p data-content-chunk-id=\"99378b62-3e6c-4d35-b98e-fedc38f4c0fa\">TEMPLE FEATURES</p>\n<p data-content-chunk-id=\"3ff308ad-5600-424f-85ec-73fe434e0d1a\">The temple (areas E4 through <a href=\"https://www.dndbeyond.com/sources/doip/dwarven-excavation#E11HallofGreed\"><span class=\"visually-hidden\">area </span>E11</a>) is smoothly hewn from solid rock. The following features are common throughout.</p>\n<p data-content-chunk-id=\"34b61330-0630-4dbb-b9f0-b3543283748f\"><em><strong>Ceilings.</strong></em> Ceilings throughout are 10 feet high and flat.</p>\n<p data-content-chunk-id=\"82c0be76-cbb5-47ec-84d9-d3991e717f0c\"><em><strong>Doors.</strong></em> All doors are made of carved stone with stone pins for hinges. Secret doors blend in with the surrounding stonework. Finding a secret door requires a search of the wall and a successful DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check. Dazlyn and Norbus have found one secret door thus far, in area E4. The others have yet to be discovered.</p>\n<p data-content-chunk-id=\"b98ebc69-c28f-4a04-908c-2e4e882c9a45\"><em><strong>Dust and Debris.</strong></em> The temple is choked with dusty rubble. Rubble-filled squares are <a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a> (see the <a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/basic-rules\">Basic Rules</a>).</p>\n<p data-content-chunk-id=\"d3c14313-3402-42ef-b9af-6bace819c152\"><em><strong>Light.</strong></em> There are no light sources in the temple, since the dwarf priests of Abbathor relied on <a class=\"tooltip-hover sense-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/monsters#Darkvision\" data-tooltip-href=\"//www.dndbeyond.com/senses/2-tooltip?disable-webm=1&amp;disable-webm=1\">darkvision</a> to see.</p>\n</aside>",
+	            "plain": "TEMPLE FEATURESThe temple (areas E4 through area E11) is smoothly hewn from solid rock. The following features are common throughout.Ceilings. Ceilings throughout are 10 feet high and flat.Doors. All doors are made of carved stone with stone pins for hinges. Secret doors blend in with the surrounding stonework. Finding a secret door requires a search of the wall and a successful DC 15 Wisdom (Perception) check. Dazlyn and Norbus have found one secret door thus far, in area E4. The others have yet to be discovered.Dust and Debris. The temple is choked with dusty rubble. Rubble-filled squares are difficult terrain (see the Basic Rules).Light. There are no light sources in the temple, since the dwarf priests of Abbathor relied on darkvision to see.",
+	            "player": false
+	        },
+	        "53e65a75-9a70-421a-aa4d-ea8e5e0165ac": {
+	            "title": "Ochre Jelly 3",
+	            "text": "<p>With two or more characters not counting sidekicks</p>",
+	            "plain": "With two or more characters not counting sidekicks",
+	            "player": false
+	        },
+	        "632dd8fc-eb09-458e-ac24-e35c3349c1a9": {
+	            "title": "T",
+	            "text": "<p data-content-chunk-id=\"511f7a9a-2538-4651-8fc8-81342379e3fb\">The dwarven excavation lies due east of Leilon, 15 miles southwest of Phandalin, at the eastern end of a canyon (<a href=\"https://www.dndbeyond.com/sources/doip/dwarven-excavation#E1Canyon\" data-content-chunk-id=\"b3892046-7ba1-417a-ad82-13e820fdb32b\">area E1</a>). When the characters reach area E1 on the map, read the following boxed text aloud:</p>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"0318aae4-139d-4d23-9658-82814750fe0c\">The canyon&rsquo;s rocky walls rise to a height of eighty feet. At the end of the canyon, a twenty-foot-high wall of black stone has a broken gate carved into it, with one stone door hanging precariously by a hinge and the other door missing. Beyond this open gate, in the shadow of a great mountain to the east, lies a ruined settlement. All is quiet.</p>\n</aside>\n<p data-content-chunk-id=\"08d4f733-2969-4873-82a6-6ba4a790cb22\">If the characters announce their arrival, Dazlyn and Norbus come forth to greet them. Otherwise, the characters encounter the dwarves in <a href=\"https://www.dndbeyond.com/sources/doip/E3CourtyardandTempleFacade\" data-content-chunk-id=\"5215f37c-9286-4524-bbe4-987bd246095a\">area E3</a>.</p>",
+	            "plain": "The dwarven excavation lies due east of Leilon, 15 miles southwest of Phandalin, at the eastern end of a canyon (area E1). When the characters reach area E1 on the map, read the following boxed text aloud:The canyon’s rocky walls rise to a height of eighty feet. At the end of the canyon, a twenty-foot-high wall of black stone has a broken gate carved into it, with one stone door hanging precariously by a hinge and the other door missing. Beyond this open gate, in the shadow of a great mountain to the east, lies a ruined settlement. All is quiet.If the characters announce their arrival, Dazlyn and Norbus come forth to greet them. Otherwise, the characters encounter the dwarves in area E3.",
+	            "player": false
+	        },
+	        "6de4c70d-895f-4d56-b326-7ce1951a3f14": {
+	            "title": "Ochre Jelly",
+	            "text": "<p>dangling from the roof</p>",
+	            "plain": "dangling from the roof",
+	            "player": false
+	        },
+	        "6e28cddc-6130-4c23-b85d-cc0a4dbb9a63": {
+	            "title": "E6. Partially Collapsed Room",
+	            "text": "<p>An earthquake collapsed part of this room, which holds nothing of value.</p>",
+	            "plain": "An earthquake collapsed part of this room, which holds nothing of value.",
+	            "player": false
+	        },
+	        "9c0a7a3f-e2e9-4b19-ac3e-478dd550aa30": {
+	            "title": "E2. Ruined Settlement",
+	            "text": "<p data-content-chunk-id=\"7cc64ff2-162f-4b9a-bac6-ebc9ecc08421\">All knowledge of this settlement, including its name, vanished along with its original inhabitants, who were killed by an avalanche. The rubble that once buried the settlement has been hauled away, leaving the outlines of stone buildings visible as collapsed walls. A stone well on the far side of the ruins is filled with rubble.</p>\n<p data-content-chunk-id=\"90645b5c-4ef4-4757-bd41-28829b02f48a\">The settlement has been thoroughly ransacked. Characters who search the ruins find a few crushed dwarf bones and signs of recent campfires, but nothing of value.</p>",
+	            "plain": "All knowledge of this settlement, including its name, vanished along with its original inhabitants, who were killed by an avalanche. The rubble that once buried the settlement has been hauled away, leaving the outlines of stone buildings visible as collapsed walls. A stone well on the far side of the ruins is filled with rubble.The settlement has been thoroughly ransacked. Characters who search the ruins find a few crushed dwarf bones and signs of recent campfires, but nothing of value.",
+	            "player": false
+	        },
+	        "ac503dcc-6119-4ca5-a0c1-abfa72b0221d": {
+	            "title": "Canyon",
+	            "text": "<p>The canyon floor is strewn with rubble and bereft of vegetation except for a few tough, scraggly weeds.</p>",
+	            "plain": "The canyon floor is strewn with rubble and bereft of vegetation except for a few tough, scraggly weeds.",
+	            "player": false
+	        },
+	        "ccee6f35-a762-4ef5-a839-f06317209594": {
+	            "title": "E10. Partially Collapsed Room",
+	            "text": "<p data-content-chunk-id=\"3d11b29b-d15b-43fc-b171-e54e10737f08\">Half-buried in the rubble here is the skeleton of a dwarf priest wearing rotted red leather armor. The dwarf was killed when part of the room collapsed.</p>\n<p data-content-chunk-id=\"7423c46d-3ab9-40af-86de-9abddcc9782b\"><em><strong>Treasure.</strong></em> Around the skeleton&rsquo;s neck hangs a <a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/holy-symbol\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/213-tooltip?disable-webm=1&amp;disable-webm=1\">holy symbol</a> of Abbathor: a tiny jeweled dagger on a silver chain. The symbol is inscribed with Dwarvish runes that translate to &ldquo;Greed is good,&rdquo; and is worth 50 gp.</p>",
+	            "plain": "Half-buried in the rubble here is the skeleton of a dwarf priest wearing rotted red leather armor. The dwarf was killed when part of the room collapsed.Treasure. Around the skeleton’s neck hangs a holy symbol of Abbathor: a tiny jeweled dagger on a silver chain. The symbol is inscribed with Dwarvish runes that translate to “Greed is good,” and is worth 50 gp.",
+	            "player": false
+	        },
+	        "cd9cdd96-8af0-42e1-8872-8d3234a59b80": {
+	            "title": "E7. Secret Tunnel",
+	            "text": "<p>Trapped behind the secret doors, an <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16967-ochre-jelly\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16967-tooltip?disable-webm=1&amp;disable-webm=1\">ochre jelly</a> lurks in the rubble at the south end of this hall.</p>",
+	            "plain": "Trapped behind the secret doors, an ochre jelly lurks in the rubble at the south end of this hall.",
+	            "player": false
+	        },
+	        "f7beb76d-12bd-4941-a22c-2d2136ad2e70": {
+	            "title": "E9. Vestry",
+	            "text": "<p>An empty stone font juts out of the southwest wall. A stone wardrobe against the east wall holds the rotted remains of two suits of red leather armor (vestments worn by priests of Abbathor, now ruined and worthless).</p>",
+	            "plain": "An empty stone font juts out of the southwest wall. A stone wardrobe against the east wall holds the rotted remains of two suits of red leather armor (vestments worn by priests of Abbathor, now ruined and worthless).",
+	            "player": false
+	        }
+	    }
 	},
 	"doip/falcons-hunting-lodge/5963ce4b-3f8e-40fd-995d-d3945d5160d0": {
 		"dm_map_usable": "1",
@@ -54451,6 +55404,7 @@ var DDB_EXTRAS =
 	    "darkness_filter_number": "0",
 	    "title": "Map: Gnomengarde ",
 	    "fog_of_war": "1",
+	    "uuid": "doip/gnomengarde/MapGnomengarde",
 	    "player_map": "https://www.dndbeyond.com/attachments/5/762/map-gnomegarde-pc.jpg",
 	    "upsq": "ft",
 	    "folderPath": "/First set of quests",
@@ -58171,67 +59125,6 @@ var DDB_EXTRAS =
 	    ],
 	    "fpsq": "5",
 	    "tokens": {
-	        "/profile/115242822/characters/96033095": {
-	            "itemType": "pc",
-	            "color": "#1A6AFF",
-	            "disablestat": false,
-	            "hidestat": false,
-	            "gridSquares": 1,
-	            "custom_conditions": [],
-	            "hp": "11",
-	            "inspiration": false,
-	            "max_hp": "11",
-	            "legacyaspectratio": true,
-	            "restrictPlayerMove": true,
-	            "listItemPath": "/Players/Me testing",
-	            "top": "878.667px",
-	            "hidehpbar": false,
-	            "light1": {
-	                "color": "rgba(255, 255, 255, 1)",
-	                "feet": "0"
-	            },
-	            "id": "/profile/115242822/characters/96033095",
-	            "imgsrc": "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/characters/default-avatar.png",
-	            "locked": false,
-	            "light2": {
-	                "color": "rgba(255, 255, 255, 0.5)",
-	                "feet": "0"
-	            },
-	            "ac": 18,
-	            "aura2": {
-	                "color": "rgba(255, 255, 0, 0.1)",
-	                "feet": "0"
-	            },
-	            "aura1": {
-	                "color": "rgba(255, 129, 0, 0.3)",
-	                "feet": "0"
-	            },
-	            "tokenStyleSelect": "circle",
-	            "revealname": false,
-	            "lockRestrictDrop": "restrict",
-	            "player_owned": false,
-	            "tokenBaseStyleSelect": "default",
-	            "vision": {
-	                "color": "rgba(255, 255, 255, 0.5)",
-	                "feet": "60"
-	            },
-	            "itemId": "/profile/115242822/characters/96033095",
-	            "square": false,
-	            "healthauratype": "bar",
-	            "temp_hp": 0,
-	            "tokenSize": 1,
-	            "size": 87.6,
-	            "left": "964.4px",
-	            "name": "Me testing",
-	            "zindexdiff": 17,
-	            "defaultmaxhptype": "average",
-	            "disableborder": false,
-	            "auraislight": true,
-	            "disableaura": true,
-	            "conditions": [],
-	            "enablepercenthpbar": true,
-	            "revealInFog": false
-	        },
 	        "085b09a3-f408-4123-a657-4139c420372f": {
 	            "sizeId": 3,
 	            "itemType": "monster",
@@ -58291,6 +59184,67 @@ var DDB_EXTRAS =
 	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "0cdb33d7-b742-4f17-b6fb-871e2fa80872": {
+	            "itemType": "builtinToken",
+	            "color": "#808000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/14",
+	            "top": "2101.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "0cdb33d7-b742-4f17-b6fb-871e2fa80872",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/14.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/14.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_14",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "701.6px",
+	            "name": "G14. Throne Room",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "122087f1-7e92-4b30-98fa-495dd0d07bce": {
@@ -58354,6 +59308,67 @@ var DDB_EXTRAS =
 	            "enablepercenthpbar": true,
 	            "revealInFog": false
 	        },
+	        "1795d957-8983-4077-95df-941262badbd7": {
+	            "itemType": "builtinToken",
+	            "color": "#FFD433",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/15",
+	            "top": "1577.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "1795d957-8983-4077-95df-941262badbd7",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/15.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/15.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_15",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "1402.4px",
+	            "name": "G15. Gnome Kings’ Bedroom",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": true,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
 	        "1c6e6bab-fd1a-463c-8750-d856505b0cf3": {
 	            "sizeId": 3,
 	            "itemType": "monster",
@@ -58413,6 +59428,67 @@ var DDB_EXTRAS =
 	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "317fa941-b39c-4e95-8af9-886309e43c87": {
+	            "itemType": "builtinToken",
+	            "color": "#0000C0",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/08",
+	            "top": "2412.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "317fa941-b39c-4e95-8af9-886309e43c87",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_08",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "5388.8px",
+	            "name": "G8. Mimic and Mushroom Wine",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "31a7c9f9-3f8c-42a6-bf2e-6d9e3db7f361": {
@@ -58539,6 +59615,128 @@ var DDB_EXTRAS =
 	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "39d2c87f-d110-43d2-b8b4-9c3cae58791d": {
+	            "itemType": "builtinToken",
+	            "color": "#808000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/12",
+	            "top": "2014px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "39d2c87f-d110-43d2-b8b4-9c3cae58791d",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/12.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/12.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_12",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "2366px",
+	            "name": "G12. Gnome Domiciles",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "404a89ee-dfca-4846-8ead-2ece43d18716": {
+	            "itemType": "builtinToken",
+	            "color": "#00A000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/02",
+	            "top": "2918.12px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "404a89ee-dfca-4846-8ead-2ece43d18716",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_02",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "3662.13px",
+	            "name": "G2. Waterfall and Rope Bridge",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": true,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "408fcfb0-4a5b-4574-9dbf-39887efb69ae": {
@@ -58726,6 +59924,67 @@ var DDB_EXTRAS =
 	            "enablepercenthpbar": true,
 	            "revealInFog": false
 	        },
+	        "53315589-1b76-4022-a42b-66e687954061": {
+	            "itemType": "builtinToken",
+	            "color": "#404000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/03",
+	            "top": "966px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "53315589-1b76-4022-a42b-66e687954061",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_03",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "4118px",
+	            "name": "G3. Dining Room",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
 	        "5adb726b-4678-4b3a-9d9d-7acc66296672": {
 	            "sizeId": 3,
 	            "itemType": "monster",
@@ -58848,6 +60107,128 @@ var DDB_EXTRAS =
 	            "enablepercenthpbar": true,
 	            "revealInFog": false
 	        },
+	        "647e8aeb-8345-4cb9-a34a-b94cfc795268": {
+	            "itemType": "builtinToken",
+	            "color": "#1E50DC",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/13",
+	            "top": "3149.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "647e8aeb-8345-4cb9-a34a-b94cfc795268",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/13.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/13.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_13",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "1665.2px",
+	            "name": "G13. Treasury",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "659af930-e6b0-4062-811e-41864c71d12a": {
+	            "itemType": "builtinToken",
+	            "color": "#C0C000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/05",
+	            "top": "665.333px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "659af930-e6b0-4062-811e-41864c71d12a",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_05",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "5476.8px",
+	            "name": "G5. Pantry",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
 	        "8562b524-ba9b-469f-9bc6-49771e27b460": {
 	            "sizeId": 3,
 	            "itemType": "monster",
@@ -58907,6 +60288,67 @@ var DDB_EXTRAS =
 	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "87fe8266-952b-40dc-8504-e13b7974fc4e": {
+	            "itemType": "builtinToken",
+	            "color": "#400040",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/07",
+	            "top": "1839.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "87fe8266-952b-40dc-8504-e13b7974fc4e",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_07",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "4205.6px",
+	            "name": "G7. Autoloading Crossbow Platform",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "95827fb7-f010-47c4-a369-bef3d8dcbe49": {
@@ -59145,7 +60587,7 @@ var DDB_EXTRAS =
 	            "size": 88.00000000000001,
 	            "left": "3504.8px",
 	            "elev": "",
-	            "name": "Commoner",
+	            "name": "Rope Bridge",
 	            "zindexdiff": 17,
 	            "defaultmaxhptype": "average",
 	            "disableborder": false,
@@ -59214,6 +60656,189 @@ var DDB_EXTRAS =
 	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "b14abb18-41b7-4305-99e2-be5c7409947a": {
+	            "itemType": "builtinToken",
+	            "color": "#000020",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/11",
+	            "top": "2625.33px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "b14abb18-41b7-4305-99e2-be5c7409947a",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/11.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/11.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_11",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "2103.2px",
+	            "name": "G11. Inventors’ Workshop",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "bba9394a-07dc-4f6d-b4d1-de8ae9cfb14f": {
+	            "itemType": "builtinToken",
+	            "color": "#911EB4",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/09",
+	            "top": "2712.67px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "bba9394a-07dc-4f6d-b4d1-de8ae9cfb14f",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_09",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "4556px",
+	            "name": "G9. Gnome Guard Post",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "bd2a40de-a569-4f22-9b19-cb994f9ddccc": {
+	            "itemType": "builtinToken",
+	            "color": "#E0E0E0",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/04",
+	            "top": "354.667px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "bd2a40de-a569-4f22-9b19-cb994f9ddccc",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_04",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "4293.2px",
+	            "name": "G4. Kitchen",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "c5995c34-6734-483e-9e4a-eddedd9fd4ab": {
@@ -59338,6 +60963,128 @@ var DDB_EXTRAS =
 	            "enablepercenthpbar": true,
 	            "revealInFog": false
 	        },
+	        "d0ba2523-d1ec-48f9-b397-2fcd2e130536": {
+	            "itemType": "builtinToken",
+	            "color": "#200000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/01",
+	            "top": "2276px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "d0ba2523-d1ec-48f9-b397-2fcd2e130536",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_01",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "3504.8px",
+	            "name": "G1. Misty Pool and Mushroom Islands",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": true,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "d79ce2c0-a7e0-404b-bd39-2274df2077c8": {
+	            "itemType": "builtinToken",
+	            "color": "#FFD433",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/10",
+	            "top": "3236.67px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "d79ce2c0-a7e0-404b-bd39-2274df2077c8",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/10.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/10.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_10",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "2541.2px",
+	            "name": "G10. Spinning Blades",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
 	        "db2b0111-fa86-48c9-8656-a2d849d2acbb": {
 	            "sizeId": 3,
 	            "itemType": "monster",
@@ -59458,6 +61205,67 @@ var DDB_EXTRAS =
 	            "disableaura": true,
 	            "conditions": [],
 	            "enablepercenthpbar": true,
+	            "revealInFog": false
+	        },
+	        "e9b6478d-1cde-4482-b3e2-9c01e44976ea": {
+	            "itemType": "builtinToken",
+	            "color": "#606000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0045662100456623,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/06",
+	            "top": "1140.67px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "e9b6478d-1cde-4482-b3e2-9c01e44976ea",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_06",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88.00000000000001,
+	            "left": "5432px",
+	            "name": "G6. Barrel Crabs",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "ebe4ccfc-69f3-46d5-b945-575c18cd8fae": {
@@ -59644,10 +61452,12 @@ var DDB_EXTRAS =
 	            "revealInFog": false
 	        }
 	    },
+	    "id": "fecf2f91-658c-45eb-9d41-b6e55e4d5bd9",
 	    "darkness_filter": "0",
 	    "grid_line_width": "0.5",
 	    "order": 1678819957737,
 	    "grid_subdivided": "0",
+	    "parentId": "a22420d5-103e-4bad-834e-01cb07ce0faf",
 	    "scale_factor": "2",
 	    "offsetx": 0.8000000000001819,
 	    "dm_map_usable": "1",
@@ -59663,13 +61473,103 @@ var DDB_EXTRAS =
 	    "width": 2888,
 	    "height": 1838,
 	    "notes": {
-		    "31a7c9f9-3f8c-42a6-bf2e-6d9e3db7f361": {
-		        "title": "King Gnerkli",
-		        "text": "<p>Glued to a chair and restrained</p>",
-		        "plain": "Glued to a chair and restrained",
-		        "player": false
-		    }
-		}
+	        "0cdb33d7-b742-4f17-b6fb-871e2fa80872": {
+	            "title": "14",
+	            "text": "<p>Situated atop a stone dais are two squat thrones made of scrap metal and sized for gnomes. A secret door in the north wall conceals a short tunnel leading to area G15. Only the gnome kings know of this secret passage.</p>",
+	            "plain": "Situated atop a stone dais are two squat thrones made of scrap metal and sized for gnomes. A secret door in the north wall conceals a short tunnel leading to area G15. Only the gnome kings know of this secret passage.",
+	            "player": false
+	        },
+	        "1795d957-8983-4077-95df-941262badbd7": {
+	            "title": "15",
+	            "text": "<p data-content-chunk-id=\"9b99727e-5a6f-4ee1-9918-9d4bae14cee9\">King Korboz has locked himself and King Gnerkli in their bedroom, forgetting that there&rsquo;s a secret door that others could find and use to gain entry. Only Korboz and Gnerkli have keys to the locked main door. If the characters knock on the door or otherwise announce their arrival, Korboz speaks to them from inside the room and warns of a &ldquo;shapechanger&rdquo; in their midst. Korboz doesn&rsquo;t regain his senses until the characters assure him that the monster has been found and killed. Whether the mimic is truly killed or not, convincing Korboz that it&rsquo;s dead requires a successful DC 12 Charisma (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Persuasion\" data-tooltip-href=\"//www.dndbeyond.com/skills/19-tooltip?disable-webm=1&amp;disable-webm=1\">Persuasion</a>) check.</p>\n<p data-content-chunk-id=\"1ef85bc6-b9d9-4024-8b66-4182a5def82f\">Korboz and Gnerkli are <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/338614-rock-gnome-recluse\" data-tooltip-href=\"//www.dndbeyond.com/monsters/338614-tooltip?disable-webm=1&amp;disable-webm=1\">rock gnome recluses</a>, each wearing a jagged metal crown and a patchwork cloak. Gnerkli is glued to a chair and <a class=\"tooltip-hover condition-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/appendix-a-conditions#Restrained\" data-tooltip-href=\"//www.dndbeyond.com/conditions/13-tooltip?disable-webm=1&amp;disable-webm=1\">restrained</a>. Korboz carries a flask of solvent that dissolves the glue on contact. Their room contains all the trappings of a nicely appointed gnome bedroom.</p>\n<p data-content-chunk-id=\"30bbf2fc-f27a-4d18-a0e1-8f67eca19cae\"><em><strong>Treasure.</strong></em> A small unlocked chest under the gnomes&rsquo; bed contains a <a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/27050-hat-of-wizardry\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/27050-tooltip?disable-webm=1&amp;disable-webm=1\">hat of wizardry</a> and a fully charged <a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/27147-wand-of-pyrotechnics\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/27147-tooltip?disable-webm=1&amp;disable-webm=1\">wand of pyrotechnics</a>.</p>",
+	            "plain": "King Korboz has locked himself and King Gnerkli in their bedroom, forgetting that there’s a secret door that others could find and use to gain entry. Only Korboz and Gnerkli have keys to the locked main door. If the characters knock on the door or otherwise announce their arrival, Korboz speaks to them from inside the room and warns of a “shapechanger” in their midst. Korboz doesn’t regain his senses until the characters assure him that the monster has been found and killed. Whether the mimic is truly killed or not, convincing Korboz that it’s dead requires a successful DC 12 Charisma (Persuasion) check.Korboz and Gnerkli are rock gnome recluses, each wearing a jagged metal crown and a patchwork cloak. Gnerkli is glued to a chair and restrained. Korboz carries a flask of solvent that dissolves the glue on contact. Their room contains all the trappings of a nicely appointed gnome bedroom.Treasure. A small unlocked chest under the gnomes’ bed contains a hat of wizardry and a fully charged wand of pyrotechnics.",
+	            "player": false
+	        },
+	        "317fa941-b39c-4e95-8af9-886309e43c87": {
+	            "title": "08",
+	            "text": "<p data-content-chunk-id=\"27ae04fb-f303-4adb-86a8-07fa6f1e13bb\">This room contains twelve forty-gallon barrels set into wide alcoves. Each barrel is secured by a wooden brace. The barrels in the south alcove have been tapped with wooden spigots. Two of those barrels are half full, and two are nearly empty.</p>\n<p data-content-chunk-id=\"f9c0c687-369c-4a00-9ed4-d818fcbb75a0\">Seven of the eight barrels in the north and east alcoves are untapped and full of mushroom wine. The eighth barrel is the <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16957-mimic\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16957-tooltip?disable-webm=1&amp;disable-webm=1\">mimic</a>. You can decide where the mimic is, or roll a d8 to randomly determine which barrel is the fake one. See &ldquo;<a href=\"https://www.dndbeyond.com/sources/doip/gnomengarde#MysteryMonster\" data-content-chunk-id=\"748cdded-a68a-4369-b220-8f8a621f1a5d\">Mystery Monster</a>&rdquo; for more information on the mimic and its behavior when discovered.</p>",
+	            "plain": "This room contains twelve forty-gallon barrels set into wide alcoves. Each barrel is secured by a wooden brace. The barrels in the south alcove have been tapped with wooden spigots. Two of those barrels are half full, and two are nearly empty.Seven of the eight barrels in the north and east alcoves are untapped and full of mushroom wine. The eighth barrel is the mimic. You can decide where the mimic is, or roll a d8 to randomly determine which barrel is the fake one. See “Mystery Monster” for more information on the mimic and its behavior when discovered.",
+	            "player": false
+	        },
+	        "31a7c9f9-3f8c-42a6-bf2e-6d9e3db7f361": {
+	            "title": "King Gnerkli",
+	            "text": "<p>Glued to a chair and restrained</p>",
+	            "plain": "Glued to a chair and restrained",
+	            "player": false
+	        },
+	        "39d2c87f-d110-43d2-b8b4-9c3cae58791d": {
+	            "title": "12",
+	            "text": "<p>The floor of this cave is strewn with the remnants of old campfires. Four side caves serve as sleeping areas, with five small wooden cots crammed into each one. Eight <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/338614-rock-gnome-recluse\" data-tooltip-href=\"//www.dndbeyond.com/monsters/338614-tooltip?disable-webm=1&amp;disable-webm=1\">rock gnome recluses</a> sleep soundly here when the characters first arrive, with two gnomes in each side cave &mdash; Caramip, Jabby, Nyx, and Quippy (females), and Anverth, Delebean, Pallabar, and Zook (males). Characters can move through the area without waking the sleeping gnomes, who defend themselves if attacked but pose no danger otherwise. They avoid talking about the recent troubles, but advise visitors to speak with Fibblestib and Dabbledob (see <a href=\"https://www.dndbeyond.com/sources/doip/gnomengarde#G11InventorsWorkshop\" data-content-chunk-id=\"7deb6b15-627f-40f1-8bcc-9104ca5297e5\">area G11</a>), Gnomengarde&rsquo;s two most gifted rock gnome inventors.</p>",
+	            "plain": "The floor of this cave is strewn with the remnants of old campfires. Four side caves serve as sleeping areas, with five small wooden cots crammed into each one. Eight rock gnome recluses sleep soundly here when the characters first arrive, with two gnomes in each side cave — Caramip, Jabby, Nyx, and Quippy (females), and Anverth, Delebean, Pallabar, and Zook (males). Characters can move through the area without waking the sleeping gnomes, who defend themselves if attacked but pose no danger otherwise. They avoid talking about the recent troubles, but advise visitors to speak with Fibblestib and Dabbledob (see area G11), Gnomengarde’s two most gifted rock gnome inventors.",
+	            "player": false
+	        },
+	        "404a89ee-dfca-4846-8ead-2ece43d18716": {
+	            "title": "G2. Waterfall and Rope Bridge",
+	            "text": "<p>&nbsp;The waterfall plunges 60 feet, its mist lightly obscuring a 35-foot-long rope bridge firmly anchored to 20-foot-high ledges. The bridge is <a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a> (see the <a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/basic-rules\" data-content-chunk-id=\"cec2af65-2175-4cb6-9be4-f5f7622a669e\">Basic Rules</a>), and sags so that its midpoint is only 15 feet above the water. A creature that falls or jumps from the bridge takes no damage if it lands in the water, which is 5 feet deep in the area below the bridge. The bridge has AC 11, 30 hit points, and immunity to poison and psychic damage. The barrel crab contraptions in area G6 are too clumsy to cross the bridge without getting tangled in its ropes.</p>",
+	            "plain": " The waterfall plunges 60 feet, its mist lightly obscuring a 35-foot-long rope bridge firmly anchored to 20-foot-high ledges. The bridge is difficult terrain (see the Basic Rules), and sags so that its midpoint is only 15 feet above the water. A creature that falls or jumps from the bridge takes no damage if it lands in the water, which is 5 feet deep in the area below the bridge. The bridge has AC 11, 30 hit points, and immunity to poison and psychic damage. The barrel crab contraptions in area G6 are too clumsy to cross the bridge without getting tangled in its ropes.",
+	            "player": false
+	        },
+	        "53315589-1b76-4022-a42b-66e687954061": {
+	            "title": "03",
+	            "text": "<p>This room contains several dining tables and chairs sized for Small folk. A stout wooden cabinet against the east wall holds tin dishware and utensils.</p>",
+	            "plain": "This room contains several dining tables and chairs sized for Small folk. A stout wooden cabinet against the east wall holds tin dishware and utensils.",
+	            "player": false
+	        },
+	        "647e8aeb-8345-4cb9-a34a-b94cfc795268": {
+	            "title": "13",
+	            "text": "<p data-content-chunk-id=\"d417eda1-5f9e-4e9e-9438-305c1f6c9b21\">The door to this room is locked, and Fibblestib and Dabbledob (see <a href=\"https://www.dndbeyond.com/sources/doip/gnomengarde#G11InventorsWorkshop\" data-content-chunk-id=\"4ff106cb-d9ad-46c3-a68e-d3d7f7d6b516\">area G11</a>) carry the keys. The room contains a jumble of nonfunctional gnomish gizmos, as well as loose gears, twisted bits of metal, and other scraps that the gnomes use to cobble together new inventions.</p>\n<p data-content-chunk-id=\"880abb66-ff3e-4a2f-8a1c-bec09e7ec3df\"><em><strong>Treasure.</strong></em> Amid the clutter, the characters can find a <a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/27042-clockwork-amulet\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/27042-tooltip?disable-webm=1&amp;disable-webm=1\">clockwork amulet</a> and a <a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/27112-pole-of-collapsing\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/27112-tooltip?disable-webm=1&amp;disable-webm=1\">pole of collapsing</a>, most easily by scanning the room with a <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/detect-magic\" data-tooltip-href=\"//www.dndbeyond.com/spells/2065-tooltip?disable-webm=1&amp;disable-webm=1\">detect magic</a> spell. It otherwise takes 1 hour to find each item.</p>",
+	            "plain": "The door to this room is locked, and Fibblestib and Dabbledob (see area G11) carry the keys. The room contains a jumble of nonfunctional gnomish gizmos, as well as loose gears, twisted bits of metal, and other scraps that the gnomes use to cobble together new inventions.Treasure. Amid the clutter, the characters can find a clockwork amulet and a pole of collapsing, most easily by scanning the room with a detect magic spell. It otherwise takes 1 hour to find each item.",
+	            "player": false
+	        },
+	        "659af930-e6b0-4062-811e-41864c71d12a": {
+	            "title": "G5. Pantry",
+	            "text": "<p>This room is piled high with small wooden crates. Each contains loaves of green mushroom bread and other foodstuffs collected and kept by the gnomes.</p>",
+	            "plain": "This room is piled high with small wooden crates. Each contains loaves of green mushroom bread and other foodstuffs collected and kept by the gnomes.",
+	            "player": false
+	        },
+	        "87fe8266-952b-40dc-8504-e13b7974fc4e": {
+	            "title": "07",
+	            "text": "<p data-content-chunk-id=\"4b8e0461-ca0e-479a-ae8a-3d0b3ef8b320\">Bolted to the floor of this room is a rotating platform equipped with four heavy crossbows that reload automatically. Each crossbow comes with twenty bolts. Mounted above the crossbows at a height of 6 feet is a chair equipped with pedals that causes the entire contraption to spin counterclockwise, and with levers that reload and fire the crossbows. This clanking, clattering contraption is a Large object with AC 13, 45 hit points, and immunity to poison and psychic damage. Every time it loses 10 hit points, one of its crossbows breaks.</p>\n<p data-content-chunk-id=\"5e70c80e-a286-41b0-877f-7ea03895d918\">A creature sitting in the chair can use an action to rotate the device up to 360 degrees counterclockwise and fire up to two of its crossbows in any direction. Each crossbow makes the following attack.</p>\n<aside class=\"epigraph\">\n<p data-content-chunk-id=\"574f0172-108e-4b67-a3a8-e4b1f9a0bb98\"><em><strong>Heavy Crossbow.</strong> Ranged Weapon Attack:</em> +5 to hit, range 50/200 ft., one target. <em>Hit:</em> 5 (1d10) piercing damage.</p>\n</aside>\n<p data-content-chunk-id=\"b7cffc3c-7bad-4242-a775-059c7fa33d39\">Sitting in the chair when the characters first enter this area is the device&rsquo;s inventor, a <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/338614-rock-gnome-recluse\" data-tooltip-href=\"//www.dndbeyond.com/monsters/338614-tooltip?disable-webm=1&amp;disable-webm=1\">rock gnome recluse</a> named Facktor&eacute;. When she sees strangers, Facktor&eacute; decides to test out the contraption on them. She stands down only when her contraption ceases to function, or when she can no longer see any targets. Being deranged and utterly consumed by her work, she can barely string together a cohesive sentence, let alone advise visitors on where to go or whom to talk to.</p>",
+	            "plain": "Bolted to the floor of this room is a rotating platform equipped with four heavy crossbows that reload automatically. Each crossbow comes with twenty bolts. Mounted above the crossbows at a height of 6 feet is a chair equipped with pedals that causes the entire contraption to spin counterclockwise, and with levers that reload and fire the crossbows. This clanking, clattering contraption is a Large object with AC 13, 45 hit points, and immunity to poison and psychic damage. Every time it loses 10 hit points, one of its crossbows breaks.A creature sitting in the chair can use an action to rotate the device up to 360 degrees counterclockwise and fire up to two of its crossbows in any direction. Each crossbow makes the following attack.Heavy Crossbow. Ranged Weapon Attack: +5 to hit, range 50/200 ft., one target. Hit: 5 (1d10) piercing damage.Sitting in the chair when the characters first enter this area is the device’s inventor, a rock gnome recluse named Facktoré. When she sees strangers, Facktoré decides to test out the contraption on them. She stands down only when her contraption ceases to function, or when she can no longer see any targets. Being deranged and utterly consumed by her work, she can barely string together a cohesive sentence, let alone advise visitors on where to go or whom to talk to.",
+	            "player": false
+	        },
+	        "b14abb18-41b7-4305-99e2-be5c7409947a": {
+	            "title": "11",
+	            "text": "<p data-content-chunk-id=\"15c6b6e4-f5bf-4305-935b-95eb5ef7b12e\">As the characters approach this area, they overhear an argument in Gnomish between two <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/338614-rock-gnome-recluse\" data-tooltip-href=\"//www.dndbeyond.com/monsters/338614-tooltip?disable-webm=1&amp;disable-webm=1\">rock gnome recluses</a> &mdash; a male named Fibblestib and a female named Dabbledob. As Gnomengarde&rsquo;s foremost inventors, they are trying to dream up an invention that will cure King Korboz&rsquo;s madness. Fibblestib&rsquo;s proposal is a &ldquo;sanity ray.&rdquo; Dabbledob thinks that&rsquo;s dumb, and wants to build something called a &ldquo;straitjacket&rdquo; instead. If the characters interrupt them, the gnomes realize that the new arrivals might have another solution, so they fill in what&rsquo;s been happening and ask for any advice on how they might help cure Korboz and rescue King Gnerkli.</p>\n<p data-content-chunk-id=\"4ba3c439-05a9-4b17-a8b6-f06f96c75063\">Fibblestib and Dabbledob consider the mystery of the vanishing gnomes of secondary importance to their mission of aiding their kings. They focus on Korboz and Gnerkli to the exclusion of all else, promising magical rewards in exchange for aid (see &ldquo;<a href=\"https://www.dndbeyond.com/sources/doip/gnomengarde#GnomeMadeMagicItems\" data-content-chunk-id=\"f135f99e-d71e-445b-860c-d249785cebbe\">Gnome-Made Magic Items</a>&rdquo;).</p>\n<p data-content-chunk-id=\"001a48e8-5e19-45fe-9ed8-eb5b970159b7\">The workshop is cluttered with half-completed gnomish inventions that serve no purpose, as well as worktables strewn with tinker&rsquo;s tools. A 10-foot-high ledge overlooks the room, set with a wooden pedestal on which sits a leather-bound book.</p>\n<p data-content-chunk-id=\"7fb1c929-bc7b-4b8f-9791-55e62f0d1713\"><em><strong>Treasure.</strong></em> The book on the pedestal is a <a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/spellbook\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/86-tooltip?disable-webm=1&amp;disable-webm=1\">spellbook</a> that the rock gnomes of Gnomengarde share. Its cover describes its title as <em>Magick of Gnomengarde</em> (in Common and Gnomish), and it contains the wizard spells <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/burning-hands\" data-tooltip-href=\"//www.dndbeyond.com/spells/2021-tooltip?disable-webm=1&amp;disable-webm=1\">burning hands</a>, <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/detect-magic\" data-tooltip-href=\"//www.dndbeyond.com/spells/2065-tooltip?disable-webm=1&amp;disable-webm=1\">detect magic</a>, <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/identify\" data-tooltip-href=\"//www.dndbeyond.com/spells/2152-tooltip?disable-webm=1&amp;disable-webm=1\">identify</a>, <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/mage-armor\" data-tooltip-href=\"//www.dndbeyond.com/spells/2172-tooltip?disable-webm=1&amp;disable-webm=1\">mage armor</a>, <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/magic-missile\" data-tooltip-href=\"//www.dndbeyond.com/spells/2176-tooltip?disable-webm=1&amp;disable-webm=1\">magic missile</a>, <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/shield\" data-tooltip-href=\"//www.dndbeyond.com/spells/2247-tooltip?disable-webm=1&amp;disable-webm=1\">shield</a>, and <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/sleep\" data-tooltip-href=\"//www.dndbeyond.com/spells/2254-tooltip?disable-webm=1&amp;disable-webm=1\">sleep</a>.</p>",
+	            "plain": "As the characters approach this area, they overhear an argument in Gnomish between two rock gnome recluses — a male named Fibblestib and a female named Dabbledob. As Gnomengarde’s foremost inventors, they are trying to dream up an invention that will cure King Korboz’s madness. Fibblestib’s proposal is a “sanity ray.” Dabbledob thinks that’s dumb, and wants to build something called a “straitjacket” instead. If the characters interrupt them, the gnomes realize that the new arrivals might have another solution, so they fill in what’s been happening and ask for any advice on how they might help cure Korboz and rescue King Gnerkli.Fibblestib and Dabbledob consider the mystery of the vanishing gnomes of secondary importance to their mission of aiding their kings. They focus on Korboz and Gnerkli to the exclusion of all else, promising magical rewards in exchange for aid (see “Gnome-Made Magic Items”).The workshop is cluttered with half-completed gnomish inventions that serve no purpose, as well as worktables strewn with tinker’s tools. A 10-foot-high ledge overlooks the room, set with a wooden pedestal on which sits a leather-bound book.Treasure. The book on the pedestal is a spellbook that the rock gnomes of Gnomengarde share. Its cover describes its title as Magick of Gnomengarde (in Common and Gnomish), and it contains the wizard spells burning hands, detect magic, identify, mage armor, magic missile, shield, and sleep.",
+	            "player": false
+	        },
+	        "bba9394a-07dc-4f6d-b4d1-de8ae9cfb14f": {
+	            "title": "09",
+	            "text": "<p data-content-chunk-id=\"45f5a275-432c-48a5-90c8-9a7424c80832\">Mist from the waterfall dampens this empty cave, which has a 10-foot-high ledge overlooking it to the south. The ledge can be reached by following the curved tunnel to the east, or by scaling the slick rock wall with a successful DC 12 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check.</p>\n<p data-content-chunk-id=\"55df1728-0c52-4cf8-a2ec-b8f8e8a628e6\">Two <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/338614-rock-gnome-recluse\" data-tooltip-href=\"//www.dndbeyond.com/monsters/338614-tooltip?disable-webm=1&amp;disable-webm=1\">rock gnome recluses</a> stand on the ledge &mdash; a female named Ulla and a male named Pog. When anyone enters the cave, Ulla calls out, &ldquo;Who goes there?&rdquo; in Gnomish, then Pog repeats the question in Common. Their orders are to &ldquo;attack shapechangers on sight.&rdquo; Since anyone might be a shapechanger, they attack anyone who can&rsquo;t prove they are who they claim to be. Characters who don&rsquo;t want to be attacked must succeed on one of the following checks:</p>\n<ul data-content-chunk-id=\"ed624844-b8fd-4d6e-855c-e9da309490b1\">\n<li data-content-chunk-id=\"70781e43-a124-40f8-9726-fbf7531b6425\">A DC 10 Charisma (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Deception\" data-tooltip-href=\"//www.dndbeyond.com/skills/16-tooltip?disable-webm=1&amp;disable-webm=1\">Deception</a>) check to trick the gnomes into thinking the characters have an audience with the kings of Gnomengarde.</li>\n<li data-content-chunk-id=\"5b17f13e-f78e-480e-9453-939303b77afd\">A DC 10 Charisma (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Intimidation\" data-tooltip-href=\"//www.dndbeyond.com/skills/17-tooltip?disable-webm=1&amp;disable-webm=1\">Intimidation</a>) check to scare the gnomes into thinking that any harm visited upon the characters will result in Gnomengarde&rsquo;s destruction.</li>\n<li data-content-chunk-id=\"5f23467d-7f5c-4aec-a64b-6b08e9d04cbc\">A DC 10 Charisma (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Persuasion\" data-tooltip-href=\"//www.dndbeyond.com/skills/19-tooltip?disable-webm=1&amp;disable-webm=1\">Persuasion</a>) check to convince the gnomes that the characters can&rsquo;t be shapechangers, as shapechangers would surely take less conspicuous forms.</li>\n</ul>",
+	            "plain": "Mist from the waterfall dampens this empty cave, which has a 10-foot-high ledge overlooking it to the south. The ledge can be reached by following the curved tunnel to the east, or by scaling the slick rock wall with a successful DC 12 Strength (Athletics) check.Two rock gnome recluses stand on the ledge — a female named Ulla and a male named Pog. When anyone enters the cave, Ulla calls out, “Who goes there?” in Gnomish, then Pog repeats the question in Common. Their orders are to “attack shapechangers on sight.” Since anyone might be a shapechanger, they attack anyone who can’t prove they are who they claim to be. Characters who don’t want to be attacked must succeed on one of the following checks:A DC 10 Charisma (Deception) check to trick the gnomes into thinking the characters have an audience with the kings of Gnomengarde.A DC 10 Charisma (Intimidation) check to scare the gnomes into thinking that any harm visited upon the characters will result in Gnomengarde’s destruction.A DC 10 Charisma (Persuasion) check to convince the gnomes that the characters can’t be shapechangers, as shapechangers would surely take less conspicuous forms.",
+	            "player": false
+	        },
+	        "bd2a40de-a569-4f22-9b19-cb994f9ddccc": {
+	            "title": "04",
+	            "text": "<p data-content-chunk-id=\"16254f41-57f6-4aa8-9362-38cbff7adab2\">This kitchen is furnished with gnomes in mind, so everything is either close to the floor or readily reachable by tugging on an overly complicated rope-and-pulley mechanism. Five <a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/338614-rock-gnome-recluse\" data-tooltip-href=\"//www.dndbeyond.com/monsters/338614-tooltip?disable-webm=1&amp;disable-webm=1\">rock gnome recluses</a> busy themselves here:</p>\n<ul data-content-chunk-id=\"02c5ddbe-38c5-4da0-b07d-63515e075083\">\n<li data-content-chunk-id=\"5df628c5-3b06-4f4f-9f29-c48671a2c59e\">Joybell (female) uses a poker to stoke the fire of a hot iron stove standing against the east wall.</li>\n<li data-content-chunk-id=\"552287d1-f904-4bba-8c2d-22e8591dc8fe\">Dimble (male) uses a complicated press-like contraption to squeeze oil out of a big red mushroom and filter the liquid into four oil flasks.</li>\n<li data-content-chunk-id=\"f0a13a06-a1aa-4c18-9cde-42f71e2293c3\">Panana (female) stands atop a low table and uses a mechanical rolling pin contraption to kneed green bread dough. The severed caps of several big green mushrooms are set around her.</li>\n<li data-content-chunk-id=\"920d2aa1-b92b-42bd-bae1-9db71f49e995\">Uppendown (male) forms the dough into loaves of green bread, his tongue sticking out as he carefully shapes each loaf like a master sculptor.</li>\n<li data-content-chunk-id=\"f9599f69-291c-436a-bdad-2706a59b1801\">Tervaround (female) teeters on a stool as she stuffs a big purple mushroom into a barrel, so that it can ferment and be turned into mushroom wine.</li>\n</ul>\n<p data-content-chunk-id=\"8f4b59ba-a0ff-4754-812e-5552fc7d7df1\">Characters who question the gnomes are urged to speak to Fibblestib or Dabbledob in the workshop (<a href=\"https://www.dndbeyond.com/sources/doip/gnomengarde#G11InventorsWorkshop\" data-content-chunk-id=\"fd1df902-89f3-472b-89ed-d2477a2d48b7\">area G11</a>), as they know more about what&rsquo;s going on than any other gnomes in the complex. These gnomes won&rsquo;t leave the kitchen, but they can point characters in the right direction. The gnomes avoid talking about the missing gnomes or Mad King Korboz.</p>",
+	            "plain": "This kitchen is furnished with gnomes in mind, so everything is either close to the floor or readily reachable by tugging on an overly complicated rope-and-pulley mechanism. Five rock gnome recluses busy themselves here:Joybell (female) uses a poker to stoke the fire of a hot iron stove standing against the east wall.Dimble (male) uses a complicated press-like contraption to squeeze oil out of a big red mushroom and filter the liquid into four oil flasks.Panana (female) stands atop a low table and uses a mechanical rolling pin contraption to kneed green bread dough. The severed caps of several big green mushrooms are set around her.Uppendown (male) forms the dough into loaves of green bread, his tongue sticking out as he carefully shapes each loaf like a master sculptor.Tervaround (female) teeters on a stool as she stuffs a big purple mushroom into a barrel, so that it can ferment and be turned into mushroom wine.Characters who question the gnomes are urged to speak to Fibblestib or Dabbledob in the workshop (area G11), as they know more about what’s going on than any other gnomes in the complex. These gnomes won’t leave the kitchen, but they can point characters in the right direction. The gnomes avoid talking about the missing gnomes or Mad King Korboz.",
+	            "player": false
+	        },
+	        "d0ba2523-d1ec-48f9-b397-2fcd2e130536": {
+	            "title": "Misty Pool and Mushroom Islands",
+	            "text": "<p data-content-chunk-id=\"5726a6db-c69f-4329-be38-d33a9cac0104\">The gnomes subsist on 2-foot-tall mushrooms that grow atop two small islands in the middle of this 3-foot-deep pool. The islands are perpetually shrouded in mist from the waterfall. Magic bestowed upon the islands by Gnomengarde&rsquo;s first settlers causes the mushrooms to grow to abnormally large size. This same magic is the source of Gnomengarde&rsquo;s wild magic (see above).</p>\n<p data-content-chunk-id=\"6e0cb618-f0b0-4d7b-a6da-c8f6912eb4b6\">The mushrooms come in three colors. Red mushrooms provide oil that the gnomes use to fuel their lanterns and other mechanical devices. Green mushrooms are ground into flour and used to make a tasty green bread. Purple mushrooms are crushed and fermented to make mushroom wine, which tastes as good as it sounds.</p>",
+	            "plain": "The gnomes subsist on 2-foot-tall mushrooms that grow atop two small islands in the middle of this 3-foot-deep pool. The islands are perpetually shrouded in mist from the waterfall. Magic bestowed upon the islands by Gnomengarde’s first settlers causes the mushrooms to grow to abnormally large size. This same magic is the source of Gnomengarde’s wild magic (see above).The mushrooms come in three colors. Red mushrooms provide oil that the gnomes use to fuel their lanterns and other mechanical devices. Green mushrooms are ground into flour and used to make a tasty green bread. Purple mushrooms are crushed and fermented to make mushroom wine, which tastes as good as it sounds.",
+	            "player": false
+	        },
+	        "d79ce2c0-a7e0-404b-bd39-2274df2077c8": {
+	            "title": "10",
+	            "text": "<p data-content-chunk-id=\"8319c168-7a05-4b18-99d3-a7442a5ce2d4\">This area is <a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#VisionandLight\" data-tooltip-href=\"//www.dndbeyond.com/rules/89-tooltip?disable-webm=1&amp;disable-webm=1\">lightly obscured</a> by mist from the waterfall. The larger eastern part of the room contains two rapidly spinning devices that look like turnstiles fitted with stacks of long, sharp blades spaced 1 foot apart. The northern turnstile spins counterclockwise, while the southern one spins clockwise. Any creature that enters or starts its turn in the eastern part of the room while the blades are spinning must make a DC 15 Dexterity saving throw, taking 18 (4d8) slashing damage on a failed save, or half as much damage on a successful one.</p>\n<p data-content-chunk-id=\"efb35ef6-5f38-4648-a65e-a9c07b8d1891\">Set into the south wall of the smaller western part of the room is a brass lever in the down position. Pulling the lever up causes the turnstiles to stop spinning, allowing safe passage through the chamber. The rock gnomes bypass this trap by using the <a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/mage-hand\" data-tooltip-href=\"//www.dndbeyond.com/spells/2173-tooltip?disable-webm=1&amp;disable-webm=1\">mage hand</a> cantrip to move the lever from the east doorway.</p>",
+	            "plain": "This area is lightly obscured by mist from the waterfall. The larger eastern part of the room contains two rapidly spinning devices that look like turnstiles fitted with stacks of long, sharp blades spaced 1 foot apart. The northern turnstile spins counterclockwise, while the southern one spins clockwise. Any creature that enters or starts its turn in the eastern part of the room while the blades are spinning must make a DC 15 Dexterity saving throw, taking 18 (4d8) slashing damage on a failed save, or half as much damage on a successful one.Set into the south wall of the smaller western part of the room is a brass lever in the down position. Pulling the lever up causes the turnstiles to stop spinning, allowing safe passage through the chamber. The rock gnomes bypass this trap by using the mage hand cantrip to move the lever from the east doorway.",
+	            "player": false
+	        },
+	        "e9b6478d-1cde-4482-b3e2-9c01e44976ea": {
+	            "title": "06",
+	            "text": "<p data-content-chunk-id=\"dd9b1640-3a86-4321-9820-3d438d834c9a\">Parked in alcoves in this otherwise empty room are two gnomish contraptions. Each resembles a crab with a barrel for a shell, six articulated metal legs, and a pair of forward-facing pincer claws. A hatch on the top of each barrel opens to reveal an interior compartment equipped with a small, leather-padded seat surrounded by levers, pedals, and gears. The barrels are not airtight.</p>\n<p data-content-chunk-id=\"0a5e21d5-268c-4825-ab7e-9070fbd31483\">The gnomes built these crablike contraptions to grip and move other objects, rather like crude forklifts. However, the contraptions are so clumsy that they are useless for delicate work. They are just small enough to navigate Gnomengarde&rsquo;s 5-foot-wide passageways.</p>\n<p data-content-chunk-id=\"8c015612-01df-4cd0-95c7-025633abb6af\">Each barrel crab is a Large object with AC 15, 30 hit points, a Strength score of 10, and immunity to poison and psychic damage. It is designed to hold a single Small humanoid, though a Medium humanoid can fit inside with some discomfort. While in the barrel with the hatch closed, a creature has <a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/combat#Cover\" data-tooltip-href=\"//www.dndbeyond.com/rules/85-tooltip?disable-webm=1&amp;disable-webm=1\">total cover</a> against attacks from outside the contraption. It can use its action to make the contraption scuttle across the ground at a walking speed of 15 feet or make one attack with its pincer claws.</p>\n<aside class=\"epigraph\">\n<p data-content-chunk-id=\"3d7f74d9-883f-460b-aa9e-9d9b00bba08c\"><em><strong>Claws.</strong> Melee Weapon Attack:</em> +2 to hit, reach 5 ft., one target. <em>Hit:</em> 5 (2d4) piercing damage, and the target is <a class=\"tooltip-hover condition-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/appendix-a-conditions#Grappled\" data-tooltip-href=\"//www.dndbeyond.com/conditions/6-tooltip?disable-webm=1&amp;disable-webm=1\">grappled</a> (escape DC 10).</p>\n</aside>",
+	            "plain": "Parked in alcoves in this otherwise empty room are two gnomish contraptions. Each resembles a crab with a barrel for a shell, six articulated metal legs, and a pair of forward-facing pincer claws. A hatch on the top of each barrel opens to reveal an interior compartment equipped with a small, leather-padded seat surrounded by levers, pedals, and gears. The barrels are not airtight.The gnomes built these crablike contraptions to grip and move other objects, rather like crude forklifts. However, the contraptions are so clumsy that they are useless for delicate work. They are just small enough to navigate Gnomengarde’s 5-foot-wide passageways.Each barrel crab is a Large object with AC 15, 30 hit points, a Strength score of 10, and immunity to poison and psychic damage. It is designed to hold a single Small humanoid, though a Medium humanoid can fit inside with some discomfort. While in the barrel with the hatch closed, a creature has total cover against attacks from outside the contraption. It can use its action to make the contraption scuttle across the ground at a walking speed of 15 feet or make one attack with its pincer claws.Claws. Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 5 (2d4) piercing damage, and the target is grappled (escape DC 10).",
+	            "player": false
+	        }
+	    }
 	},
 	"doip/icespire-hold/0f2c0fab-acf0-4ead-b0bd-bbe81fe0d7bc": {
 		"dm_map_usable": "1",
@@ -59746,6 +61646,7 @@ var DDB_EXTRAS =
 	    "darkness_filter_number": "0",
 	    "title": "Map: Umbrage Hill ",
 	    "fog_of_war": "1",
+	    "uuid": "doip/umbrage-hill/MapUmbrageHill",
 	    "player_map": "https://www.dndbeyond.com/attachments/5/774/map-uh-pc.jpg",
 	    "upsq": "ft",
 	    "folderPath": "/First set of quests",
@@ -60349,13 +62250,73 @@ var DDB_EXTRAS =
 	    ],
 	    "fpsq": "5",
 	    "tokens": {
+	        "07487d25-bdfa-43a1-ac8e-31e0f1229d00": {
+	            "itemType": "builtinToken",
+	            "color": "#800080",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/02",
+	            "top": "2887.4px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "07487d25-bdfa-43a1-ac8e-31e0f1229d00",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_02",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "2456.8px",
+	            "name": "U2. Ruins of a House",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
 	        "3abe2295-ca4d-44cc-8970-b530cbccb921": {
 	            "sizeId": 5,
 	            "itemType": "monster",
 	            "color": "#000040",
 	            "disablestat": false,
 	            "hidestat": false,
-	            "hidden": true,
 	            "gridSquares": 2.0106626047220106,
 	            "custom_conditions": [],
 	            "hp": "68",
@@ -60363,7 +62324,7 @@ var DDB_EXTRAS =
 	            "legacyaspectratio": true,
 	            "restrictPlayerMove": true,
 	            "listItemPath": "/Monsters/Manticore",
-	            "top": "2537.8px",
+	            "top": "2450.4px",
 	            "hidehpbar": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
@@ -60376,6 +62337,8 @@ var DDB_EXTRAS =
 	                "color": "rgba(255, 255, 255, 0.5)",
 	                "feet": "0"
 	            },
+	            "ct_show": true,
+	            "init": 8,
 	            "ac": "14",
 	            "aura2": {
 	                "color": "rgba(255, 255, 0, 0.1)",
@@ -60398,7 +62361,7 @@ var DDB_EXTRAS =
 	            },
 	            "itemId": 16951,
 	            "square": false,
-	            "healthauratype": "bar",
+	            "healthauratype": "none",
 	            "size": 176,
 	            "left": "2281.73px",
 	            "elev": "",
@@ -60409,7 +62372,129 @@ var DDB_EXTRAS =
 	            "auraislight": true,
 	            "disableaura": true,
 	            "conditions": [],
-	            "enablepercenthpbar": true,
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "4ae370df-1f7a-4e23-8bcc-556ef6eb840d": {
+	            "itemType": "builtinToken",
+	            "color": "#600000",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/01",
+	            "top": "3149.6px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "4ae370df-1f7a-4e23-8bcc-556ef6eb840d",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_01",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "3857.33px",
+	            "name": "Dwarven Cairns",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "60a6ab87-2a79-43c1-84fe-1641e34b2084": {
+	            "itemType": "builtinToken",
+	            "color": "#200020",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/04",
+	            "top": "702.4px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "60a6ab87-2a79-43c1-84fe-1641e34b2084",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_04",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "3507.2px",
+	            "name": "U4. Second Floor",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
 	            "revealInFog": false
 	        },
 	        "7e3dcc0a-365a-4f8e-83b2-4dd8484b4a45": {
@@ -60424,7 +62509,7 @@ var DDB_EXTRAS =
 	            "legacyaspectratio": true,
 	            "restrictPlayerMove": true,
 	            "listItemPath": "/My Tokens/Adabra Gwynn",
-	            "top": "2275.6px",
+	            "top": "2188.2px",
 	            "hidehpbar": false,
 	            "light1": {
 	                "color": "rgba(255, 255, 255, 1)",
@@ -60464,6 +62549,7 @@ var DDB_EXTRAS =
 	            "tokenSize": 1,
 	            "size": 88,
 	            "left": "2106.67px",
+	            "elev": "",
 	            "name": "Adabra Gwynn",
 	            "zindexdiff": 17,
 	            "defaultmaxhptype": "average",
@@ -60473,12 +62559,136 @@ var DDB_EXTRAS =
 	            "conditions": [],
 	            "enablepercenthpbar": true,
 	            "revealInFog": false
+	        },
+	        "c0ecb1af-c295-47aa-a9fd-4d0facfa54e1": {
+	            "itemType": "builtinToken",
+	            "color": "#002020",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/05",
+	            "top": "527.6px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "c0ecb1af-c295-47aa-a9fd-4d0facfa54e1",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_05",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "4645.13px",
+	            "name": "U5. Third Floor",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
+	        },
+	        "dc1c8ecc-ff20-4a21-b511-dbace7c5b8c1": {
+	            "itemType": "builtinToken",
+	            "color": "#006060",
+	            "disablestat": true,
+	            "hidestat": false,
+	            "hidden": true,
+	            "gridSquares": 1.0053313023610053,
+	            "custom_conditions": [],
+	            "hp": "",
+	            "max_hp": "",
+	            "legacyaspectratio": true,
+	            "folderPath": "/Numbers",
+	            "restrictPlayerMove": true,
+	            "listItemPath": "/AboveVTT Tokens/Numbers/03",
+	            "top": "2537.8px",
+	            "hidehpbar": false,
+	            "light1": {
+	                "color": "rgba(255, 255, 255, 1)",
+	                "feet": "0"
+	            },
+	            "id": "dc1c8ecc-ff20-4a21-b511-dbace7c5b8c1",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+	            "locked": false,
+	            "light2": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": "0"
+	            },
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+	            "ac": "",
+	            "aura2": {
+	                "color": "rgba(255, 255, 0, 0.1)",
+	                "feet": "0"
+	            },
+	            "aura1": {
+	                "color": "rgba(255, 129, 0, 0.3)",
+	                "feet": "0"
+	            },
+	            "tokenStyleSelect": "circle",
+	            "revealname": false,
+	            "lockRestrictDrop": "restrict",
+	            "player_owned": false,
+	            "tokenBaseStyleSelect": "default",
+	            "itemId": "_AboveVTT_Tokens_Numbers_03",
+	            "square": false,
+	            "vision": {
+	                "color": "rgba(255, 255, 255, 0.5)",
+	                "feet": 60
+	            },
+	            "healthauratype": "aura",
+	            "size": 88,
+	            "left": "2019.13px",
+	            "name": "U3. Stone Windmill first floor",
+	            "zindexdiff": 17,
+	            "defaultmaxhptype": "average",
+	            "disableborder": true,
+	            "auraislight": false,
+	            "disableaura": false,
+	            "conditions": [],
+	            "enablepercenthpbar": false,
+	            "revealInFog": false
 	        }
 	    },
+	    "id": "e1bbc7ae-45e8-4391-9eb8-ad3e0188f95e",
 	    "darkness_filter": "0",
 	    "grid_line_width": "0.5",
 	    "order": 1677826158790,
 	    "grid_subdivided": "0",
+	    "parentId": "a22420d5-103e-4bad-834e-01cb07ce0faf",
 	    "scale_factor": "2",
 	    "offsetx": 5.866666666666731,
 	    "dm_map_usable": "1",
@@ -60492,7 +62702,51 @@ var DDB_EXTRAS =
 	    "snap": "1",
 	    "map": "https://www.dndbeyond.com/attachments/5/773/map-uh-dm.jpg",
 	    "width": 2888,
-	    "height": 1838
+	    "height": 1838,
+	    "notes": {
+	        "07487d25-bdfa-43a1-ac8e-31e0f1229d00": {
+	            "title": "U2. Ruins of a House",
+	            "text": "<p>A fireplace is all that remains of this old stone house.</p>",
+	            "plain": "A fireplace is all that remains of this old stone house.",
+	            "player": false
+	        },
+	        "3abe2295-ca4d-44cc-8970-b530cbccb921": {
+	            "title": "Manticore",
+	            "text": "<p>Characters can fight or negotiate with the manticore, which ceases its attack and flies away if given at least 25 gp in treasure or a few pounds of meat.</p>",
+	            "plain": "Characters can fight or negotiate with the manticore, which ceases its attack and flies away if given at least 25 gp in treasure or a few pounds of meat.",
+	            "player": false
+	        },
+	        "4ae370df-1f7a-4e23-8bcc-556ef6eb840d": {
+	            "title": "Dwarven Cairns",
+	            "text": "<p>Dwarves were buried under these rock piles, but their bones, armor, and weapons disintegrated long ago.</p>",
+	            "plain": "Dwarves were buried under these rock piles, but their bones, armor, and weapons disintegrated long ago.",
+	            "player": false
+	        },
+	        "60a6ab87-2a79-43c1-84fe-1641e34b2084": {
+	            "title": "U4. Second Floor",
+	            "text": "<p>Her quarters are on the second floor (area U4).</p>",
+	            "plain": "Her quarters are on the second floor (area U4). ",
+	            "player": false
+	        },
+	        "7e3dcc0a-365a-4f8e-83b2-4dd8484b4a45": {
+	            "title": "Adabra Gwynn",
+	            "text": "<p><em><strong>Treasure.</strong></em> Adabra sells up to six <a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/potion-of-healing\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/71-tooltip?disable-webm=1&amp;disable-webm=1\">potions of healing</a> for 50 gp each.</p>",
+	            "plain": "Treasure. Adabra sells up to six potions of healing for 50 gp each.",
+	            "player": false
+	        },
+	        "c0ecb1af-c295-47aa-a9fd-4d0facfa54e1": {
+	            "title": "U5. Third Floor",
+	            "text": "<p>The third floor (area U5) is a loft where guests can stay.</p>",
+	            "plain": "The third floor (area U5) is a loft where guests can stay.",
+	            "player": false
+	        },
+	        "dc1c8ecc-ff20-4a21-b511-dbace7c5b8c1": {
+	            "title": "U3. Stone Windmill first floor",
+	            "text": "",
+	            "plain": "",
+	            "player": false
+	        }
+	    },
 	},
 	"doip/woodland-manse/96f5f33c-db89-443a-9441-660679edc173": {
 		"dm_map_usable": "1",
