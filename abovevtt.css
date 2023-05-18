@@ -1812,6 +1812,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     width: 90%;
     margin: auto;
 }
+#export_current_scene{
+    margin: 7px 0px 0px 0px;
+    width: 94.5%;
+    transform: scale(0.8);
+}
 
 .ct-sidebar__controls .tab-btn,
 .sidebar__controls .tab-btn {

@@ -495,6 +495,11 @@ function init_settings() {
 				<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
 				<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
 					<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
+				</div>
+				<div id='export_current_scene_container'>
+					<button id='export_current_scene' onclick='export_current_scene();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the current scene data including token notes">EXPORT CURRENT SCENE ONLY</button>
+				</div>
+
 			</div>
 		`);
 
@@ -917,7 +922,7 @@ function export_current_scene(){
 		journalchapters: [],
 		soundpads: {}
 	};
-
+	delete DataFile.scenes[0].itemType;
 	for(tokenID in window.TOKEN_OBJECTS){
 		for(noteID in window.JOURNAL.notes){
 			if(tokenID == noteID){
