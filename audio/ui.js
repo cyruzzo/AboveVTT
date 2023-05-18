@@ -63,15 +63,16 @@ function init_mixer() {
             if (window.YTPLAYER) {
                 window.YTPLAYER.volume = $("#youtube_volume").val();
                 window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
-            }            
+            }   
+            if($('video#scene_map').length > 0)
+                $('video#scene_map')[0].volume = $("#youtube_volume").val()/100 * $("#master-volume input").val();  
+
             if(window.YTPLAYER || $('video#scene_map').length>0){
                 data={
                     volume: $("#youtube_volume").val()
                 };
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
             }     
-            $('video#scene_map')[0].volume = $("#youtube_volume").val()/100 * $("#master-volume input").val();
-
         });
         var text_calc = $(`<div class='channelName'>Animated Map Audio</span>`);
         $('body').prepend(text_calc);

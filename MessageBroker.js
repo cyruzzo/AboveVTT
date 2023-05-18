@@ -721,8 +721,11 @@ class MessageBroker {
 				if(window.YTPLAYER?.setVolume){
 						window.YTPLAYER.setVolume(msg.data.volume*$("#master-volume input").val());
 				}
-				$('video#scene_map')[0].volume = msg.data.volume/100*$("#master-volume input").val();
-				$('video#scene_map').attr('data-volume', msg.data.volume/100)
+				if($('video#scene_map').length > 0){
+					$('video#scene_map')[0].volume = msg.data.volume/100*$("#master-volume input").val();
+					$('video#scene_map').attr('data-volume', msg.data.volume/100)
+				}
+
 			}
 
 			if (msg.eventType == "dice/roll/pending"){
