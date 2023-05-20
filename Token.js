@@ -527,7 +527,9 @@ class Token {
 		// Save handle params
 		top = parseFloat(top);
 		left = parseFloat(left);
-
+		if(this.walkableArea.right == null || this.walkableArea.bottom == null){
+			this.prepareWalkableArea()
+		}
 		// Stop movement if new position is outside of the scene
 		if (
 			top  < this.walkableArea.top - this.options.size    || 
@@ -2012,6 +2014,9 @@ class Token {
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					window.oldTokenPosition = {};
+					if(self.walkableArea.right == null || self.walkableArea.bottom == null){
+						self.prepareWalkableArea()
+					}
 					click.x = event.pageX;
 					click.y = event.pageY;
 					if(self.selected == false && $(".token.tokenselected").length>0){
@@ -2059,7 +2064,9 @@ class Token {
 								let curr = window.TOKEN_OBJECTS[id];
 								curr.orig_top = curr.options.top;
 								curr.orig_left = curr.options.left;
-
+ 								if(curr.walkableArea.right == null || curr.walkableArea.bottom == null){
+ 									curr.prepareWalkableArea();
+								}
 								let el = $("#aura_" + id.replaceAll("/", ""));
 								if (el.length > 0) {
 									el.attr("data-left", el.css("left").replace("px", ""));
@@ -2456,6 +2463,7 @@ class Token {
 
 		// Shorten letiable to improve readability
 		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
+
 
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
