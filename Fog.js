@@ -1006,7 +1006,7 @@ function redraw_drawings() {
 			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x, y, color, 1, true);
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true);
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
