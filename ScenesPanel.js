@@ -255,7 +255,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 		let options = {
 			...default_options(),
 			id: uuid(),
-			imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
+			imgsrc : `https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png`,
 			hidden : true,
 			tokenStyleSelect : 'definitelyNotAToken',
 			light1 : {
@@ -2032,8 +2032,8 @@ function create_scene_root_container(fullPath, parentId) {
 	});
 
 	const UVTT = build_tutorial_import_list_item({
-		"title": "Import from Universal Virtual Tabletop File",
-		"description": "Build a scene using a UVTT file",
+		"title": "Import from UVTT File",
+		"description": "Build a scene using a Universal Virtual Tabletop file",
 		"category": "Scenes",
 		"player_map": "",
 	}, "", false);
@@ -2078,6 +2078,7 @@ function build_UVTT_import_container(){
 		        
 		      </div>
 		      <div id='uvtt instructions'>Note: Currently Dropbox and Google Drive public links are supported. In Google Drive this means making sure 'anyone with the link' can view it. Other hosting sites may work but due to the type of file many will not, discord for example does not work.</div>
+		      <div id='uvtt instructions'>UVTT Maps will take longer to load then regularly hosted images.</div>
 
 		    </section>
 		  </div>
