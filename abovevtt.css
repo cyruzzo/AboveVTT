@@ -5743,7 +5743,7 @@ input.max_hp[disabled]{
     }
 }
 
-.token img[src*='https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png'] {
+.token img[src*='/assets/lightbulb.png'] {
     background:#ffffff80;
     border-radius:20px !important;
     border: var(--token-border-width) solid #000 !important;
@@ -5752,9 +5752,6 @@ input.max_hp[disabled]{
 .body-rpgcampaign .ddb-campaigns-invite-primary {
     filter: blur(6px);
     transition: 0ms filter 200ms;
-}
-.ct-character-sheet__inner[style*='width: 570px'] #avtt-character-join-button{
-  display:none;
 }
 
 .body-rpgcampaign .ddb-campaigns-invite-primary:active {

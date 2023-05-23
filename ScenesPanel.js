@@ -255,7 +255,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 		let options = {
 			...default_options(),
 			id: uuid(),
-			imgsrc : `https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png`,
+			imgsrc : `${window.EXTENSION_PATH}assets/lightbulb.png`,
 			hidden : true,
 			tokenStyleSelect : 'definitelyNotAToken',
 			light1 : {
