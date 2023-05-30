@@ -9,12 +9,14 @@ class ItemType {
     static Encounter = "encounter";
     static Scene = "scene";
     static Aoe = "aoe";
+    static Open5e = "open5e"
 }
 
 class RootFolder {
     static Root = { name: "", path: "/", id: "root" };
     static Players = { name: "Players", path: "/Players", id: "playersFolder" };
     static Monsters = { name: "Monsters", path: "/Monsters", id: "monstersFolder" };
+    static Open5e = { name: "Open5e Monsters", path: "/Open5e Monsters", id: "open5eFolder" };
     static MyTokens = { name: "My Tokens", path: "/My Tokens", id: "myTokensFolder" };
     static AboveVTT = { name: "AboveVTT Tokens", path: "/AboveVTT Tokens", id: "builtinTokensFolder" };
     static DDB = { name: "D&D Beyond Tokens", path: "/DDB", id: "_DDB" };
@@ -26,6 +28,7 @@ class RootFolder {
                RootFolder.Root,
                RootFolder.Players,
                RootFolder.Monsters,
+               RootFolder.Open5e,
                RootFolder.MyTokens,
                RootFolder.AboveVTT,
                RootFolder.Encounters,
@@ -77,7 +80,7 @@ class TokenCustomization {
     tokenOptions;
 
     /** Used internally during TokenCustomization construction to ensure data integrety */
-    static validTypes = [ItemType.PC, ItemType.Monster, ItemType.MyToken, ItemType.Folder];
+    static validTypes = [ItemType.PC, ItemType.Monster, ItemType.Open5e, ItemType.MyToken, ItemType.Folder];
 
     /**
      * @param playerSheet {string} the id of the DDB character
@@ -97,6 +100,16 @@ class TokenCustomization {
      */
     static Monster(monsterId, tokenOptions) {
         return new TokenCustomization(monsterId, ItemType.Monster, RootFolder.Monsters.id, RootFolder.MyTokens.id, tokenOptions);
+    }
+
+    /**
+     * @param monsterId {number|string} the slug of the open 5e monster
+     * @param tokenOptions {object} the overrides for token.options
+     * @returns {TokenCustomization} the token customization for the monster
+     * @constructor
+     */
+    static open5eMonster(monsterId, tokenOptions) {
+        return new TokenCustomization(monsterId, ItemType.Open5e, RootFolder.Open5e.id, RootFolder.MyTokens.id, tokenOptions);
     }
 
     /**
@@ -316,6 +329,9 @@ class TokenCustomization {
     }
     isTypeMonster() {
         return this.tokenType === ItemType.Monster;
+    }
+    isTypeOpen5eMonster() {
+        return this.tokenType === ItemType.Open5e;
     }
 
     allCombinedOptions() {

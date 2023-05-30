@@ -662,6 +662,13 @@ function should_use_iframes_for_monsters() {
  * @param {UUID} tokenId selected token ID
  */
 function load_monster_stat(monsterId, tokenId) {
+	if(window.TOKEN_OBJECTS[tokenId].options.monster == 'open5e'){
+		let container = build_draggable_monster_window();
+		build_and_display_stat_block_with_id(window.TOKEN_OBJECTS[tokenId].options.stat, container, tokenId, function () {
+			$(".sidebar-panel-loading-indicator").hide();
+		}, true);
+		return;
+	}
 	if (should_use_iframes_for_monsters()) {
 		load_monster_stat_iframe(monsterId, tokenId);
 		return;

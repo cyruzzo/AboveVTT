@@ -573,6 +573,21 @@ class SidebarListItem {
     item.monsterData = monsterData;
     return item;
   }
+    /**
+   * Creates a Monster list item.
+   * @param monsterData {object} the object returned by the DDB API call that searches for monsters
+   * @returns {SidebarListItem} the list item this creates
+   * @constructor
+   */
+  static open5eMonster(monsterData) {
+    console.debug("SidebarListItem.Monster", monsterData);
+    if(monsterData.img_main == null){
+      monsterData.img_main = 'https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg'
+    }
+    let item = new SidebarListItem(monsterData.slug, monsterData.name, monsterData.img_main, ItemType.Open5e, RootFolder.Open5e.path, RootFolder.Open5e.id);
+    item.monsterData = monsterData;
+    return item;
+  }
 
   /**
    * Creates a PC list item.
@@ -697,6 +712,9 @@ class SidebarListItem {
   /** @returns {boolean} whether or not this item represents a Monster */
   isTypeMonster() { return this.type === ItemType.Monster }
 
+  /** @returns {boolean} whether or not this item represents a Monster */
+  isTypeOpen5eMonster() { return this.type === ItemType.Open5e }
+
   /** @returns {boolean} whether or not this item represents a Builtin Token */
   isTypeBuiltinToken() { return this.type === ItemType.BuiltinToken }
 
@@ -738,6 +756,7 @@ class SidebarListItem {
       case ItemType.MyToken:
       case ItemType.PC:
       case ItemType.Monster:
+      case ItemType.Open5e:
       case ItemType.Encounter:
       case ItemType.Scene:
       case ItemType.Aoe:
@@ -764,6 +783,7 @@ class SidebarListItem {
         return true;
       case ItemType.PC:
       case ItemType.Monster:
+      case ItemType.isTypeOpen5eMonster:
       case ItemType.BuiltinToken:
       case ItemType.Encounter: // we technically could support this, but I don't think we should
       case ItemType.Aoe: // we technically could support this, but I don't think we should
@@ -887,6 +907,11 @@ function find_sidebar_list_item(html) {
     }
     // explicitly using '==' instead of '===' to allow (33253 == '33253') to return true
     foundItem = window.monsterListItems.find(item => item.monsterData.id == html.attr("data-monster"));
+    if (foundItem !== undefined) {
+      console.log('find_sidebar_list_item', foundItem);
+      return foundItem;
+    }
+    foundItem = window.open5eListItems.find(item => item.id == htmlId);
     if (foundItem !== undefined) {
       console.log('find_sidebar_list_item', foundItem);
       return foundItem;
@@ -1369,7 +1394,7 @@ function build_sidebar_list_row(listItem) {
       break;
   }
 
-  if (listItem.canEdit() || listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) { // can't edit builtin or DDB, but need access to the list of images for drag and drop reasons.
+  if (listItem.canEdit() || listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken() || listItem.isTypeOpen5eMonster()) { // can't edit builtin or DDB, but need access to the list of images for drag and drop reasons.
     let settingsButton = $(`
         <div class="token-row-gear" title="configure">
             <img src="${window.EXTENSION_PATH}assets/icons/cog.svg" style="width:100%;height:100%;"  alt="settings icon"/>
@@ -1504,6 +1529,9 @@ function display_sidebar_list_item_configuration_modal(listItem) {
     case ItemType.MyToken:
     case ItemType.PC:
     case ItemType.Monster:
+      display_token_configuration_modal(listItem);
+      break;
+    case ItemType.Open5e:
       display_token_configuration_modal(listItem);
       break;
     case ItemType.Scene:
