@@ -433,7 +433,9 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     margin: 25px 0px 0px 0px;
 }
 
-
+.open5eMonster .detail-content>div:not(.mon-stat-block) {
+    display:none !important;
+}
 a.ddbeb-button {
     align-items: center;
     -webkit-appearance: none;

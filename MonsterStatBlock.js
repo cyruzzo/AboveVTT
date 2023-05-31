@@ -1,22 +1,30 @@
 
-function build_and_display_stat_block_with_id(monsterId, container, tokenId, callback) {
-    let cachedMonsterItem = cached_monster_items[monsterId];
+function build_and_display_stat_block_with_id(monsterId, container, tokenId, callback, open5e=false) {
+
+
+    let cachedMonsterItem = open5e ? cached_open5e_items[monsterId] : cached_monster_items[monsterId];
     if (cachedMonsterItem) {
-        display_stat_block_in_container(new MonsterStatBlock(cachedMonsterItem.monsterData), container, tokenId);
-        if (callback) {
-            callback();
-        }
+      display_stat_block_in_container(new MonsterStatBlock(cachedMonsterItem.monsterData), container, tokenId);
+      if (callback) {
+          callback();
+      }
     } else {
-        fetch_and_cache_monsters([monsterId], function () {
-            display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterId].monsterData), container, tokenId);
+        fetch_and_cache_monsters([monsterId], function (open5e = false) {
+            if(!open5e){
+
+              display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterId].monsterData), container, tokenId);
+            }
+            else{
+              display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData), container, tokenId);
+            }
             if (callback) {
                 callback();
             }
-        });
+        }, tokenId, open5e);
     }
 }
 
-function build_and_display_stat_block_with_data(monsterData, container, tokenId) {
+function build_and_display_stat_block_with_data(monsterData, container, tokenId, open5e=false) {
     let cachedMonsterItem = cached_monster_items[monsterData.id];
     if (cachedMonsterItem) {
         // we have a cached monster. this data is the best data we have so display that instead of whatever we were given
@@ -26,9 +34,13 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId)
         // is not as good as the data we get from fetching the monster directly so
         // build with what the listItem has on it, then fetch more details, then re-render it with the updated details
         display_stat_block_in_container(new MonsterStatBlock(monsterData), container, tokenId);
-        fetch_and_cache_monsters([monsterData.id], function () {
+        fetch_and_cache_monsters([monsterData.stat], function (open5e = false) {
+          if(!open5e){
             display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterData.id].monsterData), container, tokenId);
-        });
+          }
+          else{
+            display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterData.stat].monsterData), container, tokenId);}
+        }, tokenId, open5e);
     }
 }
 
@@ -58,7 +70,7 @@ function build_monster_stat_block(statBlock) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
     return `
-<div class="container avtt-stat-block-container">
+<div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
   <div id="content" class="main content-container" style="padding:0!important">
     <section class="primary-content" role="main">
 
@@ -354,14 +366,13 @@ class MonsterStatBlock {
         return this.findObj("creatureSizes", this.data.sizeId);
     }
     get sizeName() {
-        return this.sizeObj?.name || "";
+        return this.data.size || this.sizeObj?.name || "";
     }
-
     get typeObj() {
         return this.findObj("monsterTypes", this.data.typeId);
     }
     get typeName() {
-        return this.typeObj?.name || "";
+        return this.data.type || this.typeObj?.name || "";
     }
     get monsterTypeHtml() {
         if (!this.data.subTypes || this.data.subTypes.length === 0) {
@@ -375,7 +386,7 @@ class MonsterStatBlock {
         return this.findObj("alignments", this.data.alignmentId);
     }
     get alignmentName() {
-        return this.alignmentObj?.name || "";
+        return this.data.alignment || this.alignmentObj?.name || "";
     }
 
     get speedDescription() {
@@ -548,6 +559,9 @@ class MonsterStatBlock {
         if (!this.data.languages || this.data.languages.length === 0) {
             return "<span class='hideme'></span>";
         }
+        if(typeof this.data.languages === "string"){
+          return this.data.languages
+        }
         return this.data.languages
             .map(l => {
                 const definition = this.findObj("languages", l.languageId);
@@ -561,21 +575,18 @@ class MonsterStatBlock {
     }
 
     get challengeRatingHtml() {
-        const definition = this.findObj("challengeRatings", this.data.challengeRatingId);
-        let crString = parseInt(definition.value);
-        if(definition.value == 0.125){
-          crString = `1/8`
-        }
-        else if(definition.value == 0.25){
-          crString = `1/4`
-        }
-        else if(definition.value == 0.5){
-          crString = `1/2`
-        }
-
-
-
-        return `${crString} (${definition.xp.toLocaleString()} XP)`;
+      const definition = this.findObj("challengeRatings", this.data.challengeRatingId);  
+      let crString = parseInt(definition.value);
+      if(definition.value == 0.125){
+        crString = `1/8`
+      }
+      else if(definition.value == 0.25){
+        crString = `1/4`
+      }
+      else if(definition.value == 0.5){
+        crString = `1/2`
+      }
+      return `${crString} (${definition.xp.toLocaleString()} XP)`;
     }
 
     get proficiencyBonusHtml() {
@@ -587,10 +598,16 @@ class MonsterStatBlock {
     get sourceBookHtml() {
         let html = `<p class="source monster-source">`;
         if (this.data.sourceId) {
-            const definition = this.findObj("sources", this.data.sourceId);
-            html += definition.description;
+            if(!this.data.document__title){
+              const definition = this.findObj("sources", this.data.sourceId);
+              html += definition.description;
+            }
+            else{
+              html += this.data.document__title;
+            }
+            
             if (this.data.sourcePageNumber) {
-                html += `<span class="page-number">, pg. ${this.data.sourcePageNumber}</span>`;
+                html += `, pg. ${this.data.sourcePageNumber}`;
             }
         }
         html += `</p>`;
