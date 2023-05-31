@@ -167,24 +167,22 @@ class Mixer extends EventTarget {
 
             // create new player if needed
             if (!(player)) {
-                player = new Audio(channel.src);
-                player.preload = "auto";
+                let url = channel.src;
+                if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+                    const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+                    console.log("parse drive audio is converting", url, "to", parsed);
+                    url = parsed;
+                }
+                else if (url.includes("dropbox.com") && url.includes("?dl=")) {
+                    const parsed = url.split("?dl=")[0] + "?raw=1";
+                    console.log("parse dropbox audio is converting", url, "to", parsed);
+                    url = parsed;
+                }
+                player = new Audio(url);
+                player.preload = "metadata";
                 this._players[id] = player;
             }
-            const url = player.src;
-            if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
-                const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
-                console.log("parse drive audio is converting", url, "to", parsed);
-                player.src = parsed;
-            }
-            else if (url.includes("dropbox.com") && url.includes("?dl=")) {
-                const parsed = url.split("?dl=")[0] + "?raw=1";
-                console.log("parse dropbox audio is converting", url, "to", parsed);
-                player.src = parsed;
-            }
-            if(player.readyState != 4){
-                player.load();  
-            }
+
             // sync player
             player.volume = state.volume * channel.volume;
             player.loop = channel.loop;
@@ -196,7 +194,7 @@ class Mixer extends EventTarget {
             } else if (play) {
                 player.addEventListener("canplaythrough", (event) => {
                   /* the audio is now playable; play it if permissions allow */
-                    if(!(state.paused || channel.paused))
+                   if(this._players[id] && !(state.paused || channel.paused))
                         player.play();
                 }, { once: true });
                 
