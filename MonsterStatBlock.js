@@ -20,7 +20,7 @@ function build_and_display_stat_block_with_id(monsterId, container, tokenId, cal
             if (callback) {
                 callback();
             }
-        }, tokenId, open5e);
+        }, open5e);
     }
 }
 
@@ -40,7 +40,7 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
           }
           else{
             display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterData.stat].monsterData), container, tokenId);}
-        }, tokenId, open5e);
+        }, open5e);
     }
 }
 
@@ -514,16 +514,36 @@ class MonsterStatBlock {
         return objects.map(obj => obj.name).join(", ");
     }
     get damageVulnerabilitiesHtml() {
+        if(this.data.damage_vulnerabilities){
+          return this.data.damage_vulnerabilities.replace(/(?:^|\s)\w/g, function(match) {
+              return match.toUpperCase();
+          });
+        }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES);
     }
     get damageResistancesHtml() {
+        if(this.data.damage_resistances){
+          return this.data.damage_resistances.replace(/(?:^|\s)\w/g, function(match) {
+              return match.toUpperCase();
+          });
+        }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_RESISTANCE);
     }
     get damageImmunitiesHtml() {
+        if(this.data.damage_immunities){
+          return this.data.damage_immunities.replace(/(?:^|\s)\w/g, function(match) {
+              return match.toUpperCase();
+          });
+        }
         return this.damageAdjustmentsHtml(DAMAGE_ADJUSTMENT_TYPE_IMMUNITY);
     }
 
     get conditionImmunitiesHtml() {
+        if(this.data.condition_immunities){
+          return this.data.condition_immunities.replace(/(?:^|\s)\w/g, function(match) {
+              return match.toUpperCase();
+          });
+        }
         if (this.data.conditionImmunitiesHtml === "string" && this.data.conditionImmunitiesHtml.length > 0) {
             return this.data.conditionImmunitiesHtml;
         }
