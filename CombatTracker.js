@@ -191,7 +191,7 @@ function init_combat_tracker(){
 				if(element.attr("data-target") in window.all_token_objects){
 					window.all_token_objects[element.attr("data-target")].options.init = value;
 				}
-			});
+			}, $(this).attr('data-stat'));
 		});
 		
 		debounceCombatReorder()
@@ -441,9 +441,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		entry.addClass("hasTooltip");
 	}
 
-	if(token.options.monster > 0)
+	if(token.options.monster > 0 || token.options.monster == 'open5e')
 		entry.attr('data-monster',token.options.monster);
 	
+	if(token.options.stat)
+		entry.attr('data-stat', token.options.stat)
+
 	img=$("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	img.attr('src',token.options.imgsrc);
 	img.css('border','3px solid '+token.options.color);
@@ -492,7 +495,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	// auto roll initiative for monsters
 	
-	if(window.DM && (token.options.monster > 0) && (!disablerolling) && token.options.init == undefined){
+	if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e') && (!disablerolling) && token.options.init == undefined){
 		window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				token.options.init = value;
@@ -500,7 +503,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
 				debounceCombatReorder();
-			});
+			}, token.options.itemId);
 	}
 	
 	
