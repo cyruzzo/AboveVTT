@@ -217,7 +217,7 @@ class Mixer extends EventTarget {
      * @private
      * @param {MixerState} state
      */
-    _write(state, setPlaylist = false) {
+    _write(state, setPlaylist = false, noSync = false) {
         if(!setPlaylist && window.DM){
             let selectedPlaylistID = this.selectedPlaylist();
             if(selectedPlaylistID != undefined){
@@ -227,8 +227,11 @@ class Mixer extends EventTarget {
             }
         }
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
-        this.syncPlayers();
-        this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
+        if(!noSync){
+            this.syncPlayers();
+            this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
+        }
+
     }
 
     /**
@@ -255,7 +258,8 @@ class Mixer extends EventTarget {
     set volume(v) {
         const state = this.state();
         state.volume = v;
-        this._write(state);
+        const noSync = true;
+        this._write(state, undefined, noSync);
     }
 
     /**
