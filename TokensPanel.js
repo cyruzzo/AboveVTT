@@ -2704,7 +2704,7 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
     });
 });
 
-const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, tokenId, open5e) => {
+const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
     if(open5e){
         const cachedIds = Object.keys(cached_open5e_items);
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
@@ -2779,52 +2779,52 @@ function convert_open5e_monsterData(monsterData){
 
         if(monsterData.special_abilities?.length>0){
             monsterData.specialTraitsDescription = monsterData.special_abilities.map(action => {
-                let desc = `<b>${action.name}.</b> ${action.desc}`
-                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
-            }).join("<p> ");
+            }).join("");
         }
                
         if(monsterData.actions?.length>0){
             monsterData.actionsDescription = monsterData.actions.map(action => {
-                let desc = `<b>${action.name}.</b> ${action.desc}`
-                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
-            }).join("<p> ");
+            }).join("");
         }
     
         if(monsterData.bonus_actions?.length>0){
             monsterData.bonusActionsDescription = monsterData.bonus_actions.map(action => {
-                let desc = `<b>${action.name}.</b> ${action.desc}`
-                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
-            }).join("<p> ");
+            }).join("");
         }
    
         if(monsterData.reactions?.length>0){
             monsterData.reactionsDescription = monsterData.reactions.map(action => {
-                let desc = `<b>${action.name}.</b> ${action.desc}`
-                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
-            }).join("<p> ");
+            }).join("");
         }
  
         if(monsterData.legendary_actions?.length>0){
             monsterData.legendaryActionsDescription = monsterData.legendary_actions.map(action => {
-                let desc = `<b>${action.name}.</b> ${action.desc}`
-                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
-            }).join("<p> ");
+            }).join("");
         }
        
         let convertedSkills = [];
