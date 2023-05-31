@@ -6,6 +6,53 @@ monster_search_filters = {};
 encounter_monster_items = {}; // encounterId: SidebarTokenItem[]
 cached_monster_items = {}; // monsterId: SidebarTokenItem
 aoe_items = [];
+open5e_monsters = [];
+open5e_next = '';
+cached_open5e_items = {};
+
+
+async function getOpen5e(results = [], search = ''){
+    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
+    let jsonData = {}
+    await $.getJSON(api_url, function(data){
+        jsonData = data;
+
+    });
+    for (let i = 0; i < jsonData.results.length; i++) {
+        jsonData.results[i] = convert_open5e_monsterData(jsonData.results[i])
+    }
+    results = results.concat(jsonData.results)
+    open5e_monsters = results;
+    open5e_next = jsonData.next;
+    inject_open5e_monster_list_items(); 
+
+    return open5e_monsters;
+}
+async function getGroupOpen5e(slugin){
+    let api_url = `https://api.open5e.com/monsters/?slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3`
+    let jsonData = {}
+    await $.getJSON(api_url, function(data){
+        jsonData = data;
+    });
+    for (let i = 0; i < jsonData.results.length; i++) {
+        jsonData.results[i] = convert_open5e_monsterData(jsonData.results[i])
+    }
+    return jsonData.results;
+}
+async function getNextOpen5e(results = open5e_monsters, nextPage){ 
+    let jsonData = {}
+    await $.getJSON(nextPage, function(data){
+        jsonData = data;
+    });
+
+    results = results.concat(jsonData.results)
+    for (let i = 0; i < jsonData.results.length; i++) {
+        jsonData.results[i] = convert_open5e_monsterData(jsonData.results[i])
+    }
+    open5e_monsters = results;
+    open5e_next = jsonData.next;
+    return open5e_monsters;
+}
 
 /** Reads in tokendata, and writes to mytokens and mytokensfolders; marks tokendata objects with didMigrateToMyToken = false; */
 function migrate_tokendata() {
@@ -284,7 +331,7 @@ function filter_token_list(searchTerm) {
         allFolders.removeClass("collapsed"); // auto expand all folders
         for (let i = 0; i < allFolders.length; i++) {
             let currentFolder = $(allFolders[i]);
-            if (matches_full_path(currentFolder, RootFolder.Monsters.path)) {
+            if (matches_full_path(currentFolder, RootFolder.Monsters.path) || matches_full_path(currentFolder, RootFolder.Open5e.path) ) {
                 // we always want the monsters folder to be open when searching
                 continue;
             }
@@ -299,7 +346,11 @@ function filter_token_list(searchTerm) {
     console.log("filter_token_list about to call inject_monster_tokens");
 
     window.monsterListItems = []; // don't let this grow unbounded
+    window.open5eListItems = [];
+    open5e_monsters = [];
     inject_monster_tokens(searchTerm, 0);
+    getOpen5e(open5e_monsters, searchTerm);
+
 }
 
 /**
@@ -367,14 +418,30 @@ function inject_monster_list_items(listItems) {
     }
 }
 
-/** Called on startup. It reads from localStorage, and initializes all the things needed for the TokensPanel to function properly */
-function init_tokens_panel() {
+function inject_open5e_monster_list_items(listItems = open5e_monsters) {
+    let monsterFolder = find_html_row_from_path(RootFolder.Open5e.path, tokensPanel.body);
+    if (monsterFolder === undefined || monsterFolder.length === 0) {
+        console.warn("inject_monster_list_items failed to find the monsters folder");
+        return;
+    }
+    let list = monsterFolder.find(`> .folder-item-list`);
+    for (let i = 0; i < listItems.length; i++) {
+        let item = SidebarListItem.open5eMonster(listItems[i]);
+        window.open5eListItems.push(item);
+        let row = build_sidebar_list_row(item);
+        enable_draggable_token_creation(row);
+        list.append(row);
+    }
+}
 
+/** Called on startup. It reads from localStorage, and initializes all the things needed for the TokensPanel to function properly */
+async function init_tokens_panel() {
     console.log("init_tokens_panel");
 
     tokens_rootfolders = [
         SidebarListItem.Folder(RootFolder.Players.id, RootFolder.Root.path, RootFolder.Players.name, false, path_to_html_id(RootFolder.Root.path), ItemType.PC),
         SidebarListItem.Folder(RootFolder.Monsters.id, RootFolder.Root.path, RootFolder.Monsters.name, false, path_to_html_id(RootFolder.Root.path), ItemType.Monster),
+        SidebarListItem.Folder(RootFolder.Open5e.id, RootFolder.Root.path, RootFolder.Open5e.name, false, path_to_html_id(RootFolder.Root.path), ItemType.Open5e),
         SidebarListItem.Folder(RootFolder.MyTokens.id, RootFolder.Root.path, RootFolder.MyTokens.name, false, path_to_html_id(RootFolder.Root.path), ItemType.MyToken),
         SidebarListItem.Folder(RootFolder.AboveVTT.id, RootFolder.Root.path, RootFolder.AboveVTT.name, false, path_to_html_id(RootFolder.Root.path), ItemType.BuiltinToken),
         SidebarListItem.Folder(RootFolder.DDB.id, RootFolder.Root.path, RootFolder.DDB.name, false, path_to_html_id(RootFolder.Root.path), ItemType.DDBToken),
@@ -430,6 +497,7 @@ function init_tokens_panel() {
     read_local_monster_search_filters();
 
     window.monsterListItems = []; // don't let this grow unbounded
+    window.open5eListItems = [];
     setTimeout(function () {
         // give it a couple of second to make sure everything is rendered before fetching the base monsters
         // this isn't ideal, but the loading screen is up for much longer anyway...
@@ -825,6 +893,8 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
 
     let tokenSizeSetting;
     let tokenSize;
+    let hpVal;
+    let placedCount;
     switch (listItem.type) {
         case ItemType.Folder:
             console.log("TODO: place all tokens in folder?", listItem);
@@ -874,7 +944,6 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.color = color_from_pc_object(pc);
             break;
         case ItemType.Monster:
-            let hpVal;
             switch (options['defaultmaxhptype']) {
                 case 'max':
                     const hitDiceData = listItem.monsterData.hitPointDice;
@@ -902,9 +971,50 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.armorClass = listItem.monsterData.armorClass;
             options.monster = listItem.monsterData.id;
             options.stat = listItem.monsterData.id;
-            let placedCount = 1;
+            placedCount = 1;
             for (let tokenId in window.TOKEN_OBJECTS) {
                 if (window.TOKEN_OBJECTS[tokenId].options.monster === listItem.monsterData.id) {
+                    placedCount++;
+                }
+            }
+            if (placedCount > 1) {
+                let color = TOKEN_COLORS[(placedCount - 1) % 54];
+                console.log(`updating monster name with count: ${placedCount}, and setting color: ${color}`);
+                options.name = `${listItem.name} ${placedCount}`;
+                options.color = `#${color}`;
+            }
+            break;
+        case ItemType.Open5e:
+             switch (options['defaultmaxhptype']) {
+                case 'max':
+                    const hitDiceData = listItem.monsterData.hitPointDice;
+                    hpVal = hitDiceData.diceCount * hitDiceData.diceValue + hitDiceData.fixedValue;
+                    break;
+                case 'roll':
+                    hpVal = new rpgDiceRoller.DiceRoll(listItem.monsterData.hitPointDice.diceString).total;
+                    break;
+                case 'average':
+                default:
+                    hpVal = listItem.monsterData.averageHitPoints;
+                    break;
+            }
+            options.hitPointInfo = {
+                current: hpVal,
+                maximum: hpVal,
+                temp: 0
+            };
+            tokenSizeSetting = options.tokenSize;
+            tokenSize = parseInt(tokenSizeSetting);
+            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+                options.sizeId = listItem.monsterData.sizeId;
+                // TODO: handle custom sizes
+            }
+            options.armorClass = listItem.monsterData.armorClass;
+            options.monster = "open5e";
+            options.stat = listItem.monsterData.slug;
+            placedCount = 1;
+            for (let tokenId in window.TOKEN_OBJECTS) {
+                if (window.TOKEN_OBJECTS[tokenId].options.stat === listItem.monsterData.slug) {
                     placedCount++;
                 }
             }
@@ -1372,6 +1482,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     switch (listItem?.type) {
         case ItemType.MyToken:
         case ItemType.Monster:
+        case ItemType.Open5e:
         case ItemType.PC:
             break;
         default:
@@ -1551,7 +1662,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                 color: 'rgba(142, 142, 142, 1)'
             }
         }
-        else if(listItem.isTypeMonster()){
+        else if(listItem.isTypeMonster() || listItem.isTypeOpen5eMonster()){
             let darkvision = 0;
             if(listItem.monsterData.senses.length > 0)
             {
@@ -2560,17 +2671,28 @@ function display_change_image_modal(placedToken) {
 const fetch_and_cache_scene_monster_items = mydebounce( () => {
     console.log("fetch_and_cache_scene_monster_items");
     let monsterIds = [];
+    let open5emonsterIds = []
     for (let id in window.TOKEN_OBJECTS) {
         let token = window.TOKEN_OBJECTS[id];
         if (token.isMonster()) {
-            let alreadyCached = cached_monster_items[token.options.monster];
-            if (alreadyCached === undefined) {
-                // we only want monsters that we haven't already cached. no need to keep fetching the same things
-                monsterIds.push(token.options.monster);
+            if(token.options.monster == 'open5e'){
+                let alreadyCached = cached_open5e_items[token.options.stat];
+                if (alreadyCached === undefined) {
+                    // we only want monsters that we haven't already cached. no need to keep fetching the same things
+                    open5emonsterIds.push(token.options.stat);
+                }
             }
+            else{
+                let alreadyCached = cached_monster_items[token.options.monster];
+                if (alreadyCached === undefined) {
+                    // we only want monsters that we haven't already cached. no need to keep fetching the same things
+                    monsterIds.push(token.options.monster);
+                }
+            }
+           
         }
     }
-    if (monsterIds.length === 0) {
+    if (monsterIds.length === 0 && open5emonsterIds === 0) {
         console.log("fetch_and_cache_scene_monster_items no monsters to fetch");
         return;
     }
@@ -2582,19 +2704,300 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
     });
 });
 
-const fetch_and_cache_monsters = mydebounce( (monsterIds, callback) => {
-    const cachedIds = Object.keys(cached_monster_items);
-    const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
-    fetch_monsters(monstersToFetch, function (response) {
-        if (response !== false) {
-            update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
-        }
-        if (callback) {
-            callback();
-        }
-    });
+const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, tokenId, open5e) => {
+    if(open5e){
+        const cachedIds = Object.keys(cached_open5e_items);
+        const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
+        fetch_monsters(monstersToFetch, function (response) {
+            if (response !== false) {
+                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)));
+            }
+            if (callback) {
+                callback(open5e);
+            }
+        }, open5e);
+    }
+    else{
+        const cachedIds = Object.keys(cached_monster_items);
+        const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
+        fetch_monsters(monstersToFetch, function (response) {
+            if (response !== false) {
+                update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
+            }
+            if (callback) {
+                callback();
+            }
+        });
+    }
+    
 });
 
 function update_monster_item_cache(newItems) {
     newItems.forEach(item => cached_monster_items[item.monsterData.id] = item);
+}
+function update_open5e_item_cache(newItems) {
+    newItems.forEach(item => {
+        cached_open5e_items[item.monsterData.slug] = item
+    });
+}
+function convert_open5e_monsterData(monsterData){
+        monsterData.isHomebrew = true;
+        monsterData.stats = [
+        {
+            "statId": 1,
+            "name": null,
+            "value": monsterData.strength
+        },
+        {
+            "statId": 2,
+            "name": null,
+            "value": monsterData.dexterity
+        },
+        {
+            "statId": 3,
+            "name": null,
+            "value": monsterData.constitution
+        },
+        {
+            "statId": 4,
+            "name": null,
+            "value": monsterData.intelligence
+        },
+        {
+            "statId": 5,
+            "name": null,
+            "value": monsterData.wisdom
+        },
+        {
+            "statId": 6,
+            "name": null,
+            "value": monsterData.charisma
+        }];
+
+        monsterData.passivePerception = monsterData.perception + 10;
+   
+
+        if(monsterData.special_abilities?.length>0){
+            monsterData.specialTraitsDescription = monsterData.special_abilities.map(action => {
+                let desc = `<b>${action.name}.</b> ${action.desc}`
+                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
+                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
+                return desc;
+            }).join("<p> ");
+        }
+               
+        if(monsterData.actions?.length>0){
+            monsterData.actionsDescription = monsterData.actions.map(action => {
+                let desc = `<b>${action.name}.</b> ${action.desc}`
+                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
+                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
+                return desc;
+            }).join("<p> ");
+        }
+    
+        if(monsterData.bonus_actions?.length>0){
+            monsterData.bonusActionsDescription = monsterData.bonus_actions.map(action => {
+                let desc = `<b>${action.name}.</b> ${action.desc}`
+                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
+                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
+                return desc;
+            }).join("<p> ");
+        }
+   
+        if(monsterData.reactions?.length>0){
+            monsterData.reactionsDescription = monsterData.reactions.map(action => {
+                let desc = `<b>${action.name}.</b> ${action.desc}`
+                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
+                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
+                return desc;
+            }).join("<p> ");
+        }
+ 
+        if(monsterData.legendary_actions?.length>0){
+            monsterData.legendaryActionsDescription = monsterData.legendary_actions.map(action => {
+                let desc = `<b>${action.name}.</b> ${action.desc}`
+                desc = desc.replace(/\d\dd\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
+                desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
+                return desc;
+            }).join("<p> ");
+        }
+       
+        let convertedSkills = [];
+        Object.entries(monsterData.skills).forEach(([key, value]) => {
+          console.log(`${key}: ${value}`)     
+            if(key == "athletics"){
+                convertedSkills.push({skillId: 2, value: value, additionalBonus: null})
+            }
+            else if(key == "acrobatics"){
+                convertedSkills.push({skillId: 3, value: value, additionalBonus: null})
+            }
+            else if(key == "sleight of hand"){
+                convertedSkills.push({skillId: 4, value: value, additionalBonus: null})
+            }
+            else if(key == "stealth"){
+                convertedSkills.push({skillId: 5, value: value, additionalBonus: null})
+            }
+            else if(key == "arcana"){
+                convertedSkills.push({skillId: 6, value: value, additionalBonus: null})
+            }
+            else if(key == "hHistory"){
+                convertedSkills.push({skillId: 7, value: value, additionalBonus: null})
+            }
+            else if(key == "investigation"){
+               convertedSkills.push({skillId: 8, value: value, additionalBonus: null})
+            }
+            else if(key == "nature"){
+                convertedSkills.push({skillId: 9, value: value, additionalBonus: null})
+            }
+            else if(key == "religion"){
+                convertedSkills.push({skillId: 10, value: value, additionalBonus: null})
+            }
+            else if(key == "animal handling"){
+                convertedSkills.push({skillId: 11, value: value, additionalBonus: null})
+            }
+            else if(key == "insight"){
+                convertedSkills.push({skillId: 12, value: value, additionalBonus: null})
+            }
+            else if(key == "medicine"){
+                convertedSkills.push({skillId: 13, value: value, additionalBonus: null})
+            }
+            else if(key == "perception"){
+                convertedSkills.push({skillId: 14, value: value, additionalBonus: null})
+            }
+            else if(key == "survival"){
+                convertedSkills.push({skillId: 15, value: value, additionalBonus: null})
+            }
+            else if(key == "deception"){
+                convertedSkills.push({skillId: 16, value: value, additionalBonus: null})
+            }
+            else if(key == "intimidation"){
+                convertedSkills.push({skillId: 17, value: value, additionalBonus: null})
+            }
+            else if(key == "performance"){
+                convertedSkills.push({skillId: 18, value: value, additionalBonus: null})
+            }
+            else if(key == "persuation"){
+                convertedSkills.push({skillId: 19, value: value, additionalBonus: null})
+            }       
+        });
+        monsterData.skills = convertedSkills;
+
+
+        let convertedSenses = [];
+
+        monsterData.senses = monsterData.senses.split(', ');
+        let sensesArray = [];
+        for(let i = 0; i < monsterData.senses.length; i++){
+            let currentSense = monsterData.senses[i].split(' ');
+            if(currentSense[0] == "blindsight"){
+                convertedSenses.push({senseId: 1, notes: `${currentSense[1]} ${currentSense[2]}`})
+            }
+            else if(currentSense[0] == "darkvision"){
+                convertedSenses.push({senseId: 2, notes: `${currentSense[1]} ${currentSense[2]}`})
+            }
+            else if(currentSense[0] == "tremorsense"){
+                convertedSenses.push({senseId: 3, notes: `${currentSense[1]} ${currentSense[2]}`})
+            }        
+            else if(currentSense[0] == "truesight"){
+                convertedSenses.push({senseId: 4, notes: `${currentSense[1]} ${currentSense[2]}`})
+            }  
+
+        }
+        monsterData.senses = convertedSenses;
+
+        if(monsterData.cr >= 1){
+          monsterData.challengeRatingId = monsterData.cr + 4
+        }
+        else if(monsterData.cr == 0){
+          monsterData.challengeRatingId = 1
+        }
+        else if(monsterData.cr == 0.125){
+          monsterData.challengeRatingId = 2
+        }
+        else if(monsterData.cr == 0.25){
+          monsterData.challengeRatingId = 3
+        }
+        else if(monsterData.cr == 0.5){
+          monsterData.challengeRatingId = 4
+        }
+        monsterData.sourceId = monsterData.document__title;    
+        monsterData.sourcePageNumber = monsterData.page_no;
+        monsterData.hitPointDice = {};
+        monsterData.hitPointDice.diceString = monsterData.hit_dice;
+        monsterData.averageHitPoints = monsterData.hit_points;
+        monsterData.armorClass = monsterData.armor_class;
+        monsterData.armorClassDescription = monsterData.armor_desc;  
+
+        if(monsterData.size == 'Tiny'){
+            monsterData.sizeId = 2
+        }
+        else if(monsterData.size == 'Small' ){
+            monsterData.sizeId = 3
+        }
+        else if(monsterData.size == 'Medium' ){
+            monsterData.sizeId = 4
+        }
+        else if(monsterData.size == 'Large' ){
+            monsterData.sizeId = 5
+        }
+        else if(monsterData.size == 'Huge' ){
+            monsterData.sizeId = 6
+        }
+        else if(monsterData.size == 'Gargantuan' ){
+            monsterData.sizeId = 7
+        }
+
+        monsterData.savingThrows = [];
+        if(monsterData.strength_save != null){
+            monsterData.savingThrows.push({statId: 1, bonusModifier: null})
+        }
+        if(monsterData.dexterity_save != null){
+            monsterData.savingThrows.push({statId: 2, bonusModifier: null})
+        }
+        if(monsterData.constitution_save != null){
+            monsterData.savingThrows.push({statId: 3, bonusModifier: null})
+        }
+        if(monsterData.intelligence_save != null){
+            monsterData.savingThrows.push({statId: 4, bonusModifier: null})
+        }
+        if(monsterData.wisdom_save != null){
+            monsterData.savingThrows.push({statId: 5, bonusModifier: null})
+        }
+        if(monsterData.charisma_save != null){
+            monsterData.savingThrows.push({statId: 6, bonusModifier: null})
+        }
+        
+        
+
+        monsterData.movements = [];
+        Object.entries(monsterData.speed).forEach(([key, value]) => {
+          console.log(`${key}: ${value}`)
+          key = key.replace(/\b[a-z]/g, function(letter) {
+            return letter.toUpperCase();
+          });
+          if(key == 'Walk'){
+            monsterData.movements.push({movementId: 1, speed: value, name: key})
+          }
+          else if(key == 'Burrow'){
+            monsterData.movements.push({movementId: 2, speed: value, name: key})
+          }
+          else if(key == 'Climb'){
+            monsterData.movements.push({movementId: 3, speed: value, name: key})
+          }
+          else if(key == 'Fly'){
+            monsterData.movements.push({movementId: 4, speed: value, name: key})
+          }
+          else if(key == 'Swim'){
+            monsterData.movements.push({movementId: 5, speed: value, name: key})
+          }
+        });
+
+
+
+        return monsterData;
 }

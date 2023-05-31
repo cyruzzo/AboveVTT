@@ -13,7 +13,6 @@ function scan_monster(target, stats, tokenId) {
 	target.find(".homebrew-creation-actions").remove();
 	target.find(".homebrew-previous-versions").remove();
 	target.find(".homebrew-details-footer").remove();
-	target.find("footer").remove()
 	target.find("#footer-push").remove();
 	target.find("#footer").remove();
 	target.find(".integrated-dice__container").hide();
