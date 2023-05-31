@@ -16,9 +16,12 @@ class StatHandler {
 				callback(cached_open5e_items[open5eSlug].monsterData)
 			}
 			else{
-				fetch_and_cache_monsters([open5eSlug], function (open5e = false) {          
-	                callback(cached_open5e_items[open5eSlug].monsterData);         
-	        	}, true);
+		        fetch_monsters([open5eSlug], function (response) {
+		            if (response !== false) {
+		                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)));
+		            }
+					callback(cached_open5e_items[open5eSlug].monsterData)
+		        }, true);
 			}
 		}
 		else {
