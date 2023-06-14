@@ -61,13 +61,27 @@ class ChatObserver {
 
     #parseSlashCommand(text) {
         let diceRoll = DiceRoll.fromSlashCommand(text);
-        let didSend = window.diceRoller.roll(diceRoll); // TODO: update this with more details?
-        if (didSend === false) {
-            // it was too complex so try to send it through rpgDiceRoller
+        if(window.AboveDice){
             let expression = text.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
-            didSend = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+            let roll = new rpgDiceRoller.DiceRoll(expression); 
+            let msgdata = {
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+                whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+            };
+            window.MB.inject_chat(msgdata);       
         }
-        return didSend;
+        else{
+            let didSend = window.diceRoller.roll(diceRoll); // TODO: update this with more details?
+            if (didSend === false) {
+                // it was too complex so try to send it through rpgDiceRoller
+                let expression = text.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+                didSend = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+            }
+            return didSend;
+        }
+
     }
 
     #sendChatMessage(text) {

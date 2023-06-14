@@ -48,7 +48,20 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         diceRoll.entityId = entityId;
         diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
 
-        window.diceRoller.roll(diceRoll);
+
+        if(window.AboveDice){      
+            let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+            let msgdata = {
+                player: window.PLAYER_NAME,
+                img: window.PLAYER_IMG,
+                text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+                whisper: `${(diceRoll.sendToOverride != 'Everyone') ? window.PLAYER_NAME : ``}`
+            };
+            window.MB.inject_chat(msgdata);       
+        }
+        else{
+            window.diceRoller.roll(diceRoll);
+        }
     });
 
     return menu;
@@ -90,7 +103,19 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             diceRoll.entityType = entityType;
             diceRoll.entityId = entityId;
 
-            window.diceRoller.roll(diceRoll);
+            
+            if(window.AboveDice){      
+                let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+                let msgdata = {
+                    player: window.PLAYER_NAME,
+                    img: window.PLAYER_IMG,
+                    text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+                };
+                window.MB.inject_chat(msgdata);       
+            }
+            else{
+                window.diceRoller.roll(diceRoll);
+            }
         });
 }
 

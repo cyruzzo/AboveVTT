@@ -4588,7 +4588,17 @@ div#selectedTokensBorderRotationGrabberConnector,
     width: 245px;
     max-height: 100%;
 }
-
+.aboveDiceTotal{
+    width: 100%;
+    display: block;
+    text-align: center;
+    font-weight: 700;
+    font-size: 23px;
+    font-family: Roboto,Open Sans,Helvetica,sans-serif;
+}
+.aboveDiceOutput{
+    width:100%;
+}
 #tokenOptionsContainer{
     overflow: hidden auto;
     padding: 5px;

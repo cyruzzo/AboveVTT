@@ -346,15 +346,27 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	const rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
 
-	window.diceRoller.roll(new DiceRoll(
-		`${expression}${modifier}`,
-		action,
-		rollType,
-		displayName,
-		imgUrl,
-		entityType,
-		entityId
-	));
+	if(window.AboveDice){      
+	    let roll = new rpgDiceRoller.DiceRoll(`${expression}${modifier}`); 
+	    let msgdata = {
+	        player: window.PLAYER_NAME,
+	        img: window.PLAYER_IMG,
+	        text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+	        whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+	    };
+	    window.MB.inject_chat(msgdata);       
+	}
+	else{
+		window.diceRoller.roll(new DiceRoll(
+			`${expression}${modifier}`,
+			action,
+			rollType,
+			displayName,
+			imgUrl,
+			entityType,
+			entityId
+		));
+	}
 	pressedButton = null
 }
 
