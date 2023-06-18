@@ -210,6 +210,7 @@ class Token {
 			this.options.hidestat = true
 			this.options.disableborder = true
 			this.options.disableaura = true
+			this.options.revealInFog = true
 		}
 	}
 
