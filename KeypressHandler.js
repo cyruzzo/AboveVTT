@@ -281,10 +281,22 @@ Mousetrap.bind('command+c', function(e) {
 
 Mousetrap.bind('ctrl+v', function(e) {
     if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
-    paste_selected_tokens(window.cursor_x, window.cursor_y);
+    if($('#temp_overlay:hover').length>0){
+        paste_selected_tokens(window.cursor_x, window.cursor_y);
+    } 
+    else {
+        let center = center_of_view();
+        paste_selected_tokens(center.x, center.y);
+    }
 });
 Mousetrap.bind('command+v', function(e) {
-    paste_selected_tokens(e.clientX - e.target.getBoundingClientRect(), e.clientY - e.target.getBoundingClientRect());
+    if($('#temp_overlay:hover').length>0){
+        paste_selected_tokens(window.cursor_x, window.cursor_y);
+    } 
+    else {
+        let center = center_of_view();
+        paste_selected_tokens(center.x, center.y);
+    }
 });
 
 document.onmousemove = function(event)
