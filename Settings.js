@@ -291,6 +291,16 @@ function avtt_settings() {
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' token measurement and ruler measurement during their turn in combat. You will not see rulers of any player that disables cursor/ruler streaming.` }
 				],
 				defaultValue: "all"
+			},
+			{
+				name: "projector",
+				label: "Streaming/TV Table Projector Mode",
+				type: "toggle",
+				options: [
+					{ value: true, label: "Enable", description: `If you have another tab with the player view open it will receive your scroll and zoom events.` },
+					{ value: false, label: "Disable", description: `If you have another tab with the player view open it will not receive your scroll and zoom events.` }
+				],
+				defaultValue: false
 			}
 		);
 	} else {

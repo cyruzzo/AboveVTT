@@ -21,6 +21,7 @@ const sendCharacterUpdateEvent = mydebounce(() => {
     update_pc_with_data(window.PLAYER_ID, pcData);
   } else {
     tabCommunicationChannel.postMessage({
+      msgType: 'CharacterData',
       characterId: window.location.href.split('/').slice(-1)[0],
       pcData: pcData
     });
