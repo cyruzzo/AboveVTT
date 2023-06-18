@@ -149,6 +149,14 @@ function change_zoom(newZoom, x, y) {
 	$(window).scrollTop(pageY);
 	$("body").css("--window-zoom", window.ZOOM)
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+	if(window.EXPERIMENTAL_SETTINGS.projector == true){
+		tabCommunicationChannel.postMessage({
+   			msgType: 'projectionZoom',
+   			newZoom: newZoom,
+   			x: x,
+   			y: y
+   		})
+	}
 	console.groupEnd()
 }
 

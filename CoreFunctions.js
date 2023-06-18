@@ -33,13 +33,22 @@ $(function() {
   window.diceRoller = new DiceRoller();
   if (is_abovevtt_page()) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
-      if(!find_pc_by_player_id(event.data.characterId, false))
+      if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
         return;
       if(!window.DM){
-         window.MB.sendMessage("custom/myVTT/character-update", {
-          characterId: event.data.characterId,
-          pcData: event.data.pcData
-        });
+        if(event.data.msgType == 'CharacterData'){
+          window.MB.sendMessage("custom/myVTT/character-update", {
+            characterId: event.data.characterId,
+            pcData: event.data.pcData
+          });
+        }
+        else if(event.data.msgType == 'projectionScroll'){
+          window.scroll(event.data.x, event.data.y);
+        }
+        else if(event.data.msgType == 'projectionZoom'){
+          change_zoom(event.data.newZoom, event.data.x, event.data.y);
+        }
+
       }
       else{
         update_pc_with_data(event.data.characterId, event.data.pcData);
