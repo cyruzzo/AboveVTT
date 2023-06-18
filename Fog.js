@@ -454,7 +454,7 @@ function check_single_token_visibility(id){
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
 	const inFog = is_token_under_fog(id); // this token is in fog
@@ -517,7 +517,7 @@ async function do_check_token_visibility() {
 
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 			//Combining some and filter cut down about 140ms for average sized picture
 			let someFilter = function(ctx) {
