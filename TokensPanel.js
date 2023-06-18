@@ -2779,7 +2779,14 @@ function convert_open5e_monsterData(monsterData){
 
         if(monsterData.special_abilities?.length>0){
             monsterData.specialTraitsDescription = monsterData.special_abilities.map(action => {
-                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                let desc = ``
+                if(action.name == 'Spellcasting'){
+                    actionDesc = action.desc.replace(/Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel/g, '</p><p>$&');
+                    desc = `<p><b>${action.name}.</b> ${actionDesc}</p>`;
+                }
+                else{
+                    desc = `<p><b>${action.name}.</b> ${action.desc.replace(/\n/g, `<br />`)}</p>`
+                }
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
