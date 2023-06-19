@@ -1229,7 +1229,7 @@ function init_journal(gameid){
 }
 
 function render_source_chapter_in_iframe(url) {
-	if (typeof url !== "string" || (!url.startsWith('https://www.dndbeyond.com/sources/') && !url.startsWith('/sources/'))) {
+	if (typeof url !== "string" || (!url.startsWith('https://www.dndbeyond.com/sources/') && !url.startsWith('/sources/') && !url.startsWith('https://www.dndbeyond.com/compendium/') && !url.startsWith('/compendium/'))) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
 	}
