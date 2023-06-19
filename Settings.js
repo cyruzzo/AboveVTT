@@ -294,7 +294,7 @@ function avtt_settings() {
 			},
 			{
 				name: "projector",
-				label: "Streaming/TV Table Projector Mode",
+				label: "Streaming/TV Projector Mode",
 				type: "toggle",
 				options: [
 					{ value: true, label: "Enable", description: `If you have another tab with the player view open it will receive your scroll and zoom events.` },

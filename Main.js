@@ -154,7 +154,8 @@ function change_zoom(newZoom, x, y) {
    			msgType: 'projectionZoom',
    			newZoom: newZoom,
    			x: x,
-   			y: y
+   			y: y,
+   			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
 	console.groupEnd()
