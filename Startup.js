@@ -16,7 +16,8 @@ $(function() {
             tabCommunicationChannel.postMessage({
               msgType: 'projectionScroll',
               x: window.pageXOffset,
-              y: window.pageYOffset
+              y: window.pageYOffset,
+              sceneId: window.CURRENT_SCENE_DATA.id
             });
       }
     }, true);

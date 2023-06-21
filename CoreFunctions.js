@@ -42,10 +42,10 @@ $(function() {
             pcData: event.data.pcData
           });
         }
-        else if(event.data.msgType == 'projectionScroll'){
+        else if(event.data.msgType == 'projectionScroll' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
           window.scroll(event.data.x, event.data.y);
         }
-        else if(event.data.msgType == 'projectionZoom'){
+        else if(event.data.msgType == 'projectionZoom' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
           change_zoom(event.data.newZoom, event.data.x, event.data.y);
         }
 
