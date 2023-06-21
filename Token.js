@@ -2160,9 +2160,11 @@ class Token {
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 
-					// Constrain token within scene
-					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
-					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
+					if(self.walkableArea.bottom != null && self.walkableArea.right != null){ // need to figure out what's causing these to be null but this is a workaround for the error for now
+						// Constrain token within scene
+						tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
+						tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
+					}
 
 
 					ui.position = {
@@ -2279,7 +2281,8 @@ class Token {
 										  Error(`One of these values is not a number: Size: ${curr.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
 										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 										)
-									}									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
+									}									
+									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 									if (pixeldata[2] != 0)
 									{	
