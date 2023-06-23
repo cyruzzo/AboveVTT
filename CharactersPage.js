@@ -335,6 +335,9 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
         else if($(this).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
           rollTitle = $(this).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
         }
+        else if($(this).parents(`.ddbc-combat-attack--item`).length > 0){
+          rollTitle = $(this).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
+        }
       }
 
 
