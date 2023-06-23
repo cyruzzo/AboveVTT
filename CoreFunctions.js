@@ -35,6 +35,10 @@ $(function() {
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
         return;
+      if(event.data.msgType == 'roll'){
+        window.MB.inject_chat(event.data.msg);
+        return;
+      }
       if(!window.DM){
         if(event.data.msgType == 'CharacterData'){
           window.MB.sendMessage("custom/myVTT/character-update", {
