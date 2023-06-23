@@ -268,7 +268,7 @@ class DiceRoller {
                 let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
                 let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
                 let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
-                let rollTitle = (diceRoll.name) ? diceRoll.name : 'AboveVTT';
+                let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
                 
                 let msgdata = {
                       player: window.PLAYER_NAME,
