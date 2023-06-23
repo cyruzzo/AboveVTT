@@ -332,7 +332,7 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
         else if($(this).parents(`.ct-spells-spell`).length > 0){
           rollTitle = $(this).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
         }
-        else if($(this).parents(`.ddbc-combat-action-attack`).length > 0){
+        else if($(this).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
           rollTitle = $(this).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
         }
         else if($(this).parents(`.ddbc-combat-attack--item`).length > 0){
