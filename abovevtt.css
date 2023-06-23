@@ -4589,16 +4589,45 @@ div#selectedTokensBorderRotationGrabberConnector,
     max-height: 100%;
 }
 .aboveDiceTotal{
-    width: 100%;
+    width: 25px;
     display: block;
     text-align: center;
     font-weight: 700;
     font-size: 23px;
     font-family: Roboto,Open Sans,Helvetica,sans-serif;
+    color: rgb(92, 112, 128);
 }
 .aboveDiceOutput{
-    width:100%;
+    width:181px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: "Roboto Condensed", "Arial Narrow", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgb(92, 112, 128);
 }
+.abovevtt-roll-check,
+.abovevtt-roll-skill{
+    color: rgb(181, 93, 255);
+}
+.abovevtt-roll-save,
+.abovevtt-roll-heal{
+    color: rgb(108, 191, 91);
+}
+.abovevtt-roll-damage{
+    color: rgb(223, 123, 123);
+}
+.abovevtt-roll-attack{
+    color: rgb(27, 154, 240);
+}
+.abovevtt-roll-custom,
+.abovevtt-roll-initiative{
+    color: rgb(245, 166, 35);
+}
+
+
+
 #tokenOptionsContainer{
     overflow: hidden auto;
     padding: 5px;
