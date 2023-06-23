@@ -287,6 +287,39 @@ function init_characters_pages(container = $(document)) {
   init_character_list_page_without_avtt();
 }
 
+const debounceConvertToRPGRoller =  mydebounce(() => {
+  for(let i = 0; i < $('.integrated-dice__container').length; i++){
+    let rollButton = $('.integrated-dice__container')[i];
+    $(rollButton).off('click.rpg-roller').on('click.rpg-roller', function(e){
+      e.stopImmediatePropagation();
+      let expression = '';
+      if($(this).find('.ddbc-damage__value').length>0){
+        expression = $(this).find('.ddbc-damage__value').text();
+      }
+      else if($(this).find('.ddbc-signed-number').length>0){
+        expression = `1d20${$(this).find('.ddbc-signed-number').attr('aria-label')}`;
+      }
+      let roll = new rpgDiceRoller.DiceRoll(expression); 
+      let msgdata = {
+          player: window.PLAYER_NAME,
+          img: window.PLAYER_IMG,
+          text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+      };
+      window.MB.inject_chat(msgdata);
+    });
+  }
+
+
+}, 1500)
+
+const debounceRemoveRPGRoller =  mydebounce(() => {
+  for(let i = 0; i < $('.integrated-dice__container').length; i++){
+    let rollButton = $('.integrated-dice__container')[i];
+    $(rollButton).off('click.rpg-roller');
+  }
+}, 1500)
+
 /** actions to take on the character sheet when AboveVTT is NOT running */
 function init_character_sheet_page() {
   if (!is_characters_page()) return;
@@ -358,7 +391,20 @@ function inject_dice_roll(element) {
     clickEvent.stopPropagation();
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-    window.diceRoller.roll(diceRoll);
+    if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+      let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+      let msgdata = {
+          player: window.PLAYER_NAME,
+          img: window.PLAYER_IMG,
+          text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+      };
+      window.MB.inject_chat(msgdata);
+    }
+    else{
+      window.diceRoller.roll(diceRoll);
+    }
+
   });
 }
 
@@ -394,6 +440,11 @@ function observe_character_sheet_changes(documentToObserve) {
         console.debug("character_sheet_observer mutation", mutation);
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
+        if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+          debounceConvertToRPGRoller();
+        } else{
+          debounceRemoveRPGRoller();
+        }
         switch (mutation.type) {
           case "attributes":
             if (

@@ -321,6 +321,17 @@ function avtt_settings() {
 			}
 		);
 	}
+	settings.push(
+	{
+		name: "rpgRoller",
+		label: "Disable DDB dice where possible",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Allow", description: `Disables DDB dice and uses a random number generator` },
+			{ value: false, label: "Never", description: `Defaults to DDB dice` }
+		],
+		defaultValue: false
+	})
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
 		// This is either a local or a beta build, so allow this helpful debugging tool

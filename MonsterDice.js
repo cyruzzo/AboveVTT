@@ -346,7 +346,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	const rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
 
-	if(window.AboveDice){      
+	if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){      
 	    let roll = new rpgDiceRoller.DiceRoll(`${expression}${modifier}`); 
 	    let msgdata = {
 	        player: window.PLAYER_NAME,
