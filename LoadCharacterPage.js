@@ -35,6 +35,7 @@ if (!isVttGamePage) {
         { src: "DiceRoller.js" },
         { src: "DDBApi.js" },
         { src: "MessageBroker.js" },
+        { src: "rpg-dice-roller.bundle.min.js" },
         // AboveVTT files that execute when loaded
         { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
         { src: "CharactersPage.js" } // Make sure CharactersPage executes last

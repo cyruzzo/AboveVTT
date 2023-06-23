@@ -1695,6 +1695,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	iframe.attr('data-sheet_url',sheet_url);
 	iframe.attr('src', sheet_url);
 
+
+
 	// lock this sheet
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
@@ -1710,6 +1712,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    { src: "DiceContextMenu/DiceContextMenu.js" },
 		    { src: "DiceRoller.js" },
 		    { src: "DDBApi.js" },
+		    { src: "rpg-dice-roller.bundle.min.js" },
 		    // AboveVTT files that execute when loaded
 		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
 		    { src: "CharactersPage.js" } // Make sure CharactersPage executes last
@@ -1793,6 +1796,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		console.log("removing headers");
 
 
+		
 		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
 			let addedElement = $(addedEvent.target);
 			if (addedElement.hasClass("ct-sidebar__pane")) {
@@ -1840,6 +1844,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
+			event.target.contentWindow.EXPERIMENTAL_SETTINGS['rpgRoller'] = window.EXPERIMENTAL_SETTINGS['rpgRoller'];
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
 			if (sidebar.length > 0 && $(event.target).contents().find("#castbutton").length == 0) {
 				inject_sidebar_send_to_gamelog_button($(event.target).contents().find(".ct-sidebar__pane-content > div"));
