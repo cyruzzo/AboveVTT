@@ -351,7 +351,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	    let msgdata = {
 	        player: window.PLAYER_NAME,
 	        img: window.PLAYER_IMG,
-	        text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
+	        text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${expression}${modifier}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${action}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
 	        whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
 	    };
 	    window.MB.inject_chat(msgdata);       
