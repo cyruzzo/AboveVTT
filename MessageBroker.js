@@ -257,6 +257,35 @@ class MessageBroker {
 		if (trackHistory) {
 			window.MB.track_message_history(data);
 		}
+		if(window.DM && data.data.injected_data?.rollType == 'initiative'){
+			let total = data.data.injected_data?.result;
+			let entityid = data.data.injected_data?.playerId;
+
+			
+			$("#tokens .VTTToken").each(
+				function(){
+					let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+					if(converted==entityid){
+						ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+						window.all_token_objects[$(this).attr('data-id')].options.init = total;
+						window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
+						window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
+					}
+				}
+			);
+
+			$("#combat_area tr").each(function() {
+				let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+				if (converted == entityid) {
+					$(this).find(".init").val(total);
+					window.all_token_objects[$(this).attr('data-target')].options.init = total;
+					window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
+					window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
+				}
+			});
+			debounceCombatReorder();
+		}
+
 		// start the task
 		
 		if(self.chat_decipher_task==null){

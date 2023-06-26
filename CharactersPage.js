@@ -313,7 +313,10 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
           player: window.PLAYER_NAME,
           img: window.PLAYER_IMG,
           text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
-          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+          rollType: rollData.rollType,
+          result: rollData.roll.total,
+          playerId: window.PLAYER_ID
       };
       if(is_abovevtt_page()){
         window.MB.inject_chat(msgdata);
@@ -381,11 +384,11 @@ function getRollData(rollButton){
         rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
       }
     }
-    const modifier = (roll.rolls.length > 1) ? roll.rolls[roll.rolls.length-1] : '';
+    const modifier = (roll.rolls.length > 1) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
 
     return {
       roll: roll,
-      expression: expression,
+      expression: expression.split(/[+-]/g)[0],
       rollType: rollType,
       rollTitle: rollTitle,
       modifier: modifier,
