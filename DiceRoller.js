@@ -43,7 +43,7 @@ class DiceRoll {
         }
         try {
             let alteredRollType = newRollType.trim().toLowerCase().replace("-", " ");
-            const validRollTypes = ["to hit", "damage", "save", "check", "heal", "reroll", "initiative"];
+            const validRollTypes = ["to hit", "damage", "save", "check", "heal", "reroll", "initiative", "attack", "roll"];
             if (validRollTypes.includes(alteredRollType)) {
                 this.#diceRollType = alteredRollType;
             } else {

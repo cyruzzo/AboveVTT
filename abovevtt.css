@@ -4622,7 +4622,8 @@ div#selectedTokensBorderRotationGrabberConnector,
     color: rgb(27, 154, 240);
 }
 .abovevtt-roll-custom,
-.abovevtt-roll-initiative{
+.abovevtt-roll-initiative,
+.abovevtt-roll-roll{
     color: rgb(245, 166, 35);
 }
 

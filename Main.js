@@ -2241,7 +2241,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 	`));
 
 	$(".dice-roller > div img").on("click", function(e) {
-		if ($(".dice-toolbar__dropdown").length > 0) {
+		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			// DDB dice are on the screen so let's use those. Ours will synchronize when these change.
 			if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
 				// make sure it's open
@@ -2270,34 +2270,37 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 
 	$(".dice-toolbar__dropdown").on("DOMSubtreeModified", function() {
 		// Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
-		$(".dice-die-button").each(function() {
-			let dieSize = $(this).attr("data-dice");
-			let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
-			let diceCountElement = $(this).find(".dice-die-button__count");
-			ourDiceElement.parent().find("span").remove();
-			if (diceCountElement.length == 0) {
-				ourDiceElement.removeAttr("data-count");
-			} else {
-				let diceCount = parseInt(diceCountElement.text());
-				ourDiceElement.attr("data-count", diceCount);
-				ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
-			}
-		})
+		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+			$(".dice-die-button").each(function() {
+				let dieSize = $(this).attr("data-dice");
+				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
+				let diceCountElement = $(this).find(".dice-die-button__count");
+				ourDiceElement.parent().find("span").remove();
+				if (diceCountElement.length == 0) {
+					ourDiceElement.removeAttr("data-count");
+				} else {
+					let diceCount = parseInt(diceCountElement.text());
+					ourDiceElement.attr("data-count", diceCount);
+					ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
+				}
+			})
 
-		// make sure our roll button is shown/hidden after all animations have completed
-		setTimeout(function() {
-			if ($(".dice-toolbar").hasClass("rollable")) {
-				$(".roll-button").addClass("show");
-			} else {
-				$(".roll-button").removeClass("show");
-			}
-		}, 0);
+
+			// make sure our roll button is shown/hidden after all animations have completed
+			setTimeout(function() {
+				if ($(".dice-toolbar").hasClass("rollable")) {
+					$(".roll-button").addClass("show");
+				} else {
+					$(".roll-button").removeClass("show");
+				}
+			}, 0);
+		}
 	});
 
 	$(".dice-roller > div img").on("contextmenu", function(e) {
 		e.preventDefault();
 
-		if ($(".dice-toolbar__dropdown").length > 0) {
+		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			// There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
 			// the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
 			let dieSize = $(this).attr("alt");
@@ -2327,12 +2330,12 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		}
 	});
 
-	if ($(".roll-button").length == 0) {
+	if ($(".roll-button").length == 0 || window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 		const rollButton = $(`<button class="roll-button">Roll</button>`);
 		$("body").append(rollButton);
 		rollButton.on("click", function (e) {
 
-			if ($(".dice-toolbar").hasClass("rollable")) {
+			if ($(".dice-toolbar").hasClass("rollable") && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 				let theirRollButton = $(".dice-toolbar__target").children().first();
 				if (theirRollButton.length > 0) {
 					// we found a DDB dice roll button. Click it and move on
@@ -2350,6 +2353,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 			let sentAsDDB = send_rpg_dice_to_ddb(rollExpression.join("+"), sendToDM);
 			if (!sentAsDDB) {
 				const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
+				
 				const text = roll.output;
 				const uuid = new Date().getTime();
 				const data = {
@@ -2368,6 +2372,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 						$(this).remove();
 					});
 				}
+						
 			}
 
 			$(".roll-button").removeClass("show");
