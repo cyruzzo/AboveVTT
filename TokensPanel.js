@@ -11,10 +11,28 @@ open5e_next = '';
 cached_open5e_items = {};
 
 
+
 async function getOpen5e(results = [], search = ''){
+    let ddbMonsterTypes = {
+        1: 'Aberration',
+        2: 'Beast',
+        3: 'Celestial',
+        4: 'Construct',
+        6: 'Dragon',
+        7: 'Elemental',
+        8: 'Fey',
+        9: 'Fiend',
+        10: 'Giant',
+        11: 'Humanoid',
+        13: 'Monstrosity',
+        14: 'Ooze',
+        15: 'Plant',
+        16: 'Undead'
+    }
     const maxCR = (monster_search_filters?.challengeRatingMax) ? monster_search_filters?.challengeRatingMax : '';
     const minCR = (monster_search_filters?.challengeRatingMin) ? monster_search_filters?.challengeRatingMin : '';
-    const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.toString() : '';
+    const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
+    
 
     let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
     let jsonData = {}
