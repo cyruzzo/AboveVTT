@@ -34,12 +34,13 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
         // is not as good as the data we get from fetching the monster directly so
         // build with what the listItem has on it, then fetch more details, then re-render it with the updated details
         display_stat_block_in_container(new MonsterStatBlock(monsterData), container, tokenId);
-        fetch_and_cache_monsters([monsterData.stat], function (open5e = false) {
+        let monsterId = (monsterData.slug) ? monsterData.slug : monsterData.id
+        fetch_and_cache_monsters([monsterId], function (open5e = false) {
           if(!open5e){
-            display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterData.id].monsterData), container, tokenId);
+            display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterId].monsterData), container, tokenId);
           }
           else{
-            display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterData.stat].monsterData), container, tokenId);}
+            display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData), container, tokenId);}
         }, open5e);
     }
 }

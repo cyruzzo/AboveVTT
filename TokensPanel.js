@@ -2259,7 +2259,7 @@ function open_monster_item(listItem, open5e=false) {
     let sidebarModal = new SidebarPanel("monster-stat-block", true);
     display_sidebar_modal(sidebarModal);
     try {
-        build_and_display_stat_block_with_data(listItem.monsterData, sidebarModal.body, undefined);
+        build_and_display_stat_block_with_data(listItem.monsterData, sidebarModal.body, undefined, open5e);
     } catch (error) {
         console.error("open_monster_item failed to build a stat block locally. Attempting to open an iFrame instead", error);
         close_sidebar_modal();
