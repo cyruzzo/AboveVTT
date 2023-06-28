@@ -1450,6 +1450,10 @@ function did_click_row(clickEvent) {
         window.open(clickedItem.monsterData.url, '_blank');
       }
       break;
+    case ItemType.Open5e: 
+        console.log(`Opening open5e monster with id ${clickedItem.monsterData.slug}`);
+        open_monster_item(clickedItem, true);
+      break;
     case ItemType.BuiltinToken:
       // display_builtin_token_details_modal(clickedItem);
       break;

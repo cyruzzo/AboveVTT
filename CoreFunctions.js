@@ -54,7 +54,7 @@ $(function() {
         }
 
       }
-      else{
+      else if(event.data.msgType == 'CharacterData'){
         update_pc_with_data(event.data.characterId, event.data.pcData);
       }
     })
