@@ -224,6 +224,7 @@ class Token {
 		tok.stop(true, true);
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
+		$('.token[data-clone-id^="dragging-"]').remove();
 		debounceLightChecks();
 	}
 
@@ -1455,6 +1456,7 @@ class Token {
 							await scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
 							await scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
 						}
+						$('.token[data-clone-id^="dragging-"]').remove();
 					}
 				});
 				
@@ -1486,7 +1488,7 @@ class Token {
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
 				// NEED RESIZING
-				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps)+"px");
+				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px");
 				old.find("img").css({
 					"max-height": this.sizeWidth(),
 					"max-width": this.sizeHeight()
@@ -1751,7 +1753,7 @@ class Token {
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");
-				tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps)+"px");
+				tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px" );
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
 				tokenImage.attr("src", this.options.imgsrc);
