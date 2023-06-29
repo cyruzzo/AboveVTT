@@ -38,8 +38,8 @@ function scan_monster(target, stats, tokenId) {
 				// clone the element as if it came from an iframe these variables won't be freed from memory
 				let currentElement = $(this).clone()
 				const modMatch = $(currentElement).attr("data-dicenotation")?.match(/(\+|-).*/gm)
-				const modifier = (modMatch ? modMatch.shift() : "").replaceAll("(", "").replaceAll(")", "");
-				const dice = $(currentElement).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "")
+				const modifier = (modMatch ? modMatch.shift() : "").replaceAll("(", "").replaceAll(")", "").replace(/\s/g, '');;
+				const dice = $(currentElement).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "").replace(/\s/g, '');
 				const rollType = $(currentElement).attr("data-rolltype")?.replace(" ","-")
 				const actionType = $(currentElement).attr("data-rollaction")?.replace(" ","-") || "custom"
 				const text = $(currentElement)?.text()
