@@ -163,6 +163,10 @@ class Mixer extends EventTarget {
         const state = this.state();
  
         Object.entries(state.channels).forEach(([id, channel]) => {
+            if(!channel?.src){
+                delete this._players[id];
+                return;
+            }
             let player = this._players[id]
 
             // create new player if needed

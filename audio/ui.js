@@ -81,6 +81,9 @@ function init_mixer() {
         channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
         /** @type {Object.<string, Channel>} */
         Object.entries(channels).forEach(([id, channel]) => {
+            if(!channel?.src){
+                return;
+            }
             const item = document.createElement("li");
             item.className = "audio-row";
             let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>${channel.name}</div></div>`)
