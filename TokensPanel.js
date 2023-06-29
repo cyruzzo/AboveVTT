@@ -1159,11 +1159,18 @@ function token_size_for_item(listItem) {
 function alternative_images_for_item(listItem) {
     if (!listItem) return [];
     let alternativeImages;
+    let customization;
     switch (listItem.type) {
         case ItemType.MyToken:
         case ItemType.PC:
         case ItemType.Monster:
-            let customization = find_token_customization(listItem.type, listItem.id);
+            customization = find_token_customization(listItem.type, listItem.id);
+            if (customization) {
+                alternativeImages = customization.alternativeImages();
+            }
+            break;
+        case ItemType.Open5e:
+            customization = find_token_customization(listItem.type, listItem.id);
             if (customization) {
                 alternativeImages = customization.alternativeImages();
             }
