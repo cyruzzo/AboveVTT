@@ -2830,7 +2830,7 @@ function convert_open5e_monsterData(monsterData){
                 else{
                     desc = `<p><b>${action.name}.</b> ${action.desc.replace(/\n/g, `<br />`)}</p>`
                 }
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2840,7 +2840,7 @@ function convert_open5e_monsterData(monsterData){
         if(monsterData.actions?.length>0){
             monsterData.actionsDescription = monsterData.actions.map(action => {
                 let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2850,7 +2850,7 @@ function convert_open5e_monsterData(monsterData){
         if(monsterData.bonus_actions?.length>0){
             monsterData.bonusActionsDescription = monsterData.bonus_actions.map(action => {
                 let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2860,7 +2860,7 @@ function convert_open5e_monsterData(monsterData){
         if(monsterData.reactions?.length>0){
             monsterData.reactionsDescription = monsterData.reactions.map(action => {
                 let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
