@@ -297,6 +297,238 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 
 	return sceneData;
 }
+function edit_scene_vision_settings(scene_id){
+	let scene = window.ScenesHandler.scenes[scene_id];
+
+	function form_row(name, title, inputOverride=null, imageValidation=false) {
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
+		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+		let rowInput
+		if(!inputOverride){
+			if (imageValidation){
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+			}else{
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
+			}
+			 
+		}
+		else{
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
+
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
+		toggle.on("click", callback)
+		if (scene[name] === "1" || defaultOn){
+			toggle.addClass("rc-switch-checked")
+		}
+		return toggle
+	}
+
+	function handle_form_grid_on_change(){
+		// not editting this scene, don't show live updates to grid
+		if (scene.id !== window.CURRENT_SCENE_DATA.id){
+			return
+		}
+	
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		// redraw grid with new information
+		if(grid === "1"){
+			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
+		}
+		// redraw grid using current scene data
+		else if(grid === "0"){
+			clear_grid()
+		}
+	}
+
+	$("#edit_dialog").remove();
+
+	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
+	console.log('edit_scene_dialog');
+	$("#scene_selector").attr('disabled', 'disabled');
+	dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
+	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+
+
+	scene_properties = $('<div id="scene_properties"/>');
+	dialog.append(scene_properties);
+
+
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, 1000);
+
+	var container = scene_properties;
+
+	container.empty();
+
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
+
+	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
+	uuid_hidden.val(scene['uuid']);
+	form.append(uuid_hidden);
+
+	let darknessValue = scene.darkness_filter || 0;
+	let darknessFilterRange = $(`<input name="darkness_filter" class="darkness-filter-range" type="range" value="${darknessValue}" min="0" max="100" step="1"/>`);
+	let darknessNumberInput = $(`<input name='darkness_filter_number' class='styled-number-input' type='number' min='0' max='100' value='${darknessValue}'/>`)
+	
+	darknessFilterRange.on('input change', function(){
+		$("#darkness_layer").toggleClass("smooth-transition", true);
+		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+   	 	let darknessPercent = 100 - darknessFilterRangeValue;
+   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+   		}
+   		setTimeout(function(){
+   			$("#darkness_layer").toggleClass("smooth-transition", false);
+   		}, 400);
+   		darknessNumberInput.val(darknessFilterRange.val());
+   		if(darknessFilterRange.val() == 100){
+   			playerPreviewHiddenMap.toggleClass('selected', true);
+   			playerPreviewVisibleMap.toggleClass('selected', false);
+   		}
+   		else{
+   			playerPreviewHiddenMap.toggleClass('selected', false);
+   			playerPreviewVisibleMap.toggleClass('selected', true);
+   		}
+	});
+
+
+	darknessFilterRange.on('mouseup', function(){
+   	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+   	 	scene.darkness_filter = darknessFilterRangeValue;
+	});
+
+	form.append(form_row('darknessFilter',
+						'Line of Sight/Darkness Opacity',
+						darknessFilterRange)
+	);
+	form.append(form_row('disableSceneVision',
+			'Disable token vision/light',
+			form_toggle("disableSceneVision",null, false,  function(event) {
+				handle_basic_form_toggle_click(event);
+			})
+		)
+	);
+	form.find('#darknessFilter_row').attr('title', `This will darken the map by the percentage indicated. This filter interacts with light auras. Any light aura on the map will reveal the darkness. Fully opaque white light will completely eliminate the darkness in it's area.`)
+	darknessFilterRange.after(darknessNumberInput);
+
+	let playerPreviewVisibleMap = $('<img class="player_map_preview zero_darkness" src="https://media.discordapp.net/attachments/1127918981303504946/1127920961946124430/revealed.jpg"></img>')
+	let playerPreviewHiddenMap = $('<img class="player_map_preview hundred_darkness" src="https://media.discordapp.net/attachments/1127918981303504946/1127920962218774598/darkness.jpg"></img>')
+	
+
+	if(darknessFilterRange.val() == 100){
+		playerPreviewHiddenMap.toggleClass('selected', true);
+		playerPreviewVisibleMap.toggleClass('selected', false);
+	}
+	else{
+		playerPreviewHiddenMap.toggleClass('selected', false);
+		playerPreviewVisibleMap.toggleClass('selected', true);
+	}
+
+	playerPreviewVisibleMap.on('click', function(){
+		playerPreviewHiddenMap.toggleClass('selected', false);
+   		playerPreviewVisibleMap.toggleClass('selected', true);
+   		darknessFilterRange.val(0);
+   		darknessFilterRange.trigger('change');
+	})
+
+	playerPreviewHiddenMap.on('click', function(){
+		playerPreviewHiddenMap.toggleClass('selected', true);
+   		playerPreviewVisibleMap.toggleClass('selected', false);
+   		darknessFilterRange.val(100);
+   		darknessFilterRange.trigger('change');
+	})
+
+
+	darknessNumberInput.on('input change', function(){
+		$("#darkness_layer").toggleClass("smooth-transition", true);
+		darknessFilterRange.val(darknessNumberInput.val());
+		let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
+   	 	let darknessPercent = 100 - darknessFilterRangeValue;
+   	 	if(window.CURRENT_SCENE_DATA.id == window.ScenesHandler.scenes[scene_id].id) {
+	   	 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+   		}
+   		setTimeout(function(){
+   			$("#darkness_layer").toggleClass("smooth-transition", false);
+   		}, 400); 
+   		if(darknessFilterRange.val() == 100){
+   			playerPreviewHiddenMap.toggleClass('selected', true);
+   			playerPreviewVisibleMap.toggleClass('selected', false);
+   		}
+   		else{
+   			playerPreviewHiddenMap.toggleClass('selected', false);
+   			playerPreviewVisibleMap.toggleClass('selected', true);
+   		}
+
+	});
+
+
+
+	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap);
+
+	const cancel = $("<button type='button'>Cancel</button>");
+	cancel.click(function() {
+		// redraw or clear grid based on scene data
+		// discarding any changes that have been made to live modification of grid
+		if (scene.id === window.CURRENT_SCENE_DATA.id){
+			if(window.CURRENT_SCENE_DATA.grid === "1"){
+				redraw_grid()
+			}
+			else{
+				clear_grid()
+			}
+		}
+		$("#sources-import-main-container").remove();
+		$(".ddb-classes-page-stylesheet").remove();
+		$("#scene_selector").removeAttr("disabled");
+		
+	})
+	const submitButton = $("<button type='button'>Save</button>");
+	submitButton.click(function() {
+		console.log("Saving scene changes")
+
+		const formData = get_edit_form_data();
+		for (key in formData) {
+			scene[key] = formData[key];
+		}
+
+		const isNew = false;
+		window.ScenesHandler.persist_scene(scene_id, isNew);
+
+
+
+		$("#sources-import-main-container").remove();
+		$("#scene_selector").removeAttr("disabled");
+		$("#scene_selector_toggle").click();
+		if(window.CURRENT_SCENE_DATA.id != window.ScenesHandler.scenes[scene_id].id) {
+			$(`.scene-item[data-scene-id='${window.ScenesHandler.scenes[scene_id].id}'] .dm_scenes_button`).click();
+		}
+		did_update_scenes();
+	});
+
+	form.append(submitButton);
+	form.append(cancel);
+	//		f.append(export_grid);
+	container.css('opacity', '0.0');
+	container.append(form);
+	
+	container.animate({
+		opacity: '1.0'
+	}, 1000);
+}
 
 function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
@@ -468,7 +700,7 @@ function edit_scene_dialog(scene_id) {
 	});
 
 	form.append(form_row('darknessFilter',
-						'Darkness filter',
+						'Line of Sight/Darkness Opacity',
 						darknessFilterRange)
 	);
 	form.append(form_row('disableSceneVision',

@@ -5834,7 +5834,8 @@ body.body-rpgcharacter-sheet #combat_area tr.CTToken:before{
 }
 
 #draw_menu .sp-replacer,
-#text_menu .sp-replacer{
+#text_menu .sp-replacer,
+#vision_menu .sp-replacer{
     width: 100%
 }
 
@@ -5967,6 +5968,20 @@ div.ddbc-tab-options--layout-pill>button{
 #scene_map_container{
     transform: scale(var(--scene-scale));
     transform-origin: top left;
+}
+
+#scene_map_container.preview{
+    pointer-events: none;
+    width:50%;
+}
+
+.player_map_preview{
+    width:45%;
+    margin:0px 20px 20px 20px;
+    cursor: pointer;
+}
+.player_map_preview.selected{
+    box-shadow: 0px 0px 0px 3px #f00;
 }
 
 @keyframes aurafx-flicker{
