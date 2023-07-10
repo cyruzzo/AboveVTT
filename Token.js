@@ -6,13 +6,13 @@ const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Flying", "Flamed", "Rage"
 
 /*const TOKEN_COLORS=  [
 	"D1BBD7","882E72","5289C7","4EB265","CAEOAB","F6C141","E8601C","777777","AE76A3","1965BO","7BAFDE","90C987","F7F056","F1932D","DC050C",
-	"FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF", 
-		"800000", "008000", "000080", "808000", "800080", "008080", "808080", 
-		"C00000", "00C000", "0000C0", "C0C000", "C000C0", "00C0C0", "C0C0C0", 
-		"400000", "004000", "000040", "404000", "400040", "004040", "404040", 
-		"200000", "002000", "000020", "202000", "200020", "002020", "202020", 
-		"600000", "006000", "000060", "606000", "600060", "006060", "606060", 
-		"A00000", "00A000", "0000A0", "A0A000", "A000A0", "00A0A0", "A0A0A0", 
+	"FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF",
+		"800000", "008000", "000080", "808000", "800080", "008080", "808080",
+		"C00000", "00C000", "0000C0", "C0C000", "C000C0", "00C0C0", "C0C0C0",
+		"400000", "004000", "000040", "404000", "400040", "004040", "404040",
+		"200000", "002000", "000020", "202000", "200020", "002020", "202020",
+		"600000", "006000", "000060", "606000", "600060", "006060", "606060",
+		"A00000", "00A000", "0000A0", "A0A000", "A000A0", "00A0A0", "A0A0A0",
 		"E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0", "000000"];*/
 
 // const TOKEN_COLORS = ["8DB6C7","","D1C6BF","CA9F92","","E3D9BO","B1C27A","B2E289","51COBF","59ADDO","","9FA3E3","099304","DB8DB2","F1C3DO"];
@@ -43,7 +43,7 @@ const debounceLightChecks = mydebounce(async () => {
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
-			redraw_light_walls();	
+			redraw_light_walls();
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		let promise = [redraw_light()];
@@ -345,7 +345,7 @@ class Token {
 				this.options.custom_conditions.push(condition);
 	    }
 	}
-	
+
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			if (this.isPlayer()) {
@@ -416,7 +416,7 @@ class Token {
 	show() {
 		this.update_from_page();
 		delete this.options.hidden;
-		if(this.options.ct_show !== undefined){//this is required as if it's undefined it's not in the combat tracker and changing it will add it to the combat tracker on next scene swap unintendedly.		
+		if(this.options.ct_show !== undefined){//this is required as if it's undefined it's not in the combat tracker and changing it will add it to the combat tracker on next scene swap unintendedly.
 			this.options.ct_show = true;
 		}
 		if(this.options.monster) {
@@ -458,13 +458,13 @@ class Token {
 		if (window.DM && this.options.locked) return; // don't allow rotating if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
-		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
+		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes,
 		// this just rotates locally to help with performance.
-		// draggable.stop will call place_sync_persist to finalize the rotation. 
+		// draggable.stop will call place_sync_persist to finalize the rotation.
 		// If we ever want this to send to all players in real time, simply comment out the rest of this function and call place_sync_persist() instead.
 		let scale = this.get_token_scale();
 		if(this.options.imageSize === undefined) {
-			this.imageSize(1) 
+			this.imageSize(1)
 		}
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
@@ -475,9 +475,7 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
 	async moveUp() {	
-		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);	
-		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
+		let newTop = `${parseFloat(this.options.top) - parseFloat(window.CURRENT_SCENE_DATA.vpps)}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
@@ -485,9 +483,9 @@ class Token {
 		}
 	}
 	async moveDown() {
-		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);	
 		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
+		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
 		if(inLos){
@@ -534,10 +532,10 @@ class Token {
 		}
 		// Stop movement if new position is outside of the scene
 		if (
-			top  < this.walkableArea.top - this.options.size    || 
+			top  < this.walkableArea.top - this.options.size    ||
 			top  > this.walkableArea.bottom + this.options.size ||
-			left < this.walkableArea.left - this.options.size || 
-			left > this.walkableArea.right + this.options.size 
+			left < this.walkableArea.left - this.options.size ||
+			left > this.walkableArea.right + this.options.size
 		) { return; }
 
 		this.options.top = top + 'px';
@@ -559,7 +557,7 @@ class Token {
 
 			const selectedOldTop = parseInt(this.options.top);
 			const selectedOldleft = parseInt(this.options.left);
-			
+
 			const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
 			const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
 
@@ -570,7 +568,7 @@ class Token {
 			this.options.top = `${selectedNewtop}px`;
 			this.options.left = `${selectedNewleft}px`;
 			this.place_sync_persist();
-		}		
+		}
 	}
 	place_sync_persist() {
 		this.place();
@@ -592,7 +590,7 @@ class Token {
 			let pageX = Math.round(parseInt(this.options.left) * window.ZOOM - ($(window).width() / 2));
 			let pageY = Math.round(parseInt(this.options.top) * window.ZOOM - ($(window).height() / 2));
 			console.log(this.options.left + " " + this.options.top + "->" + pageX + " " + pageY);
-			
+
 			if(!dontscroll){
 			$("html,body").animate({
 				scrollTop: pageY + window.VTTMargin,
@@ -644,7 +642,7 @@ class Token {
 	update_dead_cross(token){
 		if(this.maxHp > 0) {
 			// add a cross if it doesn't exist
-			if(token.find(".dead").length === 0) 
+			if(token.find(".dead").length === 0)
 				token.prepend(`<div class="dead" hidden></div>`);
 			// update cross scale
 			const deadCross = token.find('.dead')
@@ -699,11 +697,11 @@ class Token {
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage);
 		let tokenWidth = this.sizeWidth();
 		let tokenHeight = this.sizeHeight();
-			
+
 		if(this.options.disableaura || !this.hp || !this.maxHp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
-		} 
+		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
 				tokenWidth = tokenWidth - 6;
@@ -720,7 +718,7 @@ class Token {
 		if(this.options.disableborder) {
 			token.css('--token-border-color', 'transparent');
 			$("token:before").css('--token-border-color', 'transparent');
-		} 
+		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
 				tokenWidth = tokenWidth - 1;
@@ -762,7 +760,7 @@ class Token {
 						token.children('.token-image').css("min-height", tokenHeight + 'px');
 						token.children('.token-image').css("min-width", '');
 					}
-									
+
 				}
 			}
 		}
@@ -770,8 +768,8 @@ class Token {
 			token.children('.token-image').css("min-width", "");
 			token.children('.token-image').css("min-height", "");
 		}
-		
-		token.children('.token-image').css({		
+
+		token.children('.token-image').css({
 		    'max-width': tokenWidth + 'px',
 			'max-height': tokenHeight + 'px',
 		});
@@ -785,7 +783,7 @@ class Token {
 			};
 			window.MB.inject_chat(msgdata);
 		}
-		
+
 		console.groupEnd()
 	}
 
@@ -805,8 +803,8 @@ class Token {
 		let selector = "div[data-id='" + this.options.id + "']";
 		let old = $("#tokens").find(selector);
 
-		if(old.is(':animated')){	
-			this.stopAnimation(); // stop the animation and jump to the end.	
+		if(old.is(':animated')){
+			this.stopAnimation(); // stop the animation and jump to the end.
 		}
 
 		this.options.left = old.css("left");
@@ -817,7 +815,7 @@ class Token {
 			this.options.hidden = true;
 		else
 			delete this.options.hidden;
-		
+
 		// one of either
 		// is a monster?
 		// is the DM
@@ -863,7 +861,7 @@ class Token {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'hidden');
-		}	
+		}
 		else {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'visible');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'visible');
@@ -875,7 +873,7 @@ class Token {
 		else{
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", false);
 		}
-		
+
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
 			console.log("Setting combat tracker opacity to 1.0")
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','1.0');
@@ -893,14 +891,14 @@ class Token {
 		if ($("#qrm_dialog")){
 			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_hp").val(this.hp);
 			$("#quick_roll_area tr[data-target='" + this.options.id + "'] td #qrm_maxhp").val(this.maxHp);
-			
+
 			if($("#quick_roll_area tr[data-target='" + this.options.id + "'] .qrm_hp").val() === '0'){
 				$("#quick_roll_area tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", true);
 			}
 			else{
 				$("#quick_roll_area tr[data-target='" + this.options.id + "']").toggleClass("ct_dead", false);
 			}
-		}	
+		}
 		qrm_update_popout();
 	}
 
@@ -917,7 +915,7 @@ class Token {
 
 		hpbar.toggleClass('medium-or-smaller', false);
 		hpbar.toggleClass('tiny-or-smaller', false);
-		
+
 		let tokenWidth = this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps;
 		if(tokenWidth >= 10)
 			hpbar.toggleClass('greater-than-10-wide', true);
@@ -925,7 +923,7 @@ class Token {
 			hpbar.toggleClass('medium', true);
 		if(tokenWidth < 1)
 			hpbar.toggleClass('smaller-than-medium', true);
-		
+
 
 		let fs = Math.floor(bar_height / 1.2) + "px";
 
@@ -959,8 +957,8 @@ class Token {
 				let tokenID = $(this).parent().parent().attr("data-id");
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].hp = hp_input.val();
-				}			
-				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
+				}
+				if(window.TOKEN_OBJECTS[tokenID] != undefined){
 					window.TOKEN_OBJECTS[tokenID].hp = hp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
@@ -974,7 +972,7 @@ class Token {
 				if(window.all_token_objects[tokenID] != undefined){
 					window.all_token_objects[tokenID].maxHp = maxhp_input.val();
 				}
-				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
+				if(window.TOKEN_OBJECTS[tokenID] != undefined){
 					window.TOKEN_OBJECTS[tokenID].maxHp = maxhp_input.val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
@@ -1041,7 +1039,7 @@ class Token {
 			  <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview11" showgrid="false" inkscape:zoom="41.7193" inkscape:cx="3.7543605" inkscape:cy="7.3293954" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="svg9"/>
 			  <path style="opacity:1;fill:#fffd;fill-opacity:1;stroke:#020000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers" d="M 6.9014354,2.6799347 C 6.0612858,2.6944777 5.3005052,3.1744944 4.9326856,3.9221221 l -0.0044,0.00879 C 4.8347246,3.9105641 4.7397197,3.8973421 4.6441114,3.8913601 3.6580232,3.8369761 2.7983013,4.5487128 2.6782913,5.5188014 l -0.02637,0.010254 c -0.815669,-0.082231 -1.547762,0.4967997 -1.646485,1.3022461 -0.09854,0.8060438 0.473532,1.541652 1.286133,1.6538085 0.101483,0.013222 0.255109,0.013942 0.255109,0.013942 L 8.984441,8.49975 V 8.49682 C 9.9364542,8.478592 10.726709,7.763601 10.830143,6.8269035 10.941123,5.8069376 10.202664,4.8882705 9.173405,4.7658721 H 9.165985 C 9.12106,3.9596309 8.6352575,3.2418777 7.898991,2.8938019 7.5876151,2.7472589 7.2461776,2.6740579 6.9014324,2.6799347 Z" id="path905-36" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccccccccccccc"/>
 			<text x='6px' y='8px' style="font-weight: bold;font-size: 5px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.elev}</text>
-			
+
 			</svg>
 						`));
 		} else if (parseFloat(this.options.elev) < 0) {
@@ -1052,7 +1050,7 @@ class Token {
 			  <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview11" showgrid="false" inkscape:zoom="41.7193" inkscape:cx="3.7543605" inkscape:cy="7.3293954" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="svg9"/>
 			  <path style="opacity:1;fill:#fffd;fill-opacity:1;stroke:#020000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers" d="M 6.9014354,2.6799347 C 6.0612858,2.6944777 5.3005052,3.1744944 4.9326856,3.9221221 l -0.0044,0.00879 C 4.8347246,3.9105641 4.7397197,3.8973421 4.6441114,3.8913601 3.6580232,3.8369761 2.7983013,4.5487128 2.6782913,5.5188014 l -0.02637,0.010254 c -0.815669,-0.082231 -1.547762,0.4967997 -1.646485,1.3022461 -0.09854,0.8060438 0.473532,1.541652 1.286133,1.6538085 0.101483,0.013222 0.255109,0.013942 0.255109,0.013942 L 8.984441,8.49975 V 8.49682 C 9.9364542,8.478592 10.726709,7.763601 10.830143,6.8269035 10.941123,5.8069376 10.202664,4.8882705 9.173405,4.7658721 H 9.165985 C 9.12106,3.9596309 8.6352575,3.2418777 7.898991,2.8938019 7.5876151,2.7472589 7.2461776,2.6740579 6.9014324,2.6799347 Z" id="path905-36" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccccccccccccc"/>
 			<text x='6px' y='8px' style="font-weight: bold;font-size: 5px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.elev}</text>
-			
+
 			</svg>
 			`)
 		);}
@@ -1177,13 +1175,13 @@ class Token {
 		} else{
 			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
 		}
-		
+
 		const conditions = this.conditions;
 		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player));
 
 		if (conditionsTotal > 0) {
 			let conditionCount = 0;
-			
+
 
 			for (let i = 0; i < this.options.conditions.length; i++) {
 				const condition = this.options.conditions[i];
@@ -1264,7 +1262,7 @@ class Token {
 						cond.append(conditionContainer);
 					}
 				}
-				
+
 				conditionCount++;
 			}
 			// CHECK IF ADDING NOTE CONDITION
@@ -1282,7 +1280,7 @@ class Token {
 				let noteHover = `<div>
 									<div class="tooltip-header">
 							       	 	<div class="tooltip-header-icon">
-							            
+
 								        	</div>
 								        <div class="tooltip-header-text">
 								            ${window.JOURNAL.notes[this.options.id].title}
@@ -1299,9 +1297,9 @@ class Token {
 								        </div>
 								    </div>
 								</div>`
-							
+
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
-		
+
 				let hoverNoteTimer;
 				symbolImage.on({
 					'mouseover': function(e){
@@ -1358,17 +1356,17 @@ class Token {
 					            });
 					            flyout.css("background-color", "#fff");
 					        });
-			        	}, 500);		
-					
+			        	}, 500);
+
 					},
 					'mouseout': function(e){
 						clearTimeout(hoverNoteTimer)
 					}
-			
+
 			    });
-			
-			    
-							
+
+
+
 
 
 				conditionContainer.css('width', symbolSize + "px");
@@ -1385,8 +1383,8 @@ class Token {
 			}
 
 		}
-				
-		
+
+
 		if (parent) {
 			parent.find(".conditions").remove();
 			parent.append(cond);
@@ -1427,7 +1425,7 @@ class Token {
 		}
 		else{
 			old.removeAttr('data-group-id')
-		}		
+		}
 
 		if (old.length > 0) {
 			console.trace();
@@ -1435,7 +1433,7 @@ class Token {
 			console.log("trovato!!");
 
 			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
-				
+
 				remove_selected_token_bounding_box();
 				if(old.is(':animated')){
 					// this token is being moved quickly, speed up the animation
@@ -1468,14 +1466,14 @@ class Token {
 			old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
 			old.css("--token-rotation", rotation+"deg");
 			old.css("--token-scale", imageScale);
-			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
-			
+			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);
+
 			let selector = "tr[data-target='"+this.options.id+"']";
 			let entry = $("#combat_area").find(selector);
 			if((!(this.options.name) || !(this.options.revealname)) && !window.DM) {
 				old.toggleClass('hasTooltip', false);
 				entry.toggleClass('hasTooltip', false);
-			}	
+			}
 			else if (this.options.name) {
 				if ((window.DM || this.isPlayer() || this.options.revealname)) {
 					old.attr("data-name", this.options.name);
@@ -1620,7 +1618,7 @@ class Token {
 			}
 			else if((window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || !this.options.locked){
 				old.draggable("enable");
-			}	
+			}
 			else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
 				old.draggable("enable");
 			}
@@ -1639,7 +1637,7 @@ class Token {
 		else { // adding a new token
 			// console.group("new token")
 			let tok = $("<div/>");
-			
+
 			let bar_height = Math.floor(this.sizeHeight() * 0.2);
 
 			if (bar_height > 60)
@@ -1647,7 +1645,7 @@ class Token {
 
 			let fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
-			
+
 			if(this.options.gridSquares != undefined){
 				this.options.size = window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares;
 			}
@@ -1688,7 +1686,7 @@ class Token {
 		        else if(this.isMonster()){
 		            let darkvision = 0;
 		            if(window.monsterListItems){
-		            	let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];	
+		            	let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];
 		            	if(!monsterSidebarListItem){
 							for(let i in encounter_monster_items){
 							    if(encounter_monster_items[i].some((d) => this.options.monster == d.id)){
@@ -1697,7 +1695,7 @@ class Token {
 							    }
 							}
 						}
-		                   
+
 						if(monsterSidebarListItem){
 				            if(monsterSidebarListItem.monsterData.senses.length > 0){
 				                for(let i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
@@ -1708,7 +1706,7 @@ class Token {
 				                }
 				            }
 			       		}
-		       		} 
+		       		}
 		            this.options.vision = {
 		                feet: darkvision.toString(),
 		                color: 'rgba(142, 142, 142, 1)'
@@ -1719,7 +1717,7 @@ class Token {
 						feet: 60,
 						color: 'rgba(142, 142, 142, 1)'
 					}
-				
+
 				}
 			}
 
@@ -1774,10 +1772,10 @@ class Token {
 
 
 
-			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
+			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
-			
+
 			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
 			tok.width(this.sizeWidth());
 			tok.height(this.sizeHeight());
@@ -1792,7 +1790,7 @@ class Token {
 			this.update_health_aura(tok);
 
 
-				
+
 			tok.css("position", "absolute");
 			tok.css("--z-index-diff", zindexdiff);
 			tok.css("top", this.options.top);
@@ -1824,12 +1822,12 @@ class Token {
 				window.all_token_objects[this.options.id] = {};
 			}
 			if(window.all_token_objects[this.options.id].ct_show !== undefined){
-				this.options.ct_show = window.all_token_objects[this.options.id].ct_show 
+				this.options.ct_show = window.all_token_objects[this.options.id].ct_show
 			}
 			if (this.options !== undefined){
 				window.all_token_objects[this.options.id] = new Token(this.options);
 			}
-			else if (typeof window.all_token_objects[this.options.id].options.init !== undefined && window.all_token_objects[this.options.id].options.ct_show !== undefined){		
+			else if (typeof window.all_token_objects[this.options.id].options.init !== undefined && window.all_token_objects[this.options.id].options.ct_show !== undefined){
 				this.options.init = window.all_token_objects[this.options.id].options.init;
 			}
 			// CONDITIONS
@@ -1871,11 +1869,11 @@ class Token {
 						tok.removeAttr("data-dragging")
 						tok.removeAttr("data-drag-x")
 						tok.removeAttr("data-drag-y")
-			
+
 						// this should be a XOR... (A AND !B) OR (!A AND B)
 						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 						console.log("shallwesnap",shallwesnap);
-						console.log("toggleSnap",window.toggleSnap);					
+						console.log("toggleSnap",window.toggleSnap);
 						if (shallwesnap) {
 
 							// calculate offset in real coordinates
@@ -1884,6 +1882,7 @@ class Token {
 
 							const selectedOldTop = parseInt($(event.target).css("top"));
 							const selectedOldleft = parseInt($(event.target).css("left"));
+							
 
 							const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
 							const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;				
@@ -1974,14 +1973,14 @@ class Token {
 									}
 								}
 							}
-						}					
-				
+						}
+
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
 						$("#temp_overlay").css("z-index", "25")
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
-						}	
+						}
 						setTimeout(debounceLightChecks, 250)
 
 						self.update_and_sync(event, false);
@@ -1993,7 +1992,7 @@ class Token {
 								let curr = window.TOKEN_OBJECTS[id];
 								let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
 								curr.update_and_sync(ev);
-							}												
+							}
 						}
 						window.DRAGGING = false;
 						draw_selected_token_bounding_box();
@@ -2042,7 +2041,7 @@ class Token {
 			
 					
 					// for dragging behind iframes so tokens don't "jump" when you move past it
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
 					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 
 					console.log("Click x: " + click.x + " y: " + click.y);
@@ -2087,7 +2086,7 @@ class Token {
 								}
 							}
 
-						}												
+						}
 					}
 
 					let el = $("#aura_" + self.options.id.replaceAll("/", ""));
@@ -2133,7 +2132,7 @@ class Token {
 							// incase we click while on select, remove any line dashes
 							context.setLineDash([])
 							context.fillStyle = '#f50';
-							
+
 							WaypointManager.setCanvas(canvas);
 					}
 
@@ -2147,7 +2146,7 @@ class Token {
 				 */
 				drag: async function(event, ui) {
 					event.stopImmediatePropagation();
-					
+
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -2188,8 +2187,8 @@ class Token {
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 						if (pixeldata[2] != 0)
-						{	
-							window.oldTokenPosition[self.options.id] = ui.position;				
+						{
+							window.oldTokenPosition[self.options.id] = ui.position;
 						}
 						else{
 							ui.position = (window.oldTokenPosition[self.options.id] != undefined) ? window.oldTokenPosition[self.options.id] : {left: ui.originalPosition.left/zoom, top: ui.originalPosition.top/zoom};
@@ -2212,7 +2211,7 @@ class Token {
 
 
 					//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
-					// HACK TEST 
+					// HACK TEST
 					/*$(event.target).css("left",ui.position.left);
 					$(event.target).css("top",ui.position.top);*/
 					// END OF HACK TEST
@@ -2287,22 +2286,22 @@ class Token {
 									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 									if (pixeldata[2] != 0)
-									{	
+									{
 										window.oldTokenPosition[curr.options.id] = {
 											left: tokenX,
 											top: tokenY
-										};				
+										};
 									}
 									else{
 										window.oldTokenPosition[curr.options.id] = (window.oldTokenPosition[curr.options.id] != undefined) ? window.oldTokenPosition[curr.options.id] : {left: parseInt(curr.orig_left), top: parseInt(curr.orig_top)};
-									
+
 										$(tok).css('left', window.oldTokenPosition[curr.options.id].left + "px");
 										$(tok).css('top', window.oldTokenPosition[curr.options.id].top + "px");
 									}
 								}
-								
-		
-													
+
+
+
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
 
@@ -2334,12 +2333,12 @@ class Token {
 									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
 							}
-						}													
+						}
 					}
 
 				}
 			});
-			
+
 			if(this.options.lockRestrictDrop == undefined){
 				if(this.options.restrictPlayerMove){
 					this.options.lockRestrictDrop = "restrict"
@@ -2395,14 +2394,14 @@ class Token {
 					toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
 				} else {
 					parentToken.removeClass('tokenselected');
-				}				
+				}
 
 				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
 
 				for (let id in window.TOKEN_OBJECTS) {
 					if (id.selected == true) {
 						count++;
-					}			
+					}
 				}
 
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
@@ -2413,9 +2412,9 @@ class Token {
 			   	else if(window.TOKEN_OBJECTS[tokID].options.itemType == 'pc' || window.TOKEN_OBJECTS[tokID].options.shared_vision){
 			   		debounceLightChecks();
 			   	}
-				
+
 			});
-			
+
 			console.groupEnd()
 		}
 		// HEALTH AURA / DEAD CROSS
@@ -2468,7 +2467,7 @@ class Token {
 		};
 
 		// Shorten letiable to improve readability
-		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
+		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER;
 
 
 		this.walkableArea = {
@@ -2476,9 +2475,9 @@ class Token {
 			left: 0 - (sizeOnGrid.x * multi),
 			right:  window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
 			bottom: window.CURRENT_SCENE_DATA.height * window.CURRENT_SCENE_DATA.scale_factor + (sizeOnGrid.y * (multi -1)), // ... same as above
-		};	
+		};
 	}
-	
+
 }
 
 /**
@@ -2542,7 +2541,7 @@ function default_options() {
 		auraislight: true, // this is actually light/vision is enabled now.
 		light1: {
 			feet: "0",
-			color: "rgba(255, 255, 255, 1)" 
+			color: "rgba(255, 255, 255, 1)"
 		},
 		light2: {
 			feet: "0",
@@ -2552,7 +2551,7 @@ function default_options() {
 }
 
 function center_of_view() {
-	let centerX = (window.innerWidth/2) + window.scrollX 
+	let centerX = (window.innerWidth/2) + window.scrollX
 	if($("#hide_rightpanel").hasClass("point-right")) {
     centerX = centerX - 190; // 190 = half gamelog + scrollbar
   }
@@ -2671,11 +2670,11 @@ function place_token_at_map_point(tokenObject, x, y) {
 		if(window.all_token_objects[options.id].options.ct_show !== undefined){
 			options = window.all_token_objects[options.id].options;
 		  	$(`#combat_area tr[data-target='${options.id}'] .findSVG`).remove();
-	       	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
+	       	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');
 	        $(`#combat_area tr[data-target='${options.id}'] .findTokenCombatButton`).append(findSVG);
 		}
 	}
-	
+
 	options.left = `${x - options.size/2}px`;
 	options.top = `${y - options.size/2}px`;
 	// set reasonable defaults for any global settings that aren't already set
@@ -2699,7 +2698,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	}
 	window.MB.sendMessage('custom/myVTT/token', options);
 
-	
+
 	fetch_and_cache_scene_monster_items();
 	update_pc_token_rows();
 }
@@ -2787,20 +2786,55 @@ function determine_hidden_classname(tokenIds) {
 }
 
 function token_menu() {
+	$("#tokens").on("contextmenu", ".VTTToken", function(event) {
+		event.preventDefault();
+		event.stopPropagation();
 
-		$("#tokens").on("contextmenu", ".VTTToken", function(event) {
-			console.log("context_menu_flyout contextmenu event", event);
-			event.preventDefault();
-			event.stopPropagation();
-			if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
-				return;
-			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
-				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
-			} else {
-				token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
-			}
-		});
+		let existingPopup = document.getElementById("tokenOptionsPopup");
+		if (existingPopup) {
+			remove_token_options_popup();
+		}
+
+		let target = $(event.currentTarget);
+		if(target.children('.token-image').css('pointer-events') == 'none' && !window.DM)
+			return;
+		if (target.hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+			token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
+		} else {
+			token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
+		}
+
+		window.addEventListener('click', remove_token_options_popup);
+	});
+}
+
+function remove_token_options_popup(event = null) {
+	if (!event) {
+		$("#tokenOptionsPopup").remove();
+		$('.context-menu-list').trigger('contextmenu:hide')
+		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
+		$("#tokenOptionsContainer .sp-container").remove();
+		$(`.context-menu-flyout`).remove();
+		window.removeEventListener('click', remove_token_options_popup);
 		return;
+	}
+
+	let target = event.target;
+	let clickedMenuInput = () => target.matches(".menu-input");
+	let clickedMenuFlyoutButton = () => target.matches(".token-image-modal-footer-title");
+	let clickedConditions = () => !!target.parentNode.closest("#conditions-flyout");
+	let didNotClickAdjustmentsAndTokenImage = () => !!target.parentNode.closest("#adjustments-flyout") && !target.matches("#changeTokenImage");
+	let didNotClickLight = () => !!target.parentNode.closest("#light-flyout");
+	let didNotClickOptions = () => !!target.parentNode.closest("#options-flyout");
+	let didNotClickAura =() => !!target.parentNode.closest("#auras-flyout");
+	if (!(clickedMenuInput() || clickedMenuFlyoutButton() || clickedConditions() || didNotClickAdjustmentsAndTokenImage() || didNotClickLight() || didNotClickOptions() || didNotClickAura())) {
+		$("#tokenOptionsPopup").remove();
+		$('.context-menu-list').trigger('contextmenu:hide')
+		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
+		$("#tokenOptionsContainer .sp-container").remove();
+		$(`.context-menu-flyout`).remove();
+		window.removeEventListener('click', remove_token_options_popup);
+	}
 }
 
 function deselect_all_tokens() {
@@ -2815,9 +2849,9 @@ function deselect_all_tokens() {
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-	let darknessPercent = 100 - parseInt(darknessFilter); 	
+	let darknessPercent = 100 - parseInt(darknessFilter);
 	if(window.DM && darknessPercent < 40){
-   	 	darknessPercent = 40; 	
+   	 	darknessPercent = 40;
    	 	$('#raycastingCanvas').css('opacity', 0);
    	}
 	else{
@@ -2893,7 +2927,7 @@ function setTokenAuras (token, options) {
 							display:${showAura}
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
-			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
+			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);
 		} else {
 			const auraElement = $(`<div class='aura-element' id="aura_${tokenId}" data-id='${token.attr("data-id")}' style='${auraStyles}' />`);
 			auraElement.contextmenu(function(){return false;});
@@ -2909,7 +2943,7 @@ function setTokenAuras (token, options) {
 		}
 
 
-		
+
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find("#aura_" + tokenId).remove();
@@ -2953,8 +2987,8 @@ function setTokenLight (token, options) {
 							`;
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		if (token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").length > 0) {
-			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
-			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
+			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);
+			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);
 		} else {
 			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}'></div><div class='aura-element' id="vision_${tokenId}" data-id='${token.attr("data-id")}' style='${visionStyles}'></div></div>`);
 			lightElement.contextmenu(function(){return false;});
@@ -2970,22 +3004,22 @@ function setTokenLight (token, options) {
 		}
 		token.parent().parent().find("#light_" + tokenId).show()
 		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
-		
+
 	} else {
 		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).remove();
 	}
 	if(!window.DM){
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		
+
 		let vision = $("[id*='vision_']");
 		for(let i = 0; i < vision.length; i++){
 			if(!vision[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.share_vision != true){
 				$(vision[i]).css("visibility", "hidden");
-			}		
+			}
 			if(playerTokenId == undefined && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.itemType == 'pc'){
 				$(vision[i]).css("visibility", "visible");
-			}	
+			}
 		}
 	}
 }
@@ -3153,7 +3187,7 @@ function load_custom_monster_image_mapping() {
 function save_custom_monster_image_mapping() {
 	let customMappingData = JSON.stringify(window.CUSTOM_TOKEN_IMAGE_MAP);
 	localStorage.setItem("CustomDefaultTokenMapping", customMappingData);
-	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { 17100: [ "some.url.com/img1.png", "some.url.com/img2.png" ] }	
+	// The JSON structure for CUSTOM_TOKEN_IMAGE_MAP looks like this { 17100: [ "some.url.com/img1.png", "some.url.com/img2.png" ] }
 }
 
 function copy_to_clipboard(text) {
@@ -3506,7 +3540,7 @@ function copy_selected_tokens() {
 	let redrawBoundingBox = false;
 	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
-		if (token.selected) { 
+		if (token.selected) {
 			if (token.isPlayer()) {
 				// deselect player tokens to avoid confusion about them being selected but not copy/pasted
 				window.TOKEN_OBJECTS[id].selected = false;
@@ -3540,8 +3574,8 @@ function paste_selected_tokens(x, y) {
 		options.init = undefined;
 		options.ct_show = undefined;
 		options.selected = true;
-		let center = center_of_view() 
-		let mapView = convert_point_from_view_to_map(x, y, false);
+		let center = center_of_view()
+		let mapView = convert_point_from_view_to_map(center.x, center.y, false);
 		options.top = `${mapView.y - Math.round(token.sizeHeight() / 2)}px`;
 		options.left = `${mapView.x - Math.round(token.sizeWidth() / 2) + token.sizeWidth()  * i + 5 - (token.sizeWidth() * ((window.TOKEN_PASTE_BUFFER.length/2)-1))}px`;
 		window.ScenesHandler.create_update_token(options);
@@ -3576,7 +3610,7 @@ function delete_selected_tokens() {
 	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) {
-			if (window.DM || token.options.deleteableByPlayers == true) {				
+			if (window.DM || token.options.deleteableByPlayers == true) {
 				tokensToDelete.push(token);
 			}
 		}
