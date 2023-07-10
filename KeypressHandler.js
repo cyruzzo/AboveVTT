@@ -117,6 +117,9 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 Mousetrap.bind('w', function () {
     $('#wall_button').click()
 });
+Mousetrap.bind('l', function () {
+    $('#vision_button').click()
+});
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
     stop_drawing();

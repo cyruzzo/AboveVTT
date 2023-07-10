@@ -1185,7 +1185,7 @@ function drawing_mousedown(e) {
 
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
-	window.DRAWTYPE = data.fill
+	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
@@ -2208,7 +2208,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
  * Hides all open menus from the top buttons and deselects all the buttons
  */
 function deselect_all_top_buttons(buttonSelectedClasses) {
-	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button"]
+	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button"]
 	$(".top_menu").removeClass("visible")
 	topButtonIDs.forEach(function(id) {
 		$(`#${id}`).removeClass(buttonSelectedClasses)
@@ -2991,13 +2991,16 @@ function init_draw_menu(buttons){
 				 	Polygon
 			</button>
 		</div>`);
-	draw_menu.append(
+	if(window.DM){
+		draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
 				 	Bucket Fill
 			</button>
 		</div>`);
+	}
+
 	draw_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
 		redraw_light_walls();
 	});
@@ -3040,15 +3043,6 @@ function init_draw_menu(buttons){
 				FILLED
 			</button>
 		</div>`);
-	if(window.DM){
-		draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'>
-			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
-				data-key="fill" data-value='light' data-unique-with="fill">
-				LIGHT
-			</button>
-		</div>`);
-	}
 
 	draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
 	draw_menu.append(`
@@ -3080,12 +3074,6 @@ function init_draw_menu(buttons){
 					CLEAR DRAW
 				</button>
 			</div>`);
-		draw_menu.append(
-			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_light'>
-					CLEAR LIGHT
-				</button>
-			</div>`);
 	}
 
 
@@ -3094,15 +3082,6 @@ function init_draw_menu(buttons){
 		if (r === true) {
 			// keep only text
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall') || d[1].includes('light') );
-			redraw_drawings()
-			sync_drawings()
-		}
-	});
-	draw_menu.find("#delete_light").click(function() {
-		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
-		if (r === true) {
-			// keep only text
-			window.DRAWINGS = window.DRAWINGS.filter(d => !d[1].includes('light') );
 			redraw_drawings()
 			sync_drawings()
 		}
@@ -3220,6 +3199,174 @@ function init_walls_menu(buttons){
 	buttons.append(wall_button);
 	wall_menu.css("left",wall_button.position().left);
 }
+function init_vision_menu(buttons){
+	vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
+
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='vision_settings' class='settings menu-option  ddbc-tab-options__header-heading'
+				data-shape='settings' data-function="settings" data-unique-with="settings">
+					Settings
+			</button>
+		</div>`);
+	vision_menu.append(`<div class='menu-subtitle'>Light Drawing</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-shape="rect" data-function="draw" data-unique-with="draw">
+					Rectangle
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape="3pointRect" data-function="draw" data-unique-with="draw">
+					3p Rect
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_circle' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='arc' data-function="draw" data-unique-with="draw">
+					Circle
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_cone' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='cone' data-function="draw" data-unique-with="draw">
+					Cone
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='line' data-function="draw" data-unique-with="draw">
+					Line
+			</button>
+			</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='brush' data-function="draw" data-unique-with="draw">
+					Brush
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_polygon' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='polygon' data-function="draw" data-unique-with="draw">
+				 	Polygon
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
+				 	Bucket Fill
+			</button>
+		</div>`);
+	vision_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
+		redraw_light_walls();
+	});
+	vision_menu.append(`
+        <input title='Background color' data-required="background_color" class='spectrum'
+            id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#FFF'}'/>
+        `)
+
+    let colorPickers = vision_menu.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		clickoutFiresChange: true
+	});
+
+    const colorPickerChange = function(e, tinycolor) {
+		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        $(e.target).val(color)
+
+	};
+	vision_menu.find(".sp-replacer").attr("data-skip",'true')
+	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
+	vision_menu.append("<div class='menu-subtitle'>Line Width</div>");
+	vision_menu.append(`
+		<div>
+			<input id='draw_line_width' data-required="draw_line_width" type='number' style='width:90%' min='1'
+			value='6' class='drawWidthSlider'>
+		</div>`
+	);
+
+
+	vision_menu.append(`<div class='menu-subtitle'>Controls</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="eraser" data-unique-with="draw">
+				 	Erase
+			</button>
+		</div>`);
+
+	vision_menu.append(`
+	<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+		<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+			UNDO
+		</button>
+	</div>`);
+	vision_menu.append(
+	`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+		<button class='ddbc-tab-options__header-heading  menu-option' id='delete_light'>
+			CLEAR LIGHT
+		</button>
+	</div>`);
+
+	vision_menu.find("#vision_settings").click(function() {
+		let scene_index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
+		edit_scene_vision_settings(scene_index);
+	})
+
+	vision_menu.find("#delete_light").click(function() {
+		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
+		if (r === true) {
+			// keep only text
+			window.DRAWINGS = window.DRAWINGS.filter(d => !d[1].includes('light') );
+			redraw_drawings()
+			sync_drawings()
+		}
+	});
+
+	vision_menu.find("#draw_undo").click(function() {
+		// start at the end
+        let currentElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's not text
+        while (currentElement--) {
+            if (!window.DRAWINGS[currentElement][0].includes("text")){
+                window.DRAWINGS.splice(currentElement, 1)
+                redraw_drawings()
+				sync_drawings()
+                break
+            }
+        }
+	});
+
+	vision_menu.css("position", "fixed");
+	vision_menu.css("top", "50px");
+	vision_menu.css("width", "90px");
+	vision_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+
+	$("body").append(vision_menu);
+
+	vision_button = $("<button style='display:inline;width:75px' id='vision_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>L</u>IGHT/VISION</button>");
+
+	buttons.append(vision_button);
+	vision_menu.css("left",vision_button.position().left);
+}
+
+
 // helper functions
 let degreeToRadian = function(degree) {
   return (degree / 180) * Math.PI;
