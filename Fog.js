@@ -3297,7 +3297,7 @@ function init_vision_menu(buttons){
 	vision_menu.append(`
 		<div>
 			<input id='draw_line_width' data-required="draw_line_width" type='number' style='width:90%' min='1'
-			value='6' class='drawWidthSlider'>
+			value='${window.CURRENT_SCENE_DATA.hpps}' class='drawWidthSlider'>
 		</div>`
 	);
 

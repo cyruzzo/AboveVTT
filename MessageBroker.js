@@ -1338,6 +1338,7 @@ class MessageBroker {
 		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
 		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
+		$('#vision_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 		$(".aura-element[id^='aura_'").remove();
