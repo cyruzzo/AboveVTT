@@ -3505,15 +3505,7 @@ function copy_selected_tokens() {
 	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) { 
-			if (token.isPlayer()) {
-				// deselect player tokens to avoid confusion about them being selected but not copy/pasted
-				window.TOKEN_OBJECTS[id].selected = false;
-				window.TOKEN_OBJECTS[id].place_sync_persist();
-				redrawBoundingBox = true;
-			} else {
-				// only allow copy/paste for selected monster tokens
-				window.TOKEN_PASTE_BUFFER.push(id);
-			}
+			window.TOKEN_PASTE_BUFFER.push(id);
 		}
 	}
 	if (redrawBoundingBox) {
@@ -3530,9 +3522,9 @@ function paste_selected_tokens(x, y) {
 	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
 		let id = window.TOKEN_PASTE_BUFFER[i];
 		let token = window.all_token_objects[id];
-		if (token == undefined || token.isPlayer()) continue; // only allow copy/paste for monster tokens, and protect against pasting deleted tokens
+		if(token == undefined || (token.isPlayer() && window.TOKEN_OBJECTS[id])) continue;
 		let options = $.extend(true, {}, token.options);
-		let newId = uuid();
+		let newId = token.isPlayer() ? id : uuid();
 		options.id = newId;
 		// TODO: figure out the location under the cursor and paste there instead of doing center of view
 		options.init = undefined;
