@@ -1123,7 +1123,6 @@ div#scene_properties form > div {
     z-index: 57000;
     display: flex;
     flex-direction: row;
-    direction: rtl;
 }
 
 .condition-lock.material-symbols-outlined {
