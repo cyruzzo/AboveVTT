@@ -1123,6 +1123,30 @@ div#scene_properties form > div {
     z-index: 57000;
     display: flex;
     flex-direction: row;
+    direction: rtl;
+}
+
+.condition-lock.material-symbols-outlined {
+    position: absolute;
+    z-index: 10;
+    top: 3px;
+    right: 46px;
+    line-height: 20px;
+}
+.condition-lock.material-symbols-outlined:before{
+    font-family: "Material Icons", sans-serif !important;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    content:"\e898"; 
+}
+
+
+.condition-lock.locked.material-symbols-outlined:before,
+.condition-lock.material-symbols-outlined:hover:before {
+    content:"\e897"; 
+}
+.condition-lock.locked.material-symbols-outlined:hover:before{
+    content:"\e898"; 
+
 }
 #hide_rightpanel .ddbc-tab-options__header-heading,
 #zoom_buttons .ddbc-tab-options__header-heading {
@@ -2329,7 +2353,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     -moz-osx-font-smoothing: grayscale;
 }
 #conditions-flyout li:hover {
-    background-color: rgba(41, 128, 185) !important;
+    background-color: rgb(221 221 222) !important;
 }
 
 #playerTokenSelectedWarning
@@ -5742,7 +5766,7 @@ input.max_hp[disabled]{
 
 .markers-icon>input[type='text']{
     position: absolute;
-    width: 85%;
+    width: 80%;
     left: 0;
 }
 
