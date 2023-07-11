@@ -2833,8 +2833,8 @@ function init_zoom_buttons() {
 		});
 		projector_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
 		zoom_section.append(projector_toggle);
-		if (!get_avtt_setting_value("projector")) {
-			projector_toggle.toggleClass('enabled', false);
+		if (get_avtt_setting_value("projector")) {
+			projector_toggle.toggleClass('enabled', true);
 		}
 
 		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);
