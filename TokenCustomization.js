@@ -640,12 +640,23 @@ function persist_token_customization(customization, callback) {
             callback(false, "Invalid Customization");
             return;
         }
-
+        customization.tokenOptions = Object.fromEntries(Object.entries(customization.tokenOptions).filter(([key, value]) => value != 'undefined'))
         let existingIndex = window.TOKEN_CUSTOMIZATIONS.findIndex(c => c.tokenType === customization.tokenType && c.id === customization.id);
         if (existingIndex >= 0) {
             window.TOKEN_CUSTOMIZATIONS[existingIndex] = customization;
         } else {
             window.TOKEN_CUSTOMIZATIONS.push(customization);
+        } 
+
+
+        if(customization.tokenType == 'pc'){
+            if(window.all_token_objects[customization.id])
+                window.all_token_objects[customization.id].options = {
+                    ...window.all_token_objects[customization.id].options,
+                    ...customization.tokenOptions,
+                    size: customization.tokenOptions.tokenSize * window.CURRENT_SCENE_DATA.hpps,
+                    gridSquares: customization.tokenOptions.tokenSize
+                }
         }
 
         // TODO: call the API with a single object instead of persisting everything

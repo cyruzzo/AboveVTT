@@ -977,7 +977,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
             options.armorClass = pc.armorClass;
-            options.color = color_from_pc_object(pc);
+            options = {...options, ...find_token_options_for_list_item(listItem)}
             break;
         case ItemType.Monster:
             switch (options['defaultmaxhptype']) {
@@ -1652,6 +1652,9 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     inputWrapper.append(imageScaleWrapper);
 
     // border color
+    if(listItem.isTypePC()){
+        customization.tokenOptions.color = color_from_pc_object(find_pc_by_player_id(listItem.id));
+    }
     const color = customization.tokenOptions.color || random_token_color();
     const borderColorWrapper = build_token_border_color_input(color, function (newColor, eventType) {
         customization.setTokenOption("color", newColor);
@@ -1669,7 +1672,10 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         ],
         defaultValue: false
     };
+
+
     const specificBorderColorValue = (typeof customization.tokenOptions.color === "string" && customization.tokenOptions.color.length > 0);
+
     const borderColorToggle = build_toggle_input(specificBorderColorSetting, specificBorderColorValue, function (useSpecificColorKey, useSpecificColorValue) {
         if (useSpecificColorValue === true) {
             customization.setTokenOption("color", color);
