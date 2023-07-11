@@ -327,13 +327,23 @@ class Token {
 	        return;
 	    }
 	    if (STANDARD_CONDITIONS.includes(conditionName)) {
-	        if (this.isPlayer()) {
-	            window.MB.inject_chat({
-	                player: window.PLAYER_NAME,
-	                img: window.PLAYER_IMG,
-	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="set-conditions-button">Toggle ${conditionName} ON</button></div>`,
-	                whisper: this.options.name
-	            });
+	        if (this.isPlayer()) {	        
+				if(window.PLAYER_NAME == this.options.name){
+					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+					$('.ct-condition-manage-pane').css('visibility', 'hidden');
+					$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+					setTimeout(function(){
+						$(`#switch_gamelog`).click();
+					}, 10)
+				}
+				else{
+				   window.MB.inject_chat({
+		                player: window.PLAYER_NAME,
+		                img: window.PLAYER_IMG,
+		                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="set-conditions-button">Toggle ${conditionName} ON</button></div>`,
+		                whisper: this.options.name
+		            });	
+				}        
 	        } else {
 	            this.options.conditions.push({ name: conditionName });
 	        }
@@ -349,12 +359,23 @@ class Token {
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			if (this.isPlayer()) {
-				window.MB.inject_chat({
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
-					whisper: this.options.name
-				});
+				if(window.PLAYER_NAME == this.options.name){
+					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+					$('.ct-condition-manage-pane').css('visibility', 'hidden');
+					$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+					setTimeout(function(){
+						$(`#switch_gamelog`).click();
+					}, 10)		
+				}
+				else{
+
+					window.MB.inject_chat({
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
+						whisper: this.options.name
+					});
+				}
 			} else {
 				this.options.conditions = this.options.conditions.filter(c => {
 					if (typeof c === "string") {
