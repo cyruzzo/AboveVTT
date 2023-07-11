@@ -3518,7 +3518,7 @@ function paste_selected_tokens(x, y) {
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
 	}
-
+	deselect_all_tokens();
 	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
 		let id = window.TOKEN_PASTE_BUFFER[i];
 		let token = window.all_token_objects[id];
