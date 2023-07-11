@@ -410,11 +410,6 @@ function edit_scene_vision_settings(scene_id){
    	 	let darknessFilterRangeValue = parseInt(darknessFilterRange.val());
    	 	scene.darkness_filter = darknessFilterRangeValue;
 	});
-
-	form.append(form_row('darknessFilter',
-						'Line of Sight/Darkness Opacity',
-						darknessFilterRange)
-	);
 	form.append(form_row('disableSceneVision',
 			'Disable token vision/light',
 			form_toggle("disableSceneVision",null, false,  function(event) {
@@ -422,6 +417,12 @@ function edit_scene_vision_settings(scene_id){
 			})
 		)
 	);
+
+	form.append(form_row('darknessFilter',
+						'Line of Sight/Darkness Opacity',
+						darknessFilterRange)
+	);
+
 	form.find('#darknessFilter_row').attr('title', `This will darken the map by the percentage indicated. This filter interacts with light auras. Any light aura on the map will reveal the darkness. Fully opaque white light will completely eliminate the darkness in it's area.`)
 	darknessFilterRange.after(darknessNumberInput);
 
