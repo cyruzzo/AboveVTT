@@ -1153,11 +1153,19 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 		let conditionItem = $(`<li class="${determine_condition_item_classname(tokenIds, conditionName)} icon-${conditionName.toLowerCase().replaceAll("(", "-").replaceAll(")", "").replaceAll(" ", "-")}"></li>`);
 		if (conditionName.startsWith("#")) {
+			let lockedConditions = {
+				[conditionName] : '',
+				...JSON.parse(localStorage.getItem("lockedConditions"))
+			}
 			let colorItem = $(`<input type='text' placeholder='custom condition'></input>`);
 			tokens.every(token => {
 				let colorItemArr = token.options.custom_conditions.find(e => e.name === conditionName)
 				if(colorItemArr != undefined){
 					colorItem.val(colorItemArr.text);	
+					return false;
+				}
+				else{
+					colorItem.val(lockedConditions[conditionName]);
 					return false;
 				}
 				return true;
@@ -1182,24 +1190,74 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 				clickedItem.removeClass("single-active all-active some-active active-condition");
 				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
 			});
+
+
+
+			conditionItem.off(`click.customCondition`).on('click.customCondition', function(){
+				let clickedItem = $(this);
+				tokens.forEach(token => {
+						if(token.hasCondition(conditionName)){
+							token.removeCondition(conditionName);
+						}
+						else{
+							token.addCondition(conditionName, $(this).find('input').val());
+						}
+					token.place_sync_persist();	
+				});
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
+
+			});
+
+			
+			let conditionLocked = lockedConditions[conditionName] != '';
+
+			const conditionLock = $(`<span class="${conditionLocked ? `locked` : ''} condition-lock material-icons material-symbols-outlined"></span>`)
+			
+			conditionLock.off(`click.lock`).on(`click.lock`, function(e){
+				e.stopPropagation();
+				if($(this).hasClass('locked')){
+					lockedConditions = {
+						...lockedConditions,
+						[conditionName] : '',
+					}
+					$(this).toggleClass('locked', false);
+				}
+				else{
+					lockedConditions = {
+						...lockedConditions,
+						[conditionName] : colorItem.val(),
+					}
+					$(this).toggleClass('locked', true);
+				}
+
+
+				localStorage.setItem("lockedConditions", JSON.stringify(lockedConditions));
+			})
+
+			conditionItem.append(conditionLock);
+
+
 		} else {
 			conditionItem.append(`<span>${conditionName}</span>`);
+			conditionItem.on("click", function (clickEvent) {
+				let clickedItem = $(clickEvent.currentTarget);
+				let deactivateAll = clickedItem.hasClass("some-active");
+				tokens.forEach(token => {
+					if (deactivateAll || token.hasCondition(conditionName)) {
+						token.removeCondition(conditionName)
+					} else {
+						token.addCondition(conditionName)
+					}
+					token.place_sync_persist();
+				});
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
+			});
 		}
 
-		conditionItem.on("click", function (clickEvent) {
-			let clickedItem = $(clickEvent.currentTarget);
-			let deactivateAll = clickedItem.hasClass("some-active");
-			tokens.forEach(token => {
-				if (deactivateAll || token.hasCondition(conditionName)) {
-					token.removeCondition(conditionName)
-				} else {
-					token.addCondition(conditionName)
-				}
-				token.place_sync_persist();
-			});
-			clickedItem.removeClass("single-active all-active some-active active-condition");
-			clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
-		});
+
+	
 		return conditionItem;
 	};
 
