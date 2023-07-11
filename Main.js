@@ -149,7 +149,7 @@ function change_zoom(newZoom, x, y) {
 	$(window).scrollTop(pageY);
 	$("body").css("--window-zoom", window.ZOOM)
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-	if(window.EXPERIMENTAL_SETTINGS.projector == true && window.DM){
+	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
    			msgType: 'projectionZoom',
    			newZoom: newZoom,
@@ -2818,6 +2818,25 @@ function init_zoom_buttons() {
 	zoom_section = $("<div id='zoom_buttons' />");
 
 	if(window.DM) {
+
+		const projector_toggle = $(`<div id='projector_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector mode'></div>`);
+		projector_toggle.click(function (event) {
+			console.log("projector_toggle", event);
+			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
+			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
+				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
+				window.ProjectorEnabled = false;
+			} else {
+				iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+				window.ProjectorEnabled = false;
+			}
+		});
+		projector_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
+		zoom_section.append(projector_toggle);
+		if (!get_avtt_setting_value("projector")) {
+			projector_toggle.toggleClass('enabled', false);
+		}
+
 		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);
 		cursor_ruler_toggle.click(function (event) {
 			console.log("cursor_ruler_toggle", event);
@@ -2833,7 +2852,7 @@ function init_zoom_buttons() {
 		cursor_ruler_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">left_click</span></div>`);
 		zoom_section.append(cursor_ruler_toggle);
 		if (!get_avtt_setting_value("peerStreaming")) {
-			cursor_ruler_toggle.css("visibility", "collapse");
+			cursor_ruler_toggle.css("display", "none");
 		}
 
 		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
@@ -2956,7 +2975,7 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-236px");
+		zoom_section.css("right","371px");
 	} else {
 		zoom_section.css("left","-198px");
 	}
