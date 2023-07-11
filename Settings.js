@@ -410,6 +410,9 @@ function set_avtt_setting_value(name, newValue) {
 			toggle_peer_settings_visibility(newValue);
 			local_peer_setting_changed(name, newValue);
 			break;
+		case "projector":
+			$('#projector_toggle').toggleClass('enabled', newValue);
+			break;
 		case "receiveCursorFromPeers":
 		case "receiveRulerFromPeers":
 			local_peer_setting_changed(name, newValue);
