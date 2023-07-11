@@ -772,7 +772,13 @@ function observe_character_theme_change() {
               update_window_color(newColor);
               if(window.PeerManager != undefined)
                 window.PeerManager.send(PeerEvent.preferencesChange());
-              character_sheet_changed({color: newColor});
+              character_sheet_changed({
+                decorations: {
+                  characterTheme:{ 
+                    themeColor: newColor
+                  }
+                }
+              });
             }
           }
         });
