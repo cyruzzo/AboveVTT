@@ -1155,7 +1155,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		if (conditionName.startsWith("#")) {
 			let lockedConditions = {
 				[conditionName] : '',
-				...JSON.parse(localStorage.getItem("lockedConditions"))
+				...JSON.parse(localStorage.getItem(`lockedConditions.${window.gameId}`))
 			}
 			let colorItem = $(`<input type='text' placeholder='custom condition'></input>`);
 			tokens.every(token => {
@@ -1232,7 +1232,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 				}
 
 
-				localStorage.setItem("lockedConditions", JSON.stringify(lockedConditions));
+				localStorage.setItem(`lockedConditions.${window.gameId}`, JSON.stringify(lockedConditions));
 			})
 
 			conditionItem.append(conditionLock);
