@@ -169,7 +169,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			let mapHeight = $("#scene_map").height();
 			let mapWidth = $("#scene_map").width();
 
-			if(data.width == undefined && (mapHeight > 2500 || mapWidth > 2500)){
+			if(scene.scale_check && !scene.UVTTFile && !scene.is_video && (mapHeight > 2500 || mapWidth > 2500)){
 				let conversion = 2;
 				if(mapWidth >= mapHeight){
 					conversion = 1980 / mapWidth;
