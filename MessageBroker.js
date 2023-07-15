@@ -1375,10 +1375,31 @@ class MessageBroker {
 			console.group("load_scenemap callback")
 			if(!window.CURRENT_SCENE_DATA.scale_factor)
 				window.CURRENT_SCENE_DATA.scale_factor = 1;
-			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
+			let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 			// Store current scene width and height
-			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
-			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
+			let mapHeight = $("#scene_map").height();
+			let mapWidth = $("#scene_map").width();
+
+			if(!data.UVTTFile && !data.is_video && data.width == undefined && (mapHeight > 2500 || mapWidth > 2500)){
+				let conversion = 2;
+				if(mapWidth >= mapHeight){
+					conversion = 1980 / mapWidth;
+				}
+				else{
+					conversion = 1980 / mapHeight;
+				}
+				mapHeight = mapHeight*conversion;
+				mapWidth = mapWidth*conversion;
+				$("#scene_map").css({
+					'height': mapHeight,
+					'width': mapWidth
+				});
+				scaleFactor = scaleFactor / conversion
+				window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
+			}
+
+			window.CURRENT_SCENE_DATA.width = mapWidth;
+			window.CURRENT_SCENE_DATA.height = mapHeight;
 			// Scale map according to scaleFactor
 
 			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
