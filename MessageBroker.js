@@ -1379,8 +1379,9 @@ class MessageBroker {
 			// Store current scene width and height
 			let mapHeight = $("#scene_map").height();
 			let mapWidth = $("#scene_map").width();
+			window.CURRENT_SCENE_DATA.conversion = 1;
 
-			if(!data.UVTTFile && !data.is_video && data.width == undefined && (mapHeight > 2500 || mapWidth > 2500)){
+			if(data.scale_check && !data.UVTTFile && !data.is_video && data.width == undefined && (mapHeight > 2500 || mapWidth > 2500)){
 				let conversion = 2;
 				if(mapWidth >= mapHeight){
 					conversion = 1980 / mapWidth;
@@ -1394,7 +1395,7 @@ class MessageBroker {
 					'height': mapHeight,
 					'width': mapWidth
 				});
-				scaleFactor = scaleFactor / conversion
+				scaleFactor = scaleFactor / conversion		
 				window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
 			}
 

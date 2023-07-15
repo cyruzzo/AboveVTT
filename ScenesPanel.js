@@ -531,7 +531,7 @@ function edit_scene_vision_settings(scene_id){
 	}, 1000);
 }
 
-function edit_scene_dialog(scene_id) {
+function edit_scene_dialog(scene_id, newScene) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
@@ -836,6 +836,11 @@ function edit_scene_dialog(scene_id) {
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
+
+		if(newScene){
+			scene['scale_check'] = true; //this scene is made after 0.98 check image size to see if we should scale down. 
+		}
+
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
@@ -1941,7 +1946,7 @@ function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
 
 	window.ScenesHandler.scenes.push(sceneData);
 	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
-	edit_scene_dialog(window.ScenesHandler.scenes.length - 1);
+	edit_scene_dialog(window.ScenesHandler.scenes.length - 1, true);
 	did_update_scenes();
 }
 
