@@ -116,10 +116,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		}
 
-		scene.vpps = parseFloat(scene.vpps);
-		scene.hpps = parseFloat(scene.hpps);
-		scene.offsetx = parseFloat(scene.offsetx);
-		scene.offsety = parseFloat(scene.offsety);
+		scene.vpps = parseFloat(scene.vpps) * scene.scale_factor;
+		scene.hpps = parseFloat(scene.hpps) * scene.scale_factor;
+		scene.offsetx = parseFloat(scene.offsetx) * scene.scale_factor;
+		scene.offsety = parseFloat(scene.offsety) * scene.scale_factor;
 
 		// CALCOLI DI SCALA non dovrebbero servire piu''
 		scene['scale'] = (60.0 / parseInt(scene['hpps'])) * 100; // for backward compatibility, this will be horizonat scale
