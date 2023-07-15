@@ -164,8 +164,28 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		load_scenemap(map_url, map_is_video, null, null, window.CURRENT_SCENE_DATA.UVTTFile, function() {
 			window.CURRENT_SCENE_DATA.scale_factor = 1;
 			scene.scale_factor = 1;
-			var owidth = $("#scene_map").width();
-			var oheight = $("#scene_map").height();
+
+
+			let mapHeight = $("#scene_map").height();
+			let mapWidth = $("#scene_map").width();
+
+			if(data.width == undefined && (mapHeight > 2500 || mapWidth > 2500)){
+				let conversion = 2;
+				if(mapWidth >= mapHeight){
+					conversion = 1980 / mapWidth;
+				}
+				else{
+					conversion = 1980 / mapHeight;
+				}
+				mapHeight = mapHeight*conversion;
+				mapWidth = mapWidth*conversion;
+				$("#scene_map").css({
+					'height': mapHeight,
+					'width': mapWidth
+				});
+			}
+			var owidth = mapHeight;
+			var oheight = mapWidth;
 			var max_length = get_canvas_max_length();
 			var max_area = get_canvas_max_area();
 			console.log("Map size is " + owidth + "x" + oheight + " (with scale factor of " + scene.scale_factor + ") and browser supports max length of " + max_length + "px and max area of " + max_area + "px");
