@@ -523,7 +523,7 @@ function edit_scene_vision_settings(scene_id){
 	}, 1000);
 }
 
-function edit_scene_dialog(scene_id, newScene) {
+function edit_scene_dialog(scene_id) {
 	let scene = window.ScenesHandler.scenes[scene_id];
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
@@ -827,10 +827,6 @@ function edit_scene_dialog(scene_id, newScene) {
 		const formData = get_edit_form_data();
 		for (key in formData) {
 			scene[key] = formData[key];
-		}
-
-		if(newScene){
-			scene['scale_check'] = true; //this scene is made after 0.98 check image size to see if we should scale down. 
 		}
 
 
@@ -1284,7 +1280,15 @@ function edit_scene_dialog(scene_id, newScene) {
 
 			window.ScenesHandler.persist_scene(scene_id);
 			window.ScenesHandler.switch_scene(scene_id);
-			let copiedSceneData = $.extend(true, {}, window.CURRENT_SCENE_DATA);
+			let copiedSceneData = {
+				...$.extend(true, {}, window.CURRENT_SCENE_DATA),
+				hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
+				vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
+				offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
+				offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
+			}
+
+			
 
 			$("#VTT").css("--scene-scale", 1)
 
@@ -1938,7 +1942,7 @@ function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
 
 	window.ScenesHandler.scenes.push(sceneData);
 	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
-	edit_scene_dialog(window.ScenesHandler.scenes.length - 1, true);
+	edit_scene_dialog(window.ScenesHandler.scenes.length - 1);
 	did_update_scenes();
 }
 
