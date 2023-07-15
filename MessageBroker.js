@@ -1398,6 +1398,15 @@ class MessageBroker {
 				scaleFactor = scaleFactor / conversion		
 				window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
 			}
+			else if(!data.scale_check){ //older than 0.98
+				window.CURRENT_SCENE_DATA = {
+					...window.CURRENT_SCENE_DATA,
+					hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
+					vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
+					offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
+					offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
+				}
+			}
 
 			window.CURRENT_SCENE_DATA.width = mapWidth;
 			window.CURRENT_SCENE_DATA.height = mapHeight;

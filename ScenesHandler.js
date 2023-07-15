@@ -186,6 +186,16 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				scene.scale_factor = scene.scale_factor / conversion		
 				window.CURRENT_SCENE_DATA.scale_factor = scene.scale_factor;
 			}
+			else if(!data.scale_check){ //older than 0.98
+				window.CURRENT_SCENE_DATA = {
+					...window.CURRENT_SCENE_DATA,
+					hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
+					vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
+					offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
+					offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
+				}
+			}
+
 			var owidth = mapHeight;
 			var oheight = mapWidth;
 			var max_length = get_canvas_max_length();
@@ -574,9 +584,24 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
 		let sceneData=Object.assign({},this.scenes[scene_index]);
-		sceneData.reveals=[];
-		sceneData.drawings=[];
-		sceneData.tokens={};
+		if(!sceneData.scale_check){
+			sceneData = {
+				...sceneData,
+				hpps: sceneData.hpps / sceneData.scale_factor,
+				vpps: sceneData.vpps / sceneData.scale_factor,
+				offsetx: sceneData.offsetx / sceneData.scale_factor,
+				offsety: sceneData.offsety / sceneData.scale_factor
+			}
+		}
+		sceneData ={
+			...sceneData,
+			scale_check: true,
+			reveals: [],
+			drawings:[],
+			tokens: {}
+		}
+	
+		
 		if(isnew)
 			sceneData.isnewscene=true;
 
@@ -585,9 +610,23 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	persist_current_scene(dontswitch=false){
 		let sceneData=Object.assign({},this.scene);
-		sceneData.reveals=[];
-		sceneData.drawings=[];
-		sceneData.tokens={};
+		if(!sceneData.scale_check){
+			sceneData = {
+				...sceneData,
+				hpps: sceneData.hpps / sceneData.scale_factor,
+				vpps: sceneData.vpps / sceneData.scale_factor,
+				offsetx: sceneData.offsetx / sceneData.scale_factor,
+				offsety: sceneData.offsety / sceneData.scale_factor
+			}
+		}
+		sceneData = {
+			...sceneData,
+			scale_check: true,
+			reveals: [],
+			drawings:[],
+			tokens: {}
+		}
+		
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}
 
