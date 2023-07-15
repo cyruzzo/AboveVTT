@@ -848,7 +848,7 @@ function redraw_fog() {
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
 		let adjustedArray = [];
-		let revealedScale = (d[6] != undefined) ? d[6] : window.CURRENT_SCENE_DATA.scale_factor;
+		let revealedScale = (d[6] != undefined) ? d[6]/window.CURRENT_SCENE_DATA.conversion : window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
 			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
@@ -873,7 +873,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
-				clearPolygon(ctx, d[0], d[6]);
+				clearPolygon(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion);
 			}
 			if (d[4] == 4) {
 				for(let adjusted = 0; adjusted < 2; adjusted++){
@@ -884,7 +884,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT
-				clear3PointRect(ctx, d[0], d[6]);		
+				clear3PointRect(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion);		
 			}
 		}
 		if (d[5] == 1) { // HIDE
@@ -906,7 +906,7 @@ function redraw_fog() {
 			if (d[4] == 3) {
 				// HIDE POLYGON
 				clearPolygon(ctx, d[0], d[6], true);
-				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
+				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);
 			
 			}
 			if (d[4] == 4) {
@@ -918,7 +918,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT
-				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);		
+				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);		
 			}
 		}
 	}
@@ -971,7 +971,7 @@ function redraw_drawings() {
 			targetCtx = lightCtx;
 		}
 
-		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
@@ -1054,7 +1054,7 @@ function  redraw_light_walls(clear=true){
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
 		}
-		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
@@ -1617,7 +1617,7 @@ function drawing_mouseup(e) {
 		 width,
 		 height,
 		 window.LINEWIDTH,
-		 window.CURRENT_SCENE_DATA.scale_factor];
+		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' )){
@@ -1687,7 +1687,7 @@ function drawing_mouseup(e) {
 				rectLine.rx,
 				rectLine.ry + rectLine.rh,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line1);
 
 			let line2 = ['line',
@@ -1698,7 +1698,7 @@ function drawing_mouseup(e) {
 				rectLine.rx + rectLine.rw,
 				rectLine.ry,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line2);
 			let line3 = ['line',
 				"wall",
@@ -1708,7 +1708,7 @@ function drawing_mouseup(e) {
 				rectLine.rx + rectLine.rw,
 				rectLine.ry + rectLine.rh,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line3);
 			let line4 = ['line',
 				"wall",
@@ -1718,7 +1718,7 @@ function drawing_mouseup(e) {
 				 rectLine.rx + rectLine.rw,
 				 rectLine.ry + rectLine.rh,
 				 window.LINEWIDTH,
-				 window.CURRENT_SCENE_DATA.scale_factor];
+				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line4);
 		}
 		else{
@@ -1738,7 +1738,7 @@ function drawing_mouseup(e) {
 						window.StoredWalls[walls][2],
 						window.StoredWalls[walls][3],
 						window.LINEWIDTH,
-						window.CURRENT_SCENE_DATA.scale_factor];
+						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 					window.DRAWINGS.push(data);
 			}
 			window.StoredWalls = [];
@@ -1807,7 +1807,7 @@ function drawing_mouseup(e) {
 
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;
+			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 
 			
 
@@ -1905,7 +1905,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);
 					}	
@@ -1929,7 +1929,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);				
 					}
@@ -1952,7 +1952,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);
 					
@@ -1976,7 +1976,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);					
 					}
@@ -2020,7 +2020,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 12,
-						 window.CURRENT_SCENE_DATA.scale_factor
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 						 ];	
 						window.DRAWINGS.push(data);
 						
@@ -2184,18 +2184,18 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const centerX = window.BEGIN_MOUSEX;
 		const centerY = window.BEGIN_MOUSEY;
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
-		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 		window.REVEALED.push(data);
 		sync_fog();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 		window.REVEALED.push(data);
 		sync_fog();
 		redraw_fog();
 	}
 	else if(window.DRAWSHAPE == "paint-bucket"){
-		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor]
+		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion]
 		window.REVEALED.push(data);
 		sync_fog();
 		redraw_fog();
@@ -2627,7 +2627,7 @@ function save3PointRect(e){
 			null,
 			5,
 			fog_type_to_int(), 
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -2645,7 +2645,7 @@ function save3PointRect(e){
 				polygonPoints[point+1].x,
 				polygonPoints[point+1].y,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			}
 			else{
 			data = ['line',
@@ -2656,7 +2656,7 @@ function save3PointRect(e){
 				polygonPoints[0].x,
 				polygonPoints[0].y,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			}
 			window.DRAWINGS.push(data);
 		}
@@ -2674,7 +2674,7 @@ function save3PointRect(e){
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
@@ -2700,7 +2700,7 @@ function savePolygon(e) {
 			null,
 			3,
 			fog_type_to_int(), 
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -2715,7 +2715,7 @@ function savePolygon(e) {
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
