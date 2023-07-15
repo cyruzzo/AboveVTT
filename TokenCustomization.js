@@ -650,13 +650,19 @@ function persist_token_customization(customization, callback) {
 
 
         if(customization.tokenType == 'pc'){
-            if(window.all_token_objects[customization.id])
+            if(window.all_token_objects[customization.id]){
                 window.all_token_objects[customization.id].options = {
                     ...window.all_token_objects[customization.id].options,
                     ...customization.tokenOptions,
-                    size: customization.tokenOptions.tokenSize * window.CURRENT_SCENE_DATA.hpps,
-                    gridSquares: customization.tokenOptions.tokenSize
                 }
+                if(customization.tokenOptions.tokenSize) {
+                    window.all_token_objects[customization.id].options = {
+                        ...window.all_token_objects[customization.id].options,
+                        size: customization.tokenOptions.tokenSize * window.CURRENT_SCENE_DATA.hpps,
+                        gridSquares: customization.tokenOptions.tokenSize
+                    }
+                }
+            }
         }
 
         // TODO: call the API with a single object instead of persisting everything
