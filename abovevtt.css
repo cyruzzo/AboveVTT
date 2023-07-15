@@ -4313,6 +4313,14 @@ div#selectedTokensBorderRotationGrabberConnector,
 #combat_area tr{
     position: relative;
 }
+.resize_drag_window{
+    pointer-events:none;
+    background:none;
+}
+.resize_drag_window > *{
+    pointer-events:all;
+}
+
 
 #text_controller_title_bar,
 .text-input-title-bar,
