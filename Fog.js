@@ -698,13 +698,13 @@ function draw_wizarding_box() {
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
 
 	let al1 = {
-		x: parseInt($("#aligner1").css("left")) + 29,
-		y: parseInt($("#aligner1").css("top")) + 29,
+		x: (parseInt($("#aligner1").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		y: (parseInt($("#aligner1").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
 	};
 
 	let al2 = {
-		x: parseInt($("#aligner2").css("left")) + 29,
-		y: parseInt($("#aligner2").css("top")) + 29,
+		x: (parseInt($("#aligner2").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		y: (parseInt($("#aligner2").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
 	};
 	gridContext.setLineDash([30, 5]);
 

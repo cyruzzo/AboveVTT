@@ -183,6 +183,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					'height': mapHeight,
 					'width': mapWidth
 				});
+				scene.scale_factor = scene.scale_factor / conversion		
+				window.CURRENT_SCENE_DATA.scale_factor = scene.scale_factor;
 			}
 			var owidth = mapHeight;
 			var oheight = mapWidth;
