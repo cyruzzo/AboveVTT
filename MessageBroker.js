@@ -1381,7 +1381,7 @@ class MessageBroker {
 			let mapWidth = $("#scene_map").width();
 			window.CURRENT_SCENE_DATA.conversion = 1;
 
-			if(data.scale_check && !data.UVTTFile && !data.is_video && data.width == undefined && (mapHeight > 2500 || mapWidth > 2500)){
+			if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
 				let conversion = 2;
 				if(mapWidth >= mapHeight){
 					conversion = 1980 / mapWidth;
@@ -1397,6 +1397,7 @@ class MessageBroker {
 				});
 				scaleFactor = scaleFactor / conversion		
 				window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
+				window.CURRENT_SCENE_DATA.conversion = conversion;
 			}
 			else if(!data.scale_check){ //older than 0.98
 				window.CURRENT_SCENE_DATA = {
