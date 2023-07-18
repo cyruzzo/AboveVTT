@@ -237,11 +237,11 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 	for(let i = 0; i<DataFile.lights.length; i++){
 
 		let hexTransparency = parseInt(DataFile.lights[i].color.substring(DataFile.lights[i].color.length - 2, DataFile.lights[i].color.length), 16)/255;
-		let intensity = (DataFile.lights[i].intensity <= 1) ? DataFile.lights[i].intensity : DataFile.lights[i].intensity/100;
+		let intensity = DataFile.lights[i].intensity;
 		let clippedColor = `#${(DataFile.lights[i].color.substring(0, DataFile.lights[i].color.length - 2))}`;
 
 		if(hexTransparency > 0)
-			intensity = intensity*hexTransparency;
+			intensity = intensity/4*hexTransparency;
 
 		let lightColor = hexToRGB(clippedColor, intensity);
 		let options = {
