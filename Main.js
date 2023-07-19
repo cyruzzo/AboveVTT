@@ -3036,6 +3036,7 @@ function init_help_menu() {
 						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
 						<li><a href="#tab2">FAQ</a></li>
 						<li><a href="#tab3">Get Help</a></li>
+						<li><a href="#tab4">Compatible Tools</a></li>
 					</ul>
 				</div>
 
@@ -3142,6 +3143,23 @@ function init_help_menu() {
 						<button id="help-error-container-copy-logs-button">Copy logs to clipboard</button><span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 16px;position: relative;">line_start_arrow_notch</span>Use this button to share logs with developers!
 					</div>
 
+					<div id="tab4">
+						<div class='help-compatible-tool'>
+							<a href='https://dddice.com' target="_blank">
+								<img class='compatible-tool-icon dddice-icon' src='https://media.discordapp.net/attachments/1131333685908623370/1131333688416817294/logo-light-fs8.png'/>
+								<span class='compatible-tool-title'>dddice</span>
+							</a>
+							<span class='compatible-tool-desc'>A multiplayer dice roller that allows you to roll, create, and collect 3D dice with your party or community.</span>
+						</div>
+						<div class='help-compatible-tool'>
+							<a href='https://www.dungeonalchemist.com/' target="_blank">
+								<img class='compatible-tool-icon da-icon' src='https://cdn.discordapp.com/attachments/1131333685908623370/1131333688693620796/DungeonAlchemist-Logo-Softshadow-0907.png'/>
+								<span class='compatible-tool-title'>Dungeon Alchemist</span>
+							</a>
+							<span class='compatible-tool-desc'>An AI-powered map-making application that enables you to make high-quality content fast! Export maps as a UVTT file to import maps, light and walls into AboveVTT.</span>
+						</div>
+					</div>
+
 				</section>
 			</div>
 		</div>
@@ -3153,7 +3171,7 @@ function init_help_menu() {
 		$('.help-tabs li').removeClass('active');
 		$(this).parent().addClass('active');
 		let currentTab = $(this).attr('href');
-		$('.tabs-content div').hide();
+		$('.tabs-content>div').hide();
 		$(currentTab).show();
 		return false;
 	});
