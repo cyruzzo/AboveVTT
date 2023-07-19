@@ -3068,7 +3068,7 @@ body {
     margin-right: 10px;
   }
 
-  .tabs-content div:not(:first-child) {
+  .tabs-content>div:not(:first-child) {
     display: none;
   }
 .page-number {
@@ -6731,6 +6731,32 @@ button.journal-view-button.journal-button {
     border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 }
 /* end Note ddb styling*/
+
+
+.help-compatible-tool{
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: center;
+    width: 60%;
+    margin: auto;
+    align-items: center;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.compatible-tool-title{
+    font-size: 25px;
+    font-weight: bold;
+}
+.compatible-tool-icon{
+    filter: drop-shadow(1px 1px 1px #000);
+    display: block;
+    height:120px;
+}
+
+
 
 /* start quick roll menu */
 #qrm_dialog button{
