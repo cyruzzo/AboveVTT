@@ -1334,6 +1334,9 @@ class MessageBroker {
 		if(window.DM){
 			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
 		}
+
+		if(!window.CURRENT_SCENE_DATA.scale_factor)
+			window.CURRENT_SCENE_DATA.scale_factor = 1;
 		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps*window.CURRENT_SCENE_DATA.scale_factor);
 		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps*window.CURRENT_SCENE_DATA.scale_factor);
 		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.scale_factor);
