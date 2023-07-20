@@ -585,12 +585,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
 		let sceneData=Object.assign({},this.scenes[scene_index]);
 		if(!sceneData.scale_check){
+
+			const scale_factor = (!isNaN(parseInt(sceneData.scale_factor))) ? parseInt(sceneData.scale_factor) : 1;
 			sceneData = {
 				...sceneData,
-				hpps: sceneData.hpps / sceneData.scale_factor,
-				vpps: sceneData.vpps / sceneData.scale_factor,
-				offsetx: sceneData.offsetx / sceneData.scale_factor,
-				offsety: sceneData.offsety / sceneData.scale_factor
+				hpps: sceneData.hpps / scale_factor,
+				vpps: sceneData.vpps / scale_factor,
+				offsetx: sceneData.offsetx / scale_factor,
+				offsety: sceneData.offsety / scale_factor
 			}
 		}
 		sceneData ={
@@ -600,7 +602,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			drawings:[],
 			tokens: {}
 		}
-	
+		this.scenes[scene_index].scale_check = true;
 		
 		if(isnew)
 			sceneData.isnewscene=true;
@@ -609,16 +611,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	persist_current_scene(dontswitch=false){
+		window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = window.CURRENT_SCENE_DATA;
+		window.ScenesHandler.scene = window.CURRENT_SCENE_DATA;
 		let sceneData=Object.assign({},this.scene);
-		if(!sceneData.scale_check){
-			sceneData = {
-				...sceneData,
-				hpps: sceneData.hpps / sceneData.scale_factor,
-				vpps: sceneData.vpps / sceneData.scale_factor,
-				offsetx: sceneData.offsetx / sceneData.scale_factor,
-				offsety: sceneData.offsety / sceneData.scale_factor
-			}
-		}
+
 		sceneData = {
 			...sceneData,
 			scale_check: true,
@@ -626,6 +622,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			drawings:[],
 			tokens: {}
 		}
+
 		
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}

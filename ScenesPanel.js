@@ -497,7 +497,7 @@ function edit_scene_vision_settings(scene_id){
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
-
+		
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
 
@@ -1256,6 +1256,7 @@ function edit_scene_dialog(scene_id) {
 				function() {
 					aligner1.remove();
 					aligner2.remove();
+
 
 					$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
 					$("#grid_5").click(function() { grid_5(); });
