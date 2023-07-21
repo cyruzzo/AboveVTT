@@ -491,6 +491,7 @@ async function init_tokens_panel() {
         SidebarListItem.Aoe("cone", 1, "acid"),
         SidebarListItem.Aoe("line", 1, "acid")
     ]
+    hiddenFolderItems = (JSON.parse(localStorage.getItem(`${window.gameId}.hiddenFolderItems`)) != null) ? JSON.parse(localStorage.getItem(`${window.gameId}.hiddenFolderItems`)) : [];
 
 
     if(localStorage.getItem('MyTokens') != null){
@@ -512,7 +513,8 @@ async function init_tokens_panel() {
     let header = tokensPanel.header;
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
-    add_expand_collapse_buttons_to_header(tokensPanel);
+    add_expand_collapse_buttons_to_header(tokensPanel, true);
+
     header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
@@ -1295,6 +1297,7 @@ function register_token_row_context_menu() {
                 }
             };
 
+
             if (!rowItem.isTypeFolder() && !rowItem.isTypeEncounter()) {
                 // copy url doesn't make sense for folders
                 menuItems["copyUrl"] = {
@@ -1325,9 +1328,36 @@ function register_token_row_context_menu() {
                 };
             }
 
+            if(rowItem.isTypeFolder() || rowItem.isTypePC()){
+                menuItems["border"] = "---";
+
+                menuItems['Hide/Reveal'] = {
+                    name: (window.hiddenFolderItems.indexOf(rowItem.id) > -1) ? "Reveal in menu" : "Hide in menu",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToHide = find_sidebar_list_item(opt.$trigger);
+                    
+                        const index = window.hiddenFolderItems.indexOf(itemToHide.id);
+                        if (index > -1) { 
+                            window.hiddenFolderItems.splice(index, 1); 
+                        }
+                        else{
+                            window.hiddenFolderItems.push(itemToHide.id);
+                        }
+                           
+                        localStorage.setItem(`${window.gameId}.hiddenFolderItems`, JSON.stringify(window.hiddenFolderItems));
+                        let buttonClicked = $('.temporary-visible').length>0;
+                        redraw_token_list($('[name="token-search"]').val());
+                        if(buttonClicked){
+                            $('.sidebar-panel-body .hidden-sidebar-item').toggleClass('temporary-visible', true);
+                        }
+                    }
+                }
+            }
+
             if (rowItem.canDelete()) {
 
-                menuItems["border"] = "---";
+                if(!rowItem.isTypeFolder() && !rowItem.isTypeEncounter() && !rowItem.isTypePC())
+                    menuItems["border"] = "---";
 
                 // not a built in folder or token, add an option to delete
                 menuItems["delete"] = {

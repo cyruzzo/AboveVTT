@@ -5858,6 +5858,18 @@ body.body-rpgcharacter-sheet #combat_area tr.CTToken:before{
     width: calc(100% - 80px);
 }
 
+.hidden-sidebar-item{
+    display: none !important;
+}
+
+.hidden-sidebar-item.temporary-visible{
+    display: block !important;
+}
+
+.reveal-hidden-button.clicked{
+    background: #F66;
+}
+
 .text-option{
     width:20px;
     height:20px;
