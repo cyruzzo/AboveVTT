@@ -1094,7 +1094,10 @@ function build_sidebar_list_row(listItem) {
 
   let row = $(`<div id="${listItem.id}" class="sidebar-list-item-row" title="${listItem.name}"></div>`);
   set_list_item_identifier(row, listItem);
-
+  
+  if (window.hiddenFolderItems.indexOf(listItem.id) > -1) {
+    row.toggleClass('hidden-sidebar-item', true);
+  }
   let rowItem = $(`<div class="sidebar-list-item-row-item"></div>`);
   row.append(rowItem);
   rowItem.on("click", did_click_row);
@@ -1902,7 +1905,9 @@ function disable_draggable_change_folder() {
       tokensPanel.body.removeClass("folder");
       tokensPanel.header.find("input[name='token-search']").show();
       tokensPanel.updateHeader("Tokens");
-      add_expand_collapse_buttons_to_header(tokensPanel);
+      
+      add_expand_collapse_buttons_to_header(tokensPanel, true);
+
       try {
         tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
       } catch (e) {} // don't care if it fails, just try
@@ -1932,7 +1937,8 @@ function disable_draggable_change_folder() {
   }
 }
 
-function add_expand_collapse_buttons_to_header(sidebarPanel) {
+function add_expand_collapse_buttons_to_header(sidebarPanel, addHideButton=false) {
+
   let expandAll = $(`<button class="token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
   expandAll.on("click", function (clickEvent) {
     $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").removeClass("collapsed");
@@ -1943,6 +1949,17 @@ function add_expand_collapse_buttons_to_header(sidebarPanel) {
   });
   let buttonWrapper = $("<div class='expand-collapse-wrapper'></div>");
   sidebarPanel.header.find(".sidebar-panel-header-title").append(buttonWrapper);
+  if(addHideButton){
+    let hideButton = $(`<button class="token-row-button reveal-hidden-button" title="Reveal hidden folders/tokens" style=""><span class="material-icons">disabled_visible</span></button>`);
+    hideButton.on("click", function (clickEvent) {
+      $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible");
+      $(this).toggleClass('clicked');
+    });
+    if($('.temporary-visible').length>0){
+      $(hideButton).toggleClass('clicked', true);
+    }
+    buttonWrapper.append(hideButton);
+  }
   buttonWrapper.append(expandAll);
   buttonWrapper.append(collapseAll);
 }
