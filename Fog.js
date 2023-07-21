@@ -2350,6 +2350,12 @@ function handle_drawing_button_click() {
 		else{
 			$("#text_div").css("z-index", "20")
 		}
+		if ($("#vision_button").hasClass('ddbc-tab-options__header-heading--is-active')){
+			$("#temp_overlay").css("mix-blend-mode", "soft-light")
+		}
+		else{
+			$("#temp_overlay").css("mix-blend-mode", "")
+		}
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup',  data, drawing_mouseup);
 		target.on('mousemove', data, drawing_mousemove);
