@@ -1239,7 +1239,7 @@ function render_source_chapter_in_iframe(url) {
 	const chapterHash = url.split("#")?.[1];
 	const iframeId = 'sourceChapterIframe';
 	const containerId = `${iframeId}_resizeDrag`;
-	const container = find_or_create_generic_draggable_window(containerId, 'Source Book');
+	const container = find_or_create_generic_draggable_window(containerId, 'Source Book', true, true, `#${iframeId}`);
 
 	let iframe = $(`#${iframeId}`);
 	if (iframe.length > 0) {
