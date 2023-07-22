@@ -984,8 +984,6 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       container.data("prev-left", container.css("left"));
       container.css("top", container.data("prev-minimized-top"));
       container.css("left", container.data("prev-minimized-left"));
-      titleBar.height(23);
-      titleBar.width(200);
       container.height(23);
       container.width(200);
       titleBar.addClass("minimized");
@@ -994,8 +992,6 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     } else if(titleBar.hasClass("minimized")) {
       container.data("prev-minimized-top", container.css("top"));
       container.data("prev-minimized-left", container.css("left"));
-      titleBar.height(titleBar.data("prev-height"));
-      titleBar.width(titleBar.data("prev-width"));
       container.height('80%');
       container.width('80%');
       container.css("top", container.data("prev-top"));
