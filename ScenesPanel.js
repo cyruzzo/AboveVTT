@@ -850,10 +850,13 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		window.WIZARDING = false;
-		window.ScenesHandler.scene.fpsq = "5";
-		window.ScenesHandler.scene.upsq = "ft";
-		window.ScenesHandler.scene.grid_subdivided = "0";
-		consider_upscaling(window.ScenesHandler.scene);
+		window.CURRENT_SCENE_DATA = {
+			...window.CURRENT_SCENE_DATA,
+			upsq: "ft",
+			fpsq: "5",
+			grid_subdivided: "0"
+		}
+		consider_upscaling(window.CURRENT_SCENE_DATA);
 		window.ScenesHandler.persist_current_scene();
 		$("#wizard_popup").empty().append("You're good to go!!");
 		$("#exitWizard").remove();
@@ -872,14 +875,15 @@ function edit_scene_dialog(scene_id) {
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
-			window.ScenesHandler.scene.grid_subdivided = "1";
-			window.ScenesHandler.scene.fpsq = "5";
-			window.ScenesHandler.scene.upsq = "ft";
-			window.ScenesHandler.scene.hpps /= 2;
-			window.ScenesHandler.scene.vpps /= 2;
-			
-			consider_upscaling(window.ScenesHandler.scene);
-			
+			window.CURRENT_SCENE_DATA = {
+				...window.CURRENT_SCENE_DATA,
+				hpps: window.CURRENT_SCENE_DATA.hpps/2,
+				vpps: window.CURRENT_SCENE_DATA.vpps/2,
+				upsq: "ft",
+				fpsq: "5",
+				grid_subdivided: "1"
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
 			$("#exitWizard").remove();
 			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 				$("#wizard_popup").remove();
@@ -893,12 +897,15 @@ function edit_scene_dialog(scene_id) {
 			window.WIZARDING = false;
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
-			window.ScenesHandler.scene.snap = "1";
-			window.ScenesHandler.scene.grid_subdivided = "0";
-			window.ScenesHandler.scene.grid = "0";
-			window.ScenesHandler.scene.fpsq = "10";
-			window.ScenesHandler.scene.upsq = "ft";
-			consider_upscaling(window.ScenesHandler.scene);
+			window.CURRENT_SCENE_DATA= {
+				...window.CURRENT_SCENE_DATA,
+				upsq: "ft",
+				fpsq: "10",
+				grid_subdivided: "0",
+				snap: "1",
+				grid: "0"
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
 			window.ScenesHandler.persist_current_scene();
 			$("#exitWizard").remove();
 			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
@@ -915,12 +922,15 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
-		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.fpsq = "5";
-		window.ScenesHandler.scene.upsq = "ft";
-		window.ScenesHandler.scene.hpps /= 3;
-		window.ScenesHandler.scene.vpps /= 3;
-		consider_upscaling(window.ScenesHandler.scene);
+		window.CURRENT_SCENE_DATA = {
+			...window.CURRENT_SCENE_DATA,
+			hpps: window.CURRENT_SCENE_DATA.hpps/3,
+			vpps: window.CURRENT_SCENE_DATA.vpps/3,
+			upsq: "ft",
+			fpsq: "5",
+			grid_subdivided: "0"
+		}
+		consider_upscaling(window.CURRENT_SCENE_DATA);
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
@@ -936,12 +946,15 @@ function edit_scene_dialog(scene_id) {
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
-		window.ScenesHandler.scene.grid_subdivided = "0";
-		window.ScenesHandler.scene.fpsq = "5";
-		window.ScenesHandler.scene.upsq = "ft";
-		window.ScenesHandler.scene.hpps /= 4;
-		window.ScenesHandler.scene.vpps /= 4;
-		consider_upscaling(window.ScenesHandler.scene);
+		window.CURRENT_SCENE_DATA = {
+			...window.CURRENT_SCENE_DATA,
+			hpps: window.CURRENT_SCENE_DATA.hpps/4,
+			vpps: window.CURRENT_SCENE_DATA.vpps/4,
+			upsq: "ft",
+			fpsq: "5",
+			grid_subdivided: "0"
+		}
+		consider_upscaling(window.CURRENT_SCENE_DATA);
 		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
 			$("#wizard_popup").remove();
 		});
