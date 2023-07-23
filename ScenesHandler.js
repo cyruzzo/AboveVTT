@@ -602,10 +602,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			drawings:[],
 			tokens: {}
 		}
-		this.scenes[scene_index].scale_check = true;
+
 		
 		if(isnew)
 			sceneData.isnewscene=true;
+
+		this.scenes[scene_index] = sceneData;
 
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
