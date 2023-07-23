@@ -328,22 +328,6 @@ function edit_scene_vision_settings(scene_id){
 		return toggle
 	}
 
-	function handle_form_grid_on_change(){
-		// not editting this scene, don't show live updates to grid
-		if (scene.id !== window.CURRENT_SCENE_DATA.id){
-			return
-		}
-	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
-		// redraw grid with new information
-		if(grid === "1"){
-			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
-		}
-		// redraw grid using current scene data
-		else if(grid === "0"){
-			clear_grid()
-		}
-	}
 
 	$("#edit_dialog").remove();
 
@@ -571,7 +555,7 @@ function edit_scene_dialog(scene_id) {
 		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
 		// redraw grid with new information
 		if(grid === "1"){
-			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
+			redraw_grid(parseFloat(hpps)*parseInt(window.CURRENT_SCENE_DATA.scale_factor), parseFloat(vpps)*parseInt(window.CURRENT_SCENE_DATA.scale_factor), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
 		}
 		// redraw grid using current scene data
 		else if(grid === "0"){
