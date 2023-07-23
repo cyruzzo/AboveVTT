@@ -545,6 +545,8 @@ class JournalManager{
 		}
 		let note_text=$("<div class='note-text'/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
+		this.add_journal_roll_buttons(note_text);
+		
 		note.append(note_text);
 		note.find("a").attr("target","_blank");
 		note.dialog({
@@ -599,6 +601,48 @@ class JournalManager{
 			event.preventDefault();
 			render_source_chapter_in_iframe(event.target.href);
 		});
+
+	}
+
+	add_journal_roll_buttons(target){
+		console.group("add_journal_roll_buttons")
+		
+		const clickHandler = function(clickEvent) {
+			roll_button_clicked(clickEvent, window.PLAYER_NAME, window.PLAYER_IMG)
+		};
+
+		const rightClickHandler = function(contextmenuEvent) {
+			roll_button_contextmenu_handler(contextmenuEvent, window.PLAYER_NAME, window.PLAYER_IMG);
+		}
+
+		// replace all "to hit" and "damage" rolls
+	
+		let currentElement = $(target).clone()
+
+		// apply most specific regex first matching all possible ways to write a dice notation
+		// to account for all the nuances of DNDB dice notation.
+		// numbers can be swapped for any number in the following comment
+		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
+		const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/g
+		// matches " +1 " or " + 1 "
+		const hitRollRegex = /\s([+-]\s?[0-9]+)\s/g
+		const dRollRegex = /\s(\s?d[0-9]+)\s/g
+		const tableNoSpaceRollRegex = />(\s?d[0-9]+\s?)</g
+		const actionType = "custom"
+		const updated = currentElement.html()
+			.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='AboveVTT' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} damage">$1</button>`)
+			.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='AboveVTT' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} to hit">$1</button>`)
+			.replaceAll(dRollRegex, `<button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} to hit">$1</button>`)
+			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} to hit">$1</button><`)
+			
+		$(target).html(updated);
+		
+		// terminate the clones reference, overkill but rather be safe when it comes to memory
+		currentElement = null
+	
+		$(target).find(".avtt-roll-button").click(clickHandler);
+		$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+		console.groupEnd()
 	}
 	
 	note_visibility(id,visibility){
