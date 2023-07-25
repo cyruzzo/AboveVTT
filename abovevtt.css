@@ -4232,9 +4232,6 @@ div#selectedTokensBorderRotationGrabberConnector,
     height: 100%;
 }
 
-.MuiModal-root{
-    pointer-events: none;
-}
 
 #VTT{
 	z-index:2;
