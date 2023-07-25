@@ -466,6 +466,9 @@ class JournalManager{
 		});
 		if(window.DM){
 			let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
+			chapterImport.append($(`<option value='/magic-items'>Magic Items</option>`));
+			chapterImport.append($(`<option value='/feats'>Feats</option>`));
+			chapterImport.append($(`<option value='/spells'>Spells</option>`));
 			window.ScenesHandler.build_adventures(function(){
 				for(let source in window.ScenesHandler.sources){
 					let sourcetitle = window.ScenesHandler.sources[source].title;
@@ -474,28 +477,57 @@ class JournalManager{
 			});
 			chapterImport.on('change', function(){
 				let source = this.value;
-				self.chapters.push({
-					title: window.ScenesHandler.sources[source].title,
-					collapsed: false,
-					notes: [],
-				});
-				window.ScenesHandler.build_chapters(source, function(){
-					for(let chapter in window.ScenesHandler.sources[source].chapters){
-						let new_noteid=uuid();
-						let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
-						self.notes[new_noteid]={
-							title: new_note_title,
-							text: "",
-							player: false,
-							plain: "",
-							ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
-						};
-						self.chapters[self.chapters.length-1].notes.push(new_noteid);
+				
+				if (source == '/magic-items' || source == '/feats' || source == '/spells'){
+					let new_noteid=uuid();
+					let new_note_title = source.replaceAll(/-/g, ' ')
+											.replaceAll(/\//g, '')
+											.replaceAll(/\b\w/g, l => l.toUpperCase());
+
+					self.notes[new_noteid]={
+						title: new_note_title,
+						text: "",
+						player: false,
+						plain: "",
+						ddbsource: `https://dndbeyond.com${source}`
+					};
+					let chapter = self.chapters.find(x => x.title == 'Compendium')
+					if(!chapter){
+						self.chapters.push({
+							title: 'Compendium',
+							collapsed: false,
+							notes: [],
+						});
+						chapter = self.chapters[self.chapters.length-1];
 					}
+					
+					chapter.notes.push(new_noteid);
 					self.persist();
 					self.build_journal();
-				});
-
+				}
+				else{
+					self.chapters.push({
+						title: window.ScenesHandler.sources[source].title,
+						collapsed: false,
+						notes: [],
+					});
+					window.ScenesHandler.build_chapters(source, function(){
+						for(let chapter in window.ScenesHandler.sources[source].chapters){
+							let new_noteid=uuid();
+							let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+							self.notes[new_noteid]={
+								title: new_note_title,
+								text: "",
+								player: false,
+								plain: "",
+								ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+							};
+							self.chapters[self.chapters.length-1].notes.push(new_noteid);
+						}
+						self.persist();
+						self.build_journal();
+					});
+				}
 			})
 
 			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
@@ -1278,8 +1310,9 @@ function init_journal(gameid){
 function render_source_chapter_in_iframe(url) {
 	const sourceChapter = url.startsWith('https://www.dndbeyond.com/sources/') || url.startsWith('/sources/');
 	const compendiumChapter = url.startsWith('https://www.dndbeyond.com/compendium/') || url.startsWith('/compendium/');
-	const attachmentChapter = url.startsWith('https://www.dndbeyond.com/attachments/') || url.startsWith('/attachments/')
-	if (typeof url !== "string" ||  (!sourceChapter && !compendiumChapter && !attachmentChapter)) {
+	const attachmentChapter = url.startsWith('https://www.dndbeyond.com/attachments/') || url.startsWith('/attachments/');
+	const rulesChapter = url.startsWith('https://dndbeyond.com/magic-items') || url.startsWith('https://dndbeyond.com/feats') || url.startsWith('https://dndbeyond.com/spells')
+	if (typeof url !== "string" ||  (!sourceChapter && !compendiumChapter && !attachmentChapter && !rulesChapter)) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
 	}
