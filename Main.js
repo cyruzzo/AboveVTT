@@ -26,8 +26,10 @@ function parse_img(url) {
 		const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
 		console.log("parse_img is converting", url, "to", parsed);
 		retval = parsed;
-	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
-		const parsed = retval.split("?dl=")[0] + "?raw=1";
+	} 
+	else if(retval.includes("dropbox.com")){
+		const splitUrl = url.split('dropbox.com');
+		const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
 		console.log("parse_img is converting", url, "to", parsed);
 		retval = parsed;
 	}
