@@ -2173,8 +2173,8 @@ class Token {
 					if (self.selected && window.dragSelectedTokens.length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						let offsetLeft = tokenPosition.x - parseInt(self.orig_left);
+						let offsetTop = tokenPosition.y - parseInt(self.orig_top);
 
 						for (let tok of window.dragSelectedTokens){
 							let id = $(tok).attr("data-id");
