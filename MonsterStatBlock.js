@@ -45,11 +45,15 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
     }
 }
 
-function display_stat_block_in_container(statBlock, container, tokenId) {
-    const html = build_monster_stat_block(statBlock);
+function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
+    const html = (customStatBlock) ? $(`
+    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : build_monster_stat_block(statBlock);
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
+    if(customStatBlock){
+      window.JOURNAL.add_journal_roll_buttons(html);
+    }
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
         e.stopPropagation();
         e.preventDefault();
@@ -58,9 +62,11 @@ function display_stat_block_in_container(statBlock, container, tokenId) {
         imgContainer.find("img").addClass("magnify");
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
-    container.find("div.image").append(statBlock.imageHtml());
+    if(!customStatBlock)
+      container.find("div.image").append(statBlock.imageHtml());
     container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
-    scan_monster(container, statBlock, tokenId);
+    if(!customStatBlock)
+      scan_monster(container, statBlock, tokenId);
     // scan_creature_pane(container, statBlock.name, statBlock.image);
     add_stat_block_hover(container);
     $("span.hideme").parent().parent().hide();
