@@ -657,7 +657,7 @@ class JournalManager{
 		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
 		const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/g
 		// matches " +1 " or " + 1 "
-		const hitRollRegex = /\s([+-]\s?[0-9]+)\s|\(([+-]\s?[0-9]+)\)/g
+		const hitRollRegex = /(\s)([+-]\s?[0-9]+)(\s)|\(([+-]\s?[0-9]+)\)|(\;)([+-]\s?[0-9]+)(\&)/g
 		const htmlNoSpaceHitRollRegex = />([+-]\s?[0-9]+)</g
 		const dRollRegex = /\s(\s?d[0-9]+)\s/g
 		const tableNoSpaceRollRegex = />(\s?d[0-9]+\s?)</g
@@ -665,7 +665,7 @@ class JournalManager{
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
 			.replaceAll(damageRollRegex, ` <button data-exp='$2' data-mod='$3' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1</button> `)
-			.replaceAll(hitRollRegex, ` <button data-exp='1d20' data-mod='$2' data-rolltype='rollType' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button> `)
+			.replaceAll(hitRollRegex, `$5$1<button data-exp='1d20' data-mod='$2$4$6' data-rolltype='rollType' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2$4$6</button>$3$7`)
 			.replaceAll(htmlNoSpaceHitRollRegex, `><button data-exp='1d20' data-mod='$1' data-rolltype='rollType' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
 			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
 			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)

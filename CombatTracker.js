@@ -253,8 +253,8 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			if($("#resizeDragMon:not(.hideMon)").length>0) {
-				$("[data-current][data-monster] button.openSheetCombatButton").click();
+			if($("#resizeDragMon:not(.hideMon)").length>0 && $("[data-current] button.openSheetCombatButton").css('visibility') == 'visible') {
+				$("[data-current] button.openSheetCombatButton").click();
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -651,12 +651,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(!token.isPlayer()){
 		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
-		stat.click(function(){
+		stat.click(function(){			
+			if(token.options.statBlock){
+				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
+				load_monster_stat(undefined, undefined, customStatBlock);
+				return;
+			}
 			load_monster_stat(token.options.monster, token.options.id);
 		});
 		if(window.DM){
 			buttons.append(stat);
-			if(!token.isMonster()){
+			if(!token.isMonster() && !token.options.statBlock){
 				stat.css("visibility", "hidden");
 			}
 
