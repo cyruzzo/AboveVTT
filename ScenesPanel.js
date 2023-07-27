@@ -452,9 +452,9 @@ function edit_scene_vision_settings(scene_id){
 
 	});
 
+	let playerViewLabel = $('<div class="player_map_preview_label">Player view will see the map image even when behind walls at less than 100% darkness opacity. Tokens will still be hidden when out of line of sight.</div>')
 
-
-	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap);
+	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap, playerViewLabel);
 
 	const cancel = $("<button type='button'>Cancel</button>");
 	cancel.click(function() {
