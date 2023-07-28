@@ -253,7 +253,7 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			if($("#resizeDragMon:not(.hideMon)").length>0 && $("[data-current] button.openSheetCombatButton").css('visibility') == 'visible') {
+			if($("#resizeDragMon:not(.hideMon)").length>0 && $("[data-current] button.openSheetCombatButton").css('visibility') == 'visible' && !$('[data-current]').attr('data-target').startsWith('/profile')) {
 				$("[data-current] button.openSheetCombatButton").click();
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
