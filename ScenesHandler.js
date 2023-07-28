@@ -121,6 +121,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		scene.offsetx = parseFloat(scene.offsetx) * scene.scale_factor;
 		scene.offsety = parseFloat(scene.offsety) * scene.scale_factor;
 
+		scene.scale_factor = 1;
+		scene.grid_subdivided = '0';
+
 		// CALCOLI DI SCALA non dovrebbero servire piu''
 		scene['scale'] = (60.0 / parseInt(scene['hpps'])) * 100; // for backward compatibility, this will be horizonat scale
 		scene['scaleX'] = (60.0 / parseInt(scene['hpps'])); // for backward compatibility, this will be horizonat scale
@@ -162,39 +165,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
 		load_scenemap(map_url, map_is_video, null, null, window.CURRENT_SCENE_DATA.UVTTFile, function() {
-			window.CURRENT_SCENE_DATA.scale_factor = 1;
-			scene.scale_factor = 1;
+
 
 
 			let mapHeight = $("#scene_map").height();
 			let mapWidth = $("#scene_map").width();
 
-			if(scene.scale_check && !scene.UVTTFile && !scene.is_video && (mapHeight > 2500 || mapWidth > 2500)){
-				let conversion = 2;
-				if(mapWidth >= mapHeight){
-					conversion = 1980 / mapWidth;
-				}
-				else{
-					conversion = 1980 / mapHeight;
-				}
-				mapHeight = mapHeight*conversion;
-				mapWidth = mapWidth*conversion;
-				$("#scene_map").css({
-					'height': mapHeight,
-					'width': mapWidth
-				});
-				scene.scale_factor = scene.scale_factor / conversion		
-				window.CURRENT_SCENE_DATA.scale_factor = scene.scale_factor;
-			}
-			else if(!data.scale_check){ //older than 0.98
-				window.CURRENT_SCENE_DATA = {
-					...window.CURRENT_SCENE_DATA,
-					hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
-					vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
-					offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
-					offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
-				}
-			}
 
 			var owidth = mapHeight;
 			var oheight = mapWidth;
