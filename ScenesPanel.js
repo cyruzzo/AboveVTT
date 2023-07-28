@@ -1055,6 +1055,7 @@ function edit_scene_dialog(scene_id) {
 			})
 
 			let regrid = function(e) {
+				window.CURRENT_SCENE_DATA.grid_subdivided = '0';
 
 				let al1 = {
 					x: parseInt(aligner1.css("left")) + 29,

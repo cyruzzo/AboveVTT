@@ -439,10 +439,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 
 
 		newmap.on("error", map_load_error_cb);
-		if (width != null) {
-			newmap.width(width);
-			newmap.height(height);
-		}
+
 		newmap.on("load", () => {
 			$("#scene_map_container").toggleClass('map-loading', false);
 		});
