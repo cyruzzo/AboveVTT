@@ -131,6 +131,7 @@ function init_combat_tracker(){
 	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
 	
 	reset_rounds.click(function (){
+		$(e.target).select();
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 		let tokenID = $("#combat_area tr[data-current]").attr('data-target');
@@ -475,6 +476,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		init.val(token.options.init);
 		init.attr("disabled","disabled");
 	}
+	init.click(function(e) {
+		$(e.target).select();
+	});
 	if(window.DM){
 		init.change(function(){	
 				window.all_token_objects[token.options.id].options.init = init.val()
@@ -487,7 +491,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
-				debounceCombatReorder();
+				ct_reorder(window.DM);
 			}
 		);
 	}
