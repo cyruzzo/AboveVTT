@@ -1281,7 +1281,29 @@ function edit_scene_dialog(scene_id) {
 				scene[key] = formData[key];
 			}
 
-			window.ScenesHandler.persist_scene(scene_id);
+			let sceneData=Object.assign({},window.ScenesHandler.scenes[scene_id]);
+			if(!sceneData.scale_check){
+
+				const scale_factor = (!isNaN(parseInt(sceneData.scale_factor))) ? parseInt(sceneData.scale_factor) : 1;
+				sceneData = {
+					...sceneData,
+					hpps: sceneData.hpps / scale_factor,
+					vpps: sceneData.vpps / scale_factor,
+					offsetx: sceneData.offsetx / scale_factor,
+					offsety: sceneData.offsety / scale_factor
+				}
+			}
+			sceneData ={
+				...sceneData,
+				scale_check: true,
+				reveals: [],
+				drawings:[],
+				tokens: {}
+			}
+
+			window.ScenesHandler.scenes[scene_id] = sceneData;
+
+
 			window.ScenesHandler.switch_scene(scene_id);
 			let copiedSceneData = {
 				...$.extend(true, {}, window.CURRENT_SCENE_DATA),
