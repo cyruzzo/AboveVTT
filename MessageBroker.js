@@ -1416,8 +1416,6 @@ class MessageBroker {
 			window.CURRENT_SCENE_DATA.height = mapHeight;
 			// Scale map according to scaleFactor
 
-			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
-			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
 			$("#VTT").css("--scene-scale", scaleFactor)
 			
 
