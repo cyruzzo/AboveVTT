@@ -1,5 +1,9 @@
 
-const debounceCombatReorder = combatmydebounce(() => {ct_reorder(window.DM)}, 250); //250ms so this still feels reactive
+const debounceCombatReorder = combatmydebounce((resetCurrent = false) => {
+	ct_reorder(window.DM)
+	if(resetCurrent)
+		$("#combat_area tr").first().attr('data-current','1');
+}, 250); //250ms so this still feels reactive
 const debounceCombatPersist = combatmydebounce(() => {ct_persist()}, 500); //500 ms since doesn't have visible effect on the screen the change takes place.
 
 function combatmydebounce(func, timeout = 800){ // we need to figure out where to put the original debounce somewhere we can access it earlier.
@@ -195,10 +199,9 @@ function init_combat_tracker(){
 			}, $(this).attr('data-stat'));
 		});
 		
-		debounceCombatReorder()
+		debounceCombatReorder(true);
 
 		ct_update_popout();
-		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
 	clear=$("<button>CLEAR</button>");
