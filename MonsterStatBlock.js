@@ -53,6 +53,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     container.append(html);
     if(customStatBlock){
       window.JOURNAL.add_journal_roll_buttons(html);
+      window.JOURNAL.add_journal_tooltip_targets(html);
     }
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
         e.stopPropagation();

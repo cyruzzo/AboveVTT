@@ -578,6 +578,8 @@ class JournalManager{
 		let note_text=$("<div class='note-text'/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
 		this.add_journal_roll_buttons(note_text);
+		this.add_journal_tooltip_targets(note_text);
+		add_stat_block_hover(note_text);
 		
 		note.append(note_text);
 		note.find("a").attr("target","_blank");
@@ -634,6 +636,16 @@ class JournalManager{
 			render_source_chapter_in_iframe(event.target.href);
 		});
 
+	}
+	add_journal_tooltip_targets(target){
+		$(target).find('.tooltip-hover').each(function(){
+			$(this).attr('data-tooltip-href', window.JOURNAL.getDataTooltip(this.href));
+		});
+	}
+
+	getDataTooltip(url){
+		const urlRegex = /(www\.dndbeyond\.com\/[a-zA-Z\-]+\/[0-9]+)/g;
+		return `${url.match(urlRegex)[0]}-tooltip?disable-webm=1`;		
 	}
 
 	add_journal_roll_buttons(target){
@@ -797,7 +809,14 @@ class JournalManager{
 			},
 			link_class_list: [
 			   {title: 'External Link', value: 'ext_link'},
-			   {title: 'DNDBeyond Source Link', value: 'int_source_link'}
+			   {title: 'DNDBeyond Source Link', value: 'int_source_link'},
+			   {title: 'DDB Tooltip Links',
+			      menu: [
+			        {title: 'Spell', value: 'tooltip-hover spell-tooltip'},
+			        {title: 'Magic Item', value: 'tooltip-hover magic-item-tooltip'},
+			        {title: 'Monster', value: 'tooltip-hover monster-tooltip'}
+			      ]
+			    }
 			],
 			relative_urls : false,
 			remove_script_host : false,
