@@ -3056,7 +3056,7 @@ body {
     overflow: auto;
   }
 
-  .tabs-content iframe{
+.tabs-content .googledoc iframe{
     width: 830px;
     height: 90vh;
     max-width: 90vw;
