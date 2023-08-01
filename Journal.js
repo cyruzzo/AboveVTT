@@ -639,7 +639,8 @@ class JournalManager{
 	}
 	add_journal_tooltip_targets(target){
 		$(target).find('.tooltip-hover').each(function(){
-			$(this).attr('data-tooltip-href', window.JOURNAL.getDataTooltip(this.href));
+			if(!$(this).attr('data-tooltip-href'))
+				$(this).attr('data-tooltip-href', window.JOURNAL.getDataTooltip(this.href));
 		});
 	}
 
