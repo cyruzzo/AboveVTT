@@ -1072,6 +1072,46 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             // specificImage = options.imgsrc; // force it to use what we just built
             break;
     }
+    if(options.statBlock){
+        const statText = window.JOURNAL.notes[options.statBlock].text
+        const hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
+        const averageHP = $(statText).find('.custom-avghp.custom-stat').text();
+         switch (options['defaultmaxhptype']) {
+            case 'max':
+                if(hitDiceData != ''){
+                    const regex = /([0-9]+)d([0-9]+)\s?([+-])\s?([0-9]+)/g
+                    const regexMatch = hitDiceData.matchAll(regex).next();
+                    hpVal = regexMatch.value[1] * regexMatch.value[2] + parseInt(`${regexMatch.value[3]}${regexMatch.value[4]}`); 
+                }
+                break;
+            case 'roll':
+                if(hitDiceData != ''){
+                    hpVal = new rpgDiceRoller.DiceRoll(hitDiceData).total;
+                }
+                break;
+            case 'average':
+            default:
+                if(averageHP != ''){
+                    hpVal = averageHP;          
+                }
+                break;
+        }
+        if(hpVal){
+            options.hitPointInfo = {
+                current: hpVal,
+                maximum: hpVal,
+                temp: 0
+            };
+        }
+        const newInit = $(statText).find('.custom-initiative.custom-stat').text();
+        if(newInit){
+            options.customInit = newInit
+        }
+
+        const newAC = $(statText).find('.custom-ac.custom-stat').text();
+        options.armorClass = (newAC) ? newAC : options.armorClass;
+        options.monster = 'customStat'
+    }
 
     options.itemType = listItem.type;
     options.itemId = listItem.id;

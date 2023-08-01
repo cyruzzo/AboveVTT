@@ -797,7 +797,13 @@ class JournalManager{
 			      { title: 'Ripped Paper', block: 'div', wrapper: true, classes: 'block-torn-paper' },
 			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
 			      { title: 'Stat Block Paper', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
-			    ] }
+			    ] },
+			    { title: 'Custom Statblock Stats', items: [
+			      { title: 'AC', inline: 'b', classes: 'custom-ac custom-stat'},
+			      { title: 'Average HP', inline: 'b',classes: 'custom-avghp custom-stat' },
+			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
+			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
+			   	]}
 			],
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
 			toolbar1: 'undo styleselect | hr | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
@@ -1277,6 +1283,28 @@ class JournalManager{
 				    position: relative;
 				    border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 				}
+				  .custom-stat{
+				  	font-weight:bold;
+				  	border: 1px dotted #666;
+				  }
+				  .custom-avghp.custom-stat
+			      {
+
+			      	color: #F00;
+			      }
+			      
+			      .custom-hp-roll.custom-stat
+			      {
+			      	color: #8f03b3;
+			      }
+			      
+			      .custom-initiative.custom-stat{
+			      	color: #007900;
+			      }
+				  
+			      .custom-ac.custom-stat{
+			      	color: #00F;
+			      }
 				`,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
