@@ -39,18 +39,15 @@ const availableToAoe = [
 
 
 
-const debounceLightChecks = mydebounce(async () => {		
+const debounceLightChecks = mydebounce(() => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		let promise = [redraw_light()];
-		if(!window.DM)
-			promise.push(check_token_visibility());
-		
-		await Promise.all(promise);
+		redraw_light();
+
 }, 500);
 
 

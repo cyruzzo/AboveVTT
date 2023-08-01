@@ -3765,6 +3765,8 @@ async function redraw_light(){
 	}
 	await Promise.all(promises);
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	if(!window.DM)
+		check_token_visibility();
 }
 
 
