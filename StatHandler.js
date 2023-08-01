@@ -43,26 +43,34 @@ class StatHandler {
 		}
 	}
 
-	rollInit(monsterid, callback, open5eSlug = undefined) {
+	rollInit(monsterid, callback, open5eSlug = undefined, tokenId = undefined) {
 		if(monsterid =='open5e')
 		{
 			this.getStat(monsterid, function(data) {
-				var modifier = Math.floor((data.stats[1].value - 10) / 2.0);
-				var expression = "1d20+" + modifier;
-				var roll = new rpgDiceRoller.DiceRoll(expression);
+				let modifier = Math.floor((data.stats[1].value - 10) / 2.0);
+				let expression = "1d20+" + modifier;
+				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				callback(roll.total);
 			}, open5eSlug);
+		}
+		else if(monsterid =='customStat'){
+			let modifier = parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit);
+			let expression = "1d20+" + modifier;
+			let roll = new rpgDiceRoller.DiceRoll(expression);
+			console.log(expression + "->" + roll.total);
+			callback(roll.total);
 		}
 		else{
 			this.getStat(monsterid, function(stat) {
-				var modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
-				var expression = "1d20+" + modifier;
-				var roll = new rpgDiceRoller.DiceRoll(expression);
+				let modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
+				let expression = "1d20+" + modifier;
+				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				callback(roll.total);
 			}, open5eSlug);
 		}
+
 		
 	}
 

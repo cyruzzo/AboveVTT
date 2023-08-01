@@ -196,7 +196,7 @@ function init_combat_tracker(){
 				if(element.attr("data-target") in window.all_token_objects){
 					window.all_token_objects[element.attr("data-target")].options.init = value;
 				}
-			}, $(this).attr('data-stat'));
+			}, $(this).attr('data-stat'), $(this).attr('data-target'));
 		});
 		
 		debounceCombatReorder(true);
@@ -445,7 +445,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		entry.addClass("hasTooltip");
 	}
 
-	if(token.options.monster > 0 || token.options.monster == 'open5e')
+	if(token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat' )
 		entry.attr('data-monster',token.options.monster);
 	
 	if(token.options.stat)
@@ -502,7 +502,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	// auto roll initiative for monsters
 	
-	if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e') && (!disablerolling) && token.options.init == undefined){
+	if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat') && (!disablerolling) && token.options.init == undefined){
 		window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				token.options.init = value;
@@ -510,7 +510,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
 				debounceCombatReorder();
-			}, token.options.itemId);
+			}, token.options.itemId, token.options.id);
 	}
 	
 	
