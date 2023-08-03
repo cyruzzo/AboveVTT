@@ -715,14 +715,9 @@ class JournalManager{
 	}
 
     translateHtmlAndBlocks(target) {
-    	data = $(target).clone().html().replace(/<br \/>|<br>/g, '\n');
-        // Normalize newline characters
-        data = data.replace(/\n+/g, '\n');
-        // Add spacing for any lists
-        data = data.replace(/\n(\<[a-z])/g, ' $1');
-        // Add spacing for hit
-        data = data.replace(/\nHit\:/g, ' Hit:');
-        let lines = data.split('\n').filter((l) => l.trim());
+    	data = $(target).clone().html();
+
+        let lines = data.split(/<br \/>|<br>/g);
         lines = lines.map((line, li) => {
             let input = line;
             // Find name
@@ -761,24 +756,33 @@ class JournalManager{
                 });
             // Find cover rules
             input = input.replace(
-                /(?<!\])(total cover|heavily obscured|lightly obscured)/gi,
+                /(?<!\])[\#\>]?(total cover|heavily obscured|lightly obscured)/gi,
                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let rulesId = window.ddbConfigJson.rules.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/rules/${rulesId}-tooltip" data-tooltip-json-href="/conditions/${rulesId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // Find conditions
             input = input.replace(
-                /(?<!\])(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)/gi,
+                /(?<!\])[\#\>]?(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)/gi,
                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let conditionId = window.ddbConfigJson.conditions.filter((d) => d.definition.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].definition.id;
                		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/appendix-a-conditions#${m}" aria-haspopup="true" data-tooltip-href="/conditions/${conditionId}-tooltip" data-tooltip-json-href="/conditions/${conditionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // Find skills
             input = input.replace(
-                /(?<!\])(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)/gi,
+                /(?<!\])[\#\>]?(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)/gi,
                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="/skills/${skillId}-tooltip" data-tooltip-json-href="/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
                 }
@@ -786,16 +790,22 @@ class JournalManager{
             );
             // Find opportunity attacks
             input = input.replace(
-                /(?<!\]|;)(opportunity attack)s/gi,
+                /(?<!\]|;)[\#\>]?(opportunity attack)s/gi,
                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // find opportunity attack
             input = input.replace(
-                /(?<!\]|;)(opportunity attack)/gi,
+                /(?<!\]|;)[\#\>]?(opportunity attack)/gi,
                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
                 }
@@ -849,8 +859,11 @@ class JournalManager{
 
             // Find senses
             input = input.replace(
-                /(?<!\])(truesight|blindsight|darkvision|tremorsense)/gi,
+                /(?<!\])[\#\>]?(truesight|blindsight|darkvision|tremorsense)/gi,
                  function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/monsters#${m}" aria-haspopup="true" data-tooltip-href="/senses/${senseId}-tooltip" data-tooltip-json-href="/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
                 }
@@ -858,8 +871,11 @@ class JournalManager{
 
             // Find actions
             input = input.replace(
-                /(?<!\])((dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell))/gim,
+                /(?<!\])[\#\>]?((dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell))/gim,
                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
                 	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
                 }
