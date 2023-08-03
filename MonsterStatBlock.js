@@ -68,6 +68,8 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
     if(!customStatBlock)
       scan_monster(container, statBlock, tokenId);
+    else
+      add_ability_tracker_inputs(container, tokenId)
     // scan_creature_pane(container, statBlock.name, statBlock.image);
     add_stat_block_hover(container);
     $("span.hideme").parent().parent().hide();

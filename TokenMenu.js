@@ -141,7 +141,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			
 			button.click(function(){
 				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
-				load_monster_stat(undefined, undefined, customStatBlock)
+				load_monster_stat(undefined, token.options.id, customStatBlock)
 				close_token_context_menu();
 			});
 			if(token.options.player_owned || window.DM){
