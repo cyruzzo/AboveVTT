@@ -713,6 +713,166 @@ class JournalManager{
 		$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 		console.groupEnd()
 	}
+
+    translateHtmlAndBlocks(target) {
+    	data = $(target).clone().html().replace(/<br \/>|<br>/g, '\n');
+        // Normalize newline characters
+        data = data.replace(/\n+/g, '\n');
+        // Add spacing for any lists
+        data = data.replace(/\n(\<[a-z])/g, ' $1');
+        // Add spacing for hit
+        data = data.replace(/\nHit\:/g, ' Hit:');
+        let lines = data.split('\n').filter((l) => l.trim());
+        lines = lines.map((line, li) => {
+            let input = line;
+            // Find name
+            // e.g. Frightful Presence.
+            let name = (
+                input.match(/^(([A-Z][^ ]+ ?){1,7}(\([^\)]+\))?\.)/gim) || []
+            ).toString();
+
+            // Remove period at the end of the name
+            name = name.replace(/\.$/, '');
+            // Remove whitespace from the name
+            name = name.split('(')[0].trim();
+
+            // Remove space between letter ranges
+            // e.g. a- b
+            input = input.replace(/([a-z])- ([a-z])/gi, '$1$2');
+            // Replace with right single quote
+            input = input.replace(/'/g, '’');
+            // e.g. Divine Touch. Melee Spell Attack:
+            input = input.replace(
+                /^(([A-Z0-9][^ .]+ ?){1,2}(\([^\)]+\))?\.)( (Melee|Ranged|Melee or Ranged) (Weapon|Spell) Attack:)?/gim,
+                /(lair|legendary) actions/g.test(data)
+                    ? '<strong>$1</strong>'
+                    : '<em><strong>$1</strong>$4</em>'
+            );
+            // Emphasize hit
+            input = input.replace(/Hit:/g, '<em>Hit:</em>');
+            // Emphasize hit or miss
+            input = input.replace(/Hit or Miss:/g, '<em>Hit or Miss:</em>');
+  
+            // Find attack actions
+            input = input.replace(/(attack) action/gi, 
+            	function(m){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
+                });
+            // Find cover rules
+            input = input.replace(
+                /(?<!\])(total cover|heavily obscured|lightly obscured)/gi,
+                function(m){
+                	let rulesId = window.ddbConfigJson.rules.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/rules/${rulesId}-tooltip" data-tooltip-json-href="/conditions/${rulesId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // Find conditions
+            input = input.replace(
+                /(?<!\])(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)/gi,
+                function(m){
+                	let conditionId = window.ddbConfigJson.conditions.filter((d) => d.definition.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].definition.id;
+               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/appendix-a-conditions#${m}" aria-haspopup="true" data-tooltip-href="/conditions/${conditionId}-tooltip" data-tooltip-json-href="/conditions/${conditionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // Find skills
+            input = input.replace(
+                /(?<!\])(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)/gi,
+                function(m){
+                	let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="/skills/${skillId}-tooltip" data-tooltip-json-href="/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
+                }
+
+            );
+            // Find opportunity attacks
+            input = input.replace(
+                /(?<!\]|;)(opportunity attack)s/gi,
+                function(m){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // find opportunity attack
+            input = input.replace(
+                /(?<!\]|;)(opportunity attack)/gi,
+                function(m){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // Add parens for escape dc
+            input = input.replace(/ escape DC/g, ' (escape DC');
+            input = input.replace(/(DC )(\d+) (\:|\.|,)/g, '$1$2)$3');
+            // Fix parens for dice
+            // e.g. (3d6 + 12) thunder
+            input = input.replace(/\(?(\d+d\d+( \+ \d+)?)\)? ? (\w)/g, '($1) $3');
+            // Try to find spells
+            input = input.replace(
+                / (the|a|an) (([\w]+ ?){1,4}) spell( |\.|\:|,)/g,
+                ' $1 [spell]$2[/spell] spell$4'
+            );
+            // another spell attempt
+            input = input.replace(
+                /casts (([\w]+ ?){1,4}),/g,
+                'casts [spell]$1[/spell],'
+            );
+            // Search for spell casting section
+            const spellcasting = lines.findIndex((l) =>
+                l.match(/Spellcasting([^.]+)?./g)
+            );
+            // If we find the section, loop through the levels
+            if (
+                spellcasting >= 0 &&
+                spellcasting < li &&
+                (input.startsWith('At will:') ||
+                    input.startsWith('Cantrips (at will):') ||
+                    input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
+            ) {
+                let parts = input.split(': ');
+                parts[1] = parts[1].split(/, (?![^(]*\))/gm);
+                for (let p in parts[1]) {
+                   	if (parts[1][p] && typeof parts[1][p] === 'string') {
+                        parts[1][p] = parts[1][p]
+                            .replace(/^/gm, '[spell]')
+                            .replace(/( \(|(?<!\))$)/gm, '[/spell]');
+                    }
+                }
+                parts[1] = parts[1].join(', ');
+                input = parts.join(': ');
+            }
+
+            input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');
+            	let spellUrl = spell.replace(/\s/g, '-');
+                return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+            // Find senses
+            input = input.replace(
+                /(?<!\])(truesight|blindsight|darkvision|tremorsense)/gi,
+                 function(m){
+                	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/monsters#${m}" aria-haspopup="true" data-tooltip-href="/senses/${senseId}-tooltip" data-tooltip-json-href="/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+
+            // Find actions
+            input = input.replace(
+                /(?<!\])((dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell))/gim,
+                function(m){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+ 
+            input = input.replace(/\&nbsp\;/g, ' ');
+            // Replace quotes to entity
+            input = input.replace(/\'/g, '&rsquo;');
+            return input;
+        });
+
+        $(target).html(lines.join(`<br/>`));
+    }
 	
 	note_visibility(id,visibility){
 		this.notes[id].player=visibility;

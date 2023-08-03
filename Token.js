@@ -47,7 +47,7 @@ const debounceLightChecks = mydebounce(() => {
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		redraw_light();
-
+		
 }, 500);
 
 
