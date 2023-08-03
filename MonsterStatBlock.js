@@ -52,6 +52,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
     if(customStatBlock){
+      window.JOURNAL.translateHtmlAndBlocks(html)
       window.JOURNAL.add_journal_roll_buttons(html);
       window.JOURNAL.add_journal_tooltip_targets(html);
     }
