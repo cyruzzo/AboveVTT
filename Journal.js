@@ -639,14 +639,35 @@ class JournalManager{
 	}
 	add_journal_tooltip_targets(target){
 		$(target).find('.tooltip-hover').each(function(){
-			if(!$(this).attr('data-tooltip-href'))
-				$(this).attr('data-tooltip-href', window.JOURNAL.getDataTooltip(this.href));
+			let self = this;
+			if(!$(self).attr('data-tooltip-href'))
+			window.JOURNAL.getDataTooltip(self.href, function(url){
+				$(self).attr('data-tooltip-href', url);
+			});
 		});
 	}
 
-	getDataTooltip(url){
-		const urlRegex = /(www\.dndbeyond\.com\/[a-zA-Z\-]+\/[0-9]+)/g;
-		return `${url.match(urlRegex)[0]}-tooltip?disable-webm=1`;		
+	getDataTooltip(url, callback){
+		const urlRegex = /www\.dndbeyond\.com\/[a-zA-Z\-]+\/([0-9]+)/g;
+		const urlType = /www\.dndbeyond\.com\/([a-zA-Z\-]+)/g;
+		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[1] : 0;
+		const itemType = url.matchAll(urlType).next().value[1];
+		if(itemId == 0){
+			let iframe = $(`<iframe src='${url}'></iframe>`)
+			iframe.hide();
+			$("#site").append(iframe);
+			iframe.on('load.itemId', function(event){
+				itemId = event.target.contentWindow.cobaltVcmList[0].id;				
+				callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`);
+				iframe.off('load.itemId');
+				$(event.target).remove();
+			});		
+			
+		}
+		else{
+			callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`);	
+		}
+		
 	}
 
 	add_journal_roll_buttons(target){
