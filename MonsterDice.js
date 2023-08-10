@@ -175,7 +175,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 	}
 
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
-	target.find(".mon-stat-block__description-block-content > p").each(function() {
+	target.find("p").each(function() {
 		let element = $(this);
 		if ($(this).find(".injected-input").length === 0) {
 			processInput(element, /\(([0-9]) slots?\)/, "slots remaining")
