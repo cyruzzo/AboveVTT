@@ -648,20 +648,29 @@ class JournalManager{
 	}
 
 	getDataTooltip(url, callback){
+		if(window.spellIdCache == undefined){
+			window.spellIdCache = {};
+		}
 		const urlRegex = /www\.dndbeyond\.com\/[a-zA-Z\-]+\/([0-9]+)/g;
 		const urlType = /www\.dndbeyond\.com\/([a-zA-Z\-]+)/g;
 		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[1] : 0;
 		const itemType = url.matchAll(urlType).next().value[1];
+		url = url.toLowerCase();
 		if(itemId == 0){
-			let iframe = $(`<iframe src='${url}'></iframe>`)
-			iframe.hide();
-			$("#site").append(iframe);
-			iframe.on('load.itemId', function(event){
-				itemId = event.target.contentWindow.cobaltVcmList[0].id;				
-				callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`);
-				iframe.off('load.itemId');
-				$(event.target).remove();
-			});		
+			if(window.spellIdCache[url]){
+				callback(`www.dndbeyond.com/${itemType}/${window.spellIdCache[url]}-tooltip?disable-webm=1`);	
+			}
+			else{
+				let spellPage = '';			
+				$.get(url,  function (data) {
+				    spellPage = data;
+				}).done(function(){
+					const regex = /id\:[0-9]+/g;
+					const itemId = $(spellPage).find('.more-info.details-more-info .detail-content script').text().match(regex)[0].split(':')[1];
+					window.spellIdCache[url] = itemId;
+					callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`);	
+				})
+			}
 			
 		}
 		else{
@@ -841,6 +850,8 @@ class JournalManager{
                 let parts = input.split(': ');
                 parts[1] = parts[1].split(/, (?![^(]*\))/gm);
                 for (let p in parts[1]) {
+                	if(parts[1][p].startsWith('<') || parts[1][p].startsWith('[spell]') )
+                		continue;
                    	if (parts[1][p] && typeof parts[1][p] === 'string') {
                         parts[1][p] = parts[1][p]
                             .replace(/^/gm, '[spell]')
