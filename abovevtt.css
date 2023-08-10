@@ -3219,6 +3219,15 @@ div.ct-sidebar__pane-content > div.selected-tab {
     line-height: 1.4;
     margin: 4px 6px 2px 2px;
 }
+
+span.add-input.slots {
+    display: block;
+}
+
+span.add-input.slots ~ input {
+    margin: 0px 0px 13px 0px;
+}
+
 div.token-image-modal-footer-title {
     font-size: 13px;
     /*width: 100%;*/
