@@ -726,7 +726,7 @@ class JournalManager{
     translateHtmlAndBlocks(target) {
     	data = $(target).clone().html();
 
-        let lines = data.split(/<br \/>|<br>|<p>|'\n'/g);
+        let lines = data.split(/(<br \/>|<br>|<p>|\\n)/g);
         lines = lines.map((line, li) => {
             let input = line;
             // Find name
@@ -914,7 +914,7 @@ class JournalManager{
             return input;
         });
 
-        $(target).html(lines.join(`<br/>`));
+        $(target).html(lines.join(``));
     }
 	
 	note_visibility(id,visibility){
