@@ -3049,9 +3049,15 @@ function init_help_menu() {
 						<li><a href="#tab4">Player UI</a></li>
 						<li><a href="#tab5">Light, Vision and Visibility</a></li>
 						<li><a href="#tab6">Sound</a></li>
-						<li><a href="#tab7">Video Tutorial Playlist</a></li>
-						<li><a href="#tab8">Get Help</a></li>		
-						<li><a href="#tab9">Compatible Tools</a></li>
+						<li><a href="#tab7">Settings</a></li>
+						<li><a href="#tab8">Tokens and Combat</a></li>
+						<li><a href="#tab9">Map Manipulation</a></li>
+						<li><a href="#tab10">Quick Start</a></li>
+						<li><a href="#tab11">In-person tools</a></li>
+						<!-- some unused numbers here for more tabs -->
+						<li><a href="#tab20">Video Tutorial Playlist</a></li>
+						<li><a href="#tab21">Get Help</a></li>		
+						<li><a href="#tab22">Compatible Tools</a></li>
 					</ul>
 				</div>
 
@@ -3144,26 +3150,23 @@ function init_help_menu() {
 						<dl>
 					</div>
 
-					<div id="tab2" class='googledoc'>
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true"></iframe>
+					<div id="tab2" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true">
+						<iframe src=''></iframe>
 					</div>
-					<div id="tab3" class='googledoc bookmark'>
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.g7app6ltg7nq"></iframe>
-					</div>
-					<div id="tab4" class='googledoc bookmark'>
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.514yompiqqkv"></iframe>
-					</div>
-					<div id="tab5" class='googledoc bookmark'>
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.5s8va6pc895f"></iframe>
-					</div>
-					<div id="tab6" class='googledoc bookmark'>
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.j0fwkrx8203i"></iframe>
-					</div>
+					<div id="tab3" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.g7app6ltg7nq"></div>
+					<div id="tab4" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.514yompiqqkv"></div>
+					<div id="tab5" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.5s8va6pc895f"></div>
+					<div id="tab6" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.j0fwkrx8203i"></div>
+					<div id="tab7" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#kix.bqz5eec7dr2a"></div>
+					<div id="tab8" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.vcs37mnw8lej"></div>
+					<div id="tab9" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.l17lakiwxlm6"></div>
+					<div id="tab10" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.it30rzhxilz3"></div>
+					<div id="tab11" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.6jh5zmtqvn3f"></div>
 
-					<div id="tab7">
+					<div id="tab20">
 						<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 					</div>
-					<div id="tab8">
+					<div id="tab21">
 						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
 						<ul id="help-error-container">
 							<li><a href="https://github.com/cyruzzo/AboveVTT/issues?q=is%3Aissue+label%3Abug" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check Github</a> (Use the search/filter bar at the top of the screen)</li>
@@ -3172,7 +3175,7 @@ function init_help_menu() {
 						</ul>
 						<button id="help-error-container-copy-logs-button">Copy logs to clipboard</button><span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 16px;position: relative;">line_start_arrow_notch</span>Use this button to share logs with developers!
 					</div>
-					<div id="tab9">
+					<div id="tab22">
 						<div class='help-compatible-tool'>
 							<a href='https://dddice.com' target="_blank">
 								<img class='compatible-tool-icon dddice-icon' src='https://media.discordapp.net/attachments/1131333685908623370/1131333688416817294/logo-light-fs8.png'/>
@@ -3202,10 +3205,11 @@ function init_help_menu() {
 		$(this).parent().addClass('active');
 		let currentTab = $(this).attr('href');
 		$('.tabs-content>div').hide();
-			if($(currentTab).hasClass('bookmark')){
-			let src = $(currentTab).find('iframe').attr('src');
-			$(currentTab).find('iframe').attr('src', '');
-			$(currentTab).find('iframe').attr('src', src);
+		if($(currentTab).hasClass('bookmark')){
+			$('.tabs-content>div#tab2').show();
+			let src = $(currentTab).attr('data-src');
+			$('.tabs-content>div#tab2').find('iframe').attr('src', '');
+			$('.tabs-content>div#tab2').find('iframe').attr('src', src);
 		}
 
 		$(currentTab).show();
