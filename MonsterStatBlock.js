@@ -52,9 +52,25 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
     if(customStatBlock){
-      window.JOURNAL.translateHtmlAndBlocks(html)
+      window.JOURNAL.translateHtmlAndBlocks(html, tokenId)
       window.JOURNAL.add_journal_roll_buttons(html);
       window.JOURNAL.add_journal_tooltip_targets(html);
+
+      const token = window.TOKEN_OBJECTS[tokenId];
+      $(container).find('.add-input').each(function(){
+        let numberFound = $(this).attr('data-number');
+        const spellName = $(this).attr('data-spell');
+        const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+
+        if (token.options.abilityTracker?.[spellName]>= 0){
+          numberFound = token.options.abilityTracker[spellName]
+        } else{
+          token.track_ability(spellName, numberFound)
+        }
+        let input = createCountTracker(token, spellName, numberFound, remainingText, "");
+        $(this).find('p').remove();
+        $(this).after(input)
+      })
     }
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
         e.stopPropagation();
