@@ -1674,50 +1674,54 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
     inputWrapper.append(imageUrlInput);
 
-    let has_note = customization.tokenOptions.statBlock;
-    let editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons">
-            <span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>
-                Create Custom Statblock
-            </span>
-        </button>`)
-    if(has_note){
-        let viewNoteButton = $(`<button class="custom-stat-buttons icon-view-note material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>View Custom Statblock</span></button>`)      
-        let deleteNoteButton = $(`<button class="custom-stat-buttons icon-note-delete material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>Delete Custom Statblock</span></button>`)
-        editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>Edit Custom Statblock</span></button>`)
-        inputWrapper.append(viewNoteButton);
-        inputWrapper.append(editNoteButton);        
-        inputWrapper.append(deleteNoteButton);  
-        viewNoteButton.off().on("click", function(){
-            window.JOURNAL.display_note(customization.id);
-        });
-        deleteNoteButton.off().on("click", function(){
-            if(customization.id in window.JOURNAL.notes){
-                delete window.JOURNAL.notes[customization.id];
-                window.JOURNAL.persist();
-            }
-            delete customization.tokenOptions.statBlock; 
-            persist_token_customization(customization);
-            display_token_configuration_modal(listItem, placedToken)
-        });
-    }
-    else {
-        inputWrapper.append(editNoteButton);
-    }
+    if(!listItem.isTypePC()){
+        let has_note = customization.tokenOptions.statBlock;
 
-    editNoteButton.off().on("click", function(){
-        if (!(customization.id in window.JOURNAL.notes)) {
-            window.JOURNAL.notes[customization.id] = {
-                title: customization.tokenOptions.name,
-                text: '',
-                plain: '',
-                player: true
-            }
-            customization.tokenOptions.statBlock = customization.id;
-            persist_token_customization(customization);
-            display_token_configuration_modal(listItem, placedToken);
+        let editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons">
+                <span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>
+                    Create Custom Statblock
+                </span>
+            </button>`)
+        if(has_note){
+            let viewNoteButton = $(`<button class="custom-stat-buttons icon-view-note material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>View Custom Statblock</span></button>`)      
+            let deleteNoteButton = $(`<button class="custom-stat-buttons icon-note-delete material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>Delete Custom Statblock</span></button>`)
+            editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>Edit Custom Statblock</span></button>`)
+            inputWrapper.append(viewNoteButton);
+            inputWrapper.append(editNoteButton);        
+            inputWrapper.append(deleteNoteButton);  
+            viewNoteButton.off().on("click", function(){
+                window.JOURNAL.display_note(customization.id);
+            });
+            deleteNoteButton.off().on("click", function(){
+                if(customization.id in window.JOURNAL.notes){
+                    delete window.JOURNAL.notes[customization.id];
+                    window.JOURNAL.persist();
+                }
+                delete customization.tokenOptions.statBlock; 
+                persist_token_customization(customization);
+                display_token_configuration_modal(listItem, placedToken)
+            });
         }
-        window.JOURNAL.edit_note(customization.id);
-    });
+        else {
+            inputWrapper.append(editNoteButton);
+        }
+
+        editNoteButton.off().on("click", function(){
+            if (!(customization.id in window.JOURNAL.notes)) {
+                window.JOURNAL.notes[customization.id] = {
+                    title: customization.tokenOptions.name,
+                    text: '',
+                    plain: '',
+                    player: true
+                }
+                customization.tokenOptions.statBlock = customization.id;
+                persist_token_customization(customization);
+                display_token_configuration_modal(listItem, placedToken);
+            }
+            window.JOURNAL.edit_note(customization.id);
+        });
+    }
+   
     if (listItem.isTypeMyToken()) {
 
         // MyToken name
