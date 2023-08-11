@@ -7298,6 +7298,9 @@ button.journal-view-button.journal-button {
     position: relative;
     border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 }
+.custom-stat-block input.injected-input {
+    margin-left: 5px;
+}
 /* end Note ddb styling*/
 /* end Note ddb styling*/
 

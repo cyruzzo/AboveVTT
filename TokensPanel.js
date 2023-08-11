@@ -1690,7 +1690,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             inputWrapper.append(editNoteButton);        
             inputWrapper.append(deleteNoteButton);  
             viewNoteButton.off().on("click", function(){
-                window.JOURNAL.display_note(customization.id);
+                window.JOURNAL.display_note(customization.id, true);
             });
             deleteNoteButton.off().on("click", function(){
                 if(customization.id in window.JOURNAL.notes){
@@ -1718,7 +1718,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                 persist_token_customization(customization);
                 display_token_configuration_modal(listItem, placedToken);
             }
-            window.JOURNAL.edit_note(customization.id);
+            window.JOURNAL.edit_note(customization.id, true);
         });
     }
    
