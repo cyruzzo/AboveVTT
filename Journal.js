@@ -707,13 +707,28 @@ class JournalManager{
 		const actionType = "roll"
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
-			.replaceAll(damageRollRegex, ` <button data-exp='$2' data-mod='$3' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1</button> `)
-			.replaceAll(hitRollRegex, `$5$1<button data-exp='1d20' data-mod='$2$4$6' data-rolltype='rollType' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2$4$6</button>$3`)
-			.replaceAll(htmlNoSpaceHitRollRegex, `><button data-exp='1d20' data-mod='$1' data-rolltype='rollType' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
+			.replaceAll(damageRollRegex, ` <button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1</button> `)
+			.replaceAll(hitRollRegex, `$5$1<button data-exp='1d20' data-mod='$2$4$6' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2$4$6</button>$3`)
+			.replaceAll(htmlNoSpaceHitRollRegex, `><button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
 			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
 			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
 			
+		
+
 		$(target).html(updated);
+
+		$(target).find('button[data-rolltype="damage"], button[data-rolltype="to hit"]').each(function(){
+			let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
+			rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
+			if(rollAction == ''){
+				$(this).attr('data-rolltype', 'roll');
+				$(this).attr('data-actiontype', 'AboveVTT');	
+			}
+			else{
+				$(this).attr('data-actiontype', rollAction);
+			}
+			
+		})
 		
 		// terminate the clones reference, overkill but rather be safe when it comes to memory
 		currentElement = null
