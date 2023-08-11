@@ -704,6 +704,7 @@ class JournalManager{
 		const htmlNoSpaceHitRollRegex = />([+-]\s?[0-9]+)</g
 		const dRollRegex = /\s(\s?d[0-9]+)\s/g
 		const tableNoSpaceRollRegex = />(\s?d[0-9]+\s?)</g
+		const rechargeRegEx = /(Recharge [0-6]?\s?[–-]?\s?[0-6])/g
 		const actionType = "roll"
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
@@ -712,6 +713,7 @@ class JournalManager{
 			.replaceAll(htmlNoSpaceHitRollRegex, `><button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
 			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
 			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
+			.replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'> $1</button>`)
 			
 		
 
@@ -744,6 +746,7 @@ class JournalManager{
         let lines = data.split(/(<br \/>|<br>|<p>|\\n)/g);
         lines = lines.map((line, li) => {
             let input = line;
+            input = input.replace(/&nbsp;/g,' ')
             // Find name
             // e.g. Frightful Presence.
             let name = (
@@ -862,12 +865,11 @@ class JournalManager{
                     input.startsWith('Cantrips (at will):') ||
                     input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
             ) {
-
             	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+/gi)[0]) : undefined;
             	let slotsNumberFound = (input.match(/\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-                let parts = input.split(/:\s|:&nbsp;/g);
-                parts[1] = parts[1].split(/, (?![^(]*\))/gm);
+                let parts = input.split(/:\s/g);
+                parts[1] = parts[1].split(/,\s(?![^(]*\))/gm);
                 for (let p in parts[1]) {
                 	let spellName = (parts[1][p].startsWith('<a')) ? $(parts[1][p]).text() : parts[1][p].replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
 
