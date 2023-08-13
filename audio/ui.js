@@ -141,6 +141,17 @@ function init_mixer() {
                     channel_play_pause.toggleClass('pressed', true);
                     channel.paused = false;
                     window.MIXER.updateChannel(id, channel);
+                    if(window.MIXER.paused){
+                        window.MIXER.togglePaused();
+                        const playPause = $('.mixer-play-pause-button');s
+                        const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
+                        const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
+                        pause_svg.css('display', 'block');
+                        mixer_playlist_svg.css('display', 'none');
+                        playPause.toggleClass('playing', true);
+                        playPause.toggleClass('pressed', true);
+                        $('style#mixer-paused').remove();
+                    }
                 }
                 else {
                     pause_svg.css('display', 'none');
@@ -360,6 +371,18 @@ function init_trackLibrary() {
                 channel.paused = false;
                 channel.loop = false;
                 window.MIXER.addChannel(channel);
+                if(window.MIXER.paused){
+                    window.MIXER.togglePaused();
+                    const playPause = $('.mixer-play-pause-button');s
+                    const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
+                    const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
+                    pause_svg.css('display', 'block');
+                    mixer_playlist_svg.css('display', 'none');
+                    playPause.toggleClass('playing', true);
+                    playPause.toggleClass('pressed', true);
+                    $('style#mixer-paused').remove();
+                }
+                    
             });
             let track_add_button = $('<button class="track-add-to-mixer"></button>');          
             let add_svg = $('<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>');               
