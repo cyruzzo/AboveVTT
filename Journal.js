@@ -1070,6 +1070,29 @@ class JournalManager{
 			      ]
 			    }
 			],
+			setup: function (editor) { 
+				editor.on('NodeChange', function (e) {
+					// When an image is inserted into the editor
+				    if (e.element.tagName === "IMG") { 
+				    	let url = e.element.getAttribute('src');
+				    	if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+		                    const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+		                    console.log("parse drive audio is converting", url, "to", parsed);
+		                    url = parsed;
+		                }
+		                else if(url.includes('dropbox.com')){       
+		                    const splitUrl = url.split('dropbox.com');
+		                    const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+		                    console.log("parse dropbox audio is converting", url, "to", parsed);
+		                    url = parsed;
+		                }
+
+				        e.element.setAttribute("src", url);
+				        return; 
+				    }
+				    return;
+				});
+			},
 			relative_urls : false,
 			remove_script_host : false,
 			convert_urls : true,
