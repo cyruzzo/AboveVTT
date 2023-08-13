@@ -535,7 +535,7 @@ class JournalManager{
 	}
 	
 	
-	display_note(id){
+	display_note(id, statBlock = false){
 		let self=this;
 		let note=$("<div class='note'></div>");
 		
@@ -567,7 +567,7 @@ class JournalManager{
 			let edit_btn=$("<button>Edit</button>");
 			edit_btn.click(function(){
 				note.remove();
-				window.JOURNAL.edit_note(id);
+				window.JOURNAL.edit_note(id, statBlock);
 			});
 			
 			visibility_container.append(edit_btn);
@@ -577,8 +577,12 @@ class JournalManager{
 		}
 		let note_text=$("<div class='note-text'/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
+		if(statBlock){
+			this.translateHtmlAndBlocks(note_text);
+		}
 		this.add_journal_roll_buttons(note_text);
 		this.add_journal_tooltip_targets(note_text);
+
 		add_stat_block_hover(note_text);
 		
 		note.append(note_text);
@@ -743,7 +747,7 @@ class JournalManager{
     translateHtmlAndBlocks(target) {
     	data = $(target).clone().html();
 
-        let lines = data.split(/(<br \/>|<br>|<p>|\\n)/g);
+        let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
         lines = lines.map((line, li) => {
             let input = line;
             input = input.replace(/&nbsp;/g,' ')
@@ -865,13 +869,13 @@ class JournalManager{
                     input.startsWith('Cantrips (at will):') ||
                     input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
             ) {
-            	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+/gi)[0]) : undefined;
+            	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
             	let slotsNumberFound = (input.match(/\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-                let parts = input.split(/:\s/g);
+                let parts = input.split(/:\s(?<!left:\s?)/g);
                 parts[1] = parts[1].split(/,\s(?![^(]*\))/gm);
                 for (let p in parts[1]) {
-                	let spellName = (parts[1][p].startsWith('<a')) ? $(parts[1][p]).text() : parts[1][p].replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
+                	let spellName = (parts[1][p].startsWith('<a')) ? $(parts[1][p]).text() : parts[1][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
 
                 	if(parts[1][p].startsWith('<') || parts[1][p].startsWith('[spell]') ){
 						parts[1][p] = parts[1][p]
@@ -951,7 +955,7 @@ class JournalManager{
 		});
 	}
 
-	edit_note(id){
+	edit_note(id, statBlock = false){
 		this.close_all_notes();
 		let self=this;
 		
@@ -986,7 +990,7 @@ class JournalManager{
 				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
 				btn_view.click(function(){	
 					self.close_all_notes();
-					self.display_note(id);
+					self.display_note(id, statBlock);
 				});
 			},
 			close: function( event, ui ) {
