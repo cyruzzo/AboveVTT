@@ -1682,6 +1682,7 @@ div#combat_button{
 
 .token>.ac{
     pointer-events: none;
+    font-weight: 900;
 }
 
 .color-reminder {
