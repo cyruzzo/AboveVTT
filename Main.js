@@ -2225,7 +2225,7 @@ function inject_chat_buttons() {
 '/hit 2d20kh1+2 longsword ADV'&#xa;<br/>
 '/dmg 1d8-2 longsword'&#xa;<br/>
 '/save 2d20kl1 DEX DISADV'&#xa;<br/>
-'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;<br/>
+'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;<br/>
 Advantage: 2d20kh1 (keep highest)&#xa;<br/>
 Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 '/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
