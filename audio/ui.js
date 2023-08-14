@@ -428,22 +428,48 @@ function init_trackLibrary() {
                     const trackSrcInput = $(`<input class='trackSrc trackInput' placeholder='https://.../example.mp3'/>`)
                     const okButton = $('<button class="add-track-ok-button">OK</button>');  
                     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+                    const trackTags = window.TRACK_LIBRARY.find(trackName, trackSrc)[1].tags;
                     trackNameInput.val(trackName);
                     trackSrcInput.val(trackSrc);
                     
                     cancelButton.off().on("click", function(){
                       trackLibrary.deleteTrack(trackID);
-                      trackLibrary.addTrack(trackName, trackSrc);
+                      trackLibrary.addTrack(trackName, trackSrc, trackTags);
                       importTrackFields.remove();
                     });
                     okButton.off().on("click", function(){
                         trackLibrary.deleteTrack(trackID);
-                        trackLibrary.addTrack(trackNameInput.val(), trackSrcInput.val());
+                        trackLibrary.addTrack(trackNameInput.val(), trackSrcInput.val(), trackTags);
                         importTrackFields.remove();
                     });
                     importTrackFields.append(trackNameInput, trackSrcInput, okButton, cancelButton);
                     rowHtml.after(importTrackFields);
                     rowHtml.remove();
+                }
+            };
+             menuItems["tags"] = {
+                name: "Tags",
+                callback: function() {
+                    const setTrackTagsFields = $("<div id='editTagsFields'></div>")
+                    const trackTagsInput = $(`<textarea class='trackTags trackInput' placeholder='Combat, CoS, Vampire'/>`)
+                    const okButton = $('<button class="add-track-ok-button">OK</button>');  
+                    const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+                    const currentTrack = window.TRACK_LIBRARY.find(trackName, trackSrc);
+
+                    trackTagsInput.val(currentTrack[1].tags.join(', '));
+
+                    
+                    cancelButton.off().on("click", function(){
+                      setTrackTagsFields.remove();
+                    });
+                    okButton.off().on("click", function(){
+                        const tags = trackTagsInput.val().split(', ');
+                        currentTrack[1].tags = tags;
+                        window.TRACK_LIBRARY.update(trackID, currentTrack[1]) 
+                        setTrackTagsFields.remove();
+                    });
+                    setTrackTagsFields.append(trackTagsInput, okButton, cancelButton);
+                    rowHtml.after(setTrackTagsFields);
                 }
             };
     
