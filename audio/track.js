@@ -111,8 +111,9 @@ class TrackLibrary extends Library {
     deleteTrack(id){
         this.delete(id);
     }
-    addTrack(name, src){
+    addTrack(name, src, tags=[]){
         const track = new Track(name, src);  
+        track.tags = tags;
         this.create(track);
     }
     /**

@@ -7797,13 +7797,19 @@ div#editTrackFields input {
     position: relative;
 }
 
+.trackTags{
+    width:258px !important;
+}
+
 div#importTrackFields input.trackSrc,
 div#editTrackFields input.trackSrc  {
     width: 145px;
 }
-div#editTrackFields button{
+div#editTrackFields button,
+div#editTagsFields button{
     float: initial;
     height: 24px;
+    vertical-align:top;
 }
 div#importTrackFields,
 div#playlistFields {
