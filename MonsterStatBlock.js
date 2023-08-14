@@ -80,6 +80,14 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         imgContainer.find("img").addClass("magnify");
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
+    container.find("p>em>strong").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+      e.preventDefault();
+      let outerP = event.target.closest('p').outerHTML;
+      const regExFeature = new RegExp(`<p>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
+      let matched = `<p>${outerP.matchAll(regExFeature).next().value[1]}</p>`;
+      send_html_to_gamelog(matched);
+    })
+
     if(!customStatBlock)
       container.find("div.image").append(statBlock.imageHtml());
     container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
