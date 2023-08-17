@@ -187,20 +187,21 @@ class Mixer extends EventTarget {
                 player.preload = "metadata";
                 this._players[id] = player;
             }
-
+            if(player.paused)
+                player.load();
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {        
-                player.load();
+                player.volume = state.volume * channel.volume;
+                player.loop = channel.loop;
+                if(channel.currentTime != undefined){
+                    player.currentTime = channel.currentTime;
+                }
                 player.addEventListener("canplaythrough", (event) => {
                   /* the audio is now playable; play it if permissions allow */
-                    // sync player
-                    player.volume = state.volume * channel.volume;
-                    player.loop = channel.loop;
-                    if(channel.currentTime != undefined){
-                        player.currentTime = channel.currentTime;
-                    }
-                   if(this._players[id] && !(state.paused || channel.paused))
+                    // sync player        
+                    const state = window.MIXER.state();      
+                    if(this._players[id] && !(state.paused || state.channels[id].paused))
                         player.play();
                 }, { once: true });
                 
