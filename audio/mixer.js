@@ -187,12 +187,11 @@ class Mixer extends EventTarget {
                 player.preload = "metadata";
                 this._players[id] = player;
             }
-            if(player.paused)
-                player.load();
+
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {        
-
+                player.load();
                 player.addEventListener("canplaythrough", (event) => {
                   /* the audio is now playable; play it if permissions allow */
                     // sync player
