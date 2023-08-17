@@ -645,8 +645,9 @@ class JournalManager{
 		$(target).find('.tooltip-hover').each(function(){
 			let self = this;
 			if(!$(self).attr('data-tooltip-href'))
-			window.JOURNAL.getDataTooltip(self.href, function(url){
+			window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
 				$(self).attr('data-tooltip-href', url);
+				$(self).toggleClass(`${typeClass}-tooltip`, true);
 			});
 		});
 	}
@@ -662,23 +663,23 @@ class JournalManager{
 		url = url.toLowerCase();
 		if(itemId == 0){
 			if(window.spellIdCache[url]){
-				callback(`www.dndbeyond.com/${itemType}/${window.spellIdCache[url]}-tooltip?disable-webm=1`);	
+				callback(`www.dndbeyond.com/${itemType}/${window.spellIdCache[url]}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
 			}
 			else{
 				let spellPage = '';			
 				$.get(url,  function (data) {
 				    spellPage = data;
 				}).done(function(){
-					const regex = /id\:[0-9]+/g;
-					const itemId = $(spellPage).find('.more-info.details-more-info .detail-content script').text().match(regex)[0].split(':')[1];
+					const regex = /window\.cobaltVcmList\.push\(\{.+id\:([0-9]+)/g;
+					const itemId = spellPage.matchAll(regex).next().value[1];
 					window.spellIdCache[url] = itemId;
-					callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`);	
+					callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
 				})
 			}
 			
 		}
 		else{
-			callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`);	
+			callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
 		}
 		
 	}
@@ -1061,14 +1062,8 @@ class JournalManager{
 			},
 			link_class_list: [
 			   {title: 'External Link', value: 'ext_link'},
-			   {title: 'DNDBeyond Source Link', value: 'int_source_link'},
-			   {title: 'DDB Tooltip Links',
-			      menu: [
-			        {title: 'Spell', value: 'tooltip-hover spell-tooltip'},
-			        {title: 'Magic Item', value: 'tooltip-hover magic-item-tooltip'},
-			        {title: 'Monster', value: 'tooltip-hover monster-tooltip'}
-			      ]
-			    }
+			   {title: 'DDB Sourcebook Link', value: 'int_source_link'},
+			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items)', value: 'tooltip-hover'}
 			],
 			setup: function (editor) { 
 				editor.on('NodeChange', function (e) {
