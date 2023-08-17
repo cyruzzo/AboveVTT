@@ -900,9 +900,24 @@ class JournalManager{
             }
 
             input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
-            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');
-            	let spellUrl = spell.replace(/\s/g, '-');
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');   	
+            	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];;
+            	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
                 return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+            input = input.replace(/\[monster\](.*?)\[\/monster\]/g, function(m){
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[monster\]\s?|\s?\[\/monster\]\s?/g, '').replace('[/monster]', '');   	
+            	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];;
+            	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
+                return `<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+            input = input.replace(/\[magicItem\](.*?)\[\/magicItem\]/g, function(m){
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[magicItem\]\s?|\s?\[\/magicItem\]\s?/g, '').replace('[/magicItem]', '');   	
+            	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
+            	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
+                return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
             // Find senses
