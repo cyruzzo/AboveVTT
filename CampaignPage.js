@@ -88,7 +88,7 @@ function inject_instructions() {
 
 function inject_dm_join_button() {
   if (!is_campaign_page()) return;
-  if ($(".ddb-campaigns-detail-body-dm-notes-private").length === 0) return; // The owner of the campaign (the DM) is the only one with private notes on the campaign page
+ // if ($(".ddb-campaigns-detail-body-dm-notes-private").length === 0) return; // The owner of the campaign (the DM) is the only one with private notes on the campaign page
   // The owner of the campaign (the DM) is the only one with private notes on the campaign page
   console.log("inject_dm_join_button");
 
