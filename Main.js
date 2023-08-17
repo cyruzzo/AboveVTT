@@ -3047,7 +3047,7 @@ function init_help_menu() {
 						<li><a href="#tab2">FAQ</a></li>
 						<li><a href="#tab3">Scene Creation</a></li>
 						<li><a href="#tab4">Player UI</a></li>
-						<li><a href="#tab5">Light, Vision and Visibility</a></li>
+						<li><a href="#tab5">Fog, Light and Vision</a></li>
 						<li><a href="#tab6">Sound</a></li>
 						<li><a href="#tab7">Settings</a></li>
 						<li><a href="#tab8">Tokens and Combat</a></li>
