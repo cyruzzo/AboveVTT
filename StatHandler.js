@@ -56,7 +56,7 @@ class StatHandler {
 		}
 		else if(monsterid =='customStat'){
 			let modifier = parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit);
-			let expression = "1d20+" + modifier;
+			let expression = (!isNaN(modifier)) ? "1d20+" + modifier : '0';
 			let roll = new rpgDiceRoller.DiceRoll(expression);
 			console.log(expression + "->" + roll.total);
 			callback(roll.total);
