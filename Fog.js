@@ -1028,13 +1028,13 @@ function  redraw_light_walls(clear=true){
 	let sceneMapHeight = sceneMapContainer.height();
 	let sceneMapWidth = sceneMapContainer.width();
 
-	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0));
+	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0), 0);
 	window.walls.push(wall5);
-	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight));
+	let wall6 = new Boundary(new Vector(0, 0), new Vector(0, sceneMapHeight), 0);
 	window.walls.push(wall6);
-	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight));
+	let wall7 = new Boundary(new Vector(sceneMapWidth, 0), new Vector(sceneMapWidth, sceneMapHeight), 0);
 	window.walls.push(wall7);
-	let wall8 = new Boundary(new Vector(0, sceneMapHeight), new Vector(sceneMapWidth, sceneMapHeight));
+	let wall8 = new Boundary(new Vector(0, sceneMapHeight), new Vector(sceneMapWidth, sceneMapHeight), 0);
 	window.walls.push(wall8);
 
 	const drawings = window.DRAWINGS.filter(d => d[1] == "wall");
@@ -1060,29 +1060,34 @@ function  redraw_light_walls(clear=true){
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
-
-		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)")){
+		let type = (color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)" ) ? 1 : 0;
+		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)" || color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)")){
 			let doorButtonColor;
-			if(color == "rgba(255, 100, 255, 0.5)")
+			if(color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 255, 0, 0.5)" )
 				doorButtonColor = '#9eff61ad'
-			if(color == "rgba(255, 100, 255, 1)")
+			if(color == "rgba(255, 100, 255, 1)" || color == "rgba(255, 255, 0, 1)")
 				doorButtonColor = '#ff6168ad'
 			
 
 			let midX = Math.floor((x+width)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
 			let midY = Math.floor((y+height)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
+
+			let googleIcon = (type == 1) ? `window_closed` : `door_open`
+
 			let openCloseDoorButton = $(`<div class='door-button' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px; background:${doorButtonColor};'>
 											<span class="material-symbols-outlined">
-												door_open
+												${googleIcon}
 											</span>
 										</div>`)
-			openCloseDoorButton.on('click', function(){open_close_door(x, y, width, height)});
+			openCloseDoorButton.on('click', function(){open_close_door(x, y, width, height, type)});
 			$('#tokens').append(openCloseDoorButton);
 		}
-		if(color == "rgba(255, 100, 255, 0.5)"){
+		if(color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 255, 0, 0.5)"){
 			continue;
 		}
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor))
+		
+
+		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
 		window.walls.push(drawnWall);
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
@@ -1100,17 +1105,26 @@ function  redraw_light_walls(clear=true){
  		});
  	}
 }
-function open_close_door(x1, y1, x2, y2){
-	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && (d[2] == "rgba(255, 100, 255, 1)" || d[2] == "rgba(255, 100, 255, 0.5)")  && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
+function open_close_door(x1, y1, x2, y2, type=0){
+	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && (d[2] == "rgba(255, 100, 255, 1)" || d[2] == "rgba(255, 100, 255, 0.5)" || d[2] == "rgba(255, 255, 0, 0.5)" || d[2] == "rgba(255, 255, 0, 1)")  && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
 	let color;
-	if(doors[0][2] == "rgba(255, 100, 255, 0.5)"){
-		color = "rgba(255, 100, 255, 1)"
+	if(type == 0){ //door
+		if(doors[0][2] == "rgba(255, 100, 255, 0.5)"){
+			color = "rgba(255, 100, 255, 1)"
+		}
+		else{
+			color = "rgba(255, 100, 255, 0.5)";
+		}
 	}
-	else{
-		color = "rgba(255, 100, 255, 0.5)";
+	else if(type == 1){//window
+		if(doors[0][2] == "rgba(255, 255, 0, 0.5)"){
+			color = "rgba(255, 255, 0, 1)"
+		}
+		else{
+			color = "rgba(255, 255, 0, 0.5)";
+		}
 	}
-
-	 window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
 		
 	let data = ['line',
 				 'wall',
@@ -1219,6 +1233,12 @@ function drawing_mousedown(e) {
 		window.DRAWTYPE = "filled"
 		window.LINEWIDTH = 12;
 	}
+	else if(window.DRAWFUNCTION === "wall-window-convert" || window.DRAWFUNCTION === "wall-window" ){
+		// semi transparent black
+		window.DRAWCOLOR = "rgba(255, 255, 0, 1)"
+		window.DRAWTYPE = "filled"
+		window.LINEWIDTH = 12;
+	}
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
 		context.setLineDash([10, 5])
@@ -1234,19 +1254,19 @@ function drawing_mousedown(e) {
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
-	if (e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall" && window.DRAWFUNCTION != "wall-door")
+	if (e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall" && window.DRAWFUNCTION != "wall-door" && window.DRAWFUNCTION != "wall-window" )
 		return;
 
-	if (e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door"))
+	if (e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window" ))
 		return;
 
-	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door") && window.MOUSEDOWN && window.wallToStore != undefined){
+	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.MOUSEDOWN && window.wallToStore != undefined){
 		if(window.StoredWalls == undefined){
 			window.StoredWalls =[];
 		}
 		window.StoredWalls.push(window.wallToStore);
 	}
-	if ((e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door") && !window.MOUSEDOWN)
+	if ((e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
 		return;
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
@@ -1333,7 +1353,7 @@ function drawing_mousedown(e) {
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
 	}
-	else if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door") && window.wallToStore != undefined){
+	else if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.wallToStore != undefined){
 		if(window.wallToStore.length>0) {
 			window.BEGIN_MOUSEX = window.wallToStore[2];
 			window.BEGIN_MOUSEY = window.wallToStore[3];
@@ -1398,7 +1418,7 @@ function drawing_mousemove(e) {
 		// }
 
 		if (window.DRAWSHAPE == "rect") {
-			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
+			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" || window.DRAWFUNCTION == "wall-window-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
 				redraw_light_walls(false);
 			}
 			if(window.DRAWFUNCTION == "draw_text")
@@ -1477,7 +1497,7 @@ function drawing_mousemove(e) {
 					window.DRAWCOLOR,
 					window.LINEWIDTH);
 			}
-			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door'){
+			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
 				redraw_light_walls(false);
 				if(window.StoredWalls != undefined){
@@ -1566,7 +1586,7 @@ function drawing_mouseup(e) {
 	if ($(".ui-draggable-dragging").length > 0){
 		return
 	}
-	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || e.button != 0) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door"))){
+	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || e.button != 0) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == 'wall-window'))){
 		return;
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
@@ -1620,7 +1640,7 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
-		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' )){
+		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
@@ -1669,6 +1689,9 @@ function drawing_mouseup(e) {
 			data[1] = "wall"
 			data[2] = "rgba(255, 100, 255, 1)"
 			break;
+		case 'wall-window':
+			data[1] = "wall"
+			data[2] = "rgba(255, 255, 0, 1)"
 		default:
 			break;
 		}
@@ -1725,7 +1748,7 @@ function drawing_mouseup(e) {
 			window.DRAWINGS.push(data);
 		}
 
-		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'){
+		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window'){
 			if ( e.button == 2) {
 				return;
 			}
@@ -1793,7 +1816,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION == "wall-eraser-one"){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION == 'wall-window-convert' || window.DRAWFUNCTION == "wall-eraser-one"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -1981,7 +2004,7 @@ function drawing_mouseup(e) {
 						window.DRAWINGS.push(data);					
 					}
 
-					if(window.DRAWFUNCTION == 'wall-door-convert'){
+					if(window.DRAWFUNCTION == 'wall-door-convert' || window.DRAWFUNCTION == 'wall-window-convert'){
 						x1 = undefined;
 
 						if(bottom != false){
@@ -2012,9 +2035,10 @@ function drawing_mouseup(e) {
 								x2 = top.x;
 								y2 = top.y;							
 						}
+						let color = (window.DRAWFUNCTION == 'wall-door-convert') ? "rgba(255, 100, 255, 1)" : "rgba(255, 255, 0, 1)"
 						let data = ['line',
 						 'wall',
-						 "rgba(255, 100, 255, 1)",
+						 color,
 						 x1,
 						 y1,
 						 x2,
@@ -3159,6 +3183,20 @@ function init_walls_menu(buttons){
 		</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='line' data-function="wall-window" data-unique-with="draw">
+				 	Draw Window
+			</button>
+		</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-window-convert" data-unique-with="draw">
+				 	Wall>Window 
+			</button>
+		</div>`);
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-eraser-one" data-unique-with="draw">
 				 	Erase Line
@@ -3428,9 +3466,10 @@ Vector.prototype.normalize = function() {
 };
 
 // boundary object a: vector, b: vector
-let Boundary = function(aVec, bVec) {
+let Boundary = function(aVec, bVec, type=0) {
   this.a = aVec;
   this.b = bVec;
+  this.c = type;
 };
 
 
@@ -3502,14 +3541,21 @@ function particleUpdate(x, y) {
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false) {
 	lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
+	movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	let prevClosestWall = null;
     let prevClosestPoint = null;
+   	let prevClosestBarrier = null;
+    let prevClosestBarrierPoint = null;
     let closestWall = null;
+    let closestBarrier = null;
+
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
 	    
 	    let pt;
-	    let closest = null;
-	    let record = Infinity;
+	    let closestLight = null;
+	    let closestMove = null;
+	    let recordLight = Infinity;
+	    let recordMove = Infinity;
 
 	    for (let j = 0; j < walls.length; j++) {
 	    
@@ -3517,32 +3563,47 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
-	        if (dist < record) {
-	          record = dist;
-	          if(dist == lightRadius){
-	          	pt = {
-		          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-		          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
-		          }
-	          }
-	          closest=pt;
-	          if(dist != lightRadius){
-	          	closestWall = walls[j]
-	          }
-	          
+	        if (dist < recordLight) {
+	        	if(walls[j].c != 1)
+	          		recordLight = dist;
+	          	recordMove = dist;
+		        if(dist == lightRadius){
+		          	pt = {
+			          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+			          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+			          }
+	       		}
+	           	if(walls[j].c != 1)
+	          		closestLight = pt;
+
+	        	closestMove = pt;
+		        if(dist != lightRadius){
+		          	if(!walls[j].c)
+		          		closestWall = walls[j];
+		          	closestBarrier = walls[j];
+		        }	         
 	        }
 
 	      }
 	    }	    
-	    if (closest && closestWall != prevClosestWall) {
+	    if (closestLight && closestWall != prevClosestWall) {
 	    	if(prevClosestPoint){
 	    		 lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
-	    	lightPolygon.push({x: closest.x*window.CURRENT_SCENE_DATA.scale_factor, y: closest.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    } 
+	    if (closestMove && closestBarrier != prevClosestBarrier) {
+	    	if(prevClosestPoint){
+	    		 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	}
+	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
 
-	    prevClosestPoint = closest;
+	    prevClosestPoint = closestLight;
 	    prevClosestWall = closestWall;
+
+	    prevClosestBarrierPoint = closestMove;
+	    prevClosestBarrier = closestBarrier;
 	}
 	if(lightPolygon[1] != undefined)
   		lightPolygon.push(lightPolygon[1]);
@@ -3603,7 +3664,7 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 
 //Checks if a pixel is in line of current line of sight
 function detectInLos(x, y) {
-	let canvas = document.getElementById("raycastingCanvas");
+	let canvas = window.moveOffscreenCanvasMask;
 	let ctx = canvas.getContext("2d", { willReadFrequently: true });
 	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 	if (pixeldata[2] == 0)
@@ -3647,6 +3708,17 @@ async function redraw_light(){
 
 	offscreenContext.fillStyle = "black";
 	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+
+	if(window.moveOffscreenCanvasMask == undefined){
+		window.moveOffscreenCanvasMask = document.createElement('canvas');
+	}
+	let moveOffscreenContext = moveOffscreenCanvasMask.getContext('2d', {willReadFrequently: true});
+
+	window.moveOffscreenCanvasMask.width = canvasWidth;
+	window.moveOffscreenCanvasMask.height = canvasHeight;
+
+	moveOffscreenContext.fillStyle = "black";
+	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
 	let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
@@ -3713,12 +3785,14 @@ async function redraw_light(){
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
 				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
+				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 			}
 			else{
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 				particleLook(context, walls, 100000, undefined, undefined, undefined, false);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 				window.lineOfSightPolygons[auraId] = {
 					polygon: lightPolygon,
+					move: movePolygon,
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length
@@ -3759,12 +3833,14 @@ async function redraw_light(){
 
 				tokenVisionAura.css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			}
 			resolve();
 		})); 	
 	}
 	await Promise.all(promises);
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	
 	if(!window.DM)
 		check_token_visibility();
 }

@@ -1879,7 +1879,7 @@ class Token {
 				y: 0
 			};
 
-			let canvas = document.getElementById("raycastingCanvas");
+			let canvas = window.moveOffscreenCanvasMask;
 			let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 			tok.draggable({
