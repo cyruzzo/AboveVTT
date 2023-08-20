@@ -4730,7 +4730,12 @@ div#selectedTokensBorderRotationGrabberConnector,
     color: rgb(245, 166, 35);
 }
 
-
+.abovevtt-mon-stat-block__separator{
+    max-width: 100%;
+    min-height: 10px;
+    margin: 0px;
+    background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat;
+}
 
 #tokenOptionsContainer{
     overflow: hidden auto;
